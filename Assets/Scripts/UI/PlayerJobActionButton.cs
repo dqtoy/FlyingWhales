@@ -136,6 +136,9 @@ public class PlayerJobActionButton : MonoBehaviour {
         } else if (action is CorruptUnfaithful) {
             message = "Make a character prone to have affairs.";
             header += "(Seducer Action)";
+        } else if (action is RaiseDead) {
+            message = "Return a character to life.";
+            header += "(Instigator Action)";
         }
 
         if (action.parentData.hasActionInCooldown) {

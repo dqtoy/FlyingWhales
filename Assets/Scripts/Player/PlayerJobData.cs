@@ -57,6 +57,7 @@ public class PlayerJobData {
                 jobActions.Add(new Abduct());
                 jobActions.Add(new Provoke());
                 jobActions.Add(new Destroy());
+                jobActions.Add(new RaiseDead());
                 break;
         }
         for (int i = 0; i < jobActions.Count; i++) {

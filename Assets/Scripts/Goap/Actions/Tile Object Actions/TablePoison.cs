@@ -110,6 +110,19 @@ public class TablePoison : GoapAction {
         currentState.SetIntelReaction(PoisonSuccessReactions);
         //UIManager.Instance.Pause();
     }
+    public void AfterPoisonSuccess() {
+        if (actor.name == "Audrey") {
+            //force go home
+            actor.PlanIdleReturnHome();
+
+            Character fiona = CharacterManager.Instance.GetCharacterByName("Fiona");
+            fiona.CancelAllJobsAndPlans();
+            GoapAction eat = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT_DWELLING_TABLE, fiona, poiTarget);
+            GoapPlan plan = new GoapPlan(new GoapNode(null, eat.cost, eat), new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY }, GOAP_CATEGORY.FULLNESS);
+            plan.ConstructAllNodes();
+            fiona.AddPlan(plan, true);
+        }
+    }
     public void PreTargetMissing() {
         currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }

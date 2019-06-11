@@ -208,6 +208,17 @@ public class ChatCharacter : GoapAction {
     }
     #endregion
 
+    private void CreatePoisonTable(Character character) {
+        Character target = poiTarget as Character;
+        IPointOfInterest targetTable = target.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
+        GoapPlanJob job = new GoapPlanJob("Poison Table", INTERACTION_TYPE.TABLE_POISON, targetTable);
+        job.SetCannotOverrideJob(true);
+        job.SetCannotCancelJob(true);
+        job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+        character.jobQueue.AddJobInQueue(job, true);
+        character.jobQueue.ProcessFirstJobInQueue(character);
+    }
+
     #region Intel Reactions
     private List<string> FlirtIntelReaction(Character recipient, Intel sharedIntel) {
         List<string> reactions = new List<string>();
@@ -217,12 +228,15 @@ public class ChatCharacter : GoapAction {
 
         if (recipient.name == "Audrey" && actor.name == "Jamie" && target.name == "Fiona") {
             reactions.Add(string.Format("{0} is a cur!", actor.name));
-            IPointOfInterest targetTable = target.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
-            GoapPlanJob job = new GoapPlanJob("Poison Table", INTERACTION_TYPE.TABLE_POISON, targetTable);
-            job.SetCannotOverrideJob(true);
-            job.SetCannotCancelJob(true);
-            job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-            recipient.jobQueue.AddJobInQueue(job, true);
+            //IPointOfInterest targetTable = target.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
+            //GoapPlanJob job = new GoapPlanJob("Poison Table", INTERACTION_TYPE.TABLE_POISON, targetTable);
+            //job.SetCannotOverrideJob(true);
+            //job.SetCannotCancelJob(true);
+            //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+            //recipient.jobQueue.AddJobInQueue(job, true);
+            //recipient.jobQueue.ProcessFirstJobInQueue(recipient);
+            recipient.CancelAllJobsAndPlans();
+            recipient.marker.GoTo(recipient.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).GetRandomUnoccupiedTile(), () => CreatePoisonTable(recipient));
             return reactions;
         }
 

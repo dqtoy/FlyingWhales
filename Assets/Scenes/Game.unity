@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1273174, g: 0.13414761, b: 0.12107885, a: 1}
+  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -54725,6 +54725,7 @@ MonoBehaviour:
     - Inflict Kleptomania
     - Inflict Vampirism
     - Inflict Unfaithfulness
+    - Raise Dead
     m_values:
     - {fileID: 21300000, guid: 360bd7c134b76554488e42b1b995ce62, type: 3}
     - {fileID: 21300000, guid: 7cfbe25a31be2aa4c909bf1a7c6742a4, type: 3}
@@ -54736,6 +54737,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 8d5d07972a054c648a726e3008902938, type: 3}
     - {fileID: 21300000, guid: b657484a4dbd1c34d9511855a8a101af, type: 3}
     - {fileID: 21300000, guid: 88e35ef856bf3404fb43ebc852f031a7, type: 3}
+    - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
     - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
     - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
     - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}

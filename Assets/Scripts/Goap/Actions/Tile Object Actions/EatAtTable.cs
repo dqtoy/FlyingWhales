@@ -96,6 +96,9 @@ public class EatAtTable : GoapAction {
         RemoveTraitFrom(poiTarget, "Poisoned");
         Log log = null;
         int chance = UnityEngine.Random.Range(0, 2);
+        if (actor.name == "Fiona") {
+            chance = 1; //forced death
+        }
         if (chance == 0) {
             log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_sick", this);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -130,6 +133,16 @@ public class EatAtTable : GoapAction {
             SetCannotCancelAction(true);
             actor.Death("normal");
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = actor });
+            if (actor.name == "Fiona") {
+                Character jamie = CharacterManager.Instance.GetCharacterByName("Jamie");
+                jamie.CancelAllJobsAndPlans();
+                //make jaime go to fiona's home
+                GoapAction eat = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT_DWELLING_TABLE, jamie, poiTarget);
+                GoapPlan plan = new GoapPlan(new GoapNode(null, eat.cost, eat), new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY }, GOAP_CATEGORY.FULLNESS);
+                plan.ConstructAllNodes();
+                jamie.AddPlan(plan, true);
+                
+            }
         }
     }
     private void PreTargetMissing() {

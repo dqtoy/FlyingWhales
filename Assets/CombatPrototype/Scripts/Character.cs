@@ -771,7 +771,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             SetIsDead(false);
             SubscribeToSignals();
             SetPOIState(POI_STATE.ACTIVE);
+            ChangeRace(RACE.SKELETON);
+            AssignRole(CharacterRole.SOLDIER);
+            AssignClassByRole(this.role);
+            ChangeFactionTo(FactionManager.Instance.neutralFaction);
             _ownParty.ReturnToLife();
+            marker.OnReturnToLife();
         }
     }
     public void Death(string cause = "normal") {
@@ -1356,6 +1361,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)) {
             return false;
         }
+        if (this.name == "Jamie" || this.name == "Fiona" || this.name == "Audrey") {
+            if (this.name == "Jamie" && targetCharacter.name == "Fiona" && targetCharacter.isDead) {
+                CancelAllJobsAndPlans();
+                marker.StopMovement();
+                marker.LookAt(targetCharacter.marker.transform.position, true);
+                //add heartbroken trait to jaime
+                AddTrait("Heartbroken");
+            }
+            return false;
+        }
         bool hasCreatedJob = false;
         if (CreateRemoveTraitJobs(targetCharacter)) {
             hasCreatedJob = true;
@@ -1906,10 +1921,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void ChangeFactionTo(Faction newFaction) {
-        if (this.faction.id == newFaction.id) {
+        if (this.faction == newFaction) {
             return; //if the new faction is the same, ignore change
         }
-        faction.RemoveCharacter(this);
+        if (faction != null) {
+            faction.RemoveCharacter(this);
+        }
         newFaction.AddNewCharacter(this);
     }
     private void OnChangeFaction() {
@@ -4070,13 +4087,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    WillAboutToDoAction(specificAction);
         //    return;
         //}
-        if (allGoapPlans.Count > 0) {
-            //StopDailyGoapPlanGeneration();
-            PerformGoapPlans();
-            //SchedulePerformGoapPlans();
+        if (name == "Fiona" || name == "Jamie" || name == "Audrey") {
+            if (allGoapPlans.Count > 0) {
+                PerformGoapPlans();
+            }
         } else {
-            IdlePlans();
+            if (allGoapPlans.Count > 0) {
+                //StopDailyGoapPlanGeneration();
+                PerformGoapPlans();
+                //SchedulePerformGoapPlans();
+            } else {
+                IdlePlans();
+            }
         }
+        
     }
     private void IdlePlans() {
         if (_hasAlreadyAskedForPlan) {
@@ -5665,7 +5689,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.BURY_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
         poiGoapActions.Add(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
-        poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
+        //poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE); //Disabled for trailer build
         poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
         poiGoapActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
         poiGoapActions.Add(INTERACTION_TYPE.TANTRUM);

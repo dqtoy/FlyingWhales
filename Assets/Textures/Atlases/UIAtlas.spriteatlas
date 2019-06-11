@@ -333,7 +333,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c62642afd29207b40abc2902af0362c6, type: 3}
   - {fileID: 21300000, guid: 2764e6af55896cd47b3df12d138bb2cf, type: 3}
   - {fileID: 21300000, guid: dfcdc9affebb42f40b589a0b2040aa2e, type: 3}
-  - {fileID: 21300000, guid: 42f9aeaf8c219244a8650f0e6581cf40, type: 3}
   - {fileID: 21300000, guid: 26ca39cf2c4aefc45882e0028f698aa1, type: 3}
   - {fileID: 21300000, guid: 5cc90bcf42fd4974abaae59743b659cd, type: 3}
   - {fileID: 21300000, guid: a47bd4df720d07043b0db5b9058df34c, type: 3}
@@ -645,7 +644,6 @@ SpriteAtlas:
   - neutrals_s
   - scroll_button_right_on
   - ge_icon-19
-  - sidebar
   - 1x_button_disabled
   - widget_day_counter
   - orelia

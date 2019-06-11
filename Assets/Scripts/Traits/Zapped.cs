@@ -48,6 +48,26 @@ public class Zapped : Trait {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             character.AdjustDoNotDisturb(-1);
+
+            if (character.name == "Audrey") {
+                Character fiona = CharacterManager.Instance.GetCharacterByName("Fiona");
+                Character jamie = CharacterManager.Instance.GetCharacterByName("Jamie");
+
+                if (fiona.currentStructure == fiona.homeStructure) {
+                    fiona.PlanIdleStrollOutside(fiona.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                }
+                if (jamie.currentStructure == fiona.homeStructure) {
+                    jamie.PlanIdleStrollOutside(jamie.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                }
+
+                IPointOfInterest targetTable = fiona.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
+                GoapPlanJob job = new GoapPlanJob("Poison Table", INTERACTION_TYPE.TABLE_POISON, targetTable);
+                job.SetCannotOverrideJob(true);
+                job.SetCannotCancelJob(true);
+                job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                character.jobQueue.AddJobInQueue(job, true);
+                character.jobQueue.ProcessFirstJobInQueue(character);
+            }
         }
     }
     #endregion
