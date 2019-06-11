@@ -25,7 +25,7 @@ public class SpreadRumorRemoveLove : GoapAction {
         if (!isTargetMissing) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Break Love Success", 10);
-            weights.AddElement("Break Love Fail", 20);
+            //weights.AddElement("Break Love Fail", 20);
             SetState(weights.PickRandomElementGivenWeights());
         } else {
             SetState("Target Missing");

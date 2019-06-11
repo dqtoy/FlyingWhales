@@ -78,7 +78,7 @@ public class AssaultCharacter : GoapAction {
         Injured injured = new Injured();
         AddTraitTo(loser, injured, winner);
         CharacterManager.Instance.RelationshipDegradation(actor, poiTarget as Character, this);
-        currentState.SetIntelReaction(State1And2Reactions);
+        currentState.SetIntelReaction(TargetInjuredKnockOutReactions);
     }
     public void AfterTargetInjured() {
         //moved this to pre effect, because if put here, will cause infinite loop:
@@ -101,7 +101,7 @@ public class AssaultCharacter : GoapAction {
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
         AddTraitTo(winner, "Combat Recovery", loser);
         CharacterManager.Instance.RelationshipDegradation(actor, poiTarget as Character, this);
-        currentState.SetIntelReaction(State1And2Reactions);
+        currentState.SetIntelReaction(TargetInjuredKnockOutReactions);
     }
     public void AfterTargetKnockedOut() {
         if(parentPlan.job != null) {
@@ -121,7 +121,7 @@ public class AssaultCharacter : GoapAction {
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
         AddTraitTo(winner, "Combat Recovery", loser);
-        currentState.SetIntelReaction(State3Reactions);
+        currentState.SetIntelReaction(TargetKilledReactions);
     }
     public void AfterTargetKilled() {
         if (parentPlan.job != null) {
@@ -174,119 +174,307 @@ public class AssaultCharacter : GoapAction {
     #endregion
 
     #region Intel Reactions
-    private List<string> State1And2Reactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+    private List<string> TargetInjuredKnockOutReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
-        Character target = poiTarget as Character;
+        Character targetCharacter = poiTarget as Character;
 
-        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(poiTargetAlterEgo);
-        RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actorAlterEgo);
-
-        //Recipient and Actor are the same
-        if (recipient == actor) {
-            //- **Recipient Response Text**: "I know what I've done!"
-            reactions.Add(string.Format("I know what I've done!", actor.name));
-            //-**Recipient Effect**:  no effect
-        }
-        //Recipient and Target have a negative relationship:
-        else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
-            //- **Recipient Response Text**: "[Target Name] deserves that!"
-            reactions.Add(string.Format("{0} deserves that!", target.name));
-            //-**Recipient Effect**: no effect
-        }
-
-        //Recipient and Actor are from the same faction and they dont have a positive relationship. 
-        else if (recipient.faction == actorAlterEgo.faction && relWithActor != RELATIONSHIP_EFFECT.POSITIVE
-            && committedCrime != CRIME.NONE) {
-            //Target is not considered Hostile to Recipient and Actor's faction:
-            //- **Recipient Response Text**: "[Actor Name] committed an assault!?"
-            reactions.Add(string.Format("{0} committed an assault!?", actor.name));
-            //-**Recipient Effect**:  Apply Crime System handling as if the Recipient witnessed Actor commit an Assault.
-            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, null, this);
-        }
-
-        //Recipient and Actor are from the same faction and they have a positive relationship:
-        else if (recipient.faction == actorAlterEgo.faction && relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-            //- **Recipient Response Text**: "I'm sure there's a reason [Actor Name] did that."
-            reactions.Add(string.Format("I'm sure there's a reason {0} did that.", actor.name));
-            //-**Recipient Effect * *: no effect
-        }
-
-        //Recipient and Actor are from the same faction and they dont have a positive relationship. Target is considered Hostile to Recipient and Actor's faction:
-        else if (recipient.faction == actorAlterEgo.faction && relWithActor != RELATIONSHIP_EFFECT.POSITIVE
-            && committedCrime == CRIME.NONE) {
-            //- **Recipient Response Text**: "I'm sure there's a reason [Actor Name] did that."
-            reactions.Add(string.Format("I'm sure there's a reason {0} did that.", actor.name));
-            //-**Recipient Effect * *: no effect
-        }
-
-        //Recipient and Target have a positive relationship or Recipient and Target are from the same faction and they dont have a negative relationship:
-        else if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE ||
-            (recipient.faction == poiTargetAlterEgo.faction && relWithTarget != RELATIONSHIP_EFFECT.NEGATIVE)) {
-            //- **Recipient Response Text**: "Poor [Target Name]! I hope [he/she]'s okay."
-            reactions.Add(string.Format("Poor {0}! I hope {1}'s okay.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-            //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between Recipient and Actor
-            CharacterManager.Instance.RelationshipDegradation(actorAlterEgo, recipient);
+        if (isOldNews) {
+            //Old News
+            reactions.Add("This is old news.");
+        } else {
+            CHARACTER_MOOD recipientMood = recipient.currentMoodType;
+            //Not Yet Old News
+            if (awareCharactersOfThisAction.Contains(recipient)) {
+                //- If Recipient is Aware
+                reactions.Add("I know that already.");
+            } else {
+                //- Recipient is Actor
+                if (recipient == actor) {
+                    reactions.Add("I know what I did.");
+                }
+                //- Recipient is Target
+                else if (recipient == targetCharacter) {
+                    if (!recipient.HasRelationshipWith(actor)) {
+                        reactions.Add("Please don't remind me of that altercation.");
+                        AddTraitTo(recipient, "Annoyed");
+                    } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        //- Has Negative Relationship
+                        reactions.Add(string.Format("Now that you've reminded me about that, I think I should get back at {0}.", actor.name));
+                        recipient.CreateUndermineJobOnly(actor, "idle", status);
+                    } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                        //- Has Positive Relationship
+                        if (recipientMood == CHARACTER_MOOD.BAD || recipientMood == CHARACTER_MOOD.DARK) {
+                            //- No Relationship (Negative Mood)
+                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                reactions.Add(string.Format("Now that you've reminded me about that, I think I really should start avoiding {0}!", actor.name));
+                            } else {
+                                reactions.Add("Past is past.");
+                            }
+                        } else {
+                            //- No Relationship (Positive Mood)
+                            reactions.Add("Past is past.");
+                        }
+                    }
+                }
+                //- Recipient Has Positive Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                            reactions.Add(string.Format("I am fond of {0}. I can't allow such violence!", targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, null, this);
+                            }
+                            if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                                if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                    recipient.marker.AddHostileInRange(actor);
+                                }
+                            }
+                        } else {
+                            reactions.Add(string.Format("{0} assaulted {1}? I don't believe that.", actor.name, targetCharacter.name));
+                            if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                                if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                    recipient.marker.AddAvoidInRange(actor);
+                                }
+                            }
+                        }
+                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        reactions.Add(string.Format("{0} assaulted {1}? Why am I not surprised?", actor.name, targetCharacter.name));
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, null, this);
+                        }
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                recipient.marker.AddHostileInRange(actor);
+                            }
+                        }
+                    } else {
+                        reactions.Add(string.Format("Poor {1}. {0} must pay.", actor.name, targetCharacter.name));
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, null, this);
+                        }
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                recipient.marker.AddHostileInRange(actor);
+                            }
+                        }
+                    }
+                }
+                //- Recipient Has Negative Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                        reactions.Add(string.Format("{0} deserves to be beaten.", targetCharacter.name));
+                        AddTraitTo(recipient, "Cheery");
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(targetCharacter)) {
+                                recipient.marker.AddHostileInRange(targetCharacter);
+                            }
+                        }
+                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        reactions.Add("Those misfits are always up to no good.");
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                recipient.marker.AddAvoidInRange(actor);
+                            }
+                        }
+                    } else {
+                        reactions.Add(string.Format("{0} deserves to be beaten.", targetCharacter.name));
+                        AddTraitTo(recipient, "Cheery");
+                    }
+                }
+                //- Recipient Has No Relationship with Target
+                else {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                        reactions.Add(string.Format("{0} assaulted {1}? I don't believe that.", actor.name, targetCharacter.name));
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                recipient.marker.AddAvoidInRange(actor);
+                            }
+                        }
+                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        reactions.Add(string.Format("{0} assaulted {1}? Why am I not surprised?", actor.name, targetCharacter.name));
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, null, this);
+                        }
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                recipient.marker.AddAvoidInRange(actor);
+                            }
+                        }
+                    } else {
+                        reactions.Add(string.Format("Poor {1}. {0} must pay.", actor.name, targetCharacter.name));
+                        CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, null, this);
+                        }
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                recipient.marker.AddAvoidInRange(actor);
+                            }
+                        }
+                    }
+                }
+            }
         }
         return reactions;
     }
-    private List<string> State3Reactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+    private List<string> TargetKilledReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
-        Character target = poiTarget as Character;
+        Character targetCharacter = poiTarget as Character;
 
-        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(target);
-        RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actor);
-
-        //Recipient and Actor are the same
-        if (recipient == actor) {
-            //- **Recipient Response Text**: "I know what I've done!"
-            reactions.Add(string.Format("I know what I've done!", actor.name));
-            //-**Recipient Effect**:  no effect
-        }        
-
-        //Recipient and Target have a positive relationship:
-        else if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-            //- **Recipient Response Text**: "That despicable [Actor Name] killed [Target Name]! [He/She] is a murderer!"
-            reactions.Add(string.Format("That despicable {0} killed {1}, {2} is a murderer!", actor.name, target.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-            //-**Recipient Effect**: Remove any positive relationships between Actor and Recipient. Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this); //removal of relationships should be handled by crime system
-        }
-
-        //Recipient and Target have a negative relationship:
-        else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
-            //- **Recipient Response Text**: "I am glad that [Actor Name] dealt with [Killed Character Name]!"
-            reactions.Add(string.Format("I am glad that {0} dealt with {1}!", actor.name, target.name));
-            //-**Recipient Effect**: If Actor and Recipient have no relationships yet, they will become friends.
-            if (!recipient.HasRelationshipWith(actor)) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
+        if (isOldNews) {
+            //Old News
+            reactions.Add("This is old news.");
+        } else {
+            CHARACTER_MOOD recipientMood = recipient.currentMoodType;
+            //Not Yet Old News
+            if (awareCharactersOfThisAction.Contains(recipient)) {
+                //- If Recipient is Aware
+                reactions.Add("I know that already.");
+            } else {
+                //- Recipient is Actor
+                if (recipient == actor) {
+                    reactions.Add("I know what I did.");
+                }
+                //- Recipient is Target
+                else if (recipient == targetCharacter) {
+                    reactions.Add("That altercation ended my past life.");
+                    AddTraitTo(recipient, "Heartbroken");
+                }
+                //- Recipient Has Positive Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                            reactions.Add(string.Format("I cannot condone the murder of {0}. {1} must pay for {2} crime.", targetCharacter.name, actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.POSSESSIVE, false)));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                            }
+                            if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                                if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                    recipient.marker.AddHostileInRange(actor);
+                                }
+                            }
+                        } else {
+                            reactions.Add(string.Format("{0} killed {1}? I don't believe that.", actor.name, targetCharacter.name));
+                            if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                                if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                    recipient.marker.AddAvoidInRange(actor);
+                                }
+                            }
+                        }
+                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        reactions.Add(string.Format("{0} murdered {1}? Why am I not surprised?", actor.name, targetCharacter.name));
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                        }
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                recipient.marker.AddHostileInRange(actor);
+                            }
+                        }
+                    } else {
+                        reactions.Add(string.Format("{1} was killed? {0} must pay.", actor.name, targetCharacter.name));
+                        CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                        }
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                recipient.marker.AddHostileInRange(actor);
+                            }
+                        }
+                    }
+                }
+                //- Recipient Has Negative Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                        reactions.Add(string.Format("Suits {0} right.", Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                        AddTraitTo(recipient, "Cheery");
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                recipient.marker.AddAvoidInRange(actor);
+                            }
+                        }
+                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        reactions.Add("My enemies are killing each other. Isn't that funny?");
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                recipient.marker.AddAvoidInRange(actor);
+                            }
+                        }
+                    } else {
+                        if (CharacterManager.Instance.RelationshipImprovement(actor, recipient, this)) {
+                            reactions.Add(string.Format("I am happy {0} was able to do what I cannot.", actor.name));
+                            if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                                if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                    recipient.marker.AddAvoidInRange(actor);
+                                }
+                            }
+                        } else {
+                            reactions.Add(string.Format("Though I dislike {1}, I am appalled at {0}'s actions.", actor.name, targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                            }
+                            if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                                if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                    recipient.marker.AddAvoidInRange(actor);
+                                }
+                            }
+                        }
+                        AddTraitTo(recipient, "Cheery");
+                    }
+                }
+                //- Recipient Has No Relationship with Target
+                else {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                            reactions.Add(string.Format("I may be fond of {0} but I can't condone murder!", actor.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                            }
+                            if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                                if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                    recipient.marker.AddAvoidInRange(actor);
+                                }
+                            }
+                        } else {
+                            reactions.Add(string.Format("{0} killed {1}? I don't believe that.", actor.name, targetCharacter.name));
+                            if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                                if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                    recipient.marker.AddAvoidInRange(actor);
+                                }
+                            }
+                        }
+                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        reactions.Add(string.Format("{0} is truly wicked.", actor.name));
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                        }
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                recipient.marker.AddAvoidInRange(actor);
+                            }
+                        }
+                    } else {
+                        reactions.Add(string.Format("Poor {1}. {0} must pay.", actor.name, targetCharacter.name));
+                        CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                        }
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                                recipient.marker.AddAvoidInRange(actor);
+                            }
+                        }
+                    }
+                }
             }
         }
-
-        //Recipient and Actor are from the same faction and they have a positive relationship:
-        else if (recipient.faction == actor.faction && relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-            //- **Recipient Response Text**: "[Actor Name] killed somebody! This is horrible!"
-            reactions.Add(string.Format("{0} killed somebody! This is horrible!", actor.name));
-            //-**Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
-        }
-
-        //Recipient and Actor are from the same faction and they dont have a positive relationship. 
-        else if (recipient.faction == actor.faction && relWithActor != RELATIONSHIP_EFFECT.POSITIVE) {
-            //Target is considered Hostile to Recipient and Actor's faction:
-            if (committedCrime == CRIME.NONE) {
-                //- **Recipient Response Text**: "I'm sure there's a reason [Actor Name] did that."
-                reactions.Add(string.Format("I'm sure there's a reason {0} did that.", actor.name));
-                //-**Recipient Effect**: no effect
-            }
-
-            //Target is not considered Hostile to Recipient and Actor's faction:
-            else {
-                //- **Recipient Response Text**: "[Actor Name] killed somebody! This is horrible!"
-                reactions.Add(string.Format("{0} killed somebody! This is horrible!", actor.name));
-                //-**Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
-            }
-        }
-        
         return reactions;
     }
     #endregion

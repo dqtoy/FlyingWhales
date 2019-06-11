@@ -1492,7 +1492,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    private bool CreateAssaultUndermineJobOnly(Character targetCharacter, string reason) {
+    public bool CreateAssaultUndermineJobOnly(Character targetCharacter, string reason) {
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.ASSAULT_ACTION_NPC, targetCharacter);
         job.SetCannotOverrideJob(true);
         Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + job.targetInteractionType.ToString() + " to " + this.name + " with target " + targetCharacter.name);

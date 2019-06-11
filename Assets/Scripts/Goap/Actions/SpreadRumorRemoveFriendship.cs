@@ -24,7 +24,7 @@ public class SpreadRumorRemoveFriendship : GoapAction {
         if (!isTargetMissing) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Break Friendship Success", 10);
-            weights.AddElement("Break Friendship Fail", 20);
+            //weights.AddElement("Break Friendship Fail", 20);
             SetState(weights.PickRandomElementGivenWeights());
         } else {
             SetState("Target Missing");

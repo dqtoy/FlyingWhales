@@ -955,7 +955,7 @@ public class CharacterManager : MonoBehaviour {
                 return false;
         }
     }
-    public void RelationshipImprovement(Character actor, Character target) {
+    public bool RelationshipImprovement(Character actor, Character target, GoapAction cause = null) {
         string summary = "Relationship improvement between " + actor.name + " and " + target.name;
         Log log = null;
         if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
@@ -968,12 +968,14 @@ public class CharacterManager : MonoBehaviour {
                 summary += target.name + " now considers " + actor.name + " an enemy.";
                 RemoveOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
                 CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
+                return true;
             }
         } else if (!target.HasRelationshipWith(actor)) {
             log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
             summary += "\n" + target.name + " has no relationship with " + actor.name + ". " + target.name + " now considers " + actor.name + " a friend.";
             //If Target has no relationship with Actor, Target now considers Actor a Friend.
             CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
+            return true;
         }
         Debug.Log(summary);
         if (log != null) {
@@ -981,6 +983,7 @@ public class CharacterManager : MonoBehaviour {
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
         }
+        return false;
     }
     /// <summary>
     /// Unified way of degrading a relationship of a character with a target character.
