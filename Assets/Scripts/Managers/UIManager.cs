@@ -101,6 +101,7 @@ public class UIManager : MonoBehaviour {
     [Header("For Testing")]
     public ButtonToggle toggleBordersBtn;
     public ButtonToggle corruptionBtn;
+    public CharacterTestingUI characterTestingUI;
 
     public delegate void OnPauseEventExpiration(bool state);
     public OnPauseEventExpiration onPauseEventExpiration;
@@ -211,6 +212,7 @@ public class UIManager : MonoBehaviour {
     }
     private void HideMenus() {
         HideContextMenu();
+        characterTestingUI.HideUI();
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
         }
@@ -489,7 +491,7 @@ public class UIManager : MonoBehaviour {
     public void HideCharacterPortraitHoverInfo() {
         characterPortraitHoverInfoGO.SetActive(false);
     }
-    private void PositionTooltip(GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
+    public void PositionTooltip(GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {
         PositionTooltip(Input.mousePosition, tooltipParent, rtToReposition, boundsRT);
     }
     private void PositionTooltip(Vector3 position, GameObject tooltipParent, RectTransform rtToReposition, RectTransform boundsRT) {

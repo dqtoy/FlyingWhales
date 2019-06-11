@@ -151,7 +151,11 @@ public class CharacterMarker : PooledObject {
     public void OnPointerClick(BaseEventData bd) {
         PointerEventData ped = bd as PointerEventData;
         //character.gridTileLocation.OnClickTileActions(ped.button);
-        UIManager.Instance.ShowCharacterInfo(character);
+        if(ped.button == PointerEventData.InputButton.Left) {
+            UIManager.Instance.ShowCharacterInfo(character);
+        }else if (ped.button == PointerEventData.InputButton.Right) {
+            UIManager.Instance.characterTestingUI.ShowUI(character);
+        }
     }
     #endregion
 
