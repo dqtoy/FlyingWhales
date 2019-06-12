@@ -6471,6 +6471,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
                     PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
                 } else {
+                    if(witnessedCrime != null) {
+                        if (marker.inVisionPOIs.Contains(criminal.owner)) {
+                            marker.AddAvoidInRange(criminal.owner);
+                        }
+                    }
                     witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
                     reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
                 }
@@ -6489,6 +6494,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
                 PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
             } else {
+                if (witnessedCrime != null) {
+                    if (marker.inVisionPOIs.Contains(criminal.owner)) {
+                        marker.AddAvoidInRange(criminal.owner);
+                    }
+                }
                 witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
                 reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
             }
