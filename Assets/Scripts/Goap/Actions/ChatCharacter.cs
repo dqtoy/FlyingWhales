@@ -27,6 +27,8 @@ public class ChatCharacter : GoapAction {
         actor.marker.UpdateActionIcon();
         targetCharacter.marker.UpdateActionIcon();
 
+        targetCharacter.marker.LookAt(actor.marker.transform.position, true); //For Trailer Build Only
+
         CHARACTER_MOOD thisCharacterMood = actor.currentMoodType;
         CHARACTER_MOOD targetCharacterMood = targetCharacter.currentMoodType;
 

@@ -3431,17 +3431,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //when a character gains a criminal trait, drop all location jobs that this character is assigned to
             homeArea.jobQueue.UnassignAllJobsTakenBy(this);
         } else if (trait.name == "Unfaithful" && this.name == "Jamie") {
+            //force Jamie to drop all plans, then go to fiona to chat. (Scheduled him to chat after 5 ticks)
             CancelAllJobsAndPlans();
-            //force Jamie to drop all plans, then go to fiona to chat.
-            //StartGOAP(INTERACTION_TYPE.CHAT_CHARACTER, CharacterManager.Instance.GetCharacterByName("Fiona"), GOAP_CATEGORY.HAPPINESS, true);
-            GoapAction chatCharacter = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, CharacterManager.Instance.GetCharacterByName("Fiona"));
-            GoapNode node = new GoapNode(null, chatCharacter.cost, chatCharacter);
-            GoapPlan plan = new GoapPlan(node, new GOAP_EFFECT_CONDITION[] { }, GOAP_CATEGORY.IDLE);
-            plan.ConstructAllNodes();
-            AddPlan(plan, true);
-            
+            GameDate chatSched = GameManager.Instance.Today();
+            chatSched.AddTicks(5);
+            SchedulingManager.Instance.AddEntry(chatSched, ScheduleChat);
         }
         return true;
+    }
+    private void ScheduleChat() {
+        GoapAction chatCharacter = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, CharacterManager.Instance.GetCharacterByName("Fiona"));
+        GoapNode node = new GoapNode(null, chatCharacter.cost, chatCharacter);
+        GoapPlan plan = new GoapPlan(node, new GOAP_EFFECT_CONDITION[] { }, GOAP_CATEGORY.IDLE);
+        plan.ConstructAllNodes();
+        AddPlan(plan, true);
     }
     private bool RemoveTraitOnSchedule(Trait trait, bool triggerOnRemove = true) {
         if (isDead) {
