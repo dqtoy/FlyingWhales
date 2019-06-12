@@ -207,7 +207,7 @@ public class CharacterMarker : PooledObject {
                     NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
                 }
             } else if (trait.name == "Spooked" && characterThatGainedTrait.GetNormalTrait("Unconscious") == null) {
-                gainTraitSummary += "\nGained trait is spooked, character will flee is there are characters in vision";
+                gainTraitSummary += "\nGained trait is Spooked, character will flee is there are characters in vision";
                 if (inVisionPOIs.Count > 0) {
                     Spooked spooked = trait as Spooked;
                     for (int i = 0; i < inVisionPOIs.Count; i++) {
@@ -218,6 +218,18 @@ public class CharacterMarker : PooledObject {
                     }
                     if(spooked.terrifyingCharacters.Count > 0) {
                         AddAvoidsInRange(spooked.terrifyingCharacters);
+                    }
+                }
+            } else if (trait.name == "Berserked") {
+                gainTraitSummary += "\nGained trait is Berserked, characters in vision will flee from this character";
+                if (inVisionPOIs.Count > 0) {
+                    for (int i = 0; i < inVisionPOIs.Count; i++) {
+                        if (inVisionPOIs[i] is Character) {
+                            Character characterInVision = inVisionPOIs[i] as Character;
+                            if(characterInVision.role.roleType == CHARACTER_ROLE.CIVILIAN) {
+                                characterInVision.marker.AddAvoidInRange(characterThatGainedTrait);
+                            }
+                        }
                     }
                 }
             }

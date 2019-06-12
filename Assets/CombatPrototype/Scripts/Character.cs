@@ -2733,6 +2733,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (spooked != null) {
             spooked.AddTerrifyingCharacter(target);
             marker.AddAvoidInRange(target);
+            return;
+        }
+
+        if(role.roleType == CHARACTER_ROLE.CIVILIAN) {
+            if (target.GetNormalTrait("Berserked") != null) {
+                marker.AddAvoidInRange(target);
+                return;
+            }
         }
     }
     public List<Log> GetMemories(int dayFrom, int dayTo, bool eventMemoriesOnly = false){
