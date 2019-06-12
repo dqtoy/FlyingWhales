@@ -11,9 +11,11 @@ public class Poisoned : Trait {
     public List<Character> awareCharacters { get; private set; } //characters that know about this trait
 
     private List<Character> _responsibleCharacters;
+
+    public IPointOfInterest poi { get; private set; } //poi that has the poison
     public Poisoned() {
         name = "Poisoned";
-        description = "This character is poisoned.";
+        description = "This object is poisoned.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;
@@ -30,6 +32,10 @@ public class Poisoned : Trait {
     }
     public override bool IsResponsibleForTrait(Character character) {
         return responsibleCharacters.Contains(character);
+    }
+    public override void OnAddTrait(IPointOfInterest sourceCharacter) {
+        base.OnAddTrait(sourceCharacter);
+        poi = sourceCharacter;
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
         base.OnRemoveTrait(sourceCharacter);

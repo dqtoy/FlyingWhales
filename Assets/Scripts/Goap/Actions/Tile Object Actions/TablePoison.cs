@@ -154,6 +154,7 @@ public class TablePoison : GoapAction {
         //this action is still valid for reactions where the table is currently poisoned.
         PoisonTableIntel pti = sharedIntel as PoisonTableIntel;
         Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
+        Dwelling targetDwelling = poisonedTrait.poi.gridTileLocation.structure as Dwelling;
 
         bool tableHasPoison = poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor);
 
@@ -162,24 +163,24 @@ public class TablePoison : GoapAction {
             return reactions;
         }
 
-        if (_assumedTargetCharacter == null && pti.targetDwelling.residents.Count > 0) {
+        if (_assumedTargetCharacter == null && targetDwelling.residents.Count > 0) {
             TileObject table = poiTarget as TileObject;
-            if (pti.targetDwelling.IsResident(recipient)) {
+            if (targetDwelling.IsResident(recipient)) {
                 _assumedTargetCharacter = recipient;
             } else {
-                List<Character> positiveRelOwners = pti.targetDwelling.residents.Where(x => recipient.GetRelationshipEffectWith(x) == RELATIONSHIP_EFFECT.POSITIVE).ToList();
+                List<Character> positiveRelOwners = targetDwelling.residents.Where(x => recipient.GetRelationshipEffectWith(x) == RELATIONSHIP_EFFECT.POSITIVE).ToList();
                 if(positiveRelOwners != null && positiveRelOwners.Count > 0) {
                     _assumedTargetCharacter = positiveRelOwners[UnityEngine.Random.Range(0, positiveRelOwners.Count)];
                 } else {
-                    List<Character> negativeRelOwners = pti.targetDwelling.residents.Where(x => recipient.GetRelationshipEffectWith(x) == RELATIONSHIP_EFFECT.NEGATIVE).ToList();
+                    List<Character> negativeRelOwners = targetDwelling.residents.Where(x => recipient.GetRelationshipEffectWith(x) == RELATIONSHIP_EFFECT.NEGATIVE).ToList();
                     if (negativeRelOwners != null && negativeRelOwners.Count > 0) {
                         _assumedTargetCharacter = negativeRelOwners[UnityEngine.Random.Range(0, negativeRelOwners.Count)];
                     } else {
-                        List<Character> sameFactionOwners = pti.targetDwelling.residents.Where(x => recipient.faction.id == x.faction.id).ToList();
+                        List<Character> sameFactionOwners = targetDwelling.residents.Where(x => recipient.faction.id == x.faction.id).ToList();
                         if (sameFactionOwners != null && sameFactionOwners.Count > 0) {
                             _assumedTargetCharacter = sameFactionOwners[UnityEngine.Random.Range(0, sameFactionOwners.Count)];
                         } else {
-                            _assumedTargetCharacter = pti.targetDwelling.residents[UnityEngine.Random.Range(0, pti.targetDwelling.residents.Count)];
+                            _assumedTargetCharacter = targetDwelling.residents[UnityEngine.Random.Range(0, targetDwelling.residents.Count)];
                         }
                     }
                 }
