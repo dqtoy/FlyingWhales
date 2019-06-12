@@ -86,6 +86,10 @@ public class EngageState : CharacterState {
 
             Debug.Log("Attackers Chance: " + attackersChance + "! Chance: " + chance);
 
+            if (engagerCharacter.name == "Fiona" && targetCharacter.name == "Jamie") {
+                attackersChance = 100f; //fiona should always win
+            }
+
             if (chance < attackersChance) {
                 //Hunter Win
                 CombatEncounterEvents(engagerCharacter, targetCharacter, true);
@@ -129,6 +133,11 @@ public class EngageState : CharacterState {
         loserResults.AddElement("Death", 5);
 
         string result = loserResults.PickRandomElementGivenWeights();
+
+        if (winner.name == "Fiona" && loser.name == "Jamie") {
+            result = "Death"; //always kill jamie
+        }
+
         switch (result) {
             case "Unconscious":
                 Unconscious u = new Unconscious();

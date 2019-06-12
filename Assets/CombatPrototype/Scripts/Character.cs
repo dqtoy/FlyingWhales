@@ -3410,15 +3410,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
 #if !WORLD_CREATION_TOOL
         if (GameManager.Instance.gameHasStarted) {
-            if (trait.name == "Hungry" || trait.name == "Starving") {
-                Debug.Log("Planning fullness recovery from gain trait");
-                PlanFullnessRecoveryActions();
-            } else if (trait.name == "Lonely" || trait.name == "Forlorn") {
-                Debug.Log("Planning happiness recovery from gain trait");
-                PlanHappinessRecoveryActions();
-            } else if (trait.name == "Tired" || trait.name == "Exhausted") {
-                Debug.Log("Planning tiredness recovery from gain trait");
-                PlanTirednessRecoveryActions();
+            if (this.name != "Jamie" && this.name != "Fiona" && this.name != "Audrey") {
+                if (trait.name == "Hungry" || trait.name == "Starving") {
+                    Debug.Log("Planning fullness recovery from gain trait");
+                    PlanFullnessRecoveryActions();
+                } else if (trait.name == "Lonely" || trait.name == "Forlorn") {
+                    Debug.Log("Planning happiness recovery from gain trait");
+                    PlanHappinessRecoveryActions();
+                } else if (trait.name == "Tired" || trait.name == "Exhausted") {
+                    Debug.Log("Planning tiredness recovery from gain trait");
+                    PlanTirednessRecoveryActions();
+                }
             }
         }
 #endif
@@ -3434,7 +3436,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //force Jamie to drop all plans, then go to fiona to chat. (Scheduled him to chat after 5 ticks)
             CancelAllJobsAndPlans();
             GameDate chatSched = GameManager.Instance.Today();
-            chatSched.AddTicks(5);
+            chatSched.AddTicks(2);
             SchedulingManager.Instance.AddEntry(chatSched, ScheduleChat);
         }
         return true;
@@ -6698,6 +6700,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             int chance = UnityEngine.Random.Range(0, 100);
 
             tantrumLog += "\nRolled: " + chance.ToString();
+
+            if (name == "Fiona" || name == "Jamie" || name == "Audrey") {
+                chance = 100; //do not make main cast have tantrum
+            }
 
             if (chance < 20) {
                 CancelAllJobsAndPlans();
