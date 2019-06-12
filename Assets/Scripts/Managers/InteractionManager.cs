@@ -108,7 +108,7 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.EXPLORE:
                 goapAction = new Explore(actor, target);
                 break;
-            case INTERACTION_TYPE.TABLE_REMOVE_POISON:
+            case INTERACTION_TYPE.REMOVE_POISON_TABLE:
                 goapAction = new TableRemovePoison(actor, target);
                 break;
             case INTERACTION_TYPE.TABLE_POISON:

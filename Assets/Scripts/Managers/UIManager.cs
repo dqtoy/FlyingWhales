@@ -101,7 +101,7 @@ public class UIManager : MonoBehaviour {
     [Header("For Testing")]
     public ButtonToggle toggleBordersBtn;
     public ButtonToggle corruptionBtn;
-    public CharacterTestingUI characterTestingUI;
+    public POITestingUI poiTestingUI;
 
     public delegate void OnPauseEventExpiration(bool state);
     public OnPauseEventExpiration onPauseEventExpiration;
@@ -212,7 +212,7 @@ public class UIManager : MonoBehaviour {
     }
     private void HideMenus() {
         HideContextMenu();
-        characterTestingUI.HideUI();
+        poiTestingUI.HideUI();
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
         }

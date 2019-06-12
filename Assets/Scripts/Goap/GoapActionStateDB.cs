@@ -136,7 +136,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Explore Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Explore Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.TABLE_REMOVE_POISON, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.REMOVE_POISON_TABLE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Remove Poison Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },

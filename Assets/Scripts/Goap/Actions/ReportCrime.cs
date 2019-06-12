@@ -68,7 +68,8 @@ public class ReportCrime : GoapAction {
         if (crimeAction != null) {
             target.CreateInformedEventLog(crimeAction, true);
         }
-        target.ReactToCrime(crime, crimeAction, criminal, null, crimeAction);
+        bool hasRelationshipDegraded = false;
+        target.ReactToCrime(crime, crimeAction, criminal, ref hasRelationshipDegraded, null, crimeAction);
     }
     public void PreReportCrimeFail() {
         currentState.AddLogFiller(criminal, criminal.owner.name, LOG_IDENTIFIER.CHARACTER_3);

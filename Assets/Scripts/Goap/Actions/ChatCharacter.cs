@@ -232,6 +232,9 @@ public class ChatCharacter : GoapAction {
         } 
         else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.LOVER) || recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
             reactions.Add("Huh? What were they talking about?");
+        } 
+        else {
+            reactions.Add("Is this important?");
         }
         return reactions;
     }
@@ -400,8 +403,8 @@ public class ChatCharacter : GoapAction {
             //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between and Recipient and Target.
             //Add an Undermine Job to Recipient versus Target (choose at random). Add a Breakup Job to Recipient versus Actor.
             CharacterManager.Instance.RelationshipDegradation(target, recipient, this);
-            recipient.ForceCreateUndermineJob(target, "cheated");
-            recipient.CreateBreakupJob(actor);
+            recipient.ForceCreateUndermineJob(target, "snake");
+            //recipient.CreateBreakupJob(actor);
         }
         //Recipient considers Target as a Lover:
         else if (recipient.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER)) {
@@ -410,8 +413,8 @@ public class ChatCharacter : GoapAction {
             //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between and Recipient and Actor.
             //Add an Undermine Job to Recipient versus Actor (choose at random). Add a Breakup Job to Recipient versus Target.
             CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
-            recipient.ForceCreateUndermineJob(actor, "cheated");
-            recipient.CreateBreakupJob(target);
+            recipient.ForceCreateUndermineJob(actor, "snake");
+            //recipient.CreateBreakupJob(target);
         }
         //Actor has a Lover. Actor's Lover is not the Target. Recipient does not have a positive relationship with Actor. Recipient has a relationship (positive or negative) with Actor's Lover.
         else if (recipient != actor && recipient != target && actorLover != null && actorLover != target
@@ -423,7 +426,7 @@ public class ChatCharacter : GoapAction {
 
             recipient.CreateShareInformationJob(actorLover, this);
 
-            CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
+            //CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
         }
         //Target has a Lover. Target's Lover is not the Actor. Recipient does not have a positive relationship with Target. Recipient has a positive relationship with Target's Lover.
         else if (recipient != actor && recipient != target && targetLover != null && targetLover != actor

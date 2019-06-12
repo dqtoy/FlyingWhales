@@ -3599,8 +3599,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 AdjustIgnoreHostilities(1);
             }
-            _ownParty.RemoveAllOtherCharacters();
             if (trait.name != "Combat Recovery") {
+                _ownParty.RemoveAllOtherCharacters();
                 CancelAllJobsTargettingThisCharacter(JOB_TYPE.ASSAULT);
             }
         } else if (trait.type == TRAIT_TYPE.CRIMINAL) {
@@ -6395,21 +6395,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// Make this character react to a crime that he/she witnessed.
     /// </summary>
     /// <param name="witnessedCrime">Witnessed Crime.</param>
-    public void ReactToCrime(GoapAction witnessedCrime) {
-        ReactToCrime(witnessedCrime.committedCrime, witnessedCrime, witnessedCrime.actorAlterEgo, witnessedCrime);
+    public void ReactToCrime(GoapAction witnessedCrime, ref bool hasRelationshipDegraded) {
+        ReactToCrime(witnessedCrime.committedCrime, witnessedCrime, witnessedCrime.actorAlterEgo, ref hasRelationshipDegraded, witnessedCrime);
         witnessedCrime.OnWitnessedBy(this);
     }
     /// <summary>
     /// A variation of react to crime in which the parameter SHARE_INTEL_STATUS will be the one to determine if it is informed or witnessed crime
+    /// Returns true or false, if the relationship between the reactor and the criminal has degraded
     /// </summary>
-    public void ReactToCrime(CRIME committedCrime, GoapAction crimeAction, AlterEgoData criminal, SHARE_INTEL_STATUS status) {
-        if(status == SHARE_INTEL_STATUS.WITNESSED) {
-            ReactToCrime(committedCrime, crimeAction, criminal, crimeAction, null);
+    public bool ReactToCrime(CRIME committedCrime, GoapAction crimeAction, AlterEgoData criminal, SHARE_INTEL_STATUS status) {
+        bool hasRelationshipDegraded = false;
+        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+            ReactToCrime(committedCrime, crimeAction, criminal, ref hasRelationshipDegraded, crimeAction, null);
         }else if (status == SHARE_INTEL_STATUS.INFORMED) {
-            ReactToCrime(committedCrime, crimeAction, criminal, null, crimeAction);
+            ReactToCrime(committedCrime, crimeAction, criminal, ref hasRelationshipDegraded, null, crimeAction);
         } else {
             Debug.LogError("The share intel status is neither INFORMED or WITNESSED");
         }
+        return hasRelationshipDegraded;
     }
     /// <summary>
     /// Base function for crime reactions
@@ -6418,7 +6421,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// <param name="criminal">The character that committed the crime</param>
     /// <param name="witnessedCrime">The crime witnessed by this character, if this is null, character was only informed of the crime by someone else.</param>
     /// <param name="informedCrime">The crime this character was informed of. NOTE: Should only have value if Share Intel</param>
-    public void ReactToCrime(CRIME committedCrime, GoapAction crimeAction, AlterEgoData criminal, GoapAction witnessedCrime = null, GoapAction informedCrime = null) {
+    public void ReactToCrime(CRIME committedCrime, GoapAction crimeAction, AlterEgoData criminal, ref bool hasRelationshipDegraded, GoapAction witnessedCrime = null, GoapAction informedCrime = null) {
         //NOTE: Moved this to be per action specific. See GoapAction.IsConsideredACrimeBy and GoapAction.CanReactToThisCrime for necessary mechanics.
         //if (witnessedCrime != null) {
         //    //if the action that should be considered a crime is part of a job from this character's area, do not consider it a crime
@@ -6462,10 +6465,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             else if (category.IsGreaterThanOrEqual(CRIME_CATEGORY.SERIOUS)) {
                 reactSummary += "\nCrime committed is serious or worse. Removing positive relationships.";
                 //- Relationship Degradation between Character and Criminal
-                CharacterManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
-                witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
-                reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
-                PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
+                hasRelationshipDegraded = CharacterManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
+                if (hasRelationshipDegraded) {
+                    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
+                    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
+                    PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
+                } else {
+                    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
+                    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
+                }
+
             }
         }
         //If character has no relationships with the criminal or they are enemies and the crime is a Misdemeanor or worse:
@@ -6473,11 +6482,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             && category.IsGreaterThanOrEqual(CRIME_CATEGORY.MISDEMEANOR)) {
             reactSummary += "\n" + this.name + " does not have a relationship with or is an enemy of " + criminal.name + " and the committed crime is misdemeanor or worse";
             //- Relationship Degradation between Character and Criminal
-            CharacterManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
+            hasRelationshipDegraded = CharacterManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
             //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
-            witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
-            reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed");
-            PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
+            if (hasRelationshipDegraded) {
+                witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
+                reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
+                PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
+            } else {
+                witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
+                reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
+            }
         }
 
         if (witnessedCrime != null) {

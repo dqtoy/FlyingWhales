@@ -154,7 +154,7 @@ public class CharacterMarker : PooledObject {
         if(ped.button == PointerEventData.InputButton.Left) {
             UIManager.Instance.ShowCharacterInfo(character);
         }else if (ped.button == PointerEventData.InputButton.Right) {
-            UIManager.Instance.characterTestingUI.ShowUI(character);
+            UIManager.Instance.poiTestingUI.ShowUI(character);
         }
     }
     #endregion
@@ -179,7 +179,8 @@ public class CharacterMarker : PooledObject {
                 && action.CanReactToThisCrime(this.character)
                 && inVisionPOIs.Contains(character)
                 && this.character.CanReactToCrime()) {
-                this.character.ReactToCrime(action);
+                bool hasRelationshipDegraded = false;
+                this.character.ReactToCrime(action, ref hasRelationshipDegraded);
             }
         }
     }

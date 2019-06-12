@@ -90,7 +90,7 @@ public class TablePoison : GoapAction {
             }
             //- If Noble or Faction Leader, create an Ask for Help Remove Poison Job.
             else if (witness.role.roleType == CHARACTER_ROLE.NOBLE || witness.role.roleType == CHARACTER_ROLE.LEADER) {
-                witness.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
+                witness.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.REMOVE_POISON_TABLE, poiTarget);
             }
         }
         //- The witness should not eat at the table until the Poison has been removed
@@ -545,7 +545,7 @@ public class TablePoison : GoapAction {
         }
         //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
         else if (recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-            recipient.CreateAskForHelpJob(_assumedTargetCharacter, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
+            recipient.CreateAskForHelpJob(_assumedTargetCharacter, INTERACTION_TYPE.REMOVE_POISON_TABLE, poiTarget);
         }
     }
 }
