@@ -223,7 +223,7 @@ public class AssaultCharacter : GoapAction {
                         if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                             reactions.Add(string.Format("I am fond of {0}. I can't allow such violence!", targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                             }
                             if (status == SHARE_INTEL_STATUS.WITNESSED) {
                                 if (recipient.marker.inVisionPOIs.Contains(actor)) {
@@ -241,7 +241,7 @@ public class AssaultCharacter : GoapAction {
                     } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add(string.Format("{0} assaulted {1}? Why am I not surprised?", actor.name, targetCharacter.name));
                         if (!hasCrimeBeenReported) {
-                            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, null, this);
+                            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                         }
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
                             if (recipient.marker.inVisionPOIs.Contains(actor)) {
@@ -251,7 +251,7 @@ public class AssaultCharacter : GoapAction {
                     } else {
                         reactions.Add(string.Format("Poor {1}. {0} must pay.", actor.name, targetCharacter.name));
                         if (!hasCrimeBeenReported) {
-                            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, null, this);
+                            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                         }
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
                             if (recipient.marker.inVisionPOIs.Contains(actor)) {
@@ -296,7 +296,7 @@ public class AssaultCharacter : GoapAction {
                     } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add(string.Format("{0} assaulted {1}? Why am I not surprised?", actor.name, targetCharacter.name));
                         if (!hasCrimeBeenReported) {
-                            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, null, this);
+                            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                         }
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
                             if (recipient.marker.inVisionPOIs.Contains(actor)) {
@@ -307,7 +307,7 @@ public class AssaultCharacter : GoapAction {
                         reactions.Add(string.Format("Poor {1}. {0} must pay.", actor.name, targetCharacter.name));
                         CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
                         if (!hasCrimeBeenReported) {
-                            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, null, this);
+                            recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                         }
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
                             if (recipient.marker.inVisionPOIs.Contains(actor)) {
@@ -350,7 +350,7 @@ public class AssaultCharacter : GoapAction {
                         if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                             reactions.Add(string.Format("I cannot condone the murder of {0}. {1} must pay for {2} crime.", targetCharacter.name, actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.POSSESSIVE, false)));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                             }
                             if (status == SHARE_INTEL_STATUS.WITNESSED) {
                                 if (recipient.marker.inVisionPOIs.Contains(actor)) {
@@ -368,7 +368,7 @@ public class AssaultCharacter : GoapAction {
                     } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add(string.Format("{0} murdered {1}? Why am I not surprised?", actor.name, targetCharacter.name));
                         if (!hasCrimeBeenReported) {
-                            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                         }
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
                             if (recipient.marker.inVisionPOIs.Contains(actor)) {
@@ -379,7 +379,7 @@ public class AssaultCharacter : GoapAction {
                         reactions.Add(string.Format("{1} was killed? {0} must pay.", actor.name, targetCharacter.name));
                         CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
                         if (!hasCrimeBeenReported) {
-                            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                         }
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
                             if (recipient.marker.inVisionPOIs.Contains(actor)) {
@@ -417,7 +417,7 @@ public class AssaultCharacter : GoapAction {
                         } else {
                             reactions.Add(string.Format("Though I dislike {1}, I am appalled at {0}'s actions.", actor.name, targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                             }
                             if (status == SHARE_INTEL_STATUS.WITNESSED) {
                                 if (recipient.marker.inVisionPOIs.Contains(actor)) {
@@ -435,7 +435,7 @@ public class AssaultCharacter : GoapAction {
                         if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                             reactions.Add(string.Format("I may be fond of {0} but I can't condone murder!", actor.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                             }
                             if (status == SHARE_INTEL_STATUS.WITNESSED) {
                                 if (recipient.marker.inVisionPOIs.Contains(actor)) {
@@ -453,7 +453,7 @@ public class AssaultCharacter : GoapAction {
                     } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add(string.Format("{0} is truly wicked.", actor.name));
                         if (!hasCrimeBeenReported) {
-                            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                         }
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
                             if (recipient.marker.inVisionPOIs.Contains(actor)) {
@@ -464,7 +464,7 @@ public class AssaultCharacter : GoapAction {
                         reactions.Add(string.Format("Poor {1}. {0} must pay.", actor.name, targetCharacter.name));
                         CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
                         if (!hasCrimeBeenReported) {
-                            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                            recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                         }
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
                             if (recipient.marker.inVisionPOIs.Contains(actor)) {

@@ -238,7 +238,7 @@ public class TablePoison : GoapAction {
                                     reactions.Add(string.Format("{0} wants to poison me?", actor.name));
                                 }
                                 if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                                 }
                             } else {
                                 //- No Relationship (Positive Mood)
@@ -251,7 +251,7 @@ public class TablePoison : GoapAction {
                                     reactions.Add(string.Format("{0} wants to poison me?", actor.name));
                                 }
                                 if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                                 }
                             }
                         } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
@@ -267,7 +267,7 @@ public class TablePoison : GoapAction {
                                 reactions.Add(string.Format("That stupid {0} wants to poison me?!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                             }
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                             }
                         } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
                             //- Has Positive Relationship
@@ -275,7 +275,7 @@ public class TablePoison : GoapAction {
                                 if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                     reactions.Add(string.Format("Why does {0} want me dead? I've got to do something about this!", actor.name));
                                     if (!hasCrimeBeenReported) {
-                                        recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                        recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                                     }
                                 } else {
                                     reactions.Add("I just have to remove the poison and everything will go back to the way it was.");
@@ -285,7 +285,7 @@ public class TablePoison : GoapAction {
                                 if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                     reactions.Add(string.Format("Why does {0} want me dead? I've got to do something about this!", actor.name));
                                     if (!hasCrimeBeenReported) {
-                                        recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                        recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                                     }
                                 } else {
                                     reactions.Add("Relax. I didn't die. I just got sick. I'm sure I'll recover in no time.");
@@ -339,7 +339,7 @@ public class TablePoison : GoapAction {
                             if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                 reactions.Add(string.Format("{0} wants to poison {1}? I've got to do something about this.", actor.name, targetCharacter.name));
                                 if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                                 }
                                 recipient.CreateShareInformationJob(targetCharacter, this);
                             } else {
@@ -349,7 +349,7 @@ public class TablePoison : GoapAction {
                             if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                 reactions.Add(string.Format("{0} poisoned {1}? I've got to do something about this.", actor.name, targetCharacter.name));
                                 if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                                 }
                                 recipient.CreateShareInformationJob(targetCharacter, this);
                             } else {
@@ -359,7 +359,7 @@ public class TablePoison : GoapAction {
                             if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                 reactions.Add(string.Format("{0} poisoned {1}? I've got to do something about this.", actor.name, targetCharacter.name));
                                 if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                                    recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                                 }
                             } else {
                                 reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
@@ -371,19 +371,19 @@ public class TablePoison : GoapAction {
                         if (tableHasPoison) {
                             reactions.Add(string.Format("{0} wants to poison {1}? Why am I not surprised?", actor.name, targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                             }
                             recipient.CreateShareInformationJob(targetCharacter, this);
                         } else if (targetIsSick) {
                             reactions.Add(string.Format("{0} poisoned {1}? Why am I not surprised?", actor.name, targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                             }
                             recipient.CreateShareInformationJob(targetCharacter, this);
                         } else if (targetIsDead) {
                             reactions.Add(string.Format("{0} poisoned {1}? Why am I not surprised?", actor.name, targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                             }
                         } else {
                             reactions.Add(string.Format("{0} wants to poison {1}? What a horrible person!", actor.name, targetCharacter.name));
@@ -392,19 +392,19 @@ public class TablePoison : GoapAction {
                         if (tableHasPoison) {
                             reactions.Add(string.Format("{0} could die. I've got to do something about this!", targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                             }
                             recipient.CreateShareInformationJob(targetCharacter, this);
                         } else if (targetIsSick) {
                             reactions.Add(string.Format("{0} almost died. I've got to do something about this!", targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                             }
                             recipient.CreateShareInformationJob(targetCharacter, this);
                         } else if (targetIsDead) {
                             reactions.Add(string.Format("{0} died. I've got to do something about this!", targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                             }
                         } else {
                             reactions.Add(string.Format("{0} could die.", targetCharacter.name));
@@ -460,7 +460,7 @@ public class TablePoison : GoapAction {
                             if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                 reactions.Add(string.Format("{0} wants to poison {1}? This is unacceptable!", actor.name, targetCharacter.name));
                                 if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                                 }
                                 recipient.CreateShareInformationJob(targetCharacter, this);
                             } else {
@@ -470,7 +470,7 @@ public class TablePoison : GoapAction {
                             if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                 reactions.Add(string.Format("{0} poisoned {1}? This is unacceptable!", actor.name, targetCharacter.name));
                                 if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                                 }
                                 recipient.CreateShareInformationJob(targetCharacter, this);
                             } else {
@@ -480,7 +480,7 @@ public class TablePoison : GoapAction {
                             if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                 reactions.Add(string.Format("{0} poisoned {1}? This is unacceptable!", actor.name, targetCharacter.name));
                                 if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                                    recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                                 }
                             } else {
                                 reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
@@ -492,19 +492,19 @@ public class TablePoison : GoapAction {
                         if (tableHasPoison) {
                             reactions.Add(string.Format("{0} wants to poison {1}? Why am I not surprised?", actor.name, targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                             }
                             recipient.CreateShareInformationJob(targetCharacter, this);
                         } else if (targetIsSick) {
                             reactions.Add(string.Format("{0} poisoned {1}? Why am I not surprised?", actor.name, targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                             }
                             recipient.CreateShareInformationJob(targetCharacter, this);
                         } else if (targetIsDead) {
                             reactions.Add(string.Format("{0} poisoned {1}? I can't let a killer loose.", actor.name, targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                             }
                         } else {
                             reactions.Add(string.Format("{0} wants to poison {1}? So horrible!", actor.name, targetCharacter.name));
@@ -513,19 +513,19 @@ public class TablePoison : GoapAction {
                         if (tableHasPoison) {
                             reactions.Add(string.Format("{0} could die. I've got to do something about this!", targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                             }
                             recipient.CreateShareInformationJob(targetCharacter, this);
                         } else if (targetIsSick) {
                             reactions.Add(string.Format("{0} almost died. I've got to do something about this!", targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
                             }
                             recipient.CreateShareInformationJob(targetCharacter, this);
                         } else if (targetIsDead) {
                             reactions.Add(string.Format("{0} died. I've got to do something about this!", targetCharacter.name));
                             if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, null, this);
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                             }
                         } else {
                             reactions.Add(string.Format("{0} could die.", targetCharacter.name));

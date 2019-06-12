@@ -2660,6 +2660,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (HasRelationshipWith(alterEgo, useDisabled)) {
             for (int i = 0; i < relationships[alterEgo].rels.Count; i++) {
                 RelationshipTrait currTrait = relationships[alterEgo].rels[i];
+                if(currTrait.relType == RELATIONSHIP_TRAIT.LOVER || currTrait.relType == RELATIONSHIP_TRAIT.PARAMOUR) {
+                    if(jobQueue.HasJob(JOB_TYPE.BREAK_UP, alterEgo.owner)) {
+                        continue;
+                    }
+                }
                 if (currTrait.effect == TRAIT_EFFECT.NEGATIVE) {
                     return RELATIONSHIP_EFFECT.NEGATIVE;
                 }
@@ -6385,6 +6390,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void ReactToCrime(GoapAction witnessedCrime) {
         ReactToCrime(witnessedCrime.committedCrime, witnessedCrime, witnessedCrime.actorAlterEgo, witnessedCrime);
         witnessedCrime.OnWitnessedBy(this);
+    }
+    /// <summary>
+    /// A variation of react to crime in which the parameter SHARE_INTEL_STATUS will be the one to determine if it is informed or witnessed crime
+    /// </summary>
+    public void ReactToCrime(CRIME committedCrime, GoapAction crimeAction, AlterEgoData criminal, SHARE_INTEL_STATUS status) {
+        if(status == SHARE_INTEL_STATUS.WITNESSED) {
+            ReactToCrime(committedCrime, crimeAction, criminal, crimeAction, null);
+        }else if (status == SHARE_INTEL_STATUS.INFORMED) {
+            ReactToCrime(committedCrime, crimeAction, criminal, null, crimeAction);
+        } else {
+            Debug.LogError("The share intel status is neither INFORMED or WITNESSED");
+        }
     }
     /// <summary>
     /// Base function for crime reactions
