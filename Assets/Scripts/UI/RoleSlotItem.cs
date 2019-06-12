@@ -56,6 +56,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             portrait.gameObject.SetActive(false);
         } else {
             portrait.GeneratePortrait(character);
+            portrait.SetBaseBGState(false);
             portrait.gameObject.SetActive(true);
         }
     }    

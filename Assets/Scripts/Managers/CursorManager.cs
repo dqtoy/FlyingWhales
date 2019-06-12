@@ -7,12 +7,7 @@ public class CursorManager : MonoBehaviour {
     public static CursorManager Instance = null;
     public bool isDraggingItem = false;
 
-    [SerializeField] private Texture2D defaultCursorTexture;
-    [SerializeField] private Texture2D targetCursorTexture;
-    [SerializeField] private Texture2D dragWorldCursorTexture;
-    [SerializeField] private Texture2D dragItemHoverCursorTexture;
-    [SerializeField] private Texture2D dragItemClickedCursorTexture;
-    [SerializeField] private CursorMode cursorMode = CursorMode.Auto;
+    [SerializeField] private CursorMode cursorMode;
 
     private List<System.Action> leftClickActions = new List<System.Action>();
 
@@ -21,7 +16,7 @@ public class CursorManager : MonoBehaviour {
     public enum Cursor_Type {
         None, Default, Target, Drag_Hover, Drag_Clicked, Check, Cross
     }
-    private Cursor_Type currentCursorType;
+    public Cursor_Type currentCursorType { get; private set; }
 
 
     #region Monobehaviours
@@ -44,7 +39,7 @@ public class CursorManager : MonoBehaviour {
                     SetCursorTo(Cursor_Type.Cross);
                 }
             } else {
-                SetCursorTo(Cursor_Type.Target);
+                SetCursorTo(Cursor_Type.Cross);
             }
         }
         if (Input.GetMouseButtonDown(0)) {
@@ -64,11 +59,11 @@ public class CursorManager : MonoBehaviour {
             case Cursor_Type.Drag_Clicked:
                 isDraggingItem = true;
                 break;
-            case Cursor_Type.Target:
-            case Cursor_Type.Cross:
-            case Cursor_Type.Check:
-                hotSpot = new Vector2(29f, 29f);
-                break;
+            //case Cursor_Type.Target:
+            //case Cursor_Type.Cross:
+            //case Cursor_Type.Check:
+            //    hotSpot = new Vector2(29f, 29f);
+            //    break;
             default:
                 isDraggingItem = false;
                 break;

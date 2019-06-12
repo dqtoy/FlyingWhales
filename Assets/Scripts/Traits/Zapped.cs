@@ -10,7 +10,7 @@ public class Zapped : Trait {
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEUTRAL;
         associatedInteraction = INTERACTION_TYPE.NONE;
-        daysDuration = GameManager.Instance.GetTicksBasedOnMinutes(30);
+        daysDuration = 3;
         effects = new List<TraitEffect>();
     }
 

@@ -229,7 +229,7 @@ public class ChatCharacter : GoapAction {
         Character targetLover = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
 
         if (recipient.name == "Audrey" && actor.name == "Jamie" && target.name == "Fiona") {
-            reactions.Add(string.Format("{0} is a cur!", actor.name));
+            reactions.Add(string.Format("This is the last straw! I'm leaving that cur {0}, and this godforsaken town!", actor.name));
             //IPointOfInterest targetTable = target.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
             //GoapPlanJob job = new GoapPlanJob("Poison Table", INTERACTION_TYPE.TABLE_POISON, targetTable);
             //job.SetCannotOverrideJob(true);

@@ -539,11 +539,14 @@ public class Player : ILeader {
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
             PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(previousActiveAction);
             jobActionButton?.UpdateInteractableState();
+            jobActionButton?.SetSelectedIconState(false);
         } else {
+            PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(currentActivePlayerJobAction);
             //change the cursor
-            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Target);
+            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Cross);
             CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveAction);
             CursorManager.Instance.AddLeftClickAction(() => SetCurrentlyActivePlayerJobAction(null));
+            jobActionButton?.SetSelectedIconState(true);
         }
         
     }
@@ -681,6 +684,10 @@ public class Player : ILeader {
 
     #region Player Notifications
     public bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
+        if (character.name == "Fiona" || character.name == "Jamie" || character.name == "Audrey") {
+            return true;
+        }
+        return false;
         if (!onlyClickedCharacter && !character.isDead && AreaMapCameraMove.Instance.gameObject.activeSelf) {
             if((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || AreaMapCameraMove.Instance.CanSee(character.marker.gameObject)) {
                 return true;
@@ -696,6 +703,10 @@ public class Player : ILeader {
         return false;
     }
     private bool ShouldShowNotificationFrom(Character character, Log log) {
+        if (character.name == "Fiona" || character.name == "Jamie" || character.name == "Audrey") {
+            return true;
+        }
+        return false;
         if (ShouldShowNotificationFrom(character)) {
             return true;
         } else {

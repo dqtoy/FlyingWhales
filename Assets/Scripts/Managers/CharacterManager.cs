@@ -391,6 +391,9 @@ public class CharacterManager : MonoBehaviour {
         choices.Remove(SPECIAL_TOKEN.TOOL);
         for (int i = 0; i < allCharacters.Count; i++) {
             Character character = allCharacters[i];
+            if (character.name == "Fiona" || character.name == "Audrey" || character.name == "Jamie") {
+                continue;
+            }
             if (character.minion == null) {
                 if (Random.Range(0, 2) == 0) {
                     SPECIAL_TOKEN randomItem = choices[UnityEngine.Random.Range(0, choices.Count)];

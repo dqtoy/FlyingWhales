@@ -19,6 +19,7 @@ public class RaiseDead : PlayerJobAction {
         }
         base.ActivateAction(assignedCharacter, target);
         target.ReturnToLife();
+        UIManager.Instance.Unpause();
     }
 
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {

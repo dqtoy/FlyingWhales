@@ -510,8 +510,14 @@ public class UIManager : MonoBehaviour {
         rtToReposition.pivot = new Vector2(0f, 1f);
         smallInfoBGParentLG.childAlignment = TextAnchor.UpperLeft;
 
-        v3.x += 25f;
-        v3.y -= 25f;
+        if (CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Cross || CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Check) {
+            v3.x += 100f;
+            v3.y -= 32f;
+        } else {
+            v3.x += 25f;
+            v3.y -= 25f;
+        }
+        
         tooltipParent.transform.position = v3;
 
         Vector3[] corners = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right

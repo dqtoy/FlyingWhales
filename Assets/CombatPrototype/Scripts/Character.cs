@@ -701,9 +701,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //portraitGO.transform.localPosition = pos;
         SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
         marker.SetCharacter(this);
-#if UNITY_EDITOR
         marker.SetHoverAction(OnHoverMarker, OnHoverExit);
-#endif
     }
     public void DestroyMarker() {
         ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
@@ -1368,6 +1366,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 marker.LookAt(targetCharacter.marker.transform.position, true);
                 //add heartbroken trait to jaime
                 AddTrait("Heartbroken");
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "mental_breakdown");
+                log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                PlayerManager.Instance.player.ShowNotification(log);
             }
             return false;
         }

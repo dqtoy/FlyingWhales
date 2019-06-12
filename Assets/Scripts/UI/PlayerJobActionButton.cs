@@ -15,6 +15,7 @@ public class PlayerJobActionButton : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI btnLbl;
     [SerializeField] private TextMeshProUGUI subTextLbl;
     [SerializeField] private Image actionIcon;
+    [SerializeField] private Image selectedIcon;
     [SerializeField] private GameObject cover;
     //[SerializeField] private GameObject pointer;
     private Character character;
@@ -71,6 +72,9 @@ public class PlayerJobActionButton : MonoBehaviour {
             clickAction();
             UpdateInteractableState();
         }
+    }
+    public void SetSelectedIconState(bool state) {
+        selectedIcon.gameObject.SetActive(state);
     }
     #endregion
 
