@@ -2846,7 +2846,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void ThisCharacterWitnessedEvent(GoapAction witnessedEvent) {
         if (witnessedEvent.currentState.shareIntelReaction != null) {
-            witnessedEvent.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.WITNESSED);
+            List<string> reactions = witnessedEvent.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.WITNESSED);
+            if(reactions != null) {
+                string reactionLog = name + " witnessed event: " + witnessedEvent.goapName;
+                reactionLog += "\nREACTION:";
+                for (int i = 0; i < reactions.Count; i++) {
+                    reactionLog += "\n" + reactions[i];
+                }
+                PrintLogIfActive(reactionLog);
+            }
         }
 
         witnessedEvent.AddAwareCharacter(this);
