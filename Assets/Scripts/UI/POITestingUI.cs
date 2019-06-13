@@ -67,6 +67,15 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
+    public void DrinkBlood() {
+        if (poi is Character) {
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_STARVING, INTERACTION_TYPE.DRINK_BLOOD, poi);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
+        } else {
+            Debug.LogError(poi.name + " is not a character!");
+        }
+        HideUI();
+    }
     #endregion
 
     #region Tile Object Testing

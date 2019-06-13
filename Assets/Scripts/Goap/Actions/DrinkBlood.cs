@@ -28,11 +28,13 @@ public class DrinkBlood : GoapAction {
         base.PerformActualAction();
         if (!isTargetMissing) {
             Character target = poiTarget as Character;
-            if(target.GetNormalTrait("Unconscious", "Resting") != null) {
-                SetState("Drink Success");
-            } else {
-                SetState("Drink Fail");
-            }
+            SetState("Drink Success");
+
+            //if (target.GetNormalTrait("Unconscious", "Resting") != null) {
+            //    SetState("Drink Success");
+            //} else {
+            //    SetState("Drink Fail");
+            //}
         } else {
             if (!poiTarget.IsAvailable()) {
                 SetState("Drink Fail");
@@ -59,10 +61,10 @@ public class DrinkBlood : GoapAction {
         return true;
     }
     protected bool RequirementOnBuildGoapTree() {
-        if (!actor.isStarving) {
-            Character target = poiTarget as Character;
-            return target.GetNormalTrait("Unconscious", "Resting") != null;
-        }
+        //if (!actor.isStarving) {
+        //    Character target = poiTarget as Character;
+        //    return target.GetNormalTrait("Unconscious", "Resting") != null;
+        //}
         return true;
     }
     #endregion
