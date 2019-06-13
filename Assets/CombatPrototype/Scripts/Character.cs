@@ -5951,7 +5951,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Character target = action.poiTarget as Character;
             if (IsHostileWith(target) && GetNormalTrait("Injured") != null) {
                 AdjustIsWaitingForInteraction(1);
-                DropPlan(action.parentPlan);
+                DropPlan(action.parentPlan, true);
                 AdjustIsWaitingForInteraction(-1);
 
                 Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "plan_cancelled_injury");
