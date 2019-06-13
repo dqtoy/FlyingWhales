@@ -641,7 +641,7 @@ public class CharacterInfoUI : UIMenu {
         }
         if(characterPool.Count > 0) {
             Character chosenCharacter = characterPool[UnityEngine.Random.Range(0, characterPool.Count)];
-            _activeCharacter.CreateAssaultUndermineJobOnly(chosenCharacter, "idle");
+            _activeCharacter.CreateKnockoutJob(chosenCharacter);
         } else {
             Debug.LogError("No eligible characters to assault!");
         }

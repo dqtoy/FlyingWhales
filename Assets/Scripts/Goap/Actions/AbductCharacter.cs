@@ -87,37 +87,49 @@ public class AbductCharacter : GoapAction {
     #region Intel Reactions
     private List<string> AbductSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
-        Character target = poiTarget as Character;
+        Character targetCharacter = poiTarget as Character;
 
-        //Recipient and Actor are the same
-        if (recipient == actor) {
-            //- **Recipient Response Text**: "I know what I've done!"
-            reactions.Add("I know what I've done!");
-            //- **Recipient Effect**: no effect
-        }
-        //Recipient considers Target a personal Enemy:
-        else if (recipient.HasRelationshipOfTypeWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-            //- **Recipient Response Text**: "[Target Name] deserves that!"
-            reactions.Add(string.Format("{0} deserves that!", target.name));
-            //- **Recipient Effect**: no effect
-        }
-        //Recipient considers Target a personal Friend, Paramour, Lover or Relative:
-        else if (recipient.HasRelationshipOfTypeWith(poiTargetAlterEgo, true, RELATIONSHIP_TRAIT.FRIEND, RELATIONSHIP_TRAIT.PARAMOUR, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.RELATIVE)) {
-            //- **Recipient Response Text**: "Where is [Actor Name] taking [Target Name]!? Please let me know if you find out."
-            reactions.Add(string.Format("Where is {0} taking {1}!? Please let me know if you find out.", actor.name, target.name));
-            //- **Recipient Effect**: no effect
-        }
-        //Recipient considers Actor a personal Enemy:
-        else if (recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-            //- **Recipient Response Text**: "[Actor Name] is truly ruthless."
-            reactions.Add(string.Format("{0} is truly ruthless.", actor.name));
-            //- **Recipient Effect**: no effect
-        }
-        //Recipient and Target have no relationship but are from the same faction:
-        else if (!recipient.HasRelationshipWith(poiTargetAlterEgo) && recipient.faction.id == poiTargetAlterEgo.faction.id) {
-            //- **Recipient Response Text**: "Where is [Actor Name] taking [Target Name]!? Please let me know if you find out."
-            reactions.Add(string.Format("Where is {0} taking {1}!? Please let me know if you find out.", actor.name, target.name));
-            //- **Recipient Effect**: no effect
+        if (isOldNews) {
+            //Old News
+            reactions.Add("This is old news.");
+        } else {
+            //Not Yet Old News
+            if (awareCharactersOfThisAction.Contains(recipient)) {
+                //- If Recipient is Aware
+                reactions.Add("I know that already.");
+            } else {
+                //- Recipient is Actor
+                if (recipient == actor) {
+                    reactions.Add("I know what I did.");
+                }
+                //- Recipient is Target
+                else if (recipient == targetCharacter) {
+                    reactions.Add("Please help me!");
+                }
+                //- Recipient Has Positive Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    reactions.Add(string.Format("I want to save {0} from {1} but I need to know where {2} was taken.", targetCharacter.name, actor.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                            recipient.marker.AddHostileInRange(actor);
+                        }
+                    }
+                }
+                //- Recipient Has Negative Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    reactions.Add(string.Format("{0} deserves what {1} got.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                    AddTraitTo(recipient, "Cheery");
+                }
+                //- Recipient Has No Relationship with Target
+                else {
+                    reactions.Add(string.Format("Poor {0}. If you find out where {1} took {2}, I may be able to help.", targetCharacter.name, actor.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                            recipient.marker.AddHostileInRange(actor);
+                        }
+                    }
+                }
+            }
         }
         return reactions;
     }

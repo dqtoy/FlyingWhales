@@ -109,7 +109,7 @@ public class JobQueueItem {
             case JOB_TYPE.TANTRUM:
                 priority = 10;
                 break;
-            case JOB_TYPE.ASSAULT:
+            case JOB_TYPE.KNOCKOUT:
             case JOB_TYPE.ABDUCT:
             case JOB_TYPE.UNDERMINE_ENEMY:
                 priority = 20;

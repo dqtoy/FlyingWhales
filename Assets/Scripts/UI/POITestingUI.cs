@@ -23,9 +23,9 @@ public class POITestingUI : MonoBehaviour {
     #endregion
 
     #region Character Testing
-    public void AssaultThisCharacter() {
+    public void KnockoutThisCharacter() {
         if(poi is Character) {
-            UIManager.Instance.characterInfoUI.activeCharacter.CreateAssaultUndermineJobOnly(poi as Character, "idle");
+            UIManager.Instance.characterInfoUI.activeCharacter.CreateKnockoutJob(poi as Character);
         } else {
             Debug.LogError(poi.name + " is not a character!");
         }

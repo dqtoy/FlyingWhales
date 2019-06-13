@@ -46,9 +46,9 @@ public class FleeState : CharacterState {
         }
         if (stateComponent.character.IsHostileOutsider(targetCharacter)) {
             if (stateComponent.character.role.roleType == CHARACTER_ROLE.LEADER || stateComponent.character.role.roleType == CHARACTER_ROLE.NOBLE || stateComponent.character.role.roleType == CHARACTER_ROLE.SOLDIER) {
-                int numOfJobs = 3 - targetCharacter.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.ASSAULT);
+                int numOfJobs = 3 - targetCharacter.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
                 if (numOfJobs > 0) {
-                    stateComponent.character.CreateAssaultJobs(targetCharacter, numOfJobs);
+                    stateComponent.character.CreateLocationKnockoutJobs(targetCharacter, numOfJobs);
                 }
             } else {
                 if (!(targetCharacter.isDead || targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery") || targetCharacter.isAtHomeArea)) {

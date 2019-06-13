@@ -218,17 +218,18 @@ public class AssaultCharacter : GoapAction {
                 }
                 //- Recipient Has Positive Relationship with Target
                 else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                    bool hasRelationshipDegraded = false;
                     if (!hasCrimeBeenReported) {
-                        recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
+                        hasRelationshipDegraded = recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     }
-                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
-                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                    if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (hasRelationshipDegraded) {
                             reactions.Add(string.Format("I may have been fond of {0} but I can't allow such violence!", actor.name));
                         } else {
                             reactions.Add(string.Format("{0} assaulted {1}? I don't believe that.", actor.name, targetCharacter.name));
                         }
-                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add(string.Format("{0} assaulted {1}? Why am I not surprised?", actor.name, targetCharacter.name));
                     } else {
                         reactions.Add(string.Format("Poor {1}. {0} must pay.", actor.name, targetCharacter.name));
@@ -259,17 +260,18 @@ public class AssaultCharacter : GoapAction {
                 }
                 //- Recipient Has No Relationship with Target
                 else {
+                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                    bool hasRelationshipDegraded = false;
                     if (!hasCrimeBeenReported) {
-                        recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
+                        hasRelationshipDegraded = recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     }
-                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
-                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                    if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (hasRelationshipDegraded) {
                             reactions.Add(string.Format("I may have been fond of {0} but I can't allow such violence!", actor.name));
                         } else {
                             reactions.Add(string.Format("{0} assaulted {1}? I don't believe that.", actor.name, targetCharacter.name));
                         }
-                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add(string.Format("{0} assaulted {1}? Why am I not surprised?", actor.name, targetCharacter.name));
                     } else {
                         reactions.Add(string.Format("Poor {1}. {0} must pay.", actor.name, targetCharacter.name));
@@ -287,7 +289,6 @@ public class AssaultCharacter : GoapAction {
             //Old News
             reactions.Add("This is old news.");
         } else {
-            CHARACTER_MOOD recipientMood = recipient.currentMoodType;
             //Not Yet Old News
             if (awareCharactersOfThisAction.Contains(recipient)) {
                 //- If Recipient is Aware
@@ -304,17 +305,18 @@ public class AssaultCharacter : GoapAction {
                 }
                 //- Recipient Has Positive Relationship with Target
                 else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                    bool hasRelationshipDegraded = false;
                     if (!hasCrimeBeenReported) {
-                        recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
+                        hasRelationshipDegraded = recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                     }
-                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
-                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                    if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (hasRelationshipDegraded) {
                             reactions.Add(string.Format("I may have been fond of {0} but I can't condone murder!", actor.name));
                         } else {
                             reactions.Add(string.Format("{0} killed {1}? I don't believe that.", actor.name, targetCharacter.name));
                         }
-                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add(string.Format("{0} murdered {1}? Why am I not surprised?", actor.name, targetCharacter.name));
                     } else {
                         reactions.Add(string.Format("{1} was killed? {0} must pay.", actor.name, targetCharacter.name));
@@ -362,17 +364,18 @@ public class AssaultCharacter : GoapAction {
                 }
                 //- Recipient Has No Relationship with Target
                 else {
+                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                    bool hasRelationshipDegraded = false;
                     if (!hasCrimeBeenReported) {
-                        recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
+                        hasRelationshipDegraded = recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                     }
-                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
-                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                    if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (hasRelationshipDegraded) {
                             reactions.Add(string.Format("I may be fond of {0} but I can't condone murder!", actor.name));
                         } else {
                             reactions.Add(string.Format("{0} killed {1}? I don't believe that.", actor.name, targetCharacter.name));
                         }
-                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add(string.Format("{0} is truly wicked.", actor.name));
                     } else {
                         reactions.Add(string.Format("Poor {1}. {0} must pay.", actor.name, targetCharacter.name));

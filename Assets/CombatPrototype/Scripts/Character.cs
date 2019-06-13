@@ -1383,7 +1383,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return false;
         }
         if(status == SHARE_INTEL_STATUS.WITNESSED) {
-            return CreateAssaultUndermineJobOnly(targetCharacter, reason);
+            //When creating undermine job and the creator of the job witnessed the event that caused him/her to undermine, mutate undermine job to knockout job
+            //This means that all undermine jobs that are caused by witnessing an event will become knockout jobs
+            return CreateKnockoutJob(targetCharacter);
         }
         WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
         undermineWeights.AddElement("negative trait", 50);
@@ -1473,7 +1475,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter, affairMemoriesInvolvingRumoredCharacter } }, });
             }
 
-            job.SetCannotOverrideJob(true);
+            //job.SetCannotOverrideJob(true);
             Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + result + " to " + this.name + " with target " + targetCharacter.name);
             //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
             jobQueue.AddJobInQueue(job, false);
@@ -1492,37 +1494,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return false;
     }
-    public bool CreateAssaultUndermineJobOnly(Character targetCharacter, string reason) {
-        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.ASSAULT_ACTION_NPC, targetCharacter);
-        job.SetCannotOverrideJob(true);
-        Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + job.targetInteractionType.ToString() + " to " + this.name + " with target " + targetCharacter.name);
-        //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-        jobQueue.AddJobInQueue(job, false);
-        //if (processJobQueue) {
-        //    jobQueue.ProcessFirstJobInQueue(this);
-        //}
-
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", reason + "_and_undermine");
-        log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        log.AddToFillers(null, currentMoodType.ToString().ToLower(), LOG_IDENTIFIER.STRING_1);
-        AddHistory(log);
-
-        PlayerManager.Instance.player.ShowNotificationFrom(log, this, false);
-        return true;
-    }
-    public void CreateAssaultJobs(Character targetCharacter, int amount) {
+    public void CreateLocationKnockoutJobs(Character targetCharacter, int amount) {
         if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery") && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             for (int i = 0; i < amount; i++) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.ASSAULT, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
-                job.SetCanTakeThisJobChecker(CanCharacterTakeAssaultJob);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = targetCharacter });
+                job.SetCanTakeThisJobChecker(CanCharacterTakeKnockoutJob);
                 homeArea.jobQueue.AddJobInQueue(job);
             }
             //return job;
         }
         //return null;
     }
-    private bool CanCharacterTakeAssaultJob(Character character, Character targetCharacter, JobQueueItem job) {
+    public bool CreateKnockoutJob(Character targetCharacter) {
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = targetCharacter });
+        jobQueue.AddJobInQueue(job);
+        PrintLogIfActive(GameManager.Instance.TodayLogString() + "Added a KNOCKOUT Job to " + this.name + " with target " + targetCharacter.name);
+        return true;
+    }
+    private bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter, JobQueueItem job) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
     /// <summary>
@@ -3609,7 +3598,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             if (trait.name != "Combat Recovery") {
                 _ownParty.RemoveAllOtherCharacters();
-                CancelAllJobsTargettingThisCharacter(JOB_TYPE.ASSAULT);
+                CancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
             }
         } else if (trait.type == TRAIT_TYPE.CRIMINAL) {
             CancelOrUnassignRemoveTraitRelatedJobs();

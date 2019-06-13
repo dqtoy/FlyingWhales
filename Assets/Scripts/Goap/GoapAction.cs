@@ -576,7 +576,7 @@ public class GoapAction {
     }
     public bool IsFromApprehendJob() {
         if (parentPlan != null && parentPlan.job != null && 
-            (parentPlan.job.jobType == JOB_TYPE.ASSAULT || parentPlan.job.jobType == JOB_TYPE.APPREHEND)) {
+            (parentPlan.job.jobType == JOB_TYPE.KNOCKOUT || parentPlan.job.jobType == JOB_TYPE.APPREHEND)) {
             return true;
         }
         return false;
