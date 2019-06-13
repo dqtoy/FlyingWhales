@@ -18,8 +18,9 @@ public class MakeLove : GoapAction {
         base.PerformActualAction();
         targetCharacter.OnTargettedByAction(this);
         if (!isTargetMissing) {
+            Bed bed = poiTarget as Bed;
             poiTargetAlterEgo = targetCharacter.currentAlterEgo;
-            if (targetCharacter.currentParty == actor.ownParty && !targetCharacter.isStarving && !targetCharacter.isExhausted 
+            if (bed.GetActiveUserCount() == 0 && targetCharacter.currentParty == actor.ownParty && !targetCharacter.isStarving && !targetCharacter.isExhausted 
                 && targetCharacter.GetNormalTrait("Annoyed") == null) {
                 SetState("Make Love Success");
             } else {

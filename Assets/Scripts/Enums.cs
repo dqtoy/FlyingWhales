@@ -1484,4 +1484,20 @@ public static class Extensions {
         return false;
     }
     #endregion
+
+    #region Jobs
+    public static bool IsNeedsTypeJob(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
+            case JOB_TYPE.FULLNESS_RECOVERY_STARVING:
+            case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
+            case JOB_TYPE.TIREDNESS_RECOVERY:
+            case JOB_TYPE.FULLNESS_RECOVERY:
+            case JOB_TYPE.HAPPINESS_RECOVERY:
+                return true;
+            default:
+                return false;
+        }
+    }
+    #endregion
 }

@@ -142,7 +142,7 @@ public class Bed : TileObject {
             }
         }
     }
-    private int GetActiveUserCount() {
+    public int GetActiveUserCount() {
         int count = 0;
         for (int i = 0; i < bedUsers.Length; i++) {
             if (bedUsers[i] != null) {

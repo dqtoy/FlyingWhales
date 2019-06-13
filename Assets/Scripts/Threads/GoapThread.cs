@@ -171,31 +171,34 @@ public class GoapThread : Multithread {
                 }
             } else if (kvp.Key == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                 //NOTE: Not happy about this, very unoptimized. Need to think of a way to make this more performant.
-                Dictionary<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>> filtered = new Dictionary<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>>();
+                Dictionary<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>> sorted = new Dictionary<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>>();
                 for (int i = 0; i < kvp.Value.Count; i++) {
                     IAwareness currAwareness = kvp.Value[i];
                     if (currAwareness.poi.gridTileLocation != null && currAwareness.poi.gridTileLocation.structure != null) {
                         LocationStructure objStructure = currAwareness.poi.gridTileLocation.structure;
-                        if (!filtered.ContainsKey(objStructure)) {
-                            filtered.Add(objStructure, new Dictionary<INTERACTION_TYPE, List<GoapAction>>());
+                        if (!sorted.ContainsKey(objStructure)) {
+                            sorted.Add(objStructure, new Dictionary<INTERACTION_TYPE, List<GoapAction>>());
                         }
                         List<GoapAction> awarenessActions = currAwareness.poi.AdvertiseActionsToActor(actor, actorAllowedActions);
                         for (int j = 0; j < awarenessActions.Count; j++) {
                             GoapAction currAction = awarenessActions[j];
-                            if (!filtered[objStructure].ContainsKey(currAction.goapType)) {
-                                filtered[objStructure].Add(currAction.goapType, new List<GoapAction>());
+                            if (!sorted[objStructure].ContainsKey(currAction.goapType)) {
+                                sorted[objStructure].Add(currAction.goapType, new List<GoapAction>());
                             }
-                            filtered[objStructure][currAction.goapType].Add(currAction);
+                            sorted[objStructure][currAction.goapType].Add(currAction);
                         }
                     }
                 }
-                foreach (KeyValuePair<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>> keyValuePair in filtered) {
-                    foreach (KeyValuePair<INTERACTION_TYPE, List<GoapAction>> keyValuePair2 in keyValuePair.Value) {
-                        if (keyValuePair2.Value.Count > 1) {
-                            GoapAction chosenAction = keyValuePair2.Value[Utilities.rng.Next(0, keyValuePair2.Value.Count)];
+                foreach (KeyValuePair<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>> structureActions in sorted) {
+                    foreach (KeyValuePair<INTERACTION_TYPE, List<GoapAction>> actions in structureActions.Value) {
+                        if (actions.Key == INTERACTION_TYPE.CHOP_WOOD) {
+                            //allow all chop wood actions to be advertised
+                            usableActions.AddRange(actions.Value);
+                        } else if (actions.Value.Count > 1) { //if there are multiple advertised actions of a type in the given structure, pick a random one
+                            GoapAction chosenAction = actions.Value[Utilities.rng.Next(0, actions.Value.Count)];
                             usableActions.Add(chosenAction);
-                        } else if (keyValuePair2.Value.Count == 1) {
-                            usableActions.Add(keyValuePair2.Value[0]);
+                        } else if (actions.Value.Count == 1) { //else if there is only one, just use that
+                            usableActions.Add(actions.Value[0]);
                         }
                     }
                 }
@@ -343,7 +346,7 @@ public class GoapThread : Multithread {
                             allPlans.Add(plan);
                             plan.SetListOfCharacterAwareness(characterTargetsAwareness);
                         }
-                        //log += planLog;
+                        //Debug.Log(planLog);
                     }
                 }
             }
