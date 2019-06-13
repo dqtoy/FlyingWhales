@@ -69,7 +69,7 @@ public class Restrained : Trait {
         }
         if (targetCharacter.GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
             if (!targetCharacter.isAtHomeArea) {
-                GoapPlanJob job = characterThatWillDoJob.CreateSaveCharacterJob(targetCharacter, false);
+                characterThatWillDoJob.CreateSaveCharacterJob(targetCharacter, false);
                 return true;
             } else {
                 if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name)) {

@@ -1641,35 +1641,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public Character troubledCharacter { get; private set; }
-    public void CreateAskForHelpSaveCharacterJob(Character troubledCharacter) {
-        if (troubledCharacter != null && troubledCharacter != this) {
-            this.troubledCharacter = troubledCharacter;
-            Character targetCharacter = null;
-            List<Character> positiveCharacters = GetCharactersWithRelationship(TRAIT_EFFECT.POSITIVE);
-            positiveCharacters.Remove(troubledCharacter);
-            if (positiveCharacters.Count > 0) {
-                targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
-            } else {
-                List<Character> nonEnemyCharacters = GetCharactersWithoutRelationship(RELATIONSHIP_TRAIT.ENEMY).Where(x => x.faction.id == faction.id).ToList();
-                nonEnemyCharacters.Remove(troubledCharacter);
-                if (nonEnemyCharacters.Count > 0) {
-                    targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
-                }
-            }
-            if (targetCharacter != null) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, targetCharacter);
-                jobQueue.AddJobInQueue(job);
-            } else {
-                RegisterLogAndShowNotifToThisCharacterOnly("Generic", "ask_for_help_fail", troubledCharacter, troubledCharacter.name);
-            }
-        } else {
-            if (troubledCharacter == null) {
-                Debug.LogError(name + " cannot create ask for help save character job because troubled character is null!");
-            } else {
-                Debug.LogError(name + " cannot create ask for help save character job for " + troubledCharacter.name);
-            }
-        }
-    }
     public void CreateAskForHelpJob(Character troubledCharacter, INTERACTION_TYPE helpType, params object[] otherData) {
         //&& troubledCharacter != this
         if (troubledCharacter != null) {
@@ -1703,13 +1674,53 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    public GoapPlanJob CreateSaveCharacterJob(Character targetCharacter, bool processLogicForPersonalJob = true) {
+    private void CreateAskForHelpSaveCharacterJob(Character troubledCharacter) {
+        if (troubledCharacter != null && troubledCharacter != this) {
+            this.troubledCharacter = troubledCharacter;
+            Character targetCharacter = null;
+            List<Character> positiveCharacters = GetCharactersWithRelationship(TRAIT_EFFECT.POSITIVE);
+            positiveCharacters.Remove(troubledCharacter);
+            if (positiveCharacters.Count > 0) {
+                targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
+            } else {
+                List<Character> nonEnemyCharacters = GetCharactersWithoutRelationship(RELATIONSHIP_TRAIT.ENEMY).Where(x => x.faction.id == faction.id).ToList();
+                nonEnemyCharacters.Remove(troubledCharacter);
+                if (nonEnemyCharacters.Count > 0) {
+                    targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
+                }
+            }
+            if (targetCharacter != null) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, targetCharacter);
+                jobQueue.AddJobInQueue(job);
+            } else {
+                RegisterLogAndShowNotifToThisCharacterOnly("Generic", "ask_for_help_fail", troubledCharacter, troubledCharacter.name);
+            }
+        } else {
+            if (troubledCharacter == null) {
+                Debug.LogError(name + " cannot create ask for help save character job because troubled character is null!");
+            } else {
+                Debug.LogError(name + " cannot create ask for help save character job for " + troubledCharacter.name);
+            }
+        }
+    }
+    public void CreateSaveCharacterJob(Character targetCharacter, bool processLogicForPersonalJob = true) {
         if (targetCharacter != null && targetCharacter != this) {
+            string log = name + " is creating save character job for " + targetCharacter.name;
+            if (role.roleType == CHARACTER_ROLE.CIVILIAN || role.roleType == CHARACTER_ROLE.NOBLE
+                || role.roleType == CHARACTER_ROLE.LEADER) {
+                CreateAskForHelpSaveCharacterJob(targetCharacter);
+                log += "\n" + name + " is either a Civilian/Leader/Noble and cannot save a character, thus, will try to ask for help.";
+                return;
+            }
             if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.SAVE_CHARACTER)) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SAVE_CHARACTER, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = targetCharacter.homeArea, targetPOI = targetCharacter });
                 jobQueue.AddJobInQueue(job, processLogicForPersonalJob);
-                return job;
+                log += "\n" + name + " created save character job.";
+                //return job;
+            } else {
+                log += "\n" + targetCharacter.name + " is already being saved by someone.";
             }
+            PrintLogIfActive(log);
         } else {
             if (targetCharacter == null) {
                 Debug.LogError(name + " cannot create save character job because troubled character is null!");
@@ -1717,7 +1728,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 Debug.LogError(name + " cannot create save character job for " + targetCharacter.name);
             }
         }
-        return null;
+        //return null;
     }
     public GoapPlanJob CreateBreakupJob(Character targetCharacter) {
         if (jobQueue.HasJob(JOB_TYPE.BREAK_UP, targetCharacter)) {

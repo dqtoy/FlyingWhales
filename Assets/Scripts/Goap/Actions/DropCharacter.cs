@@ -86,48 +86,57 @@ public class DropCharacter : GoapAction {
         //Recipient and Target have at least one non-negative relationship and Actor is not from the same faction:
         Character targetCharacter = poiTarget as Character;
 
-        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(poiTargetAlterEgo);
-
-        if (recipient == actor) {
-            return reactions; //return empty list if same actor
-        }
-
-        if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE && actorAlterEgo.faction != recipient.faction) {
-            //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to free [Target Name]!
-            reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
-            //-**Recipient Effect**: If Adventurer or Soldier or Unaligned Non-Beast, create a Save Target plan.
-            if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.isFactionless && recipient.role.roleType != CHARACTER_ROLE.BEAST)) {
-                recipient.CreateSaveCharacterJob(targetCharacter);
+        if (isOldNews) {
+            //Old News
+            reactions.Add("This is old news.");
+        } else {
+            //Not Yet Old News
+            if (awareCharactersOfThisAction.Contains(recipient)) {
+                //- If Recipient is Aware
+                reactions.Add("I know that already.");
+            } else {
+                //- Recipient is Actor
+                if (recipient == actor) {
+                    reactions.Add("I know what I did.");
+                }
+                //- Recipient is Target
+                else if (recipient == targetCharacter) {
+                    if (recipient.faction.id != actor.faction.id) {
+                        reactions.Add("Please help me!");
+                    } else {
+                        reactions.Add(string.Format("I am grateful for {0}'s help.", actor.name));
+                    }
+                }
+                //- Recipient Has Positive Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    if (recipient.faction.id != actor.faction.id) {
+                        reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
+                        recipient.CreateSaveCharacterJob(targetCharacter);
+                    } else {
+                        reactions.Add(string.Format("I am grateful that {0} saved {1}.", actor.name, targetCharacter.name));
+                        CharacterManager.Instance.RelationshipImprovement(actor, recipient, this);
+                    }
+                }
+                //- Recipient Has Negative Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    if (recipient.faction.id != actor.faction.id) {
+                        reactions.Add("This news is music to my ears!");
+                        AddTraitTo(recipient, "Cheery");
+                    } else {
+                        reactions.Add(string.Format("I am pissed that {0} had been brought back.", targetCharacter.name));
+                        AddTraitTo(recipient, "Annoyed");
+                    }
+                }
+                //- Recipient Has No Relationship with Target
+                else {
+                    if (recipient.faction.id != actor.faction.id) {
+                        reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
+                        recipient.CreateSaveCharacterJob(targetCharacter);
+                    } else {
+                        reactions.Add(string.Format("It is good that {0} saved {1}.", actor.name, targetCharacter.name));
+                    }
+                }
             }
-            //If Civilian, Noble or Faction Leader, create an Ask for Save Help plan.
-            else if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-                recipient.CreateAskForHelpSaveCharacterJob(targetCharacter);
-            }
-        }
-        //Recipient and Target have no relationship but from the same faction and Actor is not from the same faction:
-        else if (relWithTarget == RELATIONSHIP_EFFECT.NONE && recipient.faction == poiTargetAlterEgo.faction && recipient.faction != actorAlterEgo.faction) {
-            //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to free [Target Name]!
-            reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to free {0}!", targetCharacter.name));
-            //-**Recipient Effect**: If Adventurer or Soldier or Unaligned Non-Beast, create a Save Target plan
-            if (recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.isFactionless && recipient.role.roleType != CHARACTER_ROLE.BEAST)) {
-                recipient.CreateSaveCharacterJob(targetCharacter);
-            }
-            //If Civilian, Noble or Faction Leader, create an Ask for Save Help plan.
-            else if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-                recipient.CreateAskForHelpSaveCharacterJob(targetCharacter);
-            }
-        }
-        //Recipient and Target are enemies:
-        else if (recipient.HasRelationshipOfTypeWith(poiTargetAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-            //- **Recipient Response Text**: "[Target Name] got abducted? That's what [he/she] deserves."
-            reactions.Add(string.Format("{0} got abducted? That's what {1} deserves.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-            //-**Recipient Effect**: no effect
-        }
-        //Recipient, Actor and Target are from the same faction and Target has Criminal Trait:
-        if (recipient.faction == actorAlterEgo.faction && recipient.faction == poiTargetAlterEgo.faction && targetCharacter.GetNormalTrait("Criminal") != null) {
-            //- **Recipient Response Text**: "[Target Name] is a criminal. I cannot do anything for [him/her]."
-            reactions.Add(string.Format("{0} is a criminal. I cannot do anything for {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
-            //-**Recipient Effect**: no effect
         }
         return reactions;
     }
