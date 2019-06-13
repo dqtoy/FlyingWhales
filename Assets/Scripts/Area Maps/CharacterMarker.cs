@@ -608,6 +608,11 @@ public class CharacterMarker : PooledObject {
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
     }
+    /// <summary>
+    /// Make this marker look at a specific point (In World Space).
+    /// </summary>
+    /// <param name="target">The target point in world space</param>
+    /// <param name="force">Should this object be forced to rotate?</param>
     public void LookAt(Vector3 target, bool force = false) {
         if (!force) {
             if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -618,9 +623,14 @@ public class CharacterMarker : PooledObject {
         Vector3 diff = target - transform.position;
         diff.Normalize();
         float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-        LookAt(Quaternion.Euler(0f, 0f, rot_z - 90), force);
+        Rotate(Quaternion.Euler(0f, 0f, rot_z - 90), force);
     }
-    public void LookAt(Quaternion target, bool force = false) {
+    /// <summary>
+    /// Rotate this marker to a specific angle.
+    /// </summary>
+    /// <param name="target">The angle this character must rotate to.</param>
+    /// <param name="force">Should this object be forced to rotate?</param>
+    public void Rotate(Quaternion target, bool force = false) {
         if (!force) {
             if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
                 return;
@@ -676,32 +686,35 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Animation
-    private void PlayWalkingAnimation() {
+    public void PlayWalkingAnimation() {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
-        Play("Walk");
+        PlayAnimation("Walk");
     }
     public void PlayIdle() {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
-        Play("Idle");
+        PlayAnimation("Idle");
     }
     private void PlaySleepGround() {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
-        Play("Sleep Ground");
+        PlayAnimation("Sleep Ground");
     }
-    private void Play(string animation) {
+    private void PlayAnimation(string animation) {
         //Debug.Log(character.name + " played " + animation + " animation.");
         animator.Play(animation, 0, 0.5f);
         //StartCoroutine(PlayAnimation(animation));
     }
     private void UpdateAnimation() {
+        if (!character.IsInOwnParty()) {
+            return; //if not in own party do not update animations
+        }
         if (character.isDead) {
-            Play("Dead");
+            PlayAnimation("Dead");
         } else if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             PlaySleepGround();
         } else if (isStoppedByOtherCharacter > 0) {
@@ -710,9 +723,9 @@ public class CharacterMarker : PooledObject {
             //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
             PlayWalkingAnimation();
         } else if (character.currentAction != null && character.currentAction.currentState != null && !string.IsNullOrEmpty(character.currentAction.currentState.animationName)) {
-            Play(character.currentAction.currentState.animationName);
+            PlayAnimation(character.currentAction.currentState.animationName);
         } else if (character.currentAction != null && !string.IsNullOrEmpty(character.currentAction.animationName)) {
-            Play(character.currentAction.animationName);
+            PlayAnimation(character.currentAction.animationName);
         } else {
             PlayIdle();
         }
@@ -834,7 +847,7 @@ public class CharacterMarker : PooledObject {
     private IEnumerator Positioner(Vector3 localPos, Quaternion lookAt) {
         yield return null;
         transform.localPosition = localPos;
-        LookAt(lookAt, true);
+        Rotate(lookAt, true);
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
         if (character.race == RACE.SKELETON) {

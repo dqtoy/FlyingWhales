@@ -23,7 +23,8 @@ public class InviteToMakeLove : GoapAction {
         Character targetCharacter = poiTarget as Character;
         if (!isTargetMissing && targetCharacter.IsInOwnParty()) {
             if (!targetCharacter.isStarving && !targetCharacter.isExhausted
-                && targetCharacter.GetNormalTrait("Annoyed") == null && !targetCharacter.HasOtherCharacterInParty()) {
+                && targetCharacter.GetNormalTrait("Annoyed") == null && !targetCharacter.HasOtherCharacterInParty()
+                && targetCharacter.stateComponent.currentState == null) {
                 SetState("Invite Success");
             } else {
                 SetState("Invite Fail");
@@ -104,6 +105,8 @@ public class InviteToMakeLove : GoapAction {
         actor.AddPlan(makeLovePlan, true);
         AddTraitTo(target, "Wooed", actor);
         actor.ownParty.AddCharacter(target);
+        target.marker.PlayIdle();
+        target.marker.Rotate(Quaternion.Euler(0f, 0f, 0f), true);
         currentState.SetIntelReaction(InviteSuccessReactions);
     }
     private void PreInviteFail() {

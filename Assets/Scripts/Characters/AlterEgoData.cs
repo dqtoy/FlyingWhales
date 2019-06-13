@@ -85,6 +85,13 @@ public class AlterEgoData {
                 awareness[pointOfInterest.poiType].Add(iawareness);
                 iawareness.OnAddAwareness(owner);
             }
+
+            if (pointOfInterest is TreeObject) {
+                List<IAwareness> treeAwareness = GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE.TREE);
+                if (treeAwareness.Count >= Character.TREE_AWARENESS_LIMIT) {
+                    RemoveAwareness(treeAwareness[0].poi);
+                }
+            }
         } else {
             if (pointOfInterest.gridTileLocation != null) {
                 //if already has awareness for that poi, just update it's known location. 
@@ -132,6 +139,19 @@ public class AlterEgoData {
             return null;
         }
         return null;
+    }
+    public List<IAwareness> GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE tileObjectType) {
+        List<IAwareness> objects = new List<IAwareness>();
+        if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.TILE_OBJECT)) {
+            List<IAwareness> awarenesses = awareness[POINT_OF_INTEREST_TYPE.TILE_OBJECT];
+            for (int i = 0; i < awarenesses.Count; i++) {
+                TileObjectAwareness iawareness = awarenesses[i] as TileObjectAwareness;
+                if (iawareness.tileObject.tileObjectType == tileObjectType) {
+                    objects.Add(iawareness);
+                }
+            }
+        }
+        return objects;
     }
     private IAwareness CreateNewAwareness(IPointOfInterest poi) {
         if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {

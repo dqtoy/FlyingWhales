@@ -147,6 +147,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private const int HAPPINESS_THRESHOLD_1 = 160;
     private const int HAPPINESS_THRESHOLD_2 = 0;
 
+    public static readonly int TREE_AWARENESS_LIMIT = 5; //The number of Tree Objects a character can have in his awareness, everytime a character adds a new tree object to his/her awareness list, remove the oldest one if this limit is reached
+
     //portrait
     public float hSkinColor { get; private set; }
     public float hHairColor { get; private set; }
@@ -4852,7 +4854,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
                 allGoapPlans.Insert(indexToInsert, plan);
             } else {
-
                 allGoapPlans.Add(plan);
             }
             //If a character is strolling or idly returning home and a plan is added to this character, end the action/state
@@ -4865,6 +4866,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     currentAction.StopAction();
                 }
             }
+
+            if (plan.job != null && plan.job.jobType.IsNeedsTypeJob()) {
+                //Unassign Location Job if character decides to rest, eat or have fun.
+                homeArea.jobQueue.UnassignAllJobsTakenBy(this);
+            }
+
         }
     }
     #endregion
@@ -5469,17 +5476,33 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
         } else {
+            List<IPointOfInterest> treeObjects = new List<IPointOfInterest>();
             foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in specificLocation.structures) {
                 for (int i = 0; i < keyValuePair.Value.Count; i++) {
                     LocationStructure structure = keyValuePair.Value[i];
                     for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
                         IPointOfInterest poi = structure.pointsOfInterest[j];
-                        if (poi != this && !(poi is TreeObject)) {
+                        if (poi != this) {
+                            if (poi is TreeObject) {
+                                treeObjects.Add(poi);
+                                continue;
+                            }
                             AddAwareness(poi);
                         }
                     }
                 }
+                //order the tree objects, then only add the first n to this character
+                treeObjects = treeObjects.OrderBy(x => Vector3Int.Distance(x.gridTileLocation.localPlace, this.gridTileLocation.localPlace)).ToList();
+                for (int i = 0; i < TREE_AWARENESS_LIMIT; i++) {
+                    if (treeObjects.Count <= i) {
+                        break; //no more tree objects left
+                    }
+                    IPointOfInterest tree = treeObjects[i];
+                    AddAwareness(tree);
+                }
+
             }
+
         }
     }
     public void LogAwarenessList() {
