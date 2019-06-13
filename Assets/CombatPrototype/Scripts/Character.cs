@@ -1359,6 +1359,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)) {
             return false;
         }
+#if TRAILER_BUILD
         if (this.name == "Jamie" || this.name == "Fiona" || this.name == "Audrey") {
             if (this.name == "Jamie" && targetCharacter.name == "Fiona" && targetCharacter.isDead) {
                 CancelAllJobsAndPlans();
@@ -1372,6 +1373,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             return false;
         }
+#endif
         bool hasCreatedJob = false;
         if (CreateRemoveTraitJobs(targetCharacter)) {
             hasCreatedJob = true;
@@ -3411,6 +3413,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
 #if !WORLD_CREATION_TOOL
         if (GameManager.Instance.gameHasStarted) {
+#if TRAILER_BUILD
             if (this.name != "Jamie" && this.name != "Fiona" && this.name != "Audrey") {
                 if (trait.name == "Hungry" || trait.name == "Starving") {
                     Debug.Log("Planning fullness recovery from gain trait");
@@ -3423,6 +3426,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     PlanTirednessRecoveryActions();
                 }
             }
+#else
+            if (trait.name == "Hungry" || trait.name == "Starving") {
+                Debug.Log("Planning fullness recovery from gain trait");
+                PlanFullnessRecoveryActions();
+            } else if (trait.name == "Lonely" || trait.name == "Forlorn") {
+                Debug.Log("Planning happiness recovery from gain trait");
+                PlanHappinessRecoveryActions();
+            } else if (trait.name == "Tired" || trait.name == "Exhausted") {
+                Debug.Log("Planning tiredness recovery from gain trait");
+                PlanTirednessRecoveryActions();
+            }
+#endif
         }
 #endif
         //if (trait is RelationshipTrait) {
@@ -3433,13 +3448,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             || (trait.effect == TRAIT_EFFECT.NEGATIVE && trait.type == TRAIT_TYPE.DISABLER)) {
             //when a character gains a criminal trait, drop all location jobs that this character is assigned to
             homeArea.jobQueue.UnassignAllJobsTakenBy(this);
-        } else if (trait.name == "Unfaithful" && this.name == "Jamie") {
+        }
+#if TRAILER_BUILD
+        else if (trait.name == "Unfaithful" && this.name == "Jamie") {
             //force Jamie to drop all plans, then go to fiona to chat. (Scheduled him to chat after 5 ticks)
             CancelAllJobsAndPlans();
             GameDate chatSched = GameManager.Instance.Today();
             chatSched.AddTicks(2);
             SchedulingManager.Instance.AddEntry(chatSched, ScheduleChat);
         }
+#endif
         return true;
     }
     private void ScheduleChat() {
@@ -4093,18 +4111,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    WillAboutToDoAction(specificAction);
         //    return;
         //}
+#if TRAILER_BUILD
         if (name == "Fiona" || name == "Jamie" || name == "Audrey") {
             if (allGoapPlans.Count > 0) {
                 PerformGoapPlans();
             }
+            return;
+        }
+#endif
+        if (allGoapPlans.Count > 0) {
+            //StopDailyGoapPlanGeneration();
+            PerformGoapPlans();
+            //SchedulePerformGoapPlans();
         } else {
-            if (allGoapPlans.Count > 0) {
-                //StopDailyGoapPlanGeneration();
-                PerformGoapPlans();
-                //SchedulePerformGoapPlans();
-            } else {
-                IdlePlans();
-            }
+            IdlePlans();
         }
         
     }
@@ -6702,10 +6722,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
             tantrumLog += "\nRolled: " + chance.ToString();
 
+#if TRAILER_BUILD
             if (name == "Fiona" || name == "Jamie" || name == "Audrey") {
                 chance = 100; //do not make main cast have tantrum
             }
-
+#endif
             if (chance < 20) {
                 CancelAllJobsAndPlans();
                 //Create Tantrum action

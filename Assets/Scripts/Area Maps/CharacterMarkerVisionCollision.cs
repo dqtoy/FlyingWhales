@@ -151,11 +151,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         if(!parentMarker.character.IsHostileWith(targetCharacter)) {
             int roll = UnityEngine.Random.Range(0, 100);
             int chance = 12;
-            //if (parentMarker.character.name == "Jamie" && targetCharacter.name == "Fiona" && parentMarker.character.GetNormalTrait("Unfaithful") != null) {
-            //    chance = 100; //ensure chat between Jaime and Fiona if Jamie is Unfaithful
-            //} else {
-            //    chance = 0; //if anything other than these conditions, do not allow chat.
-            //}
+
             if (roll < chance) {
                 if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
                     parentMarker.character.ChatCharacter(targetCharacter);
@@ -202,10 +198,13 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                         Character targetCharacter = poi as Character;
                         if (!parentMarker.AddHostileInRange(targetCharacter)) {
                             if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter)) {
+#if TRAILER_BUILD
                                 if (parentMarker.character.name != "Jamie" && parentMarker.character.name != "Audrey" && parentMarker.character.name != "Fiona") { //For Trailer Build Only
                                     ChatHandling(targetCharacter);
                                 }
-                                
+#else
+                                ChatHandling(targetCharacter);
+#endif
                             }
                         }
                     }
@@ -215,9 +214,13 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                     Character targetCharacter = poi as Character;
                     if (!parentMarker.AddHostileInRange(targetCharacter)) {
                         if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter)) {
+#if TRAILER_BUILD
                             if (parentMarker.character.name != "Jamie" && parentMarker.character.name != "Audrey" && parentMarker.character.name != "Fiona") { //For Trailer Build Only
                                 ChatHandling(targetCharacter);
                             }
+#else
+                            ChatHandling(targetCharacter);
+#endif
                         }
                     }
                 }

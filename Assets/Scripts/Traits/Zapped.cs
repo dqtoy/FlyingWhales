@@ -49,6 +49,7 @@ public class Zapped : Trait {
             Character character = sourcePOI as Character;
             character.AdjustDoNotDisturb(-1);
 
+#if TRAILER_BUILD
             if (character.name == "Audrey") {
                 Character fiona = CharacterManager.Instance.GetCharacterByName("Fiona");
                 Character jamie = CharacterManager.Instance.GetCharacterByName("Jamie");
@@ -68,6 +69,7 @@ public class Zapped : Trait {
                 character.jobQueue.AddJobInQueue(job, true);
                 character.jobQueue.ProcessFirstJobInQueue(character);
             }
+#endif
         }
     }
     #endregion

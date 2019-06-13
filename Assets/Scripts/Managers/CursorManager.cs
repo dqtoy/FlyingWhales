@@ -7,7 +7,11 @@ public class CursorManager : MonoBehaviour {
     public static CursorManager Instance = null;
     public bool isDraggingItem = false;
 
-    [SerializeField] private CursorMode cursorMode;
+//#if UNITY_EDITOR
+//    private CursorMode cursorMode = CursorMode.Auto;
+//#else
+    private CursorMode cursorMode = CursorMode.ForceSoftware;
+//#endif
 
     private List<System.Action> leftClickActions = new List<System.Action>();
 

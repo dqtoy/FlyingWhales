@@ -684,10 +684,13 @@ public class Player : ILeader {
 
     #region Player Notifications
     public bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
+#if TRAILER_BUILD
         if (character.name == "Fiona" || character.name == "Jamie" || character.name == "Audrey") {
             return true;
         }
         return false;
+#endif
+
         if (!onlyClickedCharacter && !character.isDead && AreaMapCameraMove.Instance.gameObject.activeSelf) {
             if((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || AreaMapCameraMove.Instance.CanSee(character.marker.gameObject)) {
                 return true;
@@ -703,10 +706,12 @@ public class Player : ILeader {
         return false;
     }
     private bool ShouldShowNotificationFrom(Character character, Log log) {
+#if TRAILER_BUILD
         if (character.name == "Fiona" || character.name == "Jamie" || character.name == "Audrey") {
             return true;
         }
         return false;
+#endif
         if (ShouldShowNotificationFrom(character)) {
             return true;
         } else {

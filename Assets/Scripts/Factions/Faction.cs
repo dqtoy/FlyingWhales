@@ -413,21 +413,29 @@ public class Faction {
         //        " character " + leader.characterClass.className + " " + leader.name + " at " + this.name + " for faction " + leader.name);
 
         if (_name == "Fyn") {
-            //Male Human King with **4 Human Soldiers** as his servants
-            for (int i = 0; i < 1; i++) {
+            int soldierCount = 4;
+            int adventurerCount = 3;
+            int civilianCount = 3;
+#if TRAILER_BUILD
+            soldierCount = 1;  
+            adventurerCount = 1;
+            civilianCount = 2;
+#endif
+            //**4 Human Soldiers**
+            for (int i = 0; i < soldierCount; i++) {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.HUMANS, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 createdCharacter.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
             }
-
             //**3 Human Adventurers**
-            //**3 Human Civilians**
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < adventurerCount; i++) {
                 Character adventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.HUMANS, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 adventurer.LevelUp(citizensLevel - 1);
-
+            }
+            //**3 Human Civilians**
+            for (int i = 0; i < civilianCount; i++) {
                 Character civilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.HUMANS, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 civilian.LevelUp(citizensLevel - 1);

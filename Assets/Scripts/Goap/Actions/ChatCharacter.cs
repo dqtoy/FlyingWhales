@@ -143,12 +143,16 @@ public class ChatCharacter : GoapAction {
         }
 
         chatResult = weights.PickRandomElementGivenWeights();
+
+#if TRAILER_BUILD
         if (actor.name == "Jamie" && targetCharacter.name == "Fiona") {
             chatResult = "Flirt"; //For Trailer Only
         }
         if (actor.name == "Jamie" && targetCharacter.name == "Audrey") {
             chatResult = "Argument"; //For Trailer Only
         }
+#endif
+
         if (chatResult == "Become Friends") {
             //may become friends
             CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.FRIEND);
@@ -228,19 +232,14 @@ public class ChatCharacter : GoapAction {
         Character actorLover = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
         Character targetLover = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
 
+#if TRAILER_BUILD
         if (recipient.name == "Audrey" && actor.name == "Jamie" && target.name == "Fiona") {
             reactions.Add(string.Format("This is the last straw! I'm leaving that cur {0}, and this godforsaken town!", actor.name));
-            //IPointOfInterest targetTable = target.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
-            //GoapPlanJob job = new GoapPlanJob("Poison Table", INTERACTION_TYPE.TABLE_POISON, targetTable);
-            //job.SetCannotOverrideJob(true);
-            //job.SetCannotCancelJob(true);
-            //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-            //recipient.jobQueue.AddJobInQueue(job, true);
-            //recipient.jobQueue.ProcessFirstJobInQueue(recipient);
             recipient.CancelAllJobsAndPlans();
             recipient.marker.GoTo(recipient.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).GetRandomUnoccupiedTile(), () => CreatePoisonTable(recipient));
             return reactions;
         }
+#endif
 
         //Recipient and Actor is the same:
         if (recipient == actor) {

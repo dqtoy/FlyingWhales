@@ -133,6 +133,7 @@ public class EatAtTable : GoapAction {
             SetCannotCancelAction(true);
             actor.Death("normal");
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = actor });
+#if TRAILER_BUILD
             if (actor.name == "Fiona") {
                 Character jamie = CharacterManager.Instance.GetCharacterByName("Jamie");
                 jamie.CancelAllJobsAndPlans();
@@ -141,8 +142,8 @@ public class EatAtTable : GoapAction {
                 GoapPlan plan = new GoapPlan(new GoapNode(null, eat.cost, eat), new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY }, GOAP_CATEGORY.FULLNESS);
                 plan.ConstructAllNodes();
                 jamie.AddPlan(plan, true);
-                
             }
+#endif
         }
     }
     private void PreTargetMissing() {

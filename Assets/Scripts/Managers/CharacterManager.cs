@@ -391,9 +391,11 @@ public class CharacterManager : MonoBehaviour {
         choices.Remove(SPECIAL_TOKEN.TOOL);
         for (int i = 0; i < allCharacters.Count; i++) {
             Character character = allCharacters[i];
+#if TRAILER_BUILD
             if (character.name == "Fiona" || character.name == "Audrey" || character.name == "Jamie") {
                 continue;
             }
+#endif
             if (character.minion == null) {
                 if (Random.Range(0, 2) == 0) {
                     SPECIAL_TOKEN randomItem = choices[UnityEngine.Random.Range(0, choices.Count)];
@@ -592,10 +594,11 @@ public class CharacterManager : MonoBehaviour {
         // Loop through all characters in the world
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currCharacter = allCharacters[i];
+#if TRAILER_BUILD
             if (currCharacter.name == "Jamie" || currCharacter.name == "Audrey" || currCharacter.name == "Fiona") {
                 continue; //skip main cast (For Trailer Only)
             }
-
+#endif
             int currentRelCount = currCharacter.GetAllRelationshipCountExcept(new List<RELATIONSHIP_TRAIT>() { RELATIONSHIP_TRAIT.MASTER, RELATIONSHIP_TRAIT.SERVANT });
             if (currentRelCount >= maxInitialRels) {
                 continue; //skip
@@ -657,9 +660,11 @@ public class CharacterManager : MonoBehaviour {
                     // Loop through all characters in the world, excluding current character
                     for (int l = 0; l < allCharacters.Count; l++) {
                         Character otherCharacter = allCharacters[l];
+#if TRAILER_BUILD
                         if (otherCharacter.name == "Jamie" || otherCharacter.name == "Audrey" || otherCharacter.name == "Fiona") {
                             continue; //skip main cast (For Trailer Only)
                         }
+#endif
                         if (currCharacter.id != otherCharacter.id) { //&& currCharacter.faction == otherCharacter.faction
                             List<RELATIONSHIP_TRAIT> existingRelsOfCurrentCharacter = currCharacter.GetAllRelationshipTraitTypesWith(otherCharacter);
                             List<RELATIONSHIP_TRAIT> existingRelsOfOtherCharacter = otherCharacter.GetAllRelationshipTraitTypesWith(currCharacter);

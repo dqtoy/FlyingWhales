@@ -86,9 +86,11 @@ public class EngageState : CharacterState {
 
             Debug.Log("Attackers Chance: " + attackersChance + "! Chance: " + chance);
 
+#if TRAILER_BUILD
             if (engagerCharacter.name == "Fiona" && targetCharacter.name == "Jamie") {
                 attackersChance = 100f; //fiona should always win
             }
+#endif
 
             if (chance < attackersChance) {
                 //Hunter Win
@@ -134,9 +136,11 @@ public class EngageState : CharacterState {
 
         string result = loserResults.PickRandomElementGivenWeights();
 
+#if TRAILER_BUILD
         if (winner.name == "Fiona" && loser.name == "Jamie") {
             result = "Death"; //always kill jamie
         }
+#endif
 
         switch (result) {
             case "Unconscious":

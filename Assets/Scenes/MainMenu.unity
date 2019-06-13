@@ -4097,7 +4097,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isDraggingItem: 0
-  cursorMode: 1
   cursors:
     m_keys: 01000000020000000300000004000000050000000600000000000000
     m_values:

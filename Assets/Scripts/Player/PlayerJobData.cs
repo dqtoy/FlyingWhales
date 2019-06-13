@@ -31,7 +31,7 @@ public class PlayerJobData {
         jobActions = new List<PlayerJobAction>();
         switch (jobType) {
             case JOB.SPY:
-                jobActions.Add(new Track());
+                //jobActions.Add(new Track());
                 jobActions.Add(new AccessMemories());
                 break;
             case JOB.SEDUCER:
