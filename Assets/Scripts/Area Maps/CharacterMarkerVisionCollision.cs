@@ -152,8 +152,10 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             return false;
         }
         if(!parentMarker.character.IsHostileWith(targetCharacter)) {
-            int chance = UnityEngine.Random.Range(0, 100);
-            if (chance < 12) {
+            int roll = UnityEngine.Random.Range(0, 100);
+            int chance = 12;
+
+            if (roll < chance) {
                 if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
                     parentMarker.character.ChatCharacter(targetCharacter);
                     return true;
@@ -199,7 +201,13 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                         Character targetCharacter = poi as Character;
                         if (!parentMarker.AddHostileInRange(targetCharacter)) {
                             if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter)) {
+#if TRAILER_BUILD
+                                if (parentMarker.character.name != "Jamie" && parentMarker.character.name != "Audrey" && parentMarker.character.name != "Fiona") { //For Trailer Build Only
+                                    ChatHandling(targetCharacter);
+                                }
+#else
                                 ChatHandling(targetCharacter);
+#endif
                             }
                         }
                     }
@@ -209,7 +217,13 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                     Character targetCharacter = poi as Character;
                     if (!parentMarker.AddHostileInRange(targetCharacter)) {
                         if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter)) {
+#if TRAILER_BUILD
+                            if (parentMarker.character.name != "Jamie" && parentMarker.character.name != "Audrey" && parentMarker.character.name != "Fiona") { //For Trailer Build Only
+                                ChatHandling(targetCharacter);
+                            }
+#else
                             ChatHandling(targetCharacter);
+#endif
                         }
                     }
                 }

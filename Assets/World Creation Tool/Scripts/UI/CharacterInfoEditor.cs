@@ -23,6 +23,7 @@ namespace worldcreator {
         [SerializeField] private InputField nameField;
         [SerializeField] private Dropdown raceField;
         [SerializeField] private Dropdown genderField;
+        [SerializeField] private Dropdown sexualityField;
         [SerializeField] private Dropdown roleField;
         [SerializeField] private Dropdown classField;
         [SerializeField] private Dropdown factionField;
@@ -34,6 +35,7 @@ namespace worldcreator {
         [SerializeField] private GameObject relationshipItemPrefab;
         [SerializeField] private ScrollRect relationshipScrollView;
         [SerializeField] private Dropdown charactersRelationshipDropdown;
+        [SerializeField] private Dropdown relationshipTypesDropdown;
         [SerializeField] private Button createRelationshipBtn;
 
         [Header("Equipment Info")]
@@ -54,8 +56,9 @@ namespace worldcreator {
         public Dictionary<string, PortraitSettings> portraitTemplates;
 
         public void Initialize() {
-            //Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_CREATED, OnRelationshipCreated);
-            //Messenger.AddListener<Relationship>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
+            Messenger.AddListener<Character, RelationshipTrait>(Signals.RELATIONSHIP_ADDED, OnRelationshipCreated);
+            Messenger.AddListener<Character, RELATIONSHIP_TRAIT, AlterEgoData>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
+            Messenger.AddListener<Character, Character>(Signals.ALL_RELATIONSHIP_REMOVED, OnAllRelationshipRemoved);
 
             //LoadEquipmentChoices();
             //LoadInventoryChoices();
@@ -74,7 +77,7 @@ namespace worldcreator {
             //UpdatePortraitControls();
             UpdateBasicInfo();
             LoadRelationships();
-            LoadCharacters();
+            LoadRelationshipDropdowns();
             //LoadEquipment();
             LoadInventory();
             LoadTemplateChoices();
@@ -127,6 +130,7 @@ namespace worldcreator {
         private void LoadDropdownOptions() {
             raceField.ClearOptions();
             genderField.ClearOptions();
+            sexualityField.ClearOptions();
             roleField.ClearOptions();
             classField.ClearOptions();
             attributeChoicesDropdown.ClearOptions();
@@ -134,6 +138,7 @@ namespace worldcreator {
 
             raceField.AddOptions(Utilities.GetEnumChoices<RACE>());
             genderField.AddOptions(Utilities.GetEnumChoices<GENDER>());
+            sexualityField.AddOptions(Utilities.GetEnumChoices<SEXUALITY>());
             roleField.AddOptions(Utilities.GetEnumChoices<CHARACTER_ROLE>());
             classField.AddOptions(Utilities.GetFileChoices(Utilities.dataPath + "CharacterClasses/", "*.json"));
             attributeChoicesDropdown.AddOptions(Utilities.GetEnumChoices<ATTRIBUTE>());
@@ -151,6 +156,7 @@ namespace worldcreator {
             nameField.text = _character.name;
             raceField.value = Utilities.GetOptionIndex(raceField, _character.raceSetting.race.ToString());
             genderField.value = Utilities.GetOptionIndex(genderField, _character.gender.ToString());
+            sexualityField.value = Utilities.GetOptionIndex(sexualityField, _character.sexuality.ToString());
             roleField.value = Utilities.GetOptionIndex(roleField, _character.role.roleType.ToString());
             moralityField.value = Utilities.GetOptionIndex(moralityField, _character.morality.ToString());
 
@@ -184,6 +190,10 @@ namespace worldcreator {
         public void SetGender(int choice) {
             GENDER newGender = (GENDER)Enum.Parse(typeof(GENDER), genderField.options[choice].text);
             _character.ChangeGender(newGender);
+        }
+        public void SetSexuality(int choice) {
+            SEXUALITY newSexuality = (SEXUALITY)Enum.Parse(typeof(SEXUALITY), sexualityField.options[choice].text);
+            _character.SetSexuality(newSexuality);
         }
         public void SetRole(int choice) {
             CHARACTER_ROLE newRole = (CHARACTER_ROLE)Enum.Parse(typeof(CHARACTER_ROLE), roleField.options[choice].text);
@@ -224,20 +234,20 @@ namespace worldcreator {
             for (int i = 0; i < children.Length; i++) {
                 GameObject.Destroy(children[i].gameObject);
             }
-            //foreach (KeyValuePair<Character, Relationship> kvp in _character.relationships) {
-            //    GameObject relItemGO = GameObject.Instantiate(relationshipItemPrefab, relationshipScrollView.content);
-            //    RelationshipEditorItem relItem = relItemGO.GetComponent<RelationshipEditorItem>();
-            //    relItem.SetRelationship(kvp.Value);
-            //}
+            foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in _character.relationships) {
+                GameObject relItemGO = GameObject.Instantiate(relationshipItemPrefab, relationshipScrollView.content);
+                RelationshipEditorItem relItem = relItemGO.GetComponent<RelationshipEditorItem>();
+                relItem.SetRelationship(kvp.Value);
+            }
         }
-        public void LoadCharacters() {
+        public void LoadRelationshipDropdowns() {
             List<string> options = new List<string>();
             charactersRelationshipDropdown.ClearOptions();
             for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
                 Character currCharacter = CharacterManager.Instance.allCharacters[i];
-                //if (currCharacter.id != _character.id && _character.GetRelationshipWith(currCharacter) == null) {
-                //    options.Add(currCharacter.name);
-                //}
+                if (currCharacter.id != _character.id && !_character.HasRelationshipWith(currCharacter)) {
+                    options.Add(currCharacter.name);
+                }
             }
             charactersRelationshipDropdown.AddOptions(options);
             if (charactersRelationshipDropdown.options.Count == 0) {
@@ -245,32 +255,52 @@ namespace worldcreator {
             } else {
                 createRelationshipBtn.interactable = true;
             }
+
+            relationshipTypesDropdown.ClearOptions();
+            relationshipTypesDropdown.AddOptions(Utilities.GetEnumChoices<RELATIONSHIP_TRAIT>());
         }
         public void CreateRelationship() {
             string chosenCharacterName = charactersRelationshipDropdown.options[charactersRelationshipDropdown.value].text;
+            string chosenRelType = relationshipTypesDropdown.options[relationshipTypesDropdown.value].text;
             Character chosenCharacter = CharacterManager.Instance.GetCharacterByName(chosenCharacterName);
-            //CharacterManager.Instance.CreateNewRelationshipTowards(_character, chosenCharacter);
+            RELATIONSHIP_TRAIT rel = (RELATIONSHIP_TRAIT)Enum.Parse(typeof(RELATIONSHIP_TRAIT), chosenRelType);
+            CharacterManager.Instance.CreateNewRelationshipBetween(_character, chosenCharacter, rel);
         }
-        private void OnRelationshipCreated(Relationship newRel) {
-            if (_character == null) {
+        private void OnRelationshipCreated(Character character, RelationshipTrait gainedRel) {
+            if (_character == null || character != _character) {
                 return;
             }
-            GameObject relItemGO = GameObject.Instantiate(relationshipItemPrefab, relationshipScrollView.content);
-            RelationshipEditorItem relItem = relItemGO.GetComponent<RelationshipEditorItem>();
-            relItem.SetRelationship(newRel);
-            LoadCharacters();
+            RelationshipEditorItem existingItem = GetRelationshipItem(character.GetCharacterRelationshipData(gainedRel.targetCharacter));
+            if (existingItem != null) {
+                existingItem.UpdateInfo();
+            } else {
+                GameObject relItemGO = GameObject.Instantiate(relationshipItemPrefab, relationshipScrollView.content);
+                RelationshipEditorItem relItem = relItemGO.GetComponent<RelationshipEditorItem>();
+                relItem.SetRelationship(character.GetCharacterRelationshipData(gainedRel.targetCharacter));
+            }
+            LoadRelationshipDropdowns();
         }
-        public void OnRelationshipRemoved(Relationship removedRel) {
+        private void OnRelationshipRemoved(Character character, RELATIONSHIP_TRAIT rel, AlterEgoData target) {
+            if (_character == null || character != _character) {
+                return;
+            }
+            RelationshipEditorItem existingItem = GetRelationshipItem(character.GetCharacterRelationshipData(target));
+            if (existingItem != null) {
+                existingItem.UpdateInfo();
+            }
+            LoadRelationshipDropdowns();
+        }
+        public void OnAllRelationshipRemoved(Character character, Character target) {
             if (_character == null || !this.gameObject.activeSelf) {
                 return;
             }
-            RelationshipEditorItem itemToRemove = GetRelationshipItem(removedRel);
+            RelationshipEditorItem itemToRemove = GetRelationshipItem(character.GetCharacterRelationshipData(target));
             if (itemToRemove != null) {
                 GameObject.Destroy(itemToRemove.gameObject);
-                LoadCharacters();
+                LoadRelationshipDropdowns();
             }
         }
-        private RelationshipEditorItem GetRelationshipItem(Relationship rel) {
+        private RelationshipEditorItem GetRelationshipItem(CharacterRelationshipData rel) {
             RelationshipEditorItem[] children = Utilities.GetComponentsInDirectChildren<RelationshipEditorItem>(relationshipScrollView.content.gameObject);
             for (int i = 0; i < children.Length; i++) {
                 RelationshipEditorItem currItem = children[i];

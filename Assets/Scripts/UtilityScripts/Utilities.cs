@@ -1908,6 +1908,13 @@ public class Utilities : MonoBehaviour {
         }
         return true;
     }
+    public static void ScrolRectSnapTo(ScrollRect scrollRect, RectTransform target) {
+        Canvas.ForceUpdateCanvases();
+
+        scrollRect.content.anchoredPosition =
+            (Vector2)scrollRect.transform.InverseTransformPoint(scrollRect.content.position)
+            - (Vector2)scrollRect.transform.InverseTransformPoint(target.position);
+    }
     #endregion
 
     #region Dictionary

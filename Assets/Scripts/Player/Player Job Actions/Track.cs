@@ -23,7 +23,6 @@ public class Track : PlayerJobAction {
         target = targetCharacter;
         target.SetTracked(true);
         Debug.Log(GameManager.Instance.TodayLogString() + assignedCharacter.name + " is now tracking " + target.name);
-        SetSubText("Tracking " + target.name);
     }
     public override void DeactivateAction() {
         base.DeactivateAction();
@@ -31,9 +30,8 @@ public class Track : PlayerJobAction {
             target.SetTracked(false);
         }
         target = null;
-        SetSubText(string.Empty);
     }
-    protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;
         }
@@ -43,10 +41,10 @@ public class Track : PlayerJobAction {
         if (targetCharacter.isTracked) {
             return false;
         }
-        return base.ShouldButtonBeInteractable(character, targetCharacter);
+        return base.CanPerformActionTowards(character, targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
-        return false;
+        //return false;
         if (!(targetPOI is Character)) {
             return false;
         }

@@ -24,6 +24,19 @@ public class InteriorMapManager : MonoBehaviour {
             return currentlyShowingMap != null;
         }
     }
+    public IPointOfInterest currentlyHoveredPOI {
+        get {
+            if (isAnAreaMapShowing) {
+                if (currentlyShowingMap.hoveredCharacter != null) {
+                    return currentlyShowingMap.hoveredCharacter;
+                } else if (GetTileFromMousePosition() != null) {
+                    LocationGridTile hoveredTile = GetTileFromMousePosition();
+                    return hoveredTile.objHere;
+                }
+            }
+            return null;
+        }
+    }
 
     //Used for generating the inner map of an area, structure templates are first placed here before generating the actual map
     public Tilemap agGroundTilemap;
@@ -52,16 +65,25 @@ public class InteriorMapManager : MonoBehaviour {
         Instance = this;
         templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
     }
-    public void LateUpdate() {
-        if (UIManager.Instance.IsMouseOnUI() || currentlyShowingMap == null) {
-            return;
-        }
+    public LocationGridTile GetTileFromMousePosition() {
         Vector3 mouseWorldPos = (currentlyShowingMap.worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
         Vector3 localPos = currentlyShowingMap.grid.WorldToLocal(mouseWorldPos);
         Vector3Int coordinate = currentlyShowingMap.grid.LocalToCell(localPos);
         if (coordinate.x >= 0 && coordinate.x < currentlyShowingMap.width
             && coordinate.y >= 0 && coordinate.y < currentlyShowingMap.height) {
-            LocationGridTile hoveredTile = currentlyShowingMap.map[coordinate.x, coordinate.y];
+           return currentlyShowingMap.map[coordinate.x, coordinate.y];
+        }
+        return null;
+    }
+    public void LateUpdate() {
+        if (UIManager.Instance.IsMouseOnUI() || currentlyShowingMap == null) {
+            if (UIManager.Instance.IsSmallInfoShowing() && UIManager.Instance.smallInfoShownFrom == "ShowTileData") {
+                UIManager.Instance.HideSmallInfo();
+            }
+            return;
+        }
+        LocationGridTile hoveredTile = GetTileFromMousePosition();
+        if (hoveredTile != null) {
             if (GameManager.showAllTilesTooltip) {
                 ShowTileData(hoveredTile);
                 if (hoveredTile.objHere != null) {
@@ -125,10 +147,12 @@ public class InteriorMapManager : MonoBehaviour {
             return;
         }
         currentlyShowingMap.Close();
-        Messenger.Broadcast(Signals.AREA_MAP_CLOSED, currentlyShowingArea);
+        Area closedArea = currentlyShowingArea;
         AreaMapCameraMove.Instance.CenterCameraOn(null);
         currentlyShowingMap = null;
         currentlyShowingArea = null;
+        PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
+        Messenger.Broadcast(Signals.AREA_MAP_CLOSED, closedArea);
     }
     public void OnCreateAreaMap(AreaInnerTileMap newMap) {
         areaMaps.Add(newMap);
@@ -255,6 +279,12 @@ public class InteriorMapManager : MonoBehaviour {
                     if (except.Contains(loaded.name)) {
                         continue; //skip
                     }
+                    Debug.Log(loaded.name);
+#if TRAILER_BUILD
+                    if (folderName == "TOWN CENTER/" && loaded.name != "TC_Template_3.json") {
+                        continue; //only use Template 3 on Trailer Build
+                    }
+#endif
                     templates.Add(loaded);
                 }
             }

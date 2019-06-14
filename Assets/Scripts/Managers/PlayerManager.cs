@@ -25,6 +25,9 @@ public class PlayerManager : MonoBehaviour {
         { LANDMARK_TYPE.RAMPART, new CurrenyCost{ amount = 0, currency = CURRENCY.SUPPLY } },
     };
 
+    [Header("Job Action Icons")]
+    [SerializeField] private StringSpriteDictionary jobActionIcons;
+
     #region getters/setters
     public Sprite[] playerAreaFloorSprites {
         get { return _playerAreaFloorSprites; }
@@ -172,6 +175,12 @@ public class PlayerManager : MonoBehaviour {
             return true;
         }
         return false;
+    }
+    public Sprite GetJobActionSprite(string actionName) {
+        if (jobActionIcons.ContainsKey(actionName)) {
+            return jobActionIcons[actionName];
+        }
+        return null;
     }
     #endregion
 

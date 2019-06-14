@@ -49,7 +49,7 @@ namespace worldcreator {
             characterItem.SetCharacter(newCharacter);
             characterItem.SetEditAction(() => ShowCharacterInfoEditor(newCharacter));
             if (characterInfoEditor.gameObject.activeSelf) {
-                characterInfoEditor.LoadCharacters();
+                characterInfoEditor.LoadRelationshipDropdowns();
             }
         }
         private void OnCharacterRemoved(Character characterToBeRemoved) {

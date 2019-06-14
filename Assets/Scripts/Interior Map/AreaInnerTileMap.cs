@@ -221,7 +221,11 @@ public class AreaInnerTileMap : MonoBehaviour {
             //first get a town center template that has the needed connections for the structures in the area
             List<StructureTemplate> validTownCenters = GetValidTownCenterTemplates(area);
             if (validTownCenters.Count == 0) {
-                throw new System.Exception("There are no valid town center structures for area " + area.name);
+                string error = "There are no valid town center structures for area " + area.name + ". Needed connectors are: ";
+                foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
+                    error += "\n" + keyValuePair.Key.ToString() + " - " + keyValuePair.Value.Count.ToString();
+                }
+                throw new System.Exception(error);
             }
             //Once a town center is chosen
             StructureTemplate chosenTownCenter = validTownCenters[Random.Range(0, validTownCenters.Count)];

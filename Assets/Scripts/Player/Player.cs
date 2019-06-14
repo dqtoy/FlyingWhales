@@ -226,7 +226,6 @@ public class Player : ILeader {
 
     #region Minions
     public void CreateInitialMinions() {
-        PlayerUI.Instance.ResetAllMinionItems();
         _minions = new List<Minion>();
         for (int i = 0; i < 20; i++) {
             AddMinion(CreateNewMinion(RACE.DEMON));
@@ -238,8 +237,6 @@ public class Player : ILeader {
         //AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
 
         //UpdateMinions();
-        PlayerUI.Instance.minionsScrollRect.verticalNormalizedPosition = 1f;
-        PlayerUI.Instance.OnStartMinionUI();
     }
     public Minion CreateNewMinion(Character character) {
         return new Minion(character, true);
@@ -253,62 +250,13 @@ public class Player : ILeader {
         Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea), false);
         return minion;
     }
-    public void UpdateMinions() {
-        for (int i = 0; i < _minions.Count; i++) {
-            RearrangeMinionItem(_minions[i].minionItem, i);
-        }
-    }
-    private void RearrangeMinionItem(PlayerCharacterItem minionItem, int index) {
-        //if (minionItem.transform.GetSiblingIndex() != index) {
-            //minionItem.transform.SetSiblingIndex(index);
-            minionItem.supposedIndex = index;
-            Vector3 to = PlayerUI.Instance.minionsContentTransform.GetChild(index).transform.localPosition;
-            Vector3 from = minionItem.transform.localPosition;
-            minionItem.tweenPos.from = from;
-            minionItem.tweenPos.to = to;
-            minionItem.tweenPos.ResetToBeginning();
-            minionItem.tweenPos.PlayForward();
-        //}
-    }
-    public void SortByLevel() {
-        _minions = _minions.OrderBy(x => x.lvl).ToList();
-        //for (int i = 0; i < PlayerUI.Instance.minionItems.Length; i++) {
-        //    MinionItem minionItem = PlayerUI.Instance.minionItems[i];
-        //    if (i < _minions.Count) {
-        //        minionItem.SetMinion(_minions[i]);
-        //    } else {
-        //        minionItem.SetMinion(null);
-        //    }
-        //}
-        UpdateMinions();
-    }
-    public void SortByClass() {
-        _minions = _minions.OrderBy(x => x.character.characterClass.className).ToList();
-        //for (int i = 0; i < PlayerUI.Instance.minionItems.Length; i++) {
-        //    MinionItem minionItem = PlayerUI.Instance.minionItems[i];
-        //    if (i < _minions.Count) {
-        //        minionItem.SetMinion(_minions[i]);
-        //    } else {
-        //        minionItem.SetMinion(null);
-        //    }
-        //}
-        UpdateMinions();
-    }
-    public void SortByDefault() {
-        _minions = _minions.OrderBy(x => x.indexDefaultSort.ToString()).ToList();
-        UpdateMinions();
-    }
     public void AddMinion(Minion minion) {
         minion.SetIndexDefaultSort(_minions.Count);
-        //MinionItem minionItem = PlayerUI.Instance.minionItems[_minions.Count];
-        PlayerCharacterItem item = PlayerUI.Instance.CreateMinionItem();
-        item.SetCharacter(minion.character);
 
         if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.LEVEL) {
             for (int i = 0; i < _minions.Count; i++) {
                 if (minion.lvl <= _minions[i].lvl) {
                     _minions.Insert(i, minion);
-                    item.transform.SetSiblingIndex(i);
                     break;
                 }
             }
@@ -318,7 +266,6 @@ public class Player : ILeader {
                 int compareResult = string.Compare(strMinionType, minion.character.characterClass.className);
                 if (compareResult == -1 || compareResult == 0) {
                     _minions.Insert(i, minion);
-                    item.transform.SetSiblingIndex(i);
                     break;
                 }
             }
@@ -327,26 +274,8 @@ public class Player : ILeader {
         }
     }
     public void RemoveMinion(Minion minion) {
-        if(_minions.Remove(minion)){
-            PlayerUI.Instance.RemoveCharacterItem(minion.minionItem);
-            //if (minion.currentlyExploringArea != null) {
-            //    minion.currentlyExploringArea.areaInvestigation.CancelInvestigation("explore");
-            //}
-            //if (minion.currentlyAttackingArea != null) {
-            //    minion.currentlyAttackingArea.areaInvestigation.CancelInvestigation("attack");
-            //}
-        }
+        _minions.Remove(minion);
     }
-    //public void AdjustMaxMinions(int adjustment) {
-    //    _maxMinions += adjustment;
-    //    _maxMinions = Mathf.Max(0, _maxMinions);
-    //    PlayerUI.Instance.OnMaxMinionsChanged();
-    //}
-    //public void SetMaxMinions(int value) {
-    //    _maxMinions = value;
-    //    _maxMinions = Mathf.Max(0, _maxMinions);
-    //    PlayerUI.Instance.OnMaxMinionsChanged();
-    //}
     #endregion
 
     #region Currencies
@@ -447,7 +376,7 @@ public class Player : ILeader {
     public void ConstructRoleSlots() {
         roleSlots = new Dictionary<JOB, PlayerJobData>();
         roleSlots.Add(JOB.SPY, new PlayerJobData(JOB.SPY));
-        roleSlots.Add(JOB.RECRUITER, new PlayerJobData(JOB.RECRUITER));
+        roleSlots.Add(JOB.SEDUCER, new PlayerJobData(JOB.SEDUCER));
         roleSlots.Add(JOB.DIPLOMAT, new PlayerJobData(JOB.DIPLOMAT));
         roleSlots.Add(JOB.INSTIGATOR, new PlayerJobData(JOB.INSTIGATOR));
         roleSlots.Add(JOB.DEBILITATOR, new PlayerJobData(JOB.DEBILITATOR));
@@ -458,11 +387,11 @@ public class Player : ILeader {
             switch (character.characterClass.className) {
                 case "Envy":
                     validJobs.Add(JOB.SPY);
-                    validJobs.Add(JOB.RECRUITER);
+                    validJobs.Add(JOB.SEDUCER);
                     break;
                 case "Lust":
                     validJobs.Add(JOB.DIPLOMAT);
-                    validJobs.Add(JOB.RECRUITER);
+                    validJobs.Add(JOB.SEDUCER);
                     break;
                 case "Pride":
                     validJobs.Add(JOB.DIPLOMAT);
@@ -474,7 +403,7 @@ public class Player : ILeader {
                     break;
                 case "Guttony":
                     validJobs.Add(JOB.SPY);
-                    validJobs.Add(JOB.RECRUITER);
+                    validJobs.Add(JOB.SEDUCER);
                     break;
                 case "Wrath":
                     validJobs.Add(JOB.INSTIGATOR);
@@ -489,7 +418,7 @@ public class Player : ILeader {
             switch (character.race) {
                 case RACE.HUMANS:
                     validJobs.Add(JOB.DIPLOMAT);
-                    validJobs.Add(JOB.RECRUITER);
+                    validJobs.Add(JOB.SEDUCER);
                     break;
                 case RACE.ELVES:
                     validJobs.Add(JOB.SPY);
@@ -497,7 +426,7 @@ public class Player : ILeader {
                     break;
                 case RACE.GOBLIN:
                     validJobs.Add(JOB.INSTIGATOR);
-                    validJobs.Add(JOB.RECRUITER);
+                    validJobs.Add(JOB.SEDUCER);
                     break;
                 case RACE.FAERY:
                     validJobs.Add(JOB.SPY);
@@ -566,9 +495,6 @@ public class Player : ILeader {
     public bool HasCharacterAssignedToJob(JOB job) {
         return roleSlots[job].assignedCharacter != null;
     }
-    public Character GetCharacterAssignedToJob(JOB job) {
-        return roleSlots[job].assignedCharacter;
-    }
     private List<Character> GetValidCharactersForJob(JOB job) {
         List<Character> valid = new List<Character>();
         for (int i = 0; i < minions.Count; i++) {
@@ -605,6 +531,52 @@ public class Player : ILeader {
         }
         return actions;
     }
+    public PlayerJobAction currentActivePlayerJobAction { get; private set; }
+    public void SetCurrentlyActivePlayerJobAction(PlayerJobAction action) {
+        PlayerJobAction previousActiveAction = currentActivePlayerJobAction;
+        currentActivePlayerJobAction = action;
+        if (currentActivePlayerJobAction == null) {
+            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+            PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(previousActiveAction);
+            jobActionButton?.UpdateInteractableState();
+            jobActionButton?.SetSelectedIconState(false);
+        } else {
+            PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(currentActivePlayerJobAction);
+            //change the cursor
+            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Cross);
+            CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveAction);
+            CursorManager.Instance.AddLeftClickAction(() => SetCurrentlyActivePlayerJobAction(null));
+            jobActionButton?.SetSelectedIconState(true);
+        }
+        
+    }
+    private void TryExecuteCurrentActiveAction() {
+        string summary = "Mouse was clicked. Will try to execute " + currentActivePlayerJobAction.name;
+        if (InteriorMapManager.Instance.currentlyShowingMap != null && InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
+            summary += " targetting " + InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter.name;
+            if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.parentData.assignedCharacter, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
+                summary += "\nActivated action!";
+                currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.parentData.assignedCharacter, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
+            } else {
+                summary += "\nDid not activate action! Did not meet requirements";
+            }
+        } else {
+            LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
+            if (hoveredTile != null && hoveredTile.objHere != null) {
+                summary += " targetting " + hoveredTile.objHere.name;
+                if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.parentData.assignedCharacter, hoveredTile.objHere)) {
+                    summary += "\nActivated action!";
+                    currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.parentData.assignedCharacter, hoveredTile.objHere);
+                } else {
+                    summary += "\nDid not activate action! Did not meet requirements";
+                }
+            } else {
+                summary += "\nNo Target!";
+            }
+        }
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+        Debug.Log(GameManager.Instance.TodayLogString() + summary);
+    }
     #endregion
 
     #region Utilities
@@ -619,37 +591,6 @@ public class Player : ILeader {
             hasSeenActionButtonsOnce = true;
             Messenger.Broadcast(Signals.HAS_SEEN_ACTION_BUTTONS);
         }
-    }
-    #endregion
-
-    #region Tracking
-    public List<Character> GetTrackedCharacters() {
-        List<Character> characters = new List<Character>();
-        //foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
-        //    if (keyValuePair.Value.activeAction != null) {
-        //        if (keyValuePair.Value.activeAction is Track) {
-        //            Track track = keyValuePair.Value.activeAction as Track;
-        //            if (track.currentTargetType == JOB_ACTION_TARGET.CHARACTER) {
-        //                characters.Add(track.target as Character);
-        //            }
-        //        }
-        //    }
-        //}
-        return characters;
-    }
-    public List<Area> GetTrackedAreas() {
-        List<Area> characters = new List<Area>();
-        //foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
-        //    if (keyValuePair.Value.activeAction != null) {
-        //        if (keyValuePair.Value.activeAction is Track) {
-        //            Track track = keyValuePair.Value.activeAction as Track;
-        //            if (track.currentTargetType == JOB_ACTION_TARGET.AREA) {
-        //                characters.Add(track.target as Area);
-        //            }
-        //        }
-        //    }
-        //}
-        return characters;
     }
     #endregion
 
@@ -743,6 +684,13 @@ public class Player : ILeader {
 
     #region Player Notifications
     public bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
+#if TRAILER_BUILD
+        if (character.name == "Fiona" || character.name == "Jamie" || character.name == "Audrey") {
+            return true;
+        }
+        return false;
+#endif
+
         if (!onlyClickedCharacter && !character.isDead && AreaMapCameraMove.Instance.gameObject.activeSelf) {
             if((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || AreaMapCameraMove.Instance.CanSee(character.marker.gameObject)) {
                 return true;
@@ -758,6 +706,12 @@ public class Player : ILeader {
         return false;
     }
     private bool ShouldShowNotificationFrom(Character character, Log log) {
+#if TRAILER_BUILD
+        if (character.name == "Fiona" || character.name == "Jamie" || character.name == "Audrey") {
+            return true;
+        }
+        return false;
+#endif
         if (ShouldShowNotificationFrom(character)) {
             return true;
         } else {

@@ -9,12 +9,14 @@ public class PlayerJobActionButton : MonoBehaviour {
 
     private Action clickAction;
 
-    private PlayerJobAction action;
+    public PlayerJobAction action { get; private set; }
 
     [SerializeField] private Button btn;
     [SerializeField] private TextMeshProUGUI btnLbl;
     [SerializeField] private TextMeshProUGUI subTextLbl;
-    [SerializeField] private Image jobIcon;
+    [SerializeField] private Image actionIcon;
+    [SerializeField] private Image selectedIcon;
+    [SerializeField] private GameObject cover;
     //[SerializeField] private GameObject pointer;
     private Character character;
     private object target;
@@ -22,24 +24,22 @@ public class PlayerJobActionButton : MonoBehaviour {
     private void OnEnable() {
         Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
         Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
-        Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_SUB_TEXT_CHANGED, OnSubTextChanged);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
     private void OnDisable() {
         Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
         Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
-        Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_SUB_TEXT_CHANGED, OnSubTextChanged);
+        Messenger.RemoveListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
+        Messenger.RemoveListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
 
-    public void SetJobAction(PlayerJobAction action, Character character, object target) {
+    public void SetJobAction(PlayerJobAction action, Character character) {
         this.action = action;
         this.character = character;
-        this.target = target;
-        jobIcon.sprite = CharacterManager.Instance.GetJobSprite(action.parentData.jobType);
+        actionIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
         UpdateInteractableState();
-        //UpdateSubText();
         UpdateButtonText();
-        //pointer.SetActive(!PlayerManager.Instance.player.hasSeenActionButtonsOnce);
-        //Messenger.AddListener(Signals.HAS_SEEN_ACTION_BUTTONS, OnSeenActionButtons);
     }
 
     //private void OnSeenActionButtons() {
@@ -47,17 +47,19 @@ public class PlayerJobActionButton : MonoBehaviour {
     //}
 
     #region Visuals
-    private void UpdateInteractableState() {
-        SetInteractableState(action.ShouldButtonBeInteractable(character, target));
+    public void UpdateInteractableState() {
+        SetInteractableState(
+            !action.parentData.hasActionInCooldown 
+            && InteriorMapManager.Instance.isAnAreaMapShowing 
+            && PlayerManager.Instance.player.currentActivePlayerJobAction != this.action
+        );
     }
     private void SetInteractableState(bool state) {
         btn.interactable = state;
-    }
-    private void UpdateSubText() {
-        subTextLbl.text = action.btnSubText;
+        cover.SetActive(!state);
     }
     private void UpdateButtonText() {
-        btnLbl.text = action.actionName;
+        btnLbl.text = action.name;
     }
     #endregion
 
@@ -71,55 +73,79 @@ public class PlayerJobActionButton : MonoBehaviour {
             UpdateInteractableState();
         }
     }
+    public void SetSelectedIconState(bool state) {
+        selectedIcon.gameObject.SetActive(state);
+    }
     #endregion
 
     #region Hover
     public void ShowHoverText() {
         string message = string.Empty;
-        string header = string.Empty;
-        IPointOfInterest poi = this.target as IPointOfInterest;
-        if(poi is Character) {
-            Character target = poi as Character;
-            if (action is Track) {
-                message = "The Spy will keep track of every significant event happening to " + target.name + ". A notification will be displayed " +
-                    "for each event related to " + target.name + " even when " + Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, false) + " is not actively selected.";
-                header = "Spy Action";
-            } else if (action is Corrupt) {
-                message = "The Seducer will afflict " + target.name + " with a negative Trait.";
-                header = "Seducer Action";
-            } else if (action is Recruit) {
-                message = "The Seducer will attempt to recruit " + target.name + " to your side. This is only possible while " + target.name + " is mentally vulnerable.";
-                header = "Seducer Action";
-            } else if (action is ShareIntel) {
-                message = "The Diplomat will reach out to " + target.name + " and share a piece of information with " + Utilities.GetPronounString(target.gender, PRONOUN_TYPE.REFLEXIVE, false) + ".";
-                header = "Diplomat Action";
-            } else if (action is RileUp) {
-                RileUp rileUp = action as RileUp;
-                if (rileUp.GetActionName(target) == "Abduct") {
-                    message = "The Instigator will goad " + target.name + " into abducting a specified character. This action only works on goblins.";
-                    header = "Instigator Action";
-                } else {
-                    message = "The Instigator will rile up " + target.name + " and goad him into attacking people in a specified location. This action only works for beasts.";
-                    header = "Instigator Action";
-                }
-            } else if (action is Intervene) {
-                message = "The Debilitator will convince " + target.name + " to drop his current plans.";
-                header = "Debilitator Action";
-            } else if (action is Provoke) {
-                message = "The Instigator will provoke " + target.name + " into attacking one of " + Utilities.GetPronounString(target.gender, PRONOUN_TYPE.POSSESSIVE, false) + " enemies. This is more likely to succeed if " + target.name + " is in a bad mood.";
-                header = "Instigator Action";
-            }
-        } else if (poi is TileObject) {
-            if (action is Destroy) {
-                message = "Remove this object from the world.";
-                header = "Instigator Action";
-            } else if (action is Disable) {
-                message = "Prevent characters from using this object for 4 hours.";
-                header = "Debilitator Action";
-            }
+        string header = action.name + " ";
+        if (action is Track) {
+            message = "The Spy will keep track of every significant event happening to a target. A notification will be displayed " +
+                "for each event related to the target even when the target is not actively selected.";
+            header += "(Spy Action)";
+        } else if (action is Corrupt) {
+            message = "The Seducer will afflict the target with a negative Trait.";
+            header += "(Seducer Action)";
+        } else if (action is Recruit) {
+            message = "The Seducer will attempt to recruit a character to your side. This is only possible while the target is mentally vulnerable.";
+            header += "(Seducer Action)";
+        } else if (action is ShareIntel) {
+            message = "The Diplomat will reach out to a character and share a piece of information with them.";
+            header += "(Diplomat Action)";
+        } else if (action is RileUp) {
+            message = "The Instigator will rile up a character and goad him into attacking people in a specified location. This action only works for beasts.";
+            header += "(Instigator Action)";
+        } else if (action is Intervene) {
+            message = "The Debilitator will convince a character to drop his current plans.";
+            header += "(Debilitator Action)";
+        } else if (action is Provoke) {
+            message = "The Instigator will provoke a character into attacking one of his/her enemies. This is more likely to succeed if he/she is in a bad mood.";
+            header += "(Instigator Action)";
+        } else if (action is Destroy) {
+            message = "Remove this object from the world.";
+            header += "(Instigator Action)";
+        } else if (action is Disable) {
+            message = "Prevent characters from using this object for 4 hours.";
+            header += "(Debilitator Action)";
+        } else if (action is AccessMemories) {
+            message = "Access the memories of a character.";
+            header += "(Spy Action)";
+        } else if (action is Abduct) {
+            message = "The Instigator will goad a character into abducting a specified character. This action only works on goblins and skeletons.";
+            header += "(Instigator Action)";
+        } else if (action is Zap) {
+            message = "Temporarily prevents a character from moving for 30 minutes.";
+            header += "(Debilitator Action)";
+        } else if (action is Jolt) {
+            message = "Temporarily speeds up the movement of a character.";
+            header += "(Debilitator Action)";
+        } else if (action is Spook) {
+            message = "Temporarily forces a character to flee from all other nearby characters.";
+            header += "(Debilitator Action)";
+        } else if (action is Enrage) {
+            message = "Temporarily enrages a character.";
+            header += "(Debilitator Action)";
+        } else if (action is CorruptLycanthropy) {
+            message = "Inflict a character with Lycanthropy, which gives a character a chance to transform into a wild wolf whenever he/she sleeps.";
+            header += "(Seducer Action)";
+        } else if (action is CorruptKleptomaniac) {
+            message = "Inflict a character with Kleptomania, which will make that character enjoy stealing other people's items.";
+            header += "(Seducer Action)";
+        } else if (action is CorruptVampiric) {
+            message = "Inflict a character with Vampirism, which will make that character need blood for sustenance.";
+            header += "(Seducer Action)";
+        } else if (action is CorruptUnfaithful) {
+            message = "Make a character prone to have affairs.";
+            header += "(Seducer Action)";
+        } else if (action is RaiseDead) {
+            message = "Return a character to life.";
+            header += "(Instigator Action)";
         }
-        
-        if (action.isInCooldown) {
+
+        if (action.parentData.hasActionInCooldown) {
             header += " (On Cooldown)";
         }
         PlayerManager.Instance.player.SeenActionButtonsOnce();
@@ -130,20 +156,23 @@ public class PlayerJobActionButton : MonoBehaviour {
     }
     #endregion
 
+    #region Listeners
     private void OnJobActionCooldownActivated(PlayerJobAction jobAction) {
-        if (jobAction == action) {
+        if (jobAction.parentData == this.action.parentData) {
             UpdateInteractableState();
         }
     }
     private void OnJobActionCooldownDone(PlayerJobAction jobAction) {
-        if (jobAction == action) {
+        if (jobAction.parentData == this.action.parentData) {
             UpdateInteractableState();
         }
     }
-
-    public void OnSubTextChanged(PlayerJobAction jobAction) {
-        if (jobAction == action) {
-            //UpdateSubText();
-        }
+    private void OnAreaMapOpened(Area area) {
+        UpdateInteractableState();
     }
+    private void OnAreaMapClosed(Area area) {
+        UpdateInteractableState();
+    }
+    #endregion
+
 }

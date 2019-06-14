@@ -8,6 +8,7 @@ public class CharacterManager : MonoBehaviour {
 
     public static CharacterManager Instance = null;
 
+    public const int MAX_HISTORY_LOGS = 300;
     public const int CHARACTER_MAX_MEMORY = 20;
 
     public GameObject characterIconPrefab;
@@ -104,10 +105,10 @@ public class CharacterManager : MonoBehaviour {
                 if (characterFaction != null) {
                     //currCharacter.SetFaction(characterFaction);
                     characterFaction.AddNewCharacter(currCharacter);
-                    FactionSaveData factionData = data.GetFactionData(characterFaction.id);
-                    if (factionData.leaderID != -1 && factionData.leaderID == currCharacter.id) {
-                        characterFaction.SetLeader(currCharacter);
-                    }
+                    //FactionSaveData factionData = data.GetFactionData(characterFaction.id);
+                    //if (factionData.leaderID != -1 && factionData.leaderID == currCharacter.id) {
+                    //    characterFaction.SetLeader(currCharacter);
+                    //}
                 }
 #if !WORLD_CREATION_TOOL
                 else {
@@ -179,17 +180,15 @@ public class CharacterManager : MonoBehaviour {
         Party party = newCharacter.CreateOwnParty();
         if (faction != null) {
             faction.AddNewCharacter(newCharacter);
-        } else {
-            FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
         }
 #if !WORLD_CREATION_TOOL
+        else {
+            FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
+        }
         party.CreateIcon();
         if(homeLocation != null) {
             party.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            //if (homeStructure != null) {
-            //    newCharacter.MigrateHomeStructureTo(homeStructure);
-            //}
             homeLocation.AddCharacterToLocation(party.owner, null, true);
         }
         //newCharacter.AddAwareness(newCharacter);
@@ -230,21 +229,16 @@ public class CharacterManager : MonoBehaviour {
         newCharacter.Initialize();
         allCharacterLogs.Add(newCharacter, new List<string>());
 
+        Party party = newCharacter.CreateOwnParty();
         if (data.homeAreaID != -1) {
             Area homeArea = LandmarkManager.Instance.GetAreaByID(data.homeAreaID);
             if (homeArea != null) {
-                homeArea.AddResident(newCharacter, null, true);
-            }
-        }
-        Party party = newCharacter.CreateOwnParty();
-        if (data.locationID != -1) {
-            Area currentLocation = LandmarkManager.Instance.GetAreaByID(data.locationID);
-            if (currentLocation != null) {
 #if !WORLD_CREATION_TOOL
                 party.CreateIcon();
-                party.icon.SetPosition(currentLocation.coreTile.transform.position);
+                party.icon.SetPosition(homeArea.coreTile.transform.position);
+                newCharacter.MigrateHomeTo(homeArea, null, false);
+                homeArea.AddCharacterToLocation(party.owner, null, true);
 #endif
-                currentLocation.AddCharacterToLocation(party.owner, null, true);
             }
         }
         //newCharacter.AddAwareness(newCharacter);
@@ -379,9 +373,14 @@ public class CharacterManager : MonoBehaviour {
                 character.CreateMarker();
                 if (character.homeStructure != null) {
                     //place the character at a random unoccupied tile in his/her home
-                    List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles;
+                    List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                     LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
                     character.marker.PlaceMarkerAt(chosenTile);
+
+                    ////if character is fiona, force her to stay at her home, forever (For Trailer Build Only)
+                    //if (character.name == "Fiona") {
+                    //    character.trapStructure.SetStructureAndDuration(character.currentStructure, 0);
+                    //}
                 }
             }
         }
@@ -392,6 +391,11 @@ public class CharacterManager : MonoBehaviour {
         choices.Remove(SPECIAL_TOKEN.TOOL);
         for (int i = 0; i < allCharacters.Count; i++) {
             Character character = allCharacters[i];
+#if TRAILER_BUILD
+            if (character.name == "Fiona" || character.name == "Audrey" || character.name == "Jamie") {
+                continue;
+            }
+#endif
             if (character.minion == null) {
                 if (Random.Range(0, 2) == 0) {
                     SPECIAL_TOKEN randomItem = choices[UnityEngine.Random.Range(0, choices.Count)];
@@ -404,6 +408,24 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Relationships
+    public void LoadRelationships(WorldSaveData data) {
+        if (data.charactersData != null) {
+            for (int i = 0; i < data.charactersData.Count; i++) {
+                CharacterSaveData currData = data.charactersData[i];
+                Character currCharacter = GetCharacterByID(currData.id);
+                for (int j = 0; j < currData.relationshipsData.Count; j++) {
+                    RelationshipSaveData relData = currData.relationshipsData[j];
+                    for (int k = 0; k < relData.rels.Count; k++) {
+                        RELATIONSHIP_TRAIT currRel = relData.rels[k];
+                        Character target = GetCharacterByID(relData.targetCharacterID);
+                        if (!currCharacter.HasRelationshipOfTypeWith(target, currRel)) {
+                            CreateNewRelationshipBetween(currCharacter, target, currRel);
+                        }
+                    }
+                }
+            }
+        }
+    }
     public RelationshipTrait CreateRelationshipTrait(RELATIONSHIP_TRAIT type, Character targetCharacter) {
         switch (type) {
             case RELATIONSHIP_TRAIT.ENEMY:
@@ -520,7 +542,7 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < rels.Count; i++) {
             RemoveRelationshipBetween(character, targetCharacter, rels[i]);
         }
-
+        Messenger.Broadcast(Signals.ALL_RELATIONSHIP_REMOVED, character, targetCharacter);
         //character.RemoveRelationship(targetCharacter);
         //targetCharacter.RemoveRelationship(character);
     }
@@ -572,6 +594,14 @@ public class CharacterManager : MonoBehaviour {
         // Loop through all characters in the world
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currCharacter = allCharacters[i];
+#if TRAILER_BUILD
+            if (currCharacter.name == "Jamie" || currCharacter.name == "Audrey" || currCharacter.name == "Fiona") {
+                continue; //skip main cast (For Trailer Only)
+            }
+#endif
+            if (currCharacter.isFactionless) {
+                continue; //skip factionless characters
+            }
             int currentRelCount = currCharacter.GetAllRelationshipCountExcept(new List<RELATIONSHIP_TRAIT>() { RELATIONSHIP_TRAIT.MASTER, RELATIONSHIP_TRAIT.SERVANT });
             if (currentRelCount >= maxInitialRels) {
                 continue; //skip
@@ -601,8 +631,9 @@ public class CharacterManager : MonoBehaviour {
                         }
                         break;
                     case RELATIONSHIP_TRAIT.LOVER:
+                        if (currCharacter.name == "Fiona") { relsToCreate = 0; } //For Trailer Map Only
                         //- a character has a 20% chance to have a lover
-                        if (chance < 20) relsToCreate = 1;
+                        else if (chance < 20) relsToCreate = 1;
                         break;
                     case RELATIONSHIP_TRAIT.ENEMY:
                         //- a character may have either zero (75%), one (20%) or two (5%) enemies
@@ -629,9 +660,14 @@ public class CharacterManager : MonoBehaviour {
                 
                 if (relsToCreate > 0) {
                     WeightedFloatDictionary<Character> relWeights = new WeightedFloatDictionary<Character>();
-                    // Loop through all characters in the world, excluding current character
-                    for (int l = 0; l < allCharacters.Count; l++) {
-                        Character otherCharacter = allCharacters[l];
+                    // Loop through all characters that are in the same faction as the current character
+                    for (int l = 0; l < currCharacter.faction.characters.Count; l++) {
+                        Character otherCharacter = currCharacter.faction.characters[l];
+#if TRAILER_BUILD
+                        if (otherCharacter.name == "Jamie" || otherCharacter.name == "Audrey" || otherCharacter.name == "Fiona") {
+                            continue; //skip main cast (For Trailer Only)
+                        }
+#endif
                         if (currCharacter.id != otherCharacter.id) { //&& currCharacter.faction == otherCharacter.faction
                             List<RELATIONSHIP_TRAIT> existingRelsOfCurrentCharacter = currCharacter.GetAllRelationshipTraitTypesWith(otherCharacter);
                             List<RELATIONSHIP_TRAIT> existingRelsOfOtherCharacter = otherCharacter.GetAllRelationshipTraitTypesWith(currCharacter);
@@ -1406,6 +1442,65 @@ public class CharacterManager : MonoBehaviour {
         relWeights.AddElement(RELATIONSHIP_TRAIT.PARAMOUR, 10);
         //RELATIONSHIP_TRAIT[] choices = Utilities.GetEnumValues<RELATIONSHIP_TRAIT>();
         return relWeights.PickRandomElementGivenWeights();
+    }
+    public void GenerateInitialLogs() {
+        GameDate startDate = new GameDate(1, 1, 80, 1);
+
+        Character jamie = GetCharacterByName("Jamie");
+        Character audrey = GetCharacterByName("Audrey");
+
+        List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>();
+        interactions.Add(INTERACTION_TYPE.EAT_DWELLING_TABLE);
+        interactions.Add(INTERACTION_TYPE.SLEEP);
+        interactions.Add(INTERACTION_TYPE.DAYDREAM);
+        interactions.Add(INTERACTION_TYPE.PRAY);
+        interactions.Add(INTERACTION_TYPE.SIT);
+
+        int argumentCount = 4;
+        int logCount = argumentCount * 8;
+        for (int i = 0; i < logCount; i++) {
+            startDate.AddTicks(Random.Range(11, 21));
+            if (i % argumentCount == 0) {
+                Log argumentLog = new Log(startDate, "GoapAction", "ChatCharacter", "argument_description");
+                if (Random.Range(0, 2) == 0) {
+                    argumentLog.AddToFillers(jamie, jamie.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    argumentLog.AddToFillers(audrey, audrey.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                } else {
+                    argumentLog.AddToFillers(jamie, jamie.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    argumentLog.AddToFillers(audrey, audrey.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                }
+                argumentLog.AddLogToInvolvedObjects();
+            } else {
+                INTERACTION_TYPE randomInteraction = interactions[Random.Range(0, interactions.Count)];
+                string file = Utilities.NormalizeString(randomInteraction.ToString());
+                IPointOfInterest target = null;
+                switch (randomInteraction) {
+                    case INTERACTION_TYPE.EAT_DWELLING_TABLE:
+                        target = jamie.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
+                        file = "EatAtTable";
+                        break;
+                    case INTERACTION_TYPE.SIT:
+                        target = jamie.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
+                        break;
+                    case INTERACTION_TYPE.SLEEP:
+                        target = jamie.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.BED)[0];
+                        break;
+                }
+                Log log = new Log(startDate, "GoapAction", file,  GoapActionStateDB.goapActionStates[randomInteraction][0].name.ToLower() + "_description");
+                Character actor = jamie;
+                if (Random.Range(0, 2) == 0) {
+                    actor = audrey;
+                }
+                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                if (target != null) {
+                    log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddToFillers(target.gridTileLocation.parentAreaMap.area, target.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+                }
+                
+                log.AddLogToInvolvedObjects();
+            }
+        }
+        GameManager.Instance.SetStartDate(startDate);
     }
     #endregion
 }

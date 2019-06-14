@@ -23,16 +23,14 @@ public class Recruit : PlayerJobAction {
         currentTargetType = JOB_ACTION_TARGET.CHARACTER;
         target = targetPOI;
         Debug.Log(GameManager.Instance.TodayLogString() + assignedCharacter.name + " is now recruiting " + targetCharacter.name);
-        SetSubText(string.Empty);
         CreateRecruitInteraction(targetCharacter);
     }
     public override void DeactivateAction() {
         base.DeactivateAction();
         currentTargetType = JOB_ACTION_TARGET.NONE;
         target = null;
-        SetSubText(string.Empty);
     }
-    protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
         return false; //always deactivate for now
         if (targetCharacter.isDead) {
             return false;
@@ -43,7 +41,7 @@ public class Recruit : PlayerJobAction {
         if (targetCharacter.isLeader || targetCharacter.currentParty.icon.isTravelling || targetCharacter.isDefender || !targetCharacter.IsInOwnParty() || targetCharacter.doNotDisturb > 0) {
             return false;
         }
-        return base.ShouldButtonBeInteractable(character, targetCharacter);
+        return base.CanPerformActionTowards(character, targetCharacter);
     }
     protected override void OnCharacterDied(Character characterThatDied) {
         base.OnCharacterDied(characterThatDied);

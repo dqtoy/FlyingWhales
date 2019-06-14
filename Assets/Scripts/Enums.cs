@@ -1125,7 +1125,7 @@ public enum JOB {
     INSTIGATOR,
     EXPLORER,
     DIPLOMAT,
-    RECRUITER,
+    SEDUCER,
     RAIDER,
     SPY,
     DEBILITATOR,

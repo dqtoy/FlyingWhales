@@ -21,11 +21,11 @@ public class Disable : PlayerJobAction {
         base.ActivateAction(assignedCharacter, targetPOI);
     }
 
-    protected override bool ShouldButtonBeInteractable(Character character, IPointOfInterest targetPOI) {
+    protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
         if (targetPOI.isDisabledByPlayer) {
             return false;
         }
-        return base.ShouldButtonBeInteractable(character, targetPOI);
+        return base.CanPerformActionTowards(character, targetPOI);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if (!(targetPOI is TileObject)) {
