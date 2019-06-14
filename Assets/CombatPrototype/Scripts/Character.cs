@@ -6650,14 +6650,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public bool CanReactToCrime() {
+
         if (stateComponent.currentState == null) {
-            return true;
+            return GetNormalTrait("Resting", "Unconscious") != null;
         } else {
             if (stateComponent.currentState.characterState == CHARACTER_STATE.FLEE || stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
                 return false;
             }
         }
-        return true;
+        return GetNormalTrait("Resting", "Unconscious") != null;
     }
     #endregion
 
