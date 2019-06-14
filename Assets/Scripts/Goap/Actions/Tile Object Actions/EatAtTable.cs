@@ -9,7 +9,7 @@ public class EatAtTable : GoapAction {
     public EatAtTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_DWELLING_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Eat_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
-        isNotificationAnIntel = false;
+        //isNotificationAnIntel = false;
     }
 
     #region Overrides
@@ -210,7 +210,7 @@ public class EatAtTable : GoapAction {
                     reactions.Add(string.Format("{0} wasn't my target when I poisoned the food.", actor.name));
                 }
             } 
-            else if ((recipient.faction.id == actor.faction.id && !recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) 
+            else if ((recipient.faction == actor.faction && !recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) 
                 || (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE)) {
 
                 Trait sickTrait = actor.GetNormalTrait("Sick");
