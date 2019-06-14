@@ -76,6 +76,15 @@ public class POITestingUI : MonoBehaviour {
         }
         HideUI();
     }
+    public void Feed() {
+        if (poi is Character) {
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_STARVING, INTERACTION_TYPE.FEED, poi);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
+        } else {
+            Debug.LogError(poi.name + " is not a character!");
+        }
+        HideUI();
+    }
     #endregion
 
     #region Tile Object Testing
@@ -95,6 +104,15 @@ public class POITestingUI : MonoBehaviour {
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
         } else {
             Debug.LogError(poi.name + " is not a table!");
+        }
+        HideUI();
+    }
+    public void Sleep() {
+        if (poi is Bed) {
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TIREDNESS_RECOVERY, INTERACTION_TYPE.SLEEP, poi);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
+        } else {
+            Debug.LogError(poi.name + " is not a bed!");
         }
         HideUI();
     }

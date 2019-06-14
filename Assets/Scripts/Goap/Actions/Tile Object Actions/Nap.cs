@@ -21,7 +21,11 @@ public class Nap : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         if (!isTargetMissing) {
-            SetState("Nap Success");
+            if (CanSleepInBed(actor, poiTarget as TileObject)) {
+                SetState("Nap Success");
+            } else {
+                SetState("Nap Fail");
+            }
         } else {
             TileObject obj = poiTarget as TileObject;
             if (!obj.IsAvailable()) {
@@ -101,4 +105,16 @@ public class Nap : GoapAction {
     //    currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     //}
     #endregion
+
+    private bool CanSleepInBed(Character character, TileObject tileObject) {
+        for (int i = 0; i < tileObject.users.Length; i++) {
+            if (tileObject.users[i] != null) {
+                RELATIONSHIP_EFFECT relEffect = character.GetRelationshipEffectWith(tileObject.users[i]);
+                if (relEffect == RELATIONSHIP_EFFECT.NEGATIVE || relEffect == RELATIONSHIP_EFFECT.NONE) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 }
