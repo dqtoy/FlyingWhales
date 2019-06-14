@@ -68,6 +68,8 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private AnimationCurve curve;
     [SerializeField] private Image combatGridAssignerIcon;
 
+    public GameObject electricEffectPrefab;
+
     private MINIONS_SORT_TYPE _minionSortType;
     private bool _isScrollingUp;
     private bool _isScrollingDown;

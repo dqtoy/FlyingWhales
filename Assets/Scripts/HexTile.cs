@@ -1184,6 +1184,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
         if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
+            //SetBordersState(true);
         }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
 #endif
@@ -1198,6 +1199,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //}
 #else
         _hoverHighlightGO.SetActive(false);
+        //SetBordersState(false);
         HideSmallInfoWindow();
         //if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
         //    return;

@@ -419,7 +419,7 @@ public class Faction {
 #if TRAILER_BUILD
             soldierCount = 1;  
             adventurerCount = 1;
-            civilianCount = 2;
+            civilianCount = 1;
 #endif
             //**4 Human Soldiers**
             for (int i = 0; i < soldierCount; i++) {
