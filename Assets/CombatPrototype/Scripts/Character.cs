@@ -4101,6 +4101,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         job.SetCannotOverrideJob(true);
                         //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                     }
+                    job.SetCancelOnFail(true);
                     jobQueue.AddJobInQueue(job, false);
                     //jobQueue.ProcessFirstJobInQueue(this);
                     //StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.FULLNESS, true);
@@ -4144,6 +4145,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         job.SetCannotOverrideJob(true);
                         //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                     }
+                    job.SetCancelOnFail(true);
                     jobQueue.AddJobInQueue(job, false);
                     //jobQueue.ProcessFirstJobInQueue(this);
                     //StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.TIREDNESS, true);
@@ -4187,6 +4189,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         job.SetCannotOverrideJob(true);
                         //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                     }
+                    job.SetCancelOnFail(true);
                     jobQueue.AddJobInQueue(job, false);
                     //jobQueue.ProcessFirstJobInQueue(this);
                     //StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.HAPPINESS, true);
