@@ -75,7 +75,7 @@ public class Abduct : PlayerJobAction {
         job.SetCannotOverrideJob(true);
         //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
         _targetCharacter.jobQueue.AddJobInQueue(job);
-        _targetCharacter.jobQueue.ProcessFirstJobInQueue(_targetCharacter);
+        //_targetCharacter.jobQueue.ProcessFirstJobInQueue(_targetCharacter);
         //_targetCharacter.StartGOAP(goapEffect, character, GOAP_CATEGORY.REACTION);
     }
     private bool CanRileUpCharacter(Character character) {

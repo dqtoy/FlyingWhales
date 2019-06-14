@@ -1490,7 +1490,7 @@ public class Area {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
                     });
                     job.SetCanTakeThisJobChecker(CanBrewPotion);
-                    job.SetCannotOverrideJob(false);
+                    //job.SetCannotOverrideJob(false);
                     jobQueue.AddJobInQueue(job);
                 }
             } else {
@@ -1504,7 +1504,7 @@ public class Area {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.TOOL } },
                     });
                     job.SetCanTakeThisJobChecker(CanCraftTool);
-                    job.SetCannotOverrideJob(false);
+                    //job.SetCannotOverrideJob(false);
                     jobQueue.AddJobInQueue(job);
                 }
             } else {
@@ -1537,7 +1537,7 @@ public class Area {
                         { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
                     });
         //job.SetCanTakeThisJobChecker(job.CanCraftItemChecker);
-        job.SetCannotOverrideJob(false);
+        //job.SetCannotOverrideJob(false);
         jobQueue.AddJobInQueue(job);
     }
     #endregion

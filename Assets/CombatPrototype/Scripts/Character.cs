@@ -1798,7 +1798,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         AdjustIsWaitingForInteraction(-1);
     }
-    public bool CanCurrentJobBeOverridenByJob(JobQueueItem job) {
+    public bool CanCurrentJobBeOverriddenByJob(JobQueueItem job) {
+        //GENERAL RULE: Plans/States that have no jobs are always the lowest priority
+
+        //Current job cannot be overriden by null job
+        if (job == null) {
+            return false;
+        }
         if ((stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)
             || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)) {
             //Berserked state cannot be overriden
@@ -1825,13 +1831,24 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 return false;
             }
         }
+        //Cannot override when resting
+        if(GetNormalTrait("Resting") != null) {
+            return false;
+        }
         //If there is no current state then check the current action
         //Same process applies that if the current action's job has a lower job priority (higher number) than the parameter job, it is overridable
-        if (currentAction != null && currentAction.parentPlan != null && currentAction.parentPlan.job != null && !currentAction.parentPlan.job.cannotOverrideJob
+        if (currentAction != null && currentAction.parentPlan != null) {
+            if(currentAction.parentPlan.job != null && !currentAction.parentPlan.job.cannotOverrideJob
                        && job.priority < currentAction.parentPlan.job.priority) {
-            return true;
+                return true;
+            } else if (currentAction.parentPlan.job == null) {
+                return true;
+            }
+            return false;
         }
-        return false;
+
+        //If nothing applies, always overridable
+        return true;
     }
     #endregion
 
@@ -4634,27 +4651,27 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         AddPlan(goapPlan);
         //PlanGoapActions(goapAction);
     }
-    public bool AssaultCharacter(Character target) {
-        //Debug.Log(this.name + " will assault " + target.name);
-        hasAssaultPlan = true;
-        lastAssaultedCharacter = target;
-        //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
-        //if(currentStructure.unoccupiedTiles.Count > 0) {
-        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ASSAULT_ACTION_NPC, this, target);
-        goapAction.SetEndAction(OnAssaultActionReturn);
-        //goapAction.SetTargetStructure(target);
-        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.DEATH }, GOAP_CATEGORY.REACTION);
-        goapPlan.ConstructAllNodes();
-        goapPlan.SetDoNotRecalculate(true);
-        AddPlan(goapPlan, true);
-        if (currentAction != null) {
-            currentAction.StopAction();
-        }
-        return true;
-        //}
-        //return false;
-    }
+    //public bool AssaultCharacter(Character target) {
+    //    //Debug.Log(this.name + " will assault " + target.name);
+    //    hasAssaultPlan = true;
+    //    lastAssaultedCharacter = target;
+    //    //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
+    //    //if(currentStructure.unoccupiedTiles.Count > 0) {
+    //    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ASSAULT_ACTION_NPC, this, target);
+    //    goapAction.SetEndAction(OnAssaultActionReturn);
+    //    //goapAction.SetTargetStructure(target);
+    //    GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+    //    GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.DEATH }, GOAP_CATEGORY.REACTION);
+    //    goapPlan.ConstructAllNodes();
+    //    goapPlan.SetDoNotRecalculate(true);
+    //    AddPlan(goapPlan, true);
+    //    if (currentAction != null) {
+    //        currentAction.StopAction();
+    //    }
+    //    return true;
+    //    //}
+    //    //return false;
+    //}
     private void SetLastAssaultedCharacter(Character character) {
         lastAssaultedCharacter = character;
         if (character != null) {
@@ -4938,18 +4955,35 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (!allGoapPlans.Contains(plan)) {
             plan.SetPriorityState(isPriority);
             if (isPriority) {
-                //if the plan is a priority, place it after all other plans that are not overridable
-                int indexToInsert = 0;
-                for (int i = 0; i < allGoapPlans.Count; i++) {
-                    GoapPlan currPlan = allGoapPlans[i];
-                    if (!(currPlan.job != null && currPlan.job.cannotOverrideJob)) {
-                        indexToInsert = i; //this is the first plan in the list that is overridable, place the priority plan before the current item.
-                        break;
+                allGoapPlans.Insert(0, plan);
+                ////if the plan is a priority, place it after all other plans that are not overridable
+                //int indexToInsert = 0;
+                //for (int i = 0; i < allGoapPlans.Count; i++) {
+                //    GoapPlan currPlan = allGoapPlans[i];
+                //    if (!(currPlan.job != null && currPlan.job.cannotOverrideJob)) {
+                //        indexToInsert = i; //this is the first plan in the list that is overridable, place the priority plan before the current item.
+                //        break;
+                //    }
+                //}
+                //allGoapPlans.Insert(indexToInsert, plan);
+            } else {
+                bool hasBeenInserted = false;
+                if(plan.job != null) {
+                    for (int i = 0; i < allGoapPlans.Count; i++) {
+                        GoapPlan currentPlan = allGoapPlans[i];
+                        if (currentPlan.isPriority) {
+                            continue;
+                        }
+                        if (currentPlan.job == null || plan.job.priority < currentPlan.job.priority) {
+                            allGoapPlans.Insert(i, plan);
+                            hasBeenInserted = true;
+                            break;
+                        }
                     }
                 }
-                allGoapPlans.Insert(indexToInsert, plan);
-            } else {
-                allGoapPlans.Add(plan);
+                if (!hasBeenInserted) {
+                    allGoapPlans.Add(plan);
+                }
             }
             //If a character is strolling or idly returning home and a plan is added to this character, end the action/state
             if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.STROLL 
@@ -5732,7 +5766,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.BURY_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
         poiGoapActions.Add(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
-        //poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE); //Disabled for trailer build
+        poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE); //Disabled for trailer build
         poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
         poiGoapActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
         poiGoapActions.Add(INTERACTION_TYPE.TANTRUM);
@@ -5841,6 +5875,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         return;
                     }
                     goapThread.job.SetAssignedPlan(goapThread.createdPlan);
+
+                    //If the created plan contains a carry component, that plan cannot be overridden
                     for (int i = 0; i < goapThread.createdPlan.allNodes.Count; i++) {
                         if (goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CHARACTER
                             || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CORPSE
@@ -5849,31 +5885,35 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                             break;
                         }
                     }
-                    if (CanCurrentJobBeOverridenByJob(goapThread.job)) {
-                        AddPlan(goapThread.createdPlan, true);
-
-                        if (stateComponent.currentState != null) {
-                            //- berserk, flee, and engage are the highest priority, they cannot be overridden. character must finish the state before doing anything else.
-                            if (stateComponent.currentState.characterState != CHARACTER_STATE.ENGAGE && stateComponent.currentState.characterState != CHARACTER_STATE.FLEE && stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED) {
-                                stateComponent.currentState.OnExitThisState();
-                            }
-                        } else {
-                            if (currentParty.icon.isTravelling) {
-                                if (currentParty.icon.travelLine == null) {
-                                    marker.StopMovement();
-                                } else {
-                                    currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
-                                }
-                            }
-                            AdjustIsWaitingForInteraction(1);
-                            StopCurrentAction(false);
-                            AdjustIsWaitingForInteraction(-1);
-                        }
-                        return;
-                    }
                 }
                 AddPlan(goapThread.createdPlan);
-                //PlanGoapActions();
+                if (CanCurrentJobBeOverriddenByJob(goapThread.job)) {
+                    //AddPlan(goapThread.createdPlan, true);
+
+                    if (stateComponent.currentState != null) {
+                        stateComponent.currentState.OnExitThisState();
+                        //This call is doubled so that it will also exit the previous major state if there's any
+                        if (stateComponent.currentState != null) {
+                            stateComponent.currentState.OnExitThisState();
+                        }
+                        ////- berserk, flee, and engage are the highest priority, they cannot be overridden. character must finish the state before doing anything else.
+                        //if (stateComponent.currentState.characterState != CHARACTER_STATE.ENGAGE && stateComponent.currentState.characterState != CHARACTER_STATE.FLEE && stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED) {
+                        //    stateComponent.currentState.OnExitThisState();
+                        //}
+                    } else {
+                        if (currentParty.icon.isTravelling) {
+                            if (currentParty.icon.travelLine == null) {
+                                marker.StopMovement();
+                            } else {
+                                currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
+                            }
+                        }
+                        AdjustIsWaitingForInteraction(1);
+                        StopCurrentAction(false);
+                        AdjustIsWaitingForInteraction(-1);
+                    }
+                    //return;
+                }
             } else {
                 //Receive plan recalculation
                 goapThread.createdPlan.SetIsBeingRecalculated(false);

@@ -37,6 +37,10 @@ public class JobQueueItem {
     public virtual void OnAddJobToQueue() { }
     public virtual bool OnRemoveJobFromQueue() { return true; }
     public virtual bool CanCharacterTakeThisJob(Character character) {
+        //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers if the character parameter is the owner of the job queue
+        if (character == jobQueueParent.character) {
+            return CanTakeJob(character);
+        }
         if (_canTakeThisJob != null) {
             if (_canTakeThisJob(character, this)) {
                 return CanTakeJob(character);

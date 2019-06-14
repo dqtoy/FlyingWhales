@@ -60,11 +60,13 @@ public class Sick : Trait {
         }
         if (targetCharacter.GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
             if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name)) {
-                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect);
-                job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-                characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                return true;
+                if (CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
+                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect);
+                    //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    return true;
+                }
             }
         }
         return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);

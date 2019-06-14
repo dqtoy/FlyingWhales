@@ -26,14 +26,16 @@ public class Dead : Trait {
         if (targetCharacter.isDead && targetCharacter.race != RACE.SKELETON && !characterThatWillDoJob.HasTraitOf(TRAIT_TYPE.CRIMINAL) && characterThatWillDoJob.isAtHomeArea 
             && characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST) {
             //check first if the target character already has a bury job in this location
-            GoapPlanJob buryJob = characterThatWillDoJob.jobQueue.GetJob(JOB_TYPE.BURY, targetCharacter) as GoapPlanJob;
-            if (buryJob == null) {
-                //if none, create one
-                buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
-                buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
-                buryJob.SetCanTakeThisJobChecker(CanTakeBuryJob);
-                buryJob.AllowDeadTargets();
-                characterThatWillDoJob.jobQueue.AddJobInQueue(buryJob, false);
+            if (CanTakeBuryJob(characterThatWillDoJob, null)) {
+                GoapPlanJob buryJob = characterThatWillDoJob.jobQueue.GetJob(JOB_TYPE.BURY, targetCharacter) as GoapPlanJob;
+                if (buryJob == null) {
+                    //if none, create one
+                    buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
+                    buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
+                    buryJob.AllowDeadTargets();
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(buryJob, false);
+                }
+                return true;
             }
             ////if the character is a soldier or civilian, and the bury job is currently unassigned, take the job
             //if (buryJob.assignedCharacter == null && (role.roleType == CHARACTER_ROLE.SOLDIER || role.roleType == CHARACTER_ROLE.CIVILIAN)) {
@@ -46,7 +48,6 @@ public class Dead : Trait {
             //    //    homeArea.jobQueue.AssignCharacterToJob(buryJob, this);
             //    //}
             //}
-            return true;
         }
         return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
     }

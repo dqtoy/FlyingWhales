@@ -31,13 +31,31 @@ public class JobQueue {
 
         if(character != null) {
             //bool hasProcessed = false;
+
             //If the current action's job of the character is overridable and the added job has higher priority than it,
-            //then process the first job in queue if the first job is the added job
-            if (character.CanCurrentJobBeOverridenByJob(job)) {
-                JobQueueItem firstJob = GetFirstUnassignedJobInQueue(character);
-                if(firstJob != null && firstJob == job) {
-                    character.jobQueue.ProcessFirstJobInQueue(character);
-                    //hasProcessed = true;
+            //then process that job immediately and stop what the character is currently doing
+            //Sometimes, in rare cases, the character still cannot be assigned to a job even if it is a personal job,
+            //It might be because CanTakeJob/CanCharacterTakeThisJob function is not satisfied
+            if (character.CanCurrentJobBeOverriddenByJob(job)) {
+                if(AssignCharacterToJob(job, character)) {
+                    if (character.stateComponent.currentState != null) {
+                        character.stateComponent.currentState.OnExitThisState();
+                        //This call is doubled so that it will also exit the previous major state if there's any
+                        if (character.stateComponent.currentState != null) {
+                            character.stateComponent.currentState.OnExitThisState();
+                        }
+                    } else {
+                        if (character.currentParty.icon.isTravelling) {
+                            if (character.currentParty.icon.travelLine == null) {
+                                character.marker.StopMovement();
+                            } else {
+                                character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+                            }
+                        }
+                        character.AdjustIsWaitingForInteraction(1);
+                        character.StopCurrentAction(false);
+                        character.AdjustIsWaitingForInteraction(-1);
+                    }
                 }
             }
             //if (processLogicForPersonalJob && !hasProcessed) {

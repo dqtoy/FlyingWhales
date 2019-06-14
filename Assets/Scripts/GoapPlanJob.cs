@@ -181,6 +181,10 @@ public class GoapPlanJob : JobQueueItem {
         return base.CanTakeJob(character);
     }
     public override bool CanCharacterTakeThisJob(Character character) {
+        //All jobs that are personal will bypass _canTakeThisJob/_canTakeThisJobWithTarget function checkers if the character parameter is the owner of the job queue
+        if(character == jobQueueParent.character) {
+            return CanTakeJob(character);
+        }
         if (_canTakeThisJob != null) {
             if (_canTakeThisJob(character, this)) {
                 return CanTakeJob(character);
