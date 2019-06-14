@@ -13,23 +13,14 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     public JOB slotJob { get; private set; }
     [SerializeField] private Image jobIcon;
     [SerializeField] private TextMeshProUGUI jobNameLbl;
-    [SerializeField] private Button assignBtn;
-    [SerializeField] private RoleSlotItemDraggable draggable;
     [SerializeField] private Image cooldownProgress;
     [SerializeField] private UIHoverHandler portraitHover;
 
-    [Header("Job Actions")]
-    [SerializeField] private GameObject jobActionBtnPrefab;
-    [SerializeField] private RectTransform jobActionsParent;
 
     [SerializeField] private GameObject validPortraitGO;
     [SerializeField] private GameObject invalidPortraitGO;
     [SerializeField] private GameObject tooltipGO;
     [SerializeField] private TextMeshProUGUI tooltipLbl;
-
-    public CustomDropZone dropZone;
-
-    public System.Type neededType { get; private set; }
 
     public object associatedObj {
         get { return character; }
@@ -39,19 +30,12 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         slotJob = job;
         UpdateVisuals();
         AddListeners();
-        neededType = typeof(Character);
     }
 
     private void AddListeners() {
         Messenger.AddListener<JOB, Character>(Signals.CHARACTER_ASSIGNED_TO_JOB, OnCharacterAssignedToJob);
         Messenger.AddListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
-        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener<JOB, bool>(Signals.JOB_SLOT_LOCK_CHANGED, OnJobSlotLockChanged);
-        Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_CREATED, OnDragObjectCreated);
-        Messenger.AddListener<DragObject>(Signals.DRAG_OBJECT_DESTROYED, OnDragObjectDestroyed);
         Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobCooldownActivated);
-        //Messenger.AddListener<Intel>(Signals.PLAYER_OBTAINED_INTEL, OnPlayerObtainedIntel);
     }
 
     public void SetCharacter(Character character) {
@@ -72,33 +56,10 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             portrait.gameObject.SetActive(false);
         } else {
             portrait.GeneratePortrait(character);
+            portrait.SetBaseBGState(false);
             portrait.gameObject.SetActive(true);
         }
-    }
-	
-    public void OnClickAssign() {
-        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, AssignCharacterToJob, new CharacterLevelComparer(), CanAssignCharacterToJob);
-    }
-    private bool CanAssignCharacterToJob(Character character) {
-        if (this.character != null && this.character.id == character.id) {
-            return false; //This means that the character is already assigned to this job
-        }
-        if (PlayerManager.Instance.player.roleSlots[slotJob].isSlotLocked) {
-            return false;
-        }
-        JOB charactersJob = PlayerManager.Instance.player.GetCharactersCurrentJob(character);
-        if (charactersJob != JOB.NONE 
-            && PlayerManager.Instance.player.roleSlots[charactersJob].activeAction != null
-            && PlayerManager.Instance.player.roleSlots[charactersJob].activeAction.isInCooldown) {
-            return false;
-        }
-        return PlayerManager.Instance.player.CanAssignCharacterToJob(slotJob, character);
-    }
-    private void AssignCharacterToJob(Character character) {
-        Debug.Log("Assigning " + character.name + " to job " + slotJob.ToString());
-        PlayerManager.Instance.player.AssignCharacterToJob(slotJob, character);
-        //UIManager.Instance.HideObjectPicker();
-    }
+    }    
     private void OnCharacterAssignedToJob(JOB job, Character character) {
         if (slotJob == job) {
             SetCharacter(character);
@@ -109,112 +70,6 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             SetCharacter(null);
         }
     }
-
-    #region Drag
-    private void OnDragObjectCreated(DragObject obj) {
-        if (dropZone != null && dropZone.isEnabled && neededType != null && CanAssignCharacter(obj.parentItem.associatedObj)) {
-            //glowGO.SetActive(true);
-            validPortraitGO.SetActive(true);
-            invalidPortraitGO.SetActive(false);
-        } else {
-            validPortraitGO.SetActive(false);
-            invalidPortraitGO.SetActive(true);
-        }
-    }
-    private void OnDragObjectDestroyed(DragObject obj) {
-        //glowGO.SetActive(false);
-        validPortraitGO.SetActive(false);
-        invalidPortraitGO.SetActive(false);
-    }
-    private bool CanAssignCharacter(object obj) {
-        if(obj is Character) {
-            Character character = obj as Character;
-            return CanAssignCharacterToJob(character);
-        }
-        return false;
-    }
-    public void OnDropItemAtDropZone(GameObject go) { //this is used to filter if the dragged object is valid for this slot
-        DragObject dragObj = go.GetComponent<DragObject>();
-        if (dragObj == null) {
-            return;
-        }
-        IDragParentItem parentItem = dragObj.parentItem;
-        if (parentItem != null) {
-            if (CanAssignCharacter(parentItem.associatedObj)) {
-                AssignCharacterToJob(parentItem.associatedObj as Character);
-            }
-        }
-    }
-    public void OverrideDraggableState(bool isDraggable) {
-        draggable.SetDraggableOverride(isDraggable);
-    }
-    #endregion
-
-    #region Assign
-    private void OnJobSlotLockChanged(JOB job, bool isLocked) {
-        if (slotJob == job) {
-            assignBtn.interactable = !isLocked;
-        }
-    }
-    #endregion
-
-    #region Action Buttons
-    public void HideActionButtons() {
-        jobActionsParent.gameObject.SetActive(false);
-    }
-    public void ShowActionButtons(IPointOfInterest target, RectTransform parent) {
-        //Utilities.DestroyChildren(jobActionsParent);
-        string summary = "Showing action buttons from " + slotJob.ToString() + " targetting " + target.name;
-        List<PlayerJobAction> actions = PlayerManager.Instance.player.GetJobActionsThatCanTarget(slotJob, target);
-        for (int i = 0; i < actions.Count; i++) {
-            PlayerJobAction currAction = actions[i];
-            GameObject buttonGO = UIManager.Instance.InstantiateUIObject(jobActionBtnPrefab.name, parent);
-            buttonGO.name = currAction.actionName;
-            PlayerJobActionButton btn = buttonGO.GetComponent<PlayerJobActionButton>();
-            btn.SetJobAction(currAction, character, target);
-            btn.SetClickAction(() => currAction.ActivateAction(character, target));
-            summary += "\nShowing action " + currAction.actionName; 
-            //switch (actionTarget) {
-            //case JOB_ACTION_TARGET.CHARACTER:
-
-            //        break;
-            //    case JOB_ACTION_TARGET.AREA:
-            //        btn.SetJobAction(currAction, character, UIManager.Instance.areaInfoUI.activeArea);
-            //        btn.SetClickAction(() => currAction.ActivateAction(character, UIManager.Instance.areaInfoUI.activeArea));
-            //        break;
-            //    case JOB_ACTION_TARGET.FACTION:
-            //        break;
-            //    default:
-            //        break;
-            //}
-        }
-        //Debug.Log(summary);
-        //jobActionsParent.gameObject.SetActive(true);
-    }
-    private void OnMenuOpened(UIMenu menu) {
-        //UpdateActionButtons();
-    }
-    private void OnMenuClosed(UIMenu menu) {
-        //UpdateActionButtons();
-    }
-    public void UpdateActionButtons() {
-        if (UIManager.Instance.IsShareIntelMenuOpen()) {
-            return;
-        }
-        //if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.minion == null) {
-        //    ShowActionButtons(UIManager.Instance.characterInfoUI.activeCharacter);
-        //} 
-        //else if (UIManager.Instance.areaInfoUI.isShowing && UIManager.Instance.areaInfoUI.activeArea.id != PlayerManager.Instance.player.playerArea.id) {
-        //    ShowActionButtons(JOB_ACTION_TARGET.AREA);
-        //} 
-        else {
-            HideActionButtons();
-        }
-    }
-    private void OnPlayerObtainedIntel(Intel intel) {
-        //UpdateActionButtons();
-    }
-    #endregion
 
     #region Cooldown
     private void OnJobCooldownActivated(PlayerJobAction action) {
@@ -261,8 +116,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
             case JOB.SPY:
                 message = "An agent that gathers information about places and characters.";
                 break;
-            case JOB.RECRUITER:
-                header = "Seducer: " + character.name;
+            case JOB.SEDUCER:
                 message = "An agent that corrupts heroes and recruits new minions.";
                 break;
             case JOB.DIPLOMAT:
@@ -279,7 +133,9 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         UIManager.Instance.ShowSmallInfo(message, header);
     }
     public void HideTooltip() {
-        UIManager.Instance.HideSmallInfo();
+        if (UIManager.Instance != null) {
+            UIManager.Instance.HideSmallInfo();
+        }
     }
     private void ShowActionBtnTooltip(string message, string header) {
         string m = string.Empty;   

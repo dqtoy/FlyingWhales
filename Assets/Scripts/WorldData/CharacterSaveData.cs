@@ -8,6 +8,7 @@ public class CharacterSaveData {
     public string name;
     public RACE race;
     public GENDER gender;
+    public SEXUALITY sexuality;
     public CharacterRole role;
     public string className;
     public LOCATION_IDENTIFIER locationType;
@@ -18,7 +19,7 @@ public class CharacterSaveData {
     public PortraitSettings portraitSettings;
     public List<string> equipmentData;
     public List<string> inventoryData;
-    //public List<RelationshipSaveData> relationshipsData;
+    public List<RelationshipSaveData> relationshipsData;
     public List<ATTRIBUTE> attributes;
     public HIDDEN_DESIRE hiddenDesire;
     public List<int> secrets;
@@ -31,6 +32,7 @@ public class CharacterSaveData {
         name = character.name;
         race = character.raceSetting.race;
         gender = character.gender;
+        sexuality = character.sexuality;
         role = character.role;
         className = character.characterClass.className;
 
@@ -67,10 +69,10 @@ public class CharacterSaveData {
         //    inventoryData.Add(item.itemName);
         //}
 
-        //relationshipsData = new List<RelationshipSaveData>();
-        //foreach (KeyValuePair<Character, Relationship> kvp in character.relationships) {
-        //    relationshipsData.Add(new RelationshipSaveData(kvp.Value));
-        //}
+        relationshipsData = new List<RelationshipSaveData>();
+        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in character.relationships) {
+            relationshipsData.Add(new RelationshipSaveData(kvp.Value));
+        }
 
         //attributes = new List<ATTRIBUTE>();
         //for (int i = 0; i < character.attributes.Count; i++) {

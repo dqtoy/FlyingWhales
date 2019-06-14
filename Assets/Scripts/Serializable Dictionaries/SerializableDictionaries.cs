@@ -49,7 +49,10 @@ public class ItemSpriteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite
 public class TileObjectBiomeAssetDictionary : SerializableDictionary<BIOMES, BiomeTileObjectTileSetting> { }
 [System.Serializable]
 public class TileObjectSlotDictionary : SerializableDictionary<TileBase, List<TileObjectSlotSetting>, TileObjectSlotListStorage> { }
+[System.Serializable]
+public class CursorTextureDictionary : SerializableDictionary<CursorManager.Cursor_Type, Texture2D> { }
 
+//List storage
 [System.Serializable]
 public class CharacterTagListStorage : SerializableDictionary.Storage<List<CharacterActionTagRequirement>> { }
 [System.Serializable]

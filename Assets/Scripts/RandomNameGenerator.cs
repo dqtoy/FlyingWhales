@@ -562,6 +562,19 @@ public class RandomNameGenerator : MonoBehaviour {
     //
     //		return " ";
     //	}
+
+    public void RemoveNameAsAvailable(GENDER gender, RACE race, string name) {
+        switch (race) {
+            case RACE.HUMANS:
+                if (gender == GENDER.MALE) {
+                    availableHumanMaleNames.Remove(name);
+                }else {
+                    availableHumanFemaleNames.Remove(name);
+                }
+                break;
+            
+        }
+    }
 }
 
 

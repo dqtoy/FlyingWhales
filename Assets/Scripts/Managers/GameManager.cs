@@ -76,7 +76,7 @@ public class GameManager : MonoBehaviour {
         Instance = this;
         this.timeElapsed = 0f;
         _gameHasStarted = false;
-        CursorManager.Instance.SetCursorToDefault();
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
 #if !WORLD_CREATION_TOOL
         //Application.logMessageReceived += LogCallback;
 #endif
@@ -365,6 +365,13 @@ public class GameManager : MonoBehaviour {
             return true;
         }
         return false;
+    }
+    public void SetStartDate(GameDate date) {
+        month = date.month;
+        days = date.day;
+        tick = date.tick;
+        year = date.year;
+        continuousDays = date.ConvertToContinuousDays();
     }
     #endregion
 }

@@ -144,19 +144,22 @@ public class MapGenerator : MonoBehaviour {
 
         LandmarkManager.Instance.InitializeLandmarks();
 
-        CharacterManager.Instance.LoadCharacters(data);
         LandmarkManager.Instance.LoadAdditionalAreaData();
-
-        //InteriorMapManager.Instance.RegisterObstacles();
 
         TokenManager.Instance.Initialize();
 
         FactionManager.Instance.RandomizeStartingFactions(data);
+        CharacterManager.Instance.LoadCharacters(data);
+        FactionManager.Instance.GenerateStartingFactionData();
         CharacterManager.Instance.CreateNeutralCharacters();
 
+        CharacterManager.Instance.LoadRelationships(data);
         CharacterManager.Instance.GenerateRelationships();
         CharacterManager.Instance.PlaceInitialCharacters();
         CharacterManager.Instance.GiveInitialItems();
+#if TRAILER_BUILD
+        CharacterManager.Instance.GenerateInitialLogs();
+#endif
 
         AudioManager.Instance.TransitionTo("World Music", 10);
 

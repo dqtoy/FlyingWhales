@@ -40,7 +40,9 @@ public class Trait {
         //    Character character = sourceCharacter as Character;
         //    character.CreateApprehendJob();
         //}
-        dateEstablished = GameManager.Instance.Today();
+#if !WORLD_CREATION_TOOL
+         dateEstablished = GameManager.Instance.Today();
+#endif
     }
     public virtual void OnRemoveTrait(IPointOfInterest sourceCharacter) {
         if (onRemoveAction != null) {

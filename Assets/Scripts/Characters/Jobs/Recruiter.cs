@@ -5,5 +5,5 @@ using UnityEngine;
 
 public class Recruiter : Job {
 
-    public Recruiter(Character character) : base(character, JOB.RECRUITER) { }
+    public Recruiter(Character character) : base(character, JOB.SEDUCER) { }
 }

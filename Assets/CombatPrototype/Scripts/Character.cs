@@ -213,7 +213,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool isFactionless { //is the character part of the neutral faction? or no faction?
         get {
-            if (faction == null || FactionManager.Instance.neutralFaction.id == faction.id) {
+            if (faction == null || FactionManager.Instance.neutralFaction == faction) {
                 return true;
             } else {
                 return false;
@@ -559,7 +559,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Character(CharacterSaveData data) : this() {
         _id = Utilities.SetID(this, data.id);
         _gender = data.gender;
-        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
+        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
         AssignRole(data.role, false);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
@@ -631,13 +631,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //supply
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
-        GetRandomCharacterColor();
 
         ConstructInitialGoapAdvertisementActions();
         SubscribeToSignals();
+#if !WORLD_CREATION_TOOL
+        GetRandomCharacterColor();
         GameDate gameDate = GameManager.Instance.Today();
         gameDate.AddTicks(1);
         SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions());
+#endif
     }
 
     #region Signals
@@ -689,6 +691,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    public void SetSexuality(SEXUALITY sexuality) {
+        this.sexuality = sexuality;
+    }
     #endregion
 
     #region Marker
@@ -698,12 +703,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //portraitGO.transform.localPosition = pos;
         SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
         marker.SetCharacter(this);
-#if UNITY_EDITOR
         marker.SetHoverAction(OnHoverMarker, OnHoverExit);
-#endif
     }
     public void DestroyMarker() {
         ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
+        gridTileLocation.RemoveCharacterHere(this);
+    }
+    public void DisableMarker() {
+        marker.gameObject.SetActive(false);
         gridTileLocation.RemoveCharacterHere(this);
     }
     #endregion
@@ -768,7 +775,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             SetIsDead(false);
             SubscribeToSignals();
             SetPOIState(POI_STATE.ACTIVE);
+            ChangeRace(RACE.SKELETON);
+            AssignRole(CharacterRole.SOLDIER);
+            AssignClassByRole(this.role);
+            ChangeFactionTo(FactionManager.Instance.neutralFaction);
             _ownParty.ReturnToLife();
+            marker.OnReturnToLife();
+            if (grave != null) {
+                marker.PlaceMarkerAt(grave.gridTileLocation);
+                grave.gridTileLocation.structure.RemovePOI(grave);
+                SetGrave(null);
+            }
+            MigrateHomeStructureTo(null);
         }
     }
     public void Death(string cause = "normal", GoapAction deathFromAction = null) {
@@ -1185,7 +1203,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (CharacterManager.Instance.IsClassADeadlySin(_characterClass.className)) {
             AssignJob(_characterClass.jobType);
         } else {
-            JOB[] jobs = new JOB[] { JOB.DIPLOMAT, JOB.DEBILITATOR, JOB.EXPLORER, JOB.INSTIGATOR, JOB.RAIDER, JOB.RECRUITER, JOB.SPY };
+            JOB[] jobs = new JOB[] { JOB.DIPLOMAT, JOB.DEBILITATOR, JOB.EXPLORER, JOB.INSTIGATOR, JOB.RAIDER, JOB.SEDUCER, JOB.SPY };
             AssignJob(jobs[UnityEngine.Random.Range(0, jobs.Length)]);
             //AssignJob(JOB.RAIDER);
         }
@@ -1210,7 +1228,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             case JOB.DIPLOMAT:
                 _job = new Diplomat(this);
                 break;
-            case JOB.RECRUITER:
+            case JOB.SEDUCER:
                 _job = new Recruiter(this);
                 break;
             case JOB.LEADER:
@@ -1355,6 +1373,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (!CanCharacterReact()) {
             return true;
         }
+#if TRAILER_BUILD
+        if (this.name == "Jamie" || this.name == "Fiona" || this.name == "Audrey") {
+            if (this.name == "Jamie" && targetCharacter.name == "Fiona" && targetCharacter.isDead) {
+                CancelAllJobsAndPlans();
+                marker.StopMovement();
+                marker.LookAt(targetCharacter.marker.transform.position, true);
+                //add heartbroken trait to jaime
+                AddTrait("Heartbroken");
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "mental_breakdown");
+                log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                PlayerManager.Instance.player.ShowNotification(log);
+            }
+            return false;
+        }
+#endif
         bool hasCreatedJob = false;
         for (int i = 0; i < targetCharacter.normalTraits.Count; i++) {
             if (targetCharacter.normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetCharacter, this)) {
@@ -1819,10 +1852,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void ChangeFactionTo(Faction newFaction) {
-        if (this.faction.id == newFaction.id) {
+        if (this.faction == newFaction) {
             return; //if the new faction is the same, ignore change
         }
-        faction.RemoveCharacter(this);
+        if (faction != null) {
+            faction.RemoveCharacter(this);
+        }
         newFaction.AddNewCharacter(this);
     }
     private void OnChangeFaction() {
@@ -2120,6 +2155,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void SetName(string newName) {
         _name = newName;
         _firstName = _name.Split(' ')[0];
+        RandomNameGenerator.Instance.RemoveNameAsAvailable(this.gender, this.race, newName);
     }
     //If true, character can't do daily action (onDailyAction), i.e. actions, needs
     //public void SetIsIdle(bool state) {
@@ -2524,13 +2560,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return true;
     }
     internal void OnRelationshipWithCharacterAdded(Character targetCharacter, RelationshipTrait newRel) {
-        //check if they share the same home, then migrate them accordingly
+#if !WORLD_CREATION_TOOL
+         //check if they share the same home, then migrate them accordingly
         if (newRel.relType == RELATIONSHIP_TRAIT.LOVER
             && this.homeArea.id == targetCharacter.homeArea.id
             && this.homeStructure != targetCharacter.homeStructure) {
             //Lover conquers all, even if one character is factionless they will be together, meaning the factionless character will still have home structure
             homeArea.AssignCharacterToDwellingInArea(this, targetCharacter.homeStructure);
         }
+#endif
     }
     /// <summary>
     /// Does this character have a relationship of effect with the provided character?
@@ -3203,7 +3241,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //Added checking, because character can sometimes change home from dwelling to nothing.
             dwelling.AddResident(this);
         }
+#if !WORLD_CREATION_TOOL
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " changed home structure to " + dwelling?.ToString() ?? "None");
+#endif
     }
     //private void OnCharacterMigratedHome(Character character, Area previousHome, Area homeArea) {
     //    if (character.id != this.id && this.homeArea.id == homeArea.id) {
@@ -3357,7 +3397,22 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         Messenger.Broadcast(Signals.TRAIT_ADDED, this, trait);
 
+#if !WORLD_CREATION_TOOL
         if (GameManager.Instance.gameHasStarted) {
+#if TRAILER_BUILD
+            if (this.name != "Jamie" && this.name != "Fiona" && this.name != "Audrey") {
+                if (trait.name == "Hungry" || trait.name == "Starving") {
+                    Debug.Log("Planning fullness recovery from gain trait");
+                    PlanFullnessRecoveryActions();
+                } else if (trait.name == "Lonely" || trait.name == "Forlorn") {
+                    Debug.Log("Planning happiness recovery from gain trait");
+                    PlanHappinessRecoveryActions();
+                } else if (trait.name == "Tired" || trait.name == "Exhausted") {
+                    Debug.Log("Planning tiredness recovery from gain trait");
+                    PlanTirednessRecoveryActions();
+                }
+            }
+#else
             if (trait.name == "Hungry" || trait.name == "Starving") {
                 Debug.Log("Planning fullness recovery from gain trait");
                 PlanFullnessRecoveryActions();
@@ -3368,8 +3423,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 Debug.Log("Planning tiredness recovery from gain trait");
                 PlanTirednessRecoveryActions();
             }
+#endif
         }
-
+#endif
         //if (trait is RelationshipTrait) {
         //    RelationshipTrait rel = trait as RelationshipTrait;
         //    AddRelationship(rel.targetCharacter, rel);
@@ -3379,7 +3435,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //when a character gains a criminal trait, drop all location jobs that this character is assigned to
             homeArea.jobQueue.UnassignAllJobsTakenBy(this);
         }
+#if TRAILER_BUILD
+        else if (trait.name == "Unfaithful" && this.name == "Jamie") {
+            //force Jamie to drop all plans, then go to fiona to chat. (Scheduled him to chat after 5 ticks)
+            CancelAllJobsAndPlans();
+            GameDate chatSched = GameManager.Instance.Today();
+            chatSched.AddTicks(2);
+            SchedulingManager.Instance.AddEntry(chatSched, ScheduleChat);
+        }
+#endif
         return true;
+    }
+    private void ScheduleChat() {
+        GoapAction chatCharacter = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, CharacterManager.Instance.GetCharacterByName("Fiona"));
+        GoapNode node = new GoapNode(null, chatCharacter.cost, chatCharacter);
+        GoapPlan plan = new GoapPlan(node, new GOAP_EFFECT_CONDITION[] { }, GOAP_CATEGORY.IDLE);
+        plan.ConstructAllNodes();
+        AddPlan(plan, true);
     }
     private bool RemoveTraitOnSchedule(Trait trait, bool triggerOnRemove = true) {
         if (isDead) {
@@ -4025,6 +4097,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    WillAboutToDoAction(specificAction);
         //    return;
         //}
+#if TRAILER_BUILD
+        if (name == "Fiona" || name == "Jamie" || name == "Audrey") {
+            if (allGoapPlans.Count > 0) {
+                PerformGoapPlans();
+            }
+            return;
+        }
+#endif
         if (allGoapPlans.Count > 0) {
             //StopDailyGoapPlanGeneration();
             PerformGoapPlans();
@@ -4032,6 +4112,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else {
             IdlePlans();
         }
+        
     }
     private void IdlePlans() {
         if (_hasAlreadyAskedForPlan) {
@@ -4327,7 +4408,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
-                    if (chance < 25) {
+                    if (chance < 25 && name != "Fiona") { //For Trailer Build Only
                         log += "\n  -Morning, Afternoon, or Early Night: " + name + " will enter Stroll Outside Mode";
                         PlanIdleStrollOutside(currentStructure);
                         return log;
@@ -4401,7 +4482,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
-                    if (chance < 25) {
+                    if (chance < 25 && name != "Fiona") { //For Trailer Build Only
                         log += "\n  -Morning or Afternoon: " + name + " will enter Stroll Outside State";
                         PlanIdleStrollOutside(currentStructure);
                         return log;
@@ -5648,7 +5729,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.BURY_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
         poiGoapActions.Add(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
-        poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
+        //poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE); //Disabled for trailer build
         poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
         poiGoapActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
         poiGoapActions.Add(INTERACTION_TYPE.TANTRUM);
@@ -6683,6 +6764,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
             tantrumLog += "\nRolled: " + chance.ToString();
 
+#if TRAILER_BUILD
+            if (name == "Fiona" || name == "Jamie" || name == "Audrey") {
+                chance = 100; //do not make main cast have tantrum
+            }
+#endif
             if (chance < 20) {
                 CancelAllJobsAndPlans();
                 //Create Tantrum action

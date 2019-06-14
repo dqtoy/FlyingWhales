@@ -148,7 +148,11 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             PortraitFrame frame = CharacterManager.Instance.GetPortraitFrame(_character.role.roleType);
             baseBG.sprite = frame.baseBG;
             lockedFrame.sprite = frame.frameOutline;
+            SetBaseBGState(true);
         }
+    }
+    public void SetBaseBGState(bool state) {
+        baseBG.gameObject.SetActive(state);
     }
     public void ShowCharacterInfo() {
         UIManager.Instance.ShowSmallInfo(_character.name);

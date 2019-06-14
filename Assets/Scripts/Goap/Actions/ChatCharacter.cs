@@ -26,6 +26,9 @@ public class ChatCharacter : GoapAction {
         targetCharacter.SetIsChatting(true);
         actor.marker.UpdateActionIcon();
         targetCharacter.marker.UpdateActionIcon();
+
+        targetCharacter.marker.LookAt(actor.marker.transform.position, true); //For Trailer Build Only
+
         CHARACTER_MOOD thisCharacterMood = actor.currentMoodType;
         CHARACTER_MOOD targetCharacterMood = targetCharacter.currentMoodType;
 
@@ -140,6 +143,16 @@ public class ChatCharacter : GoapAction {
         }
 
         chatResult = weights.PickRandomElementGivenWeights();
+
+#if TRAILER_BUILD
+        if (actor.name == "Jamie" && targetCharacter.name == "Fiona") {
+            chatResult = "Flirt"; //For Trailer Only
+        }
+        if (actor.name == "Jamie" && targetCharacter.name == "Audrey") {
+            chatResult = "Argument"; //For Trailer Only
+        }
+#endif
+
         if (chatResult == "Become Friends") {
             //may become friends
             CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.FRIEND);
@@ -216,13 +229,31 @@ public class ChatCharacter : GoapAction {
     }
     #endregion
 
+    private void CreatePoisonTable(Character character) {
+        Character target = poiTarget as Character;
+        IPointOfInterest targetTable = target.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.TABLE_POISON, targetTable);
+        job.SetCannotOverrideJob(true);
+        job.SetCannotCancelJob(true);
+        //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+        character.jobQueue.AddJobInQueue(job, true);
+        character.jobQueue.ProcessFirstJobInQueue(character);
+    }
+
     #region Intel Reactions
     private List<string> QuickChatIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 
-        //Recipient and Actor is the same or Recipient and Target is the same:
-        if (recipient == actor || recipient == target) {
+#if TRAILER_BUILD
+        if (recipient.name == "Audrey" && actor.name == "Jamie" && target.name == "Fiona") {
+            reactions.Add(string.Format("This is the last straw! I'm leaving that cur {0}, and this godforsaken town!", actor.name));
+            recipient.CancelAllJobsAndPlans();
+            recipient.marker.GoTo(recipient.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).GetRandomUnoccupiedTile(), () => CreatePoisonTable(recipient));
+            return reactions;
+        }
+#endif
+ 	if (recipient == actor || recipient == target) {
             //- **Recipient Response Text**: I know what I did.
             reactions.Add("I know what I did.");
             //-**Recipient Effect * *: no effect
@@ -343,7 +374,6 @@ public class ChatCharacter : GoapAction {
         Character target = poiTarget as Character;
         Character actorParamour = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
         Character targetParamour = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
-
         if (recipient == actor) {
             if(recipient == targetParamour) {
                 reactions.Add(string.Format("Yes that's true! I am so happy {0} finally chose me. This is what I've been dreaming for and at last, it came true!", target.name));
@@ -455,7 +485,6 @@ public class ChatCharacter : GoapAction {
         }
         return reactions;
     }
-
     private List<string> ResolveEnmityIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;

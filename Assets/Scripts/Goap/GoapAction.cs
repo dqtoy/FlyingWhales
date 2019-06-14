@@ -180,7 +180,7 @@ public class GoapAction {
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             poiTargetAlterEgo = targetCharacter.currentAlterEgo;
-            if (poiTarget != actor) {
+            if (poiTarget != actor && !targetCharacter.isDead) {
                 targetCharacter.OnTargettedByAction(this);
                 if (!doesNotStopTargetCharacter) {
                     if (targetCharacter.currentAction != null) {
@@ -587,7 +587,7 @@ public class GoapAction {
     /// </summary>
     /// <returns>Chosen log.</returns>
     public Log GetCurrentLog() {
-        if (onlyShowNotifOfDescriptionLog) {
+        if (onlyShowNotifOfDescriptionLog && currentState != null) {
             return this.currentState.descriptionLog;
         }
         if (actor.currentParty.icon.isTravelling) {

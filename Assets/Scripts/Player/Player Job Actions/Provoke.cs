@@ -19,14 +19,14 @@ public class Provoke : PlayerJobAction {
         base.ActivateAction(assignedCharacter, targetCharacter);
     }
 
-    protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
         if (targetCharacter.isDead || character.id == targetCharacter.id) {
             return false;
         }
         //if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
         //    return false;
         //}
-        return base.ShouldButtonBeInteractable(character, targetCharacter);
+        return base.CanPerformActionTowards(character, targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if (!(targetPOI is Character)) {

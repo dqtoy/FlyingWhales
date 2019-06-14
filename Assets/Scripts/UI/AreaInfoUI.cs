@@ -237,7 +237,7 @@ public class AreaInfoUI : UIMenu {
         Utilities.DestroyChildren(charactersScrollView.content);
         characterItems.Clear();
 
-        List<Character> charactersToShow = new List<Character>(activeArea.charactersAtLocation);
+        List<Character> charactersToShow = new List<Character>();
         for (int i = 0; i < activeArea.charactersAtLocation.Count; i++) {
             Character character = activeArea.charactersAtLocation[i];
             for (int j = 0; j < character.ownParty.characters.Count; j++) {

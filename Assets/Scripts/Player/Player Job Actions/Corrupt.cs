@@ -24,14 +24,14 @@ public class Corrupt : PlayerJobAction {
         UIManager.Instance.ShowClickableObjectPicker(_traitNames, OnClickTrait, null, CanCorruptCharacter, "Corrupt " + _targetCharacter.name + " with an affliction.", OnHoverTrait);
     }
 
-    protected override bool ShouldButtonBeInteractable(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
         if (targetCharacter.isDead || character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
         //if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
         //    return false;
         //}
-        return base.ShouldButtonBeInteractable(character, targetCharacter);
+        return base.CanPerformActionTowards(character, targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if(!(targetPOI is Character)) {

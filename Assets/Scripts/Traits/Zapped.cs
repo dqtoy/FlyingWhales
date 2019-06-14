@@ -10,7 +10,7 @@ public class Zapped : Trait {
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEUTRAL;
         associatedInteraction = INTERACTION_TYPE.NONE;
-        daysDuration = GameManager.Instance.GetTicksBasedOnMinutes(30);
+        daysDuration = 3;
         effects = new List<TraitEffect>();
     }
 
@@ -49,6 +49,28 @@ public class Zapped : Trait {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             character.AdjustDoNotDisturb(-1);
+
+#if TRAILER_BUILD
+            if (character.name == "Audrey") {
+                Character fiona = CharacterManager.Instance.GetCharacterByName("Fiona");
+                Character jamie = CharacterManager.Instance.GetCharacterByName("Jamie");
+
+                if (fiona.currentStructure == fiona.homeStructure) {
+                    fiona.PlanIdleStrollOutside(fiona.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                }
+                if (jamie.currentStructure == fiona.homeStructure) {
+                    jamie.PlanIdleStrollOutside(jamie.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
+                }
+
+                IPointOfInterest targetTable = fiona.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
+                GoapPlanJob job = new GoapPlanJob("Poison Table", INTERACTION_TYPE.TABLE_POISON, targetTable);
+                job.SetCannotOverrideJob(true);
+                job.SetCannotCancelJob(true);
+                job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                character.jobQueue.AddJobInQueue(job, true);
+                character.jobQueue.ProcessFirstJobInQueue(character);
+            }
+#endif
         }
         base.OnRemoveTrait(sourcePOI);
     }

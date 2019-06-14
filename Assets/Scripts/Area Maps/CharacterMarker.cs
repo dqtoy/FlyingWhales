@@ -870,6 +870,14 @@ public class CharacterMarker : PooledObject {
             visionCollision.OnDeath();
         }
     }
+    public void OnReturnToLife() {
+        gameObject.SetActive(true);
+        for (int i = 0; i < colliders.Length; i++) {
+            colliders[i].enabled = true;
+        }
+        UpdateAnimation();
+        UpdateActionIcon();
+    }
     public void UpdateCenteredWorldPos() {
         centeredWorldPos = character.gridTileLocation.centeredWorldLocation;
     }
