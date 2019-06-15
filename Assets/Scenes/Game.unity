@@ -17690,7 +17690,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00000070191805}
+  m_AnchoredPosition: {x: 0, y: 0.000031219497}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &471264974
@@ -20518,6 +20518,8 @@ MonoBehaviour:
   tile1: {fileID: 0}
   tile2: {fileID: 0}
   electricEffectPrefab: {fileID: 1997544771906246, guid: f8f78640bd2a9f34c8838653cdcb9f8b,
+    type: 2}
+  hitEffectPrefab: {fileID: 1826126969253054, guid: 35a4e5c959a14474086ca1824ea11827,
     type: 2}
   pauseTickEnded2: 0
 --- !u!114 &557822220
@@ -35123,6 +35125,7 @@ GameObject:
   - component: {fileID: 930355349}
   - component: {fileID: 930355351}
   - component: {fileID: 930355347}
+  - component: {fileID: 930355346}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -35130,6 +35133,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &930355346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 930355345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  profile: {fileID: 11400000, guid: eb61b37790c165446b5921ae728df1ca, type: 2}
 --- !u!114 &930355347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54737,7 +54752,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 1b96ebf196409684fb1e35671e17331f, type: 3}
     - {fileID: 21300000, guid: 175be3da23178ae4096b6cc3d20b459f, type: 3}
     - {fileID: 21300000, guid: 623d4fe6fa7f3264d8a883e12f3774f4, type: 3}
-    - {fileID: 21300000, guid: a8a98d8c7dc898049a9b26ba7a7682dd, type: 3}
+    - {fileID: 21300000, guid: 00c146ecfee6b7c4fb1138f861d0a9f4, type: 3}
     - {fileID: 21300000, guid: a85b0710644af4c48a2a7f742a32da7e, type: 3}
     - {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
     - {fileID: 21300000, guid: b509b7ae41091354f8a5b5a1f47718ea, type: 3}
@@ -75058,7 +75073,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -0.00006866455, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1929403611

@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour {
 
     [Header("Particle Effects")]
     [SerializeField] private GameObject electricEffectPrefab;
+    [SerializeField] private GameObject hitEffectPrefab;
 
     private const float X1_SPEED = 0.75f;
     private const float X2_SPEED = 0.5f;
@@ -321,6 +322,16 @@ public class GameManager : MonoBehaviour {
     }
     private IEnumerator ElectricEffect(Character character) {
         GameObject go = GameObject.Instantiate(electricEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
+        go.SetActive(true);
+        go.transform.localPosition = Vector3.zero;
+        yield return new WaitForSeconds(2f);
+        GameObject.Destroy(go);
+    }
+    public void CreateHitEffectAt(Character character) {
+        StartCoroutine(HitEffect(character));
+    }
+    private IEnumerator HitEffect(Character character) {
+        GameObject go = GameObject.Instantiate(hitEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.SetActive(true);
         go.transform.localPosition = Vector3.zero;
         yield return new WaitForSeconds(2f);
