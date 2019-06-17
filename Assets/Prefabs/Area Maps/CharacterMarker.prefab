@@ -191,6 +191,7 @@ GameObject:
   - component: {fileID: 114825110122692990}
   - component: {fileID: 212044654499763036}
   - component: {fileID: 61336182176749038}
+  - component: {fileID: 114755964225770220}
   m_Layer: 14
   m_Name: Main
   m_TagString: Character Marker
@@ -563,6 +564,7 @@ MonoBehaviour:
   colorHighlight: {fileID: 212653369134426336}
   penaltyRadius: 8
   useCanTraverse: 0
+  isInCombatTick: 0
 --- !u!114 &114578536136533292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -642,6 +644,18 @@ MonoBehaviour:
   spread: 5000
   aimStrength: 0.75
   stopMovementST: 
+--- !u!114 &114755964225770220
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1834306330221550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d02e585acca245e40a6a2520b4342143, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentMarker: {fileID: 114379759619008666}
 --- !u!114 &114825110122692990
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -801,11 +815,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 23532730333942114}
@@ -854,7 +868,7 @@ SpriteRenderer:
   m_SortingLayerID: 1024382313
   m_SortingLayer: 19
   m_SortingOrder: 20
-  m_Sprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 45b22988c879646488b23dcc2915bc35, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

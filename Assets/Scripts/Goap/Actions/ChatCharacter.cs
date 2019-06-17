@@ -245,15 +245,8 @@ public class ChatCharacter : GoapAction {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 
-#if TRAILER_BUILD
-        if (recipient.name == "Audrey" && actor.name == "Jamie" && target.name == "Fiona") {
-            reactions.Add(string.Format("This is the last straw! I'm leaving that cur {0}, and this godforsaken town!", actor.name));
-            recipient.CancelAllJobsAndPlans();
-            recipient.marker.GoTo(recipient.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).GetRandomUnoccupiedTile(), () => CreatePoisonTable(recipient));
-            return reactions;
-        }
-#endif
- 	if (recipient == actor || recipient == target) {
+
+ 	    if (recipient == actor || recipient == target) {
             //- **Recipient Response Text**: I know what I did.
             reactions.Add("I know what I did.");
             //-**Recipient Effect * *: no effect
@@ -330,6 +323,15 @@ public class ChatCharacter : GoapAction {
         Character actorParamour = actor.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
         Character targetLover = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
         Character targetParamour = target.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+
+#if TRAILER_BUILD
+        if (recipient.name == "Audrey" && actor.name == "Jamie" && target.name == "Fiona") {
+            reactions.Add(string.Format("This is the last straw! I'm leaving that cur {0}, and this godforsaken town!", actor.name));
+            recipient.CancelAllJobsAndPlans();
+            recipient.marker.GoTo(recipient.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).GetRandomUnoccupiedTile(), () => CreatePoisonTable(recipient));
+            return reactions;
+        }
+#endif
 
         //Recipient and Actor is the same:
         if (recipient == actor) {

@@ -20,10 +20,17 @@ public class RaiseDead : PlayerJobAction {
             return;
         }
         base.ActivateAction(assignedCharacter, target);
+        GameManager.Instance.StartCoroutine(Raise(target));
+    }
+
+    private IEnumerator Raise(Character target) {
+        target.marker.PlayAnimation("Raise Dead");
+        yield return new WaitForSeconds(0.7f);
         target.ReturnToLife();
 #if TRAILER_BUILD
-        UIManager.Instance.Unpause();
+      UIManager.Instance.Unpause();
 #endif
+        yield return null;
     }
 
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {

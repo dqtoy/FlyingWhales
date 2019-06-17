@@ -25,7 +25,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Date Objects")]
     [SerializeField] private ToggleGroup speedToggleGroup;
-    [SerializeField] private Toggle pauseBtn;
+    public Toggle pauseBtn;
     [SerializeField] private Toggle x1Btn;
     [SerializeField] private Toggle x2Btn;
     [SerializeField] private Toggle x4Btn;
@@ -143,15 +143,17 @@ public class UIManager : MonoBehaviour {
             if (contextMenu.gameObject.activeSelf) {
                 HideContextMenu();
             }
-        } else if (Input.GetKeyDown(KeyCode.Space) && !IsMouseOnInput()) {
-            if (pauseBtn.IsInteractable()) {
-                if (GameManager.Instance.isPaused) {
-                    Unpause();
-                } else {
-                    Pause();
-                }
-            }
-        } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
+        } else 
+        //if (Input.GetKeyDown(KeyCode.Space) && !IsMouseOnInput()) {
+        //    if (pauseBtn.IsInteractable()) {
+        //        if (GameManager.Instance.isPaused) {
+        //            Unpause();
+        //        } else {
+        //            Pause();
+        //        }
+        //    }
+        //} else 
+        if (Input.GetKeyDown(KeyCode.Alpha1)) {
             PlayerUI.Instance.ScrollRoleSlotTo(0);
         } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
             PlayerUI.Instance.ScrollRoleSlotTo(1);
@@ -338,6 +340,9 @@ public class UIManager : MonoBehaviour {
 
     #region World Controls
     private void UpdateSpeedToggles(bool isPaused) {
+        if (!gameObject.activeInHierarchy) {
+            return;
+        }
         if (isPaused) {
             pauseBtn.isOn = true;
             speedToggleGroup.NotifyToggleOn(pauseBtn);
