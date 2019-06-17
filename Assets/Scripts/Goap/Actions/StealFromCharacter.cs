@@ -72,7 +72,7 @@ public class StealFromCharacter : GoapAction {
         //**Note**: This is a Theft crime
         SetCommittedCrime(CRIME.THEFT, new Character[] { actor });
         currentState.AddLogFiller(_targetItem, _targetItem.name, LOG_IDENTIFIER.ITEM_1);
-        currentState.SetIntelReaction(State1Reactions);
+        currentState.SetIntelReaction(StealSuccessReactions);
     }
     private void AfterStealSuccess() {
         actor.ObtainTokenFrom(_targetCharacter, _targetItem, false);
@@ -86,84 +86,259 @@ public class StealFromCharacter : GoapAction {
             Kleptomaniac kleptomaniac = trait as Kleptomaniac;
             kleptomaniac.AddNoItemCharacter(poiTarget as Character);
         }
-        currentState.SetIntelReaction(State2Reactions);
+        currentState.SetIntelReaction(StealFailReactions);
     }
     #endregion
 
     #region Intel Reactions
-    private List<string> State1Reactions(Character recipient, Intel sharedIntel) {
+    private List<string> StealSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character targetCharacter = poiTarget as Character;
-        //Recipient and Target is the same:
-        if (recipient == targetCharacter) {
-            //- **Recipient Response Text**: "[Actor Name] stole from me? What a horrible person."
-            reactions.Add(string.Format("{0} stole from me? What a horrible person.", actor.name));
-            //Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
-            recipient.ReactToCrime(CRIME.THEFT, actorAlterEgo, null, this);
+        if (isOldNews) {
+            //Old News
+            reactions.Add("This is old news.");
+        } else {
+            //Not Yet Old News
+            if (awareCharactersOfThisAction.Contains(recipient)) {
+                //- If Recipient is Aware
+                if (recipient == actor) {
+                    reactions.Add("Yes, I did that.");
+                } else {
+                    reactions.Add(string.Format("I already know that {0} stole from me.", actor.name));
+                }
+            } else {
+                //- If Recipient is Not Aware
+                //- Recipient is Actor
+                CHARACTER_MOOD recipientMood = recipient.currentMoodType;
+                if (recipient == actor) {
+                    if (recipientMood == CHARACTER_MOOD.BAD || recipientMood == CHARACTER_MOOD.DARK) {
+                        //- If Negative Mood: "Are you threatening me?!"
+                        reactions.Add("Are you threatening me?!");
+                    } else {
+                        //- If Positive Mood: "Yes I did that."
+                        reactions.Add("Yes I did that.");
+                    }
+                }
+                //- Recipient is Target
+                else if (recipient == targetCharacter) {
+                    if(recipient.faction == actor.faction) {
+                        //- Same Faction
+                        if (!recipient.HasRelationshipWith(actor)){
+                            if (recipientMood == CHARACTER_MOOD.BAD || recipientMood == CHARACTER_MOOD.DARK) {
+                                //- No Relationship (Negative Mood)
+                                reactions.Add(string.Format("{0} stole from me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                                if (!hasCrimeBeenReported) {
+                                    recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+                                }
+                            } else {
+                                //- No Relationship (Positive Mood)
+                                reactions.Add(string.Format("{0} stole from me? What a horrible person!", actor.name));
+                                if (!hasCrimeBeenReported) {
+                                    recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+                                }
+                                recipient.CreateUndermineJobOnly(actor, "idle", status);
+                            }
+                        } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE){
+                            //- Has Negative Relationship
+                            reactions.Add(string.Format("That stupid {0} stole from me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+                            }
+                            recipient.CreateUndermineJobOnly(actor, "idle", status);
+                        } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                            //- Has Positive Relationship
+                            if(CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                reactions.Add(string.Format("I should have never trusted {0}!", actor.name));
+                                if (!hasCrimeBeenReported) {
+                                    recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+                                }
+                            } else {
+                                reactions.Add("Everybody deserves a second chance.");
+                            }
+                        }
+                    } else {
+                        //- Not Same Faction
+                        if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                            //- Has Positive Relationship
+                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                reactions.Add(string.Format("I should have never trusted {0}! {1} will not get away with this!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true)));
+                                recipient.CreateUndermineJobOnly(actor, "idle", status);
+                            } else {
+                                reactions.Add("Everybody deserves a second chance.");
+                            }
+                        } else {
+                            //- Has Negative/No Relationship
+                            reactions.Add(string.Format("{0} will not get away with this!", actor.name));
+                            recipient.CreateUndermineJobOnly(actor, "idle", status);
+                        }
+                    }
+                }
+                //- Recipient Has Positive Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                            reactions.Add(string.Format("{0} is a thief?! I regret that I ever liked {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+                            }
+                        } else {
+                            reactions.Add(string.Format("{0} is a thief? I don't believe that.", actor.name));
+                        }
+                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        reactions.Add(string.Format("{0} is a thief? Why am I not surprised?", actor.name));
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+                        }
+                    } else {
+                        reactions.Add(string.Format("Poor {0}. {1} must pay.", targetCharacter.name, actor.name));
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+                        }
+                    }
+                }
+                //- Recipient Has Negative Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                        reactions.Add(string.Format("It's {0}'s fault for not taking care of {1} possessions.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false)));
+                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        reactions.Add("I hate both of them but a crime's a crime.");
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+                        }
+                    } else {
+                        reactions.Add("I hate both of them but a crime's a crime.");
+                        AddTraitTo(recipient, "Cheery");
+                    }
+                }
+                //- Recipient Has No Relationship with Target
+                else {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                            reactions.Add(string.Format("{0} is a thief?! I regret that I ever liked {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+                            }
+                        } else {
+                            reactions.Add(string.Format("{0} is a thief? I don't believe that.", actor.name));
+                        }
+                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        reactions.Add(string.Format("{0} is a thief? Why am I not surprised?", actor.name));
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+                        }
+                    } else {
+                        reactions.Add(string.Format("Poor {0}. {1} must pay.", targetCharacter.name, actor.name));
+                        if (!hasCrimeBeenReported) {
+                            recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+                        }
+                    }
+                }
+            }
         }
-        //Recipient and Actor is the same:
-        else if (recipient == actor) {
-            //- **Recipient Response Text**: "I know what I did."
-            reactions.Add("I know what I did.");
-            //-**Recipient Effect**: no effect
-        }
-        //Recipient and Actor have a positive relationship:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
-            //- **Recipient Response Text**: "[Actor Name] may have committed theft but I know that [he/she] is a good person."
-            reactions.Add(string.Format("{0} may have committed theft but I know that {1} is a good person.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-            //-**Recipient Effect * *: no effect
-        }
-        //Recipient and Actor have a negative relationship:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.NEGATIVE)) {
-            //- **Recipient Response Text**: "[Actor Name] committed theft!? Why am I not surprised."
-            reactions.Add(string.Format("{0} committed theft!? Why am I not surprised.", actor.name));
-            //-**Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
-            recipient.ReactToCrime(CRIME.THEFT, actorAlterEgo, null, this);
-        }
-        //Recipient and Actor have no relationship but are from the same faction:
-        else if (!recipient.HasRelationshipWith(actor) && recipient.faction == actor.faction) {
-            //- **Recipient Response Text**: "[Actor Name] committed theft!? That's illegal."
-            reactions.Add(string.Format("{0} committed theft!? That's illegal.", actor.name));
-            //- **Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
-            recipient.ReactToCrime(CRIME.THEFT, actorAlterEgo, null, this);
-        }
-        
         return reactions;
     }
-    private List<string> State2Reactions(Character recipient, Intel sharedIntel) {
+
+    private List<string> StealFailReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character targetCharacter = poiTarget as Character;
-        //Recipient and Target is the same:
-        if (recipient == targetCharacter) {
-            //- **Recipient Response Text**: "Hahaha! Good thing I'm not carrying anything with me at that time. What a loser."
-            reactions.Add("Hahaha! Good thing I'm not carrying anything with me at that time. What a loser.");
-            //- **Recipient Effect**: https://trello.com/c/mqor1Ddv/1884-relationship-degradation between Recipient and Actor
-            CharacterManager.Instance.RelationshipDegradation(actor, recipient);
-        }
-        //Recipient and Actor is the same:
-        else if (recipient == actor) {
-            //- **Recipient Response Text**: "At least I didn't get caught. Too bad I got nothing either."
-            reactions.Add("At least I didn't get caught. Too bad I got nothing either.");
-            //-**Recipient Effect**: no effect
-        }
-        //Recipient and Actor have a positive relationship:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
-            //- **Recipient Response Text**: "Well, nothing was taken, right? Let it go."
-            reactions.Add("Well, nothing was taken, right? Let it go.");
-            //-**Recipient Effect * *: no effect
-        }
-        //Recipient and Actor have a negative relationship:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.NEGATIVE)) {
-            //- **Recipient Response Text**: "[Actor Name] committed theft!? Why am I not surprised."
-            reactions.Add(string.Format("{0} committed theft!? Why am I not surprised.", actor.name));
-            //- **Recipient Effect**: no effect
-        }
-        //Recipient and Actor have no relationship but are from the same faction:
-        else if (!recipient.HasRelationshipWith(actor) && recipient.faction == actor.faction) {
-            //- **Recipient Response Text**: "[Actor Name] attempted theft!? I better watch my back around [him/her]."
-            reactions.Add(string.Format("{0} attempted theft!? I better watch my back around {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
-            //- **Recipient Effect**: Recipient and Actor are now Enemies.
-            CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
+        if (awareCharactersOfThisAction.Contains(recipient)) {
+            //- If Recipient is Aware
+            reactions.Add(string.Format("I already know that {0} attempted to steal from me.", actor.name));
+        } else {
+            //- If Recipient is Not Aware
+            //- Recipient is Actor
+            CHARACTER_MOOD recipientMood = recipient.currentMoodType;
+            if (recipient == actor) {
+                if (recipientMood == CHARACTER_MOOD.BAD || recipientMood == CHARACTER_MOOD.DARK) {
+                    //- If Negative Mood: "Are you threatening me?!"
+                    reactions.Add("I didn't even get a thing!");
+                } else {
+                    //- If Positive Mood: "Yes I did that."
+                    reactions.Add("Too bad I got nothing.");
+                }
+            }
+            //- Recipient is Target
+            else if (recipient == targetCharacter) {
+                if (recipient.faction == actor.faction) {
+                    //- Same Faction
+                    if (!recipient.HasRelationshipWith(actor)) {
+                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                            reactions.Add(string.Format("{0} tried to steal from me?! What a horrible person!", actor.name));
+                        } else {
+                            reactions.Add("Good thing I wasn't carrying any item at that time.");
+                        }
+                    } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        //- Has Negative Relationship
+                        reactions.Add(string.Format("That stupid {0} attempted to steal from me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                        recipient.CreateUndermineJobOnly(actor, "idle", status);
+                    } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                        //- Has Positive Relationship
+                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                            reactions.Add(string.Format("I should have never trusted {0}!", actor.name));
+                        } else {
+                            reactions.Add("Relax. Nothing was stolen.");
+                        }
+                    }
+                } else {
+                    //- Not Same Faction
+                    if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                        //- Has Positive Relationship
+                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                            reactions.Add(string.Format("I should have never trusted {0}!", actor.name));
+                        } else {
+                            reactions.Add("Relax. Nothing was stolen.");
+                        }
+                    } else {
+                        //- Has Negative/No Relationship
+                        reactions.Add(string.Format("{0} will not get away with this!", actor.name));
+                        recipient.CreateUndermineJobOnly(actor, "idle", status);
+                    }
+                }
+            }
+            //- Recipient Has Positive Relationship with Target
+            else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                    if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                        reactions.Add(string.Format("{0} is a thief?! I regret that I ever liked {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                    } else {
+                        reactions.Add(string.Format("{0} is a thief? I don't believe that.", actor.name));
+                    }
+                } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    reactions.Add(string.Format("{0} is a thief? Why am I not surprised?", actor.name));
+                } else {
+                    reactions.Add("I'm glad nothing of value was taken.");
+                }
+            }
+            //- Recipient Has Negative Relationship with Target
+            else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                    reactions.Add(string.Format("Nothing was taken from {0}? Too bad.", targetCharacter.name));
+                } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    reactions.Add(string.Format("Nothing was taken from {0}? {1} is so useless.", targetCharacter.name, actor.name));
+                } else {
+                    reactions.Add(string.Format("Nothing was taken from {0}? Ugh! Too bad!", targetCharacter.name));
+                }
+            }
+            //- Recipient Has No Relationship with Target
+            else {
+                RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                    if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                        reactions.Add(string.Format("{0} is a thief?! I regret that I ever liked {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                    } else {
+                        reactions.Add(string.Format("{0} is a thief? I don't believe that.", actor.name));
+                    }
+                } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    reactions.Add(string.Format("{0} is a thief? Why am I not surprised?", actor.name));
+                } else {
+                    reactions.Add("I'm glad nothing of value was taken.");
+                }
+            }
         }
         return reactions;
     }

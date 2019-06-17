@@ -95,7 +95,7 @@ public class CurseCharacter : GoapAction {
     #endregion
 
     #region Intel Reactions
-    public List<string> CurseSuccessReactions(Character reciepient, Intel sharedIntel) {
+    public List<string> CurseSuccessReactions(Character reciepient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 
@@ -110,7 +110,7 @@ public class CurseCharacter : GoapAction {
             CharacterManager.Instance.RemoveRelationshipBetween(reciepient, actorAlterEgo, RELATIONSHIP_TRAIT.LOVER);
             CharacterManager.Instance.RemoveRelationshipBetween(reciepient, actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR);
             //Apply Crime System handling as if the Recipient witnessed Actor commit Assault.
-            reciepient.ReactToCrime(CRIME.ASSAULT, actorAlterEgo, null, this);
+            reciepient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
         }
         //Recipient is the actor:
         else if (reciepient == actor) {
@@ -129,14 +129,14 @@ public class CurseCharacter : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] cursed someone!? Why am I not surprised."
             reactions.Add(string.Format("{0} cursed someone!? Why am I not surprised.", actor.name));
             //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit Assault.
-            reciepient.ReactToCrime(CRIME.ASSAULT, actorAlterEgo, null, this);
+            reciepient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
         }
         //Recipient and Actor have no relationship but are from the same faction:
         else if (relWithActor == RELATIONSHIP_EFFECT.NONE && reciepient.faction == actorAlterEgo.faction) {
             //- **Recipient Response Text**: "[Actor Name] cursed someone!? That's forbidden."
             reactions.Add(string.Format("{0} cursed someone!? That's forbidden.", actor.name));
             //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit Assault.
-            reciepient.ReactToCrime(CRIME.ASSAULT, actorAlterEgo, null, this);
+            reciepient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
         }
         return reactions;
     }

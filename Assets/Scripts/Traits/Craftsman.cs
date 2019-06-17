@@ -31,6 +31,7 @@ public class Craftsman : Trait {
         //}else if (sourceCharacter.race == RACE.GOBLIN) {
         //    craftedItemName = SPECIAL_TOKEN.JUNK;
         //}
+        base.OnAddTrait(sourcePOI);
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             for (int i = 0; i < advertisedInteractions.Count; i++) {
@@ -45,6 +46,7 @@ public class Craftsman : Trait {
                 character.RemoveInteractionType(advertisedInteractions[i]);
             }
         }
+        base.OnRemoveTrait(sourcePOI);
     }
     #endregion
 }

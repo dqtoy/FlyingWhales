@@ -29,7 +29,7 @@ public class ReportHostile : GoapAction {
         base.PerformActualAction();
         Character targetCharacter = poiTarget as Character;
         if (!isTargetMissing && targetCharacter.IsInOwnParty()) {
-            if(hostile.GetNumOfJobsTargettingThisCharacter("Assault") < 3 && !hostile.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
+            if(hostile.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT) < 3 && !hostile.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
                 SetState("Report Hostile Success");
             } else {
                 SetState("Report Hostile Fail");
@@ -59,9 +59,9 @@ public class ReportHostile : GoapAction {
         currentState.AddLogFiller(hostile, hostile.name, LOG_IDENTIFIER.CHARACTER_3);
         currentState.AddLogFiller(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         Character targetCharacter = poiTarget as Character;
-        int numOfJobs = 3 - hostile.GetNumOfJobsTargettingThisCharacter("Assault");
+        int numOfJobs = 3 - hostile.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
         if (numOfJobs > 0) {
-            targetCharacter.CreateAssaultJobs(hostile, numOfJobs);
+            targetCharacter.CreateLocationKnockoutJobs(hostile, numOfJobs);
         }
     }
     private void PreReportHostileFail() {

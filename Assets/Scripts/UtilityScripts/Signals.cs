@@ -160,6 +160,7 @@ public static class Signals {
     public static string ACTION_REMOVED_FROM_QUEUE = "OnActionRemovedFromQueue"; //Parameters (CharacterAction actionRemoved, Character affectedCharacter)
     public static string LOOK_FOR_ACTION = "LookForAction"; //Parameters (ActionThread actionThread)
     public static string BUILD_STRUCTURE_LOOK_ACTION = "BuildStructureLookAction"; //Parameters (BuildStructureQuestData questData)
+    public static string OLD_NEWS_TRIGGER = "OnOldNewsTrigger"; //Parameters (IPointOfInterest poi)
     //public static string ON_TARGETTED_BY_ACTION = "OnCharacterTargettedByAction"; //Parameters (Character, GoapAction)
     #endregion
 

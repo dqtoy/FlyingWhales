@@ -108,25 +108,6 @@ public class CharacterInfoUI : UIMenu {
 
         InitializeLogsMenu();
     }
-    private void InitializeLogsMenu() {
-        logHistoryItems = new LogHistoryItem[CharacterManager.MAX_HISTORY_LOGS];
-        //populate history logs table
-        for (int i = 0; i < CharacterManager.MAX_HISTORY_LOGS; i++) {
-            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
-            logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
-            newLogItem.transform.localScale = Vector3.one;
-            newLogItem.SetActive(true);
-        }
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            logHistoryItems[i].gameObject.SetActive(false);
-        }
-    }
-
-    private void OnCharacterDied(Character character) {
-        if (this.isShowing && activeCharacter.id == character.id) {
-            AreaMapCameraMove.Instance.CenterCameraOn(null);
-        }
-    }
 
     #region Overrides
     public override void CloseMenu() {
@@ -162,6 +143,20 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
+    #region Utilities
+    private void InitializeLogsMenu() {
+        logHistoryItems = new LogHistoryItem[CharacterManager.MAX_HISTORY_LOGS];
+        //populate history logs table
+        for (int i = 0; i < CharacterManager.MAX_HISTORY_LOGS; i++) {
+            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
+            logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
+            newLogItem.transform.localScale = Vector3.one;
+            newLogItem.SetActive(true);
+        }
+        for (int i = 0; i < logHistoryItems.Length; i++) {
+            logHistoryItems[i].gameObject.SetActive(false);
+        }
+    }
     public void ResetAllScrollPositions() {
         historyScrollView.verticalNormalizedPosition = 1;
         relationshipTraitsScrollView.verticalNormalizedPosition = 1;
@@ -203,7 +198,7 @@ public class CharacterInfoUI : UIMenu {
                 if (disablerTrait.thoughtText != null && disablerTrait.thoughtText != string.Empty) {
                     plansLbl.text = disablerTrait.thoughtText.Replace("[Character]", _activeCharacter.name);
                     return;
-                } 
+                }
                 //else {
                 //    plansLbl.text = _activeCharacter.name + " has a disabler trait: " + disablerTrait.name + ".";
                 //}
@@ -212,7 +207,7 @@ public class CharacterInfoUI : UIMenu {
         }
 
         //Character State
-        if(_activeCharacter.stateComponent.currentState != null) {
+        if (_activeCharacter.stateComponent.currentState != null) {
             plansLblLogItem.SetLog(_activeCharacter.stateComponent.currentState.thoughtBubbleLog);
             plansLbl.text = Utilities.LogReplacer(_activeCharacter.stateComponent.currentState.thoughtBubbleLog);
             return;
@@ -290,7 +285,7 @@ public class CharacterInfoUI : UIMenu {
 
         //Travelling
         if (_activeCharacter.currentParty.icon.isTravelling) {
-            if(_activeCharacter.currentParty.owner.marker.destinationTile != null) {
+            if (_activeCharacter.currentParty.owner.marker.destinationTile != null) {
                 plansLbl.text = _activeCharacter.name + " is going to " + _activeCharacter.currentParty.owner.marker.destinationTile.structure.GetNameRelativeTo(_activeCharacter);
                 return;
             }
@@ -298,9 +293,29 @@ public class CharacterInfoUI : UIMenu {
 
         //Default - Do nothing/Idle
         if (_activeCharacter.currentStructure != null) {
-            plansLbl.text =  _activeCharacter.name + " is in " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
+            plansLbl.text = _activeCharacter.name + " is in " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
         }
     }
+
+    public bool IsCharacterInfoShowing(Character character) {
+        return (isShowing && _activeCharacter == character);
+    }
+
+    private void CheckIfMenuShouldBeHidden() {
+        if (UIManager.Instance.partyinfoUI.isShowing) {
+            logParentGO.SetActive(false);
+        } else {
+            logParentGO.SetActive(true);
+        }
+    }
+    private void OnPlayerLandmarkCreated(BaseLandmark createdLandmark) {
+        //if (createdLandmark.specificLandmarkType == LANDMARK_TYPE.SNATCHER_DEMONS_LAIR) {
+        //    CheckShowSnatchButton();
+        //}
+    }
+    #endregion
+
+    
 
     #region Stats
     private void UpdateStatInfo() {
@@ -454,10 +469,6 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    public bool IsCharacterInfoShowing(Character character) {
-        return (isShowing && _activeCharacter == character);
-    }
-
     #region Attack Character
     private void ShowAttackButton() {
         SetActiveAttackButtonGO(true);
@@ -503,12 +514,6 @@ public class CharacterInfoUI : UIMenu {
         joinBattleButtonGO.SetActive(state);
     }
     #endregion
-
-    private void OnPlayerLandmarkCreated(BaseLandmark createdLandmark) {
-        //if (createdLandmark.specificLandmarkType == LANDMARK_TYPE.SNATCHER_DEMONS_LAIR) {
-        //    CheckShowSnatchButton();
-        //}
-    }
 
     #region Level Up
     public void LevelUpCharacter() {
@@ -587,17 +592,15 @@ public class CharacterInfoUI : UIMenu {
             UpdateTraits();
         }
     }
-    #endregion
-
-    private void CheckIfMenuShouldBeHidden() {
-        if (UIManager.Instance.partyinfoUI.isShowing) {
-            logParentGO.SetActive(false);
-        } else {
-            logParentGO.SetActive(true);
+    private void OnCharacterDied(Character character) {
+        if (this.isShowing && activeCharacter.id == character.id) {
+            AreaMapCameraMove.Instance.CenterCameraOn(null);
         }
     }
-   
 
+    #endregion
+
+    #region For Testing
     public void ShowCharacterTestingInfo() {
         string summary = "Home structure: " + activeCharacter.homeStructure?.ToString() ?? "None";
         summary += "\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None";
@@ -631,4 +634,20 @@ public class CharacterInfoUI : UIMenu {
         _activeCharacter.marker.LogPOIsInVisionRange();
         _activeCharacter.LogAwarenessList();
     }
+    public void AssaultACharacter() {
+        List<Character> characterPool = new List<Character>();
+        for (int i = 0; i < _activeCharacter.specificLocation.charactersAtLocation.Count; i++) {
+            Character character = _activeCharacter.specificLocation.charactersAtLocation[i];
+            if (!character.isDead && !(character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine != null)) {
+                characterPool.Add(character);
+            }
+        }
+        if(characterPool.Count > 0) {
+            Character chosenCharacter = characterPool[UnityEngine.Random.Range(0, characterPool.Count)];
+            _activeCharacter.CreateKnockoutJob(chosenCharacter);
+        } else {
+            Debug.LogError("No eligible characters to assault!");
+        }
+    }
+    #endregion
 }

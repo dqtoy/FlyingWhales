@@ -46,6 +46,7 @@ public class CharacterMarker : PooledObject {
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
+    public List<Character> avoidInRange { get; private set; } //POI's in this characters hostility collider
 
     public Action arrivalAction {
         get { return _arrivalAction; }
@@ -94,6 +95,7 @@ public class CharacterMarker : PooledObject {
         inVisionPOIs = new List<IPointOfInterest>();
         hostilesInRange = new List<Character>();
         terrifyingCharacters = new List<Character>();
+        avoidInRange = new List<Character>();
         //rvoController.avoidedAgents = new List<IAgent>();
 
         GameObject collisionTriggerGO = GameObject.Instantiate(InteriorMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
@@ -149,7 +151,11 @@ public class CharacterMarker : PooledObject {
     public void OnPointerClick(BaseEventData bd) {
         PointerEventData ped = bd as PointerEventData;
         //character.gridTileLocation.OnClickTileActions(ped.button);
-        UIManager.Instance.ShowCharacterInfo(character);
+        if(ped.button == PointerEventData.InputButton.Left) {
+            UIManager.Instance.ShowCharacterInfo(character);
+        }else if (ped.button == PointerEventData.InputButton.Right) {
+            UIManager.Instance.poiTestingUI.ShowUI(character);
+        }
     }
     #endregion
 
@@ -173,7 +179,8 @@ public class CharacterMarker : PooledObject {
                 && action.CanReactToThisCrime(this.character)
                 && inVisionPOIs.Contains(character)
                 && this.character.CanReactToCrime()) {
-                this.character.ReactToCrime(action);
+                bool hasRelationshipDegraded = false;
+                this.character.ReactToCrime(action, ref hasRelationshipDegraded);
             }
         }
     }
@@ -201,7 +208,7 @@ public class CharacterMarker : PooledObject {
                     NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
                 }
             } else if (trait.name == "Spooked" && characterThatGainedTrait.GetNormalTrait("Unconscious") == null) {
-                gainTraitSummary += "\nGained trait is spooked, character will flee is there are characters in vision";
+                gainTraitSummary += "\nGained trait is Spooked, character will flee is there are characters in vision";
                 if (inVisionPOIs.Count > 0) {
                     Spooked spooked = trait as Spooked;
                     for (int i = 0; i < inVisionPOIs.Count; i++) {
@@ -211,7 +218,19 @@ public class CharacterMarker : PooledObject {
                         }
                     }
                     if(spooked.terrifyingCharacters.Count > 0) {
-                        AddHostilesInRange(spooked.terrifyingCharacters, CHARACTER_STATE.FLEE);
+                        AddAvoidsInRange(spooked.terrifyingCharacters);
+                    }
+                }
+            } else if (trait.name == "Berserked") {
+                gainTraitSummary += "\nGained trait is Berserked, characters in vision will flee from this character";
+                if (inVisionPOIs.Count > 0) {
+                    for (int i = 0; i < inVisionPOIs.Count; i++) {
+                        if (inVisionPOIs[i] is Character) {
+                            Character characterInVision = inVisionPOIs[i] as Character;
+                            if(characterInVision.role.roleType == CHARACTER_ROLE.CIVILIAN) {
+                                characterInVision.marker.AddAvoidInRange(characterThatGainedTrait);
+                            }
+                        }
                     }
                 }
             }
@@ -232,9 +251,8 @@ public class CharacterMarker : PooledObject {
                 //GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait);
             }
             if (trait.name == "Unconscious") {
-                if (hostilesInRange.Contains(characterThatGainedTrait)) {
-                    RemoveHostileInRange(characterThatGainedTrait);
-                }
+                RemoveHostileInRange(characterThatGainedTrait);
+                RemoveAvoidInRange(characterThatGainedTrait);
             }
         }
         if(trait.type == TRAIT_TYPE.DISABLER && terrifyingCharacters.Count > 0) {
@@ -262,6 +280,12 @@ public class CharacterMarker : PooledObject {
                                 if (nearestHostile != null) {
                                     lostTraitSummary += "\n" + character.name + " will react to nearest hostile " + nearestHostile.name + " after losing trait " + trait.name;
                                     NormalReactToHostileCharacter(nearestHostile);
+                                }
+                            } else if (avoidInRange.Count > 0) {
+                                Character nearestAvoid = GetNearestValidAvoid();
+                                if (nearestAvoid != null) {
+                                    lostTraitSummary += "\n" + character.name + " will react to nearest avoid " + nearestAvoid.name + " after losing trait " + trait.name;
+                                    NormalReactToHostileCharacter(nearestAvoid, CHARACTER_STATE.FLEE);
                                 }
                             } else {
                                 lostTraitSummary += "\n" + character.name + " has no more hostiles in range.";
@@ -324,6 +348,7 @@ public class CharacterMarker : PooledObject {
             }
         }
         RemoveHostileInRange(travellingParty.owner);
+        RemoveAvoidInRange(travellingParty.owner);
         RemovePOIFromInVisionRange(travellingParty.owner);
 
     }
@@ -583,6 +608,11 @@ public class CharacterMarker : PooledObject {
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
     }
+    /// <summary>
+    /// Make this marker look at a specific point (In World Space).
+    /// </summary>
+    /// <param name="target">The target point in world space</param>
+    /// <param name="force">Should this object be forced to rotate?</param>
     public void LookAt(Vector3 target, bool force = false) {
         if (!force) {
             if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -593,9 +623,14 @@ public class CharacterMarker : PooledObject {
         Vector3 diff = target - transform.position;
         diff.Normalize();
         float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-        LookAt(Quaternion.Euler(0f, 0f, rot_z - 90), force);
+        Rotate(Quaternion.Euler(0f, 0f, rot_z - 90), force);
     }
-    public void LookAt(Quaternion target, bool force = false) {
+    /// <summary>
+    /// Rotate this marker to a specific angle.
+    /// </summary>
+    /// <param name="target">The angle this character must rotate to.</param>
+    /// <param name="force">Should this object be forced to rotate?</param>
+    public void Rotate(Quaternion target, bool force = false) {
         if (!force) {
             if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
                 return;
@@ -651,25 +686,25 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Animation
-    private void PlayWalkingAnimation() {
+    public void PlayWalkingAnimation() {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
-        Play("Walk");
+        PlayAnimation("Walk");
     }
     public void PlayIdle() {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
-        Play("Idle");
+        PlayAnimation("Idle");
     }
     private void PlaySleepGround() {
         if (!this.gameObject.activeInHierarchy) {
             return;
         }
-        Play("Sleep Ground");
+        PlayAnimation("Sleep Ground");
     }
-    public void Play(string animation) {
+    public void PlayAnimation(string animation) {
         //Debug.Log(character.name + " played " + animation + " animation.");
         animator.Play(animation, 0, 0.5f);
         //StartCoroutine(PlayAnimation(animation));
@@ -678,8 +713,11 @@ public class CharacterMarker : PooledObject {
         if (isInCombatTick) {
             return;
         }
+        if (!character.IsInOwnParty()) {
+            return; //if not in own party do not update animations
+        }
         if (character.isDead) {
-            Play("Dead");
+            PlayAnimation("Dead");
         } else if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             PlaySleepGround();
         } else if (isStoppedByOtherCharacter > 0) {
@@ -688,9 +726,9 @@ public class CharacterMarker : PooledObject {
             //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
             PlayWalkingAnimation();
         } else if (character.currentAction != null && character.currentAction.currentState != null && !string.IsNullOrEmpty(character.currentAction.currentState.animationName)) {
-            Play(character.currentAction.currentState.animationName);
+            PlayAnimation(character.currentAction.currentState.animationName);
         } else if (character.currentAction != null && !string.IsNullOrEmpty(character.currentAction.animationName)) {
-            Play(character.currentAction.animationName);
+            PlayAnimation(character.currentAction.animationName);
         } else {
             PlayIdle();
         }
@@ -812,7 +850,7 @@ public class CharacterMarker : PooledObject {
     private IEnumerator Positioner(Vector3 localPos, Quaternion lookAt) {
         yield return null;
         transform.localPosition = localPos;
-        LookAt(lookAt, true);
+        Rotate(lookAt, true);
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
         if (character.race == RACE.SKELETON) {
@@ -829,12 +867,14 @@ public class CharacterMarker : PooledObject {
                 placeMarkerAt = deathTileLocation.GetNearestUnoccupiedTileFromThis();
             }
             transform.position = placeMarkerAt.centeredWorldLocation;
-            hostilesInRange.Clear();
-            inVisionPOIs.Clear();
+            ClearHostilesInRange();
+            ClearPOIsInVisionRange();
+            ClearAvoidInRange();
             visionCollision.OnDeath();
         }
     }
     public void OnReturnToLife() {
+        gameObject.SetActive(true);
         for (int i = 0; i < colliders.Length; i++) {
             colliders[i].enabled = true;
         }
@@ -975,6 +1015,7 @@ public class CharacterMarker : PooledObject {
                 RemoveHostileInRange(otherCharacter);
             }
         }
+        RemoveAvoidInRange(otherCharacter);
 
         if (targetPOI == otherCharacter) {
             //if (this.arrivalAction != null) {
@@ -988,6 +1029,48 @@ public class CharacterMarker : PooledObject {
             ClearArrivalAction();
             action?.Invoke();
         }
+    }
+    #endregion
+
+    #region Avoid In Range
+    public bool AddAvoidInRange(Character poi) {
+        if (!poi.isDead) {
+            if (!avoidInRange.Contains(poi)) {
+                avoidInRange.Add(poi);
+                NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool AddAvoidsInRange(List<Character> pois) {
+        //Only react to the first hostile that is added
+        Character otherPOI = null;
+        for (int i = 0; i < pois.Count; i++) {
+            Character poi = pois[i];
+            if (!poi.isDead) {
+                if (!avoidInRange.Contains(poi)) {
+                    avoidInRange.Add(poi);
+                    if (otherPOI == null) {
+                        otherPOI = poi;
+                    }
+                    return true;
+                }
+            }
+        }
+        if (otherPOI != null) {
+            NormalReactToHostileCharacter(otherPOI, CHARACTER_STATE.FLEE);
+            return true;
+        }
+        return false;
+    }
+    public void RemoveAvoidInRange(Character poi) {
+        if (avoidInRange.Remove(poi)) {
+            Debug.Log("Removed avoid in range " + poi.name + " from " + this.character.name);
+        }
+    }
+    public void ClearAvoidInRange() {
+        avoidInRange.Clear();
     }
     #endregion
 
@@ -1085,9 +1168,9 @@ public class CharacterMarker : PooledObject {
         }
         if(character.stateComponent.currentState == null || character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
             summary += "\n" + character.name + " is engaging, creating assault jobs for the target: " + otherCharacter.name;
-            int numOfJobs = 3 - otherCharacter.GetNumOfJobsTargettingThisCharacter("Assault");
+            int numOfJobs = 3 - otherCharacter.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
             if (numOfJobs > 0) {
-                character.CreateAssaultJobs(otherCharacter, numOfJobs);
+                character.CreateLocationKnockoutJobs(otherCharacter, numOfJobs);
             }
         }
         Debug.Log(summary);
@@ -1097,13 +1180,13 @@ public class CharacterMarker : PooledObject {
     #region Flee
     public bool hasFleePath { get; private set; }
     public void OnStartFlee() {
-        if (hostilesInRange.Count == 0) {
+        if (hostilesInRange.Count == 0 && avoidInRange.Count == 0) {
             return;
         }
         pathfindingAI.ClearAllCurrentPathData();
         hasFleePath = true;
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, hostilesInRange.Select(x => x.marker.transform.position).ToArray(), 10000);
+        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidInRange.Concat(hostilesInRange).Select(x => x.marker.transform.position).ToArray(), 10000);
         fleePath.aimStrength = 1;
         fleePath.spread = 4000;
         seeker.StartPath(fleePath);
@@ -1118,12 +1201,12 @@ public class CharacterMarker : PooledObject {
         StartMovement();
     }
     public void RedetermineFlee() {
-        if (hostilesInRange.Count == 0) {
+        if (hostilesInRange.Count == 0 && avoidInRange.Count == 0) {
             return;
         }
         hasFleePath = true;
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, hostilesInRange.Select(x => x.marker.transform.position).ToArray(), 10000);
+        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidInRange.Concat(hostilesInRange).Select(x => x.marker.transform.position).ToArray(), 10000);
         fleePath.aimStrength = 1;
         fleePath.spread = 4000;
         seeker.StartPath(fleePath, OnFleePathComputed);
@@ -1199,10 +1282,14 @@ public class CharacterMarker : PooledObject {
         enemy.marker.pathfindingAI.AdjustDoNotMove(1);
         LookAt(enemy.marker.transform.position);
 
+#if TRAILER_BUILD
         Messenger.AddListener(Signals.TICK_STARTED, CombatTick);
         isInCombatTick = true;
         //enemy.marker.isInCombatTick = true;
         //CombatTick();
+#else
+        ExecuteCombat();
+#endif
     }
     private const int Fixed_Combat_Ticks = 3;
     private int currentCombatTick = 0;
@@ -1214,7 +1301,7 @@ public class CharacterMarker : PooledObject {
             Debug.Log(character.name + " hit " + currentlyEngaging?.name);
             //Play animation here
             GameManager.Instance.CreateHitEffectAt(currentlyEngaging);
-            Play("Attack");
+            PlayAnimation("Attack");
             //StartCoroutine(CombatAnimation());
         }
         if (currentCombatTick == Fixed_Combat_Ticks) {
@@ -1264,6 +1351,21 @@ public class CharacterMarker : PooledObject {
                 float dist = Vector2.Distance(this.transform.position, currHostile.marker.transform.position);
                 if (nearest == null || dist < nearestDist) {
                     nearest = currHostile;
+                    nearestDist = dist;
+                }
+            }
+        }
+        return nearest;
+    }
+    public Character GetNearestValidAvoid() {
+        Character nearest = null;
+        float nearestDist = 9999f;
+        for (int i = 0; i < avoidInRange.Count; i++) {
+            Character currAvoid = avoidInRange.ElementAt(i);
+            if (IsValidCombatTarget(currAvoid)) {
+                float dist = Vector2.Distance(this.transform.position, currAvoid.marker.transform.position);
+                if (nearest == null || dist < nearestDist) {
+                    nearest = currAvoid;
                     nearestDist = dist;
                 }
             }

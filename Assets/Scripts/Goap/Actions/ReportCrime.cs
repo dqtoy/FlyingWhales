@@ -60,15 +60,16 @@ public class ReportCrime : GoapAction {
     #region State Effects
     public void PreReportCrimeSuccess() {
         //**Effect 1**: The reported criminal will gain the associated Crime trait
-        criminal.owner.AddCriminalTrait(crime);
+        criminal.owner.AddCriminalTrait(crime, crimeAction);
         currentState.AddLogFiller(criminal, criminal.owner.name, LOG_IDENTIFIER.CHARACTER_3);
         Character target = poiTarget as Character;
 
         //**Effect 2**: Share event related to the Crime to the Target's memories
         if (crimeAction != null) {
-            target.CreateInformedEventLog(crimeAction);
+            target.CreateInformedEventLog(crimeAction, true);
         }
-        target.ReactToCrime(crime, criminal, null, crimeAction);
+        bool hasRelationshipDegraded = false;
+        target.ReactToCrime(crime, crimeAction, criminal, ref hasRelationshipDegraded, null, crimeAction);
     }
     public void PreReportCrimeFail() {
         currentState.AddLogFiller(criminal, criminal.owner.name, LOG_IDENTIFIER.CHARACTER_3);

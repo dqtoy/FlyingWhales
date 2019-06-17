@@ -28,7 +28,6 @@ public class Criminal : Trait {
         
     }
     public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
-        base.OnRemoveTrait(sourcePOI);
         if (sourcePOI is Character) {
             Character sourceCharacter = sourcePOI as Character;
             //When a character loses this Trait, add this log to the location and the character:
@@ -37,7 +36,26 @@ public class Criminal : Trait {
             sourceCharacter.AddHistory(addLog);
             sourceCharacter.specificLocation.AddHistory(addLog);
         }
-        
+        base.OnRemoveTrait(sourcePOI);
+    }
+    /// <summary>
+    /// Make this character create an apprehend job at his home location targetting a specific character.
+    /// </summary>
+    /// <param name="targetCharacter">The character to be apprehended.</param>
+    /// <returns>The created job.</returns>
+    public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+        Character targetCharacter = traitOwner as Character;
+        if (characterThatWillDoJob.isAtHomeArea && targetCharacter.isAtHomeArea && !targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.APPREHEND)
+            && targetCharacter.GetNormalTrait("Restrained") == null && !characterThatWillDoJob.HasTraitOf(TRAIT_TYPE.CRIMINAL) && gainedFromDoing.awareCharactersOfThisAction.Contains(characterThatWillDoJob)) {
+            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = characterThatWillDoJob.homeArea, targetPOI = targetCharacter };
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, goapEffect);
+            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+            job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
+            //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
     }
     #endregion
 }

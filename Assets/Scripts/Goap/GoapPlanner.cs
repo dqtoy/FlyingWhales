@@ -107,16 +107,21 @@ public class GoapPlanner {
             }
             if (unsatisfiedPreconditions.Count > 0) {
                 log += "\nChecking unsatisfied preconditions: ";
+                for (int j = 0; j < unsatisfiedPreconditions.Count; j++) {
+                    Precondition precon = unsatisfiedPreconditions[j];
+                    log += "\n\t" + precon.goapEffect.conditionType.ToString() + " " + precon.goapEffect.conditionKey?.ToString() + " " + precon.goapEffect.targetPOI?.ToString() + " - ";
+                }
                 //Look for an action that can satisfy all unsatisfied preconditions
                 //if one precondition cannot be satisfied, skip that action
                 //if all preconditions can be satisfied, create a new goap tree for it
-                for (int i = 0; i < usableActions.Count; i++) {
-                    GoapAction usableAction = usableActions[i];
+                log += "\nActions: ";
+                List<GoapAction> shuffledActions = Utilities.Shuffle(usableActions);
+                for (int i = 0; i < shuffledActions.Count; i++) {
+                    GoapAction usableAction = shuffledActions[i];
                     bool canSatisfyAllPreconditions = true;
-                    
+                    log += "\n\t" + usableAction.goapName;
                     for (int j = 0; j < unsatisfiedPreconditions.Count; j++) {
                         Precondition precon = unsatisfiedPreconditions[j];
-                        //log += "\n\t\t" + precon.goapEffect.conditionType.ToString() + " " + precon.goapEffect.conditionKey?.ToString() + " " + precon.goapEffect.targetPOI?.ToString() + " - ";
                         if (!usableAction.WillEffectsSatisfyPrecondition(precon.goapEffect)) {
                             canSatisfyAllPreconditions = false;
                             break;
@@ -143,26 +148,19 @@ public class GoapPlanner {
                     }
                     if (canSatisfyAllPreconditions) {
                         GoapNode leafNode = new GoapNode(parent, parent.runningCost + usableAction.cost, usableAction);
-                        log += "\n\t- " + usableAction.goapName;
-                        log += "(";
-                        for (int j = 0; j < usableAction.expectedEffects.Count; j++) {
-                            GoapEffect expectedEffect = usableAction.expectedEffects[j];
-                            log += expectedEffect.conditionType.ToString() + " " + expectedEffect.conditionKey?.ToString() + " " + expectedEffect.targetPOI?.ToString() + ", ";
-                        }
-                        log += ")";
-                        log += "Satisfied"; 
+                        log += " - Satisfied"; 
                         bool success = BuildGoapTree(leafNode, startingNodes, usableActions, ref log, job);
                         return success;
                     }
                 }
                 return false;
             } else {
-                log += "\nNo unsatisfied preconditions.";
+                log += "\nNo unsatisfied preconditions";
                 startingNodes.Add(parent);
                 return true;
             }
         } else {
-            log += "\nNo preconditions: ";
+            log += "\nNo preconditions.";
             startingNodes.Add(parent);
             return true;
         }

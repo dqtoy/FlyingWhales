@@ -85,14 +85,22 @@ public class GameManager : MonoBehaviour {
         //Application.logMessageReceived += LogCallback;
 #endif
     }
-    private void FixedUpdate() {
-#if UNITY_EDITOR
+    private void Update() {
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
             if (allowConsole) {
                 UIManager.Instance.ToggleConsole();
             }
+        } else if (Input.GetKeyDown(KeyCode.Space) && !UIManager.Instance.IsMouseOnInput()) {
+            if (UIManager.Instance.pauseBtn.IsInteractable()) {
+                if (isPaused) {
+                    UIManager.Instance.Unpause();
+                } else {
+                    UIManager.Instance.Pause();
+                }
+            }
         }
-#endif
+    }
+    private void FixedUpdate() {
         if (_gameHasStarted && !isPaused) {
             if (this.timeElapsed == 0f) {
                 this.TickStarted();

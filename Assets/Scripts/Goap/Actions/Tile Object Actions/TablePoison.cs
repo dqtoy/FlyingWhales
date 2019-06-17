@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class TablePoison : GoapAction {
     protected override string failActionState { get { return "Poison Fail"; } }
+
+    private Character _assumedTargetCharacter;
 
     public TablePoison(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TABLE_POISON, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Poison Table";
@@ -80,14 +83,14 @@ public class TablePoison : GoapAction {
             if (witness.role.roleType == CHARACTER_ROLE.CIVILIAN || witness.role.roleType == CHARACTER_ROLE.ADVENTURER 
                 || witness.role.roleType == CHARACTER_ROLE.SOLDIER || witness.role.roleType == CHARACTER_ROLE.BANDIT 
                 || (witness.role.roleType != CHARACTER_ROLE.BEAST && witness.isFactionless)) {
-                if (!witness.jobQueue.HasJob("Remove Poison", poiTarget)) {
-                    GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
+                if (!witness.jobQueue.HasJob(JOB_TYPE.REMOVE_POISON, poiTarget)) {
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_POISON, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
                     witness.jobQueue.AddJobInQueue(job);
                 }
             }
             //- If Noble or Faction Leader, create an Ask for Help Remove Poison Job.
             else if (witness.role.roleType == CHARACTER_ROLE.NOBLE || witness.role.roleType == CHARACTER_ROLE.LEADER) {
-                witness.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
+                witness.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.REMOVE_POISON_TABLE, poiTarget);
             }
         }
         //- The witness should not eat at the table until the Poison has been removed
@@ -98,6 +101,10 @@ public class TablePoison : GoapAction {
             throw new System.Exception("Poisoned trait of " + poiTarget.ToString() + " is null! But it was just poisoned by " + actor.name);
         }
         poisonedTrait.AddAwareCharacter(witness);
+    }
+    protected override void OldNewsTrigger(IPointOfInterest poi) {
+        base.OldNewsTrigger(poi);
+
     }
     #endregion
 
@@ -157,177 +164,407 @@ public class TablePoison : GoapAction {
     #endregion
 
     #region Intel Reactions
-    private List<string> PoisonSuccessReactions(Character recipient, Intel sharedIntel) {
+    private List<string> PoisonSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
 
-        PoisonTableIntel pti = sharedIntel as PoisonTableIntel;
-        Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
-        Character tableOwner = pti.targetDwelling.owner;
         //NOTE: If the eat at table action of the intel is null, nobody has eaten at this table yet.
         //NOTE: Poisoned trait has a list of characters that poisoned it. If the poisoned trait that is currently on the table has the actor of this action in it's list
         //this action is still valid for reactions where the table is currently poisoned.
+        PoisonTableIntel pti = sharedIntel as PoisonTableIntel;
+        Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
+        Dwelling targetDwelling = poisonedTrait.poi.gridTileLocation.structure as Dwelling;
 
-        //Recipient is the same as the actor:
-        if (recipient == actor) {
-            // **Recipient Response Text**: "I know what I've done!"
-            reactions.Add("I know what I've done!");
-            //-**Recipient Effect * *: no effect
-        }
+        bool tableHasPoison = poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor);
 
-        //Recipient is the owner of the Poisoned Table and the Table is still currently poisoned by the actor of this action:
-        else if (pti.targetDwelling.IsResident(recipient) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
-            //- **Recipient Response Text**: "[Actor Name] wants to poison me? I've got to do something about this!"
-            reactions.Add(string.Format("{0} wants to poison me? I've got to do something about this!", actor.name));
-            //-**Recipient Effect**: Recipient will create a Remove Poison Job to his personal job queue. 
-            GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
-            recipient.jobQueue.AddJobInQueue(job);
-            //Add Enemy relationship if they are not yet enemies. 
-            if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
-            }
-            //Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
-            recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actorAlterEgo, null, this);
-        }
-        //Recipient is the owner of the Poisoned Table and have gained Sick trait by using the Table:
-        else if (pti.targetDwelling.IsResident(recipient) && pti.eatAtTableAction != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Sick", recipient)) {
-            //- **Recipient Response Text**: "That despicable [Actor Name] made me gravely ill! I almost died. [He/She] will pay for this!"
-            reactions.Add(string.Format("That despicable {0} made me gravely ill! I almost died. {1} will pay for this!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true)));
-            //-**Recipient Effect**: Remove any positive relationships between Actor and Recipient. 
-            List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
-            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
-            //Add Enemy relationship if they are not yet enemies. 
-            if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
-            }
-            //Apply Crime System handling as if the Recipient witnessed Actor commit an Assault.
-            recipient.ReactToCrime(CRIME.ASSAULT, actorAlterEgo, null, this);
-        }
-        //Recipient has a positive relationship with a character that became Sick by using the Table:
-        else if (pti.eatAtTableAction != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Sick", pti.eatAtTableAction.actor)
-            && recipient.HasRelationshipOfEffectWith(pti.eatAtTableAction.actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
-            //- **Recipient Response Text**: "That despicable [Actor Name] almost killed [Sick Character Name]! That's an assault!"
-            reactions.Add(string.Format("That despicable {0} almost killed {1}! That's an assault!", actor.name, pti.eatAtTableAction.actor));
-            //-**Recipient Effect * *: Remove any positive relationships between Actor and Recipient.
-            List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
-            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
-            //Add Enemy relationship if they are not yet enemies. 
-            if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
-            }
-            //Apply Crime System handling as if the Recipient witnessed Actor commit an Assault.
-            recipient.ReactToCrime(CRIME.ASSAULT, actorAlterEgo, null, this);
-        }
-        //Recipient has a positive relationship with a character killed by using the Table:
-        else if (pti.eatAtTableAction != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.DEATH, null, pti.eatAtTableAction.actor)
-            && recipient.HasRelationshipOfEffectWith(pti.eatAtTableAction.actor, TRAIT_EFFECT.POSITIVE)) {
-            //- **Recipient Response Text**: "That despicable [Actor Name] killed [Killed Character Name]! [He/She] is a murderer!"
-            reactions.Add(string.Format("That despicable {0} killed {1}! {2} is a murderer!", actor.name, pti.eatAtTableAction.actor, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true)));
-            //-**Recipient Effect * *: Remove any positive relationships between Actor and Recipient. 
-            List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
-            CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
-            //Add Enemy relationship if they are not yet enemies. 
-            if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.ENEMY);
-            }
-            //Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.MURDER, actorAlterEgo, null, this);
-        }
-        //Recipient has a negative relationship with a character that has gotten sick by using the Table:
-        else if (pti.eatAtTableAction != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Sick", pti.eatAtTableAction.actor)
-            && recipient.HasRelationshipOfEffectWith(pti.eatAtTableAction.actor, TRAIT_EFFECT.NEGATIVE)) {
-            //- **Recipient Response Text**: "I am glad that [Actor Name] dealt with [Sick Character Name]! Too bad it didn't end up killing [Target Name]."
-            reactions.Add(string.Format("I am glad that {0} dealt with {1}! Too bad it didn't end up killing {1}!", actor.name, pti.eatAtTableAction.actor));
-            //-**Recipient Effect * *: no effect
-        }
-        //Recipient has a negative relationship with a character killed by using the Table:
-         else if (pti.eatAtTableAction != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.DEATH, null, pti.eatAtTableAction.actor)
-            && recipient.HasRelationshipOfEffectWith(pti.eatAtTableAction.actor, TRAIT_EFFECT.NEGATIVE)) {
-            //- **Recipient Response Text**: "I am glad that [Actor Name] dealt with [Killed Character Name]!"
-            reactions.Add(string.Format("I am glad that {0} dealt with {1}!", actor.name, pti.eatAtTableAction.actor));
-            //-**Recipient Effect * *: If Actor and Recipient have no relationships yet, they will become friends.
-            if (!recipient.HasRelationshipWith(actor)) {
-                CharacterManager.Instance.CreateNewRelationshipBetween(recipient, actor, RELATIONSHIP_TRAIT.FRIEND);
-            }
-        }
-        //Recipient has a positive relationship with owner of the Table and the Table is still currently poisoned:
-        else if (tableOwner != null && recipient.HasRelationshipOfEffectWith(tableOwner, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
-            //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to remove that poison to save [Target Name]!
-            reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", tableOwner.name));
-            //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
-            if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
-                GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
-                recipient.jobQueue.AddJobInQueue(job);
-            }
-            //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
-            else if (recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-                recipient.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
-            }
-            //Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
-            recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actorAlterEgo, null, this);
-        }
-        //Recipient has no relationship with owner of the table but they are from the same faction and the Table is still currently poisoned:
-        else if (tableOwner != null && !recipient.HasRelationshipWith(tableOwner) && tableOwner.faction == recipient.faction && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
-            //- **Recipient Response Text**: "Thank you for letting me know about this. I've got to find a way to remove that poison to save [Target Name]!
-            reactions.Add(string.Format("Thank you for letting me know about this. I've got to find a way to remove that poison to save {0}!", tableOwner.name));
-            //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
-            if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
-                GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
-                recipient.jobQueue.AddJobInQueue(job);
-            }
-            //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
-            else if (recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-                recipient.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
-            }
-            //Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
-            recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actorAlterEgo, null, this);
-        }
-        //Recipient and Target are enemies and the Table is still currently poisoned:
-        else if (tableOwner != null && recipient.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY) && poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
-            //- **Recipient Response Text**: "I hope that kills [Target Name]."
-            reactions.Add(string.Format("I hope that kills {0}.", tableOwner.name));
-            //-**Recipient Effect * *: no effect
-        }
-        //Recipient and Actor have a positive relationship and the Table is still currently poisoned. Recipient and Target are not enemies:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && poisonedTrait != null
-            && poisonedTrait.responsibleCharacters.Contains(actor) && tableOwner != null && !recipient.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY)) {
-            //- **Recipient Response Text**: "[Actor Name] is attempting murder! I've got to put a stop to this."
-            reactions.Add(string.Format("{0} is attempting murder! I've got to put a stop to this.", actor.name));
-            //-**Recipient Effect * *: If Adventurer or Soldier or Unaligned Non - Beast, create a Remove Poison Job.
-            if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
-                GoapPlanJob job = new GoapPlanJob("Remove Poison", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
-                recipient.jobQueue.AddJobInQueue(job);
-            }
-            //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
-            else if (recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-                recipient.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, poiTarget);
-            }
-        }
-        //Recipient and Actor have a positive relationship and the Table already killed the Target. Recipient and Target are not enemies:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && pti.eatAtTableAction != null 
-            && tableOwner != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.DEATH, null, tableOwner) && !recipient.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY)) {
-            //- **Recipient Response Text**: "[Actor Name] killed somebody! This is horrible!"
-            reactions.Add(string.Format("{0} killed somebody! This is horrible!", actor.name));
-            //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.MURDER, actorAlterEgo, null, this);
-        }
-        //Recipient and Actor have no positive relationship but are from the same faction and the Table is still currently poisoned. Recipient and Target have no relationship:
-        else if (!recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) && recipient.faction == actor.faction && poisonedTrait != null
-            && poisonedTrait.responsibleCharacters.Contains(actor) && tableOwner != null && !recipient.HasRelationshipWith(tableOwner)) {
-            //- **Recipient Response Text**: "[Actor Name] is attempting murder!"
-            reactions.Add(string.Format("{0} is attempting murder!", actor.name));
-            //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit an Attempted Murder.
-            recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, actorAlterEgo, null, this);
+        if (isOldNews) {
+            reactions.Add("This is old news.");
+            return reactions;
         }
 
-        //Recipient has no relationship with the Actor but they are from the same faction and a character has been killed by using the Table.
-        else if (!recipient.HasRelationshipWith(actor) && actor.faction == recipient.faction && pti.eatAtTableAction != null
-            && tableOwner != null && pti.eatAtTableAction.HasActualEffect(GOAP_EFFECT_CONDITION.DEATH, null, tableOwner)) {
-            //-**Recipient Response Text**: "[Actor Name] killed somebody! This is horrible!"
-            reactions.Add(string.Format("{0} killed somebody! This is horrible!", actor.name));
-            //- **Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit a Murder.
-            recipient.ReactToCrime(CRIME.MURDER, actorAlterEgo, null, this);
+        if (_assumedTargetCharacter == null && targetDwelling.residents.Count > 0) {
+            TileObject table = poiTarget as TileObject;
+            if (targetDwelling.IsResident(recipient)) {
+                _assumedTargetCharacter = recipient;
+            } else {
+                List<Character> positiveRelOwners = targetDwelling.residents.Where(x => recipient.GetRelationshipEffectWith(x) == RELATIONSHIP_EFFECT.POSITIVE).ToList();
+                if(positiveRelOwners != null && positiveRelOwners.Count > 0) {
+                    _assumedTargetCharacter = positiveRelOwners[UnityEngine.Random.Range(0, positiveRelOwners.Count)];
+                } else {
+                    List<Character> negativeRelOwners = targetDwelling.residents.Where(x => recipient.GetRelationshipEffectWith(x) == RELATIONSHIP_EFFECT.NEGATIVE).ToList();
+                    if (negativeRelOwners != null && negativeRelOwners.Count > 0) {
+                        _assumedTargetCharacter = negativeRelOwners[UnityEngine.Random.Range(0, negativeRelOwners.Count)];
+                    } else {
+                        List<Character> sameFactionOwners = targetDwelling.residents.Where(x => recipient.faction.id == x.faction.id).ToList();
+                        if (sameFactionOwners != null && sameFactionOwners.Count > 0) {
+                            _assumedTargetCharacter = sameFactionOwners[UnityEngine.Random.Range(0, sameFactionOwners.Count)];
+                        } else {
+                            _assumedTargetCharacter = targetDwelling.residents[UnityEngine.Random.Range(0, targetDwelling.residents.Count)];
+                        }
+                    }
+                }
+            }
+        }
+
+        if(_assumedTargetCharacter == null) {
+            if (recipient == actor) {
+                reactions.Add("What are you talking about?! I did not plan to poison anyone. How dare you accuse me?!");
+                AddTraitTo(recipient, "Annoyed");
+            } else {
+                reactions.Add("I think it was a mistake.");
+            }
+        } else {
+            Character targetCharacter = _assumedTargetCharacter;
+            Sick sickTrait = targetCharacter.GetNormalTrait("Sick") as Sick;
+            Dead deadTrait = targetCharacter.GetNormalTrait("Dead") as Dead;
+            bool targetIsSick = sickTrait != null && sickTrait.gainedFromDoing != null && sickTrait.gainedFromDoing.poiTarget == poiTarget;
+            bool targetIsDead = deadTrait != null && deadTrait.gainedFromDoing != null && deadTrait.gainedFromDoing.poiTarget == poiTarget;
+
+            if (awareCharactersOfThisAction.Contains(recipient)) {
+                //- If Recipient is Aware
+                if (recipient == actor) {
+                    reactions.Add("Yes, I did that.");
+                } else {
+                    reactions.Add(string.Format("I already know that {0} poisoned {1}.", actor.name, poiTarget.name));
+                }
+            } else {
+                //- If Recipient is Not Aware
+                //- Recipient is Actor
+                CHARACTER_MOOD recipientMood = recipient.currentMoodType;
+                if (recipient == actor) {
+                    if (recipientMood == CHARACTER_MOOD.BAD || recipientMood == CHARACTER_MOOD.DARK) {
+                        //- If Negative Mood: "Are you threatening me?!"
+                        reactions.Add("Are you threatening me?!");
+                    } else {
+                        //- If Positive Mood: "Yes I did that."
+                        reactions.Add("Yes I did that.");
+                    }
+                }
+                //- Recipient is Target
+                else if (recipient == targetCharacter) {
+                    if (recipient.faction == actor.faction) {
+                        //- Same Faction
+                        if (!recipient.HasRelationshipWith(actor)) {
+                            if (recipientMood == CHARACTER_MOOD.BAD || recipientMood == CHARACTER_MOOD.DARK) {
+                                //- No Relationship (Negative Mood)
+                                if (tableHasPoison) {
+                                    reactions.Add(string.Format("{0} wants to poison me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                                    CreateRemovePoisonJob(recipient);
+                                    recipient.CreateUndermineJobOnly(actor, "idle", status);
+                                } else if (targetIsSick) {
+                                    reactions.Add(string.Format("{0} poisoned me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                                    recipient.CreateUndermineJobOnly(actor, "idle", status);
+                                } else {
+                                    reactions.Add(string.Format("{0} wants to poison me?", actor.name));
+                                }
+                                if (!hasCrimeBeenReported) {
+                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                                }
+                            } else {
+                                //- No Relationship (Positive Mood)
+                                if (tableHasPoison) {
+                                    reactions.Add(string.Format("{0} wants to poison me? I've got to do something about this.", actor.name));
+                                    CreateRemovePoisonJob(recipient);
+                                } else if (targetIsSick) {
+                                    reactions.Add(string.Format("{0} poisoned me?! Oh my. :(", actor.name));
+                                } else {
+                                    reactions.Add(string.Format("{0} wants to poison me?", actor.name));
+                                }
+                                if (!hasCrimeBeenReported) {
+                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                                }
+                            }
+                        } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                            //- Has Negative Relationship
+                            if (tableHasPoison) {
+                                reactions.Add(string.Format("That stupid {0} wants to poison me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                                CreateRemovePoisonJob(recipient);
+                                recipient.CreateUndermineJobOnly(actor, "idle", status);
+                            } else if (targetIsSick) {
+                                reactions.Add(string.Format("That stupid {0} poisoned me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                                recipient.CreateUndermineJobOnly(actor, "idle", status);
+                            } else {
+                                reactions.Add(string.Format("That stupid {0} wants to poison me?!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                            }
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                            }
+                        } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                            //- Has Positive Relationship
+                            if (tableHasPoison) {
+                                if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                    reactions.Add(string.Format("Why does {0} want me dead? I've got to do something about this!", actor.name));
+                                    if (!hasCrimeBeenReported) {
+                                        recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                                    }
+                                } else {
+                                    reactions.Add("I just have to remove the poison and everything will go back to the way it was.");
+                                }
+                                CreateRemovePoisonJob(recipient);
+                            } else if (targetIsSick) {
+                                if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                    reactions.Add(string.Format("Why does {0} want me dead? I've got to do something about this!", actor.name));
+                                    if (!hasCrimeBeenReported) {
+                                        recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                                    }
+                                } else {
+                                    reactions.Add("Relax. I didn't die. I just got sick. I'm sure I'll recover in no time.");
+                                }
+                            } else {
+                                reactions.Add(string.Format("Why does {0} want me dead?", actor.name));
+                            }
+                        }
+                    } else {
+                        //- Not Same Faction
+                        if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                            //- Has Positive Relationship
+                            if (tableHasPoison) {
+                                if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                    reactions.Add(string.Format("{0} wants to poison me?! {1} will not get away with this!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true)));
+                                    recipient.CreateUndermineJobOnly(actor, "idle", status);
+                                } else {
+                                    reactions.Add("I just have to remove the poison and everything will go back to the way it was.");
+                                }
+                                CreateRemovePoisonJob(recipient);
+                            } else if (targetIsSick) {
+                                if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                    reactions.Add(string.Format("{0} poisoned me?! I will have my revenge!", actor.name));
+                                    recipient.CreateUndermineJobOnly(actor, "idle", status);
+                                } else {
+                                    reactions.Add("Relax. I didn't die. I just got sick. I'm sure I'll recover in no time.");
+                                }
+                            } else {
+                                reactions.Add(string.Format("{0} wants to poison me?! I knew those kind of people could never be trusted.", actor.name));
+                            }
+                        } else {
+                            //- Has Negative/No Relationship
+                            if (tableHasPoison) {
+                                reactions.Add(string.Format("{0} will not get away with this!", actor.name));
+                                CreateRemovePoisonJob(recipient);
+                                recipient.CreateUndermineJobOnly(actor, "idle", status);
+                            } else if (targetIsSick) {
+                                reactions.Add(string.Format("{0} will not get away with this!", actor.name));
+                                recipient.CreateUndermineJobOnly(actor, "idle", status);
+                            } else {
+                                reactions.Add(string.Format("{0} will not get away with this! I knew those kind of people could never be trusted.", actor.name));
+                            }
+                        }
+                    }
+                }
+                //- Recipient Has Positive Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (tableHasPoison) {
+                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                reactions.Add(string.Format("{0} wants to poison {1}? I've got to do something about this.", actor.name, targetCharacter.name));
+                                if (!hasCrimeBeenReported) {
+                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                                }
+                                recipient.CreateShareInformationJob(targetCharacter, this);
+                            } else {
+                                reactions.Add(string.Format("{0} wants to poison {1}? I don't believe that.", actor.name, targetCharacter.name));
+                            }
+                        } else if (targetIsSick) {
+                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                reactions.Add(string.Format("{0} poisoned {1}? I've got to do something about this.", actor.name, targetCharacter.name));
+                                if (!hasCrimeBeenReported) {
+                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                                }
+                                recipient.CreateShareInformationJob(targetCharacter, this);
+                            } else {
+                                reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
+                            }
+                        } else if (targetIsDead) {
+                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                reactions.Add(string.Format("{0} poisoned {1}? I've got to do something about this.", actor.name, targetCharacter.name));
+                                if (!hasCrimeBeenReported) {
+                                    recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
+                                }
+                            } else {
+                                reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
+                            }
+                        } else {
+                            reactions.Add(string.Format("{0} wants to poison {1}?", actor.name, targetCharacter.name));
+                        }
+                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        if (tableHasPoison) {
+                            reactions.Add(string.Format("{0} wants to poison {1}? Why am I not surprised?", actor.name, targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                            }
+                            recipient.CreateShareInformationJob(targetCharacter, this);
+                        } else if (targetIsSick) {
+                            reactions.Add(string.Format("{0} poisoned {1}? Why am I not surprised?", actor.name, targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                            }
+                            recipient.CreateShareInformationJob(targetCharacter, this);
+                        } else if (targetIsDead) {
+                            reactions.Add(string.Format("{0} poisoned {1}? Why am I not surprised?", actor.name, targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
+                            }
+                        } else {
+                            reactions.Add(string.Format("{0} wants to poison {1}? What a horrible person!", actor.name, targetCharacter.name));
+                        }
+                    } else {
+                        if (tableHasPoison) {
+                            reactions.Add(string.Format("{0} could die. I've got to do something about this!", targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                            }
+                            recipient.CreateShareInformationJob(targetCharacter, this);
+                        } else if (targetIsSick) {
+                            reactions.Add(string.Format("{0} almost died. I've got to do something about this!", targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                            }
+                            recipient.CreateShareInformationJob(targetCharacter, this);
+                        } else if (targetIsDead) {
+                            reactions.Add(string.Format("{0} died. I've got to do something about this!", targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
+                            }
+                        } else {
+                            reactions.Add(string.Format("{0} could die.", targetCharacter.name));
+                        }
+                    }
+                }
+                //- Recipient Has Negative Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (tableHasPoison) {
+                            reactions.Add(string.Format("I hope {0} dies from that poison!", targetCharacter.name));
+                        } else if (targetIsSick) {
+                            reactions.Add(string.Format("{0} deserves worse but that will do.", targetCharacter.name));
+                            AddTraitTo(recipient, "Cheery");
+                        } else if (targetIsDead) {
+                            reactions.Add("Good riddance.");
+                            AddTraitTo(recipient, "Cheery");
+                        } else {
+                            reactions.Add(string.Format("I can't wait for {0} to die from that poison.", targetCharacter.name));
+                        }
+                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        if (tableHasPoison) {
+                            reactions.Add(string.Format("I hate both of them but I hope {0} dies from that poison!", targetCharacter.name));
+                        } else if (targetIsSick) {
+                            reactions.Add(string.Format("{0} deserves worse but that will do.", targetCharacter.name));
+                            AddTraitTo(recipient, "Cheery");
+                        } else if (targetIsDead) {
+                            reactions.Add(string.Format("Good riddance. I hope {0} is next.", actor.name));
+                            AddTraitTo(recipient, "Cheery");
+                        } else {
+                            reactions.Add(string.Format("I hate both of them but I can't wait for {0} to die from that poison.", targetCharacter.name));
+                        }
+                    } else {
+                        if (tableHasPoison) {
+                            reactions.Add(string.Format("I hope {0} dies from that poison!", targetCharacter.name));
+                        } else if (targetIsSick) {
+                            reactions.Add(string.Format("{0} deserves worse but that will do.", targetCharacter.name));
+                            AddTraitTo(recipient, "Cheery");
+                        } else if (targetIsDead) {
+                            reactions.Add("Good riddance.");
+                            AddTraitTo(recipient, "Cheery");
+                        } else {
+                            reactions.Add(string.Format("I can't wait for {0} to die from that poison.", targetCharacter.name));
+                        }
+                    }
+                }
+                //- Recipient Has No Relationship with Target
+                else {
+                    RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
+                    if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (tableHasPoison) {
+                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                reactions.Add(string.Format("{0} wants to poison {1}? This is unacceptable!", actor.name, targetCharacter.name));
+                                if (!hasCrimeBeenReported) {
+                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                                }
+                                recipient.CreateShareInformationJob(targetCharacter, this);
+                            } else {
+                                reactions.Add(string.Format("{0} wants to poison {1}? I don't believe that.", actor.name, targetCharacter.name));
+                            }
+                        } else if (targetIsSick) {
+                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                reactions.Add(string.Format("{0} poisoned {1}? This is unacceptable!", actor.name, targetCharacter.name));
+                                if (!hasCrimeBeenReported) {
+                                    recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                                }
+                                recipient.CreateShareInformationJob(targetCharacter, this);
+                            } else {
+                                reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
+                            }
+                        } else if (targetIsDead) {
+                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
+                                reactions.Add(string.Format("{0} poisoned {1}? This is unacceptable!", actor.name, targetCharacter.name));
+                                if (!hasCrimeBeenReported) {
+                                    recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
+                                }
+                            } else {
+                                reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
+                            }
+                        } else {
+                            reactions.Add(string.Format("{0} wants to poison {1}? Why?!", actor.name, targetCharacter.name));
+                        }
+                    } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        if (tableHasPoison) {
+                            reactions.Add(string.Format("{0} wants to poison {1}? Why am I not surprised?", actor.name, targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                            }
+                            recipient.CreateShareInformationJob(targetCharacter, this);
+                        } else if (targetIsSick) {
+                            reactions.Add(string.Format("{0} poisoned {1}? Why am I not surprised?", actor.name, targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                            }
+                            recipient.CreateShareInformationJob(targetCharacter, this);
+                        } else if (targetIsDead) {
+                            reactions.Add(string.Format("{0} poisoned {1}? I can't let a killer loose.", actor.name, targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
+                            }
+                        } else {
+                            reactions.Add(string.Format("{0} wants to poison {1}? So horrible!", actor.name, targetCharacter.name));
+                        }
+                    } else {
+                        if (tableHasPoison) {
+                            reactions.Add(string.Format("{0} could die. I've got to do something about this!", targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                            }
+                            recipient.CreateShareInformationJob(targetCharacter, this);
+                        } else if (targetIsSick) {
+                            reactions.Add(string.Format("{0} almost died. I've got to do something about this!", targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.ATTEMPTED_MURDER, this, actorAlterEgo, status);
+                            }
+                            recipient.CreateShareInformationJob(targetCharacter, this);
+                        } else if (targetIsDead) {
+                            reactions.Add(string.Format("{0} died. I've got to do something about this!", targetCharacter.name));
+                            if (!hasCrimeBeenReported) {
+                                recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
+                            }
+                        } else {
+                            reactions.Add(string.Format("{0} could die.", targetCharacter.name));
+                        }
+                    }
+                }
+            }
         }
         return reactions;
     }
     #endregion
+
+    private void CreateRemovePoisonJob(Character recipient) {
+        if (recipient.role.roleType == CHARACTER_ROLE.CIVILIAN || recipient.role.roleType == CHARACTER_ROLE.ADVENTURER || recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.BANDIT || (recipient.role.roleType != CHARACTER_ROLE.BEAST && recipient.isFactionless)) {
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_POISON, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
+            recipient.jobQueue.AddJobInQueue(job);
+        }
+        //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
+        else if (recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
+            recipient.CreateAskForHelpJob(_assumedTargetCharacter, INTERACTION_TYPE.REMOVE_POISON_TABLE, poiTarget);
+        }
+    }
 }

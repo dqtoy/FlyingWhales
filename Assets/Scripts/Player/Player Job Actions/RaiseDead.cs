@@ -14,6 +14,8 @@ public class RaiseDead : PlayerJobAction {
         Character target;
         if (targetPOI is Character) {
             target = targetPOI as Character;
+        } else if (targetPOI is Tombstone) {
+            target = (targetPOI as Tombstone).character;
         } else {
             return;
         }
@@ -22,21 +24,31 @@ public class RaiseDead : PlayerJobAction {
     }
 
     private IEnumerator Raise(Character target) {
-        target.marker.Play("Raise Dead");
+        target.marker.PlayAnimation("Raise Dead");
         yield return new WaitForSeconds(0.7f);
         target.ReturnToLife();
-        UIManager.Instance.Unpause();
+#if TRAILER_BUILD
+      UIManager.Instance.Unpause();
+#endif
         yield return null;
     }
 
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
-        return targetCharacter.isDead;
+        return targetCharacter.isDead && targetCharacter.IsInOwnParty();
+    }
+    protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
+        return targetPOI is Tombstone || (targetPOI is Character && (targetPOI as Character).IsInOwnParty()) ;
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
-        if (!(targetPOI is Character)) {
+        if (!(targetPOI is Character) && !(targetPOI is Tombstone)) {
             return false;
         }
-        Character targetCharacter = targetPOI as Character;
-        return targetCharacter.isDead;
+        Character targetCharacter;
+        if (targetPOI is Character) {
+            targetCharacter = targetPOI as Character;
+        } else {
+            targetCharacter = (targetPOI as Tombstone).character;
+        }
+        return targetCharacter.isDead && targetCharacter.IsInOwnParty();
     }
 }

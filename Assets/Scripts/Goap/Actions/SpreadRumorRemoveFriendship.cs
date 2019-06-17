@@ -24,7 +24,7 @@ public class SpreadRumorRemoveFriendship : GoapAction {
         if (!isTargetMissing) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Break Friendship Success", 10);
-            weights.AddElement("Break Friendship Fail", 20);
+            //weights.AddElement("Break Friendship Fail", 20);
             SetState(weights.PickRandomElementGivenWeights());
         } else {
             SetState("Target Missing");
@@ -81,7 +81,7 @@ public class SpreadRumorRemoveFriendship : GoapAction {
     }
     public void AfterBreakFriendshipSuccess() {
         if (chosenMemory.goapAction.currentState.shareIntelReaction != null) {
-            chosenMemory.goapAction.currentState.shareIntelReaction.Invoke(poiTarget as Character, null);
+            chosenMemory.goapAction.currentState.shareIntelReaction.Invoke(poiTarget as Character, null, SHARE_INTEL_STATUS.INFORMED);
         }
         //Character target = poiTarget as Character;
         ////**Effect 1**: Target - Remove Friend relationship with Character 2

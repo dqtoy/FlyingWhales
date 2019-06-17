@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class EatAtTable : GoapAction {
 
-    public Trait poisonedTrait { get; private set; }
+    public Poisoned poisonedTrait { get; private set; }
     private string poisonedResult;
     public EatAtTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_DWELLING_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Eat_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
-        isNotificationAnIntel = false;
+        //isNotificationAnIntel = false;
     }
 
     #region Overrides
@@ -20,7 +22,7 @@ public class EatAtTable : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         if (!isTargetMissing) {
-            poisonedTrait = poiTarget.GetNormalTrait("Poisoned");
+            poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
             if (poisonedTrait != null) {
                 SetState("Eat Poisoned");
             } else {
@@ -71,8 +73,14 @@ public class EatAtTable : GoapAction {
     //    SetState("Target Missing");
     //}
     public override void OnStopActionDuringCurrentState() {
-        if (currentState.name == "Eat Success" || currentState.name == "Eat Poisoned") {
+        if (currentState.name == "Eat Success") {
             actor.AdjustDoNotGetHungry(-1);
+        }else if(currentState.name == "Eat Poisoned") {
+            actor.AdjustDoNotGetHungry(-1);
+            Sick sick = new Sick();
+            for (int i = 0; i < poisonedTrait.responsibleCharacters.Count; i++) {
+                AddTraitTo(actor, sick, poisonedTrait.responsibleCharacters[i]);
+            }
         }
     }
     #endregion
@@ -81,6 +89,7 @@ public class EatAtTable : GoapAction {
     private void PreEatSuccess() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         actor.AdjustDoNotGetHungry(1);
+        currentState.SetIntelReaction(EatSuccessReactions);
         //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
@@ -112,7 +121,7 @@ public class EatAtTable : GoapAction {
         }
         //log.AddLogToInvolvedObjects();
         currentState.OverrideDescriptionLog(log);
-        currentState.SetIntelReaction(State2Reactions);
+        currentState.SetIntelReaction(EatPoisonedReactions);
     }
     private void PerTickEatPoisoned() {
         actor.AdjustFullness(18);
@@ -131,7 +140,7 @@ public class EatAtTable : GoapAction {
                 parentPlan.job.SetCannotCancelJob(true);
             }
             SetCannotCancelAction(true);
-            actor.Death("normal");
+            actor.Death(deathFromAction: this);
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = actor });
 #if TRAILER_BUILD
             if (actor.name == "Fiona") {
@@ -169,59 +178,59 @@ public class EatAtTable : GoapAction {
     #endregion
 
     #region Intel Reactions
-    private List<string> State2Reactions(Character recipient, Intel sharedIntel) {
+    private List<string> EatSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
 
-        //Recipient and Actor are the same
-        if (recipient == actor) {
-            //- **Recipient Response Text**: "I know what I've done!"
-            reactions.Add(string.Format("I know what I've done!", actor.name));
-            //-**Recipient Effect**:  no effect
+        if (isOldNews) {
+            reactions.Add("This is old news.");
+        } else {
+            //Recipient is Actor
+            if (recipient == actor) {
+                reactions.Add("I know what I did.");
+            } else {
+                reactions.Add("This is not relevant to me.");
+            }
         }
+        return reactions;
+    }
+    private List<string> EatPoisonedReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+        if (isOldNews) {
+            reactions.Add("This is old news.");
+        } else {
+            //Recipient is Actor
+            if (recipient == actor) {
+                reactions.Add("Yes! I ate poisoned food but thankfully, I survived. Do you know who did it?!");
+            } 
+            else if (poisonedTrait.IsResponsibleForTrait(recipient)) {
+                if(recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    reactions.Add("Yes I did that and it worked! Muahahaha!");
+                    AddTraitTo(recipient, "Cheery");
+                } else {
+                    reactions.Add(string.Format("{0} wasn't my target when I poisoned the food.", actor.name));
+                }
+            } 
+            else if ((recipient.faction == actor.faction && !recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) 
+                || (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE)) {
 
-        //Recipient poisoned the table and he has a negative relationship with the Actor:
-        else if (poisonedTrait.IsResponsibleForTrait(recipient) && recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.NEGATIVE)) {
-            //- **Recipient Response Text**: "Yes, I did that. Hahaha!"
-            reactions.Add("Yes, I did that. Hahaha!");
-            //-**Recipient Effect * *: no effect
+                Trait sickTrait = actor.GetNormalTrait("Sick");
+                if (actor.isDead) {
+                    reactions.Add(string.Format("Poor {0}, may {1} rest in peace.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                    Trait deadTrait = actor.GetNormalTrait("Dead");
+                    deadTrait.CreateJobsOnEnterVisionBasedOnTrait(actor, recipient);
+                }else if (sickTrait != null) {
+                    reactions.Add(string.Format("Poor {0}, maybe I can help.", actor.name));
+                    sickTrait.CreateJobsOnEnterVisionBasedOnTrait(actor, recipient);
+                }
+            } 
+            else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+                reactions.Add(string.Format("{0} deserves that.", actor.name));
+                AddTraitTo(recipient, "Cheery");
+            }
+            else {
+                reactions.Add("This is not relevant to me.");
+            }
         }
-
-        //Recipient has a negative relationship with the Actor:
-        else if (recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.NEGATIVE)) {
-            //- **Recipient Response Text**: "It's what [Actor Name] deserves!"
-            reactions.Add(string.Format("It's what {0} deserves!", actor.name));
-            //-**Recipient Effect**: no effect
-        }
-
-        //Actor became Sick, Recipient has a positive relationship with the Actor but is not part of the same faction:
-        else if (recipient.faction != actor.faction && !recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)
-            && HasActualEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Sick", actor)) {
-            //- **Recipient Response Text**: "Poor [Actor Name]. Maybe I can help!"
-            reactions.Add(string.Format("Poor {0}. Maybe I can help!", actor.name));
-            //-**Recipient Effect * *: Add a Remove[Sick] Job to Actor's personal job queue.
-            GoapPlanJob job = new GoapPlanJob("Remove Sick", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = actor });
-            recipient.jobQueue.AddJobInQueue(job);
-        }
-
-        //Actor became Sick, Recipient does not have a negative relationship with the Actor and is part of the same faction:
-        else if (recipient.faction == actor.faction && !recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.NEGATIVE)
-            && HasActualEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Sick", actor)) {
-            //- **Recipient Response Text**: "Poor [Actor Name]. Maybe I can help!"
-            reactions.Add(string.Format("Poor {0}. Maybe I can help!", actor.name));
-            //-**Recipient Effect * *: Add a Remove[Sick] Job to location job queue and assign it to Recipient.
-            GoapPlanJob job = new GoapPlanJob("Remove Sick", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = actor });
-            recipient.jobQueue.AddJobInQueue(job);
-        }
-
-        //Actor died, Recipient has a positive relationship with the Actor or is part of the same faction and not enemies:
-        else if (HasActualEffect(GOAP_EFFECT_CONDITION.DEATH, null, actor) 
-            && (recipient.faction == actor.faction || recipient.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE))
-            && !recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
-            //- **Recipient Response Text**: "Poor [Actor Name]. May [he/she] rest in peace."
-            reactions.Add(string.Format("Poor {0}. May {1} rest in peace.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-            //-**Recipient Effect * *: No effect.
-        }
-
         return reactions;
     }
     #endregion

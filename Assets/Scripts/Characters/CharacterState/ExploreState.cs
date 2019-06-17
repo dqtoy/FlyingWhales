@@ -123,7 +123,7 @@ public class ExploreState : CharacterState {
     }
 
     public void CreateDeliverTreasureJob() {
-        GoapPlanJob job = new GoapPlanJob("Deliver Treasure", INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DELIVER_TREASURE, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
         job.SetPlanConstructor(DeliverTreasureConstructor);
         stateComponent.character.jobQueue.AddJobInQueue(job);
     }

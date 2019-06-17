@@ -216,6 +216,7 @@ public class CharacterAvatar : MonoBehaviour{
         //place marker at edge tile of target location
         LocationGridTile entrance = targetLocation.GetRandomUnoccupiedEdgeTile();
         _party.owner.marker.ClearHostilesInRange();
+        _party.owner.marker.ClearAvoidInRange();
         _party.owner.marker.ClearPOIsInVisionRange();
         _party.owner.marker.PlaceMarkerAt(entrance);
         //_party.owner.marker.gameObject.SetActive(true);

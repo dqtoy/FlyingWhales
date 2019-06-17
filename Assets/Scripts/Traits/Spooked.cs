@@ -36,19 +36,19 @@ public class Spooked : Trait {
             }
             character.AdjustDoNotDisturb(1);
         }
+        base.OnAddTrait(sourcePOI);
     }
     public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             character.AdjustDoNotDisturb(-1);
             for (int i = 0; i < terrifyingCharacters.Count; i++) {
-                if (!character.IsHostileWith(terrifyingCharacters[i])) {
-                    character.marker.RemoveHostileInRange(terrifyingCharacters[i]);
-                }
+                character.marker.RemoveAvoidInRange(terrifyingCharacters[i]);
                 character.marker.RemoveTerrifyingCharacter(terrifyingCharacters[i]);
             }
             ClearTerrifyingCharacters();
         }
+        base.OnRemoveTrait(sourcePOI);
     }
     #endregion
 

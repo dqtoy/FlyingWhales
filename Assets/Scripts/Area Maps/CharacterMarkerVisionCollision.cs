@@ -15,6 +15,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         if (parentMarker.hostilesInRange != null) {
             parentMarker.ClearHostilesInRange();
         }
+        if (parentMarker.avoidInRange != null) {
+            parentMarker.ClearAvoidInRange();
+        }
     }
 
     public void Initialize() {
@@ -252,6 +255,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             //remove from vision and hostile range
             parentMarker.RemovePOIFromInVisionRange(character);
             parentMarker.RemoveHostileInRange(character);
+            parentMarker.RemoveAvoidInRange(character);
             AddPOIAsInRangeButDifferentStructure(character);
         }
         //if the character that changed structures is this character
@@ -276,6 +280,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                     parentMarker.RemovePOIFromInVisionRange(poi);
                     if (poi is Character) {
                         parentMarker.RemoveHostileInRange(poi as Character);
+                        parentMarker.RemoveAvoidInRange(poi as Character);
                     }
                 } else if (poi.gridTileLocation.structure != parentMarker.character.currentStructure 
                     && (!poi.gridTileLocation.structure.structureType.IsOpenSpace() || !parentMarker.character.currentStructure.structureType.IsOpenSpace())) {
@@ -283,6 +288,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                     parentMarker.RemovePOIFromInVisionRange(poi);
                     if (poi is Character) {
                         parentMarker.RemoveHostileInRange(poi as Character);
+                        parentMarker.RemoveAvoidInRange(poi as Character);
                     }
                     AddPOIAsInRangeButDifferentStructure(poi);
                 }

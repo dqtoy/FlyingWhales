@@ -599,6 +599,9 @@ public class CharacterManager : MonoBehaviour {
                 continue; //skip main cast (For Trailer Only)
             }
 #endif
+            if (currCharacter.isFactionless) {
+                continue; //skip factionless characters
+            }
             int currentRelCount = currCharacter.GetAllRelationshipCountExcept(new List<RELATIONSHIP_TRAIT>() { RELATIONSHIP_TRAIT.MASTER, RELATIONSHIP_TRAIT.SERVANT });
             if (currentRelCount >= maxInitialRels) {
                 continue; //skip
@@ -657,9 +660,9 @@ public class CharacterManager : MonoBehaviour {
                 
                 if (relsToCreate > 0) {
                     WeightedFloatDictionary<Character> relWeights = new WeightedFloatDictionary<Character>();
-                    // Loop through all characters in the world, excluding current character
-                    for (int l = 0; l < allCharacters.Count; l++) {
-                        Character otherCharacter = allCharacters[l];
+                    // Loop through all characters that are in the same faction as the current character
+                    for (int l = 0; l < currCharacter.faction.characters.Count; l++) {
+                        Character otherCharacter = currCharacter.faction.characters[l];
 #if TRAILER_BUILD
                         if (otherCharacter.name == "Jamie" || otherCharacter.name == "Audrey" || otherCharacter.name == "Fiona") {
                             continue; //skip main cast (For Trailer Only)
@@ -988,7 +991,7 @@ public class CharacterManager : MonoBehaviour {
                 return false;
         }
     }
-    public void RelationshipImprovement(Character actor, Character target) {
+    public bool RelationshipImprovement(Character actor, Character target, GoapAction cause = null) {
         string summary = "Relationship improvement between " + actor.name + " and " + target.name;
         Log log = null;
         if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
@@ -1001,12 +1004,14 @@ public class CharacterManager : MonoBehaviour {
                 summary += target.name + " now considers " + actor.name + " an enemy.";
                 RemoveOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
                 CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
+                return true;
             }
         } else if (!target.HasRelationshipWith(actor)) {
             log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
             summary += "\n" + target.name + " has no relationship with " + actor.name + ". " + target.name + " now considers " + actor.name + " a friend.";
             //If Target has no relationship with Actor, Target now considers Actor a Friend.
             CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
+            return true;
         }
         Debug.Log(summary);
         if (log != null) {
@@ -1014,6 +1019,7 @@ public class CharacterManager : MonoBehaviour {
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
         }
+        return false;
     }
     /// <summary>
     /// Unified way of degrading a relationship of a character with a target character.
@@ -1021,20 +1027,21 @@ public class CharacterManager : MonoBehaviour {
     /// <param name="actor">The character that did something to degrade the relationship.</param>
     /// <param name="target">The character that will change their relationship with the actor.</param>
     /// <param name="cause">The action that caused of the degradation. Can be null.</param>
-    public void RelationshipDegradation(Character actor, Character target, GoapAction cause = null) {
-        RelationshipDegradation(actor.currentAlterEgo, target, cause);
+    public bool RelationshipDegradation(Character actor, Character target, GoapAction cause = null) {
+        return RelationshipDegradation(actor.currentAlterEgo, target, cause);
     }
-    public void RelationshipDegradation(AlterEgoData actorAlterEgo, Character target, GoapAction cause = null) {
+    public bool RelationshipDegradation(AlterEgoData actorAlterEgo, Character target, GoapAction cause = null) {
+        bool hasDegraded = false;
         if (actorAlterEgo.owner == target) {
             Debug.LogWarning("Relationship degredation was called and provided same characters " + target.name);
-            return;
+            return hasDegraded;
         }
         string summary = "Relationship degradation between " + actorAlterEgo.owner.name + " and " + target.name;
         if (cause != null && cause.IsFromApprehendJob()) {
             //If this has been triggered by an Action's End Result that is part of an Apprehend Job, skip processing.
             summary += "Relationship degradation was caused by an action in an apprehend job. Skipping degredation...";
             Debug.Log(summary);
-            return;
+            return hasDegraded;
         }
         //If Actor and Target are Lovers, 25% chance to create a Break Up Job with the Lover.
         if (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.LOVER)) {
@@ -1049,6 +1056,7 @@ public class CharacterManager : MonoBehaviour {
                 log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+                hasDegraded = true;
             }
         }
         //If Actor and Target are Paramours, 25% chance to create a Break Up Job with the Paramour.
@@ -1064,7 +1072,7 @@ public class CharacterManager : MonoBehaviour {
                 log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
-
+                hasDegraded = true;
             }
         }
 
@@ -1078,11 +1086,13 @@ public class CharacterManager : MonoBehaviour {
                 log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+                hasDegraded = true;
             } else {
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "no_longer_friend");
                 log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+                hasDegraded = true;
             }
         }
         //If Target is only Relative of Actor(no other relationship) or has no relationship with Actor, Target now considers Actor an Enemy.
@@ -1094,9 +1104,11 @@ public class CharacterManager : MonoBehaviour {
             log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(actorAlterEgo.owner, actorAlterEgo.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
+            hasDegraded = true;
         }
 
         Debug.Log(summary);
+        return hasDegraded;
     }
     #endregion
 

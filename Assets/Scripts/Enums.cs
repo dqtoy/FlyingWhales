@@ -998,7 +998,7 @@ public enum INTERACTION_TYPE {
     SLEEP_OUTSIDE,
     EXPLORE,
     PATROL,
-    TABLE_REMOVE_POISON,
+    REMOVE_POISON_TABLE,
     TABLE_POISON,
     PRAY,
     CHOP_WOOD,
@@ -1269,6 +1269,11 @@ public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, HAS_SUPPLY, H
 , TARGET_REMOVE_RELATIONSHIP }
 public enum GOAP_PLAN_STATE { IN_PROGRESS, SUCCESS, FAILED, CANCELLED, }
 public enum GOAP_CATEGORY { NONE, IDLE, FULLNESS, TIREDNESS, HAPPINESS, WORK, REACTION,}
+public enum JOB_TYPE { NONE, UNDERMINE_ENEMY, TIREDNESS_RECOVERY_EXHAUSTED, FULLNESS_RECOVERY_STARVING, HAPPINESS_RECOVERY_FORLORN, TIREDNESS_RECOVERY, FULLNESS_RECOVERY, HAPPINESS_RECOVERY, REMOVE_TRAIT, RESTRAIN, OBTAIN_SUPPLY
+        , REMOVE_POISON, ASK_FOR_HELP_REMOVE_POISON_TABLE, FEED, KNOCKOUT, APPREHEND, ABDUCT, DESTROY_FRIENDSHIP
+        , DESTROY_LOVE, REPORT_HOSTILE, REPORT_CRIME, BURY, DELIVER_TREASURE, CRAFT_TOOL, REPLACE_TILE_OBJECT, BREW_POTION
+        , JUDGEMENT, BREAK_UP, SAVE_CHARACTER, ASK_FOR_HELP_SAVE_CHARACTER, TANTRUM, SHARE_INFORMATION, BUILD_FURNITURE
+        , BERSERK, PATROL, EXPLORE, }
 public enum Cardinal_Direction { North, South, East, West };
 public enum ACTION_LOCATION_TYPE {
     IN_PLACE,
@@ -1316,6 +1321,7 @@ public enum RELATIONSHIP_EFFECT {
     POSITIVE,
     NEGATIVE,
 }
+public enum SHARE_INTEL_STATUS { NONE, WITNESSED, INFORMED,}
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
@@ -1476,6 +1482,22 @@ public static class Extensions {
             return data.CanProvideFacility(facility);
         }
         return false;
+    }
+    #endregion
+
+    #region Jobs
+    public static bool IsNeedsTypeJob(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
+            case JOB_TYPE.FULLNESS_RECOVERY_STARVING:
+            case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
+            case JOB_TYPE.TIREDNESS_RECOVERY:
+            case JOB_TYPE.FULLNESS_RECOVERY:
+            case JOB_TYPE.HAPPINESS_RECOVERY:
+                return true;
+            default:
+                return false;
+        }
     }
     #endregion
 }

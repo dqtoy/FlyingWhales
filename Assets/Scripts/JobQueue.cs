@@ -14,22 +14,39 @@ public class JobQueue {
         jobsInQueue = new List<JobQueueItem>();
     }
 
-    public void AddJobInQueue(JobQueueItem job, bool isPriority = false, bool processLogicForPersonalJob = true) {
+    public void AddJobInQueue(JobQueueItem job, bool processLogicForPersonalJob = true) {
         job.SetJobQueueParent(this);
-        job.SetIsPriority(isPriority);
-        if (!isPriority) {
+        bool hasBeenInserted = false;
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if(job.priority < jobsInQueue[i].priority) {
+                jobsInQueue.Insert(i, job);
+                hasBeenInserted = true;
+                break;
+            }
+        }
+        if (!hasBeenInserted) {
             jobsInQueue.Add(job);
-        } else {
-            jobsInQueue.Insert(0, job);
         }
         job.OnAddJobToQueue();
 
-        if(processLogicForPersonalJob && character != null) {
-            if((character.stateComponent.currentState != null && (character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE))
-                || (character.currentAction != null && character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME && 
-                (character.currentAction.parentPlan == null || character.currentAction.parentPlan.category == GOAP_CATEGORY.IDLE))) {
-                character.jobQueue.ProcessFirstJobInQueue(character);
+        if(character != null) {
+            //bool hasProcessed = false;
+            //If the current action's job of the character is overridable and the added job has higher priority than it,
+            //then process the first job in queue if the first job is the added job
+            if (character.CanCurrentJobBeOverridenByJob(job)) {
+                JobQueueItem firstJob = GetFirstUnassignedJobInQueue(character);
+                if(firstJob != null && firstJob == job) {
+                    character.jobQueue.ProcessFirstJobInQueue(character);
+                    //hasProcessed = true;
+                }
             }
+            //if (processLogicForPersonalJob && !hasProcessed) {
+            //    if ((character.stateComponent.currentState != null && (character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE))
+            //        || (character.currentAction != null && character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME &&
+            //        (character.currentAction.parentPlan == null || character.currentAction.parentPlan.category == GOAP_CATEGORY.IDLE))) {
+            //        character.jobQueue.ProcessFirstJobInQueue(character);
+            //    }
+            //}
         }
     }
     public bool RemoveJobInQueue(JobQueueItem job) {
@@ -53,6 +70,20 @@ public class JobQueue {
     }
     public bool IsJobInTopPriority(JobQueueItem job) {
         return jobsInQueue.Count > 0 && jobsInQueue[0] == job;
+    }
+    public JobQueueItem GetFirstUnassignedJobInQueue(Character characterToDoJob) {
+        if (jobsInQueue.Count > 0) {
+            for (int i = 0; i < jobsInQueue.Count; i++) {
+                JobQueueItem job = jobsInQueue[i];
+                if (job.assignedCharacter == null && job.CanCharacterTakeThisJob(characterToDoJob)) {
+                    if (job.blacklistedCharacters.Contains(characterToDoJob)) {
+                        continue;
+                    }
+                    return job;
+                }
+            }
+        }
+        return null;
     }
     public bool ProcessFirstJobInQueue(Character characterToDoJob) {
         if(jobsInQueue.Count > 0) {
@@ -174,17 +205,19 @@ public class JobQueue {
         }
         return false;
     }
-    public bool HasJob(string jobName) {
+    public bool HasJob(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if (jobsInQueue[i].name == jobName) {
-                return true;
+            for (int j = 0; j < jobTypes.Length; j++) {
+                if (jobsInQueue[i].jobType == jobTypes[j]) {
+                    return true;
+                }
             }
         }
         return false;
     }
-    public bool HasJob(string jobName, IPointOfInterest targetPOI) {
+    public bool HasJob(JOB_TYPE jobType, IPointOfInterest targetPOI) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if(jobsInQueue[i].name == jobName && jobsInQueue[i] is GoapPlanJob) {
+            if(jobsInQueue[i].jobType == jobType && jobsInQueue[i] is GoapPlanJob) {
                 GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
                 if (job.targetPOI == targetPOI) {
                     return true;
@@ -193,9 +226,9 @@ public class JobQueue {
         }
         return false;
     }
-    public bool HasJobWithOtherData(string jobName, object otherData) {
+    public bool HasJobWithOtherData(JOB_TYPE jobType, object otherData) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if (jobsInQueue[i].name == jobName && jobsInQueue[i] is GoapPlanJob) {
+            if (jobsInQueue[i].jobType == jobType && jobsInQueue[i] is GoapPlanJob) {
                 GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
                 if(job.allOtherData != null) {
                     for (int j = 0; j < job.allOtherData.Count; j++) {
@@ -242,9 +275,9 @@ public class JobQueue {
         }
         return false;
     }
-    public JobQueueItem GetJob(string jobName, IPointOfInterest targetPOI) {
+    public JobQueueItem GetJob(JOB_TYPE jobType, IPointOfInterest targetPOI) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if (jobsInQueue[i].name == jobName && jobsInQueue[i] is GoapPlanJob) {
+            if (jobsInQueue[i].jobType == jobType && jobsInQueue[i] is GoapPlanJob) {
                 GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
                 if (job.targetPOI == targetPOI) {
                     return job;
@@ -253,10 +286,12 @@ public class JobQueue {
         }
         return null;
     }
-    public JobQueueItem GetJob(string jobName) {
+    public JobQueueItem GetJob(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if (jobsInQueue[i].name == jobName) {
-                return jobsInQueue[i];
+            for (int j = 0; j < jobTypes.Length; j++) {
+                if (jobsInQueue[i].jobType == jobTypes[j]) {
+                    return jobsInQueue[i];
+                }
             }
         }
         return null;
@@ -273,9 +308,9 @@ public class JobQueue {
         }
         return count;
     }
-    public void CancelAllJobs(string jobName) {
+    public void CancelAllJobs(JOB_TYPE jobType) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
-            if(jobsInQueue[i].name == jobName) {
+            if(jobsInQueue[i].jobType == jobType) {
                 if (CancelJob(jobsInQueue[i])) {
                     i--;
                 }
@@ -310,11 +345,11 @@ public class JobQueue {
         for (int i = 0; i < allJobs.Count; i++) {
             JobQueueItem currJob = allJobs[i];
             if (currJob.assignedCharacter == character) {
-                if (character.currentAction != null && character.currentAction.parentPlan.job != null && character.currentAction.parentPlan.job == currJob) {
-                    //skip
-                    character.currentAction.parentPlan.job.SetAssignedCharacter(null);
-                    continue;
-                }
+                //if (character.currentAction != null && character.currentAction.parentPlan.job != null && character.currentAction.parentPlan.job == currJob) {
+                //    //skip
+                //    character.currentAction.parentPlan.job.SetAssignedCharacter(null);
+                //    continue;
+                //}
                 summary += "\nUnassigned " + character.name + " from job " + currJob.name; 
                 currJob.UnassignJob(false);
             }

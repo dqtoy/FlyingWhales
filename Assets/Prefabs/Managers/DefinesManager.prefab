@@ -52,7 +52,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainSceneDefines: []
-  mainMenuSceneDefines:
-  - TRAILER_BUILD
+  mainMenuSceneDefines: []
   worldCreationDefines:
   - WORLD_CREATION_TOOL

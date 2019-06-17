@@ -77,8 +77,8 @@ public class RileUp : PlayerJobAction {
             _targetCharacter.stateComponent.currentState.OnExitThisState();
         }
 
-        CharacterStateJob job = new CharacterStateJob("Berserked", CHARACTER_STATE.BERSERKED, area);
-        _targetCharacter.jobQueue.AddJobInQueue(job, true);
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.BERSERK, CHARACTER_STATE.BERSERKED, area);
+        _targetCharacter.jobQueue.AddJobInQueue(job);
         //_targetCharacter.AddTrait("Berserker");
         //_targetCharacter.currentParty.GoToLocation(area, PATHFINDING_MODE.NORMAL);
     }

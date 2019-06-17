@@ -48,7 +48,7 @@ public class JudgeCharacter : GoapAction {
         SetCannotCancelAction(true);
         //**Effect 1**: Remove target's Restrained trait
         //**Effect 2**: Target dies
-        (poiTarget as Character).Death();
+        (poiTarget as Character).Death(deathFromAction: this);
 
         RemoveTraitFrom(poiTarget, "Restrained");
     }
@@ -103,7 +103,7 @@ public class JudgeCharacter : GoapAction {
     }
 
     #region Intel Reactions
-    private List<string> EndState1Reactions(Character recipient, Intel intel) {
+    private List<string> EndState1Reactions(Character recipient, Intel intel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 
@@ -144,7 +144,7 @@ public class JudgeCharacter : GoapAction {
         }
         return reactions;
     }
-    private List<string> EndState2Reactions(Character recipient, Intel intel) {
+    private List<string> EndState2Reactions(Character recipient, Intel intel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 
@@ -194,7 +194,7 @@ public class JudgeCharacter : GoapAction {
         }
         return reactions;
     }
-    private List<string> EndState3Reactions(Character recipient, Intel intel) {
+    private List<string> EndState3Reactions(Character recipient, Intel intel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 

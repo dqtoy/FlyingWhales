@@ -15,6 +15,7 @@ public class Jolted : Trait {
 
     #region Overrides
     public override void OnAddTrait(IPointOfInterest sourcePOI) {
+        base.OnAddTrait(sourcePOI);
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             character.marker.AdjustSpeedModifier(2f);
@@ -25,6 +26,7 @@ public class Jolted : Trait {
             Character character = sourcePOI as Character;
             character.marker.AdjustSpeedModifier(-2f);
         }
+        base.OnRemoveTrait(sourcePOI);
     }
     #endregion
 }

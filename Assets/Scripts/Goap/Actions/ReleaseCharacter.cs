@@ -52,14 +52,14 @@ public class ReleaseCharacter : GoapAction {
     #endregion
 
     #region State Effects
-    //public void PreReleaseSuccess() {
-    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //}
+    public void PreReleaseSuccess() {
+        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        currentState.SetIntelReaction(ReleaseSuccessIntelReaction);
+    }
     public void AfterReleaseSuccess() {
         Character target = poiTarget as Character;
         RemoveTraitFrom(target, "Restrained");
         RemoveTraitFrom(target, "Abducted");
-        currentState.SetIntelReaction(ReleaseSuccessIntelReaction);
     }
     //public void PreTargetMissing() {
     //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -70,7 +70,7 @@ public class ReleaseCharacter : GoapAction {
     #endregion
 
     #region Intel Reactions
-    private List<string> ReleaseSuccessIntelReaction(Character recipient, Intel sharedIntel) {
+    private List<string> ReleaseSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character target = poiTarget as Character;
 

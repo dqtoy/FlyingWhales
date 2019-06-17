@@ -55,7 +55,7 @@ public class ShareInformation : GoapAction {
     }
     private void AfterShareSuccess() {
         if(eventToBeShared.currentState.shareIntelReaction != null) {
-            eventToBeShared.currentState.shareIntelReaction.Invoke(poiTarget as Character, null);
+            eventToBeShared.currentState.shareIntelReaction.Invoke(poiTarget as Character, null, SHARE_INTEL_STATUS.INFORMED);
         }
     }
     #endregion

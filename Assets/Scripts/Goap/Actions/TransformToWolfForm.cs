@@ -27,16 +27,18 @@ public class TransformToWolfForm : GoapAction {
     #endregion
 
     #region State Effects
+    public void PreTransformSuccess() {
+        currentState.SetIntelReaction(TransformSuccessIntelReaction);
+    }
     public void AfterTransformSuccess() {
         Lycanthropy lycanthropy = actor.GetNormalTrait("Lycanthropy") as Lycanthropy;
         lycanthropy.TurnToWolf();
         SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
-        currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     #endregion
 
     #region Intel Reactions
-    private List<string> TransformSuccessIntelReaction(Character recipient, Intel sharedIntel) {
+    private List<string> TransformSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         //Lycanthropy lycanthropy = actor.GetTrait("Lycanthropy") as Lycanthropy;
         //Faction actorOrigFaction = lycanthropy.data.faction;
@@ -67,13 +69,13 @@ public class TransformToWolfForm : GoapAction {
             reactions.Add(string.Format("Lycanthropes are not welcome here. {0} must be restrained!", actor.name));
             //-**Recipient Effect**: If soldier, noble or faction leader, brand Actor with Aberration crime (add Apprehend job). Otherwise, add a personal Report Crime job to the Recipient.
             if (recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-                actor.AddCriminalTrait(CRIME.ABERRATION);
+                actor.AddCriminalTrait(CRIME.ABERRATION, this);
                 GoapPlanJob job = recipient.CreateApprehendJobFor(actor);
                 //if (job != null) {
                 //    recipient.homeArea.jobQueue.AssignCharacterToJob(job, this);
                 //}
             } else {
-                GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo, this }}
                 });
                 job.SetCannotOverrideJob(true);
@@ -86,13 +88,13 @@ public class TransformToWolfForm : GoapAction {
             reactions.Add(string.Format("Lycanthropes are not welcome here. {0} must be restrained!", actor.name));
             //-**Recipient Effect**: If soldier, noble or faction leader, brand Actor with Aberration crime (add Apprehend job). Otherwise, add a personal Report Crime job to the Recipient.
             if (recipient.role.roleType == CHARACTER_ROLE.SOLDIER || recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-                actor.AddCriminalTrait(CRIME.ABERRATION);
+                actor.AddCriminalTrait(CRIME.ABERRATION, this);
                 GoapPlanJob job = recipient.CreateApprehendJobFor(actor);
                 //if (job != null) {
                 //    recipient.homeArea.jobQueue.AssignCharacterToJob(job, this);
                 //}
             } else {
-                GoapPlanJob job = new GoapPlanJob("Report Crime", INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo, this }}
                 });
                 job.SetCannotOverrideJob(true);

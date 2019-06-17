@@ -43,6 +43,7 @@ public class Zapped : Trait {
             //}
             character.AdjustDoNotDisturb(1);
         }
+        base.OnAddTrait(sourcePOI);
     }
     public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
         if (sourcePOI is Character) {
@@ -62,15 +63,16 @@ public class Zapped : Trait {
                 }
 
                 IPointOfInterest targetTable = fiona.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
-                GoapPlanJob job = new GoapPlanJob("Poison Table", INTERACTION_TYPE.TABLE_POISON, targetTable);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.TABLE_POISON, targetTable);
                 job.SetCannotOverrideJob(true);
                 job.SetCannotCancelJob(true);
-                job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                 character.jobQueue.AddJobInQueue(job, true);
                 character.jobQueue.ProcessFirstJobInQueue(character);
             }
 #endif
         }
+        base.OnRemoveTrait(sourcePOI);
     }
     #endregion
 }

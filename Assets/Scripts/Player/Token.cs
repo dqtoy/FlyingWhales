@@ -219,10 +219,10 @@ public class SpecialToken : Token, IPointOfInterest {
     public bool RemoveJobTargettingThis(JobQueueItem job) {
         return allJobsTargettingThis.Remove(job);
     }
-    public bool HasJobTargettingThis(string jobName) {
+    public bool HasJobTargettingThis(JOB_TYPE jobType) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
-            if (job.name == jobName) {
+            if (job.jobType == jobType) {
                 return true;
             }
         }

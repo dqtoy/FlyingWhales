@@ -69,6 +69,9 @@ public class GoapAction {
     public bool onlyShowNotifOfDescriptionLog { get; protected set; }
     public CharacterState characterState { get; protected set; }
     public Character[] crimeCommitters { get; protected set; }
+    public List<Character> awareCharactersOfThisAction { get; protected set; } //all characters that witnessed/aware of this action
+    public bool isOldNews { get; protected set; }
+    public int referenceCount { get; protected set; }
 
     protected virtual bool isTargetMissing {
         get { return !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
@@ -106,6 +109,7 @@ public class GoapAction {
         resumeTargetCharacterState = true;
         isNotificationAnIntel = true;
         canBeAddedToMemory = true;
+        awareCharactersOfThisAction = new List<Character>();
         //for testing
         //CRIME[] choices = Utilities.GetEnumValues<CRIME>();
         //committedCrime = choices[Utilities.rng.Next(1, choices.Length)];
@@ -172,10 +176,11 @@ public class GoapAction {
     public virtual void PerformActualAction() {
         isPerformingActualAction = true;
         actorAlterEgo = actor.currentAlterEgo;
+        //Messenger.AddListener<IPointOfInterest>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             poiTargetAlterEgo = targetCharacter.currentAlterEgo;
-            if (poiTarget != actor) {
+            if (poiTarget != actor && !targetCharacter.isDead) {
                 targetCharacter.OnTargettedByAction(this);
                 if (!doesNotStopTargetCharacter) {
                     if (targetCharacter.currentAction != null) {
@@ -358,6 +363,11 @@ public class GoapAction {
     public virtual bool IsTarget(IPointOfInterest poi) {
         return poiTarget == poi;
     }
+
+    /// <summary>
+    /// This might change the value of isOldNews to true if the conditions are met
+    /// </summary>
+    protected virtual void OldNewsTrigger(IPointOfInterest poi) { }
     #endregion
 
     #region Utilities
@@ -455,11 +465,11 @@ public class GoapAction {
                 actor.currentParty.icon.SetOnArriveAction(() => actor.OnArriveAtAreaStopMovement());
             }
         }
+        //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+        //    Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        //    Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
+        //}
 
-        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-            Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
-        }
         OnCancelActionTowardsTarget();
         SetIsStopped(true);
 
@@ -566,7 +576,7 @@ public class GoapAction {
     }
     public bool IsFromApprehendJob() {
         if (parentPlan != null && parentPlan.job != null && 
-            (parentPlan.job.name == "Assault" || parentPlan.job.name == "Apprehend")) {
+            (parentPlan.job.jobType == JOB_TYPE.KNOCKOUT || parentPlan.job.jobType == JOB_TYPE.APPREHEND)) {
             return true;
         }
         return false;
@@ -608,6 +618,28 @@ public class GoapAction {
             return 1;
         }
         return 3;
+    }
+    public void AddAwareCharacter(Character character) {
+        if (!awareCharactersOfThisAction.Contains(character)) {
+            awareCharactersOfThisAction.Add(character);
+        }
+    }
+    public void SetIsOldNews(bool state) {
+        if(isOldNews != state) {
+            isOldNews = state;
+            if (isOldNews) {
+                if (Messenger.eventTable.ContainsKey(Signals.OLD_NEWS_TRIGGER)) {
+                    Messenger.RemoveListener<IPointOfInterest>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
+                }
+            }
+        }
+    }
+    public void AdjustReferenceCount(int amount) {
+        referenceCount += amount;
+        referenceCount = Mathf.Max(0, referenceCount);
+        if(referenceCount == 0) {
+            SetIsOldNews(true);
+        }
     }
     #endregion
 
