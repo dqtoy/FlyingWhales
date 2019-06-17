@@ -1833,7 +1833,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 //If current state has no job, it is automatically overridable, otherwise, if the current state's job has a lower job priority (higher number) than the parameter job, it is overridable
                 if(stateComponent.currentState.job != null && !stateComponent.currentState.job.cannotOverrideJob && job.priority < stateComponent.currentState.job.priority) {
                     return true;
-                }else if(stateComponent.currentState.job == null) {
+                }else if (stateComponent.stateToDo.job != null && !stateComponent.stateToDo.job.cannotOverrideJob && job.priority < stateComponent.stateToDo.job.priority) {
+                    return true;
+                } else if(stateComponent.currentState.job == null) {
                     return true;
                 }
                 return false;

@@ -92,7 +92,7 @@ public class CureCharacter : GoapAction {
                 }
                 //- Recipient Has No Relationship with Target
                 else {
-                    reactions.Add("That was not nice.");
+                    reactions.Add(string.Format("That was nice of {0}.", Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                 }
             }
         }

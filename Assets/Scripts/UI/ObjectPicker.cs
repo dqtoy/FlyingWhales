@@ -32,9 +32,11 @@ public class ObjectPicker : MonoBehaviour {
             ShowStringItems(validItems.Cast<string>().ToList(), invalidItems.Cast<string>().ToList(), onClickItemAction, onHoverItemAction);
         }
         titleLbl.text = title;
-        this.gameObject.SetActive(true);
-        _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
-        GameManager.Instance.SetPausedState(true);
+        if (!gameObject.activeSelf) {
+            this.gameObject.SetActive(true);
+            _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
+            GameManager.Instance.SetPausedState(true);
+        }
     }
     public void ShowDraggable<T>(List<T> items, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
         Utilities.DestroyChildren(objectPickerScrollView.content);
@@ -46,9 +48,11 @@ public class ObjectPicker : MonoBehaviour {
             ShowDraggableCharacterItems<T>(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList());
         }
         titleLbl.text = title;
-        this.gameObject.SetActive(true);
-        _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
-        GameManager.Instance.SetPausedState(true);
+        if (!gameObject.activeSelf) {
+            this.gameObject.SetActive(true);
+            _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
+            GameManager.Instance.SetPausedState(true);
+        }
     }
     public void Hide() {
         if (gameObject.activeSelf) {
