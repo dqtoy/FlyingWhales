@@ -25,13 +25,15 @@ public class TileObjectInfoUI : UIMenu {
     }
     public override void OpenMenu() {
         activeTileObject = _data as TileObject;
-        bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != activeTileObject.specificLocation;
-        AreaMapCameraMove.Instance.CenterCameraOn(activeTileObject.collisionTrigger.gameObject, instantCenter);
-        base.OpenMenu();
-        UIManager.Instance.HideObjectPicker();
-        //UpdateBasicInfo();
-        UpdateTileObjectInfo();
-        UpdateCharacters();
+        if(activeTileObject.gridTileLocation != null) {
+            bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != activeTileObject.specificLocation;
+            AreaMapCameraMove.Instance.CenterCameraOn(activeTileObject.collisionTrigger.gameObject, instantCenter);
+            base.OpenMenu();
+            UIManager.Instance.HideObjectPicker();
+            //UpdateBasicInfo();
+            UpdateTileObjectInfo();
+            UpdateCharacters();
+        }
     }
     #endregion
 

@@ -46401,7 +46401,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 114708430495352550}
   m_OnClick:
     m_PersistentCalls:
@@ -52235,7 +52235,6 @@ MonoBehaviour:
   historyScrollView: {fileID: 114367558329102766}
   evenLogColor: {r: 0.18039216, g: 0.16078432, b: 0.28627452, a: 1}
   oddLogColor: {r: 0.3921569, g: 0.3647059, b: 0.43529415, a: 1}
-  logsMenuCover: {fileID: 0}
   attackButtonGO: {fileID: 1451827706558128}
   attackBtnToggle: {fileID: 114563728260968208}
   joinBattleButtonGO: {fileID: 1711266467705662}

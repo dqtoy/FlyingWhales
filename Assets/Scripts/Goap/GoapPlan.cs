@@ -113,6 +113,11 @@ public class GoapPlan {
     }
     public void SetJob(GoapPlanJob job) {
         this.job = job;
+        if(this.job != null) {
+            for (int i = 0; i < allNodes.Count; i++) {
+                allNodes[i].action.OnSetJob(this.job);
+            }
+        }
     }
     public string LogPlan() {
         string log = "\n---------------------NEW PLAN OF " + endNode.action.actor.name + " FOR " + endNode.action.goapName + " WITH TARGET " + target.name + " (" + endNode.action.actor.specificLocation.name + ")--------------------------";

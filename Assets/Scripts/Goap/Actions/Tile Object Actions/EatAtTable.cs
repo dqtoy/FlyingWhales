@@ -133,8 +133,9 @@ public class EatAtTable : GoapAction {
         if (poisonedResult == "Sick") {
             Sick sick = new Sick();
             for (int i = 0; i < poisonedTrait.responsibleCharacters.Count; i++) {
-                AddTraitTo(actor, sick, poisonedTrait.responsibleCharacters[i]);
+                sick.AddCharacterResponsibleForTrait(poisonedTrait.responsibleCharacters[i]);
             }
+            AddTraitTo(actor, sick);
         } else {
             if (parentPlan.job != null) {
                 parentPlan.job.SetCannotCancelJob(true);

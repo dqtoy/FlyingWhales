@@ -75,6 +75,10 @@ public class Table : TileObject {
 
         }
     }
+    protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
+        base.OnRemoveTileObject(removedBy, removedFrom);
+        //Messenger.Broadcast(Signals.OLD_NEWS_TRIGGER, this as IPointOfInterest, null as GoapAction);
+    }
     //private bool IsSlotAvailable() {
     //    for (int i = 0; i < users.Length; i++) {
     //        if (users[i] == null) {

@@ -41,6 +41,7 @@ public class Poisoned : Trait {
         base.OnRemoveTrait(sourceCharacter);
         awareCharacters.Clear();
         responsibleCharacters.Clear(); //Cleared list, for garbage collection
+        //Messenger.Broadcast(Signals.OLD_NEWS_TRIGGER, sourceCharacter, gainedFromDoing);
     }
     #endregion
 

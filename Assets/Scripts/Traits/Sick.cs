@@ -52,6 +52,7 @@ public class Sick : Trait {
         _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
         _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         base.OnRemoveTrait(sourceCharacter);
+        //Messenger.Broadcast(Signals.OLD_NEWS_TRIGGER, sourceCharacter, gainedFromDoing);
     }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         Character targetCharacter = traitOwner as Character;

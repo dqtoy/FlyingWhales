@@ -71,6 +71,7 @@ public class BuryCharacter : GoapAction {
                 characters[i].AddAwareness(tombstone);
             }
         }
+        //Messenger.Broadcast(Signals.OLD_NEWS_TRIGGER, poiTarget, this as GoapAction);
         //targetCharacter.CancelAllJobsTargettingThisCharacter("target is already buried", false);
     }
     #endregion

@@ -176,7 +176,7 @@ public class GoapAction {
     public virtual void PerformActualAction() {
         isPerformingActualAction = true;
         actorAlterEgo = actor.currentAlterEgo;
-        //Messenger.AddListener<IPointOfInterest>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
+        //Messenger.AddListener<IPointOfInterest, GoapAction>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             poiTargetAlterEgo = targetCharacter.currentAlterEgo;
@@ -367,7 +367,14 @@ public class GoapAction {
     /// <summary>
     /// This might change the value of isOldNews to true if the conditions are met
     /// </summary>
-    protected virtual void OldNewsTrigger(IPointOfInterest poi) { }
+    /// <param name="poi">The POI that is the basis for the old news. Usually, it must match with the action's poiTarget.</param>
+    /// <param name="action">Can be null. If this is not null, then the listener action must match with this.</param>
+    protected virtual void OldNewsTrigger(IPointOfInterest poi, GoapAction action) { }
+
+    /// <summary>
+    /// What happens when the parent plan of this action has a job
+    /// </summary>
+    public virtual void OnSetJob(GoapPlanJob job) { }
     #endregion
 
     #region Utilities
@@ -629,7 +636,7 @@ public class GoapAction {
             isOldNews = state;
             if (isOldNews) {
                 if (Messenger.eventTable.ContainsKey(Signals.OLD_NEWS_TRIGGER)) {
-                    Messenger.RemoveListener<IPointOfInterest>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
+                    Messenger.RemoveListener<IPointOfInterest, GoapAction>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
                 }
             }
         }
