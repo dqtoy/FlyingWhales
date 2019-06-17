@@ -63,10 +63,10 @@ public class Zapped : Trait {
                 }
 
                 IPointOfInterest targetTable = fiona.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
-                GoapPlanJob job = new GoapPlanJob("Poison Table", INTERACTION_TYPE.TABLE_POISON, targetTable);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.TABLE_POISON, targetTable);
                 job.SetCannotOverrideJob(true);
                 job.SetCannotCancelJob(true);
-                job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                 character.jobQueue.AddJobInQueue(job, true);
                 character.jobQueue.ProcessFirstJobInQueue(character);
             }

@@ -20968,6 +20968,10 @@ MonoBehaviour:
     type: 2}
   tile1: {fileID: 0}
   tile2: {fileID: 0}
+  electricEffectPrefab: {fileID: 1997544771906246, guid: f8f78640bd2a9f34c8838653cdcb9f8b,
+    type: 2}
+  hitEffectPrefab: {fileID: 1826126969253054, guid: 35a4e5c959a14474086ca1824ea11827,
+    type: 2}
   pauseTickEnded2: 0
 --- !u!114 &557822220
 MonoBehaviour:
@@ -23270,6 +23274,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   combatGridAssignerIcon: {fileID: 1805880855}
+  electricEffectPrefab: {fileID: 0}
   previousMenu: minion
 --- !u!1001 &607353879
 Prefab:
@@ -36035,6 +36040,7 @@ GameObject:
   - component: {fileID: 930355349}
   - component: {fileID: 930355351}
   - component: {fileID: 930355347}
+  - component: {fileID: 930355346}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -36042,6 +36048,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &930355346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 930355345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  profile: {fileID: 11400000, guid: eb61b37790c165446b5921ae728df1ca, type: 2}
 --- !u!114 &930355347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -36086,7 +36104,7 @@ Camera:
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 0
+  m_HDR: 1
   m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
@@ -69801,6 +69819,7 @@ GameObject:
   - component: {fileID: 1713567858}
   - component: {fileID: 1713567859}
   - component: {fileID: 1713567860}
+  - component: {fileID: 1713567861}
   m_Layer: 0
   m_Name: Area Maps Camera
   m_TagString: Untagged
@@ -69850,8 +69869,8 @@ Camera:
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
-  m_HDR: 0
-  m_AllowMSAA: 1
+  m_HDR: 1
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
   m_OcclusionCulling: 1
@@ -69899,6 +69918,18 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 16384
   m_MaxRayIntersections: 0
+--- !u!114 &1713567861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1713567856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  profile: {fileID: 11400000, guid: eb61b37790c165446b5921ae728df1ca, type: 2}
 --- !u!1 &1719621709
 GameObject:
   m_ObjectHideFlags: 0
@@ -74168,7 +74199,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 3
   m_TargetDisplay: 0
 --- !u!114 &1810423191
 MonoBehaviour:

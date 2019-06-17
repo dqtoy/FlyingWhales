@@ -705,12 +705,15 @@ public class CharacterMarker : PooledObject {
         }
         PlayAnimation("Sleep Ground");
     }
-    private void PlayAnimation(string animation) {
+    public void PlayAnimation(string animation) {
         //Debug.Log(character.name + " played " + animation + " animation.");
         animator.Play(animation, 0, 0.5f);
         //StartCoroutine(PlayAnimation(animation));
     }
     private void UpdateAnimation() {
+        if (isInCombatTick) {
+            return;
+        }
         if (!character.IsInOwnParty()) {
             return; //if not in own party do not update animations
         }
@@ -990,8 +993,10 @@ public class CharacterMarker : PooledObject {
         if (inVisionPOIs.Contains(otherCharacter)) {
             character.CreateJobsOnEnterVisionWith(otherCharacter); //this is used to create jobs that involve characters that died within the character's range of vision
         }
+#if !TRAILER_BUILD
         RemovePOIFromInVisionRange(otherCharacter);
         visionCollision.RemovePOIAsInRangeButDifferentStructure(otherCharacter);
+#endif
         //RemoveHostileInRange(otherCharacter);
 
         //if (this.hasFleePath) { //if this character is fleeing, remove the character that died from his/her hostile list
@@ -1273,11 +1278,42 @@ public class CharacterMarker : PooledObject {
         }
 
         engageSummary += this.character.name + " has reached engage target " + currentlyEngaging.name + "\n";
-
         Character enemy = currentlyEngaging;
         //stop the enemy's movement
         enemy.marker.pathfindingAI.AdjustDoNotMove(1);
+        LookAt(enemy.marker.transform.position);
 
+#if TRAILER_BUILD
+        Messenger.AddListener(Signals.TICK_STARTED, CombatTick);
+        isInCombatTick = true;
+        //enemy.marker.isInCombatTick = true;
+        //CombatTick();
+#else
+        ExecuteCombat();
+#endif
+    }
+    private const int Fixed_Combat_Ticks = 3;
+    private int currentCombatTick = 0;
+    public bool isInCombatTick = false;
+    public Character lastHitBy;
+    public void CombatTick() {
+        if (currentCombatTick < Fixed_Combat_Ticks) {
+            currentCombatTick++;
+            Debug.Log(character.name + " hit " + currentlyEngaging?.name);
+            //Play animation here
+            GameManager.Instance.CreateHitEffectAt(currentlyEngaging);
+            PlayAnimation("Attack");
+            //StartCoroutine(CombatAnimation());
+        }
+        if (currentCombatTick == Fixed_Combat_Ticks) {
+            //Do actual combat here
+            ExecuteCombat();
+            Messenger.RemoveListener(Signals.TICK_STARTED, CombatTick);
+            isInCombatTick = false;
+        }
+    }
+    private void ExecuteCombat() {
+        Character enemy = currentlyEngaging;
         //determine whether to start combat or not
         if (cannotCombat) {
             cannotCombat = false;

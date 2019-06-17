@@ -17,6 +17,11 @@ public class CursorManager : MonoBehaviour {
 
     [SerializeField] private CursorTextureDictionary cursors;
 
+    [Header("Cursor Effects")]
+    [SerializeField] private GameObject effectsParent;
+    [SerializeField] private Camera effectsCamera;
+    public GameObject electricEffect;
+
     public enum Cursor_Type {
         None, Default, Target, Drag_Hover, Drag_Clicked, Check, Cross
     }
@@ -50,6 +55,13 @@ public class CursorManager : MonoBehaviour {
             //left click
             ExecuteLeftClickActions();
             ClearLeftClickActions();
+        }
+        if (AreaMapCameraMove.Instance != null) {
+            Vector3 pos = effectsCamera.ScreenToWorldPoint(Input.mousePosition);
+            //pos.x += 0.05f;
+            //pos.y -= 0.05f;
+            pos.z = 0f;
+            effectsParent.transform.position = pos;
         }
     }
     #endregion
@@ -90,4 +102,9 @@ public class CursorManager : MonoBehaviour {
     }
     #endregion
 
+    #region Effects
+    public void SetElectricEffectState(bool state) {
+        electricEffect.gameObject.SetActive(state);
+    }
+    #endregion
 }

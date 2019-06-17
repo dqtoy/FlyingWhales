@@ -138,7 +138,7 @@ public class EngageState : CharacterState {
 
 #if TRAILER_BUILD
         if (winner.name == "Fiona" && loser.name == "Jamie") {
-            result = "Death"; //always kill jamie
+            result = "Unconscious"; //always make jamie unconscious
         }
 #endif
 

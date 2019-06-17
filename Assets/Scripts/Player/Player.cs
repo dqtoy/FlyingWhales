@@ -540,6 +540,7 @@ public class Player : ILeader {
             PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(previousActiveAction);
             jobActionButton?.UpdateInteractableState();
             jobActionButton?.SetSelectedIconState(false);
+            //CursorManager.Instance.SetElectricEffectState(false);
         } else {
             PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(currentActivePlayerJobAction);
             //change the cursor
@@ -547,6 +548,9 @@ public class Player : ILeader {
             CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveAction);
             CursorManager.Instance.AddLeftClickAction(() => SetCurrentlyActivePlayerJobAction(null));
             jobActionButton?.SetSelectedIconState(true);
+            //if (action is Zap) {
+            //    CursorManager.Instance.SetElectricEffectState(true);
+            //}
         }
         
     }

@@ -10,6 +10,7 @@ TagManager:
   - CharacterInfoUI
   - Character Marker
   - Avatar
+  - Landmark
   layers:
   - Default
   - TransparentFX
@@ -27,7 +28,7 @@ TagManager:
   - WorldUI
   - Area Maps
   - Area Maps Collision
-  - 
+  - Cursor Effects
   - 
   - 
   - 
@@ -112,4 +113,7 @@ TagManager:
     locked: 0
   - name: Area Maps
     uniqueID: 1024382313
+    locked: 0
+  - name: Cursor Effects
+    uniqueID: 3537618809
     locked: 0

@@ -19,6 +19,7 @@ public class Zap : PlayerJobAction {
             return;
         }
         base.ActivateAction(assignedCharacter, _targetCharacter);
+        GameManager.Instance.CreateElectricEffectAt(_targetCharacter);
         Trait newTrait = new Zapped();
         _targetCharacter.AddTrait(newTrait);
         if (UIManager.Instance.characterInfoUI.isShowing) {

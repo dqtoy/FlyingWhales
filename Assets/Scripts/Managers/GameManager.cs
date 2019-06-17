@@ -47,6 +47,10 @@ public class GameManager : MonoBehaviour {
     public HexTile tile1;
     public HexTile tile2;
 
+    [Header("Particle Effects")]
+    [SerializeField] private GameObject electricEffectPrefab;
+    [SerializeField] private GameObject hitEffectPrefab;
+
     private const float X1_SPEED = 0.75f;
     private const float X2_SPEED = 0.5f;
     private const float X4_SPEED = 0.25f;
@@ -81,14 +85,22 @@ public class GameManager : MonoBehaviour {
         //Application.logMessageReceived += LogCallback;
 #endif
     }
-    private void FixedUpdate() {
-#if UNITY_EDITOR
+    private void Update() {
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
             if (allowConsole) {
                 UIManager.Instance.ToggleConsole();
             }
+        } else if (Input.GetKeyDown(KeyCode.Space) && !UIManager.Instance.IsMouseOnInput()) {
+            if (UIManager.Instance.pauseBtn.IsInteractable()) {
+                if (isPaused) {
+                    UIManager.Instance.Unpause();
+                } else {
+                    UIManager.Instance.Pause();
+                }
+            }
         }
-#endif
+    }
+    private void FixedUpdate() {
         if (_gameHasStarted && !isPaused) {
             if (this.timeElapsed == 0f) {
                 this.TickStarted();
@@ -311,6 +323,29 @@ public class GameManager : MonoBehaviour {
         float percent = (float)minutes/60f;
         return Mathf.FloorToInt(ticksPerHour * percent);
     }
+
+    #region Particle Effects
+    public void CreateElectricEffectAt(Character character) {
+        StartCoroutine(ElectricEffect(character));
+    }
+    private IEnumerator ElectricEffect(Character character) {
+        GameObject go = GameObject.Instantiate(electricEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
+        go.SetActive(true);
+        go.transform.localPosition = Vector3.zero;
+        yield return new WaitForSeconds(2f);
+        GameObject.Destroy(go);
+    }
+    public void CreateHitEffectAt(Character character) {
+        StartCoroutine(HitEffect(character));
+    }
+    private IEnumerator HitEffect(Character character) {
+        GameObject go = GameObject.Instantiate(hitEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
+        go.SetActive(true);
+        go.transform.localPosition = Vector3.zero;
+        yield return new WaitForSeconds(2f);
+        GameObject.Destroy(go);
+    }
+    #endregion
 
     //#region Cursor
     //public void SetCursorToDefault() {

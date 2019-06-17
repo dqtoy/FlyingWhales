@@ -786,7 +786,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 grave.gridTileLocation.structure.RemovePOI(grave);
                 SetGrave(null);
             }
+            RemoveTrait("Dead");
+            ClearAllAwareness();
+            Area gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
             MigrateHomeStructureTo(null);
+            MigrateHomeTo(gloomhollow);
+            AddInitialAwareness(gloomhollow);
         }
     }
     public void Death(string cause = "normal", GoapAction deathFromAction = null) {
@@ -5603,6 +5608,49 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         AddAwareness(this);
         if (faction == FactionManager.Instance.neutralFaction) {
             foreach (List<LocationStructure> structures in specificLocation.structures.Values) {
+                for (int i = 0; i < structures.Count; i++) {
+                    for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+                        IPointOfInterest poi = structures[i].pointsOfInterest[j];
+                        if (poi != this) {
+                            AddAwareness(poi);
+                        }
+                    }
+                }
+            }
+        } else {
+            List<IPointOfInterest> treeObjects = new List<IPointOfInterest>();
+            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in specificLocation.structures) {
+                for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                    LocationStructure structure = keyValuePair.Value[i];
+                    for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
+                        IPointOfInterest poi = structure.pointsOfInterest[j];
+                        if (poi != this) {
+                            if (poi is TreeObject) {
+                                treeObjects.Add(poi);
+                                continue;
+                            }
+                            AddAwareness(poi);
+                        }
+                    }
+                }
+                //order the tree objects, then only add the first n to this character
+                treeObjects = treeObjects.OrderBy(x => Vector3Int.Distance(x.gridTileLocation.localPlace, this.gridTileLocation.localPlace)).ToList();
+                for (int i = 0; i < TREE_AWARENESS_LIMIT; i++) {
+                    if (treeObjects.Count <= i) {
+                        break; //no more tree objects left
+                    }
+                    IPointOfInterest tree = treeObjects[i];
+                    AddAwareness(tree);
+                }
+
+            }
+
+        }
+    }
+    public void AddInitialAwareness(Area area) {
+        AddAwareness(this);
+        if (faction == FactionManager.Instance.neutralFaction) {
+            foreach (List<LocationStructure> structures in area.structures.Values) {
                 for (int i = 0; i < structures.Count; i++) {
                     for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
                         IPointOfInterest poi = structures[i].pointsOfInterest[j];
