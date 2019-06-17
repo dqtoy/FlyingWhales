@@ -38,7 +38,7 @@ public class FirstAidCharacter : GoapAction {
     public void PreFirstAidSuccess() {
         //**Pre Effect 1**: Prevent movement of Target
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
-
+        currentState.SetIntelReaction(FirstAidSuccessReactions);
     }
     public void AfterFirstAidSuccess() {
         //**After Effect 1**: Remove target's Injured and Unconscious trait
@@ -58,6 +58,46 @@ public class FirstAidCharacter : GoapAction {
         }
         //**After Effect 3**: Allow movement of Target
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
+    }
+    #endregion
+
+    #region Intel Reactions
+    private List<string> FirstAidSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+        Character targetCharacter = poiTarget as Character;
+
+        if (isOldNews) {
+            //Old News
+            reactions.Add("This is old news.");
+        } else {
+            //Not Yet Old News
+            if (awareCharactersOfThisAction.Contains(recipient)) {
+                //- If Recipient is Aware
+                reactions.Add("I know that already.");
+            } else {
+                //- Recipient is Actor
+                if (recipient == actor) {
+                    reactions.Add("I know what I did.");
+                }
+                //- Recipient is Target
+                else if (recipient == targetCharacter) {
+                    reactions.Add(string.Format("I am grateful for {0}'s help.", actor.name));
+                }
+                //- Recipient Has Positive Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    reactions.Add(string.Format("I am grateful that {0} helped {1}.", actor.name, targetCharacter.name));
+                }
+                //- Recipient Has Negative Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    reactions.Add(string.Format("{0} is such a chore.", targetCharacter.name));
+                }
+                //- Recipient Has No Relationship with Target
+                else {
+                    reactions.Add("That was not nice.");
+                }
+            }
+        }
+        return reactions;
     }
     #endregion
 }

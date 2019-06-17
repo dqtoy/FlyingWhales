@@ -60,8 +60,7 @@ public class CurseCharacter : GoapAction {
 
     #region State Effects
     public void PreCurseSuccess() {
-        currentState.SetIntelReaction(CurseSuccessReactions);
-
+        SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
         actorLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), currentState.name.ToLower() + "_description_actor", this);
         actorLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         actorLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -70,6 +69,7 @@ public class CurseCharacter : GoapAction {
         targetLog.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
 
         currentState.OverrideDescriptionLog(actorLog);
+        currentState.SetIntelReaction(CurseSuccessReactions);
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(1);
     }
     public void AfterCurseSuccess() {
@@ -95,48 +95,92 @@ public class CurseCharacter : GoapAction {
     #endregion
 
     #region Intel Reactions
-    public List<string> CurseSuccessReactions(Character reciepient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+    public List<string> CurseSuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
-        Character target = poiTarget as Character;
+        Character targetCharacter = poiTarget as Character;
 
-        RELATIONSHIP_EFFECT relWithActor = reciepient.GetRelationshipEffectWith(actorAlterEgo);
-
-        //Recipient is the target:
-        if (reciepient == poiTarget) {
-            //- **Recipient Response Text**:  "[Actor Name] cursed me? What a horrible person."
-            reactions.Add(string.Format("{0} cursed me? What a horrible person.", actor.name));
-            //-**Recipient Effect * *: Remove Friend/ Lover / Paramour relationship between Actor and Recipient.
-            CharacterManager.Instance.RemoveRelationshipBetween(reciepient, actorAlterEgo, RELATIONSHIP_TRAIT.FRIEND);
-            CharacterManager.Instance.RemoveRelationshipBetween(reciepient, actorAlterEgo, RELATIONSHIP_TRAIT.LOVER);
-            CharacterManager.Instance.RemoveRelationshipBetween(reciepient, actorAlterEgo, RELATIONSHIP_TRAIT.PARAMOUR);
-            //Apply Crime System handling as if the Recipient witnessed Actor commit Assault.
-            reciepient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
-        }
-        //Recipient is the actor:
-        else if (reciepient == actor) {
-            //-**Recipient Response Text**: I know what I did.
-            reactions.Add("I know what I did.");
-            //- **Recipient Effect * *: no effect
-        }
-        //Recipient and Actor have a positive relationship:
-        else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-            //-**Recipient Response Text**: "[Actor Name] may have cursed somebody but I know that [he/she] is a good person."
-            reactions.Add(string.Format("{0} may have cursed somebody but I know that {1} is a good person.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-            //- **Recipient Effect * *: no effect
-        }
-        //Recipient and Actor have a negative relationship:
-        else if (relWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
-            //- **Recipient Response Text**: "[Actor Name] cursed someone!? Why am I not surprised."
-            reactions.Add(string.Format("{0} cursed someone!? Why am I not surprised.", actor.name));
-            //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit Assault.
-            reciepient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
-        }
-        //Recipient and Actor have no relationship but are from the same faction:
-        else if (relWithActor == RELATIONSHIP_EFFECT.NONE && reciepient.faction == actorAlterEgo.faction) {
-            //- **Recipient Response Text**: "[Actor Name] cursed someone!? That's forbidden."
-            reactions.Add(string.Format("{0} cursed someone!? That's forbidden.", actor.name));
-            //-**Recipient Effect * *: Apply Crime System handling as if the Recipient witnessed Actor commit Assault.
-            reciepient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
+        if (isOldNews) {
+            //Old News
+            reactions.Add("This is old news.");
+        } else {
+            //Not Yet Old News
+            if (awareCharactersOfThisAction.Contains(recipient)) {
+                //- If Recipient is Aware
+                reactions.Add("I know that already.");
+            } else {
+                //- Recipient is Actor
+                if (recipient == actor) {
+                    reactions.Add("I know what I did.");
+                }
+                //- Recipient is Target
+                else if (recipient == targetCharacter) {
+                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                    bool hasRelationshipDegraded = false;
+                    if (!hasCrimeBeenReported) {
+                        hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                    }
+                    if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (hasRelationshipDegraded) {
+                            reactions.Add(string.Format("So it was {0} who did that to me. I should start avoiding {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                        } else {
+                            reactions.Add(string.Format("I forgave {0} already.", actor.name));
+                        }
+                    } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        reactions.Add(string.Format("So it was {0} who did that to me. I should get back at {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                        if (status == SHARE_INTEL_STATUS.INFORMED) {
+                            recipient.CreateUndermineJobOnly(actor, "idle", status);
+                        }
+                    } else {
+                        reactions.Add(string.Format("Why did {0} do that to me?", actor.name));
+                        AddTraitTo(recipient, "Annoyed");
+                    }
+                }
+                //- Recipient Has Positive Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                    bool hasRelationshipDegraded = false;
+                    if (!hasCrimeBeenReported) {
+                        hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                    }
+                    if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (hasRelationshipDegraded) {
+                            reactions.Add(string.Format("{0} shouldn't have done that to {1}. I should start avoiding {2}.", actor.name, targetCharacter.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                        } else {
+                            reactions.Add("Everyone makes mistakes.");
+                        }
+                    } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        reactions.Add(string.Format("Why did {0} do that to {1}? I should get back at {2}.", actor.name, targetCharacter.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                        if (status == SHARE_INTEL_STATUS.INFORMED) {
+                            recipient.CreateUndermineJobOnly(actor, "idle", status);
+                        }
+                    } else {
+                        reactions.Add(string.Format("Why did {0} do that to {1}?", actor.name, targetCharacter.name));
+                    }
+                }
+                //- Recipient Has Negative Relationship with Target
+                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    reactions.Add(string.Format("Serves {0} right.", targetCharacter.name));
+                }
+                //- Recipient Has No Relationship with Target
+                else {
+                    RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
+                    bool hasRelationshipDegraded = false;
+                    if (!hasCrimeBeenReported) {
+                        hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                    }
+                    if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (hasRelationshipDegraded) {
+                            reactions.Add(string.Format("{0} shouldn't have done that to {1}. I should start avoiding {2}.", actor.name, targetCharacter.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                        } else {
+                            reactions.Add(string.Format("{0} probably has {1} reason for doing that.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.POSSESSIVE, false)));
+                        }
+                    } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        reactions.Add(string.Format("{0} is up to no good again.", actor.name));
+                    } else {
+                        reactions.Add(string.Format("Why did {0} do that to {1}?", actor.name, targetCharacter.name));
+                    }
+                }
+            }
         }
         return reactions;
     }
