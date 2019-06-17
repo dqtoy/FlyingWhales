@@ -153,9 +153,7 @@ public class CharacterMarker : PooledObject {
         //character.gridTileLocation.OnClickTileActions(ped.button);
         if(ped.button == PointerEventData.InputButton.Left) {
             //This checker is used so that when a character is clicked and it is because there is a player ability that will target that character, the character info ui will not show
-            if(PlayerManager.Instance.player.currentActivePlayerJobAction == null) {
-                UIManager.Instance.ShowCharacterInfo(character);
-            }
+            UIManager.Instance.ShowCharacterInfo(character);
         } else if (ped.button == PointerEventData.InputButton.Right) {
             UIManager.Instance.poiTestingUI.ShowUI(character);
         }

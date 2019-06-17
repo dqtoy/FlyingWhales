@@ -122,6 +122,8 @@ public class UIManager : MonoBehaviour {
     private UIMenu lastOpenedMenu = null;
     private List<object> _uiMenuHistory;
 
+    public bool tempDisableShowInfoUI { get; private set; }
+
     #region Monobehaviours
     private void Awake() {
         Instance = this;
@@ -712,6 +714,9 @@ public class UIManager : MonoBehaviour {
         scrollRect.content.anchoredPosition = new Vector2(ogPos.x, diff.y);
             
     }
+    public void SetTempDisableShowInfoUI(bool state) {
+        tempDisableShowInfoUI = state;
+    }
     #endregion
 
     #region Object Pooling
@@ -926,6 +931,10 @@ public class UIManager : MonoBehaviour {
     public void ShowFactionInfo(Faction faction) {
         //BeforeOpeningMenu(factionInfoUI);
         //HideMainUI();
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
         if (areaInfoUI.isShowing) {
             areaInfoUI.CloseMenu();
         }
@@ -962,6 +971,10 @@ public class UIManager : MonoBehaviour {
     public void ShowCharacterInfo(Character character) {
         //BeforeOpeningMenu(characterInfoUI);
         //HideMainUI();
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
         }
@@ -1026,6 +1039,10 @@ public class UIManager : MonoBehaviour {
     public void ShowTileObjectInfo(TileObject tileObject) {
         //BeforeOpeningMenu(areaInfoUI);
         //HideMainUI();
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
         if (factionInfoUI.isShowing) {
             factionInfoUI.CloseMenu();
         }
@@ -1061,6 +1078,10 @@ public class UIManager : MonoBehaviour {
     public void ShowPartyInfo(Party party) {
         //BeforeOpeningMenu(partyinfoUI);
         //HideMainUI();
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
         if (landmarkInfoUI.isShowing) {
             landmarkInfoUI.CloseMenu();
         }

@@ -560,6 +560,7 @@ public class Player : ILeader {
             } else {
                 summary += "\nDid not activate action! Did not meet requirements";
             }
+            UIManager.Instance.SetTempDisableShowInfoUI(true);
         } else {
             LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
             if (hoveredTile != null && hoveredTile.objHere != null) {
@@ -570,6 +571,7 @@ public class Player : ILeader {
                 } else {
                     summary += "\nDid not activate action! Did not meet requirements";
                 }
+                UIManager.Instance.SetTempDisableShowInfoUI(true);
             } else {
                 summary += "\nNo Target!";
             }
