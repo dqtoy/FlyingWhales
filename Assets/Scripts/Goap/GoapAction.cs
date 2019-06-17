@@ -177,6 +177,7 @@ public class GoapAction {
         isPerformingActualAction = true;
         actorAlterEgo = actor.currentAlterEgo;
         //Messenger.AddListener<IPointOfInterest, GoapAction>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
+        AddAwareCharacter(actor);
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             poiTargetAlterEgo = targetCharacter.currentAlterEgo;
@@ -771,6 +772,10 @@ public class GoapAction {
         if (poiTarget is TileObject) {
             TileObject target = poiTarget as TileObject;
             target.OnDoActionToObject(this);
+        } else if (poiTarget is Character) {
+            if (currentState.name != "Target Missing" && !doesNotStopTargetCharacter) {
+                AddAwareCharacter(poiTarget as Character);
+            }
         }
     }
     protected virtual void OnFinishActionTowardsTarget() {

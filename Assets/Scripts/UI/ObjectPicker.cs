@@ -16,6 +16,8 @@ public class ObjectPicker : MonoBehaviour {
     [SerializeField] private GameObject objectPickerAttackItemPrefab;
     [SerializeField] private TextMeshProUGUI titleLbl;
 
+    private bool _isGamePausedBeforeOpeningPicker;
+
     public void ShowClickable<T>(List<T> items, Action<T> onClickItemAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "", Action<T> onHoverItemAction = null) {
         Utilities.DestroyChildren(objectPickerScrollView.content);
         List<T> validItems;
@@ -31,6 +33,8 @@ public class ObjectPicker : MonoBehaviour {
         }
         titleLbl.text = title;
         this.gameObject.SetActive(true);
+        _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
+        GameManager.Instance.SetPausedState(true);
     }
     public void ShowDraggable<T>(List<T> items, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
         Utilities.DestroyChildren(objectPickerScrollView.content);
@@ -43,9 +47,14 @@ public class ObjectPicker : MonoBehaviour {
         }
         titleLbl.text = title;
         this.gameObject.SetActive(true);
+        _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
+        GameManager.Instance.SetPausedState(true);
     }
     public void Hide() {
-        this.gameObject.SetActive(false);
+        if (gameObject.activeSelf) {
+            this.gameObject.SetActive(false);
+            GameManager.Instance.SetPausedState(_isGamePausedBeforeOpeningPicker);
+        }
     }
 
     private void OrganizeList<T>(List<T> items, out List<T> validItems, out List<T> invalidItems, IComparer<T> comparer = null, Func<T, bool> validityChecker = null) {

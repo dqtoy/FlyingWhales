@@ -38,6 +38,10 @@ public class JobQueue {
             //It might be because CanTakeJob/CanCharacterTakeThisJob function is not satisfied
             if (character.CanCurrentJobBeOverriddenByJob(job)) {
                 if(AssignCharacterToJob(job, character)) {
+                    if(job is CharacterStateJob) {
+                        //Will no longer stop what is currently doing if job is a state job because it will already be done by that state
+                        return;
+                    }
                     if (character.stateComponent.currentState != null) {
                         character.stateComponent.currentState.OnExitThisState();
                         //This call is doubled so that it will also exit the previous major state if there's any

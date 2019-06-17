@@ -173,17 +173,17 @@ public class JobQueueItem {
                 priority = 170;
                 break;
             case JOB_TYPE.FULLNESS_RECOVERY:
-                priority = 180;
-                break;
+                //priority = 180;
+                //break;
             case JOB_TYPE.TIREDNESS_RECOVERY:
-                priority = 190;
-                break;
+                //priority = 190;
+                //break;
             case JOB_TYPE.HAPPINESS_RECOVERY:
-                priority = 200;
-                break;
+                //priority = 200;
+                //break;
             case JOB_TYPE.SHARE_INFORMATION:
-                priority = 210;
-                break;
+                //priority = 210;
+                //break;
             case JOB_TYPE.JUDGEMENT:
                 priority = 220;
                 break;

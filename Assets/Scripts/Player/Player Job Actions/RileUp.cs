@@ -62,20 +62,20 @@ public class RileUp : PlayerJobAction {
         base.ActivateAction(assignedCharacter, _targetCharacter);
         UIManager.Instance.HideObjectPicker();
 
-        _targetCharacter.AdjustIsWaitingForInteraction(1);
-        if (_targetCharacter.currentAction != null) {
-            _targetCharacter.currentAction.StopAction();
-        }
-        _targetCharacter.DropAllPlans();
-        _targetCharacter.AdjustIsWaitingForInteraction(-1);
+        //_targetCharacter.AdjustIsWaitingForInteraction(1);
+        //if (_targetCharacter.currentAction != null) {
+        //    _targetCharacter.currentAction.StopAction();
+        //}
+        //_targetCharacter.DropAllPlans();
+        //_targetCharacter.AdjustIsWaitingForInteraction(-1);
 
-        if(_targetCharacter.stateComponent.currentState != null) {
-            _targetCharacter.stateComponent.currentState.OnExitThisState();
-        }
-        //This is double in case the character is in a minor state and has previous major state, so that the previous major state will end too
-        if (_targetCharacter.stateComponent.currentState != null) {
-            _targetCharacter.stateComponent.currentState.OnExitThisState();
-        }
+        //if(_targetCharacter.stateComponent.currentState != null) {
+        //    _targetCharacter.stateComponent.currentState.OnExitThisState();
+        //}
+        ////This is double in case the character is in a minor state and has previous major state, so that the previous major state will end too
+        //if (_targetCharacter.stateComponent.currentState != null) {
+        //    _targetCharacter.stateComponent.currentState.OnExitThisState();
+        //}
 
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.BERSERK, CHARACTER_STATE.BERSERKED, area);
         _targetCharacter.jobQueue.AddJobInQueue(job);

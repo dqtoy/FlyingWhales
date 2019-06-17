@@ -1394,9 +1394,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 hasCreatedJob = true;
             }
         }
-        for (int i = 0; i < targetCharacter.relationshipTraits.Count; i++) {
-            if (targetCharacter.relationshipTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetCharacter, this)) {
-                hasCreatedJob = true;
+        for (int i = 0; i < relationshipTraits.Count; i++) {
+            if(relationshipTraits[i].targetCharacter == targetCharacter) {
+                if (relationshipTraits[i].CreateJobsOnEnterVisionBasedOnTrait(this, this)) {
+                    hasCreatedJob = true;
+                }
             }
         }
         return hasCreatedJob;
@@ -1806,7 +1808,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return false;
         }
         if ((stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)
-            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)) {
+            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED) 
+            || (stateComponent.stateToDo != null && stateComponent.stateToDo.characterState == CHARACTER_STATE.BERSERKED)) {
             //Berserked state cannot be overriden
             return false;
         }
@@ -2788,12 +2791,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         Spooked spooked = GetNormalTrait("Spooked") as Spooked;
         if (spooked != null) {
-            spooked.AddTerrifyingCharacter(target);
-            marker.AddAvoidInRange(target);
+            if (marker.AddAvoidInRange(target)) {
+                spooked.AddTerrifyingCharacter(target);
+            }
             return;
         }
 
-        if(role.roleType == CHARACTER_ROLE.CIVILIAN) {
+        if (role.roleType == CHARACTER_ROLE.CIVILIAN) {
             if (target.GetNormalTrait("Berserked") != null) {
                 marker.AddAvoidInRange(target);
                 return;
@@ -2841,7 +2845,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         List<Log> memories = new List<Log>();
         for (int i = 0; i < _history.Count; i++) {
             Log historyLog = _history[i];
-            if (historyLog.goapAction != null && historyLog.goapAction.committedCrime != CRIME.NONE) {
+            if (historyLog.goapAction != null && historyLog.goapAction.awareCharactersOfThisAction.Contains(this) && historyLog.goapAction.committedCrime != CRIME.NONE) {
                 if (historyLog.day >= dayFrom && historyLog.day <= dayTo) {
                     if(involvedCharacter != null) {
                         for (int j = 0; j < historyLog.goapAction.crimeCommitters.Length; j++) {
@@ -4108,6 +4112,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         if (stateComponent.currentState != null) {
             Debug.LogWarning("Currently in " + stateComponent.currentState.stateName + " state, can't plan actions!");
+            return;
+        }
+        if (stateComponent.stateToDo != null) {
+            Debug.LogWarning("Will about to do " + stateComponent.stateToDo.stateName + " state, can't plan actions!");
             return;
         }
         //if(specificAction != null) {

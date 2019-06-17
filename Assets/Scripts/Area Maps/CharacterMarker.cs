@@ -152,8 +152,11 @@ public class CharacterMarker : PooledObject {
         PointerEventData ped = bd as PointerEventData;
         //character.gridTileLocation.OnClickTileActions(ped.button);
         if(ped.button == PointerEventData.InputButton.Left) {
-            UIManager.Instance.ShowCharacterInfo(character);
-        }else if (ped.button == PointerEventData.InputButton.Right) {
+            //This checker is used so that when a character is clicked and it is because there is a player ability that will target that character, the character info ui will not show
+            if(PlayerManager.Instance.player.currentActivePlayerJobAction == null) {
+                UIManager.Instance.ShowCharacterInfo(character);
+            }
+        } else if (ped.button == PointerEventData.InputButton.Right) {
             UIManager.Instance.poiTestingUI.ShowUI(character);
         }
     }
@@ -207,7 +210,7 @@ public class CharacterMarker : PooledObject {
                     Debug.Log(characterThatGainedTrait.name + " gained an injured trait. Reacting...");
                     NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
                 }
-            } else if (trait.name == "Spooked" && characterThatGainedTrait.GetNormalTrait("Unconscious") == null) {
+            } else if (trait.name == "Spooked" && !characterThatGainedTrait.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
                 gainTraitSummary += "\nGained trait is Spooked, character will flee is there are characters in vision";
                 if (inVisionPOIs.Count > 0) {
                     Spooked spooked = trait as Spooked;
@@ -1029,7 +1032,7 @@ public class CharacterMarker : PooledObject {
 
     #region Avoid In Range
     public bool AddAvoidInRange(Character poi) {
-        if (!poi.isDead) {
+        if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             if (!avoidInRange.Contains(poi)) {
                 avoidInRange.Add(poi);
                 NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
@@ -1043,7 +1046,7 @@ public class CharacterMarker : PooledObject {
         Character otherPOI = null;
         for (int i = 0; i < pois.Count; i++) {
             Character poi = pois[i];
-            if (!poi.isDead) {
+            if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
                 if (!avoidInRange.Contains(poi)) {
                     avoidInRange.Add(poi);
                     if (otherPOI == null) {
