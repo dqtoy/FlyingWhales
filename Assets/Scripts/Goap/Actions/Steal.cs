@@ -100,7 +100,7 @@ public class Steal : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] stole from me? What a horrible person."
             reactions.Add(string.Format("{0} stole from me? What a horrible person.", actor.name));
             //- **Recipient Effect**: Remove Friend/Lover/Paramour relationship between Actor and Recipient.Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
-            recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+            recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
             List<RelationshipTrait> traitsToRemove = recipient.GetAllRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE);
             CharacterManager.Instance.RemoveRelationshipBetween(recipient, actor, traitsToRemove);
         }
@@ -123,14 +123,14 @@ public class Steal : GoapAction {
             //- **Recipient Response Text**: "[Actor Name] committed theft!? Why am I not surprised."
             reactions.Add(string.Format("{0} committed theft!? Why am I not surprised.", actor.name));
             //-**Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
-            recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+            recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
         }
         //Recipient and Actor have no relationship but are from the same faction:
         else if (!recipient.HasRelationshipWith(actor) && recipient.faction == actor.faction) {
             //- **Recipient Response Text**: "[Actor Name] committed theft!? That's illegal."
             reactions.Add(string.Format("{0} committed theft!? That's illegal.", actor.name));
             //- **Recipient Effect**: Apply Crime System handling as if the Recipient witnessed Actor commit Theft.
-            recipient.ReactToCrime(CRIME.THEFT, this, actorAlterEgo, status);
+            recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
         }
         return reactions;
     }

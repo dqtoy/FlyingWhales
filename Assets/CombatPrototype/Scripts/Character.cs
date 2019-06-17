@@ -2902,7 +2902,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //}
     }
     public void ThisCharacterWitnessedEvent(GoapAction witnessedEvent) {
-        if (witnessedEvent.currentState.shareIntelReaction != null) {
+        if (witnessedEvent.currentState.shareIntelReaction != null && !isFactionless) {
             List<string> reactions = witnessedEvent.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.WITNESSED);
             if(reactions != null) {
                 string reactionLog = name + " witnessed event: " + witnessedEvent.goapName;
@@ -2930,21 +2930,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (HasRelationshipOfTypeWith(witnessedEvent.actor, RELATIONSHIP_TRAIT.LOVER) || HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
                     Betrayed betrayed = new Betrayed();
                     AddTrait(betrayed);
-                    CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
-                    CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+                    //CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+                    //CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
                 } 
             } else if (witnessedEvent.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
                 if (HasRelationshipOfTypeWith(witnessedEvent.actor, RELATIONSHIP_TRAIT.LOVER)) {
                     Betrayed betrayed = new Betrayed();
                     AddTrait(betrayed);
-                    CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
-                    CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+                    //CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+                    //CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
                 } else if (HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER)) {
                     if (witnessedEvent.currentState.name == "Invite Success") {
                         Betrayed betrayed = new Betrayed();
                         AddTrait(betrayed);
-                        CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
-                        CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
+                        //CharacterManager.Instance.RelationshipDegradation(witnessedEvent.actor, this, witnessedEvent);
+                        //CharacterManager.Instance.RelationshipDegradation(target, this, witnessedEvent);
                     }
                 }
             }
@@ -6591,6 +6591,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //}
 
         string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + criminal.owner.name;
+        if(committedCrime == CRIME.NONE) {
+            reactSummary += "\nNo reaction because committed crime is " + committedCrime.ToString();
+            Debug.Log(reactSummary);
+            return;
+        }
         Log witnessLog = null;
         Log reportLog = null;
         RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = GetRelationshipEffectWith(criminal);

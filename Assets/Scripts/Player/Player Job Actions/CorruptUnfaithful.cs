@@ -28,9 +28,9 @@ public class CorruptUnfaithful : PlayerJobAction {
         if (targetCharacter.isDead || character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        //if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
-        //    return false;
-        //}
+        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
+            return false;
+        }
         if (targetCharacter.GetNormalTrait("Unfaithful") != null) {
             return false;
         }

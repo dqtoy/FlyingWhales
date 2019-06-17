@@ -29,9 +29,9 @@ public class CorruptLycanthropy : PlayerJobAction {
         if (targetCharacter.isDead || character.id == targetCharacter.id) {
             return false;
         }
-        //if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
-        //    return false;
-        //}
+        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
+            return false;
+        }
         if (targetCharacter.GetNormalTrait("Lycanthropy") != null) {
             return false;
         }

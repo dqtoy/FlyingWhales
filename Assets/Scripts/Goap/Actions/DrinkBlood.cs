@@ -81,6 +81,7 @@ public class DrinkBlood : GoapAction {
         SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
         //poiTarget.SetPOIState(POI_STATE.INACTIVE);
         actor.AdjustDoNotGetHungry(1);
+        currentState.SetIntelReaction(DrinkBloodSuccessIntelReaction);
     }
     private void PerTickDrinkSuccess() {
         actor.AdjustFullness(12);
@@ -96,7 +97,6 @@ public class DrinkBlood : GoapAction {
             Vampiric vampiric = new Vampiric();
             AddTraitTo(poiTarget, vampiric, actor);
         }
-        currentState.SetIntelReaction(DrinkBloodSuccessIntelReaction);
     }
     //private void PreDrinkFail() {
     //    currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
@@ -138,7 +138,7 @@ public class DrinkBlood : GoapAction {
                         RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
                         bool hasRelationshipDegraded = false;
                         if (!hasCrimeBeenReported) {
-                            hasRelationshipDegraded = recipient.ReactToCrime(CRIME.ABERRATION, this, actorAlterEgo, status);
+                            hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         }
                         if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
                             if (hasRelationshipDegraded) {
@@ -184,7 +184,7 @@ public class DrinkBlood : GoapAction {
                         RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
                         bool hasRelationshipDegraded = false;
                         if (!hasCrimeBeenReported) {
-                            hasRelationshipDegraded = recipient.ReactToCrime(CRIME.ABERRATION, this, actorAlterEgo, status);
+                            hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         }
                         if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
                             if (hasRelationshipDegraded) {
@@ -221,7 +221,7 @@ public class DrinkBlood : GoapAction {
                         RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
                         bool hasRelationshipDegraded = false;
                         if (!hasCrimeBeenReported) {
-                            hasRelationshipDegraded = recipient.ReactToCrime(CRIME.ABERRATION, this, actorAlterEgo, status);
+                            hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         }
                         if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
                             if (hasRelationshipDegraded) {
@@ -253,7 +253,7 @@ public class DrinkBlood : GoapAction {
                         RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
                         bool hasRelationshipDegraded = false;
                         if (!hasCrimeBeenReported) {
-                            hasRelationshipDegraded = recipient.ReactToCrime(CRIME.ABERRATION, this, actorAlterEgo, status);
+                            hasRelationshipDegraded = recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         }
                         if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.POSITIVE) {
                             if (hasRelationshipDegraded) {
