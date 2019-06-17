@@ -1032,6 +1032,10 @@ public class CharacterManager : MonoBehaviour {
     }
     public bool RelationshipDegradation(AlterEgoData actorAlterEgo, Character target, GoapAction cause = null) {
         bool hasDegraded = false;
+        if(actorAlterEgo.owner.isFactionless || target.isFactionless) {
+            Debug.LogWarning("Relationship degredation was called and one or both of those characters is factionless");
+            return hasDegraded;
+        }
         if (actorAlterEgo.owner == target) {
             Debug.LogWarning("Relationship degredation was called and provided same characters " + target.name);
             return hasDegraded;
