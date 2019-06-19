@@ -25,6 +25,8 @@ public class Spooked : Trait {
                 if (character.stateComponent.currentState != null) {
                     character.stateComponent.currentState.OnExitThisState();
                 }
+            } else if (character.stateComponent.stateToDo != null) {
+                character.stateComponent.SetStateToDo(null);
             } else if (character.currentAction != null) {
                 character.currentAction.StopAction();
             } else if (character.currentParty.icon.isTravelling) {

@@ -31,7 +31,7 @@ public class CharacterState {
     //Starts a state and its movement behavior, can be overridden
     protected virtual void StartState() {
         hasStarted = true;
-        stateComponent.SetStateToDo(null, false);
+        stateComponent.SetStateToDo(null, false, false);
         stateComponent.SetCurrentState(this);
         currentDuration = 0;
         StartStatePerTick();
@@ -130,7 +130,7 @@ public class CharacterState {
         if (isDone) {
             return;
         }
-        stateComponent.SetStateToDo(this);
+        stateComponent.SetStateToDo(this, stopMovement: false);
         targetArea = area;
         if(targetArea == null || targetArea == stateComponent.character.specificLocation) {
             Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);

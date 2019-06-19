@@ -37,6 +37,8 @@ public class ProvokeMenu : MonoBehaviour {
         GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem item = targetDialog.GetComponent<DialogItem>();
         item.SetData(targetCharacter, targetDialogText);
+
+        GameManager.Instance.SetPausedState(true);
     }
 
     private void ProvokeAction(ref string targetText, ref string actorText) {
@@ -114,5 +116,6 @@ public class ProvokeMenu : MonoBehaviour {
         //UIManager.Instance.SetCoverState(false);
         //UIManager.Instance.SetSpeedTogglesState(true);
         this.gameObject.SetActive(false);
+        GameManager.Instance.SetPausedState(false);
     }
 }

@@ -198,6 +198,8 @@ public class GoapAction {
                     }
                     if (targetCharacter.stateComponent.currentState != null) {
                         targetCharacter.stateComponent.currentState.PauseState();
+                    }else if (targetCharacter.stateComponent.stateToDo != null) {
+                        targetCharacter.stateComponent.SetStateToDo(null, false, false);
                     }
                     targetCharacter.marker.pathfindingAI.AdjustDoNotMove(1);
                     targetCharacter.marker.AdjustIsStoppedByOtherCharacter(1);

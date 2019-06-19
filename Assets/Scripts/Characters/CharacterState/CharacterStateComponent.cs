@@ -26,11 +26,20 @@ public class CharacterStateComponent {
     public void SetCurrentState(CharacterState state) {
         currentState = state;
     }
-    public void SetStateToDo(CharacterState state, bool unassignJob = true) {
+    public void SetStateToDo(CharacterState state, bool unassignJob = true, bool stopMovement = true) {
         if(unassignJob && state == null && stateToDo != null) {
             if(stateToDo.job != null) {
                 stateToDo.job.SetAssignedCharacter(null);
                 stateToDo.job.SetAssignedState(null);
+            }
+        }
+        if (stopMovement) {
+            if (character.currentParty.icon.isTravelling) {
+                if (character.currentParty.icon.travelLine == null) {
+                    character.marker.StopMovement();
+                } else {
+                    character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+                }
             }
         }
         stateToDo = state;
@@ -76,7 +85,7 @@ public class CharacterStateComponent {
             if(stateToDo.stateCategory == CHARACTER_STATE_CATEGORY.MAJOR) {
                 previousMajorState = stateToDo;
             }
-            SetStateToDo(null, false);
+            SetStateToDo(null, false, false);
         }
 
         //Assigns new state as the current state then enter that state

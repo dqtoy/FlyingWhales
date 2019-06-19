@@ -806,6 +806,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             if (stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
+            }else if (stateComponent.stateToDo != null) {
+                stateComponent.SetStateToDo(null);
             }
             CancelAllJobsTargettingThisCharacter("target is already dead", false);
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is already dead");
@@ -1831,16 +1833,36 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             } else {
                 //If current state is not Flee or Engage, it is certainly one of the major states since the only minor states are Flee and Engage
                 //If current state has no job, it is automatically overridable, otherwise, if the current state's job has a lower job priority (higher number) than the parameter job, it is overridable
-                if(stateComponent.currentState.job != null && !stateComponent.currentState.job.cannotOverrideJob && job.priority < stateComponent.currentState.job.priority) {
+                if (stateComponent.currentState.job != null && !stateComponent.currentState.job.cannotOverrideJob && job.priority < stateComponent.currentState.job.priority) {
                     return true;
-                }else if(stateComponent.currentState.job == null) {
+                } else if (stateComponent.currentState.job == null) {
+                    return true;
+                }
+                return false;
+            }
+        } else if (stateComponent.stateToDo != null) {
+            if (stateComponent.stateToDo.characterState == CHARACTER_STATE.FLEE || stateComponent.stateToDo.characterState == CHARACTER_STATE.ENGAGE) {
+                //Only override flee or engage state if the job is Berserked State, Berserk overrides all
+                if (job is CharacterStateJob) {
+                    CharacterStateJob stateJob = job as CharacterStateJob;
+                    if (stateJob.targetState == CHARACTER_STATE.BERSERKED) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                //If current state is not Flee or Engage, it is certainly one of the major states since the only minor states are Flee and Engage
+                //If current state has no job, it is automatically overridable, otherwise, if the current state's job has a lower job priority (higher number) than the parameter job, it is overridable
+                if (stateComponent.stateToDo.job != null && !stateComponent.stateToDo.job.cannotOverrideJob && job.priority < stateComponent.stateToDo.job.priority) {
+                    return true;
+                } else if (stateComponent.stateToDo.job == null) {
                     return true;
                 }
                 return false;
             }
         }
         //Cannot override when resting
-        if(GetNormalTrait("Resting") != null) {
+        if (GetNormalTrait("Resting") != null) {
             return false;
         }
         //If there is no current state then check the current action
@@ -2362,7 +2384,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         if ((stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)
-            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)) {
+            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)
+            || (stateComponent.stateToDo != null && stateComponent.stateToDo.characterState == CHARACTER_STATE.BERSERKED)) {
             //Character must not react if he/she is in berserked state
             //Returns true so that it will create an impression that the character actually created a job even if he/she didn't, so that the character will not chat, etc.
             return false;
@@ -5007,6 +5030,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 || stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE 
                 || stateComponent.currentState.characterState == CHARACTER_STATE.PATROL)) {
                 stateComponent.currentState.OnExitThisState();
+            }else if (stateComponent.stateToDo != null && (stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL
+                || stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL_OUTSIDE
+                || stateComponent.stateToDo.characterState == CHARACTER_STATE.PATROL)) {
+                stateComponent.SetStateToDo(null);
             } else if (currentAction != null && currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
                 if (currentAction.parentPlan == null || currentAction.parentPlan.category == GOAP_CATEGORY.IDLE) {
                     currentAction.StopAction();
@@ -5963,6 +5990,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         //if (stateComponent.currentState.characterState != CHARACTER_STATE.ENGAGE && stateComponent.currentState.characterState != CHARACTER_STATE.FLEE && stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED) {
                         //    stateComponent.currentState.OnExitThisState();
                         //}
+                    } else if (stateComponent.currentState != null) {
+                        stateComponent.SetStateToDo(null);
                     } else {
                         if (currentParty.icon.isTravelling) {
                             if (currentParty.icon.travelLine == null) {
@@ -6463,7 +6492,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             if (currentAction.goapType.IsCombatAction()) { //if the character will do a combat action, remove all ignore hostilities value
                 ClearIgnoreHostilities();
             }
-            stateComponent.SetStateToDo(null);
+            stateComponent.SetStateToDo(null, stopMovement: false);
         }
         string summary = GameManager.Instance.TodayLogString() + "Set current action to ";
         if (currentAction == null) {
