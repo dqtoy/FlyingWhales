@@ -13638,6 +13638,7 @@ MonoBehaviour:
   effectsParent: {fileID: 1794712287}
   effectsCamera: {fileID: 1961614546}
   electricEffect: {fileID: 1382770740}
+  tileObjectSparkle: {fileID: 1174480298}
 --- !u!4 &910776552
 Transform:
   m_ObjectHideFlags: 0
