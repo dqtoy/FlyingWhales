@@ -2167,6 +2167,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (marker != null) {
             marker.UpdateMarkerVisuals();
         }
+        //update goap interactions that should no longer be valid
+        if (race == RACE.SKELETON) {
+            poiGoapActions.Remove(INTERACTION_TYPE.DRINK_BLOOD);
+        }
     }
     public void RemoveRace() {
         if (_raceSetting == null) {
@@ -5849,14 +5853,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.BURY_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
         poiGoapActions.Add(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
-        poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE); //Disabled for trailer build
-        poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
+        poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
         poiGoapActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
         poiGoapActions.Add(INTERACTION_TYPE.TANTRUM);
         poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP);
         poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE);
         poiGoapActions.Add(INTERACTION_TYPE.BREAK_UP);
         poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
+
+        if (race != RACE.SKELETON) {
+            poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
+        }
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {
         List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();

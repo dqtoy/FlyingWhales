@@ -43,7 +43,7 @@ public class ProvokeMenu : MonoBehaviour {
 
     private void ProvokeAction(ref string targetText, ref string actorText) {
         bool succeedProvoke = false;
-        if (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY)) {
+        if (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY, false)) {
             succeedProvoke = true;
             //CHARACTER_MOOD currentMood = targetCharacter.currentMoodType;
             //if(currentMood == CHARACTER_MOOD.GREAT) {
