@@ -84,6 +84,7 @@ public class InteriorMapManager : MonoBehaviour {
         }
         LocationGridTile hoveredTile = GetTileFromMousePosition();
         if (hoveredTile != null) {
+            //CursorManager.Instance.SetSparkleEffectState(hoveredTile.objHere != null);
             if (GameManager.showAllTilesTooltip) {
                 ShowTileData(hoveredTile);
                 if (hoveredTile.objHere != null) {

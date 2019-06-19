@@ -22,6 +22,7 @@ public class CursorManager : MonoBehaviour {
     [SerializeField] private GameObject effectsParent;
     [SerializeField] private Camera effectsCamera;
     public GameObject electricEffect;
+    [SerializeField] private GameObject tileObjectSparkle;
 
     public enum Cursor_Type {
         None, Default, Target, Drag_Hover, Drag_Clicked, Check, Cross
@@ -124,6 +125,9 @@ public class CursorManager : MonoBehaviour {
     #region Effects
     public void SetElectricEffectState(bool state) {
         electricEffect.gameObject.SetActive(state);
+    }
+    public void SetSparkleEffectState(bool state) {
+        tileObjectSparkle.SetActive(state);
     }
     #endregion
 }
