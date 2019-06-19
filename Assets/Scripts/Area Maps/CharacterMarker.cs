@@ -1279,9 +1279,9 @@ public class CharacterMarker : PooledObject {
 
         engageSummary += this.character.name + " has reached engage target " + currentlyEngaging.name + "\n";
         Character enemy = currentlyEngaging;
+        LookAt(enemy.marker.transform.position);
         //stop the enemy's movement
         enemy.marker.pathfindingAI.AdjustDoNotMove(1);
-        LookAt(enemy.marker.transform.position);
 
 #if TRAILER_BUILD
         Messenger.AddListener(Signals.TICK_STARTED, CombatTick);
@@ -1327,9 +1327,7 @@ public class CharacterMarker : PooledObject {
             Character thisCharacter = this.character;
 
             //remove enemy's current action
-            enemy.AdjustIsWaitingForInteraction(1);
             enemy.StopCurrentAction();
-            enemy.AdjustIsWaitingForInteraction(-1);
 
             engageState.CombatOnEngage();
 

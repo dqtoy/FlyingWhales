@@ -55,7 +55,7 @@ public class AreaMapCameraMove : MonoBehaviour {
             return;
         }
         ArrowKeysMovement();
-        //Dragging();
+        Dragging();
         //Zooming();
         Targetting();
         ConstrainCameraBounds();
@@ -209,7 +209,7 @@ public class AreaMapCameraMove : MonoBehaviour {
         }
         if (!isDragging) {
             if (Input.GetMouseButtonDown(0)) {
-                if (UIManager.Instance.IsMouseOnUI()) {
+                if (UIManager.Instance.IsMouseOnUI() || InteriorMapManager.Instance.currentlyHoveredPOI != null) { //if the dragging started on UI, a tileobject or a character, do not allow drag
                     startedOnUI = true;
                     return;
                 }
@@ -231,17 +231,17 @@ public class AreaMapCameraMove : MonoBehaviour {
             
         }
 
-        if (!Input.GetMouseButton(0)) {
-            ResetDragValues();
-        }
-
         if (isDragging) {
             Vector3 difference = (areaMapsCamera.ScreenToWorldPoint(Input.mousePosition))- areaMapsCamera.transform.position;
             areaMapsCamera.transform.position = dragOrigin-difference;
+            if (Input.GetMouseButtonUp(0)) {
+                ResetDragValues();
+                CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+            }
         }
     }
     private void ResetDragValues() {
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+        //CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
         currDragTime = 0f;
         isDragging = false;
         startedOnUI = false;

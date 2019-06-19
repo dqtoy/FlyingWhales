@@ -34,6 +34,7 @@ public class CursorManager : MonoBehaviour {
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
             SetCursorTo(Cursor_Type.Default);
+            Cursor.lockState = CursorLockMode.Confined;
         } else {
             Destroy(this.gameObject);
         }

@@ -172,12 +172,17 @@ public class CharacterAIPath : AILerp {
     //    }
     //    base.Update();
     //}
-    public string lastAdjustDoNotMoveST { get; private set; }
+    public string lastAdjustNegativeDoNotMoveST { get; private set; }
+    public string lastAdjustPositiveDoNotMoveST { get; private set; }
     public void AdjustDoNotMove(int amount) {
         doNotMove += amount;
         doNotMove = Mathf.Max(0, doNotMove);
         if (!StackTraceUtility.ExtractStackTrace().Contains("Pause")) {
-            lastAdjustDoNotMoveST = "Adjustment: " + amount.ToString() + "\n" + StackTraceUtility.ExtractStackTrace();
+            if (amount < 0) {
+                lastAdjustNegativeDoNotMoveST = "Adjustment: " + amount.ToString() + "\n" + StackTraceUtility.ExtractStackTrace();
+            } else {
+                lastAdjustPositiveDoNotMoveST = "Adjustment: " + amount.ToString() + "\n" + StackTraceUtility.ExtractStackTrace();
+            }
         }
     }
     public string stopMovementST;

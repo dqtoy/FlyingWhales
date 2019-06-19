@@ -23,9 +23,12 @@ public class Provoke : PlayerJobAction {
         if (targetCharacter.isDead || character.id == targetCharacter.id) {
             return false;
         }
-        //if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
-        //    return false;
-        //}
+        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
+            return false;
+        }
+        if (targetCharacter.GetNormalTrait("Unconscious") != null) {
+            return false;
+        }
         return base.CanPerformActionTowards(character, targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -37,6 +40,9 @@ public class Provoke : PlayerJobAction {
             return false;
         }
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
+            return false;
+        }
+        if (targetCharacter.GetNormalTrait("Unconscious") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter);
