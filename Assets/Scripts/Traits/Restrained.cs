@@ -123,7 +123,7 @@ public class Restrained : Trait {
             if(character.faction.id != FactionManager.Instance.neutralFaction.id) {
                 return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
             } else {
-                return true;
+                return character.role.roleType != CHARACTER_ROLE.BEAST && _sourceCharacter.currentStructure.structureType.IsOpenSpace();
             }
         }
         return false;

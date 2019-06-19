@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CursorManager : MonoBehaviour {
 
@@ -27,6 +28,7 @@ public class CursorManager : MonoBehaviour {
     }
     public Cursor_Type currentCursorType { get; private set; }
 
+    public PointerEventData cursorPointerEventData { get; private set; }
 
     #region Monobehaviours
     private void Awake() {
@@ -38,6 +40,9 @@ public class CursorManager : MonoBehaviour {
             Destroy(this.gameObject);
         }
     }
+    //private void Start() {
+    //    cursorPointerEventData = new PointerEventData(EventSystem.current);
+    //}
     private void Update() {
         if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
             IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
@@ -47,7 +52,20 @@ public class CursorManager : MonoBehaviour {
                 } else {
                     SetCursorTo(Cursor_Type.Cross);
                 }
-            } else {
+            } 
+            //else if (cursorPointerEventData.pointerEnter != null) {
+            //    LandmarkCharacterItem charItem = cursorPointerEventData.pointerEnter.transform.parent.GetComponent<LandmarkCharacterItem>();
+            //    if (charItem != null) {
+            //        if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(charItem.character)) {
+            //            SetCursorTo(Cursor_Type.Check);
+            //        } else {
+            //            SetCursorTo(Cursor_Type.Cross);
+            //        }
+            //    } else {
+            //        SetCursorTo(Cursor_Type.Cross);
+            //    }
+            //}
+            else {
                 SetCursorTo(Cursor_Type.Cross);
             }
         }
