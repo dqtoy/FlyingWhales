@@ -17,7 +17,9 @@ public class CharacterStateJob : JobQueueItem {
     public override void UnassignJob(bool shouldDoAfterEffect = true) {
         base.UnassignJob(shouldDoAfterEffect);
         if(assignedState != null && assignedCharacter != null) {
-            if(assignedCharacter.stateComponent.currentState == assignedState) {
+            if(assignedCharacter.stateComponent.stateToDo == assignedState) {
+                assignedCharacter.stateComponent.SetStateToDo(null);
+            } else if (assignedCharacter.stateComponent.currentState == assignedState) {
                 assignedCharacter.stateComponent.currentState.OnExitThisState();
             } else {
                 if(assignedCharacter.stateComponent.previousMajorState == assignedState) {

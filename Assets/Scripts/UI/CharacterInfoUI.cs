@@ -607,6 +607,7 @@ public class CharacterInfoUI : UIMenu {
         summary += "\nRole: " + activeCharacter.role.roleType.ToString();
         summary += "\nSexuality: " + activeCharacter.sexuality.ToString();
         summary += "\nCurrent State: " + activeCharacter.stateComponent.currentState?.ToString() ?? "None";
+        summary += "\nState To Do: " + activeCharacter.stateComponent.stateToDo?.ToString() ?? "None";
         summary += "\nActions targetting this character: ";
         if (activeCharacter.targettedByAction.Count > 0) {
             for (int i = 0; i < activeCharacter.targettedByAction.Count; i++) {
