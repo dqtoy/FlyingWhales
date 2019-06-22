@@ -1740,7 +1740,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return job;
     }
     public void CreateShareInformationJob(Character targetCharacter, GoapAction info) {
-        if (!jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, info)) {
+        if (!IsHostileWith(targetCharacter) && !jobQueue.HasJobWithOtherData(JOB_TYPE.SHARE_INFORMATION, info)) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SHARE_INFORMATION, INTERACTION_TYPE.SHARE_INFORMATION, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
                             { INTERACTION_TYPE.SHARE_INFORMATION, new object[] { info }}
                         });
@@ -2129,6 +2129,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //update goap interactions that should no longer be valid
         if (race == RACE.SKELETON) {
             poiGoapActions.Remove(INTERACTION_TYPE.DRINK_BLOOD);
+            poiGoapActions.Remove(INTERACTION_TYPE.SHARE_INFORMATION);
         }
     }
     public void RemoveRace() {
@@ -5818,9 +5819,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP);
         poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE);
         poiGoapActions.Add(INTERACTION_TYPE.BREAK_UP);
-        poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
-
+        
         if (race != RACE.SKELETON) {
+            poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
             poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
         }
     }
