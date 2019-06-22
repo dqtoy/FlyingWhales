@@ -363,57 +363,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return total;
         }
     }
-    //public int combatBaseAttack {
-    //    get { return _combatBaseAttack; }
-    //    set { _combatBaseAttack = value; }
-    //}
-    //public int combatBaseSpeed {
-    //    get { return _combatBaseSpeed; }
-    //    set { _combatBaseSpeed = value; }
-    //}
-    //public int combatBaseHP {
-    //    get { return _combatBaseHP; }
-    //    set { _combatBaseHP = value; }
-    //}
-    //public int combatAttackFlat {
-    //    get { return _combatAttackFlat; }
-    //    set { _combatAttackFlat = value; }
-    //}
-    //public int combatAttackMultiplier {
-    //    get { return _combatAttackMultiplier; }
-    //    set { _combatAttackMultiplier = value; }
-    //}
-    //public int combatSpeedFlat {
-    //    get { return _combatSpeedFlat; }
-    //    set { _combatSpeedFlat = value; }
-    //}
-    //public int combatSpeedMultiplier {
-    //    get { return _combatSpeedMultiplier; }
-    //    set { _combatSpeedMultiplier = value; }
-    //}
-    //public int combatHPFlat {
-    //    get { return _combatHPFlat; }
-    //    set { _combatHPFlat = value; }
-    //}
-    //public int combatHPMultiplier {
-    //    get { return _combatHPMultiplier; }
-    //    set { _combatHPMultiplier = value; }
-    //}
-    //public int combatPowerFlat {
-    //    get { return _combatPowerFlat; }
-    //    set { _combatPowerFlat = value; }
-    //}
-    //public int combatPowerMultiplier {
-    //    get { return _combatPowerMultiplier; }
-    //    set { _combatPowerMultiplier = value; }
-    //}
     public int currentHP {
         get { return this._currentHP; }
     }
-    //public PairCombatStats[] pairCombatStats {
-    //    get { return _pairCombatStats; }
-    //    set { _pairCombatStats = value; }
-    //}
+    public int attackRange {
+        get { return 1; }
+    }
+    public int attackSpeed {
+        get { return 1000; } //in milliseconds
+    }
     public Dictionary<ELEMENT, float> elementalWeaknesses {
         get { return _elementalWeaknesses; }
     }
@@ -739,6 +697,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
+        marker.UpdateHP();
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
         if (triggerDeath && previous != this._currentHP) {
             if (this._currentHP == 0) {

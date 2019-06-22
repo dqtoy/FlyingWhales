@@ -47,7 +47,7 @@ public class CharacterStateComponent {
 
     //This switches from one state to another
     //If the character is not in a state right now, this simply starts a new state instead of switching
-    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Area targetArea = null, int durationOverride = -1) {
+    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Area targetArea = null, int durationOverride = -1, object otherData = null) {
         //Before switching character must end current action first because once a character is in a state in cannot make plans
         character.AdjustIsWaitingForInteraction(1);
         character.StopCurrentAction();
@@ -94,6 +94,7 @@ public class CharacterStateComponent {
         if (durationOverride != -1) {
             newState.ChangeDuration(durationOverride);
         }
+        newState.SetOtherDataOnStartState(otherData);
         newState.SetTargetCharacter(targetCharacter);
         newState.EnterState(targetArea);
         return newState;

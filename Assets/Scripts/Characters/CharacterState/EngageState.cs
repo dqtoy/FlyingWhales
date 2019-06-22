@@ -24,7 +24,7 @@ public class EngageState : CharacterState {
     //}
     public override void OnExitThisState() {
         stateComponent.character.marker.SetCurrentlyEngaging(null);
-        stateComponent.character.marker.SetTargetTransform(null);
+        //stateComponent.character.marker.SetTargetTransform(null);
         stateComponent.character.marker.pathfindingAI.ClearAllCurrentPathData();
         //stateComponent.character.marker.ClearArrivalAction();
         stateComponent.character.currentParty.icon.SetIsTravelling(false);
@@ -37,15 +37,15 @@ public class EngageState : CharacterState {
     }
 
     public void CheckForEndState() {
-        if (stateComponent.character.marker.GetNearestValidHostile() == null) {
+        Character nearestHostile = stateComponent.character.marker.GetNearestValidHostile();
+        if (nearestHostile == null) {
             //can end engage
             OnExitThisState();
         } else {
             //engage another hostile
             stateComponent.character.marker.SetCurrentlyEngaging(null);
             stateComponent.character.marker.SetTargetTransform(null);
-            Character hostile = stateComponent.character.marker.GetNearestValidHostile();
-            stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, hostile);
+            stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, nearestHostile);
             //stateComponent.character.marker.RedetermineEngage();
         }
     }

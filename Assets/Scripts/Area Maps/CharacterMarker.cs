@@ -40,6 +40,10 @@ public class CharacterMarker : PooledObject {
     public CharacterMarkerVisionCollision visionCollision;
     //[SerializeField] private FleeingRVOController fleeingRVOController;
 
+    [Header("Combat")]
+    public GameObject hpBarGO;
+    public Image hpFill;
+
     [Header("For Testing")]
     [SerializeField] private SpriteRenderer colorHighlight;
 
@@ -80,6 +84,8 @@ public class CharacterMarker : PooledObject {
     public float penaltyRadius;
     public bool useCanTraverse;
 
+    private float _attackSpeedMeter;
+
     public void SetCharacter(Character character) {
         this.name = character.name + "'s Marker";
         nameLbl.SetText(character.name);
@@ -96,6 +102,7 @@ public class CharacterMarker : PooledObject {
         hostilesInRange = new List<Character>();
         terrifyingCharacters = new List<Character>();
         avoidInRange = new List<Character>();
+        _attackSpeedMeter = 0f;
         //rvoController.avoidedAgents = new List<IAgent>();
 
         GameObject collisionTriggerGO = GameObject.Instantiate(InteriorMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
@@ -123,11 +130,20 @@ public class CharacterMarker : PooledObject {
         visionCollision.Initialize();
     }
 
+    #region Monobehavior
     private void OnEnable() {
         if (character != null) {
             UpdateAnimation();
         }
     }
+    private void Update() {
+        if (GameManager.Instance.gameHasStarted && !GameManager.Instance.isPaused) {
+            if (_attackSpeedMeter < character.attackSpeed) {
+                _attackSpeedMeter += Time.deltaTime * 1000f;
+            }
+        }
+    }
+    #endregion
 
     #region Pointer Functions
     public void SetHoverAction(HoverMarkerAction hoverEnterAction, HoverMarkerAction hoverExitAction) {
@@ -1412,6 +1428,27 @@ public class CharacterMarker : PooledObject {
                 RemoveHostileInRange(otherCharacter);
             }
         }
+    }
+    #endregion
+
+    #region Combat
+    public void ShowHPBar() {
+        hpBarGO.SetActive(true);
+        UpdateHP();
+    }
+    public void HideHPBar() {
+        hpBarGO.SetActive(false);
+    }
+    public void UpdateHP() {
+        if (hpBarGO.activeSelf) {
+            hpFill.fillAmount = character.currentHP / character.maxHP;
+        }
+    }
+    public void ResetAttackSpeed() {
+        _attackSpeedMeter = 0f;
+    }
+    public bool CanAttackByAttackSpeed() {
+        return _attackSpeedMeter >= character.attackSpeed;
     }
     #endregion
 }

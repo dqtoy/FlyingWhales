@@ -7,7 +7,7 @@ public class CharacterState {
     public string stateName { get; protected set; }
     public CHARACTER_STATE characterState { get; protected set; }
     public CHARACTER_STATE_CATEGORY stateCategory { get; protected set; }
-    public int duration { get; protected set; } // 0 means infinite
+    public int duration { get; protected set; } // 0 means no duration - end state immediately
     public int currentDuration { get; protected set; }
     public bool isDone { get; protected set; }
     public bool hasStarted { get; protected set; }
@@ -95,6 +95,10 @@ public class CharacterState {
     public virtual void OnExitThisState() {
         stateComponent.ExitCurrentState(this);
     }
+
+    //Typically used if there are other data that is needed to be set for this state when it starts
+    //Currently used only in combat state so we can set the character's behavior if attacking or not when it enters the state
+    public virtual void SetOtherDataOnStartState(object otherData) { }
     #endregion
 
     private void FakeEndAction(string str, GoapAction action) {
@@ -104,9 +108,9 @@ public class CharacterState {
 
     //Stops the timer of this state
     public void StopStatePerTick() {
-        //if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickInState);
-        //}
+        }
     }
     //Starts the timer of this state
     public void StartStatePerTick() {
@@ -222,9 +226,7 @@ public class CharacterState {
     //handler for when the character that owns this dies
     private void OnCharacterDied(Character character) {
         if (character.id == stateComponent.character.id) {
-            if (duration > 0) {
-                StopStatePerTick();
-            }
+            StopStatePerTick();
             RemoveDefaultListeners();
         }
     }
