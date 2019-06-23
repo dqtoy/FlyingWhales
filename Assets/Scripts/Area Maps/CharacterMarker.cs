@@ -946,6 +946,13 @@ public class CharacterMarker : PooledObject {
                 || this.character.IsHostileWith(poi)) { 
                 hostilesInRange.Add(poi);
                 NormalReactToHostileCharacter(poi, forcedReaction);
+
+                ////When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
+                //if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                //    (character.stateComponent.currentState as CombatState).ReevaluateCombatBehavior();
+                //} else {
+                //    character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+                //}
                 return true;
             }
         }
@@ -972,6 +979,12 @@ public class CharacterMarker : PooledObject {
         }
         if(otherPOI != null) {
             NormalReactToHostileCharacter(otherPOI, forcedReaction);
+            ////When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
+            //if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+            //    (character.stateComponent.currentState as CombatState).ReevaluateCombatBehavior();
+            //} else {
+            //    character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+            //}
             return true;
         }
         return false;
@@ -981,6 +994,11 @@ public class CharacterMarker : PooledObject {
             Debug.Log("Removed hostile in range " + poi.name + " from " + this.character.name);
             //UnhighlightMarker(); //This is for testing only!
             OnHostileInRangeRemoved(poi);
+
+            ////When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
+            //if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+            //    (character.stateComponent.currentState as CombatState).ReevaluateCombatBehavior();
+            //}
         }
     }
     public void ClearHostilesInRange() {

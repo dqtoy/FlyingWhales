@@ -202,6 +202,9 @@ public class CharacterStateComponent {
             case CHARACTER_STATE.BERSERKED:
                 newState = new BerserkedState(this);
                 break;
+            case CHARACTER_STATE.COMBAT:
+                newState = new CombatState(this);
+                break;
         }
         return newState;
     }
