@@ -29,7 +29,7 @@ public class CharacterMarkerHostilityCollision : MonoBehaviour {
             //if (!target.IsInOwnParty()) {
             //    return;
             //}
-            parentMarker.RemoveHostileInRange(collidedWith.poi as Character);
+            //parentMarker.RemoveHostileInRange(collidedWith.poi as Character);
             parentMarker.RemoveAvoidInRange(collidedWith.poi as Character);
         }
     }

@@ -8,6 +8,7 @@ public class CombatState : CharacterState {
 
     public bool isAttacking { get; private set; } //if not attacking, it is assumed that the character is fleeing
     public Character currentClosestHostile { get; private set; }
+    private System.Action onEndStateAction; // What should happen when this state ends?
 
     public CombatState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Combat State";
@@ -45,6 +46,7 @@ public class CombatState : CharacterState {
         base.EndState();
         stateComponent.character.marker.HideHPBar();
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Ending combat state for " + stateComponent.character.name);
+        onEndStateAction?.Invoke();
     }
     public override void OnExitThisState() {
         stateComponent.character.marker.pathfindingAI.ClearAllCurrentPathData();
@@ -159,23 +161,28 @@ public class CombatState : CharacterState {
     }
 
     private void Attack() {
+        string attackSummary = stateComponent.character.name + " will attack " + currentClosestHostile.name;
         //Stop movement first before attacking
         if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
             stateComponent.character.marker.StopMovement();
         }
         //Check attack speed
         if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
+            attackSummary += "\nCannot attack yet because of attack speed.";
+            Debug.Log(attackSummary);
             return;
         }
 
         //TODO: For readjustment, attack power is the old computation
         currentClosestHostile.AdjustHP(stateComponent.character.attackPower);
+        attackSummary += "\nDealt damage " + stateComponent.character.attackPower.ToString();
 
         //Reset Attack Speed
         stateComponent.character.marker.ResetAttackSpeed();
 
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if(currentClosestHostile.currentHP <= 0) {
+            attackSummary += "\n" + currentClosestHostile.name + "'s hp has reached 0.";
             WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
             if (currentClosestHostile.GetNormalTrait("Unconscious") == null) {
                 loserResults.AddElement("Unconscious", 40);
@@ -186,6 +193,7 @@ public class CombatState : CharacterState {
             loserResults.AddElement("Death", 5);
 
             string result = loserResults.PickRandomElementGivenWeights();
+            attackSummary += "\ncombat result is " + result; ;
             switch (result) {
                 case "Unconscious":
                     Unconscious unconscious = new Unconscious();
@@ -200,14 +208,15 @@ public class CombatState : CharacterState {
                     break;
             }
         } else {
+            attackSummary += "\n" + currentClosestHostile.name + " still has remaining hp " + currentClosestHostile.currentHP.ToString();
             //If the enemy still has hp, check if still in range, then process again
-            CheckIfCurrentHostileIsInRange();
+            stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
         }
+        Debug.Log(attackSummary);
     }
     #endregion
 
     #region Flee
-    //TODO: Call this in OnFinishedTraversingFleePath function in CharacterMarker script
     public void FinishedTravellingFleePath() {
         string log = GameManager.Instance.TodayLogString() + "Finished travelling flee path of " + stateComponent.character.name;
         //After travelling flee path, check hostile characters if they are still in vision, every hostile character that is not in vision must be removed form hostile list
@@ -218,8 +227,8 @@ public class CombatState : CharacterState {
         for (int i = 0; i < stateComponent.character.marker.hostilesInRange.Count; i++) {
             Character currCharacter = stateComponent.character.marker.hostilesInRange[i];
             if (!stateComponent.character.marker.inVisionPOIs.Contains(currCharacter)) {
-                stateComponent.character.marker.RemoveHostileInRange(currCharacter, false);
-                currCharacter.marker.RemoveHostileInRange(stateComponent.character);
+                stateComponent.character.marker.RemoveHostileInRange(currCharacter, false); //removed hostile because of flee.
+                currCharacter.marker.RemoveHostileInRange(stateComponent.character); //removed hostile because of flee.
             }
         }
         if (stateComponent.character.marker.hostilesInRange.Count > 0) {
@@ -232,6 +241,12 @@ public class CombatState : CharacterState {
             stateComponent.character.PrintLogIfActive(log);
             OnExitThisState();
         }
+    }
+    #endregion
+
+    #region Utilities
+    public void SetOnEndStateAction(System.Action action) {
+        onEndStateAction = action;
     }
     #endregion
 }

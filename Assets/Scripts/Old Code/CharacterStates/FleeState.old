@@ -6,7 +6,7 @@ public class FleeState : CharacterState {
 
     public FleeState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Flee State";
-        characterState = CHARACTER_STATE.FLEE;
+        //characterState = CHARACTER_STATE.FLEE;
         stateCategory = CHARACTER_STATE_CATEGORY.MINOR;
         //duration = 288;
         actionIconString = GoapActionStateDB.Flee_Icon;

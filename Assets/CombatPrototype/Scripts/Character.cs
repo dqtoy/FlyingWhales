@@ -1778,7 +1778,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return false;
         }
         if (stateComponent.currentState != null) {
-            if (stateComponent.currentState.characterState == CHARACTER_STATE.FLEE || stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
+            if (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                 //Only override flee or engage state if the job is Berserked State, Berserk overrides all
                 if (job is CharacterStateJob) {
                     CharacterStateJob stateJob = job as CharacterStateJob;
@@ -1798,7 +1798,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 return false;
             }
         } else if (stateComponent.stateToDo != null) {
-            if (stateComponent.stateToDo.characterState == CHARACTER_STATE.FLEE || stateComponent.stateToDo.characterState == CHARACTER_STATE.ENGAGE) {
+            if (stateComponent.stateToDo.characterState == CHARACTER_STATE.COMBAT) {
                 //Only override flee or engage state if the job is Berserked State, Berserk overrides all
                 if (job is CharacterStateJob) {
                     CharacterStateJob stateJob = job as CharacterStateJob;
@@ -2336,7 +2336,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool CanCharacterReact() {
         if (stateComponent.currentState != null) {
-            if (stateComponent.currentState.characterState == CHARACTER_STATE.FLEE || stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
+            if (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                 //Character must not react if he/she is in flee or engage state
                 return false;
             }
@@ -4097,7 +4097,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //StopDailyGoapPlanGeneration();
             return;
         }
-        if (minion != null || !IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null || isWaitingForInteraction > 0 || marker.pathfindingThread != null) {
+        if (minion != null || !IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null || isWaitingForInteraction > 0) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
         if (stateComponent.currentState != null) {
@@ -6754,7 +6754,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         crimeToReport = witnessedCrime;
                         //if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
                         if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
-                            this.marker.AddHostileInRange(criminal.owner, CHARACTER_STATE.FLEE);
+                            this.marker.AddHostileInRange(criminal.owner, CHARACTER_STATE.COMBAT);
                         }
                     }
                     job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
@@ -6830,7 +6830,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (stateComponent.currentState == null) {
             return GetNormalTrait("Resting", "Unconscious") != null;
         } else {
-            if (stateComponent.currentState.characterState == CHARACTER_STATE.FLEE || stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
+            if (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                 return false;
             }
         }

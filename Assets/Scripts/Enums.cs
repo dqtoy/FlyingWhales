@@ -1285,7 +1285,7 @@ public enum ACTION_LOCATION_TYPE {
 }
 public enum CHARACTER_STATE_CATEGORY { MAJOR, MINOR,}
 //public enum MOVEMENT_MODE { NORMAL, FLEE, ENGAGE }
-public enum CHARACTER_STATE { NONE, EXPLORE, PATROL, FLEE, ENGAGE, HUNT, STROLL, BERSERKED, STROLL_OUTSIDE, COMBAT, }
+public enum CHARACTER_STATE { NONE, EXPLORE, PATROL, HUNT, STROLL, BERSERKED, STROLL_OUTSIDE, COMBAT, }
 public enum CRIME_CATEGORY {
     NONE,
     INFRACTIONS,
@@ -1423,7 +1423,7 @@ public static class Extensions {
     public static bool IsCombatState(this CHARACTER_STATE type) {
         switch (type) {
             case CHARACTER_STATE.BERSERKED:
-            case CHARACTER_STATE.ENGAGE:
+            case CHARACTER_STATE.COMBAT:
             case CHARACTER_STATE.HUNT:
                 return true;
             default:

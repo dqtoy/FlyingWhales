@@ -20,25 +20,43 @@ public class AssaultCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
     }
+    protected override void MoveToDoAction(Character targetCharacter) {
+        base.MoveToDoAction(targetCharacter);
+        //change end reached distance to the characters attack range. NOTE: Make sure to return the range to default after this action is done.
+        actor.marker.pathfindingAI.SetEndReachedDistance(actor.characterClass.attackRange);
+    }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        Character targetCharacter = poiTarget as Character;
-        if (!isTargetMissing && targetCharacter.IsInOwnParty() && !targetCharacter.isDead) {
 
-            float attackersChance = 0f;
-            float defendersChance = 0f;
-
-            CombatManager.Instance.GetCombatChanceOfTwoLists(new List<Character>() { actor }, new List<Character>() { targetCharacter }, out attackersChance, out defendersChance);
-
-            string nextState = CombatEncounterEvents(actor, targetCharacter, UnityEngine.Random.Range(0, 100) < attackersChance);
-            if (nextState == "Target Killed") {
-                parentPlan.SetDoNotRecalculate(true);
-            }
-            SetState(nextState);
+        CharacterState combatState;
+        actor.marker.AddHostileInRange(poiTarget as Character, out combatState, CHARACTER_STATE.COMBAT, false);
+        if (combatState is CombatState) {
+            (combatState as CombatState).SetOnEndStateAction(OnFinishCombatState);
         } else {
-            SetState("Target Missing");
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
         }
         
+        //Character targetCharacter = poiTarget as Character;
+        //if (!isTargetMissing && targetCharacter.IsInOwnParty() && !targetCharacter.isDead) {
+
+        //    float attackersChance = 0f;
+        //    float defendersChance = 0f;
+
+        //    CombatManager.Instance.GetCombatChanceOfTwoLists(new List<Character>() { actor }, new List<Character>() { targetCharacter }, out attackersChance, out defendersChance);
+
+        //    string nextState = CombatEncounterEvents(actor, targetCharacter, UnityEngine.Random.Range(0, 100) < attackersChance);
+        //    if (nextState == "Target Killed") {
+        //        parentPlan.SetDoNotRecalculate(true);
+        //    }
+        //    SetState(nextState);
+        //} else {
+        //    SetState("Target Missing");
+        //}
+
+    }
+    private void OnFinishCombatState() {
+        //TODO: Add checking if poi target has become unconscious. If yes action was a success.
+        Debug.Log(actor.name + " finished combat state!");
     }
     protected override int GetCost() {
         return 1;
@@ -50,6 +68,12 @@ public class AssaultCharacter : GoapAction {
     public override void DoAction() {
         SetTargetStructure();
         base.DoAction();
+    }
+    public override void OnStopActionDuringCurrentState() {
+        actor.marker.pathfindingAI.ResetEndReachedDistance();
+    }
+    public override void OnResultReturnedToActor() {
+        actor.marker.pathfindingAI.ResetEndReachedDistance();
     }
     #endregion
 

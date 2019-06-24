@@ -8,7 +8,7 @@ public class AreaMapCameraMove : MonoBehaviour {
 
 	[SerializeField] private float _minFov;
 	[SerializeField] private float _maxFov;
-	[SerializeField] private float sensitivity;
+	[SerializeField] private float zoomSensitivity;
     [SerializeField] private float _zoomSpeed = 5f;
     public Camera areaMapsCamera;
 
@@ -157,7 +157,7 @@ public class AreaMapCameraMove : MonoBehaviour {
         if (allowZoom && screenRect.Contains(Input.mousePosition)) {
             //camera scrolling code
             float fov = areaMapsCamera.orthographicSize;
-            float adjustment = Input.GetAxis("Mouse ScrollWheel") * (sensitivity);
+            float adjustment = Input.GetAxis("Mouse ScrollWheel") * (zoomSensitivity);
             if (adjustment != 0f && !UIManager.Instance.IsMouseOnUI()) {
                 //Debug.Log(adjustment);
                 fov -= adjustment;

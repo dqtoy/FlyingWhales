@@ -343,9 +343,7 @@ public class GoapAction {
     /// This is called when this actions result has been FULLY processed by the actor.
     /// This should be the last thing that is called in the action flow.
     /// </summary>
-    public virtual void OnResultReturnedToActor() {
-
-    }
+    public virtual void OnResultReturnedToActor() { }
     /// <summary>
     /// If this action is a crime. Should the given character be allowed to react to it?
     /// </summary>
@@ -414,7 +412,12 @@ public class GoapAction {
         this.result = result;
         actor.OnCharacterDoAction(this);
         currentState.StopPerTickEffect();
-        End();
+
+        isPerformingActualAction = false;
+        isDone = true;
+        endedAtState = currentState;
+        this.actor.PrintLogIfActive(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
+
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             if (poiTarget != actor) {
                 Character targetCharacter = poiTarget as Character;
@@ -447,15 +450,6 @@ public class GoapAction {
     }
     protected void AddActionDebugLog(string log) {
         actionSummary += "\n" + log;
-    }
-    public void End() {
-        isPerformingActualAction = false;
-        isDone = true;
-        endedAtState = currentState;
-        //if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_DEATH)) {
-        //    Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnActorDied);
-        //}
-        this.actor.PrintLogIfActive(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
     }
     public void SetEndAction(System.Action<string, GoapAction> endAction) {
         this.endAction = endAction;

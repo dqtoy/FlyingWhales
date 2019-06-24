@@ -184,12 +184,12 @@ public class CharacterStateComponent {
             case CHARACTER_STATE.PATROL:
                 newState = new PatrolState(this);
                 break;
-            case CHARACTER_STATE.FLEE:
-                newState = new FleeState(this);
-                break;
-            case CHARACTER_STATE.ENGAGE:
-                newState = new EngageState(this);
-                break;
+            //case CHARACTER_STATE.FLEE:
+            //    newState = new FleeState(this);
+            //    break;
+            //case CHARACTER_STATE.ENGAGE:
+            //    newState = new EngageState(this);
+            //    break;
             case CHARACTER_STATE.HUNT:
                 newState = new HuntState(this);
                 break;

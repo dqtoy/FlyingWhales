@@ -22,16 +22,23 @@ public class CharacterAIPath : AILerp {
     public STRUCTURE_TYPE[] onlyAllowedStructures { get; private set; }
     public STRUCTURE_TYPE[] notAllowedStructures { get; private set; }
 
+    private float Default_End_Reached_Distance; //This should only be set on the initialization of this object
+
+    #region Monobehaviours
     protected override void Start() {
         base.Start();
         _originalRepathRate = repathRate;
+        Default_End_Reached_Distance = endReachDistance;
         blockerTraversalProvider = new BlockerTraversalProvider(marker);
     }
+    #endregion
+
+    #region Overrides
     public override void OnTargetReached() {
         base.OnTargetReached();
         if (!_hasReachedTarget && !pathPending && reachedEndOfPath &&
             //only execute target reach if the agent has a destination transform, vector or has a flee path
-            (marker.destinationSetter.target != null || !float.IsPositiveInfinity(destination.x) || marker.hasFleePath)) { 
+            (marker.destinationSetter.target != null || !float.IsPositiveInfinity(destination.x) || marker.hasFleePath)) {
             _hasReachedTarget = true;
             canSearch = true;
             //if (marker.hasFleePath) {
@@ -40,10 +47,9 @@ public class CharacterAIPath : AILerp {
             marker.ArrivedAtTarget();
             //}
             currentPath = null;
-            
+
         }
     }
-
     protected override void OnPathComplete(Path newPath) {
         if (newPath.CompleteState == PathCompleteState.Error) {
             Debug.LogWarning(marker.character.name + " path request returned a path with errors! Arrival action is: " + marker.arrivalAction?.Method.Name ?? "None" + "Destination is " + destination.ToString());
@@ -57,7 +63,7 @@ public class CharacterAIPath : AILerp {
                 string costLog = "PATH FOR " + marker.character.name;
                 uint totalCost = 0;
                 for (int i = 0; i < currentPath.path.Count; i++) {
-                    Vector3 nodePos = (Vector3) currentPath.path[i].position;
+                    Vector3 nodePos = (Vector3)currentPath.path[i].position;
                     uint currentCost = currentPath.traversalProvider.GetTraversalCost(newPath, currentPath.path[i]);
                     //float dx = (marker.terrifyingCharacters[0].marker.character.gridTileLocation.centeredWorldLocation.x - nodePos.x);
                     //float dz = (marker.terrifyingCharacters[0].marker.character.gridTileLocation.centeredWorldLocation.y - nodePos.y);
@@ -119,7 +125,6 @@ public class CharacterAIPath : AILerp {
         // Request a path to be calculated from our current position to the destination
         //seeker.StartPath(start, end);
     }
-
     public override void UpdateMe() {
         if (!marker.gameObject.activeSelf) {
             return;
@@ -143,37 +148,16 @@ public class CharacterAIPath : AILerp {
             if (marker.character.currentAction.poiTarget.gridTileLocation != null) {
                 marker.LookAt(marker.character.currentAction.poiTarget.gridTileLocation.centeredWorldLocation); //so that the charcter will always face the target, even if it is moving
             }
-            
+
         }
         base.UpdateMe();
     }
+    #endregion
 
-    //protected override void Update() {
-    //    if (!marker.gameObject.activeSelf) {
-    //        return;
-    //    }
-    //    marker.UpdatePosition();
-    //    if (doNotMove > 0 || isStopMovement) { return; }
-    //    if (marker.character.currentParty.icon.isTravelling && marker.character.IsInOwnParty()) { //only rotate if character is travelling
-    //        Vector3 direction;
-    //        if (!interpolator.valid) {
-    //            direction = Vector3.zero;
-    //        } else {
-    //            direction = interpolator.tangent;
-    //        }
-    //        marker.visualsParent.localRotation = Quaternion.LookRotation(Vector3.forward, direction);
-    //        //if(marker.character.currentParty.icon.travelLine == null) {
-    //        //    if (!IsNodeWalkable(destination)) {
-    //        //        //if(marker.character.currentAction)
-    //        //    }
-    //        //}
-    //    } else if (marker.character.currentAction != null && marker.character.currentAction.poiTarget != marker.character) {
-    //        marker.LookAt(marker.character.currentAction.poiTarget.gridTileLocation.centeredWorldLocation); //so that the charcter will always face the target, even if it is moving
-    //    }
-    //    base.Update();
-    //}
+    #region Utilities
     public string lastAdjustNegativeDoNotMoveST { get; private set; }
     public string lastAdjustPositiveDoNotMoveST { get; private set; }
+    public string stopMovementST { get; private set; }
     public void AdjustDoNotMove(int amount) {
         doNotMove += amount;
         doNotMove = Mathf.Max(0, doNotMove);
@@ -185,14 +169,12 @@ public class CharacterAIPath : AILerp {
             }
         }
     }
-    public string stopMovementST;
     public void SetIsStopMovement(bool state) {
         isStopMovement = state;
         if (isStopMovement) {
             stopMovementST = StackTraceUtility.ExtractStackTrace();
         }
     }
-
     public void ClearAllCurrentPathData() {
         currentPath = null;
         path = null; //located at AILerp base class. Reference https://forum.arongranberg.com/t/how-to-stop-a-path-prematurely/1321/2
@@ -203,11 +185,9 @@ public class CharacterAIPath : AILerp {
         interpolator.SetPath(null);
         marker.StopMovementOnly();
     }
-
     public void SetNotAllowedStructures(STRUCTURE_TYPE[] notAllowedStructures) {
         this.notAllowedStructures = notAllowedStructures;
     }
-
     public bool IsNodeWalkable(Vector3 nodePos) {
         if (marker.terrifyingCharacters.Count > 0) {
             for (int i = 0; i < marker.terrifyingCharacters.Count; i++) {
@@ -238,13 +218,13 @@ public class CharacterAIPath : AILerp {
                 if (terrifyingCharacter == null) {
                     continue;
                 }
-                if(terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
+                if (terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
                     continue;
                 }
-                if(terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
+                if (terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
                     continue;
                 }
-                if(terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure) {
+                if (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure) {
                     continue;
                 }
                 if (!terrifyingCharacter.isDead) {
@@ -270,9 +250,9 @@ public class CharacterAIPath : AILerp {
         return 1000;
     }
     public uint GetNodePenaltyForStructures(Path path, Vector3 nodePos) {
-        if(path is CustomABPath) {
+        if (path is CustomABPath) {
             CustomABPath customPath = path as CustomABPath;
-            if(customPath.notAllowedStructures == null && customPath.onlyAllowedStructures == null) {
+            if (customPath.notAllowedStructures == null && customPath.onlyAllowedStructures == null) {
                 return 0;
             }
             if (customPath.area == null) {
@@ -287,17 +267,17 @@ public class CharacterAIPath : AILerp {
                     Utilities.IsInRange(localPlace.y, 0, customPath.area.areaMap.map.GetUpperBound(1) + 1)) {
                 nodeGridTile = customPath.area.areaMap.map[localPlace.x, localPlace.y];
             }
-            if(nodeGridTile != null && nodeGridTile.structure != null) {
+            if (nodeGridTile != null && nodeGridTile.structure != null) {
                 if (customPath.notAllowedStructures != null) {
                     for (int i = 0; i < customPath.notAllowedStructures.Length; i++) {
                         if (customPath.notAllowedStructures[i] == nodeGridTile.structure.structureType) {
                             return 1000000;
                         }
                     }
-                }else if(customPath.onlyAllowedStructures != null) {
+                } else if (customPath.onlyAllowedStructures != null) {
                     bool isAllowed = false;
                     for (int i = 0; i < customPath.onlyAllowedStructures.Length; i++) {
-                        if(customPath.onlyAllowedStructures[i] == nodeGridTile.structure.structureType) {
+                        if (customPath.onlyAllowedStructures[i] == nodeGridTile.structure.structureType) {
                             isAllowed = true;
                             break;
                         }
@@ -305,7 +285,7 @@ public class CharacterAIPath : AILerp {
                     if (!isAllowed) {
                         return 1000000;
                     }
-                } 
+                }
             }
         }
         return 0;
@@ -316,4 +296,11 @@ public class CharacterAIPath : AILerp {
         }
         return Vector3.zero;
     }
+    public void SetEndReachedDistance(float distance) {
+        endReachDistance = distance;
+    }
+    public void ResetEndReachedDistance() {
+        endReachDistance = Default_End_Reached_Distance;
+    }
+    #endregion
 }

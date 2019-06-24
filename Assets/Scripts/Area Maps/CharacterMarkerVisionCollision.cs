@@ -143,10 +143,8 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         if(targetCharacter.isDead 
             || targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) 
             || parentMarker.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
-            || (targetCharacter.stateComponent.currentState != null && (targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE 
-            || targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE))
-            || (parentMarker.character.stateComponent.currentState != null && (parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE
-            || parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE))
+            || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
+            || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
             || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST) {
             return false;
@@ -168,10 +166,8 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         if (targetCharacter.isDead
             || targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
             || parentMarker.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
-            || (targetCharacter.stateComponent.currentState != null && (targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE
-            || targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE))
-            || (parentMarker.character.stateComponent.currentState != null && (parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE
-            || parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE))
+            || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
+            || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
             || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST) {
             return false;
@@ -254,7 +250,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             }
             //remove from vision and hostile range
             parentMarker.RemovePOIFromInVisionRange(character);
-            parentMarker.RemoveHostileInRange(character);
+            //parentMarker.RemoveHostileInRange(character);
             parentMarker.RemoveAvoidInRange(character);
             AddPOIAsInRangeButDifferentStructure(character);
         }
@@ -279,7 +275,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 if (poi.gridTileLocation == null || poi.gridTileLocation.structure == null) {
                     parentMarker.RemovePOIFromInVisionRange(poi);
                     if (poi is Character) {
-                        parentMarker.RemoveHostileInRange(poi as Character);
+                        //parentMarker.RemoveHostileInRange(poi as Character);
                         parentMarker.RemoveAvoidInRange(poi as Character);
                     }
                 } else if (poi.gridTileLocation.structure != parentMarker.character.currentStructure 
@@ -287,7 +283,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                     //if the character in vision no longer has the same structure as the character, and at least one of them is not in an open space structure
                     parentMarker.RemovePOIFromInVisionRange(poi);
                     if (poi is Character) {
-                        parentMarker.RemoveHostileInRange(poi as Character);
+                        //parentMarker.RemoveHostileInRange(poi as Character);
                         parentMarker.RemoveAvoidInRange(poi as Character);
                     }
                     AddPOIAsInRangeButDifferentStructure(poi);

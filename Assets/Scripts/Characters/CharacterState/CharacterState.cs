@@ -43,7 +43,9 @@ public class CharacterState {
         Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.character, this);
         InVisionPOIsOnStartState();
     }
-    //Ends a state, can be overridden
+    /// <summary>
+    /// End this state. This is called after <see cref="OnExitThisState"/>.
+    /// </summary>
     protected virtual void EndState() {
         if (currentlyDoingAction != null) {
             if (currentlyDoingAction.isPerformingActualAction && !currentlyDoingAction.isDone) {

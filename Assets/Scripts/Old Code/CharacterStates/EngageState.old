@@ -6,7 +6,7 @@ public class EngageState : CharacterState {
 
     public EngageState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Engage State";
-        characterState = CHARACTER_STATE.ENGAGE;
+        //characterState = CHARACTER_STATE.ENGAGE;
         stateCategory = CHARACTER_STATE_CATEGORY.MINOR;
         //duration = 288;
         duration = GameManager.ticksPerHour;
@@ -45,7 +45,7 @@ public class EngageState : CharacterState {
             //engage another hostile
             stateComponent.character.marker.SetCurrentlyEngaging(null);
             stateComponent.character.marker.SetTargetTransform(null);
-            stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, nearestHostile);
+            //stateComponent.SwitchToState(CHARACTER_STATE.ENGAGE, nearestHostile);
             //stateComponent.character.marker.RedetermineEngage();
         }
     }
@@ -171,9 +171,9 @@ public class EngageState : CharacterState {
         if (engagerCharacter.GetNormalTrait("Combat Recovery") != null) {
             return false;
         }
-        if (engagerCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
-            return false;
-        }
+        //if (engagerCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
+        //    return false;
+        //}
         if (engagerCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
             return false;
         }
