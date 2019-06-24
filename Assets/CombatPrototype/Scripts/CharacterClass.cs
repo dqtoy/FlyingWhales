@@ -113,6 +113,8 @@ public class CharacterClass : EntityComponent {
         newClass._attackPowerPerLevel = this._attackPowerPerLevel;
 		newClass._speedPerLevel = this._speedPerLevel;
         newClass._hpPerLevel = this._hpPerLevel;
+        newClass._attackRange = this._attackRange;
+        newClass._baseAttackSpeed = this._baseAttackSpeed;
         //newClass._workActionType = this._workActionType;
         newClass._combatPosition = this._combatPosition;
         newClass._combatTarget = this._combatTarget;

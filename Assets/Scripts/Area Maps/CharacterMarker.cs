@@ -999,14 +999,15 @@ public class CharacterMarker : PooledObject {
     //}
     public void RemoveHostileInRange(Character poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Remove(poi)) {
-            Debug.Log("Removed hostile in range " + poi.name + " from " + this.character.name);
+            //Debug.Log("Removed hostile in range " + poi.name + " from " + this.character.name);
             //UnhighlightMarker(); //This is for testing only!
-            OnHostileInRangeRemoved(poi);
-
-            ////When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
-            //if (processCombatBehavior && character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-            //    (character.stateComponent.currentState as CombatState).ReevaluateCombatBehavior();
-            //}
+            //OnHostileInRangeRemoved(poi);
+            string removeHostileSummary = poi.name + " was removed from " + character.name + "'s hostile range.";
+            //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
+            if (processCombatBehavior && character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                (character.stateComponent.currentState as CombatState).ReevaluateCombatBehavior();
+            }
+            character.PrintLogIfActive(removeHostileSummary);
         }
     }
     public void ClearHostilesInRange() {
@@ -1465,7 +1466,7 @@ public class CharacterMarker : PooledObject {
     }
     public void UpdateHP() {
         if (hpBarGO.activeSelf) {
-            hpFill.fillAmount = character.currentHP / character.maxHP;
+            hpFill.fillAmount = (float) character.currentHP / character.maxHP;
         }
     }
     public void ResetAttackSpeed() {

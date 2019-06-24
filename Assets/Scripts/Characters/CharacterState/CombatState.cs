@@ -139,17 +139,18 @@ public class CombatState : CharacterState {
         else if (currentClosestHostile.isDead) {
             log += "\nCurrent closest hostile is dead, removing hostile in hostile list...";
             stateComponent.character.PrintLogIfActive(log);
-            //TODO: Remove hostile in hostile list. Must also reevaluate movement behavior
+            stateComponent.character.marker.RemoveHostileInRange(currentClosestHostile);
         }
         else if (currentClosestHostile.specificLocation != stateComponent.character.specificLocation) {
             log += "\nCurrent closest hostile is already in another location or is travelling to one, removing hostile in hostile list...";
             stateComponent.character.PrintLogIfActive(log);
-            //TODO: Remove hostile in hostile list. Must also reevaluate movement behavior
+            stateComponent.character.marker.RemoveHostileInRange(currentClosestHostile);
         }
         //If character is attacking and distance is within the attack range of this character, attack
         //else, pursue again
         else if (isAttacking) {
-            if (Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position) <= stateComponent.character.characterClass.attackRange) {
+            if (Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position) <= stateComponent.character.characterClass.attackRange 
+                && currentClosestHostile.currentStructure == stateComponent.character.currentStructure) {
                 Attack();
             } else {
                 PursueClosestHostile();
@@ -161,20 +162,20 @@ public class CombatState : CharacterState {
     }
 
     private void Attack() {
-        string attackSummary = stateComponent.character.name + " will attack " + currentClosestHostile.name;
         //Stop movement first before attacking
         if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
             stateComponent.character.marker.StopMovement();
         }
         //Check attack speed
         if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
-            attackSummary += "\nCannot attack yet because of attack speed.";
-            Debug.Log(attackSummary);
+            //attackSummary += "\nCannot attack yet because of attack speed.";
+            //Debug.Log(attackSummary);
             return;
         }
+        string attackSummary = stateComponent.character.name + " will attack " + currentClosestHostile.name;
 
         //TODO: For readjustment, attack power is the old computation
-        currentClosestHostile.AdjustHP(stateComponent.character.attackPower);
+        currentClosestHostile.AdjustHP(-10);//stateComponent.character.attackPower
         attackSummary += "\nDealt damage " + stateComponent.character.attackPower.ToString();
 
         //Reset Attack Speed
@@ -208,7 +209,7 @@ public class CombatState : CharacterState {
                     break;
             }
         } else {
-            attackSummary += "\n" + currentClosestHostile.name + " still has remaining hp " + currentClosestHostile.currentHP.ToString();
+            attackSummary += "\n" + currentClosestHostile.name + " still has remaining hp " + currentClosestHostile.currentHP.ToString() + "/" + currentClosestHostile.maxHP.ToString();
             //If the enemy still has hp, check if still in range, then process again
             stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
         }
