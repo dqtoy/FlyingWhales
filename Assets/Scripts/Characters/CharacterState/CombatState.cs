@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CombatState : CharacterState {
 
-    private int _currentDuration;
+    private int _currentAttackTimer; //When this timer reaches max, remove currently hostile target from hostile list
 
     public bool isAttacking { get; private set; } //if not attacking, it is assumed that the character is fleeing
     public Character currentClosestHostile { get; private set; }
@@ -15,7 +15,7 @@ public class CombatState : CharacterState {
         stateCategory = CHARACTER_STATE_CATEGORY.MINOR;
         duration = 0;
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        _currentDuration = 0;
+        _currentAttackTimer = 0;
         //Default start of combat state is attacking
         isAttacking = true;
     }
@@ -25,32 +25,6 @@ public class CombatState : CharacterState {
         base.DoMovementBehavior();
         StartCombatMovement();
     }
-    //public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
-    //    if (targetPOI is Character) {
-    //        return stateComponent.character.marker.AddHostileInRange(targetPOI as Character);
-    //    } else if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
-    //        SpecialToken token = targetPOI as SpecialToken;
-    //        if (token.characterOwner == null) {
-    //            //Patrollers should not pick up items from their warehouse
-    //            if (token.structureLocation != null && token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE
-    //                && token.specificLocation == stateComponent.character.homeArea) {
-    //                return false;
-    //            }
-    //            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);
-    //            if (goapAction.targetTile != null) {
-    //                SetCurrentlyDoingAction(goapAction);
-    //                goapAction.CreateStates();
-    //                stateComponent.character.SetCurrentAction(goapAction);
-    //                stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
-    //                PauseState();
-    //            } else {
-    //                Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't pick up item " + targetPOI.name + " because there is no tile to go to!");
-    //            }
-    //            return true;
-    //        }
-    //    }
-    //    return base.OnEnterVisionWith(targetPOI);
-    //}
     protected override void PerTickInState() {
         if (stateComponent.character.doNotDisturb > 0) {
             if (!(characterState == CHARACTER_STATE.BERSERKED && stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetNormalTrait("Combat Recovery") != null)) {
@@ -59,18 +33,15 @@ public class CombatState : CharacterState {
                 return;
             }
         }
-
-        if (isAttacking) {
-            //If attacking, must always check if current hostile character is in range for attack
-            CheckIfCurrentHostileIsInRange();
-        }
     }
     protected override void StartState() {
         stateComponent.character.marker.ShowHPBar();
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Starting combat state for " + stateComponent.character.name);
         base.StartState();
+        stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
     protected override void EndState() {
+        stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
         base.EndState();
         stateComponent.character.marker.HideHPBar();
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Ending combat state for " + stateComponent.character.name);
@@ -86,6 +57,7 @@ public class CombatState : CharacterState {
         }
     }
     #endregion
+
     private void SetIsAttacking(bool state) {
         isAttacking = state;
         ReevaluateCombatBehavior();
@@ -117,13 +89,23 @@ public class CombatState : CharacterState {
     public void ReevaluateCombatBehavior() {
         string log = GameManager.Instance.TodayLogString() + "Reevaluating combat behavior of " + stateComponent.character.name;
         if (isAttacking) {
-            log += "\n" + stateComponent.character.name + " is attacking! Pursuing closest hostile...";
-            SetClosestHostile();
-            if(currentClosestHostile == null) {
-                log += "\nNo more hostile characters, ending combat state...";
+            log += "\n" + stateComponent.character.name + " is attacking!";
+            if (currentClosestHostile != null && stateComponent.character.marker.hostilesInRange.Contains(currentClosestHostile)) {
+                log += "\nCurrent closest hostile: " + currentClosestHostile.name + " is no longer in hostile list, setting another closest hostile...";
+                SetClosestHostile();
+            }else if(currentClosestHostile == null) {
+                log += "\nNo current closest hostile, setting one...";
+                SetClosestHostile();
+            }else if(currentClosestHostile != null && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.targetPOI == currentClosestHostile) {
+                log += "\nAlready in pursuit of current closest hostile: " + currentClosestHostile.name;
+                stateComponent.character.PrintLogIfActive(log);
+                return;
+            }
+            if (currentClosestHostile == null) {
+                log += "\nNo more hostile characters, exiting combat state...";
                 OnExitThisState();
             } else {
-                log += "\nClosest hostile target: " + currentClosestHostile.name;
+                log += "\nPursuing closest hostile target: " + currentClosestHostile.name;
                 PursueClosestHostile();
             }
             stateComponent.character.PrintLogIfActive(log);
@@ -137,38 +119,43 @@ public class CombatState : CharacterState {
 
     #region Attacking
     private void PursueClosestHostile() {
-        stateComponent.character.marker.GoTo(currentClosestHostile);
+        if (!stateComponent.character.currentParty.icon.isTravelling) {
+            stateComponent.character.marker.GoTo(currentClosestHostile);
+        }
     }
     private void SetClosestHostile() {
         currentClosestHostile = stateComponent.character.marker.GetNearestValidHostile();
     }
-    private void CheckIfCurrentHostileIsInRange() {
+
+    //Will be constantly checked every frame
+    private IEnumerator CheckIfCurrentHostileIsInRange() {
         string log = GameManager.Instance.TodayLogString() + "Checking if current closest hostile is in range for " + stateComponent.character.name + " to attack...";
         if (currentClosestHostile == null) {
             log += "\nNo current closest hostile, cannot trigger attack...";
             stateComponent.character.PrintLogIfActive(log);
-            return;
         }
-        if (currentClosestHostile.isDead) {
+        else if (currentClosestHostile.isDead) {
             log += "\nCurrent closest hostile is dead, removing hostile in hostile list...";
             stateComponent.character.PrintLogIfActive(log);
             //TODO: Remove hostile in hostile list. Must also reevaluate movement behavior
-            return;
         }
-        if (currentClosestHostile.specificLocation != stateComponent.character.specificLocation) {
+        else if (currentClosestHostile.specificLocation != stateComponent.character.specificLocation) {
             log += "\nCurrent closest hostile is already in another location or is travelling to one, removing hostile in hostile list...";
             stateComponent.character.PrintLogIfActive(log);
             //TODO: Remove hostile in hostile list. Must also reevaluate movement behavior
-            return;
+        }
+        //If character is attacking and distance is within the attack range of this character, attack
+        //else, pursue again
+        else if (isAttacking) {
+            if (Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position) <= stateComponent.character.characterClass.attackRange) {
+                Attack();
+            } else {
+                PursueClosestHostile();
+            }
         }
 
-        //If distance is within the attack range of this character, attack
-        //else, pursue again
-        if(Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position) <= stateComponent.character.attackRange) {
-            Attack();
-        } else {
-            PursueClosestHostile();
-        }
+        yield return null;
+        stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
 
     private void Attack() {
@@ -209,7 +196,7 @@ public class CombatState : CharacterState {
                     currentClosestHostile.AddTrait(injured, stateComponent.character);
                     break;
                 case "Death":
-                    currentClosestHostile.Death();
+                    currentClosestHostile.Death(responsibleCharacter: stateComponent.character);
                     break;
             }
         } else {
@@ -223,28 +210,27 @@ public class CombatState : CharacterState {
     //TODO: Call this in OnFinishedTraversingFleePath function in CharacterMarker script
     public void FinishedTravellingFleePath() {
         string log = GameManager.Instance.TodayLogString() + "Finished travelling flee path of " + stateComponent.character.name;
-        //After travelling flee path, check characters in vision if there is still a character that is part of the hostile list,
-        //if there is, flee again
-        //if not, set attacking state to true (this will also reevaluate combat behavior)
-        bool stillHasHostile = false;
-        for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {
-            if(stateComponent.character.marker.inVisionPOIs[i] is Character) {
-                Character currCharacter = stateComponent.character.marker.inVisionPOIs[i] as Character;
-                if (stateComponent.character.marker.hostilesInRange.Contains(currCharacter)) {
-                    stillHasHostile = true;
-                    break;
-                }
+        //After travelling flee path, check hostile characters if they are still in vision, every hostile character that is not in vision must be removed form hostile list
+        //Consequently, the removed character must also remove this character from his/her hostile list
+        //Then check if hostile list is empty
+        //If it is, end state immediately
+        //If not, flee again
+        for (int i = 0; i < stateComponent.character.marker.hostilesInRange.Count; i++) {
+            Character currCharacter = stateComponent.character.marker.hostilesInRange[i];
+            if (!stateComponent.character.marker.inVisionPOIs.Contains(currCharacter)) {
+                stateComponent.character.marker.RemoveHostileInRange(currCharacter, false);
+                currCharacter.marker.RemoveHostileInRange(stateComponent.character);
             }
         }
-        if (stillHasHostile) {
+        if (stateComponent.character.marker.hostilesInRange.Count > 0) {
             //There is still in vision that is hostile, flee again
             log += "\nStill has hostile in vision, fleeing again...";
             stateComponent.character.PrintLogIfActive(log);
             stateComponent.character.marker.OnStartFlee();
         } else {
-            log += "\nNo more hostile in vision, will try to reevaluate combat behavior...";
+            log += "\nNo more hostiles, exiting combat state...";
             stateComponent.character.PrintLogIfActive(log);
-            SetIsAttacking(true);
+            OnExitThisState();
         }
     }
     #endregion

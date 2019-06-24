@@ -366,11 +366,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int currentHP {
         get { return this._currentHP; }
     }
-    public int attackRange {
-        get { return 1; }
-    }
     public int attackSpeed {
-        get { return 1000; } //in milliseconds
+        get { return _characterClass.baseAttackSpeed; } //in milliseconds, The lower the amount the faster the attack rate
     }
     public Dictionary<ELEMENT, float> elementalWeaknesses {
         get { return _elementalWeaknesses; }
@@ -753,7 +750,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AddInitialAwareness(gloomhollow);
         }
     }
-    public void Death(string cause = "normal", GoapAction deathFromAction = null) {
+    public void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null) {
         if (!_isDead) {
             SetIsDead(true);
             UnsubscribeSignals();
@@ -832,6 +829,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             onCharacterDeath = null;
 
             Dead dead = new Dead();
+            dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             AddTrait(dead, gainedFromDoing: deathFromAction);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
 

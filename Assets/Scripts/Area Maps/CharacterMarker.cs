@@ -139,7 +139,7 @@ public class CharacterMarker : PooledObject {
     private void Update() {
         if (GameManager.Instance.gameHasStarted && !GameManager.Instance.isPaused) {
             if (_attackSpeedMeter < character.attackSpeed) {
-                _attackSpeedMeter += Time.deltaTime * 1000f;
+                _attackSpeedMeter += ((Time.deltaTime * 1000f) * progressionSpeedMultiplier);
             }
         }
     }
@@ -989,14 +989,14 @@ public class CharacterMarker : PooledObject {
         }
         return false;
     }
-    public void RemoveHostileInRange(Character poi) {
+    public void RemoveHostileInRange(Character poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Remove(poi)) {
             Debug.Log("Removed hostile in range " + poi.name + " from " + this.character.name);
             //UnhighlightMarker(); //This is for testing only!
             OnHostileInRangeRemoved(poi);
 
             ////When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
-            //if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+            //if (processCombatBehavior && character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
             //    (character.stateComponent.currentState as CombatState).ReevaluateCombatBehavior();
             //}
         }

@@ -24,6 +24,9 @@ public class ClassPanelUI : MonoBehaviour {
     public InputField baseSPInput;
     public InputField spPerLevelInput;
     public InputField recruitmentCostInput;
+    public InputField baseAttackSpeedInput;
+    public InputField attackRangeInput;
+
     public Toggle nonCombatantToggle;
 
     public Dropdown weaponsOptions;
@@ -168,6 +171,8 @@ public class ClassPanelUI : MonoBehaviour {
         baseSPInput.text = "0";
         spPerLevelInput.text = "0";
         recruitmentCostInput.text = "0";
+        baseAttackSpeedInput.text = "1";
+        attackRangeInput.text = "1";
 
         weaponsOptions.value = 0;
         armorsOptions.value = 0;
@@ -263,6 +268,8 @@ public class ClassPanelUI : MonoBehaviour {
         baseHPInput.text = characterClass.baseHP.ToString();
         hpPerLevelInput.text = characterClass.hpPerLevel.ToString();
         recruitmentCostInput.text = characterClass.recruitmentCost.amount.ToString();
+        baseAttackSpeedInput.text = characterClass.baseAttackSpeed.ToString();
+        attackRangeInput.text = characterClass.attackRange.ToString();
 
         combatPositionOptions.value = GetDropdownIndex(combatPositionOptions, characterClass.combatPosition.ToString());
         combatTargetOptions.value = GetDropdownIndex(combatTargetOptions, characterClass.combatTarget.ToString());
