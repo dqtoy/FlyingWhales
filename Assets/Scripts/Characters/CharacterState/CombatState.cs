@@ -121,7 +121,7 @@ public class CombatState : CharacterState {
 
     #region Attacking
     private void PursueClosestHostile() {
-        if (!stateComponent.character.currentParty.icon.isTravelling) {
+        if (!stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI != currentClosestHostile) {
             stateComponent.character.marker.GoTo(currentClosestHostile);
         }
     }
@@ -149,8 +149,8 @@ public class CombatState : CharacterState {
         //If character is attacking and distance is within the attack range of this character, attack
         //else, pursue again
         else if (isAttacking) {
-            if (Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position) <= stateComponent.character.characterClass.attackRange 
-                && currentClosestHostile.currentStructure == stateComponent.character.currentStructure) {
+            if (Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position) <= stateComponent.character.characterClass.attackRange) {
+                //&& currentClosestHostile.currentStructure == stateComponent.character.currentStructure //Commented out structure checking first for assault action (Need to discuss)
                 Attack();
             } else {
                 PursueClosestHostile();
@@ -158,7 +158,9 @@ public class CombatState : CharacterState {
         }
 
         yield return null;
-        stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
+        if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
+            stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
+        }
     }
 
     private void Attack() {
@@ -172,8 +174,10 @@ public class CombatState : CharacterState {
             //Debug.Log(attackSummary);
             return;
         }
+        stateComponent.character.marker.LookAt(currentClosestHostile.marker.transform.position);
         string attackSummary = stateComponent.character.name + " will attack " + currentClosestHostile.name;
 
+        GameManager.Instance.CreateHitEffectAt(currentClosestHostile);
         //TODO: For readjustment, attack power is the old computation
         currentClosestHostile.AdjustHP(-10);//stateComponent.character.attackPower
         attackSummary += "\nDealt damage " + stateComponent.character.attackPower.ToString();
@@ -211,7 +215,10 @@ public class CombatState : CharacterState {
         } else {
             attackSummary += "\n" + currentClosestHostile.name + " still has remaining hp " + currentClosestHostile.currentHP.ToString() + "/" + currentClosestHostile.maxHP.ToString();
             //If the enemy still has hp, check if still in range, then process again
-            stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
+            //stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
+            if (!currentClosestHostile.marker.hostilesInRange.Contains(stateComponent.character)) {
+                currentClosestHostile.marker.AddHostileInRange(stateComponent.character, CHARACTER_STATE.COMBAT); //When the target is hit and it is still alive, add hostile
+            }
         }
         Debug.Log(attackSummary);
     }
@@ -248,6 +255,9 @@ public class CombatState : CharacterState {
     #region Utilities
     public void SetOnEndStateAction(System.Action action) {
         onEndStateAction = action;
+    }
+    public void ResetClosestHostile() {
+        currentClosestHostile = null;
     }
     #endregion
 }

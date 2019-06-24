@@ -606,6 +606,9 @@ public class CharacterInfoUI : UIMenu {
         summary += "\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None";
         summary += "\nRole: " + activeCharacter.role.roleType.ToString();
         summary += "\nSexuality: " + activeCharacter.sexuality.ToString();
+        summary += "\nMood: " + activeCharacter.moodValue.ToString() + "(" + activeCharacter.currentMoodType.ToString() + ")";
+        summary += "\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString();
+        summary += "\nAttack Speed: " + activeCharacter.attackSpeed.ToString();
         summary += "\nCurrent State: " + activeCharacter.stateComponent.currentState?.ToString() ?? "None";
         summary += "\nState To Do: " + activeCharacter.stateComponent.stateToDo?.ToString() ?? "None";
         summary += "\nActions targetting this character: ";

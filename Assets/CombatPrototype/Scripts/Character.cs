@@ -2896,6 +2896,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //}
     }
     public void ThisCharacterWitnessedEvent(GoapAction witnessedEvent) {
+        if (witnessedEvent.currentState == null) {
+            return; //TODO: Need to discuss (Witnessing assault that is in progress).
+        }
         if (witnessedEvent.currentState.shareIntelReaction != null && !isFactionless) {
             List<string> reactions = witnessedEvent.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.WITNESSED);
             if(reactions != null) {
@@ -5194,6 +5197,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void DecreaseNeeds() {
         if (race == RACE.SKELETON) {
             return;
+        }
+        if (stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+            return; //Set needs to not decrease while in combat state, so as not to cancel plans (For Discussion)
         }
         if (_doNotGetHungry <= 0) {
             AdjustFullness(-10);

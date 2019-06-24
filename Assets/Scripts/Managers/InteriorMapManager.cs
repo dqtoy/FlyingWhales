@@ -398,6 +398,8 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\n\tSupply: " + character.supply.ToString();
         summary += "\n\tDestination: " + (character.marker.destinationTile != null ? character.marker.destinationTile.ToString() : "None");
         summary += "\n\tMove Speed: " + character.marker.pathfindingAI.speed.ToString();
+        summary += "\n\tAttack Range: " + character.characterClass.attackRange.ToString();
+        summary += "\n\tAttack Speed: " + character.attackSpeed.ToString();
         summary += "\n\tTangent: " + character.marker.pathfindingAI.GetTangent().ToString();
         summary += "\n\tTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
         summary += "\n\tBase Structure: " + (character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None");

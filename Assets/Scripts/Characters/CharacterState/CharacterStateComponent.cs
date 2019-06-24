@@ -50,7 +50,10 @@ public class CharacterStateComponent {
     public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Area targetArea = null, int durationOverride = -1, object otherData = null) {
         //Before switching character must end current action first because once a character is in a state in cannot make plans
         character.AdjustIsWaitingForInteraction(1);
-        character.StopCurrentAction();
+        if (character.currentAction != null && character.currentAction.goapType != INTERACTION_TYPE.ASSAULT_ACTION_NPC) {
+            //TODO: Unify this! Maybe pass the action that made this character switch states, and if the character's current action is that, do not end it?
+            character.StopCurrentAction();
+        }
         character.AdjustIsWaitingForInteraction(-1);
 
         //Stop the movement of character because the new state probably has different movement behavior

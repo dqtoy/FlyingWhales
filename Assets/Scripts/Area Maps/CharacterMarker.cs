@@ -210,13 +210,14 @@ public class CharacterMarker : PooledObject {
                 pathfindingAI.AdjustDoNotMove(1);
                 gainTraitSummary += "\nGained trait is a disabler trait, adjusting do not move value.";
             }
-            //if (trait is Unconscious || trait is Restrained) {
-            //    //if the character gained an unconscious trait, exit current state if it is flee
-            //    if (characterThatGainedTrait.stateComponent.currentState != null && characterThatGainedTrait.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
-            //        characterThatGainedTrait.stateComponent.currentState.OnExitThisState();
-            //        gainTraitSummary += "\nGained trait is unconscious, and characters current state is flee, exiting flee state.";
-            //    }
-            //} else if (trait.name == "Injured" && trait.responsibleCharacter != null && characterThatGainedTrait.GetNormalTrait("Unconscious") == null) {
+            if (trait is Unconscious || trait is Restrained) {
+                //if the character gained an unconscious trait, exit current state if it is flee
+                if (characterThatGainedTrait.stateComponent.currentState != null && characterThatGainedTrait.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                    characterThatGainedTrait.stateComponent.currentState.OnExitThisState();
+                    gainTraitSummary += "\nGained trait is unconscious, and characters current state is flee, exiting flee state.";
+                }
+            }
+            //else if (trait.name == "Injured" && trait.responsibleCharacter != null && characterThatGainedTrait.GetNormalTrait("Unconscious") == null) {
             //    gainTraitSummary += "\nGained trait is injured, and character that is responsible for injured trait is " + trait.responsibleCharacter.name;
             //    if (hostilesInRange.Contains(trait.responsibleCharacter)) {
             //        gainTraitSummary += trait.responsibleCharacter.name + " is in hostile range. Forcing flee.";
@@ -1005,7 +1006,11 @@ public class CharacterMarker : PooledObject {
             string removeHostileSummary = poi.name + " was removed from " + character.name + "'s hostile range.";
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
             if (processCombatBehavior && character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-                (character.stateComponent.currentState as CombatState).ReevaluateCombatBehavior();
+                CombatState combatState = character.stateComponent.currentState as CombatState;
+                if (combatState.currentClosestHostile == poi) {
+                    combatState.ResetClosestHostile();
+                }
+                combatState.ReevaluateCombatBehavior();
             }
             character.PrintLogIfActive(removeHostileSummary);
         }
@@ -1019,9 +1024,9 @@ public class CharacterMarker : PooledObject {
             return;
         }
         string removeHostileSummary = removedCharacter.name + " was removed from " + character.name + "'s hostile range.";
-        if (character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-            (character.stateComponent.currentState as CombatState).ReevaluateCombatBehavior();
-        }
+        //if (character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+        //    (character.stateComponent.currentState as CombatState).ReevaluateCombatBehavior();
+        //}
         //if (character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
         //    removeHostileSummary += "\n" + character.name + "'s current state is engage, checking for end state...";
         //    if (currentlyEngaging == removedCharacter) {

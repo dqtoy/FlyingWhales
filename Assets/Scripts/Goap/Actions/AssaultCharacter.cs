@@ -9,6 +9,7 @@ public class AssaultCharacter : GoapAction {
 
     public AssaultCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASSAULT_ACTION_NPC, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
+        doesNotStopTargetCharacter = true;
     }
 
     #region Overrides
@@ -27,7 +28,7 @@ public class AssaultCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-
+        cannotCancelAction = true;
         CharacterState combatState;
         actor.marker.AddHostileInRange(poiTarget as Character, out combatState, CHARACTER_STATE.COMBAT, false);
         if (combatState is CombatState) {
@@ -57,6 +58,19 @@ public class AssaultCharacter : GoapAction {
     private void OnFinishCombatState() {
         //TODO: Add checking if poi target has become unconscious. If yes action was a success.
         Debug.Log(actor.name + " finished combat state!");
+        Character target = poiTarget as Character;
+        loser = target;
+        winner = actor; // TODO: How to determine if actor won?
+        if (target.GetNormalTrait("Dead") != null) {
+            SetState("Target Killed");
+        } else if (target.GetNormalTrait("Unconscious") != null) {
+            SetState("Target Knocked Out");
+        } else if (target.GetNormalTrait("Injured") != null) {
+            SetState("Target Injured");
+        } else {
+            SetState("Target Injured");
+            Debug.LogWarning("Target did not meet any of assault states. Actor must have lost.");
+        }
     }
     protected override int GetCost() {
         return 1;
@@ -98,9 +112,9 @@ public class AssaultCharacter : GoapAction {
             SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
-        AddTraitTo(winner, "Combat Recovery", loser);
-        Injured injured = new Injured();
-        AddTraitTo(loser, injured, winner);
+        //AddTraitTo(winner, "Combat Recovery", loser);
+        //Injured injured = new Injured();
+        //AddTraitTo(loser, injured, winner);
         CharacterManager.Instance.RelationshipDegradation(actor, poiTarget as Character, this);
         currentState.SetIntelReaction(TargetInjuredKnockOutReactions);
     }
@@ -123,7 +137,7 @@ public class AssaultCharacter : GoapAction {
             SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
-        AddTraitTo(winner, "Combat Recovery", loser);
+        //AddTraitTo(winner, "Combat Recovery", loser);
         CharacterManager.Instance.RelationshipDegradation(actor, poiTarget as Character, this);
         currentState.SetIntelReaction(TargetInjuredKnockOutReactions);
     }
@@ -132,9 +146,9 @@ public class AssaultCharacter : GoapAction {
             parentPlan.job.SetCannotCancelJob(true);
         }
         resumeTargetCharacterState = false; //do not resume the target character's current state after being knocked out
-        Character target = poiTarget as Character;
-        Unconscious unconscious = new Unconscious();
-        AddTraitTo(loser, unconscious, winner);
+        //Character target = poiTarget as Character;
+        //Unconscious unconscious = new Unconscious();
+        //AddTraitTo(loser, unconscious, winner);
     }
     public void PreTargetKilled() {
         //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is a Murder crime
@@ -144,7 +158,7 @@ public class AssaultCharacter : GoapAction {
             SetCommittedCrime(CRIME.MURDER, new Character[] { actor });
         }
         currentState.AddLogFiller(loser, loser.name, LOG_IDENTIFIER.CHARACTER_3);
-        AddTraitTo(winner, "Combat Recovery", loser);
+        //AddTraitTo(winner, "Combat Recovery", loser);
         currentState.SetIntelReaction(TargetKilledReactions);
     }
     public void AfterTargetKilled() {
@@ -152,7 +166,7 @@ public class AssaultCharacter : GoapAction {
             parentPlan.job.SetCannotCancelJob(true);
         }
         SetCannotCancelAction(true);
-        loser.Death(deathFromAction: this);
+        //loser.Death(deathFromAction: this);
     }
     //public void PreTargetMissing() {
     //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);

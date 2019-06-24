@@ -71,7 +71,7 @@ public class ProvokeMenu : MonoBehaviour {
         }
 
         if (succeedProvoke) {
-            List<Character> enemyCharacters = targetCharacter.GetCharactersWithRelationship(RELATIONSHIP_TRAIT.ENEMY);
+            List<Character> enemyCharacters = targetCharacter.GetCharactersWithRelationship(RELATIONSHIP_TRAIT.ENEMY).Where(x => !x.isDead).ToList();
             Character chosenCharacter = null;
             while (chosenCharacter == null && enemyCharacters.Count > 0) {
                 int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
