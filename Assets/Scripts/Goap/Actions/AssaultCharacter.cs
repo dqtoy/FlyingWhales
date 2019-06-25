@@ -29,6 +29,7 @@ public class AssaultCharacter : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         cannotCancelAction = true;
+        actor.marker.pathfindingAI.ResetEndReachedDistance();
         CharacterState combatState;
         actor.marker.AddHostileInRange(poiTarget as Character, out combatState, CHARACTER_STATE.COMBAT, false);
         if (combatState is CombatState) {
@@ -36,6 +37,7 @@ public class AssaultCharacter : GoapAction {
         } else {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
         }
+        SetState("In Progress");
         
         //Character targetCharacter = poiTarget as Character;
         //if (!isTargetMissing && targetCharacter.IsInOwnParty() && !targetCharacter.isDead) {
@@ -67,9 +69,12 @@ public class AssaultCharacter : GoapAction {
             SetState("Target Knocked Out");
         } else if (target.GetNormalTrait("Injured") != null) {
             SetState("Target Injured");
+        } else if (actor.specificLocation != target.specificLocation) {
+            SetState("Target Missing");
         } else {
-            SetState("Target Injured");
-            Debug.LogWarning("Target did not meet any of assault states. Actor must have lost.");
+            loser = actor;
+            winner = target;
+            SetState("Assault Failed");
         }
     }
     protected override int GetCost() {
@@ -168,6 +173,9 @@ public class AssaultCharacter : GoapAction {
         SetCannotCancelAction(true);
         //loser.Death(deathFromAction: this);
     }
+    //public void PreAssaultFailed() {
+    //    currentState.AddLogFiller(poiTarget as Character, (poiTarget as Character).name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //}
     //public void PreTargetMissing() {
     //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}

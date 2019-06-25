@@ -225,8 +225,8 @@ public class CharacterMarker : PooledObject {
             //        NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
             //    }
             //} else 
-            if (trait.name == "Spooked" && !characterThatGainedTrait.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-                gainTraitSummary += "\nGained trait is Spooked, character will flee is there are characters in vision";
+            else if (trait.name == "Spooked" && !characterThatGainedTrait.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                gainTraitSummary += "\nGained trait is Spooked, character will flee if there are characters in vision";
                 if (inVisionPOIs.Count > 0) {
                     Spooked spooked = trait as Spooked;
                     for (int i = 0; i < inVisionPOIs.Count; i++) {
@@ -902,6 +902,9 @@ public class CharacterMarker : PooledObject {
     public void UpdateCenteredWorldPos() {
         centeredWorldPos = character.gridTileLocation.centeredWorldLocation;
     }
+    public void SetTargetPOI(IPointOfInterest poi) {
+        this.targetPOI = poi;
+    }
     #endregion
 
     #region Vision Collision
@@ -950,7 +953,7 @@ public class CharacterMarker : PooledObject {
 
                 //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
                 if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-                    (character.stateComponent.currentState as CombatState).ReevaluateCombatBehavior();
+                    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
                 } else {
                     character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
                 }
@@ -1010,7 +1013,7 @@ public class CharacterMarker : PooledObject {
                 if (combatState.currentClosestHostile == poi) {
                     combatState.ResetClosestHostile();
                 }
-                combatState.ReevaluateCombatBehavior();
+                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
             }
             character.PrintLogIfActive(removeHostileSummary);
         }
@@ -1244,22 +1247,11 @@ public class CharacterMarker : PooledObject {
     public void OnFleePathComputed(Path path) {
         if (character == null || character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT 
             || character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return; //this is for cases that the character is no longer in a flee state, but the pathfinding thread returns a flee path
+            return; //this is for cases that the character is no longer in a combat state, but the pathfinding thread returns a flee path
         }
         //Debug.Log(character.name + " computed flee path");
         arrivalAction = OnFinishedTraversingFleePath;
         StartMovement();
-    }
-    public void RedetermineFlee() {
-        if (hostilesInRange.Count == 0 && avoidInRange.Count == 0) {
-            return;
-        }
-        hasFleePath = true;
-        pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidInRange.Concat(hostilesInRange).Select(x => x.marker.transform.position).ToArray(), 10000);
-        fleePath.aimStrength = 1;
-        fleePath.spread = 4000;
-        seeker.StartPath(fleePath, OnFleePathComputed);
     }
     public void OnFinishedTraversingFleePath() {
         //Debug.Log(name + " has finished traversing flee path.");
@@ -1483,6 +1475,7 @@ public class CharacterMarker : PooledObject {
     public Character GetNearestValidHostile() {
         Character nearest = null;
         float nearestDist = 9999f;
+        //first check only the hostiles that are in the same area as this character
         for (int i = 0; i < hostilesInRange.Count; i++) {
             Character currHostile = hostilesInRange.ElementAt(i);
             if (IsValidCombatTarget(currHostile)) {
@@ -1492,6 +1485,10 @@ public class CharacterMarker : PooledObject {
                     nearestDist = dist;
                 }
             }
+        }
+        //if no character was returned, choose at random from the list, since we are sure that all characters in the list are not in the same area as this character
+        if (nearest == null && hostilesInRange.Count > 0) {
+            nearest = hostilesInRange[UnityEngine.Random.Range(0, hostilesInRange.Count)];
         }
         return nearest;
     }

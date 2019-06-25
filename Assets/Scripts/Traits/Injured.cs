@@ -45,6 +45,7 @@ public class Injured : Trait {
             //_sourceCharacter.CreateRemoveTraitJob(name);
             _sourceCharacter.AddTraitNeededToBeRemoved(this);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+            Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, _sourceCharacter);
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {

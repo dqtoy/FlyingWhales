@@ -47,6 +47,7 @@ public class Unconscious : Trait {
             _sourceCharacter = sourceCharacter as Character;
             //CheckToApplyRestrainJob();
             //_sourceCharacter.CreateRemoveTraitJob(name);
+            _sourceCharacter.CancelAllJobsAndPlans();
             _sourceCharacter.AddTraitNeededToBeRemoved(this);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
