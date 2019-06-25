@@ -60,6 +60,8 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Target Knocked Out", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Killed", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+            new StateNameAndDuration(){ name = "Assault Failed", status = InteractionManager.Goap_State_Fail, duration = 0 },
+            new StateNameAndDuration(){ name = "In Progress", status = InteractionManager.Goap_State_Fail, duration = -1 },
         } },
         {INTERACTION_TYPE.ABDUCT_ACTION, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Abduct Success", status = InteractionManager.Goap_State_Success, duration = 0 },

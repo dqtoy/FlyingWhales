@@ -53,9 +53,12 @@ public class CombatState : CharacterState {
     }
     protected override void StartState() {
         stateComponent.character.marker.ShowHPBar();
+        //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
+        stateComponent.character.StopCurrentAction(false);
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Starting combat state for " + stateComponent.character.name);
         base.StartState();
         stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
+        Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
     }
     protected override void EndState() {
         stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
@@ -63,6 +66,7 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.HideHPBar();
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Ending combat state for " + stateComponent.character.name);
         onEndStateAction?.Invoke();
+        Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
     }
     public override void OnExitThisState() {
         stateComponent.character.marker.pathfindingAI.ClearAllCurrentPathData();
@@ -76,35 +80,65 @@ public class CombatState : CharacterState {
     }
     #endregion
 
+    /// <summary>
+    /// Function that determines what a character should do in a certain point in time.
+    /// Can be triggered by broadcasting signal <see cref="Signals.DETERMINE_COMBAT_REACTION"/>
+    /// </summary>
+    /// <param name="character">The character that should determine a reaction.</param>
+    private void DetermineReaction(Character character) {
+        if (stateComponent.character == character) {
+            string summary = character.name + " will determine a combat reaction";
+            //check flee first, the logic determines that this character will not flee, then attack by default
+            bool willAttack = true;
+            //- at some point, situation may trigger the character to flee, at which point it will attempt to move far away from target
+            if (character.GetNormalTrait("Injured") != null) {
+                summary += "\n" + character.name + " is injured.";
+                //-character gets injured(chance based dependent on the character)
+                willAttack = false;
+            } else if (character.IsHealthCriticallyLow()) {
+                summary += "\n" + character.name + "'s health is critically low.";
+                //-character's hp is critically low (chance based dependent on the character)
+                willAttack = false;
+            }
+            //else if (character.GetNormalTrait("Spooked") != null) { //TODO: Ask chy about spooked mechanics
+            //    //- fear-type status effect
+            //    willAttack = false;
+            //}
+            else if (character.isStarving || character.isExhausted) {
+                summary += "\n" + character.name + " is starving(" + character.isStarving.ToString() + ") or is exhausted(" + character.isExhausted.ToString() + ").";
+                //-character is starving or exhausted
+                willAttack = false;
+            }
+            summary += "\nDid " + character.name + " chose to attack? " + willAttack.ToString();
+            //if (willAttack != isAttacking) {
+            summary += "\n" + character.name + " will now change attacking mode to " + willAttack.ToString();
+            SetIsAttacking(willAttack); //only execute if there was a change in attacking state
+            //} else {
+            //    summary += "\n" + character.name + " is already in that mode, continuing mode... ";
+            //}
+            Debug.Log(summary);
+        }
+    }
+
     private void SetIsAttacking(bool state) {
         isAttacking = state;
-        ReevaluateCombatBehavior();
-    }
-    private void OnArriveAtPickUpLocation() {
-        if (stateComponent.character.currentAction == null) {
-            Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at pick up location of item during " + stateName + ", but current action is null");
-            return;
+        if (isAttacking) {
+            actionIconString = GoapActionStateDB.Hostile_Icon;
+        } else {
+            actionIconString = GoapActionStateDB.Flee_Icon;
         }
-        stateComponent.character.currentAction.SetEndAction(PatrolAgain);
-        stateComponent.character.currentAction.PerformActualAction();
+        stateComponent.character.marker.UpdateActionIcon();
+        DoCombatBehavior();
     }
-    private void PatrolAgain(string result, GoapAction goapAction) {
-        SetCurrentlyDoingAction(null);
-        if (stateComponent.currentState != this) {
-            return;
-        }
-        stateComponent.character.SetCurrentAction(null);
-        ResumeState();
-    }
-
     private void StartCombatMovement() {
         string log = GameManager.Instance.TodayLogString() + "Starting combat movement for " + stateComponent.character.name;
+        Debug.Log(log);
         //I set the value to its own because I only want to trigger the movement behavior, I do not want to change the boolean value
-        SetIsAttacking(isAttacking);
+        //SetIsAttacking(isAttacking);
+        DetermineReaction(stateComponent.character);
     }
-
     //Returns true if there is a hostile left, otherwise, returns false
-    public void ReevaluateCombatBehavior() {
+    private void DoCombatBehavior() {
         string log = GameManager.Instance.TodayLogString() + "Reevaluating combat behavior of " + stateComponent.character.name;
         if (isAttacking) {
             log += "\n" + stateComponent.character.name + " is attacking!";
@@ -126,9 +160,13 @@ public class CombatState : CharacterState {
                 log += "\nPursuing closest hostile target: " + currentClosestHostile.name;
                 PursueClosestHostile();
             }
-            stateComponent.character.PrintLogIfActive(log);
+            //stateComponent.character.PrintLogIfActive(log);
         } else {
-            //TODO: Flee behavior
+            if (stateComponent.character.marker.hasFleePath) {
+                log += "\nAlready in flee mode";
+                stateComponent.character.PrintLogIfActive(log);
+                return;
+            }
             log += "\n" + stateComponent.character.name + " is fleeing!";
             stateComponent.character.PrintLogIfActive(log);
             stateComponent.character.marker.OnStartFlee();
@@ -144,7 +182,6 @@ public class CombatState : CharacterState {
     private void SetClosestHostile() {
         currentClosestHostile = stateComponent.character.marker.GetNearestValidHostile();
     }
-
     //Will be constantly checked every frame
     private IEnumerator CheckIfCurrentHostileIsInRange() {
         string log = GameManager.Instance.TodayLogString() + "Checking if current closest hostile is in range for " + stateComponent.character.name + " to attack...";
@@ -165,10 +202,15 @@ public class CombatState : CharacterState {
         //If character is attacking and distance is within the attack range of this character, attack
         //else, pursue again
         else if (isAttacking) {
-            if (Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position) <= stateComponent.character.characterClass.attackRange) {
+            if (Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position) <= stateComponent.character.characterClass.attackRange
+                && currentClosestHostile.currentStructure == stateComponent.character.currentStructure) {
+                //log += "\n" + stateComponent.character.name + " is within range of " + currentClosestHostile.name + ". Attacking...";
+                //stateComponent.character.PrintLogIfActive(log);
                 //&& currentClosestHostile.currentStructure == stateComponent.character.currentStructure //Commented out structure checking first for assault action (Need to discuss)
                 Attack();
             } else {
+                //log += "\n" + stateComponent.character.name + " is not in range of " + currentClosestHostile.name + ". Pursuing...";
+                //stateComponent.character.PrintLogIfActive(log);
                 PursueClosestHostile();
             }
         }
@@ -178,21 +220,26 @@ public class CombatState : CharacterState {
             stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
         }
     }
-
     private void Attack() {
-        //Stop movement first before attacking
-        if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
-            stateComponent.character.marker.StopMovement();
             //When the character stops movement, stop pursue timer
             StopPursueTimer();
-        }
         //Check attack speed
         if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
             //attackSummary += "\nCannot attack yet because of attack speed.";
             //Debug.Log(attackSummary);
             return;
         }
-        stateComponent.character.marker.LookAt(currentClosestHostile.marker.transform.position);
+
+        //Stop movement first before attacking
+        if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
+            if (!currentClosestHostile.currentParty.icon.isTravelling) {
+                stateComponent.character.marker.StopMovement(); //only stop movement if target is also not moving.
+                //clear the marker's target poi when it reaches the target, so that the pursue closest hostile will still execute when the other character chooses to flee
+                stateComponent.character.marker.SetTargetPOI(null);
+            }
+        }
+
+        stateComponent.character.FaceTarget(currentClosestHostile);
         string attackSummary = stateComponent.character.name + " will attack " + currentClosestHostile.name;
 
         GameManager.Instance.CreateHitEffectAt(currentClosestHostile);

@@ -4,8 +4,6 @@ using System.Linq;
 using UnityEngine;
 
 public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
-    public delegate void OnCharacterDeath();
-    public OnCharacterDeath onCharacterDeath;
 
     public delegate void DailyAction();
     public DailyAction onDailyAction;
@@ -668,8 +666,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         marker.gameObject.SetActive(false);
         gridTileLocation.RemoveCharacterHere(this);
     }
-    #endregion
-
     public void SetCharacterMarker(CharacterMarker marker) {
         this.marker = marker;
     }
@@ -681,6 +677,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //InteriorMapManager.Instance.ShowTileData(this, gridTileLocation);
         location.parentAreaMap.SetHoveredCharacter(null);
     }
+    #endregion
+
     //Changes row number of this character
     public void SetRowNumber(int rowNumber) {
         this._currentRow = rowNumber;
@@ -696,30 +694,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
         marker.UpdateHP();
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
+        Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this);
         if (triggerDeath && previous != this._currentHP) {
             if (this._currentHP == 0) {
                 Death();
             }
-        }
-    }
-
-    private string GetFaintOrDeath() {
-        return "die";
-    }
-    //When character will faint
-    internal void Faint() {
-        if (!_isFainted) {
-            _isFainted = true;
-            SetHP(1);
-            ////Set Task to Fainted
-            //Faint faintTask = new Faint(this);
-            //faintTask.OnChooseTask(this)
-            ; }
-    }
-    internal void Unfaint() {
-        if (_isFainted) {
-            _isFainted = false;
-            SetHP(1);
         }
     }
     //Character's death
@@ -823,11 +802,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
             marker.OnDeath(deathTile);
 
-            if (onCharacterDeath != null) {
-                onCharacterDeath();
-            }
-            onCharacterDeath = null;
-
             Dead dead = new Dead();
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             AddTrait(dead, gainedFromDoing: deathFromAction);
@@ -844,12 +818,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void Assassinate(Character assassin) {
         Debug.Log(assassin.name + " assassinated " + name);
         Death();
-    }
-    internal void AddActionOnDeath(OnCharacterDeath onDeathAction) {
-        onCharacterDeath += onDeathAction;
-    }
-    internal void RemoveActionOnDeath(OnCharacterDeath onDeathAction) {
-        onCharacterDeath -= onDeathAction;
     }
     public void SetGrave(Tombstone grave) {
         this.grave = grave;
@@ -2949,12 +2917,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     #endregion
 
-    #region Character
-    public STANCE GetCurrentStance() {
-        return STANCE.NEUTRAL;
-    }
-    #endregion
-
     #region Combat Handlers
     public void SetIsInCombat(bool state) {
         _isInCombat = state;
@@ -3208,6 +3170,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool IsHealthFull() {
         return _currentHP >= maxHP;
+    }
+    public bool IsHealthCriticallyLow() {
+        //chance based dependent on the character
+        return currentHP < 100; //TODO: Change to be class based
     }
     #endregion
 
@@ -5245,6 +5211,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //tiredness is higher than both thresholds
             RemoveTiredOrExhausted();
         }
+        Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this);
     }
     public void DecreaseTirednessMeter() { //this is used for when tiredness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
         tiredness -= 1;
@@ -5327,6 +5294,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //fullness is higher than both thresholds
             RemoveHungryOrStarving();
         }
+        Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this);
     }
     public void DecreaseFullnessMeter() { //this is used for when fullness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
         fullness -= 1;
@@ -6510,7 +6478,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if (!shouldDoAfterEffect) {
                     currentAction.OnStopActionDuringCurrentState();
                 }
-                currentAction.currentState.EndPerTickEffect(shouldDoAfterEffect);
+                currentAction.currentState?.EndPerTickEffect(shouldDoAfterEffect);
             } else {
                 SetCurrentAction(null);
             }

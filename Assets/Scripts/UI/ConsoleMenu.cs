@@ -156,9 +156,11 @@ public class ConsoleMenu : UIMenu {
         }
 
         text += "\n<b>Action History:</b> ";
-        if (character.actionHistory.Count > 0) {
-            for (int i = 0; i < character.actionHistory.Count; i++) {
-                text += "\n\n" + character.actionHistory[i];
+        List<string> reverseHistory = new List<string>(character.actionHistory);
+        reverseHistory.Reverse();
+        if (reverseHistory.Count > 0) {
+            for (int i = 0; i < reverseHistory.Count; i++) {
+                text += "\n\n" + reverseHistory[i];
             }
         } else {
             text += "\nNone";

@@ -7,7 +7,7 @@ public class GoapActionState {
 
     public GoapAction parentAction { get; private set; }
 	public string name { get; private set; }
-    public int duration { get; private set; } //if 0, go instantly to after effect
+    public int duration { get; private set; } //if 0, go instantly to after effect, if -1, endless (can only be ended manually)
     public Log descriptionLog { get; private set; } //Always set/create description logs on Pre effect because description logs are used in Memories and Memories are stored on start of the GoapActionState
     public Action preEffect { get; private set; }
     public Action perTickEffect { get; private set; }
@@ -74,7 +74,7 @@ public class GoapActionState {
         if(duration > 0) {
             _currentDuration = 0;
             StartPerTickEffect();
-        } else {
+        } else if (duration != -1){
             EndPerTickEffect();
         }
     }

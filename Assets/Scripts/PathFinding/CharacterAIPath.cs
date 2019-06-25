@@ -131,6 +131,10 @@ public class CharacterAIPath : AILerp {
         }
         marker.UpdatePosition();
         if (doNotMove > 0 || isStopMovement) { return; }
+        UpdateRotation();
+        base.UpdateMe();
+    }
+    private void UpdateRotation() {
         if (marker.character.currentParty.icon.isTravelling && marker.character.IsInOwnParty()) { //only rotate if character is travelling
             Vector3 direction;
             if (!interpolator.valid) {
@@ -150,7 +154,6 @@ public class CharacterAIPath : AILerp {
             }
 
         }
-        base.UpdateMe();
     }
     #endregion
 

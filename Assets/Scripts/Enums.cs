@@ -596,11 +596,6 @@ public enum LOCATION_IDENTIFIER{
 	LANDMARK,
 	HEXTILE,
 }
-public enum STANCE {
-    COMBAT,
-    NEUTRAL,
-    STEALTHY
-}
 public enum MODE {
     DEFAULT,
     ALERT,
