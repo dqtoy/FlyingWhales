@@ -20,6 +20,7 @@ public class CombatManager : MonoBehaviour {
 	private List<Color> unusedColors;
 	private List<Color> usedColors;
 
+    public const int pursueDuration = 10;
 
     private void Awake() {
         Instance = this;

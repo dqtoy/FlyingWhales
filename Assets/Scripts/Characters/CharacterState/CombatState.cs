@@ -5,6 +5,7 @@ using UnityEngine;
 public class CombatState : CharacterState {
 
     private int _currentAttackTimer; //When this timer reaches max, remove currently hostile target from hostile list
+    private bool _hasTimerStarted;
 
     public bool isAttacking { get; private set; } //if not attacking, it is assumed that the character is fleeing
     public Character currentClosestHostile { get; private set; }
@@ -32,6 +33,21 @@ public class CombatState : CharacterState {
                 StopStatePerTick();
                 OnExitThisState();
                 return;
+            }
+        }
+        if (_hasTimerStarted) {
+            _currentAttackTimer += 1;
+            if(_currentAttackTimer >= CombatManager.pursueDuration) {
+                StopPursueTimer();
+                //When pursue timer reaches max, character must remove the current closest hostile in hostile list, then stop pursue timer
+                stateComponent.character.marker.RemoveHostileInRange(currentClosestHostile);
+            }
+        } else {
+            //If character is pursuing the current closest hostile, check if that hostile is in range, if it is, start pursue timer
+            if (isAttacking && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.targetPOI == currentClosestHostile) {
+                if (stateComponent.character.marker.inVisionPOIs.Contains(currentClosestHostile)) {
+                    StartPursueTimer();
+                }
             }
         }
     }
@@ -121,7 +137,7 @@ public class CombatState : CharacterState {
 
     #region Attacking
     private void PursueClosestHostile() {
-        if (!stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI != currentClosestHostile) {
+        if (!stateComponent.character.currentParty.icon.isTravelling || stateComponent.character.marker.targetPOI != currentClosestHostile) {
             stateComponent.character.marker.GoTo(currentClosestHostile);
         }
     }
@@ -167,6 +183,8 @@ public class CombatState : CharacterState {
         //Stop movement first before attacking
         if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
             stateComponent.character.marker.StopMovement();
+            //When the character stops movement, stop pursue timer
+            StopPursueTimer();
         }
         //Check attack speed
         if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
@@ -221,6 +239,17 @@ public class CombatState : CharacterState {
             }
         }
         Debug.Log(attackSummary);
+    }
+    private void StartPursueTimer() {
+        if (!_hasTimerStarted) {
+            _currentAttackTimer = 0;
+            _hasTimerStarted = true;
+        }
+    }
+    private void StopPursueTimer() {
+        if (_hasTimerStarted) {
+            _hasTimerStarted = false;
+        }
     }
     #endregion
 
