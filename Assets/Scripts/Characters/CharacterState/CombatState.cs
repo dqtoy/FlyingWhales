@@ -197,7 +197,7 @@ public class CombatState : CharacterState {
 
         GameManager.Instance.CreateHitEffectAt(currentClosestHostile);
         //TODO: For readjustment, attack power is the old computation
-        currentClosestHostile.AdjustHP(stateComponent.character.attackPower);
+        currentClosestHostile.AdjustHP(-stateComponent.character.attackPower);
         attackSummary += "\nDealt damage " + stateComponent.character.attackPower.ToString();
 
         //Reset Attack Speed
