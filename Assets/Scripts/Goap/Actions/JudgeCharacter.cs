@@ -57,8 +57,6 @@ public class JudgeCharacter : GoapAction {
         currentState.SetIntelReaction(EndState2Reactions);
     }
     public void AfterTargetReleased() {
-        //**Effect 1**: Remove target's Restrained trait
-        RemoveTraitFrom(poiTarget, "Restrained");
         //**Effect 2**: If target is from a different faction or unaligned, target is not hostile with characters from the Actor's faction until Target leaves the location. Target is forced to create a Return Home plan
         if (poiTarget.factionOwner == FactionManager.Instance.neutralFaction || poiTarget.factionOwner != actor.faction) {
             ForceTargetReturnHome();
@@ -67,13 +65,13 @@ public class JudgeCharacter : GoapAction {
         else {
             RemoveTraitsOfType(poiTarget, TRAIT_TYPE.CRIMINAL);
         }
+        //**Effect 1**: Remove target's Restrained trait
+        RemoveTraitFrom(poiTarget, "Restrained");
     }
     private void PreTargetExiled() {
         currentState.SetIntelReaction(EndState3Reactions);
     }
     public void AfterTargetExiled() {
-        //**Effect 1**: Remove target's Restrained trait
-        RemoveTraitFrom(poiTarget, "Restrained");
         //**Effect 2**: Target becomes unaligned and will have his Home Location set to a random different location
         Character target = poiTarget as Character;
         target.ChangeFactionTo(FactionManager.Instance.neutralFaction);
@@ -87,6 +85,9 @@ public class JudgeCharacter : GoapAction {
 
         //**Effect 4**: Remove any Criminal type trait from him.
         RemoveTraitsOfType(target, TRAIT_TYPE.CRIMINAL);
+
+        //**Effect 1**: Remove target's Restrained trait
+        RemoveTraitFrom(poiTarget, "Restrained");
     }
     #endregion
 
