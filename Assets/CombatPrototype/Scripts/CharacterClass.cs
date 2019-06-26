@@ -62,7 +62,7 @@ public class CharacterClass : EntityComponent {
         get { return _hpPerLevel; }
     }
     public float attackRange {
-        get { return _attackRange - 0.5f; }
+        get { return _attackRange; }
     }
     public int baseAttackSpeed {
         get { return _baseAttackSpeed; }
