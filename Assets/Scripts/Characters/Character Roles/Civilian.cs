@@ -14,5 +14,9 @@ public class Civilian : CharacterRole {
             INTERACTION_TYPE.SCRAP,
             INTERACTION_TYPE.ASSAULT_ACTION_NPC,
         };
+        requiredItems = new SPECIAL_TOKEN[] {
+            SPECIAL_TOKEN.TOOL,
+            SPECIAL_TOKEN.HEALING_POTION
+        };
     }
 }

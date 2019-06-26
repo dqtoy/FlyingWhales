@@ -17,7 +17,7 @@ public class FirstAidCharacter : GoapAction {
 
     #region Overrides
     protected override void ConstructPreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = actor }, () => actor.HasToken(SPECIAL_TOKEN.HEALING_POTION));
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = actor }, () => actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION));
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Injured", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget });
     }
@@ -50,7 +50,7 @@ public class FirstAidCharacter : GoapAction {
         RemoveTraitFrom(poiTarget, "Unconscious");
         //**After Effect 2**: Reduce character's Supply by 10
         //actor.AdjustSupply(-10);
-        if (actor.HasToken(SPECIAL_TOKEN.HEALING_POTION)) {
+        if (actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION)) {
             actor.ConsumeToken(actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
         } else {
             //the actor does not have a tool, log for now

@@ -235,6 +235,9 @@ public class GoapPlanJob : JobQueueItem {
             forcedActions.Add(precondition, forcedAction);
         }
     }
+    public void ClearForcedActions() {
+        forcedActions.Clear();
+    }
     #endregion
 
     #region Plan Constructor

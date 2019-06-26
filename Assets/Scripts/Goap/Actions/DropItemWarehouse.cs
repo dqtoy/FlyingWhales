@@ -103,7 +103,7 @@ public class DropItemWarehouse : GoapAction {
 
     #region Preconditions
     private bool HasItemTypeInInventory() {
-        return actor.HasToken(itemTypeToDeposit);
+        return actor.HasExtraTokenInInventory(itemTypeToDeposit);
         //return true;
     }
     #endregion

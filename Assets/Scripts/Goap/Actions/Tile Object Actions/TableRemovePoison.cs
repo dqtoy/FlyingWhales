@@ -44,7 +44,7 @@ public class TableRemovePoison : GoapAction {
         //**Effect 1**: Remove Poisoned Trait from target table
         RemoveTraitFrom(poiTarget, "Poisoned");
         //**Effect 2**: Remove Tool from Actor's inventory
-        if (actor.HasToken(SPECIAL_TOKEN.TOOL)) {
+        if (actor.HasTokenInInventory(SPECIAL_TOKEN.TOOL)) {
             actor.ConsumeToken(actor.GetToken(SPECIAL_TOKEN.TOOL));
         } else {
             //the actor does not have a tool, log for now

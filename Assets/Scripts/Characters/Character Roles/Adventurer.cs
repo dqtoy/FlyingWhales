@@ -10,6 +10,10 @@ public class Adventurer : CharacterRole {
             INTERACTION_TYPE.GET_SUPPLY,
             INTERACTION_TYPE.ASSAULT_ACTION_NPC,
         };
+        requiredItems = new SPECIAL_TOKEN[] {
+            SPECIAL_TOKEN.TOOL,
+            SPECIAL_TOKEN.HEALING_POTION
+        };
     }
 
     #region Overrides

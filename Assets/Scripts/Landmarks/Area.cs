@@ -1490,6 +1490,7 @@ public class Area {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
                     });
                     job.SetCanTakeThisJobChecker(CanBrewPotion);
+                    job.SetOnTakeJobAction(OnTakeBrewPotion);
                     //job.SetCannotOverrideJob(false);
                     jobQueue.AddJobInQueue(job);
                 }
@@ -1504,6 +1505,7 @@ public class Area {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.TOOL } },
                     });
                     job.SetCanTakeThisJobChecker(CanCraftTool);
+                    job.SetOnTakeJobAction(OnTakeCraftTool);
                     //job.SetCannotOverrideJob(false);
                     jobQueue.AddJobInQueue(job);
                 }
@@ -1513,10 +1515,22 @@ public class Area {
         }        
     }
     private bool CanCraftTool(Character character, JobQueueItem job) {
+        //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.TOOL);
         return SPECIAL_TOKEN.TOOL.CanBeCraftedBy(character);
     }
     private bool CanBrewPotion(Character character, JobQueueItem job) {
+        //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.HEALING_POTION);
         return SPECIAL_TOKEN.HEALING_POTION.CanBeCraftedBy(character);
+    }
+    private void OnTakeBrewPotion(Character character, JobQueueItem job) {
+        GoapPlanJob j = job as GoapPlanJob;
+        j.ClearForcedActions();
+        j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM);
+    }
+    private void OnTakeCraftTool(Character character, JobQueueItem job) {
+        GoapPlanJob j = job as GoapPlanJob;
+        j.ClearForcedActions();
+        j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM);
     }
     private void CancelBrewPotion() {
         //warehouse has 2 or more healing potions

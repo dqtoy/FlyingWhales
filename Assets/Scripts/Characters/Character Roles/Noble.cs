@@ -10,5 +10,9 @@ public class Noble : CharacterRole {
             INTERACTION_TYPE.GET_SUPPLY,
             INTERACTION_TYPE.ASSAULT_ACTION_NPC,
         };
+        requiredItems = new SPECIAL_TOKEN[] {
+            SPECIAL_TOKEN.HEALING_POTION,
+            SPECIAL_TOKEN.HEALING_POTION
+        };
     }
 }
