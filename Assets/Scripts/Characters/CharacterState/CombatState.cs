@@ -175,6 +175,13 @@ public class CombatState : CharacterState {
             }
             //stateComponent.character.PrintLogIfActive(log);
         } else {
+            Character closestHostile = stateComponent.character.marker.GetNearestValidHostile();
+            if (closestHostile == null) {
+                log += "\nNo more hostile characters, exiting combat state...";
+                stateComponent.character.PrintLogIfActive(log);
+                OnExitThisState();
+                return;
+            }
             if (stateComponent.character.marker.hasFleePath) {
                 log += "\nAlready in flee mode";
                 stateComponent.character.PrintLogIfActive(log);
