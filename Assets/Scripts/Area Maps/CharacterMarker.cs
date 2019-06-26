@@ -214,7 +214,7 @@ public class CharacterMarker : PooledObject {
                 //if the character gained an unconscious trait, exit current state if it is flee
                 if (characterThatGainedTrait.stateComponent.currentState != null && characterThatGainedTrait.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                     characterThatGainedTrait.stateComponent.currentState.OnExitThisState();
-                    gainTraitSummary += "\nGained trait is unconscious, and characters current state is flee, exiting flee state.";
+                    gainTraitSummary += "\nGained trait is unconscious, and characters current state is combat, exiting combat state.";
                 }
             }
             //else if (trait.name == "Injured" && trait.responsibleCharacter != null && characterThatGainedTrait.GetNormalTrait("Unconscious") == null) {
@@ -233,6 +233,7 @@ public class CharacterMarker : PooledObject {
                         if(inVisionPOIs[i] is Character) {
                             Character characterInVision = inVisionPOIs[i] as Character;
                             spooked.AddTerrifyingCharacter(characterInVision);
+                            AddHostileInRange(characterInVision, CHARACTER_STATE.COMBAT, false);
                         }
                     }
                     if(spooked.terrifyingCharacters.Count > 0) {
@@ -289,8 +290,15 @@ public class CharacterMarker : PooledObject {
             if (!character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
                 lostTraitSummary += "\n" + character.name + " doesn't have any other negative disabler traits.";
                 switch (trait.name) {
-                    case "Combat Recovery":
                     case "Unconscious":
+                        for (int i = 0; i < inVisionPOIs.Count; i++) {
+                            IPointOfInterest currInVision = inVisionPOIs[i];
+                            if (currInVision is Character) {
+                                Character currCharacter = currInVision as Character;
+                                AddHostileInRange(currCharacter);
+                            }
+                        }
+
                         //after this character loses combat recovery trait or unconscious trait, check if he or she can still react to another character, if yes, react.
                         //if (character.GetNormalTrait("Unconscious") == null && character.GetNormalTrait("Combat Recovery") == null) {
                         //    if (hostilesInRange.Count > 0) {
@@ -321,13 +329,12 @@ public class CharacterMarker : PooledObject {
             Debug.Log(lostTraitSummary);
             UpdateAnimation();
             UpdateActionIcon();
-        } else if (hostilesInRange.Contains(character)) {
+        } else if (inVisionPOIs.Contains(character)) {
             //if the character that lost a trait is not this character and that character is in this character's hostility range
             //and the trait that was lost is a negative disabler trait, react to them.
-            //if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-            //    NormalReactToHostileCharacter(character);
-            //}
-
+            if (!character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                AddHostileInRange(character);
+            }
         }
     }
     /// <summary>
@@ -942,7 +949,7 @@ public class CharacterMarker : PooledObject {
     #region Hosility Collision
     public bool AddHostileInRange(Character poi, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE, bool checkHostility = true) {
         if (!hostilesInRange.Contains(poi)) {
-            if (!poi.isDead && 
+            if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) &&
                 //if the function states that it should not check the normal hostility, always allow
                 (!checkHostility
                 //if forced reaction is not equal to none, it means that this character must treat the other character as hostile, regardless of conditions

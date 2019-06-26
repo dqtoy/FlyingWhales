@@ -101,12 +101,10 @@ public class CombatState : CharacterState {
                 summary += "\n" + character.name + "'s health is critically low.";
                 //-character's hp is critically low (chance based dependent on the character)
                 willAttack = false;
-            }
-            //else if (character.GetNormalTrait("Spooked") != null) { //TODO: Ask chy about spooked mechanics
-            //    //- fear-type status effect
-            //    willAttack = false;
-            //}
-            else if (character.isStarving || character.isExhausted) {
+            } else if (character.GetNormalTrait("Spooked") != null) { //TODO: Ask chy about spooked mechanics
+                //- fear-type status effect
+                willAttack = false;
+            } else if (character.isStarving || character.isExhausted) {
                 summary += "\n" + character.name + " is starving(" + character.isStarving.ToString() + ") or is exhausted(" + character.isExhausted.ToString() + ").";
                 //-character is starving or exhausted
                 willAttack = false;
@@ -223,15 +221,6 @@ public class CombatState : CharacterState {
         }
     }
     private void Attack() {
-        //When the character stops movement, stop pursue timer
-        StopPursueTimer();
-        //Check attack speed
-        if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
-            //attackSummary += "\nCannot attack yet because of attack speed.";
-            //Debug.Log(attackSummary);
-            return;
-        }
-
         //Stop movement first before attacking
         if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
             if (!currentClosestHostile.currentParty.icon.isTravelling) {
@@ -240,7 +229,15 @@ public class CombatState : CharacterState {
                 stateComponent.character.marker.SetTargetPOI(null);
             }
         }
-
+        //When the character stops movement, stop pursue timer
+        StopPursueTimer();
+        //Check attack speed
+        if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
+            //attackSummary += "\nCannot attack yet because of attack speed.";
+            //Debug.Log(attackSummary);
+            return;
+        }
+        
         stateComponent.character.FaceTarget(currentClosestHostile);
         string attackSummary = stateComponent.character.name + " will attack " + currentClosestHostile.name;
 
