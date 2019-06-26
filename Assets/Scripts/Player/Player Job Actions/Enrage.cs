@@ -7,7 +7,7 @@ public class Enrage : PlayerJobAction {
 
     public Enrage() {
         name = "Enrage";
-        SetDefaultCooldownTime(24);
+        SetDefaultCooldownTime(3);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 

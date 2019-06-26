@@ -354,7 +354,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int maxHP {
         get {
-            int total = (int)((_characterClass.baseHP + _maxHPMod) * (1f + ((_raceSetting.hpModifier + _maxHPPercentMod) / 100f)));
+            int total = (int)(((_characterClass.baseHP + _maxHPMod) * (1f + ((_raceSetting.hpModifier + _maxHPPercentMod) / 100f))) * 4f);
             if (total < 0) {
                 return 1;
             }
