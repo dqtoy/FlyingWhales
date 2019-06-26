@@ -694,7 +694,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
         marker.UpdateHP();
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
-        Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this);
+        if (IsHealthCriticallyLow()) {
+            Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this);
+        }
         if (triggerDeath && previous != this._currentHP) {
             if (this._currentHP == 0) {
                 Death();
@@ -2339,15 +2341,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public bool CanCharacterReact() {
-        if (stateComponent.currentState != null) {
+        if (stateComponent.currentState != null && !stateComponent.currentState.isDone) {
             if (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                 //Character must not react if he/she is in flee or engage state
                 return false;
             }
         }
-        if ((stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)
-            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED)
-            || (stateComponent.stateToDo != null && stateComponent.stateToDo.characterState == CHARACTER_STATE.BERSERKED)) {
+        if ((stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED && !stateComponent.currentState.isDone)
+            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED && !stateComponent.previousMajorState.isDone)
+            || (stateComponent.stateToDo != null && stateComponent.stateToDo.characterState == CHARACTER_STATE.BERSERKED && !stateComponent.stateToDo.isDone)) {
             //Character must not react if he/she is in berserked state
             //Returns true so that it will create an impression that the character actually created a job even if he/she didn't, so that the character will not chat, etc.
             return false;
@@ -2455,6 +2457,20 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             for (int i = 0; i < type.Length; i++) {
                 if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type[i])) {
                     if (characters.Contains(kvp.Key.owner)) {
+                        continue;
+                    }
+                    characters.Add(kvp.Key.owner);
+                }
+            }
+        }
+        return characters;
+    }
+    public List<Character> GetCharactersWithRelationship(GENDER gender, params RELATIONSHIP_TRAIT[] type) {
+        List<Character> characters = new List<Character>();
+        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
+            for (int i = 0; i < type.Length; i++) {
+                if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type[i])) {
+                    if (kvp.Key.owner.gender != gender || characters.Contains(kvp.Key.owner)) {
                         continue;
                     }
                     characters.Add(kvp.Key.owner);
@@ -7016,7 +7032,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (state.characterState.IsCombatState()) {
             ClearIgnoreHostilities();
         }
-        marker.UpdateActionIcon();
+        //marker.UpdateActionIcon();
     }
     #endregion
 

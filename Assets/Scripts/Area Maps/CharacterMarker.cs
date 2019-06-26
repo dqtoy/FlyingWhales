@@ -122,7 +122,7 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        //Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
 
         PathfindingManager.Instance.AddAgent(pathfindingAI);
@@ -382,11 +382,11 @@ public class CharacterMarker : PooledObject {
             UpdateActionIcon();
         }
     }
-    private void OnCharacterEndedState(Character character, CharacterState state) {
-        if (character == this.character) {
-            UpdateActionIcon();
-        }
-    }
+    //private void OnCharacterEndedState(Character character, CharacterState state) {
+    //    if (character == this.character) {
+    //        UpdateActionIcon();
+    //    }
+    //}
     #endregion
 
     #region UI
@@ -517,7 +517,7 @@ public class CharacterMarker : PooledObject {
         Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        //Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         visionCollision.Reset();
 
     }

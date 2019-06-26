@@ -274,6 +274,102 @@ public class Faction {
         }
         return chars;
     }
+    public List<Character> GetCharacters(GENDER gender, params CHARACTER_ROLE[] role) {
+        List<Character> chars = new List<Character>();
+        for (int i = 0; i < _characters.Count; i++) {
+            Character currCharacter = _characters[i];
+            if (currCharacter.gender == gender) {
+                for (int j = 0; j < role.Length; j++) {
+                    if(currCharacter.role.roleType == role[j]) {
+                        chars.Add(currCharacter);
+                        break;
+                    }
+                }
+            }
+        }
+        return chars;
+    }
+    public void SetNewLeader() {
+        if(leader != null) {
+            Character previousRuler = leader as Character;
+            Character newRuler = null;
+            string log = GameManager.Instance.TodayLogString() + name + " faction is deciding a new leader...";
+
+            log += "\nChecking male relatives of the king...";
+            List<Character> maleRelatives = previousRuler.GetCharactersWithRelationship(GENDER.MALE, RELATIONSHIP_TRAIT.RELATIVE);
+            if(maleRelatives.Count > 0) {
+                newRuler = maleRelatives[UnityEngine.Random.Range(0, maleRelatives.Count)];
+                log += "\nNew Ruler: " + newRuler.name;
+            } else {
+                log += "\nChecking male nobles...";
+                List<Character> maleNobles = GetCharacters(GENDER.MALE, CHARACTER_ROLE.NOBLE);
+                if(maleNobles.Count > 0) {
+                    newRuler = maleNobles[UnityEngine.Random.Range(0, maleNobles.Count)];
+                    log += "\nNew Ruler: " + newRuler.name;
+                } else {
+                    log += "\nChecking female relatives of the king...";
+                    List<Character> femaleRelatives = previousRuler.GetCharactersWithRelationship(GENDER.FEMALE, RELATIONSHIP_TRAIT.RELATIVE);
+                    if (femaleRelatives.Count > 0) {
+                        newRuler = femaleRelatives[UnityEngine.Random.Range(0, femaleRelatives.Count)];
+                        log += "\nNew Ruler: " + newRuler.name;
+                    } else {
+                        log += "\nChecking female nobles...";
+                        List<Character> femaleNobles = GetCharacters(GENDER.FEMALE, CHARACTER_ROLE.NOBLE);
+                        if (femaleNobles.Count > 0) {
+                            newRuler = femaleNobles[UnityEngine.Random.Range(0, femaleNobles.Count)];
+                            log += "\nNew Ruler: " + newRuler.name;
+                        } else {
+                            log += "\nChecking male soldiers and adventurers...";
+                            List<Character> maleSoldiersAndAdventurers = GetCharacters(GENDER.MALE, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER);
+                            if (maleSoldiersAndAdventurers.Count > 0) {
+                                newRuler = maleSoldiersAndAdventurers[UnityEngine.Random.Range(0, maleSoldiersAndAdventurers.Count)];
+                                log += "\nNew Ruler: " + newRuler.name;
+                            } else {
+                                log += "\nChecking female soldiers and adventurers...";
+                                List<Character> femaleSoldiersAndAdventurers = GetCharacters(GENDER.FEMALE, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER);
+                                if (femaleSoldiersAndAdventurers.Count > 0) {
+                                    newRuler = femaleSoldiersAndAdventurers[UnityEngine.Random.Range(0, femaleSoldiersAndAdventurers.Count)];
+                                    log += "\nNew Ruler: " + newRuler.name;
+                                } else {
+                                    log += "\nChecking male civilians...";
+                                    List<Character> maleCivilians = GetCharacters(GENDER.MALE, CHARACTER_ROLE.CIVILIAN);
+                                    if (maleCivilians.Count > 0) {
+                                        newRuler = maleCivilians[UnityEngine.Random.Range(0, maleCivilians.Count)];
+                                        log += "\nNew Ruler: " + newRuler.name;
+                                    } else {
+                                        log += "\nChecking female civilians...";
+                                        List<Character> femaleCivilians = GetCharacters(GENDER.FEMALE, CHARACTER_ROLE.CIVILIAN);
+                                        if (femaleCivilians.Count > 0) {
+                                            newRuler = femaleCivilians[UnityEngine.Random.Range(0, femaleCivilians.Count)];
+                                            log += "\nNew Ruler: " + newRuler.name;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(newRuler != null) {
+                previousRuler.AssignRole(CharacterRole.NOBLE);
+                previousRuler.AssignClassByRole(previousRuler.role);
+
+                newRuler.AssignRole(CharacterRole.LEADER);
+                newRuler.AssignClass(CharacterManager.Instance.CreateNewCharacterClass(_initialLeaderClass));
+
+                Log logNotif = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_faction_leader");
+                logNotif.AddToFillers(newRuler, newRuler.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                logNotif.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+                newRuler.AddHistory(logNotif);
+                PlayerManager.Instance.player.ShowNotification(logNotif);
+            } else {
+                Debug.LogError(GameManager.Instance.TodayLogString() + name + " couldn't set a new leader replacing " + previousRuler.name);
+            }
+        } else {
+            Debug.LogError(GameManager.Instance.TodayLogString() + name + " cannot set new leader because there is no previous leader!");
+        }
+    }
     #endregion
 
     #region Utilities
@@ -375,18 +471,7 @@ public class Faction {
     private void OnLeaderDied() {
         Debug.Log(this.name + "'s leader died");
         SetLeader(null);
-        ////kill all characters in faction and un own all areas
-        //List<Character> remainingCharacters = new List<Character>(characters);
-        //for (int i = 0; i < remainingCharacters.Count; i++) {
-        //    remainingCharacters[i].ChangeFactionTo(FactionManager.Instance.neutralFaction);
-        //}
-        //List<Area> areasToUnown = new List<Area>(ownedAreas);
-        //for (int i = 0; i < areasToUnown.Count; i++) {
-        //    LandmarkManager.Instance.UnownArea(areasToUnown[i]);
-        //    FactionManager.Instance.neutralFaction.AddToOwnedAreas(areasToUnown[i]);
-        //}
-        Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
-        Messenger.Broadcast(Signals.FACTION_DIED, this);
+        //Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
     }
     public void SetLevel(int amount) {
         _level = amount;

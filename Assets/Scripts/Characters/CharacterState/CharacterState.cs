@@ -101,6 +101,11 @@ public class CharacterState {
     //Typically used if there are other data that is needed to be set for this state when it starts
     //Currently used only in combat state so we can set the character's behavior if attacking or not when it enters the state
     public virtual void SetOtherDataOnStartState(object otherData) { }
+
+    //This is called on ExitCurrentState function in CharacterStateComponent after all exit processing is finished
+    public virtual void AfterExitingState() {
+        stateComponent.character.marker.UpdateActionIcon();
+    }
     #endregion
 
     private void FakeEndAction(string str, GoapAction action) {

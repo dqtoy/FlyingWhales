@@ -130,13 +130,14 @@ public class CharacterStateComponent {
             }
             currentState.ExitState();
         }
-
+        CharacterState previousState = currentState;
         if (character.isDead) {
             if(previousMajorState != null) {
                 previousMajorState.ExitState();
             }
             previousMajorState = null;
             SetCurrentState(null);
+            previousState.AfterExitingState();
             return;
         }
         //If the current state is a minor state and there is a previous major state, resume that major state
@@ -176,6 +177,7 @@ public class CharacterStateComponent {
             previousMajorState = null;
             SetCurrentState(null);
         }
+        previousState.AfterExitingState();
     }
 
     private CharacterState CreateNewState(CHARACTER_STATE state) {
