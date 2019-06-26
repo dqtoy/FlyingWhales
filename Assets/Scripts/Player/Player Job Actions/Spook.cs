@@ -30,6 +30,9 @@ public class Spook : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Spook") != null) {
             return false;
         }
+        if (targetCharacter.marker.inVisionPOIs.Count == 0) {
+            return false;
+        }
         return base.CanPerformActionTowards(character, targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -38,6 +41,9 @@ public class Spook : PlayerJobAction {
         }
         Character targetCharacter = targetPOI as Character;
         if (targetCharacter.isDead) {
+            return false;
+        }
+        if (targetCharacter.marker.inVisionPOIs.Count == 0) {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Spook") != null) {
