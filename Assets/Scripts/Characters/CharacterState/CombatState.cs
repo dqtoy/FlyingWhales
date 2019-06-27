@@ -231,8 +231,7 @@ public class CombatState : CharacterState {
         //else, pursue again
         else if (isAttacking) {
             float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position);
-            if (distance <= stateComponent.character.characterClass.attackRange
-                && currentClosestHostile.currentStructure == stateComponent.character.currentStructure) {
+            if (distance <= stateComponent.character.characterClass.attackRange) { //&& currentClosestHostile.currentStructure == stateComponent.character.currentStructure
                 //log += "\n" + stateComponent.character.name + " is within range of " + currentClosestHostile.name + ". Attacking...";
                 //stateComponent.character.PrintLogIfActive(log);
                 //&& currentClosestHostile.currentStructure == stateComponent.character.currentStructure //Commented out structure checking first for assault action (Need to discuss)
@@ -250,23 +249,39 @@ public class CombatState : CharacterState {
         }
     }
     private void Attack() {
-        //Stop movement first before attacking
-        if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
-            //if (!currentClosestHostile.currentParty.icon.isTravelling) {
-                stateComponent.character.marker.StopMovement(); //only stop movement if target is also not moving.
-                //clear the marker's target poi when it reaches the target, so that the pursue closest hostile will still execute when the other character chooses to flee
-                stateComponent.character.marker.SetTargetPOI(null);
-            //}
-        }
-        //When the character stops movement, stop pursue timer
-        StopPursueTimer();
         //Check attack speed
         if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
             //attackSummary += "\nCannot attack yet because of attack speed.";
             //Debug.Log(attackSummary);
+
+            //When character is in range but attack speed is still not fully charged, he/she will stop moving only and will wait until the attack speed is charged
+            if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
+                stateComponent.character.marker.StopMovement(); //only stop movement if target is also not moving.
+                //clear the marker's target poi when it reaches the target, so that the pursue closest hostile will still execute when the other character chooses to flee
+                stateComponent.character.marker.SetTargetPOI(null);
+            }
+            //When the character stops movement, stop pursue timer
+            StopPursueTimer();
             return;
         }
-        
+
+        //Check line of sight, if not in line of sight move to it again
+        if (!stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) {
+            //PursueClosestHostile();
+            return;
+        }
+
+        //When character is in range and is in line of sight and attack speed is charged, stop movement so he/she can attack
+        //You may notice there are 2 calls for stopping movement, it's because if the character's attack speed is charged but he/she is still not in line of sight, the movement should not stop
+        //We only want the movement to stop if the attack speed is not charged or if the attack speed is charged and current hostile is in line of sight
+        if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
+            stateComponent.character.marker.StopMovement(); //only stop movement if target is also not moving.
+            //clear the marker's target poi when it reaches the target, so that the pursue closest hostile will still execute when the other character chooses to flee
+            stateComponent.character.marker.SetTargetPOI(null);
+        }
+        //When the character stops movement, stop pursue timer
+        StopPursueTimer();
+
         stateComponent.character.FaceTarget(currentClosestHostile);
         string attackSummary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " will attack " + currentClosestHostile.name;
 
@@ -343,7 +358,7 @@ public class CombatState : CharacterState {
             if (!stateComponent.character.marker.inVisionPOIs.Contains(currCharacter)) {
                 OnFinishedFleeingFrom(currCharacter);
                 stateComponent.character.marker.RemoveHostileInRange(currCharacter, false); //removed hostile because of flee.
-                currCharacter.marker.RemoveHostileInRange(stateComponent.character); //removed hostile because of flee.
+                //currCharacter.marker.RemoveHostileInRange(stateComponent.character); //removed hostile because of flee.
             }
         }
         if (stateComponent.character.marker.hostilesInRange.Count > 0) {

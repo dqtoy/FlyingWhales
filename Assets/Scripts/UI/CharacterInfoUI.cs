@@ -657,5 +657,11 @@ public class CharacterInfoUI : UIMenu {
     public void Death() {
         _activeCharacter.Death();
     }
+    public void LogWorldDistanceToCurrentHostile() {
+        Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.position, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.position));
+    }
+    public void LogLocalDistanceToCurrentHostile() {
+        Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.localPosition, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.localPosition));
+    }
     #endregion
 }

@@ -1506,5 +1506,32 @@ public class CharacterMarker : PooledObject {
         //- If the other character has a Negative Disabler trait, this character will not trigger combat
         return !otherCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
     }
+    public bool IsCharacterInLineOfSightWith(Character targetCharacter) {
+        //return targetCharacter.currentStructure == character.currentStructure;
+        //precompute our ray settings
+        Vector3 start = transform.position;
+        Vector3 direction = targetCharacter.marker.transform.position - transform.position;
+
+        //draw the ray in the editor
+        //Debug.DrawRay(start, direction * 10f, Color.red, 1000f);
+
+        //do the ray test
+        RaycastHit2D[] hitObjects = Physics2D.RaycastAll(start, direction, 10f);
+        for (int i = 0; i < hitObjects.Length; i++) {
+            RaycastHit2D hit = hitObjects[i];
+            if (hit.collider != null) {
+                if(hit.collider.gameObject.name == "Structure_Tilemap" || hit.collider.gameObject.name == "Walls_Tilemap") {
+                    return false;
+                } else {
+                    CharacterCollisionTrigger collisionTrigger = hit.collider.gameObject.GetComponent<CharacterCollisionTrigger>();
+                    if (collisionTrigger != null && collisionTrigger.poi == targetCharacter) {
+                        return true;
+                    }
+                }
+                Debug.LogWarning(character.name + " collided with: " + hit.collider.gameObject.name);
+            }
+        }
+        return false;
+    }
     #endregion
 }
