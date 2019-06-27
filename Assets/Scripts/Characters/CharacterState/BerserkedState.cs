@@ -8,7 +8,7 @@ public class BerserkedState : CharacterState {
         stateName = "Berserked State";
         characterState = CHARACTER_STATE.BERSERKED;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
-        duration = 300;
+        duration = 100;
     }
 
     #region Overrides
