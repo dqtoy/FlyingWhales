@@ -61,6 +61,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //Stats
     protected SIDES _currentSide;
     protected int _currentHP;
+    protected int _maxHP;
     protected int _currentRow;
     protected int _level;
     protected int _experience;
@@ -354,11 +355,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int maxHP {
         get {
-            int total = (int)(((_characterClass.baseHP + _maxHPMod) * (1f + ((_raceSetting.hpModifier + _maxHPPercentMod) / 100f))) * 4f);
-            if (total < 0) {
-                return 1;
-            }
-            return total;
+            return _maxHP;
         }
     }
     public int currentHP {
@@ -687,22 +684,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void SetSide(SIDES side) {
         this._currentSide = side;
     }
-    //Adjust current HP based on specified paramater, but HP must not go below 0
-    public virtual void AdjustHP(int amount, bool triggerDeath = false) {
-        int previous = this._currentHP;
-        this._currentHP += amount;
-        this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
-        marker.UpdateHP();
-        Messenger.Broadcast(Signals.ADJUSTED_HP, this);
-        if (IsHealthCriticallyLow()) {
-            Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this);
-        }
-        if (triggerDeath && previous != this._currentHP) {
-            if (this._currentHP == 0) {
-                Death();
-            }
-        }
-    }
     //Character's death
     public void SetIsDead(bool isDead) {
         _isDead = isDead;
@@ -818,7 +799,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             AddHistory(log);
             specificLocation.AddHistory(log);
-
         }
     }
     public void Assassinate(Character assassin) {
@@ -3188,9 +3168,26 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void SetHP(int amount) {
         this._currentHP = amount;
     }
+    //Adjust current HP based on specified paramater, but HP must not go below 0
+    public virtual void AdjustHP(int amount, bool triggerDeath = false) {
+        int previous = this._currentHP;
+        this._currentHP += amount;
+        this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
+        marker.UpdateHP();
+        Messenger.Broadcast(Signals.ADJUSTED_HP, this);
+        if (IsHealthCriticallyLow()) {
+            Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this);
+        }
+        if (triggerDeath && previous != this._currentHP) {
+            if (this._currentHP == 0) {
+                Death();
+            }
+        }
+    }
     public void SetMaxHPMod(int amount) {
         int previousMaxHP = maxHP;
         _maxHPMod = amount;
+        UpdateMaxHP();
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
             _currentHP = currentMaxHP;
@@ -3205,6 +3202,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void AdjustMaxHPMod(int amount) {
         int previousMaxHP = maxHP;
         _maxHPMod += amount;
+        UpdateMaxHP();
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
             _currentHP = currentMaxHP;
@@ -3213,9 +3211,21 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void AdjustMaxHPPercentMod(int amount) {
         int previousMaxHP = maxHP;
         _maxHPPercentMod += amount;
+        UpdateMaxHP();
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
             _currentHP = currentMaxHP;
+        }
+    }
+    public void UpdateMaxHP() {
+        _maxHP = (int) (((_characterClass.baseHP + _maxHPMod) * (1f + ((_raceSetting.hpModifier + _maxHPPercentMod) / 100f))) * 4f);
+        if (_maxHP < 0) {
+            _maxHP = 1;
+        }
+    }
+    public void HPRecovery(float maxHPPercentage) {
+        if(currentHP < maxHP) {
+            AdjustHP(Mathf.CeilToInt(maxHPPercentage * maxHP));
         }
     }
     public void AdjustSpeedMod(int amount) {
@@ -4098,6 +4108,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     private void DailyGoapPlanGeneration() {
         //Check Trap Structure
         trapStructure.IncrementCurrentDuration(1);
+
+        //Out of combat hp recovery
+        if(stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
+            HPRecovery(0.0025f);
+        }
 
         //This is to ensure that this character will not be idle forever
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
@@ -5382,6 +5397,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void AdjustFullness(int adjustment) {
         fullness += adjustment;
         fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
+        if(adjustment > 0) {
+            HPRecovery(0.02f);
+        }
         if (fullness == 0) {
             Death("starvation");
         } else if (isStarving) {

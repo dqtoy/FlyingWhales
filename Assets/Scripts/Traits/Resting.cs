@@ -28,12 +28,14 @@ public class Resting : Trait {
         if(_lycanthropyTrait != null) {
             Messenger.AddListener(Signals.HOUR_STARTED, CheckForLycanthropy);
         }
+        Messenger.AddListener(Signals.TICK_STARTED, RecoverHP);
         base.OnAddTrait(sourceCharacter);
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
         if (_lycanthropyTrait != null) {
             Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForLycanthropy);
         }
+        Messenger.RemoveListener(Signals.TICK_STARTED, RecoverHP);
         _character = null;
         base.OnRemoveTrait(sourceCharacter);
     }
@@ -54,5 +56,9 @@ public class Resting : Trait {
                 _character.currentAction.currentState.EndPerTickEffect();
             }
         }
+    }
+
+    private void RecoverHP() {
+        _character.HPRecovery(0.02f);
     }
 }
