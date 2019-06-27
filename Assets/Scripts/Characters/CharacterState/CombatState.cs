@@ -35,6 +35,13 @@ public class CombatState : CharacterState {
                 return;
             }
         }
+        //if the character is away from home and is at an edge tile, go to home location
+        if (!isAttacking && stateComponent.character.homeArea != null && stateComponent.character.homeArea != stateComponent.character.specificLocation && stateComponent.character.gridTileLocation.IsAtEdgeOfWalkableMap()) {
+            StopStatePerTick();
+            OnExitThisState();
+            stateComponent.character.currentParty.GoToLocation(stateComponent.character.homeArea, PATHFINDING_MODE.NORMAL, stateComponent.character.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), null, null, null, null);
+            return;
+        }
         if (_hasTimerStarted) {
             _currentAttackTimer += 1;
             if(_currentAttackTimer >= CombatManager.pursueDuration) {
@@ -72,6 +79,7 @@ public class CombatState : CharacterState {
     }
     public override void OnExitThisState() {
         stateComponent.character.marker.pathfindingAI.ClearAllCurrentPathData();
+        stateComponent.character.marker.SetHasFleePath(false);
         base.OnExitThisState();
     }
     public override void SetOtherDataOnStartState(object otherData) {
@@ -333,6 +341,7 @@ public class CombatState : CharacterState {
         for (int i = 0; i < stateComponent.character.marker.hostilesInRange.Count; i++) {
             Character currCharacter = stateComponent.character.marker.hostilesInRange[i];
             if (!stateComponent.character.marker.inVisionPOIs.Contains(currCharacter)) {
+                OnFinishedFleeingFrom(currCharacter);
                 stateComponent.character.marker.RemoveHostileInRange(currCharacter, false); //removed hostile because of flee.
                 currCharacter.marker.RemoveHostileInRange(stateComponent.character); //removed hostile because of flee.
             }
@@ -346,6 +355,34 @@ public class CombatState : CharacterState {
             log += "\nNo more hostiles, exiting combat state...";
             stateComponent.character.PrintLogIfActive(log);
             OnExitThisState();
+        }
+    }
+    private void OnFinishedFleeingFrom(Character targetCharacter) {
+        if (stateComponent.character.IsHostileWith(targetCharacter)) {
+            if (!targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
+                stateComponent.character.marker.AddTerrifyingCharacter(targetCharacter);
+            }
+        }
+        if (stateComponent.character.IsHostileOutsider(targetCharacter)) {
+            if (stateComponent.character.role.roleType == CHARACTER_ROLE.LEADER || stateComponent.character.role.roleType == CHARACTER_ROLE.NOBLE || stateComponent.character.role.roleType == CHARACTER_ROLE.SOLDIER) {
+                int numOfJobs = 3 - targetCharacter.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
+                if (numOfJobs > 0) {
+                    stateComponent.character.CreateLocationKnockoutJobs(targetCharacter, numOfJobs);
+                }
+            } else {
+                if (!(targetCharacter.isDead || targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery") || targetCharacter.isAtHomeArea)) {
+                    if (stateComponent.character.isAtHomeArea) {
+                        if (!stateComponent.character.jobQueue.HasJobWithOtherData(JOB_TYPE.REPORT_HOSTILE, targetCharacter)) {
+                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
+                                { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { targetCharacter }}
+                            });
+                            job.SetCannotOverrideJob(true);
+                            job.SetCancelOnFail(true);
+                            stateComponent.character.jobQueue.AddJobInQueue(job, false);
+                        }
+                    }
+                }
+            }
         }
     }
     #endregion

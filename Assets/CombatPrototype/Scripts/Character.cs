@@ -3368,7 +3368,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //Random Traits
         int chance = UnityEngine.Random.Range(0, 100);
-        if (chance < 35) {
+        if (chance < 35 || role.roleType == CHARACTER_ROLE.CIVILIAN) { //ensured that all civilans are craftsmen
             AddTrait(new Craftsman());
         }
         //AddTrait(new Kleptomaniac());

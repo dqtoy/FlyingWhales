@@ -26,7 +26,7 @@ public class PickItemGoap : GoapAction {
         }
     }
     protected override int GetCost() {
-        return 2;
+        return 10;
     }
     #endregion
 

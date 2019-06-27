@@ -29,7 +29,7 @@ public class CraftItemGoap : GoapAction {
         SetState("Craft Success");
     }
     protected override int GetCost() {
-        return 2;
+        return 10;
     }
     protected override void CreateThoughtBubbleLog() {
         base.CreateThoughtBubbleLog();
