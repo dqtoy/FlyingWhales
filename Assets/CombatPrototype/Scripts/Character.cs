@@ -1511,6 +1511,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         return null;
         //}
     }
+    public GoapPlanJob CreateObtainItemJob(SPECIAL_TOKEN item) {
+        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = item.ToString(), targetPOI = this };
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_ITEM, goapEffect);
+        jobQueue.AddJobInQueue(job);
+        Debug.Log(this.name + " created job to obtain item " + item.ToString());
+        //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, this.name + " created job to obtain item " + item.ToString(), 5, null);
+        return job;
+    }
     private bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
     }
@@ -1549,6 +1557,34 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //        }
         //    }
         //}
+
+        //Obtain Item job
+        //if the character is part of a Faction and he doesnt have an Obtain Item Job in his personal job queue, 
+        //there is a 10% chance that the character will create a Obtain Item Job if he has less than four items owned 
+        //(sum from items in his inventory and in his home whose owner is this character). 
+        //Reduce this chance by 3% for every item he owns (disregard stolen items)
+        //NOTE: If he already has all items he needs, he doesnt need to do this job anymore.
+        if (!isFactionless && !jobQueue.HasJob(JOB_TYPE.OBTAIN_ITEM) && !role.HasNeededItems(this)) {
+            int numOfItemsOwned = GetNumOfItemsOwned();
+            if (numOfItemsOwned < 4) {
+                string obtainSummary = name + " will roll to obtain item.";
+                int chance = 10 - (3 * numOfItemsOwned);
+                chance = Mathf.Max(0, chance);
+                int roll = UnityEngine.Random.Range(0, 100);
+                obtainSummary += "\nChance to create job is " + chance.ToString() + ". Roll is " + roll.ToString();
+                if (roll < chance) {
+                    SPECIAL_TOKEN itemToObtain;
+                    if (role.TryGetNeededItem(this, out itemToObtain)) {
+                        CreateObtainItemJob(itemToObtain);
+                        hasCreatedJob = true;
+                        obtainSummary += "\nCreated job to obtain " + itemToObtain.ToString();
+                    } else {
+                        obtainSummary += "\nDoes not have any needed items.";
+                    }
+                }
+                Debug.Log(obtainSummary);
+            }
+        }
 
         //Undermine Enemy Job
         if (!hasCreatedJob && HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY)) {
@@ -3336,9 +3372,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         //Random Traits
         int chance = UnityEngine.Random.Range(0, 100);
-        if (chance < 35) {
+        if (chance < 35 || role.roleType == CHARACTER_ROLE.CIVILIAN) { //ensured that all civilans are craftsmen
             AddTrait(new Craftsman());
         }
+        //AddTrait(new Kleptomaniac());
     }
     public void CreateInitialTraitsByRace() {
         if (race == RACE.HUMANS) {
@@ -5139,8 +5176,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public List<SpecialToken> GetItemsOwned() {
         List<SpecialToken> itemsOwned = new List<SpecialToken>();
-        for (int i = 0; i < homeArea.possibleSpecialTokenSpawns.Count; i++) {
-            SpecialToken token = homeArea.possibleSpecialTokenSpawns[i];
+        //for (int i = 0; i < homeArea.possibleSpecialTokenSpawns.Count; i++) {
+        //    SpecialToken token = homeArea.possibleSpecialTokenSpawns[i];
+        //    if (token.characterOwner == this) {
+        //        itemsOwned.Add(token);
+        //    }
+        //}
+        for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
+            SpecialToken token = homeStructure.itemsInStructure[i];
             if (token.characterOwner == this) {
                 itemsOwned.Add(token);
             }
@@ -5155,12 +5198,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int GetNumOfItemsOwned() {
         int count = 0;
-        for (int i = 0; i < homeArea.possibleSpecialTokenSpawns.Count; i++) {
-            SpecialToken token = homeArea.possibleSpecialTokenSpawns[i];
+        //for (int i = 0; i < homeArea.possibleSpecialTokenSpawns.Count; i++) {
+        //    SpecialToken token = homeArea.possibleSpecialTokenSpawns[i];
+        //    if (token.characterOwner == this) {
+        //        count++;
+        //    }
+        //}
+        for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
+            SpecialToken token = homeStructure.itemsInStructure[i];
             if (token.characterOwner == this) {
                 count++;
             }
         }
+        
         for (int i = 0; i < items.Count; i++) {
             SpecialToken token = items[i];
             if (token.characterOwner == this) {
@@ -5169,9 +5219,45 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return count;
     }
-    public bool HasToken(SPECIAL_TOKEN tokenType) {
+    public bool HasTokenInInventory(SPECIAL_TOKEN tokenType) {
         for (int i = 0; i < items.Count; i++) {
             if (items[i].specialTokenType == tokenType) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public int GetTokenCountInInventory(SPECIAL_TOKEN tokenType) {
+        int count = 0;
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i].specialTokenType == tokenType) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public bool HasExtraTokenInInventory(SPECIAL_TOKEN tokenType) {
+        if (role.IsRequiredItem(tokenType)) {
+            //if the specified token type is required by this character's role, check if this character has any extras
+            int requiredAmount = role.GetRequiredItemAmount(tokenType);
+            if (GetTokenCountInInventory(tokenType) > requiredAmount) {
+                return true;
+            }
+            return false;
+        } else {
+            return HasTokenInInventory(tokenType);
+        }
+    }
+    public bool OwnsItemOfType(SPECIAL_TOKEN tokenType) {
+        for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
+            SpecialToken token = homeStructure.itemsInStructure[i];
+            if (token.characterOwner == this && token.specialTokenType == tokenType) {
+                return true;
+            }
+        }
+        for (int i = 0; i < items.Count; i++) {
+            SpecialToken token = items[i];
+            if (token.characterOwner == this && token.specialTokenType == tokenType) {
                 return true;
             }
         }

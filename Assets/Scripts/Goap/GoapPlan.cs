@@ -151,7 +151,6 @@ public class GoapPlan {
             }
         }
     }
-
     public void SetPriorityState(bool state) {
         isPriority = state;
     }

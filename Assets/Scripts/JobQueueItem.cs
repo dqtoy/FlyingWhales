@@ -15,7 +15,7 @@ public class JobQueueItem {
 
     protected System.Func<Character, JobQueueItem, bool> _canTakeThisJob;
     protected System.Func<Character, Character, JobQueueItem, bool> _canTakeThisJobWithTarget;
-    protected System.Action<Character> _onTakeJobAction;
+    protected System.Action<Character, JobQueueItem> _onTakeJobAction;
     protected int _priority; //The lower the amount the higher the priority
 
     public JobQueueItem(JOB_TYPE jobType) {
@@ -50,7 +50,7 @@ public class JobQueueItem {
         return CanTakeJob(character);
     }
     public virtual void OnCharacterAssignedToJob(Character character) {
-        _onTakeJobAction?.Invoke(character);
+        _onTakeJobAction?.Invoke(character, this);
     }
     #endregion
 
@@ -78,7 +78,7 @@ public class JobQueueItem {
     public void SetCanTakeThisJobChecker(System.Func<Character, Character, JobQueueItem, bool> function) {
         _canTakeThisJobWithTarget = function;
     }
-    public void SetOnTakeJobAction(System.Action<Character> action) {
+    public void SetOnTakeJobAction(System.Action<Character, JobQueueItem> action) {
         _onTakeJobAction = action;
     }
     public void SetCannotCancelJob(bool state) {
@@ -188,6 +188,7 @@ public class JobQueueItem {
                 priority = 220;
                 break;
             case JOB_TYPE.BUILD_FURNITURE:
+            case JOB_TYPE.OBTAIN_ITEM:
                 priority = 230;
                 break;
         }

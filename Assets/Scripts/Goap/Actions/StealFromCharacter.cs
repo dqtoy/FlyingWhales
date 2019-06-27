@@ -26,6 +26,11 @@ public class StealFromCharacter : GoapAction {
         if (actor.GetNormalTrait("Kleptomaniac") != null) {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
         }
+        Character target = poiTarget as Character;
+        for (int i = 0; i < target.items.Count; i++) {
+            SpecialToken currItem = target.items[i];
+            AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = currItem.specialTokenType.ToString(), targetPOI = actor });
+        }
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = actor });
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, targetPOI = actor });
     }

@@ -110,7 +110,7 @@ public class CharacterMarker : PooledObject {
         collisionTrigger.Initialize(character);
 
         //flee
-        hasFleePath = false;
+        SetHasFleePath(false);
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -1244,7 +1244,7 @@ public class CharacterMarker : PooledObject {
             return;
         }
         pathfindingAI.ClearAllCurrentPathData();
-        hasFleePath = true;
+        SetHasFleePath(true);
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
         FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidInRange.Concat(hostilesInRange).Select(x => x.marker.transform.position).ToArray(), 10000);
         fleePath.aimStrength = 1;
@@ -1262,10 +1262,13 @@ public class CharacterMarker : PooledObject {
     }
     public void OnFinishedTraversingFleePath() {
         //Debug.Log(name + " has finished traversing flee path.");
-        hasFleePath = false;
+        SetHasFleePath(false);
         (character.stateComponent.currentState as CombatState).FinishedTravellingFleePath();
         UpdateAnimation();
         UpdateActionIcon();
+    }
+    public void SetHasFleePath(bool state) {
+        hasFleePath = state;
     }
     public void AddTerrifyingCharacter(Character character) {
         //terrifyingCharacters += amount;

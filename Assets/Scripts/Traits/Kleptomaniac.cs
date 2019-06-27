@@ -18,7 +18,6 @@ public class Kleptomaniac : Trait {
         daysDuration = 0;
         effects = new List<TraitEffect>();
         noItemCharacters = new List<Character>();
-        //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
     }
 
     #region Overrides
@@ -26,10 +25,20 @@ public class Kleptomaniac : Trait {
         //(sourceCharacter as Character).RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, "Kleptomania");
         owner = sourceCharacter as Character;
         base.OnAddTrait(sourceCharacter);
+        if (sourceCharacter is Character) {
+            Character character = sourceCharacter as Character;
+            character.AddInteractionType(INTERACTION_TYPE.STEAL_CHARACTER);
+            character.AddInteractionType(INTERACTION_TYPE.STEAL);
+        }
         Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
         base.OnRemoveTrait(sourceCharacter);
+        if (sourceCharacter is Character) {
+            Character character = sourceCharacter as Character;
+            character.RemoveInteractionType(INTERACTION_TYPE.STEAL_CHARACTER);
+            character.RemoveInteractionType(INTERACTION_TYPE.STEAL);
+        }
         Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
     }
     public override void OnDeath() {
