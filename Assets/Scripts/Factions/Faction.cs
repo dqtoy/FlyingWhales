@@ -205,16 +205,26 @@ public class Faction {
          */
     public virtual void SetLeader(ILeader leader) {
         if (_leader != null && _leader is Character) {
-            Character character = _leader as Character;
-        }
-
-        _leader = leader;
-        if (_leader != null && _leader is Character) {
-            Character character = _leader as Character;
-            if (character.job.jobType != JOB.LEADER) {
-                character.AssignJob(JOB.LEADER);
+            Character previousRuler = _leader as Character;
+            if(previousRuler.role.roleType != CHARACTER_ROLE.NOBLE) {
+                previousRuler.AssignRole(CharacterRole.NOBLE);
+                previousRuler.AssignClassByRole(previousRuler.role);
+            }
+            if (previousRuler.characterClass.className != previousRuler.GetClassForRole(previousRuler.role)) {
+                previousRuler.AssignClassByRole(previousRuler.role);
             }
         }
+        if (leader != null && leader is Character) {
+            Character newRuler = leader as Character;
+            if(newRuler.role.roleType != CHARACTER_ROLE.LEADER) {
+                newRuler.AssignRole(CharacterRole.LEADER);
+            }
+            if (newRuler.characterClass.className != _initialLeaderClass) {
+                newRuler.AssignClass(CharacterManager.Instance.CreateNewCharacterClass(_initialLeaderClass));
+            }
+        }
+        _leader = leader;
+        
     }
     #endregion
 
@@ -351,12 +361,9 @@ public class Faction {
                 }
             }
 
+            previousRuler.PrintLogIfActive(log);
             if(newRuler != null) {
-                previousRuler.AssignRole(CharacterRole.NOBLE);
-                previousRuler.AssignClassByRole(previousRuler.role);
-
-                newRuler.AssignRole(CharacterRole.LEADER);
-                newRuler.AssignClass(CharacterManager.Instance.CreateNewCharacterClass(_initialLeaderClass));
+                SetLeader(newRuler);
 
                 Log logNotif = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_faction_leader");
                 logNotif.AddToFillers(newRuler, newRuler.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -375,14 +382,14 @@ public class Faction {
     #region Utilities
     private void AddListeners() {
         Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //if (!_isPlayerFaction) {
         //    Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         //}
     }
     private void RemoveListeners() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //if (!_isPlayerFaction) {
         //    Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         //}
@@ -462,17 +469,17 @@ public class Faction {
     public override string ToString() {
         return name;
     }
-    private void OnCharacterDied(Character characterThatDied) {
-        if (leader != null && leader is Character && leader.id == characterThatDied.id) {
-            Debug.Log(this.name + "'s Leader that died was " + characterThatDied.name);
-            OnLeaderDied();
-        }
-    }
-    private void OnLeaderDied() {
-        Debug.Log(this.name + "'s leader died");
-        SetLeader(null);
-        //Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
-    }
+    //private void OnCharacterDied(Character characterThatDied) {
+    //    if (leader != null && leader is Character && leader.id == characterThatDied.id) {
+    //        Debug.Log(this.name + "'s Leader that died was " + characterThatDied.name);
+    //        OnLeaderDied();
+    //    }
+    //}
+    //private void OnLeaderDied() {
+    //    Debug.Log(this.name + "'s leader died");
+    //    SetNewLeader();
+    //    //Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
+    //}
     public void SetLevel(int amount) {
         _level = amount;
     }

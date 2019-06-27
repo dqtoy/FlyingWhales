@@ -319,7 +319,7 @@ public class CharacterInfoUI : UIMenu {
 
     #region Stats
     private void UpdateStatInfo() {
-        hpLbl.text = _activeCharacter.maxHP.ToString();
+        hpLbl.text = _activeCharacter.currentHP.ToString();
         attackLbl.text = _activeCharacter.attackPower.ToString();
         speedLbl.text = _activeCharacter.speed.ToString();
         if(characterPortrait.thisCharacter != null) {
@@ -653,6 +653,9 @@ public class CharacterInfoUI : UIMenu {
         } else {
             Debug.LogError("No eligible characters to assault!");
         }
+    }
+    public void Death() {
+        _activeCharacter.Death();
     }
     #endregion
 }

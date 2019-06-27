@@ -36,7 +36,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected CharacterClass _characterClass;
     protected RaceSetting _raceSetting;
     protected CharacterRole _role;
-    protected Job _job;
+    //protected Job _job;
     protected Faction _faction;
     protected CharacterParty _ownParty;
     protected CharacterParty _currentParty;
@@ -231,7 +231,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         get { return _alreadyTargetedByGrudge; }
     }
     public bool isLeader {
-        get { return job.jobType == JOB.LEADER; }
+        get { return role == CharacterRole.LEADER; }
     }
     public bool isHoldingItem {
         get { return items.Count > 0; }
@@ -271,9 +271,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public CharacterRole role {
         get { return _role; }
     }
-    public Job job {
-        get { return _job; }
-    }
+    //public Job job {
+    //    get { return _job; }
+    //}
     public Faction faction {
         get { return _faction; }
     }
@@ -489,7 +489,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         AssignRole(role, false);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(GetClassForRole(role));
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
-        AssignRandomJob();
+        //AssignRandomJob();
         SetMorality(MORALITY.GOOD);
         GenerateSexuality();
         ResetToFullHP();
@@ -503,7 +503,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         AssignRole(role, false);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
-        AssignRandomJob();
+        //AssignRandomJob();
         SetMorality(MORALITY.GOOD);
         GenerateSexuality();
         ResetToFullHP();
@@ -517,7 +517,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         AssignRole(data.role, false);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
         SetName(data.name);
-        AssignRandomJob();
+        //AssignRandomJob();
         SetMorality(data.morality);
         GenerateSexuality();
         ResetToFullHP();
@@ -771,8 +771,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //    deathLocation.AddCorpse(this, deathStructure, deathTile);
             //}
 
-            if (this._faction != null) {
-                this._faction.RemoveCharacter(this); //remove this character from it's factions list of characters
+
+            if (faction != null) {
+                if (faction.leader == this) {
+                    faction.SetNewLeader();
+                }
+                faction.RemoveCharacter(this); //remove this character from it's factions list of characters
             }
 
             if (_role != null) {
@@ -1084,7 +1088,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Character Class
-    private string GetClassForRole(CharacterRole role) {
+    public string GetClassForRole(CharacterRole role) {
         if (role == CharacterRole.BEAST) {
             return Utilities.GetRespectiveBeastClassNameFromByRace(race);
         } else {
@@ -1133,50 +1137,50 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Jobs
-    private void AssignRandomJob() {
-        if (CharacterManager.Instance.IsClassADeadlySin(_characterClass.className)) {
-            AssignJob(_characterClass.jobType);
-        } else {
-            JOB[] jobs = new JOB[] { JOB.DIPLOMAT, JOB.DEBILITATOR, JOB.EXPLORER, JOB.INSTIGATOR, JOB.RAIDER, JOB.SEDUCER, JOB.SPY };
-            AssignJob(jobs[UnityEngine.Random.Range(0, jobs.Length)]);
-            //AssignJob(JOB.RAIDER);
-        }
-    }
-    public void AssignJob(JOB jobType) {
-        switch (jobType) {
-            case JOB.SPY:
-                _job = new Spy(this);
-                break;
-            case JOB.RAIDER:
-                _job = new Raider(this);
-                break;
-            case JOB.INSTIGATOR:
-                _job = new Instigator(this);
-                break;
-            case JOB.EXPLORER:
-                _job = new Explorer(this);
-                break;
-            case JOB.DEBILITATOR:
-                _job = new Dissuader(this);
-                break;
-            case JOB.DIPLOMAT:
-                _job = new Diplomat(this);
-                break;
-            case JOB.SEDUCER:
-                _job = new Recruiter(this);
-                break;
-            case JOB.LEADER:
-                _job = new LeaderJob(this);
-                break;
-            case JOB.WORKER:
-                _job = new Worker(this);
-                break;
-            default:
-                _job = new Job(this, JOB.NONE);
-                break;
-        }
-        _job.OnAssignJob();
-    }
+    //private void AssignRandomJob() {
+    //    if (CharacterManager.Instance.IsClassADeadlySin(_characterClass.className)) {
+    //        AssignJob(_characterClass.jobType);
+    //    } else {
+    //        JOB[] jobs = new JOB[] { JOB.DIPLOMAT, JOB.DEBILITATOR, JOB.EXPLORER, JOB.INSTIGATOR, JOB.RAIDER, JOB.SEDUCER, JOB.SPY };
+    //        AssignJob(jobs[UnityEngine.Random.Range(0, jobs.Length)]);
+    //        //AssignJob(JOB.RAIDER);
+    //    }
+    //}
+    //public void AssignJob(JOB jobType) {
+    //    switch (jobType) {
+    //        case JOB.SPY:
+    //            _job = new Spy(this);
+    //            break;
+    //        case JOB.RAIDER:
+    //            _job = new Raider(this);
+    //            break;
+    //        case JOB.INSTIGATOR:
+    //            _job = new Instigator(this);
+    //            break;
+    //        case JOB.EXPLORER:
+    //            _job = new Explorer(this);
+    //            break;
+    //        case JOB.DEBILITATOR:
+    //            _job = new Dissuader(this);
+    //            break;
+    //        case JOB.DIPLOMAT:
+    //            _job = new Diplomat(this);
+    //            break;
+    //        case JOB.SEDUCER:
+    //            _job = new Recruiter(this);
+    //            break;
+    //        case JOB.LEADER:
+    //            _job = new LeaderJob(this);
+    //            break;
+    //        case JOB.WORKER:
+    //            _job = new Worker(this);
+    //            break;
+    //        default:
+    //            _job = new Job(this, JOB.NONE);
+    //            break;
+    //    }
+    //    _job.OnAssignJob();
+    //}
     public void SetCurrentJob(JobQueueItem job) {
         currentJob = job;
     }
@@ -4082,7 +4086,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //StopDailyGoapPlanGeneration();
             return;
         }
-        if (minion != null || !IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || _job == null || isWaitingForInteraction > 0) {
+        if (minion != null || !IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
         if (stateComponent.currentState != null) {
