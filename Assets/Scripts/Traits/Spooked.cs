@@ -20,14 +20,15 @@ public class Spooked : Trait {
     public override void OnAddTrait(IPointOfInterest sourcePOI) {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
-            if (character.stateComponent.currentState != null) {
-                character.stateComponent.currentState.OnExitThisState();
-                if (character.stateComponent.currentState != null) {
-                    character.stateComponent.currentState.OnExitThisState();
-                }
-            } else if (character.stateComponent.stateToDo != null) {
-                character.stateComponent.SetStateToDo(null);
-            } else if (character.currentAction != null) {
+            //if (character.stateComponent.currentState != null) {
+            //    character.stateComponent.currentState.OnExitThisState();
+            //    if (character.stateComponent.currentState != null) {
+            //        character.stateComponent.currentState.OnExitThisState();
+            //    }
+            //} else if (character.stateComponent.stateToDo != null) {
+            //    character.stateComponent.SetStateToDo(null);
+            //} else 
+            if (character.currentAction != null) {
                 character.currentAction.StopAction();
             } else if (character.currentParty.icon.isTravelling) {
                 if (character.currentParty.icon.travelLine == null) {

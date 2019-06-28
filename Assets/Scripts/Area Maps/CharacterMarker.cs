@@ -41,6 +41,8 @@ public class CharacterMarker : PooledObject {
     [Header("Combat")]
     public GameObject hpBarGO;
     public Image hpFill;
+    //public GameObject aspeedGO;
+    public Image aspeedFill;
     public Transform projectileParent;
 
     [Header("For Testing")]
@@ -138,6 +140,7 @@ public class CharacterMarker : PooledObject {
         if (GameManager.Instance.gameHasStarted && !GameManager.Instance.isPaused) {
             if (attackSpeedMeter < character.attackSpeed) {
                 attackSpeedMeter += ((Time.deltaTime * 1000f) * progressionSpeedMultiplier);
+                UpdateAttackSpeedMeter();
             }
         }
     }
@@ -590,8 +593,10 @@ public class CharacterMarker : PooledObject {
 
     }
     public void ArrivedAtTarget() {
-        if(character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-            return;
+        if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+            if((character.stateComponent.currentState as CombatState).isAttacking){
+                return;
+            }
         }
         StopMovementOnly();
 
@@ -1580,8 +1585,14 @@ public class CharacterMarker : PooledObject {
             hpFill.fillAmount = (float) character.currentHP / character.maxHP;
         }
     }
+    public void UpdateAttackSpeedMeter() {
+        if (hpBarGO.activeSelf) {
+            aspeedFill.fillAmount = attackSpeedMeter / character.attackSpeed;
+        }
+    }
     public void ResetAttackSpeed() {
         attackSpeedMeter = 0f;
+        UpdateAttackSpeedMeter();
     }
     public bool CanAttackByAttackSpeed() {
         return attackSpeedMeter >= character.attackSpeed;
