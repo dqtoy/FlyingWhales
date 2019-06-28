@@ -40,6 +40,7 @@ public class PlayerJobActionButton : MonoBehaviour {
         actionIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
         UpdateInteractableState();
         UpdateButtonText();
+        SetSelectedIconState(false);
     }
 
     //private void OnSeenActionButtons() {

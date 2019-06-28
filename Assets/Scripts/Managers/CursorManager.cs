@@ -117,7 +117,7 @@ public class CursorManager : MonoBehaviour {
             leftClickActions[i]();
         }
     }
-    private void ClearLeftClickActions() {
+    public void ClearLeftClickActions() {
         leftClickActions.Clear();
     }
     #endregion
