@@ -15,7 +15,11 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         if (parentMarker.character.stateComponent.currentState is CombatState) {
             CombatState combatState = parentMarker.character.stateComponent.currentState as CombatState;
             if (parentMarker.character.characterClass.rangeType == RANGE_TYPE.RANGED) {
-                CreateProjectile(combatState.currentClosestHostile);
+                if (parentMarker.character.characterClass.attackType == ATTACK_TYPE.MAGICAL) {
+                    CreateMagicalHit(combatState.currentClosestHostile);
+                } else {
+                    CreateProjectile(combatState.currentClosestHostile);
+                }
             } else {
                 combatState.OnAttackHit(combatState.currentClosestHostile);
             }
@@ -33,6 +37,17 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         projectile.SetTarget(target.marker.transform);
         projectile.onHitAction = OnProjectileHit;
         currentProjectile = projectileGO;
+    }
+    private void CreateMagicalHit(Character target) {
+        GameManager.Instance.CreateFireEffectAt(target);
+        if (parentMarker.character.stateComponent.currentState is CombatState) {
+            CombatState combatState = parentMarker.character.stateComponent.currentState as CombatState;
+            combatState.OnAttackHit(target);
+        } else {
+            string attackSummary = GameManager.Instance.TodayLogString() + parentMarker.character.name + " hit " + target.name + ", outside of combat state";
+            target.OnHitByAttackFrom(parentMarker.character, ref attackSummary);
+            parentMarker.character.PrintLogIfActive(attackSummary);
+        }
     }
 
     /// <summary>
