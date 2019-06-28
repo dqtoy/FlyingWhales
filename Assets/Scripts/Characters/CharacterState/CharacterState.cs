@@ -68,16 +68,18 @@ public class CharacterState {
     
     //This is called per TICK_ENDED if the state has a duration, can be overriden
     protected virtual void PerTickInState() {
-        if (currentDuration >= duration) {
-            StopStatePerTick();
-            OnExitThisState();
-        } else if (stateComponent.character.doNotDisturb > 0) {
-            if (!(characterState == CHARACTER_STATE.BERSERKED && stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetNormalTrait("Combat Recovery") != null)) {
+        if (!isPaused) {
+            if (currentDuration >= duration) {
                 StopStatePerTick();
                 OnExitThisState();
+            } else if (stateComponent.character.doNotDisturb > 0) {
+                if (!(characterState == CHARACTER_STATE.BERSERKED && stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetNormalTrait("Combat Recovery") != null)) {
+                    StopStatePerTick();
+                    OnExitThisState();
+                }
             }
+            currentDuration++;
         }
-        currentDuration++;
     }
     //Character will do the movement behavior of this state, can be overriden
     protected virtual void DoMovementBehavior() {}

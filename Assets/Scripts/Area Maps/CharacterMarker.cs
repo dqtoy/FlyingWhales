@@ -332,9 +332,7 @@ public class CharacterMarker : PooledObject {
         } else if (inVisionPOIs.Contains(character)) {
             //if the character that lost a trait is not this character and that character is in this character's hostility range
             //and the trait that was lost is a negative disabler trait, react to them.
-            if (!character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-                AddHostileInRange(character);
-            }
+            AddHostileInRange(character);
         }
     }
     /// <summary>

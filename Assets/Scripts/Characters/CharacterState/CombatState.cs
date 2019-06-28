@@ -28,6 +28,9 @@ public class CombatState : CharacterState {
         StartCombatMovement();
     }
     protected override void PerTickInState() {
+        if (isPaused) {
+            return;
+        }
         if (stateComponent.character.doNotDisturb > 0) {
             if (!(characterState == CHARACTER_STATE.BERSERKED && stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetNormalTrait("Combat Recovery") != null)) {
                 StopStatePerTick();
