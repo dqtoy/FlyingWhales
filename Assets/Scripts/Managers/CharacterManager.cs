@@ -1515,3 +1515,4 @@ public class PortraitFrame {
     public Sprite baseBG;
     public Sprite frameOutline;
 }
+

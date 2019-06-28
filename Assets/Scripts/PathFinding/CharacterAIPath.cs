@@ -135,7 +135,7 @@ public class CharacterAIPath : AILerp {
         base.UpdateMe();
     }
     private void UpdateRotation() {
-        if (marker.character.currentParty.icon.isTravelling && marker.character.IsInOwnParty()) { //only rotate if character is travelling
+        if (marker.character.currentParty.icon.isTravelling && marker.character.IsInOwnParty() && currentPath != null) { //only rotate if character is travelling
             Vector3 direction;
             if (!interpolator.valid) {
                 direction = Vector3.zero;
@@ -152,7 +152,6 @@ public class CharacterAIPath : AILerp {
             if (marker.character.currentAction.poiTarget.gridTileLocation != null) {
                 marker.LookAt(marker.character.currentAction.poiTarget.gridTileLocation.centeredWorldLocation); //so that the charcter will always face the target, even if it is moving
             }
-
         }
     }
     #endregion

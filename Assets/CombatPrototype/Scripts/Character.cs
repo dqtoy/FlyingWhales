@@ -2961,6 +2961,43 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void SetCombatCharacter(CombatCharacter combatCharacter) {
         _currentCombatCharacter = combatCharacter;
     }
+    public void OnHitByAttackFrom(Character characterThatAttacked, ref string attackSummary) {
+        GameManager.Instance.CreateHitEffectAt(this);
+        if (this.currentHP == 0) {
+            return; //if hp is already 0, do not deal damage
+        }
+        //TODO: For readjustment, attack power is the old computation
+        this.AdjustHP(-characterThatAttacked.attackPower);
+        attackSummary += "\nDealt damage " + stateComponent.character.attackPower.ToString();
+        //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
+        if (this.currentHP <= 0) {
+            attackSummary += "\n" + this.name + "'s hp has reached 0.";
+            WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
+            if (this.GetNormalTrait("Unconscious") == null) {
+                loserResults.AddElement("Unconscious", 30);
+            }
+            //if (currentClosestHostile.GetNormalTrait("Injured") == null) {
+            //    loserResults.AddElement("Injured", 10);
+            //}
+            loserResults.AddElement("Death", 5);
+
+            string result = loserResults.PickRandomElementGivenWeights();
+            attackSummary += "\ncombat result is " + result; ;
+            switch (result) {
+                case "Unconscious":
+                    Unconscious unconscious = new Unconscious();
+                    this.AddTrait(unconscious, characterThatAttacked);
+                    break;
+                case "Injured":
+                    Injured injured = new Injured();
+                    this.AddTrait(injured, characterThatAttacked);
+                    break;
+                case "Death":
+                    this.Death(responsibleCharacter: characterThatAttacked);
+                    break;
+            }
+        }
+    }
     #endregion
 
     #region Portrait Settings
