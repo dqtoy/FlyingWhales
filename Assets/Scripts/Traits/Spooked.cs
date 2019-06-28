@@ -37,7 +37,7 @@ public class Spooked : Trait {
                     character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
                 }
             }
-            character.AdjustDoNotDisturb(1);
+            //character.AdjustDoNotDisturb(1);
 
             if (!character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
                 if (character.marker.inVisionPOIs.Count > 0) {
