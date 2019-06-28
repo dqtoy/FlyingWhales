@@ -2450,12 +2450,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return characters;
     }
-    public List<Character> GetCharactersWithRelationship(GENDER gender, params RELATIONSHIP_TRAIT[] type) {
+    public List<Character> GetViableCharactersWithRelationship(GENDER gender, params RELATIONSHIP_TRAIT[] type) {
         List<Character> characters = new List<Character>();
         foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
             for (int i = 0; i < type.Length; i++) {
                 if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type[i])) {
-                    if (kvp.Key.owner.gender != gender || characters.Contains(kvp.Key.owner)) {
+                    if (kvp.Key.owner.isDead ||  kvp.Key.owner.gender != gender || kvp.Key.owner.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) || kvp.Key.owner.HasTraitOf(TRAIT_TYPE.CRIMINAL) || characters.Contains(kvp.Key.owner)) {
                         continue;
                     }
                     characters.Add(kvp.Key.owner);
@@ -2792,12 +2792,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return;
         }
 
-        if (role.roleType == CHARACTER_ROLE.CIVILIAN) {
-            if (target.GetNormalTrait("Berserked") != null) {
-                marker.AddAvoidInRange(target);
-                return;
-            }
-        }
+        //if (role.roleType == CHARACTER_ROLE.CIVILIAN) {
+        //    if (target.GetNormalTrait("Berserked") != null) {
+        //        marker.AddAvoidInRange(target);
+        //        return;
+        //    }
+        //}
     }
     public List<Log> GetMemories(int dayFrom, int dayTo, bool eventMemoriesOnly = false){
         List<Log> memories = new List<Log>();
@@ -3004,7 +3004,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
                 AdjustSpeedMod(_characterClass.speedPerLevel);
             }
-
+            UpdateMaxHP();
             //Reset to full health and sp
             ResetToFullHP();
 
@@ -3061,6 +3061,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         _level += amount;
 
+        UpdateMaxHP();
         //Reset to full health and sp
         ResetToFullHP();
         //ResetToFullSP();
@@ -3113,6 +3114,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             AdjustSpeedMod(_characterClass.speedPerLevel * difference);
         }
 
+        UpdateMaxHP();
         //Reset to full health and sp
         ResetToFullHP();
         //ResetToFullSP();
@@ -3177,7 +3179,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         marker.UpdateHP();
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
         if (IsHealthCriticallyLow()) {
-            Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this);
+            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);
         }
         if (triggerDeath && previous != this._currentHP) {
             if (this._currentHP == 0) {
@@ -5320,6 +5322,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (isExhausted) {
             RemoveTrait("Tired");
             if (AddTrait("Exhausted")) {
+                Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
             }
             //PlanTirednessRecoveryActions();
@@ -5333,7 +5336,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //tiredness is higher than both thresholds
             RemoveTiredOrExhausted();
         }
-        Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this);
     }
     public void DecreaseTirednessMeter() { //this is used for when tiredness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
         tiredness -= 1;
@@ -5406,6 +5408,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         } else if (isStarving) {
             RemoveTrait("Hungry");
             if (AddTrait("Starving")) {
+                Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
             }
             //PlanFullnessRecoveryActions();
@@ -5419,7 +5422,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //fullness is higher than both thresholds
             RemoveHungryOrStarving();
         }
-        Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this);
     }
     public void DecreaseFullnessMeter() { //this is used for when fullness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
         fullness -= 1;
@@ -6780,7 +6782,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
                     PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
                 } else {
-                    if(witnessedCrime != null) {
+                    if (witnessedCrime != null) {
                         if (marker.inVisionPOIs.Contains(criminal.owner)) {
                             marker.AddAvoidInRange(criminal.owner);
                         }
@@ -6813,23 +6815,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
 
-        if (witnessedCrime != null) {
-            if (witnessLog != null) {
-                witnessLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                witnessLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                witnessLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
-                if (this != witnessedCrime.poiTarget) {
-                    PlayerManager.Instance.player.ShowNotificationFrom(this, witnessLog);
-                }
-            }
-        } else {
-            if (reportLog != null) {
-                reportLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                reportLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                reportLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
-                PlayerManager.Instance.player.ShowNotificationFrom(this, reportLog);
-            }
-        }
+        //if (witnessedCrime != null) {
+        //    if (witnessLog != null) {
+        //        witnessLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //        witnessLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //        witnessLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
+        //        if (this != witnessedCrime.poiTarget) {
+        //            PlayerManager.Instance.player.ShowNotificationFrom(this, witnessLog);
+        //        }
+        //    }
+        //} else {
+        //    if (reportLog != null) {
+        //        reportLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //        reportLog.AddToFillers(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //        reportLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(committedCrime.ToString()), LOG_IDENTIFIER.STRING_1);
+        //        PlayerManager.Instance.player.ShowNotificationFrom(this, reportLog);
+        //    }
+        //}
 
         Debug.Log(reactSummary);
     }

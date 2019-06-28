@@ -67,9 +67,10 @@ public class CombatState : CharacterState {
         stateComponent.character.StopCurrentAction(false);
         stateComponent.character.currentParty.RemoveAllOtherCharacters(); //Drop characters when entering combat
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Starting combat state for " + stateComponent.character.name);
-        base.StartState();
         Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
+        Messenger.AddListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        base.StartState();
         stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
     protected override void EndState() {
@@ -79,6 +80,7 @@ public class CombatState : CharacterState {
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Ending combat state for " + stateComponent.character.name);
         onEndStateAction?.Invoke();
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
+        Messenger.RemoveListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
     }
     public override void OnExitThisState() {
@@ -104,6 +106,52 @@ public class CombatState : CharacterState {
     #endregion
 
     /// <summary>
+    /// Function that determines if the character's hostile list must be transfered to avoid list
+    /// Can be triggered by broadcasting signal <see cref="Signals.TRANSFER_ENGAGE_TO_FLEE_LIST"/>
+    /// </summary>
+    /// <param name="character">The character that should determine the transfer.</param>
+    private void TransferEngageToFleeList(Character character) {
+        if (stateComponent.character == character) {
+            string summary = character.name + " will determine the transfer from engage list to flee list";
+            //check flee first, the logic determines that this character will not flee, then attack by default
+            bool willTransfer = true;
+            if (character.stateComponent.previousMajorState != null && character.stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED && !character.stateComponent.previousMajorState.isDone) {
+                willTransfer = false;
+            }
+            ////- if character is berserked, must not flee
+            //if (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED && !stateComponent.previousMajorState.isDone) {
+            //    willTransfer = false;
+            //}
+            ////- at some point, situation may trigger the character to flee, at which point it will attempt to move far away from target
+            //else if (character.GetNormalTrait("Injured") != null) {
+            //    summary += "\n" + character.name + " is injured.";
+            //    //-character gets injured(chance based dependent on the character)
+            //    willTransfer = true;
+            //} else if (character.IsHealthCriticallyLow()) {
+            //    summary += "\n" + character.name + "'s health is critically low.";
+            //    //-character's hp is critically low (chance based dependent on the character)
+            //    willTransfer = true;
+            //} else if (character.GetNormalTrait("Spooked") != null) { //TODO: Ask chy about spooked mechanics
+            //    //- fear-type status effect
+            //    willTransfer = true;
+            //} else if (character.isStarving || character.isExhausted) {
+            //    summary += "\n" + character.name + " is starving(" + character.isStarving.ToString() + ") or is exhausted(" + character.isExhausted.ToString() + ").";
+            //    //-character is starving or exhausted
+            //    willTransfer = true;
+            //}
+            summary += "\nDid " + character.name + " chose to transfer? " + willTransfer.ToString();
+
+            //Transfer all from engage list to flee list
+            if (willTransfer) {
+                stateComponent.character.marker.AddAvoidsInRange(stateComponent.character.marker.hostilesInRange, false);
+                stateComponent.character.marker.ClearHostilesInRange(false);
+                DetermineReaction(stateComponent.character);
+            }
+            Debug.Log(summary);
+        }
+    }
+
+    /// <summary>
     /// Function that determines what a character should do in a certain point in time.
     /// Can be triggered by broadcasting signal <see cref="Signals.DETERMINE_COMBAT_REACTION"/>
     /// </summary>
@@ -111,37 +159,33 @@ public class CombatState : CharacterState {
     private void DetermineReaction(Character character) {
         if (stateComponent.character == character) {
             string summary = character.name + " will determine a combat reaction";
-            //check flee first, the logic determines that this character will not flee, then attack by default
-            bool willAttack = true;
-            //- if character is berserked, must not flee
-            if (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED && !stateComponent.previousMajorState.isDone) {
-                willAttack = true;
+            if (stateComponent.character.marker.hostilesInRange.Count > 0) {
+                summary += "\nStill has hostiles, will attack...";
+                stateComponent.character.PrintLogIfActive(summary);
+                SetIsAttacking(true);
+            } else if (stateComponent.character.marker.avoidInRange.Count > 0) {
+                summary += "\nStill has characters to avoid, checking if those characters are still in range...";
+                for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
+                    Character currCharacter = stateComponent.character.marker.avoidInRange[i];
+                    if (!stateComponent.character.marker.inVisionPOIs.Contains(currCharacter)) {
+                        OnFinishedFleeingFrom(currCharacter);
+                        stateComponent.character.marker.RemoveAvoidInRange(currCharacter, false);
+                    }
+                }
+                if (stateComponent.character.marker.avoidInRange.Count > 0) {
+                    summary += "\nStill has characters to avoid in range, fleeing...";
+                    stateComponent.character.PrintLogIfActive(summary);
+                    SetIsAttacking(false);
+                } else {
+                    summary += "\nNo more hostile or avoid characters, exiting combat state...";
+                    stateComponent.character.PrintLogIfActive(summary);
+                    OnExitThisState();
+                }
+            } else {
+                summary += "\nNo more hostile or avoid characters, exiting combat state...";
+                stateComponent.character.PrintLogIfActive(summary);
+                OnExitThisState();
             }
-            //- at some point, situation may trigger the character to flee, at which point it will attempt to move far away from target
-            else if (character.GetNormalTrait("Injured") != null) {
-                summary += "\n" + character.name + " is injured.";
-                //-character gets injured(chance based dependent on the character)
-                willAttack = false;
-            } else if (character.IsHealthCriticallyLow()) {
-                summary += "\n" + character.name + "'s health is critically low.";
-                //-character's hp is critically low (chance based dependent on the character)
-                willAttack = false;
-            } else if (character.GetNormalTrait("Spooked") != null) { //TODO: Ask chy about spooked mechanics
-                //- fear-type status effect
-                willAttack = false;
-            } else if (character.isStarving || character.isExhausted) {
-                summary += "\n" + character.name + " is starving(" + character.isStarving.ToString() + ") or is exhausted(" + character.isExhausted.ToString() + ").";
-                //-character is starving or exhausted
-                willAttack = false;
-            }
-            summary += "\nDid " + character.name + " chose to attack? " + willAttack.ToString();
-            //if (willAttack != isAttacking) {
-            summary += "\n" + character.name + " will now change attacking mode to " + willAttack.ToString();
-            SetIsAttacking(willAttack); //only execute if there was a change in attacking state
-            //} else {
-            //    summary += "\n" + character.name + " is already in that mode, continuing mode... ";
-            //}
-            Debug.Log(summary);
         }
     }
 
@@ -187,9 +231,9 @@ public class CombatState : CharacterState {
             }
             //stateComponent.character.PrintLogIfActive(log);
         } else {
-            Character closestHostile = stateComponent.character.marker.GetNearestValidHostile();
-            if (closestHostile == null) {
-                log += "\nNo more hostile characters, exiting combat state...";
+            //Character closestHostile = stateComponent.character.marker.GetNearestValidAvoid();
+            if (stateComponent.character.marker.avoidInRange.Count <= 0) {
+                log += "\nNo more avoid characters, exiting combat state...";
                 stateComponent.character.PrintLogIfActive(log);
                 OnExitThisState();
                 return;
@@ -257,7 +301,7 @@ public class CombatState : CharacterState {
         if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
             //attackSummary += "\nCannot attack yet because of attack speed.";
             //Debug.Log(attackSummary);
-
+            //float aspeed = stateComponent.character.marker.attackSpeedMeter;
             //When character is in range but attack speed is still not fully charged, he/she will stop moving only and will wait until the attack speed is charged
             if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
                 stateComponent.character.marker.StopMovement(); //only stop movement if target is also not moving.
@@ -310,7 +354,7 @@ public class CombatState : CharacterState {
             loserResults.AddElement("Death", 5);
 
             string result = loserResults.PickRandomElementGivenWeights();
-            attackSummary += "\ncombat result is " + result; ;
+            attackSummary += "\nCombat result is " + result; ;
             switch (result) {
                 case "Unconscious":
                     Unconscious unconscious = new Unconscious();
@@ -357,24 +401,9 @@ public class CombatState : CharacterState {
         //Then check if hostile list is empty
         //If it is, end state immediately
         //If not, flee again
-        for (int i = 0; i < stateComponent.character.marker.hostilesInRange.Count; i++) {
-            Character currCharacter = stateComponent.character.marker.hostilesInRange[i];
-            if (!stateComponent.character.marker.inVisionPOIs.Contains(currCharacter)) {
-                OnFinishedFleeingFrom(currCharacter);
-                stateComponent.character.marker.RemoveHostileInRange(currCharacter, false); //removed hostile because of flee.
-                //currCharacter.marker.RemoveHostileInRange(stateComponent.character); //removed hostile because of flee.
-            }
-        }
-        if (stateComponent.character.marker.hostilesInRange.Count > 0) {
-            //There is still in vision that is hostile, flee again
-            log += "\nStill has hostile in vision, fleeing again...";
-            stateComponent.character.PrintLogIfActive(log);
-            stateComponent.character.marker.OnStartFlee();
-        } else {
-            log += "\nNo more hostiles, exiting combat state...";
-            stateComponent.character.PrintLogIfActive(log);
-            OnExitThisState();
-        }
+        log += "\nFinished travelling flee path, determining action...";
+        stateComponent.character.PrintLogIfActive(log);
+        DetermineReaction(stateComponent.character);
     }
     private void OnFinishedFleeingFrom(Character targetCharacter) {
         if (stateComponent.character.IsHostileWith(targetCharacter)) {

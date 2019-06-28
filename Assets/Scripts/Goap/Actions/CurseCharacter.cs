@@ -128,7 +128,7 @@ public class CurseCharacter : GoapAction {
                     } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add(string.Format("So it was {0} who did that to me. I should get back at {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                         if (status == SHARE_INTEL_STATUS.INFORMED) {
-                            recipient.CreateUndermineJobOnly(actor, "idle", status);
+                            recipient.CreateUndermineJobOnly(actor, "informed", status);
                         }
                     } else {
                         reactions.Add(string.Format("Why did {0} do that to me?", actor.name));
@@ -151,7 +151,7 @@ public class CurseCharacter : GoapAction {
                     } else if (relationshipWithActorBeforeDegradation == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add(string.Format("Why did {0} do that to {1}? I should get back at {2}.", actor.name, targetCharacter.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                         if (status == SHARE_INTEL_STATUS.INFORMED) {
-                            recipient.CreateUndermineJobOnly(actor, "idle", status);
+                            recipient.CreateUndermineJobOnly(actor, "informed", status);
                         }
                     } else {
                         reactions.Add(string.Format("Why did {0} do that to {1}?", actor.name, targetCharacter.name));

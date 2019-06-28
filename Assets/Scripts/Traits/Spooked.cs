@@ -37,6 +37,28 @@ public class Spooked : Trait {
                 }
             }
             character.AdjustDoNotDisturb(1);
+
+            if (!character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                if (character.marker.inVisionPOIs.Count > 0) {
+                    for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
+                        if (character.marker.inVisionPOIs[i] is Character) {
+                            Character characterInVision = character.marker.inVisionPOIs[i] as Character;
+                            AddTerrifyingCharacter(characterInVision);
+                            //AddHostileInRange(characterInVision, CHARACTER_STATE.COMBAT, false);
+                        }
+                    }
+                    if (terrifyingCharacters.Count > 0) {
+                        if ((character.stateComponent.previousMajorState != null && character.stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED && !character.stateComponent.previousMajorState.isDone)
+                            || (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED && !character.stateComponent.currentState.isDone)
+                            || (character.stateComponent.stateToDo != null && character.stateComponent.stateToDo.characterState == CHARACTER_STATE.BERSERKED && !character.stateComponent.stateToDo.isDone)) {
+                            //If berserked
+                        } else {
+                            character.marker.AddAvoidsInRange(terrifyingCharacters, false);
+                            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, character);
+                        }
+                    }
+                }
+            }
         }
         base.OnAddTrait(sourcePOI);
     }

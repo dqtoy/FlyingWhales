@@ -284,11 +284,11 @@ public class Faction {
         }
         return chars;
     }
-    public List<Character> GetCharacters(GENDER gender, params CHARACTER_ROLE[] role) {
+    public List<Character> GetViableCharacters(GENDER gender, params CHARACTER_ROLE[] role) {
         List<Character> chars = new List<Character>();
         for (int i = 0; i < _characters.Count; i++) {
             Character currCharacter = _characters[i];
-            if (currCharacter.gender == gender) {
+            if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !currCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                 for (int j = 0; j < role.Length; j++) {
                     if(currCharacter.role.roleType == role[j]) {
                         chars.Add(currCharacter);
@@ -306,49 +306,49 @@ public class Faction {
             string log = GameManager.Instance.TodayLogString() + name + " faction is deciding a new leader...";
 
             log += "\nChecking male relatives of the king...";
-            List<Character> maleRelatives = previousRuler.GetCharactersWithRelationship(GENDER.MALE, RELATIONSHIP_TRAIT.RELATIVE);
+            List<Character> maleRelatives = previousRuler.GetViableCharactersWithRelationship(GENDER.MALE, RELATIONSHIP_TRAIT.RELATIVE);
             if(maleRelatives.Count > 0) {
                 newRuler = maleRelatives[UnityEngine.Random.Range(0, maleRelatives.Count)];
                 log += "\nNew Ruler: " + newRuler.name;
             } else {
                 log += "\nChecking male nobles...";
-                List<Character> maleNobles = GetCharacters(GENDER.MALE, CHARACTER_ROLE.NOBLE);
+                List<Character> maleNobles = GetViableCharacters(GENDER.MALE, CHARACTER_ROLE.NOBLE);
                 if(maleNobles.Count > 0) {
                     newRuler = maleNobles[UnityEngine.Random.Range(0, maleNobles.Count)];
                     log += "\nNew Ruler: " + newRuler.name;
                 } else {
                     log += "\nChecking female relatives of the king...";
-                    List<Character> femaleRelatives = previousRuler.GetCharactersWithRelationship(GENDER.FEMALE, RELATIONSHIP_TRAIT.RELATIVE);
+                    List<Character> femaleRelatives = previousRuler.GetViableCharactersWithRelationship(GENDER.FEMALE, RELATIONSHIP_TRAIT.RELATIVE);
                     if (femaleRelatives.Count > 0) {
                         newRuler = femaleRelatives[UnityEngine.Random.Range(0, femaleRelatives.Count)];
                         log += "\nNew Ruler: " + newRuler.name;
                     } else {
                         log += "\nChecking female nobles...";
-                        List<Character> femaleNobles = GetCharacters(GENDER.FEMALE, CHARACTER_ROLE.NOBLE);
+                        List<Character> femaleNobles = GetViableCharacters(GENDER.FEMALE, CHARACTER_ROLE.NOBLE);
                         if (femaleNobles.Count > 0) {
                             newRuler = femaleNobles[UnityEngine.Random.Range(0, femaleNobles.Count)];
                             log += "\nNew Ruler: " + newRuler.name;
                         } else {
                             log += "\nChecking male soldiers and adventurers...";
-                            List<Character> maleSoldiersAndAdventurers = GetCharacters(GENDER.MALE, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER);
+                            List<Character> maleSoldiersAndAdventurers = GetViableCharacters(GENDER.MALE, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER);
                             if (maleSoldiersAndAdventurers.Count > 0) {
                                 newRuler = maleSoldiersAndAdventurers[UnityEngine.Random.Range(0, maleSoldiersAndAdventurers.Count)];
                                 log += "\nNew Ruler: " + newRuler.name;
                             } else {
                                 log += "\nChecking female soldiers and adventurers...";
-                                List<Character> femaleSoldiersAndAdventurers = GetCharacters(GENDER.FEMALE, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER);
+                                List<Character> femaleSoldiersAndAdventurers = GetViableCharacters(GENDER.FEMALE, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER);
                                 if (femaleSoldiersAndAdventurers.Count > 0) {
                                     newRuler = femaleSoldiersAndAdventurers[UnityEngine.Random.Range(0, femaleSoldiersAndAdventurers.Count)];
                                     log += "\nNew Ruler: " + newRuler.name;
                                 } else {
                                     log += "\nChecking male civilians...";
-                                    List<Character> maleCivilians = GetCharacters(GENDER.MALE, CHARACTER_ROLE.CIVILIAN);
+                                    List<Character> maleCivilians = GetViableCharacters(GENDER.MALE, CHARACTER_ROLE.CIVILIAN);
                                     if (maleCivilians.Count > 0) {
                                         newRuler = maleCivilians[UnityEngine.Random.Range(0, maleCivilians.Count)];
                                         log += "\nNew Ruler: " + newRuler.name;
                                     } else {
                                         log += "\nChecking female civilians...";
-                                        List<Character> femaleCivilians = GetCharacters(GENDER.FEMALE, CHARACTER_ROLE.CIVILIAN);
+                                        List<Character> femaleCivilians = GetViableCharacters(GENDER.FEMALE, CHARACTER_ROLE.CIVILIAN);
                                         if (femaleCivilians.Count > 0) {
                                             newRuler = femaleCivilians[UnityEngine.Random.Range(0, femaleCivilians.Count)];
                                             log += "\nNew Ruler: " + newRuler.name;

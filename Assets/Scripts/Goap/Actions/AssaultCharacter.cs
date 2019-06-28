@@ -246,7 +246,7 @@ public class AssaultCharacter : GoapAction {
                     } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
                         //- Has Negative Relationship
                         reactions.Add(string.Format("Now that you've reminded me about that, I think I should get back at {0}.", actor.name));
-                        recipient.CreateUndermineJobOnly(actor, "idle", status);
+                        recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
                         //- Has Positive Relationship
                         if (recipientMood == CHARACTER_MOOD.BAD || recipientMood == CHARACTER_MOOD.DARK) {

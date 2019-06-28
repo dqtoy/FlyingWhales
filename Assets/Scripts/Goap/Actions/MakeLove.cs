@@ -152,7 +152,7 @@ public class MakeLove : GoapAction {
                 string response = string.Empty;
                 if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this) ) {
                     response = string.Format("I've had enough of {0}'s shenanigans!", actor.name);
-                    recipient.CreateUndermineJobOnly(actor, "idle", status);
+                    recipient.CreateUndermineJobOnly(actor, "informed", status);
                 } else {
                     response = string.Format("I'm still the one {0} comes home to.", actor.name);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -162,7 +162,7 @@ public class MakeLove : GoapAction {
                 if(recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR)) {
                     if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
                         response += string.Format(" {0} seduced both of us. {1} must pay for this.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, true));
-                        recipient.CreateUndermineJobOnly(target, "idle", status);
+                        recipient.CreateUndermineJobOnly(target, "informed", status);
                     } else {
                         response += string.Format(" I already know that {0} is a harlot.", target.name);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -172,7 +172,7 @@ public class MakeLove : GoapAction {
                 }else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.RELATIVE)) {
                     if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
                         response += string.Format(" {0} is a snake! I can't believe {1} would do this to me.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, false));
-                        recipient.CreateUndermineJobOnly(target, "idle", status);
+                        recipient.CreateUndermineJobOnly(target, "informed", status);
                     } else {
                         response += string.Format(" {0} is my blood. Blood is thicker than water.", target.name);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -182,7 +182,7 @@ public class MakeLove : GoapAction {
                 } else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.FRIEND)) {
                     if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
                         response += string.Format(" {0} is a snake! I can't believe {1} would do this to me.", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, false));
-                        recipient.CreateUndermineJobOnly(target, "idle", status);
+                        recipient.CreateUndermineJobOnly(target, "informed", status);
                     } else {
                         response += string.Format(" My friendship with {0} is much stronger than this incident.", target.name);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -191,11 +191,11 @@ public class MakeLove : GoapAction {
                     }
                 } else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
                     response += string.Format(" I always knew that {0} is a snake. {1} must pay for this!", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, true));
-                    recipient.CreateUndermineJobOnly(target, "idle", status);
+                    recipient.CreateUndermineJobOnly(target, "informed", status);
                 } else if (!recipient.HasRelationshipWith(target)) {
                     if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
                         response += string.Format(" {0} is a snake. {1} must pay for this!", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, true));
-                        recipient.CreateUndermineJobOnly(target, "idle", status);
+                        recipient.CreateUndermineJobOnly(target, "informed", status);
                     } else {
                         response += string.Format(" I'm not even going to bother myself with {0}.", target.name);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -210,7 +210,7 @@ public class MakeLove : GoapAction {
                 string response = string.Empty;
                 if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
                     response = string.Format("I've had enough of {0}'s shenanigans!", target.name);
-                    recipient.CreateUndermineJobOnly(target, "idle", status);
+                    recipient.CreateUndermineJobOnly(target, "informed", status);
                 } else {
                     response = string.Format("I'm still the one {0} comes home to.", target.name);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -220,7 +220,7 @@ public class MakeLove : GoapAction {
                 if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.PARAMOUR)) {
                     if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         response += string.Format(" {0} seduced both of us. {1} must pay for this.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true));
-                        recipient.CreateUndermineJobOnly(actor, "idle", status);
+                        recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else {
                         response += string.Format(" I already know that {0} is a harlot.", actor.name);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -230,7 +230,7 @@ public class MakeLove : GoapAction {
                 } else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.RELATIVE)) {
                     if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         response += string.Format(" {0} is a snake! I can't believe {1} would do this to me.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false));
-                        recipient.CreateUndermineJobOnly(actor, "idle", status);
+                        recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else {
                         response += string.Format(" {0} is my blood. Blood is thicker than water.", actor.name);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -240,7 +240,7 @@ public class MakeLove : GoapAction {
                 } else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.FRIEND)) {
                     if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         response += string.Format(" {0} is a snake! I can't believe {1} would do this to me.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false));
-                        recipient.CreateUndermineJobOnly(actor, "idle", status);
+                        recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else {
                         response += string.Format(" My friendship with {0} is much stronger than this incident.", actor.name);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -249,11 +249,11 @@ public class MakeLove : GoapAction {
                     }
                 } else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
                     response += string.Format(" I always knew that {0} is a snake. {1} must pay for this!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true));
-                    recipient.CreateUndermineJobOnly(actor, "idle", status);
+                    recipient.CreateUndermineJobOnly(actor, "informed", status);
                 } else if (!recipient.HasRelationshipWith(actor)) {
                     if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                         response += string.Format(" {0} is a snake. {1} must pay for this!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true));
-                        recipient.CreateUndermineJobOnly(actor, "idle", status);
+                        recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else {
                         response += string.Format(" I'm not even going to bother myself with {0}.", actor.name);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {

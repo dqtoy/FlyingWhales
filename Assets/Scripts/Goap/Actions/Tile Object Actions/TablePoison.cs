@@ -272,10 +272,10 @@ public class TablePoison : GoapAction {
                                 if (tableHasPoison) {
                                     reactions.Add(string.Format("{0} wants to poison me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                                     CreateRemovePoisonJob(recipient, assumedTargetCharacter);
-                                    recipient.CreateUndermineJobOnly(actor, "idle", status);
+                                    recipient.CreateUndermineJobOnly(actor, "informed", status);
                                 } else if (targetIsSick) {
                                     reactions.Add(string.Format("{0} poisoned me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-                                    recipient.CreateUndermineJobOnly(actor, "idle", status);
+                                    recipient.CreateUndermineJobOnly(actor, "informed", status);
                                 } else {
                                     reactions.Add(string.Format("{0} wants to poison me?", actor.name));
                                 }
@@ -301,10 +301,10 @@ public class TablePoison : GoapAction {
                             if (tableHasPoison) {
                                 reactions.Add(string.Format("That stupid {0} wants to poison me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                                 CreateRemovePoisonJob(recipient, assumedTargetCharacter);
-                                recipient.CreateUndermineJobOnly(actor, "idle", status);
+                                recipient.CreateUndermineJobOnly(actor, "informed", status);
                             } else if (targetIsSick) {
                                 reactions.Add(string.Format("That stupid {0} poisoned me?! {1} will get what {2} deserves!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-                                recipient.CreateUndermineJobOnly(actor, "idle", status);
+                                recipient.CreateUndermineJobOnly(actor, "informed", status);
                             } else {
                                 reactions.Add(string.Format("That stupid {0} wants to poison me?!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                             }
@@ -343,7 +343,7 @@ public class TablePoison : GoapAction {
                             if (tableHasPoison) {
                                 if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                     reactions.Add(string.Format("{0} wants to poison me?! {1} will not get away with this!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true)));
-                                    recipient.CreateUndermineJobOnly(actor, "idle", status);
+                                    recipient.CreateUndermineJobOnly(actor, "informed", status);
                                 } else {
                                     reactions.Add("I just have to remove the poison and everything will go back to the way it was.");
                                 }
@@ -351,7 +351,7 @@ public class TablePoison : GoapAction {
                             } else if (targetIsSick) {
                                 if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                                     reactions.Add(string.Format("{0} poisoned me?! I will have my revenge!", actor.name));
-                                    recipient.CreateUndermineJobOnly(actor, "idle", status);
+                                    recipient.CreateUndermineJobOnly(actor, "informed", status);
                                 } else {
                                     reactions.Add("Relax. I didn't die. I just got sick. I'm sure I'll recover in no time.");
                                 }
@@ -363,10 +363,10 @@ public class TablePoison : GoapAction {
                             if (tableHasPoison) {
                                 reactions.Add(string.Format("{0} will not get away with this!", actor.name));
                                 CreateRemovePoisonJob(recipient, assumedTargetCharacter);
-                                recipient.CreateUndermineJobOnly(actor, "idle", status);
+                                recipient.CreateUndermineJobOnly(actor, "informed", status);
                             } else if (targetIsSick) {
                                 reactions.Add(string.Format("{0} will not get away with this!", actor.name));
-                                recipient.CreateUndermineJobOnly(actor, "idle", status);
+                                recipient.CreateUndermineJobOnly(actor, "informed", status);
                             } else {
                                 reactions.Add(string.Format("{0} will not get away with this! I knew those kind of people could never be trusted.", actor.name));
                             }

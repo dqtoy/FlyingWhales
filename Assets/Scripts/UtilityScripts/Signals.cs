@@ -99,6 +99,7 @@ public static class Signals {
     public static string CHARACTER_ENDED_STATE = "OnCharacterEndedState"; //Parameters (Character character, CharacterState state)
     public static string CHARACTER_SWITCHED_ALTER_EGO = "OnCharacterSwitchedAlterEgo"; //Parameters (Character character)
     public static string DETERMINE_COMBAT_REACTION = "DetermineCombatReaction"; //Parameters (Character character)
+    public static string TRANSFER_ENGAGE_TO_FLEE_LIST = "TransferEngageToFleeList"; //Parameters (Character character)
     #endregion
 
     #region UI
