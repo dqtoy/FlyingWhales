@@ -772,7 +772,7 @@ public class CharacterMarker : PooledObject {
         animator.speed = 1;
     }
     public void SetAnimationTrigger(string triggerName) {
-        Debug.Log("Set animation trigger " + triggerName + " of " + this.name);
+        //Debug.Log("Set animation trigger " + triggerName + " of " + this.name);
         if (triggerName == "Attack" && character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
             return; //because sometime trigger is set even though character is no longer in combat state. TODO: Find out why that is.
         }
