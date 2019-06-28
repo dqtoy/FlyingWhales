@@ -692,11 +692,12 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (_isDead) {
             SetIsDead(false);
             SubscribeToSignals();
+            ResetToFullHP();
             SetPOIState(POI_STATE.ACTIVE);
+            ChangeFactionTo(FactionManager.Instance.neutralFaction);
             ChangeRace(RACE.SKELETON);
             AssignRole(CharacterRole.SOLDIER);
             AssignClassByRole(this.role);
-            ChangeFactionTo(FactionManager.Instance.neutralFaction);
             _ownParty.ReturnToLife();
             marker.OnReturnToLife();
             if (grave != null) {

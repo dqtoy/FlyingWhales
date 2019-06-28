@@ -65,11 +65,12 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.ShowHPBar();
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
         stateComponent.character.StopCurrentAction(false);
+        stateComponent.character.currentParty.RemoveAllOtherCharacters(); //Drop characters when entering combat
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Starting combat state for " + stateComponent.character.name);
         base.StartState();
-        stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
         Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+        stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
     protected override void EndState() {
         stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
