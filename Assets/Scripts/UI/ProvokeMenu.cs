@@ -44,27 +44,27 @@ public class ProvokeMenu : MonoBehaviour {
     private void ProvokeAction(ref string targetText, ref string actorText) {
         bool succeedProvoke = false;
         if (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY, false)) {
-            succeedProvoke = true;
-            //CHARACTER_MOOD currentMood = targetCharacter.currentMoodType;
-            //if(currentMood == CHARACTER_MOOD.GREAT) {
-            //    int chance = UnityEngine.Random.Range(0, 100);
-            //    if(chance < 70) {
-            //        actorText = "You should take revenge on your enemies.";
-            //        targetText = "I am too happy right now to even care about my enemies.";
-            //    } else {
-            //        succeedProvoke = true;
-            //    }
-            //} else if (currentMood == CHARACTER_MOOD.GOOD) {
-            //    int chance = UnityEngine.Random.Range(0, 2);
-            //    if (chance == 0) {
-            //        actorText = "You should take revenge on your enemies.";
-            //        targetText = "I am too happy right now to even care about my enemies.";
-            //    } else {
-            //        succeedProvoke = true;
-            //    }
-            //} else {
-            //    succeedProvoke = true;
-            //}
+            //succeedProvoke = true;
+            CHARACTER_MOOD currentMood = targetCharacter.currentMoodType;
+            if (currentMood == CHARACTER_MOOD.GREAT) {
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < 70) {
+                    actorText = "You should take revenge on your enemies.";
+                    targetText = "I am too happy right now to even care about my enemies.";
+                } else {
+                    succeedProvoke = true;
+                }
+            } else if (currentMood == CHARACTER_MOOD.GOOD) {
+                int chance = UnityEngine.Random.Range(0, 2);
+                if (chance == 0) {
+                    actorText = "You should take revenge on your enemies.";
+                    targetText = "I am too happy right now to even care about my enemies.";
+                } else {
+                    succeedProvoke = true;
+                }
+            } else {
+                succeedProvoke = true;
+            }
         } else {
             actorText = "You should take revenge on your enemies.";
             targetText = "Sorry, I don't have any.";
