@@ -331,49 +331,27 @@ public class CombatState : CharacterState {
         StopPursueTimer();
 
         stateComponent.character.FaceTarget(currentClosestHostile);
-        string attackSummary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " will attack " + currentClosestHostile.name;
-
-        GameManager.Instance.CreateHitEffectAt(currentClosestHostile);
-        //TODO: For readjustment, attack power is the old computation
-        currentClosestHostile.AdjustHP(-stateComponent.character.attackPower);
-        attackSummary += "\nDealt damage " + stateComponent.character.attackPower.ToString();
+        stateComponent.character.marker.SetAnimationTrigger("Attack");
+    }
+    public void OnAttackHit(Character characterHit) {
+        string attackSummary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " hit " + characterHit.name;
+        if (characterHit != currentClosestHostile) {
+            attackSummary = stateComponent.character.name + " hit " + characterHit.name + " instead of " + currentClosestHostile.name + "!";
+        }
 
         //Reset Attack Speed
         stateComponent.character.marker.ResetAttackSpeed();
+        characterHit.OnHitByAttackFrom(stateComponent.character, ref attackSummary);
 
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
-        if(currentClosestHostile.currentHP <= 0) {
-            attackSummary += "\n" + currentClosestHostile.name + "'s hp has reached 0.";
-            WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
-            if (currentClosestHostile.GetNormalTrait("Unconscious") == null) {
-                loserResults.AddElement("Unconscious", 30);
-            }
-            //if (currentClosestHostile.GetNormalTrait("Injured") == null) {
-            //    loserResults.AddElement("Injured", 10);
-            //}
-            loserResults.AddElement("Death", 5);
+        if (characterHit.currentHP > 0) {
+            attackSummary += "\n" + characterHit.name + " still has remaining hp " + characterHit.currentHP.ToString() + "/" + characterHit.maxHP.ToString();
+            //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
+            if (characterHit == currentClosestHostile) {
+                if (!currentClosestHostile.marker.hostilesInRange.Contains(stateComponent.character)) {
+                    currentClosestHostile.marker.AddHostileInRange(stateComponent.character, CHARACTER_STATE.COMBAT); //When the target is hit and it is still alive, add hostile
+                }
 
-            string result = loserResults.PickRandomElementGivenWeights();
-            attackSummary += "\nCombat result is " + result; ;
-            switch (result) {
-                case "Unconscious":
-                    Unconscious unconscious = new Unconscious();
-                    currentClosestHostile.AddTrait(unconscious, stateComponent.character);
-                    break;
-                case "Injured":
-                    Injured injured = new Injured();
-                    currentClosestHostile.AddTrait(injured, stateComponent.character);
-                    break;
-                case "Death":
-                    currentClosestHostile.Death(responsibleCharacter: stateComponent.character);
-                    break;
-            }
-        } else {
-            attackSummary += "\n" + currentClosestHostile.name + " still has remaining hp " + currentClosestHostile.currentHP.ToString() + "/" + currentClosestHostile.maxHP.ToString();
-            //If the enemy still has hp, check if still in range, then process again
-            //stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
-            if (!currentClosestHostile.marker.hostilesInRange.Contains(stateComponent.character)) {
-                currentClosestHostile.marker.AddHostileInRange(stateComponent.character, CHARACTER_STATE.COMBAT); //When the target is hit and it is still alive, add hostile
             }
         }
         Debug.Log(attackSummary);

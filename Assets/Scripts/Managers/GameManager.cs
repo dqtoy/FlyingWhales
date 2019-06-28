@@ -50,6 +50,7 @@ public class GameManager : MonoBehaviour {
     [Header("Particle Effects")]
     [SerializeField] private GameObject electricEffectPrefab;
     [SerializeField] private GameObject hitEffectPrefab;
+    [SerializeField] private GameObject fireEffectPrefab;
 
     private const float X1_SPEED = 0.75f;
     private const float X2_SPEED = 0.5f;
@@ -340,6 +341,16 @@ public class GameManager : MonoBehaviour {
     }
     private IEnumerator HitEffect(Character character) {
         GameObject go = GameObject.Instantiate(hitEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
+        go.SetActive(true);
+        go.transform.localPosition = Vector3.zero;
+        yield return new WaitForSeconds(2f);
+        GameObject.Destroy(go);
+    }
+    public void CreateFireEffectAt(Character character) {
+        StartCoroutine(FireEffect(character));
+    }
+    private IEnumerator FireEffect(Character character) {
+        GameObject go = GameObject.Instantiate(fireEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.SetActive(true);
         go.transform.localPosition = Vector3.zero;
         yield return new WaitForSeconds(2f);

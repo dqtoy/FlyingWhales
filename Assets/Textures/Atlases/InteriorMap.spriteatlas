@@ -129,6 +129,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 727bfeb5c999c6545a7e1f81b359cfbd, type: 3}
   - {fileID: 21300000, guid: f7c768c5d5971b245bf59d7a3e1d15b7, type: 3}
   - {fileID: 21300000, guid: d9ae31d554049214ba62b98bd07e4949, type: 3}
+  - {fileID: 21300000, guid: 64c9a4e55ceb5b045b904d95e742119b, type: 3}
   - {fileID: 21300000, guid: d1e20ae58b832e7478ae889735dce36b, type: 3}
   - {fileID: 21300000, guid: db8a44165c5814d4b871f608a71d4db2, type: 3}
   - {fileID: 21300000, guid: 15a00226e41e6bb449bc595e7eebe398, type: 3}
@@ -405,6 +406,7 @@ SpriteAtlas:
   - grave01
   - pine00
   - wallA-1000-00
+  - Arrow
   - flowers02
   - wall1111-00
   - caveWallA-1001-02

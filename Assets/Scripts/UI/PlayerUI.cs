@@ -173,6 +173,8 @@ public class PlayerUI : MonoBehaviour {
         }
         currentlyeShowingSlotIndex = index;
         UpdateRoleSlotScroll();
+        PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
+        CursorManager.Instance.ClearLeftClickActions(); //TODO: Change this to no clear all actions but just the ones concerened with the player abilities
     }
     private void UpdateRoleSlotScroll() {
         RoleSlotItem slotToShow = roleSlots[currentlyeShowingSlotIndex];

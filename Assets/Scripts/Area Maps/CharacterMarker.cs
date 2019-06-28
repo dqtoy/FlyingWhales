@@ -28,7 +28,7 @@ public class CharacterMarker : PooledObject {
     [SerializeField] private StringSpriteDictionary actionIconDictionary;
 
     [Header("Animation")]
-    [SerializeField] private Animator animator;
+    public Animator animator;
 
     [Header("Pathfinding")]
     public CharacterAIPath pathfindingAI;    
@@ -36,13 +36,12 @@ public class CharacterMarker : PooledObject {
     public Seeker seeker;
     [SerializeField] private Collider2D[] colliders;
     [SerializeField] private Rigidbody2D[] rgBodies;
-    //[SerializeField] private RVOController rvoController;
     public CharacterMarkerVisionCollision visionCollision;
-    //[SerializeField] private FleeingRVOController fleeingRVOController;
 
     [Header("Combat")]
     public GameObject hpBarGO;
     public Image hpFill;
+    public Transform projectileParent;
 
     [Header("For Testing")]
     [SerializeField] private SpriteRenderer colorHighlight;
@@ -51,7 +50,6 @@ public class CharacterMarker : PooledObject {
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<Character> avoidInRange { get; private set; } //POI's in this characters hostility collider
-
     public Action arrivalAction {
         get { return _arrivalAction; }
         private set {
@@ -84,6 +82,7 @@ public class CharacterMarker : PooledObject {
     public bool useCanTraverse;
 
     public float attackSpeedMeter { get; private set; }
+    private AnimatorOverrideController animatorOverrideController; //this is the controller that is made per character
 
     public void SetCharacter(Character character) {
         this.name = character.name + "'s Marker";
@@ -761,6 +760,19 @@ public class CharacterMarker : PooledObject {
             PlayIdle();
         }
     }
+    public void PauseAnimation() {
+        animator.speed = 0;
+    }
+    public void UnpauseAnimation() {
+        animator.speed = 1;
+    }
+    public void SetAnimationTrigger(string triggerName) {
+        Debug.Log("Set animation trigger " + triggerName + " of " + this.name);
+        if (triggerName == "Attack" && character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
+            return; //because sometime trigger is set even though character is no longer in combat state. TODO: Find out why that is.
+        }
+        animator.SetTrigger(triggerName);
+    }
     #endregion
 
     #region Utilities
@@ -839,7 +851,40 @@ public class CharacterMarker : PooledObject {
     public void UpdateMarkerVisuals() {
         MarkerAsset assets = CharacterManager.Instance.GetMarkerAsset(character.race, character.gender);
         mainImg.sprite = assets.defaultSprite;
-        animator.runtimeAnimatorController = assets.animator;
+        animatorOverrideController = new AnimatorOverrideController(assets.animator);
+        //for (int i = 0; i < assets.animator.animationClips.Length; i++) {
+        //    AnimationClip currClip = assets.animator.animationClips[i];
+        //    animatorOverrideController[currClip.name] = currClip;
+        //}
+        animatorOverrideController["Idle"] = assets.idle;
+        animatorOverrideController["Dead"] = assets.dead;
+        animatorOverrideController["Raise Dead"] = assets.raiseDead;
+        animatorOverrideController["Sleep Ground"] = assets.sleepGround;
+        animatorOverrideController["Walk"] = assets.walk;
+
+        //update attack animations based on class
+        AnimationClip attackClip = null;
+        if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+            attackClip = assets.biteClip;
+        } else {
+            switch (character.characterClass.rangeType) {
+                case RANGE_TYPE.MELEE:
+                    attackClip = assets.slashClip;
+                    break;
+                case RANGE_TYPE.RANGED:
+                    if (character.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                        attackClip = assets.arrowClip;
+                    } else {
+                        attackClip = assets.magicClip;
+                    }
+                    break;
+                default:
+                    attackClip = assets.slashClip;
+                    break;
+            }
+        }
+        animatorOverrideController["Attack"] = attackClip;
+        animator.runtimeAnimatorController = animatorOverrideController;
     }
     public void UpdatePosition() {
         //This is checked per update, stress test this for performance
