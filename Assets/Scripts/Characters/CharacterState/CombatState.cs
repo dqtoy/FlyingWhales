@@ -292,7 +292,7 @@ public class CombatState : CharacterState {
         }
 
         yield return null;
-        if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
+        if (stateComponent.currentState == this && !isExecutingAttack) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
             stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
         }
     }
@@ -332,7 +332,9 @@ public class CombatState : CharacterState {
 
         stateComponent.character.FaceTarget(currentClosestHostile);
         stateComponent.character.marker.SetAnimationTrigger("Attack");
+        isExecutingAttack = true;
     }
+    public bool isExecutingAttack;
     public void OnAttackHit(Character characterHit) {
         string attackSummary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " hit " + characterHit.name;
         if (characterHit != currentClosestHostile) {
@@ -355,6 +357,9 @@ public class CombatState : CharacterState {
             }
         }
         Debug.Log(attackSummary);
+        if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
+            stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
+        }
     }
     private void StartPursueTimer() {
         if (!_hasTimerStarted) {

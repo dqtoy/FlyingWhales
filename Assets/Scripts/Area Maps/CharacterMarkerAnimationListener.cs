@@ -14,6 +14,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         //Debug.Log(parentMarker.name + " attacked!");
         if (parentMarker.character.stateComponent.currentState is CombatState) {
             CombatState combatState = parentMarker.character.stateComponent.currentState as CombatState;
+            combatState.isExecutingAttack = false;
             if (parentMarker.character.characterClass.rangeType == RANGE_TYPE.RANGED) {
                 if (parentMarker.character.characterClass.attackType == ATTACK_TYPE.MAGICAL) {
                     CreateMagicalHit(combatState.currentClosestHostile);
