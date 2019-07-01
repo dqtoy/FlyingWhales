@@ -42,6 +42,7 @@ public class CombatState : CharacterState {
         if (!isAttacking && stateComponent.character.homeArea != null && stateComponent.character.homeArea != stateComponent.character.specificLocation && stateComponent.character.gridTileLocation.IsAtEdgeOfWalkableMap()) {
             StopStatePerTick();
             OnExitThisState();
+            //stateComponent.character.PlanIdleReturnHome();
             stateComponent.character.currentParty.GoToLocation(stateComponent.character.homeArea, PATHFINDING_MODE.NORMAL, stateComponent.character.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS), null, null, null, null);
             return;
         }

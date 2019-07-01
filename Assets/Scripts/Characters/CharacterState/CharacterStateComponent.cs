@@ -152,8 +152,13 @@ public class CharacterStateComponent {
                     if(previousMajorState.characterState == CHARACTER_STATE.BERSERKED && character.doNotDisturb == 1 && character.GetNormalTrait("Combat Recovery") != null) { //Quick fix only for build, MUST REDO
                         if (previousMajorState.hasStarted) {
                             //Resumes previous major state
-                            SetCurrentState(previousMajorState);
-                            currentState.ResumeState();
+                            if (previousMajorState.CanResumeState()) {
+                                SetCurrentState(previousMajorState);
+                                currentState.ResumeState();
+                            } else {
+                                previousMajorState = null;
+                                SetCurrentState(null);
+                            }
                         } else {
                             previousMajorState.EnterState(previousMajorState.targetArea);
                         }
@@ -164,8 +169,13 @@ public class CharacterStateComponent {
                 } else {
                     if (previousMajorState.hasStarted) {
                         //Resumes previous major state
-                        SetCurrentState(previousMajorState);
-                        currentState.ResumeState();
+                        if (previousMajorState.CanResumeState()) {
+                            SetCurrentState(previousMajorState);
+                            currentState.ResumeState();
+                        } else {
+                            previousMajorState = null;
+                            SetCurrentState(null);
+                        }
                     } else {
                         previousMajorState.EnterState(previousMajorState.targetArea);
                     }
@@ -212,5 +222,9 @@ public class CharacterStateComponent {
                 break;
         }
         return newState;
+    }
+
+    public void ClearPreviousState() {
+        previousMajorState = null;
     }
 }

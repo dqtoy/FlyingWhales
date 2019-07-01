@@ -108,6 +108,9 @@ public class CharacterState {
     public virtual void AfterExitingState() {
         stateComponent.character.marker.UpdateActionIcon();
     }
+    public virtual bool CanResumeState() {
+        return true;
+    }
     #endregion
 
     private void FakeEndAction(string str, GoapAction action) {

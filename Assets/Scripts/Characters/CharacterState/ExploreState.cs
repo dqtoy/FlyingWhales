@@ -30,7 +30,19 @@ public class ExploreState : CharacterState {
 
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
-        StartExploreMovement();
+        //if (stateComponent.character.specificLocation != targetArea
+        //    || stateComponent.character.currentParty.icon.isTravelling) {
+        //    OnExitThisState(); //so that when a character resumes this state, but is in a different area he/she will exit this state
+        //} else {
+            StartExploreMovement();
+        //}
+    }
+    public override bool CanResumeState() {
+        if (stateComponent.character.specificLocation != targetArea
+            || stateComponent.character.currentParty.icon.isTravelling) {
+            return false;
+        }
+        return true;
     }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if (targetPOI is Character) {
@@ -71,7 +83,7 @@ public class ExploreState : CharacterState {
     protected override void PerTickInState() {
         base.PerTickInState();
         if (!isDone && !isPaused) {
-            if (stateComponent.character.GetNormalTrait("Injured") != null) {
+            if (stateComponent.character.GetNormalTrait("Injured") != null || targetArea != stateComponent.character.specificLocation) {
                 StopStatePerTick();
                 OnExitThisState();
                 return;

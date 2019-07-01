@@ -8,7 +8,7 @@ using System;
 public class CharacterAvatar : MonoBehaviour{
 
     private Action onPathFinished;
-    private Action onPathReceived;
+    private Action onPathStarted;
     private Action onPathCancelled;
     private Action onArriveAction;
 
@@ -129,7 +129,7 @@ public class CharacterAvatar : MonoBehaviour{
     public void SetOnArriveAction(Action action) {
         onArriveAction = action;
     }
-    public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, Action actionOnPathReceived = null) {
+    public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, Action actionOnPathStart = null) {
         //if (smoothMovement.isMoving) {
         //    smoothMovement.ForceStopMovement();
         //}
@@ -147,6 +147,7 @@ public class CharacterAvatar : MonoBehaviour{
         if (targetLocation != null) {
             SetOnPathFinished(actionOnPathFinished);
             StartTravelling();
+            actionOnPathStart?.Invoke();
         }
     }
     public void CancelTravel(Action onCancelTravel = null) {
@@ -162,10 +163,10 @@ public class CharacterAvatar : MonoBehaviour{
         for (int i = 0; i < _party.characters.Count; i++) {
             _party.characters[i].SetPOIState(POI_STATE.INACTIVE);
         }
-        _party.owner.marker.gameObject.SetActive(false);
         _distanceToTarget = PathGenerator.Instance.GetTravelTime(_party.specificLocation.coreTile, targetLocation.coreTile);
         _travelLine = _party.specificLocation.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
         _travelLine.SetActiveMeter(isVisualShowing);
+        _party.owner.marker.gameObject.SetActive(false);
         Messenger.AddListener(Signals.TICK_STARTED, TraverseCurveLine);
         Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, this.party);
     }
@@ -271,8 +272,8 @@ public class CharacterAvatar : MonoBehaviour{
             //    _party.specificLocation.coreTile.landmarkOnTile.landmarkVisual.OnCharacterExitedLandmark(_party);
             //}
             NewMove();
-            if(onPathReceived != null) {
-                onPathReceived();
+            if(onPathStarted != null) {
+                onPathStarted();
             }
         }
     }
@@ -415,7 +416,7 @@ public class CharacterAvatar : MonoBehaviour{
         //base.Reset();
         smoothMovement.Reset();
         SetOnPathFinished(null);
-        onPathReceived = null;
+        onPathStarted = null;
         direction = DIRECTION.LEFT;
         //targetLocation = null;
         path = null;
