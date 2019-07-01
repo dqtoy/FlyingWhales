@@ -7,7 +7,7 @@ public class Bed : TileObject {
     private Character[] bedUsers; //array of characters, currently using the bed
 
     public override Character[] users {
-        get { return bedUsers; }
+        get { return bedUsers.Where(x => x != null).ToArray(); }
     }
 
     public Bed(LocationStructure location) {

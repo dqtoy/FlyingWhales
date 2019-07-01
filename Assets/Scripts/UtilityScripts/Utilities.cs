@@ -1915,6 +1915,50 @@ public class Utilities : MonoBehaviour {
             (Vector2)scrollRect.transform.InverseTransformPoint(scrollRect.content.position)
             - (Vector2)scrollRect.transform.InverseTransformPoint(target.position);
     }
+    public static void GetAnchorMinMax(TextAnchor type, ref Vector2 anchorMin, ref Vector2 anchorMax) {
+        switch (type) {
+            case TextAnchor.UpperLeft:
+                anchorMin = new Vector2(0f, 1f);
+                anchorMax = new Vector2(0f, 1f);
+                break;
+            case TextAnchor.UpperCenter:
+                anchorMin = new Vector2(0.5f, 1f);
+                anchorMax = new Vector2(0.5f, 1f);
+                break;
+            case TextAnchor.UpperRight:
+                anchorMin = new Vector2(1f, 1f);
+                anchorMax = new Vector2(1f, 1f);
+                break;
+            case TextAnchor.MiddleLeft:
+                anchorMin = new Vector2(0f, 0.5f);
+                anchorMax = new Vector2(0f, 0.5f);
+                break;
+            case TextAnchor.MiddleCenter:
+                anchorMin = new Vector2(0.5f, 0.5f);
+                anchorMax = new Vector2(0.5f, 0.5f);
+                break;
+            case TextAnchor.MiddleRight:
+                anchorMin = new Vector2(1f, 0.5f);
+                anchorMax = new Vector2(1f, 0.5f);
+                break;
+            case TextAnchor.LowerLeft:
+                anchorMin = new Vector2(0f, 0f);
+                anchorMax = new Vector2(0f, 0f);
+                break;
+            case TextAnchor.LowerCenter:
+                anchorMin = new Vector2(0.5f, 0f);
+                anchorMax = new Vector2(0.5f, 0f);
+                break;
+            case TextAnchor.LowerRight:
+                anchorMin = new Vector2(1f, 0f);
+                anchorMax = new Vector2(1f, 0f);
+                break;
+            default:
+                anchorMin = new Vector2(1f, 1f);
+                anchorMax = new Vector2(1f, 1f);
+                break;
+        }
+    }
     #endregion
 
     #region Dictionary

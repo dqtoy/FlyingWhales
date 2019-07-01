@@ -1,11 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Spook : PlayerJobAction {
-
-    private Character _targetCharacter;
-
     public Spook() {
         name = "Spook";
         SetDefaultCooldownTime(24);
@@ -13,16 +11,39 @@ public class Spook : PlayerJobAction {
     }
 
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+        List<Character> targets = new List<Character>();
         if (targetPOI is Character) {
-            _targetCharacter = targetPOI as Character;
+            targets.Add(targetPOI as Character);
+        } else if (targetPOI is TileObject) {
+            TileObject to = targetPOI as TileObject;
+            if (to.users != null) { targets.AddRange(to.users); }
         } else {
             return;
         }
-        base.ActivateAction(assignedCharacter, _targetCharacter);
-        Trait newTrait = new Spooked();
-        _targetCharacter.AddTrait(newTrait);
+        if (targets.Count > 0) {
+            for (int i = 0; i < targets.Count; i++) {
+                Character currTarget = targets[i];
+                if (CanPerformActionTowards(assignedCharacter, currTarget)) {
+                    Trait newTrait = new Spooked();
+                    currTarget.AddTrait(newTrait);
+                }
+            }
+            base.ActivateAction(assignedCharacter, targets[0]);
+        }
     }
-
+    protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
+        if (targetPOI is TileObject) {
+            TileObject to = targetPOI as TileObject;
+            if (to.users != null) {
+                for (int i = 0; i < to.users.Length; i++) {
+                    Character currUser = to.users[i];
+                    bool canTarget = CanPerformActionTowards(character, currUser);
+                    if (canTarget) { return true; }
+                }
+            }
+        }
+        return false;
+    }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
         if (targetCharacter.isDead || character.id == targetCharacter.id) {
             return false;
@@ -30,20 +51,33 @@ public class Spook : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Spook") != null) {
             return false;
         }
-        if (targetCharacter.marker.inVisionPOIs.Count == 0) {
+        if (targetCharacter.marker.inVisionPOIs.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).ToList().Count == 0) {
             return false;
         }
         return base.CanPerformActionTowards(character, targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
-        if (!(targetPOI is Character)) {
-            return false;
+        if (targetPOI is Character) {
+            return CanTarget(targetPOI as Character);
+        } else if (targetPOI is TileObject) {
+            TileObject to = targetPOI as TileObject;
+            if (to.users != null) {
+                for (int i = 0; i < to.users.Length; i++) {
+                    Character currUser = to.users[i];
+                    if (currUser != null) {
+                        bool canTarget = CanTarget(currUser);
+                        if (canTarget) { return true; }
+                    }
+                }
+            }
         }
-        Character targetCharacter = targetPOI as Character;
+        return false;
+    }
+    private bool CanTarget(Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.marker.inVisionPOIs.Count == 0) {
+        if (targetCharacter.marker.inVisionPOIs.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).ToList().Count == 0) {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Spook") != null) {
@@ -52,6 +86,6 @@ public class Spook : PlayerJobAction {
         //if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
         //    return false;
         //}
-        return base.CanTarget(targetCharacter);
-    }   
+        return true;
+    }
 }

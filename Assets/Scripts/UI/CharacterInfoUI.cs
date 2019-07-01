@@ -65,9 +65,9 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private ScrollRect memoriesScrollView;
     public MemoryItem[] memoryItems { get; private set; }
 
-    private CombatAttributeItem[] statusTraitContainers;
-    private CombatAttributeItem[] normalTraitContainers;
-    private CombatAttributeItem[] relationshipTraitContainers;
+    private TraitItem[] statusTraitContainers;
+    private TraitItem[] normalTraitContainers;
+    private TraitItem[] relationshipTraitContainers;
     private ItemContainer[] inventoryItemContainers;
 
     private LogHistoryItem[] logHistoryItems;
@@ -99,9 +99,9 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterChangedAlterEgo);
 
-        statusTraitContainers = Utilities.GetComponentsInDirectChildren<CombatAttributeItem>(statusTraitsScrollView.content.gameObject);
-        normalTraitContainers = Utilities.GetComponentsInDirectChildren<CombatAttributeItem>(normalTraitsScrollView.content.gameObject);
-        relationshipTraitContainers = Utilities.GetComponentsInDirectChildren<CombatAttributeItem>(relationshipTraitsScrollView.content.gameObject);
+        statusTraitContainers = Utilities.GetComponentsInDirectChildren<TraitItem>(statusTraitsScrollView.content.gameObject);
+        normalTraitContainers = Utilities.GetComponentsInDirectChildren<TraitItem>(normalTraitsScrollView.content.gameObject);
+        relationshipTraitContainers = Utilities.GetComponentsInDirectChildren<TraitItem>(relationshipTraitsScrollView.content.gameObject);
         inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(itemsScrollView.content.gameObject);
 
         //InitializeMemoryUI();

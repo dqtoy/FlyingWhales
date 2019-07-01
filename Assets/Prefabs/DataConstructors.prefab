@@ -76,6 +76,8 @@ MonoBehaviour:
     - Kleptomaniac
     - Sick
     - Cursed
+    - Vampiric
+    - Unfaithful
     m_values:
     - {fileID: 21300000, guid: 360bd7c134b76554488e42b1b995ce62, type: 3}
     - {fileID: 21300000, guid: b657484a4dbd1c34d9511855a8a101af, type: 3}
@@ -96,6 +98,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 69b99f864b21aaf468543d8e4f78d683, type: 3}
     - {fileID: 21300000, guid: 257cb5c595824e446984088e48242b6b, type: 3}
     - {fileID: 21300000, guid: 7cfbe25a31be2aa4c909bf1a7c6742a4, type: 3}
+    - {fileID: 21300000, guid: d7c17715bebc81d4a9b8828befcde77f, type: 3}
+    - {fileID: 21300000, guid: 8f5344dcd2d2212439068edd05e22193, type: 3}
 --- !u!114 &114379826282364466
 MonoBehaviour:
   m_ObjectHideFlags: 1

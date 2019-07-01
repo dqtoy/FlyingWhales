@@ -87,12 +87,6 @@ public class LocationStructure {
             _itemsHere.Add(token);
             token.SetStructureLocation(this);
             AddPOI(token, gridLocation);
-            if (this.structureType == STRUCTURE_TYPE.WAREHOUSE) { //if an item is dropped at a warehouse, inform all residents of that area
-                for (int i = 0; i < this.location.areaResidents.Count; i++) {
-                    Character currCharacter = this.location.areaResidents[i];
-                    currCharacter.AddAwareness(token);
-                }
-            }
         }
     }
     public void RemoveItem(SpecialToken token) {

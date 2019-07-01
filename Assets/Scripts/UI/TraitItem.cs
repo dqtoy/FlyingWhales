@@ -5,28 +5,28 @@ using UnityEngine.UI;
 using TMPro;
 using System.Linq;
 
-public class CombatAttributeItem : MonoBehaviour {
+public class TraitItem : MonoBehaviour {
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI descriptionText;
     public Image iconImg;
 
     [SerializeField] private CharacterPortrait portrait;
 
-    private Trait _combatAttribute;
+    private Trait trait;
 
-    public void SetCombatAttribute(Trait combatAttribute) {
-        _combatAttribute = combatAttribute;
-        nameText.text = _combatAttribute.nameInUI;
+    public void SetCombatAttribute(Trait trait) {
+        this.trait = trait;
+        nameText.text = this.trait.nameInUI;
 
-        if (_combatAttribute is RelationshipTrait) {
-            RelationshipTrait relTrait = _combatAttribute as RelationshipTrait;
+        if (this.trait is RelationshipTrait) {
+            RelationshipTrait relTrait = this.trait as RelationshipTrait;
             portrait.GeneratePortrait(relTrait.targetCharacter);
             portrait.gameObject.SetActive(true);
             iconImg.gameObject.SetActive(false);
             portrait.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
         } else {
             portrait.gameObject.SetActive(false);
-            Sprite icon = AttributeManager.Instance.GetTraitIcon(combatAttribute.name);
+            Sprite icon = AttributeManager.Instance.GetTraitIcon(trait.name);
             if (icon != null) {
                 iconImg.sprite = icon;
                 iconImg.gameObject.SetActive(true);
@@ -35,16 +35,16 @@ public class CombatAttributeItem : MonoBehaviour {
             }
         }
 
-        
-        descriptionText.text = _combatAttribute.description;
+
+        descriptionText.text = this.trait.description;
         this.gameObject.SetActive(true);
     }
 
     public void OnHover() {
-        if(_combatAttribute != null) {
-            string summary = _combatAttribute.nameInUI;
-            if (_combatAttribute is RelationshipTrait) {
-                RelationshipTrait t = _combatAttribute as RelationshipTrait;
+        if(trait != null) {
+            string summary = trait.nameInUI;
+            if (trait is RelationshipTrait) {
+                RelationshipTrait t = trait as RelationshipTrait;
                 for (int i = 0; i < t.targetCharacter.alterEgos.Values.Count; i++) {
                     AlterEgoData currAlterEgo = t.targetCharacter.alterEgos.Values.ElementAt(i);
                     if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipWith(currAlterEgo, true)) {
@@ -60,7 +60,7 @@ public class CombatAttributeItem : MonoBehaviour {
                 //    summary = string.Empty;
                 //}
             } else {
-                summary += "\n" + _combatAttribute.GetTestingData();
+                summary += "\n" + trait.GetTestingData();
             }
             if(summary != string.Empty) {
                 UIManager.Instance.ShowSmallInfo(summary);
@@ -68,7 +68,7 @@ public class CombatAttributeItem : MonoBehaviour {
         }
     }
     public void OnHoverOut() {
-        if (_combatAttribute != null) {
+        if (trait != null) {
             UIManager.Instance.HideSmallInfo();
         }
     }

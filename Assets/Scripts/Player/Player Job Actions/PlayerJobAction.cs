@@ -29,8 +29,8 @@ public class PlayerJobAction {
         isActive = true;
         parentData.SetActiveAction(this);
         ActivateCooldown();
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
+        //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //Messenger.AddListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
     }
     public virtual void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) { //this is called when the actions button is pressed
         ActivateAction(assignedCharacter);
@@ -42,8 +42,8 @@ public class PlayerJobAction {
         this.assignedCharacter = null;
         isActive = false;
         parentData.SetActiveAction(null);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.RemoveListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
+        //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //Messenger.RemoveListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
     }
     protected virtual void OnCharacterDied(Character characterThatDied) {
         if (assignedCharacter != null && characterThatDied.id == assignedCharacter.id) {
@@ -66,6 +66,12 @@ public class PlayerJobAction {
         }
         return true;
     }
+    /// <summary>
+    /// Can this action be performed this instant? This considers cooldown.
+    /// </summary>
+    /// <param name="character">The character that will perform the action (Minion).</param>
+    /// <param name="obj">The target object.</param>
+    /// <returns>True or False.</returns>
     public virtual bool CanPerformActionTowards(Character character, object obj) {
         if (obj is Character) {
             return CanPerformActionTowards(character, obj as Character);

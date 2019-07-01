@@ -604,6 +604,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
         Messenger.AddListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
+        Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
 
     }
     public void UnsubscribeSignals() {
@@ -617,6 +619,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
         Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
         Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
+        Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
     }
     #endregion
 
@@ -693,6 +697,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             SetIsDead(false);
             SubscribeToSignals();
             ResetToFullHP();
+            ResetFullnessMeter();
+            ResetTirednessMeter();
+            ResetHappinessMeter();
             SetPOIState(POI_STATE.ACTIVE);
             ChangeFactionTo(FactionManager.Instance.neutralFaction);
             ChangeRace(RACE.SKELETON);
@@ -2750,7 +2757,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     //Add log to this character and show notif of that log only if this character is clicked or tracked, otherwise, add log only
-    public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "", GoapAction goapAction = null) {
+    public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "", GoapAction goapAction = null, bool onlyClickedCharacter = true) {
         if (!GameManager.Instance.gameHasStarted) {
             return;
         }
@@ -2763,7 +2770,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
         addLog.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, true);
+        PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, onlyClickedCharacter);
     }
     private void OnActionStateSet(GoapAction action, GoapActionState state) {
         if (action.actor != this && action.poiTarget != this) {
@@ -5317,6 +5324,17 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
         return false;
+    }
+    private void OnItemRemovedFromTile(SpecialToken removedItem, LocationGridTile removedFrom) {
+        //whenever an item is removed from a tile, remove all characters that are aware of it to prevent this issue. 
+        //https://trello.com/c/JEg9o5Ox/2352-scrapping-healing-potion-in-outskirts
+        RemoveAwareness(removedItem); 
+    }
+    private void OnItemPlacedOnTile(SpecialToken addedItem, LocationGridTile addedTo) {
+        //if an item is dropped at a warehouse, inform all residents of that area
+        if (addedTo.structure.structureType == STRUCTURE_TYPE.WAREHOUSE && addedTo.parentAreaMap.area == this.homeArea) { 
+            AddAwareness(addedItem);
+        }
     }
     #endregion
 

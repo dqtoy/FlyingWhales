@@ -234,8 +234,10 @@ public class SpecialToken : Token, IPointOfInterest {
         this.tile = tile;
         if (tile == null) {
             DisableCollisionTrigger();
+            Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, this, tile);
         } else {
             PlaceCollisionTriggerAt(tile);
+            Messenger.Broadcast<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, this, tile);
         }
     }
     public LocationGridTile GetNearestUnoccupiedTileFromThis() {

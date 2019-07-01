@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CorruptKleptomaniac : PlayerJobAction {
-    private Character _targetCharacter;
-
-
     public CorruptKleptomaniac() {
         name = "Inflict Kleptomania";
         SetDefaultCooldownTime(24);
@@ -13,17 +10,40 @@ public class CorruptKleptomaniac : PlayerJobAction {
     }
 
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+        List<Character> targets = new List<Character>();
         if (targetPOI is Character) {
-            _targetCharacter = targetPOI as Character;
+            targets.Add(targetPOI as Character);
+        } else if (targetPOI is TileObject) {
+            TileObject to = targetPOI as TileObject;
+            if (to.users != null) { targets.AddRange(to.users); }
         } else {
             return;
         }
-        base.ActivateAction(assignedCharacter, _targetCharacter);
-        Trait newTrait = new Kleptomaniac();
-        _targetCharacter.AddTrait(newTrait);
-        _targetCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, newTrait.name);
+        if (targets.Count > 0) {
+            for (int i = 0; i < targets.Count; i++) {
+                Character currTarget = targets[i];
+                if (CanPerformActionTowards(assignedCharacter, currTarget)) {
+                    Trait newTrait = new Kleptomaniac();
+                    currTarget.AddTrait(newTrait);
+                    currTarget.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, newTrait.name, onlyClickedCharacter: false);
+                }
+            }
+            base.ActivateAction(assignedCharacter, targets[0]);
+        }
     }
-
+    protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
+        if (targetPOI is TileObject) {
+            TileObject to = targetPOI as TileObject;
+            if (to.users != null) {
+                for (int i = 0; i < to.users.Length; i++) {
+                    Character currUser = to.users[i];
+                    bool canTarget = CanPerformActionTowards(character, currUser);
+                    if (canTarget) { return true; }
+                }
+            }
+        }
+        return false;
+    }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
         if (targetCharacter.isDead || character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
@@ -37,10 +57,23 @@ public class CorruptKleptomaniac : PlayerJobAction {
         return base.CanPerformActionTowards(character, targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
-        if (!(targetPOI is Character)) {
-            return false;
+        if (targetPOI is Character) {
+            return CanTarget(targetPOI as Character);
+        } else if (targetPOI is TileObject) {
+            TileObject to = targetPOI as TileObject;
+            if (to.users != null) {
+                for (int i = 0; i < to.users.Length; i++) {
+                    Character currUser = to.users[i];
+                    if (currUser != null) {
+                        bool canTarget = CanTarget(currUser);
+                        if (canTarget) { return true; }
+                    }
+                }
+            }
         }
-        Character targetCharacter = targetPOI as Character;
+        return false;
+    }
+    private bool CanTarget(Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;
         }
@@ -50,6 +83,6 @@ public class CorruptKleptomaniac : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Kleptomaniac") != null) {
             return false;
         }
-        return base.CanTarget(targetCharacter);
+        return true;
     }
 }

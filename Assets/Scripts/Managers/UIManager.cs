@@ -567,9 +567,18 @@ public class UIManager : MonoBehaviour {
     }
     private void PositionTooltip(UIHoverPosition position, GameObject tooltipParent, RectTransform rt) {
         tooltipParent.transform.SetParent(position.transform);
+        RectTransform tooltipParentRT = tooltipParent.transform as RectTransform;
+        tooltipParentRT.pivot = position.pivot;
+
+        Vector2 anchorMin = Vector2.zero;
+        Vector2 anchorMax = Vector2.zero;
+        Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
+        tooltipParentRT.anchorMin = anchorMin;
+        tooltipParentRT.anchorMax = anchorMax;
+        tooltipParentRT.anchoredPosition = Vector2.zero;
+
         smallInfoBGParentLG.childAlignment = position.anchor;
         rt.pivot = position.pivot;
-        (tooltipParent.transform as RectTransform).anchoredPosition = Vector2.zero;
     }
     public void ShowSmallLocationInfo(Area area, RectTransform initialParent, Vector2 adjustment, string subText = "") {
         locationSmallInfo.ShowAreaInfo(area, subText);
