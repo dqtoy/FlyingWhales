@@ -722,6 +722,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null) {
         if (!_isDead) {
+            Area deathLocation = ownParty.specificLocation;
+            LocationStructure deathStructure = currentStructure;
+            LocationGridTile deathTile = gridTileLocation;
+
             SetIsDead(true);
             UnsubscribeSignals();
             SetPOIState(POI_STATE.INACTIVE);
@@ -741,15 +745,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 currentAction.StopAction();
             }
             if (ownParty.specificLocation != null && isHoldingItem) {
-                DropAllTokens(ownParty.specificLocation, currentStructure, true);
+                DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
             }
 
             //clear traits that need to be removed
-            traitsNeededToBeRemoved.Clear();
-
-            Area deathLocation = ownParty.specificLocation;
-            LocationStructure deathStructure = currentStructure;
-            LocationGridTile deathTile = gridTileLocation;
+            traitsNeededToBeRemoved.Clear();           
 
             if (!IsInOwnParty()) {
                 _currentParty.RemoveCharacter(this);
@@ -3005,6 +3005,25 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
+    /// <summary>
+    /// Function to check what a character will do when he/she sees a hostile.
+    /// </summary>
+    /// <returns>True or False(True if the character will not flee, and false if otherwise).</returns>
+    public bool IsCombatReady() {
+        if (IsHealthCriticallyLow()) {
+            return false;
+        }
+        if (isStarving || isExhausted) {
+            return false;
+        }
+        if (GetNormalTrait("Spooked") != null) {
+            return false;
+        }
+        if (GetNormalTrait("Injured") != null) {
+            return false;
+        }
+        return true;
+    }
     #endregion
 
     #region Portrait Settings
@@ -5168,14 +5187,15 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         }
     }
-    public void DropAllTokens(Area location, LocationStructure structure, bool removeFactionOwner = false) {
+    public void DropAllTokens(Area location, LocationStructure structure, LocationGridTile tile, bool removeFactionOwner = false) {
         while (isHoldingItem) {
             SpecialToken token = items[0];
             if (UnobtainToken(token)) {
                 if (removeFactionOwner) {
                     token.SetOwner(null);
                 }
-                location.AddSpecialTokenToLocation(token, structure);
+                LocationGridTile targetTile = tile.GetNearestUnoccupiedTileFromThis();
+                location.AddSpecialTokenToLocation(token, structure, targetTile);
                 if (structure != homeStructure) {
                     //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
                     token.SetCharacterOwner(null);

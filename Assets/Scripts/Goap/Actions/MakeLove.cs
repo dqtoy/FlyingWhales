@@ -39,6 +39,10 @@ public class MakeLove : GoapAction {
     }
     public override void OnStopActionDuringCurrentState() {
         actor.ownParty.RemoveCharacter(targetCharacter);
+        RemoveTraitFrom(targetCharacter, "Wooed");
+        if (targetCharacter.currentAction == this) {
+            targetCharacter.SetCurrentAction(null);
+        }
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
