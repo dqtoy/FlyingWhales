@@ -481,9 +481,9 @@ MonoBehaviour:
       sleepGround: {fileID: 7400000, guid: d4eed393a7cc61b45835540462888a57, type: 2}
       dead: {fileID: 0}
       raiseDead: {fileID: 0}
-      slashClip: {fileID: 7400000, guid: 7a7f8b33001b58e4ba5ef8c5d36c855d, type: 2}
-      magicClip: {fileID: 7400000, guid: 064c528a6e1311542839ce27b5cd6a01, type: 2}
-      arrowClip: {fileID: 7400000, guid: 8e5e076f01148a949a6185c83d94bf82, type: 2}
+      slashClip: {fileID: 7400000, guid: 31659a02d1bffbe46bafc396b093c774, type: 2}
+      magicClip: {fileID: 7400000, guid: 9ae6415e888c697408dba7720702c529, type: 2}
+      arrowClip: {fileID: 7400000, guid: e85ab549b3f771348b8f5f857aadc461, type: 2}
       biteClip: {fileID: 7400000, guid: b61ab7905b820624da705a91cca5d04d, type: 2}
     femaleAssets:
       gender: 1
@@ -496,9 +496,9 @@ MonoBehaviour:
       sleepGround: {fileID: 7400000, guid: 8fa0d90943c737c469493b15097c7435, type: 2}
       dead: {fileID: 0}
       raiseDead: {fileID: 0}
-      slashClip: {fileID: 7400000, guid: 7a7f8b33001b58e4ba5ef8c5d36c855d, type: 2}
-      magicClip: {fileID: 7400000, guid: 064c528a6e1311542839ce27b5cd6a01, type: 2}
-      arrowClip: {fileID: 7400000, guid: 8e5e076f01148a949a6185c83d94bf82, type: 2}
+      slashClip: {fileID: 7400000, guid: 31659a02d1bffbe46bafc396b093c774, type: 2}
+      magicClip: {fileID: 7400000, guid: 9ae6415e888c697408dba7720702c529, type: 2}
+      arrowClip: {fileID: 7400000, guid: e85ab549b3f771348b8f5f857aadc461, type: 2}
       biteClip: {fileID: 7400000, guid: b61ab7905b820624da705a91cca5d04d, type: 2}
   characterAnimators:
   - {fileID: 0}
