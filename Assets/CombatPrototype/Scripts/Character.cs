@@ -3013,7 +3013,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (IsHealthCriticallyLow()) {
             return false;
         }
-        if (isStarving || isExhausted) {
+        if (isStarving && GetNormalTrait("Vampiric") == null) {
+            return false; //only characters that are not vampires will flee if they are starving
+        }
+        if (isExhausted) {
             return false;
         }
         if (GetNormalTrait("Spooked") != null) {
@@ -5482,7 +5485,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             Death("starvation");
         } else if (isStarving) {
             RemoveTrait("Hungry");
-            if (AddTrait("Starving")) {
+            if (AddTrait("Starving") && GetNormalTrait("Vampiric") == null) { //only characters that are not vampires will flee when they are starving
                 Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
             }
