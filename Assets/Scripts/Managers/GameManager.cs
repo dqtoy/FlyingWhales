@@ -327,35 +327,44 @@ public class GameManager : MonoBehaviour {
 
     #region Particle Effects
     public void CreateElectricEffectAt(Character character) {
-        StartCoroutine(ElectricEffect(character));
-    }
-    private IEnumerator ElectricEffect(Character character) {
-        GameObject go = GameObject.Instantiate(electricEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
-        go.SetActive(true);
+        //StartCoroutine(ElectricEffect(character));
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(electricEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.transform.localPosition = Vector3.zero;
-        yield return new WaitForSeconds(2f);
-        GameObject.Destroy(go);
+        go.SetActive(true);
     }
+    //private IEnumerator ElectricEffect(Character character) {
+    //    GameObject go = GameObject.Instantiate(electricEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
+    //    go.SetActive(true);
+    //    go.transform.localPosition = Vector3.zero;
+    //    yield return new WaitForSeconds(2f);
+    //    GameObject.Destroy(go);
+    //}
     public void CreateHitEffectAt(Character character) {
-        StartCoroutine(HitEffect(character));
-    }
-    private IEnumerator HitEffect(Character character) {
-        GameObject go = GameObject.Instantiate(hitEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
-        go.SetActive(true);
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.transform.localPosition = Vector3.zero;
-        yield return new WaitForSeconds(2f);
-        GameObject.Destroy(go);
+        go.SetActive(true);
+        //StartCoroutine(HitEffect(character));
     }
+    //private IEnumerator HitEffect(Character character) {
+    //    GameObject go = GameObject.Instantiate(hitEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
+    //    go.SetActive(true);
+    //    go.transform.localPosition = Vector3.zero;
+    //    yield return new WaitForSeconds(2f);
+    //    GameObject.Destroy(go);
+    //}
     public void CreateFireEffectAt(Character character) {
-        StartCoroutine(FireEffect(character));
-    }
-    private IEnumerator FireEffect(Character character) {
-        GameObject go = GameObject.Instantiate(fireEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
-        go.SetActive(true);
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.transform.localPosition = Vector3.zero;
-        yield return new WaitForSeconds(2f);
-        GameObject.Destroy(go);
+        go.SetActive(true);
+        //StartCoroutine(FireEffect(character));
     }
+    //private IEnumerator FireEffect(Character character) {
+    //    GameObject go = GameObject.Instantiate(fireEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
+    //    go.SetActive(true);
+    //    go.transform.localPosition = Vector3.zero;
+    //    yield return new WaitForSeconds(2f);
+    //    GameObject.Destroy(go);
+    //}
     #endregion
 
     //#region Cursor

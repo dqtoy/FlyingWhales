@@ -88,6 +88,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4834196081929860}
   - component: {fileID: 114537196067196250}
+  - component: {fileID: 114420952574364884}
   m_Layer: 14
   m_Name: ElectricEffect
   m_TagString: Untagged
@@ -579,6 +580,21 @@ MonoBehaviour:
     m_RotationOrder: 0
   GraphTimeMultiplier: 3.8
   IsLoop: 0
+--- !u!114 &114420952574364884
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1997544771906246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ade06471550ac4d4f876e7b4585ab8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ParentPool: {fileID: 0}
+  particleSystems:
+  - {fileID: 198016184480181512}
+  - {fileID: 198080525553550916}
 --- !u!114 &114537196067196250
 MonoBehaviour:
   m_ObjectHideFlags: 1
