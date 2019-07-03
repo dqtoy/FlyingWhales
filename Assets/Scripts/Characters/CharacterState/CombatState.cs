@@ -80,7 +80,9 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.HideHPBar();
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Ending combat state for " + stateComponent.character.name);
         onEndStateAction?.Invoke();
-        Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
+        if (Messenger.eventTable.ContainsKey(Signals.DETERMINE_COMBAT_REACTION)) {
+            Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
+        }
         Messenger.RemoveListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
     }
@@ -227,8 +229,13 @@ public class CombatState : CharacterState {
                 log += "\nNo more hostile characters, exiting combat state...";
                 OnExitThisState();
             } else {
-                log += "\nPursuing closest hostile target: " + currentClosestHostile.name;
-                PursueClosestHostile();
+                float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position);
+                if (distance > stateComponent.character.characterClass.attackRange) {
+                    log += "\nPursuing closest hostile target: " + currentClosestHostile.name;
+                    PursueClosestHostile();
+                } else {
+                    log += "\nAlready within range of: " + currentClosestHostile.name + ". Skipping pursuit...";
+                }
             }
             //stateComponent.character.PrintLogIfActive(log);
         } else {

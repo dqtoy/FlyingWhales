@@ -176,6 +176,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
     #region Structures
     public void SetStructure(LocationStructure structure) {
+        if (this.structure != null) {
+            this.structure.RemoveTile(this);
+        }
         this.structure = structure;
         this.structure.AddTile(this);
     }

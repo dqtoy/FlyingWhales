@@ -1907,6 +1907,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //        (ownParty as CharacterParty).actionData.currentAction.EndAction(ownParty, (ownParty as CharacterParty).actionData.currentTargetObject);
         //    }
         //}
+        marker.collisionTrigger.SetMainColliderState(true);
         if (this.minion != null) {
             this.minion.SetEnabledState(true); //reenable this minion, since it could've been disabled because it was part of another party
         }
@@ -1915,6 +1916,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (currentParty.id != ownParty.id) {
             ownParty.specificLocation.RemoveCharacterFromLocation(this);
             //ownParty.icon.SetVisualState(false);
+            marker.collisionTrigger.SetMainColliderState(false);
         }
     }
     public bool IsInParty() {

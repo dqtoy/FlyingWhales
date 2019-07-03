@@ -377,6 +377,7 @@ public class CharacterMarker : PooledObject {
         RemoveHostileInRange(travellingParty.owner); //removed hostile because he/she left the area.
         RemoveAvoidInRange(travellingParty.owner);
         RemovePOIFromInVisionRange(travellingParty.owner);
+        visionCollision.RemovePOIAsInRangeButDifferentStructure(travellingParty.owner);
 
     }
     private void OnCharacterStartedState(Character character, CharacterState state) {
@@ -972,7 +973,11 @@ public class CharacterMarker : PooledObject {
         if (!inVisionPOIs.Contains(poi)) {
             inVisionPOIs.Add(poi);
             //if (poi is Character) {
-            //    Debug.Log(character.name + " saw " + (poi as Character).name);
+            //    //Debug.Log(character.name + " saw " + (poi as Character).name);
+            //    Character character = poi as Character;
+            //    if (Vector2.Distance(this.transform.position, character.marker.transform.position) > 6f) {
+            //        Debug.LogError(this.name + " is trying to add a character to it's vision that is actually far (" + character.marker.name + ")");
+            //    }
             //}
             character.AddAwareness(poi);
             OnAddPOIAsInVisionRange(poi);
