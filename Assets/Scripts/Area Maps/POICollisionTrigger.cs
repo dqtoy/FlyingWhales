@@ -13,14 +13,20 @@ public class POICollisionTrigger : MonoBehaviour {
 
     private LocationGridTile _gridTileLocation;
 
+    private BoxCollider2D mainCollider;
     public virtual void Initialize(IPointOfInterest poi) {
         this.poi = poi;
         this.name = poi.name + " collision trigger";
+        mainCollider = GetComponent<BoxCollider2D>();
         //gameObject.layer = LayerMask.GetMask("Area Maps");
     }
 
     public void SetLocation(LocationGridTile location) {
         _gridTileLocation = location;
+    }
+
+    public void SetMainColliderState(bool state) {
+        mainCollider.enabled = state;
     }
 
     [ContextMenu("Print World Location")]

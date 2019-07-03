@@ -14515,82 +14515,82 @@ Prefab:
     - target: {fileID: 114458738148691882, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114458738148691882, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114734470590475174, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114734470590475174, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114418987349231008, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114418987349231008, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114680396287632648, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114680396287632648, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114719678710743138, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114719678710743138, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114587723444847032, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114587723444847032, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114239585143871558, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114239585143871558, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114003306589058108, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_havePropertiesChanged
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114003306589058108, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_isInputParsingRequired
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1322962351353356, guid: 806752206f775b240af4069999713824, type: 2}
       propertyPath: m_IsActive
@@ -14895,6 +14895,10 @@ Prefab:
         type: 2}
       propertyPath: m_SizeDelta.y
       value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082872587298216, guid: 806752206f775b240af4069999713824, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 806752206f775b240af4069999713824, type: 2}
@@ -36042,7 +36046,6 @@ GameObject:
   - component: {fileID: 930355349}
   - component: {fileID: 930355351}
   - component: {fileID: 930355347}
-  - component: {fileID: 930355346}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -36050,18 +36053,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &930355346
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 930355345}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  profile: {fileID: 11400000, guid: eb61b37790c165446b5921ae728df1ca, type: 2}
 --- !u!114 &930355347
 MonoBehaviour:
   m_ObjectHideFlags: 0

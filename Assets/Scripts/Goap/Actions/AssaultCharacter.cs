@@ -57,6 +57,10 @@ public class AssaultCharacter : GoapAction {
         //}
 
     }
+    protected override void OnCancelActionTowardsTarget() {
+        actor.marker.pathfindingAI.ResetEndReachedDistance();
+        base.OnCancelActionTowardsTarget();
+    }
     private void OnFinishCombatState() {
         //TODO: Add checking if poi target has become unconscious. If yes action was a success.
         Debug.Log(actor.name + " finished combat state!");
@@ -99,6 +103,9 @@ public class AssaultCharacter : GoapAction {
     #region Requirements
     protected bool Requirement() {
         if(poiTarget is Character && actor != poiTarget) {
+            if (!actor.IsCombatReady()) { //a character that will flee when seeing a hostile character, should not do this action.
+                return false;
+            }
             Character target = poiTarget as Character;
             if(!target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
                 return true;

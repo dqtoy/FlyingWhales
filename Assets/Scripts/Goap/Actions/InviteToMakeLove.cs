@@ -131,6 +131,9 @@ public class InviteToMakeLove : GoapAction {
         if (target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
+        if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
+            return false;
+        }
         if (!actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER) && !actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR)) {
             return false; //only lovers and paramours can make love
         }

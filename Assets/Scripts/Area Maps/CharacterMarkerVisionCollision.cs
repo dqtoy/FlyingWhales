@@ -83,41 +83,13 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
     }
     public void OnTriggerExit2D(Collider2D collision) {
-        //if (!parentMarker.character.IsInOwnParty()) {
-        //    return;
-        //}
         POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
         if (collidedWith != null && collidedWith.poi != null
             && collidedWith.poi != parentMarker.character) {
-            //if (collidedWith.poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            //    Character target = collidedWith.poi as Character;
-            //    //if (!target.IsInOwnParty()) {
-            //    //    return;
-            //    //}
-            //}
             parentMarker.RemovePOIFromInVisionRange(collidedWith.poi);
             RemovePOIAsInRangeButDifferentStructure(collidedWith.poi);
         }
     }
-    //public void OnTriggerStay2D(Collider2D collision) {
-    //    POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
-    //    if (collidedWith != null && collidedWith.poi != null
-    //        && collidedWith.poi != parentMarker.character) {
-
-    //        //Debug.Log(this.parentMarker.name + " trigger stay with " + collidedWith.poi.name);
-    //        if (collidedWith.gridTileLocation.structure == parentMarker.character.currentStructure) {
-    //            if (collidedWith is GhostCollisionTrigger) {
-    //                GhostCollisionHandling(collidedWith as GhostCollisionTrigger);
-    //                //this is for cases when the actual collision trigger of the poi was destroyed while this marker had it in it's range
-    //                parentMarker.RemovePOIFromInVisionRange(collidedWith.poi);
-    //            } else {
-    //                parentMarker.AddPOIAsInVisionRange(collidedWith.poi);
-    //            }
-    //        } else if (collidedWith.gridTileLocation.structure != parentMarker.character.currentStructure) {
-    //            parentMarker.RemovePOIFromInVisionRange(collidedWith.poi);
-    //        }
-    //    }
-    //}
     #endregion
 
     private void GhostCollisionHandling(GhostCollisionTrigger collidedWith) {

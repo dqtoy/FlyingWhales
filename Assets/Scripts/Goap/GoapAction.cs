@@ -82,6 +82,8 @@ public class GoapAction {
     protected int _numOfTries;
     protected bool _isStealthAction; //Should this action check for characters in radius before performing this action?
 
+    protected bool _stayInArea; //if the character should stay at his/her current area to do this action
+
     protected Func<bool> _requirementAction;
     protected Func<bool> _requirementOnBuildGoapTreeAction; //This particular requirement will only be called when building the goap tree in multithread
     protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -109,6 +111,7 @@ public class GoapAction {
         resumeTargetCharacterState = true;
         isNotificationAnIntel = true;
         canBeAddedToMemory = true;
+        _stayInArea = false;
         awareCharactersOfThisAction = new List<Character>();
         //for testing
         //CRIME[] choices = Utilities.GetEnumValues<CRIME>();
@@ -321,7 +324,11 @@ public class GoapAction {
     protected virtual void MoveToDoAction(Character targetCharacter) {
         //if the actor is NOT at the area where the target structure is, make him/her go there first.
         if (actor.specificLocation != targetStructure.location) {
-            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, OnArriveAtTargetLocation, null, poiTarget, targetTile);
+            if (_stayInArea) {
+                actor.PerformGoapAction();
+            } else {
+                actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, OnArriveAtTargetLocation, null, poiTarget, targetTile);
+            }
         } else {
             //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
             if (targetTile != null) {
