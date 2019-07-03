@@ -56,6 +56,7 @@ public class ConsoleMenu : UIMenu {
             {"/log_awareness", LogAwareness },
             {"/add_rel", AddRelationship },
             {"/rel_deg", ForcedRelationshipDegradation },
+            {"/set_hp", SetHP },
         };
 
 #if UNITY_EDITOR
@@ -799,6 +800,25 @@ public class ConsoleMenu : UIMenu {
         }
         CharacterManager.Instance.RelationshipDegradation(character1, character2);
         AddSuccessMessage("Relationship degradation between " + character1.name + " and " + character2.name + " has been executed.");
+    }
+    private void SetHP(string[] parameters) {
+        if (parameters.Length != 2) { //parameters: Character, hp amount
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of ForcedRelationshipDegradation");
+            return;
+        }
+        string characterParameterString = parameters[0];
+        string amountParameterString = parameters[1];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        int amount = 0;
+        if (!int.TryParse(amountParameterString, out amount)) {
+            AddErrorMessage("HP value parameter is not an integer: " + amountParameterString);
+            return;
+        }
+        character.SetHP(amount);
+        AddSuccessMessage("Set HP of " + character.name + " to " + amount);
+
     }
     #endregion
 

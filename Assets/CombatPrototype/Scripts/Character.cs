@@ -1769,9 +1769,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         if (job == null) {
             return false;
         }
-        if ((stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)
-            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED) 
-            || (stateComponent.stateToDo != null && stateComponent.stateToDo.characterState == CHARACTER_STATE.BERSERKED)) {
+        if ((stateComponent.stateToDo != null && stateComponent.stateToDo.characterState == CHARACTER_STATE.BERSERKED)
+            || (GetNormalTrait("Berserked") != null)) {
             //Berserked state cannot be overriden
             return false;
         }
@@ -2339,8 +2338,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 return false;
             }
         }
-        if ((stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED && !stateComponent.currentState.isDone)
-            || (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED && !stateComponent.previousMajorState.isDone)
+        if ((GetNormalTrait("Berserked") != null)
             || (stateComponent.stateToDo != null && stateComponent.stateToDo.characterState == CHARACTER_STATE.BERSERKED && !stateComponent.stateToDo.isDone)) {
             //Character must not react if he/she is in berserked state
             //Returns true so that it will create an impression that the character actually created a job even if he/she didn't, so that the character will not chat, etc.

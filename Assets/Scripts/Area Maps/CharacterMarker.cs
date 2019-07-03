@@ -123,6 +123,7 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.AddListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         //Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
 
@@ -212,12 +213,16 @@ public class CharacterMarker : PooledObject {
                 pathfindingAI.AdjustDoNotMove(1);
                 gainTraitSummary += "\nGained trait is a disabler trait, adjusting do not move value.";
             }
-            if (trait is Unconscious || trait is Restrained) {
+            if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 //if the character gained an unconscious trait, exit current state if it is flee
                 if (characterThatGainedTrait.stateComponent.currentState != null && characterThatGainedTrait.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                     characterThatGainedTrait.stateComponent.currentState.OnExitThisState();
                     gainTraitSummary += "\nGained trait is unconscious, and characters current state is combat, exiting combat state.";
                 }
+
+                //Once a character has a negative disabler trait, clear hostile and avoid list
+                ClearHostilesInRange(false);
+                ClearAvoidInRange(false);
             }
             //else if (trait.name == "Injured" && trait.responsibleCharacter != null && characterThatGainedTrait.GetNormalTrait("Unconscious") == null) {
             //    gainTraitSummary += "\nGained trait is injured, and character that is responsible for injured trait is " + trait.responsibleCharacter.name;
@@ -273,7 +278,7 @@ public class CharacterMarker : PooledObject {
                 //}
                 //GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait);
             }
-            if (trait.name == "Unconscious") {
+            if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 RemoveHostileInRange(characterThatGainedTrait); //removed hostile because he/she became unconscious.
                 RemoveAvoidInRange(characterThatGainedTrait);
             }
@@ -374,9 +379,16 @@ public class CharacterMarker : PooledObject {
                 action?.Invoke();
             }
         }
-        RemoveHostileInRange(travellingParty.owner); //removed hostile because he/she left the area.
-        RemoveAvoidInRange(travellingParty.owner);
-        RemovePOIFromInVisionRange(travellingParty.owner);
+
+        for (int i = 0; i < travellingParty.characters.Count; i++) {
+            Character traveller = travellingParty.characters[i];
+            if(traveller != character) {
+                RemoveHostileInRange(traveller); //removed hostile because he/she left the area.
+                RemoveAvoidInRange(traveller);
+                RemovePOIFromInVisionRange(traveller);
+            }
+        }
+
 
     }
     private void OnCharacterStartedState(Character character, CharacterState state) {
@@ -519,6 +531,7 @@ public class CharacterMarker : PooledObject {
         Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.RemoveListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         //Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         visionCollision.Reset();
 
@@ -1137,16 +1150,7 @@ public class CharacterMarker : PooledObject {
         //    //and so, the character that died was not removed from this character's hostile list
         //    hostilesInRange.Remove(otherCharacter);
         //}
-
-        if (hostilesInRange.Contains(otherCharacter)) {
-            //if this character is currently engaging(chasing) the character that died 
-            //and they are not currently in combat, remove the character that died from this characters hostile range
-            //if (currentlyEngaging == otherCharacter) {
-            //    RemoveHostileInRange(otherCharacter);
-            //} else {
-                RemoveHostileInRange(otherCharacter); //removed hostile because he/she died.
-            //}
-        }
+        RemoveHostileInRange(otherCharacter); //removed hostile because he/she died.
         RemoveAvoidInRange(otherCharacter);
 
         if (targetPOI == otherCharacter) {
@@ -1166,7 +1170,7 @@ public class CharacterMarker : PooledObject {
 
     #region Avoid In Range
     public bool AddAvoidInRange(Character poi, bool processCombatBehavior = true) {
-        if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && character.GetNormalTrait("Berserked") == null) {
             if (!avoidInRange.Contains(poi)) {
                 avoidInRange.Add(poi);
                 //NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
@@ -1188,7 +1192,7 @@ public class CharacterMarker : PooledObject {
         Character otherPOI = null;
         for (int i = 0; i < pois.Count; i++) {
             Character poi = pois[i];
-            if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && poi.GetNormalTrait("Berserked") == null) {
                 if (!avoidInRange.Contains(poi)) {
                     avoidInRange.Add(poi);
                     if (otherPOI == null) {
@@ -1404,100 +1408,137 @@ public class CharacterMarker : PooledObject {
     //        rvoController.collidesWith = RVOLayer.DefaultAgent | RVOLayer.DefaultObstacle;
     //    }
     //}
+    /// <summary>
+    /// Function that determines if the character's hostile list must be transfered to avoid list
+    /// Can be triggered by broadcasting signal <see cref="Signals.TRANSFER_ENGAGE_TO_FLEE_LIST"/>
+    /// </summary>
+    /// <param name="character">The character that should determine the transfer.</param>
+    private void TransferEngageToFleeList(Character character) {
+        if (this.character == character) {
+            string summary = character.name + " will determine the transfer from engage list to flee list";
+            //check flee first, the logic determines that this character will not flee, then attack by default
+            bool willTransfer = true;
+            if (character.GetNormalTrait("Berserked") != null) {
+                willTransfer = false;
+            }
+            summary += "\nDid " + character.name + " chose to transfer? " + willTransfer.ToString();
+
+            //Transfer all from engage list to flee list
+            if (willTransfer) {
+                //When transferring to flee list, if the character is not in vision just remove him/her in hostiles range
+                for (int i = 0; i < hostilesInRange.Count; i++) {
+                    Character hostile = hostilesInRange[i];
+                    if (inVisionPOIs.Contains(hostile)) {
+                        AddAvoidInRange(hostile, false);
+                    } else {
+                        RemoveHostileInRange(hostile, false);
+                        i--;
+                    }
+                }
+                ClearHostilesInRange(false);
+                if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
+                } else {
+                    character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+                }
+            }
+            Debug.Log(summary);
+        }
+    }
     #endregion
 
     #region Engage
     //public Character currentlyEngaging { get; private set; }
     //public Character currentlyCombatting { get; private set; }
     //private string engageSummary;
-//    public void OnStartEngage(Character target) {
-//        //determine nearest hostile in range
-//        //Character nearestHostile = GetNearestValidHostile();
-//        //set them as a target
-//        //SetTargetTransform(nearestHostile.marker.transform);
-//        if (currentlyEngaging != null) {
-//            engageSummary += this.character.name + " has decided to no longer pursue " + currentlyEngaging.name + "\n";
-//        }
-//        engageSummary += this.character.name + " will now engage " + target.name + "\n";
+    //    public void OnStartEngage(Character target) {
+    //        //determine nearest hostile in range
+    //        //Character nearestHostile = GetNearestValidHostile();
+    //        //set them as a target
+    //        //SetTargetTransform(nearestHostile.marker.transform);
+    //        if (currentlyEngaging != null) {
+    //            engageSummary += this.character.name + " has decided to no longer pursue " + currentlyEngaging.name + "\n";
+    //        }
+    //        engageSummary += this.character.name + " will now engage " + target.name + "\n";
 
-//        GoTo(target, OnReachEngageTarget);
-//        SetCurrentlyEngaging(target);
-//        //StartMovement();
-//    }
-//    public void OnReachEngageTarget() {
-//        if (currentlyEngaging == null || this.character.isDead) {
-//            return;
-//        }
+    //        GoTo(target, OnReachEngageTarget);
+    //        SetCurrentlyEngaging(target);
+    //        //StartMovement();
+    //    }
+    //    public void OnReachEngageTarget() {
+    //        if (currentlyEngaging == null || this.character.isDead) {
+    //            return;
+    //        }
 
-//        if (currentlyEngaging.specificLocation != character.specificLocation) {
-//            RemoveHostileInRange(currentlyEngaging); //quick fix for when the target character already is in another location
-//            return;
-//        }
+    //        if (currentlyEngaging.specificLocation != character.specificLocation) {
+    //            RemoveHostileInRange(currentlyEngaging); //quick fix for when the target character already is in another location
+    //            return;
+    //        }
 
-//        engageSummary += this.character.name + " has reached engage target " + currentlyEngaging.name + "\n";
-//        Character enemy = currentlyEngaging;
-//        LookAt(enemy.marker.transform.position);
-//        //stop the enemy's movement
-//        enemy.marker.pathfindingAI.AdjustDoNotMove(1);
+    //        engageSummary += this.character.name + " has reached engage target " + currentlyEngaging.name + "\n";
+    //        Character enemy = currentlyEngaging;
+    //        LookAt(enemy.marker.transform.position);
+    //        //stop the enemy's movement
+    //        enemy.marker.pathfindingAI.AdjustDoNotMove(1);
 
-//#if TRAILER_BUILD
-//        Messenger.AddListener(Signals.TICK_STARTED, CombatTick);
-//        isInCombatTick = true;
-//        //enemy.marker.isInCombatTick = true;
-//        //CombatTick();
-//#else
-//        ExecuteCombat();
-//#endif
-//    }
-//    private const int Fixed_Combat_Ticks = 3;
-//    private int currentCombatTick = 0;
-//    public bool isInCombatTick = false;
-//    public Character lastHitBy;
-//    public void CombatTick() {
-//        if (currentCombatTick < Fixed_Combat_Ticks) {
-//            currentCombatTick++;
-//            Debug.Log(character.name + " hit " + currentlyEngaging?.name);
-//            //Play animation here
-//            GameManager.Instance.CreateHitEffectAt(currentlyEngaging);
-//            PlayAnimation("Attack");
-//            //StartCoroutine(CombatAnimation());
-//        }
-//        if (currentCombatTick == Fixed_Combat_Ticks) {
-//            //Do actual combat here
-//            ExecuteCombat();
-//            Messenger.RemoveListener(Signals.TICK_STARTED, CombatTick);
-//            isInCombatTick = false;
-//        }
-//    }
-//    private void ExecuteCombat() {
-//        Character enemy = currentlyEngaging;
-//        //determine whether to start combat or not
-//        if (cannotCombat) {
-//            cannotCombat = false;
-//            if (character.stateComponent.currentState is EngageState) {
-//                (character.stateComponent.currentState as EngageState).CheckForEndState();
-//            } else {
-//                throw new Exception(character.name + " reached engage target, but not in engage state! CurrentState is " + character.stateComponent.currentState?.stateName ?? "Null");
-//            }
-//        } else {
-//            EngageState engageState = character.stateComponent.currentState as EngageState;
-//            Character thisCharacter = this.character;
+    //#if TRAILER_BUILD
+    //        Messenger.AddListener(Signals.TICK_STARTED, CombatTick);
+    //        isInCombatTick = true;
+    //        //enemy.marker.isInCombatTick = true;
+    //        //CombatTick();
+    //#else
+    //        ExecuteCombat();
+    //#endif
+    //    }
+    //    private const int Fixed_Combat_Ticks = 3;
+    //    private int currentCombatTick = 0;
+    //    public bool isInCombatTick = false;
+    //    public Character lastHitBy;
+    //    public void CombatTick() {
+    //        if (currentCombatTick < Fixed_Combat_Ticks) {
+    //            currentCombatTick++;
+    //            Debug.Log(character.name + " hit " + currentlyEngaging?.name);
+    //            //Play animation here
+    //            GameManager.Instance.CreateHitEffectAt(currentlyEngaging);
+    //            PlayAnimation("Attack");
+    //            //StartCoroutine(CombatAnimation());
+    //        }
+    //        if (currentCombatTick == Fixed_Combat_Ticks) {
+    //            //Do actual combat here
+    //            ExecuteCombat();
+    //            Messenger.RemoveListener(Signals.TICK_STARTED, CombatTick);
+    //            isInCombatTick = false;
+    //        }
+    //    }
+    //    private void ExecuteCombat() {
+    //        Character enemy = currentlyEngaging;
+    //        //determine whether to start combat or not
+    //        if (cannotCombat) {
+    //            cannotCombat = false;
+    //            if (character.stateComponent.currentState is EngageState) {
+    //                (character.stateComponent.currentState as EngageState).CheckForEndState();
+    //            } else {
+    //                throw new Exception(character.name + " reached engage target, but not in engage state! CurrentState is " + character.stateComponent.currentState?.stateName ?? "Null");
+    //            }
+    //        } else {
+    //            EngageState engageState = character.stateComponent.currentState as EngageState;
+    //            Character thisCharacter = this.character;
 
-//            //remove enemy's current action
-//            enemy.StopCurrentAction();
+    //            //remove enemy's current action
+    //            enemy.StopCurrentAction();
 
-//            engageState.CombatOnEngage();
+    //            engageState.CombatOnEngage();
 
-//            this.OnFinishCombatWith(enemy);
-//            enemy.marker.OnFinishCombatWith(this.character);
-//        }
-//        enemy.marker.pathfindingAI.AdjustDoNotMove(-1);
-//        Debug.Log(engageSummary);
-//        engageSummary = string.Empty;
-//    }
-//    public void SetCannotCombat(bool state) {
-//        cannotCombat = state;
-//    }
+    //            this.OnFinishCombatWith(enemy);
+    //            enemy.marker.OnFinishCombatWith(this.character);
+    //        }
+    //        enemy.marker.pathfindingAI.AdjustDoNotMove(-1);
+    //        Debug.Log(engageSummary);
+    //        engageSummary = string.Empty;
+    //    }
+    //    public void SetCannotCombat(bool state) {
+    //        cannotCombat = state;
+    //    }
     //public Character GetNearestValidHostile() {
     //    Character nearest = null;
     //    float nearestDist = 9999f;
@@ -1671,7 +1712,7 @@ public class CharacterMarker : PooledObject {
     public bool WillCharacterTransferEngageToFleeList() {
         bool willTransfer = false;
         //- if character is berserked, must not flee
-        if (character.stateComponent.previousMajorState != null && character.stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED && !character.stateComponent.previousMajorState.isDone) {
+        if (character.GetNormalTrait("Berserked") != null) {
             willTransfer = false;
         }
         //- at some point, situation may trigger the character to flee, at which point it will attempt to move far away from target

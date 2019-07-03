@@ -6,7 +6,7 @@ using UnityEngine;
 public class Spook : PlayerJobAction {
     public Spook() {
         name = "Spook";
-        SetDefaultCooldownTime(24);
+        SetDefaultCooldownTime(3);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 
@@ -24,7 +24,7 @@ public class Spook : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
-                    Trait newTrait = new Spooked();
+                    Spooked newTrait = new Spooked();
                     currTarget.AddTrait(newTrait);
                 }
             }
@@ -48,12 +48,12 @@ public class Spook : PlayerJobAction {
         if (targetCharacter.isDead || character.id == targetCharacter.id) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Spook") != null) {
+        if (targetCharacter.GetNormalTrait("Spooked") != null) {
             return false;
         }
-        if (targetCharacter.marker.inVisionPOIs.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).ToList().Count == 0) {
-            return false;
-        }
+        //if (targetCharacter.marker.inVisionPOIs.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).ToList().Count == 0) {
+        //    return false;
+        //}
         return base.CanPerformActionTowards(character, targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -77,10 +77,10 @@ public class Spook : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.marker.inVisionPOIs.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).ToList().Count == 0) {
-            return false;
-        }
-        if (targetCharacter.GetNormalTrait("Spook") != null) {
+        //if (targetCharacter.marker.inVisionPOIs.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).ToList().Count == 0) {
+        //    return false;
+        //}
+        if (targetCharacter.GetNormalTrait("Spooked") != null) {
             return false;
         }
         //if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {

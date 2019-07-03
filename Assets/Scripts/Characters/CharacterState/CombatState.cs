@@ -69,7 +69,6 @@ public class CombatState : CharacterState {
         stateComponent.character.currentParty.RemoveAllOtherCharacters(); //Drop characters when entering combat
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Starting combat state for " + stateComponent.character.name);
         Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
-        Messenger.AddListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         base.StartState();
         stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
@@ -81,7 +80,6 @@ public class CombatState : CharacterState {
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Ending combat state for " + stateComponent.character.name);
         onEndStateAction?.Invoke();
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
-        Messenger.RemoveListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
     }
     public override void OnExitThisState() {
@@ -105,52 +103,6 @@ public class CombatState : CharacterState {
         }
     }
     #endregion
-
-    /// <summary>
-    /// Function that determines if the character's hostile list must be transfered to avoid list
-    /// Can be triggered by broadcasting signal <see cref="Signals.TRANSFER_ENGAGE_TO_FLEE_LIST"/>
-    /// </summary>
-    /// <param name="character">The character that should determine the transfer.</param>
-    private void TransferEngageToFleeList(Character character) {
-        if (stateComponent.character == character) {
-            string summary = character.name + " will determine the transfer from engage list to flee list";
-            //check flee first, the logic determines that this character will not flee, then attack by default
-            bool willTransfer = true;
-            if (character.stateComponent.previousMajorState != null && character.stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED && !character.stateComponent.previousMajorState.isDone) {
-                willTransfer = false;
-            }
-            ////- if character is berserked, must not flee
-            //if (stateComponent.previousMajorState != null && stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED && !stateComponent.previousMajorState.isDone) {
-            //    willTransfer = false;
-            //}
-            ////- at some point, situation may trigger the character to flee, at which point it will attempt to move far away from target
-            //else if (character.GetNormalTrait("Injured") != null) {
-            //    summary += "\n" + character.name + " is injured.";
-            //    //-character gets injured(chance based dependent on the character)
-            //    willTransfer = true;
-            //} else if (character.IsHealthCriticallyLow()) {
-            //    summary += "\n" + character.name + "'s health is critically low.";
-            //    //-character's hp is critically low (chance based dependent on the character)
-            //    willTransfer = true;
-            //} else if (character.GetNormalTrait("Spooked") != null) { //TODO: Ask chy about spooked mechanics
-            //    //- fear-type status effect
-            //    willTransfer = true;
-            //} else if (character.isStarving || character.isExhausted) {
-            //    summary += "\n" + character.name + " is starving(" + character.isStarving.ToString() + ") or is exhausted(" + character.isExhausted.ToString() + ").";
-            //    //-character is starving or exhausted
-            //    willTransfer = true;
-            //}
-            summary += "\nDid " + character.name + " chose to transfer? " + willTransfer.ToString();
-
-            //Transfer all from engage list to flee list
-            if (willTransfer) {
-                stateComponent.character.marker.AddAvoidsInRange(stateComponent.character.marker.hostilesInRange, false);
-                stateComponent.character.marker.ClearHostilesInRange(false);
-                DetermineReaction(stateComponent.character);
-            }
-            Debug.Log(summary);
-        }
-    }
 
     /// <summary>
     /// Function that determines what a character should do in a certain point in time.

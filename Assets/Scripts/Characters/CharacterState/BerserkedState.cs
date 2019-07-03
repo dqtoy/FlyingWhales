@@ -18,6 +18,22 @@ public class BerserkedState : CharacterState {
         stateComponent.character.AdjustDoNotGetLonely(1);
         stateComponent.character.AdjustDoNotGetTired(1);
         stateComponent.character.AddTrait("Berserked");
+        for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
+            Character hostile = stateComponent.character.marker.avoidInRange[i];
+            if (stateComponent.character.marker.inVisionPOIs.Contains(hostile)) {
+                stateComponent.character.marker.AddHostileInRange(hostile, checkHostility: false, processCombatBehavior: false);
+            } else {
+                stateComponent.character.marker.RemoveAvoidInRange(hostile, false);
+                i--;
+            }
+        }
+        stateComponent.character.marker.ClearAvoidInRange(false);
+        if(stateComponent.character.marker.hostilesInRange.Count > 0) {
+            //I put this switching to another tick so it will not start a state inside the start state function, because it might cause some problems
+            GameDate nextDay = GameManager.Instance.Today();
+            nextDay.AddTicks(1);
+            SchedulingManager.Instance.AddEntry(nextDay, () => stateComponent.SwitchToState(CHARACTER_STATE.COMBAT));
+        }
     }
     protected override void EndState() {
         base.EndState();
@@ -34,7 +50,7 @@ public class BerserkedState : CharacterState {
     }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if(targetPOI is Character) {
-            return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, CHARACTER_STATE.NONE, false);
+            return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, checkHostility: false);
             //return true;
         }else if (targetPOI is TileObject) {
             TileObject target = targetPOI as TileObject;

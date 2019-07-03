@@ -89,12 +89,12 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
         if (collidedWith != null && collidedWith.poi != null
             && collidedWith.poi != parentMarker.character) {
-            if (collidedWith.poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                Character target = collidedWith.poi as Character;
-                //if (!target.IsInOwnParty()) {
-                //    return;
-                //}
-            }
+            //if (collidedWith.poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            //    Character target = collidedWith.poi as Character;
+            //    //if (!target.IsInOwnParty()) {
+            //    //    return;
+            //    //}
+            //}
             parentMarker.RemovePOIFromInVisionRange(collidedWith.poi);
             RemovePOIAsInRangeButDifferentStructure(collidedWith.poi);
         }

@@ -11,7 +11,7 @@ public class Spooked : Trait {
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEUTRAL;
         associatedInteraction = INTERACTION_TYPE.NONE;
-        daysDuration = GameManager.Instance.GetTicksBasedOnMinutes(30);
+        daysDuration = GameManager.Instance.GetTicksBasedOnMinutes(120);
         effects = new List<TraitEffect>();
         terrifyingCharacters = new List<Character>();
     }
@@ -49,8 +49,7 @@ public class Spooked : Trait {
                         }
                     }
                     if (terrifyingCharacters.Count > 0) {
-                        if ((character.stateComponent.previousMajorState != null && character.stateComponent.previousMajorState.characterState == CHARACTER_STATE.BERSERKED && !character.stateComponent.previousMajorState.isDone)
-                            || (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED && !character.stateComponent.currentState.isDone)
+                        if ((character.GetNormalTrait("Berserked") != null)
                             || (character.stateComponent.stateToDo != null && character.stateComponent.stateToDo.characterState == CHARACTER_STATE.BERSERKED && !character.stateComponent.stateToDo.isDone)) {
                             //If berserked
                         } else {
