@@ -178,6 +178,7 @@ public class CharacterStateComponent {
                             SetCurrentState(null);
                         }
                     } else {
+                        SetCurrentState(null);
                         previousMajorState.EnterState(previousMajorState.targetArea);
                     }
                 }

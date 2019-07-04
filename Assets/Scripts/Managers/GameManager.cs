@@ -328,6 +328,9 @@ public class GameManager : MonoBehaviour {
     #region Particle Effects
     public void CreateElectricEffectAt(Character character) {
         //StartCoroutine(ElectricEffect(character));
+        if (character.marker == null) {
+            return;
+        }
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(electricEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
@@ -340,6 +343,9 @@ public class GameManager : MonoBehaviour {
     //    GameObject.Destroy(go);
     //}
     public void CreateHitEffectAt(Character character) {
+        if (character.marker == null) {
+            return;
+        }
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
@@ -353,6 +359,9 @@ public class GameManager : MonoBehaviour {
     //    GameObject.Destroy(go);
     //}
     public void CreateFireEffectAt(Character character) {
+        if (character.marker == null) {
+            return;
+        }
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
