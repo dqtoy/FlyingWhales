@@ -346,7 +346,7 @@ public class GoapThread : Multithread {
                             allPlans.Add(plan);
                             plan.SetListOfCharacterAwareness(characterTargetsAwareness);
                         }
-                        log += planLog;
+                        //log += planLog;
                         //Debug.Log(planLog);
                     }
                 }

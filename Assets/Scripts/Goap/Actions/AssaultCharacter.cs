@@ -30,15 +30,26 @@ public class AssaultCharacter : GoapAction {
         base.PerformActualAction();
         cannotCancelAction = true;
         actor.marker.pathfindingAI.ResetEndReachedDistance();
-        CharacterState combatState;
-        actor.marker.AddHostileInRange(poiTarget as Character, out combatState, CHARACTER_STATE.COMBAT, false);
-        if (combatState is CombatState) {
-            (combatState as CombatState).SetOnEndStateAction(OnFinishCombatState);
-        } else {
-            Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
-        }
-        SetState("In Progress");
         
+        Character targetCharacter = poiTarget as Character;
+        if (targetCharacter.specificLocation == actor.specificLocation && !targetCharacter.currentParty.icon.isAreaTravelling) {
+            CharacterState combatState;
+            if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {
+                actor.marker.AddHostileInRange(targetCharacter, out combatState, CHARACTER_STATE.COMBAT, false);
+            } else {
+                combatState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
+            }
+            if (combatState is CombatState) {
+                (combatState as CombatState).SetOnEndStateAction(OnFinishCombatState);
+                SetState("In Progress");
+            } else {
+                Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
+                SetState("Target Missing");
+            }
+        } else {
+            SetState("Target Missing");
+        }
+                
         //Character targetCharacter = poiTarget as Character;
         //if (!isTargetMissing && targetCharacter.IsInOwnParty() && !targetCharacter.isDead) {
 

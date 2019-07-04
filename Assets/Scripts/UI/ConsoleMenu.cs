@@ -708,9 +708,9 @@ public class ConsoleMenu : UIMenu {
         }
 
         if (character.doNotDisturb == 0) {
-            character.AdjustDoNotDisturb(1);
+            character.marker.pathfindingAI.AdjustDoNotMove(1);
         } else {
-            character.AdjustDoNotDisturb(-1);
+            character.marker.pathfindingAI.AdjustDoNotMove(-1);
         }
         AddSuccessMessage("Adjusted " + character.name + " do not disturb to " + character.doNotDisturb);
     }
