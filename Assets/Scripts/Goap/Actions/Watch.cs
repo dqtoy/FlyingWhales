@@ -38,6 +38,7 @@ public class Watch : GoapAction {
         if (otherData.Length == 1) {
             if(otherData[0] is GoapAction) {
                 actionBeingWatched = otherData[0] as GoapAction;
+                actionIconString = actionBeingWatched.actionIconString;
                 if (thoughtBubbleLog != null) {
                     thoughtBubbleLog.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.OTHER);
                 }
@@ -46,6 +47,7 @@ public class Watch : GoapAction {
                 }
             } else if (otherData[0] is CombatState) {
                 combatBeingWatched = otherData[0] as CombatState;
+                actionIconString = GoapActionStateDB.Hostile_Icon;
                 if (thoughtBubbleLog != null) {
                     thoughtBubbleLog.AddToFillers(combatBeingWatched, "Combat", LOG_IDENTIFIER.OTHER);
                 }
@@ -59,6 +61,12 @@ public class Watch : GoapAction {
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
+    }
+    public override void OnStopActionDuringCurrentState() {
+        base.OnStopActionDuringCurrentState();
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+        }
     }
     #endregion
 

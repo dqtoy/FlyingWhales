@@ -3020,7 +3020,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             } else if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success") {
                 int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 25) {
+                if (chance < 25) { //25
                     if (!HasRelationshipOfTypeWith(action.actor, RELATIONSHIP_TRAIT.ENEMY)) {
                         CreateWatchEvent(action, null, action.actor);
                     }
@@ -4333,7 +4333,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
         if (stateComponent.currentState != null) {
-            Debug.LogWarning("Currently in " + stateComponent.currentState.stateName + " state, can't plan actions!");
+            Debug.LogWarning(name + " is currently in " + stateComponent.currentState.stateName + " state, can't plan actions!");
             return;
         }
         if (stateComponent.stateToDo != null) {

@@ -631,9 +631,12 @@ public class CharacterManager : MonoBehaviour {
                         }
                         break;
                     case RELATIONSHIP_TRAIT.LOVER:
-                        if (currCharacter.name == "Fiona") { relsToCreate = 0; } //For Trailer Map Only
+#if TRAILER_BUILD
+                         if (currCharacter.name == "Fiona") { relsToCreate = 0; } //For Trailer Map Only
+#endif
                         //- a character has a 20% chance to have a lover
-                        else if (chance < 20) relsToCreate = 1;
+                        if (chance < 20) relsToCreate = 1;
+                        //relsToCreate = 1;
                         break;
                     case RELATIONSHIP_TRAIT.ENEMY:
                         //- a character may have either zero (75%), one (20%) or two (5%) enemies
@@ -652,8 +655,9 @@ public class CharacterManager : MonoBehaviour {
                     //    //- only valid for non-beast characters with lovers
                     //    if (currCharacter.role.roleType == CHARACTER_ROLE.BEAST || currCharacter.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER) == null) { continue; }
                     //    //- a character may have either zero (85%) or one (15%) paramour
-                    //    if (chance < 85) relsToCreate = 0;
-                    //    else relsToCreate = 1;
+                    //    //if (chance < 85) relsToCreate = 0;
+                    //    //else relsToCreate = 1;
+                    //    relsToCreate = 1;
                     //    break;
                 }
                 summary += "\n===========Creating " + relsToCreate + " " + currRel.ToString() + " Relationships...==========";
@@ -900,45 +904,45 @@ public class CharacterManager : MonoBehaviour {
                                     //    }
                                     //}
                                     break;
-                                //case RELATIONSHIP_TRAIT.PARAMOUR:
-                                //    if (otherCharacter.role.roleType == CHARACTER_ROLE.BEAST) { continue; } //a beast character has no paramours
-                                //    if (currCharacter.CanHaveRelationshipWith(currRel, otherCharacter) && otherCharacter.CanHaveRelationshipWith(currRel, currCharacter)) {
-                                //        //- if non beast, from valid characters, choose based on these weights:
-                                //        if (otherCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
-                                //            //- character is non-beast: +500 Weight
-                                //            weight += 500;
-                                //        }
-                                //        if (!IsSexuallyCompatible(currCharacter, otherCharacter)) {
-                                //            //- character is sexually incompatible: Weight x0.1
-                                //            weight *= 0.1f;
-                                //        }
-                                //        if (currCharacter.race == otherCharacter.race) {
-                                //            // - character is from same race: Weight x5
-                                //            weight *= 5;
-                                //        }
-                                //        if (currCharacter.faction.id == otherCharacter.faction.id) {
-                                //            //- character is from same faction: Weight x3
-                                //            weight *= 3;
-                                //        }
+                                case RELATIONSHIP_TRAIT.PARAMOUR:
+                                    if (otherCharacter.role.roleType == CHARACTER_ROLE.BEAST) { continue; } //a beast character has no paramours
+                                    if (currCharacter.CanHaveRelationshipWith(currRel, otherCharacter) && otherCharacter.CanHaveRelationshipWith(currRel, currCharacter)) {
+                                        //- if non beast, from valid characters, choose based on these weights:
+                                        if (otherCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
+                                            //- character is non-beast: +500 Weight
+                                            weight += 500;
+                                        }
+                                        if (!IsSexuallyCompatible(currCharacter, otherCharacter)) {
+                                            //- character is sexually incompatible: Weight x0.1
+                                            weight *= 0.1f;
+                                        }
+                                        if (currCharacter.race == otherCharacter.race) {
+                                            // - character is from same race: Weight x5
+                                            weight *= 5;
+                                        }
+                                        if (currCharacter.faction.id == otherCharacter.faction.id) {
+                                            //- character is from same faction: Weight x3
+                                            weight *= 3;
+                                        }
 
-                                //        if (existingRelsOfCurrentCharacter != null) {
-                                //            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
-                                //                //- character is a relative: Weight x0.1
-                                //                weight *= 0.1f;
-                                //            }
-                                //            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.LOVER)
-                                //                || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
-                                //                //- character is a lover: Weight x0
-                                //                //- character is an enemy: Weight x0
-                                //                weight *= 0;
-                                //            }
-                                //            //REMOVED - character is a master/servant: Weight x0
-                                //        }
-                                //        if (currCharacter.faction != otherCharacter.faction) {
-                                //            weight *= 0; //disabled different faction positive relationships
-                                //        }
-                                //    }
-                                //    break;
+                                        if (existingRelsOfCurrentCharacter != null) {
+                                            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
+                                                //- character is a relative: Weight x0.1
+                                                weight *= 0.1f;
+                                            }
+                                            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.LOVER)
+                                                || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
+                                                //- character is a lover: Weight x0
+                                                //- character is an enemy: Weight x0
+                                                weight *= 0;
+                                            }
+                                            //REMOVED - character is a master/servant: Weight x0
+                                        }
+                                        if (currCharacter.faction != otherCharacter.faction) {
+                                            weight *= 0; //disabled different faction positive relationships
+                                        }
+                                    }
+                                    break;
                             }
                             if (weight > 0f) {
                                 relWeights.AddElement(otherCharacter, weight);
