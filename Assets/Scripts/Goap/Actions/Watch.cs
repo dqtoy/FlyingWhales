@@ -110,11 +110,11 @@ public class Watch : GoapAction {
             actor.marker.StopMovement();
         }
     }
-    //private void AfterWatchSuccess() {
-    //    if(actionBeingWatched.currentState.shareIntelReaction != null) {
-    //        actionBeingWatched.currentState.shareIntelReaction.Invoke(poiTarget as Character, null, SHARE_INTEL_STATUS.INFORMED);
-    //    }
-    //}
+    private void AfterWatchSuccess() {
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+        }
+    }
     #endregion
 
     #region Requirements
