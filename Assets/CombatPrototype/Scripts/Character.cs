@@ -2780,7 +2780,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, onlyClickedCharacter);
     }
     private void OnActionStateSet(GoapAction action, GoapActionState state) {
-        if (action.actor != this && action.poiTarget != this) {
+        IPointOfInterest target = null;
+        if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+            target = (action as MakeLove).targetCharacter;
+        } else {
+            target = action.poiTarget;
+        }
+        if (action.actor != this && target != this) {
             if (marker.inVisionPOIs.Contains(action.actor)) {
                 if (GetNormalTrait("Unconscious", "Resting") != null) {
                     return;
@@ -2792,7 +2798,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void ThisCharacterSaw(Character target) {
         if (target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone) {
-            if(target.currentAction.actor != this && target.currentAction.poiTarget != this) {
+            IPointOfInterest poiTarget = null;
+            if (target.currentAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                poiTarget = (target.currentAction as MakeLove).targetCharacter;
+            } else {
+                poiTarget = target.currentAction.poiTarget;
+            }
+            if (target.currentAction.actor != this && poiTarget != this) {
                 if(GetNormalTrait("Unconscious", "Resting") != null) {
                     return;
                 }
@@ -2996,7 +3008,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
         } else if (!action.isDone) {
             if (action.goapType == INTERACTION_TYPE.MAKE_LOVE && state.name == "Make Love Success") {
-                Character target = action.poiTarget as Character;
+                MakeLove makeLove = action as MakeLove;
+                Character target = makeLove.targetCharacter;
                 if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
                     CreateWatchEvent(action, null, action.actor);
                 } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
