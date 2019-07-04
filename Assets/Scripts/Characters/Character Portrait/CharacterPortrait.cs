@@ -89,7 +89,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         _portraitSettings = character.portraitSettings;
 
         Sprite classPortrait = CharacterManager.Instance.GetClassPortraitSprite(character.characterClass.className);
-        if (classPortrait != null) {
+        if (classPortrait != null && character.originalClassName == character.characterClass.className) { //so that only characters that started out with special classes can use the special portraits
             SetWholeImageSprite(classPortrait);
         } else {
             SetBody(character.portraitSettings.bodyIndex);
