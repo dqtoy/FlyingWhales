@@ -1019,12 +1019,7 @@ public class CharacterMarker : PooledObject {
     public bool AddHostileInRange(Character poi, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE, bool checkHostility = true, bool processCombatBehavior = true) {
         if (!hostilesInRange.Contains(poi)) {
             if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) &&
-                //if the function states that it should not check the normal hostility, always allow
-                (!checkHostility
-                //if forced reaction is not equal to none, it means that this character must treat the other character as hostile, regardless of conditions
-                || forcedReaction != CHARACTER_STATE.NONE)
-                || this.character.IsHostileWith(poi)) {
-
+                (!checkHostility || forcedReaction != CHARACTER_STATE.NONE || this.character.IsHostileWith(poi))) {
                 if (!WillCharacterTransferEngageToFleeList()) {
                     hostilesInRange.Add(poi);
                     //NormalReactToHostileCharacter(poi, forcedReaction);
@@ -1419,6 +1414,10 @@ public class CharacterMarker : PooledObject {
     private void TransferEngageToFleeList(Character character) {
         if (this.character == character) {
             string summary = character.name + " will determine the transfer from engage list to flee list";
+            if (hostilesInRange.Count == 0) {
+                summary += character.name + " does not have any characters in engage list. Ignoring transfer.";
+                return;
+            }
             //check flee first, the logic determines that this character will not flee, then attack by default
             bool willTransfer = true;
             if (character.GetNormalTrait("Berserked") != null) {
@@ -1442,7 +1441,9 @@ public class CharacterMarker : PooledObject {
                 if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                     Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
                 } else {
-                    character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+                    if (!character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !character.currentParty.icon.isAreaTravelling) {
+                        character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+                    }
                 }
             }
             Debug.Log(summary);

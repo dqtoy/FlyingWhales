@@ -25,6 +25,7 @@ public class CharacterStateComponent {
 
     public void SetCurrentState(CharacterState state) {
         currentState = state;
+        Debug.Log(character.name + " set state to " + currentState?.stateName ?? "Null");
     }
     public void SetStateToDo(CharacterState state, bool unassignJob = true, bool stopMovement = true) {
         if(unassignJob && state == null && stateToDo != null) {

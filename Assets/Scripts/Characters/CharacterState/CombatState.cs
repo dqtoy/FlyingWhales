@@ -181,7 +181,7 @@ public class CombatState : CharacterState {
                 OnExitThisState();
             } else {
                 float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position);
-                if (distance > stateComponent.character.characterClass.attackRange) {
+                if (distance > stateComponent.character.characterClass.attackRange || !stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) {
                     log += "\nPursuing closest hostile target: " + currentClosestHostile.name;
                     PursueClosestHostile();
                 } else {

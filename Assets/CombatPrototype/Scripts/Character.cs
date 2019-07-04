@@ -6756,9 +6756,11 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public void AdjustIgnoreHostilities(int amount) {
         ignoreHostility += amount;
         ignoreHostility = Mathf.Max(0, ignoreHostility);
+        //Debug.Log(GameManager.Instance.TodayLogString() + "Adjusted " + name + "'s ignore hostilities by " + amount + ". Ignore hostiles value is " + ignoreHostility.ToString());
     }
     public void ClearIgnoreHostilities() {
         ignoreHostility = 0;
+        //Debug.Log(GameManager.Instance.TodayLogString() + name + " clreared ignore hostiles.");
     }
     /// <summary>
     /// Is the other character an outsider. (Not part of this character's faction)
