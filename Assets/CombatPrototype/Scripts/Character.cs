@@ -160,6 +160,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public string currentAlterEgoName { get; private set; } //this character's currently active alter ego. Usually just Original.
     public Dictionary<string, AlterEgoData> alterEgos { get; private set; }
 
+    public string originalClassName { get; private set; } //the class that this character started with
+
     //For Testing
     public List<string> locationHistory { get; private set; }
     public List<string> actionHistory { get; private set; }
@@ -485,6 +487,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _raceSetting = raceSetting.CreateNewCopy();
         AssignRole(role, false);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(GetClassForRole(role));
+        originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         //AssignRandomJob();
         SetMorality(MORALITY.GOOD);
@@ -499,6 +502,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _raceSetting = raceSetting.CreateNewCopy();
         AssignRole(role, false);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
+        originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         //AssignRandomJob();
         SetMorality(MORALITY.GOOD);
@@ -513,6 +517,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _raceSetting = raceSetting.CreateNewCopy();
         AssignRole(data.role, false);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
+        originalClassName = _characterClass.className;
         SetName(data.name);
         //AssignRandomJob();
         SetMorality(data.morality);

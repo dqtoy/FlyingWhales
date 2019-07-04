@@ -177,8 +177,9 @@ public class FactionInfoUI : UIMenu {
 
         for (int i = 0; i < activeFaction.characters.Count; i++) {
             Character currCharacter = activeFaction.characters[i];
-            CreateNewCharacterItem(currCharacter);
+            CreateNewCharacterItem(currCharacter, false);
         }
+        OrderCharacterItems();
     }
     private LandmarkCharacterItem GetItem(Party party) {
         LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
@@ -204,19 +205,22 @@ public class FactionInfoUI : UIMenu {
         }
         return null;
     }
-    private LandmarkCharacterItem CreateNewCharacterItem(Character character) {
+    private LandmarkCharacterItem CreateNewCharacterItem(Character character, bool autoSort = true) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
         item.SetCharacter(character, this);
         characterItems.Add(item);
-        OrderCharacterItems();
+        if (autoSort) {
+            OrderCharacterItems();
+        }
         return item;
     }
     private void OrderCharacterItems() {
         if (activeFaction.leader is Character) {
-            LandmarkCharacterItem leaderItem = GetItem(activeFaction.leader as Character);
+            Character leader = activeFaction.leader as Character;
+            LandmarkCharacterItem leaderItem = GetItem(leader);
             if (leaderItem == null) {
-                throw new System.Exception("Leader item in " + activeFaction.name + "'s UI is null!");
+                throw new System.Exception("Leader item in " + activeFaction.name + "'s UI is null! Leader is " + leader.name);
             }
             leaderItem.transform.SetAsFirstSibling();
             leaderEmblem.gameObject.SetActive(true);
