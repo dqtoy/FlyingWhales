@@ -2779,6 +2779,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     return;
                 }
                 ThisCharacterWitnessedEvent(action);
+                ThisCharacterWatchEvent(null, action, state);
             }
         }
     }
@@ -2788,7 +2789,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 if(GetNormalTrait("Unconscious", "Resting") != null) {
                     return;
                 }
-                ThisCharacterWitnessedEvent(target.currentAction);
+                ThisCharacterWitnessedEvent(target.currentAction); 
+                ThisCharacterWatchEvent(target, target.currentAction, target.currentAction.currentState);
             }
         }
         Spooked spooked = GetNormalTrait("Spooked") as Spooked;
@@ -2798,6 +2800,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
             return;
         }
+
+        ThisCharacterWatchEvent(target, null, null);
 
         //if (role.roleType == CHARACTER_ROLE.CIVILIAN) {
         //    if (target.GetNormalTrait("Berserked") != null) {
@@ -2958,6 +2962,104 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
         }
+    }
+    public void ThisCharacterWatchEvent(Character targetCharacter, GoapAction action, GoapActionState state) {
+        if (action == null) {
+            if (targetCharacter != null && targetCharacter.stateComponent.currentState != null && !targetCharacter.stateComponent.currentState.isDone && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT
+                && targetCharacter.faction == faction) {
+                CombatState targetCombatState = targetCharacter.stateComponent.currentState as CombatState;
+                if(targetCombatState.currentClosestHostile != null && targetCombatState.currentClosestHostile.faction == faction && targetCombatState.currentClosestHostile != this) {
+                    RELATIONSHIP_EFFECT relEffectTowardsTarget = GetRelationshipEffectWith(targetCharacter);
+                    RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = GetRelationshipEffectWith(targetCombatState.currentClosestHostile);
+
+                    if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if(relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.NEGATIVE) {
+                            marker.AddHostileInRange(targetCombatState.currentClosestHostile);
+                        } else {
+                            CreateWatchEvent(null, targetCombatState, targetCharacter);
+                        }
+                    }else if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
+                            marker.AddHostileInRange(targetCharacter);
+                        } else {
+                            CreateWatchEvent(null, targetCombatState, targetCharacter);
+                        }
+                    }
+                }
+            }
+        } else if (!action.isDone) {
+            if (action.goapType == INTERACTION_TYPE.MAKE_LOVE && state.name == "Make Love Success") {
+                Character target = action.poiTarget as Character;
+                if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    CreateWatchEvent(action, null, action.actor);
+                } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    CreateWatchEvent(action, null, target);
+                } else {
+                    marker.AddAvoidInRange(action.actor, false);
+                    marker.AddAvoidInRange(target);
+                }
+            } else if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success") {
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < 25) {
+                    if (!HasRelationshipOfTypeWith(action.actor, RELATIONSHIP_TRAIT.ENEMY)) {
+                        CreateWatchEvent(action, null, action.actor);
+                    }
+                }
+            }
+            //else if (action.goapType == INTERACTION_TYPE.TABLE_POISON) {
+            //    int chance = UnityEngine.Random.Range(0, 100);
+            //    if (chance < 35) {
+            //        CreateWatchEvent(action, null, action.actor);
+            //    }
+            //} 
+            else if (action.goapType == INTERACTION_TYPE.CURSE_CHARACTER && state.name == "Curse Success") {
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < 35) {
+                    CreateWatchEvent(action, null, action.actor);
+                }
+            } else if ((action.goapType == INTERACTION_TYPE.TRANSFORM_TO_WOLF || action.goapType == INTERACTION_TYPE.REVERT_TO_NORMAL) && state.name == "Transform Success") {
+                if (faction == action.actor.faction) {
+                    CreateWatchEvent(action, null, action.actor);
+                }
+            }
+        }
+    }
+    //In watch event, it's either the character watch an action or combat state, it cannot be both
+    private void CreateWatchEvent(GoapAction actionToWatch, CombatState combatStateToWatch, Character targetCharacter) {
+        if (currentAction != null && !currentAction.isDone && currentAction.goapType == INTERACTION_TYPE.WATCH) {
+            return;
+        }
+        if (stateComponent.currentState != null) {
+            stateComponent.currentState.OnExitThisState();
+            //This call is doubled so that it will also exit the previous major state if there's any
+            if (stateComponent.currentState != null) {
+                stateComponent.currentState.OnExitThisState();
+            }
+        } else if (stateComponent.stateToDo != null) {
+            stateComponent.SetStateToDo(null);
+        } else {
+            if (currentParty.icon.isTravelling) {
+                if (currentParty.icon.travelLine == null) {
+                    marker.StopMovement();
+                } else {
+                    currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
+                }
+            }
+            AdjustIsWaitingForInteraction(1);
+            StopCurrentAction(false);
+            AdjustIsWaitingForInteraction(-1);
+        }
+
+        Watch watchAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.WATCH, this, targetCharacter) as Watch;
+        if (actionToWatch != null) {
+            watchAction.InitializeOtherData(new object[] { actionToWatch });
+        }else if (combatStateToWatch != null) {
+            watchAction.InitializeOtherData(new object[] { combatStateToWatch });
+        }
+        GoapNode goalNode = new GoapNode(null, watchAction.cost, watchAction);
+        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+        goapPlan.ConstructAllNodes();
+        AddPlan(goapPlan, true);
     }
     #endregion
 

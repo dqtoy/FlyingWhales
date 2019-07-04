@@ -352,6 +352,10 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Share Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
+        {INTERACTION_TYPE.WATCH, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Watch Success", status = InteractionManager.Goap_State_Success, duration = -1 },
+            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
     };
 }
 

@@ -130,10 +130,9 @@ public class MakeLove : GoapAction {
 
         if (isOldNews) {
             reactions.Add("This is old news.");
-            if(status == SHARE_INTEL_STATUS.WITNESSED) {
-                recipient.marker.AddAvoidInRange(actor);
-                
-            }
+            //if(status == SHARE_INTEL_STATUS.WITNESSED) {
+            //    recipient.marker.AddAvoidInRange(actor);
+            //}
         } else {
             //- Recipient is the Actor
             if(recipient == actor) {
@@ -159,9 +158,9 @@ public class MakeLove : GoapAction {
                     recipient.CreateUndermineJobOnly(actor, "informed", status);
                 } else {
                     response = string.Format("I'm still the one {0} comes home to.", actor.name);
-                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                        recipient.marker.AddAvoidInRange(actor);
-                    }
+                    //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                    //    recipient.marker.AddAvoidInRange(actor);
+                    //}
                 }
                 if(recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR)) {
                     if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
@@ -169,9 +168,9 @@ public class MakeLove : GoapAction {
                         recipient.CreateUndermineJobOnly(target, "informed", status);
                     } else {
                         response += string.Format(" I already know that {0} is a harlot.", target.name);
-                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
-                        }
+                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        //    recipient.marker.AddAvoidInRange(actor);
+                        //}
                     }
                 }else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.RELATIVE)) {
                     if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
@@ -179,9 +178,9 @@ public class MakeLove : GoapAction {
                         recipient.CreateUndermineJobOnly(target, "informed", status);
                     } else {
                         response += string.Format(" {0} is my blood. Blood is thicker than water.", target.name);
-                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
-                        }
+                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        //    recipient.marker.AddAvoidInRange(actor);
+                        //}
                     }
                 } else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.FRIEND)) {
                     if (CharacterManager.Instance.RelationshipDegradation(target, recipient, this)) {
@@ -189,9 +188,9 @@ public class MakeLove : GoapAction {
                         recipient.CreateUndermineJobOnly(target, "informed", status);
                     } else {
                         response += string.Format(" My friendship with {0} is much stronger than this incident.", target.name);
-                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
-                        }
+                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        //    recipient.marker.AddAvoidInRange(actor);
+                        //}
                     }
                 } else if (recipient.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.ENEMY)) {
                     response += string.Format(" I always knew that {0} is a snake. {1} must pay for this!", target.name, Utilities.GetPronounString(target.gender, PRONOUN_TYPE.SUBJECTIVE, true));
@@ -202,9 +201,9 @@ public class MakeLove : GoapAction {
                         recipient.CreateUndermineJobOnly(target, "informed", status);
                     } else {
                         response += string.Format(" I'm not even going to bother myself with {0}.", target.name);
-                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
-                        }
+                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        //    recipient.marker.AddAvoidInRange(actor);
+                        //}
                     }
                 }
                 reactions.Add(response);
@@ -217,9 +216,9 @@ public class MakeLove : GoapAction {
                     recipient.CreateUndermineJobOnly(target, "informed", status);
                 } else {
                     response = string.Format("I'm still the one {0} comes home to.", target.name);
-                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                        recipient.marker.AddAvoidInRange(target);
-                    }
+                    //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                    //    recipient.marker.AddAvoidInRange(target);
+                    //}
                 }
                 if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.PARAMOUR)) {
                     if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
@@ -227,9 +226,9 @@ public class MakeLove : GoapAction {
                         recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else {
                         response += string.Format(" I already know that {0} is a harlot.", actor.name);
-                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(target);
-                        }
+                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        //    recipient.marker.AddAvoidInRange(target);
+                        //}
                     }
                 } else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.RELATIVE)) {
                     if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
@@ -237,9 +236,9 @@ public class MakeLove : GoapAction {
                         recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else {
                         response += string.Format(" {0} is my blood. Blood is thicker than water.", actor.name);
-                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(target);
-                        }
+                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        //    recipient.marker.AddAvoidInRange(target);
+                        //}
                     }
                 } else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.FRIEND)) {
                     if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
@@ -247,9 +246,9 @@ public class MakeLove : GoapAction {
                         recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else {
                         response += string.Format(" My friendship with {0} is much stronger than this incident.", actor.name);
-                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(target);
-                        }
+                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        //    recipient.marker.AddAvoidInRange(target);
+                        //}
                     }
                 } else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
                     response += string.Format(" I always knew that {0} is a snake. {1} must pay for this!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, true));
@@ -260,9 +259,9 @@ public class MakeLove : GoapAction {
                         recipient.CreateUndermineJobOnly(actor, "informed", status);
                     } else {
                         response += string.Format(" I'm not even going to bother myself with {0}.", actor.name);
-                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(target);
-                        }
+                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        //    recipient.marker.AddAvoidInRange(target);
+                        //}
                     }
                 }
                 reactions.Add(response);
@@ -279,9 +278,9 @@ public class MakeLove : GoapAction {
                     recipient.CreateShareInformationJob(actorLover, this);
                 } else {
                     reactions.Add(string.Format("{0} is cheating on {1}? I don't want to get involved.", actor.name, actorLover.name));
-                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                        recipient.marker.AddAvoidInRange(actor);
-                    }
+                    //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                    //    recipient.marker.AddAvoidInRange(actor);
+                    //}
                 }
             }
             //- Recipient has a positive relationship with Target's Lover and Target's Lover is not the Actor
@@ -291,24 +290,24 @@ public class MakeLove : GoapAction {
                     recipient.CreateShareInformationJob(targetLover, this);
                 } else {
                     reactions.Add(string.Format("{0} is cheating on {1}? I don't want to get involved.", target.name, targetLover.name));
-                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                        recipient.marker.AddAvoidInRange(target);
-                    }
+                    //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                    //    recipient.marker.AddAvoidInRange(target);
+                    //}
                 }
             }
             //- Recipient has a negative relationship with Actor's Lover and Actor's Lover is not the Target
             else if (recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.NEGATIVE && actorLover != target) {
                 reactions.Add(string.Format("{0} is cheating on {1}? {2} got what {3} deserves.", actor.name, actorLover.name, Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-                if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                    recipient.marker.AddAvoidInRange(actor);
-                }
+                //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                //    recipient.marker.AddAvoidInRange(actor);
+                //}
             }
             //- Recipient has a negative relationship with Target's Lover and Target's Lover is not the Actor
             else if (recipient.GetRelationshipEffectWith(targetLover) == RELATIONSHIP_EFFECT.NEGATIVE && targetLover != actor) {
                 reactions.Add(string.Format("{0} is cheating on {1}? {2} got what {3} deserves.", target.name, targetLover.name, Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(targetLover.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-                if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                    recipient.marker.AddAvoidInRange(target);
-                }
+                //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                //    recipient.marker.AddAvoidInRange(target);
+                //}
             }
             //- Recipient has a no relationship with Actor's Lover and Actor's Lover is not the Target
             else if (recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.NONE && actorLover != target) {
@@ -323,9 +322,9 @@ public class MakeLove : GoapAction {
             //- Else Catcher
             else {
                 reactions.Add("That is none of my business.");
-                if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                    recipient.marker.AddAvoidInRange(actor);
-                }
+                //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                //    recipient.marker.AddAvoidInRange(actor);
+                //}
             }
         }
         return reactions;

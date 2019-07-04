@@ -393,6 +393,12 @@ public class CharacterMarker : PooledObject {
     private void OnCharacterStartedState(Character character, CharacterState state) {
         if (character == this.character) {
             UpdateActionIcon();
+        } else {
+            if(state.characterState == CHARACTER_STATE.COMBAT) {
+                if (inVisionPOIs.Contains(character)) {
+                    this.character.ThisCharacterWatchEvent(character, null, null);
+                }
+            }
         }
     }
     //private void OnCharacterEndedState(Character character, CharacterState state) {

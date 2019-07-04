@@ -7,12 +7,12 @@ public class ShareInformation : GoapAction {
 
     public ShareInformation(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SHARE_INFORMATION, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.MORNING,
-            TIME_IN_WORDS.AFTERNOON,
-            TIME_IN_WORDS.EARLY_NIGHT,
-            TIME_IN_WORDS.LATE_NIGHT,
-        };
+        //validTimeOfDays = new TIME_IN_WORDS[] {
+        //    TIME_IN_WORDS.MORNING,
+        //    TIME_IN_WORDS.AFTERNOON,
+        //    TIME_IN_WORDS.EARLY_NIGHT,
+        //    TIME_IN_WORDS.LATE_NIGHT,
+        //};
     }
 
     #region Overrides
