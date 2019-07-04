@@ -95,6 +95,9 @@ public class GoapPlanner {
     }
 
     private bool BuildGoapTree(GoapNode parent, List<GoapNode> startingNodes, List<GoapAction> usableActions, ref string log, GoapPlanJob job = null) {
+        if (parent == null) {
+            return false;
+        }
         log += "\nBuilding goap tree with parent " + parent.action.goapName;
         if(parent.action.preconditions.Count > 0) {
             List<Precondition> unsatisfiedPreconditions = new List<Precondition>();

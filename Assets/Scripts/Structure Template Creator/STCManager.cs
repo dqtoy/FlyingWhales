@@ -440,7 +440,7 @@ public class StructureTemplate {
     #region Utilities
     public bool HasConnectorsForStructure(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures) {
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
-            if (keyValuePair.Key.IsOpenSpace()) {
+            if (keyValuePair.Key.IsOpenSpace() && keyValuePair.Key != STRUCTURE_TYPE.CEMETERY) {
                 continue; //skip
             }
             if (GetCountOfConnectorsForType(keyValuePair.Key) < keyValuePair.Value.Count) {
@@ -450,9 +450,14 @@ public class StructureTemplate {
         }
         return true;
     }
+    /// <summary>
+    /// Does this template have all the needed connectors for all the given structures?
+    /// </summary>
+    /// <param name="structures">The structures to connect.</param>
+    /// <returns>True or False</returns>
     public bool HasConnectorsForStructure(Dictionary<STRUCTURE_TYPE, int> structures) {
         foreach (KeyValuePair<STRUCTURE_TYPE, int> keyValuePair in structures) {
-            if (keyValuePair.Key.IsOpenSpace()) {
+            if (keyValuePair.Key.IsOpenSpace() && keyValuePair.Key != STRUCTURE_TYPE.CEMETERY) {
                 continue; //skip
             }
             if (GetCountOfConnectorsForType(keyValuePair.Key) < keyValuePair.Value) {

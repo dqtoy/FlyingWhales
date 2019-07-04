@@ -1355,7 +1355,7 @@ public static class Extensions {
 
     #region Structures
     /// <summary>
-    /// Is this stucture contained within a rectangle?
+    /// Is this stucture contained within walls?
     /// </summary>
     /// <param name="sub"></param>
     /// <returns>True or false</returns>
@@ -1365,10 +1365,21 @@ public static class Extensions {
             case STRUCTURE_TYPE.WAREHOUSE:
             case STRUCTURE_TYPE.DWELLING:
             case STRUCTURE_TYPE.EXPLORE_AREA:
-            case STRUCTURE_TYPE.CEMETERY:
+            //case STRUCTURE_TYPE.CEMETERY:
                 return false;
             default:
                 return true;
+        }
+    }
+    public static bool ShouldBeGeneratedFromTemplate(this STRUCTURE_TYPE sub) {
+        switch (sub) {
+            case STRUCTURE_TYPE.INN:
+            case STRUCTURE_TYPE.WAREHOUSE:
+            case STRUCTURE_TYPE.DWELLING:
+            case STRUCTURE_TYPE.CEMETERY:
+                return true;
+            default:
+                return false;
         }
     }
     #endregion

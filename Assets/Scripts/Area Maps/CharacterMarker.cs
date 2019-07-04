@@ -1421,8 +1421,8 @@ public class CharacterMarker : PooledObject {
         if (this.character == character) {
             string summary = character.name + " will determine the transfer from engage list to flee list";
             if (hostilesInRange.Count == 0 && avoidInRange.Count == 0) {
-                summary += character.name + " does not have any characters in engage or avoid list. Ignoring transfer.";
-                Debug.Log(summary);
+                summary +=  "\n" + character.name + " does not have any characters in engage or avoid list. Ignoring transfer.";
+                //Debug.Log(summary);
                 return;
             }
             //check flee first, the logic determines that this character will not flee, then attack by default
