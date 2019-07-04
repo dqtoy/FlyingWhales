@@ -28,10 +28,10 @@ public class Dead : Trait {
             && characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST) {
             //check first if the target character already has a bury job in this location
             if (CanTakeBuryJob(characterThatWillDoJob, null)) {
-                GoapPlanJob buryJob = characterThatWillDoJob.jobQueue.GetJob(JOB_TYPE.BURY, targetCharacter) as GoapPlanJob;
-                if (buryJob == null) {
+                //GoapPlanJob buryJob = characterThatWillDoJob.jobQueue.GetJob(JOB_TYPE.BURY, targetCharacter) as GoapPlanJob;
+                if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.BURY)) { //can only have 1 bury job
                     //if none, create one
-                    buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
+                    GoapPlanJob buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
                     buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
                     buryJob.AllowDeadTargets();
                     characterThatWillDoJob.jobQueue.AddJobInQueue(buryJob, false);

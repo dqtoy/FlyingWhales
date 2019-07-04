@@ -13,27 +13,11 @@ public class BerserkedState : CharacterState {
 
     #region Overrides
     protected override void StartState() {
-        base.StartState();
         stateComponent.character.AdjustDoNotGetHungry(1);
         stateComponent.character.AdjustDoNotGetLonely(1);
         stateComponent.character.AdjustDoNotGetTired(1);
         stateComponent.character.AddTrait("Berserked");
-        for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
-            Character hostile = stateComponent.character.marker.avoidInRange[i];
-            if (stateComponent.character.marker.inVisionPOIs.Contains(hostile)) {
-                stateComponent.character.marker.AddHostileInRange(hostile, checkHostility: false, processCombatBehavior: false);
-            } else {
-                stateComponent.character.marker.RemoveAvoidInRange(hostile, false);
-                i--;
-            }
-        }
-        stateComponent.character.marker.ClearAvoidInRange(false);
-        if(stateComponent.character.marker.hostilesInRange.Count > 0) {
-            //I put this switching to another tick so it will not start a state inside the start state function, because it might cause some problems
-            GameDate nextDay = GameManager.Instance.Today();
-            nextDay.AddTicks(1);
-            SchedulingManager.Instance.AddEntry(nextDay, () => stateComponent.SwitchToState(CHARACTER_STATE.COMBAT));
-        }
+        base.StartState();
     }
     protected override void EndState() {
         base.EndState();
@@ -90,15 +74,33 @@ public class BerserkedState : CharacterState {
         return base.OnEnterVisionWith(targetPOI);
     }
     public override bool InVisionPOIsOnStartState() {
+        for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
+            Character hostile = stateComponent.character.marker.avoidInRange[i];
+            if (stateComponent.character.marker.inVisionPOIs.Contains(hostile)) {
+                stateComponent.character.marker.AddHostileInRange(hostile, checkHostility: false, processCombatBehavior: false);
+            } else {
+                stateComponent.character.marker.RemoveAvoidInRange(hostile, false);
+                i--;
+            }
+        }
+        stateComponent.character.marker.ClearAvoidInRange(false);
+
+        bool hasProcessedCombatBehavior = false;
         if (base.InVisionPOIsOnStartState()) {
             for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {
                 IPointOfInterest poi = stateComponent.character.marker.inVisionPOIs[i];
                 if (OnEnterVisionWith(poi)) {
-                    return true;
+                    if(poi is Character) {
+                        hasProcessedCombatBehavior = true;
+                    }
+                    break;
                 }
             }
         }
-        return false;
+        if (stateComponent.character.marker.hostilesInRange.Count > 0 && !hasProcessedCombatBehavior) {
+            stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+        }
+        return true;
     }
     //protected override void PerTickInState() {
     //    base.PerTickInState();

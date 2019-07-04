@@ -6,10 +6,13 @@ public class Watch : GoapAction {
     public GoapAction actionBeingWatched { get; private set; }
     public CombatState combatBeingWatched { get; private set; }
 
-    public Watch(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.WATCH, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
+    private Character _targetCharacter;
+    public Watch(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.WATCH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         doesNotStopTargetCharacter = true;
+        cannotCancelAction = true;
+        _targetCharacter = poiTarget as Character;
         //validTimeOfDays = new TIME_IN_WORDS[] {
         //    TIME_IN_WORDS.MORNING,
         //    TIME_IN_WORDS.AFTERNOON,
@@ -80,6 +83,15 @@ public class Watch : GoapAction {
         Messenger.AddListener(Signals.TICK_STARTED, PerTickWatchSuccess);
     }
     private void PerTickWatchSuccess() {
+        if (_targetCharacter.isDead) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+            if (actor.currentParty.icon.isTravelling) {
+                //Stop moving
+                actor.marker.StopMovement();
+            }
+            currentState.EndPerTickEffect();
+            return;
+        }
         if (actionBeingWatched != null) {
             if (actionBeingWatched.isDone) {
                 Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);

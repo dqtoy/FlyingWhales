@@ -2994,8 +2994,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                         if(relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.NEGATIVE) {
                             marker.AddHostileInRange(targetCombatState.currentClosestHostile);
-                        } else {
+                        } else if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                             CreateWatchEvent(null, targetCombatState, targetCharacter);
+                        } else {
+                            if(HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
+                                marker.AddHostileInRange(targetCombatState.currentClosestHostile);
+                            } else {
+                                CreateWatchEvent(null, targetCombatState, targetCharacter);
+                            }
                         }
                     }else if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
                         if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
@@ -3047,6 +3053,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //In watch event, it's either the character watch an action or combat state, it cannot be both
     private void CreateWatchEvent(GoapAction actionToWatch, CombatState combatStateToWatch, Character targetCharacter) {
         if (currentAction != null && !currentAction.isDone && currentAction.goapType == INTERACTION_TYPE.WATCH) {
+            return;
+        }
+        if (stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
             return;
         }
         if (stateComponent.currentState != null) {
