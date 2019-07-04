@@ -31,6 +31,9 @@ public class CombatState : CharacterState {
         if (isPaused) {
             return;
         }
+        if (stateComponent.currentState != this) {
+            return; //to prevent exiting from this function, when this state was already exited by another funtion in the same stack.
+        }
         if (stateComponent.character.doNotDisturb > 0) {
             if (!(characterState == CHARACTER_STATE.BERSERKED && stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetNormalTrait("Combat Recovery") != null)) {
                 StopStatePerTick();
@@ -67,11 +70,14 @@ public class CombatState : CharacterState {
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
         Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
+
+        base.StartState();
+        if (stateComponent.character.currentAction is AssaultCharacter && !stateComponent.character.currentAction.isPerformingActualAction) {
+            stateComponent.character.currentAction.PerformActualAction(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
+        }
         stateComponent.character.StopCurrentAction(false);
         stateComponent.character.currentParty.RemoveAllOtherCharacters(); //Drop characters when entering combat
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Starting combat state for " + stateComponent.character.name);
-
-        base.StartState();
         stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
     protected override void EndState() {

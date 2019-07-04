@@ -1731,9 +1731,11 @@ public class CharacterMarker : PooledObject {
         } else if (character.GetNormalTrait("Spooked") != null) { //TODO: Ask chy about spooked mechanics
                                                                   //- fear-type status effect
             willTransfer = true;
-        } else if (character.isStarving || character.isExhausted) {
-            //summary += "\n" + character.name + " is starving(" + character.isStarving.ToString() + ") or is exhausted(" + character.isExhausted.ToString() + ").";
-            //-character is starving or exhausted
+        } else if (character.isStarving && character.GetNormalTrait("Vampiric") == null) {
+            //-character is starving and is not a vampire
+            willTransfer = true;
+        } else if (character.isExhausted) {
+            //-character is exhausted
             willTransfer = true;
         }
         return willTransfer;

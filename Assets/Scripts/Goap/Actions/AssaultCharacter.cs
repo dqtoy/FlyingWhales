@@ -34,7 +34,11 @@ public class AssaultCharacter : GoapAction {
         Character targetCharacter = poiTarget as Character;
         if (targetCharacter.specificLocation == actor.specificLocation && !targetCharacter.currentParty.icon.isAreaTravelling) {
             CharacterState combatState;
-            actor.marker.AddHostileInRange(targetCharacter, out combatState, CHARACTER_STATE.COMBAT, false);
+            if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {
+                actor.marker.AddHostileInRange(targetCharacter, out combatState, CHARACTER_STATE.COMBAT, false);
+            } else {
+                combatState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
+            }
             if (combatState is CombatState) {
                 (combatState as CombatState).SetOnEndStateAction(OnFinishCombatState);
                 SetState("In Progress");

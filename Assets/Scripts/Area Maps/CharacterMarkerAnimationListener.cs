@@ -35,7 +35,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         GameObject projectileGO = GameObject.Instantiate(projectilePrefab, Vector3.zero, Quaternion.identity, parentMarker.projectileParent);
         projectileGO.transform.localPosition = Vector3.zero;
         Projectile projectile = projectileGO.GetComponent<Projectile>();
-        projectile.SetTarget(target.marker.transform);
+        projectile.SetTarget(target.marker.transform, target);
         projectile.onHitAction = OnProjectileHit;
         currentProjectile = projectileGO;
     }

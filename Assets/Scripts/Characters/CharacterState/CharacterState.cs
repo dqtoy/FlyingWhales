@@ -152,6 +152,8 @@ public class CharacterState {
             Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
             StartState();
         } else {
+            //GameDate dueDate = GameManager.Instance.Today().AddTicks(30);
+            //SchedulingManager.Instance.AddEntry(dueDate, () => GoToLocation(targetArea));
             CreateTravellingThoughtBubbleLog(targetArea);
             Debug.Log(GameManager.Instance.TodayLogString() + "Travelling to " + targetArea.name + " before entering " + stateName + " for " + stateComponent.character.name);
             stateComponent.character.currentParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => StartState());
@@ -172,6 +174,12 @@ public class CharacterState {
         //    StartState();
         //}
     }
+
+    //private void GoToLocation(Area targetArea) {
+    //    CreateTravellingThoughtBubbleLog(targetArea);
+    //    Debug.Log(GameManager.Instance.TodayLogString() + "Travelling to " + targetArea.name + " before entering " + stateName + " for " + stateComponent.character.name);
+    //    stateComponent.character.currentParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => StartState());
+    //}
     //This is the one must be called to exit and end this state
     public void ExitState() {
         Debug.Log(GameManager.Instance.TodayLogString() + "Exiting " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name ?? "No One");

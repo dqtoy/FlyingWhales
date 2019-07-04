@@ -796,11 +796,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             }
 
             marker.OnDeath(deathTile);
-
+            _numOfWaitingForGoapThread = 0; //for raise dead
             Dead dead = new Dead();
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             AddTrait(dead, gainedFromDoing: deathFromAction);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
+
+            CancelAllJobsAndPlans();
 
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
