@@ -11,7 +11,7 @@ public class Watch : GoapAction {
         actionIconString = GoapActionStateDB.Hostile_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         doesNotStopTargetCharacter = true;
-        cannotCancelAction = true;
+        //cannotCancelAction = true;
         _targetCharacter = poiTarget as Character;
         //validTimeOfDays = new TIME_IN_WORDS[] {
         //    TIME_IN_WORDS.MORNING,
@@ -120,6 +120,11 @@ public class Watch : GoapAction {
         }else if (actor.currentParty.icon.isTravelling && actor.marker.inVisionPOIs.Contains(poiTarget)) {
             //Stop moving when in vision already
             actor.marker.StopMovement();
+        }
+
+        //Always face target when not travelling
+        if (!actor.currentParty.icon.isTravelling) {
+            actor.FaceTarget(poiTarget);
         }
     }
     private void AfterWatchSuccess() {

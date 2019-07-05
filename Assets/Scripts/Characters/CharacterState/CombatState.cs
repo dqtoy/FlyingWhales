@@ -173,7 +173,7 @@ public class CombatState : CharacterState {
         string log = GameManager.Instance.TodayLogString() + "Reevaluating combat behavior of " + stateComponent.character.name;
         if (isAttacking) {
             log += "\n" + stateComponent.character.name + " is attacking!";
-            if (currentClosestHostile != null && stateComponent.character.marker.hostilesInRange.Contains(currentClosestHostile)) {
+            if (currentClosestHostile != null && !stateComponent.character.marker.hostilesInRange.Contains(currentClosestHostile)) {
                 log += "\nCurrent closest hostile: " + currentClosestHostile.name + " is no longer in hostile list, setting another closest hostile...";
                 SetClosestHostile();
             }else if(currentClosestHostile == null) {
@@ -394,7 +394,7 @@ public class CombatState : CharacterState {
                             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
                                 { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { targetCharacter }}
                             });
-                            job.SetCannotOverrideJob(true);
+                            //job.SetCannotOverrideJob(true);
                             job.SetCancelOnFail(true);
                             stateComponent.character.jobQueue.AddJobInQueue(job, false);
                         }
