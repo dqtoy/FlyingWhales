@@ -111,7 +111,7 @@ public class AbductCharacter : GoapAction {
                     reactions.Add(string.Format("I want to save {0} from {1} but I need to know where {2} was taken.", targetCharacter.name, actor.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
                         if (recipient.marker.inVisionPOIs.Contains(actor)) {
-                            recipient.marker.AddHostileInRange(actor);
+                            recipient.marker.AddHostileInRange(actor, checkHostility: false);
                         }
                     }
                 }
@@ -125,7 +125,7 @@ public class AbductCharacter : GoapAction {
                     reactions.Add(string.Format("Poor {0}. If you find out where {1} took {2}, I may be able to help.", targetCharacter.name, actor.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
                         if (recipient.marker.inVisionPOIs.Contains(actor)) {
-                            recipient.marker.AddHostileInRange(actor);
+                            recipient.marker.AddHostileInRange(actor, checkHostility: false);
                         }
                     }
                 }

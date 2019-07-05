@@ -314,23 +314,21 @@ public class TablePoison : GoapAction {
                         } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
                             //- Has Positive Relationship
                             if (tableHasPoison) {
-                                if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
-                                    reactions.Add(string.Format("Why does {0} want me dead? I've got to do something about this!", actor.name));
-                                    if (!hasCrimeBeenReported) {
-                                        recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                                if (!hasCrimeBeenReported) {
+                                    if (recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status)) {
+                                        reactions.Add(string.Format("Why does {0} want me dead? I've got to do something about this!", actor.name));
+                                    } else {
+                                        reactions.Add("I just have to remove the poison and everything will go back to the way it was.");
                                     }
-                                } else {
-                                    reactions.Add("I just have to remove the poison and everything will go back to the way it was.");
                                 }
                                 CreateRemovePoisonJob(recipient, assumedTargetCharacter);
                             } else if (targetIsSick) {
-                                if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
-                                    reactions.Add(string.Format("Why does {0} want me dead? I've got to do something about this!", actor.name));
-                                    if (!hasCrimeBeenReported) {
-                                        recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                                if (!hasCrimeBeenReported) {
+                                    if (recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status)) {
+                                        reactions.Add(string.Format("Why does {0} want me dead? I've got to do something about this!", actor.name));
+                                    } else {
+                                        reactions.Add("Relax. I didn't die. I just got sick. I'm sure I'll recover in no time.");
                                     }
-                                } else {
-                                    reactions.Add("Relax. I didn't die. I just got sick. I'm sure I'll recover in no time.");
                                 }
                             } else {
                                 reactions.Add(string.Format("Why does {0} want me dead?", actor.name));
@@ -378,33 +376,30 @@ public class TablePoison : GoapAction {
                     RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         if (tableHasPoison) {
-                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
-                                reactions.Add(string.Format("{0} wants to poison {1}? I've got to do something about this.", actor.name, targetCharacter.name));
-                                if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                            if (!hasCrimeBeenReported) {
+                                if (recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status)) {
+                                    reactions.Add(string.Format("{0} wants to poison {1}? I've got to do something about this.", actor.name, targetCharacter.name));
+                                    recipient.CreateShareInformationJob(targetCharacter, this);
+                                } else {
+                                    reactions.Add(string.Format("{0} wants to poison {1}? I don't believe that.", actor.name, targetCharacter.name));
                                 }
-                                recipient.CreateShareInformationJob(targetCharacter, this);
-                            } else {
-                                reactions.Add(string.Format("{0} wants to poison {1}? I don't believe that.", actor.name, targetCharacter.name));
                             }
                         } else if (targetIsSick) {
-                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
-                                reactions.Add(string.Format("{0} poisoned {1}? I've got to do something about this.", actor.name, targetCharacter.name));
-                                if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                            if (!hasCrimeBeenReported) {
+                                if (recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status)) {
+                                    reactions.Add(string.Format("{0} poisoned {1}? I've got to do something about this.", actor.name, targetCharacter.name));
+                                    recipient.CreateShareInformationJob(targetCharacter, this);
+                                } else {
+                                    reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
                                 }
-                                recipient.CreateShareInformationJob(targetCharacter, this);
-                            } else {
-                                reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
                             }
                         } else if (targetIsDead) {
-                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
-                                reactions.Add(string.Format("{0} poisoned {1}? I've got to do something about this.", actor.name, targetCharacter.name));
-                                if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
+                            if (!hasCrimeBeenReported) {
+                                if (recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status)) {
+                                    reactions.Add(string.Format("{0} poisoned {1}? I've got to do something about this.", actor.name, targetCharacter.name));
+                                } else {
+                                    reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
                                 }
-                            } else {
-                                reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
                             }
                         } else {
                             reactions.Add(string.Format("{0} wants to poison {1}?", actor.name, targetCharacter.name));
@@ -499,33 +494,30 @@ public class TablePoison : GoapAction {
                     RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         if (tableHasPoison) {
-                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
-                                reactions.Add(string.Format("{0} wants to poison {1}? This is unacceptable!", actor.name, targetCharacter.name));
-                                if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                            if (!hasCrimeBeenReported) {
+                                if (recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status)) {
+                                    reactions.Add(string.Format("{0} wants to poison {1}? This is unacceptable!", actor.name, targetCharacter.name));
+                                    recipient.CreateShareInformationJob(targetCharacter, this);
+                                } else {
+                                    reactions.Add(string.Format("{0} wants to poison {1}? I don't believe that.", actor.name, targetCharacter.name));
                                 }
-                                recipient.CreateShareInformationJob(targetCharacter, this);
-                            } else {
-                                reactions.Add(string.Format("{0} wants to poison {1}? I don't believe that.", actor.name, targetCharacter.name));
                             }
                         } else if (targetIsSick) {
-                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
-                                reactions.Add(string.Format("{0} poisoned {1}? This is unacceptable!", actor.name, targetCharacter.name));
-                                if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                            if (!hasCrimeBeenReported) {
+                                if (recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status)) {
+                                    reactions.Add(string.Format("{0} poisoned {1}? This is unacceptable!", actor.name, targetCharacter.name));
+                                    recipient.CreateShareInformationJob(targetCharacter, this);
+                                } else {
+                                    reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
                                 }
-                                recipient.CreateShareInformationJob(targetCharacter, this);
-                            } else {
-                                reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
                             }
                         } else if (targetIsDead) {
-                            if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
-                                reactions.Add(string.Format("{0} poisoned {1}? This is unacceptable!", actor.name, targetCharacter.name));
-                                if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
+                            if (!hasCrimeBeenReported) {
+                                if (recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status)) {
+                                    reactions.Add(string.Format("{0} poisoned {1}? This is unacceptable!", actor.name, targetCharacter.name));
+                                } else {
+                                    reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
                                 }
-                            } else {
-                                reactions.Add(string.Format("{0} poisoned {1}? I don't believe that.", actor.name, targetCharacter.name));
                             }
                         } else {
                             reactions.Add(string.Format("{0} wants to poison {1}? Why?!", actor.name, targetCharacter.name));

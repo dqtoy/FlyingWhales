@@ -8,7 +8,7 @@ public class Watch : GoapAction {
 
     private Character _targetCharacter;
     public Watch(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.WATCH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionIconString = GoapActionStateDB.Hostile_Icon;
+        actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         doesNotStopTargetCharacter = true;
         //cannotCancelAction = true;

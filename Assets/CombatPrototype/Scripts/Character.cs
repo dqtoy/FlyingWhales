@@ -2999,20 +2999,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = GetRelationshipEffectWith(targetCombatState.currentClosestHostile);
 
                     if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                        if(relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.NEGATIVE) {
-                            marker.AddHostileInRange(targetCombatState.currentClosestHostile);
-                        } else if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if(relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                             CreateWatchEvent(null, targetCombatState, targetCharacter);
                         } else {
-                            if(HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
-                                marker.AddHostileInRange(targetCombatState.currentClosestHostile);
-                            } else {
-                                CreateWatchEvent(null, targetCombatState, targetCharacter);
-                            }
+                            marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false);
                         }
-                    }else if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    } else {
                         if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                            marker.AddHostileInRange(targetCharacter);
+                            marker.AddHostileInRange(targetCharacter, checkHostility: false);
                         } else {
                             CreateWatchEvent(null, targetCombatState, targetCharacter);
                         }
@@ -3059,33 +3053,62 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     //In watch event, it's either the character watch an action or combat state, it cannot be both
     private void CreateWatchEvent(GoapAction actionToWatch, CombatState combatStateToWatch, Character targetCharacter) {
+        string summary = "Creating watch event for " + name + " with target " + targetCharacter.name;
+        if(actionToWatch != null) {
+            summary += " involving " + actionToWatch.goapName;
+        }else if (combatStateToWatch != null) {
+            summary += " involving Combat";
+        }
         if (currentAction != null && !currentAction.isDone && currentAction.goapType == INTERACTION_TYPE.WATCH) {
+            summary += "\n-Already watching an action, will not watch another one...";
+            PrintLogIfActive(summary);
             return;
         }
         if (stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+            summary += "\n-In combat state, must not watch...";
+            PrintLogIfActive(summary);
+            return;
+        }
+        int watchJobPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.WATCH);
+        if (stateComponent.currentState != null && stateComponent.currentState.job != null && stateComponent.currentState.job.priority <= watchJobPriority) {
+            summary += "\n-Current state job " + stateComponent.currentState.job.name + " priority: " + stateComponent.currentState.job.priority + " is higher or equal than Watch Job priority " + watchJobPriority + ", will not watch...";
+            PrintLogIfActive(summary);
+            return;
+        } else if (stateComponent.stateToDo != null && stateComponent.stateToDo.job != null && stateComponent.stateToDo.job.priority <= watchJobPriority) {
+            summary += "\n-State to do job " + stateComponent.stateToDo.job.name + " priority: " + stateComponent.stateToDo.job.priority + " is higher or equal than Watch Job priority " + watchJobPriority + ", will not watch...";
+            PrintLogIfActive(summary);
+            return;
+        } else if (currentAction != null && currentAction.parentPlan != null && currentAction.parentPlan.job != null && currentAction.parentPlan.job.priority <= watchJobPriority) {
+            summary += "\n-Current action job " + currentAction.parentPlan.job.name + " priority: " + currentAction.parentPlan.job.priority + " is higher or equal than Watch Job priority " + watchJobPriority + ", will not watch...";
+            PrintLogIfActive(summary);
             return;
         }
         if (stateComponent.currentState != null) {
+            summary += "\nEnding current state " + stateComponent.currentState.stateName + " before watching...";
             stateComponent.currentState.OnExitThisState();
             //This call is doubled so that it will also exit the previous major state if there's any
             if (stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
             }
         } else if (stateComponent.stateToDo != null) {
+            summary += "\nEnding state to do " + stateComponent.stateToDo.stateName + " before watching...";
             stateComponent.SetStateToDo(null);
         } else {
             if (currentParty.icon.isTravelling) {
+                summary += "\nStopping movement before watching...";
                 if (currentParty.icon.travelLine == null) {
                     marker.StopMovement();
                 } else {
                     currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
                 }
             }
+            summary += "\nEnding current action (if there's any) before watching...";
             AdjustIsWaitingForInteraction(1);
             StopCurrentAction(false);
             AdjustIsWaitingForInteraction(-1);
         }
-
+        summary += "\nWatch event created.";
+        PrintLogIfActive(summary);
         Watch watchAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.WATCH, this, targetCharacter) as Watch;
         if (actionToWatch != null) {
             watchAction.InitializeOtherData(new object[] { actionToWatch });
