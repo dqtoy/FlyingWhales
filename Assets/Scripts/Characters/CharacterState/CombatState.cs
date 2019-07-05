@@ -213,6 +213,10 @@ public class CombatState : CharacterState {
             log += "\n" + stateComponent.character.name + " is fleeing!";
             stateComponent.character.PrintLogIfActive(log);
             stateComponent.character.marker.OnStartFlee();
+
+            Log fleeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee");
+            fleeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            stateComponent.character.RegisterLogAndShowNotifToThisCharacterOnly(fleeLog, null, false);
         }
     }
 
@@ -223,7 +227,14 @@ public class CombatState : CharacterState {
         }
     }
     private void SetClosestHostile() {
+        Character previousClosestHostile = currentClosestHostile;
         currentClosestHostile = stateComponent.character.marker.GetNearestValidHostile();
+        if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
+            log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            stateComponent.character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+        }
     }
     //Will be constantly checked every frame
     private IEnumerator CheckIfCurrentHostileIsInRange() {
@@ -264,6 +275,7 @@ public class CombatState : CharacterState {
         }
     }
     private void Attack() {
+        string summary = stateComponent.character.name + " will attack " + currentClosestHostile?.name;
         //Check attack speed
         if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
             //attackSummary += "\nCannot attack yet because of attack speed.";
@@ -277,12 +289,16 @@ public class CombatState : CharacterState {
             }
             //When the character stops movement, stop pursue timer
             StopPursueTimer();
+            summary += "\nCannot attack because of attack speed. Waiting...";
+            //Debug.Log(summary);
             return;
         }
 
         //Check line of sight, if not in line of sight move to it again
         if (!stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) {
             //PursueClosestHostile();
+            summary += "\nTarget is not in line of sight. Not attacking for now...";
+            //Debug.Log(summary);
             return;
         }
 
@@ -296,10 +312,11 @@ public class CombatState : CharacterState {
         }
         //When the character stops movement, stop pursue timer
         StopPursueTimer();
-
+        summary += "\nExecuting attack...";
         stateComponent.character.FaceTarget(currentClosestHostile);
         stateComponent.character.marker.SetAnimationTrigger("Attack");
         isExecutingAttack = true;
+        //Debug.Log(summary);
     }
     public bool isExecutingAttack;
     public void OnAttackHit(Character characterHit) {
@@ -323,10 +340,13 @@ public class CombatState : CharacterState {
 
             }
         }
-        Debug.Log(attackSummary);
         if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
+            attackSummary += "\n" + stateComponent.character.name + "'s state is still this, running check coroutine.";
             stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
+        } else {
+            attackSummary += "\n" + stateComponent.character.name + "'s state no longer this, NOT running check coroutine. Current state is" + stateComponent.currentState?.stateName ?? "Null";
         }
+        Debug.Log(attackSummary);
     }
     private void StartPursueTimer() {
         if (!_hasTimerStarted) {

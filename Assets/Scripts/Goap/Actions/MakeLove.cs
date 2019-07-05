@@ -40,6 +40,7 @@ public class MakeLove : GoapAction {
     public override void OnStopActionDuringCurrentState() {
         actor.ownParty.RemoveCharacter(targetCharacter);
         RemoveTraitFrom(targetCharacter, "Wooed");
+        targetCharacter.RemoveTargettedByAction(this);
         if (targetCharacter.currentAction == this) {
             targetCharacter.SetCurrentAction(null);
         }
@@ -69,6 +70,15 @@ public class MakeLove : GoapAction {
     }
     public override bool IsTarget(IPointOfInterest poi) {
         return targetCharacter == poi || poiTarget == poi;
+    }
+    public override void OnStopActionWhileTravelling() {
+        base.OnStopActionWhileTravelling();
+        actor.ownParty.RemoveCharacter(targetCharacter);
+        RemoveTraitFrom(targetCharacter, "Wooed");
+        targetCharacter.RemoveTargettedByAction(this);
+        if (targetCharacter.currentAction == this) {
+            targetCharacter.SetCurrentAction(null);
+        }
     }
     #endregion
 

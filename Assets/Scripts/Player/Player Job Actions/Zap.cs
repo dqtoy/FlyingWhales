@@ -51,6 +51,9 @@ public class Zap : PlayerJobAction {
         if (targetCharacter.isDead || character.id == targetCharacter.id) {
             return false;
         }
+        if (!targetCharacter.IsInOwnParty()) {
+            return false;
+        }
         if (targetCharacter.GetNormalTrait("Zap") != null) {
             return false;
         }
@@ -75,6 +78,9 @@ public class Zap : PlayerJobAction {
     }
     private bool CanTarget(Character targetCharacter) {
         if (targetCharacter.isDead) {
+            return false;
+        }
+        if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Zap") != null) {

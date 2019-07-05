@@ -384,6 +384,10 @@ public class GoapAction {
     /// What happens when the parent plan of this action has a job
     /// </summary>
     public virtual void OnSetJob(GoapPlanJob job) { }
+    /// <summary>
+    /// What should happen when an action is stopped while the actor is still travelling towards it's target?
+    /// </summary>
+    public virtual void OnStopActionWhileTravelling() { }
     #endregion
 
     #region Utilities

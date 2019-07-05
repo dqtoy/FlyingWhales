@@ -16,6 +16,8 @@ public class ProvokeMenu : MonoBehaviour {
     private Character targetCharacter;
     private Character actor;
 
+    private bool wasPausedOnOpen;
+
     public void Open(Character targetCharacter, Character actor) {
         this.gameObject.SetActive(true);
 
@@ -38,7 +40,9 @@ public class ProvokeMenu : MonoBehaviour {
         DialogItem item = targetDialog.GetComponent<DialogItem>();
         item.SetData(targetCharacter, targetDialogText);
 
+        wasPausedOnOpen = GameManager.Instance.isPaused;
         GameManager.Instance.SetPausedState(true);
+        UIManager.Instance.SetSpeedTogglesState(false);
     }
 
     private void ProvokeAction(ref string targetText, ref string actorText) {
@@ -116,6 +120,7 @@ public class ProvokeMenu : MonoBehaviour {
         //UIManager.Instance.SetCoverState(false);
         //UIManager.Instance.SetSpeedTogglesState(true);
         this.gameObject.SetActive(false);
-        GameManager.Instance.SetPausedState(false);
+        UIManager.Instance.SetSpeedTogglesState(true);
+        GameManager.Instance.SetPausedState(wasPausedOnOpen);
     }
 }
