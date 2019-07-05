@@ -6801,7 +6801,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         
     }
     private void CancelCurrentAction(Character target, string cause) {
-        if (this != target && !isDead && currentAction != null && currentAction.poiTarget == target && !currentAction.cannotCancelAction) {
+        if (this != target && !isDead && currentAction != null && currentAction.poiTarget == target && !currentAction.cannotCancelAction && currentAction.goapType != INTERACTION_TYPE.WATCH) {
             RegisterLogAndShowNotifToThisCharacterOnly("Generic", "action_cancelled_cause", null, cause);
             currentAction.StopAction();
         }
