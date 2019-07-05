@@ -89,7 +89,7 @@ public class RevertToNormalForm : GoapAction {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo, this }}
                 });
-                job.SetCannotOverrideJob(true);
+                //job.SetCannotOverrideJob(true);
                 recipient.jobQueue.AddJobInQueue(job);
             }
         }
@@ -108,7 +108,7 @@ public class RevertToNormalForm : GoapAction {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo, this }}
                 });
-                job.SetCannotOverrideJob(true);
+                //job.SetCannotOverrideJob(true);
                 recipient.jobQueue.AddJobInQueue(job);
             }
         }

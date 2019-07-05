@@ -1635,7 +1635,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                                 { INTERACTION_TYPE.CRAFT_FURNITURE, new object[] { chosenTile, furnitureToCreate } }
                             });
                             job.SetCancelOnFail(true);
-                            job.SetCannotOverrideJob(true);
+                            //job.SetCannotOverrideJob(true);
                             jobQueue.AddJobInQueue(job);
                             Debug.Log(this.name + " created a new build furniture job targetting tile " + chosenTile.ToString() + " with furniture type " + furnitureToCreate.ToString());
                         }
@@ -7075,7 +7075,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.REPORT_CRIME,  new object[] { committedCrime, criminal, crimeToReport }}
                     });
-                    job.SetCannotOverrideJob(true);
+                    //job.SetCannotOverrideJob(true);
                     jobQueue.AddJobInQueue(job);
                 }
                 break;
@@ -7189,7 +7189,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 GoapPlanJob tantrum = new GoapPlanJob(JOB_TYPE.TANTRUM, INTERACTION_TYPE.TANTRUM, this, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.TANTRUM, new object[] { tantrumReason } }
                 });
-                tantrum.SetCannotOverrideJob(true);
+                //tantrum.SetCannotOverrideJob(true);
                 //tantrum.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                 jobQueue.AddJobInQueue(tantrum);
                 //jobQueue.ProcessFirstJobInQueue(this);

@@ -233,7 +233,7 @@ public class ChatCharacter : GoapAction {
         Character target = poiTarget as Character;
         IPointOfInterest targetTable = target.homeStructure.GetTileObjectsOfType(TILE_OBJECT_TYPE.TABLE)[0];
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.TABLE_POISON, targetTable);
-        job.SetCannotOverrideJob(true);
+        //job.SetCannotOverrideJob(true);
         job.SetCannotCancelJob(true);
         //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
         character.jobQueue.AddJobInQueue(job, true);

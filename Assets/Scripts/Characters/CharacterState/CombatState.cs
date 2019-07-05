@@ -374,7 +374,7 @@ public class CombatState : CharacterState {
                             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
                                 { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { targetCharacter }}
                             });
-                            job.SetCannotOverrideJob(true);
+                            //job.SetCannotOverrideJob(true);
                             job.SetCancelOnFail(true);
                             stateComponent.character.jobQueue.AddJobInQueue(job, false);
                         }
