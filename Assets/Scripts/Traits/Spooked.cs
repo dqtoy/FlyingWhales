@@ -65,7 +65,7 @@ public class Spooked : Trait {
     public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
-            character.AdjustDoNotDisturb(-1);
+            //character.AdjustDoNotDisturb(-1);
             for (int i = 0; i < terrifyingCharacters.Count; i++) {
                 character.marker.RemoveAvoidInRange(terrifyingCharacters[i]);
                 character.marker.RemoveTerrifyingCharacter(terrifyingCharacters[i]);

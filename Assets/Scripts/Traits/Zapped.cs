@@ -43,10 +43,10 @@ public class Zapped : Trait {
             //        character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
             //    }
             //}
-            character.AdjustDoNotDisturb(1);
-            character.marker.pathfindingAI.AdjustDoNotMove(1);
             character.marker.ClearHostilesInRange(false);
             character.marker.ClearAvoidInRange(false);
+            character.AdjustDoNotDisturb(1);
+            character.marker.pathfindingAI.AdjustDoNotMove(1);
         }
         base.OnAddTrait(sourcePOI);
     }
