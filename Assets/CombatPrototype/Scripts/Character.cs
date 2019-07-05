@@ -796,6 +796,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
             //deathTile.RemoveCharacterHere(this);
 
+            RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
+
             for (int i = 0; i < normalTraits.Count; i++) {
                 normalTraits[i].OnDeath(this);
             }

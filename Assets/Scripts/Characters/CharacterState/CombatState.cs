@@ -210,6 +210,11 @@ public class CombatState : CharacterState {
                 stateComponent.character.PrintLogIfActive(log);
                 return;
             }
+            if (stateComponent.character.marker.pathfindingAI.doNotMove > 0) {
+                log += "\nCannot move, not fleeing";
+                stateComponent.character.PrintLogIfActive(log);
+                return;
+            }
             log += "\n" + stateComponent.character.name + " is fleeing!";
             stateComponent.character.PrintLogIfActive(log);
             stateComponent.character.marker.OnStartFlee();
