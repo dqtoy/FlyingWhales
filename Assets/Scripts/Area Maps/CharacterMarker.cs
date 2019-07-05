@@ -796,6 +796,9 @@ public class CharacterMarker : PooledObject {
         }
         animator.SetTrigger(triggerName);
     }
+    public void SetAnimationBool(string name, bool value) {
+        animator.SetBool(name, value);
+    }
     #endregion
 
     #region Utilities

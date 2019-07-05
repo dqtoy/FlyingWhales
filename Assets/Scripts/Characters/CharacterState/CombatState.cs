@@ -67,6 +67,7 @@ public class CombatState : CharacterState {
     }
     protected override void StartState() {
         stateComponent.character.marker.ShowHPBar();
+        stateComponent.character.marker.SetAnimationBool("InCombat", true);
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
         Messenger.AddListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
@@ -84,6 +85,7 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
         base.EndState();
         stateComponent.character.marker.HideHPBar();
+        stateComponent.character.marker.SetAnimationBool("InCombat", false);
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Ending combat state for " + stateComponent.character.name);
         onEndStateAction?.Invoke();
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
