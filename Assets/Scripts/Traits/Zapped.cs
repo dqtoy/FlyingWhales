@@ -44,6 +44,7 @@ public class Zapped : Trait {
             //    }
             //}
             character.AdjustDoNotDisturb(1);
+            character.marker.pathfindingAI.AdjustDoNotMove(1);
         }
         base.OnAddTrait(sourcePOI);
     }
@@ -51,7 +52,7 @@ public class Zapped : Trait {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             character.AdjustDoNotDisturb(-1);
-
+            character.marker.pathfindingAI.AdjustDoNotMove(-1);
 #if TRAILER_BUILD
             if (character.name == "Audrey") {
                 Character fiona = CharacterManager.Instance.GetCharacterByName("Fiona");
