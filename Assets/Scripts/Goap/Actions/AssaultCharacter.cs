@@ -309,11 +309,11 @@ public class AssaultCharacter : GoapAction {
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         reactions.Add(string.Format("{0} deserves to be beaten.", targetCharacter.name));
                         AddTraitTo(recipient, "Cheery");
-                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            if (recipient.marker.inVisionPOIs.Contains(targetCharacter)) {
-                                recipient.marker.AddHostileInRange(targetCharacter);
-                            }
-                        }
+                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        //    if (recipient.marker.inVisionPOIs.Contains(targetCharacter)) {
+                        //        recipient.marker.AddHostileInRange(targetCharacter, checkHostility: false);
+                        //    }
+                        //}
                     } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add("Those misfits are always up to no good.");
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {

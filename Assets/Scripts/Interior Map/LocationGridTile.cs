@@ -505,21 +505,10 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 }
 #endif
             } else if (inputButton == PointerEventData.InputButton.Right) {
-                //#if UNITY_EDITOR
-                //                if (!InteriorMapManager.Instance.IsHoldingPOI()) {
-                //                    InteriorMapManager.Instance.HoldPOI(objHere);
-                //                }
-                //#endif
                 if (objHere is TileObject) {
                    UIManager.Instance.poiTestingUI.ShowUI(objHere);
                 }
             } else {
-                ////parentAreaMap.ShowIntelItemAt(this, InteractionManager.Instance.CreateNewIntel(objHere));
-                //if (objHere is TileObject) {
-                //    (objHere as TileObject).OnClickAction();
-                //} else {
-                //    Messenger.Broadcast(Signals.HIDE_MENUS);
-                //}
                 if(objHere is TileObject) {
                     UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
                 }

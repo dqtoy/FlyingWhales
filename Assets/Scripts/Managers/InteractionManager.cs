@@ -421,6 +421,98 @@ public class InteractionManager : MonoBehaviour {
         return chosenTile;
     }
     #endregion
+
+    public int GetInitialPriority(JOB_TYPE jobType) {
+        int priority = 0;
+        switch (jobType) {
+            case JOB_TYPE.BERSERK:
+            case JOB_TYPE.TANTRUM:
+                priority = 10;
+                break;
+            case JOB_TYPE.KNOCKOUT:
+            case JOB_TYPE.ABDUCT:
+            case JOB_TYPE.UNDERMINE_ENEMY:
+                priority = 20;
+                break;
+            case JOB_TYPE.FULLNESS_RECOVERY_STARVING:
+            case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
+                priority = 30;
+                break;
+            case JOB_TYPE.REPORT_HOSTILE:
+            case JOB_TYPE.APPREHEND:
+            case JOB_TYPE.REPORT_CRIME:
+                priority = 40;
+                break;
+            case JOB_TYPE.REMOVE_TRAIT:
+                priority = 50;
+                break;
+            case JOB_TYPE.RESTRAIN:
+                priority = 60;
+                break;
+            case JOB_TYPE.REMOVE_POISON:
+                priority = 70;
+                break;
+            case JOB_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE:
+                priority = 80;
+                break;
+            case JOB_TYPE.SAVE_CHARACTER:
+                priority = 90;
+                break;
+            case JOB_TYPE.ASK_FOR_HELP_SAVE_CHARACTER:
+                priority = 90;
+                break;
+            case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
+                priority = 100;
+                break;
+            case JOB_TYPE.WATCH:
+                priority = 109;
+                break;
+            case JOB_TYPE.FEED:
+                priority = 110;
+                break;
+            case JOB_TYPE.BURY:
+            case JOB_TYPE.CRAFT_TOOL:
+            case JOB_TYPE.BREW_POTION:
+            case JOB_TYPE.OBTAIN_SUPPLY:
+                priority = 120;
+                break;
+            case JOB_TYPE.BREAK_UP:
+                priority = 130;
+                break;
+            case JOB_TYPE.REPLACE_TILE_OBJECT:
+                priority = 140;
+                break;
+            case JOB_TYPE.EXPLORE:
+                priority = 150;
+                break;
+            case JOB_TYPE.DELIVER_TREASURE:
+                priority = 160;
+                break;
+            case JOB_TYPE.PATROL:
+                priority = 170;
+                break;
+            case JOB_TYPE.FULLNESS_RECOVERY:
+            //priority = 180;
+            //break;
+            case JOB_TYPE.TIREDNESS_RECOVERY:
+            //priority = 190;
+            //break;
+            case JOB_TYPE.HAPPINESS_RECOVERY:
+            //priority = 200;
+            //break;
+            case JOB_TYPE.SHARE_INFORMATION:
+            //priority = 210;
+            //break;
+            case JOB_TYPE.JUDGEMENT:
+                priority = 220;
+                break;
+            case JOB_TYPE.BUILD_FURNITURE:
+            case JOB_TYPE.OBTAIN_ITEM:
+                priority = 230;
+                break;
+        }
+        return priority;
+    }
 }
 
 public struct RewardConfig {

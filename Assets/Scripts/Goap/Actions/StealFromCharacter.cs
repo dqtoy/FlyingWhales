@@ -152,13 +152,12 @@ public class StealFromCharacter : GoapAction {
                             recipient.CreateUndermineJobOnly(actor, "informed", status);
                         } else if (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
                             //- Has Positive Relationship
-                            if(CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
-                                reactions.Add(string.Format("I should have never trusted {0}!", actor.name));
-                                if (!hasCrimeBeenReported) {
-                                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                            if (!hasCrimeBeenReported) {
+                                if(recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status)) {
+                                    reactions.Add(string.Format("I should have never trusted {0}!", actor.name));
+                                } else {
+                                    reactions.Add("Everybody deserves a second chance.");
                                 }
-                            } else {
-                                reactions.Add("Everybody deserves a second chance.");
                             }
                         }
                     } else {
@@ -182,13 +181,12 @@ public class StealFromCharacter : GoapAction {
                 else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
                     RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
-                            reactions.Add(string.Format("{0} is a thief?! I regret that I ever liked {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
-                            if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                        if (!hasCrimeBeenReported) {
+                            if (recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status)) {
+                                reactions.Add(string.Format("{0} is a thief?! I regret that I ever liked {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                            } else {
+                                reactions.Add(string.Format("{0} is a thief? I don't believe that.", actor.name));
                             }
-                        } else {
-                            reactions.Add(string.Format("{0} is a thief? I don't believe that.", actor.name));
                         }
                     } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add(string.Format("{0} is a thief? Why am I not surprised?", actor.name));
@@ -221,13 +219,12 @@ public class StealFromCharacter : GoapAction {
                 else {
                     RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
-                        if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
-                            reactions.Add(string.Format("{0} is a thief?! I regret that I ever liked {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
-                            if (!hasCrimeBeenReported) {
-                                recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                        if (!hasCrimeBeenReported) {
+                            if (recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status)) {
+                                reactions.Add(string.Format("{0} is a thief?! I regret that I ever liked {1}.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.OBJECTIVE, false)));
+                            } else {
+                                reactions.Add(string.Format("{0} is a thief? I don't believe that.", actor.name));
                             }
-                        } else {
-                            reactions.Add(string.Format("{0} is a thief? I don't believe that.", actor.name));
                         }
                     } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add(string.Format("{0} is a thief? Why am I not surprised?", actor.name));
