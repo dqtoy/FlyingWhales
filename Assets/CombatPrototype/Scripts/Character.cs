@@ -4434,22 +4434,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     if(GetNormalTrait("Vampiric") != null) {
                         job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.DRINK_BLOOD);
                     }
-                    if (hungryOrStarving.name == "Starving") {
-                        job.SetCannotOverrideJob(true);
-                        //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                    }
+                    //if (hungryOrStarving.name == "Starving") {
+                    //    job.SetCannotOverrideJob(true);
+                    //    //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                    //}
                     job.SetCancelOnFail(true);
                     jobQueue.AddJobInQueue(job, false);
                     //jobQueue.ProcessFirstJobInQueue(this);
                     //StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.FULLNESS, true);
                     return true;
                 }
-            } else {
-                if (hungryOrStarving.name == "Starving") {
-                    GoapPlanJob job = jobQueue.GetJob(JOB_TYPE.FULLNESS_RECOVERY, JOB_TYPE.FULLNESS_RECOVERY_STARVING) as GoapPlanJob;
-                    job.SetCannotOverrideJob(true);
-                }
-            }
+            } 
+            //else {
+            //    if (hungryOrStarving.name == "Starving") {
+            //        GoapPlanJob job = jobQueue.GetJob(JOB_TYPE.FULLNESS_RECOVERY, JOB_TYPE.FULLNESS_RECOVERY_STARVING) as GoapPlanJob;
+            //        job.SetCannotOverrideJob(true);
+            //    }
+            //}
         }
         return false;
     }
@@ -4478,22 +4479,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
                 if (chance < value) {
                     GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                    if (tiredOrExhausted.name == "Exhausted") {
-                        job.SetCannotOverrideJob(true);
-                        //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                    }
+                    //if (tiredOrExhausted.name == "Exhausted") {
+                    //    job.SetCannotOverrideJob(true);
+                    //    //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                    //}
                     job.SetCancelOnFail(true);
                     jobQueue.AddJobInQueue(job, false);
                     //jobQueue.ProcessFirstJobInQueue(this);
                     //StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.TIREDNESS, true);
                     return true;
                 }
-            } else {
-                if (tiredOrExhausted.name == "Exhausted") {
-                    GoapPlanJob job = jobQueue.GetJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED) as GoapPlanJob;
-                    job.SetCannotOverrideJob(true);
-                }
-            }
+            } 
+            //else {
+            //    if (tiredOrExhausted.name == "Exhausted") {
+            //        GoapPlanJob job = jobQueue.GetJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED) as GoapPlanJob;
+            //        job.SetCannotOverrideJob(true);
+            //    }
+            //}
         }
         return false;
     }
@@ -4522,22 +4524,23 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
                 if (chance < value) {
                     GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
-                    if (lonelyOrForlorn.name == "Forlorn") {
-                        job.SetCannotOverrideJob(true);
-                        //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                    }
+                    //if (lonelyOrForlorn.name == "Forlorn") {
+                    //    job.SetCannotOverrideJob(true);
+                    //    //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                    //}
                     job.SetCancelOnFail(true);
                     jobQueue.AddJobInQueue(job, false);
                     //jobQueue.ProcessFirstJobInQueue(this);
                     //StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.HAPPINESS, true);
                     return true;
                 }
-            } else {
-                if (lonelyOrForlorn.name == "Forlorn") {
-                    GoapPlanJob job = jobQueue.GetJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN) as GoapPlanJob;
-                    job.SetCannotOverrideJob(true);
-                }
-            }
+            } 
+            //else {
+            //    if (lonelyOrForlorn.name == "Forlorn") {
+            //        GoapPlanJob job = jobQueue.GetJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN) as GoapPlanJob;
+            //        job.SetCannotOverrideJob(true);
+            //    }
+            //}
         }
         return false;
     }
