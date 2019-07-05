@@ -42,6 +42,9 @@ public class RileUp : PlayerJobAction {
         if (targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             return false;
         }
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
         return base.CanTarget(targetCharacter);
     }
 
@@ -81,6 +84,11 @@ public class RileUp : PlayerJobAction {
         _targetCharacter.jobQueue.AddJobInQueue(job);
         //_targetCharacter.AddTrait("Berserker");
         //_targetCharacter.currentParty.GoToLocation(area, PATHFINDING_MODE.NORMAL);
+
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_rile_up");
+        log.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(area, area.name, LOG_IDENTIFIER.LANDMARK_1);
+        PlayerManager.Instance.player.ShowNotification(log);
     }
     #endregion
 }

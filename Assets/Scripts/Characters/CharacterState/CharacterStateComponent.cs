@@ -49,6 +49,11 @@ public class CharacterStateComponent {
     //This switches from one state to another
     //If the character is not in a state right now, this simply starts a new state instead of switching
     public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Area targetArea = null, int durationOverride = -1, object otherData = null) {
+        //Cannot switch state is has negative disabler
+        if(character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return null;
+        }
+
         //Before switching character must end current action first because once a character is in a state in cannot make plans
         character.AdjustIsWaitingForInteraction(1);
         if (character.currentAction != null && character.currentAction.goapType != INTERACTION_TYPE.ASSAULT_ACTION_NPC) {

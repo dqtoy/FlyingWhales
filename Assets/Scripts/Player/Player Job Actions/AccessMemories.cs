@@ -18,6 +18,10 @@ public class AccessMemories : PlayerJobAction {
         base.ActivateAction(assignedCharacter, targetCharacter);
         UIManager.Instance.ShowCharacterInfo(targetCharacter);
         PlayerUI.Instance.ShowMemories(targetCharacter);
+
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_access_memory");
+        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        PlayerManager.Instance.player.ShowNotification(log);
     }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
         if (character.id == targetCharacter.id) {

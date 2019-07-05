@@ -316,11 +316,11 @@ public class AssaultCharacter : GoapAction {
                         //}
                     } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add("Those misfits are always up to no good.");
-                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
-                                recipient.marker.AddAvoidInRange(actor);
-                            }
-                        }
+                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                        //        recipient.marker.AddAvoidInRange(actor);
+                        //    }
+                        //}
                     } else {
                         reactions.Add(string.Format("{0} deserves to be beaten.", targetCharacter.name));
                         AddTraitTo(recipient, "Cheery");
@@ -404,36 +404,36 @@ public class AssaultCharacter : GoapAction {
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         reactions.Add(string.Format("Suits {0} right.", Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                         AddTraitTo(recipient, "Cheery");
-                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
-                                recipient.marker.AddAvoidInRange(actor);
-                            }
-                        }
+                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                        //        recipient.marker.AddAvoidInRange(actor);
+                        //    }
+                        //}
                     } else if (relationshipWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
                         reactions.Add("My enemies are killing each other. Isn't that funny?");
-                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
-                                recipient.marker.AddAvoidInRange(actor);
-                            }
-                        }
+                        //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                        //        recipient.marker.AddAvoidInRange(actor);
+                        //    }
+                        //}
                     } else {
                         if (CharacterManager.Instance.RelationshipImprovement(actor, recipient, this)) {
                             reactions.Add(string.Format("I am happy {0} was able to do what I cannot.", actor.name));
-                            if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                                if (recipient.marker.inVisionPOIs.Contains(actor)) {
-                                    recipient.marker.AddAvoidInRange(actor);
-                                }
-                            }
+                            //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                            //        recipient.marker.AddAvoidInRange(actor);
+                            //    }
+                            //}
                         } else {
                             reactions.Add(string.Format("Though I dislike {1}, I am appalled at {0}'s actions.", actor.name, targetCharacter.name));
                             if (!hasCrimeBeenReported) {
                                 recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                             }
-                            if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                                if (recipient.marker.inVisionPOIs.Contains(actor)) {
-                                    recipient.marker.AddAvoidInRange(actor);
-                                }
-                            }
+                            //if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                            //        recipient.marker.AddAvoidInRange(actor);
+                            //    }
+                            //}
                         }
                         AddTraitTo(recipient, "Cheery");
                     }

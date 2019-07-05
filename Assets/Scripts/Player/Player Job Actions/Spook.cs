@@ -26,6 +26,11 @@ public class Spook : PlayerJobAction {
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
                     Spooked newTrait = new Spooked();
                     currTarget.AddTrait(newTrait);
+
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
+                    log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(null, "spooked", LOG_IDENTIFIER.STRING_1);
+                    PlayerManager.Instance.player.ShowNotification(log);
                 }
             }
             base.ActivateAction(assignedCharacter, targets[0]);
@@ -49,6 +54,9 @@ public class Spook : PlayerJobAction {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Spooked") != null) {
+            return false;
+        }
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
         //if (targetCharacter.marker.inVisionPOIs.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).ToList().Count == 0) {

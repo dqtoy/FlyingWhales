@@ -29,6 +29,11 @@ public class Zap : PlayerJobAction {
                         UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
                     }
                     GameManager.Instance.CreateElectricEffectAt(currTarget);
+
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
+                    log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(null, "zapped", LOG_IDENTIFIER.STRING_1);
+                    PlayerManager.Instance.player.ShowNotification(log);
                 }
             }
             base.ActivateAction(assignedCharacter, targets[0]);
@@ -54,7 +59,10 @@ public class Zap : PlayerJobAction {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Zap") != null) {
+        if (targetCharacter.GetNormalTrait("Zapped") != null) {
+            return false;
+        }
+        if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
         return base.CanPerformActionTowards(character, targetCharacter);
