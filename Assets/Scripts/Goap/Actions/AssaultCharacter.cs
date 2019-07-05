@@ -282,7 +282,7 @@ public class AssaultCharacter : GoapAction {
                 }
                 //- Recipient Has Positive Relationship with Target
                 else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    if (actor.IsHostileWith(targetCharacter)) {
+                    if (committedCrime == CRIME.NONE) {
                         reactions.Add(string.Format("There's a reason {0} did that.", actor.name));
                     } else {
                         RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
@@ -328,7 +328,7 @@ public class AssaultCharacter : GoapAction {
                 }
                 //- Recipient Has No Relationship with Target
                 else {
-                    if (actor.IsHostileWith(targetCharacter)) {
+                    if (committedCrime == CRIME.NONE) {
                         reactions.Add(string.Format("There's a reason {0} did that.", actor.name));
                     } else {
                         RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
@@ -377,7 +377,7 @@ public class AssaultCharacter : GoapAction {
                 }
                 //- Recipient Has Positive Relationship with Target
                 else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    if (actor.IsHostileWith(targetCharacter)) {
+                    if (committedCrime == CRIME.NONE) {
                         reactions.Add(string.Format("There's a reason {0} did that.", actor.name));
                     } else {
                         RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
@@ -440,7 +440,7 @@ public class AssaultCharacter : GoapAction {
                 }
                 //- Recipient Has No Relationship with Target
                 else {
-                    if (actor.IsHostileWith(targetCharacter)) {
+                    if (committedCrime == CRIME.NONE) {
                         reactions.Add(string.Format("There's a reason {0} did that.", actor.name));
                     } else {
                         RELATIONSHIP_EFFECT relationshipWithActorBeforeDegradation = recipient.GetRelationshipEffectWith(actor);
