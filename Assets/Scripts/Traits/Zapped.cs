@@ -45,6 +45,8 @@ public class Zapped : Trait {
             //}
             character.AdjustDoNotDisturb(1);
             character.marker.pathfindingAI.AdjustDoNotMove(1);
+            character.marker.ClearHostilesInRange(false);
+            character.marker.ClearAvoidInRange(false);
         }
         base.OnAddTrait(sourcePOI);
     }
@@ -53,6 +55,8 @@ public class Zapped : Trait {
             Character character = sourcePOI as Character;
             character.AdjustDoNotDisturb(-1);
             character.marker.pathfindingAI.AdjustDoNotMove(-1);
+            character.marker.ClearHostilesInRange(false);
+            character.marker.ClearAvoidInRange(false);
 #if TRAILER_BUILD
             if (character.name == "Audrey") {
                 Character fiona = CharacterManager.Instance.GetCharacterByName("Fiona");
