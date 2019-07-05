@@ -41,8 +41,8 @@ public class Kleptomaniac : Trait {
         }
         Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
     }
-    public override void OnDeath() {
-        base.OnDeath();
+    public override void OnDeath(Character character) {
+        base.OnDeath(character);
         Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
     }
     public override string GetTestingData() {

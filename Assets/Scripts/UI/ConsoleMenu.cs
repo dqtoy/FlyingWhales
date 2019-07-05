@@ -707,7 +707,7 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        if (character.doNotDisturb == 0) {
+        if (character.marker.pathfindingAI.doNotMove == 0) {
             character.marker.pathfindingAI.AdjustDoNotMove(1);
         } else {
             character.marker.pathfindingAI.AdjustDoNotMove(-1);

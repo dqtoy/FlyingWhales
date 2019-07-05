@@ -49,6 +49,7 @@ public class BuryCharacter : GoapAction {
         base.OnStopActionWhileTravelling();
         Character targetCharacter = poiTarget as Character;
         actor.ownParty.RemoveCharacter(targetCharacter, false);
+        targetCharacter.SetCurrentStructureLocation(targetCharacter.gridTileLocation.structure, false);
     }
     #endregion
 

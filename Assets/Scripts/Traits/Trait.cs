@@ -71,7 +71,7 @@ public class Trait {
     /// This function will be called to ensure that any unneeded resources in traits can be freed up when a character dies.
     /// <see cref="Character.Death(string)"/>
     /// </summary>
-    public virtual void OnDeath() { }
+    public virtual void OnDeath(Character character) { }
     public virtual string GetTestingData() { return string.Empty; }
     public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; }
     #endregion

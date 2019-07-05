@@ -79,6 +79,7 @@ public class MakeLove : GoapAction {
         if (targetCharacter.currentAction == this) {
             targetCharacter.SetCurrentAction(null);
         }
+        actor.DropPlan(parentPlan, true);
     }
     #endregion
 

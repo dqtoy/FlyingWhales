@@ -797,7 +797,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //deathTile.RemoveCharacterHere(this);
 
             for (int i = 0; i < normalTraits.Count; i++) {
-                normalTraits[i].OnDeath();
+                normalTraits[i].OnDeath(this);
             }
 
             marker.OnDeath(deathTile);

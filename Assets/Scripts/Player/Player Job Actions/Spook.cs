@@ -53,6 +53,9 @@ public class Spook : PlayerJobAction {
         if (targetCharacter.isDead || character.id == targetCharacter.id) {
             return false;
         }
+        if (!targetCharacter.IsInOwnParty()) {
+            return false;
+        }
         if (targetCharacter.GetNormalTrait("Spooked") != null) {
             return false;
         }
@@ -83,6 +86,9 @@ public class Spook : PlayerJobAction {
     }
     private bool CanTarget(Character targetCharacter) {
         if (targetCharacter.isDead) {
+            return false;
+        }
+        if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
         //if (targetCharacter.marker.inVisionPOIs.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).ToList().Count == 0) {
