@@ -49,6 +49,9 @@ public class Enrage : PlayerJobAction {
         if (targetCharacter.isDead || character.id == targetCharacter.id) {
             return false;
         }
+        if (!targetCharacter.IsInOwnParty()) {
+            return false;
+        }
         if (targetCharacter.GetNormalTrait("Enrage") != null) {
             return false;
         }
@@ -73,6 +76,9 @@ public class Enrage : PlayerJobAction {
     }
     private bool CanTarget(Character targetCharacter) {
         if (targetCharacter.isDead) {
+            return false;
+        }
+        if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Enrage") != null) {
