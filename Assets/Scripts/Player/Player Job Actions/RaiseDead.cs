@@ -24,6 +24,7 @@ public class RaiseDead : PlayerJobAction {
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead");
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
     }
 

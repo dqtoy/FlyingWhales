@@ -20,6 +20,7 @@ public class Destroy : PlayerJobAction {
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "destroyed", LOG_IDENTIFIER.STRING_1);
+        log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
     }
 

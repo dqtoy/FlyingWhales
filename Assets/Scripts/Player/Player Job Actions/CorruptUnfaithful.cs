@@ -28,6 +28,7 @@ public class CorruptUnfaithful : PlayerJobAction {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(newTrait, newTrait.name, LOG_IDENTIFIER.STRING_1);
+                    log.AddLogToInvolvedObjects();
                     PlayerManager.Instance.player.ShowNotification(log);
                 }
             }

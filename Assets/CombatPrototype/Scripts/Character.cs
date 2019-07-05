@@ -1830,6 +1830,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         //If there is no current state then check the current action
         //Same process applies that if the current action's job has a lower job priority (higher number) than the parameter job, it is overridable
+        if(currentAction != null && currentAction.goapType == INTERACTION_TYPE.MAKE_LOVE && !currentAction.isDone) {
+            //Cannot override make love
+            return false;
+        }
         if (currentAction != null && currentAction.parentPlan != null) {
             if(currentAction.parentPlan.job != null && !currentAction.parentPlan.job.cannotOverrideJob
                        && job.priority < currentAction.parentPlan.job.priority) {

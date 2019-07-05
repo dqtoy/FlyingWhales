@@ -31,6 +31,7 @@ public class Enrage : PlayerJobAction {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, "enraged", LOG_IDENTIFIER.STRING_1);
+                    log.AddLogToInvolvedObjects();
                     PlayerManager.Instance.player.ShowNotification(log);
                 }
             }

@@ -88,6 +88,7 @@ public class RileUp : PlayerJobAction {
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_rile_up");
         log.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(area, area.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
     }
     #endregion

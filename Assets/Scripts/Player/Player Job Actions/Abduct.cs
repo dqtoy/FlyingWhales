@@ -82,6 +82,7 @@ public class Abduct : PlayerJobAction {
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_abduct");
         log.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
         //_targetCharacter.jobQueue.ProcessFirstJobInQueue(_targetCharacter);
         //_targetCharacter.StartGOAP(goapEffect, character, GOAP_CATEGORY.REACTION);

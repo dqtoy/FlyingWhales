@@ -43,19 +43,19 @@ public class Watch : GoapAction {
                 actionBeingWatched = otherData[0] as GoapAction;
                 actionIconString = actionBeingWatched.actionIconString;
                 if (thoughtBubbleLog != null) {
-                    thoughtBubbleLog.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.OTHER);
+                    thoughtBubbleLog.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.STRING_1);
                 }
                 if (thoughtBubbleMovingLog != null) {
-                    thoughtBubbleMovingLog.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.OTHER);
+                    thoughtBubbleMovingLog.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.STRING_1);
                 }
             } else if (otherData[0] is CombatState) {
                 combatBeingWatched = otherData[0] as CombatState;
                 actionIconString = GoapActionStateDB.Hostile_Icon;
                 if (thoughtBubbleLog != null) {
-                    thoughtBubbleLog.AddToFillers(combatBeingWatched, "Combat", LOG_IDENTIFIER.OTHER);
+                    thoughtBubbleLog.AddToFillers(combatBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
                 }
                 if (thoughtBubbleMovingLog != null) {
-                    thoughtBubbleMovingLog.AddToFillers(combatBeingWatched, "Combat", LOG_IDENTIFIER.OTHER);
+                    thoughtBubbleMovingLog.AddToFillers(combatBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
                 }
             }
             return true;
@@ -76,9 +76,9 @@ public class Watch : GoapAction {
     #region State Effects
     private void PreWatchSuccess() {
         if(actionBeingWatched != null) {
-            currentState.AddLogFiller(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.OTHER);
+            currentState.AddLogFiller(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.STRING_1);
         }else if (combatBeingWatched != null) {
-            currentState.AddLogFiller(combatBeingWatched, "Combat", LOG_IDENTIFIER.OTHER);
+            currentState.AddLogFiller(combatBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
         }
         Messenger.AddListener(Signals.TICK_STARTED, PerTickWatchSuccess);
     }
