@@ -682,14 +682,14 @@ public class UIManager : MonoBehaviour {
             menuToOpen.SetOpenMenuAction(() => Pause());
         }
     }
-    private void OnMenuClosed(UIMenu closedMenu) {
-        if (GameManager.Instance.isPaused) {
-            //if the game is paused, and a menu was closed, check if all other menus are closed, if so unpause the game
-            if (!areaInfoUI.isShowing && !characterInfoUI.isShowing && !playerLandmarkInfoUI.isShowing) {
-                Unpause();
-            }
-        }
-    }
+    //private void OnMenuClosed(UIMenu closedMenu) {
+    //    if (GameManager.Instance.isPaused) {
+    //        //if the game is paused, and a menu was closed, check if all other menus are closed, if so unpause the game
+    //        if (!areaInfoUI.isShowing && !characterInfoUI.isShowing && !playerLandmarkInfoUI.isShowing) {
+    //            Unpause();
+    //        }
+    //    }
+    //}
     private void OnInteractionMenuOpened() {
         if (areaInfoUI.isShowing) {
             lastOpenedMenu = areaInfoUI;
@@ -759,12 +759,19 @@ public class UIManager : MonoBehaviour {
     #region Object Picker
     public void ShowClickableObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "", Action<T> onHoverAction = null) {
         objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction);
+        //Pause();
+        //SetSpeedTogglesState(false);
     }
     public void ShowDraggableObjectPicker<T>(List<T> choices, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
         objectPicker.ShowDraggable(choices, comparer, validityChecker, title);
     }
     public void HideObjectPicker() {
         objectPicker.Hide();
+        //Unpause();
+        //SetSpeedTogglesState(true);
+    }
+    public bool IsObjectPickerOpen() {
+        return objectPicker.gameObject.activeSelf;
     }
     #endregion
 
@@ -1466,15 +1473,13 @@ public class UIManager : MonoBehaviour {
     private void OnOpenShareIntelMenu() {
         returnToWorldBtn.interactable = false;
         SetCoverState(true);
-        Pause();
-        SetSpeedTogglesState(false);
         playerNotificationParent.SetSiblingIndex(1);
     }
     private void OnCloseShareIntelMenu() {
         returnToWorldBtn.interactable = true;
         SetCoverState(false);
-        Unpause();
-        SetSpeedTogglesState(true);
+        //Unpause();
+        //SetSpeedTogglesState(true);
         playerNotificationParent.SetAsLastSibling();
     }
     #endregion

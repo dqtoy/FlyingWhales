@@ -434,6 +434,7 @@ public class CharacterMarker : PooledObject {
             progressionSpeedMultiplier = 2f;
         }
         UpdateSpeed();
+        UpdateAnimationSpeed();
     }
     #endregion
 
@@ -798,6 +799,9 @@ public class CharacterMarker : PooledObject {
     }
     public void SetAnimationBool(string name, bool value) {
         animator.SetBool(name, value);
+    }
+    private void UpdateAnimationSpeed() {
+        animator.speed = 1f * progressionSpeedMultiplier;
     }
     #endregion
 

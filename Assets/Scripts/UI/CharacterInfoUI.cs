@@ -129,7 +129,9 @@ public class CharacterInfoUI : UIMenu {
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
         }
-        UIManager.Instance.HideObjectPicker();
+        if (UIManager.Instance.IsObjectPickerOpen()) {
+            UIManager.Instance.HideObjectPicker();
+        }
         UpdateCharacterInfo();
         UpdateTraits();
         UpdateInventoryInfo();

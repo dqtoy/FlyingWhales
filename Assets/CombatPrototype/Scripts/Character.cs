@@ -2779,6 +2779,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         addLog.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, onlyClickedCharacter);
     }
+    public void RegisterLogAndShowNotifToThisCharacterOnly(Log addLog, GoapAction goapAction = null, bool onlyClickedCharacter = true) {
+        if (!GameManager.Instance.gameHasStarted) {
+            return;
+        }
+        addLog.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, onlyClickedCharacter);
+    }
     private void OnActionStateSet(GoapAction action, GoapActionState state) {
         IPointOfInterest target = null;
         if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
@@ -6299,7 +6306,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                     goapThread.job.SetAssignedCharacter(null);
                     if (goapThread.job.jobQueueParent.character != null) {
                         goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
-                        RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "cancel_job_no_plan");
+                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
+                        log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        if (goapThread.job.targetInteractionType != INTERACTION_TYPE.NONE) {
+                            log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(goapThread.job.targetInteractionType.ToString()), LOG_IDENTIFIER.STRING_1);
+                        } else {
+                            log.AddToFillers(null, goapThread.job.name, LOG_IDENTIFIER.STRING_1);
+                        }
+                        RegisterLogAndShowNotifToThisCharacterOnly(log);
                     } else {
                         goapThread.job.AddBlacklistedCharacter(this);
                     }
@@ -6810,12 +6824,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //This does not stop the movement of this character, call StopMovement separately to stop movement
     public void StopCurrentAction(bool shouldDoAfterEffect = true) {
         if(currentAction != null) {
+            Debug.Log("Stopped action of " + name + " which is " + currentAction.goapName);
             if (currentAction.isPerformingActualAction && !currentAction.isDone) {
                 if (!shouldDoAfterEffect) {
                     currentAction.OnStopActionDuringCurrentState();
                 }
                 currentAction.currentState?.EndPerTickEffect(shouldDoAfterEffect);
             } else {
+                currentAction.OnStopActionWhileTravelling();
                 SetCurrentAction(null);
             }
         }

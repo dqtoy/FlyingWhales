@@ -44,6 +44,11 @@ public class DropCharacter : GoapAction {
     public override void SetTargetStructure() {
         base.SetTargetStructure();
     }
+    public override void OnStopActionWhileTravelling() {
+        base.OnStopActionWhileTravelling();
+        Character targetCharacter = poiTarget as Character;
+        actor.ownParty.RemoveCharacter(targetCharacter);
+    }
     #endregion
 
     #region Requirements

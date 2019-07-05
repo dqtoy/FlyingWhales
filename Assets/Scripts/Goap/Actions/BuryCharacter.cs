@@ -45,6 +45,11 @@ public class BuryCharacter : GoapAction {
     protected override int GetCost() {
         return 1;
     }
+    public override void OnStopActionWhileTravelling() {
+        base.OnStopActionWhileTravelling();
+        Character targetCharacter = poiTarget as Character;
+        actor.ownParty.RemoveCharacter(targetCharacter, false);
+    }
     #endregion
 
     #region State Effects
