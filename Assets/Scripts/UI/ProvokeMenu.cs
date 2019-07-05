@@ -74,9 +74,10 @@ public class ProvokeMenu : MonoBehaviour {
             targetText = "Sorry, I don't have any.";
         }
 
+        bool succeedUndermine = false;
+        Character chosenCharacter = null;
         if (succeedProvoke) {
             List<Character> enemyCharacters = targetCharacter.GetCharactersWithRelationship(RELATIONSHIP_TRAIT.ENEMY).Where(x => !x.isDead).ToList();
-            Character chosenCharacter = null;
             while (chosenCharacter == null && enemyCharacters.Count > 0) {
                 int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
                 Character character = enemyCharacters[index];
@@ -103,7 +104,7 @@ public class ProvokeMenu : MonoBehaviour {
                 //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                 //targetCharacter.jobQueue.AddJobInQueue(job, false);
                 //targetCharacter.jobQueue.ProcessFirstJobInQueue(targetCharacter);
-
+                succeedUndermine = true;
                 targetCharacter.CreateUndermineJobOnly(chosenCharacter, "provoke");
 
                 //Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "provoke");
@@ -113,6 +114,17 @@ public class ProvokeMenu : MonoBehaviour {
 
                 //PlayerManager.Instance.player.ShowNotification(addLog);
             }
+        }
+
+        if (succeedUndermine) {
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_provoke");
+            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            PlayerManager.Instance.player.ShowNotification(log);
+        } else {
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_provoke_fail");
+            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            PlayerManager.Instance.player.ShowNotification(log);
         }
     }
 

@@ -25,7 +25,10 @@ public class CorruptUnfaithful : PlayerJobAction {
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
                     Trait newTrait = new Unfaithful();
                     currTarget.AddTrait(newTrait);
-                    currTarget.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, newTrait.name, onlyClickedCharacter: false);
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
+                    log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(newTrait, newTrait.name, LOG_IDENTIFIER.STRING_1);
+                    PlayerManager.Instance.player.ShowNotification(log);
                 }
             }
             base.ActivateAction(assignedCharacter, targets[0]);
@@ -54,6 +57,9 @@ public class CorruptUnfaithful : PlayerJobAction {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Unfaithful") != null) {
+            return false;
+        }
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
         return base.CanPerformActionTowards(character, targetCharacter);

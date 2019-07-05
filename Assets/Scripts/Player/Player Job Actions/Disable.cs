@@ -19,6 +19,11 @@ public class Disable : PlayerJobAction {
         dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
         SchedulingManager.Instance.AddEntry(dueDate, () => targetPOI.SetIsDisabledByPlayer(false));
         base.ActivateAction(assignedCharacter, targetPOI);
+
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
+        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, "disabled", LOG_IDENTIFIER.STRING_1);
+        PlayerManager.Instance.player.ShowNotification(log);
     }
 
     protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {

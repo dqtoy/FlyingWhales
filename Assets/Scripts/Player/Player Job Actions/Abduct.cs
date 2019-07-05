@@ -35,6 +35,9 @@ public class Abduct : PlayerJobAction {
         if (targetCharacter.race != RACE.SKELETON && targetCharacter.race != RACE.GOBLIN) {
             return false;
         }
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
         return base.CanPerformActionTowards(character, targetCharacter);
     }
 
@@ -75,6 +78,11 @@ public class Abduct : PlayerJobAction {
         job.SetCannotOverrideJob(true);
         //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
         _targetCharacter.jobQueue.AddJobInQueue(job);
+
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_abduct");
+        log.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        PlayerManager.Instance.player.ShowNotification(log);
         //_targetCharacter.jobQueue.ProcessFirstJobInQueue(_targetCharacter);
         //_targetCharacter.StartGOAP(goapEffect, character, GOAP_CATEGORY.REACTION);
     }

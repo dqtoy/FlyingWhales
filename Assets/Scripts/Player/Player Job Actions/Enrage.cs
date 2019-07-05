@@ -27,6 +27,11 @@ public class Enrage : PlayerJobAction {
                     if (UIManager.Instance.characterInfoUI.isShowing) {
                         UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
                     }
+
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
+                    log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(null, "enraged", LOG_IDENTIFIER.STRING_1);
+                    PlayerManager.Instance.player.ShowNotification(log);
                 }
             }
             base.ActivateAction(assignedCharacter, targets[0]);
@@ -53,6 +58,9 @@ public class Enrage : PlayerJobAction {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Enrage") != null) {
+            return false;
+        }
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
         return base.CanPerformActionTowards(character, targetCharacter);

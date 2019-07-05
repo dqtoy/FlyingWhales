@@ -21,6 +21,10 @@ public class RaiseDead : PlayerJobAction {
         }
         base.ActivateAction(assignedCharacter, target);
         GameManager.Instance.StartCoroutine(Raise(target));
+
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead");
+        log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        PlayerManager.Instance.player.ShowNotification(log);
     }
 
     private IEnumerator Raise(Character target) {

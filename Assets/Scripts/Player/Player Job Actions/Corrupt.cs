@@ -31,6 +31,9 @@ public class Corrupt : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
         return base.CanPerformActionTowards(character, targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -83,7 +86,10 @@ public class Corrupt : PlayerJobAction {
             _targetCharacter.AddTrait(newTrait);
         }
         if (newTrait != null) {
-            _targetCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, newTrait.name);
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
+            log.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(newTrait, newTrait.name, LOG_IDENTIFIER.STRING_1);
+            PlayerManager.Instance.player.ShowNotification(log);
         }
     }
     private bool CanCorruptCharacter(string traitName) {

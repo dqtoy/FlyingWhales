@@ -1427,6 +1427,11 @@ public class CharacterMarker : PooledObject {
     private void TransferEngageToFleeList(Character character) {
         if (this.character == character) {
             string summary = character.name + " will determine the transfer from engage list to flee list";
+            if(character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                summary += "\n" + character.name + " has negative disabler trait. Ignoring transfer.";
+                //Debug.Log(summary);
+                return;
+            }
             if (hostilesInRange.Count == 0 && avoidInRange.Count == 0) {
                 summary +=  "\n" + character.name + " does not have any characters in engage or avoid list. Ignoring transfer.";
                 //Debug.Log(summary);
@@ -1455,7 +1460,7 @@ public class CharacterMarker : PooledObject {
                 if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                     Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
                 } else {
-                    if (!character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !character.currentParty.icon.isAreaTravelling) {
+                    if (!character.currentParty.icon.isAreaTravelling) {
                         character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
                     }
                 }

@@ -16,6 +16,11 @@ public class Destroy : PlayerJobAction {
         }
         targetPOI.gridTileLocation.structure.RemovePOI(targetPOI);
         base.ActivateAction(assignedCharacter, targetPOI);
+
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
+        log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(null, "destroyed", LOG_IDENTIFIER.STRING_1);
+        PlayerManager.Instance.player.ShowNotification(log);
     }
 
     //protected override bool ShouldButtonBeInteractable(Character character, IPointOfInterest targetPOI) {

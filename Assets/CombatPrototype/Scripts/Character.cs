@@ -3016,18 +3016,19 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 }
             }
         } else if (!action.isDone) {
-            if (action.goapType == INTERACTION_TYPE.MAKE_LOVE && state.name == "Make Love Success") {
-                MakeLove makeLove = action as MakeLove;
-                Character target = makeLove.targetCharacter;
-                if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                    CreateWatchEvent(action, null, action.actor);
-                } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                    CreateWatchEvent(action, null, target);
-                } else {
-                    marker.AddAvoidInRange(action.actor, false);
-                    marker.AddAvoidInRange(target);
-                }
-            } else if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success") {
+            //if (action.goapType == INTERACTION_TYPE.MAKE_LOVE && state.name == "Make Love Success") {
+            //    MakeLove makeLove = action as MakeLove;
+            //    Character target = makeLove.targetCharacter;
+            //    if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            //        CreateWatchEvent(action, null, action.actor);
+            //    } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            //        CreateWatchEvent(action, null, target);
+            //    } else {
+            //        marker.AddAvoidInRange(action.actor, false);
+            //        marker.AddAvoidInRange(target);
+            //    }
+            //} else 
+            if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success") {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 25) { //25
                     if (!HasRelationshipOfTypeWith(action.actor, RELATIONSHIP_TRAIT.ENEMY)) {
@@ -3054,7 +3055,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     //In watch event, it's either the character watch an action or combat state, it cannot be both
-    private void CreateWatchEvent(GoapAction actionToWatch, CombatState combatStateToWatch, Character targetCharacter) {
+    public void CreateWatchEvent(GoapAction actionToWatch, CombatState combatStateToWatch, Character targetCharacter) {
         string summary = "Creating watch event for " + name + " with target " + targetCharacter.name;
         if(actionToWatch != null) {
             summary += " involving " + actionToWatch.goapName;
@@ -6895,7 +6896,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// Function to encapsulate, whether or not this character treats another character as hostile.
     /// </summary>
     /// <param name="character">Character in question.</param>
-    public bool IsHostileWith(Character character) {
+    public bool IsHostileWith(Character character, bool checkIgnoreHostility = true) {
         //return true;
         if (character.isDead || this.isDead) {
             return false;
@@ -6909,7 +6910,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    }
         //}
 
-        if (character.ignoreHostility > 0 || this.ignoreHostility > 0) {
+        if (checkIgnoreHostility && (character.ignoreHostility > 0 || this.ignoreHostility > 0)) {
             //if either the character in question or this character should ignore hostility, return false.
             return false;
         }
