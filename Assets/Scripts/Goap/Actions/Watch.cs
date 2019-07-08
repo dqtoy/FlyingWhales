@@ -70,6 +70,11 @@ public class Watch : GoapAction {
         if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
         }
+
+        if (shouldAddLogs && currentState.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
+            currentState.descriptionLog.SetDate(GameManager.Instance.Today());
+            currentState.descriptionLog.AddLogToInvolvedObjects();
+        }
     }
     #endregion
 

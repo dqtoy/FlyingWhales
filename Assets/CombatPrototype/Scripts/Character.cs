@@ -2800,17 +2800,25 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             target = action.poiTarget;
         }
         if (action.actor != this && target != this) {
+            if (action.goapType == INTERACTION_TYPE.WATCH) {
+                //Cannot witness/watch a watch action
+                return;
+            }
+            if (GetNormalTrait("Unconscious", "Resting") != null) {
+                return;
+            }
             if (marker.inVisionPOIs.Contains(action.actor)) {
-                if (GetNormalTrait("Unconscious", "Resting") != null) {
-                    return;
-                }
                 ThisCharacterWitnessedEvent(action);
                 ThisCharacterWatchEvent(null, action, state);
             }
         }
     }
     public void ThisCharacterSaw(Character target) {
-        if (target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone) {
+        if (GetNormalTrait("Unconscious", "Resting") != null) {
+            return;
+        }
+        if (target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone && target.currentAction.goapType != INTERACTION_TYPE.WATCH) {
+            //Cannot witness/watch a watch action
             IPointOfInterest poiTarget = null;
             if (target.currentAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
                 poiTarget = (target.currentAction as MakeLove).targetCharacter;
@@ -2818,9 +2826,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 poiTarget = target.currentAction.poiTarget;
             }
             if (target.currentAction.actor != this && poiTarget != this) {
-                if(GetNormalTrait("Unconscious", "Resting") != null) {
-                    return;
-                }
                 ThisCharacterWitnessedEvent(target.currentAction); 
                 ThisCharacterWatchEvent(target, target.currentAction, target.currentAction.currentState);
             }
@@ -2833,14 +2838,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             return;
         }
 
+        //This will only happen if target is in combat
         ThisCharacterWatchEvent(target, null, null);
-
-        //if (role.roleType == CHARACTER_ROLE.CIVILIAN) {
-        //    if (target.GetNormalTrait("Berserked") != null) {
-        //        marker.AddAvoidInRange(target);
-        //        return;
-        //    }
-        //}
     }
     public List<Log> GetMemories(int dayFrom, int dayTo, bool eventMemoriesOnly = false){
         List<Log> memories = new List<Log>();
@@ -5235,16 +5234,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             plan.SetPriorityState(isPriority);
             if (isPriority) {
                 allGoapPlans.Insert(0, plan);
-                ////if the plan is a priority, place it after all other plans that are not overridable
-                //int indexToInsert = 0;
-                //for (int i = 0; i < allGoapPlans.Count; i++) {
-                //    GoapPlan currPlan = allGoapPlans[i];
-                //    if (!(currPlan.job != null && currPlan.job.cannotOverrideJob)) {
-                //        indexToInsert = i; //this is the first plan in the list that is overridable, place the priority plan before the current item.
-                //        break;
-                //    }
-                //}
-                //allGoapPlans.Insert(indexToInsert, plan);
             } else {
                 bool hasBeenInserted = false;
                 if(plan.job != null) {

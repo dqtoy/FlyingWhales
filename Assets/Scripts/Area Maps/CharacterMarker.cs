@@ -227,59 +227,12 @@ public class CharacterMarker : PooledObject {
                 ClearHostilesInRange(false);
                 ClearAvoidInRange(false);
             }
-            //else if (trait.name == "Injured" && trait.responsibleCharacter != null && characterThatGainedTrait.GetNormalTrait("Unconscious") == null) {
-            //    gainTraitSummary += "\nGained trait is injured, and character that is responsible for injured trait is " + trait.responsibleCharacter.name;
-            //    if (hostilesInRange.Contains(trait.responsibleCharacter)) {
-            //        gainTraitSummary += trait.responsibleCharacter.name + " is in hostile range. Forcing flee.";
-            //        Debug.Log(characterThatGainedTrait.name + " gained an injured trait. Reacting...");
-            //        NormalReactToHostileCharacter(trait.responsibleCharacter, CHARACTER_STATE.FLEE);
-            //    }
-            //} else 
-            //else if (trait.name == "Spooked" && !characterThatGainedTrait.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            //    gainTraitSummary += "\nGained trait is Spooked, character will flee if there are characters in vision";
-            //    if (inVisionPOIs.Count > 0) {
-            //        Spooked spooked = trait as Spooked;
-            //        for (int i = 0; i < inVisionPOIs.Count; i++) {
-            //            if(inVisionPOIs[i] is Character) {
-            //                Character characterInVision = inVisionPOIs[i] as Character;
-            //                spooked.AddTerrifyingCharacter(characterInVision);
-            //                //AddHostileInRange(characterInVision, CHARACTER_STATE.COMBAT, false);
-            //            }
-            //        }
-            //        if (spooked.terrifyingCharacters.Count > 0) {
-            //            AddAvoidsInRange(spooked.terrifyingCharacters, false);
-
-            //        }
-            //    }
-            //} 
-            //else if (trait.name == "Berserked") {
-            //    gainTraitSummary += "\nGained trait is Berserked, characters in vision will flee from this character";
-            //    if (inVisionPOIs.Count > 0) {
-            //        for (int i = 0; i < inVisionPOIs.Count; i++) {
-            //            if (inVisionPOIs[i] is Character) {
-            //                Character characterInVision = inVisionPOIs[i] as Character;
-            //                if(characterInVision.role.roleType == CHARACTER_ROLE.CIVILIAN) {
-            //                    characterInVision.marker.AddAvoidInRange(characterThatGainedTrait);
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
             UpdateAnimation();
             UpdateActionIcon();
             Debug.Log(gainTraitSummary);
         } else {
             if (inVisionPOIs.Contains(characterThatGainedTrait)) {
                 character.CreateJobsOnEnterVisionWith(characterThatGainedTrait);
-                //this.character.CreateRemoveTraitJobs(characterThatGainedTrait);
-                //if (this.character.role.roleType == CHARACTER_ROLE.SOLDIER && this.character.isAtHomeArea && characterThatGainedTrait.isAtHomeArea && !characterThatGainedTrait.isDead) {
-                //    if (this.character.GetRelationshipEffectWith(characterThatGainedTrait) != RELATIONSHIP_EFFECT.POSITIVE) {
-                //        if (characterThatGainedTrait.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                //            GoapPlanJob job = this.character.CreateApprehendJobFor(characterThatGainedTrait, true);
-                //        }
-                //    }
-                //}
-                //GoapPlanJob restrainJob = this.character.CreateRestrainJob(characterThatGainedTrait);
             }
             if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 RemoveHostileInRange(characterThatGainedTrait); //removed hostile because he/she became unconscious.
@@ -299,44 +252,21 @@ public class CharacterMarker : PooledObject {
             }
             //if the character does not have any other negative disabler trait
             //check for reactions.
-            if (!character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-                lostTraitSummary += "\n" + character.name + " doesn't have any other negative disabler traits.";
-                switch (trait.name) {
-                    case "Unconscious":
-                        for (int i = 0; i < inVisionPOIs.Count; i++) {
-                            IPointOfInterest currInVision = inVisionPOIs[i];
-                            if (currInVision is Character) {
-                                Character currCharacter = currInVision as Character;
-                                AddHostileInRange(currCharacter);
+            switch (trait.name) {
+                case "Unconscious":
+                case "Resting":
+                    lostTraitSummary += "\n" + character.name + " is checking for reactions towards characters in vision...";
+                    for (int i = 0; i < inVisionPOIs.Count; i++) {
+                        IPointOfInterest currInVision = inVisionPOIs[i];
+                        if (currInVision is Character) {
+                            Character currCharacter = currInVision as Character;
+                            if (!AddHostileInRange(currCharacter)) {
+                                //If not hostile, try to react to character's action
+                                character.ThisCharacterSaw(currCharacter);
                             }
                         }
-
-                        //after this character loses combat recovery trait or unconscious trait, check if he or she can still react to another character, if yes, react.
-                        //if (character.GetNormalTrait("Unconscious") == null && character.GetNormalTrait("Combat Recovery") == null) {
-                        //    if (hostilesInRange.Count > 0) {
-                        //        Character nearestHostile = GetNearestValidHostile();
-                        //        if (nearestHostile != null) {
-                        //            lostTraitSummary += "\n" + character.name + " will react to nearest hostile " + nearestHostile.name + " after losing trait " + trait.name;
-                        //            NormalReactToHostileCharacter(nearestHostile);
-                        //        }
-                        //    } else if (avoidInRange.Count > 0) {
-                        //        Character nearestAvoid = GetNearestValidAvoid();
-                        //        if (nearestAvoid != null) {
-                        //            lostTraitSummary += "\n" + character.name + " will react to nearest avoid " + nearestAvoid.name + " after losing trait " + trait.name;
-                        //            NormalReactToHostileCharacter(nearestAvoid, CHARACTER_STATE.FLEE);
-                        //        }
-                        //    } else {
-                        //        lostTraitSummary += "\n" + character.name + " has no more hostiles in range.";
-                        //        if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE) {
-                        //            lostTraitSummary += "\n" + character.name + "'s current state is flee, exiting flee state...";
-                        //            character.stateComponent.currentState.OnExitThisState();
-                        //        }
-                        //    }
-                        //}
-                        break;
-                }
-            } else {
-                lostTraitSummary += "\n" + character.name + " has other negative disabler traits. Not doing anything.";
+                    }
+                    break;
             }
             Debug.Log(lostTraitSummary);
             UpdateAnimation();
@@ -355,18 +285,6 @@ public class CharacterMarker : PooledObject {
         if (targetPOI is Character) {
             Character targetCharacter = targetPOI as Character;
             if (travellingParty.characters.Contains(targetCharacter)) {
-                //if (currentlyEngaging == targetCharacter) {
-                //    SetCurrentlyEngaging(null);
-                //}
-                //target character left the area
-                //end current action
-                //if (this.arrivalAction != null) {
-                //    Debug.Log(targetCharacter.name + " started travelling to another location, executing arrival action " + this.arrivalAction.Method.Name);
-                //} else {
-                //    Debug.Log(targetCharacter.name + " started travelling to another location, executing arrival action None");
-                //}
-
-
                 Action action = this.arrivalAction;
                 if(action != null) {
                     if (character.currentParty.icon.isTravelling) {
@@ -397,7 +315,7 @@ public class CharacterMarker : PooledObject {
         if (character == this.character) {
             UpdateActionIcon();
         } else {
-            if(state.characterState == CHARACTER_STATE.COMBAT) {
+            if(state.characterState == CHARACTER_STATE.COMBAT && this.character.GetNormalTrait("Unconscious", "Resting") == null) {
                 if (inVisionPOIs.Contains(character)) {
                     this.character.ThisCharacterWatchEvent(character, null, null);
                 }
