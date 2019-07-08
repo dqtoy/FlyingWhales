@@ -99,6 +99,20 @@ public class GameManager : MonoBehaviour {
                     UIManager.Instance.Pause();
                 }
             }
+        } else if (Input.GetKeyDown(KeyCode.F1)) {
+            if (UIManager.Instance.x1Btn.IsInteractable()) {
+                UIManager.Instance.SetProgressionSpeed1X();
+            }
+        } else if (Input.GetKeyDown(KeyCode.F2)) {
+            if (UIManager.Instance.x2Btn.IsInteractable()) {
+                UIManager.Instance.SetProgressionSpeed2X();
+            }
+        } else if (Input.GetKeyDown(KeyCode.F3)) {
+            if (UIManager.Instance.x4Btn.IsInteractable()) {
+                UIManager.Instance.SetProgressionSpeed4X();
+            }
+        } else if (Input.GetKeyDown(KeyCode.Escape)) {
+            Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Escape);
         }
     }
     private void FixedUpdate() {

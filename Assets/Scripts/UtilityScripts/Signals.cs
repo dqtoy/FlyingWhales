@@ -16,6 +16,10 @@ public static class Signals {
     public static string GAME_LOADED = "OnGameLoaded";
     public static string TOGGLE_CHARACTERS_VISIBILITY = "OnToggleCharactersVisibility";
     public static string INSPECT_ALL = "InspectAll";
+    /// <summary>
+    /// Parameters: KeyCode (Pressed Key)
+    /// </summary>
+    public static string KEY_DOWN = "OnKeyDown";
 
     #region Tiles
     public static string TILE_LEFT_CLICKED = "OnTileLeftClicked"; //Parameters (HexTile clickedTile)

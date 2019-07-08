@@ -28,6 +28,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private RectTransform activeMinionActionsParent;
     [SerializeField] private UI_InfiniteScroll roleSlotsInfiniteScroll;
     [SerializeField] private ScrollRect roleSlotsScrollRect;
+    public UIHoverPosition roleSlotTooltipPos;
 
     [Header("Attack")]
     public GameObject attackGridGO;

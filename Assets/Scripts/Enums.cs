@@ -1404,7 +1404,7 @@ public static class Extensions {
     #endregion
 
     #region Actions
-    public static bool IsCombatAction(this INTERACTION_TYPE type) {
+    public static bool IsHostileAction(this INTERACTION_TYPE type) {
         switch (type) {
             case INTERACTION_TYPE.ASSAULT_ACTION_NPC:
             case INTERACTION_TYPE.STEAL:
@@ -1412,6 +1412,19 @@ public static class Extensions {
             case INTERACTION_TYPE.TILE_OBJECT_DESTROY:
             case INTERACTION_TYPE.CURSE_CHARACTER:
             case INTERACTION_TYPE.RESTRAIN_CHARACTER:
+                return true;
+            default:
+                return false;
+        }
+    }
+    /// <summary>
+    /// Will the given action type directly make it's actor enter combat state.
+    /// </summary>
+    /// <param name="type">The type of action.</param>
+    /// <returns>True or false</returns>
+    public static bool IsDirectCombatAction(this INTERACTION_TYPE type) {
+        switch (type) {
+            case INTERACTION_TYPE.ASSAULT_ACTION_NPC:
                 return true;
             default:
                 return false;

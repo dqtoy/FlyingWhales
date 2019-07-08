@@ -114,23 +114,28 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         string message = string.Empty;
         switch (slotJob) {
             case JOB.SPY:
+                header += " (1)";
                 message = "An agent that gathers information about places and characters.";
                 break;
             case JOB.SEDUCER:
+                header += " (2)";
                 message = "An agent that corrupts heroes and recruits new minions.";
                 break;
             case JOB.DIPLOMAT:
+                header += " (3)";
                 message = "An agent that builds relationships with other characters.";
                 break;
             case JOB.INSTIGATOR:
+                header += " (4)";
                 message = "An agent that sows discord and chaos.";
                 break;
             case JOB.DEBILITATOR:
+                header += " (5)";
                 message = "An agent that halts unwanted actions and activities.";
                 break;
         }
-        //portraitHover.ShowSmallInfoInSpecificPosition(message, header);
-        UIManager.Instance.ShowSmallInfo(message, header);
+        UIManager.Instance.ShowSmallInfo(message, PlayerUI.Instance.roleSlotTooltipPos, header);
+        //UIManager.Instance.ShowSmallInfo(message, header);
     }
     public void HideTooltip() {
         if (UIManager.Instance != null) {

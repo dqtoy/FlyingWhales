@@ -90,11 +90,21 @@ public class Player : ILeader {
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener(Signals.TICK_STARTED, EverydayAction);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
 
         //goap
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+    }
+
+    private void OnKeyPressed(KeyCode pressedKey) {
+        if (pressedKey == KeyCode.Escape) {
+            if (currentActivePlayerJobAction != null) {
+                SetCurrentlyActivePlayerJobAction(null);
+                CursorManager.Instance.ClearLeftClickActions();
+            }
+        }
     }
 
     #region ILeader

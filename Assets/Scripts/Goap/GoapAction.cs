@@ -411,12 +411,18 @@ public class GoapAction {
         if(_requirementAction != null) {
             requirementActionSatisfied = _requirementAction();
         }
+        if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
+            requirementActionSatisfied = actor.IsCombatReady();
+        }
         return requirementActionSatisfied; //&& (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }
     public bool CanSatisfyRequirementOnBuildGoapTree() {
         bool requirementActionSatisfied = true;
         if (_requirementOnBuildGoapTreeAction != null) {
             requirementActionSatisfied = _requirementOnBuildGoapTreeAction();
+        }
+        if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
+            requirementActionSatisfied = actor.IsCombatReady();
         }
         return requirementActionSatisfied;
     }

@@ -26,9 +26,9 @@ public class UIManager : MonoBehaviour {
     [Header("Date Objects")]
     [SerializeField] private ToggleGroup speedToggleGroup;
     public Toggle pauseBtn;
-    [SerializeField] private Toggle x1Btn;
-    [SerializeField] private Toggle x2Btn;
-    [SerializeField] private Toggle x4Btn;
+    public Toggle x1Btn;
+    public Toggle x2Btn;
+    public Toggle x4Btn;
     [SerializeField] private TextMeshProUGUI dateLbl;
     [SerializeField] private TextMeshProUGUI timeLbl;
 

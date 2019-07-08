@@ -686,7 +686,10 @@ public class CharacterMarker : PooledObject {
         //    return;
         //}
         if (!character.IsInOwnParty()) {
-            return; //if not in own party do not update animations
+            if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                PlaySleepGround();
+            }
+            return; //if not in own party do not update any other animations
         }
         if (character.isDead) {
             PlayAnimation("Dead");

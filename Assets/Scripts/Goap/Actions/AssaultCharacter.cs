@@ -33,18 +33,22 @@ public class AssaultCharacter : GoapAction {
         
         Character targetCharacter = poiTarget as Character;
         if (targetCharacter.specificLocation == actor.specificLocation && !targetCharacter.currentParty.icon.isAreaTravelling) {
-            CharacterState combatState;
-            if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {
-                actor.marker.AddHostileInRange(targetCharacter, out combatState, CHARACTER_STATE.COMBAT, false);
+            if (actor.IsCombatReady()) {
+                CharacterState combatState;
+                if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {
+                    actor.marker.AddHostileInRange(targetCharacter, out combatState, CHARACTER_STATE.COMBAT, false);
+                } else {
+                    combatState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
+                }
+                if (combatState is CombatState) {
+                    (combatState as CombatState).SetOnEndStateAction(OnFinishCombatState);
+                    SetState("In Progress");
+                } else {
+                    Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
+                    SetState("Target Missing");
+                }
             } else {
-                combatState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
-            }
-            if (combatState is CombatState) {
-                (combatState as CombatState).SetOnEndStateAction(OnFinishCombatState);
-                SetState("In Progress");
-            } else {
-                Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
-                SetState("Target Missing");
+                SetState("Assault Failed");
             }
         } else {
             SetState("Target Missing");
@@ -114,9 +118,6 @@ public class AssaultCharacter : GoapAction {
     #region Requirements
     protected bool Requirement() {
         if(poiTarget is Character && actor != poiTarget) {
-            if (!actor.IsCombatReady()) { //a character that will flee when seeing a hostile character, should not do this action.
-                return false;
-            }
             Character target = poiTarget as Character;
             if(!target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
                 return true;
