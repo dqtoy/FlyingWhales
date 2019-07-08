@@ -1130,7 +1130,7 @@ public class CharacterMarker : PooledObject {
                     if (otherPOI == null) {
                         otherPOI = poi;
                     }
-                    return true;
+                    //return true;
                 }
             }
         }
