@@ -94,6 +94,19 @@ public class Nap : GoapAction {
     }
     private void PerTickNapSuccess() {
         actor.AdjustTiredness(4);
+        if (currentState.currentDuration == currentState.duration) {
+            //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
+            bool isTargettedByDrinkBlood = false;
+            for (int i = 0; i < actor.targettedByAction.Count; i++) {
+                if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone) {
+                    isTargettedByDrinkBlood = true;
+                    break;
+                }
+            }
+            if (isTargettedByDrinkBlood) {
+                currentState.OverrideDuration(currentState.duration + 1);
+            }
+        }
     }
     private void AfterNapSuccess() {
         RemoveTraitFrom(actor, "Resting");
