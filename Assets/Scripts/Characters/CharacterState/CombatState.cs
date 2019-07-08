@@ -129,7 +129,9 @@ public class CombatState : CharacterState {
                 summary += "\nStill has characters to avoid, checking if those characters are still in range...";
                 for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
                     Character currCharacter = stateComponent.character.marker.avoidInRange[i];
-                    if (!stateComponent.character.marker.inVisionPOIs.Contains(currCharacter)) {
+                    if (!stateComponent.character.marker.inVisionPOIs.Contains(currCharacter) 
+                        && !stateComponent.character.marker.visionCollision.poisInRangeButDiffStructure.Contains(currCharacter)) {
+                        //I added checking for poisInRangeButDiffStructure beacuse characters are being removed from the character's avoid range when they exit a structure. (Myk)
                         OnFinishedFleeingFrom(currCharacter);
                         stateComponent.character.marker.RemoveAvoidInRange(currCharacter, false);
                     }
@@ -262,7 +264,7 @@ public class CombatState : CharacterState {
         //else, pursue again
         else if (isAttacking) {
             float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position);
-            if (distance <= stateComponent.character.characterClass.attackRange) { //&& currentClosestHostile.currentStructure == stateComponent.character.currentStructure
+            if (distance <= stateComponent.character.characterClass.attackRange && stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) { //&& currentClosestHostile.currentStructure == stateComponent.character.currentStructure
                 //log += "\n" + stateComponent.character.name + " is within range of " + currentClosestHostile.name + ". Attacking...";
                 //stateComponent.character.PrintLogIfActive(log);
                 //&& currentClosestHostile.currentStructure == stateComponent.character.currentStructure //Commented out structure checking first for assault action (Need to discuss)
