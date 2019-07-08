@@ -440,6 +440,9 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (area.HasStructure(STRUCTURE_TYPE.WAREHOUSE)) {
             structuresWithWalls.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.WAREHOUSE));
         }
+        if (area.HasStructure(STRUCTURE_TYPE.PRISON)) {
+            structuresWithWalls.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.PRISON));
+        }
         if (area.HasStructure(STRUCTURE_TYPE.INN)) {
             structuresWithWalls.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.INN));
         }
@@ -485,6 +488,9 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
         if (area.HasStructure(STRUCTURE_TYPE.WAREHOUSE)) {
             structuresWithEntrances.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.WAREHOUSE));
+        }
+        if (area.HasStructure(STRUCTURE_TYPE.PRISON)) {
+            structuresWithEntrances.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.PRISON));
         }
         if (area.HasStructure(STRUCTURE_TYPE.INN)) {
             structuresWithEntrances.AddRange(area.GetStructuresOfType(STRUCTURE_TYPE.INN));
@@ -555,7 +561,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
         summary += "\nMinX: " + minX + ", MaxX: " + maxX + ", MinY: " + minY + ", MaxY: " + maxY + ", MidY: " + midY;
 
-        List<STRUCTURE_TYPE> unallowedNeighbours = new List<STRUCTURE_TYPE>() { STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.INN, STRUCTURE_TYPE.WAREHOUSE };
+        List<STRUCTURE_TYPE> unallowedNeighbours = new List<STRUCTURE_TYPE>() { STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.INN, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
 
         List<LocationGridTile> elligibleWestGates = wallTiles
             .Where(x => !x.HasStructureOfTypeHorizontally(unallowedNeighbours, 3) 
@@ -731,6 +737,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                             break;
                         case STRUCTURE_TYPE.INN:
                         case STRUCTURE_TYPE.WAREHOUSE:
+                        case STRUCTURE_TYPE.PRISON:
                             groundTilemap.SetTile(currTile.localPlace, floorTile);
                             currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
                             neighbourTiles = GetTilesInRadius(currTile, 1, 0, false, true);
