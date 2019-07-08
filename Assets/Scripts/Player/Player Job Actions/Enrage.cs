@@ -5,7 +5,7 @@ using UnityEngine;
 public class Enrage : PlayerJobAction {
     public Enrage() {
         name = "Enrage";
-        SetDefaultCooldownTime(3);
+        SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 

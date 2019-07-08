@@ -172,9 +172,12 @@ public class CharacterMarker : PooledObject {
         if(ped.button == PointerEventData.InputButton.Left) {
             //This checker is used so that when a character is clicked and it is because there is a player ability that will target that character, the character info ui will not show
             UIManager.Instance.ShowCharacterInfo(character);
-        } else if (ped.button == PointerEventData.InputButton.Right) {
+        }
+#if UNITY_EDITOR
+        else if (ped.button == PointerEventData.InputButton.Right) {
             UIManager.Instance.poiTestingUI.ShowUI(character);
         }
+#endif
     }
     #endregion
 

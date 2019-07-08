@@ -490,38 +490,36 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         if (objHere == null) {
             Messenger.Broadcast(Signals.HIDE_MENUS);
-            if (inputButton == PointerEventData.InputButton.Right) {
 #if UNITY_EDITOR
+            if (inputButton == PointerEventData.InputButton.Right) {
                 if (InteriorMapManager.Instance.IsHoldingPOI()) {
                     InteriorMapManager.Instance.PlaceHeldPOI(this);
                 }
-#endif
             }
+#endif
         } else if (objHere is TileObject || objHere is SpecialToken) {
-            if (inputButton == PointerEventData.InputButton.Middle) {
 #if UNITY_EDITOR
+            if (inputButton == PointerEventData.InputButton.Middle) {
                 if (objHere is TileObject) {
                     (objHere as TileObject).LogActionHistory();
                 }
-#endif
             } else if (inputButton == PointerEventData.InputButton.Right) {
                 if (objHere is TileObject) {
-                   UIManager.Instance.poiTestingUI.ShowUI(objHere);
+                    UIManager.Instance.poiTestingUI.ShowUI(objHere);
                 }
             } else {
-                if(objHere is TileObject) {
+                if (objHere is TileObject) {
                     UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
                 }
             }
+#else
+             if (inputButton == PointerEventData.InputButton.Left) {
+                if (objHere is TileObject) {
+                    UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
+                }
+             }
+#endif
         }
-
-        
-        //else if (objHere is Character) {
-        //    UIManager.Instance.ShowCharacterInfo((objHere as Character));
-        //}
-        //else if (occupant != null) {
-        //    UIManager.Instance.ShowCharacterInfo(occupant);
-        //}
     }
     #endregion
 

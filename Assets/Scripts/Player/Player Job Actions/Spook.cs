@@ -6,7 +6,7 @@ using UnityEngine;
 public class Spook : PlayerJobAction {
     public Spook() {
         name = "Spook";
-        SetDefaultCooldownTime(3);
+        SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
 
