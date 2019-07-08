@@ -304,5 +304,16 @@ public class CharacterAIPath : AILerp {
     public void ResetEndReachedDistance() {
         endReachDistance = Default_End_Reached_Distance;
     }
+    /// <summary>
+    /// Is this character no allowed to move? Disregards pause conditions.
+    /// </summary>
+    /// <returns></returns>
+    public bool IsNotAllowedToMove() {
+        if (GameManager.Instance.isPaused) {
+            return doNotMove > 1;
+        } else {
+            return doNotMove > 0;
+        }
+    }
     #endregion
 }

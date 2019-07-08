@@ -1201,6 +1201,7 @@ public enum STRUCTURE_TYPE {
     WORK_AREA,
     EXPLORE_AREA,
     CEMETERY,
+    PRISON,
 }
 public enum RELATIONSHIP_TRAIT {
     NONE,
@@ -1365,6 +1366,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.WAREHOUSE:
             case STRUCTURE_TYPE.DWELLING:
             case STRUCTURE_TYPE.EXPLORE_AREA:
+            case STRUCTURE_TYPE.PRISON:
             //case STRUCTURE_TYPE.CEMETERY:
                 return false;
             default:
@@ -1377,6 +1379,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.WAREHOUSE:
             case STRUCTURE_TYPE.DWELLING:
             case STRUCTURE_TYPE.CEMETERY:
+            case STRUCTURE_TYPE.PRISON:
                 return true;
             default:
                 return false;

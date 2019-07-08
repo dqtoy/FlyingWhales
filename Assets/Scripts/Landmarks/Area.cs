@@ -1114,7 +1114,7 @@ public class Area {
         List<LocationStructure> choices = new List<LocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
             if (kvp.Key != STRUCTURE_TYPE.DWELLING && kvp.Key != STRUCTURE_TYPE.EXIT && kvp.Key != STRUCTURE_TYPE.CEMETERY
-                && kvp.Key != STRUCTURE_TYPE.INN && kvp.Key != STRUCTURE_TYPE.WORK_AREA) {
+                && kvp.Key != STRUCTURE_TYPE.INN && kvp.Key != STRUCTURE_TYPE.WORK_AREA && kvp.Key != STRUCTURE_TYPE.PRISON) {
                 choices.AddRange(kvp.Value);
             }
         }
@@ -1418,7 +1418,7 @@ public class Area {
         if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
             return;
         }
-        LocationStructure chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        LocationStructure chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.PRISON);
         if(chosenPrison != null) {
             prison = chosenPrison;
         } else {

@@ -302,6 +302,8 @@ public class LocationStructure {
                 return "the inn";
             case STRUCTURE_TYPE.WAREHOUSE:
                 return "the " + location.name + " warehouse";
+            case STRUCTURE_TYPE.PRISON:
+                return "the " + location.name + " prison";
             case STRUCTURE_TYPE.WILDERNESS:
                 return "the outskirts of " + location.name;
             case STRUCTURE_TYPE.CEMETERY:

@@ -13,7 +13,7 @@ public class StrollOutsideState : CharacterState {
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = GameManager.ticksPerHour;
         _currentDuration = 0;
-        _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE };
+        _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
     }
 
     #region Overrides
