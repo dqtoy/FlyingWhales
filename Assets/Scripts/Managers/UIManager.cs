@@ -1491,17 +1491,20 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject defaultNotificationPrefab;
     //public ScrollRect playerNotifScrollView;
     public GameObject playerNotifGO;
-    public Transform playerNotifContentTransform;
+    public RectTransform playerNotificationScrollRectTransform;
+    public ScrollRect playerNotifScrollRect;
+    public Image[] playerNotifTransparentImages;
+
     private List<PlayerNotificationItem> activeNotifications = new List<PlayerNotificationItem>(); //notifications that are currently being shown.
     private void ShowPlayerNotification(Intel intel) {
-        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifContentTransform);
+        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         IntelNotificationItem newItem = newIntelGO.GetComponent<IntelNotificationItem>();
         newItem.Initialize(intel, true, OnNotificationDestroyed);
         newIntelGO.transform.localScale = Vector3.one;
         PlaceNewNotificaton(newItem);
     }
     private void ShowPlayerNotification(Log log) {
-        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifContentTransform);
+        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         PlayerNotificationItem newItem = newIntelGO.GetComponent<PlayerNotificationItem>();
         newItem.Initialize(log, true, OnNotificationDestroyed);
         newIntelGO.transform.localScale = Vector3.one;
@@ -1535,6 +1538,24 @@ public class UIManager : MonoBehaviour {
     }
     private void OnNotificationDestroyed(PlayerNotificationItem item) {
         activeNotifications.Remove(item);
+    }
+    public void OnClickExpand() {
+        if(playerNotificationScrollRectTransform.sizeDelta.y == 1000f) {
+            playerNotificationScrollRectTransform.sizeDelta = new Vector2(playerNotificationScrollRectTransform.sizeDelta.x, 380f);
+        }else if (playerNotificationScrollRectTransform.sizeDelta.y == 380f) {
+            playerNotificationScrollRectTransform.sizeDelta = new Vector2(playerNotificationScrollRectTransform.sizeDelta.x, 1000f);
+        }
+        //Canvas.ForceUpdateCanvases();
+    }
+    public void OnHoverNotificationArea() {
+        for (int i = 0; i < playerNotifTransparentImages.Length; i++) {
+            playerNotifTransparentImages[i].color = new Color(playerNotifTransparentImages[i].color.r, playerNotifTransparentImages[i].color.g, playerNotifTransparentImages[i].color.b, 120f/255f);
+        }
+    }
+    public void OnHoverExitNotificationArea() {
+        for (int i = 0; i < playerNotifTransparentImages.Length; i++) {
+            playerNotifTransparentImages[i].color = new Color(playerNotifTransparentImages[i].color.r, playerNotifTransparentImages[i].color.g, playerNotifTransparentImages[i].color.b, 25f/255f);
+        }
     }
     #endregion
 
