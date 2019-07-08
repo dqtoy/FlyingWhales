@@ -250,6 +250,33 @@ public class GoapPlanJob : JobQueueItem {
     public void AllowDeadTargets() {
         allowDeadTargets = true;
     }
+    /// <summary>
+    /// Helper function to get what this job is trying to do.
+    /// eg: Specify specific trait when it is Remove Trait job, specify specific item when it is Obtain Item job.
+    /// </summary>
+    /// <returns>string value to represent what the job detail is (eg. Remove Trait Unconscious)</returns>
+    public string GetJobDetailString() {
+        switch (jobType) {
+            case JOB_TYPE.OBTAIN_ITEM:
+            case JOB_TYPE.REMOVE_TRAIT:
+                return Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString()) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(targetEffect.conditionKey.ToString());
+            case JOB_TYPE.HUNGER_RECOVERY:
+            case JOB_TYPE.HUNGER_RECOVERY_STARVING:
+                return "Hunger Recovery";
+            case JOB_TYPE.HAPPINESS_RECOVERY:
+            case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
+                return "Happiness Recovery";
+            case JOB_TYPE.TIREDNESS_RECOVERY:
+            case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
+                return "Tiredness Recovery";
+            default:
+                if (targetInteractionType != INTERACTION_TYPE.NONE) {
+                    return Utilities.NormalizeStringUpperCaseFirstLetters(targetInteractionType.ToString());
+                } else {
+                    return name;
+                }
+        }
+    }
     #endregion
 }
 

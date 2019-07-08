@@ -434,7 +434,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.UNDERMINE_ENEMY:
                 priority = 20;
                 break;
-            case JOB_TYPE.FULLNESS_RECOVERY_STARVING:
+            case JOB_TYPE.HUNGER_RECOVERY_STARVING:
             case JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED:
                 priority = 30;
                 break;
@@ -491,7 +491,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.PATROL:
                 priority = 170;
                 break;
-            case JOB_TYPE.FULLNESS_RECOVERY:
+            case JOB_TYPE.HUNGER_RECOVERY:
             //priority = 180;
             //break;
             case JOB_TYPE.TIREDNESS_RECOVERY:

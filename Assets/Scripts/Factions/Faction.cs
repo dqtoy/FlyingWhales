@@ -515,7 +515,7 @@ public class Faction {
 #endif
             //**4 Human Soldiers**
             for (int i = 0; i < soldierCount; i++) {
-                Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.HUMANS, Utilities.GetRandomGender(),
+                Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
                     this, _ownedAreas[0]);
                 createdCharacter.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);

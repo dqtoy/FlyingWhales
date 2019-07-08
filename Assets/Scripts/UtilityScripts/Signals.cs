@@ -106,7 +106,10 @@ public static class Signals {
     public static string SHOW_POPUP_MESSAGE = "ShowPopupMessage"; //Parameters (string message, MESSAGE_BOX_MODE mode, bool expires)
     public static string HIDE_POPUP_MESSAGE = "HidePopupMessage";
     public static string UPDATE_UI = "UpdateUI";
-    public static string SHOW_DEVELOPER_NOTIFICATION = "ShowNotification"; //Parameters (string text, UnityAction onClickAction)
+    /// <summary>
+    /// Parameters (string text, int expiry, UnityAction onClickAction)
+    /// </summary>
+    public static string SHOW_DEVELOPER_NOTIFICATION = "ShowNotification";
     public static string SHOW_CHARACTER_DIALOG = "ShowCharacterDialog"; //Parameters(Character character, string text, List<CharacterDialogChoice> choices)
     public static string HISTORY_ADDED = "OnHistoryAdded"; //Parameters (object itemThatHadHistoryAdded) either a character or a landmark
     public static string PAUSED = "OnPauseChanged"; //Parameters (bool isGamePaused)

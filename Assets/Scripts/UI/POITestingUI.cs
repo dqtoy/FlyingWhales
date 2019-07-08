@@ -69,7 +69,7 @@ public class POITestingUI : MonoBehaviour {
     }
     public void DrinkBlood() {
         if (poi is Character) {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_STARVING, INTERACTION_TYPE.DRINK_BLOOD, poi);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HUNGER_RECOVERY_STARVING, INTERACTION_TYPE.DRINK_BLOOD, poi);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
         } else {
             Debug.LogError(poi.name + " is not a character!");
@@ -78,7 +78,7 @@ public class POITestingUI : MonoBehaviour {
     }
     public void Feed() {
         if (poi is Character) {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_STARVING, INTERACTION_TYPE.FEED, poi);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HUNGER_RECOVERY_STARVING, INTERACTION_TYPE.FEED, poi);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
         } else {
             Debug.LogError(poi.name + " is not a character!");
@@ -99,7 +99,7 @@ public class POITestingUI : MonoBehaviour {
     }
     public void EatAtTable() {
         if (poi is Table) {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_STARVING, INTERACTION_TYPE.EAT_DWELLING_TABLE, poi);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HUNGER_RECOVERY_STARVING, INTERACTION_TYPE.EAT_DWELLING_TABLE, poi);
             job.SetCannotOverrideJob(true);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
         } else {
