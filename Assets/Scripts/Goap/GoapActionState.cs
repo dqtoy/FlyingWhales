@@ -19,7 +19,7 @@ public class GoapActionState {
     public string animationName { get; private set; } //specific animation per action state
 
     public bool hasPerTickEffect { get { return perTickEffect != null; } }
-    private int _currentDuration;
+    public int currentDuration { get; private set; }
 
     public GoapActionState(string name, GoapAction parentAction, Action preEffect, Action perTickEffect, Action afterEffect, int duration, string status) {
         this.name = name;
@@ -72,7 +72,7 @@ public class GoapActionState {
         parentAction.SetExecutionDate(GameManager.Instance.Today());
 
         if(duration > 0) {
-            _currentDuration = 0;
+            currentDuration = 0;
             StartPerTickEffect();
         } else if (duration != -1){
             EndPerTickEffect();
@@ -106,11 +106,11 @@ public class GoapActionState {
         }
     }
     private void PerTickEffect() {
-        _currentDuration++;
+        currentDuration++;
         if (perTickEffect != null) {
             perTickEffect();
         }
-        if(_currentDuration >= duration) {
+        if(currentDuration >= duration) {
             EndPerTickEffect();
         }
     }
