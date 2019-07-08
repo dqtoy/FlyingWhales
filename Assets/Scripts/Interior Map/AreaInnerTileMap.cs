@@ -236,9 +236,17 @@ public class AreaInnerTileMap : MonoBehaviour {
             chosenTownCenter.UpdatePositionsGivenOrigin(Vector3Int.zero);
             //then iterate through all the structures in this area, making sure that the chosen template for the structure can connect to the town center
             foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
-                if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
-                    continue; //skip
+                if (area.name == "Gloomhollow") {
+                    if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate() && keyValuePair.Key != STRUCTURE_TYPE.EXPLORE_AREA) {
+                        //allow explore areas to be generated in gloomhollow
+                        continue; //skip
+                    }
+                } else {
+                    if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
+                        continue; //skip
+                    }
                 }
+                
                 int structuresToCreate = keyValuePair.Value.Count;
                 if (area.name == "Gloomhollow") {
                     structuresToCreate = 5; //hardcoded to 5
@@ -766,8 +774,15 @@ public class AreaInnerTileMap : MonoBehaviour {
     private void PlaceStructures(TownMapSettings settings, Vector3Int startPoint) {
         Dictionary<STRUCTURE_TYPE, List<StructureSlot>> slots = settings.structureSlots;
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
-            if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
-                continue; //skip
+            if (area.name == "Gloomhollow") {
+                if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate() && keyValuePair.Key != STRUCTURE_TYPE.EXPLORE_AREA) {
+                    //allow explore areas to be generated in gloomhollow
+                    continue; //skip
+                }
+            } else {
+                if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
+                    continue; //skip
+                }
             }
             if (slots[keyValuePair.Key].Count == 0) {
                 throw new System.Exception("No existing slots for " + keyValuePair.Key.ToString());
