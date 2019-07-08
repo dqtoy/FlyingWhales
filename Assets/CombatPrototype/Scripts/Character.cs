@@ -4451,13 +4451,13 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Trait hungryOrStarving = GetNormalTrait("Starving", "Hungry");
 
         if (hungryOrStarving != null) {
-            if (!jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY, JOB_TYPE.FULLNESS_RECOVERY_STARVING)) {
+            if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 int value = 0;
-                JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY;
+                JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
                 if (hungryOrStarving.name == "Starving") {
                     value = 100;
-                    jobType = JOB_TYPE.FULLNESS_RECOVERY_STARVING;
+                    jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
                 } else {
                     if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
                         value = 50;
@@ -6330,12 +6330,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                         goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
                         log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        if (goapThread.job.targetInteractionType != INTERACTION_TYPE.NONE) {
-                            log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(goapThread.job.targetInteractionType.ToString()), LOG_IDENTIFIER.STRING_1);
-                        } else {
-                            log.AddToFillers(null, goapThread.job.name, LOG_IDENTIFIER.STRING_1);
-                        }
+                        log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
                         RegisterLogAndShowNotifToThisCharacterOnly(log);
+                        //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, "Cancel Job No Plan Notif! " + name, 5, null);
+                        //UIManager.Instance.Pause();
                     } else {
                         goapThread.job.AddBlacklistedCharacter(this);
                     }
