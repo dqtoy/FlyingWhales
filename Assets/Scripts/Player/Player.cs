@@ -262,26 +262,7 @@ public class Player : ILeader {
     }
     public void AddMinion(Minion minion) {
         minion.SetIndexDefaultSort(_minions.Count);
-
-        if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.LEVEL) {
-            for (int i = 0; i < _minions.Count; i++) {
-                if (minion.lvl <= _minions[i].lvl) {
-                    _minions.Insert(i, minion);
-                    break;
-                }
-            }
-        } else if (PlayerUI.Instance.minionSortType == MINIONS_SORT_TYPE.TYPE) {
-            string strMinionType = minion.character.characterClass.className;
-            for (int i = 0; i < _minions.Count; i++) {
-                int compareResult = string.Compare(strMinionType, minion.character.characterClass.className);
-                if (compareResult == -1 || compareResult == 0) {
-                    _minions.Insert(i, minion);
-                    break;
-                }
-            }
-        } else {
-            _minions.Add(minion);
-        }
+        _minions.Add(minion);
     }
     public void RemoveMinion(Minion minion) {
         _minions.Remove(minion);

@@ -7,7 +7,7 @@ public class DefenderWeightItem : MonoBehaviour {
 
     private Faction owner;
     private AreaCharacterClass defender;
-    private int weight;
+    //private int weight;
 
     [SerializeField] private Dropdown classDropdown;
     [SerializeField] private InputField weightField;
@@ -23,7 +23,7 @@ public class DefenderWeightItem : MonoBehaviour {
 
         this.owner = owner;
         this.defender = defender;
-        this.weight = weight;
+        //this.weight = weight;
     }
 
     public void OnChangeDefenderClass(int choice) {
@@ -43,7 +43,7 @@ public class DefenderWeightItem : MonoBehaviour {
         if (this.owner == null) {
             return;
         }
-        int value = System.Int32.Parse(valueStr);
+        //int value = System.Int32.Parse(valueStr);
         //owner.defenderWeights.ChangeElementWeight(defender, value);
     }
 

@@ -305,11 +305,11 @@ public class MonsterInfoUI : UIMenu {
         if(inventory == null) {
             return;
         }
-        for (int i = 0; i < inventoryItemContainers.Length; i++) {
-            ItemContainer currContainer = inventoryItemContainers[i];
-            Item currInventoryItem = inventory.ElementAtOrDefault(i);
-            //currContainer.SetItem(currInventoryItem);
-        }
+        //for (int i = 0; i < inventoryItemContainers.Length; i++) {
+        //    ItemContainer currContainer = inventoryItemContainers[i];
+        //    Item currInventoryItem = inventory.ElementAtOrDefault(i);
+        //    //currContainer.SetItem(currInventoryItem);
+        //}
     }
     #endregion
     //private void UpdateOtherInfo() {

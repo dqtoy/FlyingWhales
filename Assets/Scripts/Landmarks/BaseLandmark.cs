@@ -214,50 +214,6 @@ public class BaseLandmark : ILocation {
     public virtual void SearchLandmark(Character character) { }
     #endregion
 
-    #region Connections
-    public void AddConnection(BaseLandmark connection) {
-        if (!_connections.Contains(connection)) {
-            _connections.Add(connection);
-        }
-    }
-    public bool IsConnectedTo(Region region) {
-        for (int i = 0; i < _connections.Count; i++) {
-            BaseLandmark currConnection = _connections[i];
-            if (currConnection.tileLocation.region.id == region.id) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool IsConnectedTo(BaseLandmark landmark) {
-        for (int i = 0; i < _connections.Count; i++) {
-            BaseLandmark currConnection = _connections[i];
-            if (currConnection.id == landmark.id) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool IsIndirectlyConnectedTo(Region region) {
-        for (int i = 0; i < _connections.Count; i++) {
-            BaseLandmark currConnection = _connections[i];
-            if (currConnection.IsConnectedTo(region)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool IsIndirectlyConnectedTo(BaseLandmark landmark) {
-        for (int i = 0; i < _connections.Count; i++) {
-            BaseLandmark currConnection = _connections[i];
-            if (currConnection.IsConnectedTo(landmark)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    #endregion
-
     #region Ownership
     public virtual void OccupyLandmark(Faction faction) {
         _owner = faction;

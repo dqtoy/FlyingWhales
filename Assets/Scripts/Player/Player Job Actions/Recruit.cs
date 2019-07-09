@@ -32,16 +32,16 @@ public class Recruit : PlayerJobAction {
     }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
         return false; //always deactivate for now
-        if (targetCharacter.isDead) {
-            return false;
-        }
-        if (character.id == targetCharacter.id && targetCharacter.faction == PlayerManager.Instance.player.playerFaction) {
-            return false;
-        }
-        if (targetCharacter.isLeader || targetCharacter.currentParty.icon.isTravelling || targetCharacter.isDefender || !targetCharacter.IsInOwnParty() || targetCharacter.doNotDisturb > 0) {
-            return false;
-        }
-        return base.CanPerformActionTowards(character, targetCharacter);
+        //if (targetCharacter.isDead) {
+        //    return false;
+        //}
+        //if (character.id == targetCharacter.id && targetCharacter.faction == PlayerManager.Instance.player.playerFaction) {
+        //    return false;
+        //}
+        //if (targetCharacter.isLeader || targetCharacter.currentParty.icon.isTravelling || targetCharacter.isDefender || !targetCharacter.IsInOwnParty() || targetCharacter.doNotDisturb > 0) {
+        //    return false;
+        //}
+        //return base.CanPerformActionTowards(character, targetCharacter);
     }
     protected override void OnCharacterDied(Character characterThatDied) {
         base.OnCharacterDied(characterThatDied);

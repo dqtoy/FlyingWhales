@@ -259,9 +259,6 @@ public class PathGenerator : MonoBehaviour {
         List<List<HexTile>> paths = new List<List<HexTile>>();
 
         Dictionary<HexTile, bool> isVisited = new Dictionary<HexTile, bool>();
-        for (int i = 0; i < RoadManager.Instance.roadTiles.Count; i++) {
-            isVisited.Add(RoadManager.Instance.roadTiles[i], false);
-        }
         List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
         for (int i = 0; i < allLandmarks.Count; i++) {
             isVisited.Add(allLandmarks[i].tileLocation, false);
@@ -308,42 +305,6 @@ public class PathGenerator : MonoBehaviour {
                 // remove current node
                 // in path[]
                 localPathList.Remove(tile);
-            }
-        }
-
-        // Mark the current node
-        isVisited[u] = false;
-    }
-
-    // A recursive function to print
-    // all paths from 'u' to 'd'.
-    // isVisited[] keeps track of
-    // vertices in current path.
-    // localPathList<> stores actual
-    // vertices in the current path
-    private void GetAllLandmarkPathsUtil(BaseLandmark u, BaseLandmark d, Dictionary<BaseLandmark, bool> isVisited,
-                            List<BaseLandmark> localPathList, List<List<BaseLandmark>> allPaths, List<Region> includedRegions) {
-
-        // Mark the current node
-        isVisited[u] = true;
-
-        if (u.id == d.id) {
-            //string text = string.Empty;
-            allPaths.Add(new List<BaseLandmark>(localPathList));
-            //localPathList.ForEach(o => text += o.landmarkName + " -> ");
-            //Debug.Log(text);
-        }
-        // Recur for all the vertices
-        // adjacent to current vertex
-        foreach (BaseLandmark landmark in u.connections.Where(x => includedRegions.Contains(x.tileLocation.region))) {
-            if (!isVisited[landmark]) {
-                // store current node 
-                // in path[]
-                localPathList.Add(landmark);
-                GetAllLandmarkPathsUtil(landmark, d, isVisited, localPathList, allPaths, includedRegions);
-                // remove current node
-                // in path[]
-                localPathList.Remove(landmark);
             }
         }
 

@@ -40,7 +40,7 @@ public class LevelLoaderManager : MonoBehaviour {
         }
 
         //asyncOperation.allowSceneActivation = true;
-        float newProg = _progress;
+        //float newProg = _progress;
         
         while (_progress < 1f) {
             yield return null;

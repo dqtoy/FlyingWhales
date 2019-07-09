@@ -299,37 +299,6 @@ public class STCManager : MonoBehaviour {
     private Dictionary<STRUCTURE_TYPE, int> testingStructures = new Dictionary<STRUCTURE_TYPE, int>() {
         { STRUCTURE_TYPE.DWELLING, 3 },
     };
-    public void GenerateTestTown() {
-        ClearTiles();
-        List<StructureTemplate> validTownCenters = GetValidTownCenterTemplates();
-        if (validTownCenters.Count == 0) {
-            throw new System.Exception("There are no valid town center structures");
-        }
-        StructureTemplate chosenTownCenter = validTownCenters[Random.Range(0, validTownCenters.Count)];
-        DrawTiles(groundTilemap, chosenTownCenter.groundTiles);
-
-        //connectors
-        Utilities.DestroyChildren(connectorsParent);
-        PlaceConnectors(chosenTownCenter);
-
-        foreach (KeyValuePair<STRUCTURE_TYPE, int> keyValuePair in testingStructures) {
-            if (keyValuePair.Key.IsOpenSpace()) {
-                continue; //skip
-            }
-
-            for (int i = 0; i < keyValuePair.Value; i++) {
-                List<StructureTemplate> templates = GetStructureTemplates(keyValuePair.Key.ToString()); //placed this inside loop so that instance of template is unique per iteration
-                List<StructureTemplate> choices = GetTemplatesThatCanConnectTo(chosenTownCenter, templates);
-                if (choices.Count == 0) {
-                    throw new System.Exception("There are no valid " + keyValuePair.Key.ToString() + " templates to connect to town center");
-                }
-                StructureTemplate chosenTemplate = choices[Random.Range(0, choices.Count)];
-                StructureConnector townCenterConnector;
-                StructureConnector chosenTemplateConnector = chosenTemplate.GetValidConnectorTo(chosenTownCenter, out townCenterConnector);
-
-            }
-        }
-    }
     private List<StructureTemplate> GetValidTownCenterTemplates() {
         List<StructureTemplate> valid = new List<StructureTemplate>();
         List<StructureTemplate> choices = GetStructureTemplates("TOWN CENTER");

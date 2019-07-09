@@ -50,11 +50,11 @@ public class LandmarkInfoEditor : MonoBehaviour {
     //    landmark.SetMinDailySupplyProductionAmount(amount);
     //}
     public void SetInitialDefenderCount(string countStr) {
-        int count = System.Int32.Parse(countStr);
+        //int count = System.Int32.Parse(countStr);
         //landmark.SetInitialDefenderCount(count);
     }
     public void SetMaxDefenderCount(string countStr) {
-        int count = System.Int32.Parse(countStr);
+        //int count = System.Int32.Parse(countStr);
         //landmark.SetMaxDefenderCount(count);
     }
     #endregion

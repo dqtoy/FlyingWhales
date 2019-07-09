@@ -15,9 +15,6 @@ namespace PathFind {
             queue.Enqueue(0, new Path<Node>(start));
             Node lastStep = start;
 
-            Region region1 = start.region;
-            Region region2 = destination.region;
-
             while (!queue.IsEmpty) {
                 var path = queue.Dequeue();
                 if (closed.Contains(path.LastStep))
@@ -32,11 +29,7 @@ namespace PathFind {
                 Path<Node> newPath;
                 if (pathfindingMode == PATHFINDING_MODE.REGION_CONNECTION) {
                     foreach (Node n in path.LastStep.AllNeighbours) {
-                        if (n.region.id != region1.id && n.region.id != region2.id) {
-                            //path cannot pass through other regions
-                            continue;
-                        }
-                        if (n.isOuterTileOfRegion && n.id != start.id && n.id != destination.id && !start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
+                        if (n.id != start.id && n.id != destination.id && !start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
                             continue; //skip tiles that are outer tiles of the region, that is not the start or the destination tile
                         }
 
@@ -46,10 +39,6 @@ namespace PathFind {
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION) {
                     foreach (Node n in path.LastStep.LandmarkConnectionTiles) {
-                        if (n.region.id != region1.id && n.region.id != region2.id) {
-                            //path cannot pass through other regions
-                            continue;
-                        }
                         if (n.hasLandmark && n.id != start.id && n.id != destination.id) {
                             //current node has a landmark and is not the start or destination
                             //skip this node
@@ -69,10 +58,6 @@ namespace PathFind {
                     }
                 } else if (pathfindingMode == PATHFINDING_MODE.LANDMARK_ROADS) {
                     foreach (Node n in path.LastStep.NoWaterTiles) {
-                        if (n.region.id != region1.id && n.region.id != region2.id) {
-                            //path cannot pass through other regions
-                            continue;
-                        }
                         if (n.hasLandmark && n.id != start.id && n.id != destination.id) {
                             continue;
                         }
@@ -115,10 +100,6 @@ namespace PathFind {
                     foreach (Node n in path.LastStep.PassableNeighbours) {
                         if (data == null) {
                             throw new Exception("There is no provided data!");
-                        } else if (data is Region) {
-                            if (n.region.id != (data as Region).id) {
-                                continue; //skip tiles that are not part of the region
-                            }
                         }
                         d = distance(path.LastStep, n);
                         newPath = path.AddStep(n, d);
@@ -128,13 +109,6 @@ namespace PathFind {
                     foreach (Node n in path.LastStep.AllNeighbours) {
                         if (data == null) {
                             throw new Exception("There is no provided data!");
-                        } else if (data is Region) {
-                            if (n.region.id != (data as Region).id) {
-                                continue; //skip tiles that are not part of the region
-                            }
-                            if ((data as Region).outerTiles.Contains(n) && n.id != start.id && n.id != destination.id && !start.AllNeighbours.Contains(n) && !destination.AllNeighbours.Contains(n)) {
-                                continue; //skip tiles that are outer tiles of the region, that is not the start or the destination tile
-                            }
                         }
                         d = distance(path.LastStep, n);
                         newPath = path.AddStep(n, d);

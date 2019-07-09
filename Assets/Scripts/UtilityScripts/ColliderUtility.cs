@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ColliderUtility : MonoBehaviour {
 
-    private Collider2D collider;
+    private new Collider2D collider;
 
     private void Awake() {
         collider = this.GetComponent<Collider2D>();

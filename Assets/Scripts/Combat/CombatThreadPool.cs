@@ -10,20 +10,20 @@ public class CombatThreadPool : MonoBehaviour {
 	private static readonly object THREAD_LOCKER = new object ();
 
 	private Queue<Combat> functionsToBeRunInThread;
-	private Queue<Combat> functionsToBeResolved;
+	//private Queue<Combat> functionsToBeResolved;
 
 	private Thread newThread;
-	private bool isRunning;
+	//private bool isRunning;
 
 	void Awake(){
 		Instance = this;
 	}
 
 	void Start () {
-		this.isRunning = true;
+		//this.isRunning = true;
 
 		functionsToBeRunInThread = new Queue<Combat> ();
-		functionsToBeResolved = new Queue<Combat> ();
+		//functionsToBeResolved = new Queue<Combat> ();
 
 		newThread = new Thread( RunThread );
 		newThread.IsBackground = true;
@@ -63,6 +63,6 @@ public class CombatThreadPool : MonoBehaviour {
 	}
 
 	void OnDestroy(){
-		this.isRunning = false;
+		//this.isRunning = false;
 	}
 }

@@ -245,13 +245,11 @@ public class LocationStructure {
         return nearestTile;
     }
     public float GetNearestDistanceTo(LocationGridTile tile) {
-        LocationGridTile nearestTile = null;
         float nearestDist = 99999f;
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile currTile = tiles[i];
             float dist = currTile.GetDistanceTo(tile);
             if (dist < nearestDist) {
-                nearestTile = currTile;
                 nearestDist = dist;
             }
         }
@@ -464,7 +462,6 @@ public class LocationStructure {
         return objs;
     }
     public List<TileObject> GetTileObjectsThatAdvertise(params INTERACTION_TYPE[] types) {
-        List<INTERACTION_TYPE> t = types.ToList();
         List<TileObject> objs = new List<TileObject>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
             IPointOfInterest currPOI = pointsOfInterest[i];

@@ -23,11 +23,9 @@ public class AreaMapCameraMove : MonoBehaviour {
     [SerializeField] private float MIN_Y;
     [SerializeField] private float MAX_Y;
 
-    [SerializeField] private Bounds bounds;
     [SerializeField] private bool allowZoom = true;
 
     [Header("Dragging")]
-    private float dragSpeed = 2f;
     private float dragThreshold = 0.15f;
     private float currDragTime;
     private Vector3 dragOrigin;
@@ -267,13 +265,13 @@ public class AreaMapCameraMove : MonoBehaviour {
         }
         Vector2 topRightCornerCoordinates = InteriorMapManager.Instance.currentlyShowingMap.map
             [InteriorMapManager.Instance.currentlyShowingMap.width - 1, InteriorMapManager.Instance.currentlyShowingMap.height - 1].localLocation;
-        LocationGridTile leftMostTile = InteriorMapManager.Instance.currentlyShowingMap.map[0, InteriorMapManager.Instance.currentlyShowingMap.height / 2];
+        //LocationGridTile leftMostTile = InteriorMapManager.Instance.currentlyShowingMap.map[0, InteriorMapManager.Instance.currentlyShowingMap.height / 2];
         LocationGridTile rightMostTile = InteriorMapManager.Instance.currentlyShowingMap.map[InteriorMapManager.Instance.currentlyShowingMap.width - 1, InteriorMapManager.Instance.currentlyShowingMap.height / 2];
         LocationGridTile topMostTile = InteriorMapManager.Instance.currentlyShowingMap.map[InteriorMapManager.Instance.currentlyShowingMap.width/2, InteriorMapManager.Instance.currentlyShowingMap.height - 1];
-        LocationGridTile botMostTile = InteriorMapManager.Instance.currentlyShowingMap.map[InteriorMapManager.Instance.currentlyShowingMap.width/2, 0];
+        //LocationGridTile botMostTile = InteriorMapManager.Instance.currentlyShowingMap.map[InteriorMapManager.Instance.currentlyShowingMap.width/2, 0];
 
-        float mapX = Mathf.Floor(topRightCornerCoordinates.x);
-        float mapY = Mathf.Floor(topRightCornerCoordinates.y);
+        //float mapX = Mathf.Floor(topRightCornerCoordinates.x);
+        //float mapY = Mathf.Floor(topRightCornerCoordinates.y);
 
         float vertExtent = areaMapsCamera.orthographicSize;
         float horzExtent = vertExtent * Screen.width / Screen.height;
@@ -317,7 +315,6 @@ public class AreaMapCameraMove : MonoBehaviour {
         return false;
     }
     private void SetCameraBounds(Bounds bounds, float horzExtent, float vertExtent) {
-        this.bounds = bounds;
         float halfOfTile = (64f / 2f) / 100f; //1.28
         MIN_X = bounds.min.x + horzExtent - (halfOfTile);
         MAX_X = bounds.max.x - horzExtent + (halfOfTile);

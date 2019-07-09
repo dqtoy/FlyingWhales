@@ -486,7 +486,7 @@ public static class NGUIEditorTools
 
 			if (NGUISettings.trueColorAtlas)
 			{
-				settings.textureFormat = TextureImporterFormat.ARGB32;
+				//settings.textureFormat = TextureImporterFormat.ARGB32;
 				settings.filterMode = FilterMode.Trilinear;
 			}
 

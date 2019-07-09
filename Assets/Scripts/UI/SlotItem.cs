@@ -20,7 +20,7 @@ public class SlotItem : MonoBehaviour {
 
     [Space(10)]
     [Header("Slot Elements")]
-    [SerializeField] private string neededTypeStr;
+    //[SerializeField] private string neededTypeStr;
     public CharacterPortrait portrait;
     public AreaEmblem areaEmblem;
     public FactionEmblem factionEmblem;
@@ -75,7 +75,7 @@ public class SlotItem : MonoBehaviour {
     }
     public void SetNeededType(System.Type neededType) {
         this.neededType = neededType;
-        neededTypeStr = neededType.ToString();
+        //neededTypeStr = neededType.ToString();
     }
     public void OnDroppedItemValid(IDragParentItem item) {
         PlaceObject(item.associatedObj);

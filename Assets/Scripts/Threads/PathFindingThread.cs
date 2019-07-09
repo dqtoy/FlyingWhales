@@ -17,7 +17,7 @@ public class PathFindingThread : Multithread {
 	private PATHFINDING_MODE _pathfindingMode;
 	//private CitizenAvatar _citizenAvatar;
     private CharacterAvatar _characterAvatar;
-    private BaseLandmark _landmark;
+    //private BaseLandmark _landmark;
 
     private object _data;
 
@@ -43,7 +43,7 @@ public class PathFindingThread : Multithread {
         this._startingTile = startingTile;
         this._destinationTile = destinationTile;
         this._pathfindingMode = pathfindingMode;
-        this._landmark = landmark;
+        //this._landmark = landmark;
         this._data = data;
     }
     #region Overrides

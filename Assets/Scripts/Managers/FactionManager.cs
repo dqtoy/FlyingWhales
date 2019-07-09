@@ -70,23 +70,6 @@ public class FactionManager : MonoBehaviour {
         CreateFavorsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
-    /*
-     Generate the initital factions,
-     races are specified in the inspector (inititalRaces)
-     */
-    public void GenerateInitialFactions() {
-        RACE[] races = new RACE[] { RACE.HUMANS, RACE.ELVES };
-
-        int numOfFactions = 5;
-        for (int i = 0; i < numOfFactions; i++) {
-            List<Region> elligibleRegions = GridMap.Instance.allRegions.Where(x => x.owner == null).ToList();
-            Region chosenRegion = elligibleRegions[Random.Range(0, elligibleRegions.Count)];
-            Faction newFaction = CreateNewFaction();
-            chosenRegion.SetOwner(newFaction);
-            newFaction.OwnRegion(chosenRegion);
-            chosenRegion.ReColorBorderTiles(newFaction.factionColor);
-        }
-    }
     public void RandomizeStartingFactions(WorldSaveData data) {
         string log = "Starting Factions are: ";
         /*
@@ -96,8 +79,8 @@ public class FactionManager : MonoBehaviour {
         2 Minor Factions
          */
         List<Faction> goodMajorChoices = GetFactionsOfMoralityAndSize(MORALITY.GOOD, FACTION_SIZE.MAJOR);
-        List<Faction> evilMajorChoices = GetFactionsOfMoralityAndSize(MORALITY.EVIL, FACTION_SIZE.MAJOR);
-        List<Faction> minorChoices = GetFactionsOfSize(FACTION_SIZE.MINOR);
+        //List<Faction> evilMajorChoices = GetFactionsOfMoralityAndSize(MORALITY.EVIL, FACTION_SIZE.MAJOR);
+        //List<Faction> minorChoices = GetFactionsOfSize(FACTION_SIZE.MINOR);
 
         Faction goodMajor = goodMajorChoices[Random.Range(0, goodMajorChoices.Count)];
         //Faction evilMajor = evilMajorChoices[Random.Range(0, evilMajorChoices.Count)];
@@ -284,10 +267,6 @@ public class FactionManager : MonoBehaviour {
         for (int i = 0; i < faction.ownedAreas.Count; i++) {
             Area ownedArea = faction.ownedAreas[i];
             LandmarkManager.Instance.UnownArea(ownedArea);
-        }
-        for (int i = 0; i < faction.ownedRegions.Count; i++) {
-            Region currRegion = faction.ownedRegions[i];
-            currRegion.SetOwner(null);
         }
         RemoveRelationshipsWith(faction);
         Messenger.Broadcast(Signals.FACTION_DELETED, faction);

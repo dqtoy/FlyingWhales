@@ -21,9 +21,6 @@ namespace worldcreator {
         public List<HexTile> nonOuterSelection {
             get { return highlightedTiles.Where(x => !WorldCreatorManager.Instance.outerGridList.Contains(x)).ToList(); }
         }
-        public List<Region> selectedRegions {
-            get { return GetSelectedRegions(); }
-        }
         public List<BaseLandmark> selectedLandmarks {
             get { return GetSelectedLandmarks(); }
         }
@@ -144,18 +141,12 @@ namespace worldcreator {
                 AddToHighlightedTiles(clickedTile);
                 clickedTile.HighlightTile(Color.gray, 128f/255f);
                 //}
-            } else if (WorldCreatorManager.Instance.selectionMode == SELECTION_MODE.REGION) {
-                AddToHighlightedTiles(clickedTile.region.tilesInRegion);
-                clickedTile.region.HighlightRegion(Color.gray, 128f/255f);
             }
         }
         private void OnTileRightClicked(HexTile clickedTile) {
             if (WorldCreatorManager.Instance.selectionMode == SELECTION_MODE.TILE) {
                 highlightedTiles.Remove(clickedTile);
                 clickedTile.UnHighlightTile();
-            } else if (WorldCreatorManager.Instance.selectionMode == SELECTION_MODE.REGION) {
-                RemoveFromHighlightedTiles(clickedTile.region.tilesInRegion);
-                clickedTile.region.UnhighlightRegion();
             }
         }
         private void OnHoverOverTile(HexTile tile) {
@@ -163,11 +154,6 @@ namespace worldcreator {
                 case SELECTION_MODE.RECTANGLE:
                 case SELECTION_MODE.TILE:
                     tile.HighlightTile(Color.grey, 128f/255f);
-                    break;
-                case SELECTION_MODE.REGION:
-                    if (tile.region != null) {
-                        tile.region.HighlightRegion(Color.grey, 128/255f);
-                    }
                     break;
                 default:
                     break;
@@ -179,11 +165,6 @@ namespace worldcreator {
                 case SELECTION_MODE.TILE:
                     if (!selection.Contains(tile)) {
                         tile.UnHighlightTile();
-                    }
-                    break;
-                case SELECTION_MODE.REGION:
-                    if (tile.region != null) {
-                        tile.region.UnhighlightRegion();
                     }
                     break;
                 default:
@@ -221,18 +202,6 @@ namespace worldcreator {
         private void RemoveFromHighlightedTiles(HexTile tile) {
             highlightedTiles.Remove(tile);
         }
-
-        private List<Region> GetSelectedRegions() {
-            List<Region> regions = new List<Region>();
-            for (int i = 0; i < highlightedTiles.Count; i++) {
-                HexTile currTile = highlightedTiles[i];
-                if (!regions.Contains(currTile.region)) {
-                    regions.Add(currTile.region);
-                }
-            }
-            return regions;
-        }
-
         private List<BaseLandmark> GetSelectedLandmarks() {
             List<BaseLandmark> landamrks = new List<BaseLandmark>();
             for (int i = 0; i < highlightedTiles.Count; i++) {

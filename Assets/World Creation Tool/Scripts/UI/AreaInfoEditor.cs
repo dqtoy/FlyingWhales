@@ -82,7 +82,7 @@ public class AreaInfoEditor : MonoBehaviour {
         currentArea.SetName(name);
     }
     public void SetDefaultRace(int choice) {
-        RACE result;
+        //RACE result;
         //if (Enum.TryParse(defaultRaceDropdown.options[defaultRaceDropdown.value].text, out result)) {
         //    currentArea.SetDefaultRace(result);
         //}

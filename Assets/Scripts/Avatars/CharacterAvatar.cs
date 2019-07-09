@@ -36,7 +36,6 @@ public class CharacterAvatar : MonoBehaviour{
     [SerializeField] private bool _isInitialized = false;
     [SerializeField] private bool _isMovementPaused = false;
     [SerializeField] private bool _isTravelling = false;
-    [SerializeField] private bool _isMovingToHex = false;
     private int _distanceToTarget;
     private bool _isVisualShowing;
     private bool _isTravelCancelled;
@@ -294,7 +293,6 @@ public class CharacterAvatar : MonoBehaviour{
      saved path.
          */
     public virtual void OnMoveFinished() {
-		_isMovingToHex = false;
 		if(this.path == null){
 			Debug.LogError (GameManager.Instance.Today ().ToStringDate());
 			Debug.LogError ("Location: " + _party.specificLocation.name);

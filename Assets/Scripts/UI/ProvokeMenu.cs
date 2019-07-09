@@ -14,7 +14,7 @@ public class ProvokeMenu : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI instructionLbl;
 
     private Character targetCharacter;
-    private Character actor;
+    //private Character actor;
 
     private bool wasPausedOnOpen;
 
@@ -22,7 +22,7 @@ public class ProvokeMenu : MonoBehaviour {
         this.gameObject.SetActive(true);
 
         this.targetCharacter = targetCharacter;
-        this.actor = actor;
+        //this.actor = actor;
         instructionLbl.text = "Provoke " + targetCharacter.name;
 
         Utilities.DestroyChildren(dialogScrollView.content);

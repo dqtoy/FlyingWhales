@@ -144,10 +144,10 @@ public class CharacterPortraitEditor : MonoBehaviour {
         //portrait.SetFacialHair(index);
         //portraitSettings.facialHairIndex = index;
     }
-    public void UpdateHairColor(Color color) {
-        portrait.SetHairColor(color);
-        //portraitSettings.hairColor = color;
-    }
+    //public void UpdateHairColor(Color color) {
+    //    portrait.SetHairColor(color);
+    //    //portraitSettings.hairColor = color;
+    //}
     public void OnClickSave() {
         string saveName = fileNameField.text;
         if (string.IsNullOrEmpty(saveName)) {

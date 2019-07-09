@@ -54,7 +54,7 @@ public class MainMenuManager : MonoBehaviour {
     }
 
     private void OnFinishMusicTransition() {
-        WorldConfigManager.Instance.SetDataToUse(newGameData);
+        //WorldConfigManager.Instance.SetDataToUse(newGameData); //Remove so that code will randomly generate world.
         LevelLoaderManager.Instance.LoadLevel("Game");
     }
 

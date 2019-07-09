@@ -32,7 +32,6 @@ public class GridMap : MonoBehaviour {
 	public List<GameObject> listHexes;
     public List<HexTile> outerGridList;
     public List<HexTile> hexTiles;
-    public List<Region> allRegions;
 	public HexTile[,] map;
 
 	internal float mapWidth;
@@ -54,6 +53,10 @@ public class GridMap : MonoBehaviour {
 	}
 
     #region Grid Generation
+    public void SetupInitialData(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
     internal void GenerateGrid() {
         float newX = xOffset * ((int)width / 2);
         float newY = yOffset * ((int)height / 2);
@@ -102,7 +105,7 @@ public class GridMap : MonoBehaviour {
         this.transform.localPosition = new Vector2(-newX, -newY);
         map = new HexTile[(int)width, (int)height];
         hexTiles = new List<HexTile>();
-        int totalTiles = (int)width * (int)height;
+        //int totalTiles = (int)width * (int)height;
         int id = 0;
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -207,7 +210,7 @@ public class GridMap : MonoBehaviour {
                 Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
                 //Biomes.Instance.AddBiomeDetailToTile(currHex);
                 Biomes.Instance.UpdateTileVisuals(currHex);
-                hexToCopy.region.AddOuterGridTile(currHex);
+                //hexToCopy.region.AddOuterGridTile(currHex);
 
 
                 currHex.DisableColliders();
@@ -349,242 +352,6 @@ public class GridMap : MonoBehaviour {
         int y = -x - z;
         return new CubeCoordinate(x, y, z);
     }
-    #endregion
-
-    #region Region Generation
-    //internal void DivideOuterGridRegions() {
-    //    for (int i = 0; i < outerGridList.Count; i++) {
-    //        HexTile currTile = outerGridList[i];
-    //        for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
-    //            HexTile currNeighbour = currTile.AllNeighbours[j];
-    //            if (currNeighbour.region != currTile.region) {
-    //                //Load Border For currTile
-    //                HEXTILE_DIRECTION borderTileToActivate = currTile.GetNeighbourDirection(currNeighbour);
-    //                SpriteRenderer border = currTile.ActivateBorder(borderTileToActivate, Color.white);
-    //                currTile.region.AddRegionBorderLineSprite(border);
-
-    //                if (GridMap.Instance.hexTiles.Contains(currNeighbour)) {
-    //                    HEXTILE_DIRECTION neighbourBorderTileToActivate = HEXTILE_DIRECTION.NONE;
-    //                    if (borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
-    //                        neighbourBorderTileToActivate = HEXTILE_DIRECTION.SOUTH_EAST;
-    //                    } else if (borderTileToActivate == HEXTILE_DIRECTION.NORTH_EAST) {
-    //                        neighbourBorderTileToActivate = HEXTILE_DIRECTION.SOUTH_WEST;
-    //                    } else if (borderTileToActivate == HEXTILE_DIRECTION.EAST) {
-    //                        neighbourBorderTileToActivate = HEXTILE_DIRECTION.WEST;
-    //                    } else if (borderTileToActivate == HEXTILE_DIRECTION.SOUTH_EAST) {
-    //                        neighbourBorderTileToActivate = HEXTILE_DIRECTION.NORTH_WEST;
-    //                    } else if (borderTileToActivate == HEXTILE_DIRECTION.SOUTH_WEST) {
-    //                        neighbourBorderTileToActivate = HEXTILE_DIRECTION.NORTH_EAST;
-    //                    } else if (borderTileToActivate == HEXTILE_DIRECTION.WEST) {
-    //                        neighbourBorderTileToActivate = HEXTILE_DIRECTION.EAST;
-    //                    }
-    //                    border = currNeighbour.ActivateBorder(neighbourBorderTileToActivate, Color.white);
-    //                    currNeighbour.region.AddRegionBorderLineSprite(border);
-    //                }
-
-    //                //if(currTile.xCoordinate == _borderThickness - 1 && currTile.yCoordinate > _borderThickness && currTile.yCoordinate < height) {
-    //                //    //tile is part of left border
-    //                //    if(borderTileToActivate == HEXTILE_DIRECTION.NORTH_WEST) {
-    //                //        currTile.region.AddRegionBorderLineSprite(currTile.ActivateBorder(HEXTILE_DIRECTION.NORTH_EAST));
-    //                //    }
-    //                //}
-    //            }
-    //        }
-    //    }
-    //}
-    /*
-     * Divide the created grid into 
-     * regions. Refer to https://gamedev.stackexchange.com/questions/57213/generate-equal-regions-in-a-hex-map 
-     * for the logic used.
-     * */
-    public void GenerateRegions(int numOfRegions, int refinementLevel) {
-        HexTile[] initialCenters = new HexTile[numOfRegions];
-        List<HexTile> allHexTiles = new List<HexTile>(hexTiles);
-        List<HexTile> chosenTiles = new List<HexTile>();
-        
-        while(chosenTiles.Count <= 0) {
-            Utilities.Shuffle(allHexTiles);
-            List<HexTile> possibleCenterTiles = new List<HexTile>(allHexTiles.Where(x => (x.xCoordinate > 1 && x.xCoordinate < width - 1) && (x.yCoordinate < height - 2 && x.yCoordinate > 2)));
-            for (int i = 0; i < numOfRegions; i++) {
-                if (possibleCenterTiles.Count <= 0) {
-                    //throw new System.Exception("All tiles have been used up!");
-                    chosenTiles.Clear();
-                    break;
-                } else {
-                    HexTile chosenHexTile = possibleCenterTiles[Random.Range(0, possibleCenterTiles.Count)];
-                    possibleCenterTiles.Remove(chosenHexTile);
-                    chosenTiles.Add(chosenHexTile);
-                    foreach (HexTile hex in chosenHexTile.GetTilesInRange(5)) {
-                        possibleCenterTiles.Remove(hex);
-                    }
-                }
-            }
-        }
-       
-
-        allRegions = new List<Region>();
-        for (int i = 0; i < chosenTiles.Count; i++) {
-            HexTile chosenHexTile = chosenTiles[i];
-            allHexTiles.Remove(chosenHexTile);
-            initialCenters[i] = chosenHexTile;
-            Region newRegion = new Region(chosenHexTile);
-            allRegions.Add(newRegion);
-            //Color centerOfMassColor = newRegion.regionColor;
-            //centerOfMassColor.a = 75.6f / 255f;
-            //chosenHexTile.SetTileHighlightColor(centerOfMassColor);
-            //chosenHexTile.ShowTileHighlight();
-        }
-        Debug.Log("Successfully got " + initialCenters.Length.ToString() + " center of masses!");
-
-        for (int i = 0; i < refinementLevel; i++) {
-            if (i != 0) {
-                allHexTiles = new List<HexTile>(hexTiles);
-                Utilities.Shuffle(allHexTiles);
-                for (int j = 0; j < allRegions.Count; j++) {
-                    Region currRegion = allRegions[j];
-                    currRegion.ReComputeCenterOfMass();
-                    currRegion.ResetTilesInRegion();
-                    currRegion.AddTile(currRegion.centerOfMass);
-                    allHexTiles.Remove(currRegion.centerOfMass);
-                }
-            }
-            for (int j = 0; j < allHexTiles.Count; j++) {
-                HexTile currHexTile = allHexTiles[j];
-                Region regionClosestTo = null;
-                float closestDistance = 999999f;
-                for (int k = 0; k < allRegions.Count; k++) {
-                    Region currRegion = allRegions[k];
-                    HexTile currCenter = currRegion.centerOfMass;
-                    float distance = Vector2.Distance(currHexTile.transform.position, currCenter.transform.position);
-                    if (distance < closestDistance) {
-                        closestDistance = distance;
-                        regionClosestTo = currRegion;
-                    }
-                }
-                if (regionClosestTo != null) {
-                    regionClosestTo.AddTile(currHexTile);
-                } else {
-                    throw new System.Exception("Could not find closest distance for tile " + currHexTile.name);
-                }
-                //allRegions = allRegions.OrderByDescending(x => x.tilesInRegion.Count).ToList();
-            }
-        }
-
-        for (int i = 0; i < allRegions.Count; i++) {
-            Region currRegion = allRegions[i];
-            currRegion.RevalidateCenterOfMass();
-            currRegion.UpdateAdjacency();
-            currRegion.WallOffRegion();
-            currRegion.DetermineRegionIslands();
-        }
-        for (int i = 0; i < allRegions.Count; i++) {
-            Region currRegion = allRegions[i];
-            currRegion.ConnectToOtherRegions();
-            //currRegion.DetermineRegionIslands();
-        }
-        //return true;
-    }
-    public void LoadRegions(WorldSaveData data) {
-        allRegions = new List<Region>();
-        for (int i = 0; i < data.regionsData.Count; i++) {
-            RegionSaveData currData = data.regionsData[i];
-            HexTile centerTile = null;
-            List<HexTile> regionTiles = GetRegionTiles(currData, ref centerTile);
-            LoadRegion(regionTiles, centerTile, currData);
-        }
-        for (int i = 0; i < allRegions.Count; i++) {
-            Region currRegion = allRegions[i];
-            currRegion.UpdateAdjacency();
-        }
-    }
-    private List<HexTile> GetRegionTiles(RegionSaveData regionData, ref HexTile centerTile) {
-        List<int> tileIDs = new List<int>(regionData.tileData);
-        List<HexTile> regionTiles = new List<HexTile>();
-        for (int i = 0; i < hexTiles.Count; i++) {
-            HexTile currTile = hexTiles[i];
-            if (tileIDs.Contains(currTile.id)) {
-                regionTiles.Add(currTile);
-                tileIDs.Remove(currTile.id);
-                if (currTile.id == regionData.centerTileID) {
-                    centerTile = currTile;
-                }
-                if (tileIDs.Count == 0) {
-                    break;
-                }
-            }
-        }
-        return regionTiles;
-    }
-    private Region LoadRegion(List<HexTile> tiles, HexTile centerTile, RegionSaveData data) {
-        Region newRegion = new Region(centerTile, tiles, data);
-        newRegion.AddTile(tiles);
-        allRegions.Add(newRegion);
-
-        //WorldCreatorUI.Instance.editRegionsMenu.OnRegionCreated(newRegion);
-        return newRegion;
-    }
-    public void OccupyRegions(WorldSaveData data) {
-        for (int i = 0; i < allRegions.Count; i++) {
-            Region currRegion = allRegions[i];
-            RegionSaveData regionData = data.GetRegionData(currRegion.id);
-            if (regionData.owner != -1) {
-                Faction owner = FactionManager.Instance.GetFactionBasedOnID(regionData.owner);
-                owner.OwnRegion(currRegion);
-                currRegion.SetOwner(owner);
-                currRegion.ReColorBorderTiles(owner.factionColor);
-            }
-        }
-    }
-    //public void BottleneckBorders() {
-    //    for (int i = 0; i < allRegions.Count; i++) {
-    //        Region currRegion = allRegions[i];
-    //        for (int j = 0; j < currRegion.outerTiles.Count; j++) {
-    //            HexTile currBorderTile = currRegion.outerTiles[j];
-    //            if (currBorderTile.isPassable && !currBorderTile.IsBottleneck()) {
-    //                List<HexTile> borderNeighbours = currBorderTile.AllNeighbours.Where(x => x.IsBorderTileOfRegion()).ToList();
-    //                if (!currBorderTile.AllNeighbours.Where(x => x.IsBottleneck()).Any()) {
-    //                    //this tile has no border neighbours that are bottlenecks or dead ends, make this tile unpassable
-    //                    currBorderTile.SetPassableState(false);
-    //                    //make passable neighbours recompute their passable type
-    //                    List<HexTile> passableNeighbours = currBorderTile.AllNeighbours.Where(x => x.isPassable).ToList();
-    //                    passableNeighbours.ForEach(x => x.DeterminePassableType());
-    //                }
-    //            }
-    //        }
-    //        currRegion.LogPassableTiles();
-    //        currRegion.DetermineRegionIslands();
-    //    }
-    //}
-    //private void NormalizeRegions() {
-    //    List<Region> orderedRegions = allRegions.OrderBy(x => x.tilesInRegion.Count).ToList();
-    //    while (true) {
-    //        //check if the regions have too much gaps between their number of tiles
-    //        bool hasBigGaps = false;
-    //        for (int i = 0; i < allRegions.Count; i++) {
-    //            Region currRegion = allRegions[i];
-    //            for (int j = 0; j < allRegions.Count; j++) {
-    //                Region otherRegion = allRegions[j];
-    //                if (currRegion.id != otherRegion.id) {
-    //                    if (otherRegion.tilesInRegion.Count > currRegion.tilesInRegion.Count) {
-    //                        if (otherRegion.tilesInRegion.Count - currRegion.tilesInRegion.Count >= currRegion.tilesInRegion.Count * 1.5f) {
-    //                            hasBigGaps = true;
-    //                            break;
-    //                        }
-    //                    }
-    //                }
-    //            }
-    //        }
-
-    //        if (hasBigGaps) {
-
-    //        } else {
-    //            break;
-    //        }
-    //    }
-    //}
-    //private void AddTilesToRegion(Region region, int tilesToAdd) {
-
-    //}
     #endregion
 }
 

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class UIContextMenuItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler {
 
-    private ContextMenuItemSettings currItemSettings;
+    //private ContextMenuItemSettings currItemSettings;
     private UnityAction onHoverEnterAction;
     private UnityAction onHoverOutAction;
     private UnityAction onClickAction;
@@ -15,13 +15,13 @@ public class UIContextMenuItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
     [SerializeField] private Text menuItemText;
     [SerializeField] private GameObject nextArrowGO;
     [SerializeField] private UIContextMenu subMenu;
-    [SerializeField] private RectTransform subMenuRT;
+    //[SerializeField] private RectTransform subMenuRT;
 
-    [SerializeField] private Vector3 rightSubMenuPosition;
-    [SerializeField] private Vector3 leftSubMenuPosition;
+    //[SerializeField] private Vector3 rightSubMenuPosition;
+    //[SerializeField] private Vector3 leftSubMenuPosition;
 
     public void LoadSettings(ContextMenuItemSettings settings) {
-        currItemSettings = settings;
+        //currItemSettings = settings;
         menuItemText.text = settings.menuItemName;
         onHoverEnterAction = settings.onHoverEnterAction;
         onHoverOutAction = settings.onHoverExitAction;

@@ -15,7 +15,7 @@ public class CharacterAIPath : AILerp {
     public int spread = 5000;
     public float aimStrength = 1f;
 
-    private float _originalRepathRate;
+    //private float _originalRepathRate;
     private BlockerTraversalProvider blockerTraversalProvider;
     private bool _hasReachedTarget;
 
@@ -27,7 +27,7 @@ public class CharacterAIPath : AILerp {
     #region Monobehaviours
     protected override void Start() {
         base.Start();
-        _originalRepathRate = repathRate;
+        //_originalRepathRate = repathRate;
         Default_End_Reached_Distance = endReachDistance;
         blockerTraversalProvider = new BlockerTraversalProvider(marker);
     }

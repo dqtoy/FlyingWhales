@@ -681,37 +681,7 @@ public class Biomes : MonoBehaviour {
         //}
     }
 
-    private List<MapIsland> GetNearIslands(MapIsland originIsland, Dictionary<HexTile, MapIsland> islands) {
-        List<MapIsland> nearIslands = new List<MapIsland>();
-        List<Collider2D> colliders = new List<Collider2D>();
-        List<HexTile> checkedTiles = new List<HexTile>();
-        for (int i = 0; i < originIsland.outerTiles.Count; i++) {
-            HexTile currOuterTile = originIsland.outerTiles[i];
-            Collider2D[] collidesWith = Physics2D.OverlapCircleAll(currOuterTile.transform.position, 10f, LayerMask.GetMask("Hextiles"));
-            for (int j = 0; j < collidesWith.Length; j++) {
-                HexTile currTile = collidesWith[j].GetComponent<HexTile>();
-                if (currTile != null && !checkedTiles.Contains(currTile) && islands.ContainsKey(currTile)) {
-                    MapIsland islandOfTile = islands[currTile];
-                    if (originIsland != islandOfTile && !nearIslands.Contains(islandOfTile)) {
-                        nearIslands.Add(islandOfTile);
-                    }
-                }
-                checkedTiles.Add(currTile);
-            }
-
-        }
-        //Collider2D[] colliders = Physics2D.OverlapCircleAll(originIsland.mainTile.transform.position, 20f, LayerMask.GetMask("Hextiles"));
-        //for (int i = 0; i < colliders.Length; i++) {
-        //    HexTile currTile = colliders[i].GetComponent<HexTile>();
-        //    if (islands.ContainsKey(currTile)) {
-        //        MapIsland islandOfTile = islands[currTile];
-        //        if (originIsland != islandOfTile && !nearIslands.Contains(islandOfTile)) {
-        //            nearIslands.Add(islandOfTile);
-        //        }
-        //    }
-        //}
-        return nearIslands;
-    }
+    
 
     private bool AreIslandsConnected(MapIsland island1, MapIsland island2) {
         HexTile randomTile1 = island1.tilesInIsland[UnityEngine.Random.Range(0, island1.tilesInIsland.Count)];
@@ -754,7 +724,6 @@ public class Biomes : MonoBehaviour {
             currTile.SetPassableState(true);
         }
     }
-
     public RuntimeAnimatorController GetTileSpriteAnimation(Sprite sprite) {
         if (biomeSpriteAnimations.ContainsKey(sprite)) {
             return biomeSpriteAnimations[sprite];

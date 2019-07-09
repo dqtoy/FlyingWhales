@@ -8,9 +8,6 @@ public class Minion {
 
     //private PlayerCharacterItem _characterItem;
     //private PlayerAbility _ability;
-    private Area _currentlyExploringArea;
-    private Area _currentlyAttackingArea;
-    private Area _currentlyCollectingArea;
 
     private Character _character;
     //private IInteractable _target;
@@ -29,12 +26,6 @@ public class Minion {
     //public PlayerAbility ability {
     //    get { return _ability; }
     //}
-    public Area currentlyExploringArea {
-        get { return _currentlyExploringArea; }
-    }
-    public Area currentlyAttackingArea {
-        get { return _currentlyAttackingArea; }
-    }
     public PlayerCharacterItem minionItem {
         get { return character.playerCharacterItem; }
     }
@@ -110,39 +101,6 @@ public class Minion {
         }
         _isEnabled = state;
         minionItem.SetEnabledState(state);
-    }
-    public void SetExploringArea(Area area) {
-        _currentlyExploringArea = area;
-        if (character.IsInOwnParty()) {
-            for (int i = 0; i < character.currentParty.characters.Count; i++) {
-                Character otherChar = character.ownParty.characters[i];
-                if (otherChar.id != character.id) {
-                    character.currentParty.characters[i].minion.SetExploringArea(area);
-                }
-            }
-        }
-    }
-    public void SetCollectingTokenArea(Area area) {
-        _currentlyCollectingArea = area;
-        if (character.IsInOwnParty()) {
-            for (int i = 0; i < character.currentParty.characters.Count; i++) {
-                Character otherChar = character.ownParty.characters[i];
-                if (otherChar.id != character.id) {
-                    character.currentParty.characters[i].minion.SetCollectingTokenArea(area);
-                }
-            }
-        }
-    }
-    public void SetAttackingArea(Area area) {
-        _currentlyAttackingArea = area;
-        if (character.IsInOwnParty()) {
-            for (int i = 0; i < character.currentParty.characters.Count; i++) {
-                Character otherChar = character.ownParty.characters[i];
-                if (otherChar.id != character.id) {
-                    character.currentParty.characters[i].minion.SetAttackingArea(area);
-                }
-            }
-        }
     }
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
         character.SetPlayerCharacterItem(item);

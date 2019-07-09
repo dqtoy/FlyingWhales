@@ -327,7 +327,7 @@ public class NewCombat : MonoBehaviour {
         return rightSide.GetTargetGridIndexesFor(currentAttacker.character, index); //rightSide is just a reference to gain access to combat grid's functions
     }
     private List<int[]> GetGridIndexesByCombatTargetType(COMBAT_TARGET combatTargetType) {
-        CombatGrid referenceGrid = leftSide; //This is only a reference to get the indexes for the targets, must not change the grid itself
+        //CombatGrid referenceGrid = leftSide; //This is only a reference to get the indexes for the targets, must not change the grid itself
         List<int[]> targets = new List<int[]>();
         if(combatTargetType == COMBAT_TARGET.SINGLE) {
             targets.Add(new int[] { 0 });

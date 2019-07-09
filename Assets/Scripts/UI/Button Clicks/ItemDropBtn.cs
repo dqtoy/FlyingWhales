@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class ItemDropBtn : MonoBehaviour {
     public Text buttonText;
-    public string name;
 
     public void Set(string name, float rate) {
         this.name = name;

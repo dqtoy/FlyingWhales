@@ -25,7 +25,6 @@ public class Faction {
     protected Race _race;
     protected ILeader _leader;
     protected FactionEmblemSetting _emblem;
-    protected List<Region> _ownedRegions;
     protected List<BaseLandmark> _ownedLandmarks;
     protected Color _factionColor;
     protected List<Character> _characters; //List of characters that are part of the faction
@@ -95,9 +94,6 @@ public class Faction {
     public List<Character> characters {
         get { return _characters; }
     }
-    public List<Region> ownedRegions {
-        get { return _ownedRegions; }
-    }
     public Dictionary<Faction, FactionRelationship> relationships {
         get { return _relationships; }
     }
@@ -133,7 +129,6 @@ public class Faction {
         factionType = Utilities.GetRandomEnumValue<FACTION_TYPE>();
         _characters = new List<Character>();
         _ownedLandmarks = new List<BaseLandmark>();
-        _ownedRegions = new List<Region>();
         _relationships = new Dictionary<Faction, FactionRelationship>();
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
@@ -172,7 +167,6 @@ public class Faction {
         factionType = Utilities.GetRandomEnumValue<FACTION_TYPE>();
         _characters = new List<Character>();
         _ownedLandmarks = new List<BaseLandmark>();
-        _ownedRegions = new List<Region>();
         _relationships = new Dictionary<Faction, FactionRelationship>();
         _landmarkInfo = new List<BaseLandmark>();
         _ownedAreas = new List<Area>();
@@ -225,17 +219,6 @@ public class Faction {
         }
         _leader = leader;
         
-    }
-    #endregion
-
-    #region Regions
-    public void OwnRegion(Region region) {
-        if (!_ownedRegions.Contains(region)) {
-            _ownedRegions.Add(region);
-        }
-    }
-    public void UnownRegion(Region region) {
-        _ownedRegions.Remove(region);
     }
     #endregion
 
@@ -447,24 +430,6 @@ public class Faction {
             }
         }
         return false;
-    }
-    public bool HasAccessToLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < _ownedRegions.Count; i++) {
-            Region currRegion = _ownedRegions[i];
-            if (currRegion.HasLandmarkOfType(landmarkType)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public BaseLandmark GetAccessibleLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < _ownedRegions.Count; i++) {
-            Region currRegion = _ownedRegions[i];
-            if (currRegion.HasLandmarkOfType(landmarkType)) {
-                return currRegion.GetLandmarksOfType(landmarkType).First();
-            }
-        }
-        return null;
     }
     public override string ToString() {
         return name;

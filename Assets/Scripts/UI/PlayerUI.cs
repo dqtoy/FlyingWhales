@@ -71,17 +71,10 @@ public class PlayerUI : MonoBehaviour {
 
     public GameObject electricEffectPrefab;
 
-    private MINIONS_SORT_TYPE _minionSortType;
     private bool _isScrollingUp;
     private bool _isScrollingDown;
     public CombatGrid attackGridReference { get; private set; }
     public CombatGrid defenseGridReference { get; private set; }
-
-    #region getters/setters
-    public MINIONS_SORT_TYPE minionSortType {
-        get { return _minionSortType; }
-    }
-    #endregion
 
     void Awake() {
         Instance = this;

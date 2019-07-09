@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class ScenarioWeightItem : MonoBehaviour {
 
     private BaseLandmark owner;
-    private INTERACTION_TYPE interactionType;
-    private int weight;
+    //private INTERACTION_TYPE interactionType;
+    //private int weight;
 
     [SerializeField] private Dropdown interactionTypeDropdown;
     [SerializeField] private InputField weightField;
@@ -46,7 +46,7 @@ public class ScenarioWeightItem : MonoBehaviour {
 
     private void SetWeight(int weight) {
         weight = Mathf.Max(0, weight);
-        this.weight = weight;
+        //this.weight = weight;
         weightField.text = weight.ToString();
         if (this.owner != null) {
             //owner.scenarios.ChangeElementWeight(interactionType, weight);
@@ -54,7 +54,7 @@ public class ScenarioWeightItem : MonoBehaviour {
     }
 
     private void SetInteractionType(INTERACTION_TYPE newType) {
-        this.interactionType = newType;
+        //this.interactionType = newType;
         interactionTypeDropdown.value = Utilities.GetOptionIndex(interactionTypeDropdown, newType.ToString());
     }
     private bool IsValid(INTERACTION_TYPE newType) {

@@ -77,7 +77,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
     }
 
     private BaseLandmark _activeLandmark;
-    private Minion _assignedMinion;
+    //private Minion _assignedMinion;
 
     internal override void Initialize() {
         base.Initialize();
@@ -92,7 +92,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
     public override void OpenMenu() {
         base.OpenMenu();
         SetLandmarkBorderState(false);
-        BaseLandmark previousLandmark = _activeLandmark;
+        //BaseLandmark previousLandmark = _activeLandmark;
         _activeLandmark = _data as BaseLandmark;
         //UpdateHiddenUI();
         UpdateLandmarkInfo();
@@ -147,7 +147,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
 
     #region Basic Info
     private void UpdateBasicInfo() {
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_activeLandmark.specificLandmarkType);
+        //LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_activeLandmark.specificLandmarkType);
         if (_activeLandmark.tileLocation.areaOfTile != null) {
             landmarkNameLbl.text = _activeLandmark.tileLocation.areaOfTile.name;
         } else {
@@ -358,7 +358,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         //}
     }
     private void ResetMinionAssignment() {
-        _assignedMinion = null;
+        //_assignedMinion = null;
         minionAssignmentPortrait.gameObject.SetActive(false);
         minionAssignmentDescription.gameObject.SetActive(true);
         minionAssignmentConfirmButton.gameObject.SetActive(false);
@@ -395,7 +395,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         }
     }
     public void AssignMinionToInvestigate(Minion minion) {
-        _assignedMinion = minion;
+        //_assignedMinion = minion;
         if (minion != null) {
             minionAssignmentPortrait.gameObject.SetActive(true);
             minionAssignmentPortrait.GeneratePortrait(minion.character);

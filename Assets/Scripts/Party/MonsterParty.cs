@@ -6,16 +6,16 @@ using UnityEngine;
 
 
 public class MonsterParty : Party {
-    private string _name;
-    private string _setupName;
+    //private string _name;
+    //private string _setupName;
 
     #region getters/setters
     //public override string name {
     //    get { return _name; }
     //}
-    public string setupName {
-        get { return _setupName; }
-    }
+    //public string setupName {
+    //    get { return _setupName; }
+    //}
     public override Character owner {
         get { return mainCharacter; }
     }
@@ -60,10 +60,10 @@ public class MonsterParty : Party {
 
     #region Utilities
     public void SetName(string name) {
-        _name = name;
+        //_name = name;
     }
     public void SetSetupName(string setupName) {
-        _setupName = setupName;
+        //_setupName = setupName;
     }
     private void EverydayAction() {
         if (onDailyAction != null) {

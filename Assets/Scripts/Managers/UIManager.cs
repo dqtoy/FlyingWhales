@@ -1263,13 +1263,13 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Tile Hover
-    private HexTile previousTileHovered;
+    //private HexTile previousTileHovered;
     private HexTile currentTileHovered;
     private float timeHovered;
     private const float hoverThreshold = 1.5f;
     private bool isHoveringTile = false;
     private void OnHoverOverTile(HexTile tile) {
-        previousTileHovered = currentTileHovered;
+        //previousTileHovered = currentTileHovered;
         currentTileHovered = tile;
         isHoveringTile = true;
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AssaultCharacter : GoapAction {
 
-    private Character winner;
+    //private Character winner;
     private Character loser;
 
     public AssaultCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASSAULT_ACTION_NPC, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
@@ -83,7 +83,7 @@ public class AssaultCharacter : GoapAction {
         Debug.Log(actor.name + " finished combat state!");
         Character target = poiTarget as Character;
         loser = target;
-        winner = actor; // TODO: How to determine if actor won?
+        //winner = actor; // TODO: How to determine if actor won?
         if (target.GetNormalTrait("Dead") != null) {
             SetState("Target Killed");
         } else if (target.GetNormalTrait("Unconscious") != null) {
@@ -94,7 +94,7 @@ public class AssaultCharacter : GoapAction {
             SetState("Target Missing");
         } else {
             loser = actor;
-            winner = target;
+            //winner = target;
             SetState("Assault Failed");
         }
     }
@@ -217,10 +217,10 @@ public class AssaultCharacter : GoapAction {
         //Reference: https://trello.com/c/uY7JokJn/1573-combat-encounter-event
 
         if (actorWon) {
-            winner = actor;
+            //winner = actor;
             loser = target;
         } else {
-            winner = target;
+            //winner = target;
             loser = actor;
         }
 

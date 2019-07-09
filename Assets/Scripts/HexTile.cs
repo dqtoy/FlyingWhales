@@ -12,7 +12,6 @@ using UnityEngine.UI;
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     public HexTileData data;
-    private Region _region;
     private Area _areaOfTile;
     public SpriteRenderer spriteRenderer;
 
@@ -135,9 +134,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public string coordinates {
         get { return xCoordinate + ", " + yCoordinate; }
     }
-    public Region region {
-        get { return _region; }
-    }
+    //public Region region {
+    //    get { return _region; }
+    //}
     public GameObject centerPiece {
         get { return this._centerPiece; }
     }
@@ -161,9 +160,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public LOCATION_IDENTIFIER locIdentifier {
         get { return LOCATION_IDENTIFIER.HEXTILE; }
-    }
-    public bool isOuterTileOfRegion {
-        get { return this.region.outerTiles.Contains(this); }
     }
     public bool hasLandmark {
         get { return _landmarkOnTile != null; }
@@ -214,35 +210,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private void AreaMapClosed(Area area) {
         uiRaycaster.enabled = true;
     }
-
-    #region Region Functions
-    internal void SetRegion(Region region) {
-        _region = region;
-        if (region == null) {
-            data.regionID = -1;
-        } else {
-            data.regionID = region.id;
-        }
-    }
-    internal bool IsAdjacentWithRegion(Region region) {
-        List<HexTile> neighbors = this.AllNeighbours;
-        for (int i = 0; i < neighbors.Count; i++) {
-            if (neighbors[i].region.id == region.id) {
-                return true;
-            }
-        }
-        return false;
-    }
-    internal bool IsAdjacentToOtherRegion() {
-        List<HexTile> neighbors = this.AllNeighbours;
-        for (int i = 0; i < neighbors.Count; i++) {
-            if (neighbors[i].region.id != this.region.id) {
-                return true;
-            }
-        }
-        return false;
-    }
-    #endregion
 
     #region Elevation Functions
     internal void SetElevation(ELEVATION elevationType) {
@@ -341,7 +308,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             landmarkGO.transform.localScale = Vector3.one;
             _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
         }
-        _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
             SetPassableState(true);
         }
@@ -372,7 +338,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             landmarkGO.transform.localScale = Vector3.one;
             _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
         }
-        _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
             SetPassableState(true);
         }
@@ -419,7 +384,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (landmarkGO != null) {
             _landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
         }
-        _region.AddLandmarkToRegion(_landmarkOnTile);
         if (_landmarkOnTile != null) {
             SetPassableState(true);
             //_landmarkOnTile.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(_landmarkOnTile.specificLandmarkType.ToString())) as StructureObj);
@@ -1122,9 +1086,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool IsDeadEnd() {
         return _passableType == PASSABLE_TYPE.MAJOR_DEADEND || _passableType == PASSABLE_TYPE.MINOR_DEADEND;
     }
-    public bool IsBorderTileOfRegion() {
-            return region.outerTiles.Contains(this);
-        }
     #endregion
 
     #region Monobehaviour Functions

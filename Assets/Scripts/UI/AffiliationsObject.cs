@@ -27,7 +27,7 @@ public class AffiliationsObject : MonoBehaviour {
         SetCharacter(character);
     }
     public void Initialize() {
-        Image[] factionChildImages = Utilities.GetComponentsInDirectChildren<Image>(factionGO);
+        //Image[] factionChildImages = Utilities.GetComponentsInDirectChildren<Image>(factionGO);
         Messenger.AddListener(Signals.UPDATE_UI, UpdateAffiliations);
         Messenger.AddListener<Character, Squad>(Signals.SQUAD_MEMBER_ADDED, OnSquadEdited);
         Messenger.AddListener<Character, Squad>(Signals.SQUAD_MEMBER_REMOVED, OnSquadEdited);

@@ -13,7 +13,6 @@ public class PlayerManager : MonoBehaviour {
 
     [SerializeField] private Sprite[] _playerAreaFloorSprites;
     [SerializeField] private Sprite[] _playerAreaDefaultStructureSprites;
-    [SerializeField] private Sprite _supplySprite, _manaSprite, _impSprite;
 
     public Dictionary<LANDMARK_TYPE, CurrenyCost> playerStructureTypes = new Dictionary<LANDMARK_TYPE, CurrenyCost>() {
         { LANDMARK_TYPE.DEMONIC_PORTAL, new CurrenyCost{ amount = 0, currency = CURRENCY.SUPPLY } },
@@ -155,17 +154,6 @@ public class PlayerManager : MonoBehaviour {
     public void AdjustTotalLifestones(int amount) {
         totalLifestonesInWorld += amount;
         Debug.Log("Adjusted lifestones in world by " + amount + ". New total is " + totalLifestonesInWorld);
-    }
-
-    public Sprite GetSpriteByCurrency(CURRENCY currency) {
-        if(currency == CURRENCY.IMP) {
-            return _impSprite;
-        }else if (currency == CURRENCY.MANA) {
-            return _manaSprite;
-        }else if (currency == CURRENCY.SUPPLY) {
-            return _supplySprite;
-        }
-        return null;
     }
 
     #region Utilities

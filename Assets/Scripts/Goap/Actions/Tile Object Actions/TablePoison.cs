@@ -205,7 +205,7 @@ public class TablePoison : GoapAction {
 
         Character assumedTargetCharacter = null;
         if (targetDwelling.residents.Count > 0) {
-            TileObject table = poiTarget as TileObject;
+            //TileObject table = poiTarget as TileObject;
             if (targetDwelling.IsResident(recipient)) {
                 assumedTargetCharacter = recipient;
             } else {

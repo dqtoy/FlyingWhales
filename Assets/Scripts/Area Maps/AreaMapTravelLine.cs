@@ -11,7 +11,7 @@ public class AreaMapTravelLine : MonoBehaviour {
     [SerializeField] private Transform targetTransform;
 
     private LocationGridTile start;
-    private LocationGridTile end;
+    //private LocationGridTile end;
     private AreaInnerTileMap areaMap;
 
     private float targetXScale; //linespriteFill
@@ -21,7 +21,7 @@ public class AreaMapTravelLine : MonoBehaviour {
     public void DrawLine(LocationGridTile start, LocationGridTile end, Character owner, AreaInnerTileMap areaMap) {
         this.owner = owner;
         this.start = start;
-        this.end = end;
+        //this.end = end;
         this.areaMap = areaMap;
         this.transform.localPosition = Vector3.zero;
         startTransform.localPosition = new Vector3(start.localPlace.x + 0.5f, start.localPlace.y + 0.5f, 0f);

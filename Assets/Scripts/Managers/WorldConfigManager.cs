@@ -6,7 +6,11 @@ public class WorldConfigManager : MonoBehaviour {
 
     public static WorldConfigManager Instance;
 
-    public WorldSaveData loadedData = null;
+    [System.NonSerialized]public WorldSaveData loadedData = null; //Used for saved worlds
+
+    public int gridSizeX;
+    public int gridSizeY;
+    public int settltementCount; //how many settlements should be generated
 
     private void Awake() {
         if (Instance == null) {

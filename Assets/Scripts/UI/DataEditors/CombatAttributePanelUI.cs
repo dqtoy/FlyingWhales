@@ -168,10 +168,10 @@ public class CombatAttributePanelUI : MonoBehaviour {
     }
 
     private void SaveCombatAttributeJson(string path) {
-        float amountInp = 0f;
-        if (!string.IsNullOrEmpty(amountInput.text)) {
-            amountInp = float.Parse(amountInput.text);
-        }
+        //float amountInp = 0f;
+        //if (!string.IsNullOrEmpty(amountInput.text)) {
+        //    amountInp = float.Parse(amountInput.text);
+        //}
         Trait newTrait = new Trait {
             name = nameInput.text,
             description = descriptionInput.text,

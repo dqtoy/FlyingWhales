@@ -18,7 +18,7 @@ public class PlayerJobActionButton : MonoBehaviour {
     [SerializeField] private Image selectedIcon;
     [SerializeField] private GameObject cover;
     //[SerializeField] private GameObject pointer;
-    private Character character;
+    //private Character character;
     private object target;
 
     private void OnEnable() {
@@ -36,7 +36,7 @@ public class PlayerJobActionButton : MonoBehaviour {
 
     public void SetJobAction(PlayerJobAction action, Character character) {
         this.action = action;
-        this.character = character;
+        //this.character = character;
         actionIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
         UpdateInteractableState();
         UpdateButtonText();

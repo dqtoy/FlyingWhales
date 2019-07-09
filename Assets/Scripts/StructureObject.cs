@@ -6,30 +6,30 @@ using EZObjectPools;
 
 public class StructureObject : PooledObject {
 
-    private HexTile _hexTile;
+    //private HexTile _hexTile;
 
     //private STRUCTURE_TYPE _structureType;
-    private STRUCTURE_STATE _structureState;
+    //private STRUCTURE_STATE _structureState;
 
-    private GameObject[] normalParents;
-    private GameObject[] ruinedParents;
+    //private GameObject[] normalParents;
+    //private GameObject[] ruinedParents;
 
     private GameDate expiryDate;
 
-    [ContextMenu("List Ruined Structures")]
-    public void ListRuinedObjects() {
-        for (int i = 0; i < ruinedParents.Length; i++) {
-            Debug.Log(ruinedParents[i].name);
-        }
-    }
+    //[ContextMenu("List Ruined Structures")]
+    //public void ListRuinedObjects() {
+    //    for (int i = 0; i < ruinedParents.Length; i++) {
+    //        Debug.Log(ruinedParents[i].name);
+    //    }
+    //}
 
     #region getters/setters
-    internal HexTile hexTile {
-        get { return _hexTile; }
-    }
-    public STRUCTURE_STATE structureState {
-        get { return _structureState; }
-    }
+    //internal HexTile hexTile {
+    //    get { return _hexTile; }
+    //}
+    //public STRUCTURE_STATE structureState {
+    //    get { return _structureState; }
+    //}
     #endregion
 
     //public void Initialize(STRUCTURE_TYPE structureType, Color structureColor,  STRUCTURE_STATE structureState, HexTile hexTile) {
@@ -62,30 +62,30 @@ public class StructureObject : PooledObject {
     //    gameObject.SetActive(true);
     //}
 
-    public void SetStructureState(STRUCTURE_STATE structureState) {
-        _structureState = structureState;
-        if(structureState == STRUCTURE_STATE.NORMAL) {
-            for (int i = 0; i < normalParents.Length; i++) {
-                normalParents[i].SetActive(true);
-            }
-            for (int i = 0; i < ruinedParents.Length; i++) {
-                ruinedParents[i].SetActive(false);
-            }
-            //Messenger.RemoveListener(Signals.HOUR_ENDED, CheckForExpiry);
-        } else {
-            for (int i = 0; i < normalParents.Length; i++) {
-                normalParents[i].SetActive(false);
-            }
-            for (int i = 0; i < ruinedParents.Length; i++) {
-                ruinedParents[i].SetActive(true);
-            }
-            //if (_agentObj != null && GameManager.Instance.enableGameAgents) {
-            //    _agentObj.gameObject.SetActive(false);
-            //    _agentObj.agent.BroadcastDeath();
-            //}
-            //QueueForExpiry();
-        }
-    }
+    //public void SetStructureState(STRUCTURE_STATE structureState) {
+    //    _structureState = structureState;
+    //    if(structureState == STRUCTURE_STATE.NORMAL) {
+    //        for (int i = 0; i < normalParents.Length; i++) {
+    //            normalParents[i].SetActive(true);
+    //        }
+    //        for (int i = 0; i < ruinedParents.Length; i++) {
+    //            ruinedParents[i].SetActive(false);
+    //        }
+    //        //Messenger.RemoveListener(Signals.HOUR_ENDED, CheckForExpiry);
+    //    } else {
+    //        for (int i = 0; i < normalParents.Length; i++) {
+    //            normalParents[i].SetActive(false);
+    //        }
+    //        for (int i = 0; i < ruinedParents.Length; i++) {
+    //            ruinedParents[i].SetActive(true);
+    //        }
+    //        //if (_agentObj != null && GameManager.Instance.enableGameAgents) {
+    //        //    _agentObj.gameObject.SetActive(false);
+    //        //    _agentObj.agent.BroadcastDeath();
+    //        //}
+    //        //QueueForExpiry();
+    //    }
+    //}
 
     public void SetStructureColor(Color color) {
         SpriteRenderer[] allColorizers = transform.GetComponentsInChildren<SpriteRenderer>().

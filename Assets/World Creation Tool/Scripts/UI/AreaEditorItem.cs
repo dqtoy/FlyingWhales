@@ -65,7 +65,7 @@ namespace worldcreator {
         #endregion
 
         public void AddTilesToArea() {
-            AreaData data = LandmarkManager.Instance.GetAreaData(_area.areaType);
+            //AreaData data = LandmarkManager.Instance.GetAreaData(_area.areaType);
             List<HexTile> validSelectedTiles = new List<HexTile>();
             for (int i = 0; i < WorldCreatorManager.Instance.selectionComponent.selection.Count; i++) {
                 HexTile currTile = WorldCreatorManager.Instance.selectionComponent.selection[i];

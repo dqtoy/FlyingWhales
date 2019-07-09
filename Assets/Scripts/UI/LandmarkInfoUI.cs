@@ -78,7 +78,7 @@ public class LandmarkInfoUI : UIMenu {
 
     private BaseLandmark _activeLandmark;
     private Minion _assignedMinion;
-    private Minion[] _assignedParty;
+    //private Minion[] _assignedParty;
     private float _currentWinChance;
 
     internal override void Initialize() {
@@ -93,7 +93,7 @@ public class LandmarkInfoUI : UIMenu {
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
         //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
         Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnIntelAdded);
-        _assignedParty = new Minion[4];
+        //_assignedParty = new Minion[4];
     }
     public override void OpenMenu() {
         base.OpenMenu();
@@ -188,7 +188,7 @@ public class LandmarkInfoUI : UIMenu {
 
     #region Basic Info
     private void UpdateBasicInfo() {
-        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_activeLandmark.specificLandmarkType);
+        //LandmarkData data = LandmarkManager.Instance.GetLandmarkData(_activeLandmark.specificLandmarkType);
         if (_activeLandmark.tileLocation.areaOfTile != null) {
             landmarkNameLbl.text = _activeLandmark.tileLocation.areaOfTile.name;
         } else {

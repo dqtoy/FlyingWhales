@@ -9,11 +9,10 @@ public class WorldSaveData {
     public int borderThickness;
     public List<HexTileData> tilesData;
     public List<HexTileData> outerGridTilesData;
-    public List<RegionSaveData> regionsData;
     public List<FactionSaveData> factionsData;
     public List<LandmarkSaveData> landmarksData;
     public List<CharacterSaveData> charactersData;
-    public List<MonsterSaveData> monstersData;
+    //public List<MonsterSaveData> monstersData;
     public List<AreaSaveData> areaData;
     public byte[] pathfindingSettings;
 
@@ -38,14 +37,6 @@ public class WorldSaveData {
         for (int i = 0; i < outerTiles.Count; i++) {
             HexTile currTile = outerTiles[i];
             outerGridTilesData.Add(currTile.data);
-        }
-    }
-    public void OccupyRegionData(List<Region> regions) {
-        regionsData = new List<RegionSaveData>();
-        for (int i = 0; i < regions.Count; i++) {
-            Region currRegion = regions[i];
-            RegionSaveData regionData = new RegionSaveData(currRegion);
-            regionsData.Add(regionData);
         }
     }
     public void OccupyFactionData(List<Faction> factions) {
@@ -88,14 +79,14 @@ public class WorldSaveData {
     //        squadData.Add(data);
     //    }
     //}
-    public void OccupyMonstersData(List<MonsterParty> monsters) {
-        monstersData = new List<MonsterSaveData>();
-        for (int i = 0; i < monsters.Count; i++) {
-            MonsterParty currMonster = monsters[i];
-            MonsterSaveData monsterData = new MonsterSaveData(currMonster);
-            monstersData.Add(monsterData);
-        }
-    }
+    //public void OccupyMonstersData(List<MonsterParty> monsters) {
+    //    monstersData = new List<MonsterSaveData>();
+    //    for (int i = 0; i < monsters.Count; i++) {
+    //        MonsterParty currMonster = monsters[i];
+    //        MonsterSaveData monsterData = new MonsterSaveData(currMonster);
+    //        monstersData.Add(monsterData);
+    //    }
+    //}
     public void OccupyPathfindingSettings(HexTile[,] map, int width, int height) {
         //PathfindingManager.Instance.ClearGraphs();
         //PathfindingManager.Instance.CreateGrid(map, width, height);
@@ -147,17 +138,6 @@ public class WorldSaveData {
         }
         return null;
     }
-
-    public RegionSaveData GetRegionData(int regionID) {
-        for (int i = 0; i < regionsData.Count; i++) {
-            RegionSaveData data = regionsData[i];
-            if (data.regionID == regionID) {
-                return data;
-            }
-        }
-        return null;
-    }
-
     public FactionSaveData GetFactionData(int factionID) {
         if (factionsData != null) {
             for (int i = 0; i < factionsData.Count; i++) {

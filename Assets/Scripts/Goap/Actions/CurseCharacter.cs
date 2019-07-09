@@ -8,7 +8,7 @@ public class CurseCharacter : GoapAction {
 
     private LocationStructure _targetStructure;
     private Log actorLog;
-    private Log targetLog;
+    //private Log targetLog;
 
     public CurseCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CURSE_CHARACTER, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;

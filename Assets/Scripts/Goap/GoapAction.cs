@@ -550,7 +550,7 @@ public class GoapAction {
                 return distance + 10;
             }
             return distance;
-        } catch (Exception e) {
+        } catch {
             Debug.LogError("Distance cost problem for " + poiTarget.name + " with actor " + actor.name + ", poitarget grid location is " + poiTarget.gridTileLocation == null ? "null" : poiTarget.gridTileLocation.ToString());
         }
         return 1;

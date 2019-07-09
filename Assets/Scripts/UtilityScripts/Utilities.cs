@@ -12,7 +12,6 @@ using UnityEngine.UI;
 
 public class Utilities : MonoBehaviour {
     public static System.Random rng = new System.Random();
-    public static int lastRegionID = 0;
     public static int lastKingdomColorIndex = 0;
     public static int lastFactionColorIndex = 0;
     public static int lastAlliancePoolID = 0;
@@ -54,10 +53,7 @@ public class Utilities : MonoBehaviour {
 	 * Set unique id
 	 * */
     public static int SetID<T>(T obj) {
-        if (obj is Region) {
-            lastRegionID += 1;
-            return lastRegionID;
-        } else if (obj is Log) {
+        if (obj is Log) {
             lastLogID += 1;
             return lastLogID;
         } else if (obj is BaseLandmark) {
@@ -102,9 +98,7 @@ public class Utilities : MonoBehaviour {
         return 0;
     }
     public static int SetID<T>(T obj, int idToUse) {
-        if (obj is Region) {
-            lastRegionID = idToUse;
-        } else if (obj is Log) {
+        if (obj is Log) {
             lastLogID = idToUse;
         } else if (obj is BaseLandmark) {
             lastLandmarkID = idToUse;

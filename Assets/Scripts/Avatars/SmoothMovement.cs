@@ -15,7 +15,7 @@ public class SmoothMovement : MonoBehaviour {
     [NonSerialized] public bool isHalted;
     [NonSerialized] public GameObject avatarGO;
 
-    [SerializeField] private float step = 0f;
+    //[SerializeField] private float step = 0f;
     //[SerializeField] private float timeStarted = 0f;
     //[SerializeField] private float timeSinceStarted = 0f;
 
@@ -42,7 +42,7 @@ public class SmoothMovement : MonoBehaviour {
         StopMoving();
     }
     internal void Reset() {
-        step = 0f;
+        //step = 0f;
         //timeStarted = 0f;
         //timeSinceStarted = 0f;
         isMoving = false;
@@ -68,7 +68,7 @@ public class SmoothMovement : MonoBehaviour {
 		this.isMoving = true;
 		//this.timeStarted = Time.time;
 		//this.timeSinceStarted = 0f;
-		this.step = 0f;
+		//this.step = 0f;
         StartCoroutine(MoveToPosition(this.avatarGO.transform.position, this.targetPosition));
 	}
 

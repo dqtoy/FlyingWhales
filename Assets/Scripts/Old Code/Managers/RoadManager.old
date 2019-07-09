@@ -1,0 +1,84 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+public class RoadManager : MonoBehaviour {
+    public static RoadManager Instance = null;
+
+    //public Transform majorRoadParent;
+    //public Transform minorRoadParent;
+
+    //public GameObject majorRoadGO;
+    //public GameObject minorRoadGO;
+
+    //public int maxConnections;
+    //public int maxCityConnections;
+    public int recommendedLandmarkConnections;
+    public int maxLandmarkConnections;
+    public int maxRoadLength; //how many tiles can a road be?
+
+    private List<HexTile> _roadTiles;
+    private List<HexTile> _minorRoadTiles;
+    private List<HexTile> _majorRoadTiles;
+
+    #region getters/setters
+    internal List<HexTile> roadTiles {
+        get { return _roadTiles; }
+    }
+    internal List<HexTile> minorRoadTiles {
+        get { return _minorRoadTiles; }
+    }
+    internal List<HexTile> majorRoadTiles {
+        get { return _majorRoadTiles; }
+    }
+    #endregion
+
+    void Awake() {
+        Instance = this;
+        _roadTiles = new List<HexTile>();
+        _majorRoadTiles = new List<HexTile>();
+        _minorRoadTiles = new List<HexTile>();
+    }
+
+    
+}
+
+public class Island {
+    private List<BaseLandmark> _landamrksInIsland;
+
+    #region getters/setters
+    public List<BaseLandmark> landamrksInIsland {
+        get { return _landamrksInIsland; }
+    }
+    #endregion
+
+    public Island(BaseLandmark initialLandmark) {
+        _landamrksInIsland = new List<BaseLandmark>();
+        AddLandmark(initialLandmark);
+    }
+
+    public void AddLandmark(BaseLandmark landmark) {
+        if (!_landamrksInIsland.Contains(landmark)) {
+            _landamrksInIsland.Add(landmark);
+        }
+    }
+    public void AddLandmark(List<BaseLandmark> landmarks) {
+        for (int i = 0; i < landmarks.Count; i++) {
+            AddLandmark(landmarks[i]);
+        }
+    }
+
+    public void RemoveLandmark(BaseLandmark landmark) {
+        _landamrksInIsland.Remove(landmark);
+    }
+    public void RemoveLandmark(List<BaseLandmark> landmarks) {
+        for (int i = 0; i < landmarks.Count; i++) {
+            RemoveLandmark(landmarks[i]);
+        }
+    }
+
+    public void ClearIsland() {
+        _landamrksInIsland.Clear();
+    }
+}

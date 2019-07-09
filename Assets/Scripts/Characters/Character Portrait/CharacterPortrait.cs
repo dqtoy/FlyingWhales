@@ -45,9 +45,6 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private GameObject hoverObj;
 
-    private Vector2 defaultPos = new Vector2(11.7f, -3f);
-    private Vector2 defaultSize = new Vector2(97f, 97f);
-
     #region getters/setters
     public Character thisCharacter {
         get { return _character; }
@@ -228,14 +225,14 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         top.sprite = CharacterManager.Instance.GetTopSprite(index, _portraitSettings.race, _portraitSettings.gender);
         top.gameObject.SetActive(top.sprite != null);
     }
-    public void SetHairColor(Color hairColor) {
-        //hair.color = hairColor;
-        //hairBack.color = hairColor;
-        Color newColor = new Color(hairColor.r, hairColor.g, hairColor.b, 115f/255f);
-        //hairOverlay.color = newColor;
-        //hairBackOverlay.color = newColor;
-        //facialHairOverlay.color = newColor;
-    }
+    //public void SetHairColor(Color hairColor) {
+    //    //hair.color = hairColor;
+    //    //hairBack.color = hairColor;
+    //    Color newColor = new Color(hairColor.r, hairColor.g, hairColor.b, 115f/255f);
+    //    //hairOverlay.color = newColor;
+    //    //hairBackOverlay.color = newColor;
+    //    //facialHairOverlay.color = newColor;
+    //}
     #endregion
 
     #region Listeners

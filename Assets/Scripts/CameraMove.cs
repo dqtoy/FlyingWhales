@@ -25,11 +25,9 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] internal float MIN_Y;
     [SerializeField] internal float MAX_Y;
 
-    [SerializeField] private Bounds bounds;
     [SerializeField] private bool allowZoom = true;
 
     [Header("Dragging")]
-    private float dragSpeed = 2f;
     private float dragThreshold = 0.15f;
     private float currDragTime;
     private Vector3 dragOrigin;
@@ -67,11 +65,11 @@ public class CameraMove : MonoBehaviour {
         Targetting();
         ConstrainCameraBounds();
 #else
-        //ArrowKeysMovement();
-        //Dragging();
-        //Zooming();
-        //Targetting();
-        //ConstrainCameraBounds();
+        ArrowKeysMovement();
+        Dragging();
+        Zooming();
+        Targetting();
+        ConstrainCameraBounds();
 #endif
 
     }
@@ -289,13 +287,13 @@ public class CameraMove : MonoBehaviour {
             return;
         }
         Vector2 topRightCornerCoordinates = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height - 1].transform.localPosition;
-        HexTile leftMostTile = GridMap.Instance.map[0, (int)GridMap.Instance.height / 2];
+        //HexTile leftMostTile = GridMap.Instance.map[0, (int)GridMap.Instance.height / 2];
         HexTile rightMostTile = GridMap.Instance.map[(int)GridMap.Instance.width - 1, (int)GridMap.Instance.height / 2];
         HexTile topMostTile = GridMap.Instance.map[(int)GridMap.Instance.width/2, (int)GridMap.Instance.height - 1];
-        HexTile botMostTile = GridMap.Instance.map[(int)GridMap.Instance.width/2, 0];
+        //HexTile botMostTile = GridMap.Instance.map[(int)GridMap.Instance.width/2, 0];
 #endif
-        float mapX = Mathf.Floor(topRightCornerCoordinates.x);
-        float mapY = Mathf.Floor(topRightCornerCoordinates.y);
+        //float mapX = Mathf.Floor(topRightCornerCoordinates.x);
+        //float mapY = Mathf.Floor(topRightCornerCoordinates.y);
 
         float vertExtent = Camera.main.orthographicSize;
         float horzExtent = vertExtent * Screen.width / Screen.height;
@@ -367,7 +365,6 @@ public class CameraMove : MonoBehaviour {
         return false;
     }
     private void SetCameraBounds(Bounds bounds, float horzExtent, float vertExtent) {
-        this.bounds = bounds;
         //boundDrawer.bounds = bounds;
         float halfOfHexagon = (256f / 2f) / 100f; //1.28
 #if WORLD_CREATION_TOOL

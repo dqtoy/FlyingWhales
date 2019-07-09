@@ -8,7 +8,7 @@ public class PartyEmblem : MonoBehaviour {
 
     private Party party;
 
-    [SerializeField] private Image frame, tint, outline, sigil;
+    //[SerializeField] private Image frame, outline, sigil;
 
     public void SetParty(Party party) {
         this.party = party;
@@ -25,11 +25,9 @@ public class PartyEmblem : MonoBehaviour {
         }
     }
     public void SetVisuals(EmblemBG bg, Sprite emblem, Color color) {
-        frame.sprite = bg.frame;
-        tint.sprite = bg.tint;
-        outline.sprite = bg.outline;
-        sigil.sprite = emblem;
-        tint.color = color;
+        //frame.sprite = bg.frame;
+        //outline.sprite = bg.outline;
+        //sigil.sprite = emblem;
         this.gameObject.SetActive(true);
     }
 

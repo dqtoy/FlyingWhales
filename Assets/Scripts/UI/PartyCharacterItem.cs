@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class PartyCharacterItem : PooledObject {
 
-    private Character character;
+    //private Character character;
 
     [SerializeField] private Image bg;
     [SerializeField] private CharacterPortrait portrait;
@@ -16,7 +16,7 @@ public class PartyCharacterItem : PooledObject {
     [SerializeField] private AffiliationsObject affiliations;
 
     public void SetCharacter(Character character) {
-        this.character = character;
+        //this.character = character;
         portrait.GeneratePortrait(character);
         nameLbl.text = character.name;
         lvlClassLbl.text = "Lvl." + character.level.ToString() + " " + character.characterClass.className;

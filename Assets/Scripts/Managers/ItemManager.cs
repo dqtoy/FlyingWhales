@@ -24,7 +24,7 @@ public class ItemManager : MonoBehaviour {
     private Dictionary<WEAPON_TYPE, WeaponType> _weaponTypeData;
     private Dictionary<ARMOR_TYPE, ArmorType> _armorTypeData;
 
-	private Dictionary<ITEM_TYPE, List<EQUIPMENT_TYPE>> _equipmentTypes;
+	//private Dictionary<ITEM_TYPE, List<EQUIPMENT_TYPE>> _equipmentTypes;
 
     private Dictionary<WEAPON_PREFIX, WeaponPrefix> _weaponPrefixes;
     private Dictionary<WEAPON_SUFFIX, WeaponSuffix> _weaponSuffixes;
@@ -222,7 +222,7 @@ public class ItemManager : MonoBehaviour {
             for (int k = 0; k < files.Length; k++) {
                 string currFilePath = files[k];
                 string dataAsJson = File.ReadAllText(currFilePath);
-                Texture2D tex = new Texture2D(24, 24);
+                //Texture2D tex = new Texture2D(24, 24);
                 switch (currItemType) {
 				    case ITEM_TYPE.WEAPON:
 					    Weapon newWeapon = JsonUtility.FromJson<Weapon> (dataAsJson);
@@ -279,7 +279,7 @@ public class ItemManager : MonoBehaviour {
             string dataAsJson = File.ReadAllText(currFilePath);
             WeaponType data = JsonUtility.FromJson<WeaponType>(dataAsJson);
             _weaponTypeData.Add(data.weaponType, data);
-			_equipmentTypes [ITEM_TYPE.WEAPON].Add ((EQUIPMENT_TYPE)data.weaponType);
+			//_equipmentTypes [ITEM_TYPE.WEAPON].Add ((EQUIPMENT_TYPE)data.weaponType);
 			//_equipmentTypes [ITEM_TYPE.ITEM].Add ((EQUIPMENT_TYPE)data.weaponType);
         }
     }
@@ -292,7 +292,7 @@ public class ItemManager : MonoBehaviour {
             string dataAsJson = File.ReadAllText(currFilePath);
             ArmorType data = JsonUtility.FromJson<ArmorType>(dataAsJson);
             _armorTypeData.Add(data.armorType, data);
-			_equipmentTypes [ITEM_TYPE.ARMOR].Add ((EQUIPMENT_TYPE)data.armorType);
+			//_equipmentTypes [ITEM_TYPE.ARMOR].Add ((EQUIPMENT_TYPE)data.armorType);
 			//_equipmentTypes [ITEM_TYPE.ITEM].Add ((EQUIPMENT_TYPE)data.armorType);
         }
     }
@@ -438,9 +438,9 @@ public class ItemManager : MonoBehaviour {
 	//	return null;
 	//}
 
-	internal EQUIPMENT_TYPE GetRandomEquipmentTypeByItemType(ITEM_TYPE itemType){
-		return _equipmentTypes [itemType] [UnityEngine.Random.Range (0, _equipmentTypes [itemType].Count)];
-	}
+	//internal EQUIPMENT_TYPE GetRandomEquipmentTypeByItemType(ITEM_TYPE itemType){
+	//	return _equipmentTypes [itemType] [UnityEngine.Random.Range (0, _equipmentTypes [itemType].Count)];
+	//}
 
     public Sprite GetItemSprite(string itemName) {
         for (int i = 0; i < itemSprites.Count; i++) {

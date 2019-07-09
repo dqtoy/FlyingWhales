@@ -7,21 +7,13 @@ using UnityEngine.Events;
 
 public class ItemEditorItem : MonoBehaviour {
 
-    private Character character;
-    private Item _item;
+    public Item item { get; private set; }
 
     [SerializeField] private Text equipmentNameLbl;
     [SerializeField] private Button deleteBtn;
 
-    #region gettters/setters
-    public Item item {
-        get { return _item; }
-    }
-    #endregion
-
     public void SetItem(Item item, Character character) {
-        this.character = character;
-        _item = item;
+        this.item = item;
         equipmentNameLbl.text = item.itemName;
     }
 

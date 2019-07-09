@@ -40,7 +40,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected Faction _faction;
     protected CharacterParty _ownParty;
     protected CharacterParty _currentParty;
-    protected Region _currentRegion;
     protected Weapon _equippedWeapon;
     protected Armor _equippedArmor;
     protected Item _equippedAccessory;
@@ -126,7 +125,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool isDisabledByPlayer { get; protected set; }
 
     private List<System.Action> onLeaveAreaActions;
-    private LocationGridTile tile; //what tile in the structure is this character currently in.
     private POI_STATE _state;
 
     private Dictionary<STAT, float> _buffs;
@@ -1952,14 +1950,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Location
-    public bool IsCharacterInAdjacentRegionOfThis(Character targetCharacter) {
-        for (int i = 0; i < _currentRegion.adjacentRegionsViaRoad.Count; i++) {
-            if (targetCharacter.party.currentRegion.id == _currentRegion.adjacentRegionsViaRoad[i].id) {
-                return true;
-            }
-        }
-        return false;
-    }
     public void SetCurrentStructureLocation(LocationStructure currentStructure, bool broadcast = true) {
         if (currentStructure == this.currentStructure) {
             return; //ignore change;
@@ -2016,17 +2006,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
     }
     public void SetGridTileLocation(LocationGridTile tile) {
-        this.tile = tile;
-        string summary = string.Empty;
-        if (tile == null) {
-            summary = GameManager.Instance.TodayLogString() + "Set tile location to null";
-        } else {
-            summary = GameManager.Instance.TodayLogString() + "Set tile location to " + tile.localPlace.ToString();
-        }
-        locationHistory.Add(summary);
-        if (locationHistory.Count > 80) {
-            locationHistory.RemoveAt(0);
-        }
+        //NOTE: Tile location is being computed every time.
+        //this.tile = tile;
+        //string summary = string.Empty;
+        //if (tile == null) {
+        //    summary = GameManager.Instance.TodayLogString() + "Set tile location to null";
+        //} else {
+        //    summary = GameManager.Instance.TodayLogString() + "Set tile location to " + tile.localPlace.ToString();
+        //}
+        //locationHistory.Add(summary);
+        //if (locationHistory.Count > 80) {
+        //    locationHistory.RemoveAt(0);
+        //}
     }
     public LocationGridTile GetNearestUnoccupiedTileFromThis() {
         if (!isDead && gridTileLocation != null) {

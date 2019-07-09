@@ -7,5 +7,5 @@ public class AttackSkill : Skill {
     public int spCost;
 
     public ATTACK_CATEGORY attackCategory;
-    public ELEMENT element;
+    //public ELEMENT element; //Already element variable in base class
 }

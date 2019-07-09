@@ -33,12 +33,10 @@ namespace worldcreator {
         [SerializeField] private Transform _borderParent;
         public int _borderThickness;
 
-        public List<Region> allRegions { get; private set; }
         public List<HexTile> allTiles { get; private set; }
 
         private void Awake() {
             Instance = this;
-            allRegions = new List<Region>();
         }
         private void Start() {
             DataConstructor.Instance.InitializeData();
@@ -98,7 +96,6 @@ namespace worldcreator {
             //TokenManager.Instance.Initialize();
             //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
             Biomes.Instance.LoadPassableStates(hexTiles);
-            CreateNewRegion(hexTiles);
             GenerateOuterGrid();
             Biomes.Instance.UpdateTileVisuals(allTiles);
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
@@ -143,11 +140,9 @@ namespace worldcreator {
 
             WorldCreatorUI.Instance.InitializeMenus();
             //CombatManager.Instance.Initialize();
-            LoadRegions(data);
             FactionManager.Instance.LoadFactions(data);
             LandmarkManager.Instance.LoadAreas(data);
             LandmarkManager.Instance.LoadLandmarks(data);
-            OccupyRegions(data);
             GenerateOuterGrid(data);
             CharacterManager.Instance.LoadCharacters(data);
             CharacterManager.Instance.LoadRelationships(data);
@@ -231,7 +226,6 @@ namespace worldcreator {
                     Biomes.Instance.SetBiomeForTile(hexToCopy.biomeType, currHex);
                     //Biomes.Instance.GenerateTileBiomeDetails(currHex);
                     //Biomes.Instance.UpdateTileVisuals(currHex);
-                    hexToCopy.region.AddOuterGridTile(currHex);
                     Biomes.Instance.UpdateTileVisuals(currHex);
 
 
@@ -309,98 +303,6 @@ namespace worldcreator {
                 return false;
             }
         }
-        private void LoadRegions(WorldSaveData data) {
-            for (int i = 0; i < data.regionsData.Count; i++) {
-                RegionSaveData currData = data.regionsData[i];
-                HexTile centerTile = null;
-                List<HexTile> regionTiles = GetRegionTiles(currData, ref centerTile);
-                CreateNewRegion(regionTiles, centerTile, currData);
-            }
-            for (int i = 0; i < allRegions.Count; i++) {
-                Region currRegion = allRegions[i];
-                currRegion.UpdateAdjacency();
-            }
-        }
-        //private void LoadLandmarks(WorldSaveData data) {
-        //    if (data.landmarksData != null) {
-        //        for (int i = 0; i < data.landmarksData.Count; i++) {
-        //            LandmarkSaveData landmarkData = data.landmarksData[i];
-        //            LandmarkManager.Instance.CreateNewLandmarkOnTile(landmarkData);
-        //        }
-        //    }
-        //}
-        //private void LoadFactions(WorldSaveData data) {
-        //    if (data.factionsData != null) {
-        //        for (int i = 0; i < data.factionsData.Count; i++) {
-        //            FactionSaveData currData = data.factionsData[i];
-        //            Faction currFaction = FactionManager.Instance.CreateNewFaction(currData);
-        //            WorldCreatorUI.Instance.editFactionsMenu.OnFactionCreated(currFaction);
-        //        }
-        //        WorldCreatorUI.Instance.editCharactersMenu.characterInfoEditor.LoadFactionDropdownOptions();
-        //    }
-        //}
-        private void OccupyRegions(WorldSaveData data) {
-            for (int i = 0; i < allRegions.Count; i++) {
-                Region currRegion = allRegions[i];
-                RegionSaveData regionData = data.GetRegionData(currRegion.id);
-                if (regionData.owner != -1) {
-                    Faction owner = FactionManager.Instance.GetFactionBasedOnID(regionData.owner);
-                    owner.OwnRegion(currRegion);
-                    currRegion.SetOwner(owner);
-                    currRegion.ReColorBorderTiles(owner.factionColor);
-                }
-            }
-            WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
-        }
-        //private void LoadCharacters(WorldSaveData data) {
-        //    if (data.charactersData != null) {
-        //        for (int i = 0; i < data.charactersData.Count; i++) {
-        //            CharacterSaveData currData = data.charactersData[i];
-        //            Character currCharacter = CharacterManager.Instance.CreateNewCharacter(currData);
-        //            Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
-        //            if (characterFaction != null) {
-        //                characterFaction.AddNewCharacter(currCharacter);
-        //                currCharacter.SetFaction(characterFaction);
-        //            }
-        //        }
-        //        WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
-        //    }
-        //}
-        //private void LoadRelationships(WorldSaveData data) {
-        //    if (data.charactersData != null) {
-        //        for (int i = 0; i < data.charactersData.Count; i++) {
-        //            CharacterSaveData currData = data.charactersData[i];
-        //            Character currCharacter = CharacterManager.Instance.GetCharacterByID(currData.id);
-        //            currCharacter.LoadRelationships(currData.relationshipsData);
-        //        }
-        //    }
-        //}
-        private List<HexTile> GetRegionTiles(RegionSaveData regionData, ref HexTile centerTile) {
-            List<int> tileIDs = new List<int>(regionData.tileData);
-            List<HexTile> regionTiles = new List<HexTile>();
-            for (int i = 0; i < hexTiles.Count; i++) {
-                HexTile currTile = hexTiles[i];
-                if (tileIDs.Contains(currTile.id)) {
-                    regionTiles.Add(currTile);
-                    tileIDs.Remove(currTile.id);
-                    if (currTile.id == regionData.centerTileID) {
-                        centerTile = currTile;
-                    }
-                    if (tileIDs.Count == 0) {
-                        break;
-                    }
-                }
-            }
-            return regionTiles;
-        }
-        internal HexTile GetHexTile(int id) {
-            for (int i = 0; i < hexTiles.Count; i++) {
-                if (hexTiles[i].id == id) {
-                    return hexTiles[i];
-                }
-            }
-            return null;
-        }
         private List<HexTile> GetAllTiles() {
             List<HexTile> allTiles = new List<HexTile>(hexTiles);
             allTiles.AddRange(outerGridList);
@@ -439,169 +341,6 @@ namespace worldcreator {
         public void SetSelectionMode(SELECTION_MODE selectionMode) {
             this.selectionMode = selectionMode;
             //selectionComponent.ClearSelectedTiles();
-        }
-        #endregion
-
-        #region Region Editing
-        //public Region GetBiggestRegion(Region except) {
-        //    return allRegions.Where(x => x.id != except.id).OrderByDescending(x => x.tilesInRegion.Count).First();
-        //}
-        public Region CreateNewRegion(List<HexTile> tiles) {
-            List<Region> affectedRegions = new List<Region>();
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile currTile = tiles[i];
-                if (currTile.region != null) {
-                    Region regionOfTile = currTile.region;
-                    regionOfTile.RemoveTile(currTile);
-                    currTile.SetRegion(null);
-                    if (!affectedRegions.Contains(regionOfTile)) {
-                        affectedRegions.Add(regionOfTile);
-                    }
-                }
-            }
-
-            HexTile center = Utilities.GetCenterTile(tiles, map, width, height);
-            Region newRegion = new Region(center, tiles);
-            newRegion.AddTile(tiles);
-            allRegions.Add(newRegion);
-
-            //Re compute the center of masses of the regions that were affected
-            for (int i = 0; i < affectedRegions.Count; i++) {
-                Region currRegion = affectedRegions[i];
-                currRegion.ReComputeCenterOfMass();
-            }
-            for (int i = 0; i < allRegions.Count; i++) {
-                Region currRegion = allRegions[i];
-                currRegion.UpdateAdjacency();
-            }
-            WorldCreatorUI.Instance.editRegionsMenu.OnRegionCreated(newRegion);
-            return newRegion;
-        }
-        public Region CreateNewRegion(List<HexTile> tiles, HexTile centerTile, RegionSaveData data) {
-            Region newRegion = new Region(centerTile, tiles, data);
-            newRegion.AddTile(tiles);
-            allRegions.Add(newRegion);
-
-            WorldCreatorUI.Instance.editRegionsMenu.OnRegionCreated(newRegion);
-            return newRegion;
-        }
-        public Region CreateNewRegion(List<HexTile> tiles, ref List<Region> affectedRegions) {
-            List<Region> emptyRegions = new List<Region>();
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile currTile = tiles[i];
-                if (currTile.region != null) {
-                    Region regionOfTile = currTile.region;
-                    regionOfTile.RemoveTile(currTile);
-                    if (regionOfTile.tilesInRegion.Count == 0) {
-                        if (!emptyRegions.Contains(regionOfTile)) {
-                            emptyRegions.Add(regionOfTile);
-                        }
-                    }
-                    currTile.SetRegion(null);
-                    if (!affectedRegions.Contains(regionOfTile)) {
-                        affectedRegions.Add(regionOfTile);
-                    }
-                }
-            }
-            
-            HexTile center = Utilities.GetCenterTile(tiles, map, width, height);
-            Region newRegion = new Region(center);
-            newRegion.AddTile(tiles);
-            allRegions.Add(newRegion);
-
-            //delete empty regions
-            for (int i = 0; i < emptyRegions.Count; i++) {
-                Region currEmptyRegion = emptyRegions[i];
-                DeleteRegion(currEmptyRegion);
-            }
-
-            //Re compute the center of masses of the regions that were affected
-            for (int i = 0; i < affectedRegions.Count; i++) {
-                Region currRegion = affectedRegions[i];
-                if (!emptyRegions.Contains(currRegion)) {
-                    currRegion.ReComputeCenterOfMass();
-                }
-            }
-            for (int i = 0; i < allRegions.Count; i++) {
-                Region currRegion = allRegions[i];
-                currRegion.UpdateAdjacency();
-            }
-            WorldCreatorUI.Instance.editRegionsMenu.OnRegionCreated(newRegion);
-            return newRegion;
-        }
-        public void AddTilesToRegion(List<HexTile> tiles, Region region) {
-            List<Region> emptyRegions = new List<Region>();
-            List<Region> affectedRegions = new List<Region>();
-            for (int i = 0; i < tiles.Count; i++) {
-                HexTile currTile = tiles[i];
-                if (currTile.region != null && currTile.region.id != region.id) {
-                    Region regionOfTile = currTile.region;
-                    regionOfTile.RemoveTile(currTile);
-                    if (regionOfTile.tilesInRegion.Count == 0) {
-                        if (!emptyRegions.Contains(regionOfTile)) {
-                            emptyRegions.Add(regionOfTile);
-                        }
-                    }
-                    if (!affectedRegions.Contains(regionOfTile)) {
-                        affectedRegions.Add(regionOfTile);
-                    }
-                    region.AddTile(currTile);
-                }
-            }
-
-            //delete empty regions
-            for (int i = 0; i < emptyRegions.Count; i++) {
-                Region currEmptyRegion = emptyRegions[i];
-                DeleteRegion(currEmptyRegion);
-            }
-
-            //Re compute the center of masses of the regions that were affected
-            for (int i = 0; i < affectedRegions.Count; i++) {
-                Region currRegion = affectedRegions[i];
-                if (!emptyRegions.Contains(currRegion)) {
-                    currRegion.ReComputeCenterOfMass();
-                }
-            }
-            for (int i = 0; i < allRegions.Count; i++) {
-                Region currRegion = allRegions[i];
-                currRegion.UpdateAdjacency();
-            }
-            WorldCreatorUI.Instance.editRegionsMenu.OnRegionEdited();
-        }
-        public void ValidateRegions(List<Region> regions) {
-            for (int i = 0; i < regions.Count; i++) {
-                Region currRegion = regions[i];
-                //StartCoroutine(currRegion.GetIslands());
-                List<RegionIsland> islands = currRegion.GetIslands();
-                if (islands.Count > 1) {
-                    for (int j = 1; j < islands.Count; j++) {
-                        RegionIsland currIsland = islands[j];
-                        currRegion.RemoveTile(currIsland.tilesInIsland);
-                        Region newRegion = CreateNewRegion(currIsland.tilesInIsland);
-                    }
-                }
-            }
-        }
-        public void DeleteRegion(Region regionToDelete) {
-            for (int i = 0; i < regionToDelete.regionBorderLines.Count; i++) {
-                SpriteRenderer currBorderLine = regionToDelete.regionBorderLines[i];
-                currBorderLine.gameObject.SetActive(false);
-            }
-            if (regionToDelete.owner != null) {
-                regionToDelete.owner.UnownRegion(regionToDelete);
-            }
-
-            //Give tiles from region to delete to another region
-            if (regionToDelete.adjacentRegions.Count > 0) {
-                Region regionToGiveTo = regionToDelete.adjacentRegions[UnityEngine.Random.Range(0, regionToDelete.adjacentRegions.Count)];
-                regionToGiveTo.AddTile(regionToDelete.tilesInRegion);
-            }
-            regionToDelete.UnhighlightRegion();
-            allRegions.Remove(regionToDelete);
-            for (int i = 0; i < allRegions.Count; i++) {
-                allRegions[i].UpdateAdjacency();
-            }
-            WorldCreatorUI.Instance.OnRegionDeleted(regionToDelete);
         }
         #endregion
 
@@ -730,13 +469,12 @@ namespace worldcreator {
             WorldSaveData worldData = new WorldSaveData(width, height, _borderThickness);
             worldData.OccupyTileData(hexTiles);
             worldData.OccupyOuterTileData(outerGridList);
-            worldData.OccupyRegionData(allRegions);
             worldData.OccupyFactionData(FactionManager.Instance.allFactions);
             worldData.OccupyLandmarksData(LandmarkManager.Instance.GetAllLandmarks());
             worldData.OccupyCharactersData(CharacterManager.Instance.allCharacters);
             worldData.OccupyAreaData(LandmarkManager.Instance.allAreas);    
             //worldData.OccupySquadData(CharacterManager.Instance.allSquads);
-            worldData.OccupyMonstersData(MonsterManager.Instance.allMonsterParties);
+            //worldData.OccupyMonstersData(MonsterManager.Instance.allMonsterParties);
             worldData.OccupyPathfindingSettings(map, width, height);
             if (!saveName.Contains(Utilities.worldConfigFileExt)) {
                 saveName += Utilities.worldConfigFileExt;
@@ -773,7 +511,7 @@ namespace worldcreator {
             StartCoroutine(GenerateGrid(data));
         }
         public WorldSaveData GetWorldData(string saveName) {
-            FileInfo saveFile = GetSaveFile(saveName);
+            //FileInfo saveFile = GetSaveFile(saveName);
             WorldSaveData saveData = SaveGame.Load<WorldSaveData>(Utilities.worldConfigsSavePath + saveName);
             Utilities.ValidateSaveData(saveData);
             return saveData;
@@ -830,6 +568,5 @@ namespace worldcreator {
     public enum SELECTION_MODE {
         RECTANGLE,
         TILE,
-        REGION
     }
 }

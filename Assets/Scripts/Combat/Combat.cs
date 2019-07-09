@@ -13,8 +13,8 @@ public class Combat {
     private List<Character> _charactersSideA, _charactersSideB;
     private SIDES _winningSide, _losingSide;
     private Area _location;
-    private Action afterCombatAction;
-    private List<string> resultsLog;
+    //private Action afterCombatAction;
+    //private List<string> resultsLog;
 
     #region getters/setters
     public List<Character> charactersSideA {
@@ -51,7 +51,7 @@ public class Combat {
             }
         }
         _location = location;
-        this.resultsLog = new List<string>();
+        //this.resultsLog = new List<string>();
     }
     public Combat(List<Character> icharacters1, List<Character> icharacters2, Area location) {
         if(icharacters1 == null) {
@@ -71,11 +71,11 @@ public class Combat {
             }
         }
         _location = location;
-        this.resultsLog = new List<string>();
+        //this.resultsLog = new List<string>();
     }
 
     public void Fight(Action afterCombatAction = null) {
-        AssignAfterCombatAction(afterCombatAction);
+        //AssignAfterCombatAction(afterCombatAction);
 
         int sideAWeight = 0;
         int sideBWeight = 0;
@@ -83,7 +83,7 @@ public class Combat {
         int totalWeight = sideAWeight + sideBWeight;
 
         float sideAChance = (sideAWeight / (float)totalWeight) * 100f;
-        float sideBChance = (sideBWeight / (float)totalWeight) * 100f;
+        //float sideBChance = (sideBWeight / (float)totalWeight) * 100f;
 
         int chance = UnityEngine.Random.Range(0, 101);
         if(chance < sideAChance) {
@@ -119,13 +119,11 @@ public class Combat {
                 }
             }
         }
-        if(afterCombatAction != null) {
-            afterCombatAction();
-        }
+        afterCombatAction?.Invoke();
         Messenger.Broadcast(Signals.COMBAT_DONE, this);
     }
     public void Fight(float sideAChance, float sideBChance, Action afterCombatAction = null) {
-        AssignAfterCombatAction(afterCombatAction);
+        //AssignAfterCombatAction(afterCombatAction);
 
         int chance = UnityEngine.Random.Range(0, 101);
         if (chance < sideAChance) {
@@ -161,9 +159,7 @@ public class Combat {
                 }
             }
         }
-        if (afterCombatAction != null) {
-            afterCombatAction();
-        }
+        afterCombatAction?.Invoke();
         Messenger.Broadcast(Signals.COMBAT_DONE, this);
     }
 
@@ -179,7 +175,7 @@ public class Combat {
         }
         return _charactersSideB;
     }
-    public void AssignAfterCombatAction(Action action) {
-        afterCombatAction = action;
-    }
+    //public void AssignAfterCombatAction(Action action) {
+    //    afterCombatAction = action;
+    //}
 }

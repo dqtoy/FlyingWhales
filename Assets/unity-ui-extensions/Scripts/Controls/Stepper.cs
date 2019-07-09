@@ -105,7 +105,7 @@ namespace UnityEngine.UI.Extensions
 
         private Selectable[] GetSides()
         {
-            Transform[] children = GetComponentsInChildren<Transform>();
+            //Transform[] children = GetComponentsInChildren<Transform>();
             var buttons = GetComponentsInChildren<Selectable>();
             if (buttons.Length != 2)
             {

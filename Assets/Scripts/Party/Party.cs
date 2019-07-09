@@ -16,7 +16,6 @@ public class Party {
     protected bool _isAttacking;
     protected bool _isDefending;
     protected List<Character> _characters;
-    protected Region _currentRegion;
     protected CharacterAvatar _icon;
     protected Faction _attackedByFaction;
     protected Combat _currentCombat;
@@ -90,9 +89,6 @@ public class Party {
     }
     public CharacterAvatar icon {
         get { return _icon; }
-    }
-    public Region currentRegion {
-        get { return _currentRegion; }
     }
     //public Area home {
     //    get { return mainCharacter.home; }
@@ -219,9 +215,6 @@ public class Party {
             + " ST: " + StackTraceUtility.ExtractStackTrace());
         if (specificLocationHistory.Count >= 50) {
             specificLocationHistory.RemoveAt(0);
-        }
-        if (_specificLocation != null) {
-            _currentRegion = _specificLocation.coreTile.region;
         }
         if (owner.homeArea == _specificLocation) {
             owner.OnReturnHome();

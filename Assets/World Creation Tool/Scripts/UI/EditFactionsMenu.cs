@@ -40,10 +40,6 @@ namespace worldcreator {
                 currItemGO.UpdateInfo();
             }
         }
-        public void OnRegionDeleted(Region deletedRegion) {
-            UpdateItems();
-        }
-
         public void ShowFactionInfo(Faction faction) {
             factionInfoEditor.ShowFactionInfo(faction);
         }

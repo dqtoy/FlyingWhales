@@ -53,11 +53,6 @@ namespace worldcreator {
         [SerializeField] private EditFactionsMenu _editFactionsMenu;
 
         [Space(10)]
-        [Header("Edit Regions Menu")]
-        [SerializeField] private GameObject editRegionsMenuGO;
-        [SerializeField] private EditRegionsMenu _editRegionsMenu;
-
-        [Space(10)]
         [Header("Edit Landmarks Menu")]
         [SerializeField] private GameObject editLandmarksMenuGO;
         [SerializeField] private EditLandmarksMenu _editLandmarksMenu;
@@ -108,9 +103,6 @@ namespace worldcreator {
         public CharacterItemsMenu characterItemsMenu;
 
         #region getters/setters
-        public EditRegionsMenu editRegionsMenu {
-            get { return _editRegionsMenu; }
-        }
         public EditFactionsMenu editFactionsMenu {
             get { return _editFactionsMenu; }
         }
@@ -211,7 +203,6 @@ namespace worldcreator {
             editBiomeMenuGO.SetActive(true);
             editElevationMenuGO.SetActive(false);
             editFactionMenuGO.SetActive(false);
-            editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
@@ -226,7 +217,6 @@ namespace worldcreator {
             editBiomeMenuGO.SetActive(false);
             editElevationMenuGO.SetActive(true);
             editFactionMenuGO.SetActive(false);
-            editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
@@ -241,7 +231,6 @@ namespace worldcreator {
             editBiomeMenuGO.SetActive(false);
             editElevationMenuGO.SetActive(false);
             editFactionMenuGO.SetActive(false);
-            editRegionsMenuGO.SetActive(true);
             editLandmarksMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
             landmarkInfoEditor.CloseMenu();
@@ -256,7 +245,6 @@ namespace worldcreator {
             editBiomeMenuGO.SetActive(false);
             editElevationMenuGO.SetActive(false);
             editFactionMenuGO.SetActive(true);
-            editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
@@ -273,7 +261,6 @@ namespace worldcreator {
             editBiomeMenuGO.SetActive(false);
             editElevationMenuGO.SetActive(false);
             editFactionMenuGO.SetActive(false);
-            editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(true);
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
@@ -287,7 +274,6 @@ namespace worldcreator {
             editBiomeMenuGO.SetActive(false);
             editElevationMenuGO.SetActive(false);
             editFactionMenuGO.SetActive(false);
-            editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(true);
             if (editCharactersMenu.characterInfoEditor.gameObject.activeSelf) {
@@ -304,7 +290,6 @@ namespace worldcreator {
             editBiomeMenuGO.SetActive(false);
             editElevationMenuGO.SetActive(false);
             editFactionMenuGO.SetActive(false);
-            editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.ShowMenu();
@@ -318,7 +303,6 @@ namespace worldcreator {
             editBiomeMenuGO.SetActive(false);
             editElevationMenuGO.SetActive(false);
             editFactionMenuGO.SetActive(false);
-            editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
@@ -332,7 +316,6 @@ namespace worldcreator {
             editBiomeMenuGO.SetActive(false);
             editElevationMenuGO.SetActive(false);
             editFactionMenuGO.SetActive(false);
-            editRegionsMenuGO.SetActive(false);
             editLandmarksMenuGO.SetActive(false);
             editCharactersMenuGO.SetActive(false);
             _editAreasMenu.HideMenu();
@@ -348,9 +331,6 @@ namespace worldcreator {
         }
         public void OnClickTileSelection() {
             WorldCreatorManager.Instance.SetSelectionMode(SELECTION_MODE.TILE);
-        }
-        public void OnClickRegionSelection() {
-            WorldCreatorManager.Instance.SetSelectionMode(SELECTION_MODE.REGION);
         }
         #endregion
 
@@ -455,11 +435,6 @@ namespace worldcreator {
             smallCharacterInfo.HideSmallCharacterInfo();
         }
         #endregion
-
-        public void OnRegionDeleted(Region deletedRegion) {
-            editRegionsMenu.OnRegionDeleted(deletedRegion);
-            editFactionsMenu.OnRegionDeleted(deletedRegion);
-        }
 
         #region Portrait Editor
         public void ShowPortraitEditor() {

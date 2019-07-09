@@ -11,7 +11,7 @@ public class FleeTest : MonoBehaviour {
 
     private List<GameObject> objsInRange = new List<GameObject>();
 
-    private Vector3 runningAwayFrom;
+    //private Vector3 runningAwayFrom;
 
     public void Awake() {
         aiPath.targetReachedAction = () => OnTargetReached();
@@ -63,11 +63,11 @@ public class FleeTest : MonoBehaviour {
         if (this.timeElapsed > this.recheckRate) {
             timeElapsed = 0f;
 
-            FleePath currPath = FleePath.Construct(transform.position, runningAwayFrom, 20000);
-            currPath.aimStrength = 1f;
-            currPath.spread = 5000;
-            // Start the path and return the result to MyCompleteFunction (which is a function you have to define, the name can of course be changed)
-            seeker.StartPath(currPath, PathCallback);
+            //FleePath currPath = FleePath.Construct(transform.position, runningAwayFrom, 20000);
+            //currPath.aimStrength = 1f;
+            //currPath.spread = 5000;
+            //// Start the path and return the result to MyCompleteFunction (which is a function you have to define, the name can of course be changed)
+            //seeker.StartPath(currPath, PathCallback);
         }
         
     }

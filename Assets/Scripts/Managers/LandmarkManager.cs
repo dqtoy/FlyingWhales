@@ -83,22 +83,9 @@ public class LandmarkManager : MonoBehaviour {
             //Destroy landmark on tile
             DestroyLandmarkOnTile(location);
         }
-        //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-        //BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
         BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType);
 #if !WORLD_CREATION_TOOL
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-        //newLandmark.GenerateDiagonalLeftTiles();
-        //newLandmark.GenerateDiagonalRightTiles();
-        //newLandmark.GenerateHorizontalTiles();
-        //newLandmark.GenerateWallTiles();
-        //newLandmark.PutWallUp();
-        //for (int i = 0; i < location.AllNeighbours.Count; i++) {
-        //    location.AllNeighbours[i].AdjustUncorruptibleLandmarkNeighbors(1);
-        //}
-        //ConstructLandmarkObjects(landmarkData, newLandmark);
-        //		AddInitialLandmarkItems (newLandmark);
-        //newLandmark.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())) as StructureObj);
         if (newLandmark.tileLocation.areaOfTile != null) {
             newLandmark.tileLocation.areaOfTile.DetermineIfTileIsExposed(newLandmark.tileLocation);
         }
@@ -115,8 +102,6 @@ public class LandmarkManager : MonoBehaviour {
             //Destroy landmark on tile
             DestroyLandmarkOnTile(location);
         }
-        //LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
-        //BASE_LANDMARK_TYPE baseLandmarkType = landmarkData.baseLandmarkType;
         BaseLandmark newLandmark = location.CreateLandmarkOfType(saveData);
 #if !WORLD_CREATION_TOOL
         if (newLandmark.tileLocation.areaOfTile != null && newLandmark.tileLocation.areaOfTile.owner != null) {
@@ -124,7 +109,6 @@ public class LandmarkManager : MonoBehaviour {
         }
 
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-        //newLandmark.SetObject(ObjectManager.Instance.CreateNewObject(OBJECT_TYPE.STRUCTURE, Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString())) as StructureObj);
         if (newLandmark.tileLocation.areaOfTile != null) {
             newLandmark.tileLocation.areaOfTile.DetermineIfTileIsExposed(newLandmark.tileLocation);
         }
@@ -142,40 +126,15 @@ public class LandmarkManager : MonoBehaviour {
         if (landmarkOnTile == null) {
             return;
         }
-        //while (landmarkOnTile.charactersAtLocation.Count != 0) {
-        //    landmarkOnTile.RemoveCharacterFromLocation(landmarkOnTile.charactersAtLocation[0]);
-        //}
-        //while (landmarkOnTile.charactersWithHomeOnLandmark.Count != 0) {
-        //    landmarkOnTile.charactersWithHomeOnLandmark[0].SetHome(null);
-        //    landmarkOnTile.RemoveCharacterHomeOnLandmark(landmarkOnTile.charactersWithHomeOnLandmark[0]);
-        //}
         tile.RemoveLandmarkVisuals();
         tile.RemoveLandmarkOnTile();
-        tile.region.RemoveLandmarkFromRegion(landmarkOnTile);
     }
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
         BaseLandmark newLandmark = location.LoadLandmark(landmark);
-        //newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-        //newLandmark.GenerateDiagonalLeftTiles();
-        //newLandmark.GenerateDiagonalRightTiles();
-        //newLandmark.GenerateHorizontalTiles();
-        //newLandmark.GenerateWallTiles();
-        //newLandmark.PutWallUp();
-        //for (int i = 0; i < location.AllNeighbours.Count; i++) {
-        //    location.AllNeighbours[i].AdjustUncorruptibleLandmarkNeighbors(1);
-        //}
-        //ConstructLandmarkObjects(landmarkData, newLandmark);
-        //		AddInitialLandmarkItems (newLandmark);
         return newLandmark;
     }
     public void OccupyLandmark(BaseLandmark landmark, Faction occupant) {
         landmark.OccupyLandmark(occupant);
-    }
-    public void OccupyLandmark(Region region, Faction occupant) {
-        region.centerOfMass.landmarkOnTile.OccupyLandmark(occupant);
-    }
-    public void OccupyLandmark(HexTile hexTile, Faction occupant) {
-        hexTile.landmarkOnTile.OccupyLandmark(occupant);
     }
     public GameObject GetLandmarkGO() {
         return this.landmarkGO;
@@ -183,102 +142,6 @@ public class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Landmark Generation
-    public void GeneratePlayerLandmarks(Region chosenRegion) {
-        //generate landmarks owned by the player in the empty region
-        //Create Demonic Portal on the tile nearest to the center of the region
-        HexTile tileToUse = null;
-        LandmarkData demonicPortalData = GetLandmarkData(LANDMARK_TYPE.DEMONIC_PORTAL);
-        if (chosenRegion.centerOfMass.isPassable && demonicPortalData.possibleSpawnPoints.Contains(chosenRegion.centerOfMass.passableType)) {
-            tileToUse = chosenRegion.centerOfMass;
-        } else {
-            float nearestDistance = 9999f;
-            List<HexTile> passableTilesInRegion = chosenRegion.tilesInRegion.Where(x => x.isPassable && x.id != chosenRegion.centerOfMass.id && demonicPortalData.possibleSpawnPoints.Contains(x.passableType)).ToList();
-            for (int i = 0; i < passableTilesInRegion.Count; i++) {
-                HexTile currTile = passableTilesInRegion[i];
-                float distance = currTile.GetDistanceTo(chosenRegion.centerOfMass);
-                if (distance < nearestDistance) {
-                    nearestDistance = distance;
-                    tileToUse = currTile;
-                }
-            }
-        }
-
-        if (tileToUse != null) {
-            CreateNewLandmarkOnTile(tileToUse, LANDMARK_TYPE.DEMONIC_PORTAL);
-        } else {
-            throw new System.Exception("Cannot create Demonic Portal for Player!");
-        }
-    }
-    public void GenerateFactionLandmarks() {
-        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-            Faction currFaction = FactionManager.Instance.allFactions[i];
-            LEVEL wealth = RandomizeLevel(25, 60, 15);
-            LEVEL population = RandomizeLevel(25, 60, 15);
-            LEVEL needProviders = RandomizeLevel(25, 60, 15);
-            LEVEL might = RandomizeLevel(25, 60, 15);
-            LEVEL characters = RandomizeLevel(25, 60, 15);
-            //Dictionary<LANDMARK_TYPE, int> landmarkSettings = GetLandmarkSettings(wealth, population, might, needProviders, currFaction);
-            //Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated = null;
-            //while (landmarksToBeCreated == null) {
-            //    landmarksToBeCreated = GenerateLandmarksForFaction(landmarkSettings, currFaction);
-            //}
-            //foreach (KeyValuePair<HexTile, LANDMARK_TYPE> kvp in landmarksToBeCreated) {
-            //    CreateNewLandmarkOnTile(kvp.Key, kvp.Value);
-            //}
-        }
-        //return true;
-    }
-    public void LoadAllLandmarksFromSave(Save save) {
-        for (int i = 0; i < save.hextiles.Count; i++) {
-            HexTile currentTile = GridMap.Instance.GetHexTile(save.hextiles[i].xCoordinate, save.hextiles[i].yCoordinate);
-            LoadLandmarkOnTile(currentTile, save.hextiles[i].landmark);
-        }
-    }
-    private LEVEL RandomizeLevel(int highPercent, int averagePercent, int lowPercent) {
-        int chance = Random.Range(0, 100);
-        if (chance <= lowPercent) {
-            return LEVEL.LOW;
-        } else if (chance > lowPercent && chance <= averagePercent) {
-            return LEVEL.AVERAGE;
-        } else {
-            return LEVEL.HIGH;
-        }
-    }
-    private Dictionary<HexTile, LANDMARK_TYPE> GenerateLandmarksForFaction(Dictionary<LANDMARK_TYPE, int> landmarkSettings, Faction faction) {
-        Region factionRegion = faction.ownedRegions[0];
-        Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated = new Dictionary<HexTile, LANDMARK_TYPE>();
-        string log = "Created " + landmarkSettings.Sum(x => x.Value).ToString() + " landmarks on " + factionRegion.name;
-        foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in landmarkSettings) {
-            LANDMARK_TYPE landmarkType = kvp.Key;
-            LandmarkData data = GetLandmarkData(landmarkType);
-            log += "\n" + landmarkType.ToString() + " - " + kvp.Value.ToString();
-            for (int i = 0; i < kvp.Value; i++) {
-                List<HexTile> tilesToChooseFrom = factionRegion.tilesInRegion.Where(x => x.CanBuildLandmarkHere(landmarkType, data, landmarksToBeCreated)).ToList();
-                //List<HexTile> tilesToChooseFrom = elligibleTiles.Where(x => ).ToList();
-                if (tilesToChooseFrom.Count <= 0) {
-                    //Debug.LogError("There are no more tiles in " + tribeRegion.name + " to build a " + landmarkType.ToString(), tribeRegion.centerOfMass);
-                    return null;
-                }
-                HexTile chosenTile = tilesToChooseFrom[Random.Range(0, tilesToChooseFrom.Count)];
-                landmarksToBeCreated.Add(chosenTile, landmarkType);
-                //CreateNewLandmarkOnTile(chosenTile, landmarkType);
-                //remove the tiles within 1 range of the chosen tile from elligible tiles
-                //elligibleTiles.Remove(chosenTile);
-                //Utilities.ListRemoveRange(elligibleTiles, chosenTile.GetTilesInRange(1));
-            }
-        }
-        Debug.Log(log, factionRegion.centerOfMass);
-        return landmarksToBeCreated;
-    }
-    public void InitializeLandmarks() {
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.landmarks[j];
-                currLandmark.Initialize();
-            }
-        }
-    }
     public LandmarkData GetLandmarkData(LANDMARK_TYPE landmarkType) {
         //for (int i = 0; i < landmarkData.Count; i++) {
         //    LandmarkData currData = landmarkData[i];
@@ -291,24 +154,12 @@ public class LandmarkManager : MonoBehaviour {
         }
         throw new System.Exception("There is no landmark data for " + landmarkType.ToString());
     }
-    public ILocation GetLocationBasedOnID(LOCATION_IDENTIFIER identifier, int id) {
-        List<ILocation> choices;
-        if (identifier == LOCATION_IDENTIFIER.HEXTILE) {
-#if WORLD_CREATION_TOOL
-            choices = new List<ILocation>(worldcreator.WorldCreatorManager.Instance.hexTiles.Select(x => x as ILocation));
-#else
-            choices = new List<ILocation>(GridMap.Instance.hexTiles.Select(x => x as ILocation));
-#endif
-        } else {
-            choices = new List<ILocation>(GetAllLandmarks().Select(x => x as ILocation));
+    public void InitializeLandmarks() {
+        List<BaseLandmark> allLandmarks = GetAllLandmarks();
+        for (int i = 0; i < allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = allLandmarks[i];
+            currLandmark.Initialize();
         }
-        for (int i = 0; i < choices.Count; i++) {
-            ILocation currLocation = choices[i];
-            if (currLocation.id == id) {
-                return currLocation;
-            }
-        }
-        return null;
     }
     #endregion
 
@@ -345,66 +196,28 @@ public class LandmarkManager : MonoBehaviour {
         //}
         return null;
     }
-    public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < GridMap.Instance.allRegions.Count; i++) {
-            Region currRegion = GridMap.Instance.allRegions[i];
-            for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.landmarks[j];
-                if (currLandmark.specificLandmarkType == landmarkType) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public List<BaseLandmark> GetLandmarksOfType(LANDMARK_TYPE landmarkType) {
-        List<BaseLandmark> allLandmarksOfType = new List<BaseLandmark>();
-#if WORLD_CREATION_TOOL
-        List<Region> allRegions = new List<Region>(worldcreator.WorldCreatorManager.Instance.allRegions);
-#else
-        List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
-#endif
-        for (int i = 0; i < allRegions.Count; i++) {
-            Region currRegion = allRegions[i];
-            for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.landmarks[j];
-                if (currLandmark.specificLandmarkType == landmarkType) {
-                    allLandmarksOfType.Add(currLandmark);
-                }
-            }
-        }
-        return allLandmarksOfType;
-    }
     public BaseLandmark GetLandmarkOfType(LANDMARK_TYPE landmarkType) {
-#if WORLD_CREATION_TOOL
-        List<Region> allRegions = new List<Region>(worldcreator.WorldCreatorManager.Instance.allRegions);
-#else
-        List<Region> allRegions = new List<Region>(GridMap.Instance.allRegions);
-#endif
-        for (int i = 0; i < allRegions.Count; i++) {
-            Region currRegion = allRegions[i];
-            for (int j = 0; j < currRegion.landmarks.Count; j++) {
-                BaseLandmark currLandmark = currRegion.landmarks[j];
-                if (currLandmark.specificLandmarkType == landmarkType) {
-                    return currLandmark;
-                }
+        List<BaseLandmark> allLandmarks = GetAllLandmarks();
+        for (int i = 0; i < allLandmarks.Count; i++) {
+            BaseLandmark currLandmark = allLandmarks[i];
+            if (currLandmark.specificLandmarkType == landmarkType) {
+                return currLandmark;
             }
         }
         return null;
     }
-    public List<BaseLandmark> GetAllLandmarks(List<Region> regions = null) {
+    public List<BaseLandmark> GetAllLandmarks() {
         List<BaseLandmark> allLandmarks = new List<BaseLandmark>();
 #if WORLD_CREATION_TOOL
-        List<Region> choices = worldcreator.WorldCreatorManager.Instance.allRegions;
+        List<HexTile> choices = worldcreator.WorldCreatorManager.Instance.allTiles;
 #else
-        List<Region> choices = GridMap.Instance.allRegions;
+        List<HexTile> choices = GridMap.Instance.hexTiles;
 #endif
-        if (regions != null) {
-            choices = regions;
-        }
         for (int i = 0; i < choices.Count; i++) {
-            Region currRegion = choices[i];
-            allLandmarks.AddRange(currRegion.landmarks);
+            HexTile currTile = choices[i];
+            if (currTile.landmarkOnTile != null) {
+                allLandmarks.Add(currTile.landmarkOnTile);
+            }
         }
         return allLandmarks;
     }

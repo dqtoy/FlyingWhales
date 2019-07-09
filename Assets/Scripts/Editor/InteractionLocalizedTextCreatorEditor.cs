@@ -13,7 +13,7 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
     public LogReplacerDictionary logReplacers;
 
     string trelloJSONStr = "Place trello json here...";
-    Vector2 scrollPos = Vector2.zero;
+    //Vector2 scrollPos = Vector2.zero;
 
     string textAreaStr;
     Vector2 textAreaScroll = Vector2.zero;

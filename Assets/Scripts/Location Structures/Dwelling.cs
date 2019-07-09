@@ -193,7 +193,6 @@ public class Dwelling : LocationStructure {
         return validTiles;
     }
     private bool HasUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type) {
-        List<LocationGridTile> validTiles = new List<LocationGridTile>();
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile currTile = tiles[i];
             if (currTile.objHere == null && currTile.furnitureSpot != null) {

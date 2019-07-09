@@ -62,7 +62,7 @@ public class ProductionManager : MonoBehaviour {
 			_armorProductionsLookup.Add (arrArmorProduction [i].armorType, arrArmorProduction [i]);
 		}
 
-		Construction[] arrConstruction = constructionGO.GetComponents<Construction> ();
+		//Construction[] arrConstruction = constructionGO.GetComponents<Construction> ();
 		//for (int i = 0; i < arrConstruction.Length; i++) {
 		//	_constructionsLookup.Add (arrConstruction [i].structure.name, arrConstruction [i]);
 		//}
