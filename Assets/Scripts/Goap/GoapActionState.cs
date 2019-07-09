@@ -21,6 +21,8 @@ public class GoapActionState {
     public bool hasPerTickEffect { get { return perTickEffect != null; } }
     public int currentDuration { get; private set; }
 
+    public List<ActionLog> arrangedLogs { get; protected set; }
+
     public GoapActionState(string name, GoapAction parentAction, Action preEffect, Action perTickEffect, Action afterEffect, int duration, string status) {
         this.name = name;
         this.preEffect = preEffect;
@@ -31,6 +33,7 @@ public class GoapActionState {
         this.status = status;
         this.shouldAddLogs = true;
         this.isDone = false;
+        this.arrangedLogs = new List<ActionLog>();
         CreateLog();
     }
 
@@ -64,6 +67,14 @@ public class GoapActionState {
     public void SetShouldAddLogs(bool state) {
         shouldAddLogs = state;
     }
+    public void AddArrangedLog(string priorityID, Log log, System.Action notifAction) {
+        int index = parentAction.GetArrangedLogPriorityIndex(priorityID);
+        if(index == -1 || arrangedLogs.Count <= index) {
+            arrangedLogs.Add(new ActionLog() { log = log, notifAction = notifAction });
+        } else {
+            arrangedLogs.Insert(index, new ActionLog() { log = log, notifAction = notifAction });
+        }
+    }
     #endregion
 
 
@@ -92,8 +103,13 @@ public class GoapActionState {
                 afterEffect();
             }
             if (parentAction.shouldAddLogs && this.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
-                descriptionLog.SetDate(GameManager.Instance.Today());
-                descriptionLog.AddLogToInvolvedObjects();
+                AddArrangedLog("description", descriptionLog, null);
+                for (int i = 0; i < arrangedLogs.Count; i++) {
+                    arrangedLogs[i].log.SetDate(GameManager.Instance.Today());
+                    arrangedLogs[i].log.AddLogToInvolvedObjects();
+                }
+                //descriptionLog.SetDate(GameManager.Instance.Today());
+                //descriptionLog.AddLogToInvolvedObjects();
             }
         } else {
             parentAction.SetShowIntelNotification(false);
@@ -120,4 +136,9 @@ public class GoapActionState {
         this.animationName = animationName;
     }
     #endregion
+}
+
+public struct ActionLog {
+    public Log log;
+    public System.Action notifAction;
 }

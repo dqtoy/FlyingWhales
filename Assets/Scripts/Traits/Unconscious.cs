@@ -49,7 +49,16 @@ public class Unconscious : Trait {
             //_sourceCharacter.CreateRemoveTraitJob(name);
             _sourceCharacter.CancelAllJobsAndPlans();
             _sourceCharacter.AddTraitNeededToBeRemoved(this);
-            _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+            if(gainedFromDoing == null || gainedFromDoing.poiTarget != _sourceCharacter) {
+                _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+            } else {
+                if(gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC) {
+                    Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
+                    addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    gainedFromDoing.states["Target Knocked Out"].AddArrangedLog("unconscious", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
+                }
+            }
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {

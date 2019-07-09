@@ -41,7 +41,9 @@ public class AssaultCharacter : GoapAction {
                     combatState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
                 }
                 if (combatState is CombatState) {
-                    (combatState as CombatState).SetOnEndStateAction(OnFinishCombatState);
+                    CombatState realCombatState = combatState as CombatState;
+                    realCombatState.SetActionThatTriggeredThisState(this);
+                    realCombatState.SetOnEndStateAction(OnFinishCombatState);
                     SetState("In Progress");
                 } else {
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
@@ -112,6 +114,16 @@ public class AssaultCharacter : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         actor.marker.pathfindingAI.ResetEndReachedDistance();
+    }
+    public override int GetArrangedLogPriorityIndex(string priorityID) {
+        if(priorityID == "description") {
+            return 0;
+        }else if (priorityID == "injured") {
+            return 1;
+        } else if (priorityID == "unconscious") {
+            return 2;
+        }
+        return base.GetArrangedLogPriorityIndex(priorityID);
     }
     #endregion
 

@@ -438,11 +438,11 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     private void UpdateAllHistoryInfo() {
-        List<Log> characterHistory = new List<Log>(_activeCharacter.history.OrderByDescending(x => x.date.year).ThenByDescending(x => x.date.month).ThenByDescending(x => x.date.day).ThenByDescending(x => x.date.tick));
+        //List<Log> characterHistory = new List<Log>(_activeCharacter.history.OrderByDescending(x => x.date.year).ThenByDescending(x => x.date.month).ThenByDescending(x => x.date.day).ThenByDescending(x => x.date.tick));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
-            Log currLog = characterHistory.ElementAtOrDefault(i);
-            if (currLog != null) {
+            if(i < _activeCharacter.history.Count) {
+                Log currLog = _activeCharacter.history[_activeCharacter.history.Count - 1 - i];
                 currItem.gameObject.SetActive(true);
                 currItem.SetLog(currLog);
                 if (Utilities.IsEven(i)) {
@@ -453,6 +453,10 @@ public class CharacterInfoUI : UIMenu {
             } else {
                 currItem.gameObject.SetActive(false);
             }
+            //if (currLog != null) {
+                
+            //} else {
+            //}
         }
     }
     private bool IsLogAlreadyShown(Log log) {

@@ -3145,6 +3145,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         attackSummary += "\nDealt damage " + stateComponent.character.attackPower.ToString();
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if (this.currentHP <= 0) {
+            CombatState state = characterThatAttacked.stateComponent.currentState as CombatState;
             attackSummary += "\n" + this.name + "'s hp has reached 0.";
             WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
             if (this.GetNormalTrait("Unconscious") == null) {
@@ -3153,18 +3154,18 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //if (currentClosestHostile.GetNormalTrait("Injured") == null) {
             //    loserResults.AddElement("Injured", 10);
             //}
-            loserResults.AddElement("Death", 5);
+            //loserResults.AddElement("Death", 5);
 
             string result = loserResults.PickRandomElementGivenWeights();
             attackSummary += "\ncombat result is " + result; ;
             switch (result) {
                 case "Unconscious":
                     Unconscious unconscious = new Unconscious();
-                    this.AddTrait(unconscious, characterThatAttacked);
+                    this.AddTrait(unconscious, characterThatAttacked, gainedFromDoing: state.actionThatTriggeredThisState);
                     break;
                 case "Injured":
                     Injured injured = new Injured();
-                    this.AddTrait(injured, characterThatAttacked);
+                    this.AddTrait(injured, characterThatAttacked, gainedFromDoing: state.actionThatTriggeredThisState);
                     break;
                 case "Death":
                     this.Death(responsibleCharacter: characterThatAttacked);

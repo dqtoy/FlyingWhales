@@ -640,19 +640,25 @@ public class Player : ILeader {
     /// <param name="character">The character that finished the action.</param>
     /// <param name="action">The action that was finished.</param>
     private void OnCharacterDidAction(Character character, GoapAction action) {
-        bool showPopup = false;
-        if (action.showIntelNotification) {
-            if (action.shouldIntelNotificationOnlyIfActorIsActive) {
-                showPopup = ShouldShowNotificationFrom(character, true);
+        for (int i = 0; i < action.currentState.arrangedLogs.Count; i++) {
+            if(action.currentState.arrangedLogs[i].notifAction != null) {
+                action.currentState.arrangedLogs[i].notifAction();
             } else {
-                showPopup = ShouldShowNotificationFrom(character, action.currentState.descriptionLog);
-            }
-        }
-        if (showPopup) {
-            if(!action.isNotificationAnIntel) {
-                Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.currentState.descriptionLog);
-            } else {
-                Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
+                bool showPopup = false;
+                if (action.showIntelNotification) {
+                    if (action.shouldIntelNotificationOnlyIfActorIsActive) {
+                        showPopup = ShouldShowNotificationFrom(character, true);
+                    } else {
+                        showPopup = ShouldShowNotificationFrom(character, action.currentState.descriptionLog);
+                    }
+                }
+                if (showPopup) {
+                    if (!action.isNotificationAnIntel) {
+                        Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.currentState.descriptionLog);
+                    } else {
+                        Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
+                    }
+                }
             }
         }
     }

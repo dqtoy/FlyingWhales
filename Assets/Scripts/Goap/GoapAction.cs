@@ -388,6 +388,8 @@ public class GoapAction {
     /// What should happen when an action is stopped while the actor is still travelling towards it's target?
     /// </summary>
     public virtual void OnStopActionWhileTravelling() { }
+
+    public virtual int GetArrangedLogPriorityIndex(string priorityID) { return -1; }
     #endregion
 
     #region Utilities
@@ -938,6 +940,4 @@ public struct GoapEffect {
     public override int GetHashCode() {
         return base.GetHashCode();
     }
-
-
 }

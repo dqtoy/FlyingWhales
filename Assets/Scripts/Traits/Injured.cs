@@ -44,7 +44,16 @@ public class Injured : Trait {
             _sourceCharacter.marker.AdjustSpeedModifier(-0.15f);
             //_sourceCharacter.CreateRemoveTraitJob(name);
             _sourceCharacter.AddTraitNeededToBeRemoved(this);
-            _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+            if (gainedFromDoing == null || gainedFromDoing.poiTarget != _sourceCharacter) {
+                _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+            } else {
+                if (gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC) {
+                    Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
+                    addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    gainedFromDoing.states["Target Injured"].AddArrangedLog("injured", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
+                }
+            }
             Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _sourceCharacter);
         }
     }

@@ -10,6 +10,7 @@ public class CombatState : CharacterState {
     public bool isAttacking { get; private set; } //if not attacking, it is assumed that the character is fleeing
     public Character currentClosestHostile { get; private set; }
     private System.Action onEndStateAction; // What should happen when this state ends?
+    public GoapAction actionThatTriggeredThisState { get; private set; }
 
     public CombatState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Combat State";
@@ -413,6 +414,9 @@ public class CombatState : CharacterState {
     #endregion
 
     #region Utilities
+    public void SetActionThatTriggeredThisState(GoapAction action) {
+        actionThatTriggeredThisState = action;
+    }
     public void SetOnEndStateAction(System.Action action) {
         onEndStateAction = action;
     }
