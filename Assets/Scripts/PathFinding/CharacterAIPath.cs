@@ -59,7 +59,7 @@ public class CharacterAIPath : AILerp {
             marker.OnFleePathComputed(newPath);
         } else {
             currentPath = newPath as CustomABPath;
-            if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null && marker.terrifyingCharacters.Count > 0) {
+            if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null) { //&& marker.terrifyingCharacters.Count > 0
                 string costLog = "PATH FOR " + marker.character.name;
                 uint totalCost = 0;
                 for (int i = 0; i < currentPath.path.Count; i++) {
@@ -79,7 +79,7 @@ public class CharacterAIPath : AILerp {
                 for (int i = 0; i < currentPath.vectorPath.Count; i++) {
                     costLog += "\n-> " + currentPath.vectorPath[i] + "(" + GetNodePenalty(currentPath.vectorPath[i]) + GetNodePenaltyForStructures(currentPath, currentPath.vectorPath[i]) + ")";
                 }
-                Debug.LogWarning(costLog);
+                //Debug.LogWarning(costLog);
             }
         }
         base.OnPathComplete(newPath);
@@ -262,7 +262,7 @@ public class CharacterAIPath : AILerp {
             }
             Vector3 newNodePos = new Vector3(Mathf.Floor(nodePos.x), Mathf.Floor(nodePos.y), Mathf.Floor(nodePos.z));
             Vector3 localPos = customPath.area.areaMap.worldPos - newNodePos;
-            Vector3Int localPlace = Vector3Int.FloorToInt(localPos);
+            Vector3Int localPlace = new Vector3Int(localPos.x < 0f ? Mathf.FloorToInt(localPos.x) * -1 : Mathf.FloorToInt(localPos.x), localPos.y < 0f ? Mathf.FloorToInt(localPos.y) * -1 : Mathf.FloorToInt(localPos.y), 0);
             //Vector3Int localPlace = customPath.area.areaMap.groundTilemap.WorldToCell(newNodePos);
             LocationGridTile nodeGridTile = null;
             if (Utilities.IsInRange(localPlace.x, 0, customPath.area.areaMap.map.GetUpperBound(0) + 1) &&

@@ -7,6 +7,7 @@ public class POITestingUI : MonoBehaviour {
     //Most of the functions here will only work if there is a currently clicked/active character
     public RectTransform rt;
     public IPointOfInterest poi { get; private set; }
+    public LocationGridTile gridTile { get; private set; }
 
     #region Utilities
     public void ShowUI(IPointOfInterest poi) {
@@ -16,9 +17,17 @@ public class POITestingUI : MonoBehaviour {
             gameObject.SetActive(true);
         }
     }
+    public void ShowUI(LocationGridTile gridTile) {
+        if (UIManager.Instance.characterInfoUI.activeCharacter != null) {
+            this.gridTile = gridTile;
+            UIManager.Instance.PositionTooltip(gameObject, rt, rt);
+            gameObject.SetActive(true);
+        }
+    }
     public void HideUI() {
         gameObject.SetActive(false);
         this.poi = null;
+        this.gridTile = null;
     }
     #endregion
 
@@ -114,6 +123,14 @@ public class POITestingUI : MonoBehaviour {
         } else {
             Debug.LogError(poi.name + " is not a bed!");
         }
+        HideUI();
+    }
+    #endregion
+
+    #region Grid Tile Testing
+    public void GoHere() {
+        STRUCTURE_TYPE[]  _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
+        UIManager.Instance.characterInfoUI.activeCharacter.marker.GoTo(this.gridTile, notAllowedStructures: _notAllowedStructures);
         HideUI();
     }
     #endregion

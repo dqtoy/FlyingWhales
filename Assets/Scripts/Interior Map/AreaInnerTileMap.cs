@@ -203,6 +203,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 map[x, y].UpdateWorldLocation();
             }
         }
+        SetWorldPosition();
     }
     public void SetWorldPosition() {
         worldPos = transform.position;

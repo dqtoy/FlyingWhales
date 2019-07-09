@@ -489,13 +489,17 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             return;
         }
         if (objHere == null) {
-            Messenger.Broadcast(Signals.HIDE_MENUS);
 #if UNITY_EDITOR
             if (inputButton == PointerEventData.InputButton.Right) {
-                if (InteriorMapManager.Instance.IsHoldingPOI()) {
-                    InteriorMapManager.Instance.PlaceHeldPOI(this);
-                }
+                UIManager.Instance.poiTestingUI.ShowUI(this);
+                //if (InteriorMapManager.Instance.IsHoldingPOI()) {
+                //    InteriorMapManager.Instance.PlaceHeldPOI(this);
+                //}
+            } else {
+                Messenger.Broadcast(Signals.HIDE_MENUS);
             }
+#else
+            Messenger.Broadcast(Signals.HIDE_MENUS);
 #endif
         } else if (objHere is TileObject || objHere is SpecialToken) {
 #if UNITY_EDITOR
@@ -521,15 +525,15 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 #endif
         }
     }
-    #endregion
+#endregion
 
-    #region Tile Objects
+#region Tile Objects
     public void SetReservedType(TILE_OBJECT_TYPE reservedType) {
         reservedObjectType = reservedType;
     }
-    #endregion
+#endregion
 
-    #region Furniture Spots
+#region Furniture Spots
     public void SetFurnitureSpot(FurnitureSpot spot) {
         furnitureSpot = spot;
     }
@@ -546,7 +550,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         throw new System.Exception("Furniture spot at " + this.ToString() + " cannot provide facility " + facility.ToString() + "! Should not reach this point if that is the case!");
     }
-    #endregion
+#endregion
 }
 
 [System.Serializable]
