@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerJobAction {
 
     public PlayerJobData parentData { get; protected set; }
+    public INTERVENTION_ABILITY abilityType { get; protected set; }
     public string name { get; protected set; }
 	public int cooldown { get; protected set; } //cooldown in ticks
     public Character assignedCharacter { get; protected set; }
@@ -18,6 +19,11 @@ public class PlayerJobAction {
 
     public void SetParentData(PlayerJobData data) {
         parentData = data;
+    }
+
+    public PlayerJobAction(INTERVENTION_ABILITY abilityType) {
+        this.abilityType = abilityType;
+        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.abilityType.ToString());
     }
 
     #region Virtuals

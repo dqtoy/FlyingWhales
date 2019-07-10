@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class RaiseDead : PlayerJobAction {
 
-    public RaiseDead() {
-        name = "Raise Dead";
+    public RaiseDead() : base(INTERVENTION_ABILITY.RAISE_DEAD) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

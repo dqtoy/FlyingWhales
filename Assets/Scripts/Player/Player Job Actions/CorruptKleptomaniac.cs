@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CorruptKleptomaniac : PlayerJobAction {
-    public CorruptKleptomaniac() {
-        name = "Inflict Kleptomania";
+
+    public CorruptKleptomaniac() : base(INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

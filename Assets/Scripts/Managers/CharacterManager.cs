@@ -61,7 +61,7 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<string, CharacterClass> demonClasses { get; private set; }
     public Dictionary<string, Dictionary<string, CharacterClass>> identifierClasses { get; private set; }
 
-    private static readonly string[] _sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
+    public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     private List<string> deadlySinsRotation = new List<string>();
 
     #region getters/setters
@@ -300,7 +300,7 @@ public class CharacterManager : MonoBehaviour {
     }
     public string GetDeadlySinsClassNameFromRotation() {
         if (deadlySinsRotation.Count == 0) {
-            deadlySinsRotation.AddRange(_sevenDeadlySinsClassNames);
+            deadlySinsRotation.AddRange(sevenDeadlySinsClassNames);
         }
         string nextClass = deadlySinsRotation[0];
         deadlySinsRotation.RemoveAt(0);
@@ -316,8 +316,8 @@ public class CharacterManager : MonoBehaviour {
         //throw new System.Exception("There are no classes with the identifier " + identifier);
     }
     public bool IsClassADeadlySin(string className) {
-        for (int i = 0; i < _sevenDeadlySinsClassNames.Length; i++) {
-            if(className == _sevenDeadlySinsClassNames[i]) {
+        for (int i = 0; i < sevenDeadlySinsClassNames.Length; i++) {
+            if(className == sevenDeadlySinsClassNames[i]) {
                 return true;
             }
         }

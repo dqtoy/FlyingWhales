@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Zap : PlayerJobAction {
-    public Zap() {
-        name = "Zap";
+
+    public Zap() : base(INTERVENTION_ABILITY.ZAP) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

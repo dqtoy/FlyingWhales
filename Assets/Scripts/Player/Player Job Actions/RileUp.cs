@@ -5,8 +5,7 @@ using UnityEngine;
 public class RileUp : PlayerJobAction {
 
     private Character _targetCharacter;
-    public RileUp() {
-        name = "Rile Up";
+    public RileUp() : base(INTERVENTION_ABILITY.RILE_UP) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

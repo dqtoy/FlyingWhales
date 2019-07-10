@@ -10,8 +10,9 @@ public class StartupManager : MonoBehaviour {
         DataConstructor.Instance.InitializeData();
         CombatManager.Instance.Initialize();
         //EncounterPartyManager.Instance.Initialize ();
-		MaterialManager.Instance.Initialize ();
-		ProductionManager.Instance.Initialize ();
+		MaterialManager.Instance.Initialize();
+		ProductionManager.Instance.Initialize();
+        PlayerManager.Instance.Initialize();
 		//TaskManager.Instance.Initialize ();
 
         LevelLoaderManager.UpdateLoadingInfo("Initializing World...");
@@ -22,7 +23,7 @@ public class StartupManager : MonoBehaviour {
             Debug.Log("Loading world from data...");
             this.mapGenerator.InitializeWorld(WorldConfigManager.Instance.loadedData);
         }
-        
+
         //if (SaveManager.Instance == null) {
         //    this.mapGenerator.InitializeWorld();
         //} else {

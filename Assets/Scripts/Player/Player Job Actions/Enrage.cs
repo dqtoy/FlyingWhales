@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Enrage : PlayerJobAction {
-    public Enrage() {
-        name = "Enrage";
+
+    public Enrage() : base(INTERVENTION_ABILITY.ENRAGE) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

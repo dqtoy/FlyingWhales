@@ -4,8 +4,8 @@ using System.Linq;
 using UnityEngine;
 
 public class Spook : PlayerJobAction {
-    public Spook() {
-        name = "Spook";
+
+    public Spook() : base(INTERVENTION_ABILITY.SPOOK) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

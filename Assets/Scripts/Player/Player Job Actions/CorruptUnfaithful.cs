@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CorruptUnfaithful : PlayerJobAction {
-    public CorruptUnfaithful() {
-        name = "Inflict Unfaithfulness";
+
+    public CorruptUnfaithful() : base(INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

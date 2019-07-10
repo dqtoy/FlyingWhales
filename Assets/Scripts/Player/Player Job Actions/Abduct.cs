@@ -6,8 +6,8 @@ public class Abduct : PlayerJobAction {
 
     private Character _targetCharacter;
     private List<Area> _abductAreas;
-    public Abduct() {
-        name = "Abduct";
+
+    public Abduct() : base(INTERVENTION_ABILITY.ABDUCT) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         _abductAreas = new List<Area>();

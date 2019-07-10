@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Disable : PlayerJobAction {
 
-    public Disable() {
-        name = "Disable";
+    public Disable() : base(INTERVENTION_ABILITY.DISABLE) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.TILE_OBJECT };
     }

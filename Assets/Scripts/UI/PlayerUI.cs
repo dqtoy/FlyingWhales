@@ -69,6 +69,12 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private AnimationCurve curve;
     [SerializeField] private Image combatGridAssignerIcon;
 
+    [Header("Minions")]
+    [SerializeField] private GameObject startingMinionPickerGO;
+    [SerializeField] private MinionCard startingMinionCard1;
+    [SerializeField] private MinionCard startingMinionCard2;
+    [SerializeField] private MinionCard startingMinionCard3;
+
     public GameObject electricEffectPrefab;
 
     private bool _isScrollingUp;
@@ -516,6 +522,32 @@ public class PlayerUI : MonoBehaviour {
         for (int i = 0; i < logHistoryItems.Length; i++) {
             logHistoryItems[i].gameObject.SetActive(false);
         }
+    }
+    #endregion
+
+    #region Minions
+    public void ShowStartingMinionPicker() {
+        startingMinionCard1.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+        startingMinionCard2.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+        startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+
+        startingMinionPickerGO.SetActive(true);
+    }
+    public void HideStartingMinionPicker() {
+        startingMinionPickerGO.SetActive(false);
+    }
+    public void Reroll1() {
+        startingMinionCard1.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+    }
+    public void Reroll2() {
+        startingMinionCard2.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+    }
+    public void Reroll3() {
+        startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+    }
+    public void OnClickStartGame() {
+        //TODO: add minions to minion list
+        HideStartingMinionPicker();
     }
     #endregion
 }

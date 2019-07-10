@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Destroy : PlayerJobAction {
 
-    public Destroy() {
-        name = "Destroy";
+    public Destroy() : base(INTERVENTION_ABILITY.DESTROY) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.TILE_OBJECT };
     }

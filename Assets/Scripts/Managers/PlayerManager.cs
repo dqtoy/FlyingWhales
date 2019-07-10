@@ -10,6 +10,7 @@ public class PlayerManager : MonoBehaviour {
     public bool isChoosingStartingTile = false;
     public Player player = null;
     public Character playerCharacter;
+    public INTERVENTION_ABILITY[] allInterventionAbilities;
 
     [SerializeField] private Sprite[] _playerAreaFloorSprites;
     [SerializeField] private Sprite[] _playerAreaDefaultStructureSprites;
@@ -41,7 +42,7 @@ public class PlayerManager : MonoBehaviour {
     }
 
     public void Initialize() {
-
+        allInterventionAbilities = (INTERVENTION_ABILITY[]) System.Enum.GetValues(typeof(INTERVENTION_ABILITY));
     }
     public void LoadStartingTile() {
         BaseLandmark portal = LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.DEMONIC_PORTAL);
@@ -68,8 +69,8 @@ public class PlayerManager : MonoBehaviour {
         player.CreatePlayerFaction();
         player.CreatePlayerArea(tile);
         //player.SetMaxMinions(9);
-        player.CreateInitialMinions();
-        player.PreAssignJobSlots();
+        //player.CreateInitialMinions();
+        //player.PreAssignJobSlots();
         LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
         Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnChooseStartingTile);
         Messenger.Broadcast(Signals.HIDE_POPUP_MESSAGE);
@@ -90,8 +91,8 @@ public class PlayerManager : MonoBehaviour {
             player.LoadPlayerArea(existingPlayerArea);
         }
         //player.SetMaxMinions(9);
-        player.CreateInitialMinions();
-        player.PreAssignJobSlots();
+        //player.CreateInitialMinions();
+        //player.PreAssignJobSlots();
         LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
         portal.SetIsBeingInspected(true);
         portal.SetHasBeenInspected(true);
@@ -101,10 +102,7 @@ public class PlayerManager : MonoBehaviour {
     }
 
     public void PurchaseTile(HexTile tile) {
-        if(player.lifestones > 0) {
-            player.AdjustLifestone(-1);
-            AddTileToPlayerArea(tile);
-        }
+        AddTileToPlayerArea(tile);
     }
     public void AddTileToPlayerArea(HexTile tile) {
         player.playerArea.AddTile(tile);
@@ -172,17 +170,57 @@ public class PlayerManager : MonoBehaviour {
     }
     #endregion
 
-    #region Minion
-    [ContextMenu("Create And Add New Minion")]
-    public void CreateMinionForTesting() {
-        Minion minion = CreateNewMinion("Pride");
-        player.AddMinion(minion);
-    }
-    public Minion CreateNewMinion(string className, int level = 1) {
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, RACE.HUMANS, GENDER.MALE,
-            player.playerFaction, player.playerArea), false);
-        minion.SetLevel(level);
-        return minion;
+    #region Intervention Abilities
+    public PlayerJobAction CreateNewInterventionAbility(INTERVENTION_ABILITY abilityType) {
+        switch (abilityType) {
+            case INTERVENTION_ABILITY.ABDUCT:
+                return new Abduct();
+            case INTERVENTION_ABILITY.ACCESS_MEMORIES:
+                return new AccessMemories();
+            case INTERVENTION_ABILITY.DESTROY:
+                return new Destroy();
+            case INTERVENTION_ABILITY.DISABLE:
+                return new Disable();
+            case INTERVENTION_ABILITY.ENRAGE:
+                return new Enrage();
+            case INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA:
+                return new CorruptKleptomaniac();
+            case INTERVENTION_ABILITY.INFLICT_LYCANTHROPY:
+                return new CorruptLycanthropy();
+            case INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS:
+                return new CorruptUnfaithful();
+            case INTERVENTION_ABILITY.INFLICT_VAMPIRISM:
+                return new CorruptVampiric();
+            case INTERVENTION_ABILITY.JOLT:
+                return new Jolt();
+            case INTERVENTION_ABILITY.PROVOKE:
+                return new Provoke();
+            case INTERVENTION_ABILITY.RAISE_DEAD:
+                return new RaiseDead();
+            case INTERVENTION_ABILITY.RILE_UP:
+                return new RileUp();
+            case INTERVENTION_ABILITY.SHARE_INTEL:
+                return new ShareIntel();
+            case INTERVENTION_ABILITY.SPOOK:
+                return new Spook();
+            case INTERVENTION_ABILITY.ZAP:
+                return new Zap();
+        }
+        return null;
     }
     #endregion
+
+    //#region Minion
+    //[ContextMenu("Create And Add New Minion")]
+    //public void CreateMinionForTesting() {
+    //    Minion minion = CreateNewMinion("Pride");
+    //    player.AddMinion(minion);
+    //}
+    //public Minion CreateNewMinion(string className, int level = 1) {
+    //    Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, RACE.HUMANS, GENDER.MALE,
+    //        player.playerFaction, player.playerArea), false);
+    //    minion.SetLevel(level);
+    //    return minion;
+    //}
+    //#endregion
 }

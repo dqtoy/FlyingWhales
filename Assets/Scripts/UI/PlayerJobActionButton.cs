@@ -83,26 +83,13 @@ public class PlayerJobActionButton : MonoBehaviour {
     public void ShowHoverText() {
         string message = string.Empty;
         string header = action.name + " ";
-        if (action is Track) {
-            message = "The Spy will keep track of every significant event happening to a target. A notification will be displayed " +
-                "for each event related to the target even when the target is not actively selected.";
-            header += "(Spy Action)";
-        } else if (action is Corrupt) {
-            message = "The Seducer will afflict the target with a negative Trait.";
-            header += "(Seducer Action)";
-        } else if (action is Recruit) {
-            message = "The Seducer will attempt to recruit a character to your side. This is only possible while the target is mentally vulnerable.";
-            header += "(Seducer Action)";
-        } else if (action is ShareIntel) {
+        if (action is ShareIntel) {
             message = "The Diplomat will reach out to a character and share a piece of information with them.";
             header += "(Diplomat Action)";
         } else if (action is RileUp) {
             message = "The Instigator will rile up a character and goad him into attacking people in a specified location. This action only works for beasts.";
             header += "(Instigator Action)";
-        } else if (action is Intervene) {
-            message = "The Debilitator will convince a character to drop his current plans.";
-            header += "(Debilitator Action)";
-        } else if (action is Provoke) {
+        }  else if (action is Provoke) {
             message = "The Instigator will provoke a character into attacking one of his/her enemies. This is more likely to succeed if he/she is in a bad mood.";
             header += "(Instigator Action)";
         } else if (action is Destroy) {

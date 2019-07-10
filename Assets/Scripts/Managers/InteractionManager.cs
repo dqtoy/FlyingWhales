@@ -280,23 +280,23 @@ public class InteractionManager : MonoBehaviour {
         }
         throw new System.Exception("There is no reward configuration with name " + rewardName);
     }
-    public void UnlockAllTokens() {
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-            Character currCharacter = CharacterManager.Instance.allCharacters[i];
-            if (!currCharacter.isDefender) {
-                PlayerManager.Instance.player.AddToken(currCharacter.characterToken);
-            }
-        }
-        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-            Area currArea = LandmarkManager.Instance.allAreas[i];
-            PlayerManager.Instance.player.AddToken(currArea.locationToken);
-            PlayerManager.Instance.player.AddToken(currArea.defenderToken);
-        }
-        for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-            Faction currFaction = FactionManager.Instance.allFactions[i];
-            PlayerManager.Instance.player.AddToken(currFaction.factionToken);
-        }
-    }
+    //public void UnlockAllTokens() {
+    //    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+    //        Character currCharacter = CharacterManager.Instance.allCharacters[i];
+    //        if (!currCharacter.isDefender) {
+    //            PlayerManager.Instance.player.AddToken(currCharacter.characterToken);
+    //        }
+    //    }
+    //    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+    //        Area currArea = LandmarkManager.Instance.allAreas[i];
+    //        PlayerManager.Instance.player.AddToken(currArea.locationToken);
+    //        PlayerManager.Instance.player.AddToken(currArea.defenderToken);
+    //    }
+    //    for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+    //        Faction currFaction = FactionManager.Instance.allFactions[i];
+    //        PlayerManager.Instance.player.AddToken(currFaction.factionToken);
+    //    }
+    //}
 
     #region Move To Save
     private bool CanCreateMoveToSave(Character character) {

@@ -52,8 +52,8 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.SetLoadingState(false);
         Messenger.Broadcast(Signals.GAME_LOADED);
         yield return null;
-        
 
+        PlayerUI.Instance.ShowStartingMinionPicker();
         //LevelLoaderManager.UpdateLoadingInfo("Generating Regions...");
         //yield return null;
         //st.Start();

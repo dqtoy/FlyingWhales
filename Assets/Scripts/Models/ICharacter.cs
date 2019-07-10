@@ -62,7 +62,7 @@ public interface ICharacter {
     Party currentParty { get; }
     Dictionary<STAT, float> buffs { get; }
     PlayerCharacterItem playerCharacterItem { get; }
-    CharacterToken characterToken { get; }
+    //CharacterToken characterToken { get; }
 
     //functions
     void SetName(string name);

@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class Provoke : PlayerJobAction {
 
-    public Provoke() {
-        name = "Provoke";
+    public Provoke() : base(INTERVENTION_ABILITY.PROVOKE) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

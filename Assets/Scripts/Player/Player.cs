@@ -8,22 +8,20 @@ public class Player : ILeader {
 
     private const int MAX_IMPS = 5;
     private const int MAX_INTEL = 3;
+    public const int MAX_MINIONS = 5;
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
     public int maxImps { get; private set; }
 
-    private int _lifestones;
-    private float _currentLifestoneChance;
     private BaseLandmark _demonicPortal;
-    private List<Token> _tokens;
-    private List<Minion> _minions;
     private Dictionary<CURRENCY, int> _currencies;
 
     public Dictionary<JOB, PlayerJobData> roleSlots { get; private set; }
     public CombatGrid attackGrid { get; private set; }
     public CombatGrid defenseGrid { get; private set; }
     public List<Intel> allIntel { get; private set; }
+    public Minion[] minions { get; private set; }
 
     #region getters/setters
     public int id {
@@ -31,12 +29,6 @@ public class Player : ILeader {
     }
     public string name {
         get { return "Player"; }
-    }
-    public int lifestones {
-        get { return _lifestones; }
-    }
-    public float currentLifestoneChance {
-        get { return _currentLifestoneChance; }
     }
     public RACE race {
         get { return RACE.HUMANS; }
@@ -50,14 +42,8 @@ public class Player : ILeader {
     public Area homeArea {
         get { return playerArea; }
     }
-    public List<Token> tokens {
-        get { return _tokens; }
-    }
     public Dictionary<CURRENCY, int> currencies {
         get { return _currencies; }
-    }
-    public List<Minion> minions {
-        get { return _minions; }
     }
     public List<Character> allOwnedCharacters {
         get { return minions.Select(x => x.character).ToList(); }
@@ -68,16 +54,15 @@ public class Player : ILeader {
 
     public Player() {
         playerArea = null;
-        _tokens = new List<Token>();
         attackGrid = new CombatGrid();
         defenseGrid = new CombatGrid();
         attackGrid.Initialize();
         defenseGrid.Initialize();
         maxImps = 5;
         allIntel = new List<Intel>();
-        SetCurrentLifestoneChance(25f);
-        ConstructCurrencies();
-        ConstructRoleSlots();
+        minions = new Minion[MAX_MINIONS];
+        //ConstructCurrencies();
+        //ConstructRoleSlots();
         AddListeners();
     }
 
@@ -167,105 +152,79 @@ public class Player : ILeader {
     }
     #endregion
 
-    #region Token
-    public void AddToken(Token token) {
-        if (!_tokens.Contains(token)) {
-            if (token is CharacterToken && (token as CharacterToken).character.minion != null) {
-
-            } else {
-                _tokens.Add(token);
-                Debug.Log("Added token " + token.ToString());
-                Messenger.Broadcast(Signals.TOKEN_ADDED, token);
-            }
-            token.SetObtainedState(true);
-            if (token is CharacterToken) {
-                Messenger.Broadcast(Signals.CHARACTER_TOKEN_ADDED, token as CharacterToken);
-            } 
-            //else if (token is SpecialToken) {
-            //    (token as SpecialToken).AdjustQuantity(-1);
-            //}
-        }
-    }
-    public bool RemoveToken(Token token) {
-        if (_tokens.Remove(token)) {
-            token.SetObtainedState(false);
-            Debug.Log("Removed token " + token.ToString());
-            return true;
-        }
-        return false;
-    }
-    public Token GetToken(Token token) {
-        for (int i = 0; i < _tokens.Count; i++) {
-            if(_tokens[i] == token) {
-                return _tokens[i];
-            }
-        }
-        return null;
-    }
-    public bool HasSpecialToken(string tokenName) {
-        for (int i = 0; i < _tokens.Count; i++) {
-            if (_tokens[i].tokenName == tokenName) {
-                return true;
-            }
-        }
-        return false;
-    }
-    #endregion
-
-    #region Lifestone
-    public void DecreaseLifestoneChance() {
-        if(_currentLifestoneChance > 2f) {
-            float decreaseRate = 5f;
-            if(_currentLifestoneChance <= 15f) {
-                decreaseRate = 1f;
-            }
-            _currentLifestoneChance -= decreaseRate;
-        }
-    }
-    public void SetCurrentLifestoneChance(float amount) {
-        _currentLifestoneChance = amount;
-    }
-    public void SetLifestone(int amount) {
-        _lifestones = amount;
-    }
-    public void AdjustLifestone(int amount) {
-        _lifestones += amount;
-        Debug.Log("Adjusted player lifestones by: " + amount + ". New total is " + _lifestones);
-    }
-    #endregion
-
     #region Minions
-    public void CreateInitialMinions() {
-        _minions = new List<Minion>();
-        for (int i = 0; i < 20; i++) {
-            AddMinion(CreateNewMinion(RACE.DEMON));
-        }
-        //AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
-        //AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
-        //AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
-        //AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
-        //AddMinion(CreateNewMinion(CharacterManager.Instance.GetRandomDeadlySinsClassName(), RACE.DEMON, false));
-
-        //UpdateMinions();
-    }
     public Minion CreateNewMinion(Character character) {
-        return new Minion(character, true);
+        Minion minion = new Minion(character, true);
+        InitializeMinion(minion);
+        return minion;
     }
     public Minion CreateNewMinion(RACE race) {
         Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, race, GENDER.MALE, playerFaction, playerArea, null), false);
         //minion.character.CreateMarker();
+        InitializeMinion(minion);
         return minion;
     }
     public Minion CreateNewMinion(string className, RACE race) {
         Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea), false);
+        InitializeMinion(minion);
         return minion;
     }
+    public Minion CreateNewMinionRandomClass(RACE race) {
+        string className = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea), false);
+        InitializeMinion(minion);
+        return minion;
+    }
+    public void InitializeMinion(Minion minion) {
+        minion.SetUnlockedInterventionSlots(3);
+        minion.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
+        minion.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
+        minion.SetCombatAbility(new CombatAbility()); //TODO: variations
+        //TODO: Add one positive and one negative trait
+    }
+
     public void AddMinion(Minion minion) {
-        minion.SetIndexDefaultSort(_minions.Count);
-        _minions.Add(minion);
+        int currentMinionCount = GetCurrentMinionCount();
+        if(currentMinionCount == minions.Length) {
+            //Broadcast minion is full, must be received by a UI that will pop up and let the player whether it will replace or be discarded
+        } else {
+            minion.SetIndexDefaultSort(currentMinionCount);
+            minions[currentMinionCount] = minion;
+        }
     }
     public void RemoveMinion(Minion minion) {
-        _minions.Remove(minion);
+        for (int i = 0; i < minions.Length; i++) {
+            if (minions[i] != null && minions[i] == minion) {
+                minions[i] = null;
+                break;
+            }
+        }
+        RearrangeMinions();
+    }
+    public int GetCurrentMinionCount() {
+        int count = 0;
+        for (int i = 0; i < minions.Length; i++) {
+            if(minions[i] != null) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public void RearrangeMinions() {
+        List<int> minionIndexesThatAreNotNull = new List<int>();
+        for (int i = 0; i < minions.Length; i++) {
+            if(minions[i] != null) {
+                minionIndexesThatAreNotNull.Add(i);
+            }
+        }
+        for (int i = 0; i < minions.Length; i++) {
+            if(i < minionIndexesThatAreNotNull.Count) {
+                minions[i] = minions[minionIndexesThatAreNotNull[i]];
+            } else {
+                minions[i] = null;
+            }
+        }
+        //Update UI
     }
     #endregion
 
@@ -486,27 +445,27 @@ public class Player : ILeader {
     public bool HasCharacterAssignedToJob(JOB job) {
         return roleSlots[job].assignedCharacter != null;
     }
-    private List<Character> GetValidCharactersForJob(JOB job) {
-        List<Character> valid = new List<Character>();
-        for (int i = 0; i < minions.Count; i++) {
-            Character currMinion = minions[i].character;
-            if (CanAssignCharacterToJob(job, currMinion) && GetCharactersCurrentJob(currMinion) == JOB.NONE) {
-                valid.Add(currMinion);
-            }
-        }
-        return valid;
-    }
-    public void PreAssignJobSlots() {
-        foreach (KeyValuePair<JOB, PlayerJobData> kvp in roleSlots) {
-            List<Character> validCharacters = GetValidCharactersForJob(kvp.Key);
-            if (validCharacters.Count > 0) {
-                Character chosenCharacter = validCharacters[UnityEngine.Random.Range(0, validCharacters.Count)];
-                AssignCharacterToJob(kvp.Key, chosenCharacter);
-            } else {
-                Debug.LogWarning("Could not pre assign any character to job: " + kvp.Key.ToString());
-            }
-        }
-    }
+    //private List<Character> GetValidCharactersForJob(JOB job) {
+    //    List<Character> valid = new List<Character>();
+    //    for (int i = 0; i < minions.Count; i++) {
+    //        Character currMinion = minions[i].character;
+    //        if (CanAssignCharacterToJob(job, currMinion) && GetCharactersCurrentJob(currMinion) == JOB.NONE) {
+    //            valid.Add(currMinion);
+    //        }
+    //    }
+    //    return valid;
+    //}
+    //public void PreAssignJobSlots() {
+    //    foreach (KeyValuePair<JOB, PlayerJobData> kvp in roleSlots) {
+    //        List<Character> validCharacters = GetValidCharactersForJob(kvp.Key);
+    //        if (validCharacters.Count > 0) {
+    //            Character chosenCharacter = validCharacters[UnityEngine.Random.Range(0, validCharacters.Count)];
+    //            AssignCharacterToJob(kvp.Key, chosenCharacter);
+    //        } else {
+    //            Debug.LogWarning("Could not pre assign any character to job: " + kvp.Key.ToString());
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Role Actions
@@ -700,11 +659,6 @@ public class Player : ILeader {
             }
         } else if (onlyClickedCharacter && UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
             return true;
-        } else if (roleSlots[JOB.SPY].activeAction is Track) {
-            Track track = roleSlots[JOB.SPY].activeAction as Track;
-            if (track.target == character) {
-                return true;
-            }
         }
         return false;
     }

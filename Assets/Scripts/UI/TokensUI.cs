@@ -87,7 +87,7 @@ public class TokensUI : UIMenu {
         GameObject newEntryGO = UIManager.Instance.InstantiateUIObject(characterEntryPrefab.name, tokensScrollView.content);
         newEntryGO.transform.localScale = Vector3.one;
         CharacterTokenItem newEntry = newEntryGO.GetComponent<CharacterTokenItem>();
-        newEntry.SetCharacter(character.characterToken);
+        //newEntry.SetCharacter(character.characterToken);
         newEntry.Initialize();
         newEntry.gameObject.SetActive(false);
         characterEntries.Add(character, newEntry);

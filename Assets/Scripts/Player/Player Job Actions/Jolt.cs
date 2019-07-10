@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Jolt : PlayerJobAction {
-    public Jolt() {
-        name = "Jolt";
+
+    public Jolt() : base(INTERVENTION_ABILITY.JOLT) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CorruptVampiric : PlayerJobAction {
-    public CorruptVampiric() {
-        name = "Inflict Vampirism";
+
+    public CorruptVampiric() : base(INTERVENTION_ABILITY.INFLICT_VAMPIRISM) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

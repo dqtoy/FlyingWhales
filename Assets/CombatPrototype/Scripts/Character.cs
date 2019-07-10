@@ -89,7 +89,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Dwelling homeStructure { get; protected set; }
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
-    public CharacterToken characterToken { get; private set; }
+    //public CharacterToken characterToken { get; private set; }
     public Dictionary<AlterEgoData, CharacterRelationshipData> relationships {
         get {
             return currentAlterEgo?.relationships ?? null;
@@ -536,7 +536,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
         combatHistory = new Dictionary<int, Combat>();
         currentInteractionTypes = new List<INTERACTION_TYPE>();
-        characterToken = new CharacterToken(this);
+        //characterToken = new CharacterToken(this);
         poiGoapActions = new List<INTERACTION_TYPE>();
         allGoapPlans = new List<GoapPlan>();
         hasAssaultPlan = false;
@@ -1918,9 +1918,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //    }
         //}
         marker.collisionTrigger.SetMainColliderState(true);
-        if (this.minion != null) {
-            this.minion.SetEnabledState(true); //reenable this minion, since it could've been disabled because it was part of another party
-        }
+        //if (this.minion != null) {
+        //    this.minion.SetEnabledState(true); //reenable this minion, since it could've been disabled because it was part of another party
+        //}
     }
     public void OnAddedToParty() {
         if (currentParty.id != ownParty.id) {
@@ -4255,9 +4255,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this);
         PlayerManager.Instance.player.AddMinion(newMinion);
 
-        if (!characterToken.isObtainedByPlayer) {
-            PlayerManager.Instance.player.AddToken(characterToken);
-        }
+        //if (!characterToken.isObtainedByPlayer) {
+        //    PlayerManager.Instance.player.AddToken(characterToken);
+        //}
     }
     #endregion
 

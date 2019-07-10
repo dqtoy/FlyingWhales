@@ -4,16 +4,23 @@ using UnityEngine;
 using System;
 
 public class Minion {
+    public const int MAX_INTERVENTION_ABILITY_SLOT = 5;
+
     public Character character { get; private set; }
     public int exp { get; private set; }
     public int indexDefaultSort { get; private set; }
+    public int unlockedInterventionSlots { get; private set; }
     //public bool isEnabled { get; private set; }
+    public PlayerJobAction[] interventionAbilities { get; private set; }
+    public CombatAbility combatAbility { get; private set; }
 
     public Minion(Character character, bool keepData) {
         this.character = character;
         this.exp = 0;
+        this.interventionAbilities = new PlayerJobAction[MAX_INTERVENTION_ABILITY_SLOT];
+        SetUnlockedInterventionSlots(0);
         character.SetMinion(this);
-        character.characterToken.SetObtainedState(true);
+        //character.characterToken.SetObtainedState(true);
         character.ownParty.icon.SetVisualState(true);
 
         if (!keepData) {
@@ -67,4 +74,43 @@ public class Minion {
     public void SetIndexDefaultSort(int index) {
         indexDefaultSort = index;
     }
+
+    #region Intervention Abilities
+    public void SetUnlockedInterventionSlots(int amount) {
+        unlockedInterventionSlots = amount;
+        unlockedInterventionSlots = Mathf.Clamp(unlockedInterventionSlots, 0, MAX_INTERVENTION_ABILITY_SLOT);
+    }
+    public void AdjustUnlockedInterventionSlots(int amount) {
+        unlockedInterventionSlots += amount;
+        unlockedInterventionSlots = Mathf.Clamp(unlockedInterventionSlots, 0, MAX_INTERVENTION_ABILITY_SLOT);
+    }
+    public void AddInterventionAbility(PlayerJobAction ability) {
+        int currentInterventionAbilityCount = GetCurrentInterventionAbilityCount();
+        if(currentInterventionAbilityCount < unlockedInterventionSlots) {
+            for (int i = 0; i < interventionAbilities.Length; i++) {
+                if (interventionAbilities[i] == null) {
+                    interventionAbilities[i] = ability;
+                    break;
+                }
+            }
+        } else {
+            //Broadcast intervention ability is full, must open UI whether player wants to replace ability or discard it
+        }
+    }
+    public int GetCurrentInterventionAbilityCount() {
+        int count = 0;
+        for (int i = 0; i < interventionAbilities.Length; i++) {
+            if (interventionAbilities[i] != null) {
+                count++;
+            }
+        }
+        return count;
+    }
+    #endregion
+
+    #region Combat Ability
+    public void SetCombatAbility(CombatAbility combatAbility) {
+        this.combatAbility = combatAbility;
+    }
+    #endregion
 }

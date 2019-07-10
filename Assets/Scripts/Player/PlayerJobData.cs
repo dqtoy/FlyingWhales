@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerJobData {
 
     public JOB jobType { get; private set; }
-	public Character assignedCharacter { get; private set; }
+	public Character assignedCharacter { get; private set; } //this is a minion
     public List<PlayerJobAction> jobActions { get; private set; }
     public PlayerJobAction activeAction { get; private set; }
     public bool isSlotLocked { get; private set; } //this says whether the job slot can be assigned to.

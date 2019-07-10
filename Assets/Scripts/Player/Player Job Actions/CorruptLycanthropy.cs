@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CorruptLycanthropy : PlayerJobAction {
-    public CorruptLycanthropy() {
-        name = "Inflict Lycanthropy";
+
+    public CorruptLycanthropy() : base(INTERVENTION_ABILITY.INFLICT_LYCANTHROPY) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

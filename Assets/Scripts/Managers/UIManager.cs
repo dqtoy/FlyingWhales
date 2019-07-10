@@ -786,17 +786,9 @@ public class UIManager : MonoBehaviour {
             landmarkInfoUI.currentlyShowingLandmark.tileLocation.SetCorruption(true, landmarkInfoUI.currentlyShowingLandmark);
         }
     }
-    public void AddLifestonesToWorld() {
-        PlayerManager.Instance.AdjustTotalLifestones(10);
-        PlayerUI.Instance.UpdateUI();
-    }
-    public void AddLifestonesToPlayer() {
-        PlayerManager.Instance.player.AdjustLifestone(10);
-        PlayerUI.Instance.UpdateUI();
-    }
-    public void UnlockAllTokens() {
-        InteractionManager.Instance.UnlockAllTokens();
-    }
+    //public void UnlockAllTokens() {
+    //    InteractionManager.Instance.UnlockAllTokens();
+    //}
     public void SetUIState(bool state) {
         //Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
         //for (int i = 0; i < children.Length; i++) {
@@ -1298,23 +1290,6 @@ public class UIManager : MonoBehaviour {
     }
     public void OnClickClosePlayerPicker() {
         HidePlayerPicker();
-    }
-    public void PopulatePlayerTokensInPicker() {
-        List<Token> tokens = PlayerManager.Instance.player.tokens;
-        int length = tokens.Count;
-        if (currentActivePlayerPickerButtons.Count > tokens.Count) {
-            length = currentActivePlayerPickerButtons.Count;
-        }
-        for (int i = 0; i < length; i++) {
-            if (i >= tokens.Count) {
-                currentActivePlayerPickerButtons[i].gameObject.SetActive(false);
-            } else if (i >= currentActivePlayerPickerButtons.Count) {
-                //CreatePlayerPickerButton(intels[i]);
-            } else {
-                currentActivePlayerPickerButtons[i].gameObject.SetActive(true);
-                //currentActivePlayerPickerButtons[i].SetPlayerPicker(intels[i]);
-            }
-        }
     }
     //public void PopulateLandmarkItemsInPicker() {
     //    BaseLandmark landmark = PlayerManager.Instance.player.currentTargetinteractable;
