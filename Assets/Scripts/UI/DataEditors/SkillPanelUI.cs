@@ -203,7 +203,7 @@ public class SkillPanelUI : MonoBehaviour {
             allSkills.Add(Path.GetFileNameWithoutExtension(file));
         }
 
-        ClassPanelUI.Instance.UpdateSkillOptions();
+        //ClassPanelUI.Instance.UpdateSkillOptions();
         MonsterPanelUI.Instance.UpdateSkillList();
     }
     #endregion

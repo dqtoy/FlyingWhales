@@ -328,9 +328,9 @@ public class CharacterPanelUI : MonoBehaviour {
             _hp = _singleHP;
         }
     }
-    private void UpdateSkills(CharacterClass characterClass) {
-        _skillName = characterClass.skillName;
-    }
+    //private void UpdateSkills(CharacterClass characterClass) {
+    //    _skillName = characterClass.skillName;
+    //}
     //private void UpdateEquipment(CharacterClass characterClass) {
     //    if(characterClass.weaponTierNames != null && characterClass.weaponTierNames.Count > 0) {
     //        _weaponName = characterClass.weaponTierNames[0];
@@ -435,7 +435,7 @@ public class CharacterPanelUI : MonoBehaviour {
         AllocateStats(race);
         LevelUp(level, characterClass, race);
         ArmyModifier(toggleArmy.isOn);
-        UpdateSkills(characterClass);
+        //UpdateSkills(characterClass);
         //UpdateEquipment(characterClass);
         UpdateUI();
     }
@@ -453,7 +453,7 @@ public class CharacterPanelUI : MonoBehaviour {
         AllocateStats(race);
         LevelUp(level, characterClass, race);
         ArmyModifier(toggleArmy.isOn);
-        UpdateSkills(characterClass);
+        //UpdateSkills(characterClass);
         //UpdateEquipment(characterClass);
         UpdateUI();
     }

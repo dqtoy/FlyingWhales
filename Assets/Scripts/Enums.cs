@@ -476,6 +476,13 @@ public enum DEFEND_TYPE {
     BLOCK,
 	NONE,
 }
+public enum DAMAGE_TYPE {
+    NONE,
+    SLASH,
+    PIERCE,
+    MAGIC,
+    BASH,
+}
 public enum STATUS_EFFECT {
     NONE,
 	INJURED,

@@ -13,7 +13,7 @@ public class CharacterClass : EntityComponent {
     [SerializeField] private int _baseHP;
     [SerializeField] private int _baseAttackSpeed; //The lower the amount the faster the attack rate
     [SerializeField] private float _attackRange;
-    [SerializeField] private string _skillName;
+    //[SerializeField] private string _skillName;
 
     [SerializeField] private string[] _traitNames;
     [SerializeField] private string _identifier;
@@ -24,6 +24,7 @@ public class CharacterClass : EntityComponent {
     [SerializeField] private COMBAT_TARGET _combatTarget;
     [SerializeField] private ATTACK_TYPE _attackType;
     [SerializeField] private RANGE_TYPE _rangeType;
+    [SerializeField] private DAMAGE_TYPE _damageType;
     [SerializeField] private COMBAT_OCCUPIED_TILE _occupiedTileType;
     [SerializeField] private CurrenyCost _recruitmentCost;
 
@@ -85,12 +86,15 @@ public class CharacterClass : EntityComponent {
     public RANGE_TYPE rangeType {
         get { return _rangeType; }
     }
+    public DAMAGE_TYPE damageType {
+        get { return _damageType; }
+    }
     public COMBAT_OCCUPIED_TILE occupiedTileType {
         get { return _occupiedTileType; }
     }
-    public string skillName {
-        get { return _skillName; }
-    }
+    //public string skillName {
+    //    get { return _skillName; }
+    //}
     public CurrenyCost recruitmentCost {
         get { return _recruitmentCost; }
     }
@@ -120,9 +124,10 @@ public class CharacterClass : EntityComponent {
         newClass._combatTarget = this._combatTarget;
         newClass._attackType = this._attackType;
         newClass._rangeType = this._rangeType;
+        newClass._damageType = this._damageType;
         newClass._occupiedTileType = this._occupiedTileType;
         //newClass._roleType = this._roleType;
-        newClass._skillName = this._skillName;
+        //newClass._skillName = this._skillName;
         newClass._skill = this._skill; //.CreateNewCopy()
         newClass._traitNames = this._traitNames;
         newClass._jobType = this._jobType;
@@ -143,7 +148,7 @@ public class CharacterClass : EntityComponent {
         //this._dodgeRate = classComponent.dodgeRate;
         //this._parryRate = classComponent.parryRate;
         //this._blockRate = classComponent.blockRate;
-        this._skillName = classComponent.skill.name;
+        //this._skillName = classComponent.skill.name;
     }
 
     public void SetDataFromClassPanelUI() {
@@ -162,9 +167,10 @@ public class CharacterClass : EntityComponent {
         this._combatTarget = (COMBAT_TARGET)System.Enum.Parse(typeof(COMBAT_TARGET), ClassPanelUI.Instance.combatTargetOptions.options[ClassPanelUI.Instance.combatTargetOptions.value].text);
         this._attackType = (ATTACK_TYPE) System.Enum.Parse(typeof(ATTACK_TYPE), ClassPanelUI.Instance.attackTypeOptions.options[ClassPanelUI.Instance.attackTypeOptions.value].text);
         this._rangeType = (RANGE_TYPE) System.Enum.Parse(typeof(RANGE_TYPE), ClassPanelUI.Instance.rangeTypeOptions.options[ClassPanelUI.Instance.rangeTypeOptions.value].text);
+        this._damageType = (DAMAGE_TYPE) System.Enum.Parse(typeof(DAMAGE_TYPE), ClassPanelUI.Instance.damageTypeOptions.options[ClassPanelUI.Instance.damageTypeOptions.value].text);
         this._occupiedTileType = (COMBAT_OCCUPIED_TILE) System.Enum.Parse(typeof(COMBAT_OCCUPIED_TILE), ClassPanelUI.Instance.occupiedTileOptions.options[ClassPanelUI.Instance.occupiedTileOptions.value].text);
         //this._roleType = (CHARACTER_ROLE) System.Enum.Parse(typeof(CHARACTER_ROLE), ClassPanelUI.Instance.roleOptions.options[ClassPanelUI.Instance.roleOptions.value].text);
-        this._skillName = ClassPanelUI.Instance.skillOptions.options[ClassPanelUI.Instance.skillOptions.value].text;
+        //this._skillName = ClassPanelUI.Instance.skillOptions.options[ClassPanelUI.Instance.skillOptions.value].text;
         this._traitNames = ClassPanelUI.Instance.traitNames.ToArray();
         this._jobType = (JOB) System.Enum.Parse(typeof(JOB), ClassPanelUI.Instance.jobTypeOptions.options[ClassPanelUI.Instance.jobTypeOptions.value].text);
         this._recruitmentCost  = new CurrenyCost {
@@ -173,10 +179,10 @@ public class CharacterClass : EntityComponent {
         };
     }
 
-    public void ConstructData() {
-        ConstructSkills();
-    }
-    private void ConstructSkills() {
-        _skill = SkillManager.Instance.allSkills[_skillName];
-    }
+    //public void ConstructData() {
+    //    ConstructSkills();
+    //}
+    //private void ConstructSkills() {
+    //    _skill = SkillManager.Instance.allSkills[_skillName];
+    //}
 }
