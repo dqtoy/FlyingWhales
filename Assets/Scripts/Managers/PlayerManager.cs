@@ -39,10 +39,6 @@ public class PlayerManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
     }
-
-    public void Initialize() {
-
-    }
     public void LoadStartingTile() {
         BaseLandmark portal = LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.DEMONIC_PORTAL);
         if (portal == null) {
@@ -99,6 +95,22 @@ public class PlayerManager : MonoBehaviour {
         UIManager.Instance.SetTimeControlsState(true);
         PlayerUI.Instance.UpdateUI();
     }
+    public void InitializePlayer(BaseLandmark portal) {
+        player = new Player();
+        PlayerUI.Instance.Initialize();
+        player.CreatePlayerFaction();
+        Area existingPlayerArea = LandmarkManager.Instance.GetAreaByName("Portal");
+        if (existingPlayerArea == null) {
+            player.CreatePlayerArea(portal);
+        } else {
+            player.LoadPlayerArea(existingPlayerArea);
+        }
+        LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
+        portal.SetIsBeingInspected(true);
+        portal.SetHasBeenInspected(true);
+        PlayerUI.Instance.UpdateUI();
+    }
+
 
     public void PurchaseTile(HexTile tile) {
         if(player.lifestones > 0) {

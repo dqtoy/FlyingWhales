@@ -29,7 +29,7 @@ public class LandmarkManager : MonoBehaviour {
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
 
     public RaceClassListDictionary defaultRaceDefenders;
-    public StringSpriteDictionary locationPortraits; //NOTE: Move this to world creation when time permits.
+    public AreaTypeSpriteDictionary locationPortraits; //NOTE: Move this to world creation when time permits.
 
     [Header("Inner Structures")]
     [SerializeField] private GameObject innerStructurePrefab;
@@ -113,12 +113,6 @@ public class LandmarkManager : MonoBehaviour {
             newLandmark.tileLocation.areaOfTile.DetermineIfTileIsExposed(newLandmark.tileLocation);
         }
 #endif
-        if (saveData.items != null) {
-            for (int i = 0; i < saveData.items.Count; i++) {
-                string currItemName = saveData.items[i];
-                newLandmark.AddItem(ItemManager.Instance.CreateNewItemInstance(currItemName));
-            }
-        }
         return newLandmark;
     }
     public void DestroyLandmarkOnTile(HexTile tile) {
@@ -142,6 +136,79 @@ public class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Landmark Generation
+    public void GenerateSettlements(IntRange settlementRange, Region[] regions, IntRange citizenRange, out BaseLandmark portal) {
+        //place portal first
+        Region chosenPlayerRegion = regions[Random.Range(0, regions.Length)];
+        List<HexTile> playerTileChoices = chosenPlayerRegion.GetValidTilesForLandmarks();
+        HexTile chosenTile = playerTileChoices[Random.Range(0, playerTileChoices.Count)];
+        Area playerArea = CreateNewArea(chosenTile, AREA_TYPE.DEMONIC_INTRUSION);
+        playerArea.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
+        portal = CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.DEMONIC_PORTAL);
+
+        //order regions based on distance from the player portal
+        List<Region> orderedRegions = new List<Region>(regions);
+        orderedRegions.OrderBy(x => Vector2.Distance(chosenPlayerRegion.coreTile.transform.position, x.coreTile.transform.position));
+
+        //separate regions based on their distance from the player area
+        List<Region> nearRegions = new List<Region>(); //regions that are near the player area
+        List<Region> farRegions = new List<Region>(); //regions that are far from the player area
+        int halfRegionCount = regions.Length / 2;
+        for (int i = 0; i < orderedRegions.Count; i++) {
+            Region currRegion = orderedRegions[i];
+            if (i < halfRegionCount) {
+                //near region
+                nearRegions.Add(currRegion);
+            } else {
+                farRegions.Add(currRegion);
+            }
+        }
+
+        int settlementCount = settlementRange.Random();
+        Debug.Log("Will generate " + settlementCount.ToString() + " settlements");
+        AREA_TYPE[] validSettlementTypes = new AREA_TYPE[] { AREA_TYPE.HUMAN_SETTLEMENT, AREA_TYPE.ELVEN_SETTLEMENT };
+        for (int i = 0; i < settlementCount; i++) {
+            AREA_TYPE chosenSettlementType = validSettlementTypes[Random.Range(0, validSettlementTypes.Length)];
+            int citizenCount = citizenRange.Random();
+            List<Region> regionChoices;
+            //Settlements with fewer inhabitants are spawned near the portal, while stronger, more populated settlements are spawned further away. 
+            if (citizenRange.IsNearUpperBound(citizenCount)) {
+                //citizen count is more than half of the range. Place settlement at a far away region
+                regionChoices = farRegions.Where(x => x.GetValidTilesForLandmarks().Count > 0).ToList();
+                if (regionChoices.Count == 0) { //if there are no valid far regions, place the landmark at a near region instead
+                    regionChoices = nearRegions.Where(x => x.GetValidTilesForLandmarks().Count > 0).ToList();
+                }
+            } else {
+                regionChoices = nearRegions.Where(x => x.GetValidTilesForLandmarks().Count > 0).ToList();
+                if (regionChoices.Count == 0) { //if there are no valid near regions, place the landmark at a far region instead
+                    regionChoices = farRegions.Where(x => x.GetValidTilesForLandmarks().Count > 0).ToList();
+                }
+            }
+
+            if (regionChoices.Count == 0) {
+                throw new System.Exception("There are no valid regions to place a settlement!");
+            }
+            Region chosenRegion = regionChoices[Random.Range(0, regionChoices.Count)];
+            List<HexTile> tileChoices = chosenRegion.GetValidTilesForLandmarks();
+            HexTile chosenRegionTile = tileChoices[Random.Range(0, tileChoices.Count)];
+            Area newArea = CreateNewArea(chosenRegionTile, chosenSettlementType);
+            BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenRegionTile, LANDMARK_TYPE.PALACE);
+            Faction faction = FactionManager.Instance.CreateNewFaction();
+            if (chosenSettlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
+                faction.SetInitialFactionLeaderClass("Queen");
+                faction.SetInitialFactionLeaderGender(GENDER.FEMALE);
+                faction.SetRace(RACE.ELVES);
+            } else if (chosenSettlementType == AREA_TYPE.HUMAN_SETTLEMENT) {
+                faction.SetInitialFactionLeaderClass("King");
+                faction.SetInitialFactionLeaderGender(GENDER.MALE);
+                faction.SetRace(RACE.HUMANS);
+            }
+            OwnArea(faction, faction.race, newArea);
+            newArea.GenerateStructures(citizenCount);
+            GenerateAreaMap(newArea);
+            faction.GenerateStartingCitizens(9, 7, citizenCount);
+        }
+        FactionManager.Instance.CreateNeutralFaction();
+    }
     public LandmarkData GetLandmarkData(LANDMARK_TYPE landmarkType) {
         //for (int i = 0; i < landmarkData.Count; i++) {
         //    LandmarkData currData = landmarkData[i];
@@ -270,7 +337,7 @@ public class LandmarkManager : MonoBehaviour {
 #endif
 #if !WORLD_CREATION_TOOL
                         if (owner.isActive) {
-                            OwnArea(owner, owner.raceType, newArea);
+                            OwnArea(owner, owner.race, newArea);
                         }
                         else {
                             Faction neutralFaction = FactionManager.Instance.neutralFaction;
@@ -308,8 +375,8 @@ public class LandmarkManager : MonoBehaviour {
         } else {
             newArea.AddTile(tiles);
         }
-        if (locationPortraits.ContainsKey(newArea.name)) {
-            newArea.SetLocationPortrait(locationPortraits[newArea.name]);
+        if (locationPortraits.ContainsKey(newArea.areaType)) {
+            newArea.SetLocationPortrait(locationPortraits[newArea.areaType]);
         }
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);
@@ -321,22 +388,25 @@ public class LandmarkManager : MonoBehaviour {
     }
     public Area CreateNewArea(AreaSaveData data) {
         Area newArea = new Area(data);
-        if (locationPortraits.ContainsKey(newArea.name)) {
-            newArea.SetLocationPortrait(locationPortraits[newArea.name]);
+        if (locationPortraits.ContainsKey(newArea.areaType)) {
+            newArea.SetLocationPortrait(locationPortraits[newArea.areaType]);
         }
 #if !WORLD_CREATION_TOOL
-        GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
-        AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
-        areaMap.Initialize(newArea);
-        newArea.SetAreaMap(areaMap);
-        newArea.PlaceTileObjects();
-        areaMap.GenerateDetails();
-        areaMap.RotateTiles();
-        InteriorMapManager.Instance.OnCreateAreaMap(areaMap);
+        GenerateAreaMap(newArea);
 #endif
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);
         return newArea;
+    }
+    public void GenerateAreaMap(Area area) {
+        GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
+        AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
+        areaMap.Initialize(area);
+        area.SetAreaMap(areaMap);
+        area.PlaceTileObjects();
+        areaMap.GenerateDetails();
+        areaMap.RotateTiles();
+        InteriorMapManager.Instance.OnCreateAreaMap(areaMap);
     }
     public Area GetAreaByID(int id) {
         for (int i = 0; i < allAreas.Count; i++) {
@@ -450,4 +520,90 @@ public class LandmarkManager : MonoBehaviour {
         return createdStructure;
     }
     #endregion
+
+    #region Regions
+    public void DivideToRegions(List<HexTile> tiles, int regionCount, int mapSize, out Region[] generatedRegions) {
+        List<HexTile> regionCoreTileChoices = new List<HexTile>(tiles.Where(x => x.elevationType != ELEVATION.WATER));
+        List<HexTile> remainingTiles = new List<HexTile>(tiles);
+        Region[] regions = new Region[regionCount];
+        for (int i = 0; i < regionCount; i++) {
+            HexTile chosenTile = regionCoreTileChoices[Random.Range(0, regionCoreTileChoices.Count)];
+            Region newRegion = new Region(chosenTile);
+            int range = Mathf.CeilToInt(mapSize * 0.01f);//1% of map size
+            List<HexTile> tilesInRange = chosenTile.GetTilesInRange(range);
+            Utilities.ListRemoveRange(regionCoreTileChoices, tilesInRange);
+            regions[i] = newRegion;
+            remainingTiles.Remove(chosenTile);
+        }
+
+        //assign each remaining tile to a region, based on each tiles distance from a core tile.
+        for (int i = 0; i < remainingTiles.Count; i++) {
+            HexTile currTile = remainingTiles[i];
+            Region nearestRegion = null;
+            float nearestDistance = 99999f;
+            for (int j = 0; j < regions.Length; j++) {
+                Region currRegion = regions[j];
+                float dist = Vector2.Distance(currTile.transform.position, currRegion.coreTile.transform.position);
+                if (dist < nearestDistance) {
+                    nearestRegion = currRegion;
+                    nearestDistance = dist;
+                }
+            }
+            nearestRegion.AddTile(currTile);
+        }
+        generatedRegions = regions;
+    }
+    #endregion
+}
+
+public class Region {
+
+    public List<HexTile> tiles { get; private set; }
+    public HexTile coreTile { get; private set; }
+
+    private Color regionColor;
+    private List<HexTile> allTiles {
+        get {
+            List<HexTile> all = new List<HexTile>(tiles);
+            all.Add(coreTile);
+            return all;
+        }
+    }
+
+    public Region(HexTile coreTile) {
+        this.coreTile = coreTile;
+        tiles = new List<HexTile>();
+        regionColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+    }
+
+    public void AddTile(HexTile tile) {
+        if (!tiles.Contains(tile)) {
+            tiles.Add(tile);
+            //tile.spriteRenderer.color = regionColor;
+        }
+    }
+
+    /// <summary>
+    /// Get all tiles in this region that don't have landmarks
+    /// and are not near any landmarks. (3 tiles to be exact)
+    /// </summary>
+    /// <returns>List of valid tiles.</returns>
+    public List<HexTile> GetValidTilesForLandmarks() {
+        List<HexTile> valid = new List<HexTile>();
+        for (int i = 0; i < allTiles.Count; i++) {
+            HexTile currTile = allTiles[i];
+            List<HexTile> tilesInRange = currTile.GetTilesInRange(3);
+            //if current tile meets the ff requirements, it is valid
+            // - Does not have a landamrk on it yet.
+            // - Is not a water tile.
+            // - Does not have a landmark within range.(3 tiles)
+            if (currTile.landmarkOnTile == null
+                && currTile.elevationType == ELEVATION.PLAIN
+                && !currTile.IsAtEdgeOfMap()
+                && tilesInRange.Where(x => x.landmarkOnTile != null).Count() == 0) {
+                valid.Add(currTile);
+            } 
+        }
+        return valid;
+    }
 }

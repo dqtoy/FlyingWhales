@@ -500,30 +500,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         int distanceAsTiles = Mathf.CeilToInt(distance / 2.315188f);
         return distanceAsTiles;
     }
-    public bool CanBuildLandmarkHere(LANDMARK_TYPE landmarkToBuild, LandmarkData data, Dictionary<HexTile, LANDMARK_TYPE> landmarksToBeCreated) {
-        if (this.hasLandmark || !this.isPassable || landmarksToBeCreated.ContainsKey(this)) {
-            return false; //this tile is not passable or already has a landmark
-        }
-        //if (landmarkToBuild == LANDMARK_TYPE.OAK_FORTIFICATION || landmarkToBuild == LANDMARK_TYPE.IRON_FORTIFICATION) {
-        //    if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(x)).Any()) {
-        //        return false; //check if this tile has any neighbours that are not fortifications
-        //    }
-        //} else {
-            if (this.PassableNeighbours.Where(x => x.hasLandmark || landmarksToBeCreated.ContainsKey(x)).Any()) {
-                return false; //check if this tile has any neighbours that have landmarks
-            }
-        //}
-        if (!data.possibleSpawnPoints.Contains(this.passableType)) {
-            return false; //check if this tiles' passable type meets the types the landmark can spawn on
-        }
-        
-        //if (this.region.outerTiles.Contains(this)) {
-        //    return false; //exclude outer tiles of region
-        //}
-        //if (!this.region.IsPartOfMainIsland(this)) {
-        //    return false;
-        //}
-        return true;
+    public bool IsAtEdgeOfMap() {
+        return AllNeighbours.Count < 6; //if this tile has less than 6 neighbours, it is at the edge of the map
     }
     #endregion
 
@@ -1147,7 +1125,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //}
         //ShowHexTileInfo();
 #else
-        if (this.landmarkOnTile != null) {
+        if (this.areaOfTile != null) {
             _hoverHighlightGO.SetActive(true);
             //SetBordersState(true);
         }

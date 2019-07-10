@@ -116,8 +116,8 @@ public class FactionInfoEditor : MonoBehaviour {
         emblemDropdown.value = Utilities.GetOptionIndex(emblemDropdown, FactionManager.Instance.GetFactionEmblemIndex(_faction.emblem).ToString());
         moralityDropdown.value = Utilities.GetOptionIndex(moralityDropdown, _faction.morality.ToString());
         sizeDropdown.value = Utilities.GetOptionIndex(sizeDropdown, _faction.size.ToString());
-        raceDropdown.value = Utilities.GetOptionIndex(raceDropdown, _faction.raceType.ToString());
-        subRaceDropdown.value = Utilities.GetOptionIndex(subRaceDropdown, _faction.subRaceType.ToString());
+        raceDropdown.value = Utilities.GetOptionIndex(raceDropdown, _faction.race.ToString());
+        //subRaceDropdown.value = Utilities.GetOptionIndex(subRaceDropdown, _faction.subRaceType.ToString());
         levelInputField.text = _faction.level.ToString();
         isActiveToggle.isOn = _faction.isActive;
     }
@@ -157,12 +157,12 @@ public class FactionInfoEditor : MonoBehaviour {
     public void ChangeRace(int choice) {
         string chosen = raceDropdown.options[choice].text;
         RACE race = (RACE)System.Enum.Parse(typeof(RACE), chosen);
-        _faction.SetRaceType(race);
+        _faction.SetRace(race);
     }
     public void ChangeSubRace(int choice) {
         string chosen = subRaceDropdown.options[choice].text;
         RACE_SUB_TYPE race = (RACE_SUB_TYPE)System.Enum.Parse(typeof(RACE_SUB_TYPE), chosen);
-        _faction.SetSubRaceType(race);
+        //_faction.SetSubRaceType(race);
     }
     private void LoadSizeChoices() {
         sizeDropdown.ClearOptions();
@@ -195,7 +195,7 @@ public class FactionInfoEditor : MonoBehaviour {
     public void AddArea() {
         string chosenAreaName = areasDropdown.options[areasDropdown.value].text;
         Area chosenArea = LandmarkManager.Instance.GetAreaByName(chosenAreaName);
-        LandmarkManager.Instance.OwnArea(_faction, _faction.raceType, chosenArea);
+        LandmarkManager.Instance.OwnArea(_faction, _faction.race, chosenArea);
         UpdateAreas();
     }
     public void RemoveArea() {

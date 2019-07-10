@@ -16312,9 +16312,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed50c8ff9e1a3604cb589243a79c9bd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSizeX: 30
+  gridSizeX: 20
   gridSizeY: 15
-  settltementCount: 3
+  regionCount: 3
+  minSettltementCount: 4
+  maxSettltementCount: 7
+  minCitizenCount: 4
+  maxCitizenCount: 10
 --- !u!1 &1665094242
 GameObject:
   m_ObjectHideFlags: 0

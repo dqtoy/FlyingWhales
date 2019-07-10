@@ -265,7 +265,7 @@ public class InteriorMapManager : MonoBehaviour {
         }
         return templates;
     }
-    public List<StructureTemplate> GetStructureTemplates(string folderName, List<string> except) {
+    public List<StructureTemplate> GetStructureTemplates(string folderName, List<string> except = null) {
         List<StructureTemplate> templates = new List<StructureTemplate>();
         string path = templatePath + folderName + "/";
         if (Directory.Exists(path)) {
@@ -277,7 +277,7 @@ public class InteriorMapManager : MonoBehaviour {
                     string dataAsJson = File.ReadAllText(currInfo.FullName);
                     StructureTemplate loaded = JsonUtility.FromJson<StructureTemplate>(dataAsJson);
                     loaded.name = currInfo.Name;
-                    if (except.Contains(loaded.name)) {
+                    if (except != null && except.Contains(loaded.name)) {
                         continue; //skip
                     }
                     Debug.Log(loaded.name);

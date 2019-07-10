@@ -59,7 +59,7 @@ public class FactionManager : MonoBehaviour {
         //}
 #endif
     }
-    private void CreateNeutralFaction() {
+    public void CreateNeutralFaction() {
         Faction newFaction = new Faction();
         newFaction.SetName("Neutral");
         newFaction.SetFactionActiveState(false);
@@ -197,7 +197,7 @@ public class FactionManager : MonoBehaviour {
                         if (neutralFaction != null) {
                             neutralFaction.RemoveFromOwnedAreas(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
                         }
-                        LandmarkManager.Instance.OwnArea(faction, faction.raceType, newArea);
+                        LandmarkManager.Instance.OwnArea(faction, faction.race, newArea);
                     }
                 }
             }

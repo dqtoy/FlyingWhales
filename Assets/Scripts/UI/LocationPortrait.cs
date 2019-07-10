@@ -21,7 +21,7 @@ public class LocationPortrait : MonoBehaviour, IPointerClickHandler {
 
     public void SetLocation(Area area) {
         this.area = area;
-        portrait.sprite = LandmarkManager.Instance.locationPortraits[area.name];
+        portrait.sprite = area.locationPortrait;
     }
 
     public void SetHoverHighlightState(bool state) {

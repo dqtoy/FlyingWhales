@@ -947,7 +947,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         if (area.name == "Gloomhollow") {
             extension = "Snow";
         }
-        List<StructureTemplate> choices = InteriorMapManager.Instance.GetStructureTemplates("TOWN CENTER/" + extension, LandmarkManager.Instance.GetUsedTownCenterTemplates());
+        List<StructureTemplate> choices = InteriorMapManager.Instance.GetStructureTemplates("TOWN CENTER/" + extension);
         for (int i = 0; i < choices.Count; i++) {
             StructureTemplate currTemplate = choices[i];
             if (currTemplate.HasConnectorsForStructure(area.structures)) {

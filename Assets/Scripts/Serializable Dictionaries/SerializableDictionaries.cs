@@ -51,6 +51,8 @@ public class TileObjectBiomeAssetDictionary : SerializableDictionary<BIOMES, Bio
 public class TileObjectSlotDictionary : SerializableDictionary<TileBase, List<TileObjectSlotSetting>, TileObjectSlotListStorage> { }
 [System.Serializable]
 public class CursorTextureDictionary : SerializableDictionary<CursorManager.Cursor_Type, Texture2D> { }
+[System.Serializable]
+public class AreaTypeSpriteDictionary : SerializableDictionary<AREA_TYPE, Sprite> { }
 
 //List storage
 [System.Serializable]

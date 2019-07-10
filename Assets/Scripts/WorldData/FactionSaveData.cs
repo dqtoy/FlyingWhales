@@ -31,7 +31,7 @@ public class FactionSaveData {
         factionName = faction.name;
         factionDescription = faction.description;
         factionColor = new ColorSave(faction.factionColor);
-        race = faction.race;
+        race = new Race(faction.race, RACE_SUB_TYPE.NORMAL);
         recruitableRaces = new List<RACE>(faction.recruitableRaces);
         startingFollowers = new List<RACE>(faction.startingFollowers);
         ConstructOwnedAreas(faction);
