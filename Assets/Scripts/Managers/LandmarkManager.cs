@@ -166,9 +166,22 @@ public class LandmarkManager : MonoBehaviour {
         int settlementCount = settlementRange.Random();
         Debug.Log("Will generate " + settlementCount.ToString() + " settlements");
         AREA_TYPE[] validSettlementTypes = new AREA_TYPE[] { AREA_TYPE.HUMAN_SETTLEMENT, AREA_TYPE.ELVEN_SETTLEMENT };
+
+        //generate all settlement settings first, then order them by citizen count. This is to ensure that settlements with lower citizen counts will be placed first, 
+        //and so can be placed closer to the player portal, without being limited by other settlements with higher citizen counts.
+        List<SettlementSettings> settlementSettings = new List<SettlementSettings>();
         for (int i = 0; i < settlementCount; i++) {
             AREA_TYPE chosenSettlementType = validSettlementTypes[Random.Range(0, validSettlementTypes.Length)];
-            int citizenCount = citizenRange.Random();
+            int cc = citizenRange.Random();
+            settlementSettings.Add(new SettlementSettings { citizenCount = cc, settlementType = chosenSettlementType });
+        }
+        settlementSettings.OrderBy(x => x.citizenCount);
+
+        //create the given settlements
+        for (int i = 0; i < settlementSettings.Count; i++) {
+            SettlementSettings currSetting = settlementSettings[i];
+            AREA_TYPE settlementType = currSetting.settlementType;
+            int citizenCount = currSetting.citizenCount;
             List<Region> regionChoices;
             //Settlements with fewer inhabitants are spawned near the portal, while stronger, more populated settlements are spawned further away. 
             if (citizenRange.IsNearUpperBound(citizenCount)) {
@@ -190,14 +203,14 @@ public class LandmarkManager : MonoBehaviour {
             Region chosenRegion = regionChoices[Random.Range(0, regionChoices.Count)];
             List<HexTile> tileChoices = chosenRegion.GetValidTilesForLandmarks();
             HexTile chosenRegionTile = tileChoices[Random.Range(0, tileChoices.Count)];
-            Area newArea = CreateNewArea(chosenRegionTile, chosenSettlementType);
+            Area newArea = CreateNewArea(chosenRegionTile, settlementType);
             BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenRegionTile, LANDMARK_TYPE.PALACE);
             Faction faction = FactionManager.Instance.CreateNewFaction();
-            if (chosenSettlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
+            if (settlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
                 faction.SetInitialFactionLeaderClass("Queen");
                 faction.SetInitialFactionLeaderGender(GENDER.FEMALE);
                 faction.SetRace(RACE.ELVES);
-            } else if (chosenSettlementType == AREA_TYPE.HUMAN_SETTLEMENT) {
+            } else if (settlementType == AREA_TYPE.HUMAN_SETTLEMENT) {
                 faction.SetInitialFactionLeaderClass("King");
                 faction.SetInitialFactionLeaderGender(GENDER.MALE);
                 faction.SetRace(RACE.HUMANS);
@@ -226,6 +239,37 @@ public class LandmarkManager : MonoBehaviour {
         for (int i = 0; i < allLandmarks.Count; i++) {
             BaseLandmark currLandmark = allLandmarks[i];
             currLandmark.Initialize();
+        }
+    }
+    public void GenerateMinorLandmarks(List<HexTile> allTiles) {
+        Dictionary<BIOMES, LANDMARK_TYPE[]> landmarkChoices = new Dictionary<BIOMES, LANDMARK_TYPE[]>() {
+            { BIOMES.GRASSLAND, new LANDMARK_TYPE[] {
+                LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.HERMIT_HUT, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.CATACOMB, LANDMARK_TYPE.PYRAMID, LANDMARK_TYPE.CAVE
+            } },
+            { BIOMES.FOREST, new LANDMARK_TYPE[] {
+                LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.HERMIT_HUT, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.CATACOMB, LANDMARK_TYPE.PYRAMID, LANDMARK_TYPE.CAVE
+            } },
+            { BIOMES.DESERT, new LANDMARK_TYPE[] {
+                LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.CATACOMB, LANDMARK_TYPE.PYRAMID, LANDMARK_TYPE.CAVE
+            } },
+            { BIOMES.SNOW, new LANDMARK_TYPE[] {
+                LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.HERMIT_HUT, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.CATACOMB, LANDMARK_TYPE.ICE_PIT, LANDMARK_TYPE.CAVE
+            } },
+            { BIOMES.TUNDRA, new LANDMARK_TYPE[] {
+                LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.HERMIT_HUT, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.CATACOMB, LANDMARK_TYPE.ICE_PIT, LANDMARK_TYPE.CAVE
+            } },
+        };
+        for (int i = 0; i < allTiles.Count; i++) {
+            HexTile currTile = allTiles[i];
+            List<HexTile> tilesInRange = currTile.GetTilesInRange(3);
+            if (currTile.landmarkOnTile == null
+                && currTile.elevationType == ELEVATION.PLAIN
+                && !currTile.IsAtEdgeOfMap()
+                && tilesInRange.Where(x => x.landmarkOnTile != null).Count() == 0) {
+                LANDMARK_TYPE[] minorLandmarkTypes = landmarkChoices[currTile.biomeType];
+                LANDMARK_TYPE chosenLandmarkType = minorLandmarkTypes[Random.Range(0, minorLandmarkTypes.Length)];
+                CreateNewLandmarkOnTile(currTile, chosenLandmarkType);
+            }
         }
     }
     #endregion
@@ -606,4 +650,9 @@ public class Region {
         }
         return valid;
     }
+}
+
+public struct SettlementSettings {
+    public AREA_TYPE settlementType;
+    public int citizenCount;
 }

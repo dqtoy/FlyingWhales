@@ -1080,7 +1080,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             return;
         }
 
-        if (this.landmarkOnTile != null) {
+        if (this.areaOfTile != null) {
             if (PlayerManager.Instance.player.homeArea == this.areaOfTile) {
                 UIManager.Instance.portalPopup.SetActive(true);
             } else {
