@@ -22,7 +22,7 @@ public class Faction {
     protected bool _isPlayerFaction;
     protected GENDER _initialLeaderGender;
     protected RACE _initialLeaderRace;
-    protected Race _race;
+    protected RACE _race;
     protected ILeader _leader;
     protected FactionEmblemSetting _emblem;
     protected List<BaseLandmark> _ownedLandmarks;
@@ -67,11 +67,8 @@ public class Faction {
     public bool isDestroyed {
         get { return _leader == null; }
     }
-    public RACE raceType {
-        get { return _race.race; }
-    }
-    public RACE_SUB_TYPE subRaceType {
-        get { return _race.subType; }
+    public RACE race {
+        get { return _race; }
     }
     public GENDER initialLeaderGender {
         get { return _initialLeaderGender; }
@@ -81,9 +78,6 @@ public class Faction {
     }
     public ILeader leader {
         get { return _leader; }
-    }
-    public Race race {
-        get { return _race; }
     }
     public FactionEmblemSetting emblem {
         get { return _emblem; }
@@ -120,7 +114,7 @@ public class Faction {
         SetName(RandomNameGenerator.Instance.GenerateKingdomName());
         SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
         SetFactionColor(Utilities.GetColorForFaction());
-        SetRace(new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL));
+        SetRace(RACE.HUMANS);
         SetMorality(MORALITY.GOOD);
         SetSize(FACTION_SIZE.MAJOR);
         SetFactionActiveState(true);
@@ -154,7 +148,7 @@ public class Faction {
         SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
         SetMorality(data.morality);
         SetSize(data.size);
-        SetRace(data.race);
+        SetRace(data.race.race);
         SetLevel(data.level);
         SetFactionActiveState(data.isActive);
         _initialLeaderClass = data.initialLeaderClass;
@@ -377,14 +371,8 @@ public class Faction {
         //    Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         //}
     }
-    public void SetRace(Race race) {
+    public void SetRace(RACE race) {
         _race = race;
-    }
-    public void SetRaceType(RACE race) {
-        _race.race = race;
-    }
-    public void SetSubRaceType(RACE_SUB_TYPE race) {
-        _race.subType = race;
     }
     public void SetSize(FACTION_SIZE size) {
         this.size = size;
@@ -659,6 +647,20 @@ public class Faction {
                 Character elfCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.ELVES, Utilities.GetRandomGender(),
                            this, _ownedAreas[0]);
                 elfCivilian.LevelUp(citizensLevel - 1);
+            }
+        }
+    }
+    public void GenerateStartingCitizens(int leaderLevel, int citizensLevel, int citizenCount) {
+        for (int i = 0; i < citizenCount; i++) {
+            if (i == 0) {
+                //leader
+                Character leader = CharacterManager.Instance.CreateNewCharacter(CharacterRole.LEADER, initialLeaderClass, race, initialLeaderGender, this, _ownedAreas[0]);
+                leader.LevelUp(leaderLevel - 1);
+                SetLeader(leader);
+            } else {
+                //citizens
+                Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, race, Utilities.GetRandomGender(), this, _ownedAreas[0]);
+                citizen.LevelUp(citizensLevel - 1);
             }
         }
     }

@@ -204,8 +204,8 @@ public class Area {
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
     }
     private void OnGameLoaded() {
-        LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
-        CheckAreaInventoryJobs(warehouse);
+        //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        //CheckAreaInventoryJobs(warehouse);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
         if (removedFrom.parentAreaMap.area.id == this.id) {
@@ -1142,6 +1142,27 @@ public class Area {
     #endregion
 
     #region Structures
+    public void GenerateStructures(int citizenCount) {
+        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+        //all areas should have
+        // - a warehouse
+        // - an inn
+        // - a prison
+        // - a work area
+        // - a cemetery
+        // - wilderness
+        // - enough dwellings for it's citizens
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WAREHOUSE, true);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.INN, true);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.PRISON, true);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CEMETERY, true);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WORK_AREA, true);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS, false);
+        for (int i = 0; i < citizenCount; i++) {
+            LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.DWELLING, true);
+        }
+
+    }
     private void LoadStructures(AreaSaveData data) {
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         if (data.structures == null) {
@@ -1584,6 +1605,15 @@ public struct IntRange {
 
     public bool IsInRange(int value) {
         if (value >= lowerBound && value <= upperBound) {
+            return true;
+        }
+        return false;
+    }
+
+    public bool IsNearUpperBound(int value) {
+        int lowerBoundDifference = Mathf.Abs(value - lowerBound);
+        int upperBoundDifference = Mathf.Abs(value - upperBound);
+        if (upperBoundDifference < lowerBoundDifference) {
             return true;
         }
         return false;

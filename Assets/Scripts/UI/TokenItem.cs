@@ -41,7 +41,7 @@ public class TokenItem : MonoBehaviour, IPointerClickHandler {
         } else if (slot.placedObject is FactionToken) {
             Faction faction = (slot.placedObject as FactionToken).faction;
             mainText.text = faction.name;
-            subText.text = Utilities.NormalizeString(faction.raceType.ToString());
+            subText.text = Utilities.NormalizeString(faction.race.ToString());
         }
     }
 

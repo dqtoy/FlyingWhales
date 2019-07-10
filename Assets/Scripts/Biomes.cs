@@ -373,7 +373,7 @@ public class Biomes : MonoBehaviour {
 		CalculateElevationAndMoisture(tiles, mapWidth, mapHeight);
 	}
 	private void CalculateElevationAndMoisture(List<HexTile> tiles, int mapWidth, int mapHeight){
-        float elevationFrequency = 19.1f; //14.93f;//2.66f;
+        float elevationFrequency = 8.93f; //19.1f//14.93f;//2.66f;
         float moistureFrequency = 12.34f; //3.34f;//2.94f;
 		float tempFrequency = 2.64f;//2.4f;
 

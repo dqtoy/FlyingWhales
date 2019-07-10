@@ -19,97 +19,58 @@ public class MapGenerator : MonoBehaviour {
     }
     private IEnumerator InitializeWorldCoroutine() {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
-        //System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
         loadingWatch.Start();
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Map...");
         yield return null;
         GridMap.Instance.SetupInitialData(WorldConfigManager.Instance.gridSizeX, WorldConfigManager.Instance.gridSizeY);
         GridMap.Instance.GenerateGrid();
-        CameraMove.Instance.Initialize();
-
-        //GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
-        //CameraMove.Instance.SetWholemapCameraValues();
         EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);
         Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
+
+        CameraMove.Instance.Initialize();
+        InteriorMapManager.Instance.Initialize();
+        ObjectPoolManager.Instance.InitializeObjectPools();
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Biomes...");
         yield return null;
         Biomes.Instance.GenerateBiome(GridMap.Instance.hexTiles);
-        Biomes.Instance.LoadPassableStates(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
+        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
+        yield return null;
+
+        Region[] generatedRegions;
+        LandmarkManager.Instance.DivideToRegions(GridMap.Instance.hexTiles, WorldConfigManager.Instance.regionCount, WorldConfigManager.Instance.gridSizeX * WorldConfigManager.Instance.gridSizeY, out generatedRegions);
+        BaseLandmark portal;
+        LandmarkManager.Instance.GenerateSettlements(new IntRange(WorldConfigManager.Instance.minSettltementCount, WorldConfigManager.Instance.maxSettltementCount), generatedRegions, new IntRange(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount), out portal);
+        LandmarkManager.Instance.LoadAdditionalAreaData();
+        LandmarkManager.Instance.GenerateMinorLandmarks(GridMap.Instance.hexTiles);
         yield return null;
 
         GridMap.Instance.GenerateOuterGrid();
+        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.outerGridList);
         CameraMove.Instance.CalculateCameraBounds();
-        ObjectPoolManager.Instance.InitializeObjectPools();
         yield return null;
         UIManager.Instance.InitializeUI();
+        
+        TokenManager.Instance.Initialize();
+        CharacterManager.Instance.GenerateRelationships();
+        CharacterManager.Instance.PlaceInitialCharacters();
+        CharacterManager.Instance.GiveInitialItems();
+        CharacterManager.Instance.GenerateInitialAwareness();
+        InteractionManager.Instance.Initialize();
 
-        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
+        PlayerManager.Instance.InitializePlayer(portal);
 
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);
         Messenger.Broadcast(Signals.GAME_LOADED);
-        yield return null;
+        CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
+        yield return new WaitForSeconds(1f);
+        GameManager.Instance.StartProgression();
+        UIManager.Instance.SetTimeControlsState(true);
 
-        PlayerUI.Instance.ShowStartingMinionPicker();
-        //LevelLoaderManager.UpdateLoadingInfo("Generating Regions...");
-        //yield return null;
-        //st.Start();
-        //GridMap.Instance.GenerateRegions(GridMap.Instance.numOfRegions, GridMap.Instance.refinementLevel);
-        //st.Stop();
-
-        //RoadManager.Instance.GenerateTilePassableTypes();
-
-        //GridMap.Instance.GenerateOuterGrid();
-        ////GridMap.Instance.DivideOuterGridRegions();
-
-        //UIManager.Instance.InitializeUI();
-        ////ObjectManager.Instance.Initialize();
-        ////CharacterScheduleManager.Instance.Initialize();
-
-        //LevelLoaderManager.UpdateLoadingInfo("Generating Factions...");
-        //yield return null;
-        //st.Start();
-        //FactionManager.Instance.GenerateInitialFactions();
-        //st.Stop();
-
-        //LevelLoaderManager.UpdateLoadingInfo("Generating Landmarks...");
-        //yield return null;
-        //st.Start();
-        //LandmarkManager.Instance.GenerateFactionLandmarks();
-        //st.Stop();
-
-        //TokenManager.Instance.Initialize();
-        ////PathfindingManager.Instance.CreateGrid(GridMap.Instance.map, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
-
-        ////FactionManager.Instance.OccupyLandmarksInFactionRegions();
-
-        //LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
-        //yield return null;
-        ////ObjectManager.Instance.Initialize();
-
-        //Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
-        ////Biomes.Instance.GenerateTileBiomeDetails(GridMap.Instance.hexTiles);
-
-        //LandmarkManager.Instance.InitializeLandmarks();
-        ////CharacterManager.Instance.GenerateCharactersForTesting(8);
-        ////CameraMove.Instance.UpdateMinimapTexture();
-        ////QuestManager.Instance.Initialize();
-        ////EventManager.Instance.Initialize();
-        ////CharacterManager.Instance.LoadCharactersInfo();
-        //if (SteamManager.Initialized) {
-        //    AchievementManager.Instance.Initialize();
-        //}
-
-        //loadingWatch.Stop();
-        //Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
-        //LevelLoaderManager.SetLoadingState(false);
-        //Messenger.Broadcast(Signals.GAME_LOADED);
-        //yield return new WaitForSeconds(1f);
-        //PlayerManager.Instance.ChooseStartingTile();
-        ////GameManager.Instance.StartProgression();
+        //TODO: make player pick 3 starting minions here.
     }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();

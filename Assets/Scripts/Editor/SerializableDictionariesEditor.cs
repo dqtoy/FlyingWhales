@@ -53,6 +53,8 @@ public class TileObjectBiomeAssetDictionaryPropertyDrawer : SerializableDictiona
 public class TileObjectSlotDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(CursorTextureDictionary))]
 public class CursorTextureDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(AreaTypeSpriteDictionary))]
+public class AreaTypeSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
