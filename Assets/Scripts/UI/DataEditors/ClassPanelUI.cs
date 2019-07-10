@@ -38,9 +38,10 @@ public class ClassPanelUI : MonoBehaviour {
     public Dropdown combatTargetOptions;
     public Dropdown attackTypeOptions;
     public Dropdown rangeTypeOptions;
+    public Dropdown damageTypeOptions;
     public Dropdown occupiedTileOptions;
     //public Dropdown roleOptions;
-    public Dropdown skillOptions;
+    //public Dropdown skillOptions;
     public Dropdown jobTypeOptions;
     public Dropdown recruitmentCostOptions;
 
@@ -97,10 +98,10 @@ public class ClassPanelUI : MonoBehaviour {
         }
         CharacterPanelUI.Instance.UpdateClassOptions();
     }
-    public void UpdateSkillOptions() {
-        skillOptions.ClearOptions();
-        skillOptions.AddOptions(SkillPanelUI.Instance.allSkills);
-    }
+    //public void UpdateSkillOptions() {
+    //    skillOptions.ClearOptions();
+    //    skillOptions.AddOptions(SkillPanelUI.Instance.allSkills);
+    //}
     public void UpdateItemOptions() {
         weaponsOptions.ClearOptions();
         armorsOptions.ClearOptions();
@@ -126,6 +127,7 @@ public class ClassPanelUI : MonoBehaviour {
         combatTargetOptions.ClearOptions();
         attackTypeOptions.ClearOptions();
         rangeTypeOptions.ClearOptions();
+        damageTypeOptions.ClearOptions();
         occupiedTileOptions.ClearOptions();
         //roleOptions.ClearOptions();
         jobTypeOptions.ClearOptions();
@@ -135,6 +137,7 @@ public class ClassPanelUI : MonoBehaviour {
         string[] combatTargets = System.Enum.GetNames(typeof(COMBAT_TARGET));
         string[] attackTypes = System.Enum.GetNames(typeof(ATTACK_TYPE));
         string[] rangeTypes = System.Enum.GetNames(typeof(RANGE_TYPE));
+        string[] damageTypes = System.Enum.GetNames(typeof(DAMAGE_TYPE));
         string[] occupiedTiles = System.Enum.GetNames(typeof(COMBAT_OCCUPIED_TILE));
         //string[] roles = System.Enum.GetNames(typeof(CHARACTER_ROLE));
         string[] jobs = System.Enum.GetNames(typeof(JOB));
@@ -144,6 +147,7 @@ public class ClassPanelUI : MonoBehaviour {
         combatTargetOptions.AddOptions(combatTargets.ToList());
         attackTypeOptions.AddOptions(attackTypes.ToList());
         rangeTypeOptions.AddOptions(rangeTypes.ToList());
+        damageTypeOptions.AddOptions(damageTypes.ToList());
         occupiedTileOptions.AddOptions(occupiedTiles.ToList());
         //roleOptions.AddOptions(roles.ToList());
         jobTypeOptions.AddOptions(jobs.ToList());
@@ -182,8 +186,9 @@ public class ClassPanelUI : MonoBehaviour {
         combatTargetOptions.value = 0;
         attackTypeOptions.value = 0;
         rangeTypeOptions.value = 0;
+        damageTypeOptions.value = 0;
         occupiedTileOptions.value = 0;
-        skillOptions.value = 0;
+        //skillOptions.value = 0;
         //roleOptions.value = 0;
         jobTypeOptions.value = 0;
         recruitmentCostOptions.value = 0;
@@ -275,10 +280,11 @@ public class ClassPanelUI : MonoBehaviour {
         combatTargetOptions.value = GetDropdownIndex(combatTargetOptions, characterClass.combatTarget.ToString());
         attackTypeOptions.value = GetDropdownIndex(attackTypeOptions, characterClass.attackType.ToString());
         rangeTypeOptions.value = GetDropdownIndex(rangeTypeOptions, characterClass.rangeType.ToString());
+        damageTypeOptions.value = GetDropdownIndex(damageTypeOptions, characterClass.damageType.ToString());
         occupiedTileOptions.value = GetDropdownIndex(occupiedTileOptions, characterClass.occupiedTileType.ToString());
 
         //roleOptions.value = GetDropdownIndex(roleOptions, characterClass.roleType.ToString());
-        skillOptions.value = GetDropdownIndex(skillOptions, characterClass.skillName.ToString());
+        //skillOptions.value = GetDropdownIndex(skillOptions, characterClass.skillName.ToString());
         jobTypeOptions.value = GetDropdownIndex(jobTypeOptions, characterClass.jobType.ToString());
         recruitmentCostOptions.value = GetDropdownIndex(recruitmentCostOptions, characterClass.recruitmentCost.currency.ToString());
         for (int i = 0; i < characterClass.traitNames.Length; i++) {

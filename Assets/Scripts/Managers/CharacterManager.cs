@@ -266,7 +266,7 @@ public class CharacterManager : MonoBehaviour {
         string[] classes = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < classes.Length; i++) {
             CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));
-            currentClass.ConstructData();
+            //currentClass.ConstructData();
             classesDictionary.Add(currentClass.className, currentClass);
             if(currentClass.identifier == "Normal") {
                 normalClasses.Add(currentClass.className, currentClass);
