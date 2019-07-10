@@ -115,7 +115,7 @@ public class SlotItem : MonoBehaviour {
             portrait.gameObject.SetActive(true);
             image.gameObject.SetActive(false);
             portrait.GeneratePortrait((associatedObj as Minion).character);
-            hoverInfo = (associatedObj as Minion).name;
+            hoverInfo = (associatedObj as Minion).character.name;
         } else if (associatedObj is Character) {
             factionEmblem.gameObject.SetActive(false);
             areaEmblem.gameObject.SetActive(false);

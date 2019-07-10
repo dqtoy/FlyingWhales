@@ -40,11 +40,11 @@ public class CharacterParty : Party {
         return _owner.isDead;
     }
     private bool IsBusy() {
-        if (owner.minion != null) {
-            //if the owner of the party is a minion, just check if it is enabled
-            //if it is not enabled, means that the minion currently has an action
-            return !owner.minion.isEnabled;
-        }
+        //if (owner.minion != null) {
+        //    //if the owner of the party is a minion, just check if it is enabled
+        //    //if it is not enabled, means that the minion currently has an action
+        //    return !owner.minion.isEnabled;
+        //}
         if (this.icon.isTravelling) {
             return true;
         }

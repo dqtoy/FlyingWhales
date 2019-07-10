@@ -371,8 +371,8 @@ public class RandomNameGenerator : MonoBehaviour {
     private void OnCharacterDied(Character characterThatDied) {
         if (characterThatDied.minion != null) {
             //minion that died
-            if (!availableMinionNames.Contains(characterThatDied.minion.name)) {
-                availableMinionNames.Add(characterThatDied.minion.name); //return name to pool
+            if (!availableMinionNames.Contains(characterThatDied.name)) {
+                availableMinionNames.Add(characterThatDied.name); //return name to pool
             }
         }
     }
