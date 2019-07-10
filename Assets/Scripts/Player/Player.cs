@@ -130,7 +130,7 @@ public class Player : ILeader {
     }
     private void SetPlayerArea(Area area) {
         playerArea = area;
-        area.SetSuppliesInBank(_currencies[CURRENCY.SUPPLY]);
+        //area.SetSuppliesInBank(_currencies[CURRENCY.SUPPLY]);
         //area.StopSupplyLine();
     }
     private void OnTileRemovedFromPlayerArea(Area affectedArea, HexTile removedTile) {

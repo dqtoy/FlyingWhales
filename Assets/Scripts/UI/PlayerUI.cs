@@ -95,11 +95,11 @@ public class PlayerUI : MonoBehaviour {
         if (PlayerManager.Instance.player == null) {
             return;
         }
-        manaText.text = PlayerManager.Instance.player.currencies[CURRENCY.MANA].ToString();
+        //manaText.text = PlayerManager.Instance.player.currencies[CURRENCY.MANA].ToString();
         //redMagicText.text = "" + PlayerManager.Instance.player.redMagic;
         //greenMagicText.text = "" + PlayerManager.Instance.player.greenMagic;
-        suppliesText.text = PlayerManager.Instance.player.currencies[CURRENCY.SUPPLY].ToString();
-        impsText.text = "Imps: " + PlayerManager.Instance.player.currencies[CURRENCY.IMP].ToString() + "/" + PlayerManager.Instance.player.maxImps.ToString();
+        //suppliesText.text = PlayerManager.Instance.player.currencies[CURRENCY.SUPPLY].ToString();
+        //impsText.text = "Imps: " + PlayerManager.Instance.player.currencies[CURRENCY.IMP].ToString() + "/" + PlayerManager.Instance.player.maxImps.ToString();
         //threatFiller.fillAmount = (float) PlayerManager.Instance.player.threatLevel / 100f;
     }
 
@@ -114,7 +114,7 @@ public class PlayerUI : MonoBehaviour {
             //currSlot.SetItemDroppedOutCallback(OnDroppedOutFromAttackGrid);
         }
 
-        LoadRoleSlots();
+        //LoadRoleSlots();
         LoadAttackSlot();
 
         UpdateIntel();
