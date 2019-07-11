@@ -572,6 +572,8 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
 
         SetMoodValue(90);
 
+        CreateOwnParty();
+
         tiredness = TIREDNESS_DEFAULT;
         if(role.roleType != CHARACTER_ROLE.MINION) {
             //Fullness value between 1300 and 1440.
