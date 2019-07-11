@@ -8,7 +8,6 @@ public class LandmarkSaveData {
     public string landmarkName;
     public Point locationCoordinates;
     public LANDMARK_TYPE landmarkType;
-    public int civilianCount;
     public int chosenMonsterSet;
     //public int eventTriggerWeight;
     //public int noEventTriggerWeight;
@@ -23,7 +22,6 @@ public class LandmarkSaveData {
         landmarkName = landmark.landmarkName;
         locationCoordinates = new Point(landmark.tileLocation.xCoordinate, landmark.tileLocation.yCoordinate);
         landmarkType = landmark.specificLandmarkType;
-        civilianCount = landmark.civilianCount;
         if (landmark is MonsterSpawnerLandmark) {
             MonsterSet monsterChoices = (landmark as MonsterSpawnerLandmark).monsterChoices;
             if (monsterChoices == null) {

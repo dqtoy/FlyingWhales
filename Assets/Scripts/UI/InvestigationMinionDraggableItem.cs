@@ -42,9 +42,6 @@ public class InvestigationMinionDraggableItem : DraggableItem {
             Destroy(_draggingObject.gameObject);
             if (customDropzone == null) {
                 _portrait.gameObject.SetActive(false);
-                if (UIManager.Instance.playerLandmarkInfoUI.isShowing) {
-                    UIManager.Instance.playerLandmarkInfoUI.AssignMinionToInvestigate(null);
-                }
                 if (UIManager.Instance.areaInfoUI.isShowing) {
                     if (_index == -1) {
                         //UIManager.Instance.areaInfoUI.AssignMinionToInvestigate(null);

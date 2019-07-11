@@ -10,14 +10,6 @@ public class FactionEmblem : MonoBehaviour, IPointerClickHandler{
     private Faction faction;
 
     [SerializeField] private Image emblemImage;
-    [SerializeField] private bool forceShow;
-
-    private void OnEnable() {
-        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenObtained);
-    }
-    private void OnDisable() {
-        Messenger.RemoveListener<Token>(Signals.TOKEN_ADDED, OnTokenObtained);
-    }
 
     public void SetFaction(Faction faction) {
         this.faction = faction;
@@ -48,24 +40,6 @@ public class FactionEmblem : MonoBehaviour, IPointerClickHandler{
         } else {
             this.gameObject.SetActive(true);
             emblemImage.sprite = faction.emblem.GetSpriteForSize(emblemImage);
-            //if (forceShow || 
-            //    (PlayerManager.Instance.player != null && PlayerManager.Instance.player.tokens.Contains(faction.factionToken))) {
-            //    //player has intel for this faction
-            //    emblemImage.sprite = faction.emblem;
-            //    this.gameObject.SetActive(true);
-            //} else {
-            //    //player does not have intel for this faction
-            //    //emblemImage.sprite = faction.emblem;
-            //    this.gameObject.SetActive(false);
-            //}
-        }
-    }
-
-    private void OnTokenObtained(Token token) {
-        if (token is FactionToken) {
-            if (this.faction != null && (token as FactionToken).faction.id == this.faction.id) {
-                UpdateEmblem();
-            }
         }
     }
 

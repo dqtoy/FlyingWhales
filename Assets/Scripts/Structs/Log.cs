@@ -98,8 +98,6 @@ public class Log {
             if (obj != null) {
                 if (obj is Character) {
                     (obj as Character).AddHistory(this);
-                } else if (obj is BaseLandmark) {
-                    (obj as BaseLandmark).AddHistory(this);
                 } else if (obj is Area) {
                     (obj as Area).AddHistory(this);
                 } else if (obj is Minion) {

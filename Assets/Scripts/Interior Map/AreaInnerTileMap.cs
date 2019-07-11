@@ -211,7 +211,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     #endregion
 
     #region Structures
-    public void GenerateInnerStructures() {
+    public IEnumerator GenerateInnerStructures() {
         ClearAllTilemaps();
         insideTiles = new List<LocationGridTile>();
         outsideTiles = new List<LocationGridTile>();
@@ -295,6 +295,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         } else {
             OldStructureGeneration();
         }
+        yield return null;
     }
     private void OldStructureGeneration() {
         Dictionary<LocationStructure, LocationStructureSetting> settings = GenerateStructureSettings(area);

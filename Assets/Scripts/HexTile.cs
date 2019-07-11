@@ -8,6 +8,7 @@ using worldcreator;
 using SpriteGlow;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using Unity.Jobs;
 
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
@@ -332,7 +333,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
         //Create Landmark Game Object on tile
         GameObject landmarkGO = CreateLandmarkVisual(saveData.landmarkType, this.landmarkOnTile, landmarkData);
-        _landmarkOnTile.SetCivilianCount(saveData.civilianCount);
         if (landmarkGO != null) {
             landmarkGO.transform.localPosition = Vector3.zero;
             landmarkGO.transform.localScale = Vector3.one;
@@ -1150,12 +1150,35 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
 #endif
     }
+    private bool hasPendingJob = false;
+    private JobHandle jobHandle;
     private void DoubleClick() {
         //Debug.Log("double click");
+        return;
         if (areaOfTile != null) {
-            InteriorMapManager.Instance.ShowAreaMap(areaOfTile);
+            //InteriorMapManager.Instance.ShowAreaMap(areaOfTile);
+            UIManager.Instance.SetInteriorMapLoadingState(true);
+            //MultiThreadPool.Instance.AddToThreadPool(new AreaMapGenerationThread(areaOfTile, OnDoneGeneratingAreaMap));
+            //StartCoroutine(LandmarkManager.Instance.GenerateAreaMap(areaOfTile, OnDoneGeneratingAreaMap));
+            var job = new AreaMapGenerationJob() {
+                areaID = areaOfTile.id,
+            };
+            jobHandle = job.Schedule();
+            hasPendingJob = true;
         }
     }
+    private void OnDoneGeneratingAreaMap(Area area) {
+        hasPendingJob = false;
+        UIManager.Instance.SetInteriorMapLoadingState(false);
+        InteriorMapManager.Instance.ShowAreaMap(areaOfTile);
+    }
+
+    private void Update() {
+        if (hasPendingJob && jobHandle.IsCompleted) {
+            OnDoneGeneratingAreaMap(areaOfTile);
+        }
+    }
+
     public void PointerClick(BaseEventData bed) {
         PointerEventData ped = bed as PointerEventData;
         if (ped.clickCount == 1) {
@@ -1726,4 +1749,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     }
     #endregion
+}
+
+struct AreaMapGenerationJob : IJob {
+
+    public int areaID;
+
+    public void Execute() {
+        LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.GetAreaByID(areaID));
+    }
 }

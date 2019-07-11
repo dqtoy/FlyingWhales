@@ -17,8 +17,6 @@ public class Area {
     public Faction owner { get; private set; }
     public Faction previousOwner { get; private set; }
     public Area attackTarget { get; private set; }
-    public LocationToken locationToken { get; private set; }
-    public DefenderToken defenderToken { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public List<BaseLandmark> exposedTiles { get; private set; }
@@ -123,8 +121,6 @@ public class Area {
         unexposedTiles = new List<BaseLandmark>();
         history = new List<Log>();
         areaColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-        locationToken = new LocationToken(this);
-        defenderToken = new DefenderToken(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         initialSpawnSetup = new List<InitialRaceSetup>();
         supplyLog = new List<string>();
@@ -155,8 +151,6 @@ public class Area {
         history = new List<Log>();
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
-        locationToken = new LocationToken(this);
-        defenderToken = new DefenderToken(this);
         jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         charactersAtLocationHistory = new List<string>();
         possibleSpecialTokenSpawns = new List<SpecialToken>();

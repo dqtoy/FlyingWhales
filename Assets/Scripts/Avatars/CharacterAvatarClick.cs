@@ -10,10 +10,6 @@ public class CharacterAvatarClick : MonoBehaviour {
         if (UIManager.Instance.IsMouseOnUI()) {
             return;
         }
-        if (characterAvatar.party.characters.Count > 1) {
-            UIManager.Instance.ShowPartyInfo(characterAvatar.party);
-        } else {
-            UIManager.Instance.ShowCharacterInfo(characterAvatar.party.mainCharacter);
-        }
+        UIManager.Instance.ShowCharacterInfo(characterAvatar.party.mainCharacter);
     }
 }

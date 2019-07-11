@@ -160,8 +160,8 @@ public class FactionInfoEditor : MonoBehaviour {
         _faction.SetRace(race);
     }
     public void ChangeSubRace(int choice) {
-        string chosen = subRaceDropdown.options[choice].text;
-        RACE_SUB_TYPE race = (RACE_SUB_TYPE)System.Enum.Parse(typeof(RACE_SUB_TYPE), chosen);
+        //string chosen = subRaceDropdown.options[choice].text;
+        //RACE_SUB_TYPE race = (RACE_SUB_TYPE)System.Enum.Parse(typeof(RACE_SUB_TYPE), chosen);
         //_faction.SetSubRaceType(race);
     }
     private void LoadSizeChoices() {

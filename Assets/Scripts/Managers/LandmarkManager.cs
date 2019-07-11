@@ -204,7 +204,7 @@ public class LandmarkManager : MonoBehaviour {
             List<HexTile> tileChoices = chosenRegion.GetValidTilesForLandmarks();
             HexTile chosenRegionTile = tileChoices[Random.Range(0, tileChoices.Count)];
             Area newArea = CreateNewArea(chosenRegionTile, settlementType);
-            BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenRegionTile, LANDMARK_TYPE.PALACE);
+            CreateNewLandmarkOnTile(chosenRegionTile, LANDMARK_TYPE.PALACE);
             Faction faction = FactionManager.Instance.CreateNewFaction();
             if (settlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
                 faction.SetInitialFactionLeaderClass("Queen");
@@ -217,7 +217,7 @@ public class LandmarkManager : MonoBehaviour {
             }
             OwnArea(faction, faction.race, newArea);
             newArea.GenerateStructures(citizenCount);
-            GenerateAreaMap(newArea);
+            //GenerateAreaMap(newArea);
             faction.GenerateStartingCitizens(9, 7, citizenCount);
         }
         FactionManager.Instance.CreateNeutralFaction();
@@ -605,7 +605,7 @@ public class Region {
     public List<HexTile> tiles { get; private set; }
     public HexTile coreTile { get; private set; }
 
-    private Color regionColor;
+    //private Color regionColor;
     private List<HexTile> allTiles {
         get {
             List<HexTile> all = new List<HexTile>(tiles);
@@ -617,7 +617,7 @@ public class Region {
     public Region(HexTile coreTile) {
         this.coreTile = coreTile;
         tiles = new List<HexTile>();
-        regionColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        //regionColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
     }
 
     public void AddTile(HexTile tile) {

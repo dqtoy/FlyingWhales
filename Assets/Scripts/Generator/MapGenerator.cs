@@ -54,9 +54,9 @@ public class MapGenerator : MonoBehaviour {
         
         TokenManager.Instance.Initialize();
         CharacterManager.Instance.GenerateRelationships();
-        CharacterManager.Instance.PlaceInitialCharacters();
+        //CharacterManager.Instance.PlaceInitialCharacters();
         CharacterManager.Instance.GiveInitialItems();
-        CharacterManager.Instance.GenerateInitialAwareness();
+        //CharacterManager.Instance.GenerateInitialAwareness();
         InteractionManager.Instance.Initialize();
 
         PlayerManager.Instance.InitializePlayer(portal);
@@ -70,6 +70,7 @@ public class MapGenerator : MonoBehaviour {
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(true);
 
+        PlayerUI.Instance.ShowStartingMinionPicker();
         //TODO: make player pick 3 starting minions here.
     }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {

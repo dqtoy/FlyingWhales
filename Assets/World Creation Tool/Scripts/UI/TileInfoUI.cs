@@ -48,32 +48,6 @@ public class TileInfoUI : MonoBehaviour {
         info = "\n<b>Landmark Info</b>";
         info += "\nLandmark Name: [" + landmark.id + "] " + landmark.landmarkName;
         info += "\nLandmark Type: " + landmark.specificLandmarkType.ToString();
-        info += "\nCivilians: " + landmark.civilianCount.ToString();
-        //info += "\nCharacters located here: ";
-        //for (int i = 0; i < landmark.charactersAtLocation.Count; i++) {
-        //    Party currChar = landmark.charactersAtLocation[i];
-        //    info += "\n   - " + currChar.name;
-        //}
-        info += "\nItems here: ";
-        for (int i = 0; i < landmark.itemsInLandmark.Count; i++) {
-            Item currItem = landmark.itemsInLandmark[i];
-            info += "\n   - " + currItem.itemName;
-        }
-        //info += "\nDefenders: ";
-        //if (landmark.defenders == null) {
-        //    info += "null";
-        //} else {
-        //    for (int i = 0; i < landmark.defenders.icharacters.Count; i++) {
-        //        ICharacter currItem = landmark.defenders.icharacters[i];
-        //        if (currItem == null) {
-        //            info += "\n   - null";
-        //        } else {
-        //            info += "\n   - " + currItem.name;
-        //        }
-
-        //    }
-        //}
-        
         if (landmark is MonsterSpawnerLandmark) {
             info += "\nMonster Set: ";
             MonsterSpawnerLandmark msl = landmark as MonsterSpawnerLandmark;

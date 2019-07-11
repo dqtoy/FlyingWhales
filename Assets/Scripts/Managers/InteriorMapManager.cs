@@ -280,7 +280,7 @@ public class InteriorMapManager : MonoBehaviour {
                     if (except != null && except.Contains(loaded.name)) {
                         continue; //skip
                     }
-                    Debug.Log(loaded.name);
+                    //Debug.Log(loaded.name);
 #if TRAILER_BUILD
                     if (folderName == "TOWN CENTER/" && loaded.name != "TC_Template_3.json") {
                         continue; //only use Template 3 on Trailer Build

@@ -43,8 +43,4 @@ public class PartyEmblem : MonoBehaviour {
         }
         UIManager.Instance.HideSmallInfo();
     }
-
-    public void ShowPartyInfoUI() {
-        UIManager.Instance.ShowPartyInfo(this.party);
-    }
 }

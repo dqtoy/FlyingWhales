@@ -176,8 +176,8 @@ public class CharacterManager : MonoBehaviour {
         } else {
             newCharacter = new Character(role, race, gender);
         }
+        //Party party = newCharacter.CreateOwnParty();
         newCharacter.Initialize();
-        Party party = newCharacter.CreateOwnParty();
         if (faction != null) {
             faction.AddNewCharacter(newCharacter);
         }
@@ -185,11 +185,11 @@ public class CharacterManager : MonoBehaviour {
         else {
             FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
         }
-        party.CreateIcon();
+        newCharacter.ownParty.CreateIcon();
         if(homeLocation != null) {
-            party.icon.SetPosition(homeLocation.coreTile.transform.position);
+            newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(party.owner, null, true);
+            homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner, null, true);
         }
         //newCharacter.AddAwareness(newCharacter);
 #endif
@@ -203,18 +203,17 @@ public class CharacterManager : MonoBehaviour {
         Area homeLocation = null, Dwelling homeStructure = null) {
         Character newCharacter = new Character(role, className, race, gender);
         newCharacter.Initialize();
-        Party party = newCharacter.CreateOwnParty();
         if (faction != null) {
             faction.AddNewCharacter(newCharacter);
         } else {
             FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
         }
 #if !WORLD_CREATION_TOOL
-        party.CreateIcon();
+        newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
-            party.icon.SetPosition(homeLocation.coreTile.transform.position);
+            newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(party.owner, null, true);
+            homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner, null, true);
         }
         //newCharacter.AddAwareness(newCharacter);
 #endif
@@ -228,16 +227,14 @@ public class CharacterManager : MonoBehaviour {
         Character newCharacter = new Character(data);
         newCharacter.Initialize();
         allCharacterLogs.Add(newCharacter, new List<string>());
-
-        Party party = newCharacter.CreateOwnParty();
         if (data.homeAreaID != -1) {
             Area homeArea = LandmarkManager.Instance.GetAreaByID(data.homeAreaID);
             if (homeArea != null) {
 #if !WORLD_CREATION_TOOL
-                party.CreateIcon();
-                party.icon.SetPosition(homeArea.coreTile.transform.position);
+                newCharacter.ownParty.CreateIcon();
+                newCharacter.ownParty.icon.SetPosition(homeArea.coreTile.transform.position);
                 newCharacter.MigrateHomeTo(homeArea, null, false);
-                homeArea.AddCharacterToLocation(party.owner, null, true);
+                homeArea.AddCharacterToLocation(newCharacter.ownParty.owner, null, true);
 #endif
             }
         }

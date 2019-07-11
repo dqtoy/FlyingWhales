@@ -38,14 +38,6 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                     if (faction != null) {
                         UIManager.Instance.ShowFactionInfo(faction);
                     }
-                } else if (linkText.Contains("_landmark")) {
-                    BaseLandmark landmark = LandmarkManager.Instance.GetLandmarkByID(idToUse);
-                    UIManager.Instance.ShowLandmarkInfo(landmark);
-                } else if (linkText.Contains("_party")) {
-                    Party party = CharacterManager.Instance.GetPartyByID(idToUse);
-                    if (party != null) {
-                        UIManager.Instance.ShowPartyInfo(party);
-                    }
                 } else if (linkText.Contains("_character")) {
                     Character character = CharacterManager.Instance.GetCharacterByID(idToUse);
                     if (character != null) {
@@ -64,8 +56,6 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                 if (lf.obj != null) {
                     if (lf.obj is Character) {
                         UIManager.Instance.ShowCharacterInfo(lf.obj as Character);
-                    } else if (lf.obj is BaseLandmark) {
-                        UIManager.Instance.ShowLandmarkInfo(lf.obj as BaseLandmark);
                     } else if (lf.obj is Area) {
                         UIManager.Instance.ShowAreaInfo(lf.obj as Area);
                     } else if (lf.obj is Faction) {
@@ -76,11 +66,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                         UIManager.Instance.ShowCombatLog(lf.obj as Combat);
                     } else if (lf.obj is Party) {
                         Party party = lf.obj as Party;
-                        if(party.characters.Count > 1) {
-                            UIManager.Instance.ShowPartyInfo(party);
-                        } else if (party.characters.Count == 1) {
-                            UIManager.Instance.ShowCharacterInfo(party.mainCharacter);
-                        }
+                        UIManager.Instance.ShowCharacterInfo(party.mainCharacter);
                     } else if (lf.obj is IPointOfInterest) {
                         IPointOfInterest poi = lf.obj as IPointOfInterest;
                         if(poi is Character) {
