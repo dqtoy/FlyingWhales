@@ -152,10 +152,10 @@ public class LandmarkManager : MonoBehaviour {
         //separate regions based on their distance from the player area
         List<Region> nearRegions = new List<Region>(); //regions that are near the player area
         List<Region> farRegions = new List<Region>(); //regions that are far from the player area
-        int halfRegionCount = regions.Length / 2;
+        int nearRegionCutoff = regions.Length / 3;
         for (int i = 0; i < orderedRegions.Count; i++) {
             Region currRegion = orderedRegions[i];
-            if (i < halfRegionCount) {
+            if (i <= nearRegionCutoff) {
                 //near region
                 nearRegions.Add(currRegion);
             } else {
@@ -175,7 +175,7 @@ public class LandmarkManager : MonoBehaviour {
             int cc = citizenRange.Random();
             settlementSettings.Add(new SettlementSettings { citizenCount = cc, settlementType = chosenSettlementType });
         }
-        settlementSettings.OrderBy(x => x.citizenCount);
+        settlementSettings = settlementSettings.OrderBy(x => x.citizenCount).ToList();
 
         //create the given settlements
         for (int i = 0; i < settlementSettings.Count; i++) {
