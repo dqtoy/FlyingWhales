@@ -302,14 +302,6 @@ public class CharacterInfoUI : UIMenu {
     public bool IsCharacterInfoShowing(Character character) {
         return (isShowing && _activeCharacter == character);
     }
-
-    private void CheckIfMenuShouldBeHidden() {
-        if (UIManager.Instance.partyinfoUI.isShowing) {
-            logParentGO.SetActive(false);
-        } else {
-            logParentGO.SetActive(true);
-        }
-    }
     private void OnPlayerLandmarkCreated(BaseLandmark createdLandmark) {
         //if (createdLandmark.specificLandmarkType == LANDMARK_TYPE.SNATCHER_DEMONS_LAIR) {
         //    CheckShowSnatchButton();

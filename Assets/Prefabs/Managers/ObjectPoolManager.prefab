@@ -52,7 +52,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIPrefabs:
-  - {fileID: 1667677566377938, guid: a9057d326864f1d488dd411e969ca51d, type: 2}
   - {fileID: 1169224389995412, guid: 098b2e337fdaee74d8c8e6db791778ce, type: 2}
   - {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b, type: 2}
   - {fileID: 1404552397919108, guid: 44606a74032cb404ca32744b5b0b1489, type: 2}
@@ -60,13 +59,10 @@ MonoBehaviour:
   - {fileID: 1668576898731800, guid: e2d243a395fd9384a8973709eb9bc9b9, type: 2}
   - {fileID: 1618945397602768, guid: 2975c486214c95b4ab5eed6af62fba90, type: 2}
   - {fileID: 1632239326956908, guid: 6a3fbd7f8a25b814bb4c4e417caae8ec, type: 2}
-  - {fileID: 1960029943899900, guid: 40796bb49d293324490f615d012de961, type: 2}
-  - {fileID: 1059898416166788, guid: 3f5d886336cd4e3428717b21e20b2772, type: 2}
   - {fileID: 1487682449734014, guid: d5974a5f53223bc4c8579f3cc89ea982, type: 2}
   - {fileID: 1619904414207612, guid: fdc88c23db2dd3249b18b559e50f7f3d, type: 2}
   - {fileID: 1566534850646756, guid: 08bcf5cfb762d5e40bb44f794b472876, type: 2}
   - {fileID: 1960029943899900, guid: e494a759a881ec348bff58d5240594c9, type: 2}
-  - {fileID: 1763281387834148, guid: 9e936abe468e502459315397d81dc971, type: 2}
   - {fileID: 1677564857695062, guid: 52b80ee5fdeff7946bfa7fea000b7c07, type: 2}
   - {fileID: 1918348133013666, guid: 65f91393e3c6b264fbfc1545702ef828, type: 2}
   - {fileID: 1281087095607850, guid: a2e8dcf04a730f542b0dbeb63f54d763, type: 2}

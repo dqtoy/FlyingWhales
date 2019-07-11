@@ -86,7 +86,6 @@ public class MonsterInfoUI : UIMenu {
     internal override void Initialize() {
         base.Initialize();
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
-        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnIntelAdded);
 
         InitializeLogsMenu();
         InitializeInventoryMenu();
@@ -367,12 +366,6 @@ public class MonsterInfoUI : UIMenu {
         //    hiddenDesireItem.SetHiddenDesire(_activeCharacter.hiddenDesire, _activeCharacter);
         //    hiddenDesireItem.gameObject.SetActive(true);
         //}
-    }
-    private void OnIntelAdded(Token intel) {
-        if (_activeMonster == null) {
-            return;
-        }
-        UpdateInfoMenu();
     }
     #endregion
 

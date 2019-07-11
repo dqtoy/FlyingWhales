@@ -83,7 +83,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         base.Initialize();
         characterItems = new List<LandmarkCharacterItem>();
         LoadLogItems();
-        Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
+        //Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
         Messenger.AddListener<BaseLandmark, Character>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
         Messenger.AddListener<BaseLandmark, Character>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
@@ -123,7 +123,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         }
         UpdateBasicInfo();
         UpdateDefenders();
-        UpdateAllHistoryInfo();
+        //UpdateAllHistoryInfo();
     }
     //private void UpdateHiddenUI() {
     //    ShowIntelTriggeredUI();
@@ -199,29 +199,29 @@ public class PlayerLandmarkInfoUI : UIMenu {
             logHistoryItems[i].gameObject.SetActive(false);
         }
     }
-    private void UpdateHistory(object obj) {
-        if (obj is BaseLandmark && _activeLandmark != null && (obj as BaseLandmark).id == _activeLandmark.id) {
-            UpdateAllHistoryInfo();
-        }
-    }
-    private void UpdateAllHistoryInfo() {
-        List<Log> landmarkHistory = new List<Log>(_activeLandmark.history.OrderByDescending(x => x.id));
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            Log currLog = landmarkHistory.ElementAtOrDefault(i);
-            if (currLog != null) {
-                currItem.gameObject.SetActive(true);
-                currItem.SetLog(currLog);
-                if (Utilities.IsEven(i)) {
-                    currItem.SetLogColor(evenLogColor);
-                } else {
-                    currItem.SetLogColor(oddLogColor);
-                }
-            } else {
-                currItem.gameObject.SetActive(false);
-            }
-        }
-    }
+    //private void UpdateHistory(object obj) {
+    //    if (obj is BaseLandmark && _activeLandmark != null && (obj as BaseLandmark).id == _activeLandmark.id) {
+    //        UpdateAllHistoryInfo();
+    //    }
+    //}
+    //private void UpdateAllHistoryInfo() {
+    //    List<Log> landmarkHistory = new List<Log>(_activeLandmark.history.OrderByDescending(x => x.id));
+    //    for (int i = 0; i < logHistoryItems.Length; i++) {
+    //        LogHistoryItem currItem = logHistoryItems[i];
+    //        Log currLog = landmarkHistory.ElementAtOrDefault(i);
+    //        if (currLog != null) {
+    //            currItem.gameObject.SetActive(true);
+    //            currItem.SetLog(currLog);
+    //            if (Utilities.IsEven(i)) {
+    //                currItem.SetLogColor(evenLogColor);
+    //            } else {
+    //                currItem.SetLogColor(oddLogColor);
+    //            }
+    //        } else {
+    //            currItem.gameObject.SetActive(false);
+    //        }
+    //    }
+    //}
     private bool IsLogAlreadyShown(Log log) {
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];

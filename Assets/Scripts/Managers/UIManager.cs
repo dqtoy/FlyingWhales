@@ -62,10 +62,6 @@ public class UIManager : MonoBehaviour {
     public GameObject portalPopup;
 
     [Space(10)]
-    [Header("Popup Message Box")]
-    [SerializeField] private PopupMessageBox popupMessageBox;
-
-    [Space(10)]
     [Header("Notification Area")]
     public DeveloperNotificationArea developerNotificationArea;
 
@@ -75,10 +71,6 @@ public class UIManager : MonoBehaviour {
 
     [Space(10)]
     [Header("Player")]
-    [SerializeField] private ScrollRect playerPickerScroll;
-    [SerializeField] private Transform playerPickerContentTransform;
-    [SerializeField] private GameObject playerPickerGO;
-    [SerializeField] private GameObject playerPickerButtonPrefab;
     [SerializeField] private Toggle minionsMenuToggle;
     [SerializeField] private Toggle charactersMenuToggle;
     [SerializeField] private Toggle locationsMenuToggle;
@@ -94,8 +86,6 @@ public class UIManager : MonoBehaviour {
 
     [Header("Object Picker")]
     [SerializeField] private ObjectPicker objectPicker;
-
-    private List<PlayerPickerButton> currentActivePlayerPickerButtons;
 
     [Space(10)] //FOR TESTING
     [Header("For Testing")]
@@ -118,7 +108,6 @@ public class UIManager : MonoBehaviour {
     public CombatUI combatUI;
 
     public bool isShowingAreaTooltip { get; private set; } //is the tooltip for area double clicks showing?
-    internal List<object> eventLogsQueue = new List<object>();
     private UIMenu lastOpenedMenu = null;
     private List<object> _uiMenuHistory;
 
@@ -131,11 +120,9 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
     }
     private void Start() {
-        currentActivePlayerPickerButtons = new List<PlayerPickerButton>();
         _uiMenuHistory = new List<object>();
         Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
         Messenger.AddListener(Signals.INSPECT_ALL, UpdateInteractableInfoUI);
-        //NormalizeFontSizes();
         ToggleBorders();
     }
     private void Update() {
@@ -202,7 +189,6 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
 
-        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnTokenAdded);
         Messenger.AddListener<Combat>(Signals.COMBAT_DONE, OnCombatDone);
         //Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         //Messenger.AddListener<IInteractable, Interaction>(Signals.ADDED_INTERACTION, OnInteractionAdded);
@@ -231,15 +217,6 @@ public class UIManager : MonoBehaviour {
         poiTestingUI.HideUI();
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
-        }
-        if (landmarkInfoUI.isShowing) {
-            landmarkInfoUI.CloseMenu();
-        }
-        if (partyinfoUI.isShowing) {
-            partyinfoUI.CloseMenu();
-        }
-        if (playerLandmarkInfoUI.isShowing) {
-            playerLandmarkInfoUI.CloseMenu();
         }
         if (factionInfoUI.isShowing) {
             factionInfoUI.CloseMenu();
@@ -327,14 +304,12 @@ public class UIManager : MonoBehaviour {
         UpdateInteractableInfoUI();
         UpdateFactionInfo();
         //UpdateHexTileInfo();
-        UpdatePartyInfo();
         //UpdateCombatLogs();
         //UpdateQuestSummary();
         PlayerUI.Instance.UpdateUI();
     }
     private void UpdateInteractableInfoUI() {
         UpdateCharacterInfo();
-        UpdateLandmarkInfo();
         UpdateTileObjectInfo();
     }
 
@@ -676,27 +651,11 @@ public class UIManager : MonoBehaviour {
         cover.SetActive(state);
         cover.GetComponent<Image>().raycastTarget = blockClicks;
     }
-    private void BeforeOpeningMenu(UIMenu menuToOpen) {
-        //if none of the menus are showing, pause the game when the menu opens
-        if (!areaInfoUI.isShowing && !characterInfoUI.isShowing && !playerLandmarkInfoUI.isShowing) {
-            menuToOpen.SetOpenMenuAction(() => Pause());
-        }
-    }
-    //private void OnMenuClosed(UIMenu closedMenu) {
-    //    if (GameManager.Instance.isPaused) {
-    //        //if the game is paused, and a menu was closed, check if all other menus are closed, if so unpause the game
-    //        if (!areaInfoUI.isShowing && !characterInfoUI.isShowing && !playerLandmarkInfoUI.isShowing) {
-    //            Unpause();
-    //        }
-    //    }
-    //}
     private void OnInteractionMenuOpened() {
         if (areaInfoUI.isShowing) {
             lastOpenedMenu = areaInfoUI;
         } else if (characterInfoUI.isShowing) {
             lastOpenedMenu = characterInfoUI;
-        } else if (playerLandmarkInfoUI.isShowing) {
-            lastOpenedMenu = playerLandmarkInfoUI;
         }
         //if (objectPicker.gameObject.activeSelf) {
         //    HideObjectPicker();
@@ -707,9 +666,6 @@ public class UIManager : MonoBehaviour {
         }
         if (characterInfoUI.isShowing) {
             characterInfoUI.gameObject.SetActive(false);
-        }
-        if (playerLandmarkInfoUI.isShowing) {
-            playerLandmarkInfoUI.gameObject.SetActive(false);
         }
     }
     private void OnInteractionMenuClosed() {
@@ -780,23 +736,7 @@ public class UIManager : MonoBehaviour {
         CameraMove.Instance.ToggleMainCameraLayer("Borders");
         CameraMove.Instance.ToggleMainCameraLayer("MinimapAndHextiles");
     }
-    public void StartCorruption() {
-        if (landmarkInfoUI.currentlyShowingLandmark != null) {
-            landmarkInfoUI.currentlyShowingLandmark.tileLocation.SetUncorruptibleLandmarkNeighbors(0);
-            landmarkInfoUI.currentlyShowingLandmark.tileLocation.SetCorruption(true, landmarkInfoUI.currentlyShowingLandmark);
-        }
-    }
-    //public void UnlockAllTokens() {
-    //    InteractionManager.Instance.UnlockAllTokens();
-    //}
     public void SetUIState(bool state) {
-        //Transform[] children = Utilities.GetComponentsInDirectChildren<Transform>(this.gameObject);
-        //for (int i = 0; i < children.Length; i++) {
-        //    Transform currChild = children[i];
-        //    if (currChild.GetComponent<ConsoleMenu>() == null) {
-        //        currChild.gameObject.SetActive(state);
-        //    }
-        //}
         this.gameObject.SetActive(state);
     }
     public void DateHover() {
@@ -810,37 +750,18 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     internal AreaInfoUI areaInfoUI;
     public void ShowAreaInfo(Area area, int indexToggleToBeActivated = 0) {
-        //BeforeOpeningMenu(areaInfoUI);
-        //HideMainUI();
         if (factionInfoUI.isShowing) {
             factionInfoUI.CloseMenu();
         }
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
         }
-        //if (hexTileInfoUI.isShowing) {
-        //    hexTileInfoUI.HideMenu();
-        //}
-        //if (questInfoUI.isShowing) {
-        //    questInfoUI.HideMenu();
-        //}
-        if (partyinfoUI.isShowing) {
-            partyinfoUI.CloseMenu();
-        }
-        if (playerLandmarkInfoUI.isShowing) {
-            playerLandmarkInfoUI.CloseMenu();
-        }
-        if (landmarkInfoUI.isShowing) {
-            landmarkInfoUI.CloseMenu();
-        }
         if (tileObjectInfoUI.isShowing) {
             tileObjectInfoUI.CloseMenu();
         }
         areaInfoUI.SetData(area);
         areaInfoUI.OpenMenu();
-        //areaInfoUI.UpdateInvestigation(indexToggleToBeActivated);
         areaInfoUI.CenterOnCoreLandmark();
-        //		playerActionsUI.ShowPlayerActionsUI ();
     }
     public void UpdateAreaInfo() {
         if (areaInfoUI.isShowing) {
@@ -855,84 +776,6 @@ public class UIManager : MonoBehaviour {
         }
         return null;
     }
-    #endregion
-    #region Landmark Info
-    [Space(10)]
-    [Header("Landmark Info")]
-    [SerializeField] internal LandmarkInfoUI landmarkInfoUI;
-    public void ShowLandmarkInfo(BaseLandmark landmark, int indexToggleToBeActivated = 0) {
-        //BeforeOpeningMenu(landmarkInfoUI);
-        //HideMainUI();
-        //if (factionInfoUI.isShowing) {
-        //    factionInfoUI.HideMenu();
-        //}
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.CloseMenu();
-        }
-        //if (hexTileInfoUI.isShowing) {
-        //    hexTileInfoUI.HideMenu();
-        //}
-        //if (questInfoUI.isShowing) {
-        //    questInfoUI.HideMenu();
-        //}
-        if (partyinfoUI.isShowing) {
-            partyinfoUI.CloseMenu();
-        }
-        if (playerLandmarkInfoUI.isShowing) {
-            playerLandmarkInfoUI.CloseMenu();
-        }
-        if (areaInfoUI.isShowing) {
-            areaInfoUI.CloseMenu();
-        }
-        if (tileObjectInfoUI.isShowing) {
-            tileObjectInfoUI.CloseMenu();
-        }
-        landmarkInfoUI.SetData(landmark);
-        landmarkInfoUI.OpenMenu();
-        landmark.CenterOnLandmark();
-        //		playerActionsUI.ShowPlayerActionsUI ();
-    }
-    public void UpdateLandmarkInfo() {
-        if (landmarkInfoUI.isShowing) {
-            landmarkInfoUI.UpdateLandmarkInfo();
-        }
-    }
-    #endregion
-
-    #region Player Landmark Info
-    [Space(10)]
-    [Header("Player Landmark Info")]
-    public PlayerLandmarkInfoUI playerLandmarkInfoUI;
-    public void ShowPlayerLandmarkInfo(BaseLandmark landmark) {
-        //BeforeOpeningMenu(playerLandmarkInfoUI);
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.CloseMenu();
-        }
-        if (partyinfoUI.isShowing) {
-            partyinfoUI.CloseMenu();
-        }
-        if (landmarkInfoUI.isShowing) {
-            landmarkInfoUI.CloseMenu();
-        }
-        if (areaInfoUI.isShowing) {
-            areaInfoUI.CloseMenu();
-        }
-        if (factionInfoUI.isShowing) {
-            factionInfoUI.CloseMenu();
-        }
-        if (tileObjectInfoUI.isShowing) {
-            tileObjectInfoUI.CloseMenu();
-        }
-        playerLandmarkInfoUI.SetData(landmark);
-        playerLandmarkInfoUI.OpenMenu();
-        playerLandmarkInfoUI.CenterOnLandmark();
-        //		playerActionsUI.ShowPlayerActionsUI ();
-    }
-    //public void UpdatePlayerLandmarkInfo() {
-    //    if (playerLandmarkInfoUI.isShowing) {
-    //        playerLandmarkInfoUI.UpdateLandmarkInfo();
-    //    }
-    //}
     #endregion
 
     #region Faction Info
@@ -956,18 +799,8 @@ public class UIManager : MonoBehaviour {
         if (tileObjectInfoUI.isShowing) {
             tileObjectInfoUI.CloseMenu();
         }
-        //if (hexTileInfoUI.isShowing) {
-        //    hexTileInfoUI.HideMenu();
-        //}
-        //if (questInfoUI.isShowing) {
-        //    questInfoUI.HideMenu();
-        //}
-        if (partyinfoUI.isShowing) {
-            partyinfoUI.CloseMenu();
-        }
         factionInfoUI.SetData(faction);
         factionInfoUI.OpenMenu();
-        //		playerActionsUI.ShowPlayerActionsUI ();
     }
     public void UpdateFactionInfo() {
         if (factionInfoUI.isShowing) {
@@ -986,12 +819,6 @@ public class UIManager : MonoBehaviour {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
-        }
-        if (landmarkInfoUI.isShowing) {
-            landmarkInfoUI.CloseMenu();
-        }
-        if (playerLandmarkInfoUI.isShowing) {
-            playerLandmarkInfoUI.CloseMenu();
         }
         if (areaInfoUI.isShowing) {
             areaInfoUI.CloseMenu();
@@ -1049,8 +876,6 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     internal TileObjectInfoUI tileObjectInfoUI;
     public void ShowTileObjectInfo(TileObject tileObject) {
-        //BeforeOpeningMenu(areaInfoUI);
-        //HideMainUI();
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
@@ -1061,15 +886,6 @@ public class UIManager : MonoBehaviour {
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
         }
-        if (partyinfoUI.isShowing) {
-            partyinfoUI.CloseMenu();
-        }
-        if (playerLandmarkInfoUI.isShowing) {
-            playerLandmarkInfoUI.CloseMenu();
-        }
-        if (landmarkInfoUI.isShowing) {
-            landmarkInfoUI.CloseMenu();
-        }
         if (areaInfoUI.isShowing) {
             areaInfoUI.CloseMenu();
         }
@@ -1079,51 +895,6 @@ public class UIManager : MonoBehaviour {
     public void UpdateTileObjectInfo() {
         if (tileObjectInfoUI.isShowing) {
             tileObjectInfoUI.UpdateTileObjectInfo();
-        }
-    }
-    #endregion
-
-    #region Party Info
-    [Space(10)]
-    [Header("Party Info")]
-    [SerializeField] internal PartyInfoUI partyinfoUI;
-    public void ShowPartyInfo(Party party) {
-        //BeforeOpeningMenu(partyinfoUI);
-        //HideMainUI();
-        if (tempDisableShowInfoUI) {
-            SetTempDisableShowInfoUI(false);
-            return;
-        }
-        if (landmarkInfoUI.isShowing) {
-            landmarkInfoUI.CloseMenu();
-        }
-        if (playerLandmarkInfoUI.isShowing) {
-            playerLandmarkInfoUI.CloseMenu();
-        }
-        if (areaInfoUI.isShowing) {
-            areaInfoUI.CloseMenu();
-        }
-        if (tileObjectInfoUI.isShowing) {
-            tileObjectInfoUI.CloseMenu();
-        }
-        //if (factionInfoUI.isShowing) {
-        //    factionInfoUI.HideMenu();
-        //}
-        //if (characterInfoUI.isShowing) {
-        //    characterInfoUI.CloseMenu();
-        //}
-        //if (questInfoUI.isShowing) {
-        //	questInfoUI.HideMenu();
-        //}
-        //if (hexTileInfoUI.isShowing) {
-        //    hexTileInfoUI.HideMenu();
-        //}
-        partyinfoUI.SetData(party);
-        partyinfoUI.OpenMenu();
-    }
-    public void UpdatePartyInfo() {
-        if (partyinfoUI.isShowing) {
-            partyinfoUI.UpdatePartyInfo();
         }
     }
     #endregion
@@ -1165,49 +936,6 @@ public class UIManager : MonoBehaviour {
     }
     public void HideConsole() {
         consoleUI.HideConsole();
-    }
-    #endregion
-
-    #region Characters Summary
-    [Space(10)]
-    [Header("Characters Summary")]
-    [SerializeField] private GameObject charactersSummaryGO;
-    public TokensUI charactersSummaryMenu;
-    public void ShowCharactersSummary() {
-        //HideQuestsSummary();
-        //HideStorylinesSummary();
-        //worldInfoCharactersSelectedGO.SetActive(true);
-        charactersSummaryMenu.OpenMenu();
-    }
-    public void HideCharactersSummary() {
-        //worldInfoCharactersSelectedGO.SetActive(false);
-        charactersSummaryMenu.CloseMenu();
-    }
-    public void ToggleCharacterSummary() {
-        if (charactersSummaryMenu.isShowing) {
-            HideCharactersSummary();
-        } else {
-            ShowCharactersSummary();
-        }
-    }
-    #endregion
-
-    #region Faction Summary
-    [Space(10)]
-    [Header("Factions Summary")]
-    public FactionTokenUI factionsSummaryMenu;
-    public void ShowFactionsSummary() {
-        factionsSummaryMenu.OpenMenu();
-    }
-    public void HideFactionSummary() {
-        factionsSummaryMenu.CloseMenu();
-    }
-    public void ToggleFactionSummary() {
-        if (factionsSummaryMenu.isShowing) {
-            HideFactionSummary();
-        } else {
-            ShowFactionsSummary();
-        }
     }
     #endregion
 
@@ -1276,66 +1004,6 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Player
-    public void ShowPlayerPicker() {
-        playerPickerGO.SetActive(true);
-    }
-    public void HidePlayerPicker() {
-        playerPickerGO.SetActive(false);
-        //PlayerUI.Instance.SetBottomMenuTogglesState(false);
-        //PlayerManager.Instance.player.OnHidePlayerPicker();
-    }
-    public void OnClickOkPlayerPicker() {
-        //PlayerManager.Instance.player.OnOkPlayerPicker();
-        HidePlayerPicker();
-    }
-    public void OnClickClosePlayerPicker() {
-        HidePlayerPicker();
-    }
-    //public void PopulateLandmarkItemsInPicker() {
-    //    BaseLandmark landmark = PlayerManager.Instance.player.currentTargetinteractable;
-    //    List<Item> items = landmark.itemsInLandmark;
-    //    int length = items.Count;
-    //    if (currentActivePlayerPickerButtons.Count > items.Count) {
-    //        length = currentActivePlayerPickerButtons.Count;
-    //    }
-    //    for (int i = 0; i < length; i++) {
-    //        if (i >= items.Count) {
-    //            currentActivePlayerPickerButtons[i].gameObject.SetActive(false);
-    //        } else if (i >= currentActivePlayerPickerButtons.Count) {
-    //            CreatePlayerPickerButton(items[i]);
-    //        } else {
-    //            currentActivePlayerPickerButtons[i].gameObject.SetActive(true);
-    //            currentActivePlayerPickerButtons[i].SetPlayerPicker(items[i]);
-    //        }
-    //    }
-    //}
-    private void CreatePlayerPickerButton(IPlayerPicker playerPicker) {
-        GameObject go = GameObject.Instantiate(playerPickerButtonPrefab, playerPickerContentTransform);
-        PlayerPickerButton playerPickerButton = go.GetComponent<PlayerPickerButton>();
-        playerPickerButton.SetPlayerPicker(playerPicker);
-        currentActivePlayerPickerButtons.Add(playerPickerButton);
-    }
-    private void OnTokenAdded(Token token) {
-        UnityAction action = null;
-        string notificationText = string.Empty;
-        if (token is FactionToken) {
-            action = () => ShowCharacterTokenMenu();
-            notificationText = "Obtained token about faction: <color=\"green\"><b>" + (token as FactionToken).faction.name;
-        } else if (token is LocationToken) {
-            action = () => ShowCharacterTokenMenu();
-            notificationText = "Obtained token about location: <color=\"green\"><b>" + (token as LocationToken).location.name;
-        } else if (token is CharacterToken) {
-            action = () => ShowCharacterTokenMenu();
-            notificationText = "Obtained token about character: <color=\"green\"><b>" + (token as CharacterToken).character.name;
-        } else if (token is DefenderToken) {
-            action = () => ShowCharacterTokenMenu();
-            notificationText = "Obtained token about defenders at: <color=\"green\"><b>" + (token as DefenderToken).owner.name;
-        } else if (token is SpecialToken) {
-            action = () => ShowCharacterTokenMenu();
-            notificationText = "Obtained token about special item: <color=\"green\"><b>" + (token as SpecialToken).name;
-        }
-        ShowDeveloperNotification(notificationText, 5, action);
-    }
     private void OnCombatDone(Combat combat) {
         ShowDeveloperNotification("Combat at <b>" + combat.location.name + "</b>!", 5, () => ShowCombatLog(combat));
     }
@@ -1537,6 +1205,25 @@ public class UIManager : MonoBehaviour {
     #region Audio
     public void ToggleMute(bool state) {
         AudioManager.Instance.SetMute(state);
+    }
+    #endregion
+
+    #region Interior Map Loading
+    [Header("Interior Map Loading")]
+    [SerializeField] private GameObject interiorMapLoadingGO;
+    [SerializeField] private Image interiorMapLoadingBGImage;
+    [SerializeField] private GameObject interiorMapLoadingDetailsGO;
+    public void SetInteriorMapLoadingState(bool state) {
+        interiorMapLoadingGO.SetActive(state);
+        //if (state) {
+        //    interiorMapLoadingGO.SetActive(true);
+        //    //StartCoroutine(LoadingCoroutine(128f/ 255f));
+        //    //interiorMapLoadingTween.PlayForward();
+        //} else {
+        //    //interiorMapLoadingTween.PlayReverse();
+        //    //interiorMapLoadingBGImage.CrossFadeAlpha(0, 0.5f, true);
+        //    //StartCoroutine(LoadingCoroutine(0f / 255f));
+        //}
     }
     #endregion
 }

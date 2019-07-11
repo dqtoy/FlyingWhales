@@ -9,8 +9,6 @@ using System.Linq;
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
 
-    public TokensUI charactersIntelUI;
-
     [Header("Currency")]
     public TextMeshProUGUI manaText;
     public TextMeshProUGUI suppliesText;
@@ -390,13 +388,6 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 
-    public void CreateNewParty() {
-        if (!UIManager.Instance.partyinfoUI.isShowing) {
-            UIManager.Instance.partyinfoUI.ShowCreatePartyUI();
-        } else {
-            UIManager.Instance.partyinfoUI.CloseMenu();
-        }
-    }
 
     public string previousMenu;
     private void OnMenuOpened(UIMenu menu) {

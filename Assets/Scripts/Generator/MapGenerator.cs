@@ -54,9 +54,9 @@ public class MapGenerator : MonoBehaviour {
         
         TokenManager.Instance.Initialize();
         CharacterManager.Instance.GenerateRelationships();
-        CharacterManager.Instance.PlaceInitialCharacters();
+        //CharacterManager.Instance.PlaceInitialCharacters();
         CharacterManager.Instance.GiveInitialItems();
-        CharacterManager.Instance.GenerateInitialAwareness();
+        //CharacterManager.Instance.GenerateInitialAwareness();
         InteractionManager.Instance.Initialize();
 
         PlayerManager.Instance.InitializePlayer(portal);

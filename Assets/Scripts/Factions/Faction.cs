@@ -40,7 +40,6 @@ public class Faction {
     public MORALITY morality { get; private set; }
     public FACTION_SIZE size { get; private set; }
     public FACTION_TYPE factionType { get; private set; }
-    public FactionToken factionToken { get; private set; }
     public WeightedDictionary<AreaCharacterClass> additionalClassWeights { get; private set; }
     public bool isActive { get; private set; }
     public List<Log> history { get; private set; }
@@ -128,7 +127,6 @@ public class Faction {
         _ownedAreas = new List<Area>();
         _recruitableRaces = new List<RACE>();
         _startingFollowers = new List<RACE>();
-        factionToken = new FactionToken(this);
         history = new List<Log>();
         //favor = new Dictionary<Faction, int>();
         //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
@@ -170,7 +168,6 @@ public class Faction {
         if (_startingFollowers == null) {
             _startingFollowers = new List<RACE>();
         }
-        factionToken = new FactionToken(this);
         history = new List<Log>();
         //favor = new Dictionary<Faction, int>();
         //if (data.defenderWeights != null) {

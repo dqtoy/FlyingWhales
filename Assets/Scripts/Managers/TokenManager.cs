@@ -6,28 +6,9 @@ using UnityEngine;
 public class TokenManager : MonoBehaviour {
     public static TokenManager Instance;
 
-    //private Dictionary<int, Intel> _intelLookup;
-
-    //private Dictionary<string, int> specialTokens = new Dictionary<string, int>() {
-    //    { "Blighted Potion", 4 },
-    //    { "Book Of The Dead", 1 },
-    //    { "Charm Spell", 4 },
-    //    { "Fear Spell", 4 },
-    //    { "Book Of Wizardry", 1 },
-    //    { "Brand Of The Beastmaster", new BrandOfTheBeastmaster() },
-    //    { "Mark Of The Witch", new MarkOfTheWitch() },
-    //    { "Secret Scroll", new SecretScroll() },
-    //};
-
     public List<SpecialTokenSettings> specialTokenSettings;
 
     [SerializeField] private ItemSpriteDictionary itemSpritesDictionary;
-
-    #region getters/setters
-    //public Dictionary<int, Intel> intelLookup {
-    //    get { return _intelLookup; }
-    //}
-    #endregion
 
     void Awake() {
         Instance = this;
@@ -123,63 +104,6 @@ public class TokenManager : MonoBehaviour {
         }
         return null;
     }
-
-    //public SpecialToken GetSpecialToken(string name) {
-    //    return null;
-    //}
-
-    //public Intel GetIntel(int id) {
-    //    return _intelLookup[id];
-    //}
-
-    //public List<Intel> GetIntelConcerning(Character character) {
-    //    List<Intel> intel = new List<Intel>();
-    //    foreach (KeyValuePair<int, Intel> kvp in _intelLookup) {
-    //        Intel currIntel = kvp.Value;
-    //        if (currIntel.description.Contains(character.name) || currIntel.name.Contains(character.name)) {
-    //            if (!intel.Contains(currIntel)) {
-    //                intel.Add(currIntel);
-    //            }
-    //        }
-    //    }
-    //    return intel;
-    //}
-
-    public List<Token> GetIntelConcerning(List<Character> character) {
-        List<Token> intel = new List<Token>();
-        List<Token> intelForCharacter = GetIntelConcerning(character);
-        for (int i = 0; i < intelForCharacter.Count; i++) {
-            Token currIntelForCharacter = intelForCharacter[i];
-            if (!intel.Contains(currIntelForCharacter)) {
-                intel.Add(currIntelForCharacter);
-            }
-        }
-        return intel;
-    }
-
-    //public List<Intel> GetIntelConcerning(List<Party> parties) {
-    //    List<Intel> intel = new List<Intel>();
-    //    for (int i = 0; i < parties.Count; i++) {
-    //        Party currParty = parties[i];
-    //        if (!(currParty is CharacterParty)) {
-    //            continue; //skip non character parties
-    //        }
-    //        for (int j = 0; j < currParty.icharacters.Count; j++) {
-    //            ICharacter currCharacter = currParty.icharacters[j];
-    //            if (currCharacter is Character) {
-    //                List<Intel> intelForCharacter = GetIntelConcerning(currCharacter as Character);
-    //                for (int k = 0; k < intelForCharacter.Count; k++) {
-    //                    Intel currIntelForCharacter = intelForCharacter[k];
-    //                    if (!intel.Contains(currIntelForCharacter)) {
-    //                        intel.Add(currIntelForCharacter);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-        
-    //    return intel;
-    //}
 }
 
 [System.Serializable]

@@ -85,32 +85,17 @@ public class LandmarkInfoUI : UIMenu {
         base.Initialize();
         characterItems = new List<LandmarkCharacterItem>();
         LoadLogItems();
-        Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
-        //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_INSPECTED, OnLandmarkInspected);
+        //Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
-        //Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, OnPartyEnteredLandmark);
-        //Messenger.AddListener<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, OnPartyExitedLandmark);
-        //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_ADDED, OnResidentAddedToLandmark);
-        //Messenger.AddListener<BaseLandmark, ICharacter>(Signals.LANDMARK_RESIDENT_REMOVED, OnResidentRemovedFromLandmark);
-        Messenger.AddListener<Token>(Signals.TOKEN_ADDED, OnIntelAdded);
-        //_assignedParty = new Minion[4];
     }
     public override void OpenMenu() {
         base.OpenMenu();
         SetLandmarkBorderState(false);
         BaseLandmark previousLandmark = _activeLandmark;
         _activeLandmark = _data as BaseLandmark;
-        UpdateHiddenUI();
         UpdateLandmarkInfo();
         UpdateCharacters();
-        
-        //UpdateInvestigation();
-        //if (_activeLandmark.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
-        //    PlayerAbilitiesUI.Instance.ShowPlayerAbilitiesUI(_activeLandmark);
-        //}
         ResetScrollPositions();
-        //PlayerUI.Instance.UncollapseMinionHolder();
-        //InteractionUI.Instance.OpenInteractionUI(_activeLandmark);
         if(previousLandmark != null) {
             if (previousLandmark.tileLocation.areaOfTile != null) {
                 previousLandmark.tileLocation.areaOfTile.SetOutlineState(false);
@@ -133,9 +118,6 @@ public class LandmarkInfoUI : UIMenu {
             SetLandmarkBorderState(false);
         }
         _activeLandmark = null;
-        //PlayerAbilitiesUI.Instance.HidePlayerAbilitiesUI();
-        //PlayerUI.Instance.CollapseMinionHolder();
-        //InteractionUI.Instance.HideInteractionUI();
     }
     public override void SetData(object data) {
         base.SetData(data);
@@ -146,28 +128,7 @@ public class LandmarkInfoUI : UIMenu {
             return;
         }
         UpdateBasicInfo();
-        //if (!_activeLandmark.isBeingInspected) {
-        //    UpdateBGs(true);
-        //} else {
-        //    UpdateBGs(false);
-        //}
-        //UpdateInfo();
-        //UpdateCharacters();
-        //UpdateDefenders();
-        //UpdateItems();
-        UpdateAllHistoryInfo();
-    }
-    private void UpdateHiddenUI() {
-        if (_activeLandmark.tileLocation.areaOfTile.locationToken.isObtainedByPlayer || GameManager.Instance.inspectAll) {
-            ShowIntelTriggeredUI();
-        } else {
-            HideIntelTriggeredUI();
-        }
-    }
-    private void OnIntelAdded(Token intel) {
-        if(_activeLandmark != null && _activeLandmark.tileLocation.areaOfTile.locationToken == intel) {
-            ShowIntelTriggeredUI();
-        }
+        //UpdateAllHistoryInfo();
     }
     private void ShowIntelTriggeredUI() {
         defendersGO.SetActive(true);
@@ -233,33 +194,33 @@ public class LandmarkInfoUI : UIMenu {
             logHistoryItems[i].gameObject.SetActive(false);
         }
     }
-    private void UpdateHistory(object obj) {
-        if (obj is BaseLandmark && _activeLandmark != null && (obj as BaseLandmark).id == _activeLandmark.id) {
-            UpdateAllHistoryInfo();
-        }
-    }
-    private void UpdateAllHistoryInfo() {
-        List<Log> landmarkHistory = new List<Log>(_activeLandmark.history.OrderByDescending(x => x.id));
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            Log currLog = landmarkHistory.ElementAtOrDefault(i);
-            if (currLog != null) {
-                currItem.gameObject.SetActive(true);
-                currItem.SetLog(currLog);
-                if (Utilities.IsEven(i)) {
-                    currItem.SetLogColor(evenLogColor);
-                } else {
-                    currItem.SetLogColor(oddLogColor);
-                }
-            } else {
-                currItem.gameObject.SetActive(false);
-            }
-        }
-        //if (this.gameObject.activeInHierarchy) {
-        //    StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
-        //    StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
-        //}
-    }
+    //private void UpdateHistory(object obj) {
+    //    if (obj is BaseLandmark && _activeLandmark != null && (obj as BaseLandmark).id == _activeLandmark.id) {
+    //        UpdateAllHistoryInfo();
+    //    }
+    //}
+    //private void UpdateAllHistoryInfo() {
+    //    List<Log> landmarkHistory = new List<Log>(_activeLandmark.history.OrderByDescending(x => x.id));
+    //    for (int i = 0; i < logHistoryItems.Length; i++) {
+    //        LogHistoryItem currItem = logHistoryItems[i];
+    //        Log currLog = landmarkHistory.ElementAtOrDefault(i);
+    //        if (currLog != null) {
+    //            currItem.gameObject.SetActive(true);
+    //            currItem.SetLog(currLog);
+    //            if (Utilities.IsEven(i)) {
+    //                currItem.SetLogColor(evenLogColor);
+    //            } else {
+    //                currItem.SetLogColor(oddLogColor);
+    //            }
+    //        } else {
+    //            currItem.gameObject.SetActive(false);
+    //        }
+    //    }
+    //    //if (this.gameObject.activeInHierarchy) {
+    //    //    StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
+    //    //    StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+    //    //}
+    //}
     private bool IsLogAlreadyShown(Log log) {
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
@@ -431,7 +392,6 @@ public class LandmarkInfoUI : UIMenu {
     private void OnInspectAll() {
         if (isShowing && _activeLandmark != null) {
             UpdateCharacters();
-            UpdateHiddenUI();
         }
     }
     private void SetLandmarkBorderState(bool state) {
