@@ -60,9 +60,9 @@ public class PlayerJobData {
                 jobActions.Add(new RaiseDead());
                 break;
         }
-        for (int i = 0; i < jobActions.Count; i++) {
-            jobActions[i].SetParentData(this);
-        }
+        //for (int i = 0; i < jobActions.Count; i++) {
+        //    jobActions[i].SetParentData(this);
+        //}
     }
 
 

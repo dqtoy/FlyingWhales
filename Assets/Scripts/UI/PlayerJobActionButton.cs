@@ -146,12 +146,12 @@ public class PlayerJobActionButton : MonoBehaviour {
 
     #region Listeners
     private void OnJobActionCooldownActivated(PlayerJobAction jobAction) {
-        if (jobAction.parentData == this.action.parentData) {
+        if (jobAction == this.action) {
             UpdateInteractableState();
         }
     }
     private void OnJobActionCooldownDone(PlayerJobAction jobAction) {
-        if (jobAction.parentData == this.action.parentData) {
+        if (jobAction == this.action) {
             UpdateInteractableState();
         }
     }

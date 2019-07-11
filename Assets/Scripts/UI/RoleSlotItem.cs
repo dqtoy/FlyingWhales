@@ -38,7 +38,7 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     private void AddListeners() {
         Messenger.AddListener<JOB, Minion>(Signals.MINION_ASSIGNED_TO_JOB, OnMinionAssignedToJob);
         Messenger.AddListener<JOB, Minion>(Signals.MINION_UNASSIGNED_FROM_JOB, OnMinionUnassignedFromJob);
-        Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobCooldownActivated);
+        //Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobCooldownActivated);
     }
 
     public void SetMinion(Minion minion) {
@@ -74,42 +74,42 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
         }
     }
 
-    #region Cooldown
-    private void OnJobCooldownActivated(PlayerJobAction action) {
-        if (PlayerManager.Instance.player.roleSlots[slotJob].activeAction == action) {
-            //the job that was activated is associated with this slot
-            if (action.isInCooldown) {
-                cooldownProgress.fillAmount = 1f;
-                Messenger.AddListener(Signals.TICK_ENDED, UpdateCooldownProgress);
-                Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobCooldownDone);
-            }
-        }
-    }
-    private void UpdateCooldownProgress() {
-        PlayerJobAction activeAction = PlayerManager.Instance.player.roleSlots[slotJob].activeAction;
-        float destinationValue = 1f - ((float)activeAction.ticksInCooldown / (float)activeAction.cooldown);
-        //float value = Mathf.Lerp(cooldownProgress.fillAmount, destinationValue, Time.deltaTime * 10f);
-        //cooldownProgress.fillAmount = value;
-        StartCoroutine(SmoothProgress(cooldownProgress.fillAmount, destinationValue));
-    }
-    IEnumerator SmoothProgress(float start, float end) {
-        float t = 0f;
-        while (t < 1) {
-            if (!GameManager.Instance.isPaused) {
-                t += Time.deltaTime / GameManager.Instance.progressionSpeed;
-                cooldownProgress.fillAmount = Mathf.Lerp(start, end, t);
-            }
-            yield return null;
-        }
-    }
-    private void OnJobCooldownDone(PlayerJobAction action) {
-        if (PlayerManager.Instance.player.roleSlots[slotJob].activeAction == action && !action.isInCooldown) {
-            Messenger.RemoveListener(Signals.TICK_ENDED, UpdateCooldownProgress);
-            Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobCooldownDone);
-            cooldownProgress.fillAmount = 0f;
-        }
-    }
-    #endregion
+    //#region Cooldown
+    //private void OnJobCooldownActivated(PlayerJobAction action) {
+    //    if (PlayerManager.Instance.player.roleSlots[slotJob].activeAction == action) {
+    //        //the job that was activated is associated with this slot
+    //        if (action.isInCooldown) {
+    //            cooldownProgress.fillAmount = 1f;
+    //            Messenger.AddListener(Signals.TICK_ENDED, UpdateCooldownProgress);
+    //            Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobCooldownDone);
+    //        }
+    //    }
+    //}
+    //private void UpdateCooldownProgress() {
+    //    PlayerJobAction activeAction = PlayerManager.Instance.player.roleSlots[slotJob].activeAction;
+    //    float destinationValue = 1f - ((float)activeAction.ticksInCooldown / (float)activeAction.cooldown);
+    //    //float value = Mathf.Lerp(cooldownProgress.fillAmount, destinationValue, Time.deltaTime * 10f);
+    //    //cooldownProgress.fillAmount = value;
+    //    StartCoroutine(SmoothProgress(cooldownProgress.fillAmount, destinationValue));
+    //}
+    //IEnumerator SmoothProgress(float start, float end) {
+    //    float t = 0f;
+    //    while (t < 1) {
+    //        if (!GameManager.Instance.isPaused) {
+    //            t += Time.deltaTime / GameManager.Instance.progressionSpeed;
+    //            cooldownProgress.fillAmount = Mathf.Lerp(start, end, t);
+    //        }
+    //        yield return null;
+    //    }
+    //}
+    //private void OnJobCooldownDone(PlayerJobAction action) {
+    //    if (PlayerManager.Instance.player.roleSlots[slotJob].activeAction == action && !action.isInCooldown) {
+    //        Messenger.RemoveListener(Signals.TICK_ENDED, UpdateCooldownProgress);
+    //        Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobCooldownDone);
+    //        cooldownProgress.fillAmount = 0f;
+    //    }
+    //}
+    //#endregion
 
     #region Hover
     public void ShowHoverTooltip() {

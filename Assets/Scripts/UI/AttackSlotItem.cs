@@ -25,13 +25,14 @@ public class AttackSlotItem : MonoBehaviour {
         for (int i = 0; i < savedCombatGrid.slots.Length; i++) {
             savedCombatGrid.slots[i].OccupySlot(PlayerUI.Instance.attackGridReference.slots[i].character);
         }
-        PlayerManager.Instance.player.AssignAttackGrid(savedCombatGrid);
+        //PlayerManager.Instance.player.AssignAttackGrid(savedCombatGrid);
         UIManager.Instance.HideObjectPicker();
         PlayerUI.Instance.HideCombatGrid();
         UpdateVisuals();
     }
     private bool CanAssignCharacterToAttack(Character character) {
-        return PlayerManager.Instance.player.CanAssignCharacterToAttack(character);
+        //return PlayerManager.Instance.player.CanAssignCharacterToAttack(character);
+        return false;
     }
     public void UpdateVisuals() {
         attackImg.gameObject.SetActive(PlayerManager.Instance.player.attackGrid != null && !PlayerManager.Instance.player.attackGrid.IsGridEmpty());

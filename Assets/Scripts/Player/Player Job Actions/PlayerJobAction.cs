@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerJobAction {
 
-    public PlayerJobData parentData { get; protected set; }
+    //public PlayerJobData parentData { get; protected set; }
+    public Minion minion { get; protected set; }
     public INTERVENTION_ABILITY abilityType { get; protected set; }
     public string name { get; protected set; }
 	public int cooldown { get; protected set; } //cooldown in ticks
@@ -17,8 +18,11 @@ public class PlayerJobAction {
         get { return ticksInCooldown != cooldown; } //check if the ticks this action has been in cooldown is the same as cooldown
     }
 
-    public void SetParentData(PlayerJobData data) {
-        parentData = data;
+    //public void SetParentData(PlayerJobData data) {
+    //    parentData = data;
+    //}
+    public void SetMinion(Minion minion) {
+        this.minion = minion;
     }
 
     public PlayerJobAction(INTERVENTION_ABILITY abilityType) {
@@ -33,7 +37,7 @@ public class PlayerJobAction {
         }
         this.assignedCharacter = assignedCharacter;
         isActive = true;
-        parentData.SetActiveAction(this);
+        //parentData.SetActiveAction(this);
         ActivateCooldown();
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //Messenger.AddListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
@@ -47,7 +51,7 @@ public class PlayerJobAction {
     public virtual void DeactivateAction() { //this is typically called when the character is assigned to another action or the assigned character dies
         this.assignedCharacter = null;
         isActive = false;
-        parentData.SetActiveAction(null);
+        //parentData.SetActiveAction(null);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //Messenger.RemoveListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
     }
@@ -118,7 +122,7 @@ public class PlayerJobAction {
     }
     private void ActivateCooldown() {
         ticksInCooldown = 0;
-        parentData.SetLockedState(true);
+        //parentData.SetLockedState(true);
         Messenger.AddListener(Signals.TICK_ENDED, CheckForCooldown);
         Messenger.Broadcast(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, this);
     }
@@ -131,13 +135,13 @@ public class PlayerJobAction {
         }
     }
     private void OnCooldownDone() {
-        parentData.SetLockedState(false);
+        //parentData.SetLockedState(false);
         Messenger.RemoveListener(Signals.TICK_ENDED, CheckForCooldown);
         Messenger.Broadcast(Signals.JOB_ACTION_COOLDOWN_DONE, this);
     }
     private void ResetCooldown() {
         ticksInCooldown = cooldown;
-        parentData.SetLockedState(false);
+        //parentData.SetLockedState(false);
     }
     #endregion
 }

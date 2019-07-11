@@ -72,7 +72,7 @@ public class RoleSlotItemDraggable : DraggableItem {
                 Destroy(_draggingObject.gameObject);
             } else {
                 CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
-                PlayerManager.Instance.player.UnassignCharacterFromJob(roleSlotItem.slotJob);
+                //PlayerManager.Instance.player.UnassignCharacterFromJob(roleSlotItem.slotJob);
                 CancelDrag();
             }
         }

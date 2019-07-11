@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ShareIntel : PlayerJobAction {
-
+    //TODO: REDO SHARE INTEL TO BE A PLAYER ABILITY!
     public Character targetCharacter { get; private set; }
 
-    public ShareIntel() : base(INTERVENTION_ABILITY.SHARE_INTEL) {
+    public ShareIntel() : base(INTERVENTION_ABILITY.ABDUCT) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
