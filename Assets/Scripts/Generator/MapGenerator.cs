@@ -70,6 +70,7 @@ public class MapGenerator : MonoBehaviour {
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(true);
 
+        PlayerUI.Instance.ShowStartingMinionPicker();
         //TODO: make player pick 3 starting minions here.
     }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
