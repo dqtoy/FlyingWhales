@@ -94,7 +94,7 @@ public class ShareIntelMenu : MonoBehaviour {
         DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
         actorItem.SetData(actor, Utilities.LogReplacer(intel.intelLog), DialogItem.Position.Right);
 
-        ShareIntel share = PlayerManager.Instance.player.roleSlots[JOB.DIPLOMAT].GetAction(typeof(ShareIntel)) as ShareIntel;
+        ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
         share.BaseActivate(targetCharacter);
         List<string> reactions = targetCharacter.ShareIntel(intel);
         StartCoroutine(ShowReactions(reactions));
@@ -131,7 +131,7 @@ public class ShareIntelMenu : MonoBehaviour {
         closeBtn.interactable = true;
         yield return null;
 
-        ShareIntel share = PlayerManager.Instance.player.roleSlots[JOB.DIPLOMAT].GetAction(typeof(ShareIntel)) as ShareIntel;
+        ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
         share.DeactivateAction();
     }
 }

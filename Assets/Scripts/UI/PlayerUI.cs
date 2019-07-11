@@ -112,7 +112,7 @@ public class PlayerUI : MonoBehaviour {
             //currSlot.SetItemDroppedOutCallback(OnDroppedOutFromAttackGrid);
         }
 
-        //LoadRoleSlots();
+        LoadRoleSlots();
         LoadAttackSlot();
 
         UpdateIntel();
@@ -138,16 +138,30 @@ public class PlayerUI : MonoBehaviour {
     int currentlyeShowingSlotIndex = 0;
     private void LoadRoleSlots() {
         int currIndex = 0;
-        roleSlots = new RoleSlotItem[PlayerManager.Instance.player.roleSlots.Count];
-        foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in PlayerManager.Instance.player.roleSlots) {
+        roleSlots = new RoleSlotItem[PlayerManager.Instance.player.minions.Length];
+        for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
             GameObject roleSlotGO = UIManager.Instance.InstantiateUIObject(roleSlotItemPrefab.name, roleSlotsParent);
             RoleSlotItem roleSlot = roleSlotGO.GetComponent<RoleSlotItem>();
-            roleSlot.SetSlotJob(keyValuePair.Key);
+            //roleSlot.SetSlotJob(keyValuePair.Key);
+            roleSlot.Initialize();
             roleSlots[currIndex] = roleSlot;
             currIndex++;
         }
+        //foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in PlayerManager.Instance.player.roleSlots) {
+        //    GameObject roleSlotGO = UIManager.Instance.InstantiateUIObject(roleSlotItemPrefab.name, roleSlotsParent);
+        //    RoleSlotItem roleSlot = roleSlotGO.GetComponent<RoleSlotItem>();
+        //    roleSlot.SetSlotJob(keyValuePair.Key);
+        //    roleSlots[currIndex] = roleSlot;
+        //    currIndex++;
+        //}
         roleSlotsInfiniteScroll.Init();
         //LoadActionButtonsForActiveJob(roleSlots[currentlyeShowingSlotIndex]);
+        UpdateRoleSlotScroll();
+    }
+    public void UpdateRoleSlots() {
+        for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+            roleSlots[i].SetMinion(PlayerManager.Instance.player.minions[i]);
+        }
         UpdateRoleSlotScroll();
     }
 
@@ -223,14 +237,19 @@ public class PlayerUI : MonoBehaviour {
     //}
     private void LoadActionButtonsForActiveJob(RoleSlotItem active) {
         Utilities.DestroyChildren(activeMinionActionsParent);
-        PlayerJobData jobData = PlayerManager.Instance.player.roleSlots[active.slotJob];
-        for (int i = 0; i < jobData.jobActions.Count; i++) {
-            PlayerJobAction jobAction = jobData.jobActions[i];
-            GameObject jobGO = UIManager.Instance.InstantiateUIObject(actionBtnPrefab.name, activeMinionActionsParent);
-            PlayerJobActionButton actionBtn = jobGO.GetComponent<PlayerJobActionButton>();
-            actionBtn.SetJobAction(jobAction, jobData.assignedCharacter);
-            actionBtn.SetClickAction(() => PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(jobAction));
+        Minion minion = active.minion;
+        if(minion != null) {
+            for (int i = 0; i < minion.interventionAbilities.Length; i++) {
+                PlayerJobAction jobAction = minion.interventionAbilities[i];
+                if(jobAction != null) {
+                    GameObject jobGO = UIManager.Instance.InstantiateUIObject(actionBtnPrefab.name, activeMinionActionsParent);
+                    PlayerJobActionButton actionBtn = jobGO.GetComponent<PlayerJobActionButton>();
+                    actionBtn.SetJobAction(jobAction, minion.character);
+                    actionBtn.SetClickAction(() => PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(jobAction));
+                }
+            }
         }
+
     }
     public PlayerJobActionButton GetPlayerJobActionButton(PlayerJobAction action) {
         PlayerJobActionButton[] buttons = Utilities.GetComponentsInDirectChildren<PlayerJobActionButton>(activeMinionActionsParent.gameObject);
@@ -368,6 +387,7 @@ public class PlayerUI : MonoBehaviour {
         factionToggle.isOn = isOn;
     }
     #endregion
+
 
     public string previousMenu;
     private void OnMenuOpened(UIMenu menu) {
@@ -539,6 +559,9 @@ public class PlayerUI : MonoBehaviour {
     public void OnClickStartGame() {
         //TODO: add minions to minion list
         HideStartingMinionPicker();
+        PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
+        PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
+        PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
     }
     #endregion
 }

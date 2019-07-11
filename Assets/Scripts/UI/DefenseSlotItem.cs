@@ -16,13 +16,14 @@ public class DefenseSlotItem : MonoBehaviour {
         for (int i = 0; i < savedCombatGrid.slots.Length; i++) {
             savedCombatGrid.slots[i].OccupySlot(PlayerUI.Instance.defenseGridReference.slots[i].character);
         }
-        PlayerManager.Instance.player.AssignDefenseGrid(savedCombatGrid);
+        //PlayerManager.Instance.player.AssignDefenseGrid(savedCombatGrid);
         UIManager.Instance.HideObjectPicker();
         PlayerUI.Instance.HideCombatGrid();
         UpdateVisuals();
     }
     private bool CanAssignCharacterToDefend(Character character) {
-        return PlayerManager.Instance.player.CanAssignCharacterToDefend(character);
+        //return PlayerManager.Instance.player.CanAssignCharacterToDefend(character);
+        return false;
     }
     public void UpdateVisuals() {
         defenseImg.gameObject.SetActive(PlayerManager.Instance.player.defenseGrid != null && !PlayerManager.Instance.player.defenseGrid.IsGridEmpty());

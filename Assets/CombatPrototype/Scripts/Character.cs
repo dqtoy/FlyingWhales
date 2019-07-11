@@ -573,10 +573,16 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         SetMoodValue(90);
 
         tiredness = TIREDNESS_DEFAULT;
-        //Fullness value between 1300 and 1440.
-        SetFullness(UnityEngine.Random.Range(1300, FULLNESS_DEFAULT + 1));
-        //Happiness value between 100 and 240.
-        SetHappiness(UnityEngine.Random.Range(100, HAPPINESS_DEFAULT + 1));
+        if(role.roleType != CHARACTER_ROLE.MINION) {
+            //Fullness value between 1300 and 1440.
+            SetFullness(UnityEngine.Random.Range(1300, FULLNESS_DEFAULT + 1));
+            //Happiness value between 100 and 240.
+            SetHappiness(UnityEngine.Random.Range(100, HAPPINESS_DEFAULT + 1));
+        } else {
+            fullness = FULLNESS_DEFAULT;
+            happiness = HAPPINESS_DEFAULT;
+        }
+
 
         hSkinColor = UnityEngine.Random.Range(-360f, 360f);
         hHairColor = UnityEngine.Random.Range(-360f, 360f);

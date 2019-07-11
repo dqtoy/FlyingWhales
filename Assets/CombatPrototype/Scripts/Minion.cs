@@ -90,6 +90,7 @@ public class Minion {
             for (int i = 0; i < interventionAbilities.Length; i++) {
                 if (interventionAbilities[i] == null) {
                     interventionAbilities[i] = ability;
+                    ability.SetMinion(this);
                     break;
                 }
             }

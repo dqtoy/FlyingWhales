@@ -17,11 +17,14 @@ public class Player : ILeader {
     private BaseLandmark _demonicPortal;
     private Dictionary<CURRENCY, int> _currencies;
 
-    public Dictionary<JOB, PlayerJobData> roleSlots { get; private set; }
+    //public Dictionary<JOB, PlayerJobData> roleSlots { get; private set; }
     public CombatGrid attackGrid { get; private set; }
     public CombatGrid defenseGrid { get; private set; }
     public List<Intel> allIntel { get; private set; }
     public Minion[] minions { get; private set; }
+
+    //Unique ability of player
+    public ShareIntel shareIntelAbility { get; private set; }
 
     #region getters/setters
     public int id {
@@ -61,6 +64,7 @@ public class Player : ILeader {
         maxImps = 5;
         allIntel = new List<Intel>();
         minions = new Minion[MAX_MINIONS];
+        shareIntelAbility = new ShareIntel();
         //ConstructCurrencies();
         //ConstructRoleSlots();
         AddListeners();
@@ -74,7 +78,7 @@ public class Player : ILeader {
         AddWinListener();
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener(Signals.TICK_STARTED, EverydayAction);
-        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
 
         //goap
@@ -190,16 +194,22 @@ public class Player : ILeader {
         } else {
             minion.SetIndexDefaultSort(currentMinionCount);
             minions[currentMinionCount] = minion;
+            PlayerUI.Instance.UpdateRoleSlots();
         }
     }
     public void RemoveMinion(Minion minion) {
+        bool hasRemoved = false;
         for (int i = 0; i < minions.Length; i++) {
             if (minions[i] != null && minions[i] == minion) {
                 minions[i] = null;
+                hasRemoved = true;
                 break;
             }
         }
-        RearrangeMinions();
+        if (hasRemoved) {
+            RearrangeMinions();
+            PlayerUI.Instance.UpdateRoleSlots();
+        }
     }
     public int GetCurrentMinionCount() {
         int count = 0;
@@ -322,165 +332,165 @@ public class Player : ILeader {
     }
     #endregion
 
-    #region Role Slots
-    public void ConstructRoleSlots() {
-        roleSlots = new Dictionary<JOB, PlayerJobData>();
-        roleSlots.Add(JOB.SPY, new PlayerJobData(JOB.SPY));
-        roleSlots.Add(JOB.SEDUCER, new PlayerJobData(JOB.SEDUCER));
-        roleSlots.Add(JOB.DIPLOMAT, new PlayerJobData(JOB.DIPLOMAT));
-        roleSlots.Add(JOB.INSTIGATOR, new PlayerJobData(JOB.INSTIGATOR));
-        roleSlots.Add(JOB.DEBILITATOR, new PlayerJobData(JOB.DEBILITATOR));
-    }
-    public List<JOB> GetValidJobForCharacter(Character character) {
-        List<JOB> validJobs = new List<JOB>();
-        if (character.minion != null) {
-            switch (character.characterClass.className) {
-                case "Envy":
-                    validJobs.Add(JOB.SPY);
-                    validJobs.Add(JOB.SEDUCER);
-                    break;
-                case "Lust":
-                    validJobs.Add(JOB.DIPLOMAT);
-                    validJobs.Add(JOB.SEDUCER);
-                    break;
-                case "Pride":
-                    validJobs.Add(JOB.DIPLOMAT);
-                    validJobs.Add(JOB.INSTIGATOR);
-                    break;
-                case "Greed":
-                    validJobs.Add(JOB.SPY);
-                    validJobs.Add(JOB.INSTIGATOR);
-                    break;
-                case "Guttony":
-                    validJobs.Add(JOB.SPY);
-                    validJobs.Add(JOB.SEDUCER);
-                    break;
-                case "Wrath":
-                    validJobs.Add(JOB.INSTIGATOR);
-                    validJobs.Add(JOB.DEBILITATOR);
-                    break;
-                case "Sloth":
-                    validJobs.Add(JOB.DEBILITATOR);
-                    validJobs.Add(JOB.DIPLOMAT);
-                    break;
-            }
-        } else {
-            switch (character.race) {
-                case RACE.HUMANS:
-                    validJobs.Add(JOB.DIPLOMAT);
-                    validJobs.Add(JOB.SEDUCER);
-                    break;
-                case RACE.ELVES:
-                    validJobs.Add(JOB.SPY);
-                    validJobs.Add(JOB.DIPLOMAT);
-                    break;
-                case RACE.GOBLIN:
-                    validJobs.Add(JOB.INSTIGATOR);
-                    validJobs.Add(JOB.SEDUCER);
-                    break;
-                case RACE.FAERY:
-                    validJobs.Add(JOB.SPY);
-                    validJobs.Add(JOB.DEBILITATOR);
-                    break;
-                case RACE.SKELETON:
-                    validJobs.Add(JOB.DEBILITATOR);
-                    validJobs.Add(JOB.INSTIGATOR);
-                    break;
-            }
-        }
-        return validJobs;
-    }
-    public bool CanAssignCharacterToJob(JOB job, Character character) {
-        List<JOB> jobs = GetValidJobForCharacter(character);
-        return jobs.Contains(job);
-    }
-    public bool CanAssignCharacterToAttack(Character character) {
-        return GetCharactersCurrentJob(character) == JOB.NONE && !defenseGrid.IsCharacterInGrid(character);
-    }
-    public bool CanAssignCharacterToDefend(Character character) {
-        return GetCharactersCurrentJob(character) == JOB.NONE && !attackGrid.IsCharacterInGrid(character);
-    }
-    public void AssignCharacterToJob(JOB job, Character character) {
-        if (!roleSlots.ContainsKey(job)) {
-            Debug.LogWarning("There is something trying to assign a character to " + job.ToString() + " but the player doesn't have a slot for it.");
-            return;
-        }
-        if (roleSlots[job].assignedCharacter != null) {
-            UnassignCharacterFromJob(job);
-        }
-        JOB charactersCurrentJob = GetCharactersCurrentJob(character);
-        if (charactersCurrentJob != JOB.NONE) {
-            UnassignCharacterFromJob(charactersCurrentJob);
-        }
+    //#region Role Slots
+    //public void ConstructRoleSlots() {
+    //    roleSlots = new Dictionary<JOB, PlayerJobData>();
+    //    roleSlots.Add(JOB.SPY, new PlayerJobData(JOB.SPY));
+    //    roleSlots.Add(JOB.SEDUCER, new PlayerJobData(JOB.SEDUCER));
+    //    roleSlots.Add(JOB.DIPLOMAT, new PlayerJobData(JOB.DIPLOMAT));
+    //    roleSlots.Add(JOB.INSTIGATOR, new PlayerJobData(JOB.INSTIGATOR));
+    //    roleSlots.Add(JOB.DEBILITATOR, new PlayerJobData(JOB.DEBILITATOR));
+    //}
+    //public List<JOB> GetValidJobForCharacter(Character character) {
+    //    List<JOB> validJobs = new List<JOB>();
+    //    if (character.minion != null) {
+    //        switch (character.characterClass.className) {
+    //            case "Envy":
+    //                validJobs.Add(JOB.SPY);
+    //                validJobs.Add(JOB.SEDUCER);
+    //                break;
+    //            case "Lust":
+    //                validJobs.Add(JOB.DIPLOMAT);
+    //                validJobs.Add(JOB.SEDUCER);
+    //                break;
+    //            case "Pride":
+    //                validJobs.Add(JOB.DIPLOMAT);
+    //                validJobs.Add(JOB.INSTIGATOR);
+    //                break;
+    //            case "Greed":
+    //                validJobs.Add(JOB.SPY);
+    //                validJobs.Add(JOB.INSTIGATOR);
+    //                break;
+    //            case "Guttony":
+    //                validJobs.Add(JOB.SPY);
+    //                validJobs.Add(JOB.SEDUCER);
+    //                break;
+    //            case "Wrath":
+    //                validJobs.Add(JOB.INSTIGATOR);
+    //                validJobs.Add(JOB.DEBILITATOR);
+    //                break;
+    //            case "Sloth":
+    //                validJobs.Add(JOB.DEBILITATOR);
+    //                validJobs.Add(JOB.DIPLOMAT);
+    //                break;
+    //        }
+    //    } else {
+    //        switch (character.race) {
+    //            case RACE.HUMANS:
+    //                validJobs.Add(JOB.DIPLOMAT);
+    //                validJobs.Add(JOB.SEDUCER);
+    //                break;
+    //            case RACE.ELVES:
+    //                validJobs.Add(JOB.SPY);
+    //                validJobs.Add(JOB.DIPLOMAT);
+    //                break;
+    //            case RACE.GOBLIN:
+    //                validJobs.Add(JOB.INSTIGATOR);
+    //                validJobs.Add(JOB.SEDUCER);
+    //                break;
+    //            case RACE.FAERY:
+    //                validJobs.Add(JOB.SPY);
+    //                validJobs.Add(JOB.DEBILITATOR);
+    //                break;
+    //            case RACE.SKELETON:
+    //                validJobs.Add(JOB.DEBILITATOR);
+    //                validJobs.Add(JOB.INSTIGATOR);
+    //                break;
+    //        }
+    //    }
+    //    return validJobs;
+    //}
+    //public bool CanAssignCharacterToJob(JOB job, Character character) {
+    //    List<JOB> jobs = GetValidJobForCharacter(character);
+    //    return jobs.Contains(job);
+    //}
+    //public bool CanAssignCharacterToAttack(Character character) {
+    //    return GetCharactersCurrentJob(character) == JOB.NONE && !defenseGrid.IsCharacterInGrid(character);
+    //}
+    //public bool CanAssignCharacterToDefend(Character character) {
+    //    return GetCharactersCurrentJob(character) == JOB.NONE && !attackGrid.IsCharacterInGrid(character);
+    //}
+    //public void AssignCharacterToJob(JOB job, Character character) {
+    //    if (!roleSlots.ContainsKey(job)) {
+    //        Debug.LogWarning("There is something trying to assign a character to " + job.ToString() + " but the player doesn't have a slot for it.");
+    //        return;
+    //    }
+    //    if (roleSlots[job].assignedCharacter != null) {
+    //        UnassignCharacterFromJob(job);
+    //    }
+    //    JOB charactersCurrentJob = GetCharactersCurrentJob(character);
+    //    if (charactersCurrentJob != JOB.NONE) {
+    //        UnassignCharacterFromJob(charactersCurrentJob);
+    //    }
 
-        roleSlots[job].AssignCharacter(character);
-        Messenger.Broadcast(Signals.CHARACTER_ASSIGNED_TO_JOB, job, character);
-    }
-    public void UnassignCharacterFromJob(JOB job) {
-        if (!roleSlots.ContainsKey(job)) {
-            Debug.LogWarning("There is something trying to unassign a character from " + job.ToString() + " but the player doesn't have a slot for it.");
-            return;
-        }
-        if (roleSlots[job] == null) {
-            return; //ignore command
-        }
-        Character character = roleSlots[job].assignedCharacter;
-        roleSlots[job].AssignCharacter(null);
-        Messenger.Broadcast(Signals.CHARACTER_UNASSIGNED_FROM_JOB, job, character);
-    }
-    public void AssignAttackGrid(CombatGrid grid) {
-        attackGrid = grid;
-    }
-    public void AssignDefenseGrid(CombatGrid grid) {
-        defenseGrid = grid;
-    }
-    public JOB GetCharactersCurrentJob(Character character) {
-        foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
-            if (keyValuePair.Value.assignedCharacter != null && keyValuePair.Value.assignedCharacter.id == character.id) {
-                return keyValuePair.Key;
-            }
-        }
-        return JOB.NONE;
-    }
-    public bool HasCharacterAssignedToJob(JOB job) {
-        return roleSlots[job].assignedCharacter != null;
-    }
-    //private List<Character> GetValidCharactersForJob(JOB job) {
-    //    List<Character> valid = new List<Character>();
-    //    for (int i = 0; i < minions.Count; i++) {
-    //        Character currMinion = minions[i].character;
-    //        if (CanAssignCharacterToJob(job, currMinion) && GetCharactersCurrentJob(currMinion) == JOB.NONE) {
-    //            valid.Add(currMinion);
+    //    roleSlots[job].AssignCharacter(character);
+    //    //Messenger.Broadcast(Signals.MINION_ASSIGNED_TO_JOB, job, character);
+    //}
+    //public void UnassignCharacterFromJob(JOB job) {
+    //    if (!roleSlots.ContainsKey(job)) {
+    //        Debug.LogWarning("There is something trying to unassign a character from " + job.ToString() + " but the player doesn't have a slot for it.");
+    //        return;
+    //    }
+    //    if (roleSlots[job] == null) {
+    //        return; //ignore command
+    //    }
+    //    Character character = roleSlots[job].assignedCharacter;
+    //    roleSlots[job].AssignCharacter(null);
+    //    //Messenger.Broadcast(Signals.MINION_UNASSIGNED_FROM_JOB, job, character);
+    //}
+    //public void AssignAttackGrid(CombatGrid grid) {
+    //    attackGrid = grid;
+    //}
+    //public void AssignDefenseGrid(CombatGrid grid) {
+    //    defenseGrid = grid;
+    //}
+    //public JOB GetCharactersCurrentJob(Character character) {
+    //    foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
+    //        if (keyValuePair.Value.assignedCharacter != null && keyValuePair.Value.assignedCharacter.id == character.id) {
+    //            return keyValuePair.Key;
     //        }
     //    }
-    //    return valid;
+    //    return JOB.NONE;
     //}
-    //public void PreAssignJobSlots() {
-    //    foreach (KeyValuePair<JOB, PlayerJobData> kvp in roleSlots) {
-    //        List<Character> validCharacters = GetValidCharactersForJob(kvp.Key);
-    //        if (validCharacters.Count > 0) {
-    //            Character chosenCharacter = validCharacters[UnityEngine.Random.Range(0, validCharacters.Count)];
-    //            AssignCharacterToJob(kvp.Key, chosenCharacter);
-    //        } else {
-    //            Debug.LogWarning("Could not pre assign any character to job: " + kvp.Key.ToString());
-    //        }
-    //    }
+    //public bool HasCharacterAssignedToJob(JOB job) {
+    //    return roleSlots[job].assignedCharacter != null;
     //}
-    #endregion
+    ////private List<Character> GetValidCharactersForJob(JOB job) {
+    ////    List<Character> valid = new List<Character>();
+    ////    for (int i = 0; i < minions.Count; i++) {
+    ////        Character currMinion = minions[i].character;
+    ////        if (CanAssignCharacterToJob(job, currMinion) && GetCharactersCurrentJob(currMinion) == JOB.NONE) {
+    ////            valid.Add(currMinion);
+    ////        }
+    ////    }
+    ////    return valid;
+    ////}
+    ////public void PreAssignJobSlots() {
+    ////    foreach (KeyValuePair<JOB, PlayerJobData> kvp in roleSlots) {
+    ////        List<Character> validCharacters = GetValidCharactersForJob(kvp.Key);
+    ////        if (validCharacters.Count > 0) {
+    ////            Character chosenCharacter = validCharacters[UnityEngine.Random.Range(0, validCharacters.Count)];
+    ////            AssignCharacterToJob(kvp.Key, chosenCharacter);
+    ////        } else {
+    ////            Debug.LogWarning("Could not pre assign any character to job: " + kvp.Key.ToString());
+    ////        }
+    ////    }
+    ////}
+    //#endregion
 
     #region Role Actions
-    public List<PlayerJobAction> GetJobActionsThatCanTarget(JOB job, IPointOfInterest target) {
-        List<PlayerJobAction> actions = new List<PlayerJobAction>();
-        if (HasCharacterAssignedToJob(job)) {
-            for (int i = 0; i < roleSlots[job].jobActions.Count; i++) {
-                PlayerJobAction currAction = roleSlots[job].jobActions[i];
-                if (currAction.CanTarget(target)) {
-                    actions.Add(currAction);
-                }
-            }
-        }
-        return actions;
-    }
+    //public List<PlayerJobAction> GetJobActionsThatCanTarget(JOB job, IPointOfInterest target) {
+    //    List<PlayerJobAction> actions = new List<PlayerJobAction>();
+    //    if (HasCharacterAssignedToJob(job)) {
+    //        for (int i = 0; i < roleSlots[job].jobActions.Count; i++) {
+    //            PlayerJobAction currAction = roleSlots[job].jobActions[i];
+    //            if (currAction.CanTarget(target)) {
+    //                actions.Add(currAction);
+    //            }
+    //        }
+    //    }
+    //    return actions;
+    //}
     public PlayerJobAction currentActivePlayerJobAction { get; private set; }
     public void SetCurrentlyActivePlayerJobAction(PlayerJobAction action) {
         PlayerJobAction previousActiveAction = currentActivePlayerJobAction;
@@ -508,9 +518,9 @@ public class Player : ILeader {
         string summary = "Mouse was clicked. Will try to execute " + currentActivePlayerJobAction.name;
         if (InteriorMapManager.Instance.currentlyShowingMap != null && InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
             summary += " targetting " + InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter.name;
-            if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.parentData.assignedCharacter, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
+            if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
                 summary += "\nActivated action!";
-                currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.parentData.assignedCharacter, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
+                currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
             } else {
                 summary += "\nDid not activate action! Did not meet requirements";
             }
@@ -519,9 +529,9 @@ public class Player : ILeader {
             LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
             if (hoveredTile != null && hoveredTile.objHere != null) {
                 summary += " targetting " + hoveredTile.objHere.name;
-                if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.parentData.assignedCharacter, hoveredTile.objHere)) {
+                if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, hoveredTile.objHere)) {
                     summary += "\nActivated action!";
-                    currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.parentData.assignedCharacter, hoveredTile.objHere);
+                    currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, hoveredTile.objHere);
                 } else {
                     summary += "\nDid not activate action! Did not meet requirements";
                 }
@@ -536,12 +546,12 @@ public class Player : ILeader {
     #endregion
 
     #region Utilities
-    private void OnCharacterDied(Character character) {
-        JOB job = GetCharactersCurrentJob(character);
-        if (job != JOB.NONE) {
-            UnassignCharacterFromJob(job);
-        }
-    }
+    //private void OnCharacterDied(Character character) {
+    //    JOB job = GetCharactersCurrentJob(character);
+    //    if (job != JOB.NONE) {
+    //        UnassignCharacterFromJob(job);
+    //    }
+    //}
     public void SeenActionButtonsOnce() {
         if (!hasSeenActionButtonsOnce) {
             hasSeenActionButtonsOnce = true;

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ShareIntel : PlayerJobAction {
-
+    //TODO: REDO SHARE INTEL TO BE A PLAYER ABILITY!
     public Character targetCharacter { get; private set; }
 
-    public ShareIntel() : base(INTERVENTION_ABILITY.SHARE_INTEL) {
+    public ShareIntel() : base(INTERVENTION_ABILITY.ABDUCT) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }
@@ -34,7 +34,7 @@ public class ShareIntel : PlayerJobAction {
         this.assignedCharacter = null;
         isActive = false;
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.RemoveListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
+        Messenger.RemoveListener<JOB, Character>(Signals.MINION_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
         targetCharacter = null;
     }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
