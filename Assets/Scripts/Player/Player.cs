@@ -190,16 +190,22 @@ public class Player : ILeader {
         } else {
             minion.SetIndexDefaultSort(currentMinionCount);
             minions[currentMinionCount] = minion;
+            PlayerUI.Instance.UpdateRoleSlots();
         }
     }
     public void RemoveMinion(Minion minion) {
+        bool hasRemoved = false;
         for (int i = 0; i < minions.Length; i++) {
             if (minions[i] != null && minions[i] == minion) {
                 minions[i] = null;
+                hasRemoved = true;
                 break;
             }
         }
-        RearrangeMinions();
+        if (hasRemoved) {
+            RearrangeMinions();
+            PlayerUI.Instance.UpdateRoleSlots();
+        }
     }
     public int GetCurrentMinionCount() {
         int count = 0;
@@ -414,7 +420,7 @@ public class Player : ILeader {
         }
 
         roleSlots[job].AssignCharacter(character);
-        Messenger.Broadcast(Signals.CHARACTER_ASSIGNED_TO_JOB, job, character);
+        //Messenger.Broadcast(Signals.MINION_ASSIGNED_TO_JOB, job, character);
     }
     public void UnassignCharacterFromJob(JOB job) {
         if (!roleSlots.ContainsKey(job)) {
@@ -426,7 +432,7 @@ public class Player : ILeader {
         }
         Character character = roleSlots[job].assignedCharacter;
         roleSlots[job].AssignCharacter(null);
-        Messenger.Broadcast(Signals.CHARACTER_UNASSIGNED_FROM_JOB, job, character);
+        //Messenger.Broadcast(Signals.MINION_UNASSIGNED_FROM_JOB, job, character);
     }
     public void AssignAttackGrid(CombatGrid grid) {
         attackGrid = grid;

@@ -50,8 +50,8 @@ public class PlayerJobActionButton : MonoBehaviour {
     #region Visuals
     public void UpdateInteractableState() {
         SetInteractableState(
-            !action.parentData.hasActionInCooldown 
-            && InteriorMapManager.Instance.isAnAreaMapShowing 
+            //!action.parentData.hasActionInCooldown &&
+            InteriorMapManager.Instance.isAnAreaMapShowing 
             && PlayerManager.Instance.player.currentActivePlayerJobAction != this.action
         );
     }
@@ -133,9 +133,9 @@ public class PlayerJobActionButton : MonoBehaviour {
             header += "(Instigator Action)";
         }
 
-        if (action.parentData.hasActionInCooldown) {
-            header += " (On Cooldown)";
-        }
+        //if (action.parentData.hasActionInCooldown) {
+        //    header += " (On Cooldown)";
+        //}
         PlayerManager.Instance.player.SeenActionButtonsOnce();
         PlayerUI.Instance.ShowActionBtnTooltip(message, header);
     }

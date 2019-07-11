@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class RoleSlotItem : MonoBehaviour, IDragParentItem {
 
-    private Character character;
+    public Minion minion { get; private set; }
 
     public CharacterPortrait portrait;
 
@@ -23,51 +23,54 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     [SerializeField] private TextMeshProUGUI tooltipLbl;
 
     public object associatedObj {
-        get { return character; }
+        get { return minion.character; }
     }
 
-    public void SetSlotJob(JOB job) { //This should only be called once!
-        slotJob = job;
-        UpdateVisuals();
+    //public void SetSlotJob(JOB job) { //This should only be called once!
+    //    slotJob = job;
+    //    UpdateVisuals();
+    //    AddListeners();
+    //}
+    public void Initialize() {
         AddListeners();
     }
 
     private void AddListeners() {
-        Messenger.AddListener<JOB, Character>(Signals.CHARACTER_ASSIGNED_TO_JOB, OnCharacterAssignedToJob);
-        Messenger.AddListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
+        Messenger.AddListener<JOB, Minion>(Signals.MINION_ASSIGNED_TO_JOB, OnMinionAssignedToJob);
+        Messenger.AddListener<JOB, Minion>(Signals.MINION_UNASSIGNED_FROM_JOB, OnMinionUnassignedFromJob);
         Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobCooldownActivated);
     }
 
-    public void SetCharacter(Character character) {
-        this.character = character;
-        if (character == null) {
-            Debug.Log("Setting character in role slot " + slotJob.ToString() + " to null");
-        } else {
-            Debug.Log("Setting character in role slot " + slotJob.ToString() + " to " + character.name);
-        }
+    public void SetMinion(Minion minion) {
+        this.minion = minion;
+        //if (minion == null) {
+        //    Debug.Log("Setting character in role slot " + slotJob.ToString() + " to null");
+        //} else {
+        //    Debug.Log("Setting character in role slot " + slotJob.ToString() + " to " + minion.name);
+        //}
         
         UpdateVisuals();
         //UpdateActionButtons();
     }
     private void UpdateVisuals() {
-        jobIcon.sprite = CharacterManager.Instance.GetJobSprite(slotJob);
-        jobNameLbl.text = Utilities.NormalizeString(slotJob.ToString());
-        if (character == null) {
+        //jobIcon.sprite = CharacterManager.Instance.GetJobSprite(slotJob);
+        //jobNameLbl.text = Utilities.NormalizeString(slotJob.ToString());
+        if (minion == null) {
             portrait.gameObject.SetActive(false);
         } else {
-            portrait.GeneratePortrait(character);
+            portrait.GeneratePortrait(minion.character);
             portrait.SetBaseBGState(false);
             portrait.gameObject.SetActive(true);
         }
     }    
-    private void OnCharacterAssignedToJob(JOB job, Character character) {
+    private void OnMinionAssignedToJob(JOB job, Minion minion) {
         if (slotJob == job) {
-            SetCharacter(character);
+            SetMinion(minion);
         }
     }
-    private void OnCharacterUnassignedFromJob(JOB job, Character character) {
+    private void OnMinionUnassignedFromJob(JOB job, Minion minion) {
         if (slotJob == job) {
-            SetCharacter(null);
+            SetMinion(null);
         }
     }
 
@@ -110,31 +113,31 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
 
     #region Hover
     public void ShowHoverTooltip() {
-        string header = Utilities.NormalizeStringUpperCaseFirstLetters(slotJob.ToString()) + ": " + character.name;
-        string message = string.Empty;
-        switch (slotJob) {
-            case JOB.SPY:
-                header += " (1)";
-                message = "An agent that gathers information about places and characters.";
-                break;
-            case JOB.SEDUCER:
-                header += " (2)";
-                message = "An agent that corrupts heroes and recruits new minions.";
-                break;
-            case JOB.DIPLOMAT:
-                header += " (3)";
-                message = "An agent that builds relationships with other characters.";
-                break;
-            case JOB.INSTIGATOR:
-                header += " (4)";
-                message = "An agent that sows discord and chaos.";
-                break;
-            case JOB.DEBILITATOR:
-                header += " (5)";
-                message = "An agent that halts unwanted actions and activities.";
-                break;
-        }
-        UIManager.Instance.ShowSmallInfo(message, PlayerUI.Instance.roleSlotTooltipPos, header);
+        //string header = Utilities.NormalizeStringUpperCaseFirstLetters(slotJob.ToString()) + ": " + minion.name;
+        //string message = string.Empty;
+        //switch (slotJob) {
+        //    case JOB.SPY:
+        //        header += " (1)";
+        //        message = "An agent that gathers information about places and characters.";
+        //        break;
+        //    case JOB.SEDUCER:
+        //        header += " (2)";
+        //        message = "An agent that corrupts heroes and recruits new minions.";
+        //        break;
+        //    case JOB.DIPLOMAT:
+        //        header += " (3)";
+        //        message = "An agent that builds relationships with other characters.";
+        //        break;
+        //    case JOB.INSTIGATOR:
+        //        header += " (4)";
+        //        message = "An agent that sows discord and chaos.";
+        //        break;
+        //    case JOB.DEBILITATOR:
+        //        header += " (5)";
+        //        message = "An agent that halts unwanted actions and activities.";
+        //        break;
+        //}
+        //UIManager.Instance.ShowSmallInfo(message, PlayerUI.Instance.roleSlotTooltipPos, header);
         //UIManager.Instance.ShowSmallInfo(message, header);
     }
     public void HideTooltip() {

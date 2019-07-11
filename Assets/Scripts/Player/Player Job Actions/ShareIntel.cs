@@ -34,7 +34,7 @@ public class ShareIntel : PlayerJobAction {
         this.assignedCharacter = null;
         isActive = false;
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.RemoveListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
+        Messenger.RemoveListener<JOB, Character>(Signals.MINION_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
         targetCharacter = null;
     }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
