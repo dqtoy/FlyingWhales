@@ -78,6 +78,7 @@ public class PlayerManager : MonoBehaviour {
         isChoosingStartingTile = false;
         UIManager.Instance.SetTimeControlsState(true);
         PlayerUI.Instance.UpdateUI();
+        PlayerUI.Instance.InitializeThreatMeter();
         //LandmarkManager.Instance.CreateNewArea(tile, AREA_TYPE.DEMONIC_INTRUSION);
     }
     private void OnLoadStartingTile(BaseLandmark portal) {
@@ -97,6 +98,7 @@ public class PlayerManager : MonoBehaviour {
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(true);
         PlayerUI.Instance.UpdateUI();
+        PlayerUI.Instance.InitializeThreatMeter();
     }
     public void InitializePlayer(BaseLandmark portal) {
         player = new Player();
@@ -110,6 +112,7 @@ public class PlayerManager : MonoBehaviour {
         }
         LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
         PlayerUI.Instance.UpdateUI();
+        PlayerUI.Instance.InitializeThreatMeter();
     }
 
 

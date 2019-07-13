@@ -73,6 +73,10 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private MinionCard startingMinionCard2;
     [SerializeField] private MinionCard startingMinionCard3;
 
+    [Header("Corruption and Threat")]
+    [SerializeField] private GameObject corruptTileConfirmationGO;
+    [SerializeField] private Slider threatMeter;
+
     public GameObject electricEffectPrefab;
 
     private bool _isScrollingUp;
@@ -562,6 +566,33 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
+    }
+    #endregion
+
+    #region Corruption and Threat
+    public void InitializeThreatMeter() {
+        threatMeter.minValue = 0f;
+        threatMeter.maxValue = Player.MAX_THREAT;
+        threatMeter.value = 0f;
+    }
+    public void ShowCorruptTileConfirmation(HexTile tile) {
+        if (tile.CanBeCorrupted() && tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted) {
+            PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
+            corruptTileConfirmationGO.SetActive(true);
+        }
+    }
+    public void HideCorruptTileConfirmation() {
+        corruptTileConfirmationGO.SetActive(false);
+    }
+    public void OnClickYesCorruption() {
+        PlayerManager.Instance.player.CorruptATile();
+        HideCorruptTileConfirmation();
+    }
+    public void OnClickNoCorruption() {
+        HideCorruptTileConfirmation();
+    }
+    public void UpdateThreatMeter() {
+        threatMeter.value = PlayerManager.Instance.player.threat;
     }
     #endregion
 }

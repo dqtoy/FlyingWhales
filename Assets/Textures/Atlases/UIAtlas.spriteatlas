@@ -294,6 +294,54 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9e6ac31dc22c6c74c87fa0351f9a63c3, type: 3}
   - {fileID: 21300000, guid: 62cc391ddf5e0c54b90366603efc2e32, type: 3}
   - {fileID: 21300000, guid: 4e72ca1dca662654c8f2748b29510203, type: 3}
+  - {fileID: 21300062, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300060, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300066, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300064, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300070, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300068, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300074, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300072, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300078, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300076, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300038, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300036, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300026, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300024, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300056, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300022, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300058, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300020, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300052, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300034, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300054, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300032, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300048, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300030, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300050, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300028, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300044, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300046, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300040, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300042, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300088, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300090, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300092, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300094, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300080, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300082, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300084, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300086, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300016, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300018, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300000, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300002, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300004, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300006, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300008, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300010, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300012, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300014, guid: bce4764debb97f74394681b55ea60dea, type: 3}
   - {fileID: 21300000, guid: dbe0987dc8cc34441938f371b77893c1, type: 3}
   - {fileID: 21300000, guid: ff09ff8d935290549957e2037d5cb0c8, type: 3}
   - {fileID: 21300000, guid: e26dc0ad13ea5214a8bbbca1cfa08889, type: 3}
@@ -616,6 +664,54 @@ SpriteAtlas:
   - traveller_clicked
   - interaction_tab_unselected
   - location_ui_visitors_icon
+  - Loading_31
+  - Loading_30
+  - Loading_33
+  - Loading_32
+  - Loading_35
+  - Loading_34
+  - Loading_37
+  - Loading_36
+  - Loading_39
+  - Loading_38
+  - Loading_19
+  - Loading_18
+  - Loading_13
+  - Loading_12
+  - Loading_28
+  - Loading_11
+  - Loading_29
+  - Loading_10
+  - Loading_26
+  - Loading_17
+  - Loading_27
+  - Loading_16
+  - Loading_24
+  - Loading_15
+  - Loading_25
+  - Loading_14
+  - Loading_22
+  - Loading_23
+  - Loading_20
+  - Loading_21
+  - Loading_44
+  - Loading_45
+  - Loading_46
+  - Loading_47
+  - Loading_40
+  - Loading_41
+  - Loading_42
+  - Loading_43
+  - Loading_8
+  - Loading_9
+  - Loading_0
+  - Loading_1
+  - Loading_2
+  - Loading_3
+  - Loading_4
+  - Loading_5
+  - Loading_6
+  - Loading_7
   - share_intel_container
   - notification_intel_button_default
   - ge_icon-02
