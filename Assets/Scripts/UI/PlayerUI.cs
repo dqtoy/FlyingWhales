@@ -36,6 +36,7 @@ public class PlayerUI : MonoBehaviour {
     public AttackSlotItem attackSlot;
     [SerializeField] private DefenseSlotItem defenseSlot;
     public SlotItem[] attackGridSlots;
+    public Button startInvasionButton;
 
     [Header("Bottom Menu")]
     public Toggle goalsToggle;
@@ -160,9 +161,11 @@ public class PlayerUI : MonoBehaviour {
     #region Listeners
     private void OnAreaMapOpened(Area area) {
         UpdateSummonsInteraction();
+        startInvasionButton.gameObject.SetActive(true);
     }
     private void OnAreaMapClosed(Area area) {
         UpdateSummonsInteraction();
+        startInvasionButton.gameObject.SetActive(false);
     }
     #endregion
 
@@ -412,6 +415,9 @@ public class PlayerUI : MonoBehaviour {
             attackGridSlots[i].PlaceObject(defenseGridReference.slots[i].character);
         }
     }
+    public void OnClickStartInvasion() {
+        PlayerManager.Instance.player.StartInvasion(InteriorMapManager.Instance.currentlyShowingArea);
+    }
     #endregion
 
     #region Miscellaneous
@@ -632,7 +638,7 @@ public class PlayerUI : MonoBehaviour {
         threatMeter.value = 0f;
     }
     public void ShowCorruptTileConfirmation(HexTile tile) {
-        if (tile.CanBeCorrupted() && tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted) {
+        if (tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted) { //tile.CanBeCorrupted() && 
             PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
             if (tile.areaOfTile != null) {
                 corruptTileConfirmationLbl.text = "To corrupt this area, you must defeat all residents within. Once you proceeed there is no going back. Do you wish to take on this settlement?";

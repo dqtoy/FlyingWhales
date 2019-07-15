@@ -5,7 +5,7 @@ using EZObjectPools;
 using System;
 
 
-public class CharacterAvatar : MonoBehaviour{
+public class CharacterAvatar : MonoBehaviour {
 
     private Action onPathFinished;
     private Action onPathStarted;

@@ -118,7 +118,7 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
-        Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
+        //Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
@@ -862,6 +862,11 @@ public class CharacterMarker : PooledObject {
         UpdatePosition();
         UpdateAnimation();
         UpdateActionIcon();
+        for (int i = 0; i < colliders.Length; i++) {
+            if (!colliders[i].enabled) {
+                colliders[i].enabled = true;
+            }
+        }
     }
     public void PlaceMarkerAt(Vector3 localPos, Vector3 lookAt) {
         StartCoroutine(Positioner(localPos, lookAt));

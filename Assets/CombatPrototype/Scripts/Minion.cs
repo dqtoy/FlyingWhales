@@ -20,6 +20,7 @@ public class Minion {
         this.interventionAbilities = new PlayerJobAction[MAX_INTERVENTION_ABILITY_SLOT];
         SetUnlockedInterventionSlots(0);
         character.SetMinion(this);
+        SetLevel(1);
         //character.characterToken.SetObtainedState(true);
         character.ownParty.icon.SetVisualState(true);
 
@@ -112,6 +113,35 @@ public class Minion {
     #region Combat Ability
     public void SetCombatAbility(CombatAbility combatAbility) {
         this.combatAbility = combatAbility;
+    }
+    #endregion
+
+    #region Invasion
+    public void StartInvasionProtocol() {
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickInvasion);
+    }
+    public void StopInvasionProtocol() {
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
+    }
+    private void PerTickInvasion() {
+        if (character.isDead) {
+            return;
+        }
+        if (!character.IsInOwnParty() || character.ownParty.icon.isTravelling || character.doNotDisturb > 0 || character.isWaitingForInteraction > 0) {
+            return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
+        }
+        if (character.stateComponent.currentState != null) {
+            return;
+        }
+        if (character.stateComponent.stateToDo != null) {
+            return;
+        }
+        GoToWorkArea();
+    }
+    private void GoToWorkArea() {
+        LocationStructure structure = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        LocationGridTile tile = structure.GetRandomTile();
+        character.marker.GoTo(tile);
     }
     #endregion
 }

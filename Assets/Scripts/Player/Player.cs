@@ -751,5 +751,46 @@ public class Player : ILeader {
         return summons.Keys.ToList();
     }
     #endregion
+
+    #region Invasion
+    public void StartInvasion(Area area) {
+        List<LocationGridTile> entrances = new List<LocationGridTile>();
+        List<Minion> currentMinions = new List<Minion>();
+        for (int i = 0; i < minions.Length; i++) {
+            Minion currMinion = minions[i];
+            if (currMinion != null) {
+                currMinion.character.CreateMarker();
+                currentMinions.Add(currMinion);
+            }
+        }
+
+        LocationGridTile mainEntrance = area.GetRandomUnoccupiedEdgeTile();
+        entrances.Add(mainEntrance);
+        int neededEntrances = currentMinions.Count - 1;
+
+        for (int i = 0; i < entrances.Count; i++) {
+            for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
+                LocationGridTile newEntrance = entrances[i].neighbourList[j];
+                if(!newEntrance.isOccupied && newEntrance.structure != null) {
+                    if(newEntrance.IsAtEdgeOfWalkableMap() && !entrances.Contains(newEntrance)) {
+                        entrances.Add(newEntrance);
+                        if(entrances.Count >= currentMinions.Count) {
+                            break;
+                        }
+                    }
+                }
+            }
+            if (entrances.Count >= currentMinions.Count) {
+                break;
+            }
+        }
+        for (int i = 0; i < entrances.Count; i++) {
+            currentMinions[i].character.marker.PlaceMarkerAt(entrances[i]);
+        }
+        for (int i = 0; i < currentMinions.Count; i++) {
+            currentMinions[i].StartInvasionProtocol();
+        }
+    }
+    #endregion
 }
 
