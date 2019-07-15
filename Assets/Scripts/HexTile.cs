@@ -1155,9 +1155,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private void DoubleLeftClick() {
         //Debug.Log("double click");
         PlayerUI.Instance.ShowCorruptTileConfirmation(this);
-        if (areaOfTile != null) {
-            InteriorMapManager.Instance.TryShowAreaMap(areaOfTile);
-        }
     }
     //private void OnDoneGeneratingAreaMap(Area area) {
     //    hasPendingJob = false;

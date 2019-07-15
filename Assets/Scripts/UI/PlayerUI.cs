@@ -75,6 +75,7 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("Corruption and Threat")]
     [SerializeField] private GameObject corruptTileConfirmationGO;
+    [SerializeField] private TextMeshProUGUI corruptTileConfirmationLbl;
     [SerializeField] private Slider threatMeter;
 
     public GameObject electricEffectPrefab;
@@ -578,6 +579,11 @@ public class PlayerUI : MonoBehaviour {
     public void ShowCorruptTileConfirmation(HexTile tile) {
         if (tile.CanBeCorrupted() && tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted) {
             PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
+            if (tile.areaOfTile != null) {
+                corruptTileConfirmationLbl.text = "To corrupt this area, you must defeat all residents within. Once you proceeed there is no going back. Do you wish to take on this settlement?";
+            } else {
+                corruptTileConfirmationLbl.text = "Corrupt this Area?";
+            }
             corruptTileConfirmationGO.SetActive(true);
         }
     }
@@ -585,8 +591,12 @@ public class PlayerUI : MonoBehaviour {
         corruptTileConfirmationGO.SetActive(false);
     }
     public void OnClickYesCorruption() {
-        PlayerManager.Instance.player.CorruptATile();
         HideCorruptTileConfirmation();
+        if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile != null) {
+            InteriorMapManager.Instance.TryShowAreaMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);
+        } else {
+            PlayerManager.Instance.player.CorruptATile();
+        }
     }
     public void OnClickNoCorruption() {
         HideCorruptTileConfirmation();

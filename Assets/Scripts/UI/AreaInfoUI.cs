@@ -523,7 +523,7 @@ public class AreaInfoUI : UIMenu {
 
     #region Area Map
     public void ShowAreaMap() {
-        InteriorMapManager.Instance.TryShowAreaMap(activeArea);
+        PlayerUI.Instance.ShowCorruptTileConfirmation(activeArea.coreTile);
     }
     private void OnAreaMapOpened(Area area) {
         if (hideOnShowAreaMap) {
