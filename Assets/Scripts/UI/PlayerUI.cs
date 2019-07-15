@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.UI.Extensions;
 using TMPro;
 using System.Linq;
+using System;
 
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
@@ -82,6 +83,13 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI corruptTileConfirmationLbl;
     [SerializeField] private Slider threatMeter;
 
+    [Header("Summons")]
+    [SerializeField] private Image currentSummonImg;
+    [SerializeField] private TextMeshProUGUI currentSummonCountLbl;
+    [SerializeField] private Button summonBtn;
+    [SerializeField] private GameObject summonCover;
+    [SerializeField] private UIHoverPosition summonTooltipPos;
+
     public GameObject electricEffectPrefab;
 
     private bool _isScrollingUp;
@@ -127,6 +135,7 @@ public class PlayerUI : MonoBehaviour {
 
         UpdateIntel();
         InitializeMemoriesMenu();
+        UpdateSummonsInteraction();
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -139,7 +148,23 @@ public class PlayerUI : MonoBehaviour {
 
         //job action buttons
         Messenger.AddListener(Signals.HAS_SEEN_ACTION_BUTTONS, OnSeenActionButtons);
+
+        //summons
+        Messenger.AddListener<Summon>(Signals.PLAYER_GAINED_SUMMON, OnGainNewSummon);
+        Messenger.AddListener<Summon>(Signals.PLAYER_REMOVED_SUMMON, OnRemoveSummon);
+
+        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
+
+    #region Listeners
+    private void OnAreaMapOpened(Area area) {
+        UpdateSummonsInteraction();
+    }
+    private void OnAreaMapClosed(Area area) {
+        UpdateSummonsInteraction();
+    }
+    #endregion
 
     #region Role Slots
     private void OnSeenActionButtons() {
@@ -572,6 +597,8 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.WOLF);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.SKELETON);
         PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
     }
     private void ShowSelectMinionLeader() {
@@ -622,6 +649,7 @@ public class PlayerUI : MonoBehaviour {
     public void OnClickYesCorruption() {
         HideCorruptTileConfirmation();
         if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile != null) {
+            GameManager.Instance.SetOnlyTickDays(false);
             InteriorMapManager.Instance.TryShowAreaMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);
         } else {
             PlayerManager.Instance.player.CorruptATile();
@@ -635,4 +663,86 @@ public class PlayerUI : MonoBehaviour {
         threatMeter.value = PlayerManager.Instance.player.threat;
     }
     #endregion
+
+    #region Summons
+    private SUMMON_TYPE currentlySelectedSummon; //the summon type that is currently shown in the UI
+    private void UpdateSummonsInteraction() {
+        bool state = PlayerManager.Instance.player.GetTotalSummonsCount() == 0;
+        summonCover.SetActive(state);
+        summonBtn.interactable = !state && InteriorMapManager.Instance.isAnAreaMapShowing;
+    }
+    public void OnGainNewSummon(Summon newSummon) {
+        UpdateSummonsInteraction();
+        if (currentlySelectedSummon == SUMMON_TYPE.NONE) {
+            SetCurrentlySelectedSummon(newSummon.summonType);
+        }
+    }
+    public void OnRemoveSummon(Summon summon) {
+        UpdateSummonsInteraction();
+        if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
+            SetCurrentlySelectedSummon(SUMMON_TYPE.NONE);
+        } else if (summon.summonType == currentlySelectedSummon 
+            && PlayerManager.Instance.player.GetSummonsOfTypeCount(summon.summonType) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+            CycleSummons(1);
+        }
+    }
+    public void SetCurrentlySelectedSummon(SUMMON_TYPE type) {
+        currentlySelectedSummon = type;
+        currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(type).summonPortrait;
+        currentSummonCountLbl.text = PlayerManager.Instance.player.GetSummonsOfTypeCount(type).ToString();
+    }
+    public void CycleSummons(int cycleDirection) {
+        SUMMON_TYPE[] types = Utilities.GetEnumValues<SUMMON_TYPE>();
+        int index = Array.IndexOf(types, currentlySelectedSummon);
+        while (true) {
+            int next = index + cycleDirection;
+            if (next == types.Length) {
+                next = 0;
+            } else if (next == 0) {
+                next = types.Length;
+            }
+            index = next;
+            SUMMON_TYPE type = types[index];
+            if (PlayerManager.Instance.player.summons.ContainsKey(type)) { //Player has a summon of that type, select that.
+                SetCurrentlySelectedSummon(type);
+                break;
+            }
+        }
+    }
+    public void ShowSummonTooltip() {
+        string header = Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
+        string message;
+        switch (currentlySelectedSummon) {
+            case SUMMON_TYPE.WOLF:
+                message = "Summon a wolf to run amok.";
+                break;
+            case SUMMON_TYPE.SKELETON:
+                message = "Summon a skeleton that will abduct a random character.";
+                break;
+            case SUMMON_TYPE.GOLEM:
+                message = "Summon a stone golem that can sustain alot of hits.";
+                break;
+            case SUMMON_TYPE.SUCCUBUS:
+                message = "Summon a succubus that will seduce a male character and eliminate him.";
+                break;
+            case SUMMON_TYPE.INCUBUS:
+                message = "Summon a succubus that will seduce a female character and eliminate her.";
+                break;
+            case SUMMON_TYPE.THIEF:
+                message = "Summon a thief that will steal items from the settlements warehouse.";
+                break;
+            default:
+                message = "Summon a " + Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
+                break;
+        }
+        UIManager.Instance.ShowSmallInfo(message, summonTooltipPos, header);
+    }
+    public void HideSummonTooltip() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    public void OnClickSummon() {
+        
+    }
+    #endregion
 }
+

@@ -55,6 +55,8 @@ public class TileObjectSlotDictionaryPropertyDrawer : SerializableDictionaryProp
 public class CursorTextureDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(AreaTypeSpriteDictionary))]
 public class AreaTypeSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(SummonSettingDictionary))]
+public class SummonSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]

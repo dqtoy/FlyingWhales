@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
+public class Character : ICharacter, ILeader, IPointOfInterest {
 
     public delegate void DailyAction();
     public DailyAction onDailyAction;
@@ -12,7 +12,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected string _firstName;
     protected string _characterColorCode;
     protected int _id;
-    protected int _gold;
     protected int _currentInteractionTick;
     protected int _doNotDisturb;
     protected int _doNotGetHungry;
@@ -21,22 +20,14 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected int _numOfWaitingForGoapThread;
     protected float _actRate;
     protected bool _isDead;
-    protected bool _isFainted;
-    protected bool _isInCombat;
-    protected bool _isBeingInspected;
-    protected bool _hasBeenInspected;
-    protected bool _alreadyTargetedByGrudge;
     protected bool _isTracked;
-    protected bool _activateDailyGoapPlanInteraction;
     protected bool _hasAlreadyAskedForPlan;
     protected bool _isChatting;
     protected GENDER _gender;
     public SEXUALITY sexuality { get; private set; }
-    protected MODE _currentMode;
     protected CharacterClass _characterClass;
     protected RaceSetting _raceSetting;
     protected CharacterRole _role;
-    //protected Job _job;
     protected Faction _faction;
     protected CharacterParty _ownParty;
     protected CharacterParty _currentParty;
@@ -48,7 +39,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     protected Color _characterColor;
     protected Minion _minion;
     protected CombatCharacter _currentCombatCharacter;
-    protected PairCombatStats[] _pairCombatStats;
     protected List<Skill> _skills;
     protected List<Log> _history;
     protected List<Trait> _normalTraits; //List of traits that are just normal Traits (Not including relationships)
@@ -89,7 +79,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Dwelling homeStructure { get; protected set; }
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
-    //public CharacterToken characterToken { get; private set; }
     public Dictionary<AlterEgoData, CharacterRelationshipData> relationships {
         get {
             return currentAlterEgo?.relationships ?? null;
@@ -109,7 +98,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public CharacterMarker marker { get; private set; }
     public GoapAction currentAction { get; private set; }
     public GoapAction previousCurrentAction { get; private set; }
-    public bool hasAssaultPlan { get; private set; }
     public Character lastAssaultedCharacter { get; private set; }
     public List<GoapAction> targettedByAction { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
@@ -120,7 +108,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public int moodValue { get; private set; }
     public bool isCombatant { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
-    //public Memories memories { get; private set; }
     public TrapStructure trapStructure { get; private set; }
     public bool isDisabledByPlayer { get; protected set; }
 
@@ -131,25 +118,25 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public Dictionary<int, Combat> combatHistory;
 
     //Needs
-    public int tiredness { get; private set; }
-    private const int TIREDNESS_DEFAULT = 1200;
-    private const int TIREDNESS_THRESHOLD_1 = 1040;
-    private const int TIREDNESS_THRESHOLD_2 = 880;
-    public int fullness { get; private set; }
-    private const int FULLNESS_DEFAULT = 1440;
-    private const int FULLNESS_THRESHOLD_1 = 1390;
-    private const int FULLNESS_THRESHOLD_2 = 1200;
-    public int happiness { get; private set; }
-    private const int HAPPINESS_DEFAULT = 240;
-    private const int HAPPINESS_THRESHOLD_1 = 160;
-    private const int HAPPINESS_THRESHOLD_2 = 0;
+    public int tiredness { get; protected set; }
+    protected const int TIREDNESS_DEFAULT = 1200;
+    protected const int TIREDNESS_THRESHOLD_1 = 1040;
+    protected const int TIREDNESS_THRESHOLD_2 = 880;
+    public int fullness { get; protected set; }
+    protected const int FULLNESS_DEFAULT = 1440;
+    protected const int FULLNESS_THRESHOLD_1 = 1390;
+    protected const int FULLNESS_THRESHOLD_2 = 1200;
+    public int happiness { get; protected set; }
+    protected const int HAPPINESS_DEFAULT = 240;
+    protected const int HAPPINESS_THRESHOLD_1 = 160;
+    protected const int HAPPINESS_THRESHOLD_2 = 0;
 
     public static readonly int TREE_AWARENESS_LIMIT = 5; //The number of Tree Objects a character can have in his awareness, everytime a character adds a new tree object to his/her awareness list, remove the oldest one if this limit is reached
 
     //portrait
-    public float hSkinColor { get; private set; }
-    public float hHairColor { get; private set; }
-    public float demonColor { get; private set; }
+    public float hSkinColor { get; protected set; }
+    public float hHairColor { get; protected set; }
+    public float demonColor { get; protected set; }
 
     //hostility
     public int ignoreHostility { get; private set; }
@@ -202,14 +189,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     public bool isDead {
         get { return this._isDead; }
     }
-    public bool isFainted {
-        get { return this._isFainted; }
-    }
-    public bool isInCombat {
-        get {
-            return _isInCombat;
-        }
-    }
     public bool isFactionless { //is the character part of the neutral faction? or no faction?
         get {
             if (faction == null || FactionManager.Instance.neutralFaction == faction) {
@@ -221,15 +200,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public bool isIdle {
         get { return _doNotDisturb <= 0 && IsInOwnParty() && !currentParty.icon.isTravelling; }
-    }
-    public bool isBeingInspected {
-        get { return _isBeingInspected; }
-    }
-    public bool hasBeenInspected {
-        get { return _hasBeenInspected; }
-    }
-    public bool alreadyTargetedByGrudge {
-        get { return _alreadyTargetedByGrudge; }
     }
     public bool isLeader {
         get { return role == CharacterRole.LEADER; }
@@ -256,9 +226,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public GENDER gender {
         get { return _gender; }
-    }
-    public MODE currentMode {
-        get { return _currentMode; }
     }
     public RACE race {
         get { return _raceSetting.race; }
@@ -313,9 +280,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public List<Log> history {
         get { return this._history; }
-    }
-    public int gold {
-        get { return _gold; }
     }
     public PortraitSettings portraitSettings {
         get { return _portraitSettings; }
@@ -397,9 +361,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public int doNotDisturb {
         get { return _doNotDisturb; }
-    }
-    public QUEST_GIVER_TYPE questGiverType {
-        get { return QUEST_GIVER_TYPE.CHARACTER; }
     }
     public bool isDefender {
         get { return defendingArea != null; }
@@ -525,7 +486,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public Character() {
         SetIsDead(false);
-        _isFainted = false;
         _history = new List<Log>();
         _normalTraits = new List<Trait>();
 
@@ -539,7 +499,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         //characterToken = new CharacterToken(this);
         poiGoapActions = new List<INTERACTION_TYPE>();
         allGoapPlans = new List<GoapPlan>();
-        hasAssaultPlan = false;
         targettedByAction = new List<GoapAction>();
         stateComponent = new CharacterStateComponent(this);
         items = new List<SpecialToken>();
@@ -565,7 +524,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     /// Initialize data for this character that is not safe to put in the constructor.
     /// Usually this is data that is dependent on the character being fully constructed.
     /// </summary>
-    public void Initialize() {
+    public virtual void Initialize() {
         OnUpdateRace();
         OnUpdateCharacterClass();
         UpdateIsCombatantState();
@@ -1129,7 +1088,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             throw new Exception("There is no class named " + className + " but it is being assigned to " + this.name);
         }
     }
-    private void OnUpdateCharacterClass() {
+    protected void OnUpdateCharacterClass() {
         SetTraitsFromClass();
     }
     public void AssignClass(CharacterClass characterClass) {
@@ -2131,7 +2090,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         OnUpdateRace();
         Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
     }
-    private void OnUpdateRace() {
+    protected void OnUpdateRace() {
         SetTraitsFromRace();
         //Update Portrait to use new race
         _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
@@ -2223,9 +2182,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
             marker.OnOtherCharacterDied(characterThatDied);
         }
-    }
-    public void SetMode(MODE mode) {
-        _currentMode = mode;
     }
     public void AdjustDoNotDisturb(int amount) {
         _doNotDisturb += amount;
@@ -3135,9 +3091,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #endregion
 
     #region Combat Handlers
-    public void SetIsInCombat(bool state) {
-        _isInCombat = state;
-    }
     public void SetCombatCharacter(CombatCharacter combatCharacter) {
         _currentCombatCharacter = combatCharacter;
     }
@@ -3541,24 +3494,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     //        }
     //    }
     //}
-    #endregion
-
-    #region IInteractable
-    public void SetIsBeingInspected(bool state) {
-        _isBeingInspected = state;
-        if (_currentParty.icon != null) {
-            _currentParty.icon.UpdateVisualState();
-        }
-        //if (_currentParty.specificLocation != null && _currentParty.specificLocation.coreTile.landmarkOnTile != null) {
-        //    _currentParty.specificLocation.coreTile.landmarkOnTile.landmarkVisual.ToggleCharactersVisibility();
-        //}
-    }
-    public void SetHasBeenInspected(bool state) {
-        _hasBeenInspected = state;
-    }
-    public void EndedInspection() {
-
-    }
     #endregion
 
     #region Traits
@@ -4933,53 +4868,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
             SetLastAssaultedCharacter(null);
         }
     }
-    private void OnAssaultActionReturn(string result, GoapAction action) {
-        hasAssaultPlan = false;
-        SetLastAssaultedCharacter(action.poiTarget as Character);
-        GoapActionResult(result, action);
-        //if (action == currentAction) {
-        //    SetCurrentAction(null);
-        //}
-        //if (isDead) {
-        //    return;
-        //}
-        //GoapPlan plan = GetPlanWithAction(action);
-        //if (action.isStopped) {
-        //    if (!DropPlan(plan)) {
-        //        PlanGoapActions();
-        //    }
-        //    return;
-        //}
-        //if (plan == null) {
-        //    PlanGoapActions();
-        //    return;
-        //}
-        //if (result == InteractionManager.Goap_State_Success) {
-        //    plan.SetNextNode();
-        //    if (plan.currentNode == null) {
-        //        //this means that this is the end goal so end this plan now
-        //        if (!DropPlan(plan)) {
-        //            PlanGoapActions();
-        //        }
-        //    } else {
-        //        PlanGoapActions();
-        //    }
-        //} else if (result == InteractionManager.Goap_State_Fail) {
-        //    if (plan.endNode.action == action) {
-        //        if (!DropPlan(plan)) {
-        //            PlanGoapActions();
-        //        }
-        //    } else {
-        //        if (plan.doNotRecalculate) {
-        //            if (!DropPlan(plan)) {
-        //                PlanGoapActions();
-        //            }
-        //        } else {
-        //            RecalculatePlan(plan);
-        //        }
-        //    }
-        //}
-    }
     public void ChatCharacter(Character targetCharacter) {
         ChatCharacter chatAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, targetCharacter) as ChatCharacter;
         chatAction.PerformActualAction();
@@ -5169,22 +5057,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     public void SetIsChatting(bool state) {
         _isChatting = state;
-    }
-    public void ClaimReward(Reward reward) {
-        switch (reward.rewardType) {
-            case REWARD.LEVEL:
-                LevelUp(reward.amount);
-                break;
-            case REWARD.SUPPLY:
-                if (minion != null) {
-                    PlayerManager.Instance.player.AdjustCurrency(CURRENCY.SUPPLY, reward.amount);
-                } else {
-                    homeArea.AdjustSuppliesInBank(reward.amount);
-                }
-                break;
-            default:
-                break;
-        }
     }
     public bool HasPlanWithType(INTERACTION_TYPE type) {
         for (int i = 0; i < allGoapPlans.Count; i++) {

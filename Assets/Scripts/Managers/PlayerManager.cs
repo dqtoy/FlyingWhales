@@ -124,14 +124,6 @@ public class PlayerManager : MonoBehaviour {
         tile.SetCorruption(true);
         tile.StopCorruptionAnimation();
     }
-    public void CreatePlayerLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
-        if(CanCreateLandmarkOnTile(landmarkType, location)) {
-            player.AdjustCurrency(playerStructureTypes[landmarkType].currency, -playerStructureTypes[landmarkType].amount);
-            BaseLandmark landmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(location, landmarkType);
-            OnPlayerLandmarkCreated(landmark);
-        }
-    }
-
     private void OnPlayerLandmarkCreated(BaseLandmark newLandmark) {
         switch (newLandmark.specificLandmarkType) {
             //case LANDMARK_TYPE.SNATCHER_DEMONS_LAIR:
@@ -168,13 +160,6 @@ public class PlayerManager : MonoBehaviour {
     }
 
     #region Utilities
-    public bool CanCreateLandmarkOnTile(LANDMARK_TYPE type, HexTile tile) {
-        CurrenyCost cost = playerStructureTypes[type];
-        if(player.currencies[cost.currency] >= cost.amount) {
-            return true;
-        }
-        return false;
-    }
     public Sprite GetJobActionSprite(string actionName) {
         if (jobActionIcons.ContainsKey(actionName)) {
             return jobActionIcons[actionName];

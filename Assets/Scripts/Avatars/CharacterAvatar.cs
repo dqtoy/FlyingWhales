@@ -378,17 +378,6 @@ public class CharacterAvatar : MonoBehaviour{
             _travelLine.SetActiveMeter(isVisualShowing);
         }
     }
-    public void UpdateVisualState() {
-        if (GameManager.Instance.allCharactersAreVisible) {
-            _avatarVisual.SetActive(isVisualShowing);
-        } else {
-            if (_party.IsPartyBeingInspected()) {
-                _avatarVisual.SetActive(isVisualShowing);
-            } else {
-                _avatarVisual.SetActive(false);
-            }
-        }
-    }
     public void SetHighlightState(bool state) {
         _avatarHighlight.SetActive(state);
     }

@@ -1330,7 +1330,7 @@ public enum INTERVENTION_ABILITY { ACCESS_MEMORIES, INFLICT_LYCANTHROPY, INFLICT
         , RILE_UP, ABDUCT, PROVOKE, DESTROY, RAISE_DEAD, }
 
 public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUNGLE, TUNDRA, SNOW, DESERT, }
-
+public enum SUMMON_TYPE { NONE, WOLF, SKELETON, GOLEM, SUCCUBUS, INCUBUS, THIEF, }
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public class SubcategoryOf : System.Attribute {

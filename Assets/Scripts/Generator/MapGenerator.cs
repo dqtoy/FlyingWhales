@@ -72,7 +72,6 @@ public class MapGenerator : MonoBehaviour {
         UIManager.Instance.SetTimeControlsState(true);
 
         PlayerUI.Instance.ShowStartingMinionPicker();
-        //TODO: make player pick 3 starting minions here.
     }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();

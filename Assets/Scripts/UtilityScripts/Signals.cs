@@ -202,6 +202,14 @@ public static class Signals {
     public static string JOB_SLOT_LOCK_CHANGED = "OnJobSlotLockChanged"; //Parameters (JOB job, bool lockedState);
     public static string PLAYER_OBTAINED_INTEL = "OnPlayerObtainedIntel"; //Parameters (InteractionIntel)
     public static string PLAYER_REMOVED_INTEL = "OnPlayerRemovedIntel"; //Parameters (InteractionIntel)
+    /// <summary>
+    /// Parameters (Summon newSummon)
+    /// </summary>
+    public static string PLAYER_GAINED_SUMMON = "OnPlayerGainedSummon";
+    /// <summary>
+    /// Parameters (Summon removedSummon)
+    /// </summary>
+    public static string PLAYER_REMOVED_SUMMON = "OnPlayerRemovedSummon";
     #endregion
 
     #region Interaction

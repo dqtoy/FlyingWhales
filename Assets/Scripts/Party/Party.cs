@@ -74,9 +74,6 @@ public class Party {
     public bool isDefending {
         get { return _isDefending; }
     }
-    public MODE currentMode {
-        get { return _characters[0].currentMode; }
-    }
     public List<Character> characters {
         get { return _characters; }
     }
@@ -139,9 +136,6 @@ public class Party {
         _characters = new List<Character>();
         _partyBuffs = new List<Buff>();
         specificLocationHistory = new List<string>();
-        SetEmblemSettings(CharacterManager.Instance.GetRandomEmblemBG(),
-                            CharacterManager.Instance.GetRandomEmblem(),
-                            UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
         SetMaxCharacters(4);
 #if !WORLD_CREATION_TOOL
         //Messenger.AddListener<ActionThread>(Signals.LOOK_FOR_ACTION, AdvertiseSelf);
@@ -318,11 +312,6 @@ public class Party {
     public void SetPartyName(string name) {
         _partyName = name;
     }
-    public void SetEmblemSettings(EmblemBG emblemBG, Sprite emblem, Color partyColor) {
-        this.emblemBG = emblemBG;
-        this.emblem = emblem;
-        this.partyColor = partyColor;
-    }
     public void GoToLocation(Area targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
         Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
         if (_icon.isTravelling && _icon.travelLine != null) {
@@ -355,14 +344,6 @@ public class Party {
     }
     public Party GetBase() {
         return this;
-    }
-    public bool IsPartyBeingInspected() {
-        for (int i = 0; i < _characters.Count; i++) {
-            if (_characters[i].isBeingInspected) {
-                return true;
-            }
-        }
-        return false;
     }
     //public void GoToLocation(GameObject locationGO, PATHFINDING_MODE pathfindingMode, Action doneAction = null) {
     //    _icon.SetActionOnTargetReached(doneAction);

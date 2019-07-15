@@ -172,17 +172,17 @@ public class MonsterInfoUI : UIMenu {
             return;
         }
         UpdateInfoMenu();
-        if (_activeMonster.isBeingInspected || GameManager.Instance.inspectAll) {
-            UpdateStatsInfo();
-            UpdateItemsInfo();
-            if(_activeMonster.relationships != null) {
-                UpdateRelationshipInfo(_activeMonster.relationships.Values.ToList());
-            }
-        } else {
-            UpdateStatsInfo(_activeMonster.uiData);
-            UpdateItemsInfo(_activeMonster.uiData);
-            UpdateRelationshipInfo(_activeMonster.uiData.relationships);
-        }
+        //if (_activeMonster.isBeingInspected || GameManager.Instance.inspectAll) {
+        //    UpdateStatsInfo();
+        //    UpdateItemsInfo();
+        //    if(_activeMonster.relationships != null) {
+        //        UpdateRelationshipInfo(_activeMonster.relationships.Values.ToList());
+        //    }
+        //} else {
+        //    UpdateStatsInfo(_activeMonster.uiData);
+        //    UpdateItemsInfo(_activeMonster.uiData);
+        //    UpdateRelationshipInfo(_activeMonster.uiData.relationships);
+        //}
         UpdateAllHistoryInfo();
         //UpdateOtherInfo();
         //Item drop info

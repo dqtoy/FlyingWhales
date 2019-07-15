@@ -33,12 +33,10 @@ public interface ICharacter {
     string name { get; }
     float computedPower { get; }
     bool isDead { get; }
-    bool isBeingInspected { get; }
     int experience { get; }
     int maxExperience { get; }
     GENDER gender { get; }
     ICHARACTER_TYPE icharacterType { get; }
-    MODE currentMode { get; }
     RACE race { get; }
     Area specificLocation { get; }
     Faction faction { get; }
@@ -81,7 +79,6 @@ public interface ICharacter {
     void SetCurrentParty(Party party);
     void SetHome(Area newHome);
     void AddHistory(Log log); //Character only
-    void SetMode(MODE mode);
     void SetMinion(Minion minion);
     void Assassinate(Character assassin);
     bool AddTrait(Trait combatAttribute, Character responsibleCharacter = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);
