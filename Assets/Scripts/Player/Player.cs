@@ -9,10 +9,12 @@ public class Player : ILeader {
     private const int MAX_IMPS = 5;
     private const int MAX_INTEL = 3;
     public const int MAX_MINIONS = 5;
+    public const int MAX_THREAT = 100;
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
     public int maxImps { get; private set; }
+    public int threat { get; private set; }
 
     private BaseLandmark _demonicPortal;
     private Dictionary<CURRENCY, int> _currencies;
@@ -25,6 +27,11 @@ public class Player : ILeader {
 
     //Unique ability of player
     public ShareIntel shareIntelAbility { get; private set; }
+
+    public int currentCorruptionDuration { get; private set; }
+    public int currentCorruptionTick { get; private set; }
+    public bool isTileCurrentlyBeingCorrupted { get; private set; }
+    public HexTile currentTileBeingCorrupted { get; private set; }
 
     #region getters/setters
     public int id {
@@ -111,7 +118,7 @@ public class Player : ILeader {
         Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
         SetPlayerArea(playerArea);
         //ActivateMagicTransferToPlayer();
-        _demonicPortal.tileLocation.ScheduleCorruption();
+        //_demonicPortal.tileLocation.ScheduleCorruption();
         //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
     }
     public void CreatePlayerArea(BaseLandmark portal) {
@@ -122,14 +129,14 @@ public class Player : ILeader {
         portal.tileLocation.SetCorruption(true);
         SetPlayerArea(playerArea);
         //ActivateMagicTransferToPlayer();
-        _demonicPortal.tileLocation.ScheduleCorruption();
+        //_demonicPortal.tileLocation.ScheduleCorruption();
     }
     public void LoadPlayerArea(Area area) {
         _demonicPortal = area.coreTile.landmarkOnTile;
         Biomes.Instance.CorruptTileVisuals(_demonicPortal.tileLocation);
         _demonicPortal.tileLocation.SetCorruption(true);
         SetPlayerArea(area);
-        _demonicPortal.tileLocation.ScheduleCorruption();
+        //_demonicPortal.tileLocation.ScheduleCorruption();
 
     }
     private void SetPlayerArea(Area area) {
@@ -720,6 +727,46 @@ public class Player : ILeader {
     }
     public void ShowNotification(Log log) {
         Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
+    }
+    #endregion
+
+    #region Threat
+    public void AdjustThreat(int amount) {
+        threat += amount;
+        threat = Mathf.Clamp(threat, 0, MAX_THREAT);
+        PlayerUI.Instance.UpdateThreatMeter();
+    }
+    #endregion
+
+    #region Tile Corruption
+    public void SetCurrentTileBeingCorrupted(HexTile tile) {
+        currentTileBeingCorrupted = tile;
+    }
+    public void CorruptATile() {
+        currentCorruptionDuration = currentTileBeingCorrupted.corruptDuration;
+        if(currentCorruptionDuration == 0) {
+            Debug.LogError("Cannot corrupt a tile with 0 corruption duration");
+        } else {
+            GameManager.Instance.SetOnlyTickDays(true);
+            currentTileBeingCorrupted.StartCorruptionAnimation();
+            currentCorruptionTick = 0;
+            Messenger.AddListener(Signals.DAY_STARTED, CorruptTilePerTick);
+            GameManager.Instance.SetPausedState(false);
+            isTileCurrentlyBeingCorrupted = true;
+        }
+    }
+    private void CorruptTilePerTick() {
+        currentCorruptionTick ++;
+        AdjustThreat(1);
+        if(currentCorruptionTick >= currentCorruptionDuration) {
+            TileIsCorrupted();
+        }
+    }
+    private void TileIsCorrupted() {
+        isTileCurrentlyBeingCorrupted = false;
+        Messenger.RemoveListener(Signals.DAY_STARTED, CorruptTilePerTick);
+        GameManager.Instance.SetPausedState(true);
+        PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
     }
     #endregion
 }

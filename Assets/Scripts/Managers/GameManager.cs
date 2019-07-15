@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour {
     public bool ignoreEventTriggerWeights = false;
     public bool showFullDebug = false;
     public static bool showAllTilesTooltip = false;
-
+    
     public GameObject travelLineParentPrefab;
     public GameObject travelLinePrefab;
     public HexTile tile1;
@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour {
     //[SerializeField] private Vector2 hotSpot = Vector2.zero;
 
     public bool pauseTickEnded2 = false;
+    public bool onlyTickDays { get; private set; }
     //public bool isDraggingItem = false;
 
     #region getters/setters
@@ -117,13 +118,21 @@ public class GameManager : MonoBehaviour {
     }
     private void FixedUpdate() {
         if (_gameHasStarted && !isPaused) {
-            if (this.timeElapsed == 0f) {
-                this.TickStarted();
-            }
-            this.timeElapsed += Time.deltaTime;
-            if (this.timeElapsed >= this.progressionSpeed) {
-                this.timeElapsed = 0f;
-                TickEnded();
+            if (onlyTickDays) {
+                this.timeElapsed += Time.deltaTime;
+                if (this.timeElapsed >= this.progressionSpeed) {
+                    this.timeElapsed = 0f;
+                    DayStarted();
+                }
+            } else {
+                if (this.timeElapsed == 0f) {
+                    this.TickStarted();
+                }
+                this.timeElapsed += Time.deltaTime;
+                if (this.timeElapsed >= this.progressionSpeed) {
+                    this.timeElapsed = 0f;
+                    TickEnded();
+                }
             }
         }
     }
@@ -279,18 +288,24 @@ public class GameManager : MonoBehaviour {
         this.tick += 1;
         if (this.tick > ticksPerDay) {
             this.tick = 1;
-            days += 1;
-            this.continuousDays += 1;
-            Messenger.Broadcast(Signals.DAY_STARTED);
-            if (days > daysPerMonth) {
-                days = 1;
-                this.month += 1;
-                if (this.month > 12) {
-                    this.month = 1;
-                    this.year += 1;
-                }
-                Messenger.Broadcast(Signals.MONTH_START);
+            DayStarted(false);
+        }
+    }
+    private void DayStarted(bool broadcastUI = true) {
+        if (broadcastUI) {
+            Messenger.Broadcast(Signals.UPDATE_UI);
+        }
+        days += 1;
+        this.continuousDays += 1;
+        Messenger.Broadcast(Signals.DAY_STARTED);
+        if (days > daysPerMonth) {
+            days = 1;
+            this.month += 1;
+            if (this.month > 12) {
+                this.month = 1;
+                this.year += 1;
             }
+            Messenger.Broadcast(Signals.MONTH_START);
         }
     }
     public static string ConvertTickToTime(int tick) {
@@ -337,6 +352,9 @@ public class GameManager : MonoBehaviour {
     public int GetTicksBasedOnMinutes(int minutes) {
         float percent = (float)minutes/60f;
         return Mathf.FloorToInt(ticksPerHour * percent);
+    }
+    public void SetOnlyTickDays(bool state) {
+        onlyTickDays = state;
     }
 
     #region Particle Effects

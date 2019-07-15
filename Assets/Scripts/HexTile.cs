@@ -103,6 +103,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public List<HexTile> LandmarkConnectionTiles { get { return AllNeighbours.Where(o => !o.isRoad).ToList(); } }
     public List<HexTile> AllNeighbourRoadTiles { get { return AllNeighbours.Where(o => o.isRoad).ToList(); } }
     public List<HexTile> PassableNeighbours { get { return AllNeighbours.Where(o => o.isPassable).ToList(); } }
+    public List<TILE_TAG> tileTags { get; private set; }
 
     private List<HexTile> _tilesConnectedInGoingToMarker = new List<HexTile>();
     private List<HexTile> _tilesConnectedInComingFromMarker = new List<HexTile>();
@@ -117,6 +118,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public int id { get { return data.id; } }
     public int xCoordinate { get { return data.xCoordinate; } }
     public int yCoordinate { get { return data.yCoordinate; } }
+    public int corruptDuration { get { return GetCorruptDuration(); } }
     public string tileName { get { return data.tileName; } }
     public string thisName { get { return data.tileName; } }
     public float elevationNoise { get { return data.elevationNoise; } }
@@ -1124,10 +1126,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //}
         //ShowHexTileInfo();
 #else
-        if (this.areaOfTile != null) {
+        //if (this.areaOfTile != null) {
             _hoverHighlightGO.SetActive(true);
             //SetBordersState(true);
-        }
+        //}
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
 #endif
     }
@@ -1150,8 +1152,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #endif
     }
     private bool hasPendingJob = false;
-    private void DoubleClick() {
+    private void DoubleLeftClick() {
         //Debug.Log("double click");
+        PlayerUI.Instance.ShowCorruptTileConfirmation(this);
         if (areaOfTile != null) {
             InteriorMapManager.Instance.TryShowAreaMap(areaOfTile);
         }
@@ -1171,7 +1174,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 RightClick();
             }
         } else if (ped.clickCount == 2) {
-            DoubleClick();
+            if (ped.button == PointerEventData.InputButton.Left) {
+                DoubleLeftClick();
+            }
         }
     }
     public void OnPointerEnter(BaseEventData bed) {
@@ -1397,6 +1402,48 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         for (int i = 0; i < particleEffects.Length; i++) {
             particleEffects[i].gameObject.SetActive(false);
         }
+    }
+    private int GetCorruptDuration() {
+        return 3;
+        //int duration = 0;
+        //for (int i = 0; i < tileTags.Count; i++) {
+        //    duration += GetTileTagCorruptDuration(tileTags[i]);
+        //}
+        //return duration;
+    }
+    private int GetTileTagCorruptDuration(TILE_TAG tileTag) {
+        switch (tileTag) {
+            case TILE_TAG.CAVE:
+                return 1;
+            case TILE_TAG.DESERT:
+                return 1;
+            case TILE_TAG.DUNGEON:
+                return 1;
+            case TILE_TAG.FLATLAND:
+                return 1;
+            case TILE_TAG.FOREST:
+                return 1;
+            case TILE_TAG.GRASSLAND:
+                return 1;
+            case TILE_TAG.JUNGLE:
+                return 1;
+            case TILE_TAG.MOUNTAIN:
+                return 1;
+            case TILE_TAG.SNOW:
+                return 1;
+            case TILE_TAG.TUNDRA:
+                return 1;
+        }
+        return 0;
+    }
+    public bool CanBeCorrupted() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile currNeighbour = AllNeighbours[i];
+            if (currNeighbour.isCorrupted) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
