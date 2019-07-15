@@ -594,7 +594,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
 
         ConstructInitialGoapAdvertisementActions();
-        SubscribeToSignals();
+        //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their area is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
 #if !WORLD_CREATION_TOOL
         GetRandomCharacterColor();
         GameDate gameDate = GameManager.Instance.Today();
@@ -602,6 +602,9 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions());
 #endif
     }
+    /// <summary>
+    /// Called when the character's home area is the one that is active.
+    /// </summary>
 
     #region Signals
     private void SubscribeToSignals() {
@@ -2360,6 +2363,10 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return true;
     }
+    public void OnHomeAreaMapActive() {
+        AddInitialAwareness();
+        SubscribeToSignals();
+    }
     #endregion
 
     #region Relationships
@@ -3554,24 +3561,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     }
     #endregion
 
-    #region Defender
-    public void OnSetAsDefender(Area defending) {
-        defendingArea = defending;
-        //this.ownParty.specificLocation.RemoveCharacterFromLocation(this.ownParty, false);
-        //ownParty.SetSpecificLocation(defending.coreTile.landmarkOnTile);
-    }
-    public void OnRemoveAsDefender() {
-        //defendingArea.coreTile.landmarkOnTile.AddCharacterToLocation(this.ownParty);
-        defendingArea = null;
-    }
-    public bool IsDefending(BaseLandmark landmark) {
-        if (defendingArea != null && defendingArea.id == landmark.id) {
-            return true;
-        }
-        return false;
-    }
-    #endregion
-
     #region Traits
     public void CreateInitialTraitsByClass() {
         //Attack Type
@@ -3825,7 +3814,6 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
         }
         return null;
     }
-
     /// <summary>
     /// Remove all traits that are not persistent.
     /// NOTE: This does NOT remove relationships!
@@ -3841,26 +3829,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
                 RemoveTrait(currTrait);
             }
         }
-    }
-    
-
-    //public Trait GetTraitOr(string traitName1, string traitName2) {
-    //    for (int i = 0; i < allTraits.Count; i++) {
-    //        if ((allTraits[i].name == traitName1 || allTraits[i].name == traitName2) && !allTraits[i].isDisabled) {
-    //            return allTraits[i];
-    //        }
-    //    }
-    //    return null;
-    //}
-
- //   public Trait GetTraitOr(string traitName1, string traitName2, string traitName3) {
-	//for (int i = 0; i < normalTraits.Count; i++) {
- //           if ((normalTraits[i].name == traitName1 || normalTraits[i].name == traitName2 || normalTraits[i].name == traitName3) && !normalTraits[i].isDisabled) {
- //               return normalTraits[i];
- //           }
- //       }
- //       return null;
- //   }
+    }    
     public bool HasTraitOf(TRAIT_TYPE traitType, string traitException = "") {
         for (int i = 0; i < normalTraits.Count; i++) {
             if (traitException != "" && normalTraits[i].name == traitException) { continue; }
@@ -4247,7 +4216,7 @@ public class Character : ICharacter, ILeader, IInteractable, IPointOfInterest {
     #region Minion
     public void SetMinion(Minion minion) {
         _minion = minion;
-        UnsubscribeSignals();
+        //UnsubscribeSignals(); //Removed this since character's listeners are not on by default now.
     }
     public void RecruitAsMinion() {
         if (!IsInOwnParty()) {

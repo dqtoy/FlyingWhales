@@ -19,10 +19,18 @@ public class FurnitureSpotMono : MonoBehaviour {
         this.name = summary;
         furnitureSummary.text = summary;
     }
+
+    public FurnitureSpot GetFurnitureSpot() {
+        return new FurnitureSpot() {
+            allowedFurnitureTypes = allowedFurnitureTypes,
+            location = new Vector3Int((int)(transform.localPosition.x - 0.5f), (int)(transform.localPosition.y - 0.5f), 0),
+            furnitureSettings = furnitureSettings
+        };
+    }
 }
 
 [System.Serializable]
-public class FurnitureSetting {
+public struct FurnitureSetting {
     public FURNITURE_TYPE type;
     public Vector3 rotation;
     public string tileAssetName;

@@ -130,11 +130,32 @@ public class AreaInnerTileMap : MonoBehaviour {
     #region Map Generation
     public void Initialize(Area area) {
         this.area = area;
+    }
+    public void DrawMap(TownMapSettings generatedSettings) {
+        GenerateGrid(generatedSettings);
+        SplitMap();
+        Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
+        DrawTownMap(generatedSettings, startPoint);
+        //once generated, just copy the generated structures to the actual map.
+        if (area.name == "Gloomhollow") {
+            LocationStructure exploreArea = area.GetRandomStructureOfType(STRUCTURE_TYPE.EXPLORE_AREA);
+            for (int i = 0; i < insideTiles.Count; i++) {
+                LocationGridTile currTile = insideTiles[i];
+                TileBase structureAsset = structureTilemap.GetTile(currTile.localPlace);
+                if (structureAsset == null || !structureAsset.name.Contains("wall")) {
+                    currTile.SetStructure(exploreArea);
+                    currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                }
+            }
+        } else {
+            PlaceStructures(generatedSettings, startPoint);
+        }
+        AssignOuterAreas(insideTiles, outsideTiles);
+    }
+    public void OnMapGenerationFinished() {
         this.name = area.name + "'s Inner Map";
         canvas.worldCamera = AreaMapCameraMove.Instance.areaMapsCamera;
         worldUICanvas.worldCamera = AreaMapCameraMove.Instance.areaMapsCamera;
-        GenerateInnerStructures();
-        //camera bounds
         cameraBounds = new Vector4(); //x - minX, y - minY, z - maxX, w - maxY 
         cameraBounds.x = -185.8f; //constant
         cameraBounds.y = AreaMapCameraMove.Instance.areaMapsCamera.orthographicSize;
@@ -186,11 +207,13 @@ public class AreaInnerTileMap : MonoBehaviour {
                 if (x < eastOutsideTiles || x >= width - westOutsideTiles || y < southOutsideTiles || y >= height - northOutsideTiles) {
                     //outside
                     currTile.SetIsInside(false);
+                    //GetOutsideFloorTileForArea(area)
                     groundTilemap.SetTile(currTile.localPlace, GetOutsideFloorTileForArea(area));
                     outsideTiles.Add(currTile);
                 } else {
                     //inside
                     currTile.SetIsInside(true);
+                    //GetOutsideFloorTileForArea(area)
                     groundTilemap.SetTile(currTile.localPlace, GetOutsideFloorTileForArea(area));
                     insideTiles.Add(currTile);
                 }
@@ -211,14 +234,14 @@ public class AreaInnerTileMap : MonoBehaviour {
     #endregion
 
     #region Structures
-    public IEnumerator GenerateInnerStructures() {
-        ClearAllTilemaps();
+    public TownMapSettings GenerateInnerStructures(out string log) {
+        log = "Generating Inner Structures for " + area.name;
         insideTiles = new List<LocationGridTile>();
         outsideTiles = new List<LocationGridTile>();
         if ((area.areaType == AREA_TYPE.DUNGEON && area.name == "Gloomhollow") 
             || (area.areaType != AREA_TYPE.DUNGEON && area.areaType != AREA_TYPE.DEMONIC_INTRUSION)) {
             //if this area is not a dungeon type
-            InteriorMapManager.Instance.CleanupForTownGeneration();
+            //InteriorMapManager.Instance.CleanupForTownGeneration();
             //first get a town center template that has the needed connections for the structures in the area
             List<StructureTemplate> validTownCenters = GetValidTownCenterTemplates(area);
             if (validTownCenters.Count == 0) {
@@ -229,14 +252,18 @@ public class AreaInnerTileMap : MonoBehaviour {
                 throw new System.Exception(error);
             }
             //Once a town center is chosen
-            StructureTemplate chosenTownCenter = validTownCenters[Random.Range(0, validTownCenters.Count)];
+            StructureTemplate chosenTownCenter = validTownCenters[Utilities.rng.Next(0, validTownCenters.Count)];
             usedTownCenterTemplateName = chosenTownCenter.name;
+            log += "\nChosen town center template is " + usedTownCenterTemplateName;
             //Place that template in the area generation tilemap
-            InteriorMapManager.Instance.DrawTownCenterTemplateForGeneration(chosenTownCenter, Vector3Int.zero);
+            //InteriorMapManager.Instance.DrawTownCenterTemplateForGeneration(chosenTownCenter, Vector3Int.zero);
+            Dictionary<int, Dictionary<int, LocationGridTileSettings>> mainGeneratedSettings = InteriorMapManager.Instance.GenerateTownCenterTemplateForGeneration(chosenTownCenter, Vector3Int.zero);
             //DrawTiles(InteriorMapManager.Instance.agGroundTilemap, chosenTownCenter.groundTiles, Vector3Int.zero);
             chosenTownCenter.UpdatePositionsGivenOrigin(Vector3Int.zero);
             //then iterate through all the structures in this area, making sure that the chosen template for the structure can connect to the town center
+            log += "\nGenerating Structures... ";
             foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
+                log += "\nStructure Type is: " + keyValuePair.Key.ToString();
                 if (area.name == "Gloomhollow") {
                     if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate() && keyValuePair.Key != STRUCTURE_TYPE.EXPLORE_AREA) {
                         //allow explore areas to be generated in gloomhollow
@@ -244,15 +271,16 @@ public class AreaInnerTileMap : MonoBehaviour {
                     }
                 } else {
                     if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
+                        log += "\nStructure type should not be generated from template. Skipping...";
                         continue; //skip
                     }
                 }
-                
+
                 int structuresToCreate = keyValuePair.Value.Count;
                 if (area.name == "Gloomhollow") {
                     structuresToCreate = 5; //hardcoded to 5
                 }
-
+                log += "\nStructures to create are: " + structuresToCreate.ToString();
                 for (int i = 0; i < structuresToCreate; i++) {
                     List<StructureTemplate> templates = InteriorMapManager.Instance.GetStructureTemplates(keyValuePair.Key); //placed this inside loop so that instance of template is unique per iteration
                     List<StructureTemplate> choices = GetTemplatesThatCanConnectTo(chosenTownCenter, templates);
@@ -260,42 +288,49 @@ public class AreaInnerTileMap : MonoBehaviour {
                         //NOTE: Show a warning log when there are no valid structure templates for the current structure
                         throw new System.Exception("There are no valid " + keyValuePair.Key.ToString() + " templates to connect to town center in area " + area.name);
                     }
-                    StructureTemplate chosenTemplate = choices[Random.Range(0, choices.Count)];
+                    StructureTemplate chosenTemplate = choices[Utilities.rng.Next(0, choices.Count)];
+                    log += "\n\tChosen Template is: " + chosenTemplate.name;
+
                     StructureConnector townCenterConnector;
                     StructureConnector chosenTemplateConnector = chosenTemplate.GetValidConnectorTo(chosenTownCenter, out townCenterConnector);
 
                     Vector3Int shiftTemplateBy = InteriorMapManager.Instance.GetMoveUnitsOfTemplateGivenConnections(chosenTemplate, chosenTemplateConnector, townCenterConnector);
                     townCenterConnector.SetIsOpen(false);
                     chosenTemplateConnector.SetIsOpen(false);
-                    InteriorMapManager.Instance.DrawStructureTemplateForGeneration(chosenTemplate, shiftTemplateBy, keyValuePair.Key);
+                    string structureLog;
+                    Dictionary<int, Dictionary<int, LocationGridTileSettings>> generatedStructure = InteriorMapManager.Instance.GenerateStructureTemplateForGeneration(chosenTemplate, shiftTemplateBy, keyValuePair.Key, out structureLog);
+                    log += "\n\t\t" + structureLog;
+                    InteriorMapManager.Instance.MergeSettings(generatedStructure, ref mainGeneratedSettings);
+                    //InteriorMapManager.Instance.DrawStructureTemplateForGeneration(chosenTemplate, shiftTemplateBy, keyValuePair.Key);
                 }
             }
             //once all structures are placed, get the occupied bounds in the area generation tilemap, and use that size to generate the actual grid for this map
-            TownMapSettings generatedSettings = InteriorMapManager.Instance.GetTownMapSettings();
-            GenerateGrid(generatedSettings);
-            SplitMap();
-            Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
-            DrawTownMap(generatedSettings, startPoint);
-            //once generated, just copy the generated structures to the actual map.
-            if (area.name == "Gloomhollow") {
-                LocationStructure exploreArea = area.GetRandomStructureOfType(STRUCTURE_TYPE.EXPLORE_AREA);
-                for (int i = 0; i < insideTiles.Count; i++) {
-                    LocationGridTile currTile = insideTiles[i];
-                    TileBase structureAsset = structureTilemap.GetTile(currTile.localPlace);
-                    if (structureAsset == null || !structureAsset.name.Contains("wall")) {
-                        currTile.SetStructure(exploreArea);
-                        currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-                    }
-                }
-            } else {
-                PlaceStructures(generatedSettings, startPoint);
-            }
-            AssignOuterAreas(insideTiles, outsideTiles);
+            return InteriorMapManager.Instance.GetTownMapSettings(mainGeneratedSettings);
+            //GenerateGrid(generatedSettings);
+            //SplitMap();
+            //Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
+            //DrawTownMap(generatedSettings, startPoint);
+            ////once generated, just copy the generated structures to the actual map.
+            //if (area.name == "Gloomhollow") {
+            //    LocationStructure exploreArea = area.GetRandomStructureOfType(STRUCTURE_TYPE.EXPLORE_AREA);
+            //    for (int i = 0; i < insideTiles.Count; i++) {
+            //        LocationGridTile currTile = insideTiles[i];
+            //        TileBase structureAsset = structureTilemap.GetTile(currTile.localPlace);
+            //        if (structureAsset == null || !structureAsset.name.Contains("wall")) {
+            //            currTile.SetStructure(exploreArea);
+            //            currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
+            //        }
+            //    }
+            //} else {
+            //    PlaceStructures(generatedSettings, startPoint);
+            //}
+            //AssignOuterAreas(insideTiles, outsideTiles);
             //else use the old structure generation
-        } else {
-            OldStructureGeneration();
         }
-        yield return null;
+        //else {
+        //    OldStructureGeneration();
+        //}
+        return default(TownMapSettings);
     }
     private void OldStructureGeneration() {
         Dictionary<LocationStructure, LocationStructureSetting> settings = GenerateStructureSettings(area);
@@ -661,8 +696,8 @@ public class AreaInnerTileMap : MonoBehaviour {
         //height is always 32, 18 is reserved for the inside structures (NOT including walls), and the remaining 14 is for the outside part (Top and bottom)
         Point size = new Point();
 
-        int xSize = settings.size.size.x;
-        int ySize = settings.size.size.y;
+        int xSize = settings.size.X;
+        int ySize = settings.size.Y;
 
         xSize += eastOutsideTiles + westOutsideTiles;
         ySize += northOutsideTiles + southOutsideTiles;
@@ -721,7 +756,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
 
             LocationGridTile chosenStartingTile = choices[Random.Range(0, choices.Count)];
-            if (kvp.Value.template != null) {
+            if (kvp.Value.hasTemplate) {
                 //if there is a provided template, draw that instead
                 List<LocationGridTile> tilesUsed = DrawStructureTemplate(kvp.Value.template, chosenStartingTile, kvp.Key);
                 Utilities.ListRemoveRange(elligibleTiles, tilesUsed);
@@ -827,8 +862,8 @@ public class AreaInnerTileMap : MonoBehaviour {
                 if (slot.furnitureSpots != null) {
                     int normalizedX = x - startPos.x;
                     int normalizedY = y - startPos.y;
-                    FurnitureSpot spot = slot.GetFurnitureSpot(new Vector3Int(normalizedX, normalizedY, 0));
-                    if (spot != null) {
+                    FurnitureSpot spot;
+                    if (slot.TryGetFurnitureSpot(new Vector3Int(normalizedX, normalizedY, 0), out spot)) {
                         tile.SetFurnitureSpot(spot);
                     }
                 }
@@ -926,7 +961,12 @@ public class AreaInnerTileMap : MonoBehaviour {
             //if (tilemap.gameObject.name.Contains("Ground")) {
             if (!string.IsNullOrEmpty(currData.tileAssetName)) {
                 tilemap.SetTile(pos, InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName, true));
-                map[pos.x, pos.y].SetLockedState(true);
+                try {
+                    map[pos.x, pos.y].SetLockedState(true);
+                } catch {
+                    throw new System.Exception("Map index out of range " + pos.x + ", " + pos.y + ". Tilemap is: " + tilemap.name + ". Map Size is: " + map.GetUpperBound(0).ToString() + ", " + map.GetUpperBound(1).ToString());
+                }
+                
                 if (tilemap == detailsTilemap) {
                     map[pos.x, pos.y].hasDetail = true;
                     map[pos.x, pos.y].SetTileState(LocationGridTile.Tile_State.Occupied);
@@ -1462,7 +1502,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     #endregion
 
     #region Utilities
-    private void ClearAllTilemaps() {
+    public void ClearAllTilemaps() {
         groundTilemap.ClearAllTiles();
         objectsTilemap.ClearAllTiles();
         structureTilemap.ClearAllTiles();
@@ -1805,15 +1845,18 @@ public struct BiomeTileObjectTileSetting {
 
 public struct LocationStructureSetting {
     public Point size;
+    public bool hasTemplate;
     public StructureTemplate template;
 
     public LocationStructureSetting(StructureTemplate t) {
         size = t.size;
+        hasTemplate = true;
         template = t;
     }
 
     public LocationStructureSetting(Point p) {
         size = p;
-        template = null;
+        hasTemplate = false;
+        template = default(StructureTemplate);
     }
 }

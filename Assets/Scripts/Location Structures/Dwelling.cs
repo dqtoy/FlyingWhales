@@ -157,7 +157,7 @@ public class Dwelling : LocationStructure {
     public bool HasUnoccupiedFurnitureSpot() {
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile currTile = tiles[i];
-            if (currTile.objHere == null && currTile.furnitureSpot != null) {
+            if (currTile.objHere == null && currTile.hasFurnitureSpot) {
                 return true;
             }
         }
@@ -179,7 +179,7 @@ public class Dwelling : LocationStructure {
         List<LocationGridTile> validTiles = new List<LocationGridTile>();
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile currTile = tiles[i];
-            if (currTile.objHere == null && currTile.furnitureSpot != null) {
+            if (currTile.objHere == null && currTile.hasFurnitureSpot) {
                 for (int j = 0; j < currTile.furnitureSpot.allowedFurnitureTypes.Length; j++) {
                     FURNITURE_TYPE furnitureType = currTile.furnitureSpot.allowedFurnitureTypes[j];
                     TILE_OBJECT_TYPE tileObject = furnitureType.ConvertFurnitureToTileObject();
@@ -195,7 +195,7 @@ public class Dwelling : LocationStructure {
     private bool HasUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type) {
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile currTile = tiles[i];
-            if (currTile.objHere == null && currTile.furnitureSpot != null) {
+            if (currTile.objHere == null && currTile.hasFurnitureSpot) {
                 for (int j = 0; j < currTile.furnitureSpot.allowedFurnitureTypes.Length; j++) {
                     FURNITURE_TYPE furnitureType = currTile.furnitureSpot.allowedFurnitureTypes[j];
                     TILE_OBJECT_TYPE tileObject = furnitureType.ConvertFurnitureToTileObject();

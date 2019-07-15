@@ -37,6 +37,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public bool isLocked { get; private set; } //if a tile is locked, any asset on it should not be replaced.
     public TILE_OBJECT_TYPE reservedObjectType { get; private set; } //the only type of tile object that can be placed here
     public FurnitureSpot furnitureSpot { get; private set; }
+    public bool hasFurnitureSpot { get; private set; }
 
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> RealisticTiles { get { return FourNeighbours().Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
@@ -207,19 +208,17 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     #region Points of Interest
     public void SetObjectHere(IPointOfInterest poi) {
         objHere = poi;
-        if (furnitureSpot != null && poi is TileObject) {
+        if (hasFurnitureSpot && poi is TileObject) {
             FURNITURE_TYPE furnitureType = (poi as TileObject).tileObjectType.ConvertTileObjectToFurniture();
             if (furnitureType != FURNITURE_TYPE.NONE) {
                 FurnitureSetting settings = furnitureSpot.GetFurnitureSettings(furnitureType);
-                if (settings != null) {
-                    TileBase usedAsset = InteriorMapManager.Instance.GetTileAsset(settings.tileAssetName);
-                    parentAreaMap.objectsTilemap.SetTile(localPlace, usedAsset);
-                    Matrix4x4 m = parentAreaMap.objectsTilemap.GetTransformMatrix(localPlace);
-                    m.SetTRS(Vector3.zero, Quaternion.Euler(settings.rotation), Vector3.one);
-                    parentAreaMap.objectsTilemap.SetTransformMatrix(localPlace, m);
-                    if (poi is Table) {
-                        (poi as Table).SetUsedAsset(usedAsset);
-                    }
+                TileBase usedAsset = InteriorMapManager.Instance.GetTileAsset(settings.tileAssetName);
+                parentAreaMap.objectsTilemap.SetTile(localPlace, usedAsset);
+                Matrix4x4 m = parentAreaMap.objectsTilemap.GetTransformMatrix(localPlace);
+                m.SetTRS(Vector3.zero, Quaternion.Euler(settings.rotation), Vector3.one);
+                parentAreaMap.objectsTilemap.SetTransformMatrix(localPlace, m);
+                if (poi is Table) {
+                    (poi as Table).SetUsedAsset(usedAsset);
                 }
             }
         }
@@ -527,15 +526,16 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     }
 #endregion
 
-#region Tile Objects
+    #region Tile Objects
     public void SetReservedType(TILE_OBJECT_TYPE reservedType) {
         reservedObjectType = reservedType;
     }
-#endregion
+    #endregion
 
-#region Furniture Spots
+    #region Furniture Spots
     public void SetFurnitureSpot(FurnitureSpot spot) {
         furnitureSpot = spot;
+        hasFurnitureSpot = true;
     }
     public FURNITURE_TYPE GetFurnitureThatCanProvide(FACILITY_TYPE facility) {
         List<FURNITURE_TYPE> choices = new List<FURNITURE_TYPE>();
@@ -550,7 +550,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         throw new System.Exception("Furniture spot at " + this.ToString() + " cannot provide facility " + facility.ToString() + "! Should not reach this point if that is the case!");
     }
-#endregion
+    #endregion
 }
 
 [System.Serializable]

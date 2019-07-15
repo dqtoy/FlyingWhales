@@ -187,19 +187,13 @@ public class Area {
     #region Listeners
     private void SubscribeToSignals() {
         Messenger.AddListener(Signals.HOUR_STARTED, CreatePatrolAndExploreJobs);
-        Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
     }
     private void UnsubscribeToSignals() {
         if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
             Messenger.RemoveListener(Signals.HOUR_STARTED, CreatePatrolAndExploreJobs);
         }
-        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-    }
-    private void OnGameLoaded() {
-        //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
-        //CheckAreaInventoryJobs(warehouse);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
         if (removedFrom.parentAreaMap.area.id == this.id) {
@@ -537,13 +531,13 @@ public class Area {
     public void SetOwner(Faction owner) {
         previousOwner = this.owner;
         this.owner = owner;
-        if(areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-            if (this.owner != null &&  this.owner != FactionManager.Instance.neutralFaction) {
-                SubscribeToSignals();
-            } else {
-                UnsubscribeToSignals();
-            }
-        }
+        //if(areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+        //    if (this.owner != null &&  this.owner != FactionManager.Instance.neutralFaction) {
+        //        SubscribeToSignals();
+        //    } else {
+        //        UnsubscribeToSignals();
+        //    }
+        //}
         UpdateBorderColors();
         /*Whenever a location is occupied, 
          all items in structures Inside Settlement will be owned by the occupying faction.*/
@@ -635,6 +629,14 @@ public class Area {
         } else {
             return Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
         }
+    }
+    /// <summary>
+    /// Called when this area is set as the current active area.
+    /// </summary>
+    public void OnAreaSetAsActive() {
+        SubscribeToSignals();
+        LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        CheckAreaInventoryJobs(warehouse);
     }
     #endregion
 
@@ -1067,21 +1069,23 @@ public class Area {
     public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
         if (!IsItemInventoryFull() && !possibleSpecialTokenSpawns.Contains(token)) {
             possibleSpecialTokenSpawns.Add(token);
-            //Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
-            if (structure != null) {
-                structure.AddItem(token, gridLocation);
-                if (structure.isInside) {
-                    token.SetOwner(this.owner);
+            if (areaMap != null) { //if the area map of this area has already been created.
+                //Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
+                if (structure != null) {
+                    structure.AddItem(token, gridLocation);
+                    if (structure.isInside) {
+                        token.SetOwner(this.owner);
+                    }
+                } else {
+                    //get structure for token
+                    LocationStructure chosen = GetRandomStructureToPlaceItem(token);
+                    chosen.AddItem(token);
+                    if (chosen.isInside) {
+                        token.SetOwner(this.owner);
+                    }
                 }
-            } else {
-                //get structure for token
-                LocationStructure chosen = GetRandomStructureToPlaceItem(token);
-                chosen.AddItem(token, gridLocation);
-                if (chosen.isInside) {
-                    token.SetOwner(this.owner);
-                }
-            }
-            OnItemAddedToLocation(token, token.structureLocation);
+                OnItemAddedToLocation(token, token.structureLocation);
+            }            
             Messenger.Broadcast(Signals.ITEM_ADDED_TO_AREA, this, token);
             return true;
         }
@@ -1090,9 +1094,11 @@ public class Area {
     public void RemoveSpecialTokenFromLocation(SpecialToken token) {
         if (possibleSpecialTokenSpawns.Remove(token)) {
             LocationStructure takenFrom = token.structureLocation;
-            takenFrom.RemoveItem(token);
+            if (takenFrom != null) {
+                takenFrom.RemoveItem(token);
+                OnItemRemovedFromLocation(token, takenFrom);
+            }
             Debug.Log(GameManager.Instance.TodayLogString() + "Removed " + token.name + " from " + name);
-            OnItemRemovedFromLocation(token, takenFrom);
             Messenger.Broadcast(Signals.ITEM_REMOVED_FROM_AREA, this, token);
         }
 
@@ -1473,14 +1479,14 @@ public class Area {
             jobQueue.AddJobInQueue(stateJob);
         }
 
-        int exploreChance = UnityEngine.Random.Range(0, 100);
-        if (exploreChance < 15 && !jobQueue.HasJobRelatedTo(CHARACTER_STATE.EXPLORE)) {
-            Area dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
-            CharacterStateJob stateJob = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.EXPLORE, dungeon);
-            //stateJob.SetOnTakeJobAction(OnTakeExploreJob);
-            stateJob.SetCanTakeThisJobChecker(CanDoPatrolAndExplore);
-            jobQueue.AddJobInQueue(stateJob);
-        }
+        //int exploreChance = UnityEngine.Random.Range(0, 100);
+        //if (exploreChance < 15 && !jobQueue.HasJobRelatedTo(CHARACTER_STATE.EXPLORE)) {
+        //    Area dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
+        //    CharacterStateJob stateJob = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.EXPLORE, dungeon);
+        //    //stateJob.SetOnTakeJobAction(OnTakeExploreJob);
+        //    stateJob.SetCanTakeThisJobChecker(CanDoPatrolAndExplore);
+        //    jobQueue.AddJobInQueue(stateJob);
+        //}
     }
     private bool CanDoPatrolAndExplore(Character character, JobQueueItem job) {
         return character.GetNormalTrait("Injured") == null;
@@ -1568,6 +1574,22 @@ public class Area {
         //job.SetCanTakeThisJobChecker(job.CanCraftItemChecker);
         //job.SetCannotOverrideJob(false);
         jobQueue.AddJobInQueue(job);
+    }
+    #endregion
+
+    #region Area Map
+    public void OnMapGenerationFinished() {
+        //place tokens in area to actual structures.
+        //get structure for token
+        for (int i = 0; i < possibleSpecialTokenSpawns.Count; i++) {
+            SpecialToken token = possibleSpecialTokenSpawns[i];
+            LocationStructure chosen = GetRandomStructureToPlaceItem(token);
+            chosen.AddItem(token);
+            if (chosen.isInside) {
+                token.SetOwner(this.owner);
+            }
+        }
+        
     }
     #endregion
 

@@ -325,12 +325,15 @@ public class UIManager : MonoBehaviour {
             if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
                 x1Btn.isOn = true;
                 speedToggleGroup.NotifyToggleOn(x1Btn);
+                SetProgressionSpeed1X();
             } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
                 x2Btn.isOn = true;
                 speedToggleGroup.NotifyToggleOn(x2Btn);
+                SetProgressionSpeed2X();
             } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
                 x4Btn.isOn = true;
                 speedToggleGroup.NotifyToggleOn(x4Btn);
+                SetProgressionSpeed4X();
             }
         }
     }

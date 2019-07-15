@@ -19,4 +19,7 @@ public struct Point {
     public int Product() {
         return X * Y;
     }
+    public override string ToString() {
+        return "(" + X.ToString() + ", " + Y.ToString() + ")";
+    }
 }

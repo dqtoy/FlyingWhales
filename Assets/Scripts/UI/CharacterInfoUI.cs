@@ -124,7 +124,9 @@ public class CharacterInfoUI : UIMenu {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
         SetLogMenuState(false);
-        _activeCharacter.CenterOnCharacter(false);
+        if (_activeCharacter.marker != null) {
+            _activeCharacter.CenterOnCharacter(false);
+        }
         base.OpenMenu();
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;

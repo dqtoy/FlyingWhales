@@ -446,41 +446,33 @@ public class AreaInfoUI : UIMenu {
         } else {
             summary += "\nNone";
         }
-        //if (activeArea.corpsesInArea.Count > 0) {
-        //    for (int i = 0; i < activeArea.corpsesInArea.Count; i++) {
-        //        Corpse currCorpse = activeArea.corpsesInArea[i];
-        //        summary += currCorpse.character.name + ", ";
-        //    }
-        //} else {
-        //    summary += "None";
-        //}
-        //summary += "\nStructures at " + activeArea.name + ": ";
-        //if (activeArea.structures.Count > 0) {
-        //    foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in activeArea.structures) {
-        //        summary += "\n" + kvp.Value.Count.ToString() + " " + kvp.Key.ToString();
-        //        for (int i = 0; i < kvp.Value.Count; i++) {
-        //            LocationStructure currStructure = kvp.Value[i];
-        //            //if (currStructure is Dwelling) {
-        //            //    summary += "\n" + kvp.Key.ToString() + " " + i.ToString() + " residents: ";
-        //            //    Dwelling dwelling = currStructure as Dwelling;
-        //            //    for (int j = 0; j < dwelling.residents.Count; j++) {
-        //            //        Character resident = dwelling.residents[j];
-        //            //        summary += "\n-" + resident.name;
-        //            //    }
-        //            //}
-        //            summary += "\n" + kvp.Key.ToString() + " " + i.ToString() + " Points of interest: ";
-        //            if (currStructure.pointsOfInterest.Count > 0) {
-        //                for (int j = 0; j < currStructure.pointsOfInterest.Count; j++) {
-        //                    summary += currStructure.pointsOfInterest[j].ToString() + ", ";
-        //                }
-        //            } else {
-        //                summary += " None";
-        //            }
-        //        }
-        //    }
-        //} else {
-        //    summary += "None";
-        //}
+        summary += "\nStructures at " + activeArea.name + ": ";
+        if (activeArea.structures.Count > 0) {
+            foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in activeArea.structures) {
+                summary += "\n" + kvp.Value.Count.ToString() + " " + kvp.Key.ToString();
+                for (int i = 0; i < kvp.Value.Count; i++) {
+                    LocationStructure currStructure = kvp.Value[i];
+                    if (currStructure is Dwelling) {
+                        summary += "\n" + kvp.Key.ToString() + " " + i.ToString() + " residents: ";
+                        Dwelling dwelling = currStructure as Dwelling;
+                        for (int j = 0; j < dwelling.residents.Count; j++) {
+                            Character resident = dwelling.residents[j];
+                            summary += resident.name + ", ";
+                        }
+                    }
+                    //summary += "\n" + kvp.Key.ToString() + " " + i.ToString() + " Points of interest: ";
+                    //if (currStructure.pointsOfInterest.Count > 0) {
+                    //    for (int j = 0; j < currStructure.pointsOfInterest.Count; j++) {
+                    //        summary += currStructure.pointsOfInterest[j].ToString() + ", ";
+                    //    }
+                    //} else {
+                    //    summary += " None";
+                    //}
+                }
+            }
+        } else {
+            summary += "None";
+        }
 
         UIManager.Instance.ShowSmallInfo(summary);
     }
@@ -531,7 +523,7 @@ public class AreaInfoUI : UIMenu {
 
     #region Area Map
     public void ShowAreaMap() {
-        InteriorMapManager.Instance.ShowAreaMap(activeArea);
+        InteriorMapManager.Instance.TryShowAreaMap(activeArea);
     }
     private void OnAreaMapOpened(Area area) {
         if (hideOnShowAreaMap) {

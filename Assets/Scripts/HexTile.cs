@@ -8,7 +8,6 @@ using worldcreator;
 using SpriteGlow;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using Unity.Jobs;
 
 public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
@@ -1151,33 +1150,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #endif
     }
     private bool hasPendingJob = false;
-    private JobHandle jobHandle;
     private void DoubleClick() {
         //Debug.Log("double click");
-        return;
         if (areaOfTile != null) {
-            //InteriorMapManager.Instance.ShowAreaMap(areaOfTile);
-            UIManager.Instance.SetInteriorMapLoadingState(true);
-            //MultiThreadPool.Instance.AddToThreadPool(new AreaMapGenerationThread(areaOfTile, OnDoneGeneratingAreaMap));
-            //StartCoroutine(LandmarkManager.Instance.GenerateAreaMap(areaOfTile, OnDoneGeneratingAreaMap));
-            var job = new AreaMapGenerationJob() {
-                areaID = areaOfTile.id,
-            };
-            jobHandle = job.Schedule();
-            hasPendingJob = true;
+            InteriorMapManager.Instance.TryShowAreaMap(areaOfTile);
         }
     }
-    private void OnDoneGeneratingAreaMap(Area area) {
-        hasPendingJob = false;
-        UIManager.Instance.SetInteriorMapLoadingState(false);
-        InteriorMapManager.Instance.ShowAreaMap(areaOfTile);
-    }
-
-    private void Update() {
-        if (hasPendingJob && jobHandle.IsCompleted) {
-            OnDoneGeneratingAreaMap(areaOfTile);
-        }
-    }
+    //private void OnDoneGeneratingAreaMap(Area area) {
+    //    hasPendingJob = false;
+    //    UIManager.Instance.SetInteriorMapLoadingState(false);
+    //    InteriorMapManager.Instance.ShowAreaMap(areaOfTile);
+    //}
 
     public void PointerClick(BaseEventData bed) {
         PointerEventData ped = bed as PointerEventData;
@@ -1749,13 +1732,4 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     }
     #endregion
-}
-
-struct AreaMapGenerationJob : IJob {
-
-    public int areaID;
-
-    public void Execute() {
-        LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.GetAreaByID(areaID));
-    }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class FurnitureSpot {
+public struct FurnitureSpot {
 
     public Vector3Int location; //where in the template grid is this furniture spot placed
     public FURNITURE_TYPE[] allowedFurnitureTypes;
@@ -24,6 +24,6 @@ public class FurnitureSpot {
                 return currSetting;
             }
         }
-        return null;
+        throw new System.Exception("No Setting for furniture type " + type.ToString());
     }
 }

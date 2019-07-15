@@ -322,10 +322,10 @@ public class ConsoleMenu : UIMenu {
                 //    Debug.LogWarning("There is an alive character with a null home structure! " + currCharacter.name);
                 //    UIManager.Instance.Pause();
                 //}
-                if (currCharacter.currentStructure == null && currCharacter.minion == null) {
-                    Debug.LogWarning("There is an alive character with a null current structure! " + currCharacter.name);
-                    //UIManager.Instance.Pause();
-                }
+                //if (currCharacter.currentStructure == null && currCharacter.minion == null) {
+                //    Debug.LogWarning("There is an alive character with a null current structure! " + currCharacter.name);
+                //    //UIManager.Instance.Pause();
+                //}
                 if (currCharacter.marker != null) {
                     for (int j = 0; j < currCharacter.marker.hostilesInRange.Count; j++) {
                         Character hostileInRange = currCharacter.marker.hostilesInRange[j];

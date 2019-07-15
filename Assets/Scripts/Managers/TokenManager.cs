@@ -21,10 +21,11 @@ public class TokenManager : MonoBehaviour {
     private void LoadSpecialTokens() {
         for (int i = 0; i < specialTokenSettings.Count; i++) {
             SpecialTokenSettings currSetting = specialTokenSettings[i];
-            List<Area> areas = GetPossibleAreaSpawns(currSetting);
-            if (areas.Count <= 0) {
-                continue; //skip
-            }
+            List<Area> areas = LandmarkManager.Instance.allAreas;
+            //List<Area> areas = GetPossibleAreaSpawns(currSetting);
+            //if (areas.Count <= 0) {
+            //    continue; //skip
+            //}
             for (int j = 0; j < currSetting.quantity; j++) {
                 if (Random.Range(0, 100) < currSetting.appearanceWeight) {
                     Area chosenArea = areas[Random.Range(0, areas.Count)];

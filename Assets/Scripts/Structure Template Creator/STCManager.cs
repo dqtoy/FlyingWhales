@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Unity.Collections;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -136,12 +137,26 @@ public class STCManager : MonoBehaviour {
         TileTemplateData[] objectTiles = GetTileData(objectsTilemap, groundTilemap.cellBounds);
         TileTemplateData[] detailTiles = GetTileData(detailsTilemap, groundTilemap.cellBounds);
 
-        ConnectorMono[] connectors = Utilities.GetComponentsInDirectChildren<ConnectorMono>(connectorsParent.gameObject);
-        FurnitureSpotMono[] furnitureSpots = Utilities.GetComponentsInDirectChildren<FurnitureSpotMono>(furnitureParent.gameObject);
+        ConnectorMono[] connectorMonos = Utilities.GetComponentsInDirectChildren<ConnectorMono>(connectorsParent.gameObject);
+        FurnitureSpotMono[] furnitureSpotMonos = Utilities.GetComponentsInDirectChildren<FurnitureSpotMono>(furnitureParent.gameObject);
+
+
+        StructureConnector[] connectors = new StructureConnector[connectorMonos.Length];
+        for (int i = 0; i < connectorMonos.Length; i++) {
+            ConnectorMono currMono = connectorMonos[i];
+            connectors[i] = currMono.GetConnector();
+        }
+
+        FurnitureSpot[] furnitureSpots = new FurnitureSpot[furnitureSpotMonos.Length];
+        for (int i = 0; i < furnitureSpotMonos.Length; i++) {
+            FurnitureSpotMono currMono = furnitureSpotMonos[i];
+            furnitureSpots[i] = currMono.GetFurnitureSpot();
+        }
+
 
         Debug.Log("Got " + groundTiles.Length + " tiles");
 
-        StructureTemplate newTemplate = new StructureTemplate(groundTiles, wallTiles, objectTiles, detailTiles,
+        StructureTemplate newTemplate = new StructureTemplate("Structure_Template", groundTiles, wallTiles, objectTiles, detailTiles,
             new Point(groundTilemap.cellBounds.size.x, groundTilemap.cellBounds.size.y), connectors, furnitureSpots);
 
         string dataAsJson = JsonUtility.ToJson(newTemplate);
@@ -354,7 +369,7 @@ public class STCManager : MonoBehaviour {
 
 
 [System.Serializable]
-public class StructureTemplate {
+public struct StructureTemplate {
     public string name;
     public Point size;
     public TileTemplateData[] groundTiles;
@@ -364,47 +379,18 @@ public class StructureTemplate {
     public StructureConnector[] connectors;
     public FurnitureSpot[] furnitureSpots;
 
-    public StructureTemplate(TileTemplateData[] ground, TileTemplateData[] walls,
-        TileTemplateData[] objects, TileTemplateData[] details, Point size, ConnectorMono[] connectorMonos, FurnitureSpotMono[] furnitureMonos) {
-        this.size = size;
-        groundTiles = ground;
-        structureWallTiles = walls;
-        objectTiles = objects;
-        detailTiles = details;
-        connectors = ConvertToStructureConnectors(connectorMonos);
-        furnitureSpots = ConvertToFurnitureSpots(furnitureMonos);
-
-        //groundTiles = Convert(ground);
-        //structureWallTiles = Convert(walls);
-        //objectTiles = Convert(objects);
-        //detailTiles = Convert(details);
+    public StructureTemplate(string _name, TileTemplateData[] _ground, TileTemplateData[] _walls,
+        TileTemplateData[] _objects, TileTemplateData[] _details, Point _size, StructureConnector[] _connectors, FurnitureSpot[] _furnitureSpots) {
+        name = _name;
+        size = _size;
+        groundTiles = _ground;
+        structureWallTiles = _walls;
+        objectTiles = _objects;
+        detailTiles = _details;
+        connectors = _connectors;
+        furnitureSpots = _furnitureSpots;
     }
 
-    private StructureConnector[] ConvertToStructureConnectors(ConnectorMono[] connectorMonos) {
-        StructureConnector[] sc = new StructureConnector[connectorMonos.Length];
-        for (int i = 0; i < sc.Length; i++) {
-            ConnectorMono cm = connectorMonos[i];
-            sc[i] = new StructureConnector() {
-                allowedStructureType = cm.allowedStructureType,
-                neededDirection = cm.connectionDirection,
-                location = new Vector3Int((int)(cm.transform.localPosition.x - 0.5f), (int)(cm.transform.localPosition.y - 0.5f), 0),
-                isOpen = true
-            };
-        }
-        return sc;
-    }
-    private FurnitureSpot[] ConvertToFurnitureSpots(FurnitureSpotMono[] monos) {
-        FurnitureSpot[] sc = new FurnitureSpot[monos.Length];
-        for (int i = 0; i < sc.Length; i++) {
-            FurnitureSpotMono fs = monos[i];
-            sc[i] = new FurnitureSpot() {
-                allowedFurnitureTypes = fs.allowedFurnitureTypes,
-                location = new Vector3Int((int)(fs.transform.localPosition.x - 0.5f), (int)(fs.transform.localPosition.y - 0.5f), 0),
-                furnitureSettings = fs.furnitureSettings
-            };
-        }
-        return sc;
-    }
 
     #region Utilities
     public bool HasConnectorsForStructure(Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures) {
@@ -462,7 +448,7 @@ public class StructureTemplate {
                 return true;
             }
         }
-        availableConnector = null;
+        availableConnector = default(StructureConnector);
         return false;
     }
 
@@ -510,19 +496,21 @@ public class StructureTemplate {
         for (int i = 0; i < data.Length; i++) {
             TileTemplateData currData = data[i];
             currData.tilePosition = new Vector3(currData.tilePosition.x + origin.x, currData.tilePosition.y + origin.y);
+            data[i] = currData;
         }
     }
     private void UpdatePositionsGivenOrigin(StructureConnector[] data, Vector3Int origin) {
         for (int i = 0; i < data.Length; i++) {
             StructureConnector currData = data[i];
             currData.location = new Vector3Int(currData.location.x + origin.x, currData.location.y + origin.y, 0);
+            data[i] = currData;
         }
     }
     #endregion
 }
 
 [System.Serializable]
-public class TileTemplateData {
+public struct TileTemplateData {
 
     public Vector3 tilePosition;
     public string tileAssetName;
@@ -540,6 +528,16 @@ public class TileTemplateData {
         tilePosition = pos;
         //rotation = m.rotation.eulerAngles;
         matrix = m;
+    }
+
+    public static TileTemplateData Empty {
+        get {
+            return new TileTemplateData() {
+                tilePosition = Vector3.zero,
+                tileAssetName = string.Empty,
+                matrix = Matrix4x4.zero
+            };
+        }
     }
 
 }

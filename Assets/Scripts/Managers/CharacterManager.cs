@@ -382,6 +382,25 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
+    public void PlaceInitialCharacters(Area area) {
+        for (int i = 0; i < area.areaResidents.Count; i++) {
+            Character character = area.areaResidents[i];
+            character.CreateMarker();
+            if (character.homeStructure != null && character.homeStructure.location == area) {
+                //place the character at a random unoccupied tile in his/her home
+                List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
+                LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                character.marker.PlaceMarkerAt(chosenTile);
+            } else {
+                //place the character at a random unoccupied tile in the area's wilderness
+                LocationStructure wilderness = area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+                List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
+                LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
+                character.marker.PlaceMarkerAt(chosenTile);
+            }
+            character.OnHomeAreaMapActive();
+        }
+    }
     public void GiveInitialItems() {
         List<SPECIAL_TOKEN> choices = Utilities.GetEnumValues<SPECIAL_TOKEN>().ToList();
         choices.Remove(SPECIAL_TOKEN.HEALING_POTION);
