@@ -1605,11 +1605,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
             foreach (LANDMARK_TYPE landmarkType in PlayerManager.Instance.playerStructureTypes.Keys) {
                 if (landmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
-                    if (PlayerManager.Instance.CanCreateLandmarkOnTile(landmarkType, this)) {
-                        ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
-                        createLandmark.onClickAction = () => PlayerManager.Instance.CreatePlayerLandmarkOnTile(this, landmarkType);
-                        createLandmarkSettings.AddMenuItem(createLandmark);
-                    }
+                    //if (PlayerManager.Instance.CanCreateLandmarkOnTile(landmarkType, this)) {
+                    //    ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
+                    //    createLandmark.onClickAction = () => PlayerManager.Instance.CreatePlayerLandmarkOnTile(this, landmarkType);
+                    //    createLandmarkSettings.AddMenuItem(createLandmark);
+                    //}
                 }
             }
         }

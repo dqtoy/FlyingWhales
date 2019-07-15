@@ -6,24 +6,21 @@ using System.Linq;
 
 public class Player : ILeader {
 
-    private const int MAX_IMPS = 5;
     private const int MAX_INTEL = 3;
     public const int MAX_MINIONS = 5;
     public const int MAX_THREAT = 100;
+    private const int MAX_SUMMONS = 5;
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
-    public int maxImps { get; private set; }
     public int threat { get; private set; }
-
-    private BaseLandmark _demonicPortal;
-    private Dictionary<CURRENCY, int> _currencies;
 
     //public Dictionary<JOB, PlayerJobData> roleSlots { get; private set; }
     public CombatGrid attackGrid { get; private set; }
     public CombatGrid defenseGrid { get; private set; }
     public List<Intel> allIntel { get; private set; }
     public Minion[] minions { get; private set; }
+    public Dictionary<SUMMON_TYPE, List<Summon>> summons { get; private set; }
 
     //Unique ability of player
     public ShareIntel shareIntelAbility { get; private set; }
@@ -43,17 +40,11 @@ public class Player : ILeader {
     public RACE race {
         get { return RACE.HUMANS; }
     }
-    public BaseLandmark demonicPortal {
-        get { return _demonicPortal; }
-    }
     public Area specificLocation {
         get { return playerArea; }
     }
     public Area homeArea {
         get { return playerArea; }
-    }
-    public Dictionary<CURRENCY, int> currencies {
-        get { return _currencies; }
     }
     public List<Character> allOwnedCharacters {
         get { return minions.Select(x => x.character).ToList(); }
@@ -68,19 +59,15 @@ public class Player : ILeader {
         defenseGrid = new CombatGrid();
         attackGrid.Initialize();
         defenseGrid.Initialize();
-        maxImps = 5;
         allIntel = new List<Intel>();
         minions = new Minion[MAX_MINIONS];
+        summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
         shareIntelAbility = new ShareIntel();
-        //ConstructCurrencies();
         //ConstructRoleSlots();
         AddListeners();
     }
 
-    private void EverydayAction() {
-        //DepleteThreatLevel();
-    }
-
+    #region Listeners
     private void AddListeners() {
         AddWinListener();
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
@@ -93,7 +80,9 @@ public class Player : ILeader {
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
     }
-
+    private void EverydayAction() {
+        //DepleteThreatLevel();
+    }
     private void OnKeyPressed(KeyCode pressedKey) {
         if (pressedKey == KeyCode.Escape) {
             if (currentActivePlayerJobAction != null) {
@@ -102,6 +91,7 @@ public class Player : ILeader {
             }
         }
     }
+    #endregion
 
     #region ILeader
     public void LevelUp() {
@@ -114,7 +104,7 @@ public class Player : ILeader {
         chosenCoreTile.SetCorruption(true);
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION);
         playerArea.LoadAdditionalData();
-        _demonicPortal = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
+        LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
         Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
         SetPlayerArea(playerArea);
         //ActivateMagicTransferToPlayer();
@@ -122,7 +112,6 @@ public class Player : ILeader {
         //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
     }
     public void CreatePlayerArea(BaseLandmark portal) {
-        _demonicPortal = portal;
         Area playerArea = LandmarkManager.Instance.CreateNewArea(portal.tileLocation, AREA_TYPE.DEMONIC_INTRUSION);
         playerArea.LoadAdditionalData();
         Biomes.Instance.CorruptTileVisuals(portal.tileLocation);
@@ -132,9 +121,8 @@ public class Player : ILeader {
         //_demonicPortal.tileLocation.ScheduleCorruption();
     }
     public void LoadPlayerArea(Area area) {
-        _demonicPortal = area.coreTile.landmarkOnTile;
-        Biomes.Instance.CorruptTileVisuals(_demonicPortal.tileLocation);
-        _demonicPortal.tileLocation.SetCorruption(true);
+        Biomes.Instance.CorruptTileVisuals(area.coreTile);
+        area.coreTile.tileLocation.SetCorruption(true);
         SetPlayerArea(area);
         //_demonicPortal.tileLocation.ScheduleCorruption();
 
@@ -193,7 +181,6 @@ public class Player : ILeader {
         minion.SetCombatAbility(new CombatAbility()); //TODO: variations
         //TODO: Add one positive and one negative trait
     }
-
     public void AddMinion(Minion minion) {
         int currentMinionCount = GetCurrentMinionCount();
         if(currentMinionCount == minions.Length) {
@@ -245,58 +232,6 @@ public class Player : ILeader {
     }
     #endregion
 
-    #region Currencies
-    private void ConstructCurrencies() {
-        _currencies = new Dictionary<CURRENCY, int>();
-        _currencies.Add(CURRENCY.IMP, 0);
-        _currencies.Add(CURRENCY.MANA, 0);
-        _currencies.Add(CURRENCY.SUPPLY, 0);
-        AdjustCurrency(CURRENCY.IMP, maxImps);
-        AdjustCurrency(CURRENCY.SUPPLY, 5000);
-        AdjustCurrency(CURRENCY.MANA, 5000);
-    }
-    public void AdjustCurrency(CURRENCY currency, int amount) {
-        _currencies[currency] += amount;
-        if(currency == CURRENCY.IMP) {
-            _currencies[currency] = Mathf.Clamp(_currencies[currency], 0, maxImps);
-        }else if (currency == CURRENCY.SUPPLY) {
-            _currencies[currency] = Mathf.Max(_currencies[currency], 0);
-            if (playerArea != null) {
-                playerArea.SetSuppliesInBank(_currencies[currency]);
-            }
-        } else if (currency == CURRENCY.MANA) {
-            _currencies[currency] = Mathf.Max(_currencies[currency], 0); //maybe 999?
-        }
-        Messenger.Broadcast(Signals.UPDATED_CURRENCIES);
-    }
-    public void SetMaxImps(int imps) {
-        maxImps = imps;
-        _currencies[CURRENCY.IMP] = Mathf.Clamp(_currencies[CURRENCY.IMP], 0, maxImps);
-    }
-    public void AdjustMaxImps(int adjustment) {
-        maxImps += adjustment;
-        AdjustCurrency(CURRENCY.IMP, adjustment);
-    }
-    #endregion
-
-    #region Rewards
-    public void ClaimReward(Reward reward) {
-        switch (reward.rewardType) {
-            case REWARD.SUPPLY:
-                AdjustCurrency(CURRENCY.SUPPLY, reward.amount);
-                break;
-            case REWARD.MANA:
-                AdjustCurrency(CURRENCY.MANA, reward.amount);
-                break;
-            //case REWARD.EXP:
-            //    state.assignedMinion.AdjustExp(reward.amount);
-            //    break;
-            default:
-                break;
-        }
-    }
-    #endregion
-
     #region Win/Lose Conditions
     private void AddWinListener() {
         Messenger.AddListener<Faction>(Signals.FACTION_LEADER_DIED, OnFactionLeaderDied);
@@ -309,33 +244,6 @@ public class Player : ILeader {
         if (allUndestroyedFactions.Count == 0) {
             Debug.LogError("All factions are destroyed! Player won!");
         }        
-    }
-    public void OnPlayerLandmarkRuined(BaseLandmark landmark) {
-        switch (landmark.specificLandmarkType) {
-            case LANDMARK_TYPE.DWELLINGS:
-                //add 2 minion slots
-                //AdjustMaxMinions(-2);
-                break;
-            case LANDMARK_TYPE.IMP_KENNEL:
-                //adds 1 Imp capacity
-                //AdjustMaxImps(-1);
-                break;
-            case LANDMARK_TYPE.DEMONIC_PORTAL:
-                //player loses if the Portal is destroyed
-                throw new System.Exception("Demonic Portal Was Destroyed! Game Over!");
-            case LANDMARK_TYPE.RAMPART:
-                //remove bonus 25% HP to all Defenders
-                //for (int i = 0; i < playerArea.landmarks.Count; i++) {
-                //    BaseLandmark currLandmark = playerArea.landmarks[i];
-                //    currLandmark.RemoveDefenderBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
-                //    //if (currLandmark.defenders != null) {
-                //    //    currLandmark.defenders.RemoveBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
-                //    //}
-                //}
-                break;
-            default:
-                break;
-        }
     }
     #endregion
 
@@ -588,9 +496,6 @@ public class Player : ILeader {
             Messenger.Broadcast(Signals.PLAYER_REMOVED_INTEL, intel);
         }
     }
-    public bool AlreadyHasIntel(Intel intel) {
-        return allIntel.Contains(intel);
-    }
     /// <summary>
     /// Listener for when a character has finished doing an action.
     /// </summary>
@@ -767,6 +672,79 @@ public class Player : ILeader {
         Messenger.RemoveListener(Signals.DAY_STARTED, CorruptTilePerTick);
         GameManager.Instance.SetPausedState(true);
         PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
+    }
+    #endregion
+
+    #region Summons
+    public void GainSummon(SUMMON_TYPE type) {
+        if (GetTotalSummonsCount() < MAX_SUMMONS) {
+            Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, GetRoleForSummon(type), GetRaceForSummon(type), Utilities.GetRandomGender(), playerFaction, playerArea);
+            AddSummon(newSummon);
+        } else {
+            Debug.LogWarning("Max summons has been reached!");
+        }
+    }
+    public int GetTotalSummonsCount() {
+        int count = 0;
+        foreach (KeyValuePair<SUMMON_TYPE, List<Summon>> kvp in summons) {
+            count += summons[kvp.Key].Count;
+        }
+        
+        return count;
+    }
+    public int GetSummonsOfTypeCount(SUMMON_TYPE type) {
+        if (!summons.ContainsKey(type)) {
+            return 0;
+        }
+        return summons[type].Count;
+    }
+    private void AddSummon(Summon newSummon) {
+        if (!summons.ContainsKey(newSummon.summonType)) {
+            summons.Add(newSummon.summonType, new List<Summon>());
+        }
+        if (!summons[newSummon.summonType].Contains(newSummon)) {
+            summons[newSummon.summonType].Add(newSummon);
+            Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
+        }
+    }
+    private void RemoveSummon(Summon summon) {
+        if (summons[summon.summonType].Remove(summon)) {
+            if (summons[summon.summonType].Count == 0) {
+                summons.Remove(summon.summonType);
+            }
+            Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
+        }
+    }
+    private CharacterRole GetRoleForSummon(SUMMON_TYPE summonType) {
+        switch (summonType) {
+            default:
+                return CharacterRole.MINION;
+        }
+    }
+    private RACE GetRaceForSummon(SUMMON_TYPE summonType) {
+        switch (summonType) {
+            case SUMMON_TYPE.WOLF:
+                return RACE.WOLF;
+            case SUMMON_TYPE.SKELETON:
+                return RACE.SKELETON;
+            case SUMMON_TYPE.GOLEM:
+                return RACE.DEMON;
+            case SUMMON_TYPE.SUCCUBUS:
+                return RACE.DEMON;
+            case SUMMON_TYPE.INCUBUS:
+                return RACE.DEMON;
+            case SUMMON_TYPE.THIEF:
+                return RACE.DEMON;
+            default:
+                return RACE.DEMON;
+        }
+    }
+    /// <summary>
+    /// Get a list of all summon types that the player has.
+    /// </summary>
+    /// <returns>List of summon types.</returns>
+    public List<SUMMON_TYPE> GetAvailableSummonTypes() {
+        return summons.Keys.ToList();
     }
     #endregion
 }

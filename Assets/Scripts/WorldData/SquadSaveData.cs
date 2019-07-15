@@ -28,8 +28,6 @@ public class SquadSaveData {
             memberIDs.Add(currMember.id, currMember.icharacterType);
         }
 
-        emblemBGIndex = CharacterManager.Instance.GetEmblemBGIndex(squad.emblemBG);
-        emblemIndex = CharacterManager.Instance.GetEmblemIndex(squad.emblem);
         squadColor = new ColorSave(squad.squadColor);
     }
 }

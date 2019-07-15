@@ -30,8 +30,6 @@ public class Squad {
         id = Utilities.SetID(this);
         SetName("Squad " + id.ToString());
         squadMembers = new List<Character>();
-        emblemBG = CharacterManager.Instance.GetRandomEmblemBG();
-        emblem = CharacterManager.Instance.GetRandomEmblem();
         SetSquadColor(Color.white);
     }
 
@@ -39,8 +37,6 @@ public class Squad {
         id = Utilities.SetID(this, data.squadID);
         SetName(data.squadName);
         squadMembers = new List<Character>();
-        emblemBG = CharacterManager.Instance.emblemBGs[data.emblemBGIndex];
-        emblem = CharacterManager.Instance.emblemSymbols[data.emblemIndex];
         SetSquadColor(data.squadColor);
     }
 

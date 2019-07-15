@@ -271,7 +271,6 @@ public class PartyInfoUI : UIMenu {
 
         Party partyToUse = partyHolder.characters[0].ownParty;
         partyToUse.SetPartyName(partyHolder.name);
-        partyToUse.SetEmblemSettings(partyHolder.emblemBG, partyHolder.emblem, partyHolder.partyColor);
         for (int i = 1; i < partyHolder.characters.Count; i++) {
             Character currCharacter = partyHolder.characters[i];
             partyToUse.AddCharacter(currCharacter);
@@ -321,9 +320,6 @@ public class PartyHolder {
     public PartyHolder() {
         name = string.Empty;
         characters = new List<Character>();
-        SetEmblemSettings(CharacterManager.Instance.GetRandomEmblemBG(), 
-            CharacterManager.Instance.GetRandomEmblem(), 
-            UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
     }
 
     public void SetName(string name) {

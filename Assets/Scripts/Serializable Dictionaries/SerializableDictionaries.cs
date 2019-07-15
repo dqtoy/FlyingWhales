@@ -53,6 +53,8 @@ public class TileObjectSlotDictionary : SerializableDictionary<TileBase, List<Ti
 public class CursorTextureDictionary : SerializableDictionary<CursorManager.Cursor_Type, Texture2D> { }
 [System.Serializable]
 public class AreaTypeSpriteDictionary : SerializableDictionary<AREA_TYPE, Sprite> { }
+[System.Serializable]
+public class SummonSettingDictionary : SerializableDictionary<SUMMON_TYPE, SummonSettings> { }
 
 //List storage
 [System.Serializable]
