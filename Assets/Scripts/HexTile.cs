@@ -204,6 +204,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //StartCorruptionAnimation();
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, AreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, AreaMapClosed);
+        tileTags = new List<TILE_TAG>();
     }
 
     private void AreaMapOpened(Area area) {
@@ -503,6 +504,33 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool IsAtEdgeOfMap() {
         return AllNeighbours.Count < 6; //if this tile has less than 6 neighbours, it is at the edge of the map
+    }
+    public void GenerateInitialTileTags() {
+        //Myk, sa GridMap to niloop, which is called by MapGenerator, pacheck kung tama yung pag call ko sa MapGenerator
+
+        //Elevation
+        if(elevationType == ELEVATION.MOUNTAIN) {
+            tileTags.Add(TILE_TAG.MOUNTAIN);
+        } else if (elevationType == ELEVATION.PLAIN) {
+            tileTags.Add(TILE_TAG.FLATLAND);
+        } else if (elevationType == ELEVATION.TREES) {
+            tileTags.Add(TILE_TAG.FOREST);
+        }
+
+        //Biome
+        if (biomeType == BIOMES.DESERT) {
+            tileTags.Add(TILE_TAG.DESERT);
+        } else if (biomeType == BIOMES.FOREST) {
+            tileTags.Add(TILE_TAG.JUNGLE); //Myk, tama ba to? Hahaha, di ko sure to lol
+        } else if (biomeType == BIOMES.GRASSLAND) {
+            tileTags.Add(TILE_TAG.GRASSLAND);
+        } else if (biomeType == BIOMES.SNOW) {
+            tileTags.Add(TILE_TAG.SNOW);
+        } else if (biomeType == BIOMES.TUNDRA) {
+            tileTags.Add(TILE_TAG.TUNDRA);
+        }
+
+        //Dito yung kulang di ko alam yung sa Cave at Dungeon
     }
     #endregion
 

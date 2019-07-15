@@ -72,6 +72,10 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private MinionCard startingMinionCard1;
     [SerializeField] private MinionCard startingMinionCard2;
     [SerializeField] private MinionCard startingMinionCard3;
+    [SerializeField] private GameObject minionLeaderPickerParent;
+    [SerializeField] private GameObject minionLeaderPickerPrefab;
+    private List<MinionLeaderPicker> minionLeaderPickers;
+    private MinionLeaderPicker tempCurrentMinionLeader;
 
     [Header("Corruption and Threat")]
     [SerializeField] private GameObject corruptTileConfirmationGO;
@@ -116,6 +120,7 @@ public class PlayerUI : MonoBehaviour {
             //currSlot.SetItemDroppedCallback(OnDropOnAttackGrid);
             //currSlot.SetItemDroppedOutCallback(OnDroppedOutFromAttackGrid);
         }
+        minionLeaderPickers = new List<MinionLeaderPicker>();
 
         LoadRoleSlots();
         LoadAttackSlot();
@@ -567,6 +572,29 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
+        PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
+    }
+    private void ShowSelectMinionLeader() {
+        Utilities.DestroyChildren(minionLeaderPickerParent.transform);
+        minionLeaderPickers.Clear();
+        for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+            Minion minion = PlayerManager.Instance.player.minions[i];
+            if(minion != null) {
+                GameObject go = GameObject.Instantiate(minionLeaderPickerPrefab, minionLeaderPickerParent.transform);
+                MinionLeaderPicker minionLeaderPicker = go.GetComponent<MinionLeaderPicker>();
+                minionLeaderPicker.SetMinion(minion);
+                minionLeaderPickers.Add(minionLeaderPicker);
+                if(minion == PlayerManager.Instance.player.currentMinionLeader) {
+                    minionLeaderPicker.imgHighlight.gameObject.SetActive(true);
+                    tempCurrentMinionLeader = minionLeaderPicker;
+                }
+            }
+        }
+    }
+    public void TemporarySetMinionLeader(MinionLeaderPicker leaderPicker) {
+        leaderPicker.imgHighlight.gameObject.SetActive(true);
+        tempCurrentMinionLeader.imgHighlight.gameObject.SetActive(false);
+        tempCurrentMinionLeader = leaderPicker;
     }
     #endregion
 
@@ -585,6 +613,7 @@ public class PlayerUI : MonoBehaviour {
                 corruptTileConfirmationLbl.text = "Corrupt this Area?";
             }
             corruptTileConfirmationGO.SetActive(true);
+            ShowSelectMinionLeader();
         }
     }
     public void HideCorruptTileConfirmation() {
@@ -597,6 +626,7 @@ public class PlayerUI : MonoBehaviour {
         } else {
             PlayerManager.Instance.player.CorruptATile();
         }
+        PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeader.minion);
     }
     public void OnClickNoCorruption() {
         HideCorruptTileConfirmation();

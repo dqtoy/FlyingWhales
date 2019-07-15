@@ -44,6 +44,7 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.GenerateSettlements(new IntRange(WorldConfigManager.Instance.minSettltementCount, WorldConfigManager.Instance.maxSettltementCount), generatedRegions, new IntRange(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount), out portal);
         LandmarkManager.Instance.LoadAdditionalAreaData();
         LandmarkManager.Instance.GenerateMinorLandmarks(GridMap.Instance.hexTiles);
+        GridMap.Instance.GenerateInitialTileTags();
         yield return null;
 
         GridMap.Instance.GenerateOuterGrid();

@@ -32,6 +32,7 @@ public class Player : ILeader {
     public int currentCorruptionTick { get; private set; }
     public bool isTileCurrentlyBeingCorrupted { get; private set; }
     public HexTile currentTileBeingCorrupted { get; private set; }
+    public Minion currentMinionLeader { get; private set; }
 
     #region getters/setters
     public int id {
@@ -242,6 +243,9 @@ public class Player : ILeader {
             }
         }
         //Update UI
+    }
+    public void SetMinionLeader(Minion minion) {
+        currentMinionLeader = minion;
     }
     #endregion
 
