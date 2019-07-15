@@ -20,7 +20,7 @@ public class Player : ILeader {
     public CombatGrid defenseGrid { get; private set; }
     public List<Intel> allIntel { get; private set; }
     public Minion[] minions { get; private set; }
-    public Dictionary<SUMMON_TYPE, List<Summon>> summons { get; private set; }
+    public Dictionary<SUMMON_TYPE, List<Summon>> availableSummons { get; private set; } //Summons that the player can still place. Does NOT include summons that have been placed. Individual summons are responsible for placeing themselves back after the player is done with a map.
 
     //Unique ability of player
     public ShareIntel shareIntelAbility { get; private set; }
@@ -62,7 +62,7 @@ public class Player : ILeader {
         defenseGrid.Initialize();
         allIntel = new List<Intel>();
         minions = new Minion[MAX_MINIONS];
-        summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
+        availableSummons = new Dictionary<SUMMON_TYPE, List<Summon>>();
         shareIntelAbility = new ShareIntel();
         //ConstructRoleSlots();
         AddListeners();
@@ -74,7 +74,6 @@ public class Player : ILeader {
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener(Signals.TICK_STARTED, EverydayAction);
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
 
         //goap
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
@@ -83,14 +82,6 @@ public class Player : ILeader {
     }
     private void EverydayAction() {
         //DepleteThreatLevel();
-    }
-    private void OnKeyPressed(KeyCode pressedKey) {
-        if (pressedKey == KeyCode.Escape) {
-            if (currentActivePlayerJobAction != null) {
-                SetCurrentlyActivePlayerJobAction(null);
-                CursorManager.Instance.ClearLeftClickActions();
-            }
-        }
     }
     #endregion
 
@@ -680,9 +671,10 @@ public class Player : ILeader {
     #endregion
 
     #region Summons
-    public void GainSummon(SUMMON_TYPE type) {
+    public void GainSummon(SUMMON_TYPE type, int level = 5) {
         if (GetTotalSummonsCount() < MAX_SUMMONS) {
-            Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, GetRoleForSummon(type), GetRaceForSummon(type), Utilities.GetRandomGender(), playerFaction, playerArea);
+            Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, playerFaction, playerArea);
+            newSummon.SetLevel(level);
             AddSummon(newSummon);
         } else {
             Debug.LogWarning("Max summons has been reached!");
@@ -690,57 +682,38 @@ public class Player : ILeader {
     }
     public int GetTotalSummonsCount() {
         int count = 0;
-        foreach (KeyValuePair<SUMMON_TYPE, List<Summon>> kvp in summons) {
-            count += summons[kvp.Key].Count;
+        foreach (KeyValuePair<SUMMON_TYPE, List<Summon>> kvp in availableSummons) {
+            count += availableSummons[kvp.Key].Count;
         }
         
         return count;
     }
     public int GetSummonsOfTypeCount(SUMMON_TYPE type) {
-        if (!summons.ContainsKey(type)) {
+        if (!availableSummons.ContainsKey(type)) {
             return 0;
         }
-        return summons[type].Count;
+        return availableSummons[type].Count;
     }
     private void AddSummon(Summon newSummon) {
-        if (!summons.ContainsKey(newSummon.summonType)) {
-            summons.Add(newSummon.summonType, new List<Summon>());
+        if (!availableSummons.ContainsKey(newSummon.summonType)) {
+            availableSummons.Add(newSummon.summonType, new List<Summon>());
         }
-        if (!summons[newSummon.summonType].Contains(newSummon)) {
-            summons[newSummon.summonType].Add(newSummon);
+        if (!availableSummons[newSummon.summonType].Contains(newSummon)) {
+            availableSummons[newSummon.summonType].Add(newSummon);
             Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
         }
     }
-    private void RemoveSummon(Summon summon) {
-        if (summons[summon.summonType].Remove(summon)) {
-            if (summons[summon.summonType].Count == 0) {
-                summons.Remove(summon.summonType);
+    /// <summary>
+    /// Remove summon from the players list of available summons.
+    /// NOTE: Summons will be placed back on the list when the player is done with a map.
+    /// </summary>
+    /// <param name="summon">The summon to be removed.</param>
+    public void RemoveSummon(Summon summon) {
+        if (availableSummons[summon.summonType].Remove(summon)) {
+            if (availableSummons[summon.summonType].Count == 0) {
+                availableSummons.Remove(summon.summonType);
             }
-            Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, summon);
-        }
-    }
-    private CharacterRole GetRoleForSummon(SUMMON_TYPE summonType) {
-        switch (summonType) {
-            default:
-                return CharacterRole.MINION;
-        }
-    }
-    private RACE GetRaceForSummon(SUMMON_TYPE summonType) {
-        switch (summonType) {
-            case SUMMON_TYPE.WOLF:
-                return RACE.WOLF;
-            case SUMMON_TYPE.SKELETON:
-                return RACE.SKELETON;
-            case SUMMON_TYPE.GOLEM:
-                return RACE.DEMON;
-            case SUMMON_TYPE.SUCCUBUS:
-                return RACE.DEMON;
-            case SUMMON_TYPE.INCUBUS:
-                return RACE.DEMON;
-            case SUMMON_TYPE.THIEF:
-                return RACE.DEMON;
-            default:
-                return RACE.DEMON;
+            Messenger.Broadcast(Signals.PLAYER_REMOVED_SUMMON, summon);
         }
     }
     /// <summary>
@@ -748,7 +721,11 @@ public class Player : ILeader {
     /// </summary>
     /// <returns>List of summon types.</returns>
     public List<SUMMON_TYPE> GetAvailableSummonTypes() {
-        return summons.Keys.ToList();
+        return availableSummons.Keys.ToList();
+    }
+    public Summon GetAvailableSummonOfType(SUMMON_TYPE type) {
+        List<Summon> choices = availableSummons[type];
+        return choices[Random.Range(0, choices.Count)];
     }
     #endregion
 }
