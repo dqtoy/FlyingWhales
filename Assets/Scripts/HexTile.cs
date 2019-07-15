@@ -506,8 +506,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return AllNeighbours.Count < 6; //if this tile has less than 6 neighbours, it is at the edge of the map
     }
     public void GenerateInitialTileTags() {
-        //Myk, sa GridMap to niloop, which is called by MapGenerator, pacheck kung tama yung pag call ko sa MapGenerator
-
         //Elevation
         if(elevationType == ELEVATION.MOUNTAIN) {
             tileTags.Add(TILE_TAG.MOUNTAIN);
@@ -521,7 +519,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (biomeType == BIOMES.DESERT) {
             tileTags.Add(TILE_TAG.DESERT);
         } else if (biomeType == BIOMES.FOREST) {
-            tileTags.Add(TILE_TAG.JUNGLE); //Myk, tama ba to? Hahaha, di ko sure to lol
+            if (elevationType == ELEVATION.TREES) {
+                tileTags.Add(TILE_TAG.JUNGLE); //Myk, tama ba to? Hahaha, di ko sure to lol. RE: Kapag ata may trees din yung forest na biome, saka siya nagiging jungle? ahahaha
+            }
         } else if (biomeType == BIOMES.GRASSLAND) {
             tileTags.Add(TILE_TAG.GRASSLAND);
         } else if (biomeType == BIOMES.SNOW) {
@@ -530,7 +530,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             tileTags.Add(TILE_TAG.TUNDRA);
         }
 
-        //Dito yung kulang di ko alam yung sa Cave at Dungeon
+        //Landmark Tags
+        if (landmarkOnTile != null) {
+            switch (landmarkOnTile.specificLandmarkType) {
+                case LANDMARK_TYPE.CAVE:
+                    tileTags.Add(TILE_TAG.CAVE);
+                    break;
+                default:
+                    tileTags.Add(TILE_TAG.DUNGEON); //Ginawa ko na dungeon type na lang muna lahat ng landmarks na di caves.
+                    break;
+            }
+        }
     }
     #endregion
 

@@ -75,6 +75,7 @@ public class CursorManager : MonoBehaviour {
             //left click
             ExecuteLeftClickActions();
             ClearLeftClickActions();
+            Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Mouse0);
         }
         if (AreaMapCameraMove.Instance != null) {
             Vector3 pos = effectsCamera.ScreenToWorldPoint(Input.mousePosition);

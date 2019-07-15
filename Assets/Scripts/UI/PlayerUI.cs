@@ -90,6 +90,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private Button summonBtn;
     [SerializeField] private GameObject summonCover;
     [SerializeField] private UIHoverPosition summonTooltipPos;
+    private bool isSummoning = false; //if the player has clicked the summon button and is targetting a tile to place the summon on.
 
     public GameObject electricEffectPrefab;
 
@@ -156,6 +157,9 @@ public class PlayerUI : MonoBehaviour {
 
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+
+        //key presses
+        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
     }
 
     #region Listeners
@@ -166,6 +170,19 @@ public class PlayerUI : MonoBehaviour {
     private void OnAreaMapClosed(Area area) {
         UpdateSummonsInteraction();
         startInvasionButton.gameObject.SetActive(false);
+    }
+    private void OnKeyPressed(KeyCode pressedKey) {
+        if (pressedKey == KeyCode.Escape) {
+            if (PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
+                PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
+                CursorManager.Instance.ClearLeftClickActions();
+            }
+        } else if (pressedKey == KeyCode.Mouse0) {
+            //left click
+            if (isSummoning) {
+                TryPlaceSummon();
+            }
+        }
     }
     #endregion
 
@@ -604,7 +621,6 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
         PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.WOLF);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.SKELETON);
         PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
     }
     private void ShowSelectMinionLeader() {
@@ -709,7 +725,7 @@ public class PlayerUI : MonoBehaviour {
             }
             index = next;
             SUMMON_TYPE type = types[index];
-            if (PlayerManager.Instance.player.summons.ContainsKey(type)) { //Player has a summon of that type, select that.
+            if (PlayerManager.Instance.player.availableSummons.ContainsKey(type)) { //Player has a summon of that type, select that.
                 SetCurrentlySelectedSummon(type);
                 break;
             }
@@ -747,7 +763,20 @@ public class PlayerUI : MonoBehaviour {
         UIManager.Instance.HideSmallInfo();
     }
     public void OnClickSummon() {
-        
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Target);
+        isSummoning = true;
+    }
+    private void TryPlaceSummon() {
+        isSummoning = false;
+        if (!UIManager.Instance.IsMouseOnUI()) {
+            LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
+            Summon summonToPlace = PlayerManager.Instance.player.GetAvailableSummonOfType(currentlySelectedSummon);
+            summonToPlace.CreateMarker();
+            summonToPlace.marker.InitialPlaceMarkerAt(tile);
+            PlayerManager.Instance.player.RemoveSummon(summonToPlace);
+            summonToPlace.OnPlaceSummon(tile);
+        }
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
     }
     #endregion
 }

@@ -43,4 +43,13 @@ public class Summon : Character {
         //SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions());
     }
     #endregion
+
+    #region Virtuals
+    /// <summary>
+    /// What should a summon do when it is placed.
+    /// </summary>
+    /// <param name="tile">The tile the summon was placed on.</param>
+    public virtual void OnPlaceSummon(LocationGridTile tile) { }
+    #endregion
+
 }

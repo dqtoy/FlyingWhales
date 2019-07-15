@@ -356,13 +356,13 @@ public class CharacterManager : MonoBehaviour {
                 //place the character at a random unoccupied tile in his/her home
                 List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
-                character.marker.PlaceMarkerAt(chosenTile);
+                character.marker.InitialPlaceMarkerAt(chosenTile);
             } else {
                 //place the character at a random unoccupied tile in the area's wilderness
                 LocationStructure wilderness = area.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
                 List<LocationGridTile> choices = wilderness.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
                 LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
-                character.marker.PlaceMarkerAt(chosenTile);
+                character.marker.InitialPlaceMarkerAt(chosenTile);
             }
             character.OnHomeAreaMapActive();
         }
@@ -390,9 +390,8 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Summons
-    public Summon CreateNewSummon(SUMMON_TYPE summonType, CharacterRole role, RACE race, GENDER gender, Faction faction = null,
-        Area homeLocation = null, Dwelling homeStructure = null) {
-        Summon newCharacter = new Summon(summonType, role, race, gender);
+    public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, Area homeLocation = null, Dwelling homeStructure = null) {
+        Summon newCharacter = CreateSummonClassFromType(summonType);
         newCharacter.Initialize();
         if (faction != null) {
             faction.AddNewCharacter(newCharacter);
@@ -409,6 +408,14 @@ public class CharacterManager : MonoBehaviour {
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
+    }
+    private Summon CreateSummonClassFromType(SUMMON_TYPE type) {
+        switch (type) {
+            case SUMMON_TYPE.WOLF:
+                return new Wolf();
+            default:
+                return new Summon(SUMMON_TYPE.NONE, CharacterRole.NONE, RACE.NONE, GENDER.MALE);
+        }
     }
     public SummonSettings GetSummonSettings(SUMMON_TYPE type) {
         return summonSettings[type];
