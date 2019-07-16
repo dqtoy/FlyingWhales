@@ -321,7 +321,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 9d587aedde59e4e45885cde1e5758b37, type: 3}
   hsvMaterial: {fileID: 2100000, guid: f635580cdf2e2344ea31e0dba17cb9b5, type: 2}
   markerAssets:
-  - race: 1
+  - raceName: Humans
+    race: 1
     maleAssets:
       gender: 0
       defaultSprite: {fileID: 21300000, guid: 94475c8d3316bae45b0f52eec2c2ea25, type: 3}
@@ -352,7 +353,8 @@ MonoBehaviour:
       magicClip: {fileID: 7400000, guid: c4bb0719d97ffe747a7a41831871beb6, type: 2}
       arrowClip: {fileID: 7400000, guid: 8ff0e129a632f1249abc8d1095989d13, type: 2}
       biteClip: {fileID: 0}
-  - race: 13
+  - raceName: Skeleton
+    race: 13
     maleAssets:
       gender: 0
       defaultSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
@@ -383,7 +385,8 @@ MonoBehaviour:
       magicClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
       arrowClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
       biteClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
-  - race: 10
+  - raceName: Wolf
+    race: 10
     maleAssets:
       gender: 0
       defaultSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
@@ -414,7 +417,40 @@ MonoBehaviour:
       magicClip: {fileID: 0}
       arrowClip: {fileID: 0}
       biteClip: {fileID: 7400000, guid: b61ab7905b820624da705a91cca5d04d, type: 2}
-  - race: 2
+  - raceName: Elves
+    race: 2
+    maleAssets:
+      gender: 0
+      defaultSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
+      hoverSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
+      clickedSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
+      animator: {fileID: 22100000, guid: 839ac1924c2c5b84f9780d1b67ae1e1a, type: 2}
+      idle: {fileID: 7400000, guid: 45c2e17bc07d8a34ea64008b976dcd09, type: 2}
+      walk: {fileID: 7400000, guid: a72140487961ba742b63502629566971, type: 2}
+      sleepGround: {fileID: 7400000, guid: d4eed393a7cc61b45835540462888a57, type: 2}
+      dead: {fileID: 0}
+      raiseDead: {fileID: 0}
+      slashClip: {fileID: 7400000, guid: 31659a02d1bffbe46bafc396b093c774, type: 2}
+      magicClip: {fileID: 7400000, guid: 9ae6415e888c697408dba7720702c529, type: 2}
+      arrowClip: {fileID: 7400000, guid: e85ab549b3f771348b8f5f857aadc461, type: 2}
+      biteClip: {fileID: 0}
+    femaleAssets:
+      gender: 1
+      defaultSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
+      hoverSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
+      clickedSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
+      animator: {fileID: 22100000, guid: acbfc5b127d225b4fb1b33ed6464266e, type: 2}
+      idle: {fileID: 7400000, guid: 19ce8a7b454132944b2693a2b3635805, type: 2}
+      walk: {fileID: 7400000, guid: 15bed1de30c563c4ebc755519387f611, type: 2}
+      sleepGround: {fileID: 7400000, guid: 8fa0d90943c737c469493b15097c7435, type: 2}
+      dead: {fileID: 0}
+      raiseDead: {fileID: 0}
+      slashClip: {fileID: 7400000, guid: 44922575217df234c8d27638ff538887, type: 2}
+      magicClip: {fileID: 7400000, guid: d914e01b0baa953469c6763ccd2631e5, type: 2}
+      arrowClip: {fileID: 7400000, guid: 87eccc24e26675c4b9a4a95b53d61027, type: 2}
+      biteClip: {fileID: 0}
+  - raceName: Abomination
+    race: 18
     maleAssets:
       gender: 0
       defaultSprite: {fileID: 21300000, guid: 5ee65e07929259446ab8e9d27bbf9b9e, type: 3}
@@ -450,8 +486,8 @@ MonoBehaviour:
     m_values:
     - summonPortrait: {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5, type: 3}
     - summonPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
-    - summonPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
-    - summonPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
-    - summonPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
-    - summonPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
-    - summonPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
+    - summonPortrait: {fileID: 21300000, guid: 3ea140c9cdcc60b46a257c943a010d0c, type: 3}
+    - summonPortrait: {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff, type: 3}
+    - summonPortrait: {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
+    - summonPortrait: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
+    - summonPortrait: {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}

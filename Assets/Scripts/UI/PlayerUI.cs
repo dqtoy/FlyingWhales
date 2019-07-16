@@ -623,7 +623,11 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.WOLF);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
         PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
     }
     private void ShowSelectMinionLeader() {
@@ -698,14 +702,14 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnGainNewSummon(Summon newSummon) {
         UpdateSummonsInteraction();
-        if (currentlySelectedSummon == SUMMON_TYPE.NONE) {
+        if (currentlySelectedSummon == SUMMON_TYPE.None) {
             SetCurrentlySelectedSummon(newSummon.summonType);
         }
     }
     public void OnRemoveSummon(Summon summon) {
         UpdateSummonsInteraction();
         if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
-            SetCurrentlySelectedSummon(SUMMON_TYPE.NONE);
+            SetCurrentlySelectedSummon(SUMMON_TYPE.None);
         } else if (summon.summonType == currentlySelectedSummon 
             && PlayerManager.Instance.player.GetSummonsOfTypeCount(summon.summonType) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
             CycleSummons(1);
@@ -721,10 +725,10 @@ public class PlayerUI : MonoBehaviour {
         int index = Array.IndexOf(types, currentlySelectedSummon);
         while (true) {
             int next = index + cycleDirection;
-            if (next == types.Length) {
+            if (next >= types.Length) {
                 next = 0;
-            } else if (next == 0) {
-                next = types.Length;
+            } else if (next <= 0) {
+                next = types.Length - 1;
             }
             index = next;
             SUMMON_TYPE type = types[index];
@@ -738,22 +742,22 @@ public class PlayerUI : MonoBehaviour {
         string header = Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
         string message;
         switch (currentlySelectedSummon) {
-            case SUMMON_TYPE.WOLF:
+            case SUMMON_TYPE.Wolf:
                 message = "Summon a wolf to run amok.";
                 break;
-            case SUMMON_TYPE.SKELETON:
+            case SUMMON_TYPE.Skeleton:
                 message = "Summon a skeleton that will abduct a random character.";
                 break;
-            case SUMMON_TYPE.GOLEM:
+            case SUMMON_TYPE.Golem:
                 message = "Summon a stone golem that can sustain alot of hits.";
                 break;
-            case SUMMON_TYPE.SUCCUBUS:
+            case SUMMON_TYPE.Succubus:
                 message = "Summon a succubus that will seduce a male character and eliminate him.";
                 break;
-            case SUMMON_TYPE.INCUBUS:
+            case SUMMON_TYPE.Incubus:
                 message = "Summon a succubus that will seduce a female character and eliminate her.";
                 break;
-            case SUMMON_TYPE.THIEF:
+            case SUMMON_TYPE.Thief:
                 message = "Summon a thief that will steal items from the settlements warehouse.";
                 break;
             default:

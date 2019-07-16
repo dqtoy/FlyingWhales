@@ -23,7 +23,7 @@ public class StrollOutsideState : CharacterState {
     }
     protected override void PerTickInState() {
         base.PerTickInState();
-        if (!isDone && !isPaused) {
+        if (!isDone && !isPaused && !isUnending) {
             if(_currentDuration >= 4) {
                 _currentDuration = 0;
 #if TRAILER_BUILD

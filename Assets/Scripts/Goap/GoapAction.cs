@@ -405,7 +405,7 @@ public class GoapAction {
         CreateStates();
     }
     public bool IsThisPartOfActorActionPool(Character actor) {
-        List<INTERACTION_TYPE> actorInteractions = RaceManager.Instance.GetNPCInteractionsOfRace(actor);
+        List<INTERACTION_TYPE> actorInteractions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
         return actorInteractions.Contains(goapType);
     }
     public bool CanSatisfyRequirements() {

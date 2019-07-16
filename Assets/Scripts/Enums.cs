@@ -1330,7 +1330,7 @@ public enum INTERVENTION_ABILITY { ACCESS_MEMORIES, INFLICT_LYCANTHROPY, INFLICT
         , RILE_UP, ABDUCT, PROVOKE, DESTROY, RAISE_DEAD, }
 
 public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUNGLE, TUNDRA, SNOW, DESERT, }
-public enum SUMMON_TYPE { NONE, WOLF, SKELETON, GOLEM, SUCCUBUS, INCUBUS, THIEF, }
+public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, Thief, }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, }
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
@@ -1416,6 +1416,10 @@ public static class Extensions {
     #endregion
 
     #region Actions
+    /// <summary>
+    /// Is this action type considered to be a hostile action.
+    /// </summary>
+    /// <returns>True or false.</returns>
     public static bool IsHostileAction(this INTERACTION_TYPE type) {
         switch (type) {
             case INTERACTION_TYPE.ASSAULT_ACTION_NPC:

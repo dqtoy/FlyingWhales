@@ -20,8 +20,7 @@ public class MakeLove : GoapAction {
         if (!isTargetMissing) {
             Bed bed = poiTarget as Bed;
             poiTargetAlterEgo = targetCharacter.currentAlterEgo;
-            if (bed.GetActiveUserCount() == 0 && targetCharacter.currentParty == actor.ownParty && !targetCharacter.isStarving && !targetCharacter.isExhausted 
-                && targetCharacter.GetNormalTrait("Annoyed") == null) {
+            if (bed.GetActiveUserCount() == 0 && targetCharacter.currentParty == actor.ownParty) {
                 SetState("Make Love Success");
             } else {
                 SetState("Make Love Fail");
@@ -102,6 +101,10 @@ public class MakeLove : GoapAction {
         }
         actor.ownParty.RemoveCharacter(targetCharacter);
         RemoveTraitFrom(targetCharacter, "Wooed");
+        if (actor is SeducerSummon) {
+            //kill the target character
+            targetCharacter.Death("seduced", this, actor);
+        }
     }
     private void PreMakeLoveFail() {
         currentState.AddLogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -294,7 +297,7 @@ public class MakeLove : GoapAction {
                 AddTraitTo(recipient, "Heartbroken");
             }
             //- Recipient has a positive relationship with Actor's Lover and Actor's Lover is not the Target
-            else if (recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.POSITIVE && actorLover != target) {
+            else if (actorLover != null && recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.POSITIVE && actorLover != target) {
                 if (CharacterManager.Instance.RelationshipDegradation(actor, recipient, this)) {
                     reactions.Add(string.Format("{0} is cheating on {1}?! I must let {2} know.", actor.name, actorLover.name, Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     recipient.CreateShareInformationJob(actorLover, this);
@@ -320,7 +323,7 @@ public class MakeLove : GoapAction {
                 }
             }
             //- Recipient has a negative relationship with Actor's Lover and Actor's Lover is not the Target
-            else if (recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.NEGATIVE && actorLover != target) {
+            else if (actorLover != null && recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.NEGATIVE && actorLover != target) {
                 reactions.Add(string.Format("{0} is cheating on {1}? {2} got what {3} deserves.", actor.name, actorLover.name, Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.SUBJECTIVE, true), Utilities.GetPronounString(actorLover.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                 if (status == SHARE_INTEL_STATUS.WITNESSED) {
                     hasFled = true;
@@ -336,7 +339,7 @@ public class MakeLove : GoapAction {
                 }
             }
             //- Recipient has a no relationship with Actor's Lover and Actor's Lover is not the Target
-            else if (recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.NONE && actorLover != target) {
+            else if (actorLover != null && recipient.GetRelationshipEffectWith(actorLover) == RELATIONSHIP_EFFECT.NONE && actorLover != target) {
                 reactions.Add(string.Format("{0} is cheating on {1}? I don't want to get involved.", actor.name, actorLover.name));
                 CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
             }

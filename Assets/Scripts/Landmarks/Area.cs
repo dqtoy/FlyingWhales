@@ -1161,7 +1161,7 @@ public class Area {
         for (int i = 0; i < citizenCount; i++) {
             LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.DWELLING, true);
         }
-
+        AssignPrison();
     }
     private void LoadStructures(AreaSaveData data) {
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();

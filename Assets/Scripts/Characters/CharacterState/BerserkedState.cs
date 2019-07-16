@@ -34,7 +34,11 @@ public class BerserkedState : CharacterState {
     }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if(targetPOI is Character) {
-            return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, checkHostility: false);
+            if (stateComponent.character is Summon) {
+                return stateComponent.character.marker.AddHostileInRange(targetPOI as Character); //check hostility if summon, so as not to attack other summons.
+            } else {
+                return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, checkHostility: false);
+            }
             //return true;
         }else if (targetPOI is TileObject) {
             TileObject target = targetPOI as TileObject;

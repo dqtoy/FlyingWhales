@@ -104,6 +104,10 @@ public static class Signals {
     public static string CHARACTER_SWITCHED_ALTER_EGO = "OnCharacterSwitchedAlterEgo"; //Parameters (Character character)
     public static string DETERMINE_COMBAT_REACTION = "DetermineCombatReaction"; //Parameters (Character character)
     public static string TRANSFER_ENGAGE_TO_FLEE_LIST = "TransferEngageToFleeList"; //Parameters (Character character)
+    /// <summary>
+    /// Parameters (Character characterWithVision, Character characterRemovedFromVision)
+    /// </summary>
+    public static string CHARACTER_REMOVED_FROM_VISION = "OnCharacterRemovedFromVision";
     #endregion
 
     #region UI

@@ -945,7 +945,11 @@ public class CharacterMarker : PooledObject {
         }
     }
     public void RemovePOIFromInVisionRange(IPointOfInterest poi) {
-        inVisionPOIs.Remove(poi);
+        if (inVisionPOIs.Remove(poi)) {
+            if (poi is Character) {
+                Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_VISION, character, poi as Character);
+            }
+        }
     }
     public void LogPOIsInVisionRange() {
         string summary = character.name + "'s POIs in range: ";
@@ -1061,36 +1065,12 @@ public class CharacterMarker : PooledObject {
             }
         }
     }
-    private void OnHostileInRangeRemoved(Character removedCharacter) {
-        if (character.isDead //character died
-            || character.stateComponent.currentState == null) {
-            return;
-        }
-        string removeHostileSummary = removedCharacter.name + " was removed from " + character.name + "'s hostile range.";
-        //if (character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-        //    (character.stateComponent.currentState as CombatState).ReevaluateCombatBehavior();
-        //}
-        //if (character.stateComponent.currentState.characterState == CHARACTER_STATE.ENGAGE) {
-        //    removeHostileSummary += "\n" + character.name + "'s current state is engage, checking for end state...";
-        //    if (currentlyEngaging == removedCharacter) {
-        //        (character.stateComponent.currentState as EngageState).CheckForEndState();
-        //    }
-        //} 
-        ////if the removed character was removed from this characters hostile range because that character died, check if this character is fleeing, if yes, check for end state
-        //else if (character.stateComponent.currentState.characterState == CHARACTER_STATE.FLEE && removedCharacter.isDead) {
-        //    removeHostileSummary += "\n" + character.name + "'s current state is flee, checking for end state...";
-        //    (character.stateComponent.currentState as FleeState).CheckForEndState();
-        //}
-        character.PrintLogIfActive(removeHostileSummary);
-    }
     public void OnOtherCharacterDied(Character otherCharacter) {
         if (inVisionPOIs.Contains(otherCharacter)) {
             character.CreateJobsOnEnterVisionWith(otherCharacter); //this is used to create jobs that involve characters that died within the character's range of vision
         }
-#if !TRAILER_BUILD
         RemovePOIFromInVisionRange(otherCharacter);
         visionCollision.RemovePOIAsInRangeButDifferentStructure(otherCharacter);
-#endif
         //RemoveHostileInRange(otherCharacter);
 
         //if (this.hasFleePath) { //if this character is fleeing, remove the character that died from his/her hostile list
@@ -1605,6 +1585,7 @@ public class CharacterMarker : PooledObject {
         for (int i = 0; i < hostilesInRange.Count; i++) {
             Character currHostile = hostilesInRange.ElementAt(i);
             if (IsValidCombatTarget(currHostile)) {
+
                 float dist = Vector2.Distance(this.transform.position, currHostile.marker.transform.position);
                 if (nearest == null || dist < nearestDist) {
                     nearest = currHostile;

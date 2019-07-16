@@ -104,6 +104,7 @@ public class AttributeManager : MonoBehaviour {
             new Zapped(),
             new Spooked(),
             new Jolted(),
+            new Taunted(),
         };
         for (int i = 0; i < specialTraits.Length; i++) {
             CategorizeTrait(specialTraits[i]);

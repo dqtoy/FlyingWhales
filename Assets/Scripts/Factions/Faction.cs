@@ -655,8 +655,13 @@ public class Faction {
                 leader.LevelUp(leaderLevel - 1);
                 SetLeader(leader);
             } else {
+                WeightedDictionary<CharacterRole> roleChoices = new WeightedDictionary<CharacterRole>();
+                roleChoices.AddElement(CharacterRole.CIVILIAN, 30);
+                roleChoices.AddElement(CharacterRole.ADVENTURER, 35);
+                roleChoices.AddElement(CharacterRole.SOLDIER, 35);
+
                 //citizens
-                Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, race, Utilities.GetRandomGender(), this, _ownedAreas[0]);
+                Character citizen = CharacterManager.Instance.CreateNewCharacter(roleChoices.PickRandomElementGivenWeights(), race, Utilities.GetRandomGender(), this, _ownedAreas[0]);
                 citizen.LevelUp(citizensLevel - 1);
             }
         }
