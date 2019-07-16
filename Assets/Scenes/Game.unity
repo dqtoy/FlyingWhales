@@ -23873,6 +23873,9 @@ MonoBehaviour:
   summonBtn: {fileID: 1242344062}
   summonCover: {fileID: 1064953658}
   summonTooltipPos: {fileID: 279106204}
+  combatAbilityGO: {fileID: 1207821431}
+  combatAbilityButtonPrefab: {fileID: 1077141539048828, guid: 3728d759673ca354db09bc955c875c3e,
+    type: 2}
   electricEffectPrefab: {fileID: 0}
   previousMenu: minion
 --- !u!1001 &607353879
@@ -28859,6 +28862,19 @@ MonoBehaviour:
     - {fileID: 21300000, guid: d7c17715bebc81d4a9b8828befcde77f, type: 3}
     - {fileID: 21300000, guid: 8f5344dcd2d2212439068edd05e22193, type: 3}
     - {fileID: 21300000, guid: 425077bbaa6443144a6a7bc4c13caccd, type: 3}
+  combatAbilityIcons:
+    m_keys:
+    - Single Heal
+    - Flamestrike
+    - Fear Spell
+    - Sacrifice
+    - Taunt
+    m_values:
+    - {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
+    - {fileID: 21300000, guid: a8a98d8c7dc898049a9b26ba7a7682dd, type: 3}
+    - {fileID: 21300000, guid: 1ea6d3c87219ca34fbdaeb2464a68bc6, type: 3}
+    - {fileID: 21300000, guid: b509b7ae41091354f8a5b5a1f47718ea, type: 3}
+    - {fileID: 21300000, guid: 623d4fe6fa7f3264d8a883e12f3774f4, type: 3}
 --- !u!1 &720807424
 GameObject:
   m_ObjectHideFlags: 0
@@ -47460,6 +47476,98 @@ RectTransform:
   m_PrefabParentObject: {fileID: 224215460217252974, guid: cdfed07929227104599994075478446b,
     type: 2}
   m_PrefabInternal: {fileID: 1200475314}
+--- !u!1 &1207821431
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1207821435}
+  - component: {fileID: 1207821434}
+  - component: {fileID: 1207821433}
+  - component: {fileID: 1207821432}
+  m_Layer: 5
+  m_Name: CombatAbilities
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1207821432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1207821431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -2095666955, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_StartCorner: 0
+  m_StartAxis: 0
+  m_CellSize: {x: 100, y: 100}
+  m_Spacing: {x: 10, y: 0}
+  m_Constraint: 0
+  m_ConstraintCount: 2
+--- !u!114 &1207821433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1207821431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 21300000, guid: cb696b73415e2624a867402ebb09e809, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+--- !u!222 &1207821434
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1207821431}
+--- !u!224 &1207821435
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1207821431}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1325775620}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -477}
+  m_SizeDelta: {x: 700, y: 112}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1210466156
 GameObject:
   m_ObjectHideFlags: 0
@@ -53352,6 +53460,7 @@ RectTransform:
   m_Children:
   - {fileID: 560404629}
   - {fileID: 1871318079}
+  - {fileID: 1207821435}
   m_Father: {fileID: 606078597}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

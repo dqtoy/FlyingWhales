@@ -171,6 +171,11 @@ public class CombatState : CharacterState {
         //SetIsAttacking(isAttacking);
         DetermineReaction(stateComponent.character);
     }
+    public void SwitchTarget(Character newTarget) {
+        stateComponent.character.marker.AddHostileInRange(newTarget, processCombatBehavior: false);
+        currentClosestHostile = newTarget;
+        DoCombatBehavior();
+    }
     //Returns true if there is a hostile left, otherwise, returns false
     private void DoCombatBehavior() {
         string log = GameManager.Instance.TodayLogString() + "Reevaluating combat behavior of " + stateComponent.character.name;

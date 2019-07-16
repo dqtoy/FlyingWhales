@@ -95,6 +95,11 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private UIHoverPosition summonTooltipPos;
     private bool isSummoning = false; //if the player has clicked the summon button and is targetting a tile to place the summon on.
 
+    [Header("Combat Abilities")]
+    public GameObject combatAbilityGO;
+    public GameObject combatAbilityButtonPrefab;
+    public List<CombatAbilityButton> currentCombatAbilityButtons { get; private set; }
+
     public GameObject electricEffectPrefab;
 
     private bool _isScrollingUp;
@@ -134,6 +139,7 @@ public class PlayerUI : MonoBehaviour {
             //currSlot.SetItemDroppedOutCallback(OnDroppedOutFromAttackGrid);
         }
         minionLeaderPickers = new List<MinionLeaderPicker>();
+        currentCombatAbilityButtons = new List<CombatAbilityButton>();
 
         LoadRoleSlots();
         LoadAttackSlot();
@@ -437,6 +443,11 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnClickStartInvasion() {
         PlayerManager.Instance.player.StartInvasion(InteriorMapManager.Instance.currentlyShowingArea);
+        ShowCombatAbilityUI();
+    }
+    public void StopInvasion() {
+        startInvasionButton.interactable = true;
+        HideCombatAbilityUI();
     }
     #endregion
 
@@ -799,6 +810,37 @@ public class PlayerUI : MonoBehaviour {
     }
     public void BackToWorld() {
         InteriorMapManager.Instance.HideAreaMap();
+    }
+    #endregion
+
+    #region Combat Ability
+    public void ShowCombatAbilityUI() {
+        PopulateCombatAbilities();
+        combatAbilityGO.SetActive(true);
+    }
+    public void HideCombatAbilityUI() {
+        combatAbilityGO.SetActive(false);
+    }
+    private void PopulateCombatAbilities() {
+        currentCombatAbilityButtons.Clear();
+        Utilities.DestroyChildren(combatAbilityGO.transform);
+        for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+            Minion currMinion = PlayerManager.Instance.player.minions[i];
+            if(currMinion != null) {
+                GameObject go = GameObject.Instantiate(combatAbilityButtonPrefab, combatAbilityGO.transform);
+                CombatAbilityButton abilityButton = go.GetComponent<CombatAbilityButton>();
+                abilityButton.SetCombatAbility(currMinion.combatAbility);
+                currentCombatAbilityButtons.Add(abilityButton);
+            }
+        }
+    }
+    public CombatAbilityButton GetCombatAbilityButton(CombatAbility ability) {
+        for (int i = 0; i < currentCombatAbilityButtons.Count; i++) {
+            if (currentCombatAbilityButtons[i].ability == ability) {
+                return currentCombatAbilityButtons[i];
+            }
+        }
+        return null;
     }
     #endregion
 }

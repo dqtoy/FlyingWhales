@@ -30,7 +30,8 @@ public class Player : ILeader {
     public bool isTileCurrentlyBeingCorrupted { get; private set; }
     public HexTile currentTileBeingCorrupted { get; private set; }
     public Minion currentMinionLeader { get; private set; }
-    public Area currentAreaBeingCorrupted { get; private set; }
+    public Area currentAreaBeingInvaded { get; private set; }
+    public CombatAbility currentActiveCombatAbility { get; private set; }
 
     #region getters/setters
     public int id {
@@ -171,7 +172,7 @@ public class Player : ILeader {
         minion.SetUnlockedInterventionSlots(3);
         minion.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
         minion.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
-        minion.SetCombatAbility(new CombatAbility()); //TODO: variations
+        minion.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
         //TODO: Add one positive and one negative trait
     }
     public void AddMinion(Minion minion) {
@@ -423,7 +424,6 @@ public class Player : ILeader {
             //    CursorManager.Instance.SetElectricEffectState(true);
             //}
         }
-        
     }
     private void TryExecuteCurrentActiveAction() {
         string summary = "Mouse was clicked. Will try to execute " + currentActivePlayerJobAction.name;
@@ -779,7 +779,7 @@ public class Player : ILeader {
                 currentMinions[i].StartInvasionProtocol();
             }
             PlayerUI.Instance.startInvasionButton.interactable = false;
-            currentAreaBeingCorrupted = area;
+            currentAreaBeingInvaded = area;
             Messenger.AddListener(Signals.TICK_ENDED, PerTickInvasion);
         } else {
             Debug.LogError("Can't invade! No more minions!");
@@ -802,9 +802,9 @@ public class Player : ILeader {
         }
 
         bool stillHasResidents = false;
-        for (int i = 0; i < currentAreaBeingCorrupted.areaResidents.Count; i++) {
-            Character currCharacter = currentAreaBeingCorrupted.areaResidents[i];
-            if (currCharacter.currentHP > 0 && currCharacter.specificLocation == currentAreaBeingCorrupted) {
+        for (int i = 0; i < currentAreaBeingInvaded.areaResidents.Count; i++) {
+            Character currCharacter = currentAreaBeingInvaded.areaResidents[i];
+            if (currCharacter.currentHP > 0 && currCharacter.specificLocation == currentAreaBeingInvaded) {
                 stillHasResidents = true;
                 break;
             }
@@ -816,8 +816,7 @@ public class Player : ILeader {
     }
     private void StopInvasion(bool playerWon) {
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickInvasion);
-        PlayerUI.Instance.startInvasionButton.interactable = true;
-
+        PlayerUI.Instance.StopInvasion();
         if (playerWon) {
             PlayerUI.Instance.SuccessfulAreaCorruption();
             AreaIsCorrupted();
@@ -825,6 +824,60 @@ public class Player : ILeader {
             string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
             PlayerUI.Instance.GameOver(gameOverText);
         }
+    }
+    #endregion
+
+    #region Combat Ability
+    public void SetCurrentActiveCombatAbility(CombatAbility ability) {
+        if(currentActiveCombatAbility == ability) {
+            //Do not process when setting the same combat ability
+            return;
+        }
+        CombatAbility previousAbility = currentActiveCombatAbility;
+        currentActiveCombatAbility = ability;
+        if (currentActiveCombatAbility == null) {
+            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+            CombatAbilityButton abilityButton = PlayerUI.Instance.GetCombatAbilityButton(previousAbility);
+            abilityButton?.UpdateInteractableState();
+            InteriorMapManager.Instance.UnhighlightTiles();
+            CursorManager.Instance.ClearRightClickActions();
+            GameManager.Instance.SetPausedState(false);
+        } else {
+            CombatAbilityButton abilityButton = PlayerUI.Instance.GetCombatAbilityButton(ability);
+            //change the cursor
+            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Cross);
+            CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveCombatAbility);
+            CursorManager.Instance.AddLeftClickAction(() => SetCurrentActiveCombatAbility(null));
+            CursorManager.Instance.AddRightClickAction(() => SetCurrentActiveCombatAbility(null));
+            abilityButton?.UpdateInteractableState();
+            GameManager.Instance.SetPausedState(true);
+        }
+    }
+    private void TryExecuteCurrentActiveCombatAbility() {
+        string summary = "Mouse was clicked. Will try to execute " + currentActiveCombatAbility.name;
+        if (currentActiveCombatAbility.abilityRadius == 0) {
+            if (currentActiveCombatAbility.CanTarget(InteriorMapManager.Instance.currentlyHoveredPOI)) {
+                currentActiveCombatAbility.ActivateAbility(InteriorMapManager.Instance.currentlyHoveredPOI);
+            }
+        } else {
+            List<LocationGridTile> highlightedTiles = InteriorMapManager.Instance.currentlyHighlightedTiles;
+            if (highlightedTiles != null) {
+                List<IPointOfInterest> poisInHighlightedTiles = new List<IPointOfInterest>();
+                for (int i = 0; i < InteriorMapManager.Instance.currentlyShowingArea.charactersAtLocation.Count; i++) {
+                    Character currCharacter = InteriorMapManager.Instance.currentlyShowingArea.charactersAtLocation[i];
+                    if (highlightedTiles.Contains(currCharacter.gridTileLocation)) {
+                        poisInHighlightedTiles.Add(currCharacter);
+                    }
+                }
+                for (int i = 0; i < highlightedTiles.Count; i++) {
+                    if(highlightedTiles[i].objHere != null) {
+                        poisInHighlightedTiles.Add(highlightedTiles[i].objHere);
+                    }
+                }
+                currentActiveCombatAbility.ActivateAbility(poisInHighlightedTiles);
+            }
+        }
+        Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
     #endregion
 }

@@ -480,6 +480,12 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         }
         return false;
     }
+    public void HighlightTile() {
+        parentAreaMap.groundTilemap.SetColor(localPlace, Color.blue);
+    }
+    public void UnhighlightTile() {
+        parentAreaMap.groundTilemap.SetColor(localPlace, Color.white);
+    }
     #endregion
 
     #region Mouse Actions

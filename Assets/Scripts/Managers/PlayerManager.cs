@@ -11,6 +11,7 @@ public class PlayerManager : MonoBehaviour {
     public Player player = null;
     public Character playerCharacter;
     public INTERVENTION_ABILITY[] allInterventionAbilities;
+    public COMBAT_ABILITY[] allCombatAbilities;
 
     [SerializeField] private Sprite[] _playerAreaFloorSprites;
     [SerializeField] private Sprite[] _playerAreaDefaultStructureSprites;
@@ -28,6 +29,9 @@ public class PlayerManager : MonoBehaviour {
     [Header("Job Action Icons")]
     [SerializeField] private StringSpriteDictionary jobActionIcons;
 
+    [Header("Combat Ability Icons")]
+    [SerializeField] private StringSpriteDictionary combatAbilityIcons;
+
     #region getters/setters
     public Sprite[] playerAreaFloorSprites {
         get { return _playerAreaFloorSprites; }
@@ -42,6 +46,7 @@ public class PlayerManager : MonoBehaviour {
     }
     public void Initialize() {
         allInterventionAbilities = (INTERVENTION_ABILITY[]) System.Enum.GetValues(typeof(INTERVENTION_ABILITY));
+        allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
     }
 
     public void LoadStartingTile() {
@@ -166,9 +171,15 @@ public class PlayerManager : MonoBehaviour {
         }
         return null;
     }
+    public Sprite GetCombatAbilitySprite(string abilityName) {
+        if (combatAbilityIcons.ContainsKey(abilityName)) {
+            return combatAbilityIcons[abilityName];
+        }
+        return null;
+    }
     #endregion
 
-    #region Intervention Abilities
+    #region Intervention Ability
     public PlayerJobAction CreateNewInterventionAbility(INTERVENTION_ABILITY abilityType) {
         switch (abilityType) {
             case INTERVENTION_ABILITY.ABDUCT:
@@ -203,6 +214,24 @@ public class PlayerManager : MonoBehaviour {
                 return new Spook();
             case INTERVENTION_ABILITY.ZAP:
                 return new Zap();
+        }
+        return null;
+    }
+    #endregion
+
+    #region Combat Ability
+    public CombatAbility CreateNewCombatAbility(COMBAT_ABILITY abilityType) {
+        switch (abilityType) {
+            case COMBAT_ABILITY.SINGLE_HEAL:
+                return new SingleHeal();
+            case COMBAT_ABILITY.FLAMESTRIKE:
+                return new Flamestrike();
+            case COMBAT_ABILITY.FEAR_SPELL:
+                return new FearSpellAbility();
+            case COMBAT_ABILITY.SACRIFICE:
+                return new Sacrifice();
+            case COMBAT_ABILITY.TAUNT:
+                return new Taunt();
         }
         return null;
     }

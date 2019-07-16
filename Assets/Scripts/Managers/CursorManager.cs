@@ -15,6 +15,7 @@ public class CursorManager : MonoBehaviour {
 //#endif
 
     private List<System.Action> leftClickActions = new List<System.Action>();
+    private List<System.Action> rightClickActions = new List<System.Action>();
 
     [SerializeField] private CursorTextureDictionary cursors;
 
@@ -46,36 +47,70 @@ public class CursorManager : MonoBehaviour {
     //    cursorPointerEventData = new PointerEventData(EventSystem.current);
     //}
     private void Update() {
-        if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
-            IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
-            if (hoveredPOI != null) {
-                if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI)) {
-                    SetCursorTo(Cursor_Type.Check);
-                } else {
+        if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
+            if(PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
+                IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
+                if (hoveredPOI != null) {
+                    if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI)) {
+                        SetCursorTo(Cursor_Type.Check);
+                    } else {
+                        SetCursorTo(Cursor_Type.Cross);
+                    }
+                }
+                //else if (cursorPointerEventData.pointerEnter != null) {
+                //    LandmarkCharacterItem charItem = cursorPointerEventData.pointerEnter.transform.parent.GetComponent<LandmarkCharacterItem>();
+                //    if (charItem != null) {
+                //        if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(charItem.character)) {
+                //            SetCursorTo(Cursor_Type.Check);
+                //        } else {
+                //            SetCursorTo(Cursor_Type.Cross);
+                //        }
+                //    } else {
+                //        SetCursorTo(Cursor_Type.Cross);
+                //    }
+                //}
+                else {
                     SetCursorTo(Cursor_Type.Cross);
                 }
-            } 
-            //else if (cursorPointerEventData.pointerEnter != null) {
-            //    LandmarkCharacterItem charItem = cursorPointerEventData.pointerEnter.transform.parent.GetComponent<LandmarkCharacterItem>();
-            //    if (charItem != null) {
-            //        if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(charItem.character)) {
-            //            SetCursorTo(Cursor_Type.Check);
-            //        } else {
-            //            SetCursorTo(Cursor_Type.Cross);
-            //        }
-            //    } else {
-            //        SetCursorTo(Cursor_Type.Cross);
-            //    }
-            //}
-            else {
-                SetCursorTo(Cursor_Type.Cross);
+            }else if (PlayerManager.Instance.player.currentActiveCombatAbility != null) {
+                CombatAbility ability = PlayerManager.Instance.player.currentActiveCombatAbility;
+                if(ability.abilityRadius == 0) {
+                    IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
+                    if (hoveredPOI != null) {
+                        if (ability.CanTarget(hoveredPOI)) {
+                            SetCursorTo(Cursor_Type.Check);
+                        } else {
+                            SetCursorTo(Cursor_Type.Cross);
+                        }
+                    }
+                } else {
+                    LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
+                    if(hoveredTile != null) {
+                        SetCursorTo(Cursor_Type.Check);
+                        if(hoveredTile != InteriorMapManager.Instance.currentlyHoveredTile) {
+                            InteriorMapManager.Instance.SetCurrentlyHoveredTile(hoveredTile);
+                            List<LocationGridTile> highlightTiles = hoveredTile.parentAreaMap.GetTilesInRadius(hoveredTile, ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                            if(InteriorMapManager.Instance.currentlyHighlightedTiles != null) {
+                                InteriorMapManager.Instance.UnhighlightTiles();
+                                InteriorMapManager.Instance.HighlightTiles(highlightTiles);
+                            } else {
+                                InteriorMapManager.Instance.HighlightTiles(highlightTiles);
+                            }
+                        }
+                    }
+                }
             }
+
         }
         if (Input.GetMouseButtonDown(0)) {
             //left click
             ExecuteLeftClickActions();
             ClearLeftClickActions();
             Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Mouse0);
+        }else if (Input.GetMouseButtonDown(1)) {
+            //right click
+            ExecuteRightClickActions();
+            ClearRightClickActions();
         }
         if (AreaMapCameraMove.Instance != null) {
             Vector3 pos = effectsCamera.ScreenToWorldPoint(Input.mousePosition);
@@ -120,6 +155,17 @@ public class CursorManager : MonoBehaviour {
     }
     public void ClearLeftClickActions() {
         leftClickActions.Clear();
+    }
+    public void AddRightClickAction(System.Action action) {
+        rightClickActions.Add(action);
+    }
+    private void ExecuteRightClickActions() {
+        for (int i = 0; i < rightClickActions.Count; i++) {
+            rightClickActions[i]();
+        }
+    }
+    public void ClearRightClickActions() {
+        rightClickActions.Clear();
     }
     #endregion
 

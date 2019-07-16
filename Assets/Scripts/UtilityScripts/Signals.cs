@@ -250,4 +250,9 @@ public static class Signals {
     public static string ITEM_PLACED_ON_TILE = "OnItemPlacedOnTile"; //Parameters (SpecialToken, LocationGridTile)
     #endregion
 
+    #region Combat Ability
+    public static string COMBAT_ABILITY_UPDATE_BUTTON = "OnCombatAbilityStopCooldown";
+    #endregion
+
+
 }
