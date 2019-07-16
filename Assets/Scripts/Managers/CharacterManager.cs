@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-
 public class CharacterManager : MonoBehaviour {
 
     public static CharacterManager Instance = null;
@@ -391,7 +390,7 @@ public class CharacterManager : MonoBehaviour {
 
     #region Summons
     public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, Area homeLocation = null, Dwelling homeStructure = null) {
-        Summon newCharacter = CreateSummonClassFromType(summonType);
+        Summon newCharacter = CreateNewSummonClassFromType(summonType) as Summon;
         newCharacter.Initialize();
         if (faction != null) {
             faction.AddNewCharacter(newCharacter);
@@ -409,14 +408,18 @@ public class CharacterManager : MonoBehaviour {
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
-    private Summon CreateSummonClassFromType(SUMMON_TYPE type) {
-        switch (type) {
-            case SUMMON_TYPE.WOLF:
-                return new Wolf();
-            default:
-                return new Summon(SUMMON_TYPE.NONE, CharacterRole.NONE, RACE.NONE, GENDER.MALE);
-        }
+    public object CreateNewSummonClassFromType(SUMMON_TYPE summonType) {
+        var typeName = summonType.ToString();
+        return System.Activator.CreateInstance(System.Type.GetType(typeName));
     }
+    //private Summon CreateSummonClassFromType(SUMMON_TYPE type) {
+    //    switch (type) {
+    //        case SUMMON_TYPE.Wolf:
+    //            return new Wolf();
+    //        default:
+    //            return new Summon(SUMMON_TYPE.None, CharacterRole.NONE, RACE.NONE, GENDER.MALE);
+    //    }
+    //}
     public SummonSettings GetSummonSettings(SUMMON_TYPE type) {
         return summonSettings[type];
     }
@@ -979,6 +982,12 @@ public class CharacterManager : MonoBehaviour {
         sexuallyCompatible = IsSexuallyCompatibleOneSided(character2, character1);
         return sexuallyCompatible;
     }
+    /// <summary>
+    /// Is a character sexually compatible with another.
+    /// </summary>
+    /// <param name="character1">The character whose sexuality will be taken into account.</param>
+    /// <param name="character2">The character that character 1 is checking.</param>
+    /// <returns></returns>
     public bool IsSexuallyCompatibleOneSided(Character character1, Character character2) {
         switch (character1.sexuality) {
             case SEXUALITY.STRAIGHT:

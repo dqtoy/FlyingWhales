@@ -4,6 +4,7 @@ using UnityEngine;
 
 [System.Serializable]
 public class RaceMarkerAssets {
+    public string raceName;
     public RACE race;
     public MarkerAsset maleAssets;
     public MarkerAsset femaleAssets;

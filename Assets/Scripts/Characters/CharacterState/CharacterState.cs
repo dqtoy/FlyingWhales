@@ -19,11 +19,13 @@ public class CharacterState {
 
     public Character targetCharacter { get; protected set; } //Target character of current state
     public Area targetArea { get; protected set; }
+    public bool isUnending { get; protected set; } //is this state unending?
     //public CharacterState parentMajorState { get; protected set; }
 
     public CharacterState(CharacterStateComponent characterComp) {
         this.stateComponent = characterComp;
         actionIconString = GoapActionStateDB.No_Icon;
+        isUnending = false;
         AddDefaultListeners();
     }
 
@@ -68,7 +70,7 @@ public class CharacterState {
     
     //This is called per TICK_ENDED if the state has a duration, can be overriden
     protected virtual void PerTickInState() {
-        if (!isPaused) {
+        if (!isPaused && !isUnending) {
             if (currentDuration >= duration) {
                 StopStatePerTick();
                 OnExitThisState();
@@ -232,10 +234,7 @@ public class CharacterState {
             thoughtBubbleLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
-    internal void ChangeDuration(int newDuration) {
-        duration = newDuration;
-    }
-
+   
     #region Listeners
     private void AddDefaultListeners() {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -249,6 +248,19 @@ public class CharacterState {
             StopStatePerTick();
             RemoveDefaultListeners();
         }
+    }
+    #endregion
+
+    #region Utilities
+    internal void ChangeDuration(int newDuration) {
+        duration = newDuration;
+    }
+    /// <summary>
+    /// Set if this state only has a specific duration, or will it run indefinitely until stopped.
+    /// </summary>
+    /// <param name="state">If the state should be unending or not.</param>
+    public void SetIsUnending(bool state) {
+        isUnending = state;
     }
     #endregion
 

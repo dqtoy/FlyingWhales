@@ -142,7 +142,7 @@ public class GoapThread : Multithread {
         }
        
 
-        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(actor);
+        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
         List<GoapAction> usableActions = new List<GoapAction>();
         //Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> orderedAwareness = actor.OrderAwarenessByStructure();
         Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>(actor.awareness);
@@ -389,7 +389,7 @@ public class GoapThread : Multithread {
         log = "-----------------RECALCULATING PLAN OF " + actor.name + " WITH TARGET " + recalculationPlan.target.name + " (" + actor.specificLocation.name + ")-----------------------";
         log += "\nGOAL ACTION: " + recalculationPlan.endNode.action.goapName + " - " + recalculationPlan.endNode.action.poiTarget.name;
         List<GoapAction> usableActions = new List<GoapAction>();
-        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(actor);
+        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
         foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in actor.awareness) {
             if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 for (int i = 0; i < kvp.Value.Count; i++) {

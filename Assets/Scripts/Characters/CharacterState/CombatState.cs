@@ -181,7 +181,11 @@ public class CombatState : CharacterState {
         string log = GameManager.Instance.TodayLogString() + "Reevaluating combat behavior of " + stateComponent.character.name;
         if (isAttacking) {
             log += "\n" + stateComponent.character.name + " is attacking!";
-            if (currentClosestHostile != null && !stateComponent.character.marker.hostilesInRange.Contains(currentClosestHostile)) {
+            Trait taunted = stateComponent.character.GetNormalTrait("Taunted");
+            if (taunted != null) {
+                log += "\n" + stateComponent.character.name + " is taunted. Setting " + taunted.responsibleCharacter.name + " as target.";
+                SetClosestHostile(taunted.responsibleCharacter);
+            } else if (currentClosestHostile != null && !stateComponent.character.marker.hostilesInRange.Contains(currentClosestHostile)) {
                 log += "\nCurrent closest hostile: " + currentClosestHostile.name + " is no longer in hostile list, setting another closest hostile...";
                 SetClosestHostile();
             }else if(currentClosestHostile == null) {
@@ -242,6 +246,16 @@ public class CombatState : CharacterState {
     private void SetClosestHostile() {
         Character previousClosestHostile = currentClosestHostile;
         currentClosestHostile = stateComponent.character.marker.GetNearestValidHostile();
+        if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
+            log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            stateComponent.character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+        }
+    }
+    private void SetClosestHostile(Character character) {
+        Character previousClosestHostile = currentClosestHostile;
+        currentClosestHostile = character;
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

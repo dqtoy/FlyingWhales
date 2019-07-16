@@ -35,13 +35,14 @@ public class Summon : Character {
         //supply
         //SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
 
-        //ConstructInitialGoapAdvertisementActions();
+        ConstructInitialGoapAdvertisementActions();
         //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their area is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
         //GetRandomCharacterColor();
         //GameDate gameDate = GameManager.Instance.Today();
         //gameDate.AddTicks(1);
         //SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions());
     }
+    protected override void OnActionStateSet(GoapAction action, GoapActionState state) { } //overriddn OnActionStateSet so that summons cannot witness other events.
     #endregion
 
     #region Virtuals
@@ -49,7 +50,11 @@ public class Summon : Character {
     /// What should a summon do when it is placed.
     /// </summary>
     /// <param name="tile">The tile the summon was placed on.</param>
-    public virtual void OnPlaceSummon(LocationGridTile tile) { }
+    public virtual void OnPlaceSummon(LocationGridTile tile) {
+        SubscribeToSignals();
+        Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds); //do not make summons decrease needs
+        Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration); //do not make summons plan goap actions by default
+    }
     #endregion
 
 }

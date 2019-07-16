@@ -296,6 +296,9 @@ public class ConsoleMenu : UIMenu {
     private void CheckForWrongCharacterData() {
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area currArea = LandmarkManager.Instance.allAreas[i];
+            if (currArea == PlayerManager.Instance.player.playerArea) {
+                continue;
+            }
             for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
                 Character character = currArea.charactersAtLocation[j];
                 if (character.isDead) {

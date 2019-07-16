@@ -195,6 +195,11 @@ public class CharacterInfoUI : UIMenu {
             plansLbl.text = _activeCharacter.name + " has died.";
             return;
         }
+        if (_activeCharacter.specificLocation.areaMap == null) {
+            //area map has not yet been generated
+            plansLbl.text = "Visit " + _activeCharacter.specificLocation.name + " to find out what " + _activeCharacter.name + " is doing.";
+            return;
+        }
         //Disabler Thought
         if (_activeCharacter.doNotDisturb > 0) {
             Trait disablerTrait = _activeCharacter.GetTraitOf(TRAIT_TYPE.DISABLER);

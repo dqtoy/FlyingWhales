@@ -576,7 +576,7 @@ public class RaceManager : MonoBehaviour {
             } },
         };
     }
-    public List<INTERACTION_TYPE> GetNPCInteractionsOfRace(Character character) {
+    public List<INTERACTION_TYPE> GetNPCInteractionsOfCharacter(Character character) {
         List<INTERACTION_TYPE> interactions = new List<INTERACTION_TYPE>(); //Get interactions of all races first
         if (_npcRaceInteractions.ContainsKey(character.race)) {
             for (int i = 0; i < _npcRaceInteractions[character.race].Length; i++) {

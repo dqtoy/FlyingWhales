@@ -139,7 +139,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     public float demonColor { get; protected set; }
 
     //hostility
-    public int ignoreHostility { get; private set; }
+    public virtual int ignoreHostility { get; protected set; }
 
     //alter egos
     public string currentAlterEgoName { get; private set; } //this character's currently active alter ego. Usually just Original.
@@ -566,7 +566,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     /// </summary>
 
     #region Signals
-    private void SubscribeToSignals() {
+    protected void SubscribeToSignals() {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
@@ -581,7 +581,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
 
     }
-    public void UnsubscribeSignals() {
+    public virtual void UnsubscribeSignals() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
@@ -1053,7 +1053,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     #endregion
 
     #region Character Class
-    public string GetClassForRole(CharacterRole role) {
+    public virtual string GetClassForRole(CharacterRole role) {
         if (role == CharacterRole.BEAST) {
             return Utilities.GetRespectiveBeastClassNameFromByRace(race);
         } else {
@@ -1276,21 +1276,6 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (!CanCharacterReact()) {
             return true;
         }
-#if TRAILER_BUILD
-        if (this.name == "Jamie" || this.name == "Fiona" || this.name == "Audrey") {
-            if (this.name == "Jamie" && targetCharacter.name == "Fiona" && targetCharacter.isDead) {
-                CancelAllJobsAndPlans();
-                marker.StopMovement();
-                marker.LookAt(targetCharacter.marker.transform.position, true);
-                //add heartbroken trait to jaime
-                AddTrait("Heartbroken");
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "mental_breakdown");
-                log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                PlayerManager.Instance.player.ShowNotification(log);
-            }
-            return false;
-        }
-#endif
         bool hasCreatedJob = false;
         for (int i = 0; i < targetCharacter.normalTraits.Count; i++) {
             if (targetCharacter.normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetCharacter, this)) {
@@ -2754,7 +2739,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         addLog.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, onlyClickedCharacter);
     }
-    private void OnActionStateSet(GoapAction action, GoapActionState state) {
+    protected virtual void OnActionStateSet(GoapAction action, GoapActionState state) {
         IPointOfInterest target = null;
         if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
             target = (action as MakeLove).targetCharacter;
@@ -2775,10 +2760,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             }
         }
     }
-    public void ThisCharacterSaw(Character target) {
+    public virtual void ThisCharacterSaw(Character target) {
         if (GetNormalTrait("Unconscious", "Resting") != null) {
             return;
         }
+        target.OnSeenBy(this); //trigger that the target character was seen by this character.
         if (target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone && target.currentAction.goapType != INTERACTION_TYPE.WATCH) {
             //Cannot witness/watch a watch action
             IPointOfInterest poiTarget = null;
@@ -2803,6 +2789,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         //This will only happen if target is in combat
         ThisCharacterWatchEvent(target, null, null);
     }
+    /// <summary>
+    /// What should happen if another character sees this character?
+    /// </summary>
+    /// <param name="character">The character that saw this character.</param>
+    protected virtual void OnSeenBy(Character character) { }
     public List<Log> GetMemories(int dayFrom, int dayTo, bool eventMemoriesOnly = false){
         List<Log> memories = new List<Log>();
         if (eventMemoriesOnly) {
@@ -3606,20 +3597,6 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
 
 #if !WORLD_CREATION_TOOL
         if (GameManager.Instance.gameHasStarted) {
-#if TRAILER_BUILD
-            if (this.name != "Jamie" && this.name != "Fiona" && this.name != "Audrey") {
-                if (trait.name == "Hungry" || trait.name == "Starving") {
-                    Debug.Log("Planning fullness recovery from gain trait");
-                    PlanFullnessRecoveryActions();
-                } else if (trait.name == "Lonely" || trait.name == "Forlorn") {
-                    Debug.Log("Planning happiness recovery from gain trait");
-                    PlanHappinessRecoveryActions();
-                } else if (trait.name == "Tired" || trait.name == "Exhausted") {
-                    Debug.Log("Planning tiredness recovery from gain trait");
-                    PlanTirednessRecoveryActions();
-                }
-            }
-#else
             if (trait.name == "Hungry" || trait.name == "Starving") {
                 Debug.Log("Planning fullness recovery from gain trait");
                 PlanFullnessRecoveryActions();
@@ -3630,7 +3607,6 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                 Debug.Log("Planning tiredness recovery from gain trait");
                 PlanTirednessRecoveryActions();
             }
-#endif
         }
 #endif
         //if (trait is RelationshipTrait) {
@@ -3642,15 +3618,6 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             //when a character gains a criminal trait, drop all location jobs that this character is assigned to
             homeArea.jobQueue.UnassignAllJobsTakenBy(this);
         }
-#if TRAILER_BUILD
-        else if (trait.name == "Unfaithful" && this.name == "Jamie") {
-            //force Jamie to drop all plans, then go to fiona to chat. (Scheduled him to chat after 5 ticks)
-            CancelAllJobsAndPlans();
-            GameDate chatSched = GameManager.Instance.Today();
-            chatSched.AddTicks(2);
-            SchedulingManager.Instance.AddEntry(chatSched, ScheduleChat);
-        }
-#endif
         return true;
     }
     private void ScheduleChat() {
@@ -4245,7 +4212,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     public void SetDailyInteractionGenerationTick(int tick) {
         _currentInteractionTick = tick;
     }
-    private void DailyGoapPlanGeneration() {
+    protected void DailyGoapPlanGeneration() {
         //Check Trap Structure
         trapStructure.IncrementCurrentDuration(1);
 
@@ -4293,14 +4260,6 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         //    WillAboutToDoAction(specificAction);
         //    return;
         //}
-#if TRAILER_BUILD
-        if (name == "Fiona" || name == "Jamie" || name == "Audrey") {
-            if (allGoapPlans.Count > 0) {
-                PerformGoapPlans();
-            }
-            return;
-        }
-#endif
         if (allGoapPlans.Count > 0) {
             //StopDailyGoapPlanGeneration();
             PerformGoapPlans();
@@ -4310,7 +4269,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
         
     }
-    private void IdlePlans() {
+    protected virtual void IdlePlans() {
         if (_hasAlreadyAskedForPlan) {
             return;
         }
@@ -5364,7 +5323,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     #endregion
 
     #region Needs
-    private void DecreaseNeeds() {
+    protected void DecreaseNeeds() {
         if (race == RACE.SKELETON) {
             return;
         }
@@ -5965,7 +5924,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     #endregion
 
     #region Goap
-    private void ConstructInitialGoapAdvertisementActions() {
+    protected void ConstructInitialGoapAdvertisementActions() {
         poiGoapActions = new List<INTERACTION_TYPE>();
         poiGoapActions.Add(INTERACTION_TYPE.CARRY_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ASSAULT_ACTION_NPC);
@@ -6219,7 +6178,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             PrintLogIfActive(log);
             return;
         }
-        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfRace(this);
+        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(this);
         bool willGoIdleState = true;
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
