@@ -68,6 +68,9 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private EasyTween tweener;
     [SerializeField] private AnimationCurve curve;
     [SerializeField] private Image combatGridAssignerIcon;
+    [SerializeField] private GameObject gameOverGO;
+    [SerializeField] private TextMeshProUGUI gameOverDescriptionText;
+    [SerializeField] private GameObject successfulAreaCorruptionGO;
 
     [Header("Minions")]
     [SerializeField] private GameObject startingMinionPickerGO;
@@ -654,7 +657,7 @@ public class PlayerUI : MonoBehaviour {
         threatMeter.value = 0f;
     }
     public void ShowCorruptTileConfirmation(HexTile tile) {
-        if (tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted) { //tile.CanBeCorrupted() && 
+        if (tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted && !tile.isCorrupted) { //tile.CanBeCorrupted() && 
             PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
             if (tile.areaOfTile != null) {
                 corruptTileConfirmationLbl.text = "To corrupt this area, you must defeat all residents within. Once you proceeed there is no going back. Do you wish to take on this settlement?";
@@ -777,6 +780,25 @@ public class PlayerUI : MonoBehaviour {
             summonToPlace.OnPlaceSummon(tile);
         }
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+    }
+    #endregion
+
+    #region Lose Condition
+    public void GameOver(string descriptionText) {
+        gameOverDescriptionText.text = descriptionText;
+        gameOverGO.SetActive(true);
+    }
+    public void BackToMainMenu() {
+        LevelLoaderManager.Instance.LoadLevel("MainMenu");
+    }
+    #endregion
+
+    #region Area Corruption
+    public void SuccessfulAreaCorruption() {
+        successfulAreaCorruptionGO.SetActive(true);
+    }
+    public void BackToWorld() {
+        InteriorMapManager.Instance.HideAreaMap();
     }
     #endregion
 }

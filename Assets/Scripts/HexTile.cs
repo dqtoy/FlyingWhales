@@ -1354,9 +1354,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             _isCorrupted = state;
         }
     }
-    public bool CanThisTileBeCorrupted() {
-        return true;
-    }
+    //public bool CanThisTileBeCorrupted() {
+    //    return true;
+    //}
     public void SetUncorruptibleLandmarkNeighbors(int amount) {
         _uncorruptibleLandmarkNeighbors = amount;
     }

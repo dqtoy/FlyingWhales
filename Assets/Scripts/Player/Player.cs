@@ -30,6 +30,7 @@ public class Player : ILeader {
     public bool isTileCurrentlyBeingCorrupted { get; private set; }
     public HexTile currentTileBeingCorrupted { get; private set; }
     public Minion currentMinionLeader { get; private set; }
+    public Area currentAreaBeingCorrupted { get; private set; }
 
     #region getters/setters
     public int id {
@@ -670,6 +671,14 @@ public class Player : ILeader {
     }
     #endregion
 
+    #region Area Corruption
+    private void AreaIsCorrupted() {
+        isTileCurrentlyBeingCorrupted = false;
+        GameManager.Instance.SetPausedState(true);
+        PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
+    }
+    #endregion
+
     #region Summons
     public void GainSummon(SUMMON_TYPE type, int level = 5) {
         if (GetTotalSummonsCount() < MAX_SUMMONS) {
@@ -737,35 +746,84 @@ public class Player : ILeader {
             Minion currMinion = minions[i];
             if (currMinion != null) {
                 currMinion.character.CreateMarker();
+                currMinion.character.marker.SetActiveState(false);
                 currentMinions.Add(currMinion);
             }
         }
 
-        LocationGridTile mainEntrance = area.GetRandomUnoccupiedEdgeTile();
-        entrances.Add(mainEntrance);
-        int neededEntrances = currentMinions.Count - 1;
+        if(currentMinions.Count > 0) {
+            LocationGridTile mainEntrance = area.GetRandomUnoccupiedEdgeTile();
+            entrances.Add(mainEntrance);
+            int neededEntrances = currentMinions.Count - 1;
 
-        for (int i = 0; i < entrances.Count; i++) {
-            for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
-                LocationGridTile newEntrance = entrances[i].neighbourList[j];
-                if(!newEntrance.isOccupied && newEntrance.structure != null) {
-                    if(newEntrance.IsAtEdgeOfWalkableMap() && !entrances.Contains(newEntrance)) {
-                        entrances.Add(newEntrance);
-                        if(entrances.Count >= currentMinions.Count) {
-                            break;
+            for (int i = 0; i < entrances.Count; i++) {
+                for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
+                    LocationGridTile newEntrance = entrances[i].neighbourList[j];
+                    if (!newEntrance.isOccupied && newEntrance.structure != null) {
+                        if (newEntrance.IsAtEdgeOfWalkableMap() && !entrances.Contains(newEntrance)) {
+                            entrances.Add(newEntrance);
+                            if (entrances.Count >= currentMinions.Count) {
+                                break;
+                            }
                         }
                     }
                 }
+                if (entrances.Count >= currentMinions.Count) {
+                    break;
+                }
             }
-            if (entrances.Count >= currentMinions.Count) {
+            for (int i = 0; i < entrances.Count; i++) {
+                currentMinions[i].character.marker.PlaceMarkerAt(entrances[i]);
+            }
+            for (int i = 0; i < currentMinions.Count; i++) {
+                currentMinions[i].StartInvasionProtocol();
+            }
+            PlayerUI.Instance.startInvasionButton.interactable = false;
+            currentAreaBeingCorrupted = area;
+            Messenger.AddListener(Signals.TICK_ENDED, PerTickInvasion);
+        } else {
+            Debug.LogError("Can't invade! No more minions!");
+        }
+    }
+    private void PerTickInvasion() {
+        bool stillHasMinions = false;
+        for (int i = 0; i < minions.Length; i++) {
+            Minion currMinion = minions[i];
+            if (currMinion != null) {
+                if(currMinion.character.currentHP > 0) {
+                    stillHasMinions = true;
+                    break;
+                }
+            }
+        }
+        if (!stillHasMinions) {
+            StopInvasion(false);
+            return;
+        }
+
+        bool stillHasResidents = false;
+        for (int i = 0; i < currentAreaBeingCorrupted.areaResidents.Count; i++) {
+            Character currCharacter = currentAreaBeingCorrupted.areaResidents[i];
+            if (currCharacter.currentHP > 0 && currCharacter.specificLocation == currentAreaBeingCorrupted) {
+                stillHasResidents = true;
                 break;
             }
         }
-        for (int i = 0; i < entrances.Count; i++) {
-            currentMinions[i].character.marker.PlaceMarkerAt(entrances[i]);
+        if (!stillHasResidents) {
+            StopInvasion(true);
+            return;
         }
-        for (int i = 0; i < currentMinions.Count; i++) {
-            currentMinions[i].StartInvasionProtocol();
+    }
+    private void StopInvasion(bool playerWon) {
+        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickInvasion);
+        PlayerUI.Instance.startInvasionButton.interactable = true;
+
+        if (playerWon) {
+            PlayerUI.Instance.SuccessfulAreaCorruption();
+            AreaIsCorrupted();
+        } else {
+            string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
+            PlayerUI.Instance.GameOver(gameOverText);
         }
     }
     #endregion

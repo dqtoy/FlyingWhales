@@ -42,6 +42,7 @@ public class MainMenuManager : MonoBehaviour {
     }
     private void Start() {
         AudioManager.Instance.PlayFade("Main Menu", 5, () => MainMenuUI.Instance.ShowMenuButtons());
+        LevelLoaderManager.SetLoadingState(false);
     }
     #endregion
 

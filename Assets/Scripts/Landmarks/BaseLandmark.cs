@@ -255,9 +255,9 @@ public class BaseLandmark {
         //}
     }
     private void SpreadCorruption(HexTile originTile) {
-        if (!originTile.CanThisTileBeCorrupted()) {
-            return;
-        }
+        //if (!originTile.CanThisTileBeCorrupted()) {
+        //    return;
+        //}
         for (int i = 0; i < originTile.AllNeighbours.Count; i++) {
             HexTile neighbor = originTile.AllNeighbours[i];
             if (neighbor.uncorruptibleLandmarkNeighbors <= 0) {
