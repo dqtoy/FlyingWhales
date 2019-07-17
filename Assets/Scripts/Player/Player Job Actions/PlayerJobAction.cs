@@ -13,6 +13,8 @@ public class PlayerJobAction {
     public List<JOB_ACTION_TARGET> targettableTypes { get; protected set; } //what sort of objects can this action target
     public bool isActive { get; protected set; }
     public int ticksInCooldown { get; private set; } //how many ticks has this action been in cooldown?
+    public int lvl { get; protected set; }
+    public List<ABILITY_TAG> abilityTags { get; protected set; }
 
     public bool isInCooldown {
         get { return ticksInCooldown != cooldown; } //check if the ticks this action has been in cooldown is the same as cooldown
@@ -28,6 +30,15 @@ public class PlayerJobAction {
     public PlayerJobAction(INTERVENTION_ABILITY abilityType) {
         this.abilityType = abilityType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.abilityType.ToString());
+        abilityTags = new List<ABILITY_TAG>();
+        this.lvl = 1;
+        OnLevelUp();
+    }
+
+    public void LevelUp() {
+        lvl++;
+        lvl = Mathf.Clamp(lvl, 1, 3);
+        OnLevelUp();
     }
 
     #region Virtuals
@@ -113,6 +124,7 @@ public class PlayerJobAction {
     public virtual string GetActionName(Character target) {
         return name;
     }
+    protected virtual void OnLevelUp() { }
     #endregion
 
     #region Cooldown

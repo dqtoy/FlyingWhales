@@ -7,6 +7,7 @@ public class Provoke : PlayerJobAction {
     public Provoke() : base(INTERVENTION_ABILITY.PROVOKE) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {

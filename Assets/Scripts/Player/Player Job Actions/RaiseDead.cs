@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class RaiseDead : PlayerJobAction {
 
+    private int _level;
+
     public RaiseDead() : base(INTERVENTION_ABILITY.RAISE_DEAD) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
+    #region Overrides
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
         Character target;
         if (targetPOI is Character) {
@@ -31,6 +35,7 @@ public class RaiseDead : PlayerJobAction {
         target.marker.PlayAnimation("Raise Dead");
         yield return new WaitForSeconds(0.7f);
         target.ReturnToLife();
+        target.SetLevel(_level);
 #if TRAILER_BUILD
       UIManager.Instance.Unpause();
 #endif
@@ -55,4 +60,15 @@ public class RaiseDead : PlayerJobAction {
         }
         return targetCharacter.isDead && targetCharacter.IsInOwnParty();
     }
+    protected override void OnLevelUp() {
+        base.OnLevelUp();
+        if (lvl == 1) {
+            _level = 5;
+        } else if (lvl == 2) {
+            _level = 10;
+        } else if (lvl == 3) {
+            _level = 15;
+        }
+    }
+    #endregion
 }

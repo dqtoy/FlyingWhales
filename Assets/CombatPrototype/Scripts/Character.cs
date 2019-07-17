@@ -130,6 +130,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     protected const int HAPPINESS_DEFAULT = 240;
     protected const int HAPPINESS_THRESHOLD_1 = 160;
     protected const int HAPPINESS_THRESHOLD_2 = 0;
+    public int fullnessDecreaseRate { get; protected set; }
+    public int tirednessDecreaseRate { get; protected set; }
+    public int happinessDecreaseRate { get; protected set; }
 
     public static readonly int TREE_AWARENESS_LIMIT = 5; //The number of Tree Objects a character can have in his awareness, everytime a character adds a new tree object to his/her awareness list, remove the oldest one if this limit is reached
 
@@ -4867,6 +4870,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             positiveFlirtationWeight *= 2;
         }
 
+        Unfaithful unfaithful = GetNormalTrait("Unfaithful") as Unfaithful;
         //x0.5 all positive modifiers per negative relationship
         if (GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
             positiveFlirtationWeight *= 0.5f;
@@ -4877,10 +4881,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         //x0.1 all positive modifiers per sexually incompatible
         if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
             positiveFlirtationWeight *= 0.1f;
-        } 
+        }
         // x6 if initiator is Unfaithful and already has a lover
-        else if ((GetNormalTrait("Unfaithful") != null) && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER))) {
+        else if (unfaithful != null && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER))) {
             positiveFlirtationWeight *= 6f;
+            positiveFlirtationWeight *= unfaithful.affairChanceMultiplier;
         }
         if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
             positiveFlirtationWeight *= 0.1f;
@@ -4969,6 +4974,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                 //+30 Weight per previous flirtation
                 positiveWeight += 50 * relData.flirtationCount;
             }
+            Unfaithful unfaithful = GetNormalTrait("Unfaithful") as Unfaithful;
             //x2 all positive modifiers per Drunk
             if (GetNormalTrait("Drunk") != null) {
                 positiveWeight *= 2.5f;
@@ -4981,9 +4987,10 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                 positiveWeight *= 0.1f;
             }
             // x4 if initiator is Unfaithful and already has a lover
-            else if ((GetNormalTrait("Unfaithful") != null) && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER)))
+            else if (unfaithful != null && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER)))
             {
                 positiveWeight *= 4f;
+                positiveWeight *= unfaithful.affairChanceMultiplier;
             }
 
             if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
@@ -5331,13 +5338,13 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         //    return; //Set needs to not decrease while in combat state, so as not to cancel plans (For Discussion)
         //}
         if (_doNotGetHungry <= 0) {
-            AdjustFullness(-10);
+            AdjustFullness(-(CharacterManager.FULLNESS_DECREASE_RATE + fullnessDecreaseRate));
         }
         if (_doNotGetTired <= 0) {
-            AdjustTiredness(-10);
+            AdjustTiredness(-(CharacterManager.TIREDNESS_DECREASE_RATE + tirednessDecreaseRate));
         }
         if (_doNotGetLonely <= 0) {
-            AdjustHappiness(-13);
+            AdjustHappiness(-(CharacterManager.HAPPINESS_DECREASE_RATE + happinessDecreaseRate));
         }
     }
     public string GetNeedsSummary() {
@@ -5345,6 +5352,15 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         summary += "\nTiredness: " + tiredness + "/" + TIREDNESS_DEFAULT.ToString();
         summary += "\nHappiness: " + happiness + "/" + HAPPINESS_DEFAULT.ToString();
         return summary;
+    }
+    public void AdjustFullnessDecreaseRate(int amount) {
+        fullnessDecreaseRate += amount;
+    }
+    public void AdjustTirednessDecreaseRate(int amount) {
+        tirednessDecreaseRate += amount;
+    }
+    public void AdjustHappinessDecreaseRate(int amount) {
+        happinessDecreaseRate += amount;
     }
     #endregion
 
@@ -7166,6 +7182,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             ChangeRace(alterEgoData.race);
             AssignRole(alterEgoData.role);
             AssignClass(alterEgoData.characterClass);
+            SetLevel(alterEgoData.level);
 
             CancelAllJobsTargettingThisCharacter("target is not found", false);
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is not found");

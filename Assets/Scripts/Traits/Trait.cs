@@ -85,6 +85,9 @@ public class Trait {
     public void SetIsDisabled(bool state) {
         isDisabled = state;
     }
+    public void OverrideDuration(int newDuration) {
+        daysDuration = newDuration;
+    }
 
     #region Jobs
     protected bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter, JobQueueItem job) {

@@ -16,9 +16,9 @@ public class DrinkBlood : GoapAction {
         _requirementOnBuildGoapTreeAction = RequirementOnBuildGoapTree;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        if (actor.isStarving) {
+        //if (actor.isStarving) {
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget }, HasUnconsciousOrRestingTarget);
-        }
+        //}
         if (actor.GetNormalTrait("Vampiric") != null) {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
         }
@@ -61,10 +61,10 @@ public class DrinkBlood : GoapAction {
         return true;
     }
     protected bool RequirementOnBuildGoapTree() {
-        if (!actor.isStarving) {
-            Character target = poiTarget as Character;
-            return target.GetNormalTrait("Unconscious", "Resting") != null;
-        }
+        //if (!actor.isStarving) {
+        //    Character target = poiTarget as Character;
+        //    return target.GetNormalTrait("Unconscious", "Resting") != null;
+        //}
         return true;
     }
     #endregion
@@ -90,11 +90,11 @@ public class DrinkBlood : GoapAction {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);
         actor.AdjustDoNotGetHungry(-1);
         int chance = UnityEngine.Random.Range(0, 100);
-        if(chance < 95) {
+        if(chance < 70) {
             Lethargic lethargic = new Lethargic();
             AddTraitTo(poiTarget, lethargic, actor);
         } else {
-            Vampiric vampiric = new Vampiric();
+            Vampiric vampiric = new Vampiric(1);
             AddTraitTo(poiTarget, vampiric, actor);
         }
     }

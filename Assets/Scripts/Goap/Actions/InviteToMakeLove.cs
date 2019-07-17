@@ -44,6 +44,19 @@ public class InviteToMakeLove : GoapAction {
         }
     }
     protected override int GetCost() {
+        if(poiTarget is Character) {
+            Character targetCharacter = poiTarget as Character;
+            Unfaithful unfaithful = actor.GetNormalTrait("Unfaithful") as Unfaithful;
+            if (unfaithful != null && actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                if(unfaithful.level == 1) {
+                    return Utilities.rng.Next(5, 11);
+                }else if (unfaithful.level == 2) {
+                    return Utilities.rng.Next(3, 8);
+                } else if (unfaithful.level == 3) {
+                    return Utilities.rng.Next(1, 3);
+                }
+            }
+        }
         TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT)
         {

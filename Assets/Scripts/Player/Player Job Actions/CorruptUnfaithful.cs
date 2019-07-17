@@ -7,8 +7,10 @@ public class CorruptUnfaithful : PlayerJobAction {
     public CorruptUnfaithful() : base(INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        abilityTags.Add(ABILITY_TAG.CRIME);
     }
 
+    #region Overrides
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
         List<Character> targets = new List<Character>();
         if (targetPOI is Character) {
@@ -23,7 +25,7 @@ public class CorruptUnfaithful : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
-                    Trait newTrait = new Unfaithful();
+                    Trait newTrait = new Unfaithful(lvl);
                     currTarget.AddTrait(newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -82,6 +84,8 @@ public class CorruptUnfaithful : PlayerJobAction {
         }
         return false;
     }
+    #endregion
+
     private bool CanTarget(Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;

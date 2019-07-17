@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class Enrage : PlayerJobAction {
 
+    private int _durationInMinutes;
     public Enrage() : base(INTERVENTION_ABILITY.ENRAGE) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
+    #region Overrides
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
         List<Character> targets = new List<Character>();
         if (targetPOI is Character) {
@@ -23,7 +26,8 @@ public class Enrage : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
-                    currTarget.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, null, GameManager.Instance.GetTicksBasedOnMinutes(30));
+                    currTarget.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, null, GameManager.Instance.GetTicksBasedOnMinutes(_durationInMinutes)
+                        ,startStateAction: ()=> currTarget.AddTrait(new BerserkBuff(lvl)), endStateAction: () => currTarget.RemoveTrait("Berserk Buff"));
                     if (UIManager.Instance.characterInfoUI.isShowing) {
                         UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
                     }
@@ -83,6 +87,18 @@ public class Enrage : PlayerJobAction {
         }
         return false;
     }
+    protected override void OnLevelUp() {
+        base.OnLevelUp();
+        if (lvl == 1) {
+            _durationInMinutes = 30;
+        } else if (lvl == 2) {
+            _durationInMinutes = 60;
+        } else if (lvl == 3) {
+            _durationInMinutes = 90;
+        }
+    }
+    #endregion
+
     private bool CanTarget(Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;

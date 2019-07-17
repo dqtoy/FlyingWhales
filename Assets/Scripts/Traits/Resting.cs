@@ -5,8 +5,9 @@ using UnityEngine;
 public class Resting : Trait {
 
     private Character _character;
-    private Lycanthropy _lycanthropyTrait;
+    public Lycanthropy lycanthropyTrait { get; private set; }
 
+    public bool hasTransformed { get; private set; }
     public Resting() {
         name = "Resting";
         description = "This character is resting.";
@@ -24,36 +25,41 @@ public class Resting : Trait {
     #region Overrides
     public override void OnAddTrait(IPointOfInterest sourceCharacter) {
         _character = sourceCharacter as Character;
-        _lycanthropyTrait = _character.GetNormalTrait("Lycanthropy") as Lycanthropy;
-        if(_lycanthropyTrait != null) {
-            Messenger.AddListener(Signals.HOUR_STARTED, CheckForLycanthropy);
-        }
+        lycanthropyTrait = _character.GetNormalTrait("Lycanthropy") as Lycanthropy;
+        //if(lycanthropyTrait != null) {
+        //    Messenger.AddListener(Signals.HOUR_STARTED, CheckForLycanthropy);
+        //}
         Messenger.AddListener(Signals.TICK_STARTED, RecoverHP);
         base.OnAddTrait(sourceCharacter);
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
-        if (_lycanthropyTrait != null) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForLycanthropy);
-        }
+        //if (lycanthropyTrait != null) {
+        //    Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForLycanthropy);
+        //}
         Messenger.RemoveListener(Signals.TICK_STARTED, RecoverHP);
         _character = null;
         base.OnRemoveTrait(sourceCharacter);
     }
     #endregion
 
-    private void CheckForLycanthropy() {
+    public void CheckForLycanthropy(bool forceTransform = false) {
+        if(lycanthropyTrait == null) {
+            return;
+        }
         int chance = UnityEngine.Random.Range(0, 100);
         if(_character.race == RACE.WOLF) {
             //Turn back to normal form
-            if (chance < 30) {
-                _lycanthropyTrait.PlanRevertToNormal();
+            if (forceTransform || chance < 40) {
+                lycanthropyTrait.PlanRevertToNormal();
                 _character.currentAction.currentState.EndPerTickEffect();
+                hasTransformed = true;
             }
         } else {
             //Turn to wolf
-            if (chance < 30) {
-                _lycanthropyTrait.PlanTransformToWolf();
+            if (forceTransform || chance < 40) {
+                lycanthropyTrait.PlanTransformToWolf();
                 _character.currentAction.currentState.EndPerTickEffect();
+                hasTransformed = true;
             }
         }
     }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class Nap : GoapAction {
     protected override string failActionState { get { return "Nap Fail"; } }
 
+    private Resting _restingTrait;
     public Nap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.NAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Sleep_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
@@ -89,13 +90,27 @@ public class Nap : GoapAction {
     #region State Effects
     private void PreNapSuccess() {
         //currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-        Resting restingTrait = new Resting();
-        actor.AddTrait(restingTrait);
+        _restingTrait = new Resting();
+        actor.AddTrait(_restingTrait);
     }
     private void PerTickNapSuccess() {
         actor.AdjustTiredness(4);
-        if (currentState.currentDuration == currentState.duration) {
-            //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
+
+        if(_restingTrait.lycanthropyTrait == null) {
+            if (currentState.currentDuration == currentState.duration) {
+                //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
+                bool isTargettedByDrinkBlood = false;
+                for (int i = 0; i < actor.targettedByAction.Count; i++) {
+                    if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone) {
+                        isTargettedByDrinkBlood = true;
+                        break;
+                    }
+                }
+                if (isTargettedByDrinkBlood) {
+                    currentState.OverrideDuration(currentState.duration + 1);
+                }
+            }
+        } else {
             bool isTargettedByDrinkBlood = false;
             for (int i = 0; i < actor.targettedByAction.Count; i++) {
                 if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone) {
@@ -103,10 +118,22 @@ public class Nap : GoapAction {
                     break;
                 }
             }
-            if (isTargettedByDrinkBlood) {
-                currentState.OverrideDuration(currentState.duration + 1);
+            if (currentState.currentDuration == currentState.duration) {
+                //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
+                if (isTargettedByDrinkBlood) {
+                    currentState.OverrideDuration(currentState.duration + 1);
+                } else {
+                    if (!_restingTrait.hasTransformed) {
+                        _restingTrait.CheckForLycanthropy(true);
+                    }
+                }
+            } else {
+                if (!isTargettedByDrinkBlood) {
+                    _restingTrait.CheckForLycanthropy();
+                }
             }
         }
+        
     }
     private void AfterNapSuccess() {
         RemoveTraitFrom(actor, "Resting");

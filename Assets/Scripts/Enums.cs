@@ -1335,7 +1335,7 @@ public enum COMBAT_ABILITY {
 
 public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUNGLE, TUNDRA, SNOW, DESERT, }
 public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, Thief, }
-public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, }
+public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, }
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public class SubcategoryOf : System.Attribute {

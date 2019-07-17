@@ -13,6 +13,7 @@ public class AlterEgoData {
     public CharacterRole role { get; private set; }
     public CharacterClass characterClass { get; private set; }
     public Dwelling homeSturcture { get; private set; }
+    public int level { get; private set; }
 
     //Awareness
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness { get; private set; }
@@ -34,6 +35,7 @@ public class AlterEgoData {
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
         relationships = new Dictionary<AlterEgoData, CharacterRelationshipData>();
         traits = new List<Trait>();
+        level = 1;
     }
 
     public void SetFaction(Faction faction) {
@@ -65,6 +67,12 @@ public class AlterEgoData {
             return; //ignore any changes while the owner is switching alter egos
         }
         this.homeSturcture = homeStructure;
+    }
+    public void SetLevel(int level) {
+        if (owner.isSwitchingAlterEgo) {
+            return; //ignore any changes while the owner is switching alter egos
+        }
+        this.level = level;
     }
 
     #region Awareness
@@ -231,6 +239,7 @@ public class AlterEgoData {
         summary += "\nRole: " + role?.name ?? "Null";
         summary += "\nCharacter Class: " + characterClass?.className ?? "Null";
         summary += "\nHome Structure: " + homeSturcture?.ToString() ?? "Null";
+        summary += "\nLevel: " + level.ToString();
         return summary;
     }
     #endregion

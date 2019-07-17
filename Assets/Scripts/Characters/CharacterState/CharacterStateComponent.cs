@@ -48,7 +48,8 @@ public class CharacterStateComponent {
 
     //This switches from one state to another
     //If the character is not in a state right now, this simply starts a new state instead of switching
-    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Area targetArea = null, int durationOverride = -1, object otherData = null) {
+    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Area targetArea = null, int durationOverride = -1, object otherData = null
+        , System.Action startStateAction = null, System.Action endStateAction = null) {
         //Cannot switch state is has negative disabler
         if(character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return null;
@@ -103,6 +104,8 @@ public class CharacterStateComponent {
         if (durationOverride != -1) {
             newState.ChangeDuration(durationOverride);
         }
+        newState.SetStartStateAction(startStateAction);
+        newState.SetEndStateAction(endStateAction);
         newState.SetOtherDataOnStartState(otherData);
         newState.SetTargetCharacter(targetCharacter);
         newState.EnterState(targetArea);

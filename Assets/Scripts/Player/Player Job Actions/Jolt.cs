@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class Jolt : PlayerJobAction {
 
+    private int _durationInMinutes;
     public Jolt() : base(INTERVENTION_ABILITY.JOLT) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
+    #region Overrides
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
         List<Character> targets = new List<Character>();
         if (targetPOI is Character) {
@@ -24,6 +27,7 @@ public class Jolt : PlayerJobAction {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
                     Trait newTrait = new Jolted();
+                    newTrait.OverrideDuration(GameManager.Instance.GetTicksBasedOnMinutes(_durationInMinutes));
                     currTarget.AddTrait(newTrait);
                     if (UIManager.Instance.characterInfoUI.isShowing) {
                         UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
@@ -80,6 +84,18 @@ public class Jolt : PlayerJobAction {
         }
         return false;
     }
+    protected override void OnLevelUp() {
+        base.OnLevelUp();
+        if (lvl == 1) {
+            _durationInMinutes = 30;
+        } else if (lvl == 2) {
+            _durationInMinutes = 60;
+        } else if (lvl == 3) {
+            _durationInMinutes = 90;
+        }
+    }
+    #endregion
+
     private bool CanTarget(Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;

@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class Zap : PlayerJobAction {
 
+    private int _zapDuration;
     public Zap() : base(INTERVENTION_ABILITY.ZAP) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
+    #region Overrides
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
         List<Character> targets = new List<Character>();
         if (targetPOI is Character) {
@@ -24,6 +27,7 @@ public class Zap : PlayerJobAction {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
                     Trait newTrait = new Zapped();
+                    newTrait.OverrideDuration(_zapDuration);
                     currTarget.AddTrait(newTrait);
                     if (UIManager.Instance.characterInfoUI.isShowing) {
                         UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
@@ -85,6 +89,18 @@ public class Zap : PlayerJobAction {
         }
         return false;
     }
+    protected override void OnLevelUp() {
+        base.OnLevelUp();
+        if(lvl == 1) {
+            _zapDuration = 3;
+        }else if (lvl == 2) {
+            _zapDuration = 6;
+        }else if (lvl == 3) {
+            _zapDuration = 9;
+        }
+    }
+    #endregion
+
     private bool CanTarget(Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;

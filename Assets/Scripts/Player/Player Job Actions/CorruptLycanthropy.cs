@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class CorruptLycanthropy : PlayerJobAction {
 
+    private int _level;
+
     public CorruptLycanthropy() : base(INTERVENTION_ABILITY.INFLICT_LYCANTHROPY) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
+    #region Overrides
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
         List<Character> targets = new List<Character>();
         if (targetPOI is Character) {
@@ -23,8 +27,10 @@ public class CorruptLycanthropy : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
-                    Trait newTrait = new Lycanthropy();
+                    Trait newTrait = new Lycanthropy(_level);
                     currTarget.AddTrait(newTrait);
+                    //AlterEgoData alterEgoData = currTarget.GetAlterEgoData("Lycanthrope");
+                    //alterEgoData.SetLevel(_level);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(newTrait, newTrait.name, LOG_IDENTIFIER.STRING_1);
@@ -81,6 +87,18 @@ public class CorruptLycanthropy : PlayerJobAction {
         }
         return false;
     }
+    protected override void OnLevelUp() {
+        base.OnLevelUp();
+        if (lvl == 1) {
+            _level = 5;
+        } else if (lvl == 2) {
+            _level = 10;
+        } else if (lvl == 3) {
+            _level = 15;
+        }
+    }
+    #endregion
+
     private bool CanTarget(Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;

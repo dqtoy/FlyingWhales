@@ -22,6 +22,9 @@ public class CharacterState {
     public bool isUnending { get; protected set; } //is this state unending?
     //public CharacterState parentMajorState { get; protected set; }
 
+    public System.Action startStateAction { get; protected set; }
+    public System.Action endStateAction { get; protected set; }
+
     public CharacterState(CharacterStateComponent characterComp) {
         this.stateComponent = characterComp;
         actionIconString = GoapActionStateDB.No_Icon;
@@ -44,6 +47,9 @@ public class CharacterState {
         stateComponent.character.OnCharacterEnteredState(this);
         Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.character, this);
         InVisionPOIsOnStartState();
+        if(startStateAction != null) {
+            startStateAction();
+        }
     }
     /// <summary>
     /// End this state. This is called after <see cref="OnExitThisState"/>.
@@ -64,6 +70,9 @@ public class CharacterState {
             job.jobQueueParent.RemoveJobInQueue(job);
             job.SetAssignedCharacter(null);
             job.SetAssignedState(null);
+        }
+        if (endStateAction != null) {
+            endStateAction();
         }
         Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.character, this);
     }
@@ -234,7 +243,13 @@ public class CharacterState {
             thoughtBubbleLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
-   
+    public void SetStartStateAction(System.Action action) {
+        startStateAction = action;
+    }
+    public void SetEndStateAction(System.Action action) {
+        endStateAction = action;
+    }
+
     #region Listeners
     private void AddDefaultListeners() {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);

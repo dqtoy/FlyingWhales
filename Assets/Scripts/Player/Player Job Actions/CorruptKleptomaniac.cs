@@ -7,8 +7,10 @@ public class CorruptKleptomaniac : PlayerJobAction {
     public CorruptKleptomaniac() : base(INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA) {
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        abilityTags.Add(ABILITY_TAG.CRIME);
     }
 
+    #region Overrides
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
         List<Character> targets = new List<Character>();
         if (targetPOI is Character) {
@@ -23,7 +25,7 @@ public class CorruptKleptomaniac : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
-                    Trait newTrait = new Kleptomaniac();
+                    Trait newTrait = new Kleptomaniac(lvl);
                     currTarget.AddTrait(newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -80,6 +82,8 @@ public class CorruptKleptomaniac : PlayerJobAction {
         }
         return false;
     }
+    #endregion
+
     private bool CanTarget(Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;

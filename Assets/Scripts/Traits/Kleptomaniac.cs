@@ -6,7 +6,8 @@ public class Kleptomaniac : Trait {
     public List<Character> noItemCharacters { get; private set; }
     private Character owner;
 
-    public Kleptomaniac() {
+    private int _happinessDecreaseRate;
+    public Kleptomaniac(int level) {
         name = "Kleptomaniac";
         description = "This character has irresistible urge to steal.";
         thoughtText = "[Character] has irresistible urge to steal.";
@@ -18,27 +19,30 @@ public class Kleptomaniac : Trait {
         daysDuration = 0;
         effects = new List<TraitEffect>();
         noItemCharacters = new List<Character>();
+        if(level == 1) {
+            _happinessDecreaseRate = 10;
+        } else if (level == 2) {
+            _happinessDecreaseRate = 15;
+        } else if (level == 3) {
+            _happinessDecreaseRate = 20;
+        }
     }
 
     #region Overrides
     public override void OnAddTrait(IPointOfInterest sourceCharacter) {
         //(sourceCharacter as Character).RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, "Kleptomania");
         owner = sourceCharacter as Character;
+        owner.AdjustHappinessDecreaseRate(_happinessDecreaseRate);
         base.OnAddTrait(sourceCharacter);
-        if (sourceCharacter is Character) {
-            Character character = sourceCharacter as Character;
-            character.AddInteractionType(INTERACTION_TYPE.STEAL_CHARACTER);
-            character.AddInteractionType(INTERACTION_TYPE.STEAL);
-        }
+        owner.AddInteractionType(INTERACTION_TYPE.STEAL_CHARACTER);
+        owner.AddInteractionType(INTERACTION_TYPE.STEAL);
         Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
         base.OnRemoveTrait(sourceCharacter);
-        if (sourceCharacter is Character) {
-            Character character = sourceCharacter as Character;
-            character.RemoveInteractionType(INTERACTION_TYPE.STEAL_CHARACTER);
-            character.RemoveInteractionType(INTERACTION_TYPE.STEAL);
-        }
+        owner.RemoveInteractionType(INTERACTION_TYPE.STEAL_CHARACTER);
+        owner.RemoveInteractionType(INTERACTION_TYPE.STEAL);
+        owner.AdjustHappinessDecreaseRate(-_happinessDecreaseRate);
         Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
     }
     public override void OnDeath(Character character) {
