@@ -42,7 +42,7 @@ public class BerserkedState : CharacterState {
             //return true;
         }else if (targetPOI is TileObject) {
             TileObject target = targetPOI as TileObject;
-            if(target.tileObjectType != TILE_OBJECT_TYPE.TREE) {
+            if(target.tileObjectType != TILE_OBJECT_TYPE.TREE && target.poiGoapActions.Contains(INTERACTION_TYPE.TILE_OBJECT_DESTROY)) {
                 //TODO: has a 20% chance to Destroy items or tile objects that enters range.
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 20) {

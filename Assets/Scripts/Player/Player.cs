@@ -9,7 +9,8 @@ public class Player : ILeader {
     private const int MAX_INTEL = 3;
     public const int MAX_MINIONS = 5;
     public const int MAX_THREAT = 100;
-    private const int MAX_SUMMONS = 5;
+    private const int MAX_SUMMONS = 3;
+    private const int MAX_ARTIFACT = 3;
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
@@ -21,7 +22,7 @@ public class Player : ILeader {
     public List<Intel> allIntel { get; private set; }
     public Minion[] minions { get; private set; }
     public Dictionary<SUMMON_TYPE, List<Summon>> availableSummons { get; private set; } //Summons that the player can still place. Does NOT include summons that have been placed. Individual summons are responsible for placeing themselves back after the player is done with a map.
-
+    public Artifact[] availableArtifacts { get; private set; }
     //Unique ability of player
     public ShareIntel shareIntelAbility { get; private set; }
 
@@ -32,6 +33,9 @@ public class Player : ILeader {
     public Minion currentMinionLeader { get; private set; }
     public Area currentAreaBeingInvaded { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
+
+    private int maxSummonSlots; //how many summons can the player have
+    private int maxArtifactSlots; //how many artifacts can the player have
 
     #region getters/setters
     public int id {
@@ -65,7 +69,10 @@ public class Player : ILeader {
         allIntel = new List<Intel>();
         minions = new Minion[MAX_MINIONS];
         availableSummons = new Dictionary<SUMMON_TYPE, List<Summon>>();
+        availableArtifacts = new Artifact[MAX_ARTIFACT];
         shareIntelAbility = new ShareIntel();
+        maxSummonSlots = 1;
+        maxArtifactSlots = 1;
         //ConstructRoleSlots();
         AddListeners();
     }
@@ -681,7 +688,7 @@ public class Player : ILeader {
 
     #region Summons
     public void GainSummon(SUMMON_TYPE type, int level = 5) {
-        if (GetTotalSummonsCount() < MAX_SUMMONS) {
+        if (GetTotalSummonsCount() < maxSummonSlots) {
             Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, playerFaction, playerArea);
             newSummon.SetLevel(level);
             AddSummon(newSummon);
@@ -735,6 +742,70 @@ public class Player : ILeader {
     public Summon GetAvailableSummonOfType(SUMMON_TYPE type) {
         List<Summon> choices = availableSummons[type];
         return choices[Random.Range(0, choices.Count)];
+    }
+    public void AdjustSummonSlot(int adjustment) {
+        maxSummonSlots += adjustment;
+        maxSummonSlots = Mathf.Clamp(maxSummonSlots, 0, MAX_SUMMONS);
+        //TODO: validate if adjusted max summons can accomodate current summons
+    }
+    #endregion
+
+    #region Artifacts
+    public void GainArtifact(ARTIFACT_TYPE type) {
+        if (GetTotalArtifactCount() < maxArtifactSlots) {
+            Artifact newArtifact = PlayerManager.Instance.CreateNewArtifact(type);
+            AddArtifact(newArtifact);
+        } else {
+            Debug.LogWarning("Max artifacts has been reached!");
+        }
+    }
+    private void AddArtifact(Artifact newArtifact) {
+        for (int i = 0; i < availableArtifacts.Length; i++) {
+            if (availableArtifacts[i] == null) {
+                availableArtifacts[i] = newArtifact;
+                Messenger.Broadcast<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
+                break;
+            }
+        }
+    }
+    public void RemoveArtifact(Artifact removedArtifact) {
+        for (int i = 0; i < availableArtifacts.Length; i++) {
+            if (availableArtifacts[i] == removedArtifact) {
+                availableArtifacts[i] = null;
+                Messenger.Broadcast<Artifact>(Signals.PLAYER_REMOVED_ARTIFACT, removedArtifact);
+                break;
+            }
+        }
+    }
+    public int GetTotalArtifactCount() {
+        int count = 0;
+        for (int i = 0; i < availableArtifacts.Length; i++) {
+            if (availableArtifacts[i] != null) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public int GetArtifactsOfTypeCount(ARTIFACT_TYPE type) {
+        int count = 0;
+        for (int i = 0; i < availableArtifacts.Length; i++) {
+            Artifact currArtifact = availableArtifacts[i];
+            if (currArtifact != null && currArtifact.type == type) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public bool TryGetAvailableArtifactOfType(ARTIFACT_TYPE type, out Artifact artifact) {
+        for (int i = 0; i < availableArtifacts.Length; i++) {
+            Artifact currArtifact = availableArtifacts[i];
+            if (currArtifact != null && currArtifact.type == type) {
+                artifact = currArtifact;
+                return true;
+            }
+        }
+        artifact = null;
+        return false;
     }
     #endregion
 

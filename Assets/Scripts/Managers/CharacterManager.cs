@@ -34,6 +34,9 @@ public class CharacterManager : MonoBehaviour {
     [Header("Summon Settings")]
     [SerializeField] private SummonSettingDictionary summonSettings;
 
+    [Header("Artifact Settings")]
+    [SerializeField] private ArtifactSettingDictionary artifactSettings;
+
     //alter egos
     public const string Original_Alter_Ego = "Original";
 
@@ -314,43 +317,18 @@ public class CharacterManager : MonoBehaviour {
     public void RemoveCharacterAvatar(CharacterAvatar characterAvatar) {
         _allCharacterAvatars.Remove(characterAvatar);
     }
-    public void CreateNeutralCharacters() {
-        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-            Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (currArea.owner == null && currArea.areaType != AREA_TYPE.DEMONIC_INTRUSION) { //if unowned (neutral)
-                currArea.GenerateNeutralCharacters();
-            }
-        }
-    }
     public void GenerateInitialAwareness() {
         for (int i = 0; i < allCharacters.Count; i++) {
             Character character = allCharacters[i];
             character.AddInitialAwareness();
         }
     }
-    public void PlaceInitialCharacters() {
-        for (int i = 0; i < allCharacters.Count; i++) {
-            Character character = allCharacters[i];
-            if (!character.isFactionless) {
-                character.CreateMarker();
-                if (character.homeStructure != null) {
-                    //place the character at a random unoccupied tile in his/her home
-                    List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
-                    LocationGridTile chosenTile = choices[UnityEngine.Random.Range(0, choices.Count)];
-                    character.marker.PlaceMarkerAt(chosenTile);
-
-                    ////if character is fiona, force her to stay at her home, forever (For Trailer Build Only)
-                    //if (character.name == "Fiona") {
-                    //    character.trapStructure.SetStructureAndDuration(character.currentStructure, 0);
-                    //}
-                }
-            }
-        }
-    }
     public void PlaceInitialCharacters(Area area) {
-        for (int i = 0; i < area.areaResidents.Count; i++) {
-            Character character = area.areaResidents[i];
-            character.CreateMarker();
+        for (int i = 0; i < area.charactersAtLocation.Count; i++) {
+            Character character = area.charactersAtLocation[i];
+            if (character.marker == null) {
+                character.CreateMarker();
+            }
             if (character.homeStructure != null && character.homeStructure.location == area) {
                 //place the character at a random unoccupied tile in his/her home
                 List<LocationGridTile> choices = character.homeStructure.unoccupiedTiles.Where(x => x.charactersHere.Count == 0).ToList();
@@ -412,16 +390,11 @@ public class CharacterManager : MonoBehaviour {
         var typeName = summonType.ToString();
         return System.Activator.CreateInstance(System.Type.GetType(typeName));
     }
-    //private Summon CreateSummonClassFromType(SUMMON_TYPE type) {
-    //    switch (type) {
-    //        case SUMMON_TYPE.Wolf:
-    //            return new Wolf();
-    //        default:
-    //            return new Summon(SUMMON_TYPE.None, CharacterRole.NONE, RACE.NONE, GENDER.MALE);
-    //    }
-    //}
     public SummonSettings GetSummonSettings(SUMMON_TYPE type) {
         return summonSettings[type];
+    }
+    public ArtifactSettings GetArtifactSettings(ARTIFACT_TYPE type) {
+        return artifactSettings[type];
     }
     #endregion
 
@@ -1281,3 +1254,7 @@ public struct SummonSettings {
     public Sprite summonPortrait;
 }
 
+[System.Serializable]
+public struct ArtifactSettings {
+    public Sprite artifactPortrait;
+}

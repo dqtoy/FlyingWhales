@@ -241,6 +241,9 @@ public class Faction {
     }
     public void RemoveCharacter(Character character) {
         if (_characters.Remove(character)) {
+            if (leader == character) {
+                SetNewLeader(); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
+            }
             character.SetFaction(null);
             Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_FACTION, character, this);
         }

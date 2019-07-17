@@ -119,6 +119,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.BREAK_UP,
                 INTERACTION_TYPE.SHARE_INFORMATION,
                 INTERACTION_TYPE.WATCH,
+                INTERACTION_TYPE.INSPECT,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -200,6 +201,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.BREAK_UP,
                 INTERACTION_TYPE.SHARE_INFORMATION,
                 INTERACTION_TYPE.WATCH,
+                INTERACTION_TYPE.INSPECT,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -282,6 +284,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.BREAK_UP,
                 INTERACTION_TYPE.SHARE_INFORMATION,
                 INTERACTION_TYPE.WATCH,
+                INTERACTION_TYPE.INSPECT,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -364,6 +367,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.BREAK_UP,
                 INTERACTION_TYPE.SHARE_INFORMATION,
                 INTERACTION_TYPE.WATCH,
+                INTERACTION_TYPE.INSPECT,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -437,6 +441,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.BREAK_UP,
                 INTERACTION_TYPE.SHARE_INFORMATION,
                 INTERACTION_TYPE.WATCH,
+                INTERACTION_TYPE.INSPECT,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
