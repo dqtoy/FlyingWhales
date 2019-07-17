@@ -1047,6 +1047,7 @@ public enum INTERACTION_TYPE {
     BREAK_UP,
     SHARE_INFORMATION,
     WATCH,
+    INSPECT,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
@@ -1246,6 +1247,11 @@ public enum TILE_OBJECT_TYPE {
     TOMBSTONE,
     NONE,
     MUSHROOM,
+    NECRONOMICON,
+    CHAOS_ORB,
+    HERMES_STATUE,
+    ANKH_OF_ANUBIS,
+    MIASMA_EMITTER,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1335,7 +1341,9 @@ public enum COMBAT_ABILITY {
 
 public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUNGLE, TUNDRA, SNOW, DESERT, }
 public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, Thief, }
+public enum ARTIFACT_TYPE { None, Necronomicon, Chaos_Orb, Hermes_Statue, Ankh_Of_Anubis, Miasma_Emitter, }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, }
+
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
 public class SubcategoryOf : System.Attribute {

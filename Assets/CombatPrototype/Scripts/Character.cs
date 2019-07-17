@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -149,6 +150,8 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     public Dictionary<string, AlterEgoData> alterEgos { get; private set; }
 
     public string originalClassName { get; private set; } //the class that this character started with
+
+    private List<Action> pendingActionsAfterMultiThread; //List of actions to perform after a character is finished with all his/her multithread processing (This is to prevent errors while the character has a thread running)
 
     //For Testing
     public List<string> locationHistory { get; private set; }
@@ -509,6 +512,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         allJobsTargettingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
+        pendingActionsAfterMultiThread = new List<Action>();
         //memories = new Memories();
         trapStructure = new TrapStructure();
         SetPOIState(POI_STATE.ACTIVE);
@@ -636,8 +640,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         marker.SetHoverAction(OnHoverMarker, OnHoverExit);
     }
     public void DestroyMarker() {
-        ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
         gridTileLocation.RemoveCharacterHere(this);
+        ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
+        marker = null;
     }
     public void DisableMarker() {
         marker.gameObject.SetActive(false);
@@ -668,7 +673,18 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     public void SetIsDead(bool isDead) {
         _isDead = isDead;
     }
-    public void ReturnToLife() {
+    public void RaiseFromDeath(int level = 1, System.Action<Character> onReturnToLifeAction = null) {
+        GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction));
+    }
+    private IEnumerator Raise(Character target, int level = 1, System.Action<Character> onReturnToLifeAction = null) {
+        target.marker.PlayAnimation("Raise Dead");
+        yield return new WaitForSeconds(0.7f);
+        target.ReturnToLife();
+        target.SetLevel(level);
+        yield return null;
+        onReturnToLifeAction?.Invoke(this);
+    }
+    private void ReturnToLife() {
         if (_isDead) {
             SetIsDead(false);
             SubscribeToSignals();
@@ -690,10 +706,10 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             }
             RemoveTrait("Dead");
             ClearAllAwareness();
-            Area gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
+            //Area gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
             MigrateHomeStructureTo(null);
-            MigrateHomeTo(gloomhollow);
-            AddInitialAwareness(gloomhollow);
+            //MigrateHomeTo(null);
+            //AddInitialAwareness(gloomhollow);
         }
     }
     public void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null) {
@@ -3539,6 +3555,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (chance < 35 || role.roleType == CHARACTER_ROLE.CIVILIAN) { //ensured that all civilans are craftsmen
             AddTrait(new Craftsman());
         }
+        if (UnityEngine.Random.Range(0, 100) < 100) {
+            AddTrait("Curious");
+        }
         //AddTrait(new Kleptomaniac());
     }
     public void CreateInitialTraitsByRace() {
@@ -3890,6 +3909,8 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             AdjustMoodValue(-20, trait, trait.gainedFromDoing);
         } else if (trait.name == "Heartbroken") {
             AdjustMoodValue(-35, trait, trait.gainedFromDoing);
+        } else if (trait.name == "Encumbered") {
+            marker.AdjustSpeedModifier(-0.5f);
         }
         //else if (trait.name == "Hungry") {
         //    CreateFeedJob();
@@ -3979,7 +4000,10 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             AdjustMoodValue(15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Lethargic") {
             AdjustMoodValue(20, trait, trait.gainedFromDoing);
+        } else if (trait.name == "Encumbered") {
+            marker.AdjustSpeedModifier(0.5f);
         }
+
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
             if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
@@ -4463,7 +4487,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     private bool PlanJobQueueFirst() {
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null && !isStarving && !isExhausted && !isForlorn) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
-                if (isAtHomeArea) {
+                if (isAtHomeArea && faction == homeArea.owner) {
                     return homeArea.jobQueue.ProcessFirstJobInQueue(this);
                 } else {
                     return false;
@@ -5712,6 +5736,10 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         //return iawareness;
     }
     public void RemoveAwareness(IPointOfInterest pointOfInterest) {
+        if (_numOfWaitingForGoapThread > 0) {
+            pendingActionsAfterMultiThread.Add(() => RemoveAwareness(pointOfInterest));
+            return;
+        }
         currentAlterEgo.RemoveAwareness(pointOfInterest);
         //if (awareness.ContainsKey(pointOfInterest.poiType)) {
         //    List<IAwareness> awarenesses = awareness[pointOfInterest.poiType];
@@ -6058,6 +6086,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
         if (goapThread.recalculationPlan == null) {
             _numOfWaitingForGoapThread--;
+        }
+        if (_numOfWaitingForGoapThread == 0) {
+            for (int i = 0; i < pendingActionsAfterMultiThread.Count; i++) {
+                pendingActionsAfterMultiThread[i].Invoke();
+            }
         }
         PrintLogIfActive(goapThread.log);
         if (goapThread.createdPlan != null) {

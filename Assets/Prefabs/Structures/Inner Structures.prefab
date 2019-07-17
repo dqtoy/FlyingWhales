@@ -839,9 +839,8 @@ MonoBehaviour:
   width: 90
   height: 16
   grid: {fileID: 2569400266708677946}
-  canvas: {fileID: 223372050258974636}
   worldUICanvas: {fileID: 223640290245089918}
-  tilemapsParent: {fileID: 4416850454280092}
+  canvas: {fileID: 223372050258974636}
   groundTilemap: {fileID: 8195094282824495090}
   wallTilemap: {fileID: 8195094279940266850}
   detailsTilemap: {fileID: 8195094281029965638}
@@ -876,7 +875,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 75978c68bd2afdf498ce5b98995c6524, type: 2}
     - {fileID: 11400000, guid: 75978c68bd2afdf498ce5b98995c6524, type: 2}
   tileObjectTiles:
-    m_keys: 0000000001000000020000000300000004000000050000000b000000070000000800000009000000060000000c0000000e000000
+    m_keys: 0000000001000000020000000300000004000000050000000b000000070000000800000009000000060000000c0000000e0000000f00000010000000110000001200000013000000
     m_values:
     - biomeAssets:
         m_keys: 06000000
@@ -958,27 +957,40 @@ MonoBehaviour:
         - activeTile: {fileID: 11400000, guid: a4383e48cdad05843ae8ce38ef3d6827, type: 2}
           inactiveTile: {fileID: 11400000, guid: c1cec5292a540bc4bb2c4cb3fba26d68,
             type: 2}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea, type: 2}
+          inactiveTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea,
+            type: 2}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea, type: 2}
+          inactiveTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea,
+            type: 2}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea, type: 2}
+          inactiveTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea,
+            type: 2}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea, type: 2}
+          inactiveTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea,
+            type: 2}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea, type: 2}
+          inactiveTile: {fileID: 11400000, guid: 2ca7b845206b24d4aa519c328da9a7ea,
+            type: 2}
   bed2SleepingVariant: {fileID: 11400000, guid: 07fbfb0f04b704441990560e16face2b,
     type: 2}
   bed1SleepingVariant: {fileID: 11400000, guid: 33042c7f3715cf642b7abbb0d2248827,
     type: 2}
-  table00: {fileID: 11400000, guid: 4c1f1c2a1d59c86479c16b6d87dcf2e7, type: 2}
-  table01: {fileID: 11400000, guid: 3088493c2df3bf3488eb33cb7ed60f38, type: 2}
-  table02: {fileID: 11400000, guid: d27ecac99bc460042b3b0ca5165ea8fc, type: 2}
-  table03: {fileID: 11400000, guid: 08d3a4ef9d3d6224e993ac1ad2c724ab, type: 2}
-  table04: {fileID: 11400000, guid: 1ead34d97b701bc4f9e2ce66fda9ead2, type: 2}
-  table10: {fileID: 11400000, guid: da9968c36c781b140b57cd868d8468b3, type: 2}
-  table11: {fileID: 11400000, guid: 65e699700e53b9b4d882dee2364f89ff, type: 2}
-  table12: {fileID: 11400000, guid: 8667e864af3db0c47be6928063500de3, type: 2}
-  table13: {fileID: 11400000, guid: f5113de1b83ac344fa4d2e40b0dc67fd, type: 2}
-  table14: {fileID: 11400000, guid: ded879c8e314e844fbc43b59173192ef, type: 2}
-  table20: {fileID: 11400000, guid: 27ed232101b81ae41a6afe2dc7035f26, type: 2}
-  table21: {fileID: 11400000, guid: c2b2b7fde1af8ce46ab3680f28aa0535, type: 2}
-  table22: {fileID: 11400000, guid: 6f2f6fdfce1e5d44693bad3423880609, type: 2}
-  bartopLeft0: {fileID: 11400000, guid: 1fb4485b293a8b34c81afc3b4cc73de3, type: 2}
-  bartopLeft1: {fileID: 11400000, guid: c79079d48050ec8438ca2a4ddeb25317, type: 2}
-  bartopRight0: {fileID: 11400000, guid: 531d35881196a184fb1e11115c5609eb, type: 2}
-  bartopRight1: {fileID: 11400000, guid: 85f6d9e952d24484096b308ebc32dcc0, type: 2}
   leftWall: {fileID: 11400000, guid: c05951cff2b0fc7449f72ccebda1c382, type: 2}
   rightWall: {fileID: 11400000, guid: 9c1ad6fdb19ade5428fd7d86124e6aa4, type: 2}
   topWall: {fileID: 11400000, guid: 801dc14b009276d4cb7b1cc2212bceee, type: 2}
@@ -1011,21 +1023,16 @@ MonoBehaviour:
   snowGarbTile: {fileID: 11400000, guid: 4d9222c9a540e774ea6034291606bd57, type: 2}
   crateBarrelTile: {fileID: 11400000, guid: 6b086f52f77704c46a54b33f4dffaedd, type: 2}
   objectsParent: {fileID: 4747174570618556}
-  eventPopupPrefab: {fileID: 1904789271207382, guid: d6c210b076dd0154bbec1d7cbed06448,
-    type: 2}
-  eventPopupParent: {fileID: 224053078617451378}
   cameraBounds: {x: 0, y: 0, z: 0, w: 0}
   centerGOPrefab: {fileID: 1235531871457826, guid: 2b36a36d8ac855246b9993705d70c259,
     type: 2}
   pathLineRenderer: {fileID: 120984747812472938}
-  x: 0
-  y: 0
   radius: 0
   radiusLimit: 0
+  x: 0
+  y: 0
   offsetX: 0
   offsetY: 0
-  startPos: {x: 0, y: 0, z: 0}
-  endPos: {x: 0, y: 0, z: 0}
 --- !u!114 &114419090812351620
 MonoBehaviour:
   m_ObjectHideFlags: 1

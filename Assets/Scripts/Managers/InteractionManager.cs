@@ -267,6 +267,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.WATCH:
                 goapAction = new Watch(actor, target);
                 break;
+            case INTERACTION_TYPE.INSPECT:
+                goapAction = new Inspect(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

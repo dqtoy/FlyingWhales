@@ -882,93 +882,6 @@ public class Area {
         }
         return structures[structureType].Where(x => !x.IsOccupied()).Count();
     }
-    public void GenerateNeutralCharacters() {
-        //if (defaultRace.race == RACE.NONE) {
-        //    return; //no default race was generated
-        //}
-        List<InitialRaceSetup> raceSetups = new List<InitialRaceSetup>();
-        if (this.name == "Visteri" || this.name == "Odious") {
-            raceSetups.AddRange(initialSpawnSetup);
-        } else {
-            raceSetups.Add(initialSpawnSetup[UnityEngine.Random.Range(0, initialSpawnSetup.Count)]);
-        }
-        //InitialRaceSetup setup = GetRaceSetup(defaultRace);
-        for (int i = 0; i < raceSetups.Count; i++) {
-            InitialRaceSetup setup = raceSetups[i];
-            //int charactersToCreate = 10;
-            int charactersToCreate = UnityEngine.Random.Range(setup.spawnRange.lowerBound, setup.spawnRange.upperBound + 1);
-            bool isRaceBeast = Utilities.IsRaceBeast(setup.race.race);
-            CharacterRole chosenRole = CharacterRole.BEAST;
-            for (int j = 0; j < charactersToCreate; j++) {
-                chosenRole = CharacterRole.BEAST;
-                if (!isRaceBeast) {
-                    if (setup.race.race == RACE.SKELETON) {
-                        chosenRole = CharacterRole.BANDIT;
-                    } else {
-                        if (UnityEngine.Random.Range(0, 2) == 0) {
-                            chosenRole = CharacterRole.BANDIT;
-                        } else {
-                            chosenRole = CharacterRole.ADVENTURER;
-                        }
-                    }
-                }
-                Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(chosenRole, setup.race.race, Utilities.GetRandomGender(),
-                    FactionManager.Instance.neutralFaction, this);
-                createdCharacter.SetLevel(UnityEngine.Random.Range(setup.levelRange.lowerBound, setup.levelRange.upperBound + 1));
-                if (this.name == "Visteri") {
-                    List<LocationStructure> choices = new List<LocationStructure>();
-                    if (createdCharacter.race == RACE.DRAGON) {
-                        choices = GetStructuresAtLocation(true);
-                    } else if (createdCharacter.race == RACE.SPIDER) {
-                        choices = GetStructuresAtLocation(true);
-                        choices.AddRange(GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS));
-                    } else {
-                        choices = GetStructuresAtLocation(true);
-                    }
-                    choices = choices.Where(x => x.unoccupiedTiles.Count > 0).ToList();
-                    if (choices.Count > 0) {
-                        LocationStructure structure = choices[UnityEngine.Random.Range(0, choices.Count)];
-                        //if (createdCharacter.currentStructure != null) {
-                        //    createdCharacter.currentStructure.RemoveCharacterAtLocation(createdCharacter);
-                        //}
-                        //structure.AddCharacterAtLocation(createdCharacter);
-                        List<LocationGridTile> tileChoices = structure.unoccupiedTiles;
-                        LocationGridTile chosenTile = tileChoices[UnityEngine.Random.Range(0, tileChoices.Count)];
-                        createdCharacter.CreateMarker();
-                        createdCharacter.marker.PlaceMarkerAt(chosenTile);
-                    }
-                } else if (this.name == "Odious") {
-                    List<LocationStructure> choices = new List<LocationStructure>();
-                    if (createdCharacter.race == RACE.ELVES) {
-                        choices = GetStructuresOfType(STRUCTURE_TYPE.WILDERNESS);
-                    } else if (createdCharacter.race == RACE.WOLF) {
-                        choices = GetStructuresAtLocation(true);
-                    }
-                    choices = choices.Where(x => x.unoccupiedTiles.Count > 0).ToList();
-                    if (choices.Count > 0) {
-                        LocationStructure structure = choices[UnityEngine.Random.Range(0, choices.Count)];
-                        //createdCharacter.currentStructure.RemoveCharacterAtLocation(createdCharacter);
-                        //structure.AddCharacterAtLocation(createdCharacter);
-                        List<LocationGridTile> tileChoices = structure.unoccupiedTiles;
-                        LocationGridTile chosenTile = tileChoices[UnityEngine.Random.Range(0, tileChoices.Count)];
-                        createdCharacter.CreateMarker();
-                        createdCharacter.marker.PlaceMarkerAt(chosenTile);
-                    }
-                } else {
-                    List<LocationStructure> choices = GetStructuresAtLocation(true);
-                    choices = choices.Where(x => x.unoccupiedTiles.Count > 0).ToList();
-                    if (choices.Count > 0) {
-                        LocationStructure structure = choices[UnityEngine.Random.Range(0, choices.Count)];
-                        List<LocationGridTile> tileChoices = structure.unoccupiedTiles;
-                        LocationGridTile chosenTile = tileChoices[UnityEngine.Random.Range(0, tileChoices.Count)];
-                        createdCharacter.CreateMarker();
-                        createdCharacter.marker.PlaceMarkerAt(chosenTile);
-                    }
-                }
-            }
-        }
-
-    }
     public void SetInitialResidents(int initialResidents) {
         this.initialResidents = initialResidents;
     }
@@ -987,6 +900,22 @@ public class Area {
         }
         return null;
     }
+    public List<Character> GetAllDeadCharactersInArea() {
+        List<Character> characters = new List<Character>();
+        CharacterMarker[] markers = Utilities.GetComponentsInDirectChildren<CharacterMarker>(areaMap.objectsParent.gameObject);
+        for (int i = 0; i < markers.Length; i++) {
+            CharacterMarker currMarker = markers[i];
+            if (currMarker.character != null && currMarker.character.isDead) {
+                characters.Add(currMarker.character);
+            }
+        }
+
+        List<TileObject> tombstones = GetTileObjectsOfType(TILE_OBJECT_TYPE.TOMBSTONE);
+        for (int i = 0; i < tombstones.Count; i++) {
+            characters.Add(tombstones[i].users[0]);
+        }
+        return characters;
+    } 
     #endregion
 
     #region Logs
@@ -1467,6 +1396,15 @@ public class Area {
             }
         }
         return pois;
+    }
+    public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
+        List<TileObject> objs = new List<TileObject>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                objs.AddRange(keyValuePair.Value[i].GetTileObjectsOfType(type));
+            }
+        }
+        return objs;
     }
     #endregion
 

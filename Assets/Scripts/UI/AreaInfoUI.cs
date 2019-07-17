@@ -107,7 +107,7 @@ public class AreaInfoUI : UIMenu {
             PlayerUI.Instance.attackSlot.ShowAttackButton();
         }
 
-        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+        if (InteriorMapManager.Instance.isAnAreaMapShowing && activeArea.areaMap != null) {
             bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != activeArea;
             InteriorMapManager.Instance.HideAreaMap();
             hideOnShowAreaMap = false;

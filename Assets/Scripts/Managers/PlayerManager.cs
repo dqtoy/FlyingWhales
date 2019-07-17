@@ -237,6 +237,17 @@ public class PlayerManager : MonoBehaviour {
     }
     #endregion
 
+    #region Artifacts
+    public Artifact CreateNewArtifact(ARTIFACT_TYPE artifactType) {
+        Artifact newArtifact = CreateNewArtifactClassFromType(artifactType) as Artifact;
+        return newArtifact;
+    }
+    private object CreateNewArtifactClassFromType(ARTIFACT_TYPE artifactType) {
+        var typeName = artifactType.ToString();
+        return System.Activator.CreateInstance(System.Type.GetType(typeName));
+    }
+    #endregion
+
     //#region Minion
     //[ContextMenu("Create And Add New Minion")]
     //public void CreateMinionForTesting() {

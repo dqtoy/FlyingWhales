@@ -38,13 +38,6 @@ public class PlayerUI : MonoBehaviour {
     public SlotItem[] attackGridSlots;
     public Button startInvasionButton;
 
-    [Header("Bottom Menu")]
-    public Toggle goalsToggle;
-    //public Toggle intelToggle;
-    public Toggle inventoryToggle;
-    public Toggle factionToggle;
-    public ToggleGroup minionSortingToggleGroup;
-
     [Header("Intel")]
     [SerializeField] private GameObject intelContainer;
     [SerializeField] private IntelItem[] intelItems;
@@ -95,12 +88,25 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private UIHoverPosition summonTooltipPos;
     private bool isSummoning = false; //if the player has clicked the summon button and is targetting a tile to place the summon on.
 
+    [Header("Artifacts")]
+    [SerializeField] private Image currentArtifactImg;
+    [SerializeField] private TextMeshProUGUI currentArtifactCountLbl;
+    [SerializeField] private Button summonArtifactBtn;
+    [SerializeField] private GameObject summonArtifactCover;
+    [SerializeField] private UIHoverPosition summonArtifactTooltipPos;
+    private bool isSummoningArtifact = false; //if the player has clicked the summon artifact button and is targetting a tile to place the summon on.
+
     [Header("Combat Abilities")]
     public GameObject combatAbilityGO;
     public GameObject combatAbilityButtonPrefab;
     public List<CombatAbilityButton> currentCombatAbilityButtons { get; private set; }
 
-    public GameObject electricEffectPrefab;
+    //[Header("Actions")]
+    //[SerializeField] private int maxActionPages;
+    //[SerializeField] private GameObject actionPagePrefab;
+    //[SerializeField] private RectTransform actionPageParent;
+    //private ActionsPage[] actionPages;
+    //private int currentActionPage;
 
     private bool _isScrollingUp;
     private bool _isScrollingDown;
@@ -133,10 +139,7 @@ public class PlayerUI : MonoBehaviour {
         for (int i = 0; i < attackGridSlots.Length; i++) {
             SlotItem currSlot = attackGridSlots[i];
             currSlot.SetNeededType(typeof(Character));
-            //currSlot.SetOtherValidation(IsObjectValidForAttack);
             currSlot.SetSlotIndex(i);
-            //currSlot.SetItemDroppedCallback(OnDropOnAttackGrid);
-            //currSlot.SetItemDroppedOutCallback(OnDroppedOutFromAttackGrid);
         }
         minionLeaderPickers = new List<MinionLeaderPicker>();
         currentCombatAbilityButtons = new List<CombatAbilityButton>();
@@ -147,6 +150,16 @@ public class PlayerUI : MonoBehaviour {
         UpdateIntel();
         InitializeMemoriesMenu();
         UpdateSummonsInteraction();
+        UpdateArtifactsInteraction();
+
+        //actions
+        //actionPages = new ActionsPage[maxActionPages];
+        //for (int i = 0; i < maxActionPages; i++) {
+        //    GameObject pageGO = GameObject.Instantiate(actionPagePrefab, actionPageParent);
+        //    ActionsPage page = pageGO.GetComponent<ActionsPage>();
+        //    page.Initialize();
+        //    actionPages[i] = page;
+        //}
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -164,6 +177,10 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Summon>(Signals.PLAYER_GAINED_SUMMON, OnGainNewSummon);
         Messenger.AddListener<Summon>(Signals.PLAYER_REMOVED_SUMMON, OnRemoveSummon);
 
+        //Artifacts
+        Messenger.AddListener<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, OnGainNewArtifact);
+        Messenger.AddListener<Artifact>(Signals.PLAYER_REMOVED_ARTIFACT, OnRemoveArtifact);
+
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
 
@@ -174,10 +191,12 @@ public class PlayerUI : MonoBehaviour {
     #region Listeners
     private void OnAreaMapOpened(Area area) {
         UpdateSummonsInteraction();
+        UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(true);
     }
     private void OnAreaMapClosed(Area area) {
         UpdateSummonsInteraction();
+        UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(false);
     }
     private void OnKeyPressed(KeyCode pressedKey) {
@@ -186,10 +205,17 @@ public class PlayerUI : MonoBehaviour {
                 PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
                 CursorManager.Instance.ClearLeftClickActions();
             }
+            if (isSummoning) {
+                CancelSummon();
+            } else if (isSummoningArtifact) {
+                CancelSummonArtifact();
+            }
         } else if (pressedKey == KeyCode.Mouse0) {
             //left click
             if (isSummoning) {
                 TryPlaceSummon();
+            } else if (isSummoningArtifact) {
+                TryPlaceArtifact();
             }
         }
     }
@@ -453,10 +479,7 @@ public class PlayerUI : MonoBehaviour {
 
     #region Miscellaneous
     public void SetBottomMenuTogglesState(bool isOn) {
-        goalsToggle.isOn = isOn;
         intelToggle.isOn = isOn;
-        inventoryToggle.isOn = isOn;
-        factionToggle.isOn = isOn;
     }
     #endregion
 
@@ -635,10 +658,12 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
         PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
+        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
         PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
     }
     private void ShowSelectMinionLeader() {
@@ -716,6 +741,7 @@ public class PlayerUI : MonoBehaviour {
         if (currentlySelectedSummon == SUMMON_TYPE.None) {
             SetCurrentlySelectedSummon(newSummon.summonType);
         }
+        //AssignNewActionToLatestItem(newSummon);
     }
     public void OnRemoveSummon(Summon summon) {
         UpdateSummonsInteraction();
@@ -793,7 +819,12 @@ public class PlayerUI : MonoBehaviour {
             summonToPlace.marker.InitialPlaceMarkerAt(tile);
             PlayerManager.Instance.player.RemoveSummon(summonToPlace);
             summonToPlace.OnPlaceSummon(tile);
+            Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summonToPlace);
         }
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+    }
+    private void CancelSummon() {
+        isSummoning = false;
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
     }
     #endregion
@@ -847,5 +878,134 @@ public class PlayerUI : MonoBehaviour {
         return null;
     }
     #endregion
+
+    #region Artifacts
+    private Artifact currentlySelectedArtifact; //the artifact that is currently shown in the UI
+    private void UpdateArtifactsInteraction() {
+        bool state = PlayerManager.Instance.player.GetTotalArtifactCount() == 0;
+        summonArtifactCover.SetActive(state);
+        summonArtifactBtn.interactable = !state && InteriorMapManager.Instance.isAnAreaMapShowing;
+    }
+    public void OnGainNewArtifact(Artifact newArtifact) {
+        UpdateArtifactsInteraction();
+        if (currentlySelectedArtifact == null) {
+            SetCurrentlySelectedArtifact(newArtifact);
+        }
+        //AssignNewActionToLatestItem(newSummon);
+    }
+    public void OnRemoveArtifact(Artifact artifact) {
+        UpdateArtifactsInteraction();
+        if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more summons left
+            SetCurrentlySelectedArtifact(null);
+        } else if (artifact == currentlySelectedArtifact
+            && PlayerManager.Instance.player.GetArtifactsOfTypeCount(artifact.type) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+            CycleArtifacts(1);
+        }
+    }
+    public void SetCurrentlySelectedArtifact(Artifact artifact) {
+        currentlySelectedArtifact = artifact;
+        if (currentlySelectedArtifact == null) {
+            currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(ARTIFACT_TYPE.None).artifactPortrait;
+            currentArtifactCountLbl.text = "0";
+        } else {
+            currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
+            currentArtifactCountLbl.text = PlayerManager.Instance.player.GetArtifactsOfTypeCount(artifact.type).ToString();
+        }
+        
+    }
+    public void CycleArtifacts(int cycleDirection) {
+        ARTIFACT_TYPE[] types = Utilities.GetEnumValues<ARTIFACT_TYPE>();
+        int index = Array.IndexOf(types, currentlySelectedArtifact?.type ?? ARTIFACT_TYPE.None);
+        while (true) {
+            int next = index + cycleDirection;
+            if (next >= types.Length) {
+                next = 0;
+            } else if (next <= 0) {
+                next = types.Length - 1;
+            }
+            index = next;
+            ARTIFACT_TYPE type = types[index];
+            Artifact artifact;
+            if (PlayerManager.Instance.player.TryGetAvailableArtifactOfType(type, out artifact)) { //Player has a summon of that type, select that.
+                SetCurrentlySelectedArtifact(artifact);
+                break;
+            }
+        }
+    }
+    public void ShowArtifactTooltip() {
+        string header = Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedArtifact.type.ToString());
+        string message;
+        switch (currentlySelectedArtifact.type) {
+            case ARTIFACT_TYPE.Necronomicon:
+                message = "Raises all dead characters in the area to attack residents.";
+                break;
+            case ARTIFACT_TYPE.Chaos_Orb:
+                message = "Characters that inspect the Chaos Orb may be permanently berserked.";
+                break;
+            case ARTIFACT_TYPE.Hermes_Statue:
+                message = "Characters that inspect this will be teleported to a different settlement. If no other settlement exists, this will be useless.";
+                break;
+            case ARTIFACT_TYPE.Ankh_Of_Anubis:
+                message = "All characters that moves through here may slowly sink and perish. Higher agility means higher chance of escaping. Sand pit has a limited duration upon placing the artifact.";
+                break;
+            case ARTIFACT_TYPE.Miasma_Emitter:
+                message = "Characters will avoid the area. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.";
+                break;
+            default:
+                message = "Summon a " + Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedArtifact.type.ToString());
+                break;
+        }
+        UIManager.Instance.ShowSmallInfo(message, summonArtifactTooltipPos, header);
+    }
+    public void HideArtifactTooltip() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    public void OnClickSummonArtifact() {
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Target);
+        isSummoningArtifact = true;
+    }
+    private void TryPlaceArtifact() {
+        isSummoningArtifact = false;
+        if (!UIManager.Instance.IsMouseOnUI()) {
+            LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
+            if (tile.objHere == null) {
+                Artifact artifactToPlace = currentlySelectedArtifact;
+                tile.structure.AddPOI(artifactToPlace, tile);
+                PlayerManager.Instance.player.RemoveArtifact(artifactToPlace);
+            } else {
+                Debug.LogWarning("There is already an object placed there. Not placing artifact");
+            }
+            //summonToPlace.CreateMarker();
+            //summonToPlace.marker.InitialPlaceMarkerAt(tile);
+            //PlayerManager.Instance.player.RemoveSummon(summonToPlace);
+            //summonToPlace.OnPlaceSummon(tile);
+            //Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summonToPlace);
+        }
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+    }
+    private void CancelSummonArtifact() {
+        isSummoningArtifact = false;
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+    }
+    #endregion
+
+    //#region Actions
+    //private void AssignNewActionToLatestItem(object obj) {
+    //    ActionItem assignedTo = null;
+    //    for (int i = 0; i < actionPages.Length; i++) {
+    //        ActionsPage currPage = actionPages[i];
+    //        ActionItem availableItem = currPage.GetUnoccupiedActionItem();
+    //        if (availableItem != null) {
+    //            availableItem.SetAction(obj);
+    //            assignedTo = availableItem;
+    //            break;
+    //        }
+    //    }
+    //    if (assignedTo == null) {
+    //        Debug.LogWarning("Could not assign new action " + obj.ToString() + " to an action item, because all pages are occupied!");
+    //    }
+    //}
+    //#endregion
+
 }
 

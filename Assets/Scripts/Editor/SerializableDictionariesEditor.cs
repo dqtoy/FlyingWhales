@@ -57,6 +57,8 @@ public class CursorTextureDictionaryPropertyDrawer : SerializableDictionaryPrope
 public class AreaTypeSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(SummonSettingDictionary))]
 public class SummonSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(ArtifactSettingDictionary))]
+public class ArtifactSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]

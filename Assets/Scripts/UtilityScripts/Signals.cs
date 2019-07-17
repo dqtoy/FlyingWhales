@@ -214,6 +214,18 @@ public static class Signals {
     /// Parameters (Summon removedSummon)
     /// </summary>
     public static string PLAYER_REMOVED_SUMMON = "OnPlayerRemovedSummon";
+    /// <summary>
+    /// Parameters (Summon placedSummon)
+    /// </summary>
+    public static string PLAYER_PLACED_SUMMON = "OnPlayerPlacedSummon";
+    /// <summary>
+    /// Parameters (Artifact newArtifact)
+    /// </summary>
+    public static string PLAYER_GAINED_ARTIFACT = "OnPlayerGainedArtifact";
+    /// <summary>
+    /// Parameters (Artifact removedArtifact)
+    /// </summary>
+    public static string PLAYER_REMOVED_ARTIFACT = "OnPlayerRemovedArtifact";
     #endregion
 
     #region Interaction

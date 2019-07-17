@@ -23,23 +23,13 @@ public class RaiseDead : PlayerJobAction {
             return;
         }
         base.ActivateAction(assignedCharacter, target);
-        GameManager.Instance.StartCoroutine(Raise(target));
+        target.RaiseFromDeath(_level);
+        target.SetLevel(_level);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead");
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
-    }
-
-    private IEnumerator Raise(Character target) {
-        target.marker.PlayAnimation("Raise Dead");
-        yield return new WaitForSeconds(0.7f);
-        target.ReturnToLife();
-        target.SetLevel(_level);
-#if TRAILER_BUILD
-      UIManager.Instance.Unpause();
-#endif
-        yield return null;
     }
 
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {

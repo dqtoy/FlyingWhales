@@ -55,6 +55,8 @@ public class CursorTextureDictionary : SerializableDictionary<CursorManager.Curs
 public class AreaTypeSpriteDictionary : SerializableDictionary<AREA_TYPE, Sprite> { }
 [System.Serializable]
 public class SummonSettingDictionary : SerializableDictionary<SUMMON_TYPE, SummonSettings> { }
+[System.Serializable]
+public class ArtifactSettingDictionary : SerializableDictionary<ARTIFACT_TYPE, ArtifactSettings> { }
 
 //List storage
 [System.Serializable]

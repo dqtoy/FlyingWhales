@@ -180,12 +180,14 @@ public class GoapThread : Multithread {
                             sorted.Add(objStructure, new Dictionary<INTERACTION_TYPE, List<GoapAction>>());
                         }
                         List<GoapAction> awarenessActions = currAwareness.poi.AdvertiseActionsToActor(actor, actorAllowedActions);
-                        for (int j = 0; j < awarenessActions.Count; j++) {
-                            GoapAction currAction = awarenessActions[j];
-                            if (!sorted[objStructure].ContainsKey(currAction.goapType)) {
-                                sorted[objStructure].Add(currAction.goapType, new List<GoapAction>());
+                        if (awarenessActions != null) {
+                            for (int j = 0; j < awarenessActions.Count; j++) {
+                                GoapAction currAction = awarenessActions[j];
+                                if (!sorted[objStructure].ContainsKey(currAction.goapType)) {
+                                    sorted[objStructure].Add(currAction.goapType, new List<GoapAction>());
+                                }
+                                sorted[objStructure][currAction.goapType].Add(currAction);
                             }
-                            sorted[objStructure][currAction.goapType].Add(currAction);
                         }
                     }
                 }
