@@ -68,7 +68,7 @@ public class Spooked : Trait {
             //character.AdjustDoNotDisturb(-1);
             for (int i = 0; i < terrifyingCharacters.Count; i++) {
                 character.marker.RemoveAvoidInRange(terrifyingCharacters[i]);
-                character.marker.RemoveTerrifyingCharacter(terrifyingCharacters[i]);
+                character.marker.RemoveTerrifyingObject(terrifyingCharacters[i]);
             }
             ClearTerrifyingCharacters();
         }

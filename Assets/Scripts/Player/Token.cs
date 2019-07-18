@@ -184,7 +184,8 @@ public class SpecialToken : IPointOfInterest {
         if (trait.daysDuration > 0) {
             GameDate removeDate = GameManager.Instance.Today();
             removeDate.AddTicks(trait.daysDuration);
-            SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
+            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
+            trait.SetExpiryTicket(this, ticket);
         }
         if (triggerOnAdd) {
             trait.OnAddTrait(this);
@@ -193,8 +194,7 @@ public class SpecialToken : IPointOfInterest {
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
         if (_traits.Remove(trait)) {
-            //UnapplyTraitEffects(trait);
-            //UnapplyPOITraitInteractions(trait);
+            trait.RemoveExpiryTicket(this);
             if (triggerOnRemove) {
                 trait.OnRemoveTrait(this);
             }

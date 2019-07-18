@@ -21,7 +21,7 @@ public class ThiefSummon : Summon {
         for (int i = 0; i < tile.parentAreaMap.area.charactersAtLocation.Count; i++) {
             Character currCharacter = tile.parentAreaMap.area.charactersAtLocation[i];
             if (currCharacter.faction != this.faction) {
-                marker.AddTerrifyingCharacter(currCharacter);
+                marker.AddTerrifyingObject(currCharacter);
             }
         }
     }
@@ -29,7 +29,7 @@ public class ThiefSummon : Summon {
         base.ThisCharacterSaw(target);
         //if the target is not from the player faction, add them to the terrifying characters list
         if (target.faction != this.faction) {
-            marker.AddTerrifyingCharacter(target);
+            marker.AddTerrifyingObject(target);
         }
     }
     protected override void IdlePlans() {
@@ -67,7 +67,7 @@ public class ThiefSummon : Summon {
             currCharacter.RemoveAwareness(this);
         }
 
-        marker.ClearTerrifyingCharacters();
+        marker.ClearTerrifyingObjects();
         specificLocation.RemoveCharacterFromLocation(this);
         DestroyMarker();
         UnsubscribeSignals();

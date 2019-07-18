@@ -610,12 +610,12 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     private void OnCharacterExitedArea(Area area, Character character) {
         if (character.id == this.id) {
             //Clear terrifying characters of this character if he/she leaves the area
-            marker.ClearTerrifyingCharacters();
+            marker.ClearTerrifyingObjects();
         } else {
             //remove the character that left the area from anyone elses list of terrifying characters.
-            if (marker.terrifyingCharacters.Count > 0) {
+            if (marker.terrifyingObjects.Count > 0) {
                 for (int i = 0; i < party.characters.Count; i++) {
-                    marker.RemoveTerrifyingCharacter(party.characters[i]);
+                    marker.RemoveTerrifyingObject(party.characters[i]);
                 }
             }
         }
@@ -2055,12 +2055,12 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (currentParty == party) {
             CheckApprehendRelatedJobsOnLeaveLocation();
             CancelOrUnassignRemoveTraitRelatedJobs();
-            marker.ClearTerrifyingCharacters();
+            marker.ClearTerrifyingObjects();
             ExecuteLeaveAreaActions();
         } else {
-            if (marker.terrifyingCharacters.Count > 0) {
+            if (marker.terrifyingObjects.Count > 0) {
                 for (int i = 0; i < party.characters.Count; i++) {
-                    marker.RemoveTerrifyingCharacter(party.characters[i]);
+                    marker.RemoveTerrifyingObject(party.characters[i]);
                 }
             }
         }
@@ -2322,7 +2322,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (isCombatant != state) {
             isCombatant = state;
             if (isCombatant && marker != null) {
-                marker.ClearTerrifyingCharacters();
+                marker.ClearTerrifyingObjects();
             }
         }
     }
@@ -3628,7 +3628,8 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (trait.daysDuration > 0) {
             GameDate removeDate = GameManager.Instance.Today();
             removeDate.AddTicks(trait.daysDuration);
-            SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTraitOnSchedule(trait));
+            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTraitOnSchedule(trait));
+            trait.SetExpiryTicket(this, ticket);
         }
         if (triggerOnAdd) {
             trait.OnAddTrait(this);
@@ -3683,6 +3684,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (removed) {
             UnapplyTraitEffects(trait);
             UnapplyPOITraitInteractions(trait);
+            trait.RemoveExpiryTicket(this);
             if (triggerOnRemove) {
                 trait.OnRemoveTrait(this);
             }

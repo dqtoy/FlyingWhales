@@ -455,10 +455,10 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "None";
         }
         summary += "\n\tTerrifying Characters: ";
-        if (character.marker.terrifyingCharacters.Count > 0) {
-            for (int i = 0; i < character.marker.terrifyingCharacters.Count; i++) {
-                Character currCharacter = character.marker.terrifyingCharacters[i];
-                summary += currCharacter.name + ", ";
+        if (character.marker.terrifyingObjects.Count > 0) {
+            for (int i = 0; i < character.marker.terrifyingObjects.Count; i++) {
+                IPointOfInterest currObj = character.marker.terrifyingObjects[i];
+                summary += currObj.name + ", ";
             }
         } else {
             summary += "None";

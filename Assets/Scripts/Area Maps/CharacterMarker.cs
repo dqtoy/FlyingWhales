@@ -76,7 +76,7 @@ public class CharacterMarker : PooledObject {
     public int useWalkSpeed { get; private set; }
     public int targettedByRemoveNegativeTraitActionsCounter { get; private set; }
     public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
-    public List<Character> terrifyingCharacters { get; private set; } //list of characters that this character is terrified of and must avoid
+    public List<IPointOfInterest> terrifyingObjects { get; private set; } //list of objects that this character is terrified of and must avoid
 
     private LocationGridTile _previousGridTile;
     private float progressionSpeedMultiplier;
@@ -99,7 +99,7 @@ public class CharacterMarker : PooledObject {
 
         inVisionPOIs = new List<IPointOfInterest>();
         hostilesInRange = new List<Character>();
-        terrifyingCharacters = new List<Character>();
+        terrifyingObjects = new List<IPointOfInterest>();
         avoidInRange = new List<Character>();
         attackSpeedMeter = 0f;
 
@@ -235,8 +235,8 @@ public class CharacterMarker : PooledObject {
                 RemoveAvoidInRange(characterThatGainedTrait);
             }
         }
-        if(trait.type == TRAIT_TYPE.DISABLER && terrifyingCharacters.Count > 0) {
-            RemoveTerrifyingCharacter(characterThatGainedTrait);
+        if(trait.type == TRAIT_TYPE.DISABLER && terrifyingObjects.Count > 0) {
+            RemoveTerrifyingObject(characterThatGainedTrait);
         }
     }
     public void OnCharacterLostTrait(Character character, Trait trait) {
@@ -1307,22 +1307,22 @@ public class CharacterMarker : PooledObject {
     public void SetHasFleePath(bool state) {
         hasFleePath = state;
     }
-    public void AddTerrifyingCharacter(Character character) {
+    public void AddTerrifyingObject(IPointOfInterest obj) {
         //terrifyingCharacters += amount;
         //terrifyingCharacters = Math.Max(0, terrifyingCharacters);
-        if (!terrifyingCharacters.Contains(character)) {
-            terrifyingCharacters.Add(character);
+        if (!terrifyingObjects.Contains(obj)) {
+            terrifyingObjects.Add(obj);
             //rvoController.avoidedAgents.Add(character.marker.fleeingRVOController.rvoAgent);
         }
     }
-    public void RemoveTerrifyingCharacter(Character character) {
-        terrifyingCharacters.Remove(character);
+    public void RemoveTerrifyingObject(IPointOfInterest obj) {
+        terrifyingObjects.Remove(obj);
         //if (terrifyingCharacters.Remove(character)) {
         //    //rvoController.avoidedAgents.Remove(character.marker.fleeingRVOController.rvoAgent);
         //}
     }
-    public void ClearTerrifyingCharacters() {
-        terrifyingCharacters.Clear();
+    public void ClearTerrifyingObjects() {
+        terrifyingObjects.Clear();
         //rvoController.avoidedAgents.Clear();
     }
     //private void UpdateFleeingRVOController() {

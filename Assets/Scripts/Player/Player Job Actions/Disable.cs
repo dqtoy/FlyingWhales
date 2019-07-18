@@ -13,10 +13,13 @@ public class Disable : PlayerJobAction {
         if (!(targetPOI is TileObject)) {
             return;
         }
-        targetPOI.SetIsDisabledByPlayer(true);
-        GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
-        SchedulingManager.Instance.AddEntry(dueDate, () => targetPOI.SetIsDisabledByPlayer(false));
+
+        targetPOI.AddTrait(new Disabled());
+
+        //targetPOI.SetIsDisabledByPlayer(true);
+        //GameDate dueDate = GameManager.Instance.Today();
+        //dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+        //SchedulingManager.Instance.AddEntry(dueDate, () => targetPOI.SetIsDisabledByPlayer(false));
         base.ActivateAction(assignedCharacter, targetPOI);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");

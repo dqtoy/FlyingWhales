@@ -38,7 +38,7 @@ public class TileObject : IPointOfInterest {
     protected LocationGridTile tile;
     private POI_STATE _state;
     private POICollisionTrigger _collisionTrigger;
-
+    protected LocationGridTile previousTile;
     #region getters/setters
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.TILE_OBJECT; }
@@ -88,7 +88,7 @@ public class TileObject : IPointOfInterest {
 
     }
     public virtual void SetGridTileLocation(LocationGridTile tile) {
-        LocationGridTile previousTile = this.tile;
+        previousTile = this.tile;
         this.tile = tile;
         if (tile == null) {
             DisableCollisionTrigger();
@@ -202,7 +202,8 @@ public class TileObject : IPointOfInterest {
         if (trait.daysDuration > 0) {
             GameDate removeDate = GameManager.Instance.Today();
             removeDate.AddTicks(trait.daysDuration);
-            SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
+            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
+            trait.SetExpiryTicket(this, ticket);
         }
         if (triggerOnAdd) {
             trait.OnAddTrait(this);
@@ -211,8 +212,7 @@ public class TileObject : IPointOfInterest {
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
         if (_traits.Remove(trait)) {
-            //UnapplyTraitEffects(trait);
-            //UnapplyPOITraitInteractions(trait);
+            trait.RemoveExpiryTicket(this);
             if (triggerOnRemove) {
                 trait.OnRemoveTrait(this);
             }
@@ -254,6 +254,18 @@ public class TileObject : IPointOfInterest {
             }
         }
         return null;
+    }
+    public void RefreshTraitExpiry(Trait trait) {
+        if (trait.expiryTickets.ContainsKey(this)) {
+            SchedulingManager.Instance.RemoveSpecificEntry(trait.expiryTickets[this]);
+        }
+        if (trait.daysDuration > 0) {
+            GameDate removeDate = GameManager.Instance.Today();
+            removeDate.AddTicks(trait.daysDuration);
+            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
+            trait.SetExpiryTicket(this, ticket);
+        }
+
     }
     #endregion
 
@@ -394,6 +406,7 @@ public class TileObject : IPointOfInterest {
         } else {
             CreateTileObjectSlots();
         }
+        Messenger.Broadcast(Signals.TILE_OBJECT_PLACED, this, tile);
     }
     private void OnRemoveObjectFromTile() {
         if (hasCreatedSlots) {

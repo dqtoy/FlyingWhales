@@ -405,7 +405,7 @@ public class CombatState : CharacterState {
     private void OnFinishedFleeingFrom(Character targetCharacter) {
         if (stateComponent.character.IsHostileWith(targetCharacter)) {
             if (!targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
-                stateComponent.character.marker.AddTerrifyingCharacter(targetCharacter);
+                stateComponent.character.marker.AddTerrifyingObject(targetCharacter);
             }
         }
         if (stateComponent.character.IsHostileOutsider(targetCharacter)) {

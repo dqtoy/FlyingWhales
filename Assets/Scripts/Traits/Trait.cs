@@ -25,10 +25,11 @@ public class Trait {
     public CRIME_CATEGORY crimeSeverity;
     public int daysDuration; //Zero (0) means Permanent
     public List<TraitEffect> effects;
+    public Dictionary<IPointOfInterest, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
     public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
     public bool isDisabled { get; private set; }
     public virtual bool broadcastDuplicates { get { return false; } }
-    public virtual bool isPersistent { get { return false; } } //should this trait persist through all the character's alter egos
+    public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
     public GameDate dateEstablished { get; protected set; }
     //private Character _responsibleCharacter;
 
@@ -87,6 +88,21 @@ public class Trait {
     }
     public void OverrideDuration(int newDuration) {
         daysDuration = newDuration;
+    }
+    public void SetExpiryTicket(IPointOfInterest poi, string expiryTicket) {
+        if (expiryTickets == null) {
+            expiryTickets = new Dictionary<IPointOfInterest, string>();
+        }
+        if (!expiryTickets.ContainsKey(poi)) {
+            expiryTickets.Add(poi, expiryTicket);
+        } else {
+            expiryTickets[poi] = expiryTicket;
+        }
+    }
+    public void RemoveExpiryTicket(IPointOfInterest poi) {
+        if (expiryTickets != null) {
+            expiryTickets.Remove(poi);
+        }
     }
 
     #region Jobs
