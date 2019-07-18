@@ -24,7 +24,6 @@ public class RaiseDead : PlayerJobAction {
         }
         base.ActivateAction(assignedCharacter, target);
         target.RaiseFromDeath(_level);
-        target.SetLevel(_level);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead");
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
