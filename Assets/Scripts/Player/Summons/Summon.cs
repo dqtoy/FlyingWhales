@@ -54,6 +54,8 @@ public class Summon : Character {
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
         ClearAllAwareness();
         CancelAllJobsAndPlans();
+        RemoveAllNonPersistentTraits();
+        ResetToFullHP();
     }
     #endregion
 

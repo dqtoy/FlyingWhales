@@ -843,7 +843,6 @@ public class CharacterMarker : PooledObject {
     }
     public void UpdatePosition() {
         //This is checked per update, stress test this for performance
-
         //I'm keeping a separate field called anchoredPos instead of using the rect transform anchoredPosition directly because the multithread cannot access transform components
         anchoredPos = transform.localPosition;
 

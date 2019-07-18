@@ -619,6 +619,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             //Clear terrifying characters of this character if he/she leaves the area
             marker.ClearTerrifyingObjects();
         } else {
+            if (marker == null) {
+                throw new Exception("Marker of " + this.name + " is null!");
+            }
             //remove the character that left the area from anyone elses list of terrifying characters.
             if (marker.terrifyingObjects.Count > 0) {
                 for (int i = 0; i < party.characters.Count; i++) {
