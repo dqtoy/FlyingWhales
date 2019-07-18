@@ -5,6 +5,7 @@ using UnityEngine;
 public class Summon : Character {
 
 	public SUMMON_TYPE summonType { get; private set; }
+    public bool hasBeenUsed { get; private set; } //has this summon been used in the current map. TODO: Set this to false at end of invasion of map.
 
     public Summon(SUMMON_TYPE summonType, CharacterRole role, RACE race, GENDER gender) : base(role, race, gender) {
         this.summonType = summonType;
@@ -51,6 +52,7 @@ public class Summon : Character {
     /// </summary>
     /// <param name="tile">The tile the summon was placed on.</param>
     public virtual void OnPlaceSummon(LocationGridTile tile) {
+        hasBeenUsed = true;
         SubscribeToSignals();
         Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds); //do not make summons decrease needs
         Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration); //do not make summons plan goap actions by default

@@ -753,18 +753,22 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     internal AreaInfoUI areaInfoUI;
     public void ShowAreaInfo(Area area, int indexToggleToBeActivated = 0) {
-        if (factionInfoUI.isShowing) {
-            factionInfoUI.CloseMenu();
+        if (PlayerManager.Instance.player.homeArea == area) {
+            UIManager.Instance.portalPopup.SetActive(true);
+        } else {
+            if (factionInfoUI.isShowing) {
+                factionInfoUI.CloseMenu();
+            }
+            if (characterInfoUI.isShowing) {
+                characterInfoUI.CloseMenu();
+            }
+            if (tileObjectInfoUI.isShowing) {
+                tileObjectInfoUI.CloseMenu();
+            }
+            areaInfoUI.SetData(area);
+            areaInfoUI.OpenMenu();
+            areaInfoUI.CenterOnCoreLandmark();
         }
-        if (characterInfoUI.isShowing) {
-            characterInfoUI.CloseMenu();
-        }
-        if (tileObjectInfoUI.isShowing) {
-            tileObjectInfoUI.CloseMenu();
-        }
-        areaInfoUI.SetData(area);
-        areaInfoUI.OpenMenu();
-        areaInfoUI.CenterOnCoreLandmark();
     }
     public void UpdateAreaInfo() {
         if (areaInfoUI.isShowing) {

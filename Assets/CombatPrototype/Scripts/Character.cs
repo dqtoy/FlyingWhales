@@ -582,6 +582,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
+        Messenger.AddListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.AddListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
@@ -597,10 +598,27 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
+        Messenger.RemoveListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
         Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+    }
+    #endregion
+
+    #region Listeners
+    private void OnCharacterExitedArea(Area area, Character character) {
+        if (character.id == this.id) {
+            //Clear terrifying characters of this character if he/she leaves the area
+            marker.ClearTerrifyingCharacters();
+        } else {
+            //remove the character that left the area from anyone elses list of terrifying characters.
+            if (marker.terrifyingCharacters.Count > 0) {
+                for (int i = 0; i < party.characters.Count; i++) {
+                    marker.RemoveTerrifyingCharacter(party.characters[i]);
+                }
+            }
+        }
     }
     #endregion
 
@@ -5347,7 +5365,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     private void OnItemPlacedOnTile(SpecialToken addedItem, LocationGridTile addedTo) {
         //if an item is dropped at a warehouse, inform all residents of that area
-        if (addedTo.structure.structureType == STRUCTURE_TYPE.WAREHOUSE && addedTo.parentAreaMap.area == this.homeArea) { 
+        if (addedTo.structure.structureType == STRUCTURE_TYPE.WAREHOUSE && addedTo.parentAreaMap.area == this.specificLocation) { 
             AddAwareness(addedItem);
         }
     }
