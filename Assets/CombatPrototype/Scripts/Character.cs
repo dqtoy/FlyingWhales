@@ -606,6 +606,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
         Messenger.RemoveListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
+        Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
         Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);

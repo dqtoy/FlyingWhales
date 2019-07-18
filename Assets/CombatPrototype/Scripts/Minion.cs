@@ -119,9 +119,11 @@ public class Minion {
     #region Invasion
     public void StartInvasionProtocol() {
         Messenger.AddListener(Signals.TICK_STARTED, PerTickInvasion);
+        Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
     }
     public void StopInvasionProtocol() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
+        Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
     }
     private void PerTickInvasion() {
         if (character.isDead) {
@@ -130,10 +132,7 @@ public class Minion {
         if (!character.IsInOwnParty() || character.ownParty.icon.isTravelling || character.doNotDisturb > 0 || character.isWaitingForInteraction > 0) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
-        if (character.stateComponent.currentState != null) {
-            return;
-        }
-        if (character.stateComponent.stateToDo != null) {
+        if (character.stateComponent.currentState != null || character.stateComponent.stateToDo != null || character.marker == null) {
             return;
         }
         GoToWorkArea();
@@ -142,6 +141,32 @@ public class Minion {
         LocationStructure structure = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
         LocationGridTile tile = structure.GetRandomTile();
         character.marker.GoTo(tile);
+    }
+    private void OnSucceedInvadeArea(Area area) {
+        if (character.stateComponent.currentState != null) {
+            character.stateComponent.currentState.OnExitThisState();
+            //This call is doubled so that it will also exit the previous major state if there's any
+            if (character.stateComponent.currentState != null) {
+                character.stateComponent.currentState.OnExitThisState();
+            }
+        } else if (character.stateComponent.currentState != null) {
+            character.stateComponent.SetStateToDo(null);
+        }
+
+        if (character.currentParty.icon.isTravelling) {
+            character.marker.StopMovement();
+        }
+        character.AdjustIsWaitingForInteraction(1);
+        character.StopCurrentAction(false);
+        character.AdjustIsWaitingForInteraction(-1);
+
+        character.specificLocation.RemoveCharacterFromLocation(character);
+        character.DestroyMarker();
+        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(character);
+        character.ClearAllAwareness();
+        character.CancelAllJobsAndPlans();
+        character.RemoveAllNonPersistentTraits();
+        character.ResetToFullHP();
     }
     #endregion
 }

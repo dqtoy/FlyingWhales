@@ -934,6 +934,12 @@ public class Player : ILeader {
             string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
             PlayerUI.Instance.GameOver(gameOverText);
         }
+        for (int i = 0; i < minions.Length; i++) {
+            Minion currMinion = minions[i];
+            if (currMinion != null) {
+                currMinion.StopInvasionProtocol();
+            }
+        }
     }
     #endregion
 
