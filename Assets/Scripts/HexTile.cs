@@ -1120,11 +1120,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
 
         if (this.areaOfTile != null) {
-            if (PlayerManager.Instance.player.homeArea == this.areaOfTile) {
-                UIManager.Instance.portalPopup.SetActive(true);
-            } else {
-                UIManager.Instance.ShowAreaInfo(this.areaOfTile);
-            }
+            UIManager.Instance.ShowAreaInfo(this.areaOfTile);
             //if (!this.landmarkOnTile.tileLocation.isCorrupted) {
             //    UIManager.Instance.ShowAreaInfo(this.areaOfTile);
             //} else {

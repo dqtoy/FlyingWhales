@@ -176,6 +176,7 @@ public class PlayerUI : MonoBehaviour {
         //summons
         Messenger.AddListener<Summon>(Signals.PLAYER_GAINED_SUMMON, OnGainNewSummon);
         Messenger.AddListener<Summon>(Signals.PLAYER_REMOVED_SUMMON, OnRemoveSummon);
+        Messenger.AddListener<Summon>(Signals.PLAYER_PLACED_SUMMON, OnSummonUsed);
 
         //Artifacts
         Messenger.AddListener<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, OnGainNewArtifact);
@@ -657,7 +658,7 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.ThiefSummon);
         //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
         //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
         //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
@@ -732,7 +733,7 @@ public class PlayerUI : MonoBehaviour {
     #region Summons
     private SUMMON_TYPE currentlySelectedSummon; //the summon type that is currently shown in the UI
     private void UpdateSummonsInteraction() {
-        bool state = PlayerManager.Instance.player.GetTotalSummonsCount() == 0;
+        bool state = PlayerManager.Instance.player.GetTotalAvailableSummonsCount() == 0;
         summonCover.SetActive(state);
         summonBtn.interactable = !state && InteriorMapManager.Instance.isAnAreaMapShowing;
     }
@@ -745,17 +746,26 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnRemoveSummon(Summon summon) {
         UpdateSummonsInteraction();
-        if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
+        if (PlayerManager.Instance.player.GetTotalAvailableSummonsCount() == 0) { //the player has no more summons left
             SetCurrentlySelectedSummon(SUMMON_TYPE.None);
         } else if (summon.summonType == currentlySelectedSummon 
-            && PlayerManager.Instance.player.GetSummonsOfTypeCount(summon.summonType) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+            && PlayerManager.Instance.player.GetAvailableSummonsOfTypeCount(summon.summonType) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+            CycleSummons(1);
+        }
+    }
+    private void OnSummonUsed(Summon summon) {
+        UpdateSummonsInteraction();
+        if (PlayerManager.Instance.player.GetTotalAvailableSummonsCount() == 0) { //the player has no more summons left
+            SetCurrentlySelectedSummon(SUMMON_TYPE.None);
+        } else if (summon.summonType == currentlySelectedSummon
+            && PlayerManager.Instance.player.GetAvailableSummonsOfTypeCount(summon.summonType) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
             CycleSummons(1);
         }
     }
     public void SetCurrentlySelectedSummon(SUMMON_TYPE type) {
         currentlySelectedSummon = type;
         currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(type).summonPortrait;
-        currentSummonCountLbl.text = PlayerManager.Instance.player.GetSummonsOfTypeCount(type).ToString();
+        currentSummonCountLbl.text = PlayerManager.Instance.player.GetAvailableSummonsOfTypeCount(type).ToString();
     }
     public void CycleSummons(int cycleDirection) {
         SUMMON_TYPE[] types = Utilities.GetEnumValues<SUMMON_TYPE>();
@@ -769,14 +779,14 @@ public class PlayerUI : MonoBehaviour {
             }
             index = next;
             SUMMON_TYPE type = types[index];
-            if (PlayerManager.Instance.player.availableSummons.ContainsKey(type)) { //Player has a summon of that type, select that.
+            if (PlayerManager.Instance.player.summons.ContainsKey(type)) { //Player has a summon of that type, select that.
                 SetCurrentlySelectedSummon(type);
                 break;
             }
         }
     }
     public void ShowSummonTooltip() {
-        string header = Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
+        string header = currentlySelectedSummon.SummonName();
         string message;
         switch (currentlySelectedSummon) {
             case SUMMON_TYPE.Wolf:
@@ -794,7 +804,7 @@ public class PlayerUI : MonoBehaviour {
             case SUMMON_TYPE.Incubus:
                 message = "Summon a succubus that will seduce a female character and eliminate her.";
                 break;
-            case SUMMON_TYPE.Thief:
+            case SUMMON_TYPE.ThiefSummon:
                 message = "Summon a thief that will steal items from the settlements warehouse.";
                 break;
             default:
@@ -817,7 +827,7 @@ public class PlayerUI : MonoBehaviour {
             Summon summonToPlace = PlayerManager.Instance.player.GetAvailableSummonOfType(currentlySelectedSummon);
             summonToPlace.CreateMarker();
             summonToPlace.marker.InitialPlaceMarkerAt(tile);
-            PlayerManager.Instance.player.RemoveSummon(summonToPlace);
+            //PlayerManager.Instance.player.RemoveSummon(summonToPlace);
             summonToPlace.OnPlaceSummon(tile);
             Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summonToPlace);
         }

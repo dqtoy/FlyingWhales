@@ -87,7 +87,7 @@ public class ActionItem : MonoBehaviour {
             case SUMMON_TYPE.Incubus:
                 message = "Summon a succubus that will seduce a female character and eliminate her.";
                 break;
-            case SUMMON_TYPE.Thief:
+            case SUMMON_TYPE.ThiefSummon:
                 message = "Summon a thief that will steal items from the settlements warehouse.";
                 break;
             default:

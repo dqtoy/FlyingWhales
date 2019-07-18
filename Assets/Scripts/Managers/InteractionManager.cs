@@ -430,6 +430,7 @@ public class InteractionManager : MonoBehaviour {
         switch (jobType) {
             case JOB_TYPE.BERSERK:
             case JOB_TYPE.TANTRUM:
+            case JOB_TYPE.STEAL:
                 priority = 10;
                 break;
             case JOB_TYPE.KNOCKOUT:

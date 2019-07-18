@@ -21,7 +21,7 @@ public class Player : ILeader {
     public CombatGrid defenseGrid { get; private set; }
     public List<Intel> allIntel { get; private set; }
     public Minion[] minions { get; private set; }
-    public Dictionary<SUMMON_TYPE, List<Summon>> availableSummons { get; private set; } //Summons that the player can still place. Does NOT include summons that have been placed. Individual summons are responsible for placeing themselves back after the player is done with a map.
+    public Dictionary<SUMMON_TYPE, List<Summon>> summons { get; private set; } //Summons that the player can still place. Does NOT include summons that have been placed. Individual summons are responsible for placeing themselves back after the player is done with a map.
     public Artifact[] availableArtifacts { get; private set; }
     //Unique ability of player
     public ShareIntel shareIntelAbility { get; private set; }
@@ -68,7 +68,7 @@ public class Player : ILeader {
         defenseGrid.Initialize();
         allIntel = new List<Intel>();
         minions = new Minion[MAX_MINIONS];
-        availableSummons = new Dictionary<SUMMON_TYPE, List<Summon>>();
+        summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
         availableArtifacts = new Artifact[MAX_ARTIFACT];
         shareIntelAbility = new ShareIntel();
         maxSummonSlots = 1;
@@ -696,26 +696,58 @@ public class Player : ILeader {
             Debug.LogWarning("Max summons has been reached!");
         }
     }
+    /// <summary>
+    /// Get total number of summons that the player has, regardless of them having been used or not.
+    /// </summary>
+    /// <returns></returns>
     public int GetTotalSummonsCount() {
         int count = 0;
-        foreach (KeyValuePair<SUMMON_TYPE, List<Summon>> kvp in availableSummons) {
-            count += availableSummons[kvp.Key].Count;
+        foreach (KeyValuePair<SUMMON_TYPE, List<Summon>> kvp in summons) {
+            count += summons[kvp.Key].Count;
         }
         
         return count;
     }
-    public int GetSummonsOfTypeCount(SUMMON_TYPE type) {
-        if (!availableSummons.ContainsKey(type)) {
+    /// <summary>
+    /// Get number of summons that have not been used yet.
+    /// </summary>
+    public int GetTotalAvailableSummonsCount() {
+        int count = 0;
+        foreach (KeyValuePair<SUMMON_TYPE, List<Summon>> kvp in summons) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                Summon currSummon = kvp.Value[i];
+                if (!currSummon.hasBeenUsed) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+    /// <summary>
+    /// Get the number of summons of a specific type that the player has not yet used.
+    /// </summary>
+    /// <param name="type">The type of summon.</param>
+    /// <returns>Integer</returns>
+    public int GetAvailableSummonsOfTypeCount(SUMMON_TYPE type) {
+        if (!summons.ContainsKey(type)) {
             return 0;
         }
-        return availableSummons[type].Count;
+        int count = 0;
+        for (int i = 0; i < summons[type].Count; i++) {
+            Summon currSummon = summons[type][i];
+            if (currSummon.summonType == type) {
+                count++;
+            }
+        }
+        return count;
     }
     private void AddSummon(Summon newSummon) {
-        if (!availableSummons.ContainsKey(newSummon.summonType)) {
-            availableSummons.Add(newSummon.summonType, new List<Summon>());
+        if (!summons.ContainsKey(newSummon.summonType)) {
+            summons.Add(newSummon.summonType, new List<Summon>());
         }
-        if (!availableSummons[newSummon.summonType].Contains(newSummon)) {
-            availableSummons[newSummon.summonType].Add(newSummon);
+        if (!summons[newSummon.summonType].Contains(newSummon)) {
+            summons[newSummon.summonType].Add(newSummon);
             Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
         }
     }
@@ -725,22 +757,15 @@ public class Player : ILeader {
     /// </summary>
     /// <param name="summon">The summon to be removed.</param>
     public void RemoveSummon(Summon summon) {
-        if (availableSummons[summon.summonType].Remove(summon)) {
-            if (availableSummons[summon.summonType].Count == 0) {
-                availableSummons.Remove(summon.summonType);
+        if (summons[summon.summonType].Remove(summon)) {
+            if (summons[summon.summonType].Count == 0) {
+                summons.Remove(summon.summonType);
             }
             Messenger.Broadcast(Signals.PLAYER_REMOVED_SUMMON, summon);
         }
     }
-    /// <summary>
-    /// Get a list of all summon types that the player has.
-    /// </summary>
-    /// <returns>List of summon types.</returns>
-    public List<SUMMON_TYPE> GetAvailableSummonTypes() {
-        return availableSummons.Keys.ToList();
-    }
     public Summon GetAvailableSummonOfType(SUMMON_TYPE type) {
-        List<Summon> choices = availableSummons[type];
+        List<Summon> choices = summons[type];
         return choices[Random.Range(0, choices.Count)];
     }
     public void AdjustSummonSlot(int adjustment) {

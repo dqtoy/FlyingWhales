@@ -1282,7 +1282,7 @@ public enum GOAP_CATEGORY { NONE, IDLE, FULLNESS, TIREDNESS, HAPPINESS, WORK, RE
 public enum JOB_TYPE { NONE, UNDERMINE_ENEMY, TIREDNESS_RECOVERY_EXHAUSTED, HUNGER_RECOVERY_STARVING, HAPPINESS_RECOVERY_FORLORN, TIREDNESS_RECOVERY, HUNGER_RECOVERY, HAPPINESS_RECOVERY, REMOVE_TRAIT, RESTRAIN, OBTAIN_SUPPLY
         , REMOVE_POISON, ASK_FOR_HELP_REMOVE_POISON_TABLE, FEED, KNOCKOUT, APPREHEND, ABDUCT, DESTROY_FRIENDSHIP
         , DESTROY_LOVE, REPORT_HOSTILE, REPORT_CRIME, BURY, DELIVER_TREASURE, CRAFT_TOOL, REPLACE_TILE_OBJECT, BREW_POTION
-        , JUDGEMENT, BREAK_UP, SAVE_CHARACTER, ASK_FOR_HELP_SAVE_CHARACTER, TANTRUM, SHARE_INFORMATION, BUILD_FURNITURE
+        , JUDGEMENT, BREAK_UP, SAVE_CHARACTER, ASK_FOR_HELP_SAVE_CHARACTER, TANTRUM, SHARE_INFORMATION, BUILD_FURNITURE, STEAL
         , BERSERK, PATROL, EXPLORE, OBTAIN_ITEM, WATCH, }
 public enum Cardinal_Direction { North, South, East, West };
 public enum ACTION_LOCATION_TYPE {
@@ -1340,7 +1340,7 @@ public enum COMBAT_ABILITY {
 }
 
 public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUNGLE, TUNDRA, SNOW, DESERT, }
-public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, Thief, }
+public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, ThiefSummon, }
 public enum ARTIFACT_TYPE { None, Necronomicon, Chaos_Orb, Hermes_Statue, Ankh_Of_Anubis, Miasma_Emitter, }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, }
 
@@ -1548,6 +1548,17 @@ public static class Extensions {
                 return true;
             default:
                 return false;
+        }
+    }
+    #endregion
+
+    #region Summons
+    public static string SummonName(this SUMMON_TYPE type) {
+        switch (type) {
+            case SUMMON_TYPE.ThiefSummon:
+                return "Thief";
+            default:
+                return Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
         }
     }
     #endregion
