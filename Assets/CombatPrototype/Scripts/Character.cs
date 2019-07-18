@@ -411,7 +411,12 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
     }
     public Vector2Int gridTilePosition {
-        get { return new Vector2Int((int) marker.anchoredPos.x, (int) marker.anchoredPos.y); }
+        get {
+            if (marker == null) {
+                throw new Exception(this.name + " marker is null!");
+            }
+            return new Vector2Int((int) marker.anchoredPos.x, (int) marker.anchoredPos.y);
+        }
     }
     public POI_STATE state {
         get { return _state; }
@@ -587,6 +592,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
         Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
 
     }
     public virtual void UnsubscribeSignals() {
@@ -603,6 +609,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
     }
     #endregion
 
@@ -618,6 +625,16 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                     marker.RemoveTerrifyingObject(party.characters[i]);
                 }
             }
+        }
+    }
+    /// <summary>
+    /// Listener for when the player successfully invades an area.
+    /// </summary>
+    /// <param name="area">The invaded area.</param>
+    protected virtual void OnSuccessInvadeArea(Area area) {
+        if (specificLocation == area) {
+            StopCurrentAction(false);
+            UnsubscribeSignals();
         }
     }
     #endregion

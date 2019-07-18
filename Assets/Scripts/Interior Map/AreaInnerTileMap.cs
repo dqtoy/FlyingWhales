@@ -20,6 +20,7 @@ public class AreaInnerTileMap : MonoBehaviour {
 
     public int width;
     public int height;
+    public GridGraph pathfindingGraph;
 
     private LocationGridTile westGate;
     private LocationGridTile eastGate;
@@ -1652,6 +1653,9 @@ public class AreaInnerTileMap : MonoBehaviour {
             default:
                 return randomGarbTile;
         }
+    }
+    public void CleanUp() {
+        Utilities.DestroyChildren(objectsParent);
     }
     #endregion
 

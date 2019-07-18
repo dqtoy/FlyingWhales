@@ -90,6 +90,9 @@ public class TileObject : IPointOfInterest {
     public virtual void SetGridTileLocation(LocationGridTile tile) {
         previousTile = this.tile;
         this.tile = tile;
+        if (_collisionTrigger == null) {
+            InitializeCollisionTrigger();
+        }
         if (tile == null) {
             DisableCollisionTrigger();
             OnRemoveTileObject(null, previousTile);

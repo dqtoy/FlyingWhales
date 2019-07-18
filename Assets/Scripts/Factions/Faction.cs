@@ -347,9 +347,10 @@ public class Faction {
                 logNotif.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
                 newRuler.AddHistory(logNotif);
                 PlayerManager.Instance.player.ShowNotification(logNotif);
-            } else {
-                Debug.LogError(GameManager.Instance.TodayLogString() + name + " couldn't set a new leader replacing " + previousRuler.name);
-            }
+            } 
+            //else {
+            //    Debug.LogError(GameManager.Instance.TodayLogString() + name + " couldn't set a new leader replacing " + previousRuler.name);
+            //}
         } else {
             Debug.LogError(GameManager.Instance.TodayLogString() + name + " cannot set new leader because there is no previous leader!");
         }

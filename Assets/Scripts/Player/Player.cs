@@ -22,7 +22,7 @@ public class Player : ILeader {
     public List<Intel> allIntel { get; private set; }
     public Minion[] minions { get; private set; }
     public Dictionary<SUMMON_TYPE, List<Summon>> summons { get; private set; } //Summons that the player can still place. Does NOT include summons that have been placed. Individual summons are responsible for placeing themselves back after the player is done with a map.
-    public Artifact[] availableArtifacts { get; private set; }
+    public Artifact[] artifacts { get; private set; }
     //Unique ability of player
     public ShareIntel shareIntelAbility { get; private set; }
 
@@ -69,7 +69,7 @@ public class Player : ILeader {
         allIntel = new List<Intel>();
         minions = new Minion[MAX_MINIONS];
         summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
-        availableArtifacts = new Artifact[MAX_ARTIFACT];
+        artifacts = new Artifact[MAX_ARTIFACT];
         shareIntelAbility = new ShareIntel();
         maxSummonSlots = 1;
         maxArtifactSlots = 1;
@@ -785,18 +785,18 @@ public class Player : ILeader {
         }
     }
     private void AddArtifact(Artifact newArtifact) {
-        for (int i = 0; i < availableArtifacts.Length; i++) {
-            if (availableArtifacts[i] == null) {
-                availableArtifacts[i] = newArtifact;
+        for (int i = 0; i < artifacts.Length; i++) {
+            if (artifacts[i] == null) {
+                artifacts[i] = newArtifact;
                 Messenger.Broadcast<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
                 break;
             }
         }
     }
     public void RemoveArtifact(Artifact removedArtifact) {
-        for (int i = 0; i < availableArtifacts.Length; i++) {
-            if (availableArtifacts[i] == removedArtifact) {
-                availableArtifacts[i] = null;
+        for (int i = 0; i < artifacts.Length; i++) {
+            if (artifacts[i] == removedArtifact) {
+                artifacts[i] = null;
                 Messenger.Broadcast<Artifact>(Signals.PLAYER_REMOVED_ARTIFACT, removedArtifact);
                 break;
             }
@@ -804,27 +804,40 @@ public class Player : ILeader {
     }
     public int GetTotalArtifactCount() {
         int count = 0;
-        for (int i = 0; i < availableArtifacts.Length; i++) {
-            if (availableArtifacts[i] != null) {
+        for (int i = 0; i < artifacts.Length; i++) {
+            if (artifacts[i] != null) {
                 count++;
             }
         }
         return count;
     }
-    public int GetArtifactsOfTypeCount(ARTIFACT_TYPE type) {
+    /// <summary>
+    /// Get number of artifacts that have not been used.
+    /// </summary>
+    public int GetTotalAvailableArtifactCount() {
         int count = 0;
-        for (int i = 0; i < availableArtifacts.Length; i++) {
-            Artifact currArtifact = availableArtifacts[i];
-            if (currArtifact != null && currArtifact.type == type) {
+        for (int i = 0; i < artifacts.Length; i++) {
+            Artifact currArtifact = artifacts[i];
+            if (currArtifact != null && !currArtifact.hasBeenUsed) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public int GetAvailableArtifactsOfTypeCount(ARTIFACT_TYPE type) {
+        int count = 0;
+        for (int i = 0; i < artifacts.Length; i++) {
+            Artifact currArtifact = artifacts[i];
+            if (currArtifact != null && currArtifact.type == type && !currArtifact.hasBeenUsed) {
                 count++;
             }
         }
         return count;
     }
     public bool TryGetAvailableArtifactOfType(ARTIFACT_TYPE type, out Artifact artifact) {
-        for (int i = 0; i < availableArtifacts.Length; i++) {
-            Artifact currArtifact = availableArtifacts[i];
-            if (currArtifact != null && currArtifact.type == type) {
+        for (int i = 0; i < artifacts.Length; i++) {
+            Artifact currArtifact = artifacts[i];
+            if (currArtifact != null && currArtifact.type == type && !currArtifact.hasBeenUsed) {
                 artifact = currArtifact;
                 return true;
             }
@@ -916,6 +929,7 @@ public class Player : ILeader {
         if (playerWon) {
             PlayerUI.Instance.SuccessfulAreaCorruption();
             AreaIsCorrupted();
+            Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, currentTileBeingCorrupted.areaOfTile);
         } else {
             string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
             PlayerUI.Instance.GameOver(gameOverText);

@@ -226,6 +226,11 @@ public static class Signals {
     /// Parameters (Artifact removedArtifact)
     /// </summary>
     public static string PLAYER_REMOVED_ARTIFACT = "OnPlayerRemovedArtifact";
+    public static string PLAYER_USED_ARTIFACT = "OnPlayerUsedArtifact";
+    /// <summary>
+    /// Parameters (Area invadedArea)
+    /// </summary>
+    public static string SUCCESS_INVASION_AREA = "OnPlayerSuccessInvadeArea";
     #endregion
 
     #region Interaction

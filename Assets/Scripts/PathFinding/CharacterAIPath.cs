@@ -261,7 +261,7 @@ public class CharacterAIPath : AILerp {
                     }
                 } else {
                     Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
-                    if (currPOI.gridTileLocation != null) {
+                    if (currPOI != null && currPOI.gridTileLocation != null) {
                         float distance = Vector3.Distance(newNodePos, currPOI.gridTileLocation.centeredWorldLocation);
                         if (distance <= marker.penaltyRadius) {
                             return 1000000;

@@ -44,6 +44,17 @@ public class Summon : Character {
         //SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions());
     }
     protected override void OnActionStateSet(GoapAction action, GoapActionState state) { } //overriddn OnActionStateSet so that summons cannot witness other events.
+    protected override void OnSuccessInvadeArea(Area area) {
+        base.OnSuccessInvadeArea(area);
+        //clean up
+        StopCurrentAction(false);
+        hasBeenUsed = false;
+        specificLocation.RemoveCharacterFromLocation(this);
+        DestroyMarker();
+        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
+        ClearAllAwareness();
+        CancelAllJobsAndPlans();
+    }
     #endregion
 
     #region Virtuals

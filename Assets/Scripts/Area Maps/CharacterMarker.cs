@@ -457,6 +457,11 @@ public class CharacterMarker : PooledObject {
         Messenger.RemoveListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         //Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         visionCollision.Reset();
+        pathfindingAI.ClearAllCurrentPathData();
+        GameObject.Destroy(collisionTrigger.gameObject);
+        for (int i = 0; i < colliders.Length; i++) {
+            colliders[i].enabled = false;
+        }
 
     }
     #endregion

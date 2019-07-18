@@ -33,4 +33,8 @@ public class POICollisionTrigger : MonoBehaviour {
     public void PrintWorldLocation() {
         Debug.Log(transform.position);
     }
+
+    private void OnDestroy() {
+        poi = null;
+    }
 }

@@ -181,6 +181,7 @@ public class PlayerUI : MonoBehaviour {
         //Artifacts
         Messenger.AddListener<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, OnGainNewArtifact);
         Messenger.AddListener<Artifact>(Signals.PLAYER_REMOVED_ARTIFACT, OnRemoveArtifact);
+        Messenger.AddListener<Artifact>(Signals.PLAYER_USED_ARTIFACT, OnUsedArtifact);
 
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
@@ -854,7 +855,15 @@ public class PlayerUI : MonoBehaviour {
         successfulAreaCorruptionGO.SetActive(true);
     }
     public void BackToWorld() {
-        InteriorMapManager.Instance.HideAreaMap();
+        Area closedArea = InteriorMapManager.Instance.HideAreaMap();
+        if (PlayerManager.Instance.player.summons.Count > 0) {
+            SetCurrentlySelectedSummon(PlayerManager.Instance.player.summons.Keys.FirstOrDefault());
+        } else {
+            SetCurrentlySelectedSummon(SUMMON_TYPE.None);
+        }
+        SetCurrentlySelectedArtifact(PlayerManager.Instance.player.artifacts.FirstOrDefault());
+        successfulAreaCorruptionGO.SetActive(false);
+        InteriorMapManager.Instance.DestroyAreaMap(closedArea);
     }
     #endregion
 
@@ -892,23 +901,32 @@ public class PlayerUI : MonoBehaviour {
     #region Artifacts
     private Artifact currentlySelectedArtifact; //the artifact that is currently shown in the UI
     private void UpdateArtifactsInteraction() {
-        bool state = PlayerManager.Instance.player.GetTotalArtifactCount() == 0;
+        bool state = PlayerManager.Instance.player.GetTotalAvailableArtifactCount() == 0;
         summonArtifactCover.SetActive(state);
         summonArtifactBtn.interactable = !state && InteriorMapManager.Instance.isAnAreaMapShowing;
     }
-    public void OnGainNewArtifact(Artifact newArtifact) {
+    private void OnGainNewArtifact(Artifact newArtifact) {
         UpdateArtifactsInteraction();
         if (currentlySelectedArtifact == null) {
             SetCurrentlySelectedArtifact(newArtifact);
         }
         //AssignNewActionToLatestItem(newSummon);
     }
-    public void OnRemoveArtifact(Artifact artifact) {
+    private void OnRemoveArtifact(Artifact artifact) {
         UpdateArtifactsInteraction();
-        if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more summons left
+        if (PlayerManager.Instance.player.GetTotalAvailableArtifactCount() == 0) { //the player has no more artifacts left
             SetCurrentlySelectedArtifact(null);
         } else if (artifact == currentlySelectedArtifact
-            && PlayerManager.Instance.player.GetArtifactsOfTypeCount(artifact.type) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+            && PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(artifact.type) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+            CycleArtifacts(1);
+        }
+    }
+    private void OnUsedArtifact(Artifact artifact) {
+        UpdateArtifactsInteraction();
+        if (PlayerManager.Instance.player.GetTotalAvailableArtifactCount() == 0) { //the player has no more artifacts left
+            SetCurrentlySelectedArtifact(null);
+        } else if (artifact == currentlySelectedArtifact
+            && PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(artifact.type) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
             CycleArtifacts(1);
         }
     }
@@ -919,7 +937,7 @@ public class PlayerUI : MonoBehaviour {
             currentArtifactCountLbl.text = "0";
         } else {
             currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
-            currentArtifactCountLbl.text = PlayerManager.Instance.player.GetArtifactsOfTypeCount(artifact.type).ToString();
+            currentArtifactCountLbl.text = PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(artifact.type).ToString();
         }
         
     }
@@ -980,8 +998,10 @@ public class PlayerUI : MonoBehaviour {
             LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
             if (tile.objHere == null) {
                 Artifact artifactToPlace = currentlySelectedArtifact;
-                tile.structure.AddPOI(artifactToPlace, tile);
-                PlayerManager.Instance.player.RemoveArtifact(artifactToPlace);
+                if (tile.structure.AddPOI(artifactToPlace, tile)) {
+                    Messenger.Broadcast(Signals.PLAYER_USED_ARTIFACT, artifactToPlace);
+                }
+                //PlayerManager.Instance.player.RemoveArtifact(artifactToPlace);
             } else {
                 Debug.LogWarning("There is already an object placed there. Not placing artifact");
             }

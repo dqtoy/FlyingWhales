@@ -57,6 +57,7 @@ public class ConsoleMenu : UIMenu {
             {"/add_rel", AddRelationship },
             {"/rel_deg", ForcedRelationshipDegradation },
             {"/set_hp", SetHP },
+            {"/kill_res",  KillResidents},
         };
 
 #if UNITY_EDITOR
@@ -486,6 +487,36 @@ public class ConsoleMenu : UIMenu {
         }
 
         character.Death(causeString);
+    }
+    private void KillResidents(string[] parameters) {
+        if (parameters.Length < 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /kill_res");
+            return;
+        }
+        string areaParameterString = parameters[0];
+        int areaID;
+
+        bool isAreaParameterNumeric = int.TryParse(areaParameterString, out areaID);
+
+        Area area = null;
+
+        if (isAreaParameterNumeric) {
+            area = LandmarkManager.Instance.GetAreaByID(areaID);
+        } else {
+            area = LandmarkManager.Instance.GetAreaByName(areaParameterString);
+        }
+
+        if (area == null) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of /kill_res");
+            return;
+        }
+
+        List<Character> characters = new List<Character>(area.areaResidents);
+        for (int i = 0; i < characters.Count; i++) {
+            characters[i].Death();
+        }
     }
     private void CenterOnCharacter(string[] parameters) {
         if (parameters.Length != 1) {

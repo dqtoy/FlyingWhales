@@ -161,9 +161,9 @@ public class InteriorMapManager : MonoBehaviour {
             AreaMapCameraMove.Instance.JustCenterCamera(instantCenter);
         }
     }
-    public void HideAreaMap() {
+    public Area HideAreaMap() {
         if (currentlyShowingMap == null) {
-            return;
+            return null;
         }
         currentlyShowingMap.Close();
         Area closedArea = currentlyShowingArea;
@@ -172,14 +172,22 @@ public class InteriorMapManager : MonoBehaviour {
         currentlyShowingArea = null;
         PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
         Messenger.Broadcast(Signals.AREA_MAP_CLOSED, closedArea);
+        return closedArea;
     }
     public void OnCreateAreaMap(AreaInnerTileMap newMap) {
         areaMaps.Add(newMap);
         newMap.transform.localPosition = nextMapPos;
-        //set the next map position based on the new maps height
-        nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 10, nextMapPos.z);
+        ////set the next map position based on the new maps height
+        //nextMapPos = new Vector3(nextMapPos.x, nextMapPos.y + newMap.height + 10, nextMapPos.z); //all maps now have same positon, because only 1 can exist at a time.
         CreatePathfindingGraphForArea(newMap);
         newMap.UpdateTilesWorldPosition();
+    }
+    public void DestroyAreaMap(Area area) {
+        pathfinder.data.RemoveGraph(area.areaMap.pathfindingGraph);
+        area.areaMap.CleanUp();
+        areaMaps.Remove(area.areaMap);
+        GameObject.Destroy(area.areaMap.gameObject);
+        area.SetAreaMap(null);
     }
 
     #region Pathfinding
@@ -208,6 +216,7 @@ public class InteriorMapManager : MonoBehaviour {
         }
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         AstarPath.active.Scan(gg);
+        newMap.pathfindingGraph = gg;
     }
     #endregion
 
