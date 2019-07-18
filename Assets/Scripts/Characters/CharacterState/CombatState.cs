@@ -361,10 +361,11 @@ public class CombatState : CharacterState {
             attackSummary += "\n" + characterHit.name + " still has remaining hp " + characterHit.currentHP.ToString() + "/" + characterHit.maxHP.ToString();
             //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
             if (characterHit == currentClosestHostile) {
-                if (!currentClosestHostile.marker.hostilesInRange.Contains(stateComponent.character)) {
+                //If character that attacked is not invisible or invisible but can be seen by character hit, character hit should react
+                Invisible invisible = stateComponent.character.GetNormalTrait("Invisible") as Invisible;
+                if (invisible == null || invisible.charactersThatCanSee.Contains(characterHit)) {
                     currentClosestHostile.marker.AddHostileInRange(stateComponent.character, CHARACTER_STATE.COMBAT); //When the target is hit and it is still alive, add hostile
                 }
-
             }
         }
         if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.

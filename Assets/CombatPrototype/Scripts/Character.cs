@@ -1330,9 +1330,15 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             }
         }
     }
-    public bool CreateJobsOnEnterVisionWith(Character targetCharacter) {
+    public bool CreateJobsOnEnterVisionWith(Character targetCharacter, bool bypassInvisibilityCheck = false) {
         if (!CanCharacterReact()) {
             return true;
+        }
+        if (!bypassInvisibilityCheck) {
+            Invisible invisible = targetCharacter.GetNormalTrait("Invisible") as Invisible;
+            if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
+                return true;
+            }
         }
         bool hasCreatedJob = false;
         for (int i = 0; i < targetCharacter.normalTraits.Count; i++) {
@@ -3011,20 +3017,25 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                 && targetCharacter.faction == faction) {
                 CombatState targetCombatState = targetCharacter.stateComponent.currentState as CombatState;
                 if(targetCombatState.currentClosestHostile != null && targetCombatState.currentClosestHostile.faction == faction && targetCombatState.currentClosestHostile != this) {
-                    RELATIONSHIP_EFFECT relEffectTowardsTarget = GetRelationshipEffectWith(targetCharacter);
-                    RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = GetRelationshipEffectWith(targetCombatState.currentClosestHostile);
-
-                    if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                        if(relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                            CreateWatchEvent(null, targetCombatState, targetCharacter);
-                        } else {
-                            marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false);
-                        }
+                    Invisible invisible = targetCombatState.currentClosestHostile.GetNormalTrait("Invisible") as Invisible;
+                    if(invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
+                        CreateWatchEvent(null, targetCombatState, targetCharacter);
                     } else {
-                        if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                            marker.AddHostileInRange(targetCharacter, checkHostility: false);
+                        RELATIONSHIP_EFFECT relEffectTowardsTarget = GetRelationshipEffectWith(targetCharacter);
+                        RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = GetRelationshipEffectWith(targetCombatState.currentClosestHostile);
+
+                        if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
+                            if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
+                                CreateWatchEvent(null, targetCombatState, targetCharacter);
+                            } else {
+                                marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false);
+                            }
                         } else {
-                            CreateWatchEvent(null, targetCombatState, targetCharacter);
+                            if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
+                                marker.AddHostileInRange(targetCharacter, checkHostility: false);
+                            } else {
+                                CreateWatchEvent(null, targetCombatState, targetCharacter);
+                            }
                         }
                     }
                 }
@@ -3178,6 +3189,18 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                 case "Death":
                     this.Death(responsibleCharacter: characterThatAttacked);
                     break;
+            }
+        } else {
+            Invisible invisible = stateComponent.character.GetNormalTrait("Invisible") as Invisible;
+            if (invisible != null) {
+                if (invisible.level == 1) {
+                    //Level 1 = remove invisible trait
+                    characterThatAttacked.RemoveTrait(invisible);
+                } else if (invisible.level == 2) {
+                    //Level 2 = attacked character will be the only character to see
+                    invisible.AddCharacterThatCanSee(this);
+                }
+                //Level 3 = will not be seen forever
             }
         }
     }
@@ -6046,6 +6069,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
             poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
+            poiGoapActions.Add(INTERACTION_TYPE.EAT_CHARACTER);
         }
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {
@@ -6323,6 +6347,20 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                     //Wait for the character to be in its own party before doing the action
                     if (plan.currentNode.action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                         Character targetCharacter = plan.currentNode.action.poiTarget as Character;
+                        Invisible invisible = targetCharacter.GetNormalTrait("Invisible") as Invisible;
+                        if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
+                            log += "\n - " + targetCharacter.name + " is invisible, drop plan and remove job in queue...";
+                            PrintLogIfActive(log);
+                            if (allGoapPlans.Count == 1) {
+                                DropPlan(plan, true);
+                                willGoIdleState = false;
+                                break;
+                            } else {
+                                DropPlan(plan, true);
+                                i--;
+                                continue;
+                            }
+                        }
                         if (!targetCharacter.IsInOwnParty() && targetCharacter.currentParty != _ownParty) {
                             log += "\n - " + targetCharacter.name + " is not in its own party, waiting and skipping...";
                             PrintLogIfActive(log);
@@ -6719,6 +6757,15 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (targettedByAction.Remove(action)) {
             if (marker != null) {
                 marker.OnCharacterRemovedTargettedByAction(action);
+            }
+        }
+    }
+    //This stops and removes from job queue all action targetting this character
+    public void StopAllActionTargettingThis() {
+        for (int i = 0; i < targettedByAction.Count; i++) {
+            if (!targettedByAction[i].isDone) {
+                targettedByAction[i].StopAction(true);
+                i--;
             }
         }
     }

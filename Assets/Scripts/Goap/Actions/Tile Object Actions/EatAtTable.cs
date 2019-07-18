@@ -17,7 +17,9 @@ public class EatAtTable : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
+        if (actor.GetNormalTrait("Vampiric", "Cannibal") == null) {
+            AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
+        }
     }
     public override void PerformActualAction() {
         base.PerformActualAction();

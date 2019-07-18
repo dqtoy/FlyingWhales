@@ -270,6 +270,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.INSPECT:
                 goapAction = new Inspect(actor, target);
                 break;
+            case INTERACTION_TYPE.EAT_CHARACTER:
+                goapAction = new EatCharacter(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

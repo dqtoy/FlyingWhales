@@ -34,7 +34,7 @@ public class CharacterMarker : PooledObject {
     public CharacterAIPath pathfindingAI;    
     public AIDestinationSetter destinationSetter;
     public Seeker seeker;
-    [SerializeField] private Collider2D[] colliders;
+    public Collider2D[] colliders;
     [SerializeField] private Rigidbody2D[] rgBodies;
     public CharacterMarkerVisionCollision visionCollision;
 
@@ -227,12 +227,22 @@ public class CharacterMarker : PooledObject {
             UpdateActionIcon();
             Debug.Log(gainTraitSummary);
         } else {
-            if (inVisionPOIs.Contains(characterThatGainedTrait)) {
-                character.CreateJobsOnEnterVisionWith(characterThatGainedTrait);
-            }
-            if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-                RemoveHostileInRange(characterThatGainedTrait); //removed hostile because he/she became unconscious.
+            if(trait.name == "Invisible") {
+                RemoveHostileInRange(characterThatGainedTrait);
                 RemoveAvoidInRange(characterThatGainedTrait);
+                RemovePOIFromInVisionRange(characterThatGainedTrait);
+                if(character.currentAction != null && character.currentAction.poiTarget == characterThatGainedTrait) {
+                    //If current action target is invisible and it is moving towards target stop it
+                    character.currentAction.StopAction(true);
+                }
+            } else {
+                if (inVisionPOIs.Contains(characterThatGainedTrait)) {
+                    character.CreateJobsOnEnterVisionWith(characterThatGainedTrait);
+                }
+                if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+                    RemoveHostileInRange(characterThatGainedTrait); //removed hostile because he/she became unconscious.
+                    RemoveAvoidInRange(characterThatGainedTrait);
+                }
             }
         }
         if(trait.type == TRAIT_TYPE.DISABLER && terrifyingObjects.Count > 0) {

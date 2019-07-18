@@ -1,0 +1,1 @@
+{"items":[{"key":"eat success_description","value":"%00@ ate %10@."},{"key":"eat fail_description","value":"%00@ wanted to eat %10@'s but failed."},{"key":"target missing_description","value":"%00@ wanted to eat %10@ but %95b was no longer there."},{"key":"thought_bubble_m","value":"%00@ is going to eat %10@."},{"key":"thought_bubble","value":"%00@ is eating %10@."}]}

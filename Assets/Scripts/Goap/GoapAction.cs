@@ -74,8 +74,20 @@ public class GoapAction {
     public int referenceCount { get; protected set; }
 
     protected virtual bool isTargetMissing {
-        get { return !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
-                || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)); }
+        get {
+            bool targetMissing = !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+                || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
+
+            if (targetMissing) {
+                return targetMissing;
+            } else {
+                Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
+                if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
+                    return true;
+                }
+                return targetMissing;
+            }
+        }
     }
 
     //Stealth

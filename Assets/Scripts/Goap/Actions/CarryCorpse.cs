@@ -6,8 +6,18 @@ public class CarryCorpse : GoapAction {
 
     protected override bool isTargetMissing {
         get {
-            return poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+            bool targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
               || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
+
+            if (targetMissing) {
+                return targetMissing;
+            } else {
+                Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
+                if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
+                    return true;
+                }
+                return targetMissing;
+            }
         }
     }
 

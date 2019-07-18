@@ -161,30 +161,20 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     //    }
     //}
     private void NormalEnterHandling(IPointOfInterest poi) {
+        Character targetCharacter = null;
+        if (poi is Character) {
+            targetCharacter = poi as Character;
+            Invisible invisible = targetCharacter.GetNormalTrait("Invisible") as Invisible;
+            if (invisible != null && !invisible.charactersThatCanSee.Contains(parentMarker.character)) {
+                return;
+            }
+        }
         parentMarker.AddPOIAsInVisionRange(poi);
         if (GameManager.Instance.gameHasStarted) {
             if (parentMarker.character.stateComponent.currentState != null) {
                 if (!parentMarker.character.stateComponent.currentState.OnEnterVisionWith(poi)) {
-                    if (poi is Character) {
-                        Character targetCharacter = poi as Character;
-                        if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                            if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter)) {
-#if TRAILER_BUILD
-                                if (parentMarker.character.name != "Jamie" && parentMarker.character.name != "Audrey" && parentMarker.character.name != "Fiona") { //For Trailer Build Only
-                                    ChatHandling(targetCharacter);
-                                }
-#else
-                                ChatHandling(targetCharacter);
-#endif
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (poi is Character) {
-                    Character targetCharacter = poi as Character;
-                    if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                        if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter)) {
+                    if (targetCharacter != null && !parentMarker.AddHostileInRange(targetCharacter)) {
+                        if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
 #if TRAILER_BUILD
                             if (parentMarker.character.name != "Jamie" && parentMarker.character.name != "Audrey" && parentMarker.character.name != "Fiona") { //For Trailer Build Only
                                 ChatHandling(targetCharacter);
@@ -193,6 +183,18 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                             ChatHandling(targetCharacter);
 #endif
                         }
+                    }
+                }
+            } else {
+                if (targetCharacter != null && !parentMarker.AddHostileInRange(targetCharacter)) {
+                    if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
+#if TRAILER_BUILD
+                        if (parentMarker.character.name != "Jamie" && parentMarker.character.name != "Audrey" && parentMarker.character.name != "Fiona") { //For Trailer Build Only
+                            ChatHandling(targetCharacter);
+                        }
+#else
+                        ChatHandling(targetCharacter);
+#endif
                     }
                 }
             }
