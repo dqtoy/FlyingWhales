@@ -140,14 +140,7 @@ public class TablePoison : GoapAction {
         //UIManager.Instance.Pause();
     }
     public void AfterPoisonSuccess() {
-        if (actor.name == "Audrey") {
-            //force go home
-            actor.PlanIdleReturnHome();
-
-            GameDate fionaEatSched = GameManager.Instance.Today();
-            fionaEatSched.AddTicks(2);
-            SchedulingManager.Instance.AddEntry(fionaEatSched, ScheduleFionaEat);
-        }
+        
     }
     private void ScheduleFionaEat() {
         Character fiona = CharacterManager.Instance.GetCharacterByName("Fiona");

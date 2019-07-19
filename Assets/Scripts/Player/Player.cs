@@ -9,8 +9,8 @@ public class Player : ILeader {
     private const int MAX_INTEL = 3;
     public const int MAX_MINIONS = 5;
     public const int MAX_THREAT = 100;
-    private const int MAX_SUMMONS = 3;
-    private const int MAX_ARTIFACT = 3;
+    private const int MAX_SUMMONS = 6; //3
+    private const int MAX_ARTIFACT = 5; //3
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
@@ -71,8 +71,8 @@ public class Player : ILeader {
         summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
         artifacts = new Artifact[MAX_ARTIFACT];
         shareIntelAbility = new ShareIntel();
-        maxSummonSlots = 1;
-        maxArtifactSlots = 1;
+        maxSummonSlots = 6;
+        maxArtifactSlots = 5;
         //ConstructRoleSlots();
         AddListeners();
     }
@@ -679,10 +679,12 @@ public class Player : ILeader {
     #endregion
 
     #region Area Corruption
-    private void AreaIsCorrupted() {
+    private Area AreaIsCorrupted() {
         isTileCurrentlyBeingCorrupted = false;
         GameManager.Instance.SetPausedState(true);
+        Area corruptedArea = currentTileBeingCorrupted.areaOfTile;
         PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
+        return corruptedArea;
     }
     #endregion
 
@@ -736,7 +738,7 @@ public class Player : ILeader {
         int count = 0;
         for (int i = 0; i < summons[type].Count; i++) {
             Summon currSummon = summons[type][i];
-            if (currSummon.summonType == type) {
+            if (currSummon.summonType == type && !currSummon.hasBeenUsed) {
                 count++;
             }
         }
@@ -913,7 +915,7 @@ public class Player : ILeader {
         bool stillHasResidents = false;
         for (int i = 0; i < currentAreaBeingInvaded.areaResidents.Count; i++) {
             Character currCharacter = currentAreaBeingInvaded.areaResidents[i];
-            if (currCharacter.currentHP > 0 && currCharacter.specificLocation == currentAreaBeingInvaded) {
+            if (currCharacter.IsAble() && currCharacter.specificLocation == currentAreaBeingInvaded) {
                 stillHasResidents = true;
                 break;
             }
@@ -928,8 +930,8 @@ public class Player : ILeader {
         PlayerUI.Instance.StopInvasion();
         if (playerWon) {
             PlayerUI.Instance.SuccessfulAreaCorruption();
-            AreaIsCorrupted();
-            Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, currentTileBeingCorrupted.areaOfTile);
+            Area corruptedArea = AreaIsCorrupted();
+            Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, corruptedArea);
         } else {
             string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
             PlayerUI.Instance.GameOver(gameOverText);

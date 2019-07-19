@@ -659,12 +659,16 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
         PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.ThiefSummon);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Chaos_Orb);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Hermes_Statue);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
         PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Miasma_Emitter);
         PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
     }
@@ -736,7 +740,12 @@ public class PlayerUI : MonoBehaviour {
     private void UpdateSummonsInteraction() {
         bool state = PlayerManager.Instance.player.GetTotalAvailableSummonsCount() == 0;
         summonCover.SetActive(state);
-        summonBtn.interactable = !state && InteriorMapManager.Instance.isAnAreaMapShowing;
+        if (currentlySelectedSummon == SUMMON_TYPE.None) {
+            summonBtn.interactable = !state && InteriorMapManager.Instance.isAnAreaMapShowing;
+        } else {
+            summonBtn.interactable = !state && InteriorMapManager.Instance.isAnAreaMapShowing && PlayerManager.Instance.player.GetAvailableSummonsOfTypeCount(currentlySelectedSummon) > 0;
+        }
+       
     }
     public void OnGainNewSummon(Summon newSummon) {
         UpdateSummonsInteraction();
@@ -767,6 +776,7 @@ public class PlayerUI : MonoBehaviour {
         currentlySelectedSummon = type;
         currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(type).summonPortrait;
         currentSummonCountLbl.text = PlayerManager.Instance.player.GetAvailableSummonsOfTypeCount(type).ToString();
+        UpdateSummonsInteraction();
     }
     public void CycleSummons(int cycleDirection) {
         SUMMON_TYPE[] types = Utilities.GetEnumValues<SUMMON_TYPE>();
@@ -780,7 +790,7 @@ public class PlayerUI : MonoBehaviour {
             }
             index = next;
             SUMMON_TYPE type = types[index];
-            if (PlayerManager.Instance.player.summons.ContainsKey(type)) { //Player has a summon of that type, select that.
+            if (PlayerManager.Instance.player.GetAvailableSummonsOfTypeCount(type) > 0) { //Player has a summon of that type, select that.
                 SetCurrentlySelectedSummon(type);
                 break;
             }
@@ -939,7 +949,7 @@ public class PlayerUI : MonoBehaviour {
             currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
             currentArtifactCountLbl.text = PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(artifact.type).ToString();
         }
-        
+        UpdateArtifactsInteraction();
     }
     public void CycleArtifacts(int cycleDirection) {
         ARTIFACT_TYPE[] types = Utilities.GetEnumValues<ARTIFACT_TYPE>();

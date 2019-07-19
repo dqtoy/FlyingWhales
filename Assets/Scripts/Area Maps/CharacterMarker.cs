@@ -448,7 +448,6 @@ public class CharacterMarker : PooledObject {
         //if (currentMoveCoroutine != null) {
         //    StopCoroutine(currentMoveCoroutine);
         //}
-        //character = null;
         hoverEnterAction = null;
         hoverExitAction = null;
         destinationTile = null;
@@ -472,7 +471,7 @@ public class CharacterMarker : PooledObject {
         for (int i = 0; i < colliders.Length; i++) {
             colliders[i].enabled = false;
         }
-
+        character = null;
     }
     #endregion
 
@@ -741,13 +740,6 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Utilities
-    public void OnMarkerInitiallyPlaced() {
-        pathfindingAI.UpdateMe();
-        for (int i = 0; i < colliders.Length; i++) {
-            colliders[i].enabled = true;
-        }
-        //Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
-    }
     private float GetSpeed() {
         float speed = character.raceSetting.runSpeed;
         if(targettedByRemoveNegativeTraitActionsCounter > 0) {
@@ -867,7 +859,10 @@ public class CharacterMarker : PooledObject {
     /// <param name="tile">The tile the character should be placed at.</param>
     public void InitialPlaceMarkerAt(LocationGridTile tile) {
         PlaceMarkerAt(tile);
-        OnMarkerInitiallyPlaced();
+        pathfindingAI.UpdateMe();
+        for (int i = 0; i < colliders.Length; i++) {
+            colliders[i].enabled = true;
+        }
     }
     public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
         this.gameObject.transform.SetParent(tile.parentAreaMap.objectsParent);
@@ -909,6 +904,7 @@ public class CharacterMarker : PooledObject {
             for (int i = 0; i < colliders.Length; i++) {
                 colliders[i].enabled = false;
             }
+            pathfindingAI.ClearAllCurrentPathData();
             UpdateAnimation();
             UpdateActionIcon();
             gameObject.transform.SetParent(deathTileLocation.parentAreaMap.objectsParent);

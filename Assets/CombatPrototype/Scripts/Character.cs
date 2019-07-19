@@ -542,11 +542,27 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         UpdateIsCombatantState();
 
         SetMoodValue(90);
-
         CreateOwnParty();
 
+        //NOTE: These values will be randomized when this character is placed in his/her area map.
         tiredness = TIREDNESS_DEFAULT;
-        if(role.roleType != CHARACTER_ROLE.MINION) {
+        fullness = FULLNESS_DEFAULT;
+        happiness = HAPPINESS_DEFAULT;
+
+
+        hSkinColor = UnityEngine.Random.Range(-360f, 360f);
+        hHairColor = UnityEngine.Random.Range(-360f, 360f);
+        demonColor = UnityEngine.Random.Range(-144f, 144f);
+
+        //supply
+        SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
+#if !WORLD_CREATION_TOOL
+        GetRandomCharacterColor();
+#endif
+    }
+    public void InitialCharacterPlacement(LocationGridTile tile) {
+        tiredness = TIREDNESS_DEFAULT;
+        if (role.roleType != CHARACTER_ROLE.MINION) {
             //Fullness value between 1300 and 1440.
             SetFullness(UnityEngine.Random.Range(1300, FULLNESS_DEFAULT + 1));
             //Happiness value between 100 and 240.
@@ -556,26 +572,16 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             happiness = HAPPINESS_DEFAULT;
         }
 
-
-        hSkinColor = UnityEngine.Random.Range(-360f, 360f);
-        hHairColor = UnityEngine.Random.Range(-360f, 360f);
-        demonColor = UnityEngine.Random.Range(-144f, 144f);
-
-        //supply
-        SetSupply(UnityEngine.Random.Range(10, 61)); //Randomize initial supply per character (Random amount between 10 to 60.)
-
         ConstructInitialGoapAdvertisementActions();
-        //SubscribeToSignals(); //NOTE: Only made characters subscribe to signals when their area is the one that is currently active. TODO: Also make sure to unsubscribe a character when the player has completed their map.
 #if !WORLD_CREATION_TOOL
-        GetRandomCharacterColor();
         GameDate gameDate = GameManager.Instance.Today();
         gameDate.AddTicks(1);
-        SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions());
+        SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions(), this);
 #endif
+        marker.InitialPlaceMarkerAt(tile);
+        AddInitialAwareness();
+        SubscribeToSignals();
     }
-    /// <summary>
-    /// Called when the character's home area is the one that is active.
-    /// </summary>
 
     #region Signals
     protected void SubscribeToSignals() {
@@ -605,7 +611,6 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
         Messenger.RemoveListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
-        Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
         Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
         Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
@@ -638,7 +643,14 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     protected virtual void OnSuccessInvadeArea(Area area) {
         if (specificLocation == area) {
             StopCurrentAction(false);
+            specificLocation.RemoveCharacterFromLocation(this);
+            if (marker != null) {
+                DestroyMarker();
+            }
             UnsubscribeSignals();
+            RemoveAllNonPersistentTraits();
+            ClearAllAwareness();
+            CancelAllJobsAndPlans();            
         }
     }
     #endregion
@@ -674,14 +686,15 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         GameObject portraitGO = ObjectPoolManager.Instance.InstantiateObjectFromPool("CharacterMarker", Vector3.zero, Quaternion.identity, InteriorMapManager.Instance.transform);
         //RectTransform rect = portraitGO.transform as RectTransform;
         //portraitGO.transform.localPosition = pos;
-        SetCharacterMarker(portraitGO.GetComponent<CharacterMarker>());
+        CharacterMarker marker = portraitGO.GetComponent<CharacterMarker>();
         marker.SetCharacter(this);
         marker.SetHoverAction(OnHoverMarker, OnHoverExit);
+        SetCharacterMarker(marker);
     }
     public void DestroyMarker() {
         gridTileLocation.RemoveCharacterHere(this);
         ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
-        marker = null;
+        SetCharacterMarker(null);
     }
     public void DisableMarker() {
         marker.gameObject.SetActive(false);
@@ -689,6 +702,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     public void SetCharacterMarker(CharacterMarker marker) {
         this.marker = marker;
+        Debug.Log("Set marker of " + name + " to " + marker?.name ?? "null");
     }
     private void OnHoverMarker(Character character, LocationGridTile location) {
         //InteriorMapManager.Instance.ShowTileData(this, gridTileLocation);
@@ -2368,9 +2382,8 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
         return true;
     }
-    public void OnHomeAreaMapActive() {
-        AddInitialAwareness();
-        SubscribeToSignals();
+    public bool IsAble() {
+        return currentHP > 0 && !HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
     }
     #endregion
 
@@ -3672,7 +3685,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (trait.daysDuration > 0) {
             GameDate removeDate = GameManager.Instance.Today();
             removeDate.AddTicks(trait.daysDuration);
-            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTraitOnSchedule(trait));
+            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTraitOnSchedule(trait), this);
             trait.SetExpiryTicket(this, ticket);
         }
         if (triggerOnAdd) {
@@ -4910,7 +4923,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (character != null) {
             //cooldown
             GameDate dueDate = GameManager.Instance.Today().AddTicks(GameManager.ticksPerHour);
-            SchedulingManager.Instance.AddEntry(dueDate, () => RemoveLastAssaultedCharacter(character));
+            SchedulingManager.Instance.AddEntry(dueDate, () => RemoveLastAssaultedCharacter(character), this);
         }
     }
     private void RemoveLastAssaultedCharacter(Character characterToRemove) {

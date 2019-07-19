@@ -45,6 +45,6 @@ public class EdiblePlant : TileObject {
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddTicks(Replenishment_Countdown);
         //Debug.Log("Will set " + this.ToString() + " as active again on " + GameManager.Instance.ConvertDayToLogString(dueDate));
-        SchedulingManager.Instance.AddEntry(dueDate, () => SetPOIState(POI_STATE.ACTIVE));
+        SchedulingManager.Instance.AddEntry(dueDate, () => SetPOIState(POI_STATE.ACTIVE), this);
     }
 }

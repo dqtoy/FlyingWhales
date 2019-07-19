@@ -26,12 +26,12 @@ public class SchedulingManager : MonoBehaviour {
 			RemoveEntry (this.checkGameDate);
 		}
 	}
-	internal string AddEntry(GameDate gameDate, Action act){
+	internal string AddEntry(GameDate gameDate, Action act, object adder){
         if (!this.schedules.ContainsKey(gameDate)) {
             this.schedules.Add(gameDate, new List<ScheduledAction>());
         }
         string newID = GenerateScheduleID();
-        this.schedules[gameDate].Add(new ScheduledAction() { scheduleID = newID, action = act });
+        this.schedules[gameDate].Add(new ScheduledAction() { scheduleID = newID, action = act, scheduler = adder });
         return newID;
 	}
 	internal void RemoveEntry(GameDate gameDate){
@@ -83,7 +83,7 @@ public class SchedulingManager : MonoBehaviour {
     }
     private void DoAsScheduled(List<ScheduledAction> acts){
 		for (int i = 0; i < acts.Count; i++) {
-			if(acts[i].action.Target != null){
+			if(acts[i].IsScheduleStillValid() && acts[i].action.Target != null){
 				acts [i].action ();
 			}
 		}
@@ -111,4 +111,19 @@ public class GameDateComparer : IEqualityComparer<GameDate> {
 public struct ScheduledAction {
     public string scheduleID;
     public Action action;
+    public object scheduler; //the object that scheduled this action
+
+    public bool IsScheduleStillValid() {
+        if (scheduler is Character) {
+            Character character = scheduler as Character;
+            return !character.isDead;
+        } else if (scheduler is TileObject) {
+            TileObject tileObject = scheduler as TileObject;
+            return tileObject.gridTileLocation != null;
+        } else if (scheduler is SpecialToken) {
+            SpecialToken token = scheduler as SpecialToken;
+            return token.gridTileLocation != null;
+        }
+        return true;
+    }
 }

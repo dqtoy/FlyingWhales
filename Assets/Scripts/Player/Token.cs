@@ -184,7 +184,7 @@ public class SpecialToken : IPointOfInterest {
         if (trait.daysDuration > 0) {
             GameDate removeDate = GameManager.Instance.Today();
             removeDate.AddTicks(trait.daysDuration);
-            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
+            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait), this);
             trait.SetExpiryTicket(this, ticket);
         }
         if (triggerOnAdd) {
@@ -237,6 +237,12 @@ public class SpecialToken : IPointOfInterest {
         }
         return null;
     }
+    private void RemoveAllTraits() {
+        List<Trait> allTraits = new List<Trait>(normalTraits);
+        for (int i = 0; i < allTraits.Count; i++) {
+            RemoveTrait(allTraits[i]);
+        }
+    }
     #endregion
 
     #region Collision
@@ -270,6 +276,12 @@ public class SpecialToken : IPointOfInterest {
         GhostCollisionTrigger gct = ghostGO.GetComponent<GhostCollisionTrigger>();
         gct.Initialize(this);
         gct.SetLocation(tile);
+    }
+    #endregion
+
+    #region Utilities
+    public void DoCleanup() {
+        RemoveAllTraits();
     }
     #endregion
 }

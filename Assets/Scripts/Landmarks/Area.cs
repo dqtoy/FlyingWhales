@@ -766,6 +766,7 @@ public class Area {
             //        exit.structure.AddCharacterAtLocation(character, exit);
             //    }
             //}
+            Debug.Log(GameManager.Instance.TodayLogString() + "Added " + character.name + " to location " + name);
             Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, this, character);
         }
     }

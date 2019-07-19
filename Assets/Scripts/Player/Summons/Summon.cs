@@ -47,14 +47,8 @@ public class Summon : Character {
     protected override void OnSuccessInvadeArea(Area area) {
         base.OnSuccessInvadeArea(area);
         //clean up
-        StopCurrentAction(false);
         hasBeenUsed = false;
-        specificLocation.RemoveCharacterFromLocation(this);
-        DestroyMarker();
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
-        ClearAllAwareness();
-        CancelAllJobsAndPlans();
-        RemoveAllNonPersistentTraits();
         ResetToFullHP();
     }
     #endregion

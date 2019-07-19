@@ -203,9 +203,11 @@ static internal class Messenger {
  
 	//Two parameters
 	static public void RemoveListener<T, U>(string eventType, Callback<T, U> handler) {
-        OnListenerRemoving(eventType, handler);
-        eventTable[eventType] = (Callback<T, U>)eventTable[eventType] - handler;
-        OnListenerRemoved(eventType);
+        if (eventTable.ContainsKey(eventType)) {
+            OnListenerRemoving(eventType, handler);
+            eventTable[eventType] = (Callback<T, U>)eventTable[eventType] - handler;
+            OnListenerRemoved(eventType);
+        }
     }
  
 	//Three parameters
