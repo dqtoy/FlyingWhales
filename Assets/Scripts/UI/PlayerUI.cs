@@ -731,19 +731,21 @@ public class PlayerUI : MonoBehaviour {
             PlayerManager.Instance.player.CorruptATile();
         }
         PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeader.minion);
-        StoryEvent e = PlayerManager.Instance.player.currentTileBeingCorrupted.GetRandomStoryEvent();
-        if (e != null) {
-            Debug.Log("Will show event " + e.name);
-            if (e.trigger == STORY_EVENT_TRIGGER.IMMEDIATE) {
-                //show story event UI
-                storyEventUI.ShowEvent(e);
-            } else if (e.trigger == STORY_EVENT_TRIGGER.MID) { //schedule show event UI based on trigger.
-                int day = UnityEngine.Random.Range(GameManager.Instance.Today().day + 1, GameManager.Instance.Today().day + PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration);
-                GameDate dueDate = GameManager.Instance.Today().AddDays(day);
-                SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e), null);
-            } else if (e.trigger == STORY_EVENT_TRIGGER.END) {
-                GameDate dueDate = GameManager.Instance.Today().AddDays(PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration);
-                SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e), null);
+        if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile == null) {
+            StoryEvent e = PlayerManager.Instance.player.currentTileBeingCorrupted.GetRandomStoryEvent();
+            if (e != null) {
+                Debug.Log("Will show event " + e.name);
+                if (e.trigger == STORY_EVENT_TRIGGER.IMMEDIATE) {
+                    //show story event UI
+                    storyEventUI.ShowEvent(e);
+                } else if (e.trigger == STORY_EVENT_TRIGGER.MID) { //schedule show event UI based on trigger.
+                    int day = UnityEngine.Random.Range(GameManager.Instance.Today().day + 1, GameManager.Instance.Today().day + PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration);
+                    GameDate dueDate = GameManager.Instance.Today().AddDays(day);
+                    SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e), null);
+                } else if (e.trigger == STORY_EVENT_TRIGGER.END) {
+                    GameDate dueDate = GameManager.Instance.Today().AddDays(PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration);
+                    SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e), null);
+                }
             }
         }
     }
