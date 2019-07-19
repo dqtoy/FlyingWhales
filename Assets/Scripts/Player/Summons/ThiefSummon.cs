@@ -59,12 +59,6 @@ public class ThiefSummon : Summon {
     }
     #endregion
 
-    protected override void OnSuccessInvadeArea(Area area) {
-        base.OnSuccessInvadeArea(area);
-        Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
-    }
-
-
     private void OnReachExitAction() {
         //remove character from other character's awareness
         for (int i = 0; i < gridTileLocation.parentAreaMap.area.charactersAtLocation.Count; i++) {

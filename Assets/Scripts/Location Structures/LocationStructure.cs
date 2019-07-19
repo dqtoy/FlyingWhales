@@ -353,6 +353,16 @@ public class LocationStructure {
         }
         return validTiles;
     }
+    public void DoCleanup() {
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            IPointOfInterest poi = pointsOfInterest[i];
+            if (poi is TileObject) {
+                (poi as TileObject).DoCleanup();
+            } else if (poi is SpecialToken) {
+                (poi as SpecialToken).DoCleanup();
+            }
+        }
+    }
     #endregion
 
     #region Templates

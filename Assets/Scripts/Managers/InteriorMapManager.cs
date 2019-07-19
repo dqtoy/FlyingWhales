@@ -183,6 +183,11 @@ public class InteriorMapManager : MonoBehaviour {
         newMap.UpdateTilesWorldPosition();
     }
     public void DestroyAreaMap(Area area) {
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                keyValuePair.Value[i].DoCleanup();
+            }
+        }
         pathfinder.data.RemoveGraph(area.areaMap.pathfindingGraph);
         area.areaMap.CleanUp();
         areaMaps.Remove(area.areaMap);

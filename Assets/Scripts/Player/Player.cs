@@ -9,8 +9,8 @@ public class Player : ILeader {
     private const int MAX_INTEL = 3;
     public const int MAX_MINIONS = 5;
     public const int MAX_THREAT = 100;
-    private const int MAX_SUMMONS = 3;
-    private const int MAX_ARTIFACT = 3;
+    private const int MAX_SUMMONS = 6; //3
+    private const int MAX_ARTIFACT = 5; //3
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
@@ -71,8 +71,8 @@ public class Player : ILeader {
         summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
         artifacts = new Artifact[MAX_ARTIFACT];
         shareIntelAbility = new ShareIntel();
-        maxSummonSlots = 1;
-        maxArtifactSlots = 1;
+        maxSummonSlots = 6;
+        maxArtifactSlots = 5;
         //ConstructRoleSlots();
         AddListeners();
     }
@@ -679,10 +679,12 @@ public class Player : ILeader {
     #endregion
 
     #region Area Corruption
-    private void AreaIsCorrupted() {
+    private Area AreaIsCorrupted() {
         isTileCurrentlyBeingCorrupted = false;
         GameManager.Instance.SetPausedState(true);
+        Area corruptedArea = currentTileBeingCorrupted.areaOfTile;
         PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
+        return corruptedArea;
     }
     #endregion
 
@@ -736,7 +738,7 @@ public class Player : ILeader {
         int count = 0;
         for (int i = 0; i < summons[type].Count; i++) {
             Summon currSummon = summons[type][i];
-            if (currSummon.summonType == type) {
+            if (currSummon.summonType == type && !currSummon.hasBeenUsed) {
                 count++;
             }
         }
@@ -773,6 +775,10 @@ public class Player : ILeader {
         maxSummonSlots = Mathf.Clamp(maxSummonSlots, 0, MAX_SUMMONS);
         //TODO: validate if adjusted max summons can accomodate current summons
     }
+    public bool HasSummon(string summonName) {
+        SUMMON_TYPE type = (SUMMON_TYPE)System.Enum.Parse(typeof(SUMMON_TYPE), summonName);
+        return summons.ContainsKey(type);
+    }
     #endregion
 
     #region Artifacts
@@ -782,6 +788,14 @@ public class Player : ILeader {
             AddArtifact(newArtifact);
         } else {
             Debug.LogWarning("Max artifacts has been reached!");
+        }
+    }
+    public void LoseArtifact(ARTIFACT_TYPE type) {
+        if (GetAvailableArtifactsOfTypeCount(type) > 0) {
+            Artifact artifact = GetArtifactOfType(type);
+            RemoveArtifact(artifact);
+        } else {
+            Debug.LogWarning("Cannot lose artifact " + type.ToString() + " because player has none.");
         }
     }
     private void AddArtifact(Artifact newArtifact) {
@@ -844,6 +858,25 @@ public class Player : ILeader {
         }
         artifact = null;
         return false;
+    }
+    public bool HasArtifact(string artifactName) {
+        ARTIFACT_TYPE type = (ARTIFACT_TYPE)System.Enum.Parse(typeof(ARTIFACT_TYPE), artifactName);
+        for (int i = 0; i < artifacts.Length; i++) {
+            Artifact currArtifact = artifacts[i];
+            if (currArtifact != null && currArtifact.type.ToString() == artifactName) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private Artifact GetArtifactOfType(ARTIFACT_TYPE type) {
+        for (int i = 0; i < artifacts.Length; i++) {
+            Artifact currArtifact = artifacts[i];
+            if (currArtifact.type == type) {
+                return currArtifact;
+            }
+        }
+        return null;
     }
     #endregion
 
@@ -913,7 +946,7 @@ public class Player : ILeader {
         bool stillHasResidents = false;
         for (int i = 0; i < currentAreaBeingInvaded.areaResidents.Count; i++) {
             Character currCharacter = currentAreaBeingInvaded.areaResidents[i];
-            if (currCharacter.currentHP > 0 && currCharacter.specificLocation == currentAreaBeingInvaded) {
+            if (currCharacter.IsAble() && currCharacter.specificLocation == currentAreaBeingInvaded) {
                 stillHasResidents = true;
                 break;
             }
@@ -928,8 +961,8 @@ public class Player : ILeader {
         PlayerUI.Instance.StopInvasion();
         if (playerWon) {
             PlayerUI.Instance.SuccessfulAreaCorruption();
-            AreaIsCorrupted();
-            Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, currentTileBeingCorrupted.areaOfTile);
+            Area corruptedArea = AreaIsCorrupted();
+            Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, corruptedArea);
         } else {
             string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
             PlayerUI.Instance.GameOver(gameOverText);

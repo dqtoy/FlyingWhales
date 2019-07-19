@@ -53,7 +53,7 @@ public class SeducerSummon : Summon {
         }
         SetHasAlreadyAskedForPlan(true);
         //pick a random character that is sexually compatible with this character, to seduce. Exclude characters that this succubus has already invited.
-        List<Character> choices = specificLocation.charactersAtLocation.Where(x => !doneCharacters.Contains(x) && CharacterManager.Instance.IsSexuallyCompatibleOneSided(x, this) && !x.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)).ToList();
+        List<Character> choices = specificLocation.charactersAtLocation.Where(x => x.faction != this.faction && !doneCharacters.Contains(x) && CharacterManager.Instance.IsSexuallyCompatibleOneSided(x, this) && !x.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)).ToList();
         if (choices.Count > 0) {
             Character chosenCharacter = choices[Random.Range(0, choices.Count)];
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, chosenCharacter);

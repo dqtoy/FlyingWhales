@@ -96,7 +96,6 @@ public class TileObject : IPointOfInterest {
         if (tile == null) {
             DisableCollisionTrigger();
             OnRemoveTileObject(null, previousTile);
-            OnRemoveObjectFromTile();
             if (previousTile != null) {
                 PlaceGhostCollisionTriggerAt(previousTile);
             }
@@ -112,7 +111,6 @@ public class TileObject : IPointOfInterest {
         this.tile = null;
         DisableCollisionTrigger();
         OnRemoveTileObject(removedBy, previousTile);
-        OnRemoveObjectFromTile();
         if (previousTile != null) {
             PlaceGhostCollisionTriggerAt(previousTile);
         }
@@ -160,6 +158,10 @@ public class TileObject : IPointOfInterest {
     /// </summary>
     protected virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
         Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
+        if (hasCreatedSlots) {
+            DestroyTileSlots();
+        }
+        RemoveAllTraits();
     }
     public virtual bool CanBeReplaced() {
         return false;
@@ -205,7 +207,7 @@ public class TileObject : IPointOfInterest {
         if (trait.daysDuration > 0) {
             GameDate removeDate = GameManager.Instance.Today();
             removeDate.AddTicks(trait.daysDuration);
-            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
+            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait), this);
             trait.SetExpiryTicket(this, ticket);
         }
         if (triggerOnAdd) {
@@ -265,10 +267,16 @@ public class TileObject : IPointOfInterest {
         if (trait.daysDuration > 0) {
             GameDate removeDate = GameManager.Instance.Today();
             removeDate.AddTicks(trait.daysDuration);
-            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait));
+            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait), this);
             trait.SetExpiryTicket(this, ticket);
         }
 
+    }
+    private void RemoveAllTraits() {
+        List<Trait> allTraits = new List<Trait>(normalTraits);
+        for (int i = 0; i < allTraits.Count; i++) {
+            RemoveTrait(allTraits[i]);
+        }
     }
     #endregion
 
@@ -411,11 +419,6 @@ public class TileObject : IPointOfInterest {
         }
         Messenger.Broadcast(Signals.TILE_OBJECT_PLACED, this, tile);
     }
-    private void OnRemoveObjectFromTile() {
-        if (hasCreatedSlots) {
-            DestroyTileSlots();
-        }
-    }
     private void CreateTileObjectSlots() {
         UnityEngine.Tilemaps.TileBase usedAsset = tile.parentAreaMap.objectsTilemap.GetTile(tile.localPlace);
         if (usedAsset != null && InteriorMapManager.Instance.HasSettingForTileObjectAsset(usedAsset)) {
@@ -501,6 +504,12 @@ public class TileObject : IPointOfInterest {
             slot.StopUsing();
             SetPOIState(POI_STATE.ACTIVE);
         }
+    }
+    #endregion
+
+    #region Utilities
+    public void DoCleanup() {
+        RemoveAllTraits();
     }
     #endregion
 }

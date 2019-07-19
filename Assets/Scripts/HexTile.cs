@@ -1382,18 +1382,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
     }
-    public void ScheduleCorruption() {
-        for (int i = 0; i < AllNeighbours.Count; i++) {
-            HexTile neighbor = AllNeighbours[i];
-            if (!neighbor.isCorrupted) {
-                neighbor.StartCorruptionAnimation();
-            }
-        }
-
-        GameDate nextCorruptionDate = GameManager.Instance.Today();
-        nextCorruptionDate.AddTicks(1);
-        SchedulingManager.Instance.AddEntry(nextCorruptionDate, () => SpreadCorruptionToNeighbors());
-    }
     public void StartCorruptionAnimation() {
         GameObject tendril = null;
         if (tileCorruptionObjects.ContainsKey(spriteRenderer.sprite)) {
@@ -1808,6 +1796,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                     break;
             }
         }
+    }
+    #endregion
+
+    #region Story Events
+    public StoryEvent GetRandomStoryEvent() {
+        List<StoryEvent> pool = StoryEventsManager.Instance.GetPossibleEventsForTile(this);
+        if (pool.Count > 0) {
+            return pool[UnityEngine.Random.Range(0, pool.Count)];
+        }
+        return null;
     }
     #endregion
 }
