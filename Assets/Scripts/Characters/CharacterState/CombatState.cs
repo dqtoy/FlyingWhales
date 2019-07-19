@@ -303,35 +303,8 @@ public class CombatState : CharacterState {
     }
     private void Attack() {
         string summary = stateComponent.character.name + " will attack " + currentClosestHostile?.name;
-        //Check attack speed
-        if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
-            //attackSummary += "\nCannot attack yet because of attack speed.";
-            //Debug.Log(attackSummary);
-            //float aspeed = stateComponent.character.marker.attackSpeedMeter;
-            //When character is in range but attack speed is still not fully charged, he/she will stop moving only and will wait until the attack speed is charged
-            if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
-                stateComponent.character.marker.StopMovement(); //only stop movement if target is also not moving.
-                //clear the marker's target poi when it reaches the target, so that the pursue closest hostile will still execute when the other character chooses to flee
-                stateComponent.character.marker.SetTargetPOI(null);
-            }
-            //When the character stops movement, stop pursue timer
-            StopPursueTimer();
-            summary += "\nCannot attack because of attack speed. Waiting...";
-            //Debug.Log(summary);
-            return;
-        }
 
-        //Check line of sight, if not in line of sight move to it again
-        if (!stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) {
-            //PursueClosestHostile();
-            summary += "\nTarget is not in line of sight. Not attacking for now...";
-            //Debug.Log(summary);
-            return;
-        }
-
-        //When character is in range and is in line of sight and attack speed is charged, stop movement so he/she can attack
-        //You may notice there are 2 calls for stopping movement, it's because if the character's attack speed is charged but he/she is still not in line of sight, the movement should not stop
-        //We only want the movement to stop if the attack speed is not charged or if the attack speed is charged and current hostile is in line of sight
+        //When in range and in line of sight, stop movement
         if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
             stateComponent.character.marker.StopMovement(); //only stop movement if target is also not moving.
             //clear the marker's target poi when it reaches the target, so that the pursue closest hostile will still execute when the other character chooses to flee
@@ -339,6 +312,15 @@ public class CombatState : CharacterState {
         }
         //When the character stops movement, stop pursue timer
         StopPursueTimer();
+
+        //Check attack speed
+        if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
+            //float aspeed = stateComponent.character.marker.attackSpeedMeter;
+            summary += "\nCannot attack because of attack speed. Waiting...";
+            //Debug.Log(summary);
+            return;
+        }
+
         summary += "\nExecuting attack...";
         stateComponent.character.FaceTarget(currentClosestHostile);
         stateComponent.character.marker.SetAnimationTrigger("Attack");

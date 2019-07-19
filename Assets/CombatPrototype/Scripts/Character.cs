@@ -3191,7 +3191,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                     break;
             }
         } else {
-            Invisible invisible = stateComponent.character.GetNormalTrait("Invisible") as Invisible;
+            Invisible invisible = characterThatAttacked.GetNormalTrait("Invisible") as Invisible;
             if (invisible != null) {
                 if (invisible.level == 1) {
                     //Level 1 = remove invisible trait

@@ -957,7 +957,7 @@ public class Player : ILeader {
             abilityButton?.UpdateInteractableState();
             InteriorMapManager.Instance.UnhighlightTiles();
             CursorManager.Instance.ClearRightClickActions();
-            GameManager.Instance.SetPausedState(false);
+            //GameManager.Instance.SetPausedState(false);
         } else {
             CombatAbilityButton abilityButton = PlayerUI.Instance.GetCombatAbilityButton(ability);
             //change the cursor
