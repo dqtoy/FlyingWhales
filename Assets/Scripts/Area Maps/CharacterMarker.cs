@@ -1046,6 +1046,7 @@ public class CharacterMarker : PooledObject {
             //UnhighlightMarker(); //This is for testing only!
             //OnHostileInRangeRemoved(poi);
             string removeHostileSummary = poi.name + " was removed from " + character.name + "'s hostile range.";
+            character.PrintLogIfActive(removeHostileSummary);
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
             if (processCombatBehavior && character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                 CombatState combatState = character.stateComponent.currentState as CombatState;
@@ -1054,7 +1055,6 @@ public class CharacterMarker : PooledObject {
                 }
                 Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
             }
-            character.PrintLogIfActive(removeHostileSummary);
         }
     }
     public void ClearHostilesInRange(bool processCombatBehavior = true) {

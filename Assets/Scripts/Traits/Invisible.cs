@@ -5,9 +5,9 @@ using UnityEngine;
 public class Invisible : Trait {
 
     public int level { get; private set; }
-
+    public Character owner { get; private set; }
     public List<Character> charactersThatCanSee { get; private set; }
-
+    public List<Character> inRangeOfVisionCharacters { get; private set; } //Must keep a list of all characters that is in vision of this character but is not added in inVisionPOIs because this character is invisible
     public Invisible(int level) {
         name = "Invisible";
         description = "This character is invisible.";
@@ -20,26 +20,35 @@ public class Invisible : Trait {
         effects = new List<TraitEffect>();
         this.level = level;
         charactersThatCanSee = new List<Character>();
+        inRangeOfVisionCharacters = new List<Character>();
     }
 
     public void AddCharacterThatCanSee(Character character) {
         charactersThatCanSee.Add(character);
+        if (RemoveInRangeOfVisionCharacter(character)) {
+            //If a character can see this character and it is in vision range, transfer this character to inVisionPOIs list of the character that can see
+            character.marker.AddPOIAsInVisionRange(owner);
+        }
+    }
+    public void AddInRangeOfVisionCharacter(Character character) {
+        inRangeOfVisionCharacters.Add(character);
+    }
+    public bool RemoveInRangeOfVisionCharacter(Character character) {
+        return inRangeOfVisionCharacters.Remove(character);
     }
 
     #region Overrides
     public override void OnAddTrait(IPointOfInterest sourcePOI) {
         base.OnAddTrait(sourcePOI);
         if (sourcePOI is Character) {
-            Character character = sourcePOI as Character;
-            character.StopAllActionTargettingThis();
-            character.CancelAllJobsTargettingThisCharacter();
+            owner = sourcePOI as Character;
+            owner.StopAllActionTargettingThis();
+            owner.CancelAllJobsTargettingThisCharacter();
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
         base.OnRemoveTrait(sourcePOI);
-        if (sourcePOI is Character) {
-            GameManager.Instance.StartCoroutine(RetriggerVisionCollision(sourcePOI as Character));
-        }
+        GameManager.Instance.StartCoroutine(RetriggerVisionCollision(owner));
     }
     #endregion
 
