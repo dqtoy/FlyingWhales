@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<EventsCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Events>
+    <Event id="AN_INCUBUS" name="An Incubus" trigger="IMMEDIATE">
+      <text>While exploring you encounter an incubus. After conversing a bit you learn that he is very interested in ancient artifacts.</text>
+      <choices>
+        <choice reqType="Artifact" reqName="Necronomicon">
+          <text>Show him your Necronomicon.</text>
+          <event trigger="IMMEDIATE">
+            <effects>
+              <effect effect="Gain" type="Summon" object="Incubus" chance="100" />
+            </effects>
+          </event>
+        </choice>
+        <choice>
+          <text>Ask him if he knows anything that may help you in conquering this region.</text>
+        </choice>
+        <choice>
+          <text>Take your leave.</text>
+        </choice>
+      </choices>
+    </Event>
+  </Events>
+</EventsCollection>

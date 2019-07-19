@@ -726,6 +726,16 @@ public class PlayerUI : MonoBehaviour {
             PlayerManager.Instance.player.CorruptATile();
         }
         PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeader.minion);
+        StoryEvent e = PlayerManager.Instance.player.currentTileBeingCorrupted.GetRandomStoryEvent();
+        if (e != null) {
+            Debug.Log("Will show event " + e.name);
+            if (e.trigger == STORY_EVENT_TRIGGER.IMMEDIATE) {
+                //show story event UI
+            } else {
+                //schedule show event UI based on trigger.
+            }
+
+        }
     }
     public void OnClickNoCorruption() {
         HideCorruptTileConfirmation();

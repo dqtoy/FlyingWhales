@@ -1798,4 +1798,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     }
     #endregion
+
+    #region Story Events
+    public StoryEvent GetRandomStoryEvent() {
+        List<StoryEvent> pool = StoryEventsManager.Instance.GetPossibleEventsForTile(this);
+        if (pool.Count > 0) {
+            return pool[UnityEngine.Random.Range(0, pool.Count)];
+        }
+        return null;
+    }
+    #endregion
 }
