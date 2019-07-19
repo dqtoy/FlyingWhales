@@ -3029,25 +3029,27 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             if (targetCharacter != null && targetCharacter.stateComponent.currentState != null && !targetCharacter.stateComponent.currentState.isDone && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT
                 && targetCharacter.faction == faction) {
                 CombatState targetCombatState = targetCharacter.stateComponent.currentState as CombatState;
-                if(targetCombatState.currentClosestHostile != null && targetCombatState.currentClosestHostile.faction == faction && targetCombatState.currentClosestHostile != this) {
+                if (targetCombatState.currentClosestHostile != null && targetCombatState.currentClosestHostile != this) {
                     Invisible invisible = targetCombatState.currentClosestHostile.GetNormalTrait("Invisible") as Invisible;
-                    if(invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
+                    if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
                         CreateWatchEvent(null, targetCombatState, targetCharacter);
                     } else {
-                        RELATIONSHIP_EFFECT relEffectTowardsTarget = GetRelationshipEffectWith(targetCharacter);
-                        RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = GetRelationshipEffectWith(targetCombatState.currentClosestHostile);
+                        if (targetCombatState.currentClosestHostile.faction == faction) {
+                            RELATIONSHIP_EFFECT relEffectTowardsTarget = GetRelationshipEffectWith(targetCharacter);
+                            RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = GetRelationshipEffectWith(targetCombatState.currentClosestHostile);
 
-                        if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                            if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                CreateWatchEvent(null, targetCombatState, targetCharacter);
+                            if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
+                                if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
+                                    CreateWatchEvent(null, targetCombatState, targetCharacter);
+                                } else {
+                                    marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false);
+                                }
                             } else {
-                                marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false);
-                            }
-                        } else {
-                            if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                marker.AddHostileInRange(targetCharacter, checkHostility: false);
-                            } else {
-                                CreateWatchEvent(null, targetCombatState, targetCharacter);
+                                if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
+                                    marker.AddHostileInRange(targetCharacter, checkHostility: false);
+                                } else {
+                                    CreateWatchEvent(null, targetCombatState, targetCharacter);
+                                }
                             }
                         }
                     }
