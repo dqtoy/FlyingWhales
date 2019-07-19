@@ -58,15 +58,17 @@ public class EatCharacter : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        if (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
-            return false;
-        }
-        if (poiTarget is Character) {
-            Character target = poiTarget as Character;
-            if(actor.race == target.race) {
-                RELATIONSHIP_EFFECT relEffect = actor.GetRelationshipEffectWith(target);
-                if (relEffect == RELATIONSHIP_EFFECT.NONE || relEffect == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    return true;
+        if(actor != poiTarget) {
+            if (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+                return false;
+            }
+            if (poiTarget is Character) {
+                Character target = poiTarget as Character;
+                if (actor.race == target.race) {
+                    RELATIONSHIP_EFFECT relEffect = actor.GetRelationshipEffectWith(target);
+                    if (relEffect == RELATIONSHIP_EFFECT.NONE || relEffect == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        return true;
+                    }
                 }
             }
         }

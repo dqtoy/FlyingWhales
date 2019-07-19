@@ -58,7 +58,10 @@ public class DrinkBlood : GoapAction {
         if (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        return true;
+        if(actor != poiTarget) {
+            return true;
+        }
+        return false;
     }
     protected bool RequirementOnBuildGoapTree() {
         //if (!actor.isStarving) {

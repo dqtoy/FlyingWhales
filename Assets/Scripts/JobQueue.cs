@@ -343,7 +343,7 @@ public class JobQueue {
     }
     public bool CancelJob(JobQueueItem job, string cause = "", bool shouldDoAfterEffect = true) {
         if (job.assignedCharacter == null 
-            || !(job.assignedCharacter.currentAction != null && job.assignedCharacter.currentAction.parentPlan != null && job.assignedCharacter.currentAction.parentPlan.job != null && job.assignedCharacter.currentAction.parentPlan.job == job)) {
+            || job.assignedCharacter.currentAction != null && job.assignedCharacter.currentAction.parentPlan != null && job.assignedCharacter.currentAction.parentPlan.job != null && job.assignedCharacter.currentAction.parentPlan.job == job) {
             if(job is GoapPlanJob && cause != "") {
                 Character actor = null;
                 if(this.character != null) {
