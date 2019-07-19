@@ -773,10 +773,12 @@ public class Area {
     public void RemoveCharacterFromLocation(Character character) {
         if (charactersAtLocation.Remove(character)) {
             //character.ownParty.SetSpecificLocation(null);
-            if (character.currentStructure == null) {
+            if (character.currentStructure == null && this != PlayerManager.Instance.player.playerArea) {
                 throw new Exception(character.name + " doesn't have a current structure at " + this.name);
             }
-            character.currentStructure.RemoveCharacterAtLocation(character);
+            if (character.currentStructure != null) {
+                character.currentStructure.RemoveCharacterAtLocation(character);
+            }
             AddCharacterAtLocationHistory("Removed " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
             Messenger.Broadcast(Signals.CHARACTER_EXITED_AREA, this, character);
         }

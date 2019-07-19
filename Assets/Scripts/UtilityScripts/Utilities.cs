@@ -785,6 +785,14 @@ public class Utilities : MonoBehaviour {
     #endregion
 
     #region String Utilities
+    public static string NormalizeNoSpaceString(string s) {
+        string[] words = System.Text.RegularExpressions.Regex.Split(s, @"(?<!^)(?=[A-Z])");
+        string normalizedString = Utilities.FirstLetterToUpperCase(words.First());
+        for (int i = 1; i < words.Length; i++) {
+            normalizedString += " " + words[i];
+        }
+        return normalizedString;
+    }
     public static string NormalizeString(string s) {
         s = s.ToLower();
         string[] words = s.Split('_');

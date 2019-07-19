@@ -104,6 +104,9 @@ public class PlayerUI : MonoBehaviour {
     [Header("Story Events")]
     [SerializeField] private StoryEventUI storyEventUI;
 
+    [Header("Replace UI")]
+    public ReplaceUI replaceUI;
+
     //[Header("Actions")]
     //[SerializeField] private int maxActionPages;
     //[SerializeField] private GameObject actionPagePrefab;
@@ -664,17 +667,17 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.ThiefSummon);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Chaos_Orb);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Hermes_Statue);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Miasma_Emitter);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.ThiefSummon);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Chaos_Orb);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Hermes_Statue);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Miasma_Emitter);
         PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
     }
     private void ShowSelectMinionLeader() {
@@ -994,27 +997,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void ShowArtifactTooltip() {
         string header = Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedArtifact.type.ToString());
-        string message;
-        switch (currentlySelectedArtifact.type) {
-            case ARTIFACT_TYPE.Necronomicon:
-                message = "Raises all dead characters in the area to attack residents.";
-                break;
-            case ARTIFACT_TYPE.Chaos_Orb:
-                message = "Characters that inspect the Chaos Orb may be permanently berserked.";
-                break;
-            case ARTIFACT_TYPE.Hermes_Statue:
-                message = "Characters that inspect this will be teleported to a different settlement. If no other settlement exists, this will be useless.";
-                break;
-            case ARTIFACT_TYPE.Ankh_Of_Anubis:
-                message = "All characters that moves through here may slowly sink and perish. Higher agility means higher chance of escaping. Sand pit has a limited duration upon placing the artifact.";
-                break;
-            case ARTIFACT_TYPE.Miasma_Emitter:
-                message = "Characters will avoid the area. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.";
-                break;
-            default:
-                message = "Summon a " + Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedArtifact.type.ToString());
-                break;
-        }
+        string message = PlayerManager.Instance.player.GetArtifactDescription(currentlySelectedArtifact.type);
         UIManager.Instance.ShowSmallInfo(message, summonArtifactTooltipPos, header);
     }
     public void HideArtifactTooltip() {
