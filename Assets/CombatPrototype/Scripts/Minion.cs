@@ -117,6 +117,9 @@ public class Minion {
     public void SetCombatAbility(CombatAbility combatAbility) {
         this.combatAbility = combatAbility;
     }
+    public void SetCombatAbility(COMBAT_ABILITY combatAbility) {
+        SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(combatAbility));
+    }
     #endregion
 
     #region Invasion

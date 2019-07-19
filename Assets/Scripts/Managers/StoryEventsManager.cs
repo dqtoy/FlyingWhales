@@ -15,53 +15,6 @@ public class StoryEventsManager : MonoBehaviour {
 
     private void Awake() {
         Instance = this;
-        StoryEventsContainer container = new StoryEventsContainer();
-        StoryEvent newEvent = new StoryEvent() {
-            id = "AN_INCUBUS",
-            name = "An Incubus",
-            text = "While exploring you encounter an incubus. After conversing a bit you learn that he is very interested in ancient artifacts.",
-            choices = new StoryEventChoice[] {
-                new StoryEventChoice {
-                    text = "Show him your Necronomicon.",
-                    reqType = "Artifact",
-                    reqName = "Necronomicon",
-                    eventToExecute = new StoryEvent() {
-                        text = "Amazed by your Necronomicon, he decides to join you so he can study it.",
-                        effects = new StoryEventEffect[] {
-                            new StoryEventEffect() {
-                                effect = "Gain",
-                                effectType = "Summon",
-                                effectValue = "Incubus",
-                                effectChance = 100
-                            }
-                        }
-                    }
-                },
-                new StoryEventChoice {
-                    text = "Ask him if he knows anything that may help you in conquering this region.",
-                    eventToExecute = new StoryEvent() {
-                        text = "Upon browsing his books, he shows you a curious block of text.",
-                        effects = new StoryEventEffect[] {
-                            new StoryEventEffect() {
-                                effect = "Gain",
-                                effectType = "Summon",
-                                effectValue = "Incubus",
-                                effectChance = 100,
-                                additionalText = "It teaches you a new magic ability!"
-                            }
-                        }
-                    }
-                },
-                new StoryEventChoice {
-                    text = "Take your leave.",
-                }
-            }
-        };
-        container.events.Add(newEvent);
-        TILE_TAG[] tileTags = Utilities.GetEnumValues<TILE_TAG>();
-        for (int i = 0; i < tileTags.Length; i++) {
-            container.Save(Application.streamingAssetsPath + "/Story Events/" + tileTags[i].ToString() + ".xml");
-        }
     }
 
     public void Initialize() {
@@ -125,13 +78,20 @@ public class StoryEventsManager : MonoBehaviour {
                 //Gain Artifact
                 ARTIFACT_TYPE type = (ARTIFACT_TYPE)System.Enum.Parse(typeof(ARTIFACT_TYPE), effect.effectValue);
                 PlayerManager.Instance.player.GainArtifact(type);
-            } else if (string.Equals(effect.effectType, "Ability", System.StringComparison.OrdinalIgnoreCase)) {
+            } else if (string.Equals(effect.effectType, "Intervention_Ability", System.StringComparison.OrdinalIgnoreCase)) {
                 //Gain Ability
                 INTERVENTION_ABILITY ability;
                 if (System.Enum.TryParse<INTERVENTION_ABILITY>(effect.effectValue, out ability)) {
                     PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(ability);
                 }
-               //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
+                //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
+            } else if (string.Equals(effect.effectType, "Combat_Ability", System.StringComparison.OrdinalIgnoreCase)) {
+                //Gain Ability
+                COMBAT_ABILITY ability;
+                if (System.Enum.TryParse<COMBAT_ABILITY>(effect.effectValue, out ability)) {
+                    PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(ability);
+                }
+                //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
             }
         } else if (string.Equals(effect.effect, "Lose", System.StringComparison.OrdinalIgnoreCase)) {
             //lose
@@ -189,6 +149,7 @@ public class StoryEventsContainer {
                     reqType = "Artifact",
                     reqName = "Necronomicon",
                     eventToExecute = new StoryEvent() {
+                        text = "Amazed by your Necronomicon, he decides to join you so he can study it.",
                         effects = new StoryEventEffect[] {
                             new StoryEventEffect() {
                                 effect = "Gain",
@@ -201,6 +162,18 @@ public class StoryEventsContainer {
                 },
                 new StoryEventChoice {
                     text = "Ask him if he knows anything that may help you in conquering this region.",
+                    eventToExecute = new StoryEvent() {
+                        text = "Upon browsing his books, he shows you a curious block of text.",
+                        effects = new StoryEventEffect[] {
+                            new StoryEventEffect() {
+                                effect = "Gain",
+                                effectType = "Intervention_Ability",
+                                effectValue = "Provoke",
+                                effectChance = 100,
+                                additionalText = "It teaches you how to Provoke!"
+                            }
+                        }
+                    }
                 },
                 new StoryEventChoice {
                     text = "Take your leave.",
