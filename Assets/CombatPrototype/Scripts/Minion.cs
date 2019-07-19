@@ -99,6 +99,9 @@ public class Minion {
             //Broadcast intervention ability is full, must open UI whether player wants to replace ability or discard it
         }
     }
+    public void AddInterventionAbility(INTERVENTION_ABILITY ability) {
+        AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(ability));
+    }
     public int GetCurrentInterventionAbilityCount() {
         int count = 0;
         for (int i = 0; i < interventionAbilities.Length; i++) {

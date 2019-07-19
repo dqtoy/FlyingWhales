@@ -28,9 +28,9 @@ public class StoryEvent {
 public class StoryEventChoice {
     public string text;
     [XmlAttribute("reqType")]
-    public string reqType;
+    public string reqType; //Summon/Artifact
     [XmlAttribute("reqName")]
-    public string reqName;
+    public string reqName; //Summon Name/ Artifact Name
     [XmlElement("event")]
     public StoryEvent eventToExecute;
 }
@@ -44,6 +44,7 @@ public class StoryEventEffect {
     public string effectValue; //Given the type, what of that type should be gained or lost e.g. Wolf/Necronomicon/1. NOTE: if no value was specified. Randomize.
     [XmlAttribute("chance")]
     public int effectChance; //The chance that this effect will execute.
+    public string additionalText; //this is text that will be concatenated with the event text, should this effect happen
 
     /*
      Example:

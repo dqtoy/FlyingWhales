@@ -775,6 +775,10 @@ public class Player : ILeader {
         maxSummonSlots = Mathf.Clamp(maxSummonSlots, 0, MAX_SUMMONS);
         //TODO: validate if adjusted max summons can accomodate current summons
     }
+    public bool HasSummon(string summonName) {
+        SUMMON_TYPE type = (SUMMON_TYPE)System.Enum.Parse(typeof(SUMMON_TYPE), summonName);
+        return summons.ContainsKey(type);
+    }
     #endregion
 
     #region Artifacts
@@ -784,6 +788,14 @@ public class Player : ILeader {
             AddArtifact(newArtifact);
         } else {
             Debug.LogWarning("Max artifacts has been reached!");
+        }
+    }
+    public void LoseArtifact(ARTIFACT_TYPE type) {
+        if (GetAvailableArtifactsOfTypeCount(type) > 0) {
+            Artifact artifact = GetArtifactOfType(type);
+            RemoveArtifact(artifact);
+        } else {
+            Debug.LogWarning("Cannot lose artifact " + type.ToString() + " because player has none.");
         }
     }
     private void AddArtifact(Artifact newArtifact) {
@@ -846,6 +858,25 @@ public class Player : ILeader {
         }
         artifact = null;
         return false;
+    }
+    public bool HasArtifact(string artifactName) {
+        ARTIFACT_TYPE type = (ARTIFACT_TYPE)System.Enum.Parse(typeof(ARTIFACT_TYPE), artifactName);
+        for (int i = 0; i < artifacts.Length; i++) {
+            Artifact currArtifact = artifacts[i];
+            if (currArtifact != null && currArtifact.type.ToString() == artifactName) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private Artifact GetArtifactOfType(ARTIFACT_TYPE type) {
+        for (int i = 0; i < artifacts.Length; i++) {
+            Artifact currArtifact = artifacts[i];
+            if (currArtifact.type == type) {
+                return currArtifact;
+            }
+        }
+        return null;
     }
     #endregion
 

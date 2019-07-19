@@ -82,6 +82,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 5767b2c2db928c446b1558b601f40b9f, type: 3}
   - {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
   - {fileID: 21300000, guid: 93b34ec21c0450c49b3150771af2a182, type: 3}
+  - {fileID: 21300000, guid: 239979d20cf21964fb82a7b3008e85a0, type: 3}
   - {fileID: 21300000, guid: b4bb50e205556bc449958a52cd6caabe, type: 3}
   - {fileID: 21300000, guid: 3b5634e2dfad1964c8eb70354f6f1bbf, type: 3}
   - {fileID: 21300000, guid: f6387ee2f8881994f98b423c7f36f320, type: 3}
@@ -185,6 +186,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 9de80cd7be7e7ce45b3e5dd866a7a360, type: 3}
   - {fileID: 21300000, guid: 7944ffd7eb078c343b90887667ff7d94, type: 3}
   - {fileID: 21300000, guid: 4f031be74da20994480c09006b835eff, type: 3}
+  - {fileID: 21300000, guid: 82a45808b48e9ba49b726a43acae8639, type: 3}
   - {fileID: 21300000, guid: eb7f9b088605da7409706c272a845a87, type: 3}
   - {fileID: 21300000, guid: defbe3380eec93a469004ccc9b14f200, type: 3}
   - {fileID: 21300000, guid: c20949385ad8bc74e9db9cb78773aa19, type: 3}
@@ -452,6 +454,7 @@ SpriteAtlas:
   - event_active_button_clicked
   - White_square
   - button_speed1_off
+  - share_intel_container
   - abducted_restrained_icon
   - 4x_button_clicked
   - minion_container_flat
@@ -555,6 +558,7 @@ SpriteAtlas:
   - faction_ui_top_cover_container
   - character_ui_basic_info_container
   - location_faction_ui_container
+  - share_intel_decor
   - nameplate_visitors
   - tile_defender_slot_widget
   - character_ui_location_container

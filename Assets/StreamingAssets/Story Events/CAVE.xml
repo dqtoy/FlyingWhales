@@ -7,6 +7,7 @@
         <choice reqType="Artifact" reqName="Necronomicon">
           <text>Show him your Necronomicon.</text>
           <event trigger="IMMEDIATE">
+            <text>Amazed by your Necronomicon, he decides to join you so he can study it.</text>
             <effects>
               <effect effect="Gain" type="Summon" object="Incubus" chance="100" />
             </effects>
@@ -14,6 +15,14 @@
         </choice>
         <choice>
           <text>Ask him if he knows anything that may help you in conquering this region.</text>
+          <event trigger="IMMEDIATE">
+            <text>Upon browsing his books, he shows you a curious block of text.</text>
+            <effects>
+              <effect effect="Gain" type="Summon" object="Incubus" chance="100">
+                <additionalText>It teaches you a new magic ability!</additionalText>
+              </effect>
+            </effects>
+          </event>
         </choice>
         <choice>
           <text>Take your leave.</text>

@@ -101,6 +101,9 @@ public class PlayerUI : MonoBehaviour {
     public GameObject combatAbilityButtonPrefab;
     public List<CombatAbilityButton> currentCombatAbilityButtons { get; private set; }
 
+    [Header("Story Events")]
+    [SerializeField] private StoryEventUI storyEventUI;
+
     //[Header("Actions")]
     //[SerializeField] private int maxActionPages;
     //[SerializeField] private GameObject actionPagePrefab;
@@ -143,6 +146,8 @@ public class PlayerUI : MonoBehaviour {
         }
         minionLeaderPickers = new List<MinionLeaderPicker>();
         currentCombatAbilityButtons = new List<CombatAbilityButton>();
+
+        storyEventUI.Initialize();
 
         LoadRoleSlots();
         LoadAttackSlot();
@@ -659,17 +664,17 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.ThiefSummon);
-        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
-        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Chaos_Orb);
-        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Hermes_Statue);
-        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
-        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Miasma_Emitter);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.ThiefSummon);
+        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
+        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Chaos_Orb);
+        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Hermes_Statue);
+        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
+        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Miasma_Emitter);
         PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
     }
     private void ShowSelectMinionLeader() {
@@ -731,10 +736,15 @@ public class PlayerUI : MonoBehaviour {
             Debug.Log("Will show event " + e.name);
             if (e.trigger == STORY_EVENT_TRIGGER.IMMEDIATE) {
                 //show story event UI
-            } else {
-                //schedule show event UI based on trigger.
+                storyEventUI.ShowEvent(e);
+            } else if (e.trigger == STORY_EVENT_TRIGGER.MID) { //schedule show event UI based on trigger.
+                int day = UnityEngine.Random.Range(GameManager.Instance.Today().day + 1, GameManager.Instance.Today().day + PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration);
+                GameDate dueDate = GameManager.Instance.Today().AddDays(day);
+                SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e), null);
+            } else if (e.trigger == STORY_EVENT_TRIGGER.END) {
+                GameDate dueDate = GameManager.Instance.Today().AddDays(PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration);
+                SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e), null);
             }
-
         }
     }
     public void OnClickNoCorruption() {
