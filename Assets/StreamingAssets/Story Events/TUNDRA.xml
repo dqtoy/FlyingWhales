@@ -18,7 +18,7 @@
           <event trigger="IMMEDIATE">
             <text>Upon browsing his books, he shows you a curious block of text.</text>
             <effects>
-              <effect effect="Gain" type="Intervention_Ability" object="Provoke" chance="100">
+              <effect effect="Gain" type="Intervention_Ability" object="PROVOKE" chance="100">
                 <additionalText>It teaches you how to Provoke!</additionalText>
               </effect>
             </effects>

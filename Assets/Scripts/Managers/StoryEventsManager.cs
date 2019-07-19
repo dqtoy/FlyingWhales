@@ -65,8 +65,7 @@ public class StoryEventsManager : MonoBehaviour {
             }
         }
     }
-    public void ExecuteEffect(StoryEventEffect effect, out string additionalText) {
-        additionalText = effect.additionalText;
+    public void ExecuteEffect(StoryEventEffect effect) {
         //TODO: Show UI for effects that need the player to replace a summon/Artifact because of max capacity
         if (string.Equals(effect.effect, "Gain", System.StringComparison.OrdinalIgnoreCase)) {
             //gain

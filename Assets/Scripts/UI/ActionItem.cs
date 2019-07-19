@@ -70,30 +70,7 @@ public class ActionItem : MonoBehaviour {
     }
     private void ShowSummonTooltip(SUMMON_TYPE currentlySelectedSummon) {
         string header = Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
-        string message;
-        switch (currentlySelectedSummon) {
-            case SUMMON_TYPE.Wolf:
-                message = "Summon a wolf to run amok.";
-                break;
-            case SUMMON_TYPE.Skeleton:
-                message = "Summon a skeleton that will abduct a random character.";
-                break;
-            case SUMMON_TYPE.Golem:
-                message = "Summon a stone golem that can sustain alot of hits.";
-                break;
-            case SUMMON_TYPE.Succubus:
-                message = "Summon a succubus that will seduce a male character and eliminate him.";
-                break;
-            case SUMMON_TYPE.Incubus:
-                message = "Summon a succubus that will seduce a female character and eliminate her.";
-                break;
-            case SUMMON_TYPE.ThiefSummon:
-                message = "Summon a thief that will steal items from the settlements warehouse.";
-                break;
-            default:
-                message = "Summon a " + Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
-                break;
-        }
+        string message = PlayerManager.Instance.player.GetSummonDescription(currentlySelectedSummon);
         UIManager.Instance.ShowSmallInfo(message, hoverPos, header);
     }
     private void OnPlayerRemovedSummon(Summon summon) {

@@ -97,8 +97,22 @@ public class Minion {
             }
         } else {
             //Broadcast intervention ability is full, must open UI whether player wants to replace ability or discard it
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(GeAllInterventionAbilities(), ability, ReplaceAbility, RejectAbility);
         }
     }
+    private void ReplaceAbility(object objToReplace, object objToAdd) {
+        PlayerJobAction replace = objToReplace as PlayerJobAction;
+        PlayerJobAction add = objToAdd as PlayerJobAction;
+        for (int i = 0; i < interventionAbilities.Length; i++) {
+            if (interventionAbilities[i] == replace) {
+                interventionAbilities[i] = add;
+                add.SetMinion(this);
+                replace.SetMinion(null);
+                break;
+            }
+        }
+    }
+    private void RejectAbility(object rejectedObj) { }
     public void AddInterventionAbility(INTERVENTION_ABILITY ability) {
         AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(ability));
     }
@@ -110,6 +124,15 @@ public class Minion {
             }
         }
         return count;
+    }
+    public List<PlayerJobAction> GeAllInterventionAbilities() {
+        List<PlayerJobAction> all = new List<PlayerJobAction>();
+        for (int i = 0; i < interventionAbilities.Length; i++) {
+            if (interventionAbilities[i] != null) {
+                all.Add(interventionAbilities[i]);
+            }
+        }
+        return all;
     }
     #endregion
 

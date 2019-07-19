@@ -461,6 +461,43 @@ public class Player : ILeader {
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
         Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
+    public string GetInterventionAbilityDescription(PlayerJobAction action) {
+        if (action is ShareIntel) {
+            return "The Diplomat will reach out to a character and share a piece of information with them.";
+        } else if (action is RileUp) {
+            return "The Instigator will rile up a character and goad him into attacking people in a specified location. This action only works for beasts.";
+        } else if (action is Provoke) {
+            return "The Instigator will provoke a character into attacking one of his/her enemies. This is more likely to succeed if he/she is in a bad mood.";
+        } else if (action is Destroy) {
+            return "Remove this object from the world.";
+        } else if (action is Disable) {
+            return "Prevent characters from using this object for 4 hours.";
+        } else if (action is AccessMemories) {
+            return "Access the memories of a character.";
+        } else if (action is Abduct) {
+            return "The Instigator will goad a character into abducting a specified character. This action only works on goblins and skeletons.";
+        } else if (action is Zap) {
+            return "Temporarily prevents a character from moving for 30 minutes.";
+        } else if (action is Jolt) {
+            return "Temporarily speeds up the movement of a character.";
+        } else if (action is Spook) {
+            return "Temporarily forces a character to flee from all other nearby characters.";
+        } else if (action is Enrage) {
+            return "Temporarily enrages a character.";
+        } else if (action is CorruptLycanthropy) {
+            return "Inflict a character with Lycanthropy, which gives a character a chance to transform into a wild wolf whenever he/she sleeps.";
+        } else if (action is CorruptKleptomaniac) {
+            return "Inflict a character with Kleptomania, which will make that character enjoy stealing other people's items.";
+        } else if (action is CorruptVampiric) {
+            return "Inflict a character with Vampirism, which will make that character need blood for sustenance.";
+        } else if (action is CorruptUnfaithful) {
+            return "Make a character prone to have affairs.";
+        } else if (action is RaiseDead) {
+            return "Return a character to life.";
+        } else {
+            return action.GetType().ToString();
+        }
+    }
     #endregion
 
     #region Utilities
@@ -690,13 +727,23 @@ public class Player : ILeader {
 
     #region Summons
     public void GainSummon(SUMMON_TYPE type, int level = 5) {
+        Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, playerFaction, playerArea);
+        newSummon.SetLevel(level);
         if (GetTotalSummonsCount() < maxSummonSlots) {
-            Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, playerFaction, playerArea);
-            newSummon.SetLevel(level);
             AddSummon(newSummon);
         } else {
             Debug.LogWarning("Max summons has been reached!");
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), newSummon, ReplaceSummon, RejectSummon);
         }
+    }
+    private void ReplaceSummon(object summonToReplace, object summonToAdd) {
+        Summon replace = summonToReplace as Summon;
+        Summon add = summonToAdd as Summon;
+        RemoveSummon(replace);
+        AddSummon(add);
+    }
+    private void RejectSummon(object rejectedSummon) {
+        ClearSummonData(rejectedSummon as Summon);
     }
     /// <summary>
     /// Get total number of summons that the player has, regardless of them having been used or not.
@@ -760,11 +807,36 @@ public class Player : ILeader {
     /// <param name="summon">The summon to be removed.</param>
     public void RemoveSummon(Summon summon) {
         if (summons[summon.summonType].Remove(summon)) {
+            ClearSummonData(summon);
             if (summons[summon.summonType].Count == 0) {
                 summons.Remove(summon.summonType);
             }
             Messenger.Broadcast(Signals.PLAYER_REMOVED_SUMMON, summon);
         }
+    }
+    public string GetSummonDescription(SUMMON_TYPE currentlySelectedSummon) {
+        switch (currentlySelectedSummon) {
+            case SUMMON_TYPE.Wolf:
+                return "Summon a wolf to run amok.";
+            case SUMMON_TYPE.Skeleton:
+                return "Summon a skeleton that will abduct a random character.";
+            case SUMMON_TYPE.Golem:
+                return "Summon a stone golem that can sustain alot of hits.";
+            case SUMMON_TYPE.Succubus:
+                return "Summon a succubus that will seduce a male character and eliminate him.";
+            case SUMMON_TYPE.Incubus:
+                return "Summon a succubus that will seduce a female character and eliminate her.";
+            case SUMMON_TYPE.ThiefSummon:
+                return "Summon a thief that will steal items from the settlements warehouse.";
+            default:
+                return "Summon a " + Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
+        }
+    }
+    private void ClearSummonData(Summon summon) {
+        PlayerManager.Instance.player.playerFaction.RemoveCharacter(summon);
+        PlayerManager.Instance.player.playerArea.RemoveCharacterFromLocation(summon);
+        PlayerManager.Instance.player.playerArea.RemoveResident(summon);
+        CharacterManager.Instance.RemoveCharacter(summon);
     }
     public Summon GetAvailableSummonOfType(SUMMON_TYPE type) {
         List<Summon> choices = summons[type];
@@ -779,17 +851,32 @@ public class Player : ILeader {
         SUMMON_TYPE type = (SUMMON_TYPE)System.Enum.Parse(typeof(SUMMON_TYPE), summonName);
         return summons.ContainsKey(type);
     }
+    public List<Summon> GetAllSummons() {
+        List<Summon> all = new List<Summon>();
+        foreach (KeyValuePair<SUMMON_TYPE, List<Summon>> kvp in summons) {
+            all.AddRange(kvp.Value);
+        }
+        return all;
+    }
     #endregion
 
     #region Artifacts
     public void GainArtifact(ARTIFACT_TYPE type) {
+        Artifact newArtifact = PlayerManager.Instance.CreateNewArtifact(type);
         if (GetTotalArtifactCount() < maxArtifactSlots) {
-            Artifact newArtifact = PlayerManager.Instance.CreateNewArtifact(type);
             AddArtifact(newArtifact);
         } else {
             Debug.LogWarning("Max artifacts has been reached!");
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllArtifacts(), newArtifact, ReplaceArtifact, RejectArtifact);
         }
     }
+    private void ReplaceArtifact(object objToReplace, object objToAdd) {
+        Artifact replace = objToReplace as Artifact;
+        Artifact add = objToAdd as Artifact;
+        RemoveArtifact(replace);
+        AddArtifact(add);
+    }
+    private void RejectArtifact(object rejectedObj) { }
     public void LoseArtifact(ARTIFACT_TYPE type) {
         if (GetAvailableArtifactsOfTypeCount(type) > 0) {
             Artifact artifact = GetArtifactOfType(type);
@@ -877,6 +964,32 @@ public class Player : ILeader {
             }
         }
         return null;
+    }
+    private List<Artifact> GetAllArtifacts() {
+        List<Artifact> all = new List<Artifact>();
+        for (int i = 0; i < artifacts.Length; i++) {
+            Artifact currArtifact = artifacts[i];
+            if (currArtifact != null) {
+                all.Add(currArtifact);
+            }
+        }
+        return all;
+    }
+    public string GetArtifactDescription(ARTIFACT_TYPE type) {
+        switch (type) {
+            case ARTIFACT_TYPE.Necronomicon:
+                return "Raises all dead characters in the area to attack residents.";
+            case ARTIFACT_TYPE.Chaos_Orb:
+                return "Characters that inspect the Chaos Orb may be permanently berserked.";
+            case ARTIFACT_TYPE.Hermes_Statue:
+                return "Characters that inspect this will be teleported to a different settlement. If no other settlement exists, this will be useless.";
+            case ARTIFACT_TYPE.Ankh_Of_Anubis:
+                return "All characters that moves through here may slowly sink and perish. Higher agility means higher chance of escaping. Sand pit has a limited duration upon placing the artifact.";
+            case ARTIFACT_TYPE.Miasma_Emitter:
+                return "Characters will avoid the area. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.";
+            default:
+                return "Summon a " + Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+        }
     }
     #endregion
 
