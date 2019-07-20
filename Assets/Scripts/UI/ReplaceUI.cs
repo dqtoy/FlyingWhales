@@ -8,6 +8,7 @@ public class ReplaceUI : MonoBehaviour {
 
     [Header("Object To Add")]
     [SerializeField] private Image otaImage;
+    [SerializeField] private CharacterPortrait portrait;
     [SerializeField] private TextMeshProUGUI otaText;
 
     [Header("Choices")]
@@ -42,7 +43,11 @@ public class ReplaceUI : MonoBehaviour {
         }
         UIManager.Instance.Pause();
         Utilities.DestroyChildren(choicesParent);
-        newObjectLbl.text = "New " + Utilities.NormalizeNoSpaceString(objectToAdd.GetType().BaseType.ToString()) + "!";
+        if(objectToAdd is Minion) {
+            newObjectLbl.text = "New Minion!";
+        } else {
+            newObjectLbl.text = "New " + Utilities.NormalizeNoSpaceString(objectToAdd.GetType().BaseType.ToString()) + "!";
+        }
         UpdateObjectToAdd(objectToAdd);
         for (int i = 0; i < choices.Count; i++) {
             T currItem = choices[i];
@@ -59,6 +64,8 @@ public class ReplaceUI : MonoBehaviour {
 
     private void UpdateObjectToAdd(object obj) {
         objToAdd = obj;
+        otaImage.gameObject.SetActive(false);
+        portrait.gameObject.SetActive(false);
         if (obj is Summon) {
             Summon summon = obj as Summon;
             otaImage.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
@@ -66,25 +73,36 @@ public class ReplaceUI : MonoBehaviour {
             text += "\nLevel: " + summon.level.ToString();
             text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
             otaText.text = text;
+            otaImage.gameObject.SetActive(true);
         } else if (obj is Artifact) {
             Artifact artifact = obj as Artifact;
             string text = artifact.name;
             text += "\nLevel: " + artifact.level.ToString();
             text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
-            otaText.text = text; 
+            otaText.text = text;
             otaImage.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
+            otaImage.gameObject.SetActive(true);
         } else if (obj is PlayerJobAction) {
             PlayerJobAction action = obj as PlayerJobAction;
             string text = action.name;
             text += "\nDescription: " + action.description;
             otaText.text = text;
             otaImage.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
+            otaImage.gameObject.SetActive(true);
         } else if (obj is CombatAbility) {
             CombatAbility ability = obj as CombatAbility;
             string text = ability.name;
             text += "\nDescription: " + ability.description;
             otaText.text = text;
             otaImage.sprite = PlayerManager.Instance.GetCombatAbilitySprite(ability.name);
+            otaImage.gameObject.SetActive(true);
+        } else if (obj is Minion) {
+            Minion minion = obj as Minion;
+            string text = minion.character.name;
+            text += "\nLvl. " + minion.character.level + " " + minion.character.raceClassName;
+            otaText.text = text;
+            portrait.GeneratePortrait(minion.character);
+            portrait.gameObject.SetActive(true);
         }
     }
 

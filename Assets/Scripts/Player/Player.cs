@@ -186,6 +186,7 @@ public class Player : ILeader {
         int currentMinionCount = GetCurrentMinionCount();
         if(currentMinionCount == minions.Length) {
             //Broadcast minion is full, must be received by a UI that will pop up and let the player whether it will replace or be discarded
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(minions.ToList(), minion, ReplaceMinion, RejectMinion);
         } else {
             minion.SetIndexDefaultSort(currentMinionCount);
             minions[currentMinionCount] = minion;
@@ -234,6 +235,19 @@ public class Player : ILeader {
     public void SetMinionLeader(Minion minion) {
         currentMinionLeader = minion;
     }
+    private void ReplaceMinion(object objToReplace, object objToAdd) {
+        Minion minionToBeReplaced = objToReplace as Minion;
+        Minion minionToBeAdded = objToAdd as Minion;
+
+        for (int i = 0; i < minions.Length; i++) {
+            if(minions[i] == minionToBeReplaced) {
+                minionToBeAdded.SetIndexDefaultSort(i);
+                minions[i] = minionToBeAdded;
+                PlayerUI.Instance.UpdateRoleSlots();
+            }
+        }
+    }
+    private void RejectMinion(object obj) { }
     #endregion
 
     #region Win/Lose Conditions

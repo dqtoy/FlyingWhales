@@ -99,6 +99,17 @@ public class StoryEventsManager : MonoBehaviour {
                     }
                 }
                 //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
+            } else if (string.Equals(effect.effectType, "Minion", System.StringComparison.OrdinalIgnoreCase)) {
+                //Gain Minion
+                //effectValue = class name
+                if (effect.effectValue.ToLower() == "random") {
+                    Minion newMinion = PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON);
+                    PlayerManager.Instance.player.AddMinion(newMinion);
+                } else {
+                    Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(effect.effectValue, RACE.DEMON);
+                    PlayerManager.Instance.player.AddMinion(newMinion);
+                }
+                //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
             } else if (string.Equals(effect.effectType, "Level", System.StringComparison.OrdinalIgnoreCase)) {
                 //If effect value is a number, this means that the one that will be leveled up is the minion itself, if it is "Intervention Ability", "Combat Ability", "Summon", "Artifact", show Level Up UI
                 //Gain Level

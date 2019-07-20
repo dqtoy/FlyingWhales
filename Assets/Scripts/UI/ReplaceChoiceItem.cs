@@ -10,6 +10,7 @@ public class ReplaceChoiceItem : PooledObject {
     private object obj;
 
     [SerializeField] private Image img;
+    [SerializeField] private CharacterPortrait portrait;
     [SerializeField] private TextMeshProUGUI info;
     public Toggle toggle;
 
@@ -18,14 +19,24 @@ public class ReplaceChoiceItem : PooledObject {
     public void SetObject(object obj, System.Action<object> onSelected) {
         this.obj = obj;
         this.onSelected = onSelected;
+        img.gameObject.SetActive(false);
+        portrait.gameObject.SetActive(false);
         if (obj is Summon) {
             img.sprite = CharacterManager.Instance.GetSummonSettings((obj as Summon).summonType).summonPortrait;
+            img.gameObject.SetActive(true);
         } else if (obj is Artifact) {
             img.sprite = CharacterManager.Instance.GetArtifactSettings((obj as Artifact).type).artifactPortrait;
+            img.gameObject.SetActive(true);
         } else if (obj is PlayerJobAction) {
             img.sprite = PlayerManager.Instance.GetJobActionSprite((obj as PlayerJobAction).name);
+            img.gameObject.SetActive(true);
         } else if (obj is CombatAbility) {
             img.sprite = PlayerManager.Instance.GetCombatAbilitySprite((obj as CombatAbility).name);
+            img.gameObject.SetActive(true);
+        } else if (obj is Minion) {
+            Minion minion = obj as Minion;
+            portrait.GeneratePortrait(minion.character);
+            portrait.gameObject.SetActive(true);
         }
         UpdateTextInfo();
     }
@@ -58,6 +69,11 @@ public class ReplaceChoiceItem : PooledObject {
             CombatAbility ability = obj as CombatAbility;
             string text = ability.name;
             text += "\nDescription: " + ability.description;
+            info.text = text;
+        } else if (obj is CombatAbility) {
+            Minion minion = obj as Minion;
+            string text = minion.character.name;
+            text += "\nLvl. " + minion.character.level + " " + minion.character.raceClassName;
             info.text = text;
         }
     }
