@@ -6,6 +6,7 @@ public class Taunt : CombatAbility {
 
     private int _hpGain;
     public Taunt() : base(COMBAT_ABILITY.TAUNT) {
+        description = "Taunts enemies into attacking this character";
         cooldown = 10;
         _currentCooldown = 10;
     }

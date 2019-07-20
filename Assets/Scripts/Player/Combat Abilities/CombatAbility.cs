@@ -26,7 +26,7 @@ public class CombatAbility {
 
     public void LevelUp() {
         lvl++;
-        lvl = Mathf.Clamp(lvl, 1, 3);
+        lvl = Mathf.Clamp(lvl, 1, PlayerManager.MAX_LEVEL_COMBAT_ABILITY);
         OnLevelUp();
     }
 

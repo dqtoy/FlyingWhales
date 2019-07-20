@@ -5,6 +5,7 @@ using UnityEngine;
 public class Disable : PlayerJobAction {
 
     public Disable() : base(INTERVENTION_ABILITY.DISABLE) {
+        description = "Prevent characters from using this object for 4 hours.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.TILE_OBJECT };
     }

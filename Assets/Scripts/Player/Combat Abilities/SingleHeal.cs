@@ -7,6 +7,7 @@ public class SingleHeal : CombatAbility {
     private float _healPercentage;
 
 	public SingleHeal() : base (COMBAT_ABILITY.SINGLE_HEAL) {
+        description = "Heals a friendly unit by a percentage of its max HP";
         abilityTags.Add(ABILITY_TAG.MAGIC);
         abilityTags.Add(ABILITY_TAG.SUPPORT);
         cooldown = 10;

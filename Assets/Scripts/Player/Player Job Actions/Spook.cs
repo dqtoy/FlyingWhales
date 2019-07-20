@@ -6,6 +6,7 @@ using UnityEngine;
 public class Spook : PlayerJobAction {
 
     public Spook() : base(INTERVENTION_ABILITY.SPOOK) {
+        description = "Temporarily forces a character to flee from all other nearby characters.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

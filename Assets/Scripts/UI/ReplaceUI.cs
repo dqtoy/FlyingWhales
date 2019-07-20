@@ -76,9 +76,15 @@ public class ReplaceUI : MonoBehaviour {
         } else if (obj is PlayerJobAction) {
             PlayerJobAction action = obj as PlayerJobAction;
             string text = action.name;
-            text += "\nDescription: " + PlayerManager.Instance.player.GetInterventionAbilityDescription(action);
+            text += "\nDescription: " + action.description;
             otaText.text = text;
             otaImage.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
+        } else if (obj is CombatAbility) {
+            CombatAbility ability = obj as CombatAbility;
+            string text = ability.name;
+            text += "\nDescription: " + ability.description;
+            otaText.text = text;
+            otaImage.sprite = PlayerManager.Instance.GetCombatAbilitySprite(ability.name);
         }
     }
 

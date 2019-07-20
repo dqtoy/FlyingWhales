@@ -6,6 +6,11 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour {
     public static PlayerManager Instance = null;
 
+    public const int MAX_LEVEL_SUMMON = 3;
+    public const int MAX_LEVEL_ARTIFACT = 3;
+    public const int MAX_LEVEL_COMBAT_ABILITY = 3;
+    public const int MAX_LEVEL_INTERVENTION_ABILITY = 3;
+
     public int totalLifestonesInWorld;
     public bool isChoosingStartingTile = false;
     public Player player = null;

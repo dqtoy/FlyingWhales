@@ -79,16 +79,35 @@ public class StoryEventsManager : MonoBehaviour {
                 PlayerManager.Instance.player.GainArtifact(type);
             } else if (string.Equals(effect.effectType, "Intervention_Ability", System.StringComparison.OrdinalIgnoreCase)) {
                 //Gain Ability
-                INTERVENTION_ABILITY ability;
-                if (System.Enum.TryParse<INTERVENTION_ABILITY>(effect.effectValue, out ability)) {
-                    PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(ability);
+                if(effect.effectValue.ToLower() == "random") {
+                    PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
+                } else {
+                    INTERVENTION_ABILITY ability;
+                    if (System.Enum.TryParse<INTERVENTION_ABILITY>(effect.effectValue, out ability)) {
+                        PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(ability);
+                    }
                 }
                 //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
             } else if (string.Equals(effect.effectType, "Combat_Ability", System.StringComparison.OrdinalIgnoreCase)) {
                 //Gain Ability
-                COMBAT_ABILITY ability;
-                if (System.Enum.TryParse<COMBAT_ABILITY>(effect.effectValue, out ability)) {
-                    PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(ability);
+                if (effect.effectValue.ToLower() == "random") {
+                    PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
+                } else {
+                    COMBAT_ABILITY ability;
+                    if (System.Enum.TryParse<COMBAT_ABILITY>(effect.effectValue, out ability)) {
+                        PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(ability);
+                    }
+                }
+                //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
+            } else if (string.Equals(effect.effectType, "Level", System.StringComparison.OrdinalIgnoreCase)) {
+                //If effect value is a number, this means that the one that will be leveled up is the minion itself, if it is "Intervention Ability", "Combat Ability", "Summon", "Artifact", show Level Up UI
+                //Gain Level
+                int level = 0;
+                bool isNumber = int.TryParse(effect.effectValue, out level);
+                if (isNumber) {
+                    PlayerManager.Instance.player.currentMinionLeader.LevelUp(level);
+                } else {
+                    PlayerUI.Instance.levelUpUI.ShowLevelUpUI(PlayerManager.Instance.player.currentMinionLeader, effect.effectValue);
                 }
                 //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
             }

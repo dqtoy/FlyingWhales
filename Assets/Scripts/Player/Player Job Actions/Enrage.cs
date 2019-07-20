@@ -6,6 +6,7 @@ public class Enrage : PlayerJobAction {
 
     private int _durationInMinutes;
     public Enrage() : base(INTERVENTION_ABILITY.ENRAGE) {
+        description = "Temporarily enrages a character.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         abilityTags.Add(ABILITY_TAG.MAGIC);

@@ -5,6 +5,7 @@ using UnityEngine;
 public class CorruptVampiric : PlayerJobAction {
 
     public CorruptVampiric() : base(INTERVENTION_ABILITY.INFLICT_VAMPIRISM) {
+        description = "Inflict a character with Vampirism, which will make that character need blood for sustenance.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         abilityTags.Add(ABILITY_TAG.MAGIC);

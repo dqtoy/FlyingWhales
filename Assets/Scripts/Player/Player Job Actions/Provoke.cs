@@ -5,6 +5,7 @@ using UnityEngine;
 public class Provoke : PlayerJobAction {
 
     public Provoke() : base(INTERVENTION_ABILITY.PROVOKE) {
+        description = "The Instigator will provoke a character into attacking one of his/her enemies. This is more likely to succeed if he/she is in a bad mood.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         abilityTags.Add(ABILITY_TAG.MAGIC);

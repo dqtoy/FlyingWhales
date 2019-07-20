@@ -5,6 +5,7 @@ using UnityEngine;
 public class InflictCannibalism : PlayerJobAction {
 
     public InflictCannibalism() : base(INTERVENTION_ABILITY.INFLICT_CANNIBALISM) {
+        description = "Inflict a character with Cannibalism, which will make that character eat other characters with the same race for sustenance.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         abilityTags.Add(ABILITY_TAG.MAGIC);

@@ -5,6 +5,7 @@ using UnityEngine;
 public class CorruptUnfaithful : PlayerJobAction {
 
     public CorruptUnfaithful() : base(INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS) {
+        description = "Make a character prone to have affairs.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         abilityTags.Add(ABILITY_TAG.CRIME);

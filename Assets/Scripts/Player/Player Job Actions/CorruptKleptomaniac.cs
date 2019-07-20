@@ -5,6 +5,7 @@ using UnityEngine;
 public class CorruptKleptomaniac : PlayerJobAction {
 
     public CorruptKleptomaniac() : base(INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA) {
+        description = "Inflict a character with Kleptomania, which will make that character enjoy stealing other people's items.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         abilityTags.Add(ABILITY_TAG.CRIME);

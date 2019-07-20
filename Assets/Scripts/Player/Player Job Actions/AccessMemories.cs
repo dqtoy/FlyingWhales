@@ -5,6 +5,7 @@ using UnityEngine;
 public class AccessMemories : PlayerJobAction {
 
     public AccessMemories() : base(INTERVENTION_ABILITY.ACCESS_MEMORIES) {
+        description = "Access the memories of a character.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

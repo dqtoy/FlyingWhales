@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ReplaceChoiceItem : PooledObject {
+public class LevelUpChoiceItem : PooledObject {
 
     private object obj;
 
@@ -19,13 +19,21 @@ public class ReplaceChoiceItem : PooledObject {
         this.obj = obj;
         this.onSelected = onSelected;
         if (obj is Summon) {
-            img.sprite = CharacterManager.Instance.GetSummonSettings((obj as Summon).summonType).summonPortrait;
+            Summon summon = obj as Summon;
+            toggle.interactable = summon.level < PlayerManager.MAX_LEVEL_SUMMON;
+            img.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
         } else if (obj is Artifact) {
-            img.sprite = CharacterManager.Instance.GetArtifactSettings((obj as Artifact).type).artifactPortrait;
+            Artifact artifact = obj as Artifact;
+            toggle.interactable = artifact.level < PlayerManager.MAX_LEVEL_ARTIFACT;
+            img.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
         } else if (obj is PlayerJobAction) {
-            img.sprite = PlayerManager.Instance.GetJobActionSprite((obj as PlayerJobAction).name);
+            PlayerJobAction interventionAbility = obj as PlayerJobAction;
+            toggle.interactable = interventionAbility.lvl < PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY;
+            img.sprite = PlayerManager.Instance.GetJobActionSprite(interventionAbility.name);
         } else if (obj is CombatAbility) {
-            img.sprite = PlayerManager.Instance.GetCombatAbilitySprite((obj as CombatAbility).name);
+            CombatAbility combatAbility = obj as CombatAbility;
+            toggle.interactable = combatAbility.lvl < PlayerManager.MAX_LEVEL_COMBAT_ABILITY;
+            img.sprite = PlayerManager.Instance.GetCombatAbilitySprite(combatAbility.name);
         }
         UpdateTextInfo();
     }

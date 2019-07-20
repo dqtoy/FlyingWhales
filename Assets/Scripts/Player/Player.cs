@@ -461,43 +461,43 @@ public class Player : ILeader {
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
         Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
-    public string GetInterventionAbilityDescription(PlayerJobAction action) {
-        if (action is ShareIntel) {
-            return "The Diplomat will reach out to a character and share a piece of information with them.";
-        } else if (action is RileUp) {
-            return "The Instigator will rile up a character and goad him into attacking people in a specified location. This action only works for beasts.";
-        } else if (action is Provoke) {
-            return "The Instigator will provoke a character into attacking one of his/her enemies. This is more likely to succeed if he/she is in a bad mood.";
-        } else if (action is Destroy) {
-            return "Remove this object from the world.";
-        } else if (action is Disable) {
-            return "Prevent characters from using this object for 4 hours.";
-        } else if (action is AccessMemories) {
-            return "Access the memories of a character.";
-        } else if (action is Abduct) {
-            return "The Instigator will goad a character into abducting a specified character. This action only works on goblins and skeletons.";
-        } else if (action is Zap) {
-            return "Temporarily prevents a character from moving for 30 minutes.";
-        } else if (action is Jolt) {
-            return "Temporarily speeds up the movement of a character.";
-        } else if (action is Spook) {
-            return "Temporarily forces a character to flee from all other nearby characters.";
-        } else if (action is Enrage) {
-            return "Temporarily enrages a character.";
-        } else if (action is CorruptLycanthropy) {
-            return "Inflict a character with Lycanthropy, which gives a character a chance to transform into a wild wolf whenever he/she sleeps.";
-        } else if (action is CorruptKleptomaniac) {
-            return "Inflict a character with Kleptomania, which will make that character enjoy stealing other people's items.";
-        } else if (action is CorruptVampiric) {
-            return "Inflict a character with Vampirism, which will make that character need blood for sustenance.";
-        } else if (action is CorruptUnfaithful) {
-            return "Make a character prone to have affairs.";
-        } else if (action is RaiseDead) {
-            return "Return a character to life.";
-        } else {
-            return action.GetType().ToString();
-        }
-    }
+    //public string GetInterventionAbilityDescription(PlayerJobAction action) {
+    //    if (action is ShareIntel) {
+    //        return "The Diplomat will reach out to a character and share a piece of information with them.";
+    //    } else if (action is RileUp) {
+    //        return "The Instigator will rile up a character and goad him into attacking people in a specified location. This action only works for beasts.";
+    //    } else if (action is Provoke) {
+    //        return "The Instigator will provoke a character into attacking one of his/her enemies. This is more likely to succeed if he/she is in a bad mood.";
+    //    } else if (action is Destroy) {
+    //        return "Remove this object from the world.";
+    //    } else if (action is Disable) {
+    //        return "Prevent characters from using this object for 4 hours.";
+    //    } else if (action is AccessMemories) {
+    //        return "Access the memories of a character.";
+    //    } else if (action is Abduct) {
+    //        return "The Instigator will goad a character into abducting a specified character. This action only works on goblins and skeletons.";
+    //    } else if (action is Zap) {
+    //        return "Temporarily prevents a character from moving for 30 minutes.";
+    //    } else if (action is Jolt) {
+    //        return "Temporarily speeds up the movement of a character.";
+    //    } else if (action is Spook) {
+    //        return "Temporarily forces a character to flee from all other nearby characters.";
+    //    } else if (action is Enrage) {
+    //        return "Temporarily enrages a character.";
+    //    } else if (action is CorruptLycanthropy) {
+    //        return "Inflict a character with Lycanthropy, which gives a character a chance to transform into a wild wolf whenever he/she sleeps.";
+    //    } else if (action is CorruptKleptomaniac) {
+    //        return "Inflict a character with Kleptomania, which will make that character enjoy stealing other people's items.";
+    //    } else if (action is CorruptVampiric) {
+    //        return "Inflict a character with Vampirism, which will make that character need blood for sustenance.";
+    //    } else if (action is CorruptUnfaithful) {
+    //        return "Make a character prone to have affairs.";
+    //    } else if (action is RaiseDead) {
+    //        return "Return a character to life.";
+    //    } else {
+    //        return action.GetType().ToString();
+    //    }
+    //}
     #endregion
 
     #region Utilities

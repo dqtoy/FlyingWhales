@@ -7,6 +7,7 @@ public class ShareIntel : PlayerJobAction {
     public Character targetCharacter { get; private set; }
 
     public ShareIntel() : base(INTERVENTION_ABILITY.ABDUCT) {
+        description = "The Diplomat will reach out to a character and share a piece of information with them.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

@@ -107,6 +107,8 @@ public class PlayerUI : MonoBehaviour {
     [Header("Replace UI")]
     public ReplaceUI replaceUI;
 
+    [Header("Level Up UI")]
+    public LevelUpUI levelUpUI;
     //[Header("Actions")]
     //[SerializeField] private int maxActionPages;
     //[SerializeField] private GameObject actionPagePrefab;

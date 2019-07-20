@@ -138,10 +138,21 @@ public class Minion {
 
     #region Combat Ability
     public void SetCombatAbility(CombatAbility combatAbility) {
-        this.combatAbility = combatAbility;
+        if (this.combatAbility == null) {
+            this.combatAbility = combatAbility;
+        } else {
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(new List<CombatAbility>() { this.combatAbility }, combatAbility, ReplaceCombatAbility, RejectCombatAbility);
+        }
     }
     public void SetCombatAbility(COMBAT_ABILITY combatAbility) {
         SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(combatAbility));
+    }
+    private void ReplaceCombatAbility(object objToReplace, object objToAdd) {
+        CombatAbility newAbility = objToAdd as CombatAbility;
+        this.combatAbility = newAbility;
+    }
+    private void RejectCombatAbility(object objToReplace) {
+
     }
     #endregion
 

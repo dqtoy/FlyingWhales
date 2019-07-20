@@ -8,6 +8,7 @@ public class PlayerJobAction {
     public Minion minion { get; protected set; }
     public INTERVENTION_ABILITY abilityType { get; protected set; }
     public string name { get; protected set; }
+    public string description { get; protected set; }
 	public int cooldown { get; protected set; } //cooldown in ticks
     public Character assignedCharacter { get; protected set; }
     public List<JOB_ACTION_TARGET> targettableTypes { get; protected set; } //what sort of objects can this action target
@@ -37,7 +38,7 @@ public class PlayerJobAction {
 
     public void LevelUp() {
         lvl++;
-        lvl = Mathf.Clamp(lvl, 1, 3);
+        lvl = Mathf.Clamp(lvl, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
         OnLevelUp();
     }
 

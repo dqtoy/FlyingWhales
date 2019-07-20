@@ -6,6 +6,7 @@ public class Jolt : PlayerJobAction {
 
     private int _durationInMinutes;
     public Jolt() : base(INTERVENTION_ABILITY.JOLT) {
+        description = "Temporarily speeds up the movement of a character.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         abilityTags.Add(ABILITY_TAG.MAGIC);
