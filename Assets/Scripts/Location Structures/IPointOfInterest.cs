@@ -26,8 +26,8 @@ public interface IPointOfInterest {
     #region Traits
     bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);
     bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);
-    bool RemoveTrait(Trait trait, bool triggerOnRemove = true);
-    bool RemoveTrait(string traitName, bool triggerOnRemove = true);
+    bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null);
+    bool RemoveTrait(string traitName, bool triggerOnRemove = true, Character removedBy = null);
     void RemoveTrait(List<Trait> traits);
     List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType);
     Trait GetNormalTrait(params string[] traitName);

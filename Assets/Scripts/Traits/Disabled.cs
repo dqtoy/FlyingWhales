@@ -19,8 +19,8 @@ public class Disabled : Trait {
         targetPOI.SetIsDisabledByPlayer(true);
     }
 
-    public override void OnRemoveTrait(IPointOfInterest targetPOI) {
-        base.OnRemoveTrait(targetPOI);
+    public override void OnRemoveTrait(IPointOfInterest targetPOI, Character removedBy) {
+        base.OnRemoveTrait(targetPOI, removedBy);
         targetPOI.SetIsDisabledByPlayer(false);
     }
 }

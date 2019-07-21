@@ -57,7 +57,7 @@ public class Injured : Trait {
             Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _sourceCharacter);
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
         _sourceCharacter.UpdateIsCombatantState();
         _sourceCharacter.marker.AdjustSpeedModifier(0.15f);
         //if (_removeTraitJob != null) {
@@ -66,7 +66,7 @@ public class Injured : Trait {
         _sourceCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
         _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
         _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
-        base.OnRemoveTrait(sourceCharacter);
+        base.OnRemoveTrait(sourceCharacter, removedBy);
     }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         Character targetCharacter = traitOwner as Character;

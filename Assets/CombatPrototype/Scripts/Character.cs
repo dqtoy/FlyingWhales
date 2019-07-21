@@ -1237,6 +1237,21 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             }
         }
     }
+    /// <summary>
+    /// Cancel all jobs of type that is targetting this character, except jobs that have the provided character assigned to it.
+    /// </summary>
+    /// <param name="jobType">The type of job to cancel.</param>
+    /// <param name="otherCharacter">The character exception.</param>
+    public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, Character otherCharacter) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            JobQueueItem job = allJobsTargettingThis[i];
+            if (job.jobType == jobType && job.assignedCharacter != otherCharacter) {
+                if (job.jobQueueParent.CancelJob(job)) {
+                    i--;
+                }
+            }
+        }
+    }
     public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, JobQueueItem except) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
@@ -3733,7 +3748,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
         return RemoveTrait(trait, triggerOnRemove);
     }
-    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
+    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
         bool removed = false;
         if (trait is RelationshipTrait) {
             removed = true;
@@ -3745,7 +3760,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             UnapplyPOITraitInteractions(trait);
             trait.RemoveExpiryTicket(this);
             if (triggerOnRemove) {
-                trait.OnRemoveTrait(this);
+                trait.OnRemoveTrait(this, removedBy);
             }
             Messenger.Broadcast(Signals.TRAIT_REMOVED, this, trait);
             //if (trait is RelationshipTrait) {
@@ -3755,10 +3770,10 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
         return removed;
     }
-    public bool RemoveTrait(string traitName, bool triggerOnRemove = true) {
+    public bool RemoveTrait(string traitName, bool triggerOnRemove = true, Character removedBy = null) {
         Trait trait = GetNormalTrait(traitName);
         if (trait != null) {
-            return RemoveTrait(trait, triggerOnRemove);
+            return RemoveTrait(trait, triggerOnRemove, removedBy);
         }
         return false;
     }
@@ -4552,7 +4567,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
-                if (isAtHomeArea) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
+                if (isAtHomeArea && faction == homeArea.owner) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
                     return homeArea.jobQueue.ProcessFirstJobInQueue(this);
                 } else {
                     return false;

@@ -84,7 +84,7 @@ public interface ICharacter {
     bool AddTrait(Trait combatAttribute, Character responsibleCharacter = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);
     bool IsInParty();
     bool IsInOwnParty();
-    bool RemoveTrait(Trait combatAttribute, bool triggerOnRemove = true);
+    bool RemoveTrait(Trait combatAttribute, bool triggerOnRemove = true, Character removedBy = null);
     Party CreateOwnParty();
     Trait GetNormalTrait(params string[] name);
     void ConstructBuffs();

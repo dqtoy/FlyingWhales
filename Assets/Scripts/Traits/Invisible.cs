@@ -46,8 +46,8 @@ public class Invisible : Trait {
             owner.CancelAllJobsTargettingThisCharacter();
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
-        base.OnRemoveTrait(sourcePOI);
+    public override void OnRemoveTrait(IPointOfInterest sourcePOI, Character removedBy) {
+        base.OnRemoveTrait(sourcePOI, removedBy);
         GameManager.Instance.StartCoroutine(RetriggerVisionCollision(owner));
     }
     #endregion

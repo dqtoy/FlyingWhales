@@ -43,7 +43,7 @@ public class Sick : Trait {
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
         _sourceCharacter.marker.AdjustSpeedModifier(0.10f);
         //if (_removeTraitJob != null) {
         //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
@@ -51,7 +51,7 @@ public class Sick : Trait {
         _sourceCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
         _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
         _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
-        base.OnRemoveTrait(sourceCharacter);
+        base.OnRemoveTrait(sourceCharacter, removedBy);
         //Messenger.Broadcast(Signals.OLD_NEWS_TRIGGER, sourceCharacter, gainedFromDoing);
     }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {

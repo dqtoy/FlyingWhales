@@ -21,12 +21,12 @@ public class Jolted : Trait {
             character.marker.AdjustSpeedModifier(2f);
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
+    public override void OnRemoveTrait(IPointOfInterest sourcePOI, Character removedBy) {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             character.marker.AdjustSpeedModifier(-2f);
         }
-        base.OnRemoveTrait(sourcePOI);
+        base.OnRemoveTrait(sourcePOI, removedBy);
     }
     #endregion
 }

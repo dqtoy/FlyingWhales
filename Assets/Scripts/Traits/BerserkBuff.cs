@@ -43,8 +43,8 @@ public class BerserkBuff : Trait {
         }
         base.OnAddTrait(sourceCharacter);
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
-        base.OnRemoveTrait(sourceCharacter);
+    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+        base.OnRemoveTrait(sourceCharacter, removedBy);
         if (sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
             character.AdjustAttackMod(_flatAttackMod);

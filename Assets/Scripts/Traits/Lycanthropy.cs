@@ -54,10 +54,10 @@ public class Lycanthropy : Trait {
 
         base.OnAddTrait(sourceCharacter);
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
         _character.RemoveAlterEgo("Lycanthrope");
         _character = null;
-        base.OnRemoveTrait(sourceCharacter);
+        base.OnRemoveTrait(sourceCharacter, removedBy);
     }
     #endregion
 

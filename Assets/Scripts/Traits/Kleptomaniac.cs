@@ -38,8 +38,8 @@ public class Kleptomaniac : Trait {
         owner.AddInteractionType(INTERACTION_TYPE.STEAL);
         Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
-        base.OnRemoveTrait(sourceCharacter);
+    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+        base.OnRemoveTrait(sourceCharacter, removedBy);
         owner.RemoveInteractionType(INTERACTION_TYPE.STEAL_CHARACTER);
         owner.RemoveInteractionType(INTERACTION_TYPE.STEAL);
         owner.AdjustHappinessDecreaseRate(-_happinessDecreaseRate);

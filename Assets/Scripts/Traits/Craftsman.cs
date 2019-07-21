@@ -39,14 +39,14 @@ public class Craftsman : Trait {
             }
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
+    public override void OnRemoveTrait(IPointOfInterest sourcePOI, Character removedBy) {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             for (int i = 0; i < advertisedInteractions.Count; i++) {
                 character.RemoveInteractionType(advertisedInteractions[i]);
             }
         }
-        base.OnRemoveTrait(sourcePOI);
+        base.OnRemoveTrait(sourcePOI, removedBy);
     }
     #endregion
 }

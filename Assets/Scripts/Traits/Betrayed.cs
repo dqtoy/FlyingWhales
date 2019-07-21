@@ -14,13 +14,4 @@ public class Betrayed : Trait {
         effects = new List<TraitEffect>();
         //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CRAFT_ITEM, INTERACTION_TYPE.CRAFT_FURNITURE };
     }
-
-    #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourcePOI) {
-        base.OnAddTrait(sourcePOI);
-    }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
-        base.OnRemoveTrait(sourcePOI);
-    }
-    #endregion
 }

@@ -36,10 +36,11 @@ public class Taunted : Trait {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Character>(Signals.CHARACTER_REMOVED_FROM_VISION, OnCharacterRemovedFromVision);
     }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
-        base.OnRemoveTrait(sourcePOI);
+    public override void OnRemoveTrait(IPointOfInterest sourcePOI, Character removedBy) {
+        base.OnRemoveTrait(sourcePOI, removedBy);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Character>(Signals.CHARACTER_REMOVED_FROM_VISION, OnCharacterRemovedFromVision);
+        Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, sourcePOI as Character);
     }
     public override void OnDeath(Character character) {
         base.OnDeath(character);

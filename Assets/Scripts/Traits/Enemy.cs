@@ -31,7 +31,7 @@ public class Enemy : RelationshipTrait {
             sourceCharacter.AddHistory(log);
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
+    public override void OnRemoveTrait(IPointOfInterest sourcePOI, Character removedBy) {
         if (sourcePOI is Character) {
             Character sourceCharacter = sourcePOI as Character;
             if (!GameManager.Instance.gameHasStarted) {

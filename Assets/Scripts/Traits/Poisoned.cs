@@ -37,8 +37,8 @@ public class Poisoned : Trait {
         base.OnAddTrait(sourceCharacter);
         poi = sourceCharacter;
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
-        base.OnRemoveTrait(sourceCharacter);
+    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+        base.OnRemoveTrait(sourceCharacter, removedBy);
         awareCharacters.Clear();
         responsibleCharacters.Clear(); //Cleared list, for garbage collection
         //Messenger.Broadcast(Signals.OLD_NEWS_TRIGGER, sourceCharacter, gainedFromDoing);

@@ -47,7 +47,7 @@ public class Vampiric : Trait {
             character.AdjustSpeedMod(_flatSpeedMod);
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
         if (sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
             character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY);
@@ -57,7 +57,7 @@ public class Vampiric : Trait {
             character.AdjustMaxHPMod(-_flatHPMod);
             character.AdjustSpeedMod(-_flatSpeedMod);
         }
-        base.OnRemoveTrait(sourceCharacter);
+        base.OnRemoveTrait(sourceCharacter, removedBy);
     }
     #endregion
 }

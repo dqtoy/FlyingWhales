@@ -26,8 +26,8 @@ public class JudgeCharacter : GoapAction {
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Target Executed", 10);
-            if (poiTarget.factionOwner != PlayerManager.Instance.player.playerFaction) {
-                //only allow target release if target is not from the player's faction
+            if (poiTarget.factionOwner == actor.faction) {
+                //only allow target release if target is from the same faction as the actor's faction
                 weights.AddElement("Target Released", 10);
             }
             //if (poiTarget.factionOwner == actor.faction) {

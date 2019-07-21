@@ -61,18 +61,18 @@ public class Unconscious : Trait {
             }
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
         //if (_restrainJob != null) {
         //    _restrainJob.jobQueueParent.CancelJob(_restrainJob);
         //}
         //if (_removeTraitJob != null) {
         //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         //}
-        _sourceCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.RESTRAIN);
+        _sourceCharacter.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.RESTRAIN, removedBy); //so that the character that restrained him will not cancel his job.
         _sourceCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
         _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
         _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
-        base.OnRemoveTrait(sourceCharacter);
+        base.OnRemoveTrait(sourceCharacter, removedBy);
     }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         Character targetCharacter = traitOwner as Character;
@@ -87,7 +87,7 @@ public class Unconscious : Trait {
                 }
             }
         }
-        if (characterThatWillDoJob.isAtHomeArea && !targetCharacter.isDead && targetCharacter.faction != characterThatWillDoJob.faction 
+        if (characterThatWillDoJob.isAtHomeArea && characterThatWillDoJob.faction == characterThatWillDoJob .homeArea.owner && !targetCharacter.isDead && targetCharacter.faction != characterThatWillDoJob.faction 
             && (characterThatWillDoJob.role.roleType == CHARACTER_ROLE.SOLDIER || characterThatWillDoJob.role.roleType == CHARACTER_ROLE.CIVILIAN || characterThatWillDoJob.role.roleType == CHARACTER_ROLE.ADVENTURER)) {
             if (!characterThatWillDoJob.HasTraitOf(TRAIT_TYPE.CRIMINAL) && targetCharacter.GetNormalTrait("Restrained") == null && characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE
                 && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.RESTRAIN)) {

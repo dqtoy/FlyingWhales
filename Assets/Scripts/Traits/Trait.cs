@@ -45,7 +45,7 @@ public class Trait {
          dateEstablished = GameManager.Instance.Today();
 #endif
     }
-    public virtual void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+    public virtual void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
         if (onRemoveAction != null) {
             onRemoveAction();
         }

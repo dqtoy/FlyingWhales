@@ -17,12 +17,6 @@ public class Dead : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourcePOI) {
-        base.OnAddTrait(sourcePOI);
-    }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
-        base.OnRemoveTrait(sourcePOI);
-    }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         Character targetCharacter = traitOwner as Character;
         if (targetCharacter.isDead && targetCharacter.race != RACE.SKELETON && !characterThatWillDoJob.HasTraitOf(TRAIT_TYPE.CRIMINAL) && characterThatWillDoJob.isAtHomeArea 

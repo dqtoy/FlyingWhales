@@ -51,7 +51,7 @@ public class Restrained : Trait {
             isLeader = _sourceCharacter.role.roleType == CHARACTER_ROLE.LEADER;
             Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
             //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
-            _sourceCharacter.RemoveTrait("Unconscious");
+            _sourceCharacter.RemoveTrait("Unconscious", removedBy: _responsibleCharacter);
             _sourceCharacter.CancelAllJobsAndPlans();
             _sourceCharacter.AddTraitNeededToBeRemoved(this);
 
@@ -61,7 +61,7 @@ public class Restrained : Trait {
             }
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter) {
+    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
         if(sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
             character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.FEED);
@@ -82,7 +82,7 @@ public class Restrained : Trait {
                 PlayerManager.Instance.player.ShowNotification(logNotif);
             }
         }
-        base.OnRemoveTrait(sourceCharacter);
+        base.OnRemoveTrait(sourceCharacter, removedBy);
     }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         Character targetCharacter = traitOwner as Character;

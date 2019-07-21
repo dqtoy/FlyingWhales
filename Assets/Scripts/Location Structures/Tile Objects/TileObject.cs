@@ -215,20 +215,20 @@ public class TileObject : IPointOfInterest {
         }
         return true;
     }
-    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true) {
+    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
         if (_traits.Remove(trait)) {
             trait.RemoveExpiryTicket(this);
             if (triggerOnRemove) {
-                trait.OnRemoveTrait(this);
+                trait.OnRemoveTrait(this, removedBy);
             }
             return true;
         }
         return false;
     }
-    public bool RemoveTrait(string traitName, bool triggerOnRemove = true) {
+    public bool RemoveTrait(string traitName, bool triggerOnRemove = true, Character removedBy = null) {
         Trait trait = GetNormalTrait(traitName);
         if (trait != null) {
-            return RemoveTrait(trait, triggerOnRemove);
+            return RemoveTrait(trait, triggerOnRemove, removedBy);
         }
         return false;
     }
