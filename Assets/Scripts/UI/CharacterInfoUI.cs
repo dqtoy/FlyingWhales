@@ -86,7 +86,6 @@ public class CharacterInfoUI : UIMenu {
         base.Initialize();
         isWaitingForAttackTarget = false;
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
-        Messenger.AddListener<BaseLandmark>(Signals.PLAYER_LANDMARK_CREATED, OnPlayerLandmarkCreated);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, UpdateTraitsFromSignal);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
@@ -308,11 +307,6 @@ public class CharacterInfoUI : UIMenu {
 
     public bool IsCharacterInfoShowing(Character character) {
         return (isShowing && _activeCharacter == character);
-    }
-    private void OnPlayerLandmarkCreated(BaseLandmark createdLandmark) {
-        //if (createdLandmark.specificLandmarkType == LANDMARK_TYPE.SNATCHER_DEMONS_LAIR) {
-        //    CheckShowSnatchButton();
-        //}
     }
     #endregion
 

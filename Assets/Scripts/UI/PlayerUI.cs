@@ -750,15 +750,15 @@ public class PlayerUI : MonoBehaviour {
                     Debug.Log("Will show event " + e.name);
                     if (e.trigger == STORY_EVENT_TRIGGER.IMMEDIATE) {
                         //show story event UI
-                        storyEventUI.ShowEvent(e);
+                        storyEventUI.ShowEvent(e, true);
                     } else if (e.trigger == STORY_EVENT_TRIGGER.MID) { //schedule show event UI based on trigger.
                         int difference = Mathf.Abs(GameManager.Instance.Today().day - (GameManager.Instance.Today().day + PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration));
                         int day = UnityEngine.Random.Range(1, difference);
                         GameDate dueDate = GameManager.Instance.Today().AddDays(day);
-                        SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e), null);
+                        SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e, true), null);
                     } else if (e.trigger == STORY_EVENT_TRIGGER.END) {
                         GameDate dueDate = GameManager.Instance.Today().AddDays(PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration);
-                        SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e), null);
+                        SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e, true), null);
                     }
                 }
             }

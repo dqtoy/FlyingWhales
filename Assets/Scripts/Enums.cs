@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 public enum PROGRESSION_SPEED {
@@ -1561,6 +1562,49 @@ public static class Extensions {
             default:
                 return Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
         }
+    }
+    #endregion
+
+    #region Intervention Abilities
+    public static List<ABILITY_TAG> GetAbilityTags(this INTERVENTION_ABILITY type) {
+        List<ABILITY_TAG> tags = new List<ABILITY_TAG>();
+        switch (type) {
+            case INTERVENTION_ABILITY.INFLICT_LYCANTHROPY:
+                tags.Add(ABILITY_TAG.MAGIC);
+                break;
+            case INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA:
+                tags.Add(ABILITY_TAG.CRIME);
+                break;
+            case INTERVENTION_ABILITY.INFLICT_VAMPIRISM:
+                tags.Add(ABILITY_TAG.MAGIC);
+                break;
+            case INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS:
+                tags.Add(ABILITY_TAG.CRIME);
+                break;
+            case INTERVENTION_ABILITY.INFLICT_CANNIBALISM:
+                tags.Add(ABILITY_TAG.MAGIC);
+                tags.Add(ABILITY_TAG.CRIME);
+                break;
+            case INTERVENTION_ABILITY.ZAP:
+                tags.Add(ABILITY_TAG.MAGIC);
+                break;
+            case INTERVENTION_ABILITY.JOLT:
+                tags.Add(ABILITY_TAG.MAGIC);
+                break;
+            case INTERVENTION_ABILITY.ENRAGE:
+                tags.Add(ABILITY_TAG.MAGIC);
+                break;
+            case INTERVENTION_ABILITY.PROVOKE:
+                tags.Add(ABILITY_TAG.MAGIC);
+                break;
+            case INTERVENTION_ABILITY.RAISE_DEAD:
+                tags.Add(ABILITY_TAG.MAGIC);
+                break;
+            case INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY:
+                tags.Add(ABILITY_TAG.MAGIC);
+                break;
+        }
+        return tags;
     }
     #endregion
 }

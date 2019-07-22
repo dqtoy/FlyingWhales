@@ -138,36 +138,6 @@ public class PlayerManager : MonoBehaviour {
         tile.SetCorruption(true);
         tile.StopCorruptionAnimation();
     }
-    private void OnPlayerLandmarkCreated(BaseLandmark newLandmark) {
-        switch (newLandmark.specificLandmarkType) {
-            //case LANDMARK_TYPE.SNATCHER_DEMONS_LAIR:
-            //    //player.AdjustSnatchCredits(1);
-            //    break;
-            case LANDMARK_TYPE.DWELLINGS:
-                //add 2 minion slots
-                //player.AdjustMaxMinions(2);
-                break;
-            case LANDMARK_TYPE.IMP_KENNEL:
-                //adds 1 Imp capacity
-                //player.AdjustMaxImps(1);
-                break;
-            case LANDMARK_TYPE.RAMPART:
-                //bonus 25% HP to all Defenders
-                //for (int i = 0; i < player.playerArea.landmarks.Count; i++) {
-                //    BaseLandmark currLandmark = player.playerArea.landmarks[i];
-                //    currLandmark.AddDefenderBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
-                    //if (currLandmark.defenders != null) {
-                    //    currLandmark.defenders.AddBuff(new Buff() { buffedStat = STAT.HP, percentage = 0.25f });
-                    //}
-                //}
-                break;
-            default:
-                break;
-        }
-        //player.playerArea.DetermineExposedTiles();
-        Messenger.Broadcast(Signals.PLAYER_LANDMARK_CREATED, newLandmark);
-    }
-
     public void AdjustTotalLifestones(int amount) {
         totalLifestonesInWorld += amount;
         Debug.Log("Adjusted lifestones in world by " + amount + ". New total is " + totalLifestonesInWorld);
@@ -229,6 +199,18 @@ public class PlayerManager : MonoBehaviour {
                 return new CloakOfInvisibility();
         }
         return null;
+    }
+    public List<INTERVENTION_ABILITY> GetInterventionAbilitiesWithTag(ABILITY_TAG tag) {
+        List<INTERVENTION_ABILITY> valid = new List<INTERVENTION_ABILITY>();
+        INTERVENTION_ABILITY[] abilities = Utilities.GetEnumValues<INTERVENTION_ABILITY>();
+        for (int i = 0; i < abilities.Length; i++) {
+            INTERVENTION_ABILITY currAbility = abilities[i];
+            List<ABILITY_TAG> tags = currAbility.GetAbilityTags();
+            if (tags.Contains(tag)) {
+                valid.Add(currAbility);
+            }
+        }
+        return valid;
     }
     #endregion
 

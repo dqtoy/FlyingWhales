@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class StoryEventUI : MonoBehaviour {
 
+    private StoryEvent rootEvent;
     private StoryEvent currentEvent;
 
     [SerializeField] private TextMeshProUGUI eventTitleLbl;
@@ -19,7 +20,7 @@ public class StoryEventUI : MonoBehaviour {
         collectedEffects = new List<StoryEventEffect>();
     }
 
-    public void ShowEvent(StoryEvent storyEvent) {
+    public void ShowEvent(StoryEvent storyEvent, bool isRootEvent = false) {
         UIManager.Instance.Pause();
         //I used flow similar to FTL: https://ftlwiki.com/wiki/Events_file_structure
         //1. All the effects of the event are collected.
@@ -33,6 +34,9 @@ public class StoryEventUI : MonoBehaviour {
             ExecuteEffects(storyEvent, out additionalText, out collectedEffects);
         }
         currentEvent = storyEvent;
+        if (isRootEvent) {
+            rootEvent = storyEvent;
+        }
         eventTitleLbl.text = storyEvent.name;
         eventTextLbl.text = storyEvent.text + additionalText;
         bool hasChoice = false;
@@ -62,7 +66,9 @@ public class StoryEventUI : MonoBehaviour {
         this.gameObject.SetActive(true);
     }
     public void CloseMenu() {
-        UIManager.Instance.Unpause();
+        if (rootEvent.trigger != STORY_EVENT_TRIGGER.END) {
+            UIManager.Instance.Unpause();
+        }
         this.gameObject.SetActive(false);
     }
 

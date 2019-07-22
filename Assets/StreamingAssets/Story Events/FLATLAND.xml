@@ -35,7 +35,7 @@
       <text>You find a concealed hut.</text>
       <choices>
 
-        <choice>
+        <choice reqType="Minion" reqName="Quantity_2">
           <text>Venture inside.</text>
           <event>
             <text>You venture inside the concealed hut.</text>
@@ -58,7 +58,12 @@
               <effect effect="Gain" type="Ability" object="Explosion" chance="10">
                   <additionalText>The lead minion gets learns Explosion!</additionalText>
               </effect>
-              <effect effect="Nothing" chance="90" />
+              <effect effect="Gain" type="Slot" object="Summon" chance="50">
+                  <additionalText> And find a summon slot!</additionalText>
+              </effect>
+              <effect effect="Gain" type="Slot" object="Artifact" chance="40">
+                  <additionalText> And find an artifact slot!</additionalText>
+              </effect>
             </effects>
           </event>
         </choice>

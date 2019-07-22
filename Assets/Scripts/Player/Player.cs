@@ -1038,6 +1038,11 @@ public class Player : ILeader {
         List<Artifact> choices = GetAllArtifacts();
         return choices[UnityEngine.Random.Range(0, choices.Count)];
     }
+    public void AdjustArtifactSlot(int adjustment) {
+        maxArtifactSlots += adjustment;
+        maxArtifactSlots = Mathf.Clamp(maxArtifactSlots, 0, MAX_ARTIFACT);
+        //TODO: validate if adjusted max artifacts can accomodate current summons
+    }
     #endregion
 
     #region Invasion

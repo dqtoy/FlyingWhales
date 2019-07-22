@@ -41,7 +41,6 @@ public class ReplaceUI : MonoBehaviour {
             pendingReplaceActions.Add(() => ShowReplaceUI(choices, objectToAdd, onClickReplace, onClickCancel));
             return;
         }
-        UIManager.Instance.Pause();
         Utilities.DestroyChildren(choicesParent);
         if(objectToAdd is Minion) {
             newObjectLbl.text = "New Minion!";
@@ -108,7 +107,6 @@ public class ReplaceUI : MonoBehaviour {
 
 
     private void Close() {
-        UIManager.Instance.Unpause();
         this.gameObject.SetActive(false);
         if (pendingReplaceActions.Count > 0) {
             System.Action pending = pendingReplaceActions[0];

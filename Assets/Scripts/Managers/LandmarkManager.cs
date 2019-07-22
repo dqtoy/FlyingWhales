@@ -154,7 +154,7 @@ public class LandmarkManager : MonoBehaviour {
 
         //order regions based on distance from the player portal
         List<Region> orderedRegions = new List<Region>(regions);
-        orderedRegions.OrderBy(x => Vector2.Distance(chosenPlayerRegion.coreTile.transform.position, x.coreTile.transform.position));
+        orderedRegions = orderedRegions.OrderBy(x => Vector2.Distance(chosenPlayerRegion.coreTile.transform.position, x.coreTile.transform.position)).ToList();
 
         //separate regions based on their distance from the player area
         List<Region> nearRegions = new List<Region>(); //regions that are near the player area
@@ -620,6 +620,9 @@ public class LandmarkManager : MonoBehaviour {
             nearestRegion.AddTile(currTile);
         }
         generatedRegions = regions;
+        //for (int i = 0; i < generatedRegions.Length; i++) {
+        //    generatedRegions[i].RedetermineCore();
+        //}
     }
     #endregion
 }
@@ -632,15 +635,14 @@ public class Region {
     //private Color regionColor;
     private List<HexTile> allTiles {
         get {
-            List<HexTile> all = new List<HexTile>(tiles);
-            all.Add(coreTile);
-            return all;
+            return tiles;
         }
     }
 
     public Region(HexTile coreTile) {
         this.coreTile = coreTile;
         tiles = new List<HexTile>();
+        AddTile(coreTile);
         //regionColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
     }
 
@@ -673,6 +675,21 @@ public class Region {
             } 
         }
         return valid;
+    }
+
+    public void RedetermineCore() {
+        int maxX = tiles.Max(t => t.data.xCoordinate);
+        int minX = tiles.Min(t => t.data.xCoordinate);
+        int maxY = tiles.Max(t => t.data.yCoordinate);
+        int minY = tiles.Min(t => t.data.yCoordinate);
+
+        int x = (minX + maxX) / 2;
+        int y = (minY + maxY) / 2;
+
+        coreTile = GridMap.Instance.map[x, y];
+        if (!tiles.Contains(coreTile)) {
+            throw new System.Exception("Region does not contain new core tile! " + coreTile.ToString());
+        }
     }
 }
 

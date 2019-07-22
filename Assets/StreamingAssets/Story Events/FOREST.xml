@@ -68,7 +68,7 @@
           <event>
             <text>You abduct one and do several experiments on it. You learn how to inflict Cannibalism on others!</text>
             <effects>
-              <effect effect="Gain" type="Intervention_Ability" object="CANNIBALISM" chance="100" />
+              <effect effect="Gain" type="Intervention_Ability" object="INFLICT_CANNIBALISM" chance="100" />
             </effects>
           </event>
         </choice>
@@ -78,7 +78,7 @@
           <event>
             <text>You attack them.</text>
             <effects>
-                  <effect effect="Gain" type="Intervention_Ability" object="CANNIBALISM" chance="30">
+                  <effect effect="Gain" type="Intervention_Ability" object="INFLICT_CANNIBALISM" chance="30">
                         <additionalText>You win, you take one of the corpses and examine it thoroughly. You learn how to inflict Cannibalism on others!</additionalText>
                   </effect>
                   <effect effect="Gain" type="All_Trait" object="Injured" chance="70">

@@ -1,12 +1,13 @@
 <?xml version="1.0"?>
 <EventsCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Events>
+
     <Event id="AN_INCUBUS" name="An Incubus" trigger="END">
       <text>While exploring you encounter an incubus. After conversing a bit you learn that he is very interested in ancient artifacts.</text>
       <choices>
         <choice reqType="Artifact" reqName="Necronomicon">
           <text>Show him your Necronomicon.</text>
-          <event trigger="IMMEDIATE">
+          <event>
             <text>Amazed by your Necronomicon, he decides to join you so he can study it.</text>
             <effects>
               <effect effect="Gain" type="Summon" object="Incubus" chance="100" />
@@ -15,11 +16,17 @@
         </choice>
         <choice>
           <text>Ask him if he knows anything that may help you in conquering this region.</text>
-          <event trigger="IMMEDIATE">
+          <event>
             <text>Upon browsing his books, he shows you a curious block of text.</text>
             <effects>
-              <effect effect="Gain" type="Intervention_Ability" object="PROVOKE" chance="100">
-                <additionalText>It teaches you how to Provoke!</additionalText>
+              <effect effect="Gain" type="Intervention_Ability" object="MAGIC" chance="50">
+                <additionalText>It teaches you a new Magic Ability!</additionalText>
+              </effect>
+              <effect effect="Gain" type="Trait" object="Cursed" chance="30">
+                <additionalText>You start reading it, each word making you weaker and weaker. You've been cursed!</additionalText>
+              </effect>
+              <effect effect="Nothing">
+                  <additionalText>You finish reading it, and else nothing happens.</additionalText>
               </effect>
             </effects>
           </event>
@@ -29,5 +36,6 @@
         </choice>
       </choices>
     </Event>
+
   </Events>
 </EventsCollection>

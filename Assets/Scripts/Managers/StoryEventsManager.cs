@@ -117,11 +117,20 @@ public class StoryEventsManager : MonoBehaviour {
                 PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
             } else {
                 INTERVENTION_ABILITY ability;
-                if (System.Enum.TryParse<INTERVENTION_ABILITY>(effect.effectValue.ToUpper(), out ability)) {
+                ABILITY_TAG abilityTag;
+                if (System.Enum.TryParse(effect.effectValue.ToUpper(), out ability)) {
+                    //intervention ability
                     PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(ability);
+                } else if (System.Enum.TryParse(effect.effectValue.ToUpper(), out abilityTag)) {
+                    //ability tag
+                    List<INTERVENTION_ABILITY> abilities = PlayerManager.Instance.GetInterventionAbilitiesWithTag(abilityTag);
+                    if (abilities.Count > 0) {
+                        PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(abilities[Random.Range(0, abilities.Count)]);
+                    } else {
+                        Debug.LogWarning("There are no intervention abilities with tag " + abilityTag.ToString());
+                    }
                 }
             }
-            //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
         } else if (string.Equals(effect.effectType, "Combat_Ability", System.StringComparison.OrdinalIgnoreCase)) {
             //Gain Ability
             if (effect.effectValue.ToLower() == "random") {
@@ -143,7 +152,6 @@ public class StoryEventsManager : MonoBehaviour {
                 Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(effect.effectValue, RACE.DEMON);
                 PlayerManager.Instance.player.AddMinion(newMinion);
             }
-            //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
         } else if (string.Equals(effect.effectType, "Level", System.StringComparison.OrdinalIgnoreCase)) {
             //If effect value is a number, this means that the one that will be leveled up is the minion itself, if it is "Intervention Ability", "Combat Ability", "Summon", "Artifact", show Level Up UI
             //Gain Level
@@ -164,6 +172,13 @@ public class StoryEventsManager : MonoBehaviour {
                 if (currMinion != null) {
                     currMinion.AddTrait(effect.effectValue);
                 }
+            }
+        } else if (string.Equals(effect.effectType, "Slot", System.StringComparison.OrdinalIgnoreCase)) {
+            //Gain Slot
+            if (string.Equals(effect.effectValue, "Summon", System.StringComparison.OrdinalIgnoreCase)) {
+                PlayerManager.Instance.player.AdjustSummonSlot(1);
+            } else if(string.Equals(effect.effectValue, "Artifact", System.StringComparison.OrdinalIgnoreCase)) {
+                PlayerManager.Instance.player.AdjustArtifactSlot(1);
             }
         }
     }
