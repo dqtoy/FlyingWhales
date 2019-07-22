@@ -260,6 +260,19 @@ public class Player : ILeader {
         }
         return false;
     }
+    public bool HasMinionWithInterventionAbility(INTERVENTION_ABILITY ability) {
+        for (int i = 0; i < minions.Length; i++) {
+            Minion currMinion = minions[i];
+            if (currMinion != null) {
+                for (int j = 0; j < currMinion.interventionAbilities.Length; j++) {
+                    if(currMinion.interventionAbilities[j] != null && currMinion.interventionAbilities[j].abilityType == ability) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Win/Lose Conditions
@@ -706,6 +719,13 @@ public class Player : ILeader {
         threat += amount;
         threat = Mathf.Clamp(threat, 0, MAX_THREAT);
         PlayerUI.Instance.UpdateThreatMeter();
+        if(threat >= MAX_THREAT) {
+            PlayerUI.Instance.GameOver("Your threat reached the whole world. You are now exposed. You lost!");
+        }
+    }
+    public void ResetThreat() {
+        threat = 0;
+        PlayerUI.Instance.UpdateThreatMeter();
     }
     #endregion
 
@@ -1131,6 +1151,7 @@ public class Player : ILeader {
         if (playerWon) {
             PlayerUI.Instance.SuccessfulAreaCorruption();
             Area corruptedArea = AreaIsCorrupted();
+            ResetThreat();
             Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, corruptedArea);
         } else {
             string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";

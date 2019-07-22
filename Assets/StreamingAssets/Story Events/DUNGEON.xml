@@ -120,5 +120,26 @@
       </choices>
     </Event>
 
+    <Event id="SACRIFICIAL_ALTAR" name="Sacrificial Altar" trigger="END">
+      <text>At the end of this dungeon, you stumbled upon an altar. It looks like you can perform rituals here.</text>
+      <choices>
+        <choice reqType="Artifact" reqName="Necronomicon">
+          <text>Perform ritual.</text>
+          <event>
+            <text>You performed a ritual using the Necronomicon. The altar blessed you with a new ability, Sacrifice.</text>
+            <effects>
+              <effect effect="Gain" type="Combat_Ability" object="Sacrifice" chance="100">
+              </effect>
+            </effects>
+          </event>
+        </choice>
+
+        <choice>
+          <text>There's nothing you can do here. Leave.</text>
+        </choice>
+      </choices>
+    </Event>
+
+
   </Events>
 </EventsCollection>

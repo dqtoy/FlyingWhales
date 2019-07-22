@@ -1423,35 +1423,35 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
     }
     private int GetCorruptDuration() {
-        return 3;
-        //int duration = 0;
-        //for (int i = 0; i < tileTags.Count; i++) {
-        //    duration += GetTileTagCorruptDuration(tileTags[i]);
-        //}
-        //return duration;
+        //return 3;
+        int duration = 0;
+        for (int i = 0; i < tileTags.Count; i++) {
+            duration += GetTileTagCorruptDuration(tileTags[i]);
+        }
+        return duration;
     }
     private int GetTileTagCorruptDuration(TILE_TAG tileTag) {
         switch (tileTag) {
             case TILE_TAG.CAVE:
-                return 1;
+                return 7;
             case TILE_TAG.DESERT:
-                return 1;
+                return 3;
             case TILE_TAG.DUNGEON:
-                return 1;
+                return 8;
             case TILE_TAG.FLATLAND:
-                return 1;
+                return 3;
             case TILE_TAG.FOREST:
-                return 1;
+                return 5;
             case TILE_TAG.GRASSLAND:
-                return 1;
+                return 4;
             case TILE_TAG.JUNGLE:
-                return 1;
+                return 5;
             case TILE_TAG.MOUNTAIN:
-                return 1;
+                return 6;
             case TILE_TAG.SNOW:
-                return 1;
+                return 5;
             case TILE_TAG.TUNDRA:
-                return 1;
+                return 4;
         }
         return 0;
     }

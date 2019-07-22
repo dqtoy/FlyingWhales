@@ -95,5 +95,90 @@
       </choices>
     </Event>
 
+    <Event id="FOREST_DEITY" name="Forest Deity" trigger="IMMEDIATE">
+      <text>A gorgeous deity protecting the forest appears before you with eyes is as blue as the sea, lips as red as ruby, and hair as white as snow. She asked, "What are you doing here? What are your intentions here?"</text>
+      <choices>
+        <choice>
+          <text>Convince her that your intentions are pure.</text>
+          <event>
+            <text>You lied and tried to convince her that your intentions are good and pure.</text>
+            <effects>
+              <effect effect="Gain" type="All_Level" object="2" chance="10">
+                <additionalText>
+                  The deity was easily tricked by your words. She decided to help you and used her powers to make your minions stronger.
+                </additionalText>
+              </effect>
+              <effect effect="Gain" type="Level" object="Intervention Ability" chance="50">
+                <additionalText>
+                   The deity was easily tricked by your words. She decided to help you and give you a blessing to make one of your abilities stronger. 
+                </additionalText>
+              </effect>
+              <effect effect="Lose" type="All_Level" object="1" chance="40">
+                <additionalText>
+                   The deity cannot be fooled. She caught on to you very quick. As a result, she attacked your minions with a powerful blast of energy, weakening all them.
+                </additionalText>
+              </effect>
+            </effects>
+          </event>
+        </choice>
+
+        <choice>
+          <text>No time for this chit-chat, just kill her.</text>
+          <event>
+            <text>You attacked the deity.</text>
+            <effects>
+              <effect effect="Lose" type="All_Level" object="2" chance="40">
+                <additionalText>
+                  You managed to defeat the deity but as she was about to die, she used her remaining powers to send a powerful blast of energy, weakening all your minions.
+                </additionalText>
+              </effect>
+              <effect effect="Gain" type="All_Trait" object="Lethargic" chance="20">
+                <additionalText>
+                   You managed to defeat the deity but it was not easy. Your minions took considerable damage.
+                </additionalText>
+              </effect>
+              <effect effect="Gain" type="All_Level" object="3" chance="40">
+                <additionalText>
+                   The deity didn't stand a chance against you. You extracted her powers from her corpse making your minions stronger.
+                </additionalText>
+              </effect>
+            </effects>
+          </event>
+        </choice>
+
+        <choice reqType="Artifact" reqName="Chaos_Orb">
+          <text>Use chaos orb on her.</text>
+          <event>
+            <text>You used the chaos orb to corrupt her mind and convince her to help you. She taught you one of her healing spells, Single Heal.</text>
+            <effects>
+              <effect effect="Gain" type="Combat_Ability" object="SINGLE_HEAL" chance="100">
+              </effect>
+            </effects>
+          </event>
+        </choice>
+      </choices>
+    </Event>
+
+    <Event id="OASIS_OF_PURIFICATION" name="Oasis Of Purification" trigger="IMMEDIATE">
+      <text>You see in the distance an oasis. You checked it out.</text>
+      <choices>
+        <choice>
+          <text>Immerse in the oasis.</text>
+          <event>
+            <text>Your minions fully immersed themselves in the oasis. They feel so relaxed and light. It's as if their injuries and afflictions are being washed away.</text>
+            <effects>
+              <effect effect="Lose" type="All_Trait" object="Negative" chance="100">
+              </effect>
+            </effects>
+          </event>
+        </choice>
+
+        <choice>
+          <text>Ignore oasis.</text>
+        </choice>
+
+      </choices>
+    </Event>
+
   </Events>
 </EventsCollection>
