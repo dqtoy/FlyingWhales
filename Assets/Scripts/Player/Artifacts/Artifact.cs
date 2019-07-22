@@ -11,6 +11,7 @@ public class Artifact : TileObject {
     public bool hasBeenUsed { get; private set; }
     public Artifact(ARTIFACT_TYPE type) {
         this.type = type;
+        level = 1;
         TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE)Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
         poiGoapActions = new List<INTERACTION_TYPE>();
         Initialize(parsed);

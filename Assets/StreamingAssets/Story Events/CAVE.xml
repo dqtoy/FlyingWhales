@@ -1,33 +1,93 @@
 <?xml version="1.0"?>
 <EventsCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Events>
-    <Event id="AN_INCUBUS" name="An Incubus" trigger="IMMEDIATE">
-      <text>While exploring you encounter an incubus. After conversing a bit you learn that he is very interested in ancient artifacts.</text>
+
+    <Event id="PANDORAS_BOX" name="Pandora's Box" trigger="END">
+      <text>You find Pandora's Box</text>
       <choices>
-        <choice reqType="Artifact" reqName="Necronomicon">
-          <text>Show him your Necronomicon.</text>
-          <event trigger="IMMEDIATE">
-            <text>Amazed by your Necronomicon, he decides to join you so he can study it.</text>
+
+        <choice reqType="Summon" reqName="ThiefSummon">
+          <text>Pick Lock.</text>
+          <event>
+            <text>You find a Chaos Orb.</text>
             <effects>
-              <effect effect="Gain" type="Summon" object="Incubus" chance="100" />
+              <effect effect="Gain" type="Artifact" object="Chaos_Orb" chance="100" />
+            </effects>
+          </event>>
+        </choice>
+
+        <choice>
+          <text>Force lock open.</text>
+          <event>
+            <text>You destroy the lock.</text>
+            <effects>
+              <effect effect="Gain" type="Artifact" object="Chaos_Orb" chance="20">
+                <additionalText> You find a Chaos Orb inside.</additionalText>
+              </effect>
+              <effect effect="Gain" type="Trait" object="Injured" chance="70">
+                <additionalText> The box then explodes injuring your lead minion!</additionalText>
+              </effect>
+              <effect effect="Nothing" chance="10" />
             </effects>
           </event>
         </choice>
+
         <choice>
-          <text>Ask him if he knows anything that may help you in conquering this region.</text>
-          <event trigger="IMMEDIATE">
-            <text>Upon browsing his books, he shows you a curious block of text.</text>
+          <text>Ignore it.</text>
+        </choice>
+         
+      </choices>
+    </Event>
+
+     <Event id="WOLVES_DEN" name="Wolves Den" trigger="END">
+      <text>You encounter a wolves den.</text>
+      <choices>
+
+        <choice reqType="Summon" reqName="Skeleton">
+          <text>Throw them a bone.</text>
+          <event>
+            <text>You gain a Wolf Summon.</text>
             <effects>
-              <effect effect="Gain" type="Intervention_Ability" object="PROVOKE" chance="100">
-                <additionalText>It teaches you how to Provoke!</additionalText>
+              <effect effect="Gain" type="Summon" object="Wolf" chance="100" />
+            </effects>
+          </event>
+        </choice>
+
+        <choice>
+          <text>Establish dominance.</text>
+          <event>
+            <text>You try and force the wolves into submission.</text>
+            <effects>
+              <effect effect="Gain" type="Summon" object="Wolf" chance="30">
+                <additionalText> You succeed, one of the wolves decides to join you.</additionalText>
+              </effect>
+              <effect effect="Gain" type="All_Trait" object="Injured" chance="50">
+                <additionalText> You fail, the wolves attack you, causing several injuries.</additionalText>
+              </effect>
+              <effect effect="Nothing" chance="20">
+                <additionalText> You fail, the wolves attack you, but you successfully deflect their attack.</additionalText>
               </effect>
             </effects>
           </event>
         </choice>
+
         <choice>
-          <text>Take your leave.</text>
+          <text>Attempt to sneak by.</text>
+          <event>
+            <text>You try and sneak your way across.</text>
+            <effects>
+              <effect effect="Gain" type="All_Trait" object="Injured" chance="50">
+                <additionalText> You fail, the wolves attack you, causing several injuries.</additionalText>
+              </effect>
+              <effect effect="Nothing" chance="50">
+                <additionalText> You succeed, the wolves do not notice you.</additionalText>
+              </effect>
+            </effects>
+          </event>
         </choice>
+         
       </choices>
     </Event>
+
   </Events>
 </EventsCollection>

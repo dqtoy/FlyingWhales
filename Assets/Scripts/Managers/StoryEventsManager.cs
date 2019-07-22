@@ -56,9 +56,30 @@ public class StoryEventsManager : MonoBehaviour {
             return true;
         } else {
             if (choice.reqType == "Summon") {
-                return PlayerManager.Instance.player.HasSummon(choice.reqName);
+                if (choice.reqName.Contains("|")) {
+                    string[] summons = choice.reqName.Split('|');
+                    return PlayerManager.Instance.player.HasAnySummon(summons);
+                } else if (choice.reqName.Contains("Quantity")) {
+                    int neededQuantity = System.Int32.Parse(choice.reqName.Substring(choice.reqName.IndexOf("_") + 1));
+                    return PlayerManager.Instance.player.GetTotalSummonsCount() >= neededQuantity;
+                } else {
+                    return PlayerManager.Instance.player.HasAnySummon(choice.reqName);
+                }
             } else if (choice.reqType == "Artifact") {
-                return PlayerManager.Instance.player.HasArtifact(choice.reqName);
+                if (choice.reqName.Contains("Quantity")) {
+                    int neededQuantity = System.Int32.Parse(choice.reqName.Substring(choice.reqName.IndexOf("_") + 1));
+                    return PlayerManager.Instance.player.GetTotalArtifactCount() >= neededQuantity;
+                } else {
+                    return PlayerManager.Instance.player.HasArtifact(choice.reqName);
+                }
+            } else if (choice.reqType == "Combat_Ability") {
+                return PlayerManager.Instance.player.HasMinionWithCombatAbility((COMBAT_ABILITY)System.Enum.Parse(typeof(COMBAT_ABILITY), choice.reqName));
+            } else if (choice.reqType == "Minion") {
+                if (choice.reqName.Contains("Quantity")) {
+                    int neededQuantity = System.Int32.Parse(choice.reqName.Substring(choice.reqName.IndexOf("_") + 1));
+                    return PlayerManager.Instance.player.GetCurrentMinionCount() >= neededQuantity;
+                }
+                return false;
             } else {
                 Debug.LogWarning("There is no casing for requirement type: " + choice.reqType);
                 return false;
@@ -66,72 +87,111 @@ public class StoryEventsManager : MonoBehaviour {
         }
     }
     public void ExecuteEffect(StoryEventEffect effect) {
-        //TODO: Show UI for effects that need the player to replace a summon/Artifact because of max capacity
-        if (string.Equals(effect.effect, "Gain", System.StringComparison.OrdinalIgnoreCase)) {
+        if (string.Equals(effect.effect, "Nothing", System.StringComparison.OrdinalIgnoreCase)) {
+            //Nothing Happens
+        } else if (string.Equals(effect.effect, "Gain", System.StringComparison.OrdinalIgnoreCase)) {
             //gain
-            if (string.Equals(effect.effectType, "Summon", System.StringComparison.OrdinalIgnoreCase)) {
-                //Gain Summon
-                SUMMON_TYPE type = (SUMMON_TYPE) System.Enum.Parse(typeof(SUMMON_TYPE), effect.effectValue);
-                PlayerManager.Instance.player.GainSummon(type);
-            } else if (string.Equals(effect.effectType, "Artifact", System.StringComparison.OrdinalIgnoreCase)) {
-                //Gain Artifact
-                ARTIFACT_TYPE type = (ARTIFACT_TYPE)System.Enum.Parse(typeof(ARTIFACT_TYPE), effect.effectValue);
-                PlayerManager.Instance.player.GainArtifact(type);
-            } else if (string.Equals(effect.effectType, "Intervention_Ability", System.StringComparison.OrdinalIgnoreCase)) {
-                //Gain Ability
-                if(effect.effectValue.ToLower() == "random") {
-                    PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
-                } else {
-                    INTERVENTION_ABILITY ability;
-                    if (System.Enum.TryParse<INTERVENTION_ABILITY>(effect.effectValue, out ability)) {
-                        PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(ability);
-                    }
-                }
-                //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
-            } else if (string.Equals(effect.effectType, "Combat_Ability", System.StringComparison.OrdinalIgnoreCase)) {
-                //Gain Ability
-                if (effect.effectValue.ToLower() == "random") {
-                    PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
-                } else {
-                    COMBAT_ABILITY ability;
-                    if (System.Enum.TryParse<COMBAT_ABILITY>(effect.effectValue, out ability)) {
-                        PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(ability);
-                    }
-                }
-                //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
-            } else if (string.Equals(effect.effectType, "Minion", System.StringComparison.OrdinalIgnoreCase)) {
-                //Gain Minion
-                //effectValue = class name
-                if (effect.effectValue.ToLower() == "random") {
-                    Minion newMinion = PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON);
-                    PlayerManager.Instance.player.AddMinion(newMinion);
-                } else {
-                    Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(effect.effectValue, RACE.DEMON);
-                    PlayerManager.Instance.player.AddMinion(newMinion);
-                }
-                //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
-            } else if (string.Equals(effect.effectType, "Level", System.StringComparison.OrdinalIgnoreCase)) {
-                //If effect value is a number, this means that the one that will be leveled up is the minion itself, if it is "Intervention Ability", "Combat Ability", "Summon", "Artifact", show Level Up UI
-                //Gain Level
-                int level = 0;
-                bool isNumber = int.TryParse(effect.effectValue, out level);
-                if (isNumber) {
-                    PlayerManager.Instance.player.currentMinionLeader.LevelUp(level);
-                } else {
-                    PlayerUI.Instance.levelUpUI.ShowLevelUpUI(PlayerManager.Instance.player.currentMinionLeader, effect.effectValue);
-                }
-                //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
-            }
+            ExecuteGainEffect(effect);
         } else if (string.Equals(effect.effect, "Lose", System.StringComparison.OrdinalIgnoreCase)) {
             //lose
-            if (string.Equals(effect.effectType, "Summon", System.StringComparison.OrdinalIgnoreCase)) {
-                //Lose Summon
-            } else if (string.Equals(effect.effectType, "Artifact", System.StringComparison.OrdinalIgnoreCase)) {
-                //Lose Artifact
+            ExecuteLoseEffect(effect);
+        }
+    }
+    private void ExecuteGainEffect(StoryEventEffect effect) {
+        if (string.Equals(effect.effectType, "Summon", System.StringComparison.OrdinalIgnoreCase)) {
+            //Gain Summon
+            SUMMON_TYPE type = (SUMMON_TYPE)System.Enum.Parse(typeof(SUMMON_TYPE), effect.effectValue);
+            PlayerManager.Instance.player.GainSummon(type);
+        } else if (string.Equals(effect.effectType, "Artifact", System.StringComparison.OrdinalIgnoreCase)) {
+            //Gain Artifact
+            if (string.Equals(effect.effectValue, "Random", System.StringComparison.OrdinalIgnoreCase)) {
+                ARTIFACT_TYPE[] types = Utilities.GetEnumValues<ARTIFACT_TYPE>();
+                PlayerManager.Instance.player.GainArtifact(types[UnityEngine.Random.Range(1, types.Length)]); //Started at 1 index to ignore None choice.
+            } else {
+                ARTIFACT_TYPE type = (ARTIFACT_TYPE)System.Enum.Parse(typeof(ARTIFACT_TYPE), effect.effectValue);
+                PlayerManager.Instance.player.GainArtifact(type);
+            }
+        } else if (string.Equals(effect.effectType, "Intervention_Ability", System.StringComparison.OrdinalIgnoreCase)) {
+            //Gain Ability
+            if (effect.effectValue.ToLower() == "random") {
+                PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
+            } else {
+                INTERVENTION_ABILITY ability;
+                if (System.Enum.TryParse<INTERVENTION_ABILITY>(effect.effectValue.ToUpper(), out ability)) {
+                    PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(ability);
+                }
+            }
+            //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
+        } else if (string.Equals(effect.effectType, "Combat_Ability", System.StringComparison.OrdinalIgnoreCase)) {
+            //Gain Ability
+            if (effect.effectValue.ToLower() == "random") {
+                PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
+            } else {
+                COMBAT_ABILITY ability;
+                if (System.Enum.TryParse<COMBAT_ABILITY>(effect.effectValue.ToUpper(), out ability)) {
+                    PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(ability);
+                }
+            }
+            //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
+        } else if (string.Equals(effect.effectType, "Minion", System.StringComparison.OrdinalIgnoreCase)) {
+            //Gain Minion
+            //effectValue = class name
+            if (effect.effectValue.ToLower() == "random") {
+                Minion newMinion = PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON);
+                PlayerManager.Instance.player.AddMinion(newMinion);
+            } else {
+                Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(effect.effectValue, RACE.DEMON);
+                PlayerManager.Instance.player.AddMinion(newMinion);
+            }
+            //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
+        } else if (string.Equals(effect.effectType, "Level", System.StringComparison.OrdinalIgnoreCase)) {
+            //If effect value is a number, this means that the one that will be leveled up is the minion itself, if it is "Intervention Ability", "Combat Ability", "Summon", "Artifact", show Level Up UI
+            //Gain Level
+            int level = 0;
+            bool isNumber = int.TryParse(effect.effectValue, out level);
+            if (isNumber) {
+                PlayerManager.Instance.player.currentMinionLeader.LevelUp(level);
+            } else {
+                PlayerUI.Instance.levelUpUI.ShowLevelUpUI(PlayerManager.Instance.player.currentMinionLeader, effect.effectValue);
+            }
+        } else if (string.Equals(effect.effectType, "Trait", System.StringComparison.OrdinalIgnoreCase)) {
+            //Gain Trait
+            PlayerManager.Instance.player.currentMinionLeader.AddTrait(effect.effectValue);
+        } else if (string.Equals(effect.effectType, "All_Trait", System.StringComparison.OrdinalIgnoreCase)) {
+            //Gain Trait for all minions.
+            for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+                Minion currMinion = PlayerManager.Instance.player.minions[i];
+                if (currMinion != null) {
+                    currMinion.AddTrait(effect.effectValue);
+                }
+            }
+        }
+    }
+    private void ExecuteLoseEffect(StoryEventEffect effect) {
+        if (string.Equals(effect.effectType, "Summon", System.StringComparison.OrdinalIgnoreCase)) {
+            //Lose Summon
+            if (string.Equals(effect.effectValue, "Random", System.StringComparison.OrdinalIgnoreCase)) {
+                Summon randomSummon = PlayerManager.Instance.player.GetRandomSummon();
+                PlayerManager.Instance.player.RemoveSummon(randomSummon);
+            } else {
+                SUMMON_TYPE type = (SUMMON_TYPE)System.Enum.Parse(typeof(SUMMON_TYPE), effect.effectValue);
+                PlayerManager.Instance.player.RemoveSummon(type);
+            }
+        } else if (string.Equals(effect.effectType, "Artifact", System.StringComparison.OrdinalIgnoreCase)) {
+            //Lose Artifact
+            if (string.Equals(effect.effectValue, "Random", System.StringComparison.OrdinalIgnoreCase)) {
+                Artifact random = PlayerManager.Instance.player.GetRandomArtifact();
+                PlayerManager.Instance.player.RemoveArtifact(random);
+            } else {
                 ARTIFACT_TYPE type = (ARTIFACT_TYPE)System.Enum.Parse(typeof(ARTIFACT_TYPE), effect.effectValue);
                 PlayerManager.Instance.player.LoseArtifact(type);
-            } else if (string.Equals(effect.effectType, "Ability", System.StringComparison.OrdinalIgnoreCase)) {
-                //Lose Ability
+            }
+        } else if (string.Equals(effect.effectType, "Ability", System.StringComparison.OrdinalIgnoreCase)) {
+            //Lose Ability
+        } else if (string.Equals(effect.effectType, "Minion", System.StringComparison.OrdinalIgnoreCase)) {
+            //Minion
+            if (string.Equals(effect.effectValue, "Lead", System.StringComparison.OrdinalIgnoreCase)) {
+                PlayerManager.Instance.player.RemoveMinion(PlayerManager.Instance.player.currentMinionLeader);
             }
         }
     }

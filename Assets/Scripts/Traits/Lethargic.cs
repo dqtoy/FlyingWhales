@@ -22,13 +22,13 @@ public class Lethargic : Trait {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
-            character.marker.AdjustSpeedModifier(-0.5f);
+            character.AdjustSpeedModifier(-0.5f);
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
         if (sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
-            character.marker.AdjustSpeedModifier(0.5f);
+            character.AdjustSpeedModifier(0.5f);
         }
         base.OnRemoveTrait(sourceCharacter, removedBy);
     }

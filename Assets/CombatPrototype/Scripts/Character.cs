@@ -111,6 +111,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     public List<Trait> traitsNeededToBeRemoved { get; private set; }
     public TrapStructure trapStructure { get; private set; }
     public bool isDisabledByPlayer { get; protected set; }
+    public float speedModifier { get; private set; }
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -711,6 +712,12 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     private void OnHoverExit(Character character, LocationGridTile location) {
         //InteriorMapManager.Instance.ShowTileData(this, gridTileLocation);
         location.parentAreaMap.SetHoveredCharacter(null);
+    }
+    public void AdjustSpeedModifier(float amount) {
+        speedModifier += amount;
+        if (marker != null) {
+            marker.UpdateSpeed();
+        }
     }
     #endregion
 
@@ -3674,7 +3681,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
     }
     public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
-        return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
+        if (AttributeManager.Instance.IsInstancedTrait(traitName)) {
+            return AddTrait(AttributeManager.Instance.CreateNewInstancedTraitClass(traitName), characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
+        } else {
+            return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
+        }
     }
     public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
         if (trait.IsUnique()) {
@@ -3983,7 +3994,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             marker.AdjustUseWalkSpeed(1);
             AdjustMoodValue(-35, trait, trait.gainedFromDoing);
         } else if (trait.name == "Tired") {
-            marker.AdjustSpeedModifier(-0.2f);
+            AdjustSpeedModifier(-0.2f);
             AdjustMoodValue(-10, trait, trait.gainedFromDoing);
         } else if (trait.name == "Starving") {
             AdjustMoodValue(-25, trait, trait.gainedFromDoing);
@@ -4004,7 +4015,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         } else if (trait.name == "Heartbroken") {
             AdjustMoodValue(-35, trait, trait.gainedFromDoing);
         } else if (trait.name == "Encumbered") {
-            marker.AdjustSpeedModifier(-0.5f);
+            AdjustSpeedModifier(-0.5f);
         }
         //else if (trait.name == "Hungry") {
         //    CreateFeedJob();
@@ -4076,7 +4087,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             marker.AdjustUseWalkSpeed(-1);
             AdjustMoodValue(35, trait, trait.gainedFromDoing);
         } else if (trait.name == "Tired") {
-            marker.AdjustSpeedModifier(0.2f);
+            AdjustSpeedModifier(0.2f);
             AdjustMoodValue(10, trait, trait.gainedFromDoing);
         } else if (trait.name == "Starving") {
             AdjustMoodValue(25, trait, trait.gainedFromDoing);
@@ -4095,7 +4106,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         } else if (trait.name == "Lethargic") {
             AdjustMoodValue(20, trait, trait.gainedFromDoing);
         } else if (trait.name == "Encumbered") {
-            marker.AdjustSpeedModifier(0.5f);
+            AdjustSpeedModifier(0.5f);
         }
 
         for (int i = 0; i < trait.effects.Count; i++) {

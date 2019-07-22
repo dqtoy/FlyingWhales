@@ -37,14 +37,14 @@ public class Sick : Trait {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
-            _sourceCharacter.marker.AdjustSpeedModifier(-0.10f);
+            _sourceCharacter.AdjustSpeedModifier(-0.10f);
             //_sourceCharacter.CreateRemoveTraitJob(name);
             _sourceCharacter.AddTraitNeededToBeRemoved(this);
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
-        _sourceCharacter.marker.AdjustSpeedModifier(0.10f);
+        _sourceCharacter.AdjustSpeedModifier(0.10f);
         //if (_removeTraitJob != null) {
         //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         //}

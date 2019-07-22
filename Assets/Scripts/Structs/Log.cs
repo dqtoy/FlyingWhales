@@ -16,6 +16,8 @@ public class Log {
 	public string file;
 	public string key;
 
+    public string message;
+
 	public List<LogFiller> fillers;
 
     private bool lockFillers;
@@ -36,21 +38,6 @@ public class Log {
         get { return GetGoapActionAssociatedWithThisLog(); }
     }
 
-    public Log(int month, int day, int year, int tick, string category, string file, string key, GoapAction goapAction = null){
-        this.id = Utilities.SetID<Log>(this);
-		this.month = (MONTH)month;
-		this.day = day;
-		this.year = year;
-        this.tick = tick;
-        this.category = category;
-		this.file = file;
-		this.key = key;
-        this._goapAction = goapAction;
-		this.fillers = new List<LogFiller>();
-        this.lockFillers = false;
-        logText = string.Empty;
-        logCallStack = StackTraceUtility.ExtractStackTrace();
-	}
     public Log(GameDate date, string category, string file, string key, GoapAction goapAction = null) {
         this.id = Utilities.SetID<Log>(this);
         this.month = (MONTH)date.month;
@@ -60,6 +47,20 @@ public class Log {
         this.category = category;
         this.file = file;
         this.key = key;
+        this._goapAction = goapAction;
+        this.fillers = new List<LogFiller>();
+        this.lockFillers = false;
+        logText = string.Empty;
+        logCallStack = StackTraceUtility.ExtractStackTrace();
+    }
+
+    public Log(GameDate date, string message, GoapAction goapAction = null) {
+        this.id = Utilities.SetID<Log>(this);
+        this.month = (MONTH)date.month;
+        this.day = date.day;
+        this.year = date.year;
+        this.tick = date.tick;
+        this.message = message;
         this._goapAction = goapAction;
         this.fillers = new List<LogFiller>();
         this.lockFillers = false;

@@ -182,6 +182,7 @@ public class PlayerUI : MonoBehaviour {
 
         //job action buttons
         Messenger.AddListener(Signals.HAS_SEEN_ACTION_BUTTONS, OnSeenActionButtons);
+        Messenger.AddListener<Minion, PlayerJobAction>(Signals.MINION_LEARNED_INTERVENE_ABILITY, OnMinionLearnedInterventionAbility);
 
         //summons
         Messenger.AddListener<Summon>(Signals.PLAYER_GAINED_SUMMON, OnGainNewSummon);
@@ -266,7 +267,6 @@ public class PlayerUI : MonoBehaviour {
         }
         UpdateRoleSlotScroll();
     }
-
     public void ScrollNext() {
         currentlyeShowingSlotIndex += 1;
         if (currentlyeShowingSlotIndex == roleSlots.Length) {
@@ -362,6 +362,12 @@ public class PlayerUI : MonoBehaviour {
             }
         }
         return null;
+    }
+    private void OnMinionLearnedInterventionAbility(Minion minion, PlayerJobAction action) {
+        RoleSlotItem currActive = roleSlots[currentlyeShowingSlotIndex];
+        if (currActive.minion == minion) {
+            LoadActionButtonsForActiveJob(currActive);
+        }
     }
     #endregion
 
@@ -669,22 +675,23 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
-        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.ThiefSummon);
-        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
-        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Chaos_Orb);
-        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Hermes_Statue);
-        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
-        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Miasma_Emitter);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
+        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.ThiefSummon);
+        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
+        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Chaos_Orb);
+        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Hermes_Statue);
+        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
+        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Miasma_Emitter);
         PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
     }
     private void ShowSelectMinionLeader() {
         Utilities.DestroyChildren(minionLeaderPickerParent.transform);
         minionLeaderPickers.Clear();
+        tempCurrentMinionLeader = null;
         for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
             Minion minion = PlayerManager.Instance.player.minions[i];
             if(minion != null) {
@@ -692,7 +699,7 @@ public class PlayerUI : MonoBehaviour {
                 MinionLeaderPicker minionLeaderPicker = go.GetComponent<MinionLeaderPicker>();
                 minionLeaderPicker.SetMinion(minion);
                 minionLeaderPickers.Add(minionLeaderPicker);
-                if(minion == PlayerManager.Instance.player.currentMinionLeader) {
+                if(minion == PlayerManager.Instance.player.currentMinionLeader || PlayerManager.Instance.player.currentMinionLeader == null) {
                     minionLeaderPicker.imgHighlight.gameObject.SetActive(true);
                     tempCurrentMinionLeader = minionLeaderPicker;
                 }
@@ -735,22 +742,24 @@ public class PlayerUI : MonoBehaviour {
         } else {
             PlayerManager.Instance.player.CorruptATile();
         }
-        PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeader.minion);
-        if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile == null) {
-            StoryEvent e = PlayerManager.Instance.player.currentTileBeingCorrupted.GetRandomStoryEvent();
-            if (e != null) {
-                Debug.Log("Will show event " + e.name);
-                if (e.trigger == STORY_EVENT_TRIGGER.IMMEDIATE) {
-                    //show story event UI
-                    storyEventUI.ShowEvent(e);
-                } else if (e.trigger == STORY_EVENT_TRIGGER.MID) { //schedule show event UI based on trigger.
-                    int difference = Mathf.Abs(GameManager.Instance.Today().day - (GameManager.Instance.Today().day + PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration));
-                    int day = UnityEngine.Random.Range(1, difference);
-                    GameDate dueDate = GameManager.Instance.Today().AddDays(day);
-                    SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e), null);
-                } else if (e.trigger == STORY_EVENT_TRIGGER.END) {
-                    GameDate dueDate = GameManager.Instance.Today().AddDays(PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration);
-                    SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e), null);
+        if (tempCurrentMinionLeader != null) {
+            PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeader.minion);
+            if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile == null) {
+                StoryEvent e = PlayerManager.Instance.player.currentTileBeingCorrupted.GetRandomStoryEvent();
+                if (e != null) {
+                    Debug.Log("Will show event " + e.name);
+                    if (e.trigger == STORY_EVENT_TRIGGER.IMMEDIATE) {
+                        //show story event UI
+                        storyEventUI.ShowEvent(e);
+                    } else if (e.trigger == STORY_EVENT_TRIGGER.MID) { //schedule show event UI based on trigger.
+                        int difference = Mathf.Abs(GameManager.Instance.Today().day - (GameManager.Instance.Today().day + PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration));
+                        int day = UnityEngine.Random.Range(1, difference);
+                        GameDate dueDate = GameManager.Instance.Today().AddDays(day);
+                        SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e), null);
+                    } else if (e.trigger == STORY_EVENT_TRIGGER.END) {
+                        GameDate dueDate = GameManager.Instance.Today().AddDays(PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration);
+                        SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e), null);
+                    }
                 }
             }
         }

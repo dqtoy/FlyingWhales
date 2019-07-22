@@ -231,6 +231,10 @@ public static class Signals {
     /// Parameters (Area invadedArea)
     /// </summary>
     public static string SUCCESS_INVASION_AREA = "OnPlayerSuccessInvadeArea";
+    /// <summary>
+    /// parameters (Minion affectedMinion, PlayerJobAction)
+    /// </summary>
+    public static string MINION_LEARNED_INTERVENE_ABILITY = "OnMinionLearnedInterveneAbility";
     #endregion
 
     #region Interaction

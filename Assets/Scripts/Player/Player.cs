@@ -9,8 +9,8 @@ public class Player : ILeader {
     private const int MAX_INTEL = 3;
     public const int MAX_MINIONS = 5;
     public const int MAX_THREAT = 100;
-    private const int MAX_SUMMONS = 6; //3
-    private const int MAX_ARTIFACT = 5; //3
+    private const int MAX_SUMMONS = 3;
+    private const int MAX_ARTIFACT = 3;
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
@@ -71,8 +71,8 @@ public class Player : ILeader {
         summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
         artifacts = new Artifact[MAX_ARTIFACT];
         shareIntelAbility = new ShareIntel();
-        maxSummonSlots = 6;
-        maxArtifactSlots = 5;
+        maxSummonSlots = 1;
+        maxArtifactSlots = 1;
         //ConstructRoleSlots();
         AddListeners();
     }
@@ -205,6 +205,9 @@ public class Player : ILeader {
         if (hasRemoved) {
             RearrangeMinions();
             PlayerUI.Instance.UpdateRoleSlots();
+            if (currentMinionLeader == minion) {
+                SetMinionLeader(null);
+            }
         }
     }
     public int GetCurrentMinionCount() {
@@ -248,6 +251,15 @@ public class Player : ILeader {
         }
     }
     private void RejectMinion(object obj) { }
+    public bool HasMinionWithCombatAbility(COMBAT_ABILITY ability) {
+        for (int i = 0; i < minions.Length; i++) {
+            Minion currMinion = minions[i];
+            if (currMinion != null && currMinion.combatAbility.type == ability) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Win/Lose Conditions
@@ -828,6 +840,11 @@ public class Player : ILeader {
             Messenger.Broadcast(Signals.PLAYER_REMOVED_SUMMON, summon);
         }
     }
+    public void RemoveSummon(SUMMON_TYPE summon) {
+        if (summons.ContainsKey(summon)) {
+            RemoveSummon(GetAvailableSummonOfType(summon));
+        }
+    }
     public string GetSummonDescription(SUMMON_TYPE currentlySelectedSummon) {
         switch (currentlySelectedSummon) {
             case SUMMON_TYPE.Wolf:
@@ -861,9 +878,17 @@ public class Player : ILeader {
         maxSummonSlots = Mathf.Clamp(maxSummonSlots, 0, MAX_SUMMONS);
         //TODO: validate if adjusted max summons can accomodate current summons
     }
-    public bool HasSummon(string summonName) {
-        SUMMON_TYPE type = (SUMMON_TYPE)System.Enum.Parse(typeof(SUMMON_TYPE), summonName);
-        return summons.ContainsKey(type);
+    public bool HasAnySummon(params string[] summonName) {
+        SUMMON_TYPE type;
+        for (int i = 0; i < summonName.Length; i++) {
+            string currName = summonName[i];
+            if (System.Enum.TryParse(currName, out type)) {
+                if (summons.ContainsKey(type)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     public List<Summon> GetAllSummons() {
         List<Summon> all = new List<Summon>();
@@ -871,6 +896,10 @@ public class Player : ILeader {
             all.AddRange(kvp.Value);
         }
         return all;
+    }
+    public Summon GetRandomSummon() {
+        List<Summon> all = GetAllSummons();
+        return all[UnityEngine.Random.Range(0, all.Count)];
     }
     #endregion
 
@@ -1004,6 +1033,10 @@ public class Player : ILeader {
             default:
                 return "Summon a " + Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
         }
+    }
+    public Artifact GetRandomArtifact() {
+        List<Artifact> choices = GetAllArtifacts();
+        return choices[UnityEngine.Random.Range(0, choices.Count)];
     }
     #endregion
 

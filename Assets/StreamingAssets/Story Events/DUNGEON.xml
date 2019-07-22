@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <EventsCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Events>
-    <Event id="AN_INCUBUS" name="An Incubus" trigger="IMMEDIATE">
+    <Event id="AN_INCUBUS" name="An Incubus" trigger="END">
       <text>While exploring you encounter an incubus. After conversing a bit you learn that he is very interested in ancient artifacts.</text>
       <choices>
         <choice reqType="Artifact" reqName="Necronomicon">
@@ -29,5 +29,96 @@
         </choice>
       </choices>
     </Event>
+
+    <Event id="THE_COLLECTOR" name="The Collector" trigger="IMMEDIATE">
+      <text>You encounter The Collector.</text>
+      <choices>
+
+        <choice reqType="Minion" reqName="Quantity_2">
+          <text>Offer a minion in exchange for an artifact.</text>
+          <event>
+            <text>You offer one of your own, the Collector graciously accepts and gives you an artifact from his collection.</text>
+            <effects>
+                  <effect effect="Lose" type="Minion" object="Lead" chance="100" />
+                  <effect effect="Gain" type="Artifact" object="Random" chance="100" />
+            </effects>
+          </event>
+        </choice>
+
+        <choice reqType="Artifact" reqName="Quantity_1">
+          <text>Offer an artifact in exchange for another artifact.</text>
+          <event>
+            <text>You offer one of your own artifacts, the Collector graciously accepts and gives you an artifact from his collection.</text>
+            <effects>
+                  <effect effect="Lose" type="Artifact" object="Random" chance="100" />
+                  <effect effect="Gain" type="Artifact" object="Random" chance="100" />
+            </effects>
+          </event>
+        </choice>
+
+        <choice reqType="Summon" reqName="ThiefSummon">
+          <text>Steal an Artifact.</text>
+          <event>
+            <text>You steal one of the Collectors artifacts.</text>
+            <effects>
+                  <effect effect="Gain" type="Artifact" object="Random" chance="100" />
+            </effects>
+          </event>
+        </choice>
+
+        <choice>
+          <text>Ask collector for an artifact.</text>
+          <event>
+            <text>You ask if the collector has any artifacts that he can spare.</text>
+            <effects>
+                  <effect effect="Gain" type="Artifact" object="Random" chance="20">
+                        <additionalText>Feeling generous, he accepts your request.</additionalText>
+                  </effect>
+                  <effect effect="Nothing" chance="80">
+                        <additionalText>Offended by your request, he shoos you away.</additionalText>
+                  </effect>
+            </effects>
+          </event>
+        </choice>
+         
+      </choices>
+    </Event>
+
+    <Event id="ANCIENT_PYRAMID" name="Ancient Pyramid" trigger="IMMEDIATE">
+      <text>You encounter The Collector.</text>
+      <choices>
+
+        <choice>
+          <text>Venture inside.</text>
+          <event>
+            <text>You venture inside, not knowing what you will find.</text>
+            <effects>
+                  <effect effect="Lose" type="Minion" object="Lead" chance="50">
+                        <additionalText>Your minions exit the Pyramid in a panicked state. Your Lead minion is nowhere to be found. The others say that he got lost.</additionalText>
+                  </effect>
+                  <effect effect="Gain" type="Artifact" object="Ankh_Of_Anubis" chance="50">
+                        <additionalText>Your minions exit the Pyramid holding a gold plated necklace. It's the fabled Ankh of Anubis! This will prove useful.</additionalText>
+                  </effect>
+            </effects>
+          </event>
+        </choice>
+
+        <choice reqType="Summon" reqName="ThiefSummon">
+          <text>Send a thief into the Pyramid.</text>
+          <event>
+            <text>The thief ventures into the Pyramid, and finds the fabled Ankh of Anubis! This will prove useful.</text>
+            <effects>
+                  <effect effect="Gain" type="Artifact" object="Ankh_Of_Anubis" chance="100" />
+            </effects>
+          </event>
+        </choice>
+
+        <choice>
+          <text>Ignore it.</text>
+        </choice>
+         
+      </choices>
+    </Event>
+
   </Events>
 </EventsCollection>

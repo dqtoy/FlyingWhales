@@ -41,7 +41,7 @@ public class Injured : Trait {
         if (sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
             _sourceCharacter.UpdateIsCombatantState();
-            _sourceCharacter.marker.AdjustSpeedModifier(-0.15f);
+            _sourceCharacter.AdjustSpeedModifier(-0.15f);
             //_sourceCharacter.CreateRemoveTraitJob(name);
             _sourceCharacter.AddTraitNeededToBeRemoved(this);
             if (gainedFromDoing == null || gainedFromDoing.poiTarget != _sourceCharacter) {
@@ -59,7 +59,7 @@ public class Injured : Trait {
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
         _sourceCharacter.UpdateIsCombatantState();
-        _sourceCharacter.marker.AdjustSpeedModifier(0.15f);
+        _sourceCharacter.AdjustSpeedModifier(0.15f);
         //if (_removeTraitJob != null) {
         //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         //}

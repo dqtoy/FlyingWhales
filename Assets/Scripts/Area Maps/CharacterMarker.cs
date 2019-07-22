@@ -72,7 +72,6 @@ public class CharacterMarker : PooledObject {
     public Vector3 centeredWorldPos { get; private set; }
     public LocationGridTile destinationTile { get; private set; }
     public bool cannotCombat { get; private set; }
-    public float speedModifier { get; private set; }
     public int useWalkSpeed { get; private set; }
     public int targettedByRemoveNegativeTraitActionsCounter { get; private set; }
     public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
@@ -765,7 +764,7 @@ public class CharacterMarker : PooledObject {
                 }
             }
         }
-        speed += (speed * speedModifier);
+        speed += (speed * character.speedModifier);
         if (speed <= 0f) {
             speed = 0.5f;
         }
@@ -774,10 +773,6 @@ public class CharacterMarker : PooledObject {
     }
     public void UpdateSpeed() {
         pathfindingAI.speed = GetSpeed();
-    }
-    public void AdjustSpeedModifier(float amount) {
-        speedModifier += amount;
-        UpdateSpeed();
     }
     public void AdjustUseWalkSpeed(int amount) {
         useWalkSpeed += amount;

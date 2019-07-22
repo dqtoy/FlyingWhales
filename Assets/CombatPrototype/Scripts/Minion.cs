@@ -14,10 +14,13 @@ public class Minion {
     public PlayerJobAction[] interventionAbilities { get; private set; }
     public CombatAbility combatAbility { get; private set; }
 
+    private List<System.Action> traitsToAdd;
+
     public Minion(Character character, bool keepData) {
         this.character = character;
         this.exp = 0;
         this.interventionAbilities = new PlayerJobAction[MAX_INTERVENTION_ABILITY_SLOT];
+        traitsToAdd = new List<System.Action>();
         SetUnlockedInterventionSlots(0);
         character.SetMinion(this);
         SetLevel(1);
@@ -92,6 +95,7 @@ public class Minion {
                 if (interventionAbilities[i] == null) {
                     interventionAbilities[i] = ability;
                     ability.SetMinion(this);
+                    Messenger.Broadcast(Signals.MINION_LEARNED_INTERVENE_ABILITY, this, ability);
                     break;
                 }
             }
@@ -108,6 +112,7 @@ public class Minion {
                 interventionAbilities[i] = add;
                 add.SetMinion(this);
                 replace.SetMinion(null);
+                Messenger.Broadcast(Signals.MINION_LEARNED_INTERVENE_ABILITY, this, add);
                 break;
             }
         }
@@ -158,6 +163,7 @@ public class Minion {
 
     #region Invasion
     public void StartInvasionProtocol() {
+        AddPendingTraits();
         Messenger.AddListener(Signals.TICK_STARTED, PerTickInvasion);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
     }
@@ -207,6 +213,26 @@ public class Minion {
         character.CancelAllJobsAndPlans();
         character.RemoveAllNonPersistentTraits();
         character.ResetToFullHP();
+    }
+    #endregion
+
+    #region Traits
+    /// <summary>
+    /// Add trait function for minions. Added handling for when a minion gains a trait while outside of an area map. All traits are stored and will be added once the minion is placed at an area map.
+    /// </summary>
+    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
+        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+            return character.AddTrait(traitName, characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
+        } else {
+            traitsToAdd.Add(() => character.AddTrait(traitName, characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd));
+            return true;
+        }
+    }
+    private void AddPendingTraits() {
+        for (int i = 0; i < traitsToAdd.Count; i++) {
+            traitsToAdd[i].Invoke();
+        }
+        traitsToAdd.Clear();
     }
     #endregion
 }

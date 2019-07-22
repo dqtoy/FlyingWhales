@@ -11,6 +11,7 @@ public class AttributeManager : MonoBehaviour {
     private Dictionary<string, Trait> _allTraits;
     private Dictionary<string, Trait> _allPositiveTraits;
     private Dictionary<string, Trait> _allIlnesses;
+    private Trait[] instancedTraits;
 
     [SerializeField] private StringSpriteDictionary traitIconDictionary;
 
@@ -41,40 +42,13 @@ public class AttributeManager : MonoBehaviour {
             CategorizeTrait(attribute);
         }
 #if !WORLD_CREATION_TOOL
-        AddSpecialTraits();
+        AddInstancedTraits(); //Traits with their own classes
 #endif
-        //foreach (Trait trait in _allPositiveTraits.Values) {
-        //    if (trait.type == TRAIT_TYPE.DISABLER) {
-        //        Debug.Log(trait.name);
-        //    }
-        //}
-    }
-    public Action<Character> GetBehavior(ATTRIBUTE_BEHAVIOR type) {
-        switch (type) {
-            case ATTRIBUTE_BEHAVIOR.NONE:
-            return null;
-        }
-        return null;
-    }
-    public string GetRandomPositiveTrait() {
-        int random = UnityEngine.Random.Range(0, _allPositiveTraits.Count);
-        int count = 0;
-        foreach (string traitName in _allPositiveTraits.Keys) {
-            if (count == random) {
-                return traitName;
-            }
-            count++;
-        }
-        return string.Empty;
-    }
-    public string GetRandomIllness() {
-        //TODO: Optimize this for performance
-        int random = UnityEngine.Random.Range(0, _allIlnesses.Count);
-        return _allIlnesses.Keys.ElementAt(random);
     }
 
-    private void AddSpecialTraits() {
-        Trait[] specialTraits = new Trait[] {
+    #region Utilities
+    private void AddInstancedTraits() {
+        instancedTraits = new Trait[] {
             new Abducted(null),
             new Charmed(null, null),
             new Craftsman(),
@@ -108,8 +82,8 @@ public class AttributeManager : MonoBehaviour {
             new Taunted(),
             new Cannibal(1),
         };
-        for (int i = 0; i < specialTraits.Length; i++) {
-            CategorizeTrait(specialTraits[i]);
+        for (int i = 0; i < instancedTraits.Length; i++) {
+            CategorizeTrait(instancedTraits[i]);
         }
     }
     private void CategorizeTrait(Trait attribute) {
@@ -121,15 +95,26 @@ public class AttributeManager : MonoBehaviour {
             _allIlnesses.Add(attribute.name, attribute);
         }
     }
-
     public Sprite GetTraitIcon(string traitName) {
         if (traitIconDictionary.ContainsKey(traitName)) {
             return traitIconDictionary[traitName];
         }
         return traitIconDictionary.Values.First();
     }
-
     public bool HasTraitIcon(string traitName) {
         return traitIconDictionary.ContainsKey(traitName);
     }
+    public bool IsInstancedTrait(string traitName) {
+        for (int i = 0; i < instancedTraits.Length; i++) {
+            Trait currTrait = instancedTraits[i];
+            if (string.Equals(currTrait.name, traitName, StringComparison.OrdinalIgnoreCase)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public Trait CreateNewInstancedTraitClass(string traitName) {
+        return System.Activator.CreateInstance(System.Type.GetType(traitName)) as Trait;
+    }
+    #endregion
 }

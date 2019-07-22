@@ -277,7 +277,13 @@ public class Utilities : MonoBehaviour {
         }
         string replacedWord = string.Empty;
         List<int> specificWordIndexes = new List<int>();
-        string newText = LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
+        string newText;
+        if (string.IsNullOrEmpty(log.message)) {
+            newText = LocalizationManager.Instance.GetLocalizedValue(log.category, log.file, log.key);
+        } else {
+            newText = log.message;
+        }
+        
         //bool hasPeriod = newText.EndsWith(".");
 
         if (!string.IsNullOrEmpty(newText)) {

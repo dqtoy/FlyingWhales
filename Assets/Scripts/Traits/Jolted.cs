@@ -18,13 +18,13 @@ public class Jolted : Trait {
         base.OnAddTrait(sourcePOI);
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
-            character.marker.AdjustSpeedModifier(2f);
+            character.AdjustSpeedModifier(2f);
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourcePOI, Character removedBy) {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
-            character.marker.AdjustSpeedModifier(-2f);
+            character.AdjustSpeedModifier(-2f);
         }
         base.OnRemoveTrait(sourcePOI, removedBy);
     }

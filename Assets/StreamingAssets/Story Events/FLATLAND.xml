@@ -1,33 +1,74 @@
 <?xml version="1.0"?>
 <EventsCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Events>
-    <Event id="AN_INCUBUS" name="An Incubus" trigger="IMMEDIATE">
-      <text>While exploring you encounter an incubus. After conversing a bit you learn that he is very interested in ancient artifacts.</text>
+
+    <Event id="ENDLESS_THUNDERSTORM" name="Endless Thunderstorm" trigger="IMMEDIATE">
+      <text>You encounter an endless thunderstorm.</text>
       <choices>
-        <choice reqType="Artifact" reqName="Necronomicon">
-          <text>Show him your Necronomicon.</text>
-          <event trigger="IMMEDIATE">
-            <text>Amazed by your Necronomicon, he decides to join you so he can study it.</text>
-            <effects>
-              <effect effect="Gain" type="Summon" object="Incubus" chance="100" />
-            </effects>
-          </event>
-        </choice>
+
         <choice>
-          <text>Ask him if he knows anything that may help you in conquering this region.</text>
-          <event trigger="IMMEDIATE">
-            <text>Upon browsing his books, he shows you a curious block of text.</text>
+          <text>Attempt to capture lightning.</text>
+          <event>
+            <text>You try and catch that lightning.</text>
             <effects>
-              <effect effect="Gain" type="Intervention_Ability" object="PROVOKE" chance="100">
-                <additionalText>It teaches you how to Provoke!</additionalText>
+              <effect effect="Gain" type="Intervention_Ability" object="Jolt" chance="25">
+                  <additionalText>Lead minion learns Jolt!</additionalText>
+              </effect>
+              <effect effect="Gain" type="Intervention_Ability" object="Zap" chance="25">
+                  <additionalText>Lead minion learns Zap!</additionalText>
+              </effect>
+              <effect effect="Gain" type="Trait" object="Injured" chance="50">
+                  <additionalText>Lead minion becomes Injured!</additionalText>
               </effect>
             </effects>
           </event>
         </choice>
+
         <choice>
-          <text>Take your leave.</text>
+          <text>Ignore it.</text>
         </choice>
+         
       </choices>
     </Event>
+
+    <Event id="CONCEALED_HUT" name="Concealed Hut" trigger="IMMEDIATE">
+      <text>You find a concealed hut.</text>
+      <choices>
+
+        <choice>
+          <text>Venture inside.</text>
+          <event>
+            <text>You venture inside the concealed hut.</text>
+            <effects>
+              <effect effect="Lose" type="Minion" object="Lead" chance="60">
+                  <additionalText>The lead minion gets lost, and is nowhere to be found!</additionalText>
+              </effect>
+              <effect effect="Gain" type="Intervention_Ability" object="CLOAK_OF_INVISIBILITY" chance="40">
+                  <additionalText>You find a cloak of invisibility!</additionalText>
+              </effect>
+            </effects>
+          </event>
+        </choice>
+
+         <choice>
+          <text>Destroy the hut.</text>
+          <event>
+            <text>You destroy the hut.</text>
+            <effects>
+              <effect effect="Gain" type="Ability" object="Explosion" chance="10">
+                  <additionalText>The lead minion gets learns Explosion!</additionalText>
+              </effect>
+              <effect effect="Nothing" chance="90" />
+            </effects>
+          </event>
+        </choice>
+
+        <choice>
+          <text>Leave it be.</text>
+        </choice>
+         
+      </choices>
+    </Event>
+
   </Events>
 </EventsCollection>

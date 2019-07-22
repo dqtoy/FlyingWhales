@@ -31,7 +31,9 @@ public class Cannibal : Trait {
         if (sourcePOI is Character) {
             Character owner = sourcePOI as Character;
             GoapPlanJob job = owner.jobQueue.GetJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING) as GoapPlanJob;
-            owner.jobQueue.CancelJob(job, shouldDoAfterEffect: false);
+            if (job != null) {
+                owner.jobQueue.CancelJob(job, shouldDoAfterEffect: false);
+            }
         }
     }
     //public override void OnRemoveTrait(IPointOfInterest sourcePOI) {

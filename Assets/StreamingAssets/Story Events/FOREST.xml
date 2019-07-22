@@ -1,33 +1,99 @@
 <?xml version="1.0"?>
 <EventsCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Events>
-    <Event id="AN_INCUBUS" name="An Incubus" trigger="IMMEDIATE">
-      <text>While exploring you encounter an incubus. After conversing a bit you learn that he is very interested in ancient artifacts.</text>
+
+     <Event id="THIEVES_GUILD" name="Thieves Guild" trigger="IMMEDIATE">
+      <text>You encounter a thieves guild.</text>
       <choices>
-        <choice reqType="Artifact" reqName="Necronomicon">
-          <text>Show him your Necronomicon.</text>
-          <event trigger="IMMEDIATE">
-            <text>Amazed by your Necronomicon, he decides to join you so he can study it.</text>
+
+        <choice reqType="Combat_Ability" reqName="TAUNT">
+          <text>Intimidate Them.</text>
+          <event>
+            <text>You intimdate them, and one of them decides to join you.</text>
             <effects>
-              <effect effect="Gain" type="Summon" object="Incubus" chance="100" />
+              <effect effect="Gain" type="Summon" object="ThiefSummon" chance="100" />
             </effects>
           </event>
         </choice>
-        <choice>
-          <text>Ask him if he knows anything that may help you in conquering this region.</text>
-          <event trigger="IMMEDIATE">
-            <text>Upon browsing his books, he shows you a curious block of text.</text>
+
+        <choice reqType="Summon" reqName="Quantity_1">
+          <text>Offer them a trade.</text>
+          <event>
+            <text>You give them </text>
             <effects>
-              <effect effect="Gain" type="Intervention_Ability" object="PROVOKE" chance="100">
-                <additionalText>It teaches you how to Provoke!</additionalText>
-              </effect>
+                  <effect effect="Lose" type="Summon" object="Random" chance="100">
+                        <additionalText>a Summon of your own.</additionalText>
+                  </effect>
+                  <effect effect="Gain" type="Summon" object="ThiefSummon" chance="80">
+                        <additionalText>They give you one of their own in return.</additionalText>
+                  </effect>
+                  <effect effect="Nothing" chance="20">
+                        <additionalText>They run off with your summon, you chase them, but they eventually got away.</additionalText>
+                  </effect>
             </effects>
           </event>
         </choice>
+
         <choice>
-          <text>Take your leave.</text>
+          <text>Attack Them.</text>
+          <event>
+            <text>You attack them.</text>
+            <effects>
+                  <effect effect="Gain" type="Summon" object="ThiefSummon" chance="30">
+                        <additionalText>You win effortlessly, taking any survivors as your slaves.</additionalText>
+                  </effect>
+                  <effect effect="Gain" type="All_Trait" object="Injured" chance="35">
+                        <additionalText>You win, but with several injuries and no survivors from the thieves guild.</additionalText>
+                  </effect>
+                  <effect effect="Nothing" chance="35">
+                        <additionalText>You win, leaving no survivors from the thieves guild.</additionalText>
+                  </effect>
+            </effects>
+          </event>
         </choice>
+
+        <choice>
+          <text>Leave them be.</text>
+        </choice>
+         
       </choices>
     </Event>
+
+    <Event id="CANNIBALS" name="Cannibals" trigger="END">
+      <text>You some cannibals.</text>
+      <choices>
+
+        <choice reqType="Summon" reqName="Skeleton">
+          <text>Abduct 1 and experiment on it.</text>
+          <event>
+            <text>You abduct one and do several experiments on it. You learn how to inflict Cannibalism on others!</text>
+            <effects>
+              <effect effect="Gain" type="Intervention_Ability" object="CANNIBALISM" chance="100" />
+            </effects>
+          </event>
+        </choice>
+
+        <choice>
+          <text>Attack Them.</text>
+          <event>
+            <text>You attack them.</text>
+            <effects>
+                  <effect effect="Gain" type="Intervention_Ability" object="CANNIBALISM" chance="30">
+                        <additionalText>You win, you take one of the corpses and examine it thoroughly. You learn how to inflict Cannibalism on others!</additionalText>
+                  </effect>
+                  <effect effect="Gain" type="All_Trait" object="Injured" chance="70">
+                        <additionalText>You lose with several injuries.</additionalText>
+                  </effect>
+            </effects>
+          </event>
+        </choice>
+
+        <choice>
+          <text>Do nothing.</text>
+        </choice>
+         
+      </choices>
+    </Event>
+
   </Events>
 </EventsCollection>
