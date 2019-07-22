@@ -60,7 +60,7 @@
                   <additionalText>The Golem decides to attack you, you barely escape with your life.</additionalText>
               </effect>
               <effect effect="Gain" type="Trait" object="Injured" chance="35">
-                  <additionalText>The Golem decides to attack you, the lead minion takes it on, but loses and becomes unconscious.</additionalText>
+                  <additionalText>The Golem decides to attack you, the lead minion takes it on, but loses and becomes injured.</additionalText>
               </effect>
             </effects>
           </event>
