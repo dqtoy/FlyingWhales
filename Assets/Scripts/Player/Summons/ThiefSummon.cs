@@ -51,9 +51,9 @@ public class ThiefSummon : Summon {
                 job.SetCannotCancelJob(true);
                 jobQueue.AddJobInQueue(job);
             } else {
-                //no more items at warehouse, but has not yet reached the thief's items to steal count. Hide and wait?
-                LocationGridTile targetTile = GetNearestUnoccupiedEdgeTileFromThis();
-                marker.GoTo(targetTile, OnReachExitAction);
+                //just enter berserked mode.
+                stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, specificLocation);
+                SetHasAlreadyAskedForPlan(false);
             }
         }
     }

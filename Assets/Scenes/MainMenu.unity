@@ -16314,10 +16314,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridSizeX: 20
   gridSizeY: 15
-  regionCount: 3
-  minSettltementCount: 4
+  regionCount: 6
+  minSettltementCount: 5
   maxSettltementCount: 7
-  minCitizenCount: 4
+  minCitizenCount: 5
   maxCitizenCount: 10
 --- !u!1 &1665094242
 GameObject:

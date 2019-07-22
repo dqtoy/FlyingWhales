@@ -699,7 +699,7 @@ public class PlayerUI : MonoBehaviour {
                 MinionLeaderPicker minionLeaderPicker = go.GetComponent<MinionLeaderPicker>();
                 minionLeaderPicker.SetMinion(minion);
                 minionLeaderPickers.Add(minionLeaderPicker);
-                if(minion == PlayerManager.Instance.player.currentMinionLeader || PlayerManager.Instance.player.currentMinionLeader == null) {
+                if(minion == PlayerManager.Instance.player.currentMinionLeader || tempCurrentMinionLeader == null) {
                     minionLeaderPicker.imgHighlight.gameObject.SetActive(true);
                     tempCurrentMinionLeader = minionLeaderPicker;
                 }

@@ -156,6 +156,12 @@ public class LandmarkManager : MonoBehaviour {
         List<Region> orderedRegions = new List<Region>(regions);
         orderedRegions = orderedRegions.OrderBy(x => Vector2.Distance(chosenPlayerRegion.coreTile.transform.position, x.coreTile.transform.position)).ToList();
 
+        string orderedLog = string.Empty;
+        for (int i = 0; i < orderedRegions.Count; i++) {
+            orderedLog += i.ToString() + " " + orderedRegions[i].coreTile.ToString() + "(" + orderedRegions[i].regionColor.ToString() + ")\n";
+        }
+        Debug.Log(orderedLog);
+
         //separate regions based on their distance from the player area
         List<Region> nearRegions = new List<Region>(); //regions that are near the player area
         List<Region> farRegions = new List<Region>(); //regions that are far from the player area
@@ -268,7 +274,7 @@ public class LandmarkManager : MonoBehaviour {
         };
         for (int i = 0; i < allTiles.Count; i++) {
             HexTile currTile = allTiles[i];
-            List<HexTile> tilesInRange = currTile.GetTilesInRange(3);
+            List<HexTile> tilesInRange = currTile.GetTilesInRange(2);
             if (currTile.landmarkOnTile == null
                 && currTile.elevationType == ELEVATION.PLAIN
                 && !currTile.IsAtEdgeOfMap()
@@ -632,7 +638,7 @@ public class Region {
     public List<HexTile> tiles { get; private set; }
     public HexTile coreTile { get; private set; }
 
-    //private Color regionColor;
+    public Color regionColor;
     private List<HexTile> allTiles {
         get {
             return tiles;
@@ -643,13 +649,15 @@ public class Region {
         this.coreTile = coreTile;
         tiles = new List<HexTile>();
         AddTile(coreTile);
-        //regionColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+        regionColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
     }
 
     public void AddTile(HexTile tile) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
-            //tile.spriteRenderer.color = regionColor;
+            //if (tile != coreTile) {
+            //    tile.spriteRenderer.color = regionColor;
+            //}
         }
     }
 
@@ -662,7 +670,7 @@ public class Region {
         List<HexTile> valid = new List<HexTile>();
         for (int i = 0; i < allTiles.Count; i++) {
             HexTile currTile = allTiles[i];
-            List<HexTile> tilesInRange = currTile.GetTilesInRange(3);
+            List<HexTile> tilesInRange = currTile.GetTilesInRange(2);
             //if current tile meets the ff requirements, it is valid
             // - Does not have a landamrk on it yet.
             // - Is not a water tile.
