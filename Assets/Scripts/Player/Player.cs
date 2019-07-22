@@ -71,8 +71,8 @@ public class Player : ILeader {
         summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
         artifacts = new Artifact[MAX_ARTIFACT];
         shareIntelAbility = new ShareIntel();
-        maxSummonSlots = 1;
-        maxArtifactSlots = 1;
+        maxSummonSlots = 3;
+        maxArtifactSlots = 3;
         //ConstructRoleSlots();
         AddListeners();
     }
@@ -1078,7 +1078,11 @@ public class Player : ILeader {
                 currentMinions[i].character.marker.PlaceMarkerAt(entrances[i]);
             }
             for (int i = 0; i < currentMinions.Count; i++) {
-                currentMinions[i].StartInvasionProtocol();
+                Minion currMinion = currentMinions[i];
+                if (!currMinion.character.marker.gameObject.activeInHierarchy) {
+                    throw new System.Exception(currMinion.character.name + " was not placed!");
+                }
+                currMinion.StartInvasionProtocol();
             }
             PlayerUI.Instance.startInvasionButton.interactable = false;
             currentAreaBeingInvaded = area;
