@@ -60,7 +60,7 @@
     </Event>
 
     <Event id="CANNIBALS" name="Cannibals" trigger="END">
-      <text>You some cannibals.</text>
+      <text>You encounter some cannibals.</text>
       <choices>
 
         <choice reqType="Summon" reqName="Skeleton">
