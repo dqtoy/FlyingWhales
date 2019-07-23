@@ -675,17 +675,17 @@ public class PlayerUI : MonoBehaviour {
         PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.ThiefSummon);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Chaos_Orb);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Hermes_Statue);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Miasma_Emitter);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
+        PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.ThiefSummon);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Chaos_Orb);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Hermes_Statue);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
+        PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Miasma_Emitter);
         PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
     }
     private void ShowSelectMinionLeader() {
