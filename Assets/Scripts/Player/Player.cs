@@ -743,7 +743,7 @@ public class Player : ILeader {
             currentTileBeingCorrupted.StartCorruptionAnimation();
             currentCorruptionTick = 0;
             Messenger.AddListener(Signals.DAY_STARTED, CorruptTilePerTick);
-            GameManager.Instance.SetPausedState(false);
+            UIManager.Instance.Unpause();
             isTileCurrentlyBeingCorrupted = true;
         }
     }
@@ -757,7 +757,7 @@ public class Player : ILeader {
     private void TileIsCorrupted() {
         isTileCurrentlyBeingCorrupted = false;
         Messenger.RemoveListener(Signals.DAY_STARTED, CorruptTilePerTick);
-        GameManager.Instance.SetPausedState(true);
+        UIManager.Instance.Pause();
         PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
     }
     #endregion

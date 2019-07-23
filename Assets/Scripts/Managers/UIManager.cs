@@ -359,15 +359,13 @@ public class UIManager : MonoBehaviour {
         Unpause();
     }
     public void Pause() {
-        if (!pauseBtn.IsInteractable()) {
-            return;
-        }
         GameManager.Instance.SetPausedState(true);
         if (onPauseEventExpiration != null) {
             onPauseEventExpiration(true);
         }
     }
     public void Unpause() {
+        //Debug.Log("Unpaused from:\n " + StackTraceUtility.ExtractStackTrace());
         GameManager.Instance.SetPausedState(false);
         if (onPauseEventExpiration != null) {
             onPauseEventExpiration(false);
