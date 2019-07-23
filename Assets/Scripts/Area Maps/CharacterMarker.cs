@@ -860,7 +860,6 @@ public class CharacterMarker : PooledObject {
     public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
         this.gameObject.transform.SetParent(tile.parentAreaMap.objectsParent);
         pathfindingAI.Teleport(tile.centeredWorldLocation);
-        pathfindingAI.UpdateMe();
         if (addToLocation) {
             tile.structure.location.AddCharacterToLocation(character);
             tile.structure.AddCharacterAtLocation(character, tile);
