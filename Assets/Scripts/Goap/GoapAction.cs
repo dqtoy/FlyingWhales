@@ -278,7 +278,7 @@ public class GoapAction {
             //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
             IAwareness awareness = actor.GetAwareness(poiTarget);
             if(awareness != null) {
-                knownTargetLocation = actor.GetAwareness(poiTarget).knownGridLocation;
+                knownTargetLocation = awareness.knownGridLocation;
             } else {
                 knownTargetLocation = poiTarget.gridTileLocation;
             }
@@ -546,25 +546,29 @@ public class GoapAction {
     }
     public int GetDistanceCost() {
         if (actor.specificLocation == null) {
-            throw new Exception(actor.name + " specific location is null!");
+            return 1;
+            //throw new Exception(actor.name + " specific location is null!");
         }
         if (targetStructure == null) {
-            throw new Exception(actor.name + "'s target structure in " + goapName + " is null! Targetting " + poiTarget.name);
+            return 1;
+            //throw new Exception(actor.name + "'s target structure in " + goapName + " is null! Targetting " + poiTarget.name);
         }
         LocationGridTile tile = targetTile;
         if (tile == null) {
             tile = poiTarget.gridTileLocation;
         }
-        try {
+        //try {
+        if(actor.gridTileLocation != null && tile != null) {
             int distance = Mathf.RoundToInt(Vector2.Distance(actor.gridTileLocation.centeredWorldLocation, tile.centeredWorldLocation));
-            distance = (int)(distance * 0.25f);
+            distance = (int) (distance * 0.25f);
             if (actor.specificLocation != targetStructure.location) {
                 return distance + 10;
             }
             return distance;
-        } catch {
-            Debug.LogError("Distance cost problem for " + poiTarget.name + " with actor " + actor.name + ", poitarget grid location is " + poiTarget.gridTileLocation == null ? "null" : poiTarget.gridTileLocation.ToString());
         }
+        //} catch {
+        //    Debug.LogError("Distance cost problem for " + poiTarget.name + " with actor " + actor.name + ", poitarget grid location is " + poiTarget.gridTileLocation == null ? "null" : poiTarget.gridTileLocation.ToString());
+        //}
         return 1;
         //if (actor.specificLocation != targetStructure.location) {
         //    return 3;

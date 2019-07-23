@@ -73,7 +73,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject minionLeaderPickerParent;
     [SerializeField] private GameObject minionLeaderPickerPrefab;
     private List<MinionLeaderPicker> minionLeaderPickers;
-    private MinionLeaderPicker tempCurrentMinionLeader;
+    private MinionLeaderPicker tempCurrentMinionLeaderPicker;
 
     [Header("Corruption and Threat")]
     [SerializeField] private GameObject corruptTileConfirmationGO;
@@ -691,7 +691,7 @@ public class PlayerUI : MonoBehaviour {
     private void ShowSelectMinionLeader() {
         Utilities.DestroyChildren(minionLeaderPickerParent.transform);
         minionLeaderPickers.Clear();
-        tempCurrentMinionLeader = null;
+        tempCurrentMinionLeaderPicker = null;
         for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
             Minion minion = PlayerManager.Instance.player.minions[i];
             if(minion != null) {
@@ -699,17 +699,22 @@ public class PlayerUI : MonoBehaviour {
                 MinionLeaderPicker minionLeaderPicker = go.GetComponent<MinionLeaderPicker>();
                 minionLeaderPicker.SetMinion(minion);
                 minionLeaderPickers.Add(minionLeaderPicker);
-                if(minion == PlayerManager.Instance.player.currentMinionLeader || tempCurrentMinionLeader == null) {
+                if (PlayerManager.Instance.player.currentMinionLeader == null) {
+                    if (tempCurrentMinionLeaderPicker == null) {
+                        minionLeaderPicker.imgHighlight.gameObject.SetActive(true);
+                        tempCurrentMinionLeaderPicker = minionLeaderPicker;
+                    }
+                } else if(minion == PlayerManager.Instance.player.currentMinionLeader) {
                     minionLeaderPicker.imgHighlight.gameObject.SetActive(true);
-                    tempCurrentMinionLeader = minionLeaderPicker;
+                    tempCurrentMinionLeaderPicker = minionLeaderPicker;
                 }
             }
         }
     }
     public void TemporarySetMinionLeader(MinionLeaderPicker leaderPicker) {
         leaderPicker.imgHighlight.gameObject.SetActive(true);
-        tempCurrentMinionLeader.imgHighlight.gameObject.SetActive(false);
-        tempCurrentMinionLeader = leaderPicker;
+        tempCurrentMinionLeaderPicker.imgHighlight.gameObject.SetActive(false);
+        tempCurrentMinionLeaderPicker = leaderPicker;
     }
     #endregion
 
@@ -742,8 +747,8 @@ public class PlayerUI : MonoBehaviour {
         } else {
             PlayerManager.Instance.player.CorruptATile();
         }
-        if (tempCurrentMinionLeader != null) {
-            PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeader.minion);
+        if (tempCurrentMinionLeaderPicker != null) {
+            PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
             if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile == null) {
                 StoryEvent e = PlayerManager.Instance.player.currentTileBeingCorrupted.GetRandomStoryEvent();
                 if (e != null) {

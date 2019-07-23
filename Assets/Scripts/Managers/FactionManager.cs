@@ -135,7 +135,7 @@ public class FactionManager : MonoBehaviour {
         Faction[] startingFactions = allFactions.Where(x => x.isActive).ToArray();
         for (int i = 0; i < startingFactions.Length; i++) {
             Faction currFaction = startingFactions[i];
-            currFaction.GenerateStartingCitizens(9, 7);
+            currFaction.GenerateStartingCitizens(2, 1); //9,7
         }
         /*
         If both Factions are opposing alignment, -1 to relationship.

@@ -272,7 +272,7 @@ public class StoryEventsManager : MonoBehaviour {
                 for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
                     Minion minion = PlayerManager.Instance.player.minions[i];
                     if (minion != null) {
-                        minion.LevelUp(level);
+                        minion.LevelUp(-level);
                     }
                 }
             }

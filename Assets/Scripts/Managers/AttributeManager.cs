@@ -81,6 +81,13 @@ public class AttributeManager : MonoBehaviour {
             new Jolted(),
             new Taunted(),
             new Cannibal(1),
+            new Lethargic(),
+            new BerserkBuff(1),
+            new Aberration(),
+            new Dead(),
+            new Disabled(),
+            new Invisible(1),
+            new Unfaithful(1),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

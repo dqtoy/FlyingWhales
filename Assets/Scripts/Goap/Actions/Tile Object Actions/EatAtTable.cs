@@ -35,7 +35,13 @@ public class EatAtTable : GoapAction {
         }
     }
     protected override int GetCost() {
-        LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        LocationGridTile knownLoc = null;
+        if (awareness != null) {
+            knownLoc = awareness.knownGridLocation;
+        } else {
+            return 100;
+        }
 
         //if the table is poisoned, check if the actor knows about it, if he/she does, increase cost
         Poisoned poisoned = poiTarget.GetNormalTrait("Poisoned") as Poisoned;

@@ -207,12 +207,15 @@ public class Minion {
         character.AdjustIsWaitingForInteraction(-1);
 
         character.specificLocation.RemoveCharacterFromLocation(character);
-        character.DestroyMarker();
+        //character.marker.ClearAvoidInRange(false);
+        //character.marker.ClearHostilesInRange(false);
+        //character.marker.ClearPOIsInVisionRange();
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(character);
         character.ClearAllAwareness();
         character.CancelAllJobsAndPlans();
         character.RemoveAllNonPersistentTraits();
         character.ResetToFullHP();
+        character.DestroyMarker();
     }
     #endregion
 

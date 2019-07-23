@@ -231,7 +231,7 @@ public class LandmarkManager : MonoBehaviour {
             OwnArea(faction, faction.race, newArea);
             newArea.GenerateStructures(citizenCount);
             //GenerateAreaMap(newArea);
-            faction.GenerateStartingCitizens(9, 7, citizenCount);
+            faction.GenerateStartingCitizens(2, 1, citizenCount); //9,7
         }
         FactionManager.Instance.CreateNeutralFaction();
     }

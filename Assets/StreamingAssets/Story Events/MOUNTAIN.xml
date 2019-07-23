@@ -82,13 +82,11 @@
             <text>You decided to help the old man.</text>
             <effects>
               <effect effect="Gain" type="Combat_Ability" object="FLAMESTRIKE" chance="50">
-                <additionalText>
-                  It turns out the old man is a very powerful mage who lost his family because people thought he is a witch. He couldn't cross over because he could not let go of what happened. He wanted revenge. You helped him accept the fact that his family will not come back but there is still a chance that they will meet if he crosses over. He agreed with you. As a parting gift, he teaches you one of his most powerful spell, Flamestrike.
+                <additionalText>It turns out the old man is a very powerful mage who lost his family because people thought he is a witch. He couldn't cross over because he could not let go of what happened. He wanted revenge. You helped him accept the fact that his family will not come back but there is still a chance that they will meet if he crosses over. He agreed with you. As a parting gift, he teaches you one of his most powerful spell, Flamestrike.
                 </additionalText>
               </effect>
               <effect effect="Gain" type="Level" object="Combat Ability" chance="50">
-                <additionalText>
-                  It turns out the old man is a very powerful mage who lost his family because people thought he is a witch. He couldn't cross over because he could not let go of what happened. He wanted revenge. You helped him accept the fact that his family will not come back but there is still a chance that they will meet if he crosses over. He said he'll think about it. Before you leave, he transfered some of his powers to you as a gift for helping him realize all his troubles.
+                <additionalText>It turns out the old man is a very powerful mage who lost his family because people thought he is a witch. He couldn't cross over because he could not let go of what happened. He wanted revenge. You helped him accept the fact that his family will not come back but there is still a chance that they will meet if he crosses over. He said he'll think about it. Before you leave, he transfered some of his powers to you as a gift for helping him realize all his troubles.
                 </additionalText>
               </effect>
             </effects>
@@ -101,8 +99,7 @@
             <text>You decided to capture the ghost and extract its essence.</text>
             <effects>
               <effect effect="Gain" type="Level" object="5" chance="100">
-                <additionalText>
-                  It turns out the ghost was a very powerful mage. You infused its essence into one of your minions and made it stronger.
+                <additionalText>It turns out the ghost was a very powerful mage. You infused its essence into one of your minions and made it stronger.
                 </additionalText>
               </effect>
             </effects>
@@ -124,18 +121,15 @@
             <text>You attempted to steal the necklace.</text>
             <effects>
               <effect effect="Gain" type="Intervention_Ability" object="PROVOKE" chance="70">
-                <additionalText>
-                  After distracting the witch you successfully stole the necklace. You examined it. It turns out you were right, it was her source of power. It was also the reason why she was so hateful because the witch became calm once you took the necklace. It appears that the necklace's powers draws from the hateful feelings to make it more powerful. You extracted the power of the necklace, and let one of your minions to wield its power, the one that can trigger the hate of the people towards their enemies.
+                <additionalText>After distracting the witch you successfully stole the necklace. You examined it. It turns out you were right, it was her source of power. It was also the reason why she was so hateful because the witch became calm once you took the necklace. It appears that the necklace's powers draws from the hateful feelings to make it more powerful. You extracted the power of the necklace, and let one of your minions to wield its power, the one that can trigger the hate of the people towards their enemies.
                 </additionalText>
               </effect>
-              <effect effect="Lose" type="Level" object="1" chance="10">
-                <additionalText>
-                  The witch caught on to what your lead minion was trying to do. She used her power to absorb the minion's life essence. He barely got out, and they quickly ran away but your minion got weaker.
+              <effect effect="Lose" type="Level" object="3" chance="10">
+                <additionalText>The witch caught on to what your lead minion was trying to do. She used her power to absorb the minion's life essence. He barely got out, and they quickly ran away but your minion got weaker.
                 </additionalText>
               </effect>
               <effect effect="Gain" type="Trait" object="Injured" chance="20">
-                <additionalText>
-                  The witch caught on to what your lead minion was trying to do. She attacked the minion, injuring it. They barely escaped.
+                <additionalText>The witch caught on to what your lead minion was trying to do. She attacked the minion, injuring it. They barely escaped.
                 </additionalText>
               </effect>
             </effects>
@@ -148,13 +142,11 @@
             <text>You explained to her what you want to do to this world.</text>
             <effects>
               <effect effect="Gain" type="All_Level" object="3" chance="90">
-                <additionalText>
-                  She agreed with you as all things should be enveloped by hate and evil. She decided to lend you some of her powers, making your minions much stronger.
+                <additionalText>She agreed with you as all things should be enveloped by hate and evil. She decided to lend you some of her powers, making your minions much stronger.
                 </additionalText>
               </effect>
               <effect effect="Nothing" chance="10">
-                <additionalText>
-                  Although she agrees with you, she did not want anything to do with you and decided not to help you because she saw in you much more darker than evil itself.
+                <additionalText>Although she agrees with you, she did not want anything to do with you and decided not to help you because she saw in you much more darker than evil itself.
                 </additionalText>
               </effect>
             </effects>

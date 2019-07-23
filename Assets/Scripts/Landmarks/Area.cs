@@ -72,6 +72,8 @@ public class Area {
     public int SPAWN_RABBIT_COUNT = 3;
     public int SPAWN_RAT_COUNT = 4;
 
+    public bool hasBeenInvaded { get; private set; }
+
     #region getters
     public RACE raceType {
         get { return _raceType; }
@@ -114,6 +116,7 @@ public class Area {
     public Area(HexTile coreTile, AREA_TYPE areaType) {
         id = Utilities.SetID(this);
         SetName(RandomNameGenerator.Instance.GetRegionName());
+        hasBeenInvaded = false;
         tiles = new List<HexTile>();
         areaResidents = new List<Character>();
         charactersAtLocation = new List<Character>();
@@ -141,6 +144,7 @@ public class Area {
         possibleOccupants = new List<RACE>();
     }
     public Area(AreaSaveData data) {
+        hasBeenInvaded = false;
         id = Utilities.SetID(this, data.areaID);
         SetName(data.areaName);
         tiles = new List<HexTile>();
@@ -637,6 +641,9 @@ public class Area {
         SubscribeToSignals();
         LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         CheckAreaInventoryJobs(warehouse);
+    }
+    public void SetHasBeenInvaded(bool state) {
+        hasBeenInvaded = state;
     }
     #endregion
 
