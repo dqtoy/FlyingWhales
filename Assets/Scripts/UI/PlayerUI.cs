@@ -206,6 +206,7 @@ public class PlayerUI : MonoBehaviour {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(true);
+        
     }
     private void OnAreaMapClosed(Area area) {
         UpdateSummonsInteraction();
@@ -598,13 +599,13 @@ public class PlayerUI : MonoBehaviour {
     }
     public void ShowPlayerIntels(bool state) {
         intelContainer.SetActive(state);
-        //RectTransform rt = UIManager.Instance.playerNotifGO.transform as RectTransform;
-        //Vector3 previousPos = rt.anchoredPosition;
-        //if (!state) {
-        //    rt.anchoredPosition = new Vector3(-640f, previousPos.y, previousPos.z);
-        //} else {
-        //    rt.anchoredPosition = new Vector3(-1150f, previousPos.y, previousPos.z);
-        //}
+        RectTransform rt = UIManager.Instance.playerNotifGO.transform as RectTransform;
+        Vector3 previousPos = rt.anchoredPosition;
+        if (!state) {
+            rt.anchoredPosition = new Vector3(-640f, previousPos.y, previousPos.z);
+        } else {
+            rt.anchoredPosition = new Vector3(-1150f, previousPos.y, previousPos.z);
+        }
     }
     #endregion
 
@@ -725,7 +726,7 @@ public class PlayerUI : MonoBehaviour {
         threatMeter.value = 0f;
     }
     public void ShowCorruptTileConfirmation(HexTile tile) {
-        if (tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted && !tile.isCorrupted) { //tile.CanBeCorrupted() && 
+        if (tile.CanBeCorrupted() && tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted && !tile.isCorrupted) { //
             PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
             if (tile.areaOfTile != null) {
                 corruptTileConfirmationLbl.text = "To corrupt this area, you must defeat all residents within. Once you proceeed there is no going back. Do you wish to take on this settlement?";

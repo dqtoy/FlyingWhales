@@ -176,6 +176,7 @@ public class Player : ILeader {
         return minion;
     }
     public void InitializeMinion(Minion minion) {
+        //minion.SetLevel(30);
         minion.SetUnlockedInterventionSlots(3);
         minion.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
         minion.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
@@ -1243,4 +1244,3 @@ public class Player : ILeader {
     }
     #endregion
 }
-

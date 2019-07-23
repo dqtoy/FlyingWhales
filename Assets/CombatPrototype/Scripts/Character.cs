@@ -3504,9 +3504,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
         marker.UpdateHP();
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
-        //if (IsHealthCriticallyLow()) {
-        //    Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);
-        //}
+        if (IsHealthCriticallyLow()) {
+            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);
+        }
         if (triggerDeath && previous != this._currentHP) {
             if (this._currentHP <= 0) {
                 Death();
