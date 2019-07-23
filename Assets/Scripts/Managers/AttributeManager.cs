@@ -49,8 +49,6 @@ public class AttributeManager : MonoBehaviour {
     #region Utilities
     private void AddInstancedTraits() {
         instancedTraits = new Trait[] {
-            new Abducted(null),
-            new Charmed(null, null),
             new Craftsman(),
             new Criminal(),
             new Grudge(),
@@ -60,17 +58,12 @@ public class AttributeManager : MonoBehaviour {
             new Assaulter(),
             new AttemptedMurderer(),
             new Cursed(),
-            //new Enemy(null),
-            //new Friend(null),
             new Injured(),
-            new Kleptomaniac(1),
-            //new Lover(null),
-            new Lycanthropy(1),
-            new Vampiric(1),
+            new Kleptomaniac(),
+            new Lycanthropy(),
+            new Vampiric(),
             new Murderer(),
-            ////new Paramour(null),
             new Poisoned(),
-            //new Relative(null),
             new Resting(),
             new Sick(),
             new Thief(),
@@ -80,7 +73,7 @@ public class AttributeManager : MonoBehaviour {
             new Spooked(),
             new Jolted(),
             new Taunted(),
-            new Cannibal(1),
+            new Cannibal(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

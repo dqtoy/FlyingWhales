@@ -5,7 +5,7 @@ using UnityEngine;
 public class Cannibal : Trait {
     public int level { get; private set; }
 
-    public Cannibal(int level) {
+    public Cannibal(int level = 1) {
         name = "Cannibal";
         description = "This character eats his own kind.";
         type = TRAIT_TYPE.SPECIAL;

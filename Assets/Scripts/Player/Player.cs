@@ -1086,7 +1086,7 @@ public class Player : ILeader {
             for (int i = 0; i < entrances.Count; i++) {
                 for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
                     LocationGridTile newEntrance = entrances[i].neighbourList[j];
-                    if (!newEntrance.isOccupied && newEntrance.structure != null) {
+                    if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
                         if (newEntrance.IsAtEdgeOfWalkableMap() && !entrances.Contains(newEntrance)) {
                             entrances.Add(newEntrance);
                             if (entrances.Count >= currentMinions.Count) {
