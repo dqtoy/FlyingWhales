@@ -232,6 +232,9 @@ public class CharacterAIPath : AILerp {
                 IPointOfInterest currPOI = marker.terrifyingObjects.ElementAtOrDefault(i);
                 if (currPOI is Character) {
                     Character terrifyingCharacter = currPOI as Character;
+                    if (terrifyingCharacter.marker == null) {
+                        continue;
+                    }
                     if (terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
                         continue;
                     }
