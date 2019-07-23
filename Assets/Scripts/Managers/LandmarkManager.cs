@@ -140,6 +140,14 @@ public class LandmarkManager : MonoBehaviour {
     public GameObject GetLandmarkGO() {
         return this.landmarkGO;
     }
+    public bool AreAllNonPlayerAreasCorrupted() {
+        for (int i = 0; i < allNonPlayerAreas.Count; i++) {
+            if (!allNonPlayerAreas[i].coreTile.isCorrupted) {
+                return false;
+            }
+        }
+        return true;
+    }
     #endregion
 
     #region Landmark Generation

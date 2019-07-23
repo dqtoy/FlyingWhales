@@ -916,6 +916,10 @@ public class PlayerUI : MonoBehaviour {
         SetCurrentlySelectedArtifact(PlayerManager.Instance.player.artifacts.FirstOrDefault());
         successfulAreaCorruptionGO.SetActive(false);
         InteriorMapManager.Instance.DestroyAreaMap(closedArea);
+
+        if (LandmarkManager.Instance.AreAllNonPlayerAreasCorrupted()) {
+            GameOver("You have conquered all settlements! This world is now yours! Congratulations!");
+        }
     }
     #endregion
 

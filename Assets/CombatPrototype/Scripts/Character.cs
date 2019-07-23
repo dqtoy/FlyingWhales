@@ -3200,7 +3200,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, ref string attackSummary) {
         GameManager.Instance.CreateHitEffectAt(this);
-        if (this.currentHP == 0) {
+        if (this.currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
         //TODO: For readjustment, attack power is the old computation
@@ -3217,22 +3217,26 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             //if (currentClosestHostile.GetNormalTrait("Injured") == null) {
             //    loserResults.AddElement("Injured", 10);
             //}
-            //loserResults.AddElement("Death", 5);
+            if(minion == null) {
+                loserResults.AddElement("Death", 5);
+            }
 
-            string result = loserResults.PickRandomElementGivenWeights();
-            attackSummary += "\ncombat result is " + result; ;
-            switch (result) {
-                case "Unconscious":
-                    Unconscious unconscious = new Unconscious();
-                    this.AddTrait(unconscious, characterThatAttacked, gainedFromDoing: state.actionThatTriggeredThisState);
-                    break;
-                case "Injured":
-                    Injured injured = new Injured();
-                    this.AddTrait(injured, characterThatAttacked, gainedFromDoing: state.actionThatTriggeredThisState);
-                    break;
-                case "Death":
-                    this.Death(responsibleCharacter: characterThatAttacked);
-                    break;
+            if(loserResults.Count > 0) {
+                string result = loserResults.PickRandomElementGivenWeights();
+                attackSummary += "\ncombat result is " + result; ;
+                switch (result) {
+                    case "Unconscious":
+                        Unconscious unconscious = new Unconscious();
+                        this.AddTrait(unconscious, characterThatAttacked, gainedFromDoing: state.actionThatTriggeredThisState);
+                        break;
+                    case "Injured":
+                        Injured injured = new Injured();
+                        this.AddTrait(injured, characterThatAttacked, gainedFromDoing: state.actionThatTriggeredThisState);
+                        break;
+                    case "Death":
+                        this.Death(responsibleCharacter: characterThatAttacked);
+                        break;
+                }
             }
         } else {
             Invisible invisible = characterThatAttacked.GetNormalTrait("Invisible") as Invisible;
@@ -3487,11 +3491,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
         marker.UpdateHP();
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
-        if (IsHealthCriticallyLow()) {
-            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);
-        }
+        //if (IsHealthCriticallyLow()) {
+        //    Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);
+        //}
         if (triggerDeath && previous != this._currentHP) {
-            if (this._currentHP == 0) {
+            if (this._currentHP <= 0) {
                 Death();
             }
         }

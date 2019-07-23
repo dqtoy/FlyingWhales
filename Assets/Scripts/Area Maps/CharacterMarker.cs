@@ -868,8 +868,8 @@ public class CharacterMarker : PooledObject {
             tile.structure.AddCharacterAtLocation(character, tile);
         }
         SetActiveState(true);
-        UpdatePosition();
         UpdateAnimation();
+        UpdatePosition();
         UpdateActionIcon();
         for (int i = 0; i < colliders.Length; i++) {
             if (!colliders[i].enabled) {
