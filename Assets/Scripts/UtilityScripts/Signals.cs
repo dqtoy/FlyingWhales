@@ -20,6 +20,10 @@ public static class Signals {
     /// Parameters: KeyCode (Pressed Key)
     /// </summary>
     public static string KEY_DOWN = "OnKeyDown";
+    /// <summary>
+    /// Parameters: GameObject (Destroyed Object)
+    /// </summary>
+    public static string POOLED_OBJECT_DESTROYED = "OnPooledObjectDestroyed";
 
     #region Tiles
     public static string TILE_LEFT_CLICKED = "OnTileLeftClicked"; //Parameters (HexTile clickedTile)

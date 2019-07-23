@@ -107,7 +107,7 @@ public class Trait {
 
     #region Jobs
     protected bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character != targetCharacter && character.faction.id == targetCharacter.faction.id) {
+        if (character != targetCharacter && character.faction == targetCharacter.faction) {
             if (responsibleCharacter != null && responsibleCharacter == character) {
                 return false;
             }

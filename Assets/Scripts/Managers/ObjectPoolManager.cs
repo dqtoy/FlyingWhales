@@ -97,6 +97,7 @@ public class ObjectPoolManager : MonoBehaviour {
             po.SendObjectBackToPool();
             po.Reset();
             po.transform.SetParent(po.ParentPool.transform);
+            Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, go);
         }
     }
 

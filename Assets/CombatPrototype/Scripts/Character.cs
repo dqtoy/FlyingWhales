@@ -641,7 +641,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
     }
     /// <summary>
-    /// Listener for when the player successfully invades an area.
+    /// Listener for when the player successfully invades an area. And this character is still alive.
     /// </summary>
     /// <param name="area">The invaded area.</param>
     protected virtual void OnSuccessInvadeArea(Area area) {
@@ -661,6 +661,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             RemoveAllNonPersistentTraits();
             ClearAllAwareness();
             CancelAllJobsAndPlans();
+            SchedulingManager.Instance.ClearAllSchedulesBy(this);
             if (marker != null) {
                 DestroyMarker();
             }
@@ -704,8 +705,12 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         marker.SetHoverAction(OnHoverMarker, OnHoverExit);
         SetCharacterMarker(marker);
     }
-    public void DestroyMarker() {
-        gridTileLocation.RemoveCharacterHere(this);
+    public void DestroyMarker(LocationGridTile destroyedAt = null) {
+        if (destroyedAt == null) {
+            gridTileLocation.RemoveCharacterHere(this);
+        } else {
+            destroyedAt.RemoveCharacterHere(this);
+        }
         ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
         SetCharacterMarker(null);
     }
@@ -776,7 +781,8 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                 grave.gridTileLocation.structure.RemovePOI(grave);
                 SetGrave(null);
             }
-            RemoveTrait("Dead");
+            //RemoveTrait("Dead");
+            RemoveAllNonPersistentTraits();
             ClearAllAwareness();
             //Area gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
             MigrateHomeStructureTo(null);
@@ -860,6 +866,8 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             for (int i = 0; i < normalTraits.Count; i++) {
                 normalTraits[i].OnDeath(this);
             }
+
+            RemoveAllNonPersistentTraits();
 
             marker.OnDeath(deathTile);
             _numOfWaitingForGoapThread = 0; //for raise dead

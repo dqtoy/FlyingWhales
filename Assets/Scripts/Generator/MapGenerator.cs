@@ -52,7 +52,7 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.CalculateCameraBounds();
         yield return null;
         UIManager.Instance.InitializeUI();
-        
+
         TokenManager.Instance.Initialize();
         CharacterManager.Instance.GenerateRelationships();
         //CharacterManager.Instance.PlaceInitialCharacters();
@@ -70,7 +70,7 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
         yield return new WaitForSeconds(1f);
         GameManager.Instance.StartProgression();
-        UIManager.Instance.SetTimeControlsState(true);
+        UIManager.Instance.SetTimeControlsState(false);
 
         PlayerUI.Instance.ShowStartingMinionPicker();
     }

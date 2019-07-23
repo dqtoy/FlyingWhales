@@ -64,6 +64,7 @@ public class AreaMapCameraMove : MonoBehaviour {
         gameObject.SetActive(false);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.AddListener<GameObject>(Signals.POOLED_OBJECT_DESTROYED, OnPooledObjectDestroyed);
     }
 
     #region Listeners
@@ -76,6 +77,11 @@ public class AreaMapCameraMove : MonoBehaviour {
     private void OnAreaMapClosed(Area area) {
         gameObject.SetActive(false);
         SetCameraControlState(false);
+    }
+    private void OnPooledObjectDestroyed(GameObject obj) {
+        if (target == obj.transform) {
+            target = null;
+        }
     }
     #endregion
 

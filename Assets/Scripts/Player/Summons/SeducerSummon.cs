@@ -18,6 +18,8 @@ public class SeducerSummon : Summon {
         }
     }
 
+    private bool hasSucceeded;
+
     public SeducerSummon(SUMMON_TYPE type, GENDER gender) : base(type, CharacterRole.MINION, RACE.DEMON, gender) {
         seduceChance = 50;
         doneCharacters = new List<Character>();
@@ -32,6 +34,7 @@ public class SeducerSummon : Summon {
     }
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
+        hasSucceeded = false;
         Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
         AdjustIgnoreHostilities(1);
     }
@@ -52,27 +55,69 @@ public class SeducerSummon : Summon {
             return;
         }
         SetHasAlreadyAskedForPlan(true);
-        //pick a random character that is sexually compatible with this character, to seduce. Exclude characters that this succubus has already invited.
-        List<Character> choices = specificLocation.charactersAtLocation.Where(x => x.faction != this.faction 
-        && !doneCharacters.Contains(x) 
-        && CharacterManager.Instance.IsSexuallyCompatibleOneSided(x, this)
-        && !x.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)).ToList();
-        if (choices.Count > 0) {
-            Character chosenCharacter = choices[Random.Range(0, choices.Count)];
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, chosenCharacter);
-            job.SetCannotOverrideJob(true);
-            job.SetCannotCancelJob(true);
-            jobQueue.AddJobInQueue(job, false);
+        if (hasSucceeded) {
+            //disappear
+            Disappear();
         } else {
-            //just enter berserked mode.
-            stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, specificLocation);
-            SetHasAlreadyAskedForPlan(false);
+            //pick a random character that is sexually compatible with this character, to seduce. Exclude characters that this succubus has already invited.
+            List<Character> choices = specificLocation.charactersAtLocation.Where(x => x.faction != this.faction
+            && !doneCharacters.Contains(x)
+            && CharacterManager.Instance.IsSexuallyCompatibleOneSided(x, this)
+            && !x.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)).ToList();
+            List<TileObject> validBeds = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
+            if (choices.Count > 0 && validBeds.Count > 0) {
+                Character chosenCharacter = choices[Random.Range(0, choices.Count)];
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, chosenCharacter);
+                job.SetCannotOverrideJob(true);
+                job.SetCannotCancelJob(true);
+                jobQueue.AddJobInQueue(job, false);
+            } else {
+                //just enter berserked mode.
+                stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, specificLocation);
+                SetHasAlreadyAskedForPlan(false);
+            }
         }
+        
     }
     protected override void OnActionStateSet(GoapAction action, GoapActionState state) {
         if (action.actor == this && action.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
             doneCharacters.Add(action.poiTarget as Character);
+        } else if (action.actor == this && action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+            if (state.status == InteractionManager.Goap_State_Success) {
+                hasSucceeded = true;
+            }
         }
     }
     #endregion
-}
+
+    private void Disappear() {
+        LocationGridTile disappearTile = gridTileLocation;
+        if (stateComponent.currentState != null) {
+            stateComponent.currentState.OnExitThisState();
+            //This call is doubled so that it will also exit the previous major state if there's any
+            if (stateComponent.currentState != null) {
+                stateComponent.currentState.OnExitThisState();
+            }
+        } else if (stateComponent.currentState != null) {
+            stateComponent.SetStateToDo(null);
+        }
+
+        if (currentParty.icon.isTravelling) {
+            marker.StopMovement();
+        }
+        AdjustIsWaitingForInteraction(1);
+        StopCurrentAction(false);
+        AdjustIsWaitingForInteraction(-1);
+        specificLocation.RemoveCharacterFromLocation(this);
+        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
+        ownParty.SetSpecificLocation(PlayerManager.Instance.player.playerArea);
+        ClearAllAwareness();
+        CancelAllJobsAndPlans();
+        RemoveAllNonPersistentTraits();
+        ResetToFullHP();
+        UnsubscribeSignals();
+        DestroyMarker(disappearTile);
+        SchedulingManager.Instance.ClearAllSchedulesBy(this);
+    }
+}   
+
