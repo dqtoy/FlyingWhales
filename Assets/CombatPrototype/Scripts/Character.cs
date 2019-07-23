@@ -647,6 +647,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     protected virtual void OnSuccessInvadeArea(Area area) {
         if (specificLocation == area && minion == null) {
             StopCurrentAction(false);
+            if (stateComponent.currentState != null) {
+                stateComponent.currentState.OnExitThisState();
+            } else if (stateComponent.stateToDo != null) {
+                stateComponent.SetStateToDo(null);
+            }
             specificLocation.RemoveCharacterFromLocation(this);
             //marker.ClearAvoidInRange(false);
             //marker.ClearHostilesInRange(false);
