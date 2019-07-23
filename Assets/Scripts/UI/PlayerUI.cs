@@ -713,8 +713,8 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     public void TemporarySetMinionLeader(MinionLeaderPicker leaderPicker) {
-        leaderPicker.imgHighlight.gameObject.SetActive(true);
         tempCurrentMinionLeaderPicker.imgHighlight.gameObject.SetActive(false);
+        leaderPicker.imgHighlight.gameObject.SetActive(true);
         tempCurrentMinionLeaderPicker = leaderPicker;
     }
     #endregion

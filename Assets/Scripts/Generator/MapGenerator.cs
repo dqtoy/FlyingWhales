@@ -42,6 +42,7 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.DivideToRegions(GridMap.Instance.hexTiles, WorldConfigManager.Instance.regionCount, WorldConfigManager.Instance.gridSizeX * WorldConfigManager.Instance.gridSizeY, out generatedRegions);
         BaseLandmark portal;
         LandmarkManager.Instance.GenerateSettlements(new IntRange(WorldConfigManager.Instance.minSettltementCount, WorldConfigManager.Instance.maxSettltementCount), generatedRegions, new IntRange(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount), out portal);
+        LandmarkManager.Instance.SetCascadingLevelsForAllCharacters(portal.tileLocation);
         LandmarkManager.Instance.LoadAdditionalAreaData();
         LandmarkManager.Instance.GenerateMinorLandmarks(GridMap.Instance.hexTiles);
         GridMap.Instance.GenerateInitialTileTags();

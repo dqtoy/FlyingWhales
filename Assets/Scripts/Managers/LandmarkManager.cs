@@ -141,8 +141,9 @@ public class LandmarkManager : MonoBehaviour {
         return this.landmarkGO;
     }
     public bool AreAllNonPlayerAreasCorrupted() {
-        for (int i = 0; i < allNonPlayerAreas.Count; i++) {
-            if (!allNonPlayerAreas[i].coreTile.isCorrupted) {
+        List<Area> areas = allNonPlayerAreas;
+        for (int i = 0; i < areas.Count; i++) {
+            if (!areas[i].coreTile.isCorrupted) {
                 return false;
             }
         }
@@ -251,6 +252,27 @@ public class LandmarkManager : MonoBehaviour {
             faction.GenerateStartingCitizens(2, 1, citizenCount); //9,7
         }
         FactionManager.Instance.CreateNeutralFaction();
+    }
+    public void SetCascadingLevelsForAllCharacters(HexTile portalTile) {
+        List<Area> arrangedAreas = allAreas.OrderBy(x => x.coreTile.GetTileDistanceTo(portalTile)).ToList();
+        int initialLeaderLevel = 2;
+        for (int i = 0; i < arrangedAreas.Count; i++) {
+            if(arrangedAreas[i].coreTile == portalTile) {
+                arrangedAreas.RemoveAt(i);
+                break;
+            }
+        }
+        for (int i = 0; i < arrangedAreas.Count; i++) {
+            for (int j = 0; j < arrangedAreas[i].areaResidents.Count; j++) {
+                Character character = arrangedAreas[i].areaResidents[j];
+                int leaderLevel = initialLeaderLevel * (i + 1);
+                if (character.role.roleType == CHARACTER_ROLE.LEADER) {
+                    character.SetLevel(leaderLevel);
+                } else {
+                    character.SetLevel(leaderLevel - 1);
+                }
+            }
+        }
     }
     public LandmarkData GetLandmarkData(LANDMARK_TYPE landmarkType) {
         //for (int i = 0; i < landmarkData.Count; i++) {
