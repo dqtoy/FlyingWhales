@@ -113,7 +113,7 @@ public class CharacterAIPath : AILerp {
             IPointOfInterest poi = marker.terrifyingObjects[i];
             if (poi is Character) {
                 Character currCharacter = poi as Character;
-                if (!currCharacter.isDead) {
+                if (!currCharacter.isDead && currCharacter.marker != null) {
                     currCharacter.marker.UpdateCenteredWorldPos();
                 }
             }
