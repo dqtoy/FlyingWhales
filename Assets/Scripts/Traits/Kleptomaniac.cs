@@ -7,7 +7,7 @@ public class Kleptomaniac : Trait {
     private Character owner;
 
     private int _happinessDecreaseRate;
-    public Kleptomaniac(int level) {
+    public Kleptomaniac(int level = 1) {
         name = "Kleptomaniac";
         description = "This character has irresistible urge to steal.";
         thoughtText = "[Character] has irresistible urge to steal.";

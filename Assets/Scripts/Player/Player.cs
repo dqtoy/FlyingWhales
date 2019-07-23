@@ -9,8 +9,8 @@ public class Player : ILeader {
     private const int MAX_INTEL = 3;
     public const int MAX_MINIONS = 5;
     public const int MAX_THREAT = 100;
-    private const int MAX_SUMMONS = 3;
-    private const int MAX_ARTIFACT = 3;
+    private const int MAX_SUMMONS = 6;
+    private const int MAX_ARTIFACT = 6;
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
@@ -71,8 +71,8 @@ public class Player : ILeader {
         summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
         artifacts = new Artifact[MAX_ARTIFACT];
         shareIntelAbility = new ShareIntel();
-        maxSummonSlots = 3;
-        maxArtifactSlots = 3;
+        maxSummonSlots = 6;
+        maxArtifactSlots = 6;
         //ConstructRoleSlots();
         AddListeners();
     }
@@ -890,7 +890,7 @@ public class Player : ILeader {
         CharacterManager.Instance.RemoveCharacter(summon);
     }
     public Summon GetAvailableSummonOfType(SUMMON_TYPE type) {
-        List<Summon> choices = summons[type];
+        List<Summon> choices = summons[type].Where(x => !x.hasBeenUsed).ToList();
         return choices[Random.Range(0, choices.Count)];
     }
     public void AdjustSummonSlot(int adjustment) {
@@ -1086,6 +1086,7 @@ public class Player : ILeader {
             for (int i = 0; i < entrances.Count; i++) {
                 for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
                     LocationGridTile newEntrance = entrances[i].neighbourList[j];
+                    //if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
                     if (newEntrance.IsAtEdgeOfWalkableMap() && !entrances.Contains(newEntrance)) {
                         entrances.Add(newEntrance);
                         if (entrances.Count >= currentMinions.Count) {

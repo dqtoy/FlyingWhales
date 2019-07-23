@@ -10,7 +10,7 @@ public class Lycanthropy : Trait {
     public override bool isPersistent { get { return true; } }
 
     private int _level;
-    public Lycanthropy(int level) {
+    public Lycanthropy(int level = 1) {
         name = "Lycanthropy";
         description = "This character can transform into a wolf.";
         thoughtText = "[Character] can transform into a wolf.";

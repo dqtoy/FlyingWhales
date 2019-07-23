@@ -9,7 +9,7 @@ public class Vampiric : Trait {
     private int _flatHPMod;
     private int _flatSpeedMod;
 
-    public Vampiric(int level) {
+    public Vampiric(int level = 1) {
         name = "Vampiric";
         description = "This character sucks blood.";
         thoughtText = "[Character] sucks blood.";

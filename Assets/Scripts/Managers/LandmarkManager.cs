@@ -196,6 +196,7 @@ public class LandmarkManager : MonoBehaviour {
             AREA_TYPE settlementType = currSetting.settlementType;
             int citizenCount = currSetting.citizenCount;
             List<Region> regionChoices;
+            bool isNear = false;
             //Settlements with fewer inhabitants are spawned near the portal, while stronger, more populated settlements are spawned further away. 
             if (citizenRange.IsNearUpperBound(citizenCount)) {
                 //citizen count is more than half of the range. Place settlement at a far away region
@@ -204,6 +205,7 @@ public class LandmarkManager : MonoBehaviour {
                     regionChoices = nearRegions.Where(x => x.GetValidTilesForLandmarks().Count > 0).ToList();
                 }
             } else {
+                isNear = true;
                 regionChoices = nearRegions.Where(x => x.GetValidTilesForLandmarks().Count > 0).ToList();
                 if (regionChoices.Count == 0) { //if there are no valid near regions, place the landmark at a far region instead
                     regionChoices = farRegions.Where(x => x.GetValidTilesForLandmarks().Count > 0).ToList();
@@ -215,7 +217,14 @@ public class LandmarkManager : MonoBehaviour {
             }
             Region chosenRegion = regionChoices[Random.Range(0, regionChoices.Count)];
             List<HexTile> tileChoices = chosenRegion.GetValidTilesForLandmarks();
-            HexTile chosenRegionTile = tileChoices[Random.Range(0, tileChoices.Count)];
+            tileChoices = tileChoices.OrderBy(x => Vector2.Distance(playerArea.coreTile.transform.position, x.transform.position)).ToList();
+            HexTile chosenRegionTile = null;
+            if (isNear) {
+                chosenRegionTile = tileChoices[0];
+            } else {
+                chosenRegionTile = tileChoices[Random.Range(tileChoices.Count / 2, tileChoices.Count)];
+            }
+            
             Area newArea = CreateNewArea(chosenRegionTile, settlementType);
             CreateNewLandmarkOnTile(chosenRegionTile, LANDMARK_TYPE.PALACE);
             Faction faction = FactionManager.Instance.CreateNewFaction();
@@ -670,7 +679,7 @@ public class Region {
         List<HexTile> valid = new List<HexTile>();
         for (int i = 0; i < allTiles.Count; i++) {
             HexTile currTile = allTiles[i];
-            List<HexTile> tilesInRange = currTile.GetTilesInRange(2);
+            List<HexTile> tilesInRange = currTile.GetTilesInRange(3);
             //if current tile meets the ff requirements, it is valid
             // - Does not have a landamrk on it yet.
             // - Is not a water tile.
