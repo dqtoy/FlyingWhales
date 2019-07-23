@@ -210,9 +210,9 @@ public class Party {
         if (specificLocationHistory.Count >= 50) {
             specificLocationHistory.RemoveAt(0);
         }
-        if (owner.homeArea == _specificLocation) {
-            owner.OnReturnHome();
-        }
+        //if (owner.homeArea == _specificLocation) {
+        //    owner.OnReturnHome();
+        //}
     }
     public bool AddCharacter(Character character, bool isOwner = false) {
         if (!isFull && !_characters.Contains(character)) {
