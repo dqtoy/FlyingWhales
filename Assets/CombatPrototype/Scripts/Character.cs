@@ -400,6 +400,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     public LocationGridTile gridTileLocation {
         get {
+            if(marker == null) {
+                return null;
+            }
             if (!IsInOwnParty()) {
                 return currentParty.owner.gridTileLocation;
             }
@@ -642,16 +645,20 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     /// </summary>
     /// <param name="area">The invaded area.</param>
     protected virtual void OnSuccessInvadeArea(Area area) {
-        if (specificLocation == area) {
+        if (specificLocation == area && minion == null) {
             StopCurrentAction(false);
             specificLocation.RemoveCharacterFromLocation(this);
-            if (marker != null) {
-                DestroyMarker();
-            }
+            //marker.ClearAvoidInRange(false);
+            //marker.ClearHostilesInRange(false);
+            //marker.ClearPOIsInVisionRange();
+
             UnsubscribeSignals();
             RemoveAllNonPersistentTraits();
             ClearAllAwareness();
-            CancelAllJobsAndPlans();            
+            CancelAllJobsAndPlans();
+            if (marker != null) {
+                DestroyMarker();
+            }
         }
     }
     #endregion
@@ -3282,7 +3289,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (_level < CharacterManager.Instance.maxLevel) {
             _level += 1;
             //Add stats per level from class
-            if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.MELEE) {
+            if (_characterClass.rangeType == RANGE_TYPE.MELEE) {//_characterClass.attackType == ATTACK_TYPE.PHYSICAL &&  = Commented this because if the character is a MAGICAL MELEE, he cannot level up
                 AdjustAttackMod(_characterClass.attackPowerPerLevel);
                 AdjustSpeedMod(_characterClass.speedPerLevel);
                 AdjustMaxHPMod(_characterClass.hpPerLevel);
@@ -3329,7 +3336,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             amount -= (supposedLevel - 1);
         }
         //Add stats per level from class
-        if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.MELEE) {
+        if (_characterClass.rangeType == RANGE_TYPE.MELEE) {//_characterClass.attackType == ATTACK_TYPE.PHYSICAL &&  = Commented this because if the character is a MAGICAL MELEE, he cannot level up
             AdjustAttackMod(_characterClass.attackPowerPerLevel * amount);
             AdjustSpeedMod(_characterClass.speedPerLevel * amount);
             AdjustMaxHPMod(_characterClass.hpPerLevel * amount);
@@ -3383,7 +3390,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
 
         //Add stats per level from class
         int difference = _level - previousLevel;
-        if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.MELEE) {
+        if (_characterClass.rangeType == RANGE_TYPE.MELEE) {//_characterClass.attackType == ATTACK_TYPE.PHYSICAL &&  = Commented this because if the character is a MAGICAL MELEE, he cannot level up
             AdjustAttackMod(_characterClass.attackPowerPerLevel * difference);
             AdjustSpeedMod(_characterClass.speedPerLevel * difference);
             AdjustMaxHPMod(_characterClass.hpPerLevel * difference);
@@ -6184,7 +6191,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         //    log += " - thread has no recalculation plan";
         //}
         //Debug.LogWarning(log);
-        if (isDead) {
+        if (isDead || marker == null) {
             return;
         }
         if (goapThread.recalculationPlan != null && goapThread.recalculationPlan.isEnd) {

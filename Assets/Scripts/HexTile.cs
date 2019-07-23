@@ -1120,7 +1120,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         }
 
         if (this.areaOfTile != null) {
-            UIManager.Instance.ShowAreaInfo(this.areaOfTile);
+            if(this.areaOfTile == PlayerManager.Instance.player.homeArea) {
+                if(this.landmarkOnTile != null && this.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.DEMONIC_PORTAL) {
+                    UIManager.Instance.ShowAreaInfo(this.areaOfTile);
+                } else {
+                    Messenger.Broadcast(Signals.HIDE_MENUS);
+                }
+            } else {
+                UIManager.Instance.ShowAreaInfo(this.areaOfTile);
+            }
             //if (!this.landmarkOnTile.tileLocation.isCorrupted) {
             //    UIManager.Instance.ShowAreaInfo(this.areaOfTile);
             //} else {

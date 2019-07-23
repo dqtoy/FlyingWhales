@@ -98,19 +98,15 @@
     				<text>Your lead minion opened the tomb.</text>
     				<effects>
     					<effect effect="Gain" type="Combat_Ability" object="FEAR_SPELL" chance="35">
-    						<additionalText>
-    							A chilly wind went through the room and with a deep voice, it started speaking, "You have set me free, for this, I shall grant you my power! The power that can make any living creature hallucinate their deepest fears!"
+    						<additionalText>A chilly wind went through the room and with a deep voice, it started speaking, "You have set me free, for this, I shall grant you my power! The power that can make any living creature hallucinate their deepest fears!"
     						</additionalText>
     					</effect>
     					<effect effect="Lose" type="minion" object="Lead" chance="35">
-    						<additionalText>
-    							A chilly wind went through the room and with a deep voice, it started speaking, "You have set me free but my freedom comes with a price for this tomb cannot be empty. As the endless curse of this tomb says, 'The one who opens will replace the one who leaves." The tomb devoured your lead minion and was sealed once again.
+    						<additionalText>A chilly wind went through the room and with a deep voice, it started speaking, "You have set me free but my freedom comes with a price for this tomb cannot be empty. As the endless curse of this tomb says, 'The one who opens will replace the one who leaves." The tomb devoured your lead minion and was sealed once again.
     						</additionalText>
     					</effect>
     					<effect effect="Nothing" chance="40">
-    						<additionalText>
-    							It is empty.
-    						</additionalText>
+    						<additionalText>It is empty.</additionalText>
     					</effect>
     				</effects>
     			</event>
@@ -122,13 +118,11 @@
     				<text>You placed the Ankh of Anubis in his hand.</text>
     				<effects>
     					<effect effect="Gain" type="Intervention_Ability" object="RAISE_DEAD" chance="45">
-    						<additionalText>
-    							It's a perfect fit! The ghost of Anubis immeresed from the tomb, and blessed you with the power to raise dead for you have returned the Ankh to its place. The floot began shaking, and the room began collapsing. You quickly grabbed the Ankh again and got out of there.
+    						<additionalText>It's a perfect fit! The ghost of Anubis immeresed from the tomb, and blessed you with the power to raise dead for you have returned the Ankh to its place. The floot began shaking, and the room began collapsing. You quickly grabbed the Ankh again and got out of there.
     						</additionalText>
     					</effect>
     					<effect effect="Lose" type="Summon" object="Skeleton" chance="55">
-    						<additionalText>
-    							It's a perfect fit! The ghost of Anubis immeresed from the tomb, and blessed you with a Skeleton soldier for you have returned the Ankh to its place. The floot began shaking, and the room began collapsing. You quickly grabbed the Ankh again and got out of there.
+    						<additionalText>It's a perfect fit! The ghost of Anubis immeresed from the tomb, and blessed you with a Skeleton soldier for you have returned the Ankh to its place. The floot began shaking, and the room began collapsing. You quickly grabbed the Ankh again and got out of there.
     						</additionalText>
     					</effect>
     				</effects>
@@ -150,13 +144,11 @@
     				<text>You tried to cure the griffin.</text>
     				<effects>
     					<effect effect="Gain" type="Intervention_Ability" object="ENRAGE" chance="60">
-    						<additionalText>
-    							After several tries, you successfully extracted the weird aura of the griffin. You realize you can weaponize the aura, so you did.
+    						<additionalText>After several tries, you successfully extracted the weird aura of the griffin. You realize you can weaponize the aura, so you did.
     						</additionalText>
     					</effect>
     					<effect effect="Gain" type="All_Trait" object="Injured" chance="40">
-    						<additionalText>
-    							But it keeps resisting and attacking your minions. Your minions suffered injuries in the process. You decided it was no longer worth trying to cure it.
+    						<additionalText>But it keeps resisting and attacking your minions. Your minions suffered injuries in the process. You decided it was no longer worth trying to cure it.
     						</additionalText>
     					</effect>
     				</effects>
@@ -169,13 +161,11 @@
     				<text>You tried to kill it.</text>
     				<effects>
     					<effect effect="Lose" type="Minion" object="Lead" chance="10">
-    						<additionalText>
-    							You successfully slayed the griffin but one of your minions suffered a fatal injury. He did not make it.
+    						<additionalText>You successfully slayed the griffin but one of your minions suffered a fatal injury. He did not make it.
     						</additionalText>
     					</effect>
     					<effect effect="Nothing" chance="90">
-    						<additionalText>
-    							It was difficult but you successfully slayed the griffin.
+    						<additionalText>It was difficult but you successfully slayed the griffin.
     						</additionalText>
     					</effect>
     				</effects>

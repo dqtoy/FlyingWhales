@@ -87,6 +87,7 @@ public class CharacterAIPath : AILerp {
     }
     public override void SearchPath() {
         if (float.IsPositiveInfinity(destination.x)) return;
+        if (marker.character == null) return;
         _hasReachedTarget = false;
         if (onSearchPath != null) onSearchPath();
 
@@ -190,6 +191,15 @@ public class CharacterAIPath : AILerp {
         marker.ClearArrivalAction();
         interpolator.SetPath(null);
         marker.StopMovementOnly();
+    }
+    public void ResetThis() {
+        ResetEndReachedDistance();
+        ClearAllCurrentPathData();
+        doNotMove = 0;
+        blockerTraversalProvider = null;
+        onlyAllowedStructures = null;
+        notAllowedStructures = null;
+        isStopMovement = false;
     }
     public void SetNotAllowedStructures(STRUCTURE_TYPE[] notAllowedStructures) {
         this.notAllowedStructures = notAllowedStructures;

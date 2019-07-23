@@ -21,8 +21,13 @@ public class TablePoison : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         //**Effect 1**: Table - Add Trait (Poisoned)
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
-        LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
-        if (knownLoc.structure is Dwelling) {
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        LocationGridTile knownLoc = null;
+        if (awareness != null) {
+            knownLoc = awareness.knownGridLocation;
+        }
+        //LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
+        if (knownLoc != null && knownLoc.structure is Dwelling) {
             Dwelling dwelling = knownLoc.structure as Dwelling;
             for (int i = 0; i < dwelling.residents.Count; i++) {
                 //**Effect 2**: Owner/s - Add Trait (Sick)
@@ -161,8 +166,13 @@ public class TablePoison : GoapAction {
         if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
             return false;
         }
-        LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
-        if (knownLoc.structure is Dwelling) {
+        IAwareness awareness = actor.GetAwareness(poiTarget);
+        LocationGridTile knownLoc = null;
+        if (awareness != null) {
+            knownLoc = awareness.knownGridLocation;
+        }
+        //LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
+        if (knownLoc != null && knownLoc.structure is Dwelling) {
             Dwelling d = knownLoc.structure as Dwelling;
             if (d.residents.Count == 0) {
                 return false;

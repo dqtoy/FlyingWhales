@@ -23,7 +23,7 @@ public class Unconscious : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         crimeSeverity = CRIME_CATEGORY.NONE;
-        daysDuration = 144;
+        daysDuration = 0; //144
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER }; //, INTERACTION_TYPE.DRINK_BLOOD
         effects = new List<TraitEffect>();
     }

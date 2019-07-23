@@ -1086,12 +1086,11 @@ public class Player : ILeader {
             for (int i = 0; i < entrances.Count; i++) {
                 for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
                     LocationGridTile newEntrance = entrances[i].neighbourList[j];
-                    if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
-                        if (newEntrance.IsAtEdgeOfWalkableMap() && !entrances.Contains(newEntrance)) {
-                            entrances.Add(newEntrance);
-                            if (entrances.Count >= currentMinions.Count) {
-                                break;
-                            }
+                    //if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
+                    if (newEntrance.IsAtEdgeOfWalkableMap() && !entrances.Contains(newEntrance)) {
+                        entrances.Add(newEntrance);
+                        if (entrances.Count >= currentMinions.Count) {
+                            break;
                         }
                     }
                 }
@@ -1152,6 +1151,12 @@ public class Player : ILeader {
             PlayerUI.Instance.SuccessfulAreaCorruption();
             Area corruptedArea = AreaIsCorrupted();
             ResetThreat();
+            for (int i = 0; i < corruptedArea.charactersAtLocation.Count; i++) {
+                corruptedArea.charactersAtLocation[i].marker.ClearAvoidInRange(false);
+                corruptedArea.charactersAtLocation[i].marker.ClearHostilesInRange(false);
+                corruptedArea.charactersAtLocation[i].marker.ClearPOIsInVisionRange();
+                corruptedArea.charactersAtLocation[i].marker.ClearTerrifyingObjects();
+            }
             Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, corruptedArea);
         } else {
             string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
@@ -1179,6 +1184,7 @@ public class Player : ILeader {
             CombatAbilityButton abilityButton = PlayerUI.Instance.GetCombatAbilityButton(previousAbility);
             abilityButton?.UpdateInteractableState();
             InteriorMapManager.Instance.UnhighlightTiles();
+            CursorManager.Instance.ClearLeftClickActions();
             CursorManager.Instance.ClearRightClickActions();
             //GameManager.Instance.SetPausedState(false);
         } else {

@@ -104,18 +104,15 @@
             <text>You lied and tried to convince her that your intentions are good and pure.</text>
             <effects>
               <effect effect="Gain" type="All_Level" object="2" chance="10">
-                <additionalText>
-                  The deity was easily tricked by your words. She decided to help you and used her powers to make your minions stronger.
+                <additionalText>The deity was easily tricked by your words. She decided to help you and used her powers to make your minions stronger.
                 </additionalText>
               </effect>
               <effect effect="Gain" type="Level" object="Intervention Ability" chance="50">
-                <additionalText>
-                   The deity was easily tricked by your words. She decided to help you and give you a blessing to make one of your abilities stronger. 
+                <additionalText>The deity was easily tricked by your words. She decided to help you and give you a blessing to make one of your abilities stronger. 
                 </additionalText>
               </effect>
-              <effect effect="Lose" type="All_Level" object="1" chance="40">
-                <additionalText>
-                   The deity cannot be fooled. She caught on to you very quick. As a result, she attacked your minions with a powerful blast of energy, weakening all them.
+              <effect effect="Lose" type="All_Level" object="2" chance="40">
+                <additionalText>The deity cannot be fooled. She caught on to you very quick. As a result, she attacked your minions with a powerful blast of energy, weakening all of them.
                 </additionalText>
               </effect>
             </effects>
@@ -127,19 +124,16 @@
           <event>
             <text>You attacked the deity.</text>
             <effects>
-              <effect effect="Lose" type="All_Level" object="2" chance="40">
-                <additionalText>
-                  You managed to defeat the deity but as she was about to die, she used her remaining powers to send a powerful blast of energy, weakening all your minions.
+              <effect effect="Lose" type="Minion" object="Lead" chance="40">
+                <additionalText>You managed to defeat the deity but as she was about to die, she used her remaining powers to send a powerful energy laser, killing one of your minions.
                 </additionalText>
               </effect>
               <effect effect="Gain" type="All_Trait" object="Lethargic" chance="20">
-                <additionalText>
-                   You managed to defeat the deity but it was not easy. Your minions took considerable damage.
+                <additionalText>You managed to defeat the deity but it was not easy. Your minions took considerable damage.
                 </additionalText>
               </effect>
               <effect effect="Gain" type="All_Level" object="3" chance="40">
-                <additionalText>
-                   The deity didn't stand a chance against you. You extracted her powers from her corpse making your minions stronger.
+                <additionalText>The deity didn't stand a chance against you. You extracted her powers from her corpse making your minions stronger.
                 </additionalText>
               </effect>
             </effects>
