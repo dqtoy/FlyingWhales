@@ -1181,9 +1181,10 @@ public class UIManager : MonoBehaviour {
             int index = (itemToReplace.transform as RectTransform).GetSiblingIndex();
             itemToReplace.DeleteNotification();
             (newNotif.gameObject.transform as RectTransform).SetSiblingIndex(index);
-        } else {
-            (newNotif.gameObject.transform as RectTransform).SetAsFirstSibling();
-        }
+        } 
+        //else {
+        //    (newNotif.gameObject.transform as RectTransform).SetAsFirstSibling();
+        //}
         activeNotifications.Add(newNotif);
     }
     private void OnNotificationDestroyed(PlayerNotificationItem item) {
@@ -1191,8 +1192,8 @@ public class UIManager : MonoBehaviour {
     }
     public void OnClickExpand() {
         if(playerNotificationScrollRectTransform.sizeDelta.y == 1000f) {
-            playerNotificationScrollRectTransform.sizeDelta = new Vector2(playerNotificationScrollRectTransform.sizeDelta.x, 380f);
-        }else if (playerNotificationScrollRectTransform.sizeDelta.y == 380f) {
+            playerNotificationScrollRectTransform.sizeDelta = new Vector2(playerNotificationScrollRectTransform.sizeDelta.x, 194f);
+        }else if (playerNotificationScrollRectTransform.sizeDelta.y == 194f) {
             playerNotificationScrollRectTransform.sizeDelta = new Vector2(playerNotificationScrollRectTransform.sizeDelta.x, 1000f);
         }
         //Canvas.ForceUpdateCanvases();
