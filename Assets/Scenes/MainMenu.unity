@@ -16314,7 +16314,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridSizeX: 20
   gridSizeY: 15
-  regionCount: 6
+  regionCount: 5
   minSettltementCount: 5
   maxSettltementCount: 7
   minCitizenCount: 5

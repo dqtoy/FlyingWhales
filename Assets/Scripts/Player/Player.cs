@@ -921,6 +921,13 @@ public class Player : ILeader {
         List<Summon> all = GetAllSummons();
         return all[UnityEngine.Random.Range(0, all.Count)];
     }
+    private void ResetSummons() {
+        foreach (KeyValuePair<SUMMON_TYPE, List<Summon>> kvp in summons) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                kvp.Value[i].Reset();
+            }
+        }
+    }
     #endregion
 
     #region Artifacts
@@ -1158,6 +1165,7 @@ public class Player : ILeader {
                 corruptedArea.charactersAtLocation[i].marker.ClearTerrifyingObjects();
             }
             Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, corruptedArea);
+            ResetSummons();
         } else {
             string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
             PlayerUI.Instance.GameOver(gameOverText);

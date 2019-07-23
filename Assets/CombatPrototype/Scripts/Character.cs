@@ -779,7 +779,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             //AddInitialAwareness(gloomhollow);
         }
     }
-    public void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null) {
+    public virtual void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null) {
         if (!_isDead) {
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
