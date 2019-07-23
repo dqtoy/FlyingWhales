@@ -173,6 +173,8 @@ public class InteriorMapManager : MonoBehaviour {
         PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
         Messenger.Broadcast(Signals.AREA_MAP_CLOSED, closedArea);
         GameManager.Instance.SetPausedState(true);
+        GameManager.Instance.DayStarted(false);
+        GameManager.Instance.SetTick(96);
         return closedArea;
     }
     public void OnCreateAreaMap(AreaInnerTileMap newMap) {
