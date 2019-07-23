@@ -53,4 +53,8 @@ public class Artifact : TileObject {
         gridTileLocation.structure.RemovePOI(this);
     }
 
+    public void Reset() {
+        hasBeenUsed = false;
+    }
+
 }

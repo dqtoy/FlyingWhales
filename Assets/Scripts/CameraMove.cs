@@ -73,6 +73,9 @@ public class CameraMove : MonoBehaviour {
 #endif
 
     }
+    private void OnDestroy() {
+        RemoveListeners();
+    }
 
     public void Initialize() {
         Messenger.AddListener(Signals.GAME_LOADED, SetInitialCameraPosition);
@@ -80,6 +83,14 @@ public class CameraMove : MonoBehaviour {
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+    }
+
+    private void RemoveListeners() {
+        Messenger.RemoveListener(Signals.GAME_LOADED, SetInitialCameraPosition);
+        Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.RemoveListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
+        Messenger.RemoveListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
 
     #region Utilities

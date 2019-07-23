@@ -16,7 +16,12 @@ public class Necronomicon : Artifact {
         List<Character> characters = tile.parentAreaMap.area.GetAllDeadCharactersInArea();
         for (int i = 0; i < characters.Count; i++) {
             Character currCharacter = characters[i];
-            currCharacter.RaiseFromDeath(raiseDeadLevel, OnCharacterReturnedToLife);
+            if (currCharacter is Summon) {
+                //character is summon, not raising to life
+            } else {
+                currCharacter.RaiseFromDeath(raiseDeadLevel, OnCharacterReturnedToLife);
+            }
+            
         }
     }
     public override void LevelUp() {

@@ -24,7 +24,8 @@ public class InviteToMakeLove : GoapAction {
         if (!isTargetMissing && targetCharacter.IsInOwnParty()) {
             if (actor is SeducerSummon) {
                 SeducerSummon seducer = actor as SeducerSummon;
-                if (UnityEngine.Random.Range(0, 100) < seducer.seduceChance) {
+                if (UnityEngine.Random.Range(0, 100) < seducer.seduceChance && !targetCharacter.HasOtherCharacterInParty()
+                     && targetCharacter.stateComponent.currentState == null) {
                     SetState("Invite Success");
                 } else {
                     SetState("Invite Fail");
@@ -38,7 +39,6 @@ public class InviteToMakeLove : GoapAction {
                     SetState("Invite Fail");
                 }
             }
-            
         } else {
             SetState("Target Missing");
         }
@@ -123,20 +123,25 @@ public class InviteToMakeLove : GoapAction {
                 validBeds.AddRange(unownedStructures[i].GetTileObjectsOfType(TILE_OBJECT_TYPE.BED));
             }
         }
-        IPointOfInterest chosenBed = validBeds[Random.Range(0, validBeds.Count)];
 
-        MakeLove makeLove = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.MAKE_LOVE, actor, chosenBed, false) as MakeLove;
-        makeLove.SetTargetCharacter(target);
-        makeLove.Initialize();
-        GoapNode startNode = new GoapNode(null, makeLove.cost, makeLove);
-        GoapPlan makeLovePlan = new GoapPlan(startNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY }, GOAP_CATEGORY.HAPPINESS);
-        makeLovePlan.ConstructAllNodes();
-        actor.AddPlan(makeLovePlan, true);
-        AddTraitTo(target, "Wooed", actor);
-        actor.ownParty.AddCharacter(target);
-        target.marker.PlayIdle();
-        target.marker.Rotate(Quaternion.Euler(0f, 0f, 0f), true);
-        currentState.SetIntelReaction(InviteSuccessReactions);
+        if (validBeds.Count == 0) {
+            //No More valid beds, what to do?
+        } else {
+            IPointOfInterest chosenBed = validBeds[Random.Range(0, validBeds.Count)];
+            MakeLove makeLove = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.MAKE_LOVE, actor, chosenBed, false) as MakeLove;
+            makeLove.SetTargetCharacter(target);
+            makeLove.Initialize();
+            GoapNode startNode = new GoapNode(null, makeLove.cost, makeLove);
+            GoapPlan makeLovePlan = new GoapPlan(startNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY }, GOAP_CATEGORY.HAPPINESS);
+            makeLovePlan.ConstructAllNodes();
+            actor.AddPlan(makeLovePlan, true);
+            AddTraitTo(target, "Wooed", actor);
+            actor.ownParty.AddCharacter(target);
+            target.marker.PlayIdle();
+            target.marker.Rotate(Quaternion.Euler(0f, 0f, 0f), true);
+            currentState.SetIntelReaction(InviteSuccessReactions);
+        }
+        
     }
     private void PreInviteFail() {
         if (actor is SeducerSummon) {

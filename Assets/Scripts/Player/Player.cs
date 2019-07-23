@@ -655,7 +655,7 @@ public class Player : ILeader {
 #endif
 
         if (!onlyClickedCharacter && !character.isDead && AreaMapCameraMove.Instance.gameObject.activeSelf) {
-            if((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || AreaMapCameraMove.Instance.CanSee(character.marker.gameObject)) {
+            if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || (character.marker != null &&  AreaMapCameraMove.Instance.CanSee(character.marker.gameObject))) {
                 return true;
             }
         } else if (onlyClickedCharacter && UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
@@ -1070,6 +1070,14 @@ public class Player : ILeader {
         maxArtifactSlots = Mathf.Clamp(maxArtifactSlots, 0, MAX_ARTIFACT);
         //TODO: validate if adjusted max artifacts can accomodate current summons
     }
+    private void ResetArtifacts() {
+        for (int i = 0; i < artifacts.Length; i++) {
+            Artifact currArtifact = artifacts[i];
+            if (currArtifact != null) {
+                currArtifact.Reset();
+            }
+        }
+    }
     #endregion
 
     #region Invasion
@@ -1166,6 +1174,7 @@ public class Player : ILeader {
             }
             Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, corruptedArea);
             ResetSummons();
+            ResetArtifacts();
         } else {
             string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
             PlayerUI.Instance.GameOver(gameOverText);

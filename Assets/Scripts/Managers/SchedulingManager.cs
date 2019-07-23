@@ -89,7 +89,18 @@ public class SchedulingManager : MonoBehaviour {
 			}
 		}
 	}
-
+    public void ClearAllSchedulesBy(Character character) {
+        Dictionary<GameDate, List<ScheduledAction>> temp = new Dictionary<GameDate, List<ScheduledAction>>(schedules);
+        foreach (KeyValuePair<GameDate, List<ScheduledAction>> kvp in temp) {
+            List<ScheduledAction> newList = new List<ScheduledAction>(kvp.Value);
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                if (kvp.Value[i].scheduler == character) {
+                    newList.Remove(kvp.Value[i]);
+                }
+            }
+            schedules[kvp.Key] = newList;
+        }
+    }
     public string GenerateScheduleID() {
         //Reference: https://stackoverflow.com/questions/11313205/generate-a-unique-id
         return Guid.NewGuid().ToString("N");

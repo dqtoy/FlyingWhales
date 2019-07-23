@@ -444,6 +444,7 @@ public class CharacterMarker : PooledObject {
         hoverEnterAction = null;
         hoverExitAction = null;
         destinationTile = null;
+        actionIcon.gameObject.SetActive(false);
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
         //InteriorMapManager.Instance.RemoveAgent(pathfindingAI);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);

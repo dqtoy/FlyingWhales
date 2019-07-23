@@ -216,6 +216,7 @@ public class Minion {
         character.RemoveAllNonPersistentTraits();
         character.ResetToFullHP();
         character.DestroyMarker();
+        SchedulingManager.Instance.ClearAllSchedulesBy(this.character);
     }
     #endregion
 

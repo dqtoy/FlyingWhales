@@ -155,6 +155,7 @@ public class InteriorMapManager : MonoBehaviour {
         area.areaMap.Open();
         currentlyShowingMap = area.areaMap;
         currentlyShowingArea = area;
+        UIManager.Instance.SetTimeControlsState(true);
         Messenger.Broadcast(Signals.AREA_MAP_OPENED, area);
 
         if (centerCameraOnMapCenter) {
@@ -172,6 +173,7 @@ public class InteriorMapManager : MonoBehaviour {
         currentlyShowingArea = null;
         PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
         Messenger.Broadcast(Signals.AREA_MAP_CLOSED, closedArea);
+        UIManager.Instance.SetTimeControlsState(false);
         GameManager.Instance.SetPausedState(true);
         return closedArea;
     }
