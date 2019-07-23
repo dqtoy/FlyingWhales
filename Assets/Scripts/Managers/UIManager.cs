@@ -1087,9 +1087,11 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private Button returnToWorldBtn;
     private void OnAreaMapOpened(Area area) {
         returnToWorldBtn.interactable = true;
+        ShowPlayerNotificationArea();
     }
     private void OnAreaMapClosed(Area area) {
         returnToWorldBtn.interactable = false;
+        HidePlayerNotificationArea();
     }
     //public void PointerClickWorldMap(BaseEventData bed) {
     //    //PointerEventData ped = bed as PointerEventData;
@@ -1207,6 +1209,13 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < playerNotifTransparentImages.Length; i++) {
             playerNotifTransparentImages[i].color = new Color(playerNotifTransparentImages[i].color.r, playerNotifTransparentImages[i].color.g, playerNotifTransparentImages[i].color.b, 25f/255f);
         }
+    }
+    public void ShowPlayerNotificationArea() {
+        Utilities.DestroyChildren(playerNotifScrollRect.content);
+        playerNotifGO.SetActive(true);
+    }
+    public void HidePlayerNotificationArea() {
+        playerNotifGO.SetActive(false);
     }
     #endregion
 
