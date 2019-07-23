@@ -291,7 +291,11 @@ public class GameManager : MonoBehaviour {
             DayStarted(false);
         }
     }
-    private void DayStarted(bool broadcastUI = true) {
+    public void SetTick(int amount) {
+        this.tick = amount;
+        Messenger.Broadcast(Signals.UPDATE_UI);
+    }
+    public void DayStarted(bool broadcastUI = true) {
         if (broadcastUI) {
             Messenger.Broadcast(Signals.UPDATE_UI);
         }
