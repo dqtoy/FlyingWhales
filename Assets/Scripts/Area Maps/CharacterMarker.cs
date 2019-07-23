@@ -848,8 +848,8 @@ public class CharacterMarker : PooledObject {
     /// Used for placing a character for the first time.
     /// </summary>
     /// <param name="tile">The tile the character should be placed at.</param>
-    public void InitialPlaceMarkerAt(LocationGridTile tile) {
-        PlaceMarkerAt(tile);
+    public void InitialPlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
+        PlaceMarkerAt(tile, addToLocation);
         pathfindingAI.UpdateMe();
         for (int i = 0; i < colliders.Length; i++) {
             colliders[i].enabled = true;

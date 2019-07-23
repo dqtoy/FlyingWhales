@@ -582,7 +582,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         gameDate.AddTicks(1);
         SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions(), this);
 #endif
-        marker.InitialPlaceMarkerAt(tile);
+        marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
         AddInitialAwareness();
         SubscribeToSignals();
     }
