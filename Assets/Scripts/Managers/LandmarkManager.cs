@@ -222,7 +222,7 @@ public class LandmarkManager : MonoBehaviour {
             if (isNear) {
                 chosenRegionTile = tileChoices[0];
             } else {
-                chosenRegionTile = tileChoices.Last();
+                chosenRegionTile = tileChoices[Random.Range(tileChoices.Count / 2, tileChoices.Count)];
             }
             
             Area newArea = CreateNewArea(chosenRegionTile, settlementType);
@@ -679,7 +679,7 @@ public class Region {
         List<HexTile> valid = new List<HexTile>();
         for (int i = 0; i < allTiles.Count; i++) {
             HexTile currTile = allTiles[i];
-            List<HexTile> tilesInRange = currTile.GetTilesInRange(2);
+            List<HexTile> tilesInRange = currTile.GetTilesInRange(3);
             //if current tile meets the ff requirements, it is valid
             // - Does not have a landamrk on it yet.
             // - Is not a water tile.
