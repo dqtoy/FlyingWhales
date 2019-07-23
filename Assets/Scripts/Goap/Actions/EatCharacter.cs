@@ -14,6 +14,9 @@ public class EatCharacter : GoapAction {
     //protected override void ConstructRequirementOnBuildGoapTree() {
     //    _requirementOnBuildGoapTreeAction = RequirementOnBuildGoapTree;
     //}
+    protected override void ConstructRequirement() {
+        _requirementAction = Requirement;
+    }
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget }, HasUnconsciousOrDeadTarget);
         if (actor.GetNormalTrait("Cannibal") != null) {
