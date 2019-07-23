@@ -1099,7 +1099,7 @@ public class Player : ILeader {
                 }
             }
             for (int i = 0; i < entrances.Count; i++) {
-                currentMinions[i].character.marker.PlaceMarkerAt(entrances[i]);
+                currentMinions[i].character.marker.InitialPlaceMarkerAt(entrances[i]);
             }
             for (int i = 0; i < currentMinions.Count; i++) {
                 Minion currMinion = currentMinions[i];

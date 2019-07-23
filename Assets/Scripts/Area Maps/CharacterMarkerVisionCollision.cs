@@ -6,6 +6,8 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
 
     public CharacterMarker parentMarker;
 
+    public bool isInitialized;
+
     public List<IPointOfInterest> poisInRangeButDiffStructure = new List<IPointOfInterest>();
 
     private void OnDisable() {
@@ -21,9 +23,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     }
 
     public void Initialize() {
+        isInitialized = true;
         Messenger.AddListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
     }
     public void Reset() {
+        isInitialized = false;
         Messenger.RemoveListener<Character, LocationStructure>(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, OnCharacterArrivedAtStructure);
         OnDisable();
     }

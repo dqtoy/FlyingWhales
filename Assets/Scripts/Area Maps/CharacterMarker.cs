@@ -101,12 +101,6 @@ public class CharacterMarker : PooledObject {
         terrifyingObjects = new List<IPointOfInterest>();
         avoidInRange = new List<Character>();
         attackSpeedMeter = 0f;
-
-        GameObject collisionTriggerGO = GameObject.Instantiate(InteriorMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
-        collisionTriggerGO.transform.localPosition = Vector3.zero;
-        collisionTrigger = collisionTriggerGO.GetComponent<POICollisionTrigger>();
-        collisionTrigger.Initialize(character);
-
         //flee
         SetHasFleePath(false);
 
@@ -123,7 +117,7 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
 
         PathfindingManager.Instance.AddAgent(pathfindingAI);
-        visionCollision.Initialize();
+        //visionCollision.Initialize();
     }
 
     #region Monobehavior
@@ -467,6 +461,7 @@ public class CharacterMarker : PooledObject {
         visionCollision.Reset();
         //pathfindingAI.ClearAllCurrentPathData();
         GameObject.Destroy(collisionTrigger.gameObject);
+        collisionTrigger = null;
         for (int i = 0; i < colliders.Length; i++) {
             colliders[i].enabled = false;
         }
@@ -859,10 +854,13 @@ public class CharacterMarker : PooledObject {
         for (int i = 0; i < colliders.Length; i++) {
             colliders[i].enabled = true;
         }
+        visionCollision.Initialize();
+        CreateCollisionTrigger();
     }
     public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
         this.gameObject.transform.SetParent(tile.parentAreaMap.objectsParent);
         pathfindingAI.Teleport(tile.centeredWorldLocation);
+        pathfindingAI.UpdateMe();
         if (addToLocation) {
             tile.structure.location.AddCharacterToLocation(character);
             tile.structure.AddCharacterAtLocation(character, tile);
@@ -876,6 +874,13 @@ public class CharacterMarker : PooledObject {
                 colliders[i].enabled = true;
             }
         }
+        //if (!visionCollision.isInitialized) {
+        //    visionCollision.Initialize();
+            
+        //}
+        //if (collisionTrigger == null) {
+        //    CreateCollisionTrigger();
+        //}
     }
     public void PlaceMarkerAt(Vector3 localPos, Vector3 lookAt) {
         StartCoroutine(Positioner(localPos, lookAt));
@@ -932,6 +937,12 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Vision Collision
+    private void CreateCollisionTrigger() {
+        GameObject collisionTriggerGO = GameObject.Instantiate(InteriorMapManager.Instance.characterCollisionTriggerPrefab, this.transform);
+        collisionTriggerGO.transform.localPosition = Vector3.zero;
+        collisionTrigger = collisionTriggerGO.GetComponent<POICollisionTrigger>();
+        collisionTrigger.Initialize(character);
+    }
     public void AddPOIAsInVisionRange(IPointOfInterest poi) {
         if (!inVisionPOIs.Contains(poi)) {
             inVisionPOIs.Add(poi);
