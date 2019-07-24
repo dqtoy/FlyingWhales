@@ -1213,7 +1213,7 @@ public class Player : ILeader {
             CursorManager.Instance.AddLeftClickAction(() => SetCurrentActiveCombatAbility(null));
             CursorManager.Instance.AddRightClickAction(() => SetCurrentActiveCombatAbility(null));
             abilityButton?.UpdateInteractableState();
-            GameManager.Instance.SetPausedState(true);
+            //GameManager.Instance.SetPausedState(true);
         }
     }
     private void TryExecuteCurrentActiveCombatAbility() {
