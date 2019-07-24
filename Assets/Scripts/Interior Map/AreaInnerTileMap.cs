@@ -1220,7 +1220,7 @@ public class AreaInnerTileMap : MonoBehaviour {
             float sample = Mathf.PerlinNoise(xCoord, yCoord);
             float sampleDetail = Mathf.PerlinNoise(xCoordDetail, yCoordDetail);
             //ground
-            if (area.coreTile.biomeType == BIOMES.SNOW) {
+            if (area.coreTile.biomeType == BIOMES.SNOW || area.coreTile.biomeType == BIOMES.TUNDRA) {
                 if (sample < 0.5f) {
                     currTile.groundType = LocationGridTile.Ground_Type.Snow;
                     groundTilemap.SetTile(currTile.localPlace, snowTile);
@@ -1268,7 +1268,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         } else {
                             if (Random.Range(0, 100) < 50) {
                                 //shrubs
-                                if (area.coreTile.biomeType != BIOMES.SNOW) {
+                                if (area.coreTile.biomeType != BIOMES.SNOW && area.coreTile.biomeType != BIOMES.TUNDRA) {
                                     currTile.hasDetail = true;
                                     detailsTilemap.SetTile(currTile.localPlace, shrubTile);
                                     currTile.SetTileState(LocationGridTile.Tile_State.Empty);
