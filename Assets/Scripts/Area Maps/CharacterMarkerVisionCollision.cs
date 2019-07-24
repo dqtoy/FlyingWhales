@@ -129,7 +129,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
-            || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST) {
+            || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST
+            || targetCharacter.role.roleType == CHARACTER_ROLE.MINION
+            || parentMarker.character.role.roleType == CHARACTER_ROLE.MINION
+            || (targetCharacter is Summon)
+            || (parentMarker.character is Summon)) {
             return false;
         }
         if(!parentMarker.character.IsHostileWith(targetCharacter)) {
@@ -152,7 +156,11 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
-            || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST) {
+            || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST
+            || targetCharacter.role.roleType == CHARACTER_ROLE.MINION
+            || parentMarker.character.role.roleType == CHARACTER_ROLE.MINION 
+            || (targetCharacter is Summon)
+            || (parentMarker.character is Summon)) {
             return false;
         }
         if (!parentMarker.character.IsHostileWith(targetCharacter)) {

@@ -2422,6 +2422,10 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
     }
     public bool CanCharacterReact() {
+        if((this is Summon) || role.roleType == CHARACTER_ROLE.MINION) {
+            //Cannot react if summon or minion
+            return false;
+        }
         if (stateComponent.currentState != null && !stateComponent.currentState.isDone) {
             if (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                 //Character must not react if he/she is in flee or engage state

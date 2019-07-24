@@ -101,16 +101,16 @@
     			<event>
     				<text>You accepted the wanderer to be your minion but you realize he is better as a creature that can wreak havoc.</text>
     				<effects>
-    					<effect effect="Gain" type="Summon" object="Wolf" chance="65">
+    					<effect effect="Gain" type="Summon" object="Wolf" chance="75">
     						<additionalText>You inflicted him with Lycanthropy and he transformed into a wolf, a loyal and blood-thirsty wolf.
     						</additionalText>
     					</effect>
-    					<effect effect="Nothing" chance="30">
+    					<effect effect="Nothing" chance="10">
     						<additionalText>You inflicted him with Lycanthropy but his body is rejecting the transformation. He dies horribly at your sight.
     						</additionalText>
     					</effect>
-    					<effect effect="Lose" type="Minion" object="Lead" chance="5">
-    						<additionalText>You inflicted him with Lycanthropy but as he transformed into a blood-thirsty wolf, he quickly attacked one of your minions. You managed to kill him but at the cost of one of your minions. 
+    					<effect effect="Gain" type="Trait" object="Injured" chance="15">
+    						<additionalText>You inflicted him with Lycanthropy but as he transformed into a blood-thirsty wolf, he quickly attacked one of your minions. You managed to kill him but one of your minions got injured in the process. 
     						</additionalText>
     					</effect>
     				</effects>
