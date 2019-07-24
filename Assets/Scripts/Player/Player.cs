@@ -9,8 +9,8 @@ public class Player : ILeader {
     private const int MAX_INTEL = 3;
     public const int MAX_MINIONS = 5;
     public const int MAX_THREAT = 100;
-    private const int MAX_SUMMONS = 6;
-    private const int MAX_ARTIFACT = 6;
+    private const int MAX_SUMMONS = 3;
+    private const int MAX_ARTIFACT = 3;
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
@@ -71,8 +71,8 @@ public class Player : ILeader {
         summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
         artifacts = new Artifact[MAX_ARTIFACT];
         shareIntelAbility = new ShareIntel();
-        maxSummonSlots = 6;
-        maxArtifactSlots = 6;
+        maxSummonSlots = 1;
+        maxArtifactSlots = 1;
         //ConstructRoleSlots();
         AddListeners();
     }
@@ -773,7 +773,7 @@ public class Player : ILeader {
     #endregion
 
     #region Summons
-    public void GainSummon(SUMMON_TYPE type, int level = 5) {
+    public void GainSummon(SUMMON_TYPE type, int level = 1) {
         Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, playerFaction, playerArea);
         newSummon.SetLevel(level);
         if (GetTotalSummonsCount() < maxSummonSlots) {
