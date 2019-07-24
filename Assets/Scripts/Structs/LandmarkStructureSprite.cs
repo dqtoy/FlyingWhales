@@ -13,4 +13,8 @@ public struct LandmarkStructureSprite {
         this.tintSprite = tintSprite;
         this.animation = animation;
     }
+
+    public static LandmarkStructureSprite Empty {
+        get { return new LandmarkStructureSprite() { mainSprite = null, tintSprite = null, animation = null }; }
+    }
 }

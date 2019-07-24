@@ -95,7 +95,7 @@ namespace worldcreator {
             LandmarkManager.Instance.RemoveArea(_area);
             _area.UnhighlightArea();
             while (_area.tiles.Count != 0) {
-                _area.RemoveTile(_area.tiles[0], false);
+                _area.RemoveTile(_area.tiles[0]);
             }
             GameObject.Destroy(this.gameObject);
         }

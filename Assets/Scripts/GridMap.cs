@@ -214,8 +214,6 @@ public class GridMap : MonoBehaviour {
 
 
                 currHex.DisableColliders();
-                currHex.unpassableGO.GetComponent<PolygonCollider2D>().enabled = true;
-                currHex.unpassableGO.SetActive(true);
                 id++;
             }
         }

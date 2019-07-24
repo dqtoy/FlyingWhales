@@ -8,35 +8,21 @@ public class Area {
 
     public int id { get; private set; }
     public string name { get; private set; }
-    public bool isHighlighted { get; private set; }
-    public bool hasBeenInspected { get; private set; }
     public bool isDead { get; private set; }
     public AREA_TYPE areaType { get; private set; }
     public HexTile coreTile { get; private set; }
     public Color areaColor { get; private set; }
     public Faction owner { get; private set; }
     public Faction previousOwner { get; private set; }
-    public Area attackTarget { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
-    public List<BaseLandmark> exposedTiles { get; private set; }
-    public List<BaseLandmark> unexposedTiles { get; private set; }
     public List<Character> areaResidents { get; private set; }
     public List<Character> charactersAtLocation { get; private set; }
-    public List<Character> attackCharacters { get; private set; }
     public List<Log> history { get; private set; }
-    public int initialResidents { get; private set; }
-    public int monthlyActions { get; private set; }
     public JobQueue jobQueue { get; private set; }
     public LocationStructure prison { get; private set; }
-
-    //defenders
-    public int maxDefenderGroups { get; private set; }
-    public int initialDefenderGroups { get; private set; }
     public List<RACE> possibleOccupants { get; private set; }
     public List<InitialRaceSetup> initialSpawnSetup { get; private set; } //only to be used when unoccupied
-    public Dictionary<JOB, List<INTERACTION_TYPE>> jobInteractionTypes { get; private set; }
-    public int monthlySupply { get; private set; }
 
     //special tokens
     public List<SpecialToken> possibleSpecialTokenSpawns { get; private set; }
@@ -44,8 +30,6 @@ public class Area {
 
     //structures
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; private set; }
-    public int dungeonSupplyRangeMin { get; private set; }
-    public int dungeonSupplyRangeMax { get; private set; }
     public AreaInnerTileMap areaMap { get; private set; }
 
     //misc
@@ -54,24 +38,10 @@ public class Area {
     public bool isBeingTracked { get; private set; }
 
     //for testing
-    public List<string> supplyLog { get; private set; } //limited to 100 entries
     public List<string> charactersAtLocationHistory { get; private set; }
 
     public Race defaultRace { get; private set; }
     private RACE _raceType;
-    private List<HexTile> outerTiles;
-    private List<SpriteRenderer> outline;
-    private int _offenseTaskWeightMultiplier;
-
-    //Food
-    public int MAX_EDIBLE_PLANT = 20;
-    public int MAX_SMALL_ANIMAL = 15;
-
-    public int SPAWN_BERRY_COUNT = 4;
-    public int SPAWN_MUSHROOM_COUNT = 3;
-    public int SPAWN_RABBIT_COUNT = 3;
-    public int SPAWN_RAT_COUNT = 4;
-
     public bool hasBeenInvaded { get; private set; }
 
     #region getters
@@ -120,26 +90,17 @@ public class Area {
         tiles = new List<HexTile>();
         areaResidents = new List<Character>();
         charactersAtLocation = new List<Character>();
-        exposedTiles = new List<BaseLandmark>();
-        unexposedTiles = new List<BaseLandmark>();
         history = new List<Log>();
         areaColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-        jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         initialSpawnSetup = new List<InitialRaceSetup>();
-        supplyLog = new List<string>();
         defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         charactersAtLocationHistory = new List<string>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         jobQueue = new JobQueue(null);
-        SetDungeonSupplyRange(0, 0);
-        SetMonthlyActions(2);
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         AddTile(coreTile);
-#if !WORLD_CREATION_TOOL
-        //StartSupplyLine();
-#endif
         nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
         possibleOccupants = new List<RACE>();
     }
@@ -150,25 +111,17 @@ public class Area {
         tiles = new List<HexTile>();
         areaResidents = new List<Character>();
         charactersAtLocation = new List<Character>();
-        exposedTiles = new List<BaseLandmark>();
-        unexposedTiles = new List<BaseLandmark>();
         history = new List<Log>();
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
-        jobInteractionTypes = new Dictionary<JOB, List<INTERACTION_TYPE>>();
         charactersAtLocationHistory = new List<string>();
         possibleSpecialTokenSpawns = new List<SpecialToken>();
-        supplyLog = new List<string>();
         jobQueue = new JobQueue(null);
         if (data.raceSetup != null) {
             initialSpawnSetup = new List<InitialRaceSetup>(data.raceSetup);
         } else {
             initialSpawnSetup = new List<InitialRaceSetup>();
         }
-        SetDungeonSupplyRange(data.dungeonSupplyRangeMin, data.dungeonSupplyRangeMax);
-        SetMonthlySupply(data.monthlySupply);
-        SetInitialResidents(data.initialResidents);
-        SetMonthlyActions(data.monthlyActions);
         LoadStructures(data);
         AssignPrison();
 #if WORLD_CREATION_TOOL
@@ -176,7 +129,6 @@ public class Area {
 #else
         SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
 #endif
-
         possibleOccupants = new List<RACE>();
         if (data.possibleOccupants != null) {
             possibleOccupants.AddRange(data.possibleOccupants);
@@ -243,9 +195,6 @@ public class Area {
             }
         }
     }
-    public void SetMonthlySupply(int amount) {
-        monthlySupply = amount;
-    }
     private void GenerateDefaultRace() {
         if (initialSpawnSetup.Count > 0) {
             InitialRaceSetup chosenSetup = initialSpawnSetup[UnityEngine.Random.Range(0, initialSpawnSetup.Count)];
@@ -261,67 +210,34 @@ public class Area {
     public void SetCoreTile(HexTile tile) {
         coreTile = tile;
     }
-    public void AddTile(List<HexTile> tiles, bool determineOuterTiles = true) {
+    public void AddTile(List<HexTile> tiles) {
         for (int i = 0; i < tiles.Count; i++) {
-            AddTile(tiles[i], false);
+            AddTile(tiles[i]);
         }
-#if !WORLD_CREATION_TOOL
-        //if (determineExposedTiles) {
-        //    DetermineExposedTiles();
-        //}
-        if (determineOuterTiles) {
-            UpdateOuterTiles();
-        }
-#endif
     }
-    public void AddTile(HexTile tile, bool determineOuterTiles = true) {
+    public void AddTile(HexTile tile) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             tile.SetArea(this);
             if (this.coreTile == null) {
                 SetCoreTile(tile);
             }
-#if !WORLD_CREATION_TOOL
-            DetermineIfTileIsExposed(tile);
-            if (determineOuterTiles) {
-                UpdateOuterTiles();
-            }
-#endif
             OnTileAddedToArea(tile);
             Messenger.Broadcast(Signals.AREA_TILE_ADDED, this, tile);
         }
     }
-    public void RemoveTile(List<HexTile> tiles, bool determineOuterTiles = true) {
+    public void RemoveTile(List<HexTile> tiles) {
         for (int i = 0; i < tiles.Count; i++) {
-            RemoveTile(tiles[i], false, false);
+            RemoveTile(tiles[i]);
         }
-#if !WORLD_CREATION_TOOL
-        //if (determineExposedTiles) {
-        //    DetermineExposedTiles();
-        //}
-        if (determineOuterTiles) {
-            UpdateOuterTiles();
-        }
-#endif
     }
-    public void RemoveTile(HexTile tile, bool determineExposedTiles = true, bool determineOuterTiles = true) {
+    public void RemoveTile(HexTile tile) {
         if (tiles.Remove(tile)) {
             tile.SetArea(null);
             if (coreTile == tile) {
                 SetCoreTile(null);
             }
             OnTileRemovedFromArea(tile);
-
-#if !WORLD_CREATION_TOOL
-            if (tile.landmarkOnTile != null) {
-                if (!exposedTiles.Remove(tile.landmarkOnTile)) {
-                    unexposedTiles.Remove(tile.landmarkOnTile);
-                }
-            }
-            if (determineOuterTiles) {
-                UpdateOuterTiles();
-            }
-#endif
             Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
         }
     }
@@ -332,20 +248,7 @@ public class Area {
         }
         //update tile visuals if necessary
         if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-            //addedTile.SetBaseSprite(PlayerManager.Instance.playerAreaFloorSprites[Random.Range(0, PlayerManager.Instance.playerAreaFloorSprites.Length)]);
-            //if (coreTile.id != addedTile.id) {
-            //    addedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(PlayerManager.Instance.playerAreaDefaultStructureSprites[Random.Range(0, PlayerManager.Instance.playerAreaDefaultStructureSprites.Length)], null));
-            //}
             Biomes.Instance.CorruptTileVisuals(addedTile);
-        } else if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
-            //addedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
-            if (coreTile.id == addedTile.id) {
-                addedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ancientRuinTowerSprite, null));
-            } else {
-                if (Utilities.IsEven(tiles.Count)) {
-                    addedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ancientRuinBlockerSprite, null));
-                }
-            }
         }
     }
     private void OnTileRemovedFromArea(HexTile removedTile) {
@@ -369,97 +272,6 @@ public class Area {
         //        }
         //    }
         //}
-    }
-    public void DetermineIfTileIsExposed(HexTile currTile) {
-        if (currTile.landmarkOnTile == null) {
-            return; //if there is no landmark on the tile, or it's landmark is already ruined, do not count as exposed
-        }
-        //check if the tile has a flat empty tile as a neighbour
-        //if it does, it is an exposed tile
-        bool isExposed = false;
-        for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
-            HexTile currNeighbour = currTile.AllNeighbours[j];
-            if (!isExposed && (currNeighbour.landmarkOnTile == null)
-                && currNeighbour.elevationType == ELEVATION.PLAIN) {
-                unexposedTiles.Remove(currTile.landmarkOnTile);
-                if (!exposedTiles.Contains(currTile.landmarkOnTile)) {
-                    exposedTiles.Add(currTile.landmarkOnTile);
-                    currTile.SetExternalState(true);
-                    currTile.SetInternalState(false);
-                }
-                isExposed = true;
-            }
-            DetermineIfNeighborTileIsExposed(currNeighbour);
-        }
-        if (!isExposed) {
-            exposedTiles.Remove(currTile.landmarkOnTile);
-            if (!unexposedTiles.Contains(currTile.landmarkOnTile)) {
-                unexposedTiles.Add(currTile.landmarkOnTile);
-                currTile.SetExternalState(false);
-                currTile.SetInternalState(true);
-            }
-        }
-    }
-    public void DetermineIfNeighborTileIsExposed(HexTile currTile) {
-        if (currTile.landmarkOnTile == null || currTile.areaOfTile == null || (currTile.areaOfTile != null && currTile.areaOfTile != this)) {
-            return; //if there is no landmark on the tile, or it's landmark is already ruined, do not count as exposed
-        }
-        //check if the tile has a flat empty tile as a neighbour
-        //if it does, it is an exposed tile
-        bool isExposed = false;
-        for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
-            HexTile currNeighbour = currTile.AllNeighbours[j];
-            if ((currNeighbour.landmarkOnTile == null)
-                && currNeighbour.elevationType == ELEVATION.PLAIN) {
-                unexposedTiles.Remove(currTile.landmarkOnTile);
-                if (!exposedTiles.Contains(currTile.landmarkOnTile)) {
-                    exposedTiles.Add(currTile.landmarkOnTile);
-                    currTile.SetExternalState(true);
-                    currTile.SetInternalState(false);
-                }
-                isExposed = true;
-                break;
-            }
-
-        }
-        if (!isExposed) {
-            exposedTiles.Remove(currTile.landmarkOnTile);
-            if (!unexposedTiles.Contains(currTile.landmarkOnTile)) {
-                unexposedTiles.Add(currTile.landmarkOnTile);
-                currTile.SetExternalState(false);
-                currTile.SetInternalState(true);
-            }
-        }
-    }
-    private void UpdateOuterTiles() {
-        outerTiles = new List<HexTile>();
-        outline = new List<SpriteRenderer>();
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            HEXTILE_DIRECTION[] neighbourDirections = Utilities.GetEnumValues<HEXTILE_DIRECTION>();
-            for (int j = 0; j < neighbourDirections.Length; j++) {
-                HEXTILE_DIRECTION currDirection = neighbourDirections[j];
-                HexTile currNeighbour = currTile.GetNeighbour(currDirection);
-                if (currNeighbour == null || currNeighbour.areaOfTile == null || currNeighbour.areaOfTile.id != this.id) {
-                    if (!outerTiles.Contains(currTile)) {
-                        outerTiles.Add(currTile);
-                    }
-                    SpriteRenderer border = currTile.GetBorder(currDirection);
-                    if (border != null) {
-                        outline.Add(border);
-                    }
-                }
-            }
-            //for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
-            //    HexTile currNeighbour = currTile.AllNeighbours[j];
-            //    if (currNeighbour.areaOfTile == null || currNeighbour.areaOfTile.id != this.id) {
-            //        if (!outerTiles.Contains(currTile)) {
-            //            outerTiles.Add(currTile);
-            //        }
-            //        outline.Add(currTile.GetBorder(currTile.GetNeighbourDirection(currNeighbour)));
-            //    }
-            //}
-        }
     }
     #endregion
 
@@ -513,13 +325,6 @@ public class Area {
             tiles[i].SetStructureTint(color);
         }
     }
-    public void SetOutlineState(bool state) {
-        isHighlighted = state;
-        for (int i = 0; i < outline.Count; i++) {
-            SpriteRenderer renderer = outline[i];
-            renderer.gameObject.SetActive(state);
-        }
-    }
     public void SetLocationPortrait(Sprite portrait) {
         locationPortrait = portrait;
     }
@@ -558,10 +363,6 @@ public class Area {
 
     #region Utilities
     public void LoadAdditionalData() {
-        //DetermineExposedTiles();
-        //Messenger.AddListener<Interaction>(Signals.INTERACTION_ENDED, RemoveEventTargettingThis); 
-        //GenerateInitialDefenders();
-        //GenerateInitialResidents();
         CreateNameplate();
     }
     private void UpdateBorderColors() {
@@ -574,21 +375,6 @@ public class Area {
                 tiles[i].SetBorderColor(owner.factionColor);
             }
         }
-    }
-    public void SetHasBeenInspected(bool state) {
-        hasBeenInspected = state;
-        //if (state) {
-        //    if (owner != null && owner.id != PlayerManager.Instance.player.playerFaction.id) {
-        //        PlayerManager.Instance.player.AddIntel(owner.factionIntel);
-        //    }
-        //    if (id != PlayerManager.Instance.player.playerArea.id) {
-        //        PlayerManager.Instance.player.AddIntel(locationIntel);
-        //    }
-        //}
-    }
-    public void SetAttackTargetAndCharacters(Area target, List<Character> characters) {
-        attackTarget = target;
-        attackCharacters = characters;
     }
     public void Death() {
         if (!isDead) {
@@ -644,6 +430,13 @@ public class Area {
     }
     public void SetHasBeenInvaded(bool state) {
         hasBeenInvaded = state;
+    }
+    public void SetOutlineState(bool state) {
+        SpriteRenderer[] borders = coreTile.GetAllBorders();
+        for (int i = 0; i < borders.Length; i++) {
+            SpriteRenderer renderer = borders[i];
+            renderer.gameObject.SetActive(state);
+        }
     }
     #endregion
 
@@ -891,12 +684,6 @@ public class Area {
             return 0;
         }
         return structures[structureType].Where(x => !x.IsOccupied()).Count();
-    }
-    public void SetInitialResidents(int initialResidents) {
-        this.initialResidents = initialResidents;
-    }
-    public void SetMonthlyActions(int amount) {
-        monthlyActions = amount;
     }
     public Character GetRandomCharacterAtLocationExcept(Character character) {
         List<Character> choices = new List<Character>();
@@ -1215,16 +1002,6 @@ public class Area {
     }
     public bool HasStructure(STRUCTURE_TYPE type) {
         return structures.ContainsKey(type);
-    }
-    public void SetDungeonSupplyRange(int min, int max) {
-        SetDungeonSupplyMinRange(min);
-        SetDungeonSupplyMaxRange(max);
-    }
-    public void SetDungeonSupplyMinRange(int min) {
-        dungeonSupplyRangeMin = min;
-    }
-    public void SetDungeonSupplyMaxRange(int max) {
-        dungeonSupplyRangeMax = max;
     }
     public void SetAreaMap(AreaInnerTileMap map) {
         areaMap = map;

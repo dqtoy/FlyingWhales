@@ -22,31 +22,15 @@ public class LandmarkManager : MonoBehaviour {
         get { return allAreas.Where(x => x != PlayerManager.Instance.player.playerArea).ToList(); }
     }
 
-    public Sprite ancientRuinTowerSprite;
-    public Sprite ancientRuinBlockerSprite;
-    public Sprite ruinedSprite;
-
     [SerializeField] private GameObject landmarkGO;
 
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
 
-    public RaceClassListDictionary defaultRaceDefenders;
     public AreaTypeSpriteDictionary locationPortraits; //NOTE: Move this to world creation when time permits.
 
     [Header("Inner Structures")]
     [SerializeField] private GameObject innerStructurePrefab;
     [SerializeField] private Transform areaMapsParent;
-
-    public static List<Point> mapNeighborPoints = new List<Point> {
-        new Point(0,1), //up
-        new Point(1,1), //upper right
-        new Point(1,0), //right
-        new Point(1,-1), //bottom right
-        new Point(0,-1), //bottom
-        new Point(-1,-1), //bottom left
-        new Point(-1,0), //left
-        new Point(-1,1), //upper left
-    };
 
     #region Monobehaviours
     private void Awake() {
@@ -56,11 +40,6 @@ public class LandmarkManager : MonoBehaviour {
         ConstructLandmarkData();
         LoadLandmarkTypeDictionary();
     }
-    //private void Update() {
-    //    if (hasPendingMapGenerationJob && pendingJob.IsCompleted) {
-    //        OnFinishedGeneratingAreaMap(pendingAreaMap);
-    //    }
-    //}
     #endregion
 
     #region Landmarks
@@ -93,9 +72,6 @@ public class LandmarkManager : MonoBehaviour {
         BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType);
 #if !WORLD_CREATION_TOOL
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-        if (newLandmark.tileLocation.areaOfTile != null) {
-            newLandmark.tileLocation.areaOfTile.DetermineIfTileIsExposed(newLandmark.tileLocation);
-        }
 #endif
         return newLandmark;
     }
@@ -116,9 +92,6 @@ public class LandmarkManager : MonoBehaviour {
         }
 
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-        if (newLandmark.tileLocation.areaOfTile != null) {
-            newLandmark.tileLocation.areaOfTile.DetermineIfTileIsExposed(newLandmark.tileLocation);
-        }
 #endif
         return newLandmark;
     }
@@ -539,19 +512,6 @@ public class LandmarkManager : MonoBehaviour {
         }
         return null;
     }
-    public Area GetRandomAreaOfType(AREA_TYPE type) {
-        List<Area> filteredAreas = new List<Area>();
-        for (int i = 0; i < allAreas.Count; i++) {
-            Area area = allAreas[i];
-            if (area.areaType == type) {
-                filteredAreas.Add(area);
-            }
-        }
-        if(filteredAreas.Count > 0) {
-            return filteredAreas[UnityEngine.Random.Range(0, filteredAreas.Count)];
-        }
-        return null;
-    }
     public void OwnArea(Faction newOwner, RACE newRace, Area area) {
         if (area.owner != null) {
             UnownArea(area);
@@ -576,18 +536,6 @@ public class LandmarkManager : MonoBehaviour {
             currArea.LoadAdditionalData();
         }
     }
-    public WeightedDictionary<AreaCharacterClass> GetDefaultClassWeights(RACE race) {
-        if (defaultRaceDefenders.ContainsKey(race)) {
-            WeightedDictionary<AreaCharacterClass> weights = new WeightedDictionary<AreaCharacterClass>();
-            for (int i = 0; i < defaultRaceDefenders[race].Count; i++) {
-                RaceAreaDefenderSetting currSetting = defaultRaceDefenders[race][i];
-                weights.AddElement(new AreaCharacterClass() { className = currSetting.className }, currSetting.weight);
-            }
-            return weights;
-        }
-        throw new System.Exception("There is no default defender weights for " + race.ToString());
-        //return null;
-    }
     public Vector2 GetAreaNameplatePosition(Area area) {
         //switch (area.name) {
         //    case "Cardell":
@@ -600,19 +548,6 @@ public class LandmarkManager : MonoBehaviour {
         Vector2 defaultPos = area.coreTile.transform.position;
         defaultPos.y -= 1.25f;
         return defaultPos;
-    }
-    public Area GetRandomUnownedAreaWithAvailableStructure(STRUCTURE_TYPE structureType) {
-        List<Area> areaChoices = new List<Area>();
-        for (int i = 0; i < allAreas.Count; i++) {
-            Area currArea = allAreas[i];
-            if(allAreas[i].owner == null && allAreas[i].GetNumberOfUnoccupiedStructure(structureType) > 0) {
-                areaChoices.Add(currArea);
-            }
-        }
-        if(areaChoices.Count > 0) {
-            return areaChoices[UnityEngine.Random.Range(0, areaChoices.Count)];
-        }
-        return null;
     }
     #endregion
 
@@ -673,7 +608,6 @@ public class LandmarkManager : MonoBehaviour {
 }
 
 public class Region {
-
     public List<HexTile> tiles { get; private set; }
     public HexTile coreTile { get; private set; }
 

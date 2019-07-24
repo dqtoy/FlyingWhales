@@ -11,21 +11,10 @@ public class AreaSaveData {
     public List<int> tileData; //list of tile id's that belong to this region
     public Color32 areaColor;
     public int ownerID;
-    public int maxDefenderGroups;
-    public int initialDefenderGroups;
-    public int initialDefenderLevel;
-    //public int supplyCapacity;
     public List<RACE> possibleOccupants;
     public List<InitialRaceSetup> raceSetup;
-    //public int initialSupply;
     public int residentCapacity;
-    public int monthlySupply;
-    public int monthlyActions;
-    //public List<string> possibleSpecialTokenSpawns;
-    public int initialResidents;
     public Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures;
-    public int dungeonSupplyRangeMin;
-    public int dungeonSupplyRangeMax;
 
     public AreaSaveData(Area area) {
         areaID = area.id;
@@ -43,23 +32,8 @@ public class AreaSaveData {
         } else {
             ownerID = area.owner.id;
         }
-        maxDefenderGroups = area.maxDefenderGroups;
-        initialDefenderGroups = area.initialDefenderGroups;
-        //supplyCapacity = area.supplyCapacity;
         possibleOccupants = new List<RACE>(area.possibleOccupants);
         raceSetup = new List<InitialRaceSetup>(area.initialSpawnSetup);
-        //initialSupply = area.initialSupply;
-        //residentCapacity = area.residentCapacity;
-        monthlySupply = area.monthlySupply;
-        initialResidents = area.initialResidents;
-        monthlyActions = area.monthlyActions;
         structures = area.structures;
-        dungeonSupplyRangeMin = area.dungeonSupplyRangeMin;
-        dungeonSupplyRangeMax = area.dungeonSupplyRangeMax;
-        //possibleSpecialTokenSpawns = new List<string>();
-        //for (int i = 0; i < area.possibleSpecialTokenSpawns.Count; i++) {
-        //    SpecialToken currToken = area.possibleSpecialTokenSpawns[i];
-        //    possibleSpecialTokenSpawns.Add(currToken.name);
-        //}
     }
 }

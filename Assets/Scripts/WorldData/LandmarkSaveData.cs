@@ -22,22 +22,7 @@ public class LandmarkSaveData {
         landmarkName = landmark.landmarkName;
         locationCoordinates = new Point(landmark.tileLocation.xCoordinate, landmark.tileLocation.yCoordinate);
         landmarkType = landmark.specificLandmarkType;
-        if (landmark is MonsterSpawnerLandmark) {
-            MonsterSet monsterChoices = (landmark as MonsterSpawnerLandmark).monsterChoices;
-            if (monsterChoices == null) {
-                chosenMonsterSet = -1;
-            } else {
-                LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-                for (int i = 0; i < data.monsterSets.Count; i++) {
-                    if (data.monsterSets[i] == monsterChoices) {
-                        chosenMonsterSet = i;
-                        break;
-                    }
-                }
-            }
-        } else {
-            chosenMonsterSet = -1;
-        }
+        chosenMonsterSet = -1;
 
         //scenarioWeights = landmark.scenarios.dictionary;
         //eventTriggerWeight = landmark.eventTriggerWeight;

@@ -92,8 +92,6 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.GenerateOuterGrid(data);
         CameraMove.Instance.CalculateCameraBounds();
 
-        Biomes.Instance.LoadPassableStates(GridMap.Instance.hexTiles, GridMap.Instance.outerGridList);
-
         UIManager.Instance.InitializeUI();
         InteriorMapManager.Instance.Initialize();
 

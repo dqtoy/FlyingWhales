@@ -19,7 +19,7 @@ public class PlayerManager : MonoBehaviour {
     public COMBAT_ABILITY[] allCombatAbilities;
 
     [SerializeField] private Sprite[] _playerAreaFloorSprites;
-    [SerializeField] private Sprite[] _playerAreaDefaultStructureSprites;
+    [SerializeField] private LandmarkStructureSprite[] _playerAreaDefaultStructureSprites;
 
     public Dictionary<LANDMARK_TYPE, CurrenyCost> playerStructureTypes = new Dictionary<LANDMARK_TYPE, CurrenyCost>() {
         { LANDMARK_TYPE.DEMONIC_PORTAL, new CurrenyCost{ amount = 0, currency = CURRENCY.SUPPLY } },
@@ -41,7 +41,7 @@ public class PlayerManager : MonoBehaviour {
     public Sprite[] playerAreaFloorSprites {
         get { return _playerAreaFloorSprites; }
     }
-    public Sprite[] playerAreaDefaultStructureSprites {
+    public LandmarkStructureSprite[] playerAreaDefaultStructureSprites {
         get { return _playerAreaDefaultStructureSprites; }
     }
     #endregion
@@ -74,7 +74,7 @@ public class PlayerManager : MonoBehaviour {
         UIManager.Instance.SetTimeControlsState(false);
     }
     private void OnChooseStartingTile(HexTile tile) {
-        if (tile.areaOfTile != null || tile.landmarkOnTile != null || !tile.isPassable) {
+        if (tile.areaOfTile != null || tile.landmarkOnTile != null) {
             Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "That is not a valid starting tile!", false);
             return;
         }
