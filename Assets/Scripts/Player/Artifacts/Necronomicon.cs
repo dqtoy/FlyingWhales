@@ -19,7 +19,7 @@ public class Necronomicon : Artifact {
             if (currCharacter is Summon) {
                 //character is summon, not raising to life
             } else {
-                currCharacter.RaiseFromDeath(raiseDeadLevel, OnCharacterReturnedToLife);
+                currCharacter.RaiseFromDeath(raiseDeadLevel, OnCharacterReturnedToLife, PlayerManager.Instance.player.playerFaction);
             }
             
         }
@@ -35,6 +35,7 @@ public class Necronomicon : Artifact {
         CharacterState state = character.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, gridTileLocation.parentAreaMap.area);
         state.SetIsUnending(true);
     }
+
 
     public override string ToString() {
         return "Necronomicon";

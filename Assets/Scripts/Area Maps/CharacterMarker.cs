@@ -437,16 +437,12 @@ public class CharacterMarker : PooledObject {
     #region Object Pool
     public override void Reset() {
         base.Reset();
-        //StopMovement();
-        //if (currentMoveCoroutine != null) {
-        //    StopCoroutine(currentMoveCoroutine);
-        //}
+        Debug.Log(GameManager.Instance.TodayLogString() + "reset marker: " + name);
         hoverEnterAction = null;
         hoverExitAction = null;
         destinationTile = null;
         actionIcon.gameObject.SetActive(false);
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
-        //InteriorMapManager.Instance.RemoveAgent(pathfindingAI);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
@@ -458,9 +454,7 @@ public class CharacterMarker : PooledObject {
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
-        //Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         visionCollision.Reset();
-        //pathfindingAI.ClearAllCurrentPathData();
         GameObject.Destroy(collisionTrigger.gameObject);
         collisionTrigger = null;
         for (int i = 0; i < colliders.Length; i++) {
@@ -899,7 +893,7 @@ public class CharacterMarker : PooledObject {
         Rotate(lookAt, true);
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
-        if (character.race == RACE.SKELETON) {
+        if (character.race == RACE.SKELETON || character is Summon) {
             character.DestroyMarker();
         } else {
             for (int i = 0; i < colliders.Length; i++) {
