@@ -140,6 +140,7 @@ public class Summon : Character {
         RemoveAllNonPersistentTraits();
         ClearAllAwareness();
         CancelAllJobsAndPlans();
+        ResetToFullHP();
     }
 
 }
