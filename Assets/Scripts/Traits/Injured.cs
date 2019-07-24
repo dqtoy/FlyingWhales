@@ -54,7 +54,7 @@ public class Injured : Trait {
                     gainedFromDoing.states["Target Injured"].AddArrangedLog("injured", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
                 }
             }
-            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _sourceCharacter);
+            //Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _sourceCharacter);
         }
     }
     public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {

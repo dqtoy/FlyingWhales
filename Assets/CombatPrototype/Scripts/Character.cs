@@ -3294,9 +3294,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (GetNormalTrait("Spooked") != null) {
             return false;
         }
-        if (GetNormalTrait("Injured") != null) {
-            return false;
-        }
+        //if (GetNormalTrait("Injured") != null) {
+        //    return false;
+        //}
         return true;
     }
     #endregion
@@ -6386,19 +6386,19 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                 //    log += "\n - Plan is currently being recalculated, skipping...";
                 //    continue; //skip plan
                 //}
-                if (IsPlanCancelledDueToInjury(plan.currentNode.action)) {
-                    log += "\n - Action's plan is cancelled due to injury, dropping plan...";
-                    PrintLogIfActive(log);
-                    if (allGoapPlans.Count == 1) {
-                        DropPlan(plan, true);
-                        willGoIdleState = false;
-                        break;
-                    } else {
-                        DropPlan(plan, true);
-                        i--;
-                        continue;
-                    }
-                }
+                //if (IsPlanCancelledDueToInjury(plan.currentNode.action)) {
+                //    log += "\n - Action's plan is cancelled due to injury, dropping plan...";
+                //    PrintLogIfActive(log);
+                //    if (allGoapPlans.Count == 1) {
+                //        DropPlan(plan, true);
+                //        willGoIdleState = false;
+                //        break;
+                //    } else {
+                //        DropPlan(plan, true);
+                //        i--;
+                //        continue;
+                //    }
+                //}
                 if (plan.currentNode.action.IsHalted()) {
                     log += "\n - Action " + plan.currentNode.action.goapName + " is waiting, skipping...";
                     continue;
