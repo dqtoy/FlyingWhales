@@ -81,9 +81,11 @@ public class GoapAction {
             if (targetMissing) {
                 return targetMissing;
             } else {
-                Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
-                if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
-                    return true;
+                if(actor != poiTarget) {
+                    Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
+                    if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
+                        return true;
+                    }
                 }
                 return targetMissing;
             }

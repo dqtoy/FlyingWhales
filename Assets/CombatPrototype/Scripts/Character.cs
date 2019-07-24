@@ -589,6 +589,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
 
     #region Signals
     protected void SubscribeToSignals() {
+        if(minion != null) {
+            Debug.LogError(name + " is a minion and has subscribed to the signals!");
+        }
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
@@ -791,6 +794,10 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
     }
     public virtual void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null) {
+        if(minion != null) {
+            minion.Death(cause, deathFromAction, responsibleCharacter);
+            return;
+        }
         if (!_isDead) {
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
@@ -854,9 +861,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             //    RemoveRelationship(characterRels[i]);
             //}
 
-            if (_minion != null) {
-                PlayerManager.Instance.player.RemoveMinion(_minion);
-            }
+            //if (_minion != null) {
+            //    PlayerManager.Instance.player.RemoveMinion(_minion);
+            //}
 
             //ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
             //deathTile.RemoveCharacterHere(this);
@@ -870,7 +877,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             RemoveAllNonPersistentTraits();
 
             marker.OnDeath(deathTile);
-            _numOfWaitingForGoapThread = 0; //for raise dead
+            SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             AddTrait(dead, gainedFromDoing: deathFromAction);
@@ -3230,11 +3237,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             //if (currentClosestHostile.GetNormalTrait("Injured") == null) {
             //    loserResults.AddElement("Injured", 10);
             //}
-            if(minion == null) {
+            if (!isDead) {
                 loserResults.AddElement("Death", 5);
             }
 
-            if(loserResults.Count > 0) {
+            if (loserResults.Count > 0) {
                 string result = loserResults.PickRandomElementGivenWeights();
                 attackSummary += "\ncombat result is " + result; ;
                 switch (result) {
@@ -6097,6 +6104,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     #endregion
 
     #region Goap
+    public void SetNumWaitingForGoapThread(int amount) {
+        _numOfWaitingForGoapThread = amount;
+    }
     protected void ConstructInitialGoapAdvertisementActions() {
         poiGoapActions = new List<INTERACTION_TYPE>();
         poiGoapActions.Add(INTERACTION_TYPE.CARRY_CHARACTER);
@@ -6412,20 +6422,23 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                     //Wait for the character to be in its own party before doing the action
                     if (plan.currentNode.action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                         Character targetCharacter = plan.currentNode.action.poiTarget as Character;
-                        Invisible invisible = targetCharacter.GetNormalTrait("Invisible") as Invisible;
-                        if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
-                            log += "\n - " + targetCharacter.name + " is invisible, drop plan and remove job in queue...";
-                            PrintLogIfActive(log);
-                            if (allGoapPlans.Count == 1) {
-                                DropPlan(plan, true);
-                                willGoIdleState = false;
-                                break;
-                            } else {
-                                DropPlan(plan, true);
-                                i--;
-                                continue;
+                        if(targetCharacter != this) {
+                            Invisible invisible = targetCharacter.GetNormalTrait("Invisible") as Invisible;
+                            if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
+                                log += "\n - " + targetCharacter.name + " is invisible, drop plan and remove job in queue...";
+                                PrintLogIfActive(log);
+                                if (allGoapPlans.Count == 1) {
+                                    DropPlan(plan, true);
+                                    willGoIdleState = false;
+                                    break;
+                                } else {
+                                    DropPlan(plan, true);
+                                    i--;
+                                    continue;
+                                }
                             }
                         }
+
                         if (!targetCharacter.IsInOwnParty() && targetCharacter.currentParty != _ownParty) {
                             log += "\n - " + targetCharacter.name + " is not in its own party, waiting and skipping...";
                             PrintLogIfActive(log);
