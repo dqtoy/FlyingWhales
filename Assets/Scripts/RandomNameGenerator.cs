@@ -308,6 +308,8 @@ public class RandomNameGenerator : MonoBehaviour {
         //generatedElvenCityNames = new MarkovNameGenerator(baseElvenKingdomNames, 2, 5);
         //generatedElvenFemaleNames = new MarkovNameGenerator(baseElvenFemaleNames, 3, 4);
         //generatedElvenMaleNames = new MarkovNameGenerator(baseElvenMaleNames, 3, 4);
+    }
+    private void Start() {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
     }
 

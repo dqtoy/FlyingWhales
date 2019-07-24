@@ -53,10 +53,10 @@ public class InflictCannibalism : PlayerJobAction {
         return false;
     }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
-        if (targetCharacter.isDead || character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
+        if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Cannibal") != null) {
@@ -87,13 +87,16 @@ public class InflictCannibalism : PlayerJobAction {
     #endregion
 
     private bool CanTarget(Character targetCharacter) {
-        if (targetCharacter.isDead) {
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        //if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
-        //    return false;
-        //}
+        if (targetCharacter.race == RACE.SKELETON) {
+            return false;
+        }
         if (targetCharacter.GetNormalTrait("Cannibal") != null) {
+            return false;
+        }
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
         return true;

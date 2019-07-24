@@ -31,16 +31,13 @@ public class Disable : PlayerJobAction {
     }
 
     protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
-        if (targetPOI.isDisabledByPlayer) {
+        if (!(targetPOI is TileObject) || targetPOI.gridTileLocation == null || targetPOI.isDisabledByPlayer) {
             return false;
         }
         return base.CanPerformActionTowards(character, targetPOI);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
-        if (!(targetPOI is TileObject)) {
-            return false;
-        }
-        if(targetPOI.gridTileLocation == null) {
+        if (!(targetPOI is TileObject) || targetPOI.gridTileLocation == null || targetPOI.isDisabledByPlayer) {
             return false;
         }
         return base.CanTarget(targetPOI);

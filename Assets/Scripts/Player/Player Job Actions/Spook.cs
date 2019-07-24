@@ -52,7 +52,7 @@ public class Spook : PlayerJobAction {
         return false;
     }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
-        if (targetCharacter.isDead || character.id == targetCharacter.id) {
+        if (targetCharacter.isDead) {
             return false;
         }
         if (!targetCharacter.IsInOwnParty()) {
@@ -93,15 +93,12 @@ public class Spook : PlayerJobAction {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        //if (targetCharacter.marker.inVisionPOIs.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).ToList().Count == 0) {
-        //    return false;
-        //}
         if (targetCharacter.GetNormalTrait("Spooked") != null) {
             return false;
         }
-        //if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
-        //    return false;
-        //}
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
         return true;
     }
 }

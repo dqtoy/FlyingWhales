@@ -21,7 +21,7 @@ public class Provoke : PlayerJobAction {
     }
 
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
-        if (targetCharacter.isDead || character.id == targetCharacter.id) {
+        if (targetCharacter.isDead) {
             return false;
         }
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.faction.id == FactionManager.Instance.neutralFaction.id) {
