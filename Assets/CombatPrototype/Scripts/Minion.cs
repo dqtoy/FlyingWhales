@@ -151,7 +151,7 @@ public class Minion {
         unlockedInterventionSlots += amount;
         unlockedInterventionSlots = Mathf.Clamp(unlockedInterventionSlots, 0, MAX_INTERVENTION_ABILITY_SLOT);
     }
-    public void AddInterventionAbility(PlayerJobAction ability) {
+    public void AddInterventionAbility(PlayerJobAction ability, bool showNewAbilityUI = false) {
         int currentInterventionAbilityCount = GetCurrentInterventionAbilityCount();
         if(currentInterventionAbilityCount < unlockedInterventionSlots) {
             for (int i = 0; i < interventionAbilities.Length; i++) {
@@ -159,6 +159,9 @@ public class Minion {
                     interventionAbilities[i] = ability;
                     ability.SetMinion(this);
                     Messenger.Broadcast(Signals.MINION_LEARNED_INTERVENE_ABILITY, this, ability);
+                    if (showNewAbilityUI) {
+                        PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(this, ability);
+                    }
                     break;
                 }
             }
@@ -181,8 +184,8 @@ public class Minion {
         }
     }
     private void RejectAbility(object rejectedObj) { }
-    public void AddInterventionAbility(INTERVENTION_ABILITY ability) {
-        AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(ability));
+    public void AddInterventionAbility(INTERVENTION_ABILITY ability, bool showNewAbilityUI = false) {
+        AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(ability), showNewAbilityUI);
     }
     public int GetCurrentInterventionAbilityCount() {
         int count = 0;

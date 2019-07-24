@@ -1,0 +1,71 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class NewAbilityUI : MonoBehaviour {
+
+    [Header("Minion")]
+    [SerializeField] private CharacterPortrait minionPortrait;
+    [SerializeField] private TextMeshProUGUI minionText;
+
+    [Header("New Ability")]
+    [SerializeField] private Image abilityIcon;
+    [SerializeField] private TextMeshProUGUI abilityText;
+
+    private Minion minion;
+
+    private List<System.Action> pendingReplaceActions = new List<System.Action>();
+
+    //string identifierToLevelUp = this identifies what to level up for the particular minion, whether it's Combat Ability, Intervention Ability, Summon, or Artifact
+    //if it is a Summon or Artifact, since it is not attached to a minion, load all player summons or artifacts
+    public void ShowNewAbilityUI(Minion minionToLevelUp, object ability) {
+        if (this.gameObject.activeInHierarchy) {
+            pendingReplaceActions.Add(() => ShowNewAbilityUI(minionToLevelUp, ability));
+            return;
+        }
+        UIManager.Instance.Pause();
+        UpdateMinionToLevelUp(minionToLevelUp);
+        UpdateNewAbility(ability);
+        this.gameObject.SetActive(true);
+    }
+
+    private void UpdateMinionToLevelUp(Minion minion) {
+        this.minion = minion;
+        minionPortrait.GeneratePortrait(this.minion.character);
+        string text = this.minion.character.name;
+        text += "\nLvl. " + this.minion.character.level + " " + this.minion.character.raceClassName;
+        minionText.text = text;
+    }
+
+    public void UpdateNewAbility(object obj) {
+        if (obj is PlayerJobAction) {
+            PlayerJobAction action = obj as PlayerJobAction;
+            abilityIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
+            string text = action.name;
+            text += "\nDescription: " + action.description;
+            abilityText.text = text;
+        } else if (obj is CombatAbility) {
+            CombatAbility ability = obj as CombatAbility;
+            abilityIcon.sprite = PlayerManager.Instance.GetCombatAbilitySprite(ability.name);
+            string text = ability.name;
+            text += "\nDescription: " + ability.description;
+            abilityText.text = text;
+        }
+    }
+
+    private void Close() {
+        UIManager.Instance.Unpause();
+        this.gameObject.SetActive(false);
+        if (pendingReplaceActions.Count > 0) {
+            System.Action pending = pendingReplaceActions[0];
+            pendingReplaceActions.RemoveAt(0);
+            pending.Invoke();
+        }
+    }
+
+    public void OnClickOk() {
+        Close();
+    }
+}
