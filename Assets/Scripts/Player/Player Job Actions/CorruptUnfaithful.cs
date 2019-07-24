@@ -54,7 +54,7 @@ public class CorruptUnfaithful : PlayerJobAction {
     }
 
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
-        if (targetCharacter.isDead || character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
@@ -88,13 +88,16 @@ public class CorruptUnfaithful : PlayerJobAction {
     #endregion
 
     private bool CanTarget(Character targetCharacter) {
-        if (targetCharacter.isDead) {
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
+        if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Unfaithful") != null) {
+            return false;
+        }
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
         return true;

@@ -78,6 +78,69 @@ public class Minion {
     public void SetIndexDefaultSort(int index) {
         indexDefaultSort = index;
     }
+    public void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null) {
+        if (!character.isDead) {
+            Area deathLocation = character.ownParty.specificLocation;
+            LocationStructure deathStructure = character.currentStructure;
+            LocationGridTile deathTile = character.gridTileLocation;
+
+            character.SetIsDead(true);
+            character.SetPOIState(POI_STATE.INACTIVE);
+            CombatManager.Instance.ReturnCharacterColorToPool(character.characterColor);
+
+            if (character.currentParty.specificLocation == null) {
+                throw new Exception("Specific location of " + character.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
+            }
+            if (character.stateComponent.currentState != null) {
+                character.stateComponent.currentState.OnExitThisState();
+            } else if (character.stateComponent.stateToDo != null) {
+                character.stateComponent.SetStateToDo(null);
+            }
+            character.CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, character, "target is already dead");
+            if (character.currentAction != null && !character.currentAction.cannotCancelAction) {
+                character.currentAction.StopAction();
+            }
+            if (character.ownParty.specificLocation != null && character.isHoldingItem) {
+                character.DropAllTokens(character.ownParty.specificLocation, character.currentStructure, deathTile, true);
+            }
+
+            //clear traits that need to be removed
+            character.traitsNeededToBeRemoved.Clear();
+
+            if (!character.IsInOwnParty()) {
+                character.currentParty.RemoveCharacter(character);
+            }
+            character.ownParty.PartyDeath();
+
+            if (character.role != null) {
+                character.role.OnDeath(character);
+            }
+
+            character.RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
+
+            for (int i = 0; i < character.normalTraits.Count; i++) {
+                character.normalTraits[i].OnDeath(character);
+            }
+
+            character.RemoveAllNonPersistentTraits();
+
+            character.marker.OnDeath(deathTile);
+            character.SetNumWaitingForGoapThread(0); //for raise dead
+            Dead dead = new Dead();
+            dead.SetCharacterResponsibleForTrait(responsibleCharacter);
+            character.AddTrait(dead, gainedFromDoing: deathFromAction);
+            Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
+
+            character.CancelAllJobsAndPlans();
+
+            Debug.Log(GameManager.Instance.TodayLogString() + character.name + " died of " + cause);
+            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            character.AddHistory(log);
+            character.specificLocation.AddHistory(log);
+        }
+    }
 
     #region Intervention Abilities
     public void SetUnlockedInterventionSlots(int amount) {
@@ -88,7 +151,7 @@ public class Minion {
         unlockedInterventionSlots += amount;
         unlockedInterventionSlots = Mathf.Clamp(unlockedInterventionSlots, 0, MAX_INTERVENTION_ABILITY_SLOT);
     }
-    public void AddInterventionAbility(PlayerJobAction ability) {
+    public void AddInterventionAbility(PlayerJobAction ability, bool showNewAbilityUI = false) {
         int currentInterventionAbilityCount = GetCurrentInterventionAbilityCount();
         if(currentInterventionAbilityCount < unlockedInterventionSlots) {
             for (int i = 0; i < interventionAbilities.Length; i++) {
@@ -96,6 +159,9 @@ public class Minion {
                     interventionAbilities[i] = ability;
                     ability.SetMinion(this);
                     Messenger.Broadcast(Signals.MINION_LEARNED_INTERVENE_ABILITY, this, ability);
+                    if (showNewAbilityUI) {
+                        PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(this, ability);
+                    }
                     break;
                 }
             }
@@ -118,8 +184,8 @@ public class Minion {
         }
     }
     private void RejectAbility(object rejectedObj) { }
-    public void AddInterventionAbility(INTERVENTION_ABILITY ability) {
-        AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(ability));
+    public void AddInterventionAbility(INTERVENTION_ABILITY ability, bool showNewAbilityUI = false) {
+        AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(ability), showNewAbilityUI);
     }
     public int GetCurrentInterventionAbilityCount() {
         int count = 0;
@@ -215,6 +281,15 @@ public class Minion {
         character.CancelAllJobsAndPlans();
         character.RemoveAllNonPersistentTraits();
         character.ResetToFullHP();
+        if (character.isDead) {
+            character.SetIsDead(false);
+            character.SetPOIState(POI_STATE.ACTIVE);
+            if (character.ownParty == null) {
+                character.CreateOwnParty();
+                character.ownParty.CreateIcon();
+            }
+            character.RemoveTrait("Dead");
+        }
         character.DestroyMarker();
         SchedulingManager.Instance.ClearAllSchedulesBy(this.character);
     }

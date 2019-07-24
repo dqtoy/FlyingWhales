@@ -28,6 +28,9 @@ public class RileUp : PlayerJobAction {
         if(targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
             return false;
         }
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
         return base.CanPerformActionTowards(character, targetCharacter);
     }
 

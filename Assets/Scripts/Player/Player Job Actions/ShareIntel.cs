@@ -39,6 +39,9 @@ public class ShareIntel : PlayerJobAction {
         targetCharacter = null;
     }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
+        if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
+            return false;
+        }
         if (targetCharacter.isDead) {
             return false;
         }
@@ -52,6 +55,9 @@ public class ShareIntel : PlayerJobAction {
             return false;
         }
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
+            return false;
+        }
+        if (targetCharacter.GetNormalTrait("Unconscious", "Resting") != null) {
             return false;
         }
         return base.CanPerformActionTowards(character, targetCharacter);

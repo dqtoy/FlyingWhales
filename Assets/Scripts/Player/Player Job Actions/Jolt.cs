@@ -57,7 +57,7 @@ public class Jolt : PlayerJobAction {
         return false;
     }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
-        if (targetCharacter.isDead || character.id == targetCharacter.id) {
+        if (targetCharacter.isDead) {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Jolted") != null) {
@@ -101,12 +101,12 @@ public class Jolt : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Jolt") != null) {
+        if (targetCharacter.GetNormalTrait("Jolted") != null) {
             return false;
         }
-        //if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
-        //    return false;
-        //}
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
         return true;
     }
 }

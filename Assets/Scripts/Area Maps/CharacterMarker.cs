@@ -1664,11 +1664,12 @@ public class CharacterMarker : PooledObject {
             willTransfer = false;
         }
         //- at some point, situation may trigger the character to flee, at which point it will attempt to move far away from target
-        else if (character.GetNormalTrait("Injured") != null) {
-            //summary += "\n" + character.name + " is injured.";
-            //-character gets injured(chance based dependent on the character)
-            willTransfer = true;
-        } else if (character.IsHealthCriticallyLow()) {
+        //else if (character.GetNormalTrait("Injured") != null) {
+        //    //summary += "\n" + character.name + " is injured.";
+        //    //-character gets injured(chance based dependent on the character)
+        //    willTransfer = true;
+        //} 
+        else if (character.IsHealthCriticallyLow()) {
             //summary += "\n" + character.name + "'s health is critically low.";
             //-character's hp is critically low (chance based dependent on the character)
             willTransfer = true;

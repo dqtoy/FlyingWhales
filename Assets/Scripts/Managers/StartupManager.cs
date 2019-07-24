@@ -4,7 +4,10 @@ using System.Collections;
 public class StartupManager : MonoBehaviour {
 	public MapGenerator mapGenerator;
 
-	void Start(){
+    void Awake() {
+        Messenger.Cleanup();
+    }
+    void Start(){
         LevelLoaderManager.SetLoadingState(true);
         LevelLoaderManager.UpdateLoadingInfo("Initializing Data...");
         DataConstructor.Instance.InitializeData();

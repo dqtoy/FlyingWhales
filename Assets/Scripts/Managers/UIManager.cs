@@ -117,10 +117,10 @@ public class UIManager : MonoBehaviour {
     private void Awake() {
         Instance = this;
         //_menuHistory = new List<UIMenuSettings>();
-        Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
     }
     private void Start() {
         _uiMenuHistory = new List<object>();
+        Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
         Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
         Messenger.AddListener(Signals.INSPECT_ALL, UpdateInteractableInfoUI);
         ToggleBorders();

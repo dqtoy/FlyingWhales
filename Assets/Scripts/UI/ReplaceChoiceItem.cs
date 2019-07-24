@@ -70,7 +70,7 @@ public class ReplaceChoiceItem : PooledObject {
             string text = ability.name;
             text += "\nDescription: " + ability.description;
             info.text = text;
-        } else if (obj is CombatAbility) {
+        } else if (obj is Minion) {
             Minion minion = obj as Minion;
             string text = minion.character.name;
             text += "\nLvl. " + minion.character.level + " " + minion.character.raceClassName;

@@ -11,7 +11,7 @@ public class Flamestrike : CombatAbility {
         abilityRadius = 3;
         cooldown = 100;
         _currentCooldown = 100;
-        _damage = 500;
+        _damage = 1000;
     }
 
     #region Overrides

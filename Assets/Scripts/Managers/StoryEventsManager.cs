@@ -116,18 +116,18 @@ public class StoryEventsManager : MonoBehaviour {
         } else if (string.Equals(effect.effectType, "Intervention_Ability", System.StringComparison.OrdinalIgnoreCase)) {
             //Gain Ability
             if (effect.effectValue.ToLower() == "random") {
-                PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
+                PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]), true);
             } else {
                 INTERVENTION_ABILITY ability;
                 ABILITY_TAG abilityTag;
                 if (System.Enum.TryParse(effect.effectValue.ToUpper(), out ability)) {
                     //intervention ability
-                    PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(ability);
+                    PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(ability, true);
                 } else if (System.Enum.TryParse(effect.effectValue.ToUpper(), out abilityTag)) {
                     //ability tag
                     List<INTERVENTION_ABILITY> abilities = PlayerManager.Instance.GetInterventionAbilitiesWithTag(abilityTag);
                     if (abilities.Count > 0) {
-                        PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(abilities[Random.Range(0, abilities.Count)]);
+                        PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(abilities[Random.Range(0, abilities.Count)], true);
                     } else {
                         Debug.LogWarning("There are no intervention abilities with tag " + abilityTag.ToString());
                     }

@@ -52,9 +52,9 @@ public class CloakOfInvisibility : PlayerJobAction {
         return false;
     }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
-        if (character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
-            return false;
-        }
+        //if (character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
+        //    return false;
+        //}
         if (targetCharacter.GetNormalTrait("Invisible") != null) {
             return false;
         }
