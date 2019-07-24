@@ -507,12 +507,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public void GenerateInitialTileTags() {
         //Elevation
-        if(elevationType == ELEVATION.MOUNTAIN) {
-            tileTags.Add(TILE_TAG.MOUNTAIN);
-        } else if (elevationType == ELEVATION.PLAIN) {
-            tileTags.Add(TILE_TAG.FLATLAND);
-        } else if (elevationType == ELEVATION.TREES) {
-            tileTags.Add(TILE_TAG.FOREST);
+        if(landmarkOnTile == null || landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE) {
+            if (elevationType == ELEVATION.MOUNTAIN) {
+                tileTags.Add(TILE_TAG.MOUNTAIN);
+            } else if (elevationType == ELEVATION.PLAIN) {
+                tileTags.Add(TILE_TAG.FLATLAND);
+            } else if (elevationType == ELEVATION.TREES) {
+                tileTags.Add(TILE_TAG.FOREST);
+            }
         }
 
         //Biome
