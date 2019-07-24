@@ -15,6 +15,9 @@ public class DrinkBlood : GoapAction {
     protected override void ConstructRequirementOnBuildGoapTree() {
         _requirementOnBuildGoapTreeAction = RequirementOnBuildGoapTree;
     }
+    protected override void ConstructRequirement() {
+        _requirementAction = Requirement;
+    }
     protected override void ConstructPreconditionsAndEffects() {
         //if (actor.isStarving) {
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget }, HasUnconsciousOrRestingTarget);
