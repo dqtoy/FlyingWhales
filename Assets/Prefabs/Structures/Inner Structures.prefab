@@ -848,7 +848,7 @@ MonoBehaviour:
   objectsTilemap: {fileID: 8195094282159575352}
   roadTilemap: {fileID: 8195094281692177958}
   outsideTile: {fileID: 11400000, guid: eb3f0a06db068d04f86d266316b14e08, type: 2}
-  snowOutsideTile: {fileID: 11400000, guid: 1f46df483dcd1f147bba5ab0a9c3336b, type: 2}
+  snowOutsideTile: {fileID: 11400000, guid: b19fb3108a794684e9cd863789e30c5a, type: 2}
   insideTile: {fileID: 11400000, guid: 34f9b3db99247e14c82054ed5b39c5a8, type: 2}
   wallTile: {fileID: 11400000, guid: 04286a618bd418a4383f64faeb657fea, type: 2}
   floorTile: {fileID: 11400000, guid: 4c0a1b3069ff1ab4eba18e4b8362b997, type: 2}
@@ -931,10 +931,13 @@ MonoBehaviour:
           inactiveTile: {fileID: 11400000, guid: 83f165685f17d3e4c9d6378fefbfeb4a,
             type: 2}
     - biomeAssets:
-        m_keys: 0600000001000000
+        m_keys: 060000000100000002000000
         m_values:
         - activeTile: {fileID: 11400000, guid: 2e58fd5b2fae6c04d9113fc8182a44ae, type: 2}
           inactiveTile: {fileID: 11400000, guid: 2e58fd5b2fae6c04d9113fc8182a44ae,
+            type: 2}
+        - activeTile: {fileID: 11400000, guid: 9aa14f340a5d11c46874b6d59511a8de, type: 2}
+          inactiveTile: {fileID: 11400000, guid: 9aa14f340a5d11c46874b6d59511a8de,
             type: 2}
         - activeTile: {fileID: 11400000, guid: 9aa14f340a5d11c46874b6d59511a8de, type: 2}
           inactiveTile: {fileID: 11400000, guid: 9aa14f340a5d11c46874b6d59511a8de,
