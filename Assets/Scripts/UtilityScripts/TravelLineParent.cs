@@ -37,7 +37,7 @@ public class TravelLineParent : MonoBehaviour {
         transform.eulerAngles = new Vector3(transform.rotation.x, transform.rotation.y, angle);
         float distance = Vector3.Distance(this.startTile.transform.position, _endTile.transform.position);
         GetComponent<RectTransform>().sizeDelta = new Vector2(distance, 0.2f);
-        gameObject.transform.SetParent(this.startTile.UIParent);
+        //gameObject.transform.SetParent(this.startTile.UIParent);
         transform.localPosition = Vector3.zero;
 
         BezierCurveManager.Instance.AddTravelLineParent(this);

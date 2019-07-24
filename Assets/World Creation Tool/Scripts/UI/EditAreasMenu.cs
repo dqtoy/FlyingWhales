@@ -48,11 +48,6 @@ namespace worldcreator {
                 WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Area Creation Error", "Core tile must not be part of outer grid!");
                 return;
             }
-            if (!coreTile.isPassable) {
-                WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
-                WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Area Creation Error", "Core tile must be passable!");
-                return;
-            }
             if (coreTile.areaOfTile != null) {
                 WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
                 WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Area Creation Error", "That tile is already part of an existing area!");

@@ -57,17 +57,6 @@ public class AreaInfoEditor : MonoBehaviour {
 
     public void LoadData() {
         areaNameField.text = currentArea.name;
-        maxDefendersField.text = currentArea.maxDefenderGroups.ToString();
-        initialDefenderGroupsField.text = currentArea.initialDefenderGroups.ToString();
-        //supplyCapacityField.text = currentArea.supplyCapacity.ToString();
-        //initialSupplyField.text = currentArea.initialSupply.ToString();
-        //residentCapacityField.text = currentArea.residentCapacity.ToString();
-        monthlySupplyField.text = currentArea.monthlySupply.ToString();
-        monthlyActionsField.text = currentArea.monthlyActions.ToString();
-        initialResidentsField.text = currentArea.initialResidents.ToString();
-        minDungeonSupplyField.text = currentArea.dungeonSupplyRangeMin.ToString();
-        maxDungeonSupplyField.text = currentArea.dungeonSupplyRangeMax.ToString();
-        //defaultRaceDropdown.value = Utilities.GetOptionIndex(defaultRaceDropdown, currentArea.defaultRace.ToString());
         occupantsSummary.text = string.Empty;
         for (int i = 0; i < currentArea.possibleOccupants.Count; i++) {
             RACE race = currentArea.possibleOccupants[i];
@@ -96,33 +85,6 @@ public class AreaInfoEditor : MonoBehaviour {
         }
         LoadData();
     }
-    //public void SetInitialSupplies(string amountStr) {
-    //    if (!string.IsNullOrEmpty(amountStr)) {
-    //        currentArea.SetInitialSupplies(System.Int32.Parse(amountStr));
-    //    }
-
-    //}
-    //public void SetResidentCapacity(string amountStr) {
-    //    if (!string.IsNullOrEmpty(amountStr)) {
-    //        currentArea.SetResidentCapacity(System.Int32.Parse(amountStr));
-    //    }
-    //}
-    public void SetMonthlySupply(string amountStr) {
-        if (!string.IsNullOrEmpty(amountStr)) {
-            currentArea.SetMonthlySupply(System.Int32.Parse(amountStr));
-        }
-    }
-    public void SetMonthlyActions(string amountStr) {
-        if (!string.IsNullOrEmpty(amountStr)) {
-            currentArea.SetMonthlyActions(System.Int32.Parse(amountStr));
-        }
-    }
-    public void SetInitialResidents(string amountStr) {
-        if (!string.IsNullOrEmpty(amountStr)) {
-            currentArea.SetInitialResidents(System.Int32.Parse(amountStr));
-        }
-    }
-
     #endregion
 
     #region Race Spawns
@@ -186,18 +148,6 @@ public class AreaInfoEditor : MonoBehaviour {
         STRUCTURE_TYPE chosenType = (STRUCTURE_TYPE)Enum.Parse(typeof(STRUCTURE_TYPE), structureItemsDropdown.options[structureItemsDropdown.value].text);
         LandmarkManager.Instance.CreateNewStructureAt(currentArea, chosenType);
         UpdateStructures();
-    }
-    public void SetMinDungeonSupplyRange(string text) {
-        if (string.IsNullOrEmpty(text)) {
-            return;
-        }
-        currentArea.SetDungeonSupplyMinRange(Int32.Parse(text));
-    }
-    public void SetMaxDungeonSupplyRange(string text) {
-        if (string.IsNullOrEmpty(text)) {
-            return;
-        }
-        currentArea.SetDungeonSupplyMaxRange(Int32.Parse(text));
     }
     #endregion
 

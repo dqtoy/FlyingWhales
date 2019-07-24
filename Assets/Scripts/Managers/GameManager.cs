@@ -180,7 +180,7 @@ public class GameManager : MonoBehaviour {
         float distance = Vector3.Distance(tile1.transform.position, tile2.transform.position);
         //float scale = (distance * 0.143f) * 6f;
         go.GetComponent<RectTransform>().sizeDelta = new Vector2(distance, 0.2f);
-        go.transform.SetParent(tile1.UIParent);
+        //go.transform.SetParent(tile1.UIParent);
         //go.transform.localScale = new Vector3(scale, go.transform.localScale.y, go.transform.localScale.z);
 
         /*To get num of ticks to travel from one tile to another, get distance and divide it by 2.31588, round up the result then multiply by 6, such that,

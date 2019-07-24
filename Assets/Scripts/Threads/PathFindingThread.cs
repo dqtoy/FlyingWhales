@@ -80,15 +80,9 @@ public class PathFindingThread : Multithread {
 //		}
 
 		if (path != null) {
-			if (_pathfindingMode == PATHFINDING_MODE.ROAD_CREATION 
-				|| _pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE) {
-
-				receivedPath = path.Reverse ().ToList ();
-			} else {
-				receivedPath = path.Reverse ().ToList ();
-				if (receivedPath.Count > 1) {
-					receivedPath.RemoveAt (0);
-				}
+			receivedPath = path.Reverse ().ToList ();
+			if (receivedPath.Count > 1) {
+				receivedPath.RemoveAt (0);
 			}
 		}else{
 			receivedPath = null;

@@ -3681,7 +3681,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         //Random Traits
         int chance = UnityEngine.Random.Range(0, 100);
         if (chance < 35 || role.roleType == CHARACTER_ROLE.CIVILIAN) { //ensured that all civilans are craftsmen
-            AddTrait(new Craftsman());
+            AddTrait("Craftsman");
         }
         if (UnityEngine.Random.Range(0, 100) < 100) {
             AddTrait("Curious");
@@ -6103,7 +6103,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
 
     #region Goap
     protected void ConstructInitialGoapAdvertisementActions() {
-        poiGoapActions = new List<INTERACTION_TYPE>();
+        //poiGoapActions = new List<INTERACTION_TYPE>();
         poiGoapActions.Add(INTERACTION_TYPE.CARRY_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ASSAULT_ACTION_NPC);
         poiGoapActions.Add(INTERACTION_TYPE.DROP_CHARACTER);
@@ -7370,9 +7370,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
 
             SetHomeStructure(alterEgoData.homeSturcture);
             ChangeFactionTo(alterEgoData.faction);
-            ChangeRace(alterEgoData.race);
             AssignRole(alterEgoData.role);
             AssignClass(alterEgoData.characterClass);
+            ChangeRace(alterEgoData.race);
             SetLevel(alterEgoData.level);
 
             CancelAllJobsTargettingThisCharacter("target is not found", false);

@@ -95,7 +95,6 @@ namespace worldcreator {
             //CombatManager.Instance.Initialize();
             //TokenManager.Instance.Initialize();
             //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
-            Biomes.Instance.LoadPassableStates(hexTiles);
             GenerateOuterGrid();
             Biomes.Instance.UpdateTileVisuals(allTiles);
             WorldCreatorUI.Instance.OnDoneLoadingGrid();
@@ -135,8 +134,6 @@ namespace worldcreator {
                 }
             }
             hexTiles.ForEach(o => o.FindNeighbours(map));
-            //Biomes.Instance.GenerateTileBiomeDetails(hexTiles);
-            Biomes.Instance.LoadPassableStates(hexTiles);
 
             WorldCreatorUI.Instance.InitializeMenus();
             //CombatManager.Instance.Initialize();
@@ -231,7 +228,6 @@ namespace worldcreator {
 
                     //currHex.DisableColliders();
                     //currHex.unpassableGO.GetComponent<PolygonCollider2D>().enabled = true;
-                    currHex.unpassableGO.SetActive(true);
                     //currHex.HideFogOfWarObjects();
                     id++;
                 }
@@ -354,14 +350,12 @@ namespace worldcreator {
                 HexTile currTile = tiles[i];
                 Biomes.Instance.UpdateTileVisuals(currTile);
                 //Biomes.Instance.GenerateTileBiomeDetails(currTile);
-                Biomes.Instance.LoadPassableStates(currTile);
             }
         }
         public void SetBiomes(HexTile tile, BIOMES biome, bool updateVisuals = true) {
             tile.SetBiome(biome);
             if (updateVisuals) {
                 Biomes.Instance.UpdateTileVisuals(tile);
-                Biomes.Instance.LoadPassableStates(tile);
             }
         }
         #endregion
@@ -375,12 +369,10 @@ namespace worldcreator {
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile currTile = tiles[i];
                 Biomes.Instance.UpdateTileVisuals(currTile);
-                Biomes.Instance.LoadPassableStates(currTile);
                 //if (currTile.AllNeighbours != null) {
                     for (int j = 0; j < currTile.AllNeighbours.Count; j++) {
                         HexTile currNeighbour = currTile.AllNeighbours[j];
                         Biomes.Instance.UpdateTileVisuals(currNeighbour);
-                        Biomes.Instance.LoadPassableStates(currNeighbour);
                     }
                 //}
             }
@@ -399,16 +391,11 @@ namespace worldcreator {
                 }
             }
             tile.SetElevation(elevation);
-            if (elevation != ELEVATION.PLAIN) {
-                tile.SetManaOnTile(0);
-            }
             if (updateVisuals) {
                 Biomes.Instance.UpdateTileVisuals(tile);
-                Biomes.Instance.LoadPassableStates(tile);
                 for (int i = 0; i < tile.AllNeighbours.Count; i++) {
                     HexTile currNeighbour = tile.AllNeighbours[i];
                     Biomes.Instance.UpdateTileVisuals(currNeighbour);
-                    Biomes.Instance.LoadPassableStates(currNeighbour);
                 }
             }
         }
@@ -431,15 +418,6 @@ namespace worldcreator {
                 return null;
             }
             LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-            if (data.isUnique) { //check if the landmark must be unique
-                //if it is, check if there is already an existing landmark of that type
-                BaseLandmark uniqueLandmark = LandmarkManager.Instance.GetLandmarkOfType(landmarkType);
-                if (uniqueLandmark != null) {
-                    //if there is, notify the user, then do not spawn landmark
-                    WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Unique landmark", "There is already a " + landmarkType.ToString() + ", destroy that first.");
-                    return null;
-                }
-            }
             return LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, landmarkType);
         }
         public void DestroyLandmarks(List<HexTile> tiles) {
@@ -551,7 +529,6 @@ namespace worldcreator {
             for (int i = 0; i < selectionComponent.selection.Count; i++) {
                 HexTile currTile = selectionComponent.selection[i];
                 if (currTile.elevationType == ELEVATION.PLAIN) {
-                    currTile.SetManaOnTile(value);
                 }
             }
         }

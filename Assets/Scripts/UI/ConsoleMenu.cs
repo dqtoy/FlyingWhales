@@ -42,7 +42,6 @@ public class ConsoleMenu : UIMenu {
             {"/center_landmark", CenterOnLandmark },
             {"/show_logs", ShowLogs },
             {"/log_location_history", LogLocationHistory  },
-            {"/log_supply_history", LogSupplyHistory  },
             {"/log_area_characters_history", LogAreaCharactersHistory  },
             {"/get_characters_with_item", GetCharactersWithItem },
             {"/i_toggle_sub", ToggleSubscriptionToInteraction },
@@ -643,18 +642,18 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        if (AttributeManager.Instance.allTraits.ContainsKey(traitParameterString)) {
+        //if (AttributeManager.Instance.allTraits.ContainsKey(traitParameterString)) {
             character.AddTrait(traitParameterString);
-        } else {
-            switch (traitParameterString) {
-                case "Criminal":
-                    character.AddTrait(new Criminal());
-                    break;
-                default:
-                    AddErrorMessage("There is no trait called " + traitParameterString);
-                    return;
-            }
-        }
+        //} else {
+        //    switch (traitParameterString) {
+        //        case "Criminal":
+        //            character.AddTrait(new Criminal());
+        //            break;
+        //        default:
+        //            AddErrorMessage("There is no trait called " + traitParameterString);
+        //            return;
+        //    }
+        //}
         AddSuccessMessage("Added " + traitParameterString + " to " + character.name);
     }
     private void RemoveTraitToCharacter(string[] parameters) {
@@ -895,31 +894,6 @@ public class ConsoleMenu : UIMenu {
     #endregion
 
     #region Area
-    private void LogSupplyHistory(string[] parameters) {
-        if (parameters.Length != 1) { 
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of " + parameters[0]);
-            return;
-        }
-
-        string areaParameterString = parameters[0];
-        int areaID;
-        
-        bool isAreaParameterNumeric = int.TryParse(areaParameterString, out areaID);
-
-        Area area = null;
-        if (isAreaParameterNumeric) {
-            area = LandmarkManager.Instance.GetAreaByID(areaID);
-        } else {
-            area = LandmarkManager.Instance.GetAreaByName(areaParameterString);
-        }
-
-        string text = area.name + "'s Supply History: ";
-        for (int i = 0; i < area.supplyLog.Count; i++) {
-            text += "\n" + area.supplyLog[i];
-        }
-        AddSuccessMessage(text);
-    }
     private void LogAreaCharactersHistory(string[] parameters) {
         if (parameters.Length != 1) {
             AddCommandHistory(consoleLbl.text);

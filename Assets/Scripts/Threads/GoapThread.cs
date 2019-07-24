@@ -339,7 +339,7 @@ public class GoapThread : Multithread {
                                 allPlans.Add(plan);
                                 plan.SetListOfCharacterAwareness(characterTargetsAwareness);
                             }
-                            //log += planLog;
+                            log += planLog;
                         }
                     } else {
                         string planLog = string.Empty;
@@ -348,7 +348,7 @@ public class GoapThread : Multithread {
                             allPlans.Add(plan);
                             plan.SetListOfCharacterAwareness(characterTargetsAwareness);
                         }
-                        //log += planLog;
+                        log += planLog;
                         //Debug.Log(planLog);
                     }
                 }

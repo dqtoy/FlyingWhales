@@ -9,11 +9,6 @@ public interface ILocation {
 	HexTile tileLocation { get; }
     string locationName { get; }
     string thisName { get; }
-    List<Party> charactersAtLocation { get; }
-
-    void AddCharacterToLocation(Party iparty);
-	void RemoveCharacterFromLocation(Party iparty, bool addToTile = false);
-    void ReplaceCharacterAtLocation(Party ipartyToReplace, Party ipartyToAdd);
 
     //void ScheduleCombatCheck();
     //void UnScheduleCombatCheck();
