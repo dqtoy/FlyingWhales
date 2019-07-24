@@ -97,15 +97,15 @@
     			<event>
     				<text>Your lead minion opened the tomb.</text>
     				<effects>
-    					<effect effect="Gain" type="Combat_Ability" object="FEAR_SPELL" chance="35">
+    					<effect effect="Gain" type="Combat_Ability" object="FEAR_SPELL" chance="75">
     						<additionalText>A chilly wind went through the room and with a deep voice, it started speaking, "You have set me free, for this, I shall grant you my power! The power that can make any living creature hallucinate their deepest fears!"
     						</additionalText>
     					</effect>
-    					<effect effect="Lose" type="minion" object="Lead" chance="35">
+    					<effect effect="Lose" type="minion" object="Lead" chance="5">
     						<additionalText>A chilly wind went through the room and with a deep voice, it started speaking, "You have set me free but my freedom comes with a price for this tomb cannot be empty. As the endless curse of this tomb says, 'The one who opens will replace the one who leaves." The tomb devoured your lead minion and was sealed once again.
     						</additionalText>
     					</effect>
-    					<effect effect="Nothing" chance="40">
+    					<effect effect="Nothing" chance="20">
     						<additionalText>It is empty.</additionalText>
     					</effect>
     				</effects>
@@ -160,14 +160,18 @@
     			<event>
     				<text>You tried to kill it.</text>
     				<effects>
-    					<effect effect="Lose" type="Minion" object="Lead" chance="10">
+    					<effect effect="Lose" type="Minion" object="Lead" chance="3">
     						<additionalText>You successfully slayed the griffin but one of your minions suffered a fatal injury. He did not make it.
     						</additionalText>
     					</effect>
-    					<effect effect="Nothing" chance="90">
-    						<additionalText>It was difficult but you successfully slayed the griffin.
+    					<effect effect="Gain" type="Level" object="Combat_Ability" chance="27">
+    						<additionalText>The griffin was slayed! Your lead minion enhances his mastery on one of his abilities.
     						</additionalText>
     					</effect>
+              <effect effect="Gain" type="Level" object="2" chance="70">
+                <additionalText>The griffin was slayed! The battle made your lead minion much stronger.
+                </additionalText>
+              </effect>
     				</effects>
     			</event>
     		</choice>

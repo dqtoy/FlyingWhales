@@ -96,7 +96,7 @@
     </Event>
 
     <Event id="FOREST_DEITY" name="Forest Deity" trigger="IMMEDIATE">
-      <text>A gorgeous deity protecting the forest appears before you with eyes is as blue as the sea, lips as red as ruby, and hair as white as snow. She asked, "What are you doing here? What are your intentions here?"</text>
+      <text>A gorgeous deity protecting the forest appears before you with eyes is as blue as the sea, lips as red as ruby, and hair as white as snow. She asked, "What are you doing here? What are your intentions?"</text>
       <choices>
         <choice>
           <text>Convince her that your intentions are pure.</text>
@@ -124,15 +124,15 @@
           <event>
             <text>You attacked the deity.</text>
             <effects>
-              <effect effect="Lose" type="Minion" object="Lead" chance="40">
+              <effect effect="Lose" type="Minion" object="Lead" chance="5">
                 <additionalText>You managed to defeat the deity but as she was about to die, she used her remaining powers to send a powerful energy laser, killing one of your minions.
                 </additionalText>
               </effect>
-              <effect effect="Gain" type="All_Trait" object="Lethargic" chance="20">
+              <effect effect="Gain" type="All_Trait" object="Lethargic" chance="15">
                 <additionalText>You managed to defeat the deity but it was not easy. Your minions took considerable damage.
                 </additionalText>
               </effect>
-              <effect effect="Gain" type="All_Level" object="3" chance="40">
+              <effect effect="Gain" type="All_Level" object="3" chance="80">
                 <additionalText>The deity didn't stand a chance against you. You extracted her powers from her corpse making your minions stronger.
                 </additionalText>
               </effect>
