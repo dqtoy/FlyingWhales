@@ -242,17 +242,15 @@ public class PlayerUI : MonoBehaviour {
     private void OnSeenActionButtons() {
         actionBtnPointer.SetActive(!PlayerManager.Instance.player.hasSeenActionButtonsOnce);
     }
-    int currentlyeShowingSlotIndex = 0;
+    int currentlyShowingSlotIndex = 0;
     private void LoadRoleSlots() {
-        int currIndex = 0;
         roleSlots = new RoleSlotItem[PlayerManager.Instance.player.minions.Length];
         for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
             GameObject roleSlotGO = UIManager.Instance.InstantiateUIObject(roleSlotItemPrefab.name, roleSlotsParent);
             RoleSlotItem roleSlot = roleSlotGO.GetComponent<RoleSlotItem>();
             //roleSlot.SetSlotJob(keyValuePair.Key);
             roleSlot.Initialize();
-            roleSlots[currIndex] = roleSlot;
-            currIndex++;
+            roleSlots[i] = roleSlot;
         }
         //foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in PlayerManager.Instance.player.roleSlots) {
         //    GameObject roleSlotGO = UIManager.Instance.InstantiateUIObject(roleSlotItemPrefab.name, roleSlotsParent);
@@ -269,33 +267,41 @@ public class PlayerUI : MonoBehaviour {
         for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
             roleSlots[i].SetMinion(PlayerManager.Instance.player.minions[i]);
         }
+        int minionCount = PlayerManager.Instance.player.GetCurrentMinionCount();
+        if (currentlyShowingSlotIndex >= minionCount){
+            currentlyShowingSlotIndex = minionCount - 1;
+        }
         UpdateRoleSlotScroll();
     }
     public void ScrollNext() {
-        currentlyeShowingSlotIndex += 1;
-        if (currentlyeShowingSlotIndex == roleSlots.Length) {
-            currentlyeShowingSlotIndex = 0;
+        currentlyShowingSlotIndex += 1;
+        if (currentlyShowingSlotIndex == PlayerManager.Instance.player.GetCurrentMinionCount()) {
+            currentlyShowingSlotIndex = 0;
         }
         UpdateRoleSlotScroll();
     }
     public void ScrollPrevious() {
-        currentlyeShowingSlotIndex -= 1;
-        if (currentlyeShowingSlotIndex < 0) {
-            currentlyeShowingSlotIndex = roleSlots.Length - 1;
+        currentlyShowingSlotIndex -= 1;
+        if (currentlyShowingSlotIndex < 0) {
+            currentlyShowingSlotIndex = PlayerManager.Instance.player.GetCurrentMinionCount() - 1;
         }
         UpdateRoleSlotScroll();
     }
     public void ScrollRoleSlotTo(int index) {
-        if (currentlyeShowingSlotIndex == index) {
+        if (currentlyShowingSlotIndex == index) {
             return;
         }
-        currentlyeShowingSlotIndex = index;
+        currentlyShowingSlotIndex = index;
+        int minionCount = PlayerManager.Instance.player.GetCurrentMinionCount();
+        if (currentlyShowingSlotIndex >= minionCount) {
+            currentlyShowingSlotIndex = minionCount - 1;
+        }
         UpdateRoleSlotScroll();
         PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
         CursorManager.Instance.ClearLeftClickActions(); //TODO: Change this to no clear all actions but just the ones concerened with the player abilities
     }
     private void UpdateRoleSlotScroll() {
-        RoleSlotItem slotToShow = roleSlots[currentlyeShowingSlotIndex];
+        RoleSlotItem slotToShow = roleSlots[currentlyShowingSlotIndex];
         activeMinionTypeLbl.text = Utilities.NormalizeString(slotToShow.slotJob.ToString());
         Utilities.ScrolRectSnapTo(roleSlotsScrollRect, slotToShow.GetComponent<RectTransform>());
         LoadActionButtonsForActiveJob(slotToShow);
@@ -368,7 +374,7 @@ public class PlayerUI : MonoBehaviour {
         return null;
     }
     private void OnMinionLearnedInterventionAbility(Minion minion, PlayerJobAction action) {
-        RoleSlotItem currActive = roleSlots[currentlyeShowingSlotIndex];
+        RoleSlotItem currActive = roleSlots[currentlyShowingSlotIndex];
         if (currActive.minion == minion) {
             LoadActionButtonsForActiveJob(currActive);
         }
