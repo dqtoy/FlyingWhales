@@ -58,6 +58,8 @@ public class ConsoleMenu : UIMenu {
             {"/rel_deg", ForcedRelationshipDegradation },
             {"/set_hp", SetHP },
             {"/kill_res",  KillResidents},
+            {"/gain_summon",  GainSummon},
+            {"/gain_artifact",  GainArtifact},
         };
 
 #if UNITY_EDITOR
@@ -1008,6 +1010,56 @@ public class ConsoleMenu : UIMenu {
             }
             PlayerManager.Instance.player.AddMinion(minion);
         }
+    }
+    #endregion
+
+    #region Summons
+    private void GainSummon(string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of GainSummon");
+            return;
+        }
+
+        string typeParameterString = parameters[0];
+        SUMMON_TYPE type;
+        if (typeParameterString.Equals("All")) {
+            SUMMON_TYPE[] types = Utilities.GetEnumValues<SUMMON_TYPE>();
+            for (int i = 1; i < types.Length; i++) {
+                PlayerManager.Instance.player.GainSummon(types[i]);
+            }
+        } else if (Enum.TryParse(typeParameterString, out type)) {
+            PlayerManager.Instance.player.GainSummon(type);
+            AddSuccessMessage("Gained new summon: " + type);
+        } else {
+            AddErrorMessage("There is no summon of type " + typeParameterString);
+        }
+
+    }
+    #endregion
+
+    #region Artifacts
+    private void GainArtifact(string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of GainSummon");
+            return;
+        }
+
+        string typeParameterString = parameters[0];
+        ARTIFACT_TYPE type;
+        if (typeParameterString.Equals("All")) {
+            ARTIFACT_TYPE[] types = Utilities.GetEnumValues<ARTIFACT_TYPE>();
+            for (int i = 1; i < types.Length; i++) {
+                PlayerManager.Instance.player.GainArtifact(types[i]);
+            }
+        } else if (Enum.TryParse(typeParameterString, out type)) {
+            PlayerManager.Instance.player.GainArtifact(type);
+            AddSuccessMessage("Gained new artifact: " + type);
+        } else {
+            AddErrorMessage("There is no artifact of type " + typeParameterString);
+        }
+
     }
     #endregion
 }

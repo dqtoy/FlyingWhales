@@ -750,18 +750,23 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     public void SetIsDead(bool isDead) {
         _isDead = isDead;
     }
-    public void RaiseFromDeath(int level = 1, System.Action<Character> onReturnToLifeAction = null) {
-        GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction));
+    public void RaiseFromDeath(int level = 1, System.Action<Character> onReturnToLifeAction = null, Faction faction = null) {
+        if (faction == null) {
+            GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction, FactionManager.Instance.neutralFaction));
+        } else {
+            GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction, faction));
+        }
+        
     }
-    private IEnumerator Raise(Character target, int level = 1, System.Action<Character> onReturnToLifeAction = null) {
+    private IEnumerator Raise(Character target, int level, System.Action<Character> onReturnToLifeAction, Faction faction) {
         target.marker.PlayAnimation("Raise Dead");
         yield return new WaitForSeconds(0.7f);
-        target.ReturnToLife();
+        target.ReturnToLife(faction);
         target.SetLevel(level);
         yield return null;
         onReturnToLifeAction?.Invoke(this);
     }
-    private void ReturnToLife() {
+    private void ReturnToLife(Faction faction) {
         if (_isDead) {
             SetIsDead(false);
             SubscribeToSignals();
@@ -770,7 +775,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             ResetTirednessMeter();
             ResetHappinessMeter();
             SetPOIState(POI_STATE.ACTIVE);
-            ChangeFactionTo(FactionManager.Instance.neutralFaction);
+            ChangeFactionTo(faction);
             ChangeRace(RACE.SKELETON);
             AssignRole(CharacterRole.SOLDIER);
             AssignClassByRole(this.role);

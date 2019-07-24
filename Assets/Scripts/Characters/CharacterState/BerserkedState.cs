@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BerserkedState : CharacterState {
 
+    private System.Func<Character, bool> hostileChecker;
+
     public BerserkedState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Berserked State";
         characterState = CHARACTER_STATE.BERSERKED;
@@ -34,10 +36,16 @@ public class BerserkedState : CharacterState {
     }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if(targetPOI is Character) {
-            if (stateComponent.character is Summon) {
-                return stateComponent.character.marker.AddHostileInRange(targetPOI as Character); //check hostility if summon, so as not to attack other summons.
+            if (stateComponent.character.faction == PlayerManager.Instance.player.playerFaction) {
+                return stateComponent.character.marker.AddHostileInRange(targetPOI as Character); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
             } else {
-                return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, checkHostility: false);
+                if (hostileChecker != null) {
+                    if (hostileChecker.Invoke(targetPOI as Character)) {
+                        return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, checkHostility: false);
+                    }
+                } else {
+                    return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, checkHostility: false);
+                }
             }
             //return true;
         }else if (targetPOI is TileObject) {
@@ -153,5 +161,9 @@ public class BerserkedState : CharacterState {
         } else {
             throw new System.Exception("No tile in " + chosenStructure.name + " for " + stateComponent.character.name + " to go to in " + stateName);
         }
+    }
+
+    public void SetHostileChecker(System.Func<Character, bool> hostileChecker) {
+        this.hostileChecker = hostileChecker;
     }
 }
