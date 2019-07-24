@@ -66,6 +66,9 @@ public class CarryCorpse : GoapAction {
 
     #region State Effects
     public void AfterCarrySuccess() {
+        if (parentPlan != null && parentPlan.job != null) {
+            parentPlan.job.SetCannotOverrideJob(true);//Carry should not be overrideable if the character is actually already carrying another character.
+        }
         Character target = poiTarget as Character;
         actor.ownParty.AddCharacter(target);
     }

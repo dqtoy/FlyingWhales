@@ -6263,14 +6263,14 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                     goapThread.job.SetAssignedPlan(goapThread.createdPlan);
 
                     //If the created plan contains a carry component, that plan cannot be overridden
-                    for (int i = 0; i < goapThread.createdPlan.allNodes.Count; i++) {
-                        if (goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CHARACTER
-                            || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CORPSE
-                            || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
-                            goapThread.createdPlan.job.SetCannotOverrideJob(true);
-                            break;
-                        }
-                    }
+                    //for (int i = 0; i < goapThread.createdPlan.allNodes.Count; i++) {
+                    //    if (goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CHARACTER
+                    //        || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.CARRY_CORPSE
+                    //        || goapThread.createdPlan.allNodes[i].action.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
+                    //        goapThread.createdPlan.job.SetCannotOverrideJob(true);
+                    //        break;
+                    //    }
+                    //}
                 }
                 AddPlan(goapThread.createdPlan);
                 if (CanCurrentJobBeOverriddenByJob(goapThread.job)) {
