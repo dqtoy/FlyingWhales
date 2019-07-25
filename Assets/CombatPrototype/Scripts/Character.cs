@@ -1330,6 +1330,20 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
         return false;
     }
+    /// <summary>
+    /// Checker if this character has a job of type targeting it that is currently being done.
+    /// </summary>
+    /// <param name="jobType">The type of job targetting this character.</param>
+    /// <returns>True or false.</returns>
+    public bool HasActiveJobTargettingThisCharacter(JOB_TYPE jobType) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            JobQueueItem job = allJobsTargettingThis[i];
+            if (job.jobType == jobType && job.assignedCharacter != null) {
+                return true;
+            }
+        }
+        return false;
+    }
     public int GetNumOfJobsTargettingThisCharacter(JOB_TYPE jobType) {
         int count = 0;
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {

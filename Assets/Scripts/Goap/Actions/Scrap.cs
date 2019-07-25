@@ -49,6 +49,12 @@ public class Scrap : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
+        if (poiTarget is SpecialToken) {
+            SpecialToken token = poiTarget as SpecialToken;
+            if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByWarehouse(token)) {
+                return false;
+            }
+        }
         IAwareness awareness = actor.GetAwareness(poiTarget);
         if (awareness == null) {
             return false;
