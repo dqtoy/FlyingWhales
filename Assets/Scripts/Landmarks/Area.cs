@@ -865,6 +865,17 @@ public class Area {
     private void OnItemRemovedFromLocation(SpecialToken item, LocationStructure structure) {
         CheckAreaInventoryJobs(structure);
     }
+    public bool IsRequiredByWarehouse(SpecialToken token) {
+        if (token.gridTileLocation != null && token.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+            LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+            if (token.specialTokenType == SPECIAL_TOKEN.HEALING_POTION) {
+                return warehouse.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) <= 2; //item is required by warehouse.
+            } else if (token.specialTokenType == SPECIAL_TOKEN.TOOL) {
+                return warehouse.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) <= 2; //item is required by warehouse.
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Structures
