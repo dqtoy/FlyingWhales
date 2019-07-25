@@ -6,7 +6,7 @@ public class Sacrifice : CombatAbility {
 
     private int _explosionRadius;
     public Sacrifice() : base(COMBAT_ABILITY.SACRIFICE) {
-        description = "Sacrifice a friendly unit to deal AOE damage in the surrounding area";
+        description = "Sacrifice a friendly unit to deal AOE damage in the surrounding area.";
         abilityTags.Add(ABILITY_TAG.MAGIC);
         cooldown = 10;
         _currentCooldown = 10;

@@ -40,4 +40,23 @@ public class MinionCard : MonoBehaviour {
             //TODO: trait1 and trait2
         }
     }
+
+    public void OnHoverInterventionAbility1() {
+        UIManager.Instance.ShowSmallInfo(minion.interventionAbilities[0].dynamicDescription);
+    }
+    public void OnExitHoverInterventionAbility1() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    public void OnHoverInterventionAbility2() {
+        UIManager.Instance.ShowSmallInfo(minion.interventionAbilities[1].dynamicDescription);
+    }
+    public void OnExitHoverInterventionAbility2() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    public void OnHoverCombatAbility() {
+        UIManager.Instance.ShowSmallInfo(minion.combatAbility.dynamicDescription);
+    }
+    public void OnExitHoverCombatAbility() {
+        UIManager.Instance.HideSmallInfo();
+    }
 }

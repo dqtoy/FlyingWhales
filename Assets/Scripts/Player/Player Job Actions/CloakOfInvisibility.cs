@@ -5,7 +5,7 @@ using UnityEngine;
 public class CloakOfInvisibility : PlayerJobAction {
 
     public CloakOfInvisibility() : base(INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY) {
-        description = "Makes a character invisible from all other characters";
+        description = "Makes a character invisible from all other characters.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         abilityTags.Add(ABILITY_TAG.MAGIC);

@@ -9,7 +9,8 @@ public class PlayerJobAction {
     public INTERVENTION_ABILITY abilityType { get; protected set; }
     public string name { get; protected set; }
     public string description { get; protected set; }
-	public int cooldown { get; protected set; } //cooldown in ticks
+    public virtual string dynamicDescription { get { return description; } }
+    public int cooldown { get; protected set; } //cooldown in ticks
     public Character assignedCharacter { get; protected set; }
     public List<JOB_ACTION_TARGET> targettableTypes { get; protected set; } //what sort of objects can this action target
     public bool isActive { get; protected set; }

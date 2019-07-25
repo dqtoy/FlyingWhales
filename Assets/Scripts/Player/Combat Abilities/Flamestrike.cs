@@ -6,7 +6,7 @@ public class Flamestrike : CombatAbility {
 
     private int _damage;
     public Flamestrike() : base(COMBAT_ABILITY.FLAMESTRIKE) {
-        description = "Deal AOE damage in the surrounding area";
+        description = "Deal AOE damage in the surrounding area.";
         abilityTags.Add(ABILITY_TAG.MAGIC);
         abilityRadius = 3;
         cooldown = 100;
