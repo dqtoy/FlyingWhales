@@ -31,14 +31,13 @@ public class StoryEventUI : MonoBehaviour {
         string additionalText = string.Empty;
         collectedEffects.Clear();
         if (storyEvent.effects != null) {
-            ExecuteEffects(storyEvent, out additionalText, out collectedEffects);
+            StoryEventsManager.Instance.CollectEffects(storyEvent, out additionalText, out collectedEffects);
         }
         currentEvent = storyEvent;
-        if (isRootEvent) {
-            rootEvent = storyEvent;
-        }
+        if (isRootEvent) { rootEvent = storyEvent; }
         eventTitleLbl.text = storyEvent.name;
-        eventTextLbl.text = storyEvent.text + additionalText;
+        Log textLog = CreateTextLog(storyEvent, additionalText);
+        eventTextLbl.text = Utilities.LogReplacer(textLog);
         bool hasChoice = false;
         if (storyEvent.choices != null) {
             for (int i = 0; i < choices.Length; i++) {
@@ -94,25 +93,13 @@ public class StoryEventUI : MonoBehaviour {
         }
     }
 
-    private void ExecuteEffects(StoryEvent storyEvent, out string additionalText, out List<StoryEventEffect> chosenEffects) {
-        additionalText = string.Empty;
-        chosenEffects = new List<StoryEventEffect>();
-        WeightedDictionary<StoryEventEffect> pooledEffects = new WeightedDictionary<StoryEventEffect>();
-        for (int i = 0; i < storyEvent.effects.Length; i++) {
-            StoryEventEffect currEFfect = storyEvent.effects[i];
-            if (currEFfect.effectChance == 100) {
-                //add effect to chosen effects. These will be executed once the player has clicked a choice
-                additionalText += " " + currEFfect.additionalText;
-                chosenEffects.Add(currEFfect);
-            } else {
-                pooledEffects.AddElement(currEFfect, currEFfect.effectChance);
-            }
-        }
-        //if any pooled effects. Give one.
-        if (pooledEffects.GetTotalOfWeights() > 0) {
-            StoryEventEffect currEffect = pooledEffects.PickRandomElementGivenWeights();
-            additionalText += " " + currEffect.additionalText;
-            chosenEffects.Add(currEffect);
-        }
+    private Log CreateTextLog(StoryEvent storyEvent, string additionalText) {
+        string message = storyEvent.text + additionalText;
+        message = message.Replace("[Lead]", "%00@");
+        Log textLog = new Log(GameManager.Instance.Today(), message);
+        textLog.AddToFillers(PlayerManager.Instance.player.currentMinionLeader, PlayerManager.Instance.player.currentMinionLeader.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        return textLog;
     }
+   
 }
+

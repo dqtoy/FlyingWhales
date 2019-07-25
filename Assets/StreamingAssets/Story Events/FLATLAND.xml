@@ -3,22 +3,22 @@
   <Events>
 
     <Event id="ENDLESS_THUNDERSTORM" name="Endless Thunderstorm" trigger="IMMEDIATE">
-      <text>You encounter an endless thunderstorm.</text>
+      <text>[Lead] encounters an endless thunderstorm.</text>
       <choices>
 
         <choice>
           <text>Attempt to capture lightning.</text>
           <event>
-            <text>You try and catch that lightning.</text>
+            <text>[Lead] tries to catch that lightning.</text>
             <effects>
               <effect effect="Gain" type="Intervention_Ability" object="Jolt" chance="25">
-                  <additionalText>Lead minion learns Jolt!</additionalText>
+                  <additionalText>[Lead] learns Jolt!</additionalText>
               </effect>
               <effect effect="Gain" type="Intervention_Ability" object="Zap" chance="25">
-                  <additionalText>Lead minion learns Zap!</additionalText>
+                  <additionalText>[Lead] learns Zap!</additionalText>
               </effect>
               <effect effect="Gain" type="Trait" object="Injured" chance="50">
-                  <additionalText>Lead minion becomes Injured!</additionalText>
+                  <additionalText>[Lead] becomes Injured!</additionalText>
               </effect>
             </effects>
           </event>
@@ -32,19 +32,19 @@
     </Event>
 
     <Event id="CONCEALED_HUT" name="Concealed Hut" trigger="IMMEDIATE">
-      <text>You find a concealed hut.</text>
+      <text>[Lead] finds a concealed hut.</text>
       <choices>
 
         <choice reqType="Minion" reqName="Quantity_2">
           <text>Venture inside.</text>
           <event>
-            <text>You venture inside the concealed hut.</text>
+            <text>[Lead] ventures inside the concealed hut.</text>
             <effects>
-              <effect effect="Lose" type="Minion" object="Lead" chance="60">
-                  <additionalText>The lead minion gets lost, and is nowhere to be found!</additionalText>
+              <effect effect="Lose" type="Minion" object="Lead" chance="10">
+                  <additionalText>[Lead] doesn't emerge from the hut after a long time. We can only assume the worst.</additionalText>
               </effect>
-              <effect effect="Gain" type="Intervention_Ability" object="CLOAK_OF_INVISIBILITY" chance="40">
-                  <additionalText>You find a cloak of invisibility!</additionalText>
+              <effect effect="Gain" type="Intervention_Ability" object="CLOAK_OF_INVISIBILITY" chance="90">
+                  <additionalText>[Lead] finds a cloak of invisibility!</additionalText>
               </effect>
             </effects>
           </event>
@@ -53,16 +53,16 @@
          <choice>
           <text>Destroy the hut.</text>
           <event>
-            <text>You destroy the hut.</text>
+            <text>[Lead] and your other minions destroy the hut.</text>
             <effects>
               <effect effect="Gain" type="Ability" object="Explosion" chance="10">
-                  <additionalText>The lead minion gets learns Explosion!</additionalText>
+                  <additionalText>[Lead] learns how to cast Explosion!</additionalText>
               </effect>
               <effect effect="Gain" type="Slot" object="Summon" chance="50">
-                  <additionalText> And find a summon slot!</additionalText>
+                  <additionalText>They find a summon slot!</additionalText>
               </effect>
               <effect effect="Gain" type="Slot" object="Artifact" chance="40">
-                  <additionalText> And find an artifact slot!</additionalText>
+                  <additionalText>They find an artifact slot!</additionalText>
               </effect>
             </effects>
           </event>
