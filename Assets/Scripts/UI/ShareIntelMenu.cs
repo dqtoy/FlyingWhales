@@ -52,6 +52,40 @@ public class ShareIntelMenu : MonoBehaviour {
 
         UpdateIntel(PlayerManager.Instance.player.allIntel);
     }
+    public void Open(Character targetCharacter, Character actor, Intel intelToShare) {
+        //UIManager.Instance.SetCoverState(true);
+        //UIManager.Instance.Pause();
+        //UIManager.Instance.SetSpeedTogglesState(false);
+        this.gameObject.SetActive(true);
+
+        wasPausedOnOpen = GameManager.Instance.isPaused;
+        UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
+
+        Messenger.Broadcast(Signals.ON_OPEN_SHARE_INTEL);
+
+        this.targetCharacter = targetCharacter;
+        this.actor = actor;
+        instructionLbl.text = "Share Intel with " + targetCharacter.name;
+        endOfConversationLbl.transform.SetParent(this.transform);
+        endOfConversationLbl.gameObject.SetActive(false);
+
+        Utilities.DestroyChildren(dialogScrollView.content);
+
+        GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        DialogItem item = targetDialog.GetComponent<DialogItem>();
+        item.SetData(targetCharacter, "What do you want from me?");
+
+        GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
+        actorItem.SetData(actor, "I am here to share information with you.", DialogItem.Position.Right);
+
+        DirectlyShowIntelReaction(intelToShare);
+    }
+    private void DirectlyShowIntelReaction(Intel intel) {
+        HideIntel();
+        ReactToIntel(intel);
+    }
 
     private void UpdateIntel(List<Intel> intelToShow) {
         intelGO.SetActive(true);
@@ -86,16 +120,16 @@ public class ShareIntelMenu : MonoBehaviour {
     private void ReactToIntel(Intel intel) {
         closeBtn.interactable = false;
         //HideIntel();
-        UpdateIntel(new List<Intel>() { intel });
-        intelItems[0].SetClickedState(true);
-        SetIntelButtonsInteractable(false);
+        //UpdateIntel(new List<Intel>() { intel });
+        //intelItems[0].SetClickedState(true);
+        //SetIntelButtonsInteractable(false);
 
         GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
         actorItem.SetData(actor, Utilities.LogReplacer(intel.intelLog), DialogItem.Position.Right);
 
-        ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
-        share.BaseActivate(targetCharacter);
+        //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
+        //share.BaseActivate(targetCharacter);
         List<string> reactions = targetCharacter.ShareIntel(intel);
         StartCoroutine(ShowReactions(reactions));
     }
@@ -131,7 +165,7 @@ public class ShareIntelMenu : MonoBehaviour {
         closeBtn.interactable = true;
         yield return null;
 
-        ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
-        share.DeactivateAction();
+        //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
+        //share.DeactivateAction();
     }
 }

@@ -977,6 +977,7 @@ public class CharacterManager : MonoBehaviour {
     }
     public bool RelationshipImprovement(Character actor, Character target, GoapAction cause = null) {
         string summary = "Relationship improvement between " + actor.name + " and " + target.name;
+        bool hasImproved = false;
         Log log = null;
         if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
             //If Actor and Target are Enemies, 25% chance to remove Enemy relationship. If so, Target now considers Actor a Friend.
@@ -988,14 +989,19 @@ public class CharacterManager : MonoBehaviour {
                 summary += target.name + " now considers " + actor.name + " an enemy.";
                 RemoveOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
                 CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
-                return true;
+                hasImproved = true;
             }
-        } else if (!target.HasRelationshipWith(actor)) {
+        }
+        //If character is already a Friend, will not change actual relationship but will consider it improved
+        else if (target.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.FRIEND)) {
+            hasImproved = true;
+        } 
+        else if (!target.HasRelationshipWith(actor)) {
             log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
             summary += "\n" + target.name + " has no relationship with " + actor.name + ". " + target.name + " now considers " + actor.name + " a friend.";
             //If Target has no relationship with Actor, Target now considers Actor a Friend.
             CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
-            return true;
+            hasImproved = true;
         }
         Debug.Log(summary);
         if (log != null) {
@@ -1003,7 +1009,7 @@ public class CharacterManager : MonoBehaviour {
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
         }
-        return false;
+        return hasImproved;
     }
     /// <summary>
     /// Unified way of degrading a relationship of a character with a target character.
@@ -1082,6 +1088,10 @@ public class CharacterManager : MonoBehaviour {
                 PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
                 hasDegraded = true;
             }
+        } 
+        //If character is already an Enemy, will not change actual relationship but will consider it degraded
+        else if (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+            hasDegraded = true;
         }
         //If Target is only Relative of Actor(no other relationship) or has no relationship with Actor, Target now considers Actor an Enemy.
         else if (!target.HasRelationshipWith(actorAlterEgo) || (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.RELATIVE) && target.GetCharacterRelationshipData(actorAlterEgo).rels.Count == 1)) {
@@ -1094,6 +1104,7 @@ public class CharacterManager : MonoBehaviour {
             PlayerManager.Instance.player.ShowNotificationFrom(log, target, actorAlterEgo.owner);
             hasDegraded = true;
         }
+
 
         Debug.Log(summary);
         return hasDegraded;

@@ -576,6 +576,9 @@ public class PlayerUI : MonoBehaviour {
             IntelItem currItem = intelItems[i];
             Intel intel = PlayerManager.Instance.player.allIntel.ElementAtOrDefault(i);
             currItem.SetIntel(intel);
+            if (intel != null) {
+                currItem.SetClickAction(PlayerManager.Instance.player.SetCurrentActiveIntel);
+            }
         }
     }
     public void SetIntelMenuState(bool state) {
@@ -635,13 +638,21 @@ public class PlayerUI : MonoBehaviour {
     }
     public void ShowPlayerIntels(bool state) {
         intelContainer.SetActive(state);
-        RectTransform rt = UIManager.Instance.playerNotifGO.transform as RectTransform;
-        Vector3 previousPos = rt.anchoredPosition;
-        if (!state) {
-            rt.anchoredPosition = new Vector3(-640f, previousPos.y, previousPos.z);
-        } else {
-            rt.anchoredPosition = new Vector3(-1150f, previousPos.y, previousPos.z);
+        //RectTransform rt = UIManager.Instance.playerNotifGO.transform as RectTransform;
+        //Vector3 previousPos = rt.anchoredPosition;
+        //if (!state) {
+        //    rt.anchoredPosition = new Vector3(-640f, previousPos.y, previousPos.z);
+        //} else {
+        //    rt.anchoredPosition = new Vector3(-1150f, previousPos.y, previousPos.z);
+        //}
+    }
+    public IntelItem GetIntelItemWithIntel(Intel intel) {
+        for (int i = 0; i < intelItems.Length; i++) {
+            if(intelItems[i].intel != null && intelItems[i].intel == intel) {
+                return intelItems[i];
+            }
         }
+        return null;
     }
     #endregion
 

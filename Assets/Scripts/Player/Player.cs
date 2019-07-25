@@ -33,6 +33,7 @@ public class Player : ILeader {
     public Minion currentMinionLeader { get; private set; }
     public Area currentAreaBeingInvaded { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
+    public Intel currentActiveIntel { get; private set; }
 
     private int maxSummonSlots; //how many summons can the player have
     private int maxArtifactSlots; //how many artifacts can the player have
@@ -643,6 +644,44 @@ public class Player : ILeader {
         if (showPopup) {
             Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
         }
+    }
+    public void SetCurrentActiveIntel(Intel intel) {
+        if (currentActiveIntel == intel) {
+            //Do not process when setting the same combat ability
+            return;
+        }
+        Intel previousIntel = currentActiveIntel;
+        currentActiveIntel = intel;
+        if (currentActiveIntel == null) {
+            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+            IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(previousIntel);
+            intelItem?.SetClickedState(false);
+            //InteriorMapManager.Instance.UnhighlightTiles();
+            //GameManager.Instance.SetPausedState(false);
+        } else {
+            IntelItem intelItem = PlayerUI.Instance.GetIntelItemWithIntel(currentActiveIntel);
+            //change the cursor
+            CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Cross);
+            CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveIntel);
+            CursorManager.Instance.AddLeftClickAction(() => SetCurrentActiveIntel(null));
+            intelItem?.SetClickedState(true);
+            //GameManager.Instance.SetPausedState(true);
+        }
+    }
+    private void TryExecuteCurrentActiveIntel() {
+        if (CanShareIntel(InteriorMapManager.Instance.currentlyHoveredPOI)) {
+            Character targetCharacter = InteriorMapManager.Instance.currentlyHoveredPOI as Character;
+            UIManager.Instance.OpenShareIntelMenu(targetCharacter, currentMinionLeader.character, currentActiveIntel);
+        }
+    }
+    public bool CanShareIntel(IPointOfInterest poi) {
+        if(poi is Character) {
+            Character character = poi as Character;
+            if(!(character is Summon) && character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.MINION && character.role.roleType != CHARACTER_ROLE.PLAYER) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

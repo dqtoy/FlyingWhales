@@ -99,6 +99,17 @@ public class CursorManager : MonoBehaviour {
                         }
                     }
                 }
+            } else if (PlayerManager.Instance.player.currentActiveIntel != null) {
+                IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
+                if (hoveredPOI != null) {
+                    if (PlayerManager.Instance.player.CanShareIntel(hoveredPOI)) {
+                        SetCursorTo(Cursor_Type.Check);
+                    } else {
+                        SetCursorTo(Cursor_Type.Cross);
+                    }
+                } else {
+                    SetCursorTo(Cursor_Type.Cross);
+                }
             }
 
         }

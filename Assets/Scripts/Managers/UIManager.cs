@@ -1117,6 +1117,9 @@ public class UIManager : MonoBehaviour {
     public void OpenShareIntelMenu(Character targetCharacter, Character actor) {
         shareIntelMenu.Open(targetCharacter, actor);
     }
+    public void OpenShareIntelMenu(Character targetCharacter, Character actor, Intel intel) {
+        shareIntelMenu.Open(targetCharacter, actor, intel);
+    }
     public bool IsShareIntelMenuOpen() {
         return shareIntelMenu.gameObject.activeSelf;
     }
