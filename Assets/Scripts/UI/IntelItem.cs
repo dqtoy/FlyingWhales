@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class IntelItem : MonoBehaviour {
 
-    private Intel intel;
+    public Intel intel { get; private set; }
 
     public delegate void OnClickAction(Intel intel);
     private OnClickAction onClickAction;
