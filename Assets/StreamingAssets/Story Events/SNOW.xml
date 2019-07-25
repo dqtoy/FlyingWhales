@@ -3,7 +3,7 @@
   <Events>
     
     <Event id="AN_INCUBUS" name="An Incubus" trigger="END">
-      <text>While exploring you encounter an incubus. After conversing a bit you learn that he is very interested in ancient artifacts.</text>
+      <text>While exploring [Lead] encounters an incubus. After conversing a bit [Lead] learns that he is very interested in ancient artifacts.</text>
       <choices>
         <choice reqType="Artifact" reqName="Necronomicon">
           <text>Show him your Necronomicon.</text>
@@ -17,16 +17,16 @@
         <choice>
           <text>Ask him if he knows anything that may help you in conquering this region.</text>
           <event>
-            <text>Upon browsing his books, he shows you a curious block of text.</text>
+            <text>Upon browsing his books, he shows [Lead] a curious block of text.</text>
             <effects>
               <effect effect="Gain" type="Intervention_Ability" object="MAGIC" chance="50">
-                <additionalText>It teaches you a new Magic Ability!</additionalText>
+                <additionalText>It teaches [Lead] a new Magic Ability!</additionalText>
               </effect>
               <effect effect="Gain" type="Trait" object="Cursed" chance="30">
-                <additionalText>You start reading it, each word making you weaker and weaker. You've been cursed!</additionalText>
+                <additionalText>[Lead] starts reading it, each word making [Lead] weaker and weaker. [Lead] has been cursed!</additionalText>
               </effect>
               <effect effect="Nothing">
-                  <additionalText>You finish reading it, and else nothing happens.</additionalText>
+                  <additionalText>[Lead] finishes reading it, and nothing else happens.</additionalText>
               </effect>
             </effects>
           </event>

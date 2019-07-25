@@ -3,13 +3,13 @@
   <Events>
 
      <Event id="THIEVES_GUILD" name="Thieves Guild" trigger="IMMEDIATE">
-      <text>You encounter a thieves guild.</text>
+      <text>Your team encounters a thieves guild.</text>
       <choices>
 
         <choice reqType="Combat_Ability" reqName="TAUNT">
           <text>Intimidate Them.</text>
           <event>
-            <text>You intimdate them, and one of them decides to join you.</text>
+            <text>[Lead] intimdates them, and one of them decides to join you.</text>
             <effects>
               <effect effect="Gain" type="Summon" object="ThiefSummon" chance="100" />
             </effects>
@@ -28,7 +28,7 @@
                         <additionalText>They give you one of their own in return.</additionalText>
                   </effect>
                   <effect effect="Nothing" chance="20">
-                        <additionalText>They run off with your summon, you chase them, but they eventually got away.</additionalText>
+                        <additionalText>They run off with your summon, your team chases them, but they eventually got away.</additionalText>
                   </effect>
             </effects>
           </event>
@@ -37,16 +37,16 @@
         <choice>
           <text>Attack Them.</text>
           <event>
-            <text>You attack them.</text>
+            <text>Your team attacks them.</text>
             <effects>
                   <effect effect="Gain" type="Summon" object="ThiefSummon" chance="30">
-                        <additionalText>You win effortlessly, taking any survivors as your slaves.</additionalText>
+                        <additionalText>They win effortlessly, taking any survivors as your slaves.</additionalText>
                   </effect>
                   <effect effect="Gain" type="All_Trait" object="Injured" chance="35">
-                        <additionalText>You win, but with several injuries and no survivors from the thieves guild.</additionalText>
+                        <additionalText>They win, but with several injuries and no survivors from the thieves guild.</additionalText>
                   </effect>
                   <effect effect="Nothing" chance="35">
-                        <additionalText>You win, leaving no survivors from the thieves guild.</additionalText>
+                        <additionalText>They win, leaving no survivors from the thieves guild.</additionalText>
                   </effect>
             </effects>
           </event>
@@ -60,13 +60,13 @@
     </Event>
 
     <Event id="CANNIBALS" name="Cannibals" trigger="END">
-      <text>You encounter some cannibals.</text>
+      <text>Your team encounters some cannibals.</text>
       <choices>
 
         <choice reqType="Summon" reqName="Skeleton">
           <text>Abduct 1 and experiment on it.</text>
           <event>
-            <text>You abduct one and do several experiments on it. You learn how to inflict Cannibalism on others!</text>
+            <text>[Lead] abducts one and does several experiments on it. [Lead] learns how to inflict Cannibalism on others!</text>
             <effects>
               <effect effect="Gain" type="Intervention_Ability" object="INFLICT_CANNIBALISM" chance="100" />
             </effects>
@@ -76,13 +76,13 @@
         <choice>
           <text>Attack Them.</text>
           <event>
-            <text>You attack them.</text>
+            <text>Your team attacks them.</text>
             <effects>
                   <effect effect="Gain" type="Intervention_Ability" object="INFLICT_CANNIBALISM" chance="30">
-                        <additionalText>You win, you take one of the corpses and examine it thoroughly. You learn how to inflict Cannibalism on others!</additionalText>
+                        <additionalText>Your team wins, [Lead] takes one of the corpses and examines it thoroughly. [Lead] learns how to inflict Cannibalism on others!</additionalText>
                   </effect>
                   <effect effect="Gain" type="All_Trait" object="Injured" chance="70">
-                        <additionalText>You lose with several injuries.</additionalText>
+                        <additionalText>Your team loses with several injuries.</additionalText>
                   </effect>
             </effects>
           </event>

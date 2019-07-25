@@ -356,6 +356,27 @@ public class StoryEventsManager : MonoBehaviour {
             }
         }
     }
+    public void CollectEffects(StoryEvent storyEvent, out string additionalText, out List<StoryEventEffect> chosenEffects) {
+        additionalText = string.Empty;
+        chosenEffects = new List<StoryEventEffect>();
+        WeightedDictionary<StoryEventEffect> pooledEffects = new WeightedDictionary<StoryEventEffect>();
+        for (int i = 0; i < storyEvent.effects.Length; i++) {
+            StoryEventEffect currEFfect = storyEvent.effects[i];
+            if (currEFfect.effectChance == 100) {
+                //add effect to chosen effects. These will be executed once the player has clicked a choice
+                additionalText += " " + currEFfect.additionalText;
+                chosenEffects.Add(currEFfect);
+            } else {
+                pooledEffects.AddElement(currEFfect, currEFfect.effectChance);
+            }
+        }
+        //if any pooled effects. Give one.
+        if (pooledEffects.GetTotalOfWeights() > 0) {
+            StoryEventEffect currEffect = pooledEffects.PickRandomElementGivenWeights();
+            additionalText += " " + currEffect.additionalText;
+            chosenEffects.Add(currEffect);
+        }
+    }
     #endregion
 }
 

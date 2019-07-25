@@ -3,29 +3,29 @@
   <Events>
 
     <Event id="PANDORAS_BOX" name="Pandora's Box" trigger="END">
-      <text>You find Pandora's Box</text>
+      <text>[Lead] finds Pandora's Box</text>
       <choices>
 
         <choice reqType="Summon" reqName="ThiefSummon">
           <text>Pick Lock.</text>
           <event>
-            <text>You find a Chaos Orb.</text>
+            <text>[Lead] finds a Chaos Orb inside.</text>
             <effects>
               <effect effect="Gain" type="Artifact" object="Chaos_Orb" chance="100" />
             </effects>
-          </event>>
+          </event>
         </choice>
 
         <choice>
           <text>Force lock open.</text>
           <event>
-            <text>You destroy the lock.</text>
+            <text>[Lead] destroys the lock.</text>
             <effects>
               <effect effect="Gain" type="Artifact" object="Chaos_Orb" chance="20">
-                <additionalText> You find a Chaos Orb inside.</additionalText>
+                <additionalText> [Lead] finds a Chaos Orb inside.</additionalText>
               </effect>
               <effect effect="Gain" type="Trait" object="Injured" chance="70">
-                <additionalText> The box then explodes injuring your lead minion!</additionalText>
+                <additionalText> The box then explodes injuring [Lead]!</additionalText>
               </effect>
               <effect effect="Nothing" chance="10" />
             </effects>
@@ -40,7 +40,7 @@
     </Event>
 
      <Event id="WOLVES_DEN" name="Wolves Den" trigger="END">
-      <text>You encounter a wolves den.</text>
+      <text>[Lead] encounters a wolves den.</text>
       <choices>
 
         <choice reqType="Summon" reqName="Skeleton">
@@ -56,16 +56,16 @@
         <choice>
           <text>Establish dominance.</text>
           <event>
-            <text>You try and force the wolves into submission.</text>
+            <text>[Lead] tries to force the wolves into submission.</text>
             <effects>
               <effect effect="Gain" type="Summon" object="Wolf" chance="30">
-                <additionalText> You succeed, one of the wolves decides to join you.</additionalText>
+                <additionalText> [Lead] succeeds, one of the wolves decides to join you.</additionalText>
               </effect>
               <effect effect="Gain" type="All_Trait" object="Injured" chance="50">
-                <additionalText> You fail, the wolves attack you, causing several injuries.</additionalText>
+                <additionalText> [Lead] fails, the wolves attack [Lead] and your other minions, causing several injuries.</additionalText>
               </effect>
               <effect effect="Nothing" chance="20">
-                <additionalText> You fail, the wolves attack you, but you successfully deflect their attack.</additionalText>
+                <additionalText> [Lead] fails, the wolves attack [Lead] and your other minions, but they successfully deflect their attack.</additionalText>
               </effect>
             </effects>
           </event>
@@ -74,13 +74,13 @@
         <choice>
           <text>Attempt to sneak by.</text>
           <event>
-            <text>You try and sneak your way across.</text>
+            <text>[Lead] and your other minions try and sneak their way across.</text>
             <effects>
               <effect effect="Gain" type="All_Trait" object="Injured" chance="50">
-                <additionalText> You fail, the wolves attack you, causing several injuries.</additionalText>
+                <additionalText> They fail, the wolves attack them, causing several injuries.</additionalText>
               </effect>
               <effect effect="Nothing" chance="50">
-                <additionalText> You succeed, the wolves do not notice you.</additionalText>
+                <additionalText> They succeed, the wolves did not notice them.</additionalText>
               </effect>
             </effects>
           </event>

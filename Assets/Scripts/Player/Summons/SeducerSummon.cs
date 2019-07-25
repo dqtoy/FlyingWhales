@@ -28,10 +28,10 @@ public class SeducerSummon : Summon {
     }
 
     #region Overrides
-    public override void UnsubscribeSignals() {
-        base.UnsubscribeSignals();
-        Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
-    }
+    //public override void UnsubscribeSignals() {
+    //    base.UnsubscribeSignals();
+    //    Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
+    //}
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
         hasSucceeded = false;
