@@ -48,10 +48,10 @@ public class Sacrifice : CombatAbility {
             }
 
             for (int i = 0; i < affectedByExplosion.Count; i++) {
-                affectedByExplosion[i].AdjustHP(-1000, true);
+                affectedByExplosion[i].AdjustHP(-1000, true, source: this);
             }
 
-            character.Death();
+            character.Death("sacrifice");
         }
         base.ActivateAbility(targetPOI);
     }

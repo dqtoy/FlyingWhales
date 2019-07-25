@@ -101,7 +101,7 @@ public class EatCharacter : GoapAction {
         if(poiTarget.GetNormalTrait("Unconscious") != null) {
             SetCannotCancelAction(true);
             Character target = poiTarget as Character;
-            target.Death(deathFromAction: this, responsibleCharacter: actor);
+            target.Death("eaten", deathFromAction: this, responsibleCharacter: actor);
         }
     }
     private void PreEatFail() {

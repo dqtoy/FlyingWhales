@@ -112,6 +112,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     public TrapStructure trapStructure { get; private set; }
     public bool isDisabledByPlayer { get; protected set; }
     public float speedModifier { get; private set; }
+    public string deathStr { get; private set; }
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -606,6 +607,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
         Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
+        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
 
     }
     public virtual void UnsubscribeSignals() {
@@ -623,6 +625,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
     }
     #endregion
 
@@ -807,7 +810,6 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
-
             SetIsDead(true);
             UnsubscribeSignals();
             SetPOIState(POI_STATE.INACTIVE);
@@ -881,25 +883,28 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
 
             RemoveAllNonPersistentTraits();
 
+            SetHP(0);
+
             marker.OnDeath(deathTile);
             SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             AddTrait(dead, gainedFromDoing: deathFromAction);
-            Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
 
-            CancelAllJobsAndPlans();
+            CancelAllJobsAndPlans();            
 
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            if (responsibleCharacter != null) {
+                log.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            }
+            deathStr = Utilities.LogReplacer(log);
+
             AddHistory(log);
             specificLocation.AddHistory(log);
+            Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
         }
-    }
-    public void Assassinate(Character assassin) {
-        Debug.Log(assassin.name + " assassinated " + name);
-        Death();
     }
     public void SetGrave(Tombstone grave) {
         this.grave = grave;
@@ -2455,7 +2460,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         return true;
     }
     public bool IsAble() {
-        return currentHP > 0 && !HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+        return currentHP > 0 && !HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !isDead;
     }
     #endregion
 
@@ -3247,7 +3252,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             return; //if hp is already 0, do not deal damage
         }
         //TODO: For readjustment, attack power is the old computation
-        this.AdjustHP(-characterThatAttacked.attackPower);
+        this.AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
         attackSummary += "\nDealt damage " + stateComponent.character.attackPower.ToString();
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if (this.currentHP <= 0) {
@@ -3277,7 +3282,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                         this.AddTrait(injured, characterThatAttacked, gainedFromDoing: state.actionThatTriggeredThisState);
                         break;
                     case "Death":
-                        this.Death(responsibleCharacter: characterThatAttacked);
+                        this.Death("attacked", responsibleCharacter: characterThatAttacked);
                         break;
                 }
             }
@@ -3528,7 +3533,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         this._currentHP = amount;
     }
     //Adjust current HP based on specified paramater, but HP must not go below 0
-    public virtual void AdjustHP(int amount, bool triggerDeath = false) {
+    public virtual void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
@@ -3539,7 +3544,18 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
         if (triggerDeath && previous != this._currentHP) {
             if (this._currentHP <= 0) {
-                Death();
+                Character character = null;
+                if (source is Character) {
+                    character = source as Character;
+                    Death("attacked", responsibleCharacter: character);
+                } else {
+                    string cause = "attacked";
+                    if (source != null) {
+                        cause += "_" + source.ToString();
+                    }
+                    Death(cause);
+                }
+                
             }
         }
     }
@@ -7339,11 +7355,19 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     #endregion
 
     #region States
-    public void OnCharacterEnteredState(CharacterState state) {
-        if (state.characterState.IsCombatState()) {
-            ClearIgnoreHostilities();
+    private void OnCharacterStartedState(Character character, CharacterState state) {
+        if (character == this) {
+            marker.UpdateActionIcon();
+            if (state.characterState.IsCombatState()) {
+                ClearIgnoreHostilities();
+            }
+        } else {
+            if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null) {
+                if (marker.inVisionPOIs.Contains(character)) {
+                    ThisCharacterWatchEvent(character, null, null);
+                }
+            }
         }
-        //marker.UpdateActionIcon();
     }
     #endregion
 

@@ -23,6 +23,7 @@ public class Area {
     public LocationStructure prison { get; private set; }
     public List<RACE> possibleOccupants { get; private set; }
     public List<InitialRaceSetup> initialSpawnSetup { get; private set; } //only to be used when unoccupied
+    public int initialResidentCount { get; private set; }
 
     //special tokens
     public List<SpecialToken> possibleSpecialTokenSpawns { get; private set; }
@@ -713,6 +714,9 @@ public class Area {
         }
         return characters;
     } 
+    public void SetInitialResidentCount(int count) {
+        initialResidentCount = count;
+    }
     #endregion
 
     #region Logs

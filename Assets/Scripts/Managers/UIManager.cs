@@ -233,6 +233,9 @@ public class UIManager : MonoBehaviour {
         if (PlayerUI.Instance.attackGridGO.activeSelf) {
             PlayerUI.Instance.HideCombatGrid();
         }
+        if (PlayerUI.Instance.isShowingKillSummary) {
+            PlayerUI.Instance.HideKillSummary();
+        }
     }
     public void AddToUIMenuHistory(object data) {
         if(_uiMenuHistory.Count > 0 && _uiMenuHistory[_uiMenuHistory.Count - 1] == data) {

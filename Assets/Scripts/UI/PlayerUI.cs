@@ -10,11 +10,6 @@ using System;
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
 
-    [Header("Currency")]
-    public TextMeshProUGUI manaText;
-    public TextMeshProUGUI suppliesText;
-    public TextMeshProUGUI impsText;
-
     [Header("Role Slots")]
     [SerializeField] private RectTransform roleSlotsParent;
     [SerializeField] private RoleSlotItem[] roleSlots;
@@ -112,6 +107,16 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("New Ability UI")]
     public NewAbilityUI newAbilityUI;
+
+    [Header("Kill Count UI")]
+    [SerializeField] private GameObject killCountGO;
+    [SerializeField] private TextMeshProUGUI killCountLbl;
+    [SerializeField] private GameObject killSummaryGO;
+    [SerializeField] private GameObject killCharacterItemPrefab;
+    [SerializeField] private ScrollRect killSummaryScrollView;
+    [SerializeField] private RectTransform aliveHeader;
+    [SerializeField] private RectTransform deadHeader;
+
     //[Header("Actions")]
     //[SerializeField] private int maxActionPages;
     //[SerializeField] private GameObject actionPagePrefab;
@@ -197,6 +202,10 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Artifact>(Signals.PLAYER_REMOVED_ARTIFACT, OnRemoveArtifact);
         Messenger.AddListener<Artifact>(Signals.PLAYER_USED_ARTIFACT, OnUsedArtifact);
 
+        //Kill Count UI
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
+
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
 
@@ -209,12 +218,16 @@ public class PlayerUI : MonoBehaviour {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(true);
-        
+        //Kill count UI
+        UpdateKillCountActiveState();
+        LoadKillSummaryCharacterItems(area);
+        UpdateKillCount();
     }
     private void OnAreaMapClosed(Area area) {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(false);
+        UpdateKillCountActiveState();
     }
     private void OnKeyPressed(KeyCode pressedKey) {
         if (pressedKey == KeyCode.Escape) {
@@ -234,6 +247,18 @@ public class PlayerUI : MonoBehaviour {
             } else if (isSummoningArtifact) {
                 TryPlaceArtifact();
             }
+        }
+    }
+    private void OnCharacterDied(Character character) {
+        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+            UpdateKillCount();
+            OrderKillSummaryItems();
+        }
+    }
+    private void OnCharacterGainedTrait(Character character, Trait trait) {
+        if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+            UpdateKillCount();
+            OrderKillSummaryItems();
         }
     }
     #endregion
@@ -516,6 +541,8 @@ public class PlayerUI : MonoBehaviour {
     private void OnMenuOpened(UIMenu menu) {
         if (menu is LandmarkInfoUI) {
             UIManager.Instance.ShowMinionsMenu();
+        } else if (menu is AreaInfoUI || menu is CharacterInfoUI || menu is TileObjectInfoUI) {
+            HideKillSummary();
         }
     }
     private void OnMenuClosed(UIMenu menu) {
@@ -1083,5 +1110,58 @@ public class PlayerUI : MonoBehaviour {
     //}
     //#endregion
 
+    #region Kill Count
+    public bool isShowingKillSummary { get { return killCountGO.activeSelf; } }
+    private void UpdateKillCountActiveState() {
+        bool state = InteriorMapManager.Instance.isAnAreaMapShowing;
+        killCountGO.SetActive(state);
+        killSummaryGO.SetActive(false);
+    }
+    private void LoadKillSummaryCharacterItems(Area area) {
+        KillCountCharacterItem[] items = Utilities.GetComponentsInDirectChildren<KillCountCharacterItem>(killSummaryScrollView.content.gameObject);
+        for (int i = 0; i < items.Length; i++) {
+            ObjectPoolManager.Instance.DestroyObject(items[i].gameObject);
+        }
+        for (int i = 0; i < area.areaResidents.Count; i++) {
+            Character character = area.areaResidents[i];
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killSummaryScrollView.content);
+            KillCountCharacterItem item = go.GetComponent<KillCountCharacterItem>();
+            item.SetCharacter(character);
+        }
+        OrderKillSummaryItems();
+    }
+    private void UpdateKillCount() {
+        killCountLbl.text = InteriorMapManager.Instance.currentlyShowingArea.areaResidents.Where(x => x.IsAble()).Count().ToString() + "/" + InteriorMapManager.Instance.currentlyShowingArea.initialResidentCount.ToString();
+    }
+    private void OrderKillSummaryItems() {
+        KillCountCharacterItem[] items = Utilities.GetComponentsInDirectChildren<KillCountCharacterItem>(killSummaryScrollView.content.gameObject);
+        List<KillCountCharacterItem> alive = new List<KillCountCharacterItem>();
+        List<KillCountCharacterItem> dead = new List<KillCountCharacterItem>();
+        for (int i = 0; i < items.Length; i++) {
+            KillCountCharacterItem currItem = items[i];
+            if (!currItem.character.IsAble() || currItem.character.faction == PlayerManager.Instance.player.playerFaction) { //added checking for faction in cases that the character was raised from dead
+                dead.Add(currItem);
+            } else {
+                alive.Add(currItem);
+            }
+        }
+        aliveHeader.transform.SetAsFirstSibling();
+        for (int i = 0; i < alive.Count; i++) {
+            KillCountCharacterItem currItem = alive[i];
+            currItem.transform.SetSiblingIndex(i + 1);
+        }
+        deadHeader.transform.SetSiblingIndex(alive.Count + 1);
+        for (int i = 0; i < dead.Count; i++) {
+            KillCountCharacterItem currItem = dead[i];
+            currItem.transform.SetSiblingIndex(alive.Count + i + 2);
+        }
+    }
+    public void ToggleKillSummary() {
+        killSummaryGO.SetActive(!killSummaryGO.activeSelf);
+    }
+    public void HideKillSummary() {
+        killSummaryGO.SetActive(false);
+    }
+    #endregion
 }
 

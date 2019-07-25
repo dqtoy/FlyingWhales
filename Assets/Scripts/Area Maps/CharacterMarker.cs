@@ -112,7 +112,6 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
-        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
 
@@ -310,22 +309,6 @@ public class CharacterMarker : PooledObject {
         }
 
     }
-    private void OnCharacterStartedState(Character character, CharacterState state) {
-        if (character == this.character) {
-            UpdateActionIcon();
-        } else {
-            if(state.characterState == CHARACTER_STATE.COMBAT && this.character.GetNormalTrait("Unconscious", "Resting") == null) {
-                if (inVisionPOIs.Contains(character)) {
-                    this.character.ThisCharacterWatchEvent(character, null, null);
-                }
-            }
-        }
-    }
-    //private void OnCharacterEndedState(Character character, CharacterState state) {
-    //    if (character == this.character) {
-    //        UpdateActionIcon();
-    //    }
-    //}
     #endregion
 
     #region UI
@@ -452,7 +435,6 @@ public class CharacterMarker : PooledObject {
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         visionCollision.Reset();
         GameObject.Destroy(collisionTrigger.gameObject);

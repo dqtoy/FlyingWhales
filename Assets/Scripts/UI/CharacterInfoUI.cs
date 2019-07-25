@@ -645,9 +645,6 @@ public class CharacterInfoUI : UIMenu {
             Debug.LogError("No eligible characters to assault!");
         }
     }
-    public void Death() {
-        _activeCharacter.Death();
-    }
     public void LogWorldDistanceToCurrentHostile() {
         Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.position, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.position));
     }
