@@ -8,7 +8,7 @@ public class Abduct : PlayerJobAction {
     private List<Area> _abductAreas;
 
     public Abduct() : base(INTERVENTION_ABILITY.ABDUCT) {
-        description = "The Instigator will goad a character into abducting a specified character. This action only works on goblins and skeletons.";
+        description = "Makes a character abduct other characters of different race.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         _abductAreas = new List<Area>();

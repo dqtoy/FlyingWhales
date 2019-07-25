@@ -36,11 +36,11 @@ public class CombatState : CharacterState {
             return; //to prevent exiting from this function, when this state was already exited by another funtion in the same stack.
         }
         if (stateComponent.character.doNotDisturb > 0) {
-            if (!(characterState == CHARACTER_STATE.BERSERKED && stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetNormalTrait("Combat Recovery") != null)) {
+            //if (!(characterState == CHARACTER_STATE.BERSERKED && stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetNormalTrait("Combat Recovery") != null)) {
                 StopStatePerTick();
                 OnExitThisState();
                 return;
-            }
+            //}
         }
         //if the character is away from home and is at an edge tile, go to home location
         //if (!isAttacking && stateComponent.character.homeArea != null && stateComponent.character.homeArea != stateComponent.character.specificLocation && stateComponent.character.gridTileLocation.IsAtEdgeOfWalkableMap()) {
@@ -387,9 +387,9 @@ public class CombatState : CharacterState {
     }
     private void OnFinishedFleeingFrom(Character targetCharacter) {
         if (stateComponent.character.IsHostileWith(targetCharacter)) {
-            if (!targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
+            //if (!targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
                 stateComponent.character.marker.AddTerrifyingObject(targetCharacter);
-            }
+            //}
         }
         if (stateComponent.character.IsHostileOutsider(targetCharacter)) {
             if (stateComponent.character.role.roleType == CHARACTER_ROLE.LEADER || stateComponent.character.role.roleType == CHARACTER_ROLE.NOBLE || stateComponent.character.role.roleType == CHARACTER_ROLE.SOLDIER) {
@@ -398,7 +398,7 @@ public class CombatState : CharacterState {
                     stateComponent.character.CreateLocationKnockoutJobs(targetCharacter, numOfJobs);
                 }
             } else {
-                if (!(targetCharacter.isDead || targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery") || targetCharacter.isAtHomeArea)) {
+                if (!(targetCharacter.isDead || targetCharacter.isAtHomeArea)) { //|| targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
                     if (stateComponent.character.isAtHomeArea) {
                         if (!stateComponent.character.jobQueue.HasJobWithOtherData(JOB_TYPE.REPORT_HOSTILE, targetCharacter)) {
                             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {

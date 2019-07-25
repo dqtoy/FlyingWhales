@@ -6,7 +6,7 @@ public class RileUp : PlayerJobAction {
 
     private Character _targetCharacter;
     public RileUp() : base(INTERVENTION_ABILITY.RILE_UP) {
-        description = "The Instigator will rile up a character and goad him into attacking people in a specified location. This action only works for beasts.";
+        description = "Enrages a beast to attack other characters in a settlement.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
     }

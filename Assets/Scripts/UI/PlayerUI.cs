@@ -735,7 +735,7 @@ public class PlayerUI : MonoBehaviour {
         threatMeter.value = 0f;
     }
     public void ShowCorruptTileConfirmation(HexTile tile) {
-        if (tile.CanBeCorrupted() && tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted && !tile.isCorrupted) { //
+        if (tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted && !tile.isCorrupted) { //tile.CanBeCorrupted() && 
             PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
             if (tile.areaOfTile != null) {
                 corruptTileConfirmationLbl.text = "To corrupt this area, you must defeat all residents within. Once you proceeed there is no going back. Do you wish to take on this settlement?";

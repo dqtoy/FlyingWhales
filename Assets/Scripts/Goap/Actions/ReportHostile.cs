@@ -29,7 +29,7 @@ public class ReportHostile : GoapAction {
         base.PerformActualAction();
         Character targetCharacter = poiTarget as Character;
         if (!isTargetMissing && targetCharacter.IsInOwnParty()) {
-            if(hostile.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT) < 3 && !hostile.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
+            if(hostile.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT) < 3) { //&& !hostile.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
                 SetState("Report Hostile Success");
             } else {
                 SetState("Report Hostile Fail");

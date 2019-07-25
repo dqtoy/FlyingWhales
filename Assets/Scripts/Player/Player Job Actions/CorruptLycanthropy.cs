@@ -7,7 +7,7 @@ public class CorruptLycanthropy : PlayerJobAction {
     private int _level;
 
     public CorruptLycanthropy() : base(INTERVENTION_ABILITY.INFLICT_LYCANTHROPY) {
-        description = "Inflict a character with Lycanthropy, which gives a character a chance to transform into a wild wolf whenever he/she sleeps.";
+        description = "Makes a character transform into a wild wolf whenever he/she sleeps.";
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         abilityTags.Add(ABILITY_TAG.MAGIC);

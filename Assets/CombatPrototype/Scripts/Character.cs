@@ -1566,7 +1566,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         return false;
     }
     public void CreateLocationKnockoutJobs(Character targetCharacter, int amount) {
-        if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery") && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {//&& !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
             for (int i = 0; i < amount; i++) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = targetCharacter });
                 job.SetCanTakeThisJobChecker(CanCharacterTakeKnockoutJob);
