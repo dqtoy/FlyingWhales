@@ -158,23 +158,25 @@ public class CharacterStateComponent {
                 SetCurrentState(null);
             } else {
                 if(character.doNotDisturb > 0) {
-                    if(previousMajorState.characterState == CHARACTER_STATE.BERSERKED && character.doNotDisturb == 1 && character.GetNormalTrait("Combat Recovery") != null) { //Quick fix only for build, MUST REDO
-                        if (previousMajorState.hasStarted) {
-                            //Resumes previous major state
-                            if (previousMajorState.CanResumeState()) {
-                                SetCurrentState(previousMajorState);
-                                currentState.ResumeState();
-                            } else {
-                                previousMajorState = null;
-                                SetCurrentState(null);
-                            }
-                        } else {
-                            previousMajorState.EnterState(previousMajorState.targetArea);
-                        }
-                    } else {
-                        previousMajorState.ExitState();
-                        SetCurrentState(null);
-                    }
+                    previousMajorState.ExitState();
+                    SetCurrentState(null);
+                    //if (previousMajorState.characterState == CHARACTER_STATE.BERSERKED && character.doNotDisturb == 1 && character.GetNormalTrait("Combat Recovery") != null) { //Quick fix only for build, MUST REDO
+                    //    if (previousMajorState.hasStarted) {
+                    //        //Resumes previous major state
+                    //        if (previousMajorState.CanResumeState()) {
+                    //            SetCurrentState(previousMajorState);
+                    //            currentState.ResumeState();
+                    //        } else {
+                    //            previousMajorState = null;
+                    //            SetCurrentState(null);
+                    //        }
+                    //    } else {
+                    //        previousMajorState.EnterState(previousMajorState.targetArea);
+                    //    }
+                    //} else {
+                    //    previousMajorState.ExitState();
+                    //    SetCurrentState(null);
+                    //}
                 } else {
                     if (previousMajorState.hasStarted) {
                         //Resumes previous major state
