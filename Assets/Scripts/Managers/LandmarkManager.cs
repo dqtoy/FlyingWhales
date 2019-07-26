@@ -17,6 +17,7 @@ public class LandmarkManager : MonoBehaviour {
 
     public int corruptedLandmarksCount;
 
+    public List<BaseLandmark> allLandmarks;
     public List<Area> allAreas;
     public List<Area> allNonPlayerAreas {
         get { return allAreas.Where(x => x != PlayerManager.Instance.player.playerArea).ToList(); }
@@ -130,7 +131,7 @@ public class LandmarkManager : MonoBehaviour {
         Region chosenPlayerRegion = regions[Random.Range(0, regions.Length)];
         List<HexTile> playerTileChoices = chosenPlayerRegion.GetValidTilesForLandmarks();
         HexTile chosenTile = playerTileChoices[Random.Range(0, playerTileChoices.Count)];
-        Area playerArea = CreateNewArea(chosenTile, AREA_TYPE.DEMONIC_INTRUSION);
+        Area playerArea = CreateNewArea(chosenTile, AREA_TYPE.DEMONIC_INTRUSION, 0);
         playerArea.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
         portal = CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.DEMONIC_PORTAL);
 
@@ -207,7 +208,7 @@ public class LandmarkManager : MonoBehaviour {
                 chosenRegionTile = tileChoices[Random.Range(tileChoices.Count / 2, tileChoices.Count)];
             }
             
-            Area newArea = CreateNewArea(chosenRegionTile, settlementType);
+            Area newArea = CreateNewArea(chosenRegionTile, settlementType, citizenCount);
             CreateNewLandmarkOnTile(chosenRegionTile, LANDMARK_TYPE.PALACE);
             Faction faction = FactionManager.Instance.CreateNewFaction();
             if (settlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
@@ -437,8 +438,8 @@ public class LandmarkManager : MonoBehaviour {
         }
         throw new System.Exception("No area data for type " + areaType.ToString());
     }
-    public Area CreateNewArea(HexTile coreTile, AREA_TYPE areaType, List<HexTile> tiles = null) {
-        Area newArea = new Area(coreTile, areaType);
+    public Area CreateNewArea(HexTile coreTile, AREA_TYPE areaType, int citizenCount, List<HexTile> tiles = null) {
+        Area newArea = new Area(coreTile, areaType, citizenCount);
         if (tiles == null) {
             newArea.AddTile(coreTile);
         } else {
@@ -463,6 +464,28 @@ public class LandmarkManager : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
         GenerateAreaMap(newArea);
 #endif
+        Messenger.Broadcast(Signals.AREA_CREATED, newArea);
+        allAreas.Add(newArea);
+        return newArea;
+    }
+    public Area CreateNewArea(SaveDataArea saveDataArea) {
+        Area newArea = new Area(saveDataArea);
+
+        if(newArea.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
+            for (int i = 0; i < saveDataArea.tileIDs.Count; i++) {
+                HexTile tile = GridMap.Instance.hexTiles[saveDataArea.tileIDs[i]];
+                newArea.AddTile(tile);
+                tile.SetCorruption(true);
+            }
+        } else {
+            for (int i = 0; i < saveDataArea.tileIDs.Count; i++) {
+                newArea.AddTile(GridMap.Instance.hexTiles[saveDataArea.tileIDs[i]]);
+            }
+        }
+
+        if (locationPortraits.ContainsKey(newArea.areaType)) {
+            newArea.SetLocationPortrait(locationPortraits[newArea.areaType]);
+        }
         Messenger.Broadcast(Signals.AREA_CREATED, newArea);
         allAreas.Add(newArea);
         return newArea;
@@ -518,7 +541,7 @@ public class LandmarkManager : MonoBehaviour {
         }
         newOwner.AddToOwnedAreas(area);
         area.SetOwner(newOwner);
-        area.SetRaceType(newRace);
+        //area.SetRaceType(newRace);
         area.TintStructuresInArea(newOwner.factionColor);
     }
     public void UnownArea(Area area) {
@@ -526,7 +549,7 @@ public class LandmarkManager : MonoBehaviour {
             area.owner.RemoveFromOwnedAreas(area);
         }
         area.SetOwner(null);
-        area.SetRaceType(area.defaultRace.race); //Return area to its default race
+        //area.SetRaceType(area.defaultRace.race); //Return area to its default race
         area.TintStructuresInArea(Color.white);
         Messenger.Broadcast(Signals.AREA_OCCUPANY_CHANGED, area);
     }

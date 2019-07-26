@@ -102,6 +102,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public int corruptDuration { get { return GetCorruptDuration(); } }
     public string tileName { get { return data.tileName; } }
     public string thisName { get { return data.tileName; } }
+    public float elevationNoise { get { return data.elevationNoise; } }
     public float moistureNoise { get { return data.moistureNoise; } }
     public float temperature { get { return data.temperature; } }
     public BIOMES biomeType { get { return data.biomeType; } }
@@ -263,6 +264,27 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 Biomes.Instance.UpdateTileVisuals(tileToConnect);
             }
         }
+        //Create Landmark Game Object on tile
+        GameObject landmarkGO = CreateLandmarkVisual(saveData.landmarkType, this.landmarkOnTile, landmarkData);
+        if (landmarkGO != null) {
+            landmarkGO.transform.localPosition = Vector3.zero;
+            landmarkGO.transform.localScale = Vector3.one;
+            landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
+        }
+        return landmarkOnTile;
+    }
+    public BaseLandmark CreateLandmarkOfType(SaveDataLandmark saveData) {
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
+        SetLandmarkOnTile(new BaseLandmark(this, saveData));
+        //if (landmarkData.minimumTileCount > 1) {
+        //    if (neighbourDirections.ContainsKey(landmarkData.connectedTileDirection) && neighbourDirections[landmarkData.connectedTileDirection] != null) {
+        //        HexTile tileToConnect = neighbourDirections[landmarkData.connectedTileDirection];
+        //        landmarkOnTile.SetConnectedTile(tileToConnect);
+        //        tileToConnect.SetElevation(ELEVATION.PLAIN);
+        //        tileToConnect.SetLandmarkOnTile(this.landmarkOnTile); //set the landmark of the connected tile to the same landmark on this tile
+        //        Biomes.Instance.UpdateTileVisuals(tileToConnect);
+        //    }
+        //}
         //Create Landmark Game Object on tile
         GameObject landmarkGO = CreateLandmarkVisual(saveData.landmarkType, this.landmarkOnTile, landmarkData);
         if (landmarkGO != null) {

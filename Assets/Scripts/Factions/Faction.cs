@@ -9,33 +9,25 @@ using System;
 
 
 public class Faction {
-    protected int _id;
-    protected string _name;
-    protected string _description;
-    protected string _initialLeaderClass;
-    protected int _level;
-    protected int _currentInteractionTick;
-    protected int _usedMonthForInteraction;
-    protected int _inventoryTaskWeight;
-    protected int _offenseTaskNumOfReserved;
-    protected int _supplyTaskNumOfReserved;
-    protected bool _isPlayerFaction;
-    protected GENDER _initialLeaderGender;
-    protected RACE _initialLeaderRace;
-    protected RACE _race;
-    protected ILeader _leader;
-    protected FactionEmblemSetting _emblem;
-    protected List<BaseLandmark> _ownedLandmarks;
-    protected Color _factionColor;
-    protected List<Character> _characters; //List of characters that are part of the faction
-    protected List<BaseLandmark> _landmarkInfo;
-    protected List<Area> _ownedAreas;
-    protected List<RACE> _recruitableRaces;
-    protected List<RACE> _startingFollowers;
-    protected Dictionary<Faction, FactionRelationship> _relationships;
-    protected Dictionary<INTERACTION_TYPE, int> _nonNeutralInteractionTypes;
-    protected Dictionary<INTERACTION_TYPE, int> _neutralInteractionTypes;
-    protected Dictionary<INTERACTION_CATEGORY, FactionTaskWeight> _factionTasksWeights;
+    public int id { get; protected set; }
+    public string name { get; protected set; }
+    public string description { get; protected set; }
+    public string initialLeaderClass { get; protected set; }
+    public int level { get; protected set; }
+    public int inventoryTaskWeight { get; protected set; }
+    public bool isPlayerFaction { get; protected set; }
+    public GENDER initialLeaderGender { get; protected set; }
+    public RACE initialLeaderRace { get; protected set; }
+    public RACE race { get; protected set; }
+    public ILeader leader { get; protected set; }
+    public FactionEmblemSetting emblem { get; protected set; }
+    public List<BaseLandmark> ownedLandmarks { get; protected set; }
+    public Color factionColor { get; protected set; }
+    public List<Character> characters { get; protected set; }//List of characters that are part of the faction
+    public List<Area> ownedAreas { get; protected set; }
+    public List<RACE> recruitableRaces { get; protected set; }
+    public List<RACE> startingFollowers { get; protected set; }
+    public Dictionary<Faction, FactionRelationship> relationships { get; protected set; }
 
     public MORALITY morality { get; private set; }
     public FACTION_SIZE size { get; private set; }
@@ -45,71 +37,17 @@ public class Faction {
     public List<Log> history { get; private set; }
 
     #region getters/setters
-    public int id {
-        get { return _id; }
-    }
-    public int level {
-        get { return _level; }
-    }
-    public string name {
-        get { return _name; }
-    }
     public string urlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_faction" + '"' + ">" + this._name + "</link>"; }
-    }
-    public string description {
-        get { return _description; }
-    }
-    public string initialLeaderClass {
-        get { return _initialLeaderClass; }
+        get { return "<link=" + '"' + this.id.ToString() + "_faction" + '"' + ">" + this.name + "</link>"; }
     }
     public bool isDestroyed {
-        get { return _leader == null; }
-    }
-    public RACE race {
-        get { return _race; }
-    }
-    public GENDER initialLeaderGender {
-        get { return _initialLeaderGender; }
-    }
-    public RACE initialLeaderRace {
-        get { return _initialLeaderRace; }
-    }
-    public ILeader leader {
-        get { return _leader; }
-    }
-    public FactionEmblemSetting emblem {
-        get { return _emblem; }
-    }
-    public Color factionColor {
-        get { return _factionColor; }
-    }
-    public List<Character> characters {
-        get { return _characters; }
-    }
-    public Dictionary<Faction, FactionRelationship> relationships {
-        get { return _relationships; }
-    }
-    public List<BaseLandmark> landmarkInfo {
-        get { return _landmarkInfo; }
-    }
-    public List<BaseLandmark> ownedLandmarks {
-        get { return _ownedLandmarks; }
-    }
-    public List<Area> ownedAreas {
-        get { return _ownedAreas; }
-    }
-    public List<RACE> recruitableRaces {
-        get { return _recruitableRaces; }
-    }
-    public List<RACE> startingFollowers {
-        get { return _startingFollowers; }
+        get { return leader == null; }
     }
     #endregion
 
     public Faction(bool isPlayerFaction = false) {
-        _isPlayerFaction = isPlayerFaction;
-        this._id = Utilities.SetID<Faction>(this);
+        this.isPlayerFaction = isPlayerFaction;
+        this.id = Utilities.SetID<Faction>(this);
         SetName(RandomNameGenerator.Instance.GenerateKingdomName());
         SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
         SetFactionColor(Utilities.GetColorForFaction());
@@ -117,16 +55,15 @@ public class Faction {
         SetMorality(MORALITY.GOOD);
         SetSize(FACTION_SIZE.MAJOR);
         SetFactionActiveState(true);
-        _level = 1;
-        _inventoryTaskWeight = FactionManager.Instance.GetRandomInventoryTaskWeight();
+        level = 1;
+        inventoryTaskWeight = FactionManager.Instance.GetRandomInventoryTaskWeight();
         factionType = Utilities.GetRandomEnumValue<FACTION_TYPE>();
-        _characters = new List<Character>();
-        _ownedLandmarks = new List<BaseLandmark>();
-        _relationships = new Dictionary<Faction, FactionRelationship>();
-        _landmarkInfo = new List<BaseLandmark>();
-        _ownedAreas = new List<Area>();
-        _recruitableRaces = new List<RACE>();
-        _startingFollowers = new List<RACE>();
+        characters = new List<Character>();
+        ownedLandmarks = new List<BaseLandmark>();
+        relationships = new Dictionary<Faction, FactionRelationship>();
+        ownedAreas = new List<Area>();
+        recruitableRaces = new List<RACE>();
+        startingFollowers = new List<RACE>();
         history = new List<Log>();
         //favor = new Dictionary<Faction, int>();
         //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
@@ -139,7 +76,7 @@ public class Faction {
     }
 
     public Faction(FactionSaveData data) {
-        _id = Utilities.SetID(this, data.factionID);
+        id = Utilities.SetID(this, data.factionID);
         SetName(data.factionName);
         SetDescription(data.factionDescription);
         SetFactionColor(data.factionColor);
@@ -149,24 +86,23 @@ public class Faction {
         SetRace(data.race.race);
         SetLevel(data.level);
         SetFactionActiveState(data.isActive);
-        _initialLeaderClass = data.initialLeaderClass;
-        _initialLeaderRace = data.initialLeaderRace;
-        _initialLeaderGender = data.initialLeaderGender;
-        _recruitableRaces = data.recruitableRaces;
-        _startingFollowers = data.startingFollowers;
+        initialLeaderClass = data.initialLeaderClass;
+        initialLeaderRace = data.initialLeaderRace;
+        initialLeaderGender = data.initialLeaderGender;
+        recruitableRaces = data.recruitableRaces;
+        startingFollowers = data.startingFollowers;
 
-        _inventoryTaskWeight = FactionManager.Instance.GetRandomInventoryTaskWeight();
+        inventoryTaskWeight = FactionManager.Instance.GetRandomInventoryTaskWeight();
         factionType = Utilities.GetRandomEnumValue<FACTION_TYPE>();
-        _characters = new List<Character>();
-        _ownedLandmarks = new List<BaseLandmark>();
-        _relationships = new Dictionary<Faction, FactionRelationship>();
-        _landmarkInfo = new List<BaseLandmark>();
-        _ownedAreas = new List<Area>();
-        if (_recruitableRaces == null) {
-            _recruitableRaces = new List<RACE>();
+        characters = new List<Character>();
+        ownedLandmarks = new List<BaseLandmark>();
+        relationships = new Dictionary<Faction, FactionRelationship>();
+        ownedAreas = new List<Area>();
+        if (recruitableRaces == null) {
+            recruitableRaces = new List<RACE>();
         }
-        if (_startingFollowers == null) {
-            _startingFollowers = new List<RACE>();
+        if (startingFollowers == null) {
+            startingFollowers = new List<RACE>();
         }
         history = new List<Log>();
         //favor = new Dictionary<Faction, int>();
@@ -182,6 +118,39 @@ public class Faction {
         AddListeners();
 #endif
     }
+    public Faction(SaveDataFaction data) {
+        this.isPlayerFaction = data.isPlayerFaction;
+        this.id = Utilities.SetID(this, data.id);
+        SetName(data.name);
+        SetDescription(data.description);
+        SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
+        SetFactionColor(data.factionColor);
+        SetRace(data.race);
+        SetMorality(data.morality);
+        SetSize(data.size);
+        SetFactionActiveState(data.isActive);
+        initialLeaderClass = data.initialLeaderClass;
+        initialLeaderRace = data.initialLeaderRace;
+        initialLeaderGender = data.initialLeaderGender;
+        level = data.level;
+        inventoryTaskWeight = data.inventoryTaskWeight;
+        factionType = data.factionType;
+        characters = new List<Character>();
+        ownedLandmarks = new List<BaseLandmark>();
+        relationships = new Dictionary<Faction, FactionRelationship>();
+        ownedAreas = new List<Area>();
+        recruitableRaces = new List<RACE>();
+        startingFollowers = new List<RACE>();
+        history = new List<Log>();
+        //favor = new Dictionary<Faction, int>();
+        //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
+        additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
+        //InitializeInteractions();
+#if !WORLD_CREATION_TOOL
+        //SetDailyInteractionGenerationTick();
+        AddListeners();
+#endif
+    }
 
     #region Virtuals
     /*
@@ -189,8 +158,8 @@ public class Faction {
      This creates relationships between the leader and it's village heads by default.
          */
     public virtual void SetLeader(ILeader leader) {
-        if (_leader != null && _leader is Character) {
-            Character previousRuler = _leader as Character;
+        if (this.leader != null && this.leader is Character) {
+            Character previousRuler = this.leader as Character;
             if(previousRuler.role.roleType != CHARACTER_ROLE.NOBLE) {
                 previousRuler.AssignRole(CharacterRole.NOBLE);
                 previousRuler.AssignClassByRole(previousRuler.role);
@@ -204,30 +173,30 @@ public class Faction {
             if(newRuler.role.roleType != CHARACTER_ROLE.LEADER) {
                 newRuler.AssignRole(CharacterRole.LEADER);
             }
-            if (newRuler.characterClass.className != _initialLeaderClass) {
-                newRuler.AssignClass(CharacterManager.Instance.CreateNewCharacterClass(_initialLeaderClass));
+            if (newRuler.characterClass.className != initialLeaderClass) {
+                newRuler.AssignClass(CharacterManager.Instance.CreateNewCharacterClass(initialLeaderClass));
             }
         }
-        _leader = leader;
+        this.leader = leader;
         
     }
     #endregion
 
     #region Landmarks
     public void OwnLandmark(BaseLandmark landmark) {
-        if (!_ownedLandmarks.Contains(landmark)) {
-            _ownedLandmarks.Add(landmark);
+        if (!ownedLandmarks.Contains(landmark)) {
+            ownedLandmarks.Add(landmark);
         }
     }
     public void UnownLandmark(BaseLandmark landmark) {
-        _ownedLandmarks.Remove(landmark);
+        ownedLandmarks.Remove(landmark);
     }
     #endregion
 
     #region Characters
     public void AddNewCharacter(Character character) {
-        if (!_characters.Contains(character)) {
-            _characters.Add(character);
+        if (!characters.Contains(character)) {
+            characters.Add(character);
             character.SetFaction(this);
             if(this != FactionManager.Instance.neutralFaction && character.role == CharacterRole.BANDIT) {
                 if(UnityEngine.Random.Range(0, 2) == 0) {
@@ -240,7 +209,7 @@ public class Faction {
         }
     }
     public void RemoveCharacter(Character character) {
-        if (_characters.Remove(character)) {
+        if (characters.Remove(character)) {
             if (leader == character) {
                 SetNewLeader(); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
             }
@@ -253,8 +222,8 @@ public class Faction {
     }
     public List<Character> GetCharactersOfType(CHARACTER_ROLE role) {
         List<Character> chars = new List<Character>();
-        for (int i = 0; i < _characters.Count; i++) {
-            Character currCharacter = _characters[i];
+        for (int i = 0; i < characters.Count; i++) {
+            Character currCharacter = characters[i];
             if (currCharacter.role.roleType == role) {
                 chars.Add(currCharacter);
             }
@@ -263,8 +232,8 @@ public class Faction {
     }
     public List<Character> GetViableCharacters(GENDER gender, params CHARACTER_ROLE[] role) {
         List<Character> chars = new List<Character>();
-        for (int i = 0; i < _characters.Count; i++) {
-            Character currCharacter = _characters[i];
+        for (int i = 0; i < characters.Count; i++) {
+            Character currCharacter = characters[i];
             if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !currCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                 for (int j = 0; j < role.Length; j++) {
                     if(currCharacter.role.roleType == role[j]) {
@@ -373,33 +342,33 @@ public class Faction {
         //}
     }
     public void SetRace(RACE race) {
-        _race = race;
+        this.race = race;
     }
     public void SetSize(FACTION_SIZE size) {
         this.size = size;
     }
     public void SetFactionColor(Color color) {
-        _factionColor = color;
+        factionColor = color;
     }
     public void SetName(string name) {
-        _name = name;
+        this.name = name;
     }
     public void SetDescription(string description) {
-        _description = description;
+        this.description = description;
     }
     public void SetInitialFactionLeaderGender(GENDER gender) {
-        _initialLeaderGender = gender;
+        initialLeaderGender = gender;
     }
     public void SetInitialFactionLeaderClass(string className) {
-        _initialLeaderClass = className;
+        initialLeaderClass = className;
     }
     public void SetInitialFactionLeaderRace(RACE race) {
-        _initialLeaderRace = race;
+        initialLeaderRace = race;
     }
     public Character GetCharacterByID(int id) {
-        for (int i = 0; i < _characters.Count; i++) {
-            if (_characters[i].id == id) {
-                return _characters[i];
+        for (int i = 0; i < characters.Count; i++) {
+            if (characters[i].id == id) {
+                return characters[i];
             }
         }
         return null;
@@ -412,8 +381,8 @@ public class Faction {
         return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY;
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < _ownedLandmarks.Count; i++) {
-            BaseLandmark currLandmark = _ownedLandmarks[i];
+        for (int i = 0; i < ownedLandmarks.Count; i++) {
+            BaseLandmark currLandmark = ownedLandmarks[i];
             if (currLandmark.specificLandmarkType == landmarkType) {
                 return true;
             }
@@ -435,13 +404,13 @@ public class Faction {
     //    //Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
     //}
     public void SetLevel(int amount) {
-        _level = amount;
+        level = amount;
     }
     public void LevelUp() {
-        _level++;
+        level++;
     }
     public void LevelUp(int amount) {
-        _level += amount;
+        level += amount;
     }
     public void SetFactionActiveState(bool state) {
         if (isActive == state) {
@@ -451,14 +420,14 @@ public class Faction {
         Messenger.Broadcast(Signals.FACTION_ACTIVE_CHANGED, this);
     }
     public void GenerateStartingCitizens(int leaderLevel, int citizensLevel) {
-        Character leader = CharacterManager.Instance.CreateNewCharacter(CharacterRole.LEADER, _initialLeaderClass, _initialLeaderRace, _initialLeaderGender,
-                    this, _ownedAreas[0]);
+        Character leader = CharacterManager.Instance.CreateNewCharacter(CharacterRole.LEADER, initialLeaderClass, initialLeaderRace, initialLeaderGender,
+                    this, ownedAreas[0]);
         leader.LevelUp(leaderLevel - 1);
         SetLeader(leader);
         //Debug.Log(GameManager.Instance.TodayLogString() + "LEADER Generated Lvl. " + leader.level.ToString() +
         //        " character " + leader.characterClass.className + " " + leader.name + " at " + this.name + " for faction " + leader.name);
 
-        if (_name == "Fyn") {
+        if (name == "Fyn") {
             int soldierCount = 4;
             int adventurerCount = 3;
             int civilianCount = 3;
@@ -470,27 +439,27 @@ public class Faction {
             //**4 Human Soldiers**
             for (int i = 0; i < soldierCount; i++) {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
-                    this, _ownedAreas[0]);
+                    this, ownedAreas[0]);
                 createdCharacter.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
             }
             //**3 Human Adventurers**
             for (int i = 0; i < adventurerCount; i++) {
                 Character adventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.HUMANS, Utilities.GetRandomGender(),
-                    this, _ownedAreas[0]);
+                    this, ownedAreas[0]);
                 adventurer.LevelUp(citizensLevel - 1);
             }
             //**3 Human Civilians**
             for (int i = 0; i < civilianCount; i++) {
                 Character civilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.HUMANS, Utilities.GetRandomGender(),
-                    this, _ownedAreas[0]);
+                    this, ownedAreas[0]);
                 civilian.LevelUp(citizensLevel - 1);
             }
-        } else if (_name == "Orelia") {
+        } else if (name == "Orelia") {
             //Female Elf Queen  with **3 Elven Soldiers** each as her servants
             for (int i = 0; i < 3; i++) {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
-                    this, _ownedAreas[0]);
+                    this, ownedAreas[0]);
                 createdCharacter.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
             }
@@ -498,44 +467,44 @@ public class Faction {
             //**2 Elven Nobles**
             for (int i = 0; i < 2; i++) {
                 Character noble = CharacterManager.Instance.CreateNewCharacter(CharacterRole.NOBLE, RACE.ELVES, Utilities.GetRandomGender(),
-                    this, _ownedAreas[0]);
+                    this, ownedAreas[0]);
                 noble.LevelUp(citizensLevel - 1);
             }
 
             //**2 Elven Adventurer**
             for (int i = 0; i < 2; i++) {
                 Character elvenAdventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.ELVES, Utilities.GetRandomGender(),
-                   this, _ownedAreas[0]);
+                   this, ownedAreas[0]);
                 elvenAdventurer.LevelUp(citizensLevel - 1);
             }
 
             //**1 Elven Civilian**
             for (int i = 0; i < 1; i++) {
                 Character elvenCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.ELVES, Utilities.GetRandomGender(),
-                   this, _ownedAreas[0]);
+                   this, ownedAreas[0]);
                 elvenCivilian.LevelUp(citizensLevel - 1);
             }
 
-        } else if (_name == "Ziranna") {
+        } else if (name == "Ziranna") {
             //Male Human Necromancer with **2 Skeleton Soldiers** and **1 Goblin Soldier** as his Servants
             for (int i = 0; i < 2; i++) {
                 Character skeletonSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SKELETON, Utilities.GetRandomGender(),
-                    this, _ownedAreas[0]);
+                    this, ownedAreas[0]);
                 skeletonSoldier.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, skeletonSoldier, RELATIONSHIP_TRAIT.SERVANT);
 
                 if (i == 0) {
                     Character goblinSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
-                   this, _ownedAreas[0]);
+                   this, ownedAreas[0]);
                     goblinSoldier.LevelUp(citizensLevel - 1);
                     //CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
                 }
             }
-        } else if (_name == "Rikitik") {
+        } else if (name == "Rikitik") {
             //Male Goblin Bandit Boss with **4 Goblin Soldiers** as Servants
             for (int i = 0; i < 4; i++) {
                 Character goblinSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
-                    this, _ownedAreas[0]);
+                    this, ownedAreas[0]);
                 goblinSoldier.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
@@ -543,12 +512,12 @@ public class Faction {
             //**1 Goblin Noble** with **3 Goblin Soldiers** as servants
             for (int i = 0; i < 1; i++) {
                 Character noble = CharacterManager.Instance.CreateNewCharacter(CharacterRole.NOBLE, RACE.GOBLIN, Utilities.GetRandomGender(),
-                    this, _ownedAreas[0]);
+                    this, ownedAreas[0]);
                 noble.LevelUp(citizensLevel - 1);
 
                 for (int j = 0; j < 3; j++) {
                     Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
-                   this, _ownedAreas[0]);
+                   this, ownedAreas[0]);
                     createdCharacter.LevelUp(citizensLevel - 1);
                     //CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
                 }
@@ -557,14 +526,14 @@ public class Faction {
             //**3 Goblin Civilians**
             for (int i = 0; i < 3; i++) {
                 Character goblinCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.GOBLIN, Utilities.GetRandomGender(),
-                           this, _ownedAreas[0]);
+                           this, ownedAreas[0]);
                 goblinCivilian.LevelUp(citizensLevel - 1);
             }
-        } else if (_name == "Caeven") {
+        } else if (name == "Caeven") {
             //Male Faery Tempest with **3 Faery Soldiers** as servants
             for (int i = 0; i < 3; i++) {
                 Character faerySoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.FAERY, Utilities.GetRandomGender(),
-                    this, _ownedAreas[0]);
+                    this, ownedAreas[0]);
                 faerySoldier.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, faerySoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
@@ -574,19 +543,19 @@ public class Faction {
             for (int i = 0; i < 2; i++) {
                 if (i < 1) {
                     Character faeryAdventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.FAERY, Utilities.GetRandomGender(),
-                           this, _ownedAreas[0]);
+                           this, ownedAreas[0]);
                     faeryAdventurer.LevelUp(citizensLevel - 1);
                 }
 
                 Character faeryCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.FAERY, Utilities.GetRandomGender(),
-                           this, _ownedAreas[0]);
+                           this, ownedAreas[0]);
                 faeryCivilian.LevelUp(citizensLevel - 1);
             }
-        } else if (_name == "Lucareth") {
+        } else if (name == "Lucareth") {
             //Female Faery Witch with **3 Spider Soldiers**
             for (int i = 0; i < 3; i++) {
                 Character spiderSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SPIDER, Utilities.GetRandomGender(),
-                    this, _ownedAreas[0]);
+                    this, ownedAreas[0]);
                 spiderSoldier.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, spiderSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
@@ -594,12 +563,12 @@ public class Faction {
             //**3 Faery Nobles** with **3 Spider Soldiers** each as their servants
             for (int i = 0; i < 3; i++) {
                 Character noble = CharacterManager.Instance.CreateNewCharacter(CharacterRole.NOBLE, RACE.FAERY, Utilities.GetRandomGender(),
-                    this, _ownedAreas[0]);
+                    this, ownedAreas[0]);
                 noble.LevelUp(citizensLevel - 1);
 
                 for (int j = 0; j < 3; j++) {
                     Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SPIDER, Utilities.GetRandomGender(),
-                   this, _ownedAreas[0]);
+                   this, ownedAreas[0]);
                     createdCharacter.LevelUp(citizensLevel - 1);
                     //CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
                 }
@@ -609,23 +578,23 @@ public class Faction {
             //**4 Faery Civilians**
             for (int i = 0; i < 4; i++) {
                 Character faeryAdventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.FAERY, Utilities.GetRandomGender(),
-                           this, _ownedAreas[0]);
+                           this, ownedAreas[0]);
                 faeryAdventurer.LevelUp(citizensLevel - 1);
 
                 Character faeryCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.FAERY, Utilities.GetRandomGender(),
-                           this, _ownedAreas[0]);
+                           this, ownedAreas[0]);
                 faeryCivilian.LevelUp(citizensLevel - 1);
             }
-        } else if (_name == "Magus") {
+        } else if (name == "Magus") {
             //Male Elf Archmage with **1 Elf Soldier** and **1 Human Soldier** as Servants
             for (int i = 0; i < 1; i++) {
                 Character elfSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
-                    this, _ownedAreas[0]);
+                    this, ownedAreas[0]);
                 elfSoldier.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, elfSoldier, RELATIONSHIP_TRAIT.SERVANT);
 
                 Character humanSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.HUMANS, Utilities.GetRandomGender(),
-                   this, _ownedAreas[0]);
+                   this, ownedAreas[0]);
                 humanSoldier.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, humanSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
@@ -634,19 +603,19 @@ public class Faction {
             //**2 Human Civilians** and **2 Elven Civilians**
             for (int i = 0; i < 2; i++) {
                 Character humanAdventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.HUMANS, Utilities.GetRandomGender(),
-                           this, _ownedAreas[0]);
+                           this, ownedAreas[0]);
                 humanAdventurer.LevelUp(citizensLevel - 1);
 
                 Character elfAdventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.ELVES, Utilities.GetRandomGender(),
-                           this, _ownedAreas[0]);
+                           this, ownedAreas[0]);
                 elfAdventurer.LevelUp(citizensLevel - 1);
 
                 Character humanCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.HUMANS, Utilities.GetRandomGender(),
-                           this, _ownedAreas[0]);
+                           this, ownedAreas[0]);
                 humanCivilian.LevelUp(citizensLevel - 1);
 
                 Character elfCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.ELVES, Utilities.GetRandomGender(),
-                           this, _ownedAreas[0]);
+                           this, ownedAreas[0]);
                 elfCivilian.LevelUp(citizensLevel - 1);
             }
         }
@@ -655,7 +624,7 @@ public class Faction {
         for (int i = 0; i < citizenCount; i++) {
             if (i == 0) {
                 //leader
-                Character leader = CharacterManager.Instance.CreateNewCharacter(CharacterRole.LEADER, initialLeaderClass, race, initialLeaderGender, this, _ownedAreas[0]);
+                Character leader = CharacterManager.Instance.CreateNewCharacter(CharacterRole.LEADER, initialLeaderClass, race, initialLeaderGender, this, ownedAreas[0]);
                 leader.LevelUp(leaderLevel - 1);
                 SetLeader(leader);
             } else {
@@ -665,7 +634,7 @@ public class Faction {
                 roleChoices.AddElement(CharacterRole.SOLDIER, 35);
 
                 //citizens
-                Character citizen = CharacterManager.Instance.CreateNewCharacter(roleChoices.PickRandomElementGivenWeights(), race, Utilities.GetRandomGender(), this, _ownedAreas[0]);
+                Character citizen = CharacterManager.Instance.CreateNewCharacter(roleChoices.PickRandomElementGivenWeights(), race, Utilities.GetRandomGender(), this, ownedAreas[0]);
                 citizen.LevelUp(citizensLevel - 1);
             }
         }
@@ -674,20 +643,20 @@ public class Faction {
 
     #region Relationships
     public void AddNewRelationship(Faction relWith, FactionRelationship relationship) {
-        if (!_relationships.ContainsKey(relWith)) {
-            _relationships.Add(relWith, relationship);
+        if (!relationships.ContainsKey(relWith)) {
+            relationships.Add(relWith, relationship);
         } else {
             throw new System.Exception(this.name + " already has a relationship with " + relWith.name + ", but something is trying to create a new one!");
         }
     }
     public void RemoveRelationshipWith(Faction relWith) {
-        if (_relationships.ContainsKey(relWith)) {
-            _relationships.Remove(relWith);
+        if (relationships.ContainsKey(relWith)) {
+            relationships.Remove(relWith);
         }
     }
     public FactionRelationship GetRelationshipWith(Faction faction) {
-        if (_relationships.ContainsKey(faction)) {
-            return _relationships[faction];
+        if (relationships.ContainsKey(faction)) {
+            return relationships[faction];
         }
         return null;
     }
@@ -751,33 +720,25 @@ public class Faction {
 
     #region Landmarks
     public BaseLandmark GetOwnedLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < _ownedLandmarks.Count; i++) {
-            BaseLandmark currLandmark = _ownedLandmarks[i];
+        for (int i = 0; i < ownedLandmarks.Count; i++) {
+            BaseLandmark currLandmark = ownedLandmarks[i];
             if (currLandmark.specificLandmarkType == landmarkType) {
                 return currLandmark;
             }
         }
         return null;
     }
-    public void AddLandmarkInfo(BaseLandmark landmark) {
-        if (!_landmarkInfo.Contains(landmark)) {
-            _landmarkInfo.Add(landmark);
-        }
-    }
-    public void RemoveLandmarkInfo(BaseLandmark landmark) {
-        _landmarkInfo.Remove(landmark);
-    }
     #endregion
 
     #region Areas
     public void AddToOwnedAreas(Area area) {
-        if (!_ownedAreas.Contains(area)) {
-            _ownedAreas.Add(area);
+        if (!ownedAreas.Contains(area)) {
+            ownedAreas.Add(area);
             Messenger.Broadcast(Signals.FACTION_OWNED_AREA_ADDED, this, area);
         }
     }
     public void RemoveFromOwnedAreas(Area area) {
-        if (_ownedAreas.Remove(area)) {
+        if (ownedAreas.Remove(area)) {
             Messenger.Broadcast(Signals.FACTION_OWNED_AREA_REMOVED, this, area);
         }
     }
@@ -785,7 +746,7 @@ public class Faction {
 
     #region Emblems
     public void SetEmblem(FactionEmblemSetting sprite) {
-        _emblem = sprite;
+        emblem = sprite;
     }
     #endregion
 

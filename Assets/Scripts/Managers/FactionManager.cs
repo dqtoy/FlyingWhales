@@ -246,8 +246,8 @@ public class FactionManager : MonoBehaviour {
     public Faction CreateNewFaction(bool isPlayerFaction = false) {
         Faction newFaction = new Faction(isPlayerFaction);
         allFactions.Add(newFaction);
-        CreateRelationshipsForFaction(newFaction);
-        CreateFavorsForFaction(newFaction);
+        //CreateRelationshipsForFaction(newFaction);
+        //CreateFavorsForFaction(newFaction);
         if (!isPlayerFaction) {
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
         } else {
@@ -261,6 +261,14 @@ public class FactionManager : MonoBehaviour {
         LoadRelationshipsForFaction(newFaction, data);
         //LoadFavorsForFaction(newFaction, data);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+        return newFaction;
+    }
+    public Faction CreateNewFaction(SaveDataFaction data) {
+        Faction newFaction = new Faction(data);
+        allFactions.Add(newFaction);
+        if (!newFaction.isPlayerFaction) {
+            Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+        }
         return newFaction;
     }
     public void DeleteFaction(Faction faction) {

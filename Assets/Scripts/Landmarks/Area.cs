@@ -23,6 +23,7 @@ public class Area {
     public LocationStructure prison { get; private set; }
     public List<RACE> possibleOccupants { get; private set; }
     public List<InitialRaceSetup> initialSpawnSetup { get; private set; } //only to be used when unoccupied
+    public int citizenCount { get; private set; }
 
     //special tokens
     public List<SpecialToken> possibleSpecialTokenSpawns { get; private set; }
@@ -40,14 +41,13 @@ public class Area {
     //for testing
     public List<string> charactersAtLocationHistory { get; private set; }
 
-    public Race defaultRace { get; private set; }
-    private RACE _raceType;
-    public bool hasBeenInvaded { get; private set; }
+    //public Race defaultRace { get; private set; }
+    //private RACE _raceType;
 
     #region getters
-    public RACE raceType {
-        get { return _raceType; }
-    }
+    //public RACE raceType {
+    //    get { return _raceType; }
+    //}
     public List<Character> visitors {
         get { return charactersAtLocation.Where(x => !areaResidents.Contains(x)).ToList(); }
     }
@@ -83,17 +83,17 @@ public class Area {
     }
     #endregion
 
-    public Area(HexTile coreTile, AREA_TYPE areaType) {
+    public Area(HexTile coreTile, AREA_TYPE areaType, int citizenCount) {
         id = Utilities.SetID(this);
+        this.citizenCount = citizenCount;
         SetName(RandomNameGenerator.Instance.GetRegionName());
-        hasBeenInvaded = false;
         tiles = new List<HexTile>();
         areaResidents = new List<Character>();
         charactersAtLocation = new List<Character>();
         history = new List<Log>();
         areaColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         initialSpawnSetup = new List<InitialRaceSetup>();
-        defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
+        //defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         possibleSpecialTokenSpawns = new List<SpecialToken>();
         charactersAtLocationHistory = new List<string>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
@@ -105,7 +105,6 @@ public class Area {
         possibleOccupants = new List<RACE>();
     }
     public Area(AreaSaveData data) {
-        hasBeenInvaded = false;
         id = Utilities.SetID(this, data.areaID);
         SetName(data.areaName);
         tiles = new List<HexTile>();
@@ -136,8 +135,35 @@ public class Area {
 
         AddTile(Utilities.GetTilesFromIDs(data.tileData));
         UpdateBorderColors();
-        GenerateDefaultRace();
+        //GenerateDefaultRace();
         nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
+    }
+
+    public Area(SaveDataArea saveDataArea) {
+        id = Utilities.SetID(this, saveDataArea.id);
+        citizenCount = saveDataArea.citizenCount;
+        SetName(saveDataArea.name);
+        areaColor = saveDataArea.areaColor;
+
+        tiles = new List<HexTile>();
+        areaResidents = new List<Character>();
+        charactersAtLocation = new List<Character>();
+        history = new List<Log>();
+        initialSpawnSetup = new List<InitialRaceSetup>();
+        possibleSpecialTokenSpawns = new List<SpecialToken>();
+        charactersAtLocationHistory = new List<string>();
+        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+        possibleOccupants = new List<RACE>();
+        jobQueue = new JobQueue(null);
+
+        SetAreaType(saveDataArea.areaType);
+        SetCoreTile(GridMap.Instance.hexTiles[saveDataArea.coreTileID]);
+
+        nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
+
+        if (citizenCount > 0) {
+            GenerateStructures(citizenCount);
+        }
     }
 
     #region Listeners
@@ -195,15 +221,15 @@ public class Area {
             }
         }
     }
-    private void GenerateDefaultRace() {
-        if (initialSpawnSetup.Count > 0) {
-            InitialRaceSetup chosenSetup = initialSpawnSetup[UnityEngine.Random.Range(0, initialSpawnSetup.Count)];
-            defaultRace = chosenSetup.race;
-            SetRaceType(defaultRace.race);
-        } else {
-            defaultRace = new Race(RACE.NONE, RACE_SUB_TYPE.NORMAL);
-        }
-    }
+    //private void GenerateDefaultRace() {
+    //    if (initialSpawnSetup.Count > 0) {
+    //        InitialRaceSetup chosenSetup = initialSpawnSetup[UnityEngine.Random.Range(0, initialSpawnSetup.Count)];
+    //        defaultRace = chosenSetup.race;
+    //        SetRaceType(defaultRace.race);
+    //    } else {
+    //        defaultRace = new Race(RACE.NONE, RACE_SUB_TYPE.NORMAL);
+    //    }
+    //}
     #endregion
 
     #region Tile Management
@@ -356,9 +382,9 @@ public class Area {
         }
         Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, this);
     }
-    public void SetRaceType(RACE raceType) {
-        _raceType = raceType;
-    }
+    //public void SetRaceType(RACE raceType) {
+    //    _raceType = raceType;
+    //}
     #endregion
 
     #region Utilities
@@ -410,15 +436,16 @@ public class Area {
         if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
             return "Demonic Portal";
         }
-        if (_raceType != RACE.NONE) {
-            if (tiles.Count > 1) {
-                return Utilities.GetNormalizedRaceAdjective(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(GetBaseAreaType().ToString());
-            } else {
-                return Utilities.GetNormalizedRaceAdjective(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
-            }
-        } else {
-            return Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
-        }
+        //if (_raceType != RACE.NONE) {
+        //    if (tiles.Count > 1) {
+        //        return Utilities.GetNormalizedRaceAdjective(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(GetBaseAreaType().ToString());
+        //    } else {
+        //        return Utilities.GetNormalizedRaceAdjective(_raceType) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
+        //    }
+        //} else {
+        //    return Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
+        //}
+        return Utilities.NormalizeStringUpperCaseFirstLetters(coreTile.landmarkOnTile.specificLandmarkType.ToString());
     }
     /// <summary>
     /// Called when this area is set as the current active area.
@@ -427,9 +454,6 @@ public class Area {
         SubscribeToSignals();
         LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         CheckAreaInventoryJobs(warehouse);
-    }
-    public void SetHasBeenInvaded(bool state) {
-        hasBeenInvaded = state;
     }
     public void SetOutlineState(bool state) {
         SpriteRenderer[] borders = coreTile.GetAllBorders();

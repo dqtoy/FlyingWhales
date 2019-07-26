@@ -112,6 +112,9 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("New Ability UI")]
     public NewAbilityUI newAbilityUI;
+
+    [Header("Saving/Loading")]
+    public Button saveGameButton;
     //[Header("Actions")]
     //[SerializeField] private int maxActionPages;
     //[SerializeField] private GameObject actionPagePrefab;
@@ -209,12 +212,13 @@ public class PlayerUI : MonoBehaviour {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(true);
-        
+        saveGameButton.gameObject.SetActive(false);
     }
     private void OnAreaMapClosed(Area area) {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(false);
+        saveGameButton.gameObject.SetActive(true);
     }
     private void OnKeyPressed(KeyCode pressedKey) {
         if (pressedKey == KeyCode.Escape) {
@@ -1093,6 +1097,12 @@ public class PlayerUI : MonoBehaviour {
     //    }
     //}
     //#endregion
+
+    #region Saving/Loading
+    public void SaveGame() {
+        SaveManager.Instance.SaveCurrentStateOfWorld();
+    }
+    #endregion
 
 }
 
