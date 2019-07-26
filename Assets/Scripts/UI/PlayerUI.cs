@@ -221,24 +221,20 @@ public class PlayerUI : MonoBehaviour {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(true);
-<<<<<<< HEAD
         saveGameButton.gameObject.SetActive(false);
-=======
+
         //Kill count UI
         UpdateKillCountActiveState();
         LoadKillSummaryCharacterItems(area);
         UpdateKillCount();
->>>>>>> dbcb8ada28c85d8185f03d26def1f57ec923a9a7
     }
     private void OnAreaMapClosed(Area area) {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(false);
-<<<<<<< HEAD
         saveGameButton.gameObject.SetActive(true);
-=======
+
         UpdateKillCountActiveState();
->>>>>>> dbcb8ada28c85d8185f03d26def1f57ec923a9a7
     }
     private void OnKeyPressed(KeyCode pressedKey) {
         if (pressedKey == KeyCode.Escape) {
