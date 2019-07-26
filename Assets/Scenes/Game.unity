@@ -24482,7 +24482,7 @@ MonoBehaviour:
   replaceUI: {fileID: 145692321}
   levelUpUI: {fileID: 1165945287}
   newAbilityUI: {fileID: 196280312}
-
+  saveGameButton: {fileID: 1978547267}
   killCountGO: {fileID: 1981778858}
   killCountLbl: {fileID: 258340447}
   killSummaryGO: {fileID: 950671559}
@@ -55639,8 +55639,9 @@ RectTransform:
   m_Children:
   - {fileID: 804921402}
   - {fileID: 420812137}
-  - {fileID: 1472373713}
+  - {fileID: 1978547266}
   - {fileID: 1981778859}
+  - {fileID: 1472373713}
   m_Father: {fileID: 606078597}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -61819,7 +61820,7 @@ RectTransform:
   m_Children:
   - {fileID: 2141870915}
   m_Father: {fileID: 1310840202}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
