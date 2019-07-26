@@ -140,6 +140,39 @@ public class GridMap : MonoBehaviour {
         //OccupyRegions(data);
 
     }
+    internal void GenerateGrid(Save data) {
+        this.width = data.width;
+        this.height = data.height;
+        float newX = xOffset * ((int) width / 2);
+        float newY = yOffset * ((int) height / 2);
+        this.transform.localPosition = new Vector2(-newX, -newY);
+        map = new HexTile[(int) width, (int) height];
+        hexTiles = new List<HexTile>();
+        //int totalTiles = (int)width * (int)height;
+        for (int i = 0; i < data.hextileSaves.Count; i++) {
+            SaveDataHextile saveDataHextile = data.hextileSaves[i];
+            int x = saveDataHextile.xCoordinate;
+            int y = saveDataHextile.yCoordinate;
+            float xPosition = x * xOffset;
+
+            float yPosition = y * yOffset;
+            if (y % 2 == 1) {
+                xPosition += xOffset / 2;
+            }
+
+            GameObject hex = GameObject.Instantiate(goHex) as GameObject;
+            hex.transform.parent = this.transform;
+            hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
+            hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
+            hex.name = x + "," + y;
+            HexTile currHex = hex.GetComponent<HexTile>();
+            hexTiles.Add(currHex);
+            currHex.Initialize();
+            saveDataHextile.Load(currHex);
+            map[x, y] = currHex;
+        }
+        hexTiles.ForEach(o => o.FindNeighbours(map));
+    }
     internal void GenerateOuterGrid() {
         int newWidth = (int)width + (_borderThickness * 2);
         int newHeight = (int)height + (_borderThickness * 2);
@@ -262,6 +295,45 @@ public class GridMap : MonoBehaviour {
             }
         }
         Biomes.Instance.UpdateTileVisuals(outerGridList);
+        outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighboursForBorders());
+    }
+    internal void GenerateOuterGrid(Save data) {
+        _borderThickness = data.borderThickness;
+        int newWidth = (int) width + (_borderThickness * 2);
+        int newHeight = (int) height + (_borderThickness * 2);
+
+        float newX = xOffset * (int) (newWidth / 2);
+        float newY = yOffset * (int) (newHeight / 2);
+
+        outerGridList = new List<HexTile>();
+        _borderParent.transform.localPosition = new Vector2(-newX, -newY);
+        for (int i = 0; i < data.outerHextileSaves.Count; i++) {
+            SaveDataHextile saveDataHextile = data.outerHextileSaves[i];
+            int x = saveDataHextile.xCoordinate + _borderThickness;
+            int y = saveDataHextile.yCoordinate + _borderThickness;
+
+            if ((x >= _borderThickness && x < newWidth - _borderThickness) && (y >= _borderThickness && y < newHeight - _borderThickness)) {
+                continue;
+            }
+            float xPosition = x * xOffset;
+
+            float yPosition = y * yOffset;
+            if (y % 2 == 1) {
+                xPosition += xOffset / 2;
+            }
+
+            GameObject hex = GameObject.Instantiate(goHex) as GameObject;
+            hex.transform.SetParent(_borderParent.transform);
+            hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
+            hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
+            HexTile currHex = hex.GetComponent<HexTile>();
+            currHex.Initialize();
+            saveDataHextile.Load(currHex);
+            currHex.name = currHex.xCoordinate + "," + currHex.yCoordinate;
+
+            outerGridList.Add(currHex);
+        }
+        //Biomes.Instance.UpdateTileVisuals(outerGridList);
         outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighboursForBorders());
     }
     //public void GenerateNeighboursWithSameTag() {

@@ -24,7 +24,7 @@ public class Player : ILeader {
     public Dictionary<SUMMON_TYPE, List<Summon>> summons { get; private set; } //Summons that the player can still place. Does NOT include summons that have been placed. Individual summons are responsible for placeing themselves back after the player is done with a map.
     public Artifact[] artifacts { get; private set; }
     //Unique ability of player
-    public ShareIntel shareIntelAbility { get; private set; }
+    //public ShareIntel shareIntelAbility { get; private set; }
 
     public int currentCorruptionDuration { get; private set; }
     public int currentCorruptionTick { get; private set; }
@@ -35,8 +35,8 @@ public class Player : ILeader {
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public Intel currentActiveIntel { get; private set; }
 
-    private int maxSummonSlots; //how many summons can the player have
-    private int maxArtifactSlots; //how many artifacts can the player have
+    public int maxSummonSlots { get; private set; } //how many summons can the player have
+    public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
 
     #region getters/setters
     public int id {
@@ -71,11 +71,14 @@ public class Player : ILeader {
         minions = new Minion[MAX_MINIONS];
         summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
         artifacts = new Artifact[MAX_ARTIFACT];
-        shareIntelAbility = new ShareIntel();
+        //shareIntelAbility = new ShareIntel();
         maxSummonSlots = 1;
         maxArtifactSlots = 1;
         //ConstructRoleSlots();
         AddListeners();
+    }
+    public Player(SaveDataPlayer saveDataPlayer) {
+
     }
 
     #region Listeners
@@ -104,7 +107,7 @@ public class Player : ILeader {
     #region Area
     public void CreatePlayerArea(HexTile chosenCoreTile) {
         chosenCoreTile.SetCorruption(true);
-        Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION);
+        Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION, 0);
         playerArea.LoadAdditionalData();
         LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
         Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
@@ -114,7 +117,7 @@ public class Player : ILeader {
         //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
     }
     public void CreatePlayerArea(BaseLandmark portal) {
-        Area playerArea = LandmarkManager.Instance.CreateNewArea(portal.tileLocation, AREA_TYPE.DEMONIC_INTRUSION);
+        Area playerArea = LandmarkManager.Instance.CreateNewArea(portal.tileLocation, AREA_TYPE.DEMONIC_INTRUSION, 0);
         playerArea.LoadAdditionalData();
         Biomes.Instance.CorruptTileVisuals(portal.tileLocation);
         portal.tileLocation.SetCorruption(true);

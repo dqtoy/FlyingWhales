@@ -37,7 +37,7 @@ public class ConsoleMenu : UIMenu {
             {"/help", ShowHelp},
             {"/change_faction_rel_stat", ChangeFactionRelationshipStatus},
             {"/kill",  KillCharacter},
-            {"/lfli", LogFactionLandmarkInfo},
+            //{"/lfli", LogFactionLandmarkInfo},
             {"/center_character", CenterOnCharacter},
             {"/center_landmark", CenterOnLandmark },
             {"/show_logs", ShowLogs },
@@ -191,7 +191,7 @@ public class ConsoleMenu : UIMenu {
         Area area = UIManager.Instance.areaInfoUI.activeArea;
         string text = area.name + "'s info:";
         text += "\n<b>Owner:</b> " + area.owner?.name ?? "None";
-        text += "\n<b>Race:</b> " + area.raceType.ToString();
+        //text += "\n<b>Race:</b> " + area.raceType.ToString();
         text += "\n<b>Residents:</b> " + area.areaResidents.Count + "/" + area.residentCapacity;
         if (area.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             for (int i = 0; i < area.structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
@@ -858,39 +858,39 @@ public class ConsoleMenu : UIMenu {
     #endregion
 
     #region Faction
-    private void LogFactionLandmarkInfo(string[] parameters) {
-        if (parameters.Length != 1) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of /lfli");
-            return;
-        }
-        string factionParameterString = parameters[0];
-        int factionID;
+    //private void LogFactionLandmarkInfo(string[] parameters) {
+    //    if (parameters.Length != 1) {
+    //        AddCommandHistory(consoleLbl.text);
+    //        AddErrorMessage("There was an error in the command format of /lfli");
+    //        return;
+    //    }
+    //    string factionParameterString = parameters[0];
+    //    int factionID;
 
-        bool isFactionParameterNumeric = int.TryParse(factionParameterString, out factionID);
-        Faction faction = null;
-        if (isFactionParameterNumeric) {
-            faction = FactionManager.Instance.GetFactionBasedOnID(factionID);
-            if (faction == null) {
-                AddErrorMessage("There was no faction with id " + factionID);
-                return;
-            }
-        } else {
-           faction = FactionManager.Instance.GetFactionBasedOnName(factionParameterString);
-            if (faction == null) {
-                AddErrorMessage("There was no faction with name " + factionParameterString);
-                return;
-            }
-        }
+    //    bool isFactionParameterNumeric = int.TryParse(factionParameterString, out factionID);
+    //    Faction faction = null;
+    //    if (isFactionParameterNumeric) {
+    //        faction = FactionManager.Instance.GetFactionBasedOnID(factionID);
+    //        if (faction == null) {
+    //            AddErrorMessage("There was no faction with id " + factionID);
+    //            return;
+    //        }
+    //    } else {
+    //       faction = FactionManager.Instance.GetFactionBasedOnName(factionParameterString);
+    //        if (faction == null) {
+    //            AddErrorMessage("There was no faction with name " + factionParameterString);
+    //            return;
+    //        }
+    //    }
 
-        string text = faction.name + "'s Landmark Info: ";
-        for (int i = 0; i < faction.landmarkInfo.Count; i++) {
-            BaseLandmark currLandmark = faction.landmarkInfo[i];
-			text += "\n" + currLandmark.landmarkName + " (" + currLandmark.tileLocation.name + ") ";
-        }
+   //     string text = faction.name + "'s Landmark Info: ";
+   //     for (int i = 0; i < faction.landmarkInfo.Count; i++) {
+   //         BaseLandmark currLandmark = faction.landmarkInfo[i];
+			//text += "\n" + currLandmark.landmarkName + " (" + currLandmark.tileLocation.name + ") ";
+   //     }
         
-        AddSuccessMessage(text);
-    }
+        //AddSuccessMessage(text);
+    //}
     #endregion
 
     #region Area

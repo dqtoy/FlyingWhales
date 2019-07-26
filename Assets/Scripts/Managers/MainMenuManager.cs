@@ -41,16 +41,28 @@ public class MainMenuManager : MonoBehaviour {
         LoadNewGameData();
     }
     private void Start() {
+        Initialize();
         AudioManager.Instance.PlayFade("Main Menu", 5, () => MainMenuUI.Instance.ShowMenuButtons());
         LevelLoaderManager.SetLoadingState(false);
     }
     #endregion
-
+    private void Initialize() {
+        SaveManager.Instance.LoadSaveData();
+        newGameButton.interactable = true;
+        loadGameButton.interactable = SaveManager.Instance.currentSave != null;
+    }
     public void OnClickPlayGame() {
         //PlayGame();
         //ShowWorldConfigurations();
         //MainMenuUI.Instance.HideMenuButtons();
+        SaveManager.Instance.SetCurrentSave(null);
         newGameButton.interactable = false;
+        loadGameButton.interactable = false;
+        AudioManager.Instance.TransitionTo("Loading", 10, () => OnFinishMusicTransition());
+    }
+    public void OnClickLoadGame() {
+        newGameButton.interactable = false;
+        loadGameButton.interactable = false;
         AudioManager.Instance.TransitionTo("Loading", 10, () => OnFinishMusicTransition());
     }
 

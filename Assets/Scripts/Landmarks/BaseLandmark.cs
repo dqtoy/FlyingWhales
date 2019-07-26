@@ -89,6 +89,15 @@ public class BaseLandmark {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
     }
+    public BaseLandmark(HexTile location, SaveDataLandmark data) : this() {
+        _id = Utilities.SetID(this, data.id);
+        _location = location;
+        _specificLandmarkType = data.landmarkType;
+        SetName(data.landmarkName);
+
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
+        ConstructTags(landmarkData);
+    }
 
     public void SetName(string name) {
         _landmarkName = name;

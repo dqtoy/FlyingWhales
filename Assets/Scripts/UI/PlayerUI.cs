@@ -108,6 +108,9 @@ public class PlayerUI : MonoBehaviour {
     [Header("New Ability UI")]
     public NewAbilityUI newAbilityUI;
 
+    [Header("Saving/Loading")]
+    public Button saveGameButton;
+
     [Header("Kill Count UI")]
     [SerializeField] private GameObject killCountGO;
     [SerializeField] private TextMeshProUGUI killCountLbl;
@@ -218,6 +221,8 @@ public class PlayerUI : MonoBehaviour {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(true);
+        saveGameButton.gameObject.SetActive(false);
+
         //Kill count UI
         UpdateKillCountActiveState();
         LoadKillSummaryCharacterItems(area);
@@ -227,6 +232,8 @@ public class PlayerUI : MonoBehaviour {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(false);
+        saveGameButton.gameObject.SetActive(true);
+
         UpdateKillCountActiveState();
     }
     private void OnKeyPressed(KeyCode pressedKey) {
@@ -1121,6 +1128,14 @@ public class PlayerUI : MonoBehaviour {
     //}
     //#endregion
 
+<<<<<<< HEAD
+    #region Saving/Loading
+    public void SaveGame() {
+        SaveManager.Instance.SaveCurrentStateOfWorld();
+    }
+    #endregion
+
+=======
     #region Kill Count
     public bool isShowingKillSummary { get { return killCountGO.activeSelf; } }
     private void UpdateKillCountActiveState() {
@@ -1174,5 +1189,6 @@ public class PlayerUI : MonoBehaviour {
         killSummaryGO.SetActive(false);
     }
     #endregion
+>>>>>>> dbcb8ada28c85d8185f03d26def1f57ec923a9a7
 }
 

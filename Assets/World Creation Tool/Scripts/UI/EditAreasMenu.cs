@@ -54,7 +54,7 @@ namespace worldcreator {
                 return;
             }
             AREA_TYPE chosenAreaType = (AREA_TYPE)Enum.Parse(typeof(AREA_TYPE), areaTypeDropdown.options[areaTypeDropdown.value].text);
-            LandmarkManager.Instance.CreateNewArea(coreTile, chosenAreaType);
+            LandmarkManager.Instance.CreateNewArea(coreTile, chosenAreaType, 0);
             Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, CreateNewArea);
             createNewAreaBtn.interactable = true;
         }
