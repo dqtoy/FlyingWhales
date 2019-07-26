@@ -15,6 +15,8 @@ public class KillCountCharacterItem : PooledObject {
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private TextMeshProUGUI deathLbl;
+    [SerializeField] private RectTransform deathLblRT;
+    [SerializeField] private RectTransform deathReasonContainer;
     [SerializeField] private GameObject coverGO;
 
     public void SetCharacter(Character character) {
@@ -33,14 +35,14 @@ public class KillCountCharacterItem : PooledObject {
         subLbl.text = character.raceClassName;
         deathLbl.gameObject.SetActive(!character.IsAble());
         if (character.isDead) {
-            deathLbl.text = character.deathStr;
+            deathLbl.text = "\"" + character.deathStr + "\"";
         } else {
             string text = string.Empty;
             Trait negDisTrait = character.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
             if (negDisTrait is Unconscious) {
-                text = character.name + " was knocked out by " + negDisTrait.responsibleCharacter.name;
+                text = "\"" + character.name + " was knocked out by " + negDisTrait.responsibleCharacter.name + "\"";
             } else if (negDisTrait is Restrained) {
-                text = character.name + " was restrained by " + negDisTrait.responsibleCharacter.name;
+                text = "\"" + character.name + " was restrained by " + negDisTrait.responsibleCharacter.name + "\"";
             }
             deathLbl.text = text;
         }
@@ -66,6 +68,7 @@ public class KillCountCharacterItem : PooledObject {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
+        StopScroll();
     }
 
     #region Listeners
@@ -82,6 +85,42 @@ public class KillCountCharacterItem : PooledObject {
     private void OnCharacterGainedTrait(Character character, Trait trait) {
         if (character.id == this.character.id && trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
             UpdateInfo();
+        }
+    }
+    #endregion
+
+    #region Utilities
+    Coroutine scrollRoutine;
+    public void ScrollText() {
+        if (deathLblRT.sizeDelta.x < deathReasonContainer.sizeDelta.x || scrollRoutine != null) {
+            return;
+        }
+        scrollRoutine = StartCoroutine(Scroll());
+    }
+    public void StopScroll() {
+        if (scrollRoutine != null) {
+            StopCoroutine(scrollRoutine);
+            scrollRoutine = null;
+        }
+        deathLblRT.anchoredPosition = new Vector3(0f, deathLblRT.anchoredPosition.y);
+    }
+    private IEnumerator Scroll() {
+        float width = deathLbl.preferredWidth;
+        Vector3 startPosition = deathLblRT.anchoredPosition;
+
+        float difference = deathReasonContainer.sizeDelta.x - deathLblRT.sizeDelta.x;
+
+        float scrollDirection = -1f;
+
+        while (true) {
+            float newX = deathLblRT.anchoredPosition.x + (0.25f * scrollDirection);
+            deathLblRT.anchoredPosition = new Vector3(newX, startPosition.y, startPosition.z);
+            if (deathLblRT.anchoredPosition.x < difference) {
+                scrollDirection = 1f;
+            } else if (deathLblRT.anchoredPosition.x > 0) {
+                scrollDirection = -1f;
+            }
+            yield return null;
         }
     }
     #endregion
