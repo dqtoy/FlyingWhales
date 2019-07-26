@@ -1128,14 +1128,12 @@ public class PlayerUI : MonoBehaviour {
     //}
     //#endregion
 
-<<<<<<< HEAD
     #region Saving/Loading
     public void SaveGame() {
         SaveManager.Instance.SaveCurrentStateOfWorld();
     }
     #endregion
 
-=======
     #region Kill Count
     public bool isShowingKillSummary { get { return killCountGO.activeSelf; } }
     private void UpdateKillCountActiveState() {
@@ -1157,7 +1155,7 @@ public class PlayerUI : MonoBehaviour {
         OrderKillSummaryItems();
     }
     private void UpdateKillCount() {
-        killCountLbl.text = InteriorMapManager.Instance.currentlyShowingArea.areaResidents.Where(x => x.IsAble()).Count().ToString() + "/" + InteriorMapManager.Instance.currentlyShowingArea.initialResidentCount.ToString();
+        killCountLbl.text = InteriorMapManager.Instance.currentlyShowingArea.areaResidents.Where(x => x.IsAble()).Count().ToString() + "/" + InteriorMapManager.Instance.currentlyShowingArea.citizenCount.ToString();
     }
     private void OrderKillSummaryItems() {
         KillCountCharacterItem[] items = Utilities.GetComponentsInDirectChildren<KillCountCharacterItem>(killSummaryScrollView.content.gameObject);
@@ -1189,6 +1187,5 @@ public class PlayerUI : MonoBehaviour {
         killSummaryGO.SetActive(false);
     }
     #endregion
->>>>>>> dbcb8ada28c85d8185f03d26def1f57ec923a9a7
 }
 

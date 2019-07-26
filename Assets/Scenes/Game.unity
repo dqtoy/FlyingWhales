@@ -24482,9 +24482,7 @@ MonoBehaviour:
   replaceUI: {fileID: 145692321}
   levelUpUI: {fileID: 1165945287}
   newAbilityUI: {fileID: 196280312}
-<<<<<<< HEAD
-  saveGameButton: {fileID: 0}
-=======
+
   killCountGO: {fileID: 1981778858}
   killCountLbl: {fileID: 258340447}
   killSummaryGO: {fileID: 950671559}
@@ -24493,7 +24491,6 @@ MonoBehaviour:
   killSummaryScrollView: {fileID: 1987882719}
   aliveHeader: {fileID: 658455209}
   deadHeader: {fileID: 763144097}
->>>>>>> dbcb8ada28c85d8185f03d26def1f57ec923a9a7
   previousMenu: minion
 --- !u!1001 &607353879
 Prefab:
@@ -55643,11 +55640,7 @@ RectTransform:
   - {fileID: 804921402}
   - {fileID: 420812137}
   - {fileID: 1472373713}
-<<<<<<< HEAD
-  - {fileID: 1978547266}
-=======
   - {fileID: 1981778859}
->>>>>>> dbcb8ada28c85d8185f03d26def1f57ec923a9a7
   m_Father: {fileID: 606078597}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
