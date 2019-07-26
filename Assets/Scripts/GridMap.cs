@@ -76,7 +76,7 @@ public class GridMap : MonoBehaviour {
                 }
 
                 GameObject hex = GameObject.Instantiate(goHex) as GameObject;
-                hex.transform.parent = this.transform;
+                hex.transform.SetParent(this.transform);
                 hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
                 hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
                 hex.name = x + "," + y;

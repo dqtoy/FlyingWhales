@@ -737,6 +737,9 @@ public class Area {
         }
         return characters;
     } 
+    public void SetInitialResidentCount(int count) {
+        citizenCount = count;
+    }
     #endregion
 
     #region Logs

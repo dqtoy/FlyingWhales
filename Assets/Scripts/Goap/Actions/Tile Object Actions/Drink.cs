@@ -81,7 +81,7 @@ public class Drink : GoapAction {
                 parentPlan.job.SetCannotCancelJob(true);
             }
             SetCannotCancelAction(true);
-            actor.Death(deathFromAction: this);
+            actor.Death("poisoned", deathFromAction: this);
         }
     }
     public void PreTargetMissing() {

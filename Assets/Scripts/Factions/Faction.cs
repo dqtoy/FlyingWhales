@@ -638,6 +638,7 @@ public class Faction {
                 citizen.LevelUp(citizensLevel - 1);
             }
         }
+        _ownedAreas[0].SetInitialResidentCount(citizenCount);
     }
     #endregion
 

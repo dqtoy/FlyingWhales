@@ -625,7 +625,7 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
             //if (_ownParty.currentCombat != null) {
             //    _ownParty.currentCombat.CharacterDeath(this, killer);
             //}
-            Death();
+            //Death();
         } else {
             DeathSim();
         }
@@ -732,10 +732,6 @@ public class Monster : ICharacter, ICharacterSim, IInteractable {
     //public CharacterAttribute GetAttribute(string attribute) {
     //    return null;
     //}
-    public void Assassinate(Character assassin) {
-        Debug.Log(assassin.name + " assassinated " + name);
-        Death();
-    }
     public void SetLevel(int amount) {
         //Not applicable
     }
