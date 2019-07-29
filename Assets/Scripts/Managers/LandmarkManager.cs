@@ -507,7 +507,7 @@ public class LandmarkManager : MonoBehaviour {
         thread.area.SetAreaMap(thread.areaMap);
         thread.areaMap.GenerateDetails();
         thread.area.PlaceTileObjects();
-        thread.areaMap.RotateTiles();
+        //thread.areaMap.RotateTiles();
 
         thread.areaMap.OnMapGenerationFinished();
         thread.area.OnMapGenerationFinished();

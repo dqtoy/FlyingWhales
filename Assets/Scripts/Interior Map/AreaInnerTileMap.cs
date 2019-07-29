@@ -971,17 +971,14 @@ public class AreaInnerTileMap : MonoBehaviour {
             if (!string.IsNullOrEmpty(currData.tileAssetName)) {
                 TileBase assetUsed = InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName, true);
                 tilemap.SetTile(pos, assetUsed);
-                try {
-                    map[pos.x, pos.y].SetLockedState(true);
-                } catch {
-                    throw new System.Exception("Map index out of range " + pos.x + ", " + pos.y + ". Tilemap is: " + tilemap.name + ". Map Size is: " + map.GetUpperBound(0).ToString() + ", " + map.GetUpperBound(1).ToString());
-                }
-                
+                LocationGridTile tile = map[pos.x, pos.y];
+                tile.SetLockedState(true);
+
                 if (tilemap == detailsTilemap) {
-                    map[pos.x, pos.y].hasDetail = true;
-                    map[pos.x, pos.y].SetTileState(LocationGridTile.Tile_State.Occupied);
+                    tile.hasDetail = true;
+                    tile.SetTileState(LocationGridTile.Tile_State.Occupied);
                 } else if (tilemap == groundTilemap && assetUsed.name.Contains("cobble")) {
-                    map[pos.x, pos.y].groundType = LocationGridTile.Ground_Type.Cobble;
+                    tile.groundType = LocationGridTile.Ground_Type.Cobble;
                 }
             }
             //} else {
@@ -1533,7 +1530,8 @@ public class AreaInnerTileMap : MonoBehaviour {
                         createEdge = true;
                     } else if (tile.groundType == LocationGridTile.Ground_Type.Cobble && currNeighbour.groundType != LocationGridTile.Ground_Type.Snow) {
                         createEdge = true;
-                    } else if (tile.groundType == LocationGridTile.Ground_Type.Tundra && currNeighbour.groundType == LocationGridTile.Ground_Type.Stone) {
+                    } else if (tile.groundType == LocationGridTile.Ground_Type.Tundra && 
+                        (currNeighbour.groundType == LocationGridTile.Ground_Type.Stone || currNeighbour.groundType == LocationGridTile.Ground_Type.Soil)) {
                         createEdge = true;
                     } else if (tile.groundType == LocationGridTile.Ground_Type.Grass && currNeighbour.groundType == LocationGridTile.Ground_Type.Soil) {
                         createEdge = true;
