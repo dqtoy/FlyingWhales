@@ -3,15 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Sick : Trait {
-    private Character _responsibleCharacter;
     private Character _sourceCharacter;
     //private GoapPlanJob _removeTraitJob;
-
-    #region getters/setters
-    public override Character responsibleCharacter {
-        get { return _responsibleCharacter; }
-    }
-    #endregion
 
     public Sick() {
         name = "Sick";
@@ -27,12 +20,6 @@ public class Sick : Trait {
     }
 
     #region Overrides
-    public override void SetCharacterResponsibleForTrait(Character character) {
-        _responsibleCharacter = character;
-    }
-    public override bool IsResponsibleForTrait(Character character) {
-        return _responsibleCharacter == character;
-    }
     public override void OnAddTrait(IPointOfInterest sourceCharacter) {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {

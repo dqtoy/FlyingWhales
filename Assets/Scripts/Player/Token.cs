@@ -18,10 +18,11 @@ public class SpecialToken : IPointOfInterest {
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public Area specificLocation { get { return gridTileLocation.structure.location; } }
     public bool isDisabledByPlayer { get; protected set; }
+    public POI_STATE state { get; protected set; }
+    public POICollisionTrigger collisionTrigger { get; protected set; }
+
     protected List<Trait> _traits;
     private LocationGridTile tile;
-    private POI_STATE _state;
-    private POICollisionTrigger _collisionTrigger;
 
     #region getters/setters
     public string tokenName {
@@ -48,17 +49,11 @@ public class SpecialToken : IPointOfInterest {
     public LocationGridTile gridTileLocation {
         get { return tile; }
     }
-    public POI_STATE state {
-        get { return _state; }
-    }
     public List<Trait> normalTraits {
         get { return _traits; }
     }
     public Faction factionOwner {
         get { return owner; }
-    }
-    public POICollisionTrigger collisionTrigger {
-        get { return _collisionTrigger; }
     }
     #endregion
 
@@ -151,10 +146,10 @@ public class SpecialToken : IPointOfInterest {
         return null;
     }
     public void SetPOIState(POI_STATE state) {
-        _state = state;
+        state = state;
     }
     public bool IsAvailable() {
-        return _state != POI_STATE.INACTIVE && !isDisabledByPlayer;
+        return state != POI_STATE.INACTIVE && !isDisabledByPlayer;
     }
     public void SetIsDisabledByPlayer(bool state) {
         isDisabledByPlayer = state;
@@ -250,22 +245,22 @@ public class SpecialToken : IPointOfInterest {
         GameObject collisionGO = GameObject.Instantiate(InteriorMapManager.Instance.poiCollisionTriggerPrefab, InteriorMapManager.Instance.transform);
         SetCollisionTrigger(collisionGO.GetComponent<POICollisionTrigger>());
         collisionGO.SetActive(false);
-        _collisionTrigger.Initialize(this);
+        collisionTrigger.Initialize(this);
         RectTransform rt = collisionGO.transform as RectTransform;
         rt.anchorMin = Vector2.zero;
         rt.anchorMax = Vector2.zero;
     }
     public void PlaceCollisionTriggerAt(LocationGridTile tile) {
-        _collisionTrigger.transform.SetParent(tile.parentAreaMap.objectsParent);
-        (_collisionTrigger.transform as RectTransform).anchoredPosition = tile.centeredLocalLocation;
-        _collisionTrigger.gameObject.SetActive(true);
-        _collisionTrigger.SetLocation(tile);
+        collisionTrigger.transform.SetParent(tile.parentAreaMap.objectsParent);
+        (collisionTrigger.transform as RectTransform).anchoredPosition = tile.centeredLocalLocation;
+        collisionTrigger.gameObject.SetActive(true);
+        collisionTrigger.SetLocation(tile);
     }
     public void DisableCollisionTrigger() {
-        _collisionTrigger.gameObject.SetActive(false);
+        collisionTrigger.gameObject.SetActive(false);
     }
     public void SetCollisionTrigger(POICollisionTrigger trigger) {
-        _collisionTrigger = trigger;
+        collisionTrigger = trigger;
     }
     public void PlaceGhostCollisionTriggerAt(LocationGridTile tile) {
         GameObject ghostGO = GameObject.Instantiate(InteriorMapManager.Instance.ghostCollisionTriggerPrefab, tile.parentAreaMap.objectsParent);

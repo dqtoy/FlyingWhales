@@ -26,7 +26,7 @@ public class Area {
     public int citizenCount { get; private set; }
 
     //special tokens
-    public List<SpecialToken> possibleSpecialTokenSpawns { get; private set; }
+    public List<SpecialToken> itemsInArea { get; private set; }
     public const int MAX_ITEM_CAPACITY = 15;
 
     //structures
@@ -94,7 +94,7 @@ public class Area {
         areaColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
         initialSpawnSetup = new List<InitialRaceSetup>();
         //defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
-        possibleSpecialTokenSpawns = new List<SpecialToken>();
+        itemsInArea = new List<SpecialToken>();
         charactersAtLocationHistory = new List<string>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         jobQueue = new JobQueue(null);
@@ -114,7 +114,7 @@ public class Area {
         areaColor = data.areaColor;
         SetAreaType(data.areaType);
         charactersAtLocationHistory = new List<string>();
-        possibleSpecialTokenSpawns = new List<SpecialToken>();
+        itemsInArea = new List<SpecialToken>();
         jobQueue = new JobQueue(null);
         if (data.raceSetup != null) {
             initialSpawnSetup = new List<InitialRaceSetup>(data.raceSetup);
@@ -150,7 +150,7 @@ public class Area {
         charactersAtLocation = new List<Character>();
         history = new List<Log>();
         initialSpawnSetup = new List<InitialRaceSetup>();
-        possibleSpecialTokenSpawns = new List<SpecialToken>();
+        itemsInArea = new List<SpecialToken>();
         charactersAtLocationHistory = new List<string>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         possibleOccupants = new List<RACE>();
@@ -820,22 +820,23 @@ public class Area {
 
     #region Special Tokens
     public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
-        if (!IsItemInventoryFull() && !possibleSpecialTokenSpawns.Contains(token)) {
-            possibleSpecialTokenSpawns.Add(token);
+        if (!IsItemInventoryFull() && !itemsInArea.Contains(token)) {
+            itemsInArea.Add(token);
+            token.SetOwner(this.owner);
             if (areaMap != null) { //if the area map of this area has already been created.
                 //Debug.Log(GameManager.Instance.TodayLogString() + "Added " + token.name + " at " + name);
                 if (structure != null) {
                     structure.AddItem(token, gridLocation);
-                    if (structure.isInside) {
-                        token.SetOwner(this.owner);
-                    }
+                    //if (structure.isInside) {
+                    //    token.SetOwner(this.owner);
+                    //}
                 } else {
                     //get structure for token
                     LocationStructure chosen = GetRandomStructureToPlaceItem(token);
                     chosen.AddItem(token);
-                    if (chosen.isInside) {
-                        token.SetOwner(this.owner);
-                    }
+                    //if (chosen.isInside) {
+                    //    token.SetOwner(this.owner);
+                    //}
                 }
                 OnItemAddedToLocation(token, token.structureLocation);
             }            
@@ -845,7 +846,7 @@ public class Area {
         return false;
     }
     public void RemoveSpecialTokenFromLocation(SpecialToken token) {
-        if (possibleSpecialTokenSpawns.Remove(token)) {
+        if (itemsInArea.Remove(token)) {
             LocationStructure takenFrom = token.structureLocation;
             if (takenFrom != null) {
                 takenFrom.RemoveItem(token);
@@ -857,7 +858,7 @@ public class Area {
 
     }
     public bool IsItemInventoryFull() {
-        return possibleSpecialTokenSpawns.Count >= MAX_ITEM_CAPACITY;
+        return itemsInArea.Count >= MAX_ITEM_CAPACITY;
     }
     private LocationStructure GetRandomStructureToPlaceItem(SpecialToken token) {
         /*
@@ -878,8 +879,8 @@ public class Area {
     }
     private int GetItemsInAreaCount(SPECIAL_TOKEN itemType) {
         int count = 0;
-        for (int i = 0; i < possibleSpecialTokenSpawns.Count; i++) {
-            SpecialToken currItem = possibleSpecialTokenSpawns[i];
+        for (int i = 0; i < itemsInArea.Count; i++) {
+            SpecialToken currItem = itemsInArea[i];
             if (currItem.specialTokenType == itemType) {
                 count++;
             }
@@ -1344,8 +1345,8 @@ public class Area {
     public void OnMapGenerationFinished() {
         //place tokens in area to actual structures.
         //get structure for token
-        for (int i = 0; i < possibleSpecialTokenSpawns.Count; i++) {
-            SpecialToken token = possibleSpecialTokenSpawns[i];
+        for (int i = 0; i < itemsInArea.Count; i++) {
+            SpecialToken token = itemsInArea[i];
             LocationStructure chosen = GetRandomStructureToPlaceItem(token);
             chosen.AddItem(token);
             if (chosen.isInside) {

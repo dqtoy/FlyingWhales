@@ -100,7 +100,7 @@ public class DrinkBlood : GoapAction {
             Lethargic lethargic = new Lethargic();
             AddTraitTo(poiTarget, lethargic, actor);
         } else {
-            Vampiric vampiric = new Vampiric(1);
+            Vampiric vampiric = new Vampiric();
             AddTraitTo(poiTarget, vampiric, actor);
         }
     }

@@ -18,7 +18,7 @@ public class SaveDataFaction {
     public int emblemIndex;
     public ColorSave factionColor;
     public List<int> ownedLandmarkIDs;
-    public List<int> characterIDs;
+    //public List<int> characterIDs;
     public List<int> ownedAreaIDs;
     //public List<RACE> recruitableRaces { get; protected set; }
     //public List<RACE> startingFollowers { get; protected set; }
@@ -54,10 +54,10 @@ public class SaveDataFaction {
             ownedLandmarkIDs.Add(faction.ownedLandmarks[i].id);
         }
 
-        characterIDs = new List<int>();
-        for (int i = 0; i < faction.characters.Count; i++) {
-            characterIDs.Add(faction.characters[i].id);
-        }
+        //characterIDs = new List<int>();
+        //for (int i = 0; i < faction.characters.Count; i++) {
+        //    characterIDs.Add(faction.characters[i].id);
+        //}
 
         ownedAreaIDs = new List<int>();
         for (int i = 0; i < faction.ownedAreas.Count; i++) {

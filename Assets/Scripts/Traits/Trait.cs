@@ -8,12 +8,8 @@ public class Trait {
     public virtual string nameInUI {
         get { return name; }
     }
-    public virtual Character responsibleCharacter {
-        get { return null; }
-    }
-    public virtual List<Character> responsibleCharacters {
-        get { return null; }
-    }
+    public Character responsibleCharacter { get; protected set; }
+    public List<Character> responsibleCharacters { get; protected set; }
     public string name;
     public string description;
     public string thoughtText;
@@ -24,6 +20,7 @@ public class Trait {
     public List<INTERACTION_TYPE> advertisedInteractions;
     public CRIME_CATEGORY crimeSeverity;
     public int daysDuration; //Zero (0) means Permanent
+    public int level;
     public List<TraitEffect> effects;
     public Dictionary<IPointOfInterest, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
     public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
@@ -41,8 +38,11 @@ public class Trait {
         //    Character character = sourceCharacter as Character;
         //    character.CreateApprehendJob();
         //}
+        if(level == 0) {
+            SetLevel(1);
+        }
 #if !WORLD_CREATION_TOOL
-         dateEstablished = GameManager.Instance.Today();
+        SetDateEstablished(GameManager.Instance.Today());
 #endif
     }
     public virtual void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
@@ -56,15 +56,6 @@ public class Trait {
             }
         }
     }
-    public virtual void SetCharacterResponsibleForTrait(Character character) {
-        //_responsibleCharacter = character;
-    }
-    public virtual void AddCharacterResponsibleForTrait(Character character) {
-    }
-    public virtual bool IsResponsibleForTrait(Character character) {
-        return false;
-        //return _responsibleCharacter == character;
-    }
     public virtual string GetToolTipText() { return string.Empty; }
     public virtual bool IsUnique() { return true; }
     /// <summary>
@@ -75,6 +66,7 @@ public class Trait {
     public virtual void OnDeath(Character character) { }
     public virtual string GetTestingData() { return string.Empty; }
     public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; }
+    protected virtual void OnChangeLevel() { }
     #endregion
 
     public void SetOnRemoveAction(System.Action onRemoveAction) {
@@ -88,6 +80,25 @@ public class Trait {
     }
     public void OverrideDuration(int newDuration) {
         daysDuration = newDuration;
+    }
+    public void SetCharacterResponsibleForTrait(Character character) {
+        responsibleCharacter = character;
+    }
+    public void AddCharacterResponsibleForTrait(Character character) {
+        if(responsibleCharacters == null) {
+            responsibleCharacters = new List<Character>();
+        }
+        if (character != null && !responsibleCharacters.Contains(character)) {
+            responsibleCharacters.Add(character);
+        }
+    }
+    public bool IsResponsibleForTrait(Character character) {
+        if(responsibleCharacter == character) {
+            return true;
+        }else if(responsibleCharacters != null) {
+            return responsibleCharacters.Contains(character);
+        }
+        return false;
     }
     public void SetExpiryTicket(IPointOfInterest poi, string expiryTicket) {
         if (expiryTickets == null) {
@@ -103,6 +114,22 @@ public class Trait {
         if (expiryTickets != null) {
             expiryTickets.Remove(poi);
         }
+    }
+    public void LevelUp() {
+        level++;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+        OnChangeLevel();
+    }
+    public void SetLevel(int amount) {
+        level = amount;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+        OnChangeLevel();
+    }
+    public void SetDateEstablished(GameDate date) {
+        dateEstablished = date;
+    }
+    public void SetTraitEffects(List<TraitEffect> effects) {
+        this.effects = effects;
     }
 
     #region Jobs

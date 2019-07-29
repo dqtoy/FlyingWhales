@@ -8,7 +8,7 @@ public class BerserkBuff : Trait {
     private int _flatHPMod;
     private int _flatSpeedMod;
 
-    public BerserkBuff(int level) {
+    public BerserkBuff() {
         name = "Berserk Buff";
         description = "Temporary increased in stats.";
         type = TRAIT_TYPE.STATUS;
@@ -18,19 +18,6 @@ public class BerserkBuff : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
-        if (level == 1) {
-            _flatAttackMod = 100;
-            _flatHPMod = 500;
-            _flatSpeedMod = 100;
-        } else if (level == 2) {
-            _flatAttackMod = 200;
-            _flatHPMod = 1000;
-            _flatSpeedMod = 200;
-        } else if (level == 3) {
-            _flatAttackMod = 300;
-            _flatHPMod = 1500;
-            _flatSpeedMod = 300;
-        }
     }
 
     #region Overrides
@@ -50,6 +37,22 @@ public class BerserkBuff : Trait {
             character.AdjustAttackMod(_flatAttackMod);
             character.AdjustMaxHPMod(_flatHPMod);
             character.AdjustSpeedMod(_flatSpeedMod);
+        }
+    }
+    protected override void OnChangeLevel() {
+        base.OnChangeLevel();
+        if (level == 1) {
+            _flatAttackMod = 100;
+            _flatHPMod = 500;
+            _flatSpeedMod = 100;
+        } else if (level == 2) {
+            _flatAttackMod = 200;
+            _flatHPMod = 1000;
+            _flatSpeedMod = 200;
+        } else if (level == 3) {
+            _flatAttackMod = 300;
+            _flatHPMod = 1500;
+            _flatSpeedMod = 300;
         }
     }
     #endregion

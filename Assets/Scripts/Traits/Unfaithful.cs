@@ -7,9 +7,7 @@ public class Unfaithful : Trait {
     public float affairChanceMultiplier { get; private set; }
     //public float makeLoveChanceMultiplier { get; private set; }
 
-    public int level { get; private set; }
-
-    public Unfaithful(int level) {
+    public Unfaithful() {
         name = "Unfaithful";
         description = "This character has a tendency to be unfaithful.";
         type = TRAIT_TYPE.SPECIAL;
@@ -19,8 +17,12 @@ public class Unfaithful : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
-        this.level = level;
-        if(level == 1) {
+    }
+
+    #region Overrides
+    protected override void OnChangeLevel() {
+        base.OnChangeLevel();
+        if (level == 1) {
             affairChanceMultiplier = 5f;
         } else if (level == 2) {
             affairChanceMultiplier = 10f;
@@ -28,5 +30,6 @@ public class Unfaithful : Trait {
             affairChanceMultiplier = 5f;
         }
     }
+    #endregion
 
 }

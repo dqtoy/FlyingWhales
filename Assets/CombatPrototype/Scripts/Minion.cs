@@ -14,13 +14,13 @@ public class Minion {
     public PlayerJobAction[] interventionAbilities { get; private set; }
     public CombatAbility combatAbility { get; private set; }
 
-    private List<System.Action> traitsToAdd;
+    public List<string> traitsToAdd { get; private set; }
 
     public Minion(Character character, bool keepData) {
         this.character = character;
         this.exp = 0;
         this.interventionAbilities = new PlayerJobAction[MAX_INTERVENTION_ABILITY_SLOT];
-        traitsToAdd = new List<System.Action>();
+        traitsToAdd = new List<string>();
         SetUnlockedInterventionSlots(0);
         character.SetMinion(this);
         SetLevel(1);
@@ -303,13 +303,13 @@ public class Minion {
         if (InteriorMapManager.Instance.isAnAreaMapShowing) {
             return character.AddTrait(traitName, characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
         } else {
-            traitsToAdd.Add(() => character.AddTrait(traitName, characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd));
+            traitsToAdd.Add(traitName);
             return true;
         }
     }
     private void AddPendingTraits() {
         for (int i = 0; i < traitsToAdd.Count; i++) {
-            traitsToAdd[i].Invoke();
+            character.AddTrait(traitsToAdd[i]);
         }
         traitsToAdd.Clear();
     }

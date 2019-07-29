@@ -403,7 +403,7 @@ public class AreaInfoUI : UIMenu {
     private void UpdateItems() {
         for (int i = 0; i < itemContainers.Length; i++) {
             ItemContainer currContainer = itemContainers[i];
-            SpecialToken currToken = activeArea.possibleSpecialTokenSpawns.ElementAtOrDefault(i);
+            SpecialToken currToken = activeArea.itemsInArea.ElementAtOrDefault(i);
             currContainer.SetItem(currToken);
         }
     }

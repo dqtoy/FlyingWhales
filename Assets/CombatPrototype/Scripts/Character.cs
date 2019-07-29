@@ -58,28 +58,18 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     protected int _maxExperience;
     protected int _sp;
     protected int _maxSP;
-    protected int _attackPowerMod;
-    protected int _speedMod;
-    protected int _maxHPMod;
-    protected int _attackPowerPercentMod;
-    protected int _speedPercentMod;
-    protected int _maxHPPercentMod;
-    protected int _combatBaseAttack;
-    protected int _combatBaseSpeed;
-    protected int _combatBaseHP;
-    protected int _combatAttackFlat;
-    protected int _combatAttackMultiplier;
-    protected int _combatSpeedFlat;
-    protected int _combatSpeedMultiplier;
-    protected int _combatHPFlat;
-    protected int _combatHPMultiplier;
-    protected int _combatPowerFlat;
-    protected int _combatPowerMultiplier;
+    public int attackPowerMod { get; protected set; }
+    public int speedMod { get; protected set; }
+    public int maxHPMod { get; protected set; }
+    public int attackPowerPercentMod { get; protected set; }
+    public int speedPercentMod { get; protected set; }
+    public int maxHPPercentMod { get; protected set; }
 
     public Area homeArea { get; protected set; }
     public Dwelling homeStructure { get; protected set; }
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
+
     public Dictionary<AlterEgoData, CharacterRelationshipData> relationships {
         get {
             return currentAlterEgo?.relationships ?? null;
@@ -309,7 +299,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     public int speed {
         get {
-            int total = (int)((_characterClass.baseSpeed + _speedMod) * (1f + ((_raceSetting.speedModifier + _speedPercentMod) / 100f)));
+            int total = (int)((_characterClass.baseSpeed + speedMod) * (1f + ((_raceSetting.speedModifier + speedPercentMod) / 100f)));
             if (total < 0) {
                 return 1;
             }
@@ -318,7 +308,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     public int attackPower {
         get {
-            int total = (int)((_characterClass.baseAttackPower + _attackPowerMod) * (1f + ((_raceSetting.attackPowerModifier + _attackPowerPercentMod) / 100f)));
+            int total = (int)((_characterClass.baseAttackPower + attackPowerMod) * (1f + ((_raceSetting.attackPowerModifier + attackPowerPercentMod) / 100f)));
             if (total < 0) {
                 return 1;
             }
@@ -369,6 +359,15 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     public int doNotDisturb {
         get { return _doNotDisturb; }
+    }
+    public int doNotGetHungry {
+        get { return _doNotGetHungry; }
+    }
+    public int doNotGetLonely {
+        get { return _doNotGetLonely; }
+    }
+    public int doNotGetTired {
+        get { return _doNotGetTired; }
     }
     public bool isDefender {
         get { return defendingArea != null; }
@@ -500,6 +499,84 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         ResetToFullHP();
         InitializeAlterEgos();
     }
+    public Character(SaveDataCharacter data) {
+        _id = Utilities.SetID(this, data.id);
+        _characterColorCode = data.characterColorCode;
+        _doNotDisturb = data.doNotDisturb;
+        _doNotGetHungry = data.doNotGetHungry;
+        _doNotGetLonely = data.doNotGetLonely;
+        _doNotGetTired = data.doNotGetTired;
+        _gender = data.gender;
+        SetSexuality(data.sexuality);
+        _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
+        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()];
+        _raceSetting = raceSetting.CreateNewCopy();
+        AssignRole(CharacterManager.Instance.GetRoleByRoleType(data.roleType), false);
+        SetPortraitSettings(data.portraitSettings);
+        _characterColor = data.characterColor;
+        SetName(data.name);
+
+        _maxHP = data.maxHP;
+        _currentHP = data.currentHP;
+        _level = data.level;
+        _experience = data.experience;
+        _maxExperience = data.maxExperience;
+        attackPowerMod = data.attackPowerMod;
+        speedMod = data.speedMod;
+        maxHPMod = data.maxHPMod;
+        attackPowerPercentMod = data.attackPowerPercentMod;
+        speedPercentMod = data.speedPercentMod;
+        maxHPPercentMod = data.maxHPPercentMod;
+        morality = data.morality;
+
+        currentInteractionTypes = data.currentInteractionTypes;
+        supply = data.supply;
+        moodValue = data.moodValue;
+        isCombatant = data.isCombatant;
+        isDisabledByPlayer = data.isDisabledByPlayer;
+        speedModifier = data.speedModifier;
+        deathStr = data.deathStr;
+        _state = data.state;
+
+        tiredness = data.tiredness;
+        fullness = data.fullness;
+        happiness = data.happiness;
+        fullnessDecreaseRate = data.fullnessDecreaseRate;
+        tirednessDecreaseRate = data.tirednessDecreaseRate;
+        happinessDecreaseRate = data.happinessDecreaseRate;
+
+        hSkinColor = data.hSkinColor;
+        hHairColor = data.hHairColor;
+        demonColor = data.demonColor;
+
+        ignoreHostility = data.ignoreHostility;
+        currentAlterEgoName = data.currentAlterEgoName;
+        originalClassName = data.originalClassName;
+
+        _history = new List<Log>();
+        _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+        _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+        combatHistory = new Dictionary<int, Combat>();
+        poiGoapActions = new List<INTERACTION_TYPE>();
+        allGoapPlans = new List<GoapPlan>();
+        targettedByAction = new List<GoapAction>();
+        stateComponent = new CharacterStateComponent(this);
+        items = new List<SpecialToken>();
+        jobQueue = new JobQueue(this);
+        allJobsTargettingThis = new List<JobQueueItem>();
+        traitsNeededToBeRemoved = new List<Trait>();
+        onLeaveAreaActions = new List<Action>();
+        pendingActionsAfterMultiThread = new List<Action>();
+        trapStructure = new TrapStructure();
+        //for testing
+        locationHistory = new List<string>();
+        actionHistory = new List<string>();
+        planner = new GoapPlanner(this);
+
+        _normalTraits = new List<Trait>();
+        alterEgos = new Dictionary<string, AlterEgoData>();
+        items = new List<SpecialToken>();
+    }
     public Character() {
         SetIsDead(false);
         _history = new List<Log>();
@@ -507,7 +584,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
 
         //RPG
         _level = 1;
-        _experience = 0;
+        SetExperience(0);
         _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
         _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
         combatHistory = new Dictionary<int, Combat>();
@@ -846,9 +923,6 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
 
 
             if (faction != null) {
-                if (faction.leader == this) {
-                    faction.SetNewLeader();
-                }
                 faction.RemoveCharacter(this); //remove this character from it's factions list of characters
             }
 
@@ -886,6 +960,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             SetHP(0);
 
             marker.OnDeath(deathTile);
+
             SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);
@@ -3489,8 +3564,8 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         //RecomputeMaxExperience();
     }
     public void OnCharacterClassChange() {
-        if (_currentHP > _maxHPMod) {
-            _currentHP = _maxHPMod;
+        if (_currentHP > maxHPMod) {
+            _currentHP = maxHPMod;
         }
         if (_sp > _maxSP) {
             _sp = _maxSP;
@@ -3499,9 +3574,18 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     public void AdjustExperience(int amount) {
         _experience += amount;
         if (_experience >= _maxExperience) {
-            _experience = 0;
+            SetExperience(0);
             //LevelUp();
         }
+    }
+    public void SetExperience(int amount) {
+        _experience = amount;
+    }
+    private void RecomputeMaxExperience() {
+        _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
+    }
+    public void SetMaxExperience(int amount) {
+        _maxExperience = amount;
     }
     public void AdjustElementalWeakness(ELEMENT element, float amount) {
         _elementalWeaknesses[element] += amount;
@@ -3513,9 +3597,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         _sp += amount;
         _sp = Mathf.Clamp(_sp, 0, _maxSP);
     }
-    private void RecomputeMaxExperience() {
-        _maxExperience = Mathf.CeilToInt(100f * ((Mathf.Pow((float) _level, 1.25f)) / 1.1f));
-    }
+
     public void ResetToFullHP() {
         SetHP(maxHP);
     }
@@ -3561,7 +3643,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     public void SetMaxHPMod(int amount) {
         int previousMaxHP = maxHP;
-        _maxHPMod = amount;
+        maxHPMod = amount;
         UpdateMaxHP();
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
@@ -3569,14 +3651,14 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
     }
     public void AdjustAttackMod(int amount) {
-        _attackPowerMod += amount;
+        attackPowerMod += amount;
     }
     public void AdjustAttackPercentMod(int amount) {
-        _attackPowerPercentMod += amount;
+        attackPowerPercentMod += amount;
     }
     public void AdjustMaxHPMod(int amount) {
         int previousMaxHP = maxHP;
-        _maxHPMod += amount;
+        maxHPMod += amount;
         UpdateMaxHP();
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
@@ -3585,7 +3667,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     public void AdjustMaxHPPercentMod(int amount) {
         int previousMaxHP = maxHP;
-        _maxHPPercentMod += amount;
+        maxHPPercentMod += amount;
         UpdateMaxHP();
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
@@ -3593,7 +3675,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
     }
     public void UpdateMaxHP() {
-        _maxHP = (int) (((_characterClass.baseHP + _maxHPMod) * (1f + ((_raceSetting.hpModifier + _maxHPPercentMod) / 100f))) * 4f);
+        _maxHP = (int) (((_characterClass.baseHP + maxHPMod) * (1f + ((_raceSetting.hpModifier + maxHPPercentMod) / 100f))) * 4f);
         if (_maxHP < 0) {
             _maxHP = 1;
         }
@@ -3604,10 +3686,10 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
     }
     public void AdjustSpeedMod(int amount) {
-        _speedMod += amount;
+        speedMod += amount;
     }
     public void AdjustSpeedPercentMod(int amount) {
-        _speedPercentMod += amount;
+        speedPercentMod += amount;
     }
     public bool IsHealthFull() {
         return _currentHP >= maxHP;
@@ -3677,26 +3759,26 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
 
     #region Traits
     public void CreateInitialTraitsByClass() {
-        //Attack Type
-        if (characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
-            AddTrait("Physical Attacker");
-        } else if (characterClass.attackType == ATTACK_TYPE.MAGICAL) {
-            AddTrait("Magic User");
-        }
+        ////Attack Type
+        //if (characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+        //    AddTrait("Physical Attacker");
+        //} else if (characterClass.attackType == ATTACK_TYPE.MAGICAL) {
+        //    AddTrait("Magic User");
+        //}
 
-        //Range Type
-        if (characterClass.rangeType == RANGE_TYPE.MELEE) {
-            AddTrait("Melee Attack");
-        } else if (characterClass.rangeType == RANGE_TYPE.RANGED) {
-            AddTrait("Ranged Attack");
-        }
+        ////Range Type
+        //if (characterClass.rangeType == RANGE_TYPE.MELEE) {
+        //    AddTrait("Melee Attack");
+        //} else if (characterClass.rangeType == RANGE_TYPE.RANGED) {
+        //    AddTrait("Ranged Attack");
+        //}
 
-        //Combat Position
-        if (characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
-            AddTrait("Frontline Combatant");
-        } else if (characterClass.combatPosition == COMBAT_POSITION.BACKLINE) {
-            AddTrait("Backline Combatant");
-        }
+        ////Combat Position
+        //if (characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
+        //    AddTrait("Frontline Combatant");
+        //} else if (characterClass.combatPosition == COMBAT_POSITION.BACKLINE) {
+        //    AddTrait("Backline Combatant");
+        //}
 
         ////Class Name
         //if (characterClass.className == "Knight" || characterClass.className == "Marauder" || characterClass.className == "Barbarian") {
@@ -5561,6 +5643,15 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     public void AdjustHappinessDecreaseRate(int amount) {
         happinessDecreaseRate += amount;
     }
+    //public void SetFullnessDecreaseRate(int amount) {
+    //    fullnessDecreaseRate = amount;
+    //}
+    //public void SetTirednessDecreaseRate(int amount) {
+    //    tirednessDecreaseRate = amount;
+    //}
+    //public void SetHappinessDecreaseRate(int amount) {
+    //    happinessDecreaseRate = amount;
+    //}
     #endregion
 
     #region Tiredness
@@ -6980,6 +7071,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         ignoreHostility = Mathf.Max(0, ignoreHostility);
         //Debug.Log(GameManager.Instance.TodayLogString() + "Adjusted " + name + "'s ignore hostilities by " + amount + ". Ignore hostiles value is " + ignoreHostility.ToString());
     }
+    public void SetIgnoreHostilities(int amount) {
+        ignoreHostility = amount;
+        ignoreHostility = Mathf.Max(0, ignoreHostility);
+        //Debug.Log(GameManager.Instance.TodayLogString() + "Adjusted " + name + "'s ignore hostilities by " + amount + ". Ignore hostiles value is " + ignoreHostility.ToString());
+    }
     public void ClearIgnoreHostilities() {
         ignoreHostility = 0;
         //Debug.Log(GameManager.Instance.TodayLogString() + name + " clreared ignore hostiles.");
@@ -7387,8 +7483,13 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             throw new Exception(this.name + " already has an alter ego named " + alterEgoName + " but something is trying to create a new one!");
         }
         AlterEgoData newData = new AlterEgoData(this, alterEgoName);
-        alterEgos.Add(alterEgoName, newData);
+        AddAlterEgo(newData);
         return newData;
+    }
+    public void AddAlterEgo(AlterEgoData data) {
+        if (!alterEgos.ContainsKey(data.name)) {
+            alterEgos.Add(data.name, data);
+        }
     }
     public void RemoveAlterEgo(string alterEgoName) {
         if (alterEgoName == CharacterManager.Original_Alter_Ego) {
@@ -7423,7 +7524,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             ResetTirednessMeter();
             RemoveAllNonPersistentTraits();
 
-            SetHomeStructure(alterEgoData.homeSturcture);
+            SetHomeStructure(alterEgoData.homeStructure);
             ChangeFactionTo(alterEgoData.faction);
             AssignRole(alterEgoData.role);
             AssignClass(alterEgoData.characterClass);

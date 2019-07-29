@@ -5,14 +5,6 @@ using UnityEngine;
 public class Abducted : Trait {
     public Area originalHome { get; private set; }
 
-    private Character _responsibleCharacter;
-
-    #region getters/setters
-    public override Character responsibleCharacter {
-        get { return _responsibleCharacter; }
-    }
-    #endregion
-
     public Abducted(Area originalHome) {
         name = "Abducted";
         this.originalHome = originalHome;
@@ -28,17 +20,11 @@ public class Abducted : Trait {
     }
 
     #region Overrides
-    public override void SetCharacterResponsibleForTrait(Character character) {
-        _responsibleCharacter = character;
-    }
-    public override bool IsResponsibleForTrait(Character character) {
-        return _responsibleCharacter == character;
-    }
     public override string GetToolTipText() {
-        if(_responsibleCharacter == null) {
+        if(responsibleCharacter == null) {
             return description;
         }
-        return "This character has been abducted by " + _responsibleCharacter.name;
+        return "This character has been abducted by " + responsibleCharacter.name;
     }
     #endregion
 }

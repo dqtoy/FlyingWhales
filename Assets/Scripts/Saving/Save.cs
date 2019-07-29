@@ -12,6 +12,7 @@ public class Save {
     public List<SaveDataLandmark> landmarkSaves;
     public List<SaveDataArea> nonPlayerAreaSaves;
     public List<SaveDataFaction> factionSaves;
+    public List<SaveDataCharacter> characterSaves;
 
     public SaveDataArea playerAreaSave;
 
@@ -94,6 +95,9 @@ public class Save {
     public void LoadPlayerArea() {
         playerAreaSave.Load();
     }
+    public void LoadPlayerAreaItems() {
+        playerAreaSave.LoadAreaItems();
+    }
     public void SaveNonPlayerAreas(List<Area> areas) {
         nonPlayerAreaSaves = new List<SaveDataArea>();
         for (int i = 0; i < areas.Count; i++) {
@@ -106,6 +110,11 @@ public class Save {
     public void LoadNonPlayerAreas() {
         for (int i = 0; i < nonPlayerAreaSaves.Count; i++) {
             nonPlayerAreaSaves[i].Load();
+        }
+    }
+    public void LoadNonPlayerAreaItems() {
+        for (int i = 0; i < nonPlayerAreaSaves.Count; i++) {
+            nonPlayerAreaSaves[i].LoadAreaItems();
         }
     }
 
@@ -124,5 +133,17 @@ public class Save {
         }
     }
 
-
+    public void SaveCharacters(List<Character> characters) {
+        characterSaves = new List<SaveDataCharacter>();
+        for (int i = 0; i < characters.Count; i++) {
+            SaveDataCharacter saveDataCharacter = new SaveDataCharacter();
+            saveDataCharacter.Save(characters[i]);
+            characterSaves.Add(saveDataCharacter);
+        }
+    }
+    public void LoadCharacters() {
+        for (int i = 0; i < characterSaves.Count; i++) {
+            characterSaves[i].Load();
+        }
+    }
 }

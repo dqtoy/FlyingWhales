@@ -12,7 +12,7 @@ public class AlterEgoData {
     public RACE race { get; private set; }
     public CharacterRole role { get; private set; }
     public CharacterClass characterClass { get; private set; }
-    public Dwelling homeSturcture { get; private set; }
+    public Dwelling homeStructure { get; private set; }
     public int level { get; private set; }
 
     //Awareness
@@ -31,7 +31,7 @@ public class AlterEgoData {
         race = RACE.NONE;
         role = null;
         characterClass = null;
-        homeSturcture = null;
+        homeStructure = null;
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
         relationships = new Dictionary<AlterEgoData, CharacterRelationshipData>();
         traits = new List<Trait>();
@@ -66,7 +66,7 @@ public class AlterEgoData {
         if (owner.isSwitchingAlterEgo) {
             return; //ignore any changes while the owner is switching alter egos
         }
-        this.homeSturcture = homeStructure;
+        this.homeStructure = homeStructure;
     }
     public void SetLevel(int level) {
         if (owner.isSwitchingAlterEgo) {
@@ -221,13 +221,16 @@ public class AlterEgoData {
 
     #region Traits
     public void CopySpecialTraits() {
-        this.traits = new List<Trait>();
+        //this.traits = new List<Trait>();
         for (int i = 0; i < owner.normalTraits.Count; i++) {
             Trait currTrait = owner.normalTraits[i];
             if (!currTrait.isPersistent && currTrait.type == TRAIT_TYPE.SPECIAL) {
                 this.traits.Add(currTrait);
             }
         }
+    }
+    public void AddTrait(Trait trait) {
+        traits.Add(trait);
     }
     #endregion
 
@@ -238,7 +241,7 @@ public class AlterEgoData {
         summary += "\nRace: " + race.ToString();
         summary += "\nRole: " + role?.name ?? "Null";
         summary += "\nCharacter Class: " + characterClass?.className ?? "Null";
-        summary += "\nHome Structure: " + homeSturcture?.ToString() ?? "Null";
+        summary += "\nHome Structure: " + homeStructure?.ToString() ?? "Null";
         summary += "\nLevel: " + level.ToString();
         return summary;
     }

@@ -3,13 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Taunted : Trait {
-
-    private Character _responsibleCharacter;
     private Character _sourceCharacter;
-
-    public override Character responsibleCharacter {
-        get { return _responsibleCharacter; }
-    }
 
     public Taunted() {
         name = "Taunted";
@@ -22,14 +16,11 @@ public class Taunted : Trait {
     }
 
     #region Overrides
-    public override void SetCharacterResponsibleForTrait(Character character) {
-        _responsibleCharacter = character;
-    }
     public override void OnAddTrait(IPointOfInterest sourcePOI) {
         base.OnAddTrait(sourcePOI);
         _sourceCharacter = sourcePOI as Character;
         if (_sourceCharacter.stateComponent.currentState == null || _sourceCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
-            _sourceCharacter.marker.AddHostileInRange(_responsibleCharacter, CHARACTER_STATE.COMBAT);
+            _sourceCharacter.marker.AddHostileInRange(responsibleCharacter, CHARACTER_STATE.COMBAT);
         } else {
             Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, _sourceCharacter);
         }

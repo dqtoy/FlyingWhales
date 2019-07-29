@@ -3,19 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Restrained : Trait {
-    private Character _responsibleCharacter;
     private Character _sourceCharacter;
     //private bool _createdFeedJob;
 
     public bool isPrisoner { get; private set; }
     public bool isCriminal { get; private set; }
     public bool isLeader { get; private set; }
-
-    #region getters/setters
-    public override Character responsibleCharacter {
-        get { return _responsibleCharacter; }
-    }
-    #endregion
 
     public Restrained() {
         name = "Restrained";
@@ -31,17 +24,11 @@ public class Restrained : Trait {
     }
 
     #region Overrides
-    public override void SetCharacterResponsibleForTrait(Character character) {
-        _responsibleCharacter = character;
-    }
-    public override bool IsResponsibleForTrait(Character character) {
-        return _responsibleCharacter == character;
-    }
     public override string GetToolTipText() {
-        if (_responsibleCharacter == null) {
+        if (responsibleCharacter == null) {
             return description;
         }
-        return "This character is restrained by " + _responsibleCharacter.name;
+        return "This character is restrained by " + responsibleCharacter.name;
     }
     public override void OnAddTrait(IPointOfInterest sourceCharacter) {
         base.OnAddTrait(sourceCharacter);
@@ -51,7 +38,7 @@ public class Restrained : Trait {
             isLeader = _sourceCharacter.role.roleType == CHARACTER_ROLE.LEADER;
             Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
             //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
-            _sourceCharacter.RemoveTrait("Unconscious", removedBy: _responsibleCharacter);
+            _sourceCharacter.RemoveTrait("Unconscious", removedBy: responsibleCharacter);
             _sourceCharacter.CancelAllJobsAndPlans();
             _sourceCharacter.AddTraitNeededToBeRemoved(this);
 

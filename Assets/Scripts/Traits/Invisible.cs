@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class Invisible : Trait {
 
-    public int level { get; private set; }
     public Character owner { get; private set; }
     public List<Character> charactersThatCanSee { get; private set; }
     public List<Character> inRangeOfVisionCharacters { get; private set; } //Must keep a list of all characters that is in vision of this character but is not added in inVisionPOIs because this character is invisible
-    public Invisible(int level) {
+    public Invisible() {
         name = "Invisible";
         description = "This character is invisible.";
         type = TRAIT_TYPE.SPECIAL;
@@ -18,7 +17,6 @@ public class Invisible : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
-        this.level = level;
         charactersThatCanSee = new List<Character>();
         inRangeOfVisionCharacters = new List<Character>();
     }

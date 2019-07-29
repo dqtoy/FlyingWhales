@@ -235,6 +235,48 @@ public class CharacterManager : MonoBehaviour {
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
     }
+    public Character CreateNewCharacter(SaveDataCharacter data) {
+        Character newCharacter = new Character(data);
+        newCharacter.CreateOwnParty();
+
+        for (int i = 0; i < data.alterEgos.Count; i++) {
+            data.alterEgos[i].Load(newCharacter);
+        }
+
+        Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
+        if(faction != null) {
+            faction.AddNewCharacter(newCharacter);
+            if (data.isFactionLeader) {
+                faction.OnlySetLeader(newCharacter);
+            }
+        }
+#if !WORLD_CREATION_TOOL
+        newCharacter.ownParty.CreateIcon();
+
+        Area home = LandmarkManager.Instance.GetAreaByID(data.homeID);
+        Area specificLocation = LandmarkManager.Instance.GetAreaByID(data.currentLocationID);
+
+        newCharacter.ownParty.icon.SetPosition(specificLocation.coreTile.transform.position);
+        if (data.isDead) {
+            newCharacter.SetHome(home); //keep this data with character to prevent errors
+            home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
+            newCharacter.ownParty.SetSpecificLocation(specificLocation);
+        } else {
+            newCharacter.MigrateHomeTo(home, null, false);
+            specificLocation.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
+        }
+#endif
+        for (int i = 0; i < data.items.Count; i++) {
+            data.items[i].Load(newCharacter);
+        }
+        for (int i = 0; i < data.normalTraits.Count; i++) {
+            data.normalTraits[i].Load(newCharacter);
+        }
+
+        _allCharacters.Add(newCharacter);
+        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
+        return newCharacter;
+    }
     public void RemoveCharacter(Character character) {
         _allCharacters.Remove(character);
         Messenger.Broadcast<Character>(Signals.CHARACTER_REMOVED, character);
@@ -1221,6 +1263,18 @@ public class CharacterManager : MonoBehaviour {
     public Sprite GetClassPortraitSprite(string className) {
         if (classPortraits.ContainsKey(className)) {
             return classPortraits[className];
+        }
+        return null;
+    }
+    #endregion
+
+    #region Role
+    public CharacterRole GetRoleByRoleType(CHARACTER_ROLE roleType) {
+        CharacterRole[] characterRoles = CharacterRole.ALL;
+        for (int i = 0; i < characterRoles.Length; i++) {
+            if(characterRoles[i].roleType == roleType) {
+                return characterRoles[i];
+            }
         }
         return null;
     }

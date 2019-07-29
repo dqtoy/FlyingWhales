@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Cannibal : Trait {
-    public int level { get; private set; }
 
-    public Cannibal(int level = 1) {
+    public Cannibal() {
         name = "Cannibal";
         description = "This character eats his own kind.";
         type = TRAIT_TYPE.SPECIAL;
@@ -15,14 +14,6 @@ public class Cannibal : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
-        this.level = level;
-        if (level == 1) {
-            daysDuration = GameManager.Instance.GetTicksBasedOnHour(3);
-        } else if (level == 2) {
-            daysDuration = GameManager.Instance.GetTicksBasedOnHour(6);
-        } else if (level == 3) {
-            daysDuration = GameManager.Instance.GetTicksBasedOnHour(9);
-        }
     }
 
     #region Overrides
@@ -39,5 +30,15 @@ public class Cannibal : Trait {
     //public override void OnRemoveTrait(IPointOfInterest sourcePOI) {
     //    base.OnRemoveTrait(sourcePOI);
     //}
+    protected override void OnChangeLevel() {
+        base.OnChangeLevel();
+        if (level == 1) {
+            daysDuration = GameManager.Instance.GetTicksBasedOnHour(3);
+        } else if (level == 2) {
+            daysDuration = GameManager.Instance.GetTicksBasedOnHour(6);
+        } else if (level == 3) {
+            daysDuration = GameManager.Instance.GetTicksBasedOnHour(9);
+        }
+    }
     #endregion
 }

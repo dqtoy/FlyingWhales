@@ -27,8 +27,10 @@ public class Enrage : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
+                    BerserkBuff berserkBuff = new BerserkBuff();
+                    berserkBuff.SetLevel(lvl);
                     currTarget.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, null, GameManager.Instance.GetTicksBasedOnMinutes(_durationInMinutes)
-                        ,startStateAction: ()=> currTarget.AddTrait(new BerserkBuff(lvl)), endStateAction: () => currTarget.RemoveTrait("Berserk Buff"));
+                        ,startStateAction: ()=> currTarget.AddTrait(berserkBuff), endStateAction: () => currTarget.RemoveTrait("Berserk Buff"));
                     if (UIManager.Instance.characterInfoUI.isShowing) {
                         UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
                     }

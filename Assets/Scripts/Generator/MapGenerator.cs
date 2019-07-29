@@ -173,7 +173,10 @@ public class MapGenerator : MonoBehaviour {
         data.LoadPlayerArea();
         data.LoadNonPlayerAreas();
         data.LoadFactions();
+        data.LoadPlayerAreaItems();
+        data.LoadNonPlayerAreaItems();
         LandmarkManager.Instance.LoadAdditionalAreaData();
+        data.LoadCharacters();
         yield return null;
         data.LoadLandmarks();
         yield return null;

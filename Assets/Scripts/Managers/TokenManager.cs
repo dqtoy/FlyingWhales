@@ -32,7 +32,7 @@ public class TokenManager : MonoBehaviour {
                     SpecialToken createdToken = CreateSpecialToken(currSetting.tokenType, currSetting.appearanceWeight);
                     if (createdToken != null) {
                         chosenArea.AddSpecialTokenToLocation(createdToken);
-                        createdToken.SetOwner(chosenArea.owner);
+                        //createdToken.SetOwner(chosenArea.owner); //Removed this because of redundancy, SetOwner is already being called inside AddSpecialTokenToLocation
                         Messenger.Broadcast<SpecialToken>(Signals.SPECIAL_TOKEN_CREATED, createdToken);
                     }
                 }

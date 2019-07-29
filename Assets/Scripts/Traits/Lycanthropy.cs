@@ -10,7 +10,7 @@ public class Lycanthropy : Trait {
     public override bool isPersistent { get { return true; } }
 
     private int _level;
-    public Lycanthropy(int level = 1) {
+    public Lycanthropy() {
         name = "Lycanthropy";
         description = "This character can transform into a wolf.";
         thoughtText = "[Character] can transform into a wolf.";
@@ -21,7 +21,6 @@ public class Lycanthropy : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
         effects = new List<TraitEffect>();
-        _level = level;
         //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
     }
 
@@ -37,7 +36,7 @@ public class Lycanthropy : Trait {
         lycanthropeAlterEgo.SetRace(RACE.WOLF);
         lycanthropeAlterEgo.SetRole(CharacterRole.BEAST);
         lycanthropeAlterEgo.SetCharacterClass(CharacterManager.Instance.CreateNewCharacterClass(Utilities.GetRespectiveBeastClassNameFromByRace(RACE.WOLF)));
-        lycanthropeAlterEgo.SetLevel(_level);
+        lycanthropeAlterEgo.SetLevel(level);
         foreach (List<LocationStructure> structures in _character.specificLocation.structures.Values) {
             for (int i = 0; i < structures.Count; i++) {
                 for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {

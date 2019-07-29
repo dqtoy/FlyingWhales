@@ -3,16 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Unconscious : Trait {
-    private Character _responsibleCharacter;
     private Character _sourceCharacter;
     //private GoapPlanJob _restrainJob;
     //private GoapPlanJob _removeTraitJob;
-
-    #region getters/setters
-    public override Character responsibleCharacter {
-        get { return _responsibleCharacter; }
-    }
-    #endregion
 
     public Unconscious() {
         name = "Unconscious";
@@ -29,17 +22,11 @@ public class Unconscious : Trait {
     }
 
     #region Overrides
-    public override void SetCharacterResponsibleForTrait(Character character) {
-        _responsibleCharacter = character;
-    }
-    public override bool IsResponsibleForTrait(Character character) {
-        return _responsibleCharacter == character;
-    }
     public override string GetToolTipText() {
-        if (_responsibleCharacter == null) {
+        if (responsibleCharacter == null) {
             return description;
         }
-        return "This character has been knocked out by " + _responsibleCharacter.name;
+        return "This character has been knocked out by " + responsibleCharacter.name;
     }
     public override void OnAddTrait(IPointOfInterest sourceCharacter) {
         base.OnAddTrait(sourceCharacter);

@@ -28,7 +28,8 @@ public class CorruptLycanthropy : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
-                    Trait newTrait = new Lycanthropy(_level);
+                    Trait newTrait = new Lycanthropy();
+                    newTrait.SetLevel(lvl);
                     currTarget.AddTrait(newTrait);
                     //AlterEgoData alterEgoData = currTarget.GetAlterEgoData("Lycanthrope");
                     //alterEgoData.SetLevel(_level);

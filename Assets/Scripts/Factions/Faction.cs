@@ -177,8 +177,7 @@ public class Faction {
                 newRuler.AssignClass(CharacterManager.Instance.CreateNewCharacterClass(initialLeaderClass));
             }
         }
-        this.leader = leader;
-        
+        OnlySetLeader(leader);
     }
     #endregion
 
@@ -323,6 +322,9 @@ public class Faction {
         } else {
             Debug.LogError(GameManager.Instance.TodayLogString() + name + " cannot set new leader because there is no previous leader!");
         }
+    }
+    public void OnlySetLeader(ILeader leader) {
+        this.leader = leader;
     }
     #endregion
 

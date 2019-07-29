@@ -24,9 +24,13 @@ public class CombatAbility {
         abilityTags = new List<ABILITY_TAG>();
     }
 
-
     public void LevelUp() {
         lvl++;
+        lvl = Mathf.Clamp(lvl, 1, PlayerManager.MAX_LEVEL_COMBAT_ABILITY);
+        OnLevelUp();
+    }
+    public void SetLevel(int amount) {
+        lvl = amount;
         lvl = Mathf.Clamp(lvl, 1, PlayerManager.MAX_LEVEL_COMBAT_ABILITY);
         OnLevelUp();
     }

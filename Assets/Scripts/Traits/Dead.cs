@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Dead : Trait {
-    private Character _responsibleCharacter;
-
     public Dead() {
         name = "Dead";
         description = "This character is dead.";
@@ -47,17 +45,11 @@ public class Dead : Trait {
         }
         return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
     }
-    public override void SetCharacterResponsibleForTrait(Character character) {
-        _responsibleCharacter = character;
-    }
-    public override bool IsResponsibleForTrait(Character character) {
-        return _responsibleCharacter == character;
-    }
     public override string GetToolTipText() {
-        if (_responsibleCharacter == null) {
+        if (responsibleCharacter == null) {
             return description;
         }
-        return "This character was killed by " + _responsibleCharacter.name;
+        return "This character was killed by " + responsibleCharacter.name;
     }
     #endregion
 }

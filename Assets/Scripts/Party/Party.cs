@@ -181,7 +181,7 @@ public class Party {
 
         _currentCombat = null;
 
-        Messenger.Broadcast<Party>(Signals.PARTY_DIED, this);
+        //Messenger.Broadcast<Party>(Signals.PARTY_DIED, this);
     }
     public void DisbandParty() {
         if(_characters.Count > 1) {

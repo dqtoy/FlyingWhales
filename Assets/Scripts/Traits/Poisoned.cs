@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class Poisoned : Trait {
 
-    public override List<Character> responsibleCharacters {
-        get { return _responsibleCharacters; }
-    }
-
     public List<Character> awareCharacters { get; private set; } //characters that know about this trait
 
     private List<Character> _responsibleCharacters;
@@ -25,14 +21,6 @@ public class Poisoned : Trait {
     }
 
     #region Overrides
-    public override void AddCharacterResponsibleForTrait(Character character) {
-        if (!_responsibleCharacters.Contains(character)) {
-            _responsibleCharacters.Add(character);
-        }
-    }
-    public override bool IsResponsibleForTrait(Character character) {
-        return responsibleCharacters.Contains(character);
-    }
     public override void OnAddTrait(IPointOfInterest sourceCharacter) {
         base.OnAddTrait(sourceCharacter);
         poi = sourceCharacter;

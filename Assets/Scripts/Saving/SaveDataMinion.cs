@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SaveDataMinion : MonoBehaviour {
+[System.Serializable]
+public class SaveDataMinion {
+    public int characterID;
+    public int exp;
+    public int indexDefaultSort;
+    public int unlockedInterventionSlots;
+    public PlayerJobAction[] interventionAbilities;
+    public SaveDataCombatAbility combatAbility;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public List<string> traitsToAdd;
 }

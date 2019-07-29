@@ -28,6 +28,7 @@ public class SaveManager : MonoBehaviour {
         save.SavePlayerArea(PlayerManager.Instance.player.playerArea);
         save.SaveNonPlayerAreas(LandmarkManager.Instance.allNonPlayerAreas);
         save.SaveFactions(FactionManager.Instance.allFactions);
+        save.SaveCharacters(CharacterManager.Instance.allCharacters);
 
         SaveGame.Save<Save>(Utilities.gameSavePath + saveFileName, save);
     }

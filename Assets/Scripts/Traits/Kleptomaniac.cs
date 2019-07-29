@@ -7,7 +7,7 @@ public class Kleptomaniac : Trait {
     private Character owner;
 
     private int _happinessDecreaseRate;
-    public Kleptomaniac(int level = 1) {
+    public Kleptomaniac() {
         name = "Kleptomaniac";
         description = "This character has irresistible urge to steal.";
         thoughtText = "[Character] has irresistible urge to steal.";
@@ -19,13 +19,6 @@ public class Kleptomaniac : Trait {
         daysDuration = 0;
         effects = new List<TraitEffect>();
         noItemCharacters = new List<Character>();
-        if(level == 1) {
-            _happinessDecreaseRate = 10;
-        } else if (level == 2) {
-            _happinessDecreaseRate = 15;
-        } else if (level == 3) {
-            _happinessDecreaseRate = 20;
-        }
     }
 
     #region Overrides
@@ -56,6 +49,16 @@ public class Kleptomaniac : Trait {
             testingData += noItemCharacters[i].name + ", ";
         }
         return testingData;
+    }
+    protected override void OnChangeLevel() {
+        base.OnChangeLevel();
+        if (level == 1) {
+            _happinessDecreaseRate = 10;
+        } else if (level == 2) {
+            _happinessDecreaseRate = 15;
+        } else if (level == 3) {
+            _happinessDecreaseRate = 20;
+        }
     }
     #endregion
 

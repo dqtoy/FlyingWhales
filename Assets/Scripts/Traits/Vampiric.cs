@@ -9,7 +9,7 @@ public class Vampiric : Trait {
     private int _flatHPMod;
     private int _flatSpeedMod;
 
-    public Vampiric(int level = 1) {
+    public Vampiric() {
         name = "Vampiric";
         description = "This character sucks blood.";
         thoughtText = "[Character] sucks blood.";
@@ -23,7 +23,6 @@ public class Vampiric : Trait {
         _flatAttackMod = 100;
         _flatHPMod = 500;
         _flatSpeedMod = 100;
-        VamipiricLevel(level);
         //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
     }
 
@@ -58,6 +57,10 @@ public class Vampiric : Trait {
             character.AdjustSpeedMod(-_flatSpeedMod);
         }
         base.OnRemoveTrait(sourceCharacter, removedBy);
+    }
+    protected override void OnChangeLevel() {
+        base.OnChangeLevel();
+        VamipiricLevel(level);
     }
     #endregion
 }
