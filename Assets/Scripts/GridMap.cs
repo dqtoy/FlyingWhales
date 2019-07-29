@@ -197,7 +197,7 @@ public class GridMap : MonoBehaviour {
                 }
 
                 GameObject hex = GameObject.Instantiate(goHex) as GameObject;
-                hex.transform.parent = _borderParent.transform;
+                hex.transform.SetParent(_borderParent.transform);
                 hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
                 hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
                 HexTile currHex = hex.GetComponent<HexTile>();

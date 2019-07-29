@@ -59,6 +59,8 @@ public class AreaTypeSpriteDictionaryPropertyDrawer : SerializableDictionaryProp
 public class SummonSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(ArtifactSettingDictionary))]
 public class ArtifactSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(SeamlessEdgeAssetsDictionary))]
+public class SeamlessEdgeAssetsDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
@@ -73,4 +75,7 @@ public class CorruptionObjectsListStoragePropertyDrawer : SerializableDictionary
 public class DefenderListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectSlotListStorage))]
 public class TileObjectSlotListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+[CustomPropertyDrawer(typeof(TileBaseListStorage))]
+public class TileBaseListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+
 

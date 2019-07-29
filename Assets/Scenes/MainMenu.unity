@@ -16326,6 +16326,11 @@ MonoBehaviour:
   gridSizeX: 20
   gridSizeY: 15
   regionCount: 5
+  minColumnsBetweenSettlements: 2
+  maxColumnsBetweenSettlements: 2
+  tileColumnRows: 3
+  tileCollectionWidth: 4
+  tileCollectionHeight: 4
   minSettltementCount: 5
   maxSettltementCount: 7
   minCitizenCount: 5

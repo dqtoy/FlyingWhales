@@ -12,7 +12,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public enum Tile_Type { Empty, Wall, Structure, Gate, Road, Structure_Entrance }
     public enum Tile_State { Empty, Occupied }
     public enum Tile_Access { Passable, Impassable, }
-    public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra }
+    public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble }
 
     public bool hasDetail = false;
 
@@ -72,13 +72,8 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public List<LocationGridTile> FourNeighbours() {
         List<LocationGridTile> fn = new List<LocationGridTile>();
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
-            switch (keyValuePair.Key) {
-                case TileNeighbourDirection.North:
-                case TileNeighbourDirection.South:
-                case TileNeighbourDirection.West:
-                case TileNeighbourDirection.East:
-                    fn.Add(keyValuePair.Value);
-                    break;
+            if (keyValuePair.Key.IsCardinalDirection()) {
+                fn.Add(keyValuePair.Value);
             }
         }
         return fn;
@@ -86,13 +81,8 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public Dictionary<TileNeighbourDirection, LocationGridTile> FourNeighboursDictionary() {
         Dictionary<TileNeighbourDirection, LocationGridTile> fn = new Dictionary<TileNeighbourDirection, LocationGridTile>();
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
-            switch (keyValuePair.Key) {
-                case TileNeighbourDirection.North:
-                case TileNeighbourDirection.South:
-                case TileNeighbourDirection.West:
-                case TileNeighbourDirection.East:
-                    fn.Add(keyValuePair.Key, keyValuePair.Value);
-                    break;
+            if (keyValuePair.Key.IsCardinalDirection()) {
+                fn.Add(keyValuePair.Key, keyValuePair.Value);
             }
         }
         return fn;
@@ -486,6 +476,18 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public void UnhighlightTile() {
         parentAreaMap.groundTilemap.SetColor(localPlace, Color.white);
     }
+    public bool HasCardinalNeighbourOfDifferentGroundType(out Dictionary<TileNeighbourDirection, LocationGridTile> differentTiles) {
+        bool hasDiff = false;
+        differentTiles = new Dictionary<TileNeighbourDirection, LocationGridTile>();
+        Dictionary<TileNeighbourDirection, LocationGridTile> cardinalNeighbours = FourNeighboursDictionary();
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in cardinalNeighbours) {
+            if (keyValuePair.Value.groundType != this.groundType) {
+                hasDiff = true;
+                differentTiles.Add(keyValuePair.Key, keyValuePair.Value);
+            }
+        }
+        return hasDiff;
+    }
     #endregion
 
     #region Mouse Actions
@@ -530,7 +532,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 #endif
         }
     }
-#endregion
+    #endregion
 
     #region Tile Objects
     public void SetReservedType(TILE_OBJECT_TYPE reservedType) {

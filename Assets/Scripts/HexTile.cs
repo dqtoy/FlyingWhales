@@ -72,9 +72,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private SpriteRenderer rightBeach;
     [SerializeField] private SpriteRenderer topRightBeach;
 
-    [Space(10)]
-    [Header("UI")]
-    [SerializeField] private GraphicRaycaster uiRaycaster;
+    //[Space(10)]
+    //[Header("UI")]
+    //[SerializeField] private GraphicRaycaster uiRaycaster;
 
     public BaseLandmark landmarkOnTile { get; private set; }
 
@@ -150,10 +150,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
 
     private void AreaMapOpened(Area area) {
-        uiRaycaster.enabled = false;
+        //uiRaycaster.enabled = false;
     }
     private void AreaMapClosed(Area area) {
-        uiRaycaster.enabled = true;
+        //uiRaycaster.enabled = true;
     }
 
     #region Elevation Functions

@@ -21,6 +21,7 @@ public class BaseLandmark {
     protected LandmarkVisual _landmarkVisual;
     protected List<Item> _itemsInLandmark;
     protected List<LANDMARK_TAG> _landmarkTags;
+    public List<BaseLandmark> connections;
     
     #region getters/setters
     public int id {
@@ -71,6 +72,7 @@ public class BaseLandmark {
         _owner = null; //landmark has no owner yet
         _hasBeenCorrupted = false;
         _itemsInLandmark = new List<Item>();
+        connections = new List<BaseLandmark>();
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
@@ -434,6 +436,12 @@ public class BaseLandmark {
     }
     public void AdjustCivilianCount(int amount) {
         _civilianCount += amount;
+    }
+    #endregion
+
+    #region Connections
+    public void AddConnection(BaseLandmark newConnection) {
+        connections.Add(newConnection);
     }
     #endregion
 }

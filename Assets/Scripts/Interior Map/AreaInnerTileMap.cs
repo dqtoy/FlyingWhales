@@ -114,6 +114,13 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private float offsetX;
     [SerializeField] private float offsetY;
 
+    [Header("Seamless Edges")]
+    [SerializeField] private Tilemap northEdgeTilemap;
+    [SerializeField] private Tilemap southEdgeTilemap;
+    [SerializeField] private Tilemap westEdgeTilemap;
+    [SerializeField] private Tilemap eastEdgeTilemap;
+    [SerializeField] private SeamlessEdgeAssetsDictionary edgeAssets; //0-north, 1-south, 2-west, 3-east
+
     public Character hoveredCharacter { get; private set; }
     public Area area { get; private set; }
     public LocationGridTile[,] map { get; private set; }
@@ -163,6 +170,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         cameraBounds.z = (cameraBounds.x + width) - 28.5f;
         cameraBounds.w = height - AreaMapCameraMove.Instance.areaMapsCamera.orthographicSize;
         SpawnCenterGO();
+        CreateSeamlessEdges();
     }
     private void SpawnCenterGO() {
         centerGO = GameObject.Instantiate(centerGOPrefab, transform);
@@ -961,16 +969,16 @@ public class AreaInnerTileMap : MonoBehaviour {
             pos.y += startPos.y;
             //if (tilemap.gameObject.name.Contains("Ground")) {
             if (!string.IsNullOrEmpty(currData.tileAssetName)) {
-                tilemap.SetTile(pos, InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName, true));
-                try {
-                    map[pos.x, pos.y].SetLockedState(true);
-                } catch {
-                    throw new System.Exception("Map index out of range " + pos.x + ", " + pos.y + ". Tilemap is: " + tilemap.name + ". Map Size is: " + map.GetUpperBound(0).ToString() + ", " + map.GetUpperBound(1).ToString());
-                }
-                
+                TileBase assetUsed = InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName, true);
+                tilemap.SetTile(pos, assetUsed);
+                LocationGridTile tile = map[pos.x, pos.y];
+                tile.SetLockedState(true);
+
                 if (tilemap == detailsTilemap) {
-                    map[pos.x, pos.y].hasDetail = true;
-                    map[pos.x, pos.y].SetTileState(LocationGridTile.Tile_State.Occupied);
+                    tile.hasDetail = true;
+                    tile.SetTileState(LocationGridTile.Tile_State.Occupied);
+                } else if (tilemap == groundTilemap && assetUsed.name.Contains("cobble")) {
+                    tile.groundType = LocationGridTile.Ground_Type.Cobble;
                 }
             }
             //} else {
@@ -1225,10 +1233,10 @@ public class AreaInnerTileMap : MonoBehaviour {
                     currTile.groundType = LocationGridTile.Ground_Type.Snow;
                     groundTilemap.SetTile(currTile.localPlace, snowTile);
                 } else if (sample >= 0.5f && sample < 0.8f) {
-                    currTile.groundType = LocationGridTile.Ground_Type.Tundra;
+                    currTile.groundType = LocationGridTile.Ground_Type.Stone;
                     groundTilemap.SetTile(currTile.localPlace, stoneTile);
                 } else {
-                    currTile.groundType = LocationGridTile.Ground_Type.Stone;
+                    currTile.groundType = LocationGridTile.Ground_Type.Tundra;
                     groundTilemap.SetTile(currTile.localPlace, tundraTile);
                 }
             } else {
@@ -1502,14 +1510,69 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
     #endregion
 
+    #region Seamless Edges
+    private void CreateSeamlessEdges() {
+        for (int i = 0; i < allTiles.Count; i++) {
+            LocationGridTile tile = allTiles[i];
+            if (tile.structure != null && !tile.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
+            Dictionary<TileNeighbourDirection, LocationGridTile> neighbours;
+            if (tile.HasCardinalNeighbourOfDifferentGroundType(out neighbours)) {
+                //grass should be higher than dirt
+                //dirt should be higher than cobble
+                //cobble should be higher than grass
+                foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> keyValuePair in neighbours) {
+                    LocationGridTile currNeighbour = keyValuePair.Value;
+                    if (currNeighbour.structure != null && !currNeighbour.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
+                    bool createEdge = false;
+                    if (tile.groundType == currNeighbour.groundType) {
+                        createEdge = true;
+                    } else if (tile.groundType == LocationGridTile.Ground_Type.Snow) {
+                        createEdge = true;
+                    } else if (tile.groundType == LocationGridTile.Ground_Type.Cobble && currNeighbour.groundType != LocationGridTile.Ground_Type.Snow) {
+                        createEdge = true;
+                    } else if (tile.groundType == LocationGridTile.Ground_Type.Tundra && 
+                        (currNeighbour.groundType == LocationGridTile.Ground_Type.Stone || currNeighbour.groundType == LocationGridTile.Ground_Type.Soil)) {
+                        createEdge = true;
+                    } else if (tile.groundType == LocationGridTile.Ground_Type.Grass && currNeighbour.groundType == LocationGridTile.Ground_Type.Soil) {
+                        createEdge = true;
+                    } else if (tile.groundType == LocationGridTile.Ground_Type.Soil && currNeighbour.groundType == LocationGridTile.Ground_Type.Stone) {
+                        createEdge = true;
+                    } else if (tile.groundType == LocationGridTile.Ground_Type.Stone && currNeighbour.groundType == LocationGridTile.Ground_Type.Grass) {
+                        createEdge = true;
+                    }
+                    if (createEdge) {
+                        Tilemap mapToUse;
+                        switch (keyValuePair.Key) {
+                            case TileNeighbourDirection.North:
+                                mapToUse = northEdgeTilemap;
+                                break;
+                            case TileNeighbourDirection.South:
+                                mapToUse = southEdgeTilemap;
+                                break;
+                            case TileNeighbourDirection.West:
+                                mapToUse = westEdgeTilemap;
+                                break;
+                            case TileNeighbourDirection.East:
+                                mapToUse = eastEdgeTilemap;
+                                break;
+                            default:
+                                mapToUse = null;
+                                break;
+                        }
+                        mapToUse.SetTile(tile.localPlace, edgeAssets[tile.groundType][(int)keyValuePair.Key]);
+                    }
+                }
+            }
+        }
+    }
+    #endregion
+
     #region Utilities
     public void ClearAllTilemaps() {
-        groundTilemap.ClearAllTiles();
-        objectsTilemap.ClearAllTiles();
-        structureTilemap.ClearAllTiles();
-        wallTilemap.ClearAllTiles();
-        detailsTilemap.ClearAllTiles();
-        roadTilemap.ClearAllTiles();
+        Tilemap[] maps = GetComponentsInChildren<Tilemap>();
+        for (int i = 0; i < maps.Length; i++) {
+            maps[i].ClearAllTiles();
+        }
     }
     private List<LocationGridTile> GetTiles(Point size, LocationGridTile startingTile, List<LocationGridTile> mustBeIn = null) {
         List<LocationGridTile> tiles = new List<LocationGridTile>();
@@ -1774,6 +1837,15 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void PrintWorldAndLocalPos() {
         Debug.Log("World Pos: " + transform.position);
         Debug.Log("Local Pos: " + transform.localPosition);
+    }
+    [Header("Clear Tiles Utility")]
+    [SerializeField] private Tilemap[] mapsToClear;
+    [ContextMenu("Clear Tiles")]
+    [ExecuteInEditMode]
+    public void ClearTiles() {
+        for (int i = 0; i < mapsToClear.Length; i++) {
+            mapsToClear[i].ClearAllTiles();
+        }
     }
     public void ShowPath(Path path) {
         List<Vector3> points = path.vectorPath;

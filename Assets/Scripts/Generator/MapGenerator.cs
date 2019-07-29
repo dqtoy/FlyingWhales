@@ -26,6 +26,8 @@ public class MapGenerator : MonoBehaviour {
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Map...");
         yield return null;
+        //RandomWorld world = WorldConfigManager.Instance.GenerateRandomWorldData();
+        //world.LogWorldData();
         GridMap.Instance.SetupInitialData(WorldConfigManager.Instance.gridSizeX, WorldConfigManager.Instance.gridSizeY);
         GridMap.Instance.GenerateGrid();
         EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);

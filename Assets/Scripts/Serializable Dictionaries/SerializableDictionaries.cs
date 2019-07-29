@@ -57,6 +57,9 @@ public class AreaTypeSpriteDictionary : SerializableDictionary<AREA_TYPE, Sprite
 public class SummonSettingDictionary : SerializableDictionary<SUMMON_TYPE, SummonSettings> { }
 [System.Serializable]
 public class ArtifactSettingDictionary : SerializableDictionary<ARTIFACT_TYPE, ArtifactSettings> { }
+[System.Serializable]
+public class SeamlessEdgeAssetsDictionary : SerializableDictionary<LocationGridTile.Ground_Type, List<TileBase>, TileBaseListStorage> { }
+
 
 //List storage
 [System.Serializable]
@@ -71,3 +74,5 @@ public class CorruptionObjectsListStorage : SerializableDictionary.Storage<List<
 public class RaceDefenderListStorage : SerializableDictionary.Storage<List<RaceAreaDefenderSetting>> { }
 [System.Serializable]
 public class TileObjectSlotListStorage : SerializableDictionary.Storage<List<TileObjectSlotSetting>> { }
+[System.Serializable]
+public class TileBaseListStorage : SerializableDictionary.Storage<List<TileBase>> { }

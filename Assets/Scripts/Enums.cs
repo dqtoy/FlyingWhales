@@ -1399,6 +1399,17 @@ public static class Extensions {
         }
         throw new System.Exception("No opposite direction for " + dir.ToString());
     }
+    public static bool IsCardinalDirection(this TileNeighbourDirection dir) {
+        switch (dir) {
+            case TileNeighbourDirection.North:
+            case TileNeighbourDirection.South:
+            case TileNeighbourDirection.West:
+            case TileNeighbourDirection.East:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     #region Actions
@@ -1579,4 +1590,5 @@ public static class Extensions {
         return tags;
     }
     #endregion
+
 }
