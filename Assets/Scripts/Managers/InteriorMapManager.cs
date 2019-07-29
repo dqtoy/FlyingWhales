@@ -352,6 +352,7 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\nLocal Location: " + tile.localLocation.ToString();
         summary += "\nWorld Location: " + tile.worldLocation.ToString();
         summary += "\nCentered World Location: " + tile.centeredWorldLocation.ToString();
+        summary += "\nGround Type: " + tile.groundType.ToString();
         summary += "\nIs Occupied: " + tile.isOccupied.ToString();
         summary += "\nIs Edge: " + tile.IsAtEdgeOfWalkableMap();
         summary += "\nTile Type: " + tile.tileType.ToString();
