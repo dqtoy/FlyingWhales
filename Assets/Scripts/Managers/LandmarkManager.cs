@@ -346,7 +346,7 @@ public class LandmarkManager : MonoBehaviour {
                     //create settlement first
                     TileRow rowInNextColumnWithMajorLandmark = nextColumn.GetRowWithMajorLandmark();
                     if (rowInNextColumnWithMajorLandmark == null) {
-                        BaseLandmark landmark = CreateMajorLandmarkOnColumn(nextColumn, LANDMARK_TYPE.PALACE, Utilities.RandomSettlementType(), i * 2);
+                        BaseLandmark landmark = CreateMajorLandmarkOnColumn(nextColumn, LANDMARK_TYPE.PALACE, Utilities.RandomSettlementType(), Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount));
                         rowInNextColumnWithMajorLandmark = nextColumn.GetRowWithMajorLandmark();
                     }
                     
