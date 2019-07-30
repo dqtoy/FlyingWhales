@@ -228,7 +228,6 @@ public class LandmarkManager : MonoBehaviour {
             //GenerateAreaMap(newArea);
             faction.GenerateStartingCitizens(2, 1, citizenCount); //9,7
         }
-        FactionManager.Instance.CreateNeutralFaction();
     }
     public void SetCascadingLevelsForAllCharacters(HexTile portalTile) {
         List<Area> arrangedAreas = allAreas.OrderBy(x => x.coreTile.GetTileDistanceTo(portalTile)).ToList();
