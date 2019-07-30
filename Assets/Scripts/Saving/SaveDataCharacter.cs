@@ -87,6 +87,9 @@ public class SaveDataCharacter {
     public bool isSummon;
     public bool isFactionLeader;
 
+    //For Summons Only
+    public SUMMON_TYPE summonType;
+
     public void Save(Character character) {
         id = character.id;
         name = character.name;
@@ -164,6 +167,10 @@ public class SaveDataCharacter {
         originalClassName = character.originalClassName;
         isMinion = character.minion != null;
         isSummon = character is Summon;
+        if (isSummon) {
+            Summon summon = character as Summon;
+            summonType = summon.summonType;
+        }
         isFactionLeader = character.faction.leader == character;
 
         currentAlterEgoName = character.currentAlterEgoName;
@@ -176,8 +183,13 @@ public class SaveDataCharacter {
     }
 
     public void Load() {
-        Character character = CharacterManager.Instance.CreateNewCharacter(this);
-        if(!isMinion && !isSummon && isDead) {
+        Character character = null;
+        if (isSummon) {
+            character = CharacterManager.Instance.CreateNewSummon(this);
+        } else {
+            character = CharacterManager.Instance.CreateNewCharacter(this);
+        }
+        if (!isMinion && !isSummon && isDead) {
             //Do not process dead save data if character is a minion or summon, there is a separate process for that in Player
             character.ownParty.PartyDeath();
             if (character.role != null) {

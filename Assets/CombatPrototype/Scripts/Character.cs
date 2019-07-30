@@ -6237,7 +6237,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     public void SetNumWaitingForGoapThread(int amount) {
         _numOfWaitingForGoapThread = amount;
     }
-    protected void ConstructInitialGoapAdvertisementActions() {
+    public void ConstructInitialGoapAdvertisementActions() {
         //poiGoapActions = new List<INTERACTION_TYPE>();
         poiGoapActions.Add(INTERACTION_TYPE.CARRY_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ASSAULT_ACTION_NPC);

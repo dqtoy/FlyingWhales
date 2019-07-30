@@ -9,6 +9,9 @@ public class Necronomicon : Artifact {
 	public Necronomicon() : base(ARTIFACT_TYPE.Necronomicon) {
         raiseDeadLevel = 5;
     }
+    public Necronomicon(SaveDataArtifact data) : base(data) {
+        raiseDeadLevel = 5;
+    }
 
     #region Override
     protected override void OnPlaceArtifactOn(LocationGridTile tile) {
@@ -27,6 +30,10 @@ public class Necronomicon : Artifact {
     public override void LevelUp() {
         base.LevelUp();
         raiseDeadLevel++;
+    }
+    public override void SetLevel(int amount) {
+        base.SetLevel(amount);
+        raiseDeadLevel = amount;
     }
     #endregion
 

@@ -8,4 +8,6 @@ public class Incubus : SeducerSummon {
     public Incubus() : base (SUMMON_TYPE.Incubus, GENDER.MALE) {
 
     }
+    public Incubus(SaveDataCharacter data) : base(data) {
+    }
 }

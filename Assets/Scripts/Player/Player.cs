@@ -77,8 +77,19 @@ public class Player : ILeader {
         //ConstructRoleSlots();
         AddListeners();
     }
-    public Player(SaveDataPlayer saveDataPlayer) {
-
+    public Player(SaveDataPlayer data) {
+        attackGrid = new CombatGrid();
+        defenseGrid = new CombatGrid();
+        attackGrid.Initialize();
+        defenseGrid.Initialize();
+        allIntel = new List<Intel>();
+        minions = new Minion[MAX_MINIONS];
+        summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
+        artifacts = new Artifact[MAX_ARTIFACT];
+        maxSummonSlots = data.maxSummonSlots;
+        maxArtifactSlots = data.maxArtifactSlots;
+        threat = data.threat;
+        AddListeners();
     }
 
     #region Listeners
@@ -132,7 +143,7 @@ public class Player : ILeader {
         //_demonicPortal.tileLocation.ScheduleCorruption();
 
     }
-    private void SetPlayerArea(Area area) {
+    public void SetPlayerArea(Area area) {
         playerArea = area;
         //area.SetSuppliesInBank(_currencies[CURRENCY.SUPPLY]);
         //area.StopSupplyLine();
@@ -151,6 +162,11 @@ public class Player : ILeader {
         playerFaction.SetEmblem(FactionManager.Instance.GetFactionEmblem(6));
         SetPlayerFaction(playerFaction);
     }
+    public void CreatePlayerFaction(SaveDataPlayer data) {
+        Faction playerFaction = FactionManager.Instance.GetFactionBasedOnID(data.playerFactionID);
+        playerFaction.SetLeader(this);
+        SetPlayerFaction(playerFaction);
+    }
     private void SetPlayerFaction(Faction faction) {
         playerFaction = faction;
     }
@@ -160,6 +176,11 @@ public class Player : ILeader {
     public Minion CreateNewMinion(Character character) {
         Minion minion = new Minion(character, true);
         InitializeMinion(minion);
+        return minion;
+    }
+    public Minion CreateNewMinion(SaveDataMinion data) {
+        Minion minion = new Minion(data);
+        InitializeMinion(data, minion);
         return minion;
     }
     public Minion CreateNewMinion(RACE race) {
@@ -186,6 +207,12 @@ public class Player : ILeader {
         minion.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
         minion.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
         //TODO: Add one positive and one negative trait
+    }
+    public void InitializeMinion(SaveDataMinion data, Minion minion) {
+        for (int i = 0; i < data.interventionAbilities.Count; i++) {
+            data.interventionAbilities[i].Load(minion);
+        }
+        data.combatAbility.Load(minion);
     }
     public void AddMinion(Minion minion) {
         int currentMinionCount = GetCurrentMinionCount();
@@ -766,6 +793,14 @@ public class Player : ILeader {
             PlayerUI.Instance.GameOver("Your threat reached the whole world. You are now exposed. You lost!");
         }
     }
+    public void SetThreat(int amount) {
+        threat = amount;
+        threat = Mathf.Clamp(threat, 0, MAX_THREAT);
+        PlayerUI.Instance.UpdateThreatMeter();
+        if (threat >= MAX_THREAT) {
+            PlayerUI.Instance.GameOver("Your threat reached the whole world. You are now exposed. You lost!");
+        }
+    }
     public void ResetThreat() {
         threat = 0;
         PlayerUI.Instance.UpdateThreatMeter();
@@ -830,6 +865,14 @@ public class Player : ILeader {
         Summon add = summonToAdd as Summon;
         RemoveSummon(replace);
         AddSummon(add);
+    }
+    public void AddASummon(Summon summon) {
+        if (GetTotalSummonsCount() < maxSummonSlots) {
+            AddSummon(summon);
+        } else {
+            Debug.LogWarning("Max summons has been reached!");
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), summon, ReplaceSummon, RejectSummon);
+        }
     }
     private void RejectSummon(object rejectedSummon) {
         ClearSummonData(rejectedSummon as Summon);
@@ -988,6 +1031,14 @@ public class Player : ILeader {
         Artifact add = objToAdd as Artifact;
         RemoveArtifact(replace);
         AddArtifact(add);
+    }
+    public void AddAnArtifact(Artifact artifact) {
+        if (GetTotalArtifactCount() < maxArtifactSlots) {
+            AddArtifact(artifact);
+        } else {
+            Debug.LogWarning("Max artifacts has been reached!");
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllArtifacts(), artifact, ReplaceArtifact, RejectArtifact);
+        }
     }
     private void RejectArtifact(object rejectedObj) { }
     public void LoseArtifact(ARTIFACT_TYPE type) {

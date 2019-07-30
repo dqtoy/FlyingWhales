@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SaveDataArtifact : MonoBehaviour {
+[System.Serializable]
+public class SaveDataArtifact {
+    public int id;
+    public ARTIFACT_TYPE type;
+    public int level;
+    
+    public void Save(Artifact artifact) {
+        id = artifact.id;
+        type = artifact.type;
+        level = artifact.level;
+    }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void Load(Player player) {
+        Artifact artifact = PlayerManager.Instance.CreateNewArtifact(this);
+        player.AddAnArtifact(artifact);
+    }
 }

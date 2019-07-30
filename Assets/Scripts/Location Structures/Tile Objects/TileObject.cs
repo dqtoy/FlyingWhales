@@ -63,6 +63,15 @@ public class TileObject : IPointOfInterest {
         hasCreatedSlots = false;
         InitializeCollisionTrigger();
     }
+    protected void Initialize(SaveDataArtifact data, TILE_OBJECT_TYPE tileObjectType) {
+        id = Utilities.SetID(this, data.id);
+        this.tileObjectType = tileObjectType;
+        _traits = new List<Trait>();
+        actionHistory = new List<string>();
+        awareCharacters = new List<Character>();
+        hasCreatedSlots = false;
+        InitializeCollisionTrigger();
+    }
 
     #region Virtuals
     /// <summary>

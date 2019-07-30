@@ -121,6 +121,8 @@ public class Utilities : MonoBehaviour {
             lastCharacterSimID = idToUse;
         } else if (obj is LocationStructure) {
             lastStructureID = idToUse;
+        } else if (obj is TileObject) {
+            lastTileObjectID = idToUse;
         }
         //else if (obj is Interaction) {
         //    lastInteractionID = idToUse;

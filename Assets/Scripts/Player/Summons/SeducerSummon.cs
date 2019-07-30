@@ -26,6 +26,11 @@ public class SeducerSummon : Summon {
         AddInteractionType(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
         AddInteractionType(INTERACTION_TYPE.MAKE_LOVE);
     }
+    public SeducerSummon(SaveDataCharacter data) : base(data) {
+        seduceChance = 50;
+        doneCharacters = new List<Character>();
+    }
+
 
     #region Overrides
     //public override void UnsubscribeSignals() {

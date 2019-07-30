@@ -4,14 +4,16 @@ using UnityEngine;
 
 [System.Serializable]
 public class SaveDataInterventionAbility {
+    public INTERVENTION_ABILITY abilityType;
+    public int lvl;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void Save(PlayerJobAction ability) {
+        abilityType = ability.abilityType;
+        lvl = ability.lvl;
+    }
+    public void Load(Minion minion) {
+        PlayerJobAction ability = PlayerManager.Instance.CreateNewInterventionAbility(abilityType);
+        minion.AddInterventionAbility(ability);
+        ability.SetLevel(lvl);
+    }
 }

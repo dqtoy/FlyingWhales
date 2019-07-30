@@ -31,6 +31,16 @@ public class Minion {
             character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
         }
     }
+    public Minion(SaveDataMinion data) {
+        this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);
+        this.exp = data.exp;
+        traitsToAdd = data.traitsToAdd;
+        this.interventionAbilities = new PlayerJobAction[MAX_INTERVENTION_ABILITY_SLOT];
+        SetIndexDefaultSort(data.indexDefaultSort);
+        SetUnlockedInterventionSlots(data.unlockedInterventionSlots);
+        character.SetMinion(this);
+        character.ownParty.icon.SetVisualState(true);
+    }
     //public void SetEnabledState(bool state) {
     //    if (character.IsInOwnParty()) {
     //        //also set enabled state of other party members
