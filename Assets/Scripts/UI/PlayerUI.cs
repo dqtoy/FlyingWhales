@@ -852,6 +852,7 @@ public class PlayerUI : MonoBehaviour {
         if (currentlySelectedSummon == SUMMON_TYPE.None) {
             SetCurrentlySelectedSummon(newSummon.summonType);
         }
+        //ShowNewObjectInfo(newSummon);
         //AssignNewActionToLatestItem(newSummon);
     }
     public void OnRemoveSummon(Summon summon) {
@@ -1024,6 +1025,7 @@ public class PlayerUI : MonoBehaviour {
         if (currentlySelectedArtifact == null) {
             SetCurrentlySelectedArtifact(newArtifact);
         }
+        //ShowNewObjectInfo(newArtifact);
         //AssignNewActionToLatestItem(newSummon);
     }
     private void OnRemoveArtifact(Artifact artifact) {
