@@ -13,15 +13,11 @@ public class WorldConfigManager : MonoBehaviour {
     public int gridSizeX;
     public int gridSizeY;
     public int regionCount;
-
     public int minColumnsBetweenSettlements;
     public int maxColumnsBetweenSettlements;
-
     public int tileColumnRows; //how many rows per tile column?
-
     public int tileCollectionWidth; //Number of tiles horizontally per collection
     public int tileCollectionHeight; //Number of tiles vertically per collection
-
 
     [Header("Settlements")]
     [Tooltip("Minimum number of settlements to generate")]
@@ -33,6 +29,9 @@ public class WorldConfigManager : MonoBehaviour {
     [Tooltip("Maximum number of citizens to generate per settlement")]
     public int maxCitizenCount;
 
+    [Header("Landmark Settings")]
+    [SerializeField] private LandmarkGenerationDictionary landmarkGenTable;
+
     private void Awake() {
         if (Instance == null) {
             Instance = this;
@@ -41,11 +40,9 @@ public class WorldConfigManager : MonoBehaviour {
         }
         DontDestroyOnLoad(this.gameObject);
     }
-
     public void SetDataToUse(WorldSaveData data) {
         loadedData = data;
     }
-
     public RandomWorld GenerateRandomWorldData() {
         RandomWorld world = new RandomWorld();
         int settlementCount = Random.Range(minSettltementCount, maxSettltementCount);
@@ -71,6 +68,10 @@ public class WorldConfigManager : MonoBehaviour {
         world.columns = columns;
         world.settlementCount = settlementCount;
         return world;
+    }
+
+    public List<LANDMARK_TYPE> GetPossibleLandmarks(BIOMES biome, LANDMARK_YIELD_TYPE yieldType) {
+        return landmarkGenTable[biome][yieldType];
     }
 }
 
@@ -103,7 +104,6 @@ public class RandomWorld {
         }
         throw new System.Exception("There is no column that has tile with x coordinate " + index.ToString());
     }
-
     public void LogWorldData() {
         string summary = "Generated world summary: ";
         summary += "\nWidth: " + mapWidth.ToString();
@@ -111,6 +111,24 @@ public class RandomWorld {
         summary += "\nSettlements: " + settlementCount.ToString();
         summary += "\nColumns: " + columns.Count.ToString();
         Debug.Log(summary);
+    }
+
+    public void ColorColumns() {
+        for (int i = 0; i < columns.Count; i++) {
+            TileColumn column = columns[i];
+            Color columnColor = Random.ColorHSV();
+            if (column.hasMajorLandmark) {
+                columnColor = Color.blue;
+            }
+            for (int j = 0; j < column.rows.Length; j++) {
+                HexTile[] tiles = column.rows[j].GetAllTiles(GridMap.Instance.map);
+                for (int k = 0; k < tiles.Length; k++) {
+                    if (tiles[k] != null) {
+                        tiles[k].spriteRenderer.color = columnColor;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -125,12 +143,13 @@ public class TileColumn {
         int lastY = 0;
 
         for (int i = 0; i < rows.Length; i++) {
-            TileRow collection = new TileRow();
-            collection.minX = startingPoint;
-            collection.maxX = startingPoint + WorldConfigManager.Instance.tileCollectionWidth - 1;
-            collection.minY = lastY;
-            collection.maxY = collection.minY + WorldConfigManager.Instance.tileCollectionHeight - 1;
-            lastY = collection.maxY + 1;
+            TileRow row = new TileRow();
+            row.minX = startingPoint;
+            row.maxX = startingPoint + WorldConfigManager.Instance.tileCollectionWidth - 1;
+            row.minY = lastY;
+            row.maxY = row.minY + WorldConfigManager.Instance.tileCollectionHeight - 1;
+            lastY = row.maxY + 1;
+            rows[i] = row;
         }
 
     }
@@ -155,16 +174,26 @@ public class TileColumn {
     }
     public List<TileRow> GetValidRowsInNextColumnForLandmarks(TileRow currentRow, TileColumn nextColumn) {
         List<TileRow> validRows = new List<TileRow>();
-        int i = System.Array.IndexOf(rows, currentRow);
-        TileRow upperRow = nextColumn.rows.ElementAtOrDefault(i + 1);
-        TileRow lowerRow = nextColumn.rows.ElementAtOrDefault(i - 1);
-        TileRow equalRow = nextColumn.rows[i];
-        validRows.Add(equalRow);
-        if (upperRow != null) {
-            validRows.Add(upperRow);
+        int indexOfCurrentRow = System.Array.IndexOf(rows, currentRow);
+        TileRow upperRowInNextColumn = nextColumn.rows.ElementAtOrDefault(indexOfCurrentRow + 1);
+        TileRow lowerRowInNextColumn = nextColumn.rows.ElementAtOrDefault(indexOfCurrentRow - 1);
+        TileRow equalRowInNextColumn = nextColumn.rows[indexOfCurrentRow];
+        validRows.Add(equalRowInNextColumn);
+        if (upperRowInNextColumn != null) {
+            validRows.Add(upperRowInNextColumn);
         }
-        if (lowerRow != null) {
-            validRows.Add(lowerRow);
+        if (lowerRowInNextColumn != null) {
+            //to check if the lower row is valid
+            //check if the row adjacent to the current row has a connection
+            //if it does, check if it is connected to the landmark below the current row, if it is, then the lower row in the next column is not valid, otherwise, it is.
+            if (equalRowInNextColumn.hasLandmark && equalRowInNextColumn.landmark.inGoingConnections.Count > 0) {
+                BaseLandmark otherConnection = equalRowInNextColumn.landmark.inGoingConnections.First();
+                TileRow connectedToRow = GetRowThatContainsTile(otherConnection.tileLocation);
+                int indexOfConnectedRow = System.Array.IndexOf(rows, connectedToRow);
+                if (indexOfCurrentRow < indexOfConnectedRow) { //current row is lower than connected row.
+                    validRows.Add(lowerRowInNextColumn);
+                }
+            }
         }
         return validRows;
     }
@@ -181,8 +210,16 @@ public class TileColumn {
         }
         return null;
     }
+    private TileRow GetRowThatContainsTile(HexTile tile) {
+        for (int i = 0; i < rows.Length; i++) {
+            TileRow tileRow = rows[i];
+            if (tileRow.IncludesTile(tile)) {
+                return tileRow;
+            }
+        }
+        return null;
+    }
 }
-
 public class TileRow {
     public int minX, maxX, minY, maxY;
     
@@ -196,11 +233,17 @@ public class TileRow {
     }
 
     public HexTile[] GetAllTiles(HexTile[,] map) {
-        HexTile[] tiles = new HexTile[maxX * maxY];
+        HexTile[] tiles = new HexTile[(maxX + 1) * (maxY + 1)];
         int count = 0;
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
-                tiles[count] = map[x, y];
+                try {
+                    tiles[count] = map[x, y];
+                } catch (System.Exception e) {
+                    throw new System.Exception("X: " + x.ToString() + ", Y: " + y.ToString() + "\n" + e.Message);
+                }
+                
+                count++;
             }
         }
         return tiles;
@@ -223,9 +266,28 @@ public class TileRow {
         for (int y = minY; y < maxY; y++) {
             for (int i = 0; i < midPoints.Count; i++) {
                 int x = midPoints[i];
+                HexTile currTile = map[x, y];
+                if (currTile.IsAtEdgeOfMap()) {
+                    continue; //skip tiles at edge of map
+                }
                 tiles.Add(map[x, y]);
             }
         }
         return tiles;
+    }
+
+    public bool IncludesTile(HexTile tile) {
+        return tile.xCoordinate >= minX && tile.xCoordinate <= maxX && tile.yCoordinate >= minY && tile.yCoordinate <= minY;
+    }
+}
+
+[System.Serializable]
+public struct YieldTypeLandmarks {
+    public YieldTypeLandmarksDictionary landmarkTypes;
+
+    public List<LANDMARK_TYPE> this[LANDMARK_YIELD_TYPE yieldType] {
+        get {
+            return landmarkTypes[yieldType];
+        }
     }
 }

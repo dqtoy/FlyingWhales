@@ -37,7 +37,6 @@ public struct DateRange {
     }
 
     private int GetRangeInTicks() {
-        //TODO: Change this to use maths
         int range = 0;
         GameDate lowerDate;
         GameDate higherDate;

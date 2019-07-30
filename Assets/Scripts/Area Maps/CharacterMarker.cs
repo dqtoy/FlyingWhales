@@ -1655,7 +1655,7 @@ public class CharacterMarker : PooledObject {
             //summary += "\n" + character.name + "'s health is critically low.";
             //-character's hp is critically low (chance based dependent on the character)
             willTransfer = true;
-        } else if (character.GetNormalTrait("Spooked") != null) { //TODO: Ask chy about spooked mechanics
+        } else if (character.GetNormalTrait("Spooked") != null) {
                                                                   //- fear-type status effect
             willTransfer = true;
         } else if (character.isStarving && character.GetNormalTrait("Vampiric") == null) {

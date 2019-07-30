@@ -21,8 +21,10 @@ public class BaseLandmark {
     protected LandmarkVisual _landmarkVisual;
     protected List<Item> _itemsInLandmark;
     protected List<LANDMARK_TAG> _landmarkTags;
-    public List<BaseLandmark> connections;
-    
+    public LANDMARK_YIELD_TYPE yieldType;
+    public List<BaseLandmark> inGoingConnections { get; private set; }
+    public List<BaseLandmark> outGoingConnections { get; private set; }
+
     #region getters/setters
     public int id {
         get { return _id; }
@@ -72,7 +74,8 @@ public class BaseLandmark {
         _owner = null; //landmark has no owner yet
         _hasBeenCorrupted = false;
         _itemsInLandmark = new List<Item>();
-        connections = new List<BaseLandmark>();
+        inGoingConnections = new List<BaseLandmark>();
+        outGoingConnections = new List<BaseLandmark>();
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
@@ -440,8 +443,20 @@ public class BaseLandmark {
     #endregion
 
     #region Connections
-    public void AddConnection(BaseLandmark newConnection) {
-        connections.Add(newConnection);
+    public void AddInGoingConnection(BaseLandmark newConnection) {
+        inGoingConnections.Add(newConnection);
+    }
+    public void AddOutGoingConnection(BaseLandmark newConnection) {
+        outGoingConnections.Add(newConnection);
+    }
+    public bool IsConnectedWith(BaseLandmark otherLandmark) {
+        return inGoingConnections.Contains(otherLandmark) || outGoingConnections.Contains(otherLandmark);
+    }
+    #endregion
+
+    #region Yield Types
+    public void SetYieldType(LANDMARK_YIELD_TYPE type) {
+        yieldType = type;
     }
     #endregion
 }

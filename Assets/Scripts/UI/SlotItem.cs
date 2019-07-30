@@ -102,7 +102,6 @@ public class SlotItem : MonoBehaviour {
             portrait.gameObject.SetActive(false);
             hoverInfo = (associatedObj as SpecialToken).name;
             image.gameObject.SetActive(true);
-            //TODO: Change Sprite per token
         }
     }
     public void ClearSlot(bool keepType = false) {

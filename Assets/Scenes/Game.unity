@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -62270,6 +62270,21 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 2080112258}
     m_Modifications:
+    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
+        type: 2}
+      propertyPath: landmarkData.Array.data[11].biomeTileSprites.m_keys.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
+        type: 2}
+      propertyPath: landmarkData.Array.data[11].biomeTileSprites.m_values.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
+        type: 2}
+      propertyPath: landmarkData.Array.data[11].biomeTileSprites.m_values.Array.data[0].data.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4032634498680816, guid: 5265a95405071234ca6e83f73bf3868d, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0

@@ -59,7 +59,10 @@ public class SummonSettingDictionary : SerializableDictionary<SUMMON_TYPE, Summo
 public class ArtifactSettingDictionary : SerializableDictionary<ARTIFACT_TYPE, ArtifactSettings> { }
 [System.Serializable]
 public class SeamlessEdgeAssetsDictionary : SerializableDictionary<LocationGridTile.Ground_Type, List<TileBase>, TileBaseListStorage> { }
-
+[System.Serializable]
+public class LandmarkGenerationDictionary : SerializableDictionary<BIOMES, YieldTypeLandmarks> { }
+[System.Serializable]
+public class YieldTypeLandmarksDictionary : SerializableDictionary<LANDMARK_YIELD_TYPE, List<LANDMARK_TYPE>, LandmarkTypeListStorage> { }
 
 //List storage
 [System.Serializable]
@@ -76,3 +79,5 @@ public class RaceDefenderListStorage : SerializableDictionary.Storage<List<RaceA
 public class TileObjectSlotListStorage : SerializableDictionary.Storage<List<TileObjectSlotSetting>> { }
 [System.Serializable]
 public class TileBaseListStorage : SerializableDictionary.Storage<List<TileBase>> { }
+[System.Serializable]
+public class LandmarkTypeListStorage : SerializableDictionary.Storage<List<LANDMARK_TYPE>> { }

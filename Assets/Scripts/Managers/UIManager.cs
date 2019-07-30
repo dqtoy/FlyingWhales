@@ -157,6 +157,11 @@ public class UIManager : MonoBehaviour {
                 ShowSmallInfo("Double click to view.", currentTileHovered.areaOfTile.name);
                 isShowingAreaTooltip = true;
             }
+#if UNITY_EDITOR
+            else if (currentTileHovered.landmarkOnTile != null) {
+                currentTileHovered.ShowTileInfo();
+            }
+#endif
         }
     }
     #endregion

@@ -1045,7 +1045,7 @@ public class Area {
     public void SetAreaMap(AreaInnerTileMap map) {
         areaMap = map;
     }
-    public void PlaceTileObjects() { //TODO: Unify placement of static POI's
+    public void PlaceTileObjects() {
         //pre placed objects
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {

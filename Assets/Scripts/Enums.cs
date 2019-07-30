@@ -1317,6 +1317,7 @@ public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUN
 public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, ThiefSummon, }
 public enum ARTIFACT_TYPE { None, Necronomicon, Chaos_Orb, Hermes_Statue, Ankh_Of_Anubis, Miasma_Emitter, }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, }
+public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]

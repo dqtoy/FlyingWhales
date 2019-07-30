@@ -270,7 +270,6 @@ public class Table : TileObject {
     //    if (gridTileLocation == null) {
     //        return;
     //    }
-    //    //TODO: Think of a way to unify this
     //    int userCount = GetActiveUserCount();
     //    if (userCount == 1) {
     //        if (usedAsset.name.Contains("0")) {

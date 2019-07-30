@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class MapGenerator : MonoBehaviour {
 
@@ -26,9 +27,10 @@ public class MapGenerator : MonoBehaviour {
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Map...");
         yield return null;
-        //RandomWorld world = WorldConfigManager.Instance.GenerateRandomWorldData();
-        //world.LogWorldData();
-        GridMap.Instance.SetupInitialData(WorldConfigManager.Instance.gridSizeX, WorldConfigManager.Instance.gridSizeY);
+        RandomWorld world = WorldConfigManager.Instance.GenerateRandomWorldData();
+        world.LogWorldData();
+        //GridMap.Instance.SetupInitialData(WorldConfigManager.Instance.gridSizeX, WorldConfigManager.Instance.gridSizeY);
+        GridMap.Instance.SetupInitialData(world.mapWidth, world.mapHeight);
         GridMap.Instance.GenerateGrid();
         EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);
         Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
@@ -42,19 +44,25 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.GenerateBiome(GridMap.Instance.hexTiles);
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         yield return null;
-
-        Region[] generatedRegions;
-        LandmarkManager.Instance.DivideToRegions(GridMap.Instance.hexTiles, WorldConfigManager.Instance.regionCount, WorldConfigManager.Instance.gridSizeX * WorldConfigManager.Instance.gridSizeY, out generatedRegions);
         BaseLandmark portal;
-        LandmarkManager.Instance.GenerateSettlements(new IntRange(WorldConfigManager.Instance.minSettltementCount, WorldConfigManager.Instance.maxSettltementCount), generatedRegions, new IntRange(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount), out portal);
+
+        LandmarkManager.Instance.GenerateLandmarks(world, out portal);
         LandmarkManager.Instance.SetCascadingLevelsForAllCharacters(portal.tileLocation);
         LandmarkManager.Instance.LoadAdditionalAreaData();
-        LandmarkManager.Instance.GenerateMinorLandmarks(GridMap.Instance.hexTiles);
         GridMap.Instance.GenerateInitialTileTags();
         yield return null;
 
+        //Region[] generatedRegions;
+        //LandmarkManager.Instance.DivideToRegions(GridMap.Instance.hexTiles, WorldConfigManager.Instance.regionCount, WorldConfigManager.Instance.gridSizeX * WorldConfigManager.Instance.gridSizeY, out generatedRegions);
+        //LandmarkManager.Instance.GenerateSettlements(new IntRange(WorldConfigManager.Instance.minSettltementCount, WorldConfigManager.Instance.maxSettltementCount), generatedRegions, new IntRange(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount), out portal);
+        //LandmarkManager.Instance.SetCascadingLevelsForAllCharacters(portal.tileLocation);
+        //LandmarkManager.Instance.LoadAdditionalAreaData();
+        //LandmarkManager.Instance.GenerateMinorLandmarks(GridMap.Instance.hexTiles);
+        //GridMap.Instance.GenerateInitialTileTags();
+        //yield return null;
+
         GridMap.Instance.GenerateOuterGrid();
-        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.outerGridList);
+        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         CameraMove.Instance.CalculateCameraBounds();
         yield return null;
         UIManager.Instance.InitializeUI();

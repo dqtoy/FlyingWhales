@@ -109,7 +109,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public ELEVATION elevationType { get { return data.elevationType; } }
     public Area areaOfTile { get { return _areaOfTile; } }
     public string locationName {
-        get { return tileName + "(" + xCoordinate + ", " + yCoordinate + ")"; }
+        get { return "(" + xCoordinate + ", " + yCoordinate + ")"; }
     }
     public GameObject centerPiece {
         get { return this._centerPiece; }
@@ -249,7 +249,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             landmarkGO.transform.localScale = Vector3.one;
             landmarkOnTile.SetLandmarkObject(landmarkGO.GetComponent<LandmarkVisual>());
         }
+        if (landmarkType == LANDMARK_TYPE.CAVE) {
+            SetElevation(ELEVATION.MOUNTAIN);
+        } else {
+            SetElevation(ELEVATION.PLAIN);
+        }
         Biomes.Instance.UpdateTileVisuals(this);
+        Debug.Log("Created new  " + landmarkType.ToString() + " on " + this.ToString());
         return landmarkOnTile;
     }
     public BaseLandmark CreateLandmarkOfType(LandmarkSaveData saveData) {
@@ -435,6 +441,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool IsAtEdgeOfMap() {
         return AllNeighbours.Count < 6; //if this tile has less than 6 neighbours, it is at the edge of the map
+    }
+    public bool HasNeighbourAtEdgeOfMap() {
+        for (int i = 0; i < AllNeighbours.Count; i++) {
+            HexTile currNeighbour = AllNeighbours[i];
+            if (currNeighbour.IsAtEdgeOfMap()) {
+                return true;
+            }
+        }
+        return false;
     }
     public void GenerateInitialTileTags() {
         //Elevation
@@ -837,7 +852,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
         //if (this.areaOfTile != null) {
             _hoverHighlightGO.SetActive(true);
-            //SetBordersState(true);
+        //SetBordersState(true);
         //}
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
 #endif
@@ -853,7 +868,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
         _hoverHighlightGO.SetActive(false);
         //SetBordersState(false);
-        HideSmallInfoWindow();
+        UIManager.Instance.HideSmallInfo();
         //if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
         //    return;
         //}
@@ -933,11 +948,26 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void ForceUpdateTileVisuals() {
         Biomes.Instance.UpdateTileVisuals(this);
     }
-    private void HideSmallInfoWindow() {
-        UIManager.Instance.HideSmallInfo();
-    }
     public override string ToString() {
         return this.locationName;
+    }
+    public void ShowTileInfo() {
+        string summary = "Landmark: " + landmarkOnTile?.specificLandmarkType.ToString();
+        if (landmarkOnTile != null) {
+            summary += "\n\t- Yield Type: " + landmarkOnTile.yieldType.ToString();
+            summary += "\n\t- In Going Connections: " + landmarkOnTile.inGoingConnections.Count.ToString();
+            for (int i = 0; i < landmarkOnTile.inGoingConnections.Count; i++) {
+                BaseLandmark connection = landmarkOnTile.inGoingConnections[i];
+                summary += "\n\t\t- " + connection.specificLandmarkType.ToString() + " " + connection.tileLocation.locationName;
+            }
+            summary += "\n\t- Out Going Connections: " + landmarkOnTile.outGoingConnections.Count.ToString();
+            for (int i = 0; i < landmarkOnTile.outGoingConnections.Count; i++) {
+                BaseLandmark connection = landmarkOnTile.outGoingConnections[i];
+                summary += "\n\t\t- " + connection.specificLandmarkType.ToString() + " " + connection.tileLocation.locationName;
+            }
+        }
+        summary += "\nArea: " + areaOfTile?.name;
+        UIManager.Instance.ShowSmallInfo(summary, this.ToString() + " Info: ");
     }
     #endregion
 

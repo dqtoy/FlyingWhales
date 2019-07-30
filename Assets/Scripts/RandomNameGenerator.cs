@@ -518,7 +518,6 @@ public class RandomNameGenerator : MonoBehaviour {
 
 	}
     public string GetLandmarkName(LANDMARK_TYPE landmarkType) {
-        //TODO: Add name generation per specific landmark type
         return GetAncientRuinName();
     }
 

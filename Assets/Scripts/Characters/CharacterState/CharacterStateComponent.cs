@@ -67,8 +67,6 @@ public class CharacterStateComponent {
         if(character.currentParty.icon.isTravelling) {
             if (character.currentParty.icon.travelLine == null) {
                 character.marker.StopMovementOnly();
-            } else {
-                //TODO: What if the character travelling to an area
             }
         }
 
@@ -125,8 +123,6 @@ public class CharacterStateComponent {
                 if (character.currentParty.icon.isTravelling) {
                     if (character.currentParty.icon.travelLine == null) {
                         character.marker.StopMovementOnly();
-                    } else {
-                        //TODO: What if the character travelling to an area
                     }
                 }
             }

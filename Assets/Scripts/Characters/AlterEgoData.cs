@@ -168,7 +168,7 @@ public class AlterEgoData {
             return new ItemAwareness(poi as SpecialToken);
         } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             return new TileObjectAwareness(poi);
-        }//TODO: Structure Awareness
+        }
         return null;
     }
     public void ClearAllAwareness() {

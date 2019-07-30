@@ -51,7 +51,6 @@ public class BerserkedState : CharacterState {
         }else if (targetPOI is TileObject) {
             TileObject target = targetPOI as TileObject;
             if(target.tileObjectType != TILE_OBJECT_TYPE.TREE && target.poiGoapActions.Contains(INTERACTION_TYPE.TILE_OBJECT_DESTROY)) {
-                //TODO: has a 20% chance to Destroy items or tile objects that enters range.
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 20) {
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.TILE_OBJECT_DESTROY, stateComponent.character, targetPOI);
@@ -68,7 +67,6 @@ public class BerserkedState : CharacterState {
                 }
             }
         } else if (targetPOI is SpecialToken) {
-            //TODO: has a 20% chance to Destroy items or tile objects that enters range.
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < 20) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ITEM_DESTROY, stateComponent.character, targetPOI);

@@ -301,23 +301,22 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
     }
-    public void GenerateLandmarks(RandomWorld world) {
+    public void GenerateLandmarks(RandomWorld world, out BaseLandmark portal) {
+        WeightedDictionary<LANDMARK_YIELD_TYPE> yieldTypeChances = new WeightedDictionary<LANDMARK_YIELD_TYPE>();
+        yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.SUMMON, 15);
+        yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.ARTIFACT, 15);
+        yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.ABILITY, 20);
+        yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.SKIRMISH, 25);
+        yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.STORY_EVENT, 25);
+
+        //create player portal
+        portal = CreateMajorLandmarkOnColumn(world.columns.First(), LANDMARK_TYPE.DEMONIC_PORTAL, AREA_TYPE.DEMONIC_INTRUSION, 0);
+
         for (int i = 0; i < world.columns.Count; i++) {
             TileColumn previousColumn = world.columns.ElementAtOrDefault(i - 1);
             TileColumn currColumn = world.columns[i];
             TileColumn nextColumn = world.columns.ElementAtOrDefault(i + 1);
-            if (previousColumn != null) {
-                //no previous column, create portal for start of map.
-                int randomRow = Random.Range(0, currColumn.rows.Length);
-                List<HexTile> choices = currColumn.rows[randomRow].GetElligibleTilesForLandmark(GridMap.Instance.map);
-                HexTile chosenTile = choices[Random.Range(0, choices.Count)];
-                BaseLandmark newLandmark = CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.DEMONIC_PORTAL);
-                currColumn.rows[randomRow].SetLandmark(newLandmark);
-            }
-
-            if (nextColumn == null) {
-                //no next column
-            } else {
+            if (nextColumn != null) {
                 int connections = 0;
                 //create connections to nextColumn
                 if (currColumn.hasMajorLandmark) {
@@ -326,67 +325,71 @@ public class LandmarkManager : MonoBehaviour {
                     //create connections
                     TileRow rowWithMajorLandmark = currColumn.GetRowWithMajorLandmark();
                     for (int j = 0; j < connections; j++) {
-                        List<TileRow> rowChoices = currColumn.GetValidRowsInNextColumnForLandmarks(rowWithMajorLandmark, nextColumn);
+                        //only choose rows that don't have landmarks or rows that have landmarks but are not yet connected to the current columns major landmark
+                        List<TileRow> rowChoices = currColumn.GetValidRowsInNextColumnForLandmarks(rowWithMajorLandmark, nextColumn)
+                            .Where(x => x.landmark == null || !x.landmark.IsConnectedWith(rowWithMajorLandmark.landmark)).ToList(); 
+                        if (rowChoices.Count == 0) {
+                            break;
+                        }
                         TileRow chosenRow = rowChoices[Random.Range(0, rowChoices.Count)];
+                        BaseLandmark landmark;
                         if (chosenRow.hasLandmark) {
                             //connect to that landmark
-                            ConnectLandmarks(rowWithMajorLandmark.landmark, chosenRow.landmark);
+                            landmark = chosenRow.landmark;
                         } else {
                             //create landmark on that row, and connect to it.
-                            List<HexTile> tiles = chosenRow.GetElligibleTilesForLandmark(GridMap.Instance.map);
-                            HexTile chosenTile = tiles[Random.Range(0, tiles.Count)];
-                            BaseLandmark landmark = CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.BANDIT_CAMP); //TODO: Change this to use new landmark types (Summon type, artifact type, etc.)
-                            chosenRow.SetLandmark(landmark);
-                            ConnectLandmarks(rowWithMajorLandmark.landmark, landmark);
+                            landmark = CreateMinorLandmarkOnRow(chosenRow, yieldTypeChances);
                         }
+                        ConnectLandmarks(rowWithMajorLandmark.landmark, landmark);
                     }
                 } else if (nextColumn.hasMajorLandmark) {
                     //create settlement first
-                    int randomRow = Random.Range(0, currColumn.rows.Length);
-                    List<HexTile> choices = currColumn.rows[randomRow].GetElligibleTilesForLandmark(GridMap.Instance.map);
-                    HexTile settlementTile = choices[Random.Range(0, choices.Count)];
-                    BaseLandmark newLandmark = CreateNewLandmarkOnTile(settlementTile, LANDMARK_TYPE.PALACE);
-                    currColumn.rows[randomRow].SetLandmark(newLandmark);
-
+                    TileRow rowInNextColumnWithMajorLandmark = nextColumn.GetRowWithMajorLandmark();
+                    if (rowInNextColumnWithMajorLandmark == null) {
+                        BaseLandmark landmark = CreateMajorLandmarkOnColumn(nextColumn, LANDMARK_TYPE.PALACE, Utilities.RandomSettlementType(), i * 2);
+                        rowInNextColumnWithMajorLandmark = nextColumn.GetRowWithMajorLandmark();
+                    }
+                    
                     //next column has a settlement, connect all landmarks to that
                     connections = 1;
                     for (int j = 0; j < currColumn.rows.Length; j++) {
-                        if (currColumn.rows[j].hasLandmark) {
-                            BaseLandmark currLandmark = currColumn.rows[j].landmark;
+                        TileRow currRow = currColumn.rows[j];
+                        if (currRow.hasLandmark) {
+                            BaseLandmark currLandmark = currRow.landmark;
                             //create connections
                             for (int k = 0; k < connections; k++) {
-                                List<TileRow> rowChoices = currColumn.GetValidRowsInNextColumnForLandmarks(currColumn.rows[j], nextColumn);
-                                TileRow chosenRow = rowChoices[Random.Range(0, rowChoices.Count)];
                                 //connect to that settlement
-                                ConnectLandmarks(newLandmark, chosenRow.landmark);
+                                ConnectLandmarks(currRow.landmark, rowInNextColumnWithMajorLandmark.landmark);
                             }
                         }
                     }
                 } else {
                     //create connections per Landmark in the current column
                     for (int j = 0; j < currColumn.rows.Length; j++) {
-                        if (currColumn.rows[j].hasLandmark) {
-                            BaseLandmark currLandmark = currColumn.rows[j].landmark;
+                        TileRow currRow = currColumn.rows[j];
+                        if (currRow.hasLandmark) {
+                            BaseLandmark currLandmark = currRow.landmark;
                             connections = 1; //75% 1 connection
                             if (Random.Range(0, 100) < 25) { //25% 2 connections
                                 connections = 2;
                             }
-
                             //create connections
                             for (int k = 0; k < connections; k++) {
-                                List<TileRow> rowChoices = currColumn.GetValidRowsInNextColumnForLandmarks(currColumn.rows[j], nextColumn);
+                                List<TileRow> rowChoices = currColumn.GetValidRowsInNextColumnForLandmarks(currRow, nextColumn)
+                                    .Where(x => x.landmark == null || !x.landmark.IsConnectedWith(currLandmark)).ToList();
+                                if (rowChoices.Count == 0) {
+                                    break;
+                                }
                                 TileRow chosenRow = rowChoices[Random.Range(0, rowChoices.Count)];
+                                BaseLandmark landmark;
                                 if (chosenRow.hasLandmark) {
+                                    landmark = chosenRow.landmark;
                                     //connect to that landmark
-                                    ConnectLandmarks(currLandmark, chosenRow.landmark);
                                 } else {
                                     //create landmark on that row, and connect to it.
-                                    List<HexTile> tiles = chosenRow.GetElligibleTilesForLandmark(GridMap.Instance.map);
-                                    HexTile chosenTile = tiles[Random.Range(0, tiles.Count)];
-                                    BaseLandmark landmark = CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.BANDIT_CAMP); //TODO: Change this to use new landmark types (Summon type, artifact type, etc.)
-                                    chosenRow.SetLandmark(landmark);
-                                    ConnectLandmarks(currLandmark, landmark);
+                                    landmark = CreateMinorLandmarkOnRow(chosenRow, yieldTypeChances);
                                 }
+                                ConnectLandmarks(currLandmark, landmark);
                             }
                         }
                     }
@@ -394,15 +397,61 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
     }
+    /// <summary>
+    /// Add a connection between 2 landmarks.
+    /// </summary>
+    /// <param name="landmark1">The landmark that will connect to landmark 2.</param>
+    /// <param name="landmark2">The landmark accepting the connection from landmark 1.</param>
     public void ConnectLandmarks(BaseLandmark landmark1, BaseLandmark landmark2) {
-        landmark1.AddConnection(landmark2);
-        landmark2.AddConnection(landmark1);
+        landmark1.AddOutGoingConnection(landmark2);
+        landmark2.AddInGoingConnection(landmark1);
         GameObject lineGO = GameObject.Instantiate(landmarkConnectionPrefab, landmark1.tileLocation.transform);
         LineRenderer line = lineGO.GetComponent<LineRenderer>();
         line.positionCount = 2;
         line.SetPosition(0, landmark1.tileLocation.transform.position);
         line.SetPosition(1, landmark2.tileLocation.transform.position);
 
+    }
+    private BaseLandmark CreateMinorLandmarkOnRow(TileRow row, WeightedDictionary<LANDMARK_YIELD_TYPE> yieldTypeChances) {
+        LANDMARK_YIELD_TYPE chosenYieldType = yieldTypeChances.PickRandomElementGivenWeights();
+        List<HexTile> tiles = row.GetElligibleTilesForLandmark(GridMap.Instance.map);
+        HexTile chosenTile = tiles[Random.Range(0, tiles.Count)];
+
+        List<LANDMARK_TYPE> landmarkChoices = WorldConfigManager.Instance.GetPossibleLandmarks(chosenTile.biomeType, chosenYieldType);
+        LANDMARK_TYPE chosenType = landmarkChoices[Random.Range(0, landmarkChoices.Count)];
+
+        BaseLandmark landmark = CreateNewLandmarkOnTile(chosenTile, chosenType);
+        row.SetLandmark(landmark);
+        landmark.SetYieldType(chosenYieldType);
+        return landmark;
+    }
+    private BaseLandmark CreateMajorLandmarkOnColumn(TileColumn currColumn, LANDMARK_TYPE type, AREA_TYPE areaType, int citizenCount) {
+        int randomRow = Random.Range(0, currColumn.rows.Length);
+        TileRow chosenRow = currColumn.rows[randomRow];
+        List<HexTile> choices = chosenRow.GetElligibleTilesForLandmark(GridMap.Instance.map);
+        HexTile chosenTile = choices[Random.Range(0, choices.Count)];
+        
+        Area newArea = CreateNewArea(chosenTile, areaType, citizenCount);
+        BaseLandmark landmark = CreateNewLandmarkOnTile(chosenTile, type);
+        chosenRow.SetLandmark(landmark);
+        if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
+            newArea.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
+        } else {
+            Faction faction = FactionManager.Instance.CreateNewFaction();
+            if (areaType == AREA_TYPE.ELVEN_SETTLEMENT) {
+                faction.SetInitialFactionLeaderClass("Queen");
+                faction.SetInitialFactionLeaderGender(GENDER.FEMALE);
+                faction.SetRace(RACE.ELVES);
+            } else if (areaType == AREA_TYPE.HUMAN_SETTLEMENT) {
+                faction.SetInitialFactionLeaderClass("King");
+                faction.SetInitialFactionLeaderGender(GENDER.MALE);
+                faction.SetRace(RACE.HUMANS);
+            }
+            OwnArea(faction, faction.race, newArea);
+            newArea.GenerateStructures(citizenCount);
+            faction.GenerateStartingCitizens(2, 1, citizenCount); //9,7
+        }        
+        return landmark;
     }
     #endregion
 

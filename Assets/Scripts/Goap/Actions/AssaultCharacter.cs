@@ -79,7 +79,6 @@ public class AssaultCharacter : GoapAction {
         base.OnCancelActionTowardsTarget();
     }
     private void OnFinishCombatState() {
-        //TODO: Add checking if poi target has become unconscious. If yes action was a success.
         Debug.Log(actor.name + " finished combat state!");
         Character target = poiTarget as Character;
         loser = target;

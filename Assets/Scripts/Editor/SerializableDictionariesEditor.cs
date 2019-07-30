@@ -61,6 +61,10 @@ public class SummonSettingDictionaryPropertyDrawer : SerializableDictionaryPrope
 public class ArtifactSettingDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(SeamlessEdgeAssetsDictionary))]
 public class SeamlessEdgeAssetsDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(LandmarkGenerationDictionary))]
+public class LandmarkGenerationDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(YieldTypeLandmarksDictionary))]
+public class YieldTypeLandmarksDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]
@@ -77,5 +81,7 @@ public class DefenderListStoragePropertyDrawer : SerializableDictionaryStoragePr
 public class TileObjectSlotListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileBaseListStorage))]
 public class TileBaseListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+[CustomPropertyDrawer(typeof(LandmarkTypeListStorage))]
+public class LandmarkTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 
 

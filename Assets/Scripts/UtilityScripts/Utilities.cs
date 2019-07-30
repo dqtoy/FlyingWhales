@@ -1200,7 +1200,6 @@ public class Utilities : MonoBehaviour {
         return date.month + "/" + date.day + "/" + date.year;
     }
     //public static int GetRangeInTicks(GameDate startDate, GameDate endDate) {
-    //    //TODO: Change this to use maths
     //    int range = 0;
     //    GameDate lowerDate;
     //    GameDate higherDate;
@@ -1704,6 +1703,12 @@ public class Utilities : MonoBehaviour {
     //             return BASE_LANDMARK_TYPE.NONE;
     //     }
     // }
+    public static AREA_TYPE RandomSettlementType() {
+        if (UnityEngine.Random.Range(0, 2) == 0) {
+            return AREA_TYPE.ELVEN_SETTLEMENT;
+        }
+        return AREA_TYPE.HUMAN_SETTLEMENT;
+    }
     #endregion
 
     #region File Utilities
