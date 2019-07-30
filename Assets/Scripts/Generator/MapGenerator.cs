@@ -48,6 +48,8 @@ public class MapGenerator : MonoBehaviour {
 
         LandmarkManager.Instance.GenerateLandmarks(world, out portal);
         FactionManager.Instance.CreateNeutralFaction();
+
+
         LandmarkManager.Instance.SetCascadingLevelsForAllCharacters(portal.tileLocation);
         LandmarkManager.Instance.LoadAdditionalAreaData();
         GridMap.Instance.GenerateInitialTileTags();

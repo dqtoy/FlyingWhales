@@ -11,6 +11,8 @@ public class Miasma_Emitter : Artifact {
 
     private List<LocationGridTile> tilesInRange;
 
+    private AOEParticle particle;
+
     public Miasma_Emitter() : base(ARTIFACT_TYPE.Miasma_Emitter) {
         range = 3;
         duration = 50;
@@ -50,6 +52,7 @@ public class Miasma_Emitter : Artifact {
                 }
             }
         }
+        particle = GameManager.Instance.CreateAOEEffectAt(tile, range);
         Messenger.AddListener(Signals.TICK_ENDED, CheckPerTick);
         Messenger.AddListener<TileObject, LocationGridTile>(Signals.TILE_OBJECT_PLACED, OnTileObjectPlaced);
     }

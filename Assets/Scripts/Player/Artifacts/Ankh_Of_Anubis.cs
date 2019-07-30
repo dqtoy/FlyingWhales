@@ -9,15 +9,17 @@ public class Ankh_Of_Anubis : Artifact {
     private int duration; //in ticks
     private int currentDuration; //how many ticks has this object been alive
 
+    private AOEParticle particle;
+
     public Ankh_Of_Anubis() : base(ARTIFACT_TYPE.Ankh_Of_Anubis) {
-        range = 3;
+        range = 1;
         deathChance = 60;
         duration = 50;
     }
     public Ankh_Of_Anubis(SaveDataArtifact data) : base(data) {
         range = 3;
         deathChance = 60;
-        duration = 50;
+        duration = 20;
     }
 
     #region Overrides
@@ -25,10 +27,12 @@ public class Ankh_Of_Anubis : Artifact {
         base.OnPlaceArtifactOn(tile);
         currentDuration = 0;
         Messenger.AddListener(Signals.TICK_ENDED, CheckPerTick);
+        particle = GameManager.Instance.CreateAOEEffectAt(tile, range);
     }
     protected override void OnRemoveArtifact() {
         base.OnRemoveArtifact();
         Messenger.RemoveListener(Signals.TICK_ENDED, CheckPerTick);
+        ObjectPoolManager.Instance.DestroyObject(particle.gameObject);
     }
     #endregion
 

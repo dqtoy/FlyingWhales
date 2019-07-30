@@ -22047,6 +22047,8 @@ MonoBehaviour:
     type: 2}
   fireEffectPrefab: {fileID: 1333321624052784, guid: 091a81aab6347964bb917f7cc6ea13c2,
     type: 2}
+  aoeParticlesPrefab: {fileID: 1513875034276412, guid: 061f2e4dfec38354189b89610d3cabd6,
+    type: 2}
   pauseTickEnded2: 0
 --- !u!114 &557822220
 MonoBehaviour:
@@ -24525,6 +24527,10 @@ MonoBehaviour:
   summonArtifactBtn: {fileID: 962356859}
   summonArtifactCover: {fileID: 11250160}
   summonArtifactTooltipPos: {fileID: 413059270}
+  newObjWindowGO: {fileID: 0}
+  newObjectImg: {fileID: 0}
+  newObjectTitle: {fileID: 0}
+  newObjectDescription: {fileID: 0}
   combatAbilityGO: {fileID: 1207821431}
   combatAbilityButtonPrefab: {fileID: 1077141539048828, guid: 3728d759673ca354db09bc955c875c3e,
     type: 2}

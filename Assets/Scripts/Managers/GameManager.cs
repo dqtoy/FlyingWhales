@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private GameObject electricEffectPrefab;
     [SerializeField] private GameObject hitEffectPrefab;
     [SerializeField] private GameObject fireEffectPrefab;
+    [SerializeField] private GameObject aoeParticlesPrefab;
 
     private const float X1_SPEED = 0.75f;
     private const float X2_SPEED = 0.5f;
@@ -371,13 +372,6 @@ public class GameManager : MonoBehaviour {
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
     }
-    //private IEnumerator ElectricEffect(Character character) {
-    //    GameObject go = GameObject.Instantiate(electricEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
-    //    go.SetActive(true);
-    //    go.transform.localPosition = Vector3.zero;
-    //    yield return new WaitForSeconds(2f);
-    //    GameObject.Destroy(go);
-    //}
     public void CreateHitEffectAt(Character character) {
         if (character.marker == null) {
             return;
@@ -387,13 +381,6 @@ public class GameManager : MonoBehaviour {
         go.SetActive(true);
         //StartCoroutine(HitEffect(character));
     }
-    //private IEnumerator HitEffect(Character character) {
-    //    GameObject go = GameObject.Instantiate(hitEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
-    //    go.SetActive(true);
-    //    go.transform.localPosition = Vector3.zero;
-    //    yield return new WaitForSeconds(2f);
-    //    GameObject.Destroy(go);
-    //}
     public void CreateFireEffectAt(Character character) {
         if (character.marker == null) {
             return;
@@ -403,13 +390,12 @@ public class GameManager : MonoBehaviour {
         go.SetActive(true);
         //StartCoroutine(FireEffect(character));
     }
-    //private IEnumerator FireEffect(Character character) {
-    //    GameObject go = GameObject.Instantiate(fireEffectPrefab, Vector3.zero, Quaternion.identity, character.marker.transform);
-    //    go.SetActive(true);
-    //    go.transform.localPosition = Vector3.zero;
-    //    yield return new WaitForSeconds(2f);
-    //    GameObject.Destroy(go);
-    //}
+    public AOEParticle CreateAOEEffectAt(LocationGridTile tile, int range) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(aoeParticlesPrefab.name, Vector3.zero, Quaternion.identity, tile.parentAreaMap.objectsParent);
+        AOEParticle particle = go.GetComponent<AOEParticle>();
+        particle.PlaceParticleEffect(tile, range);
+        return particle;
+    }
     #endregion
 
     //#region Cursor
