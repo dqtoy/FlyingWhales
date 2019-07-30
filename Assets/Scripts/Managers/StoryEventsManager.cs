@@ -103,15 +103,15 @@ public class StoryEventsManager : MonoBehaviour {
         if (string.Equals(effect.effectType, "Summon", System.StringComparison.OrdinalIgnoreCase)) {
             //Gain Summon
             SUMMON_TYPE type = (SUMMON_TYPE)System.Enum.Parse(typeof(SUMMON_TYPE), effect.effectValue);
-            PlayerManager.Instance.player.GainSummon(type);
+            PlayerManager.Instance.player.GainSummon(type, showNewSummonUI: true);
         } else if (string.Equals(effect.effectType, "Artifact", System.StringComparison.OrdinalIgnoreCase)) {
             //Gain Artifact
             if (string.Equals(effect.effectValue, "Random", System.StringComparison.OrdinalIgnoreCase)) {
                 ARTIFACT_TYPE[] types = Utilities.GetEnumValues<ARTIFACT_TYPE>();
-                PlayerManager.Instance.player.GainArtifact(types[UnityEngine.Random.Range(1, types.Length)]); //Started at 1 index to ignore None choice.
+                PlayerManager.Instance.player.GainArtifact(types[UnityEngine.Random.Range(1, types.Length)], true); //Started at 1 index to ignore None choice.
             } else {
                 ARTIFACT_TYPE type = (ARTIFACT_TYPE)System.Enum.Parse(typeof(ARTIFACT_TYPE), effect.effectValue);
-                PlayerManager.Instance.player.GainArtifact(type);
+                PlayerManager.Instance.player.GainArtifact(type, true);
             }
         } else if (string.Equals(effect.effectType, "Intervention_Ability", System.StringComparison.OrdinalIgnoreCase)) {
             //Gain Ability
@@ -136,11 +136,11 @@ public class StoryEventsManager : MonoBehaviour {
         } else if (string.Equals(effect.effectType, "Combat_Ability", System.StringComparison.OrdinalIgnoreCase)) {
             //Gain Ability
             if (effect.effectValue.ToLower() == "random") {
-                PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
+                PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]), true);
             } else {
                 COMBAT_ABILITY ability;
                 if (System.Enum.TryParse<COMBAT_ABILITY>(effect.effectValue.ToUpper(), out ability)) {
-                    PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(ability);
+                    PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(ability, true);
                 }
             }
             //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)

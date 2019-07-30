@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class NewAbilityUI : MonoBehaviour {
+    [Header("Minion")]
+    [SerializeField] private TextMeshProUGUI titleText;
 
     [Header("Minion")]
     [SerializeField] private CharacterPortrait minionPortrait;
@@ -41,16 +43,36 @@ public class NewAbilityUI : MonoBehaviour {
 
     public void UpdateNewAbility(object obj) {
         if (obj is PlayerJobAction) {
+            titleText.text = "New Intervention Ability";
             PlayerJobAction action = obj as PlayerJobAction;
             abilityIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
             string text = action.name;
+            text += "\nLevel: " + action.lvl;
             text += "\nDescription: " + action.description;
             abilityText.text = text;
         } else if (obj is CombatAbility) {
+            titleText.text = "New Combat Ability";
             CombatAbility ability = obj as CombatAbility;
             abilityIcon.sprite = PlayerManager.Instance.GetCombatAbilitySprite(ability.name);
             string text = ability.name;
+            text += "\nLevel: " + ability.lvl;
             text += "\nDescription: " + ability.description;
+            abilityText.text = text;
+        } else if (obj is Summon) {
+            titleText.text = "New Summon";
+            Summon summon = obj as Summon;
+            abilityIcon.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
+            string text = summon.name + " (" + summon.summonType.SummonName() + ")";
+            text += "\nLevel: " + summon.level.ToString();
+            text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
+            abilityText.text = text;
+        } else if (obj is Artifact) {
+            titleText.text = "New Artifact";
+            Artifact artifact = obj as Artifact;
+            abilityIcon.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
+            string text = artifact.name;
+            text += "\nLevel: " + artifact.level;
+            text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
             abilityText.text = text;
         }
     }

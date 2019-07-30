@@ -788,7 +788,7 @@ public class Player : ILeader {
     public void AdjustThreat(int amount) {
         threat += amount;
         threat = Mathf.Clamp(threat, 0, MAX_THREAT);
-        PlayerUI.Instance.UpdateThreatMeter();
+        //PlayerUI.Instance.UpdateThreatMeter();
         if(threat >= MAX_THREAT) {
             PlayerUI.Instance.GameOver("Your threat reached the whole world. You are now exposed. You lost!");
         }
@@ -796,14 +796,14 @@ public class Player : ILeader {
     public void SetThreat(int amount) {
         threat = amount;
         threat = Mathf.Clamp(threat, 0, MAX_THREAT);
-        PlayerUI.Instance.UpdateThreatMeter();
+        //PlayerUI.Instance.UpdateThreatMeter();
         if (threat >= MAX_THREAT) {
             PlayerUI.Instance.GameOver("Your threat reached the whole world. You are now exposed. You lost!");
         }
     }
     public void ResetThreat() {
         threat = 0;
-        PlayerUI.Instance.UpdateThreatMeter();
+        //PlayerUI.Instance.UpdateThreatMeter();
     }
     #endregion
 
@@ -812,17 +812,18 @@ public class Player : ILeader {
         currentTileBeingCorrupted = tile;
     }
     public void CorruptATile() {
-        currentCorruptionDuration = currentTileBeingCorrupted.corruptDuration;
-        if(currentCorruptionDuration == 0) {
-            Debug.LogError("Cannot corrupt a tile with 0 corruption duration");
-        } else {
-            GameManager.Instance.SetOnlyTickDays(true);
-            currentTileBeingCorrupted.StartCorruptionAnimation();
-            currentCorruptionTick = 0;
-            Messenger.AddListener(Signals.DAY_STARTED, CorruptTilePerTick);
-            UIManager.Instance.Unpause();
-            isTileCurrentlyBeingCorrupted = true;
-        }
+        //currentCorruptionDuration = currentTileBeingCorrupted.corruptDuration;
+        //if(currentCorruptionDuration == 0) {
+        //    Debug.LogError("Cannot corrupt a tile with 0 corruption duration");
+        //} else {
+        //    GameManager.Instance.SetOnlyTickDays(true);
+        //    currentTileBeingCorrupted.StartCorruptionAnimation();
+        //    currentCorruptionTick = 0;
+        //    Messenger.AddListener(Signals.DAY_STARTED, CorruptTilePerTick);
+        //    UIManager.Instance.Unpause();
+        //    isTileCurrentlyBeingCorrupted = true;
+        //}
+        PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
     }
     private void CorruptTilePerTick() {
         currentCorruptionTick ++;
@@ -850,11 +851,11 @@ public class Player : ILeader {
     #endregion
 
     #region Summons
-    public void GainSummon(SUMMON_TYPE type, int level = 1) {
+    public void GainSummon(SUMMON_TYPE type, int level = 1, bool showNewSummonUI = false) {
         Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, playerFaction, playerArea);
         newSummon.SetLevel(level);
         if (GetTotalSummonsCount() < maxSummonSlots) {
-            AddSummon(newSummon);
+            AddSummon(newSummon, showNewSummonUI);
         } else {
             Debug.LogWarning("Max summons has been reached!");
             PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), newSummon, ReplaceSummon, RejectSummon);
@@ -866,9 +867,9 @@ public class Player : ILeader {
         RemoveSummon(replace);
         AddSummon(add);
     }
-    public void AddASummon(Summon summon) {
+    public void AddASummon(Summon summon, bool showNewSummonUI = false) {
         if (GetTotalSummonsCount() < maxSummonSlots) {
-            AddSummon(summon);
+            AddSummon(summon, showNewSummonUI);
         } else {
             Debug.LogWarning("Max summons has been reached!");
             PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), summon, ReplaceSummon, RejectSummon);
@@ -923,13 +924,16 @@ public class Player : ILeader {
         }
         return count;
     }
-    private void AddSummon(Summon newSummon) {
+    private void AddSummon(Summon newSummon, bool showNewSummonUI = false) {
         if (!summons.ContainsKey(newSummon.summonType)) {
             summons.Add(newSummon.summonType, new List<Summon>());
         }
         if (!summons[newSummon.summonType].Contains(newSummon)) {
             summons[newSummon.summonType].Add(newSummon);
             Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
+            if (showNewSummonUI) {
+                PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
+            }
         }
     }
     /// <summary>
@@ -1017,10 +1021,10 @@ public class Player : ILeader {
     #endregion
 
     #region Artifacts
-    public void GainArtifact(ARTIFACT_TYPE type) {
+    public void GainArtifact(ARTIFACT_TYPE type, bool showNewArtifactUI = false) {
         Artifact newArtifact = PlayerManager.Instance.CreateNewArtifact(type);
         if (GetTotalArtifactCount() < maxArtifactSlots) {
-            AddArtifact(newArtifact);
+            AddArtifact(newArtifact, showNewArtifactUI);
         } else {
             Debug.LogWarning("Max artifacts has been reached!");
             PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllArtifacts(), newArtifact, ReplaceArtifact, RejectArtifact);
@@ -1032,9 +1036,9 @@ public class Player : ILeader {
         RemoveArtifact(replace);
         AddArtifact(add);
     }
-    public void AddAnArtifact(Artifact artifact) {
+    public void AddAnArtifact(Artifact artifact, bool showNewArtifactUI = false) {
         if (GetTotalArtifactCount() < maxArtifactSlots) {
-            AddArtifact(artifact);
+            AddArtifact(artifact, showNewArtifactUI);
         } else {
             Debug.LogWarning("Max artifacts has been reached!");
             PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllArtifacts(), artifact, ReplaceArtifact, RejectArtifact);
@@ -1049,11 +1053,14 @@ public class Player : ILeader {
             Debug.LogWarning("Cannot lose artifact " + type.ToString() + " because player has none.");
         }
     }
-    private void AddArtifact(Artifact newArtifact) {
+    private void AddArtifact(Artifact newArtifact, bool showNewArtifactUI = false) {
         for (int i = 0; i < artifacts.Length; i++) {
             if (artifacts[i] == null) {
                 artifacts[i] = newArtifact;
                 Messenger.Broadcast<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
+                if (showNewArtifactUI) {
+                    PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newArtifact);
+                }
                 break;
             }
         }

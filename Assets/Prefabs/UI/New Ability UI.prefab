@@ -1633,6 +1633,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2964bc60184463d419daae30e8448176, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  titleText: {fileID: 114343470073137588}
   minionPortrait: {fileID: 114114369616819338}
   minionText: {fileID: 114014458312116392}
   abilityIcon: {fileID: 114755014169834202}

@@ -219,6 +219,16 @@ public class TileColumn {
         }
         return null;
     }
+    public List<BaseLandmark> GetAllLandmarksInColumn(BaseLandmark except = null) {
+        List<BaseLandmark> columnLandmarks = new List<BaseLandmark>();
+        for (int i = 0; i < rows.Length; i++) {
+            if (rows[i] != null && rows[i].landmark != null) {
+                if(except != null && except == rows[i].landmark) { continue; }
+                columnLandmarks.Add(rows[i].landmark);
+            }
+        }
+        return columnLandmarks;
+    }
 }
 public class TileRow {
     public int minX, maxX, minY, maxY;

@@ -97,7 +97,7 @@ public class PlayerUI : MonoBehaviour {
     public List<CombatAbilityButton> currentCombatAbilityButtons { get; private set; }
 
     [Header("Story Events")]
-    [SerializeField] private StoryEventUI storyEventUI;
+    public StoryEventUI storyEventUI;
 
     [Header("Replace UI")]
     public ReplaceUI replaceUI;
@@ -780,7 +780,7 @@ public class PlayerUI : MonoBehaviour {
         threatMeter.value = 0f;
     }
     public void ShowCorruptTileConfirmation(HexTile tile) {
-        if (tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted && !tile.isCorrupted) { //tile.CanBeCorrupted() && 
+        if (tile.CanBeCorrupted() && !tile.isCorrupted) {//&& tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted
             PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
             if (tile.areaOfTile != null) {
                 corruptTileConfirmationLbl.text = "To corrupt this area, you must defeat all residents within. Once you proceeed there is no going back. Do you wish to take on this settlement?";
@@ -796,33 +796,36 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnClickYesCorruption() {
         HideCorruptTileConfirmation();
+        PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
         if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile != null) {
             GameManager.Instance.SetOnlyTickDays(false);
             InteriorMapManager.Instance.TryShowAreaMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);
         } else {
+            PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.ShowEventBasedOnYieldType();
             PlayerManager.Instance.player.CorruptATile();
         }
-        if (tempCurrentMinionLeaderPicker != null) {
-            PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
-            if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile == null) {
-                StoryEvent e = PlayerManager.Instance.player.currentTileBeingCorrupted.GetRandomStoryEvent();
-                if (e != null) {
-                    Debug.Log("Will show event " + e.name);
-                    if (e.trigger == STORY_EVENT_TRIGGER.IMMEDIATE) {
-                        //show story event UI
-                        storyEventUI.ShowEvent(e, true);
-                    } else if (e.trigger == STORY_EVENT_TRIGGER.MID) { //schedule show event UI based on trigger.
-                        int difference = Mathf.Abs(GameManager.Instance.Today().day - (GameManager.Instance.Today().day + PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration));
-                        int day = UnityEngine.Random.Range(1, difference);
-                        GameDate dueDate = GameManager.Instance.Today().AddDays(day);
-                        SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e, true), null);
-                    } else if (e.trigger == STORY_EVENT_TRIGGER.END) {
-                        GameDate dueDate = GameManager.Instance.Today().AddDays(PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration);
-                        SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e, true), null);
-                    }
-                }
-            }
-        }
+        //if (tempCurrentMinionLeaderPicker != null) {
+        //    PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
+        //    if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile == null) {
+        //        StoryEvent e = PlayerManager.Instance.player.currentTileBeingCorrupted.GetRandomStoryEvent();
+        //        if (e != null) {
+        //            Debug.Log("Will show event " + e.name);
+        //            storyEventUI.ShowEvent(e, true);
+        //            //if (e.trigger == STORY_EVENT_TRIGGER.IMMEDIATE) {
+        //            //    //show story event UI
+        //            //    storyEventUI.ShowEvent(e, true);
+        //            //} else if (e.trigger == STORY_EVENT_TRIGGER.MID) { //schedule show event UI based on trigger.
+        //            //    int difference = Mathf.Abs(GameManager.Instance.Today().day - (GameManager.Instance.Today().day + PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration));
+        //            //    int day = UnityEngine.Random.Range(1, difference);
+        //            //    GameDate dueDate = GameManager.Instance.Today().AddDays(day);
+        //            //    SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e, true), null);
+        //            //} else if (e.trigger == STORY_EVENT_TRIGGER.END) {
+        //            //    GameDate dueDate = GameManager.Instance.Today().AddDays(PlayerManager.Instance.player.currentTileBeingCorrupted.corruptDuration);
+        //            //    SchedulingManager.Instance.AddEntry(dueDate, () => storyEventUI.ShowEvent(e, true), null);
+        //            //}
+        //        }
+        //    }
+        //}
     }
     public void OnClickNoCorruption() {
         HideCorruptTileConfirmation();

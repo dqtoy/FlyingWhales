@@ -24,6 +24,7 @@ public class BaseLandmark {
     public LANDMARK_YIELD_TYPE yieldType;
     public List<BaseLandmark> inGoingConnections { get; private set; }
     public List<BaseLandmark> outGoingConnections { get; private set; }
+    public List<BaseLandmark> sameColumnLandmarks { get; private set; }
 
     #region getters/setters
     public int id {
@@ -76,6 +77,7 @@ public class BaseLandmark {
         _itemsInLandmark = new List<Item>();
         inGoingConnections = new List<BaseLandmark>();
         outGoingConnections = new List<BaseLandmark>();
+        sameColumnLandmarks = new List<BaseLandmark>();
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
@@ -452,11 +454,34 @@ public class BaseLandmark {
     public bool IsConnectedWith(BaseLandmark otherLandmark) {
         return inGoingConnections.Contains(otherLandmark) || outGoingConnections.Contains(otherLandmark);
     }
+    public void SetSameColumnLandmarks(List<BaseLandmark> landmarks) {
+        sameColumnLandmarks = landmarks;
+    }
     #endregion
 
     #region Yield Types
     public void SetYieldType(LANDMARK_YIELD_TYPE type) {
         yieldType = type;
+    }
+    #endregion
+
+
+    #region Events
+    public void ShowEventBasedOnYieldType() {
+        if (yieldType == LANDMARK_YIELD_TYPE.STORY_EVENT) {
+            StoryEvent e = tileLocation.GetRandomStoryEvent();
+            PlayerUI.Instance.storyEventUI.ShowEvent(e, true);
+        } else if (yieldType == LANDMARK_YIELD_TYPE.SUMMON) {
+            SUMMON_TYPE[] types = Utilities.GetEnumValues<SUMMON_TYPE>();
+            PlayerManager.Instance.player.GainSummon(types[UnityEngine.Random.Range(1, types.Length)], showNewSummonUI: true);
+        } else if (yieldType == LANDMARK_YIELD_TYPE.ARTIFACT) {
+            ARTIFACT_TYPE[] types = Utilities.GetEnumValues<ARTIFACT_TYPE>();
+            PlayerManager.Instance.player.GainArtifact(types[UnityEngine.Random.Range(1, types.Length)], true); //Started at 1 index to ignore None choice.
+        } else if (yieldType == LANDMARK_YIELD_TYPE.ABILITY) {
+            PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]), true);
+        } else if (yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
+            PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]), true);
+        }
     }
     #endregion
 }

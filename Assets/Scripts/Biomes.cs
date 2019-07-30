@@ -152,15 +152,15 @@ public class Biomes : MonoBehaviour {
         }
     }
     public void CorruptTileVisuals(HexTile tile) {
-        if (tile.landmarkOnTile != null && tile.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
-            LoadCorruptedStructureVisuals(tile);
-        }
         if (tile.elevationType == ELEVATION.PLAIN) {
             LoadCorruptedPlainTileVisuals(tile);
         }else if (tile.elevationType == ELEVATION.MOUNTAIN) {
             LoadCorruptedMountainTileVisuals(tile);
         }else if (tile.elevationType == ELEVATION.TREES) {
             LoadCorruptedTreeTileVisuals(tile);
+        }
+        if (tile.landmarkOnTile != null && tile.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
+            LoadCorruptedStructureVisuals(tile);
         }
     }
     private void LoadPlainTileVisuals(HexTile tile, int sortingOrder) {

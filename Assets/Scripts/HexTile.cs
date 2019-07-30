@@ -1066,13 +1066,25 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return 0;
     }
     public bool CanBeCorrupted() {
-        for (int i = 0; i < AllNeighbours.Count; i++) {
-            HexTile currNeighbour = AllNeighbours[i];
-            if (currNeighbour.isCorrupted) {
-                return true;
+        bool canBeCorrupted = false;
+        if (landmarkOnTile != null && landmarkOnTile.inGoingConnections != null) {
+            for (int i = 0; i < landmarkOnTile.inGoingConnections.Count; i++) {
+                BaseLandmark connection = landmarkOnTile.inGoingConnections[i];
+                if (connection.tileLocation.isCorrupted) {
+                    canBeCorrupted = true;
+                    break;
+                }
+            }
+            if (canBeCorrupted && landmarkOnTile.sameColumnLandmarks != null) {
+                for (int i = 0; i < landmarkOnTile.sameColumnLandmarks.Count; i++) {
+                    if (landmarkOnTile.sameColumnLandmarks[i].tileLocation.isCorrupted) {
+                        canBeCorrupted = false;
+                        break;
+                    }
+                }
             }
         }
-        return false;
+        return canBeCorrupted;
     }
     #endregion
 

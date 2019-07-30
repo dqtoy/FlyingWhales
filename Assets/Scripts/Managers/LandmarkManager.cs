@@ -394,6 +394,13 @@ public class LandmarkManager : MonoBehaviour {
                     }
                 }
             }
+
+            for (int j = 0; j < currColumn.rows.Length; j++) {
+                if(currColumn.rows[j] != null && currColumn.rows[j].landmark != null) {
+                    BaseLandmark rowLandmark = currColumn.rows[j].landmark;
+                    rowLandmark.SetSameColumnLandmarks(currColumn.GetAllLandmarksInColumn(rowLandmark));
+                }
+            }
         }
     }
     /// <summary>
@@ -951,4 +958,3 @@ public struct SettlementSettings {
 
 //}
 //#endregion
-

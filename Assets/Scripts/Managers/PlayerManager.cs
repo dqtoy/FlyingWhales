@@ -92,7 +92,7 @@ public class PlayerManager : MonoBehaviour {
         isChoosingStartingTile = false;
         UIManager.Instance.SetTimeControlsState(true);
         PlayerUI.Instance.UpdateUI();
-        PlayerUI.Instance.InitializeThreatMeter();
+        //PlayerUI.Instance.InitializeThreatMeter();
         //LandmarkManager.Instance.CreateNewArea(tile, AREA_TYPE.DEMONIC_INTRUSION);
     }
     private void OnLoadStartingTile(BaseLandmark portal) {
@@ -112,7 +112,7 @@ public class PlayerManager : MonoBehaviour {
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(true);
         PlayerUI.Instance.UpdateUI();
-        PlayerUI.Instance.InitializeThreatMeter();
+        //PlayerUI.Instance.InitializeThreatMeter();
     }
     public void InitializePlayer(BaseLandmark portal) {
         player = new Player();
@@ -126,7 +126,7 @@ public class PlayerManager : MonoBehaviour {
         }
         LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
         PlayerUI.Instance.UpdateUI();
-        PlayerUI.Instance.InitializeThreatMeter();
+        //PlayerUI.Instance.InitializeThreatMeter();
     }
     public void InitializePlayer(SaveDataPlayer data) {
         player = new Player(data);
@@ -135,8 +135,8 @@ public class PlayerManager : MonoBehaviour {
         Area existingPlayerArea = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
         player.SetPlayerArea(existingPlayerArea);
         //PlayerUI.Instance.UpdateUI();
-        PlayerUI.Instance.InitializeThreatMeter();
-        PlayerUI.Instance.UpdateThreatMeter();
+        //PlayerUI.Instance.InitializeThreatMeter();
+        //PlayerUI.Instance.UpdateThreatMeter();
 
         for (int i = 0; i < data.minions.Count; i++) {
             data.minions[i].Load(player);
@@ -147,6 +147,12 @@ public class PlayerManager : MonoBehaviour {
         }
         for (int i = 0; i < data.artifacts.Count; i++) {
             data.artifacts[i].Load(player);
+        }
+
+        for (int i = 0; i < player.minions.Length; i++) {
+            if(player.minions[i] != null && player.minions[i].character.id == data.currentMinionLeaderID) {
+                player.SetMinionLeader(player.minions[i]);
+            }
         }
     }
 
@@ -283,7 +289,6 @@ public class PlayerManager : MonoBehaviour {
         return null;
     }
     #endregion
-
     //#region Minion
     //[ContextMenu("Create And Add New Minion")]
     //public void CreateMinionForTesting() {
