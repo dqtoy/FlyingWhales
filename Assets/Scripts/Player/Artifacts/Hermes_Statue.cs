@@ -10,7 +10,11 @@ public class Hermes_Statue : Artifact {
     private int currentUses;
 
     public Hermes_Statue() : base(ARTIFACT_TYPE.Hermes_Statue) {
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.INSPECT };
+        poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
+        uses = 3;
+    }
+    public Hermes_Statue(SaveDataArtifact data) : base(data) {
+        poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
         uses = 3;
     }
 
@@ -30,6 +34,10 @@ public class Hermes_Statue : Artifact {
     public override void LevelUp() {
         base.LevelUp();
         uses++;
+    }
+    public override void SetLevel(int amount) {
+        base.SetLevel(amount);
+        uses = amount;
     }
     #endregion
 

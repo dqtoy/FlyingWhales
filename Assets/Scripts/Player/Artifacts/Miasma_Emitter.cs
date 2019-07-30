@@ -15,7 +15,10 @@ public class Miasma_Emitter : Artifact {
         range = 3;
         duration = 50;
     }
-
+    public Miasma_Emitter(SaveDataArtifact data) : base(data) {
+        range = 3;
+        duration = 50;
+    }
     #region Overrides
     protected override void OnPlaceArtifactOn(LocationGridTile tile) {
         base.OnPlaceArtifactOn(tile);

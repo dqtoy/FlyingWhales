@@ -42,6 +42,11 @@ public class PlayerJobAction {
         lvl = Mathf.Clamp(lvl, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
         OnLevelUp();
     }
+    public void SetLevel(int amount) {
+        lvl = amount;
+        lvl = Mathf.Clamp(lvl, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+        OnLevelUp();
+    }
 
     #region Virtuals
     public virtual void ActivateAction(Character assignedCharacter) { //this is called when the actions button is pressed

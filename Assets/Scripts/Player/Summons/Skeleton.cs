@@ -8,6 +8,7 @@ using UnityEngine;
 public class Skeleton : Summon {
 
     public Skeleton() : base(SUMMON_TYPE.Skeleton, CharacterRole.BANDIT, RACE.SKELETON, Utilities.GetRandomGender()) { }
+    public Skeleton(SaveDataCharacter data) : base(data) { }
 
     #region Overrides
     public override void OnPlaceSummon(LocationGridTile tile) {

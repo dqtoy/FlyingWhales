@@ -5,16 +5,23 @@ using UnityEngine;
 
 public class Artifact : TileObject {
 
-	public ARTIFACT_TYPE type { get; private set; }
+    public ARTIFACT_TYPE type { get; private set; }
     public int level { get; private set; }
 
     public bool hasBeenUsed { get; private set; }
     public Artifact(ARTIFACT_TYPE type) {
         this.type = type;
         level = 1;
-        TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE)Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
+        TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
         poiGoapActions = new List<INTERACTION_TYPE>();
         Initialize(parsed);
+    }
+    public Artifact(SaveDataArtifact data) {
+        this.type = data.type;
+        level = 1;
+        TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
+        poiGoapActions = new List<INTERACTION_TYPE>();
+        Initialize(data, parsed);
     }
 
     #region Overrides
@@ -46,6 +53,9 @@ public class Artifact : TileObject {
     public virtual void LevelUp() {
         level++;
     }
+    public virtual void SetLevel(int amount) {
+        level = amount;
+    } 
     #endregion
 
     private void OnSuccessInvadeArea(Area area) {

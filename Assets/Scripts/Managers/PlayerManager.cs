@@ -128,7 +128,27 @@ public class PlayerManager : MonoBehaviour {
         PlayerUI.Instance.UpdateUI();
         PlayerUI.Instance.InitializeThreatMeter();
     }
+    public void InitializePlayer(SaveDataPlayer data) {
+        player = new Player(data);
+        PlayerUI.Instance.Initialize();
+        player.CreatePlayerFaction(data);
+        Area existingPlayerArea = LandmarkManager.Instance.GetAreaByID(data.playerAreaID);
+        player.SetPlayerArea(existingPlayerArea);
+        //PlayerUI.Instance.UpdateUI();
+        PlayerUI.Instance.InitializeThreatMeter();
+        PlayerUI.Instance.UpdateThreatMeter();
 
+        for (int i = 0; i < data.minions.Count; i++) {
+            data.minions[i].Load(player);
+        }
+        for (int i = 0; i < data.summonIDs.Count; i++) {
+            Summon summon = CharacterManager.Instance.GetCharacterByID(data.summonIDs[i]) as Summon;
+            player.AddASummon(summon);
+        }
+        for (int i = 0; i < data.artifacts.Count; i++) {
+            data.artifacts[i].Load(player);
+        }
+    }
 
     public void PurchaseTile(HexTile tile) {
         AddTileToPlayerArea(tile);
@@ -237,9 +257,30 @@ public class PlayerManager : MonoBehaviour {
         Artifact newArtifact = CreateNewArtifactClassFromType(artifactType) as Artifact;
         return newArtifact;
     }
+    public Artifact CreateNewArtifact(SaveDataArtifact data) {
+        Artifact newArtifact = CreateNewArtifactClassFromType(data);
+        newArtifact.SetLevel(data.level);
+        return newArtifact;
+    }
     private object CreateNewArtifactClassFromType(ARTIFACT_TYPE artifactType) {
         var typeName = artifactType.ToString();
         return System.Activator.CreateInstance(System.Type.GetType(typeName));
+    }
+
+    private Artifact CreateNewArtifactClassFromType(SaveDataArtifact data) {
+        switch (data.type) {
+            case ARTIFACT_TYPE.Ankh_Of_Anubis:
+                return new Ankh_Of_Anubis(data);
+            case ARTIFACT_TYPE.Chaos_Orb:
+                return new Chaos_Orb(data);
+            case ARTIFACT_TYPE.Hermes_Statue:
+                return new Hermes_Statue(data);
+            case ARTIFACT_TYPE.Miasma_Emitter:
+                return new Miasma_Emitter(data);
+            case ARTIFACT_TYPE.Necronomicon:
+                return new Necronomicon(data);
+        }
+        return null;
     }
     #endregion
 

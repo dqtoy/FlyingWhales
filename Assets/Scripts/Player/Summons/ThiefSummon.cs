@@ -11,6 +11,9 @@ public class ThiefSummon : Summon {
         AddInteractionType(INTERACTION_TYPE.STEAL);
         AddInteractionType(INTERACTION_TYPE.STEAL_CHARACTER);
     }
+    public ThiefSummon(SaveDataCharacter data) : base(data) {
+        itemsToSteal = 2;
+    }
 
     #region Overrides
     public override void OnPlaceSummon(LocationGridTile tile) {

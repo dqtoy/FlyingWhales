@@ -238,7 +238,6 @@ public class CharacterManager : MonoBehaviour {
     public Character CreateNewCharacter(SaveDataCharacter data) {
         Character newCharacter = new Character(data);
         newCharacter.CreateOwnParty();
-
         for (int i = 0; i < data.alterEgos.Count; i++) {
             data.alterEgos[i].Load(newCharacter);
         }
@@ -429,6 +428,66 @@ public class CharacterManager : MonoBehaviour {
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
         return newCharacter;
+    }
+    public Summon CreateNewSummon(SaveDataCharacter data) {
+        Summon newCharacter = CreateNewSummonClassFromType(data);
+        newCharacter.CreateOwnParty();
+        newCharacter.ConstructInitialGoapAdvertisementActions();
+
+        for (int i = 0; i < data.alterEgos.Count; i++) {
+            data.alterEgos[i].Load(newCharacter);
+        }
+
+        Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
+        if (faction != null) {
+            faction.AddNewCharacter(newCharacter);
+            if (data.isFactionLeader) {
+                faction.OnlySetLeader(newCharacter);
+            }
+        }
+
+        newCharacter.ownParty.CreateIcon();
+
+        Area home = LandmarkManager.Instance.GetAreaByID(data.homeID);
+        Area specificLocation = LandmarkManager.Instance.GetAreaByID(data.currentLocationID);
+
+        newCharacter.ownParty.icon.SetPosition(specificLocation.coreTile.transform.position);
+        if (data.isDead) {
+            newCharacter.SetHome(home); //keep this data with character to prevent errors
+            home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
+            newCharacter.ownParty.SetSpecificLocation(specificLocation);
+        } else {
+            newCharacter.MigrateHomeTo(home, null, false);
+            specificLocation.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
+        }
+
+        for (int i = 0; i < data.items.Count; i++) {
+            data.items[i].Load(newCharacter);
+        }
+        for (int i = 0; i < data.normalTraits.Count; i++) {
+            data.normalTraits[i].Load(newCharacter);
+        }
+
+        _allCharacters.Add(newCharacter);
+        Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
+        return newCharacter;
+    }
+    public Summon CreateNewSummonClassFromType(SaveDataCharacter data) {
+        switch (data.summonType) {
+            case SUMMON_TYPE.Wolf:
+                return new Wolf(data);
+            case SUMMON_TYPE.ThiefSummon:
+                return new ThiefSummon(data);
+            case SUMMON_TYPE.Skeleton:
+                return new Skeleton(data);
+            case SUMMON_TYPE.Succubus:
+                return new Succubus(data);
+            case SUMMON_TYPE.Incubus:
+                return new Incubus(data);
+            case SUMMON_TYPE.Golem:
+                return new Golem(data);
+        }
+        return null;
     }
     public object CreateNewSummonClassFromType(SUMMON_TYPE summonType) {
         var typeName = summonType.ToString();

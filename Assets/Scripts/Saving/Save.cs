@@ -15,6 +15,13 @@ public class Save {
     public List<SaveDataCharacter> characterSaves;
 
     public SaveDataArea playerAreaSave;
+    public SaveDataPlayer playerSave;
+
+    public int month;
+    public int day;
+    public int year;
+    public int tick;
+    public int continuousDays;
 
     public Save(int width, int height, int borderThickness) {
         this.width = width;
@@ -145,5 +152,28 @@ public class Save {
         for (int i = 0; i < characterSaves.Count; i++) {
             characterSaves[i].Load();
         }
+    }
+
+    public void SavePlayer(Player player) {
+        playerSave = new SaveDataPlayer();
+        playerSave.Save(player);
+    }
+    public void LoadPlayer() {
+        playerSave.Load();
+    }
+
+    public void SaveCurrentDate() {
+        month = GameManager.Instance.month;
+        day = GameManager.days;
+        year = GameManager.Instance.year;
+        tick = GameManager.Instance.tick;
+        continuousDays = GameManager.Instance.continuousDays;
+    }
+    public void LoadCurrentDate() {
+        GameManager.Instance.month = month;
+        GameManager.days = day;
+        GameManager.Instance.year = year;
+        GameManager.Instance.tick = tick;
+        GameManager.Instance.continuousDays = continuousDays;
     }
 }

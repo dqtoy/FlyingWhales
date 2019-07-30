@@ -7,6 +7,7 @@ public class Golem : Summon {
     public Golem() : base(SUMMON_TYPE.Golem, CharacterRole.SOLDIER, RACE.ABOMINATION, Utilities.GetRandomGender()) {
         SetMaxHPMod(1000);
     }
+    public Golem(SaveDataCharacter data) : base(data) { }
 
     #region Overrides
     public override string GetClassForRole(CharacterRole role) {

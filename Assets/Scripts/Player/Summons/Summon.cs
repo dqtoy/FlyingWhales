@@ -14,6 +14,9 @@ public class Summon : Character {
     public Summon(SUMMON_TYPE summonType, CharacterRole role, string className, RACE race, GENDER gender) : base(role, className, race, gender) {
         this.summonType = summonType;
     }
+    public Summon(SaveDataCharacter data) : base(data) {
+        this.summonType = data.summonType;
+    }
 
     #region Overrides
     public override void Initialize() {
