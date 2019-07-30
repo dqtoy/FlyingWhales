@@ -12,7 +12,7 @@ public class SaveDataAlterEgo {
     public int level;
 
     //Relationships
-    //public Dictionary<AlterEgoData, CharacterRelationshipData> relationships { get; private set; }
+    public List<SaveDataRelationship> relationships;
 
     //Traits
     public List<SaveDataTrait> traits;
@@ -33,6 +33,13 @@ public class SaveDataAlterEgo {
                 traits.Add(saveDataTrait);
             }
         }
+
+        relationships = new List<SaveDataRelationship>();
+        foreach (CharacterRelationshipData relData in alterEgo.relationships.Values) {
+            SaveDataRelationship saveDataRelationship = new SaveDataRelationship();
+            saveDataRelationship.Save(relData);
+            relationships.Add(saveDataRelationship);
+        }
     }
 
     public void Load(Character character) {
@@ -44,6 +51,12 @@ public class SaveDataAlterEgo {
         alterEgoData.SetLevel(level);
         for (int i = 0; i < traits.Count; i++) {
             traits[i].Load(alterEgoData);
+        }
+    }
+    public void LoadRelationships(Character character) {
+        AlterEgoData alterEgoData = character.GetAlterEgoData(name);
+        for (int i = 0; i < relationships.Count; i++) {
+            relationships[i].Load(alterEgoData);
         }
     }
 }

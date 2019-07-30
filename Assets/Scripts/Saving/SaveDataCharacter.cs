@@ -197,4 +197,10 @@ public class SaveDataCharacter {
             }
         }
     }
+
+    public void LoadRelationships(Character character) {
+        for (int i = 0; i < alterEgos.Count; i++) {
+            alterEgos[i].LoadRelationships(character);
+        }
+    }
 }

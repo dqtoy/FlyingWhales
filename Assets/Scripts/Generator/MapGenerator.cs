@@ -191,6 +191,8 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.LoadAdditionalAreaData();
         data.LoadCharacters();
         yield return null;
+        data.LoadCharacterRelationships();
+        yield return null;
         data.LoadLandmarks();
         yield return null;
         GridMap.Instance.GenerateInitialTileTags();

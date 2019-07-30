@@ -153,6 +153,11 @@ public class Save {
             characterSaves[i].Load();
         }
     }
+    public void LoadCharacterRelationships() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadRelationships(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
 
     public void SavePlayer(Player player) {
         playerSave = new SaveDataPlayer();

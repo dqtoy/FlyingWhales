@@ -194,6 +194,11 @@ public class AlterEgoData {
         owner.OnRelationshipWithCharacterAdded(alterEgo.owner, newRel);
         Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, this.owner, newRel);
     }
+    public void AddRelationship(CharacterRelationshipData relData) {
+        if (!relationships.ContainsKey(relData.targetCharacterAlterEgo)) {
+            relationships.Add(relData.targetCharacterAlterEgo, relData);
+        }
+    }
     public void RemoveRelationship(AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
         if (relationships.ContainsKey(alterEgo)) {
             if (relationships[alterEgo].RemoveRelationship(rel)) {
