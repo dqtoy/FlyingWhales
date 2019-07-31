@@ -269,20 +269,29 @@ public class TileRow {
     public List<HexTile> GetElligibleTilesForLandmark(HexTile[,] map) {
         List<HexTile> tiles = new List<HexTile>();
 
-        int total = minX + maxX;
-        List<int> midPoints = new List<int>();
-        midPoints.Add(total / 2);
-        if (total % 2 != 0) {
-            midPoints.Add((total / 2) + 1);
-        }
+        //int total = minX + maxX;
+        //List<int> midPoints = new List<int>();
+        //midPoints.Add(total / 2);
+        //if (total % 2 != 0) {
+        //    midPoints.Add((total / 2) + 1);
+        //}
 
-        for (int y = minY; y < maxY; y++) {
-            for (int i = 0; i < midPoints.Count; i++) {
-                int x = midPoints[i];
-                HexTile currTile = map[x, y];
-                if (currTile.IsAtEdgeOfMap()) {
-                    continue; //skip tiles at edge of map
-                }
+        //for (int y = minY; y < maxY; y++) {
+        //    for (int i = 0; i < midPoints.Count; i++) {
+        //        int x = midPoints[i];
+        //        HexTile currTile = map[x, y];
+        //        if (currTile.IsAtEdgeOfMap()) {
+        //            continue; //skip tiles at edge of map
+        //        }
+        //        tiles.Add(map[x, y]);
+        //    }
+        //}
+        int nonBorderMinX = minX + 1;
+        int nonBorderMaxX = maxX - 1;
+        int nonBorderMinY = minY + 1;
+        int nonBorderMaxY = maxY - 1;
+        for (int x = nonBorderMinX; x <= nonBorderMaxX; x++) {
+            for (int y = nonBorderMinY; y <= nonBorderMaxY; y++) {
                 tiles.Add(map[x, y]);
             }
         }
