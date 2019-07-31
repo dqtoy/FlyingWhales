@@ -56,6 +56,11 @@ public class PlayerManager : MonoBehaviour {
             , INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS, INTERVENTION_ABILITY.JOLT, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE };
         //allInterventionAbilities = (INTERVENTION_ABILITY[]) System.Enum.GetValues(typeof(INTERVENTION_ABILITY));
         allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
+
+        //Unit Selection
+        //Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        //Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        //Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
     }
 
     public void LoadStartingTile() {
@@ -312,4 +317,50 @@ public class PlayerManager : MonoBehaviour {
     //    return minion;
     //}
     //#endregion
+
+    #region Unit Selection
+    private List<Character> selectedUnits = new List<Character>();
+    public void SelectUnit(Character character) {
+        if (!selectedUnits.Contains(character)) {
+            selectedUnits.Add(character);
+        }
+    }
+    public void DeselectUnit(Character character) {
+        if (selectedUnits.Remove(character)) {
+
+        }
+    }
+    public void DeselectAllUnits() {
+        Character[] units = selectedUnits.ToArray();
+        for (int i = 0; i < units.Length; i++) {
+            DeselectUnit(units[i]);
+        }
+    }
+    private void OnMenuOpened(UIMenu menu) {
+        if (menu is CharacterInfoUI) {
+            DeselectAllUnits();
+            CharacterInfoUI infoUI = menu as CharacterInfoUI;
+            if (infoUI.activeCharacter.faction == PlayerManager.Instance.player.playerFaction) {
+                SelectUnit(infoUI.activeCharacter);
+            }
+        }
+    }
+    private void OnMenuClosed(UIMenu menu) {
+        if (menu is CharacterInfoUI) {
+            DeselectAllUnits();
+        }
+    }
+    private void OnKeyPressedDown(KeyCode keyCode) {
+        if (selectedUnits.Count > 0) {
+            if (keyCode == KeyCode.Mouse1) {
+                //right click
+                for (int i = 0; i < selectedUnits.Count; i++) {
+                    selectedUnits[i].marker.GoTo(InteriorMapManager.Instance.currentlyShowingMap.worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
+                }
+            } else if (keyCode == KeyCode.Mouse0) {
+                DeselectAllUnits();
+            }
+        }
+    }
+    #endregion
 }

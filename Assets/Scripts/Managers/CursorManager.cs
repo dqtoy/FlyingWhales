@@ -122,6 +122,7 @@ public class CursorManager : MonoBehaviour {
             //right click
             ExecuteRightClickActions();
             ClearRightClickActions();
+            Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Mouse1);
         }
         if (AreaMapCameraMove.Instance != null) {
             Vector3 pos = effectsCamera.ScreenToWorldPoint(Input.mousePosition);

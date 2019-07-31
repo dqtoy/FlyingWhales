@@ -35,7 +35,6 @@ public class CharacterMarker : PooledObject {
     public AIDestinationSetter destinationSetter;
     public Seeker seeker;
     public Collider2D[] colliders;
-    [SerializeField] private Rigidbody2D[] rgBodies;
     public CharacterMarkerVisionCollision visionCollision;
 
     [Header("Combat")]
@@ -56,11 +55,6 @@ public class CharacterMarker : PooledObject {
         get { return _arrivalAction; }
         private set {
             _arrivalAction = value;
-            //if (_arrivalAction == null) {
-            //    Debug.Log("Set arrival action of " + character.name + " to null" + " ST: " + StackTraceUtility.ExtractStackTrace());
-            //} else {
-            //    Debug.Log("Set arrival action of " + character.name + " to " + _arrivalAction.Method.Name + " ST: " + StackTraceUtility.ExtractStackTrace());
-            //}
         }
     }
 
