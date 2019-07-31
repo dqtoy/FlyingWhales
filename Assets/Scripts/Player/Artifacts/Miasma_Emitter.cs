@@ -14,11 +14,11 @@ public class Miasma_Emitter : Artifact {
     private AOEParticle particle;
 
     public Miasma_Emitter() : base(ARTIFACT_TYPE.Miasma_Emitter) {
-        range = 3;
+        range = 1;
         duration = 50;
     }   
     public Miasma_Emitter(SaveDataArtifact data) : base(data) {
-        range = 3;
+        range = 1;
         duration = 50;
     }
     #region Overrides
@@ -74,6 +74,10 @@ public class Miasma_Emitter : Artifact {
             }
         }
         ObjectPoolManager.Instance.DestroyObject(particle.gameObject);
+    }
+    public override void LevelUp() {
+        base.LevelUp();
+        range++;
     }
     #endregion
 

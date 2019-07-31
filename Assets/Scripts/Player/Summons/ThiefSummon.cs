@@ -7,12 +7,12 @@ public class ThiefSummon : Summon {
     private int itemsToSteal; //number of items that the thief will steal.
 
     public ThiefSummon() : base(SUMMON_TYPE.ThiefSummon, CharacterRole.BANDIT, RACE.HUMANS, Utilities.GetRandomGender()) {
-        itemsToSteal = 2;
+        itemsToSteal = 1;
         AddInteractionType(INTERACTION_TYPE.STEAL);
         AddInteractionType(INTERACTION_TYPE.STEAL_CHARACTER);
     }
     public ThiefSummon(SaveDataCharacter data) : base(data) {
-        itemsToSteal = 2;
+        itemsToSteal = 1;
     }
 
     #region Overrides
@@ -20,13 +20,13 @@ public class ThiefSummon : Summon {
         base.OnPlaceSummon(tile);
         AddInitialAwareness(tile.parentAreaMap.area);
         Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
-        //add all characters that are not part of the player faction to this character's terrifying characters list, so this character can avoid them.
-        for (int i = 0; i < tile.parentAreaMap.area.charactersAtLocation.Count; i++) {
-            Character currCharacter = tile.parentAreaMap.area.charactersAtLocation[i];
-            if (currCharacter.faction != this.faction) {
-                marker.AddTerrifyingObject(currCharacter);
-            }
-        }
+        ////add all characters that are not part of the player faction to this character's terrifying characters list, so this character can avoid them.
+        //for (int i = 0; i < tile.parentAreaMap.area.charactersAtLocation.Count; i++) {
+        //    Character currCharacter = tile.parentAreaMap.area.charactersAtLocation[i];
+        //    if (currCharacter.faction != this.faction) {
+        //        marker.AddTerrifyingObject(currCharacter);
+        //    }
+        //}
     }
     public override void ThisCharacterSaw(Character target) {
         base.ThisCharacterSaw(target);
@@ -59,6 +59,10 @@ public class ThiefSummon : Summon {
                 SetHasAlreadyAskedForPlan(false);
             }
         }
+    }
+    public override void LevelUp() {
+        base.LevelUp();
+        itemsToSteal += 1;
     }
     #endregion
 

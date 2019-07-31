@@ -245,10 +245,12 @@ public class Minion {
         AddPendingTraits();
         Messenger.AddListener(Signals.TICK_STARTED, PerTickInvasion);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
     }
     public void StopInvasionProtocol() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
     }
     private void PerTickInvasion() {
         if (character.isDead) {
