@@ -222,6 +222,9 @@ public class Player : ILeader {
         } else {
             minion.SetIndexDefaultSort(currentMinionCount);
             minions[currentMinionCount] = minion;
+            if(currentMinionLeader == null) {
+                SetMinionLeader(minion);
+            }
             PlayerUI.Instance.UpdateRoleSlots();
         }
     }
@@ -278,6 +281,9 @@ public class Player : ILeader {
             if(minions[i] == minionToBeReplaced) {
                 minionToBeAdded.SetIndexDefaultSort(i);
                 minions[i] = minionToBeAdded;
+                if(currentMinionLeader == minionToBeReplaced) {
+                    SetMinionLeader(minionToBeAdded);
+                }
                 PlayerUI.Instance.UpdateRoleSlots();
             }
         }
@@ -304,6 +310,16 @@ public class Player : ILeader {
             }
         }
         return false;
+    }
+    public Minion GetRandomMinion() {
+        List<Minion> minionChoices = new List<Minion>();
+        for (int i = 0; i < minions.Length; i++) {
+            Minion currMinion = minions[i];
+            if (currMinion != null) {
+                minionChoices.Add(currMinion);
+            }
+        }
+        return minionChoices[UnityEngine.Random.Range(0, minionChoices.Count)];
     }
     #endregion
 

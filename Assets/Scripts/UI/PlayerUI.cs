@@ -67,6 +67,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private MinionCard startingMinionCard3;
     [SerializeField] private GameObject minionLeaderPickerParent;
     [SerializeField] private GameObject minionLeaderPickerPrefab;
+    [SerializeField] private TextMeshProUGUI selectMinionLeaderText;
     private List<MinionLeaderPicker> minionLeaderPickers;
     private MinionLeaderPicker tempCurrentMinionLeaderPicker;
 
@@ -107,6 +108,12 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("New Ability UI")]
     public NewAbilityUI newAbilityUI;
+
+    [Header("New Minion Ability UI")]
+    public NewMinionAbilityUI newMinionAbilityUI;
+
+    [Header("Skirmish UI")]
+    public SkirmishUI skirmishUI;
 
     [Header("Saving/Loading")]
     public Button saveGameButton;
@@ -746,6 +753,7 @@ public class PlayerUI : MonoBehaviour {
     private void ShowSelectMinionLeader() {
         Utilities.DestroyChildren(minionLeaderPickerParent.transform);
         minionLeaderPickers.Clear();
+        selectMinionLeaderText.gameObject.SetActive(true);
         tempCurrentMinionLeaderPicker = null;
         for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
             Minion minion = PlayerManager.Instance.player.minions[i];
@@ -788,7 +796,14 @@ public class PlayerUI : MonoBehaviour {
                 corruptTileConfirmationLbl.text = "Corrupt this Area?";
             }
             corruptTileConfirmationGO.SetActive(true);
-            ShowSelectMinionLeader();
+            if(tile.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
+                ShowSelectMinionLeader();
+            } else {
+                Utilities.DestroyChildren(minionLeaderPickerParent.transform);
+                minionLeaderPickers.Clear();
+                tempCurrentMinionLeaderPicker = null;
+                selectMinionLeaderText.gameObject.SetActive(false);
+            }
         }
     }
     public void HideCorruptTileConfirmation() {
@@ -796,7 +811,15 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnClickYesCorruption() {
         HideCorruptTileConfirmation();
-        PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
+        if(tempCurrentMinionLeaderPicker != null) {
+            PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
+        } else {
+            //If story event, randomize minion leader, if not, keep current minion leader
+            if(PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.STORY_EVENT) {
+                Minion minion = PlayerManager.Instance.player.GetRandomMinion();
+                PlayerManager.Instance.player.SetMinionLeader(minion);
+            }
+        }
         if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile != null) {
             GameManager.Instance.SetOnlyTickDays(false);
             InteriorMapManager.Instance.TryShowAreaMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);

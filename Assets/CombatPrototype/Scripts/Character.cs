@@ -2301,7 +2301,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         OnUpdateRace();
         Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
     }
-    protected void OnUpdateRace() {
+    public void OnUpdateRace() {
         SetTraitsFromRace();
         //Update Portrait to use new race
         _portraitSettings = CharacterManager.Instance.GenerateRandomPortrait(race, gender);
@@ -3452,9 +3452,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             //Reset to full health and sp
             ResetToFullHP();
 
+            Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
             if (_playerCharacterItem != null) {
                 _playerCharacterItem.UpdateMinionItem();
-                Messenger.Broadcast(Signals.CHARACTER_LEVEL_CHANGED, this);
             }
         }
     }

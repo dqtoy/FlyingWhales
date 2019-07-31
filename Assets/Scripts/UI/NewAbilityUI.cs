@@ -5,12 +5,14 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class NewAbilityUI : MonoBehaviour {
-    [Header("Minion")]
+    [Header("General")]
     [SerializeField] private TextMeshProUGUI titleText;
+    [SerializeField] private TextMeshProUGUI obtainText;
 
     [Header("Minion")]
     [SerializeField] private CharacterPortrait minionPortrait;
     [SerializeField] private TextMeshProUGUI minionText;
+    [SerializeField] private GameObject minionGO;
 
     [Header("New Ability")]
     [SerializeField] private Image abilityIcon;
@@ -42,6 +44,8 @@ public class NewAbilityUI : MonoBehaviour {
     }
 
     public void UpdateNewAbility(object obj) {
+        obtainText.gameObject.SetActive(false);
+        minionGO.SetActive(false);
         if (obj is PlayerJobAction) {
             titleText.text = "New Intervention Ability";
             PlayerJobAction action = obj as PlayerJobAction;
@@ -50,6 +54,7 @@ public class NewAbilityUI : MonoBehaviour {
             text += "\nLevel: " + action.lvl;
             text += "\nDescription: " + action.description;
             abilityText.text = text;
+            minionGO.SetActive(true);
         } else if (obj is CombatAbility) {
             titleText.text = "New Combat Ability";
             CombatAbility ability = obj as CombatAbility;
@@ -58,22 +63,27 @@ public class NewAbilityUI : MonoBehaviour {
             text += "\nLevel: " + ability.lvl;
             text += "\nDescription: " + ability.description;
             abilityText.text = text;
+            minionGO.SetActive(true);
         } else if (obj is Summon) {
             titleText.text = "New Summon";
+            obtainText.text = "You obtained a new Summon!";
             Summon summon = obj as Summon;
             abilityIcon.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
             string text = summon.name + " (" + summon.summonType.SummonName() + ")";
             text += "\nLevel: " + summon.level.ToString();
             text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
             abilityText.text = text;
+            obtainText.gameObject.SetActive(true);
         } else if (obj is Artifact) {
             titleText.text = "New Artifact";
+            obtainText.text = "You obtained a new Artifact!";
             Artifact artifact = obj as Artifact;
             abilityIcon.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
             string text = artifact.name;
             text += "\nLevel: " + artifact.level;
             text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
             abilityText.text = text;
+            obtainText.gameObject.SetActive(true);
         }
     }
 
