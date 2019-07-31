@@ -124,6 +124,11 @@ public class PlayerManager : MonoBehaviour {
         } else {
             player.LoadPlayerArea(existingPlayerArea);
         }
+        for (int i = 0; i < portal.sameRowTiles.Count; i++) {
+            HexTile sameRowTile = portal.sameRowTiles[i];
+            player.playerArea.AddTile(sameRowTile);
+            sameRowTile.SetCorruption(true);
+        }
         LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
         PlayerUI.Instance.UpdateUI();
         //PlayerUI.Instance.InitializeThreatMeter();
@@ -162,7 +167,12 @@ public class PlayerManager : MonoBehaviour {
     public void AddTileToPlayerArea(HexTile tile) {
         player.playerArea.AddTile(tile);
         tile.SetCorruption(true);
-        tile.StopCorruptionAnimation();
+        for (int i = 0; i < tile.landmarkOnTile.sameRowTiles.Count; i++) {
+            HexTile sameRowTile = tile.landmarkOnTile.sameRowTiles[i];
+            player.playerArea.AddTile(sameRowTile);
+            sameRowTile.SetCorruption(true);
+        }
+        //tile.StopCorruptionAnimation();
     }
     public void AdjustTotalLifestones(int amount) {
         totalLifestonesInWorld += amount;

@@ -707,7 +707,7 @@ public class Player : ILeader {
     public bool CanShareIntel(IPointOfInterest poi) {
         if(poi is Character) {
             Character character = poi as Character;
-            if(!(character is Summon) && character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.MINION && character.role.roleType != CHARACTER_ROLE.PLAYER) {
+            if(character.faction != PlayerManager.Instance.player.playerFaction && character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER) {
                 return true;
             }
         }

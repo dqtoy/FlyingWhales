@@ -123,17 +123,15 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         Debug.Log(ghostCollisionSummary);
     }
     public bool ChatHandling(Character targetCharacter) {
-        if(targetCharacter.isDead 
-            || targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER) 
+        if (targetCharacter.isDead
+            || targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
             || parentMarker.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER)
             || (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
             || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST
-            || targetCharacter.role.roleType == CHARACTER_ROLE.MINION
-            || parentMarker.character.role.roleType == CHARACTER_ROLE.MINION
-            || (targetCharacter is Summon)
-            || (parentMarker.character is Summon)) {
+            || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
+            || parentMarker.character.faction == PlayerManager.Instance.player.playerFaction) {
             return false;
         }
         if(!parentMarker.character.IsHostileWith(targetCharacter)) {
@@ -157,10 +155,8 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             || (parentMarker.character.stateComponent.currentState != null && parentMarker.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT)
             || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
             || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST
-            || targetCharacter.role.roleType == CHARACTER_ROLE.MINION
-            || parentMarker.character.role.roleType == CHARACTER_ROLE.MINION 
-            || (targetCharacter is Summon)
-            || (parentMarker.character is Summon)) {
+            || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
+            || parentMarker.character.faction == PlayerManager.Instance.player.playerFaction) {
             return false;
         }
         if (!parentMarker.character.IsHostileWith(targetCharacter)) {

@@ -243,7 +243,7 @@ public class TileRow {
     }
 
     public HexTile[] GetAllTiles(HexTile[,] map) {
-        HexTile[] tiles = new HexTile[(maxX + 1) * (maxY + 1)];
+        HexTile[] tiles = new HexTile[((maxX - minX) + 1) * ((maxY - minY) + 1)];
         int count = 0;
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
