@@ -25,6 +25,7 @@ public class BaseLandmark {
     public List<BaseLandmark> inGoingConnections { get; private set; }
     public List<BaseLandmark> outGoingConnections { get; private set; }
     public List<BaseLandmark> sameColumnLandmarks { get; private set; }
+    public List<HexTile> sameRowTiles { get; private set; }
 
     #region getters/setters
     public int id {
@@ -456,6 +457,9 @@ public class BaseLandmark {
     }
     public void SetSameColumnLandmarks(List<BaseLandmark> landmarks) {
         sameColumnLandmarks = landmarks;
+    }
+    public void SetSameRowTiles(List<HexTile> tiles) {
+        sameRowTiles = tiles;
     }
     #endregion
 

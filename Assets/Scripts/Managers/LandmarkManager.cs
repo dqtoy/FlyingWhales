@@ -400,6 +400,7 @@ public class LandmarkManager : MonoBehaviour {
                 if(currColumn.rows[j] != null && currColumn.rows[j].landmark != null) {
                     BaseLandmark rowLandmark = currColumn.rows[j].landmark;
                     rowLandmark.SetSameColumnLandmarks(currColumn.GetAllLandmarksInColumn(rowLandmark));
+                    rowLandmark.SetSameRowTiles(currColumn.rows[j].GetAllTiles(GridMap.Instance.map).ToList());
                 }
             }
         }

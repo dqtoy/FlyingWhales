@@ -2516,7 +2516,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
     }
     public bool CanCharacterReact() {
-        if((this is Summon) || role.roleType == CHARACTER_ROLE.MINION) {
+        if(faction == PlayerManager.Instance.player.playerFaction) {
             //Cannot react if summon or minion
             return false;
         }
@@ -3128,6 +3128,16 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         //if (witnessedEvent.currentState == null) {
         //    return; //TODO: Need to discuss (Witnessing assault that is in progress).
         //}
+        Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);
+        witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
+        witnessLog.AddToFillers(null, Utilities.LogDontReplace(witnessedEvent.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
+        witnessLog.AddToFillers(witnessedEvent.currentState.descriptionLog.fillers);
+        AddHistory(witnessLog);
+
+        if(faction == PlayerManager.Instance.player.playerFaction) {
+            //Player characters cannot react to witnessed events
+            return;
+        }
         if (witnessedEvent.currentState.shareIntelReaction != null && !isFactionless) {
             List<string> reactions = witnessedEvent.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.WITNESSED);
             if(reactions != null) {
@@ -3141,12 +3151,6 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
 
         witnessedEvent.AddAwareCharacter(this);
-
-        Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);
-        witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
-        witnessLog.AddToFillers(null, Utilities.LogDontReplace(witnessedEvent.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
-        witnessLog.AddToFillers(witnessedEvent.currentState.descriptionLog.fillers);
-        AddHistory(witnessLog);
 
         //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
         if (witnessedEvent.actor != this && !witnessedEvent.IsTarget(this)) {
@@ -3177,6 +3181,10 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
     }
     public void ThisCharacterWatchEvent(Character targetCharacter, GoapAction action, GoapActionState state) {
+        if(faction == PlayerManager.Instance.player.playerFaction) {
+            //Player characters cannot watch events
+            return;
+        }
         if (action == null) {
             if (targetCharacter != null && targetCharacter.stateComponent.currentState != null && !targetCharacter.stateComponent.currentState.isDone && targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT
                 && targetCharacter.faction == faction) {
