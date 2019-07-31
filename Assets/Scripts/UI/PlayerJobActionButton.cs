@@ -160,7 +160,7 @@ public class PlayerJobActionButton : MonoBehaviour {
     }
     private void OnAreaMapClosed(Area area) {
         //Upon closing of area map reset intervention ability cooldowns
-        action.InstantCooldown();
+        //action.InstantCooldown();
         UpdateInteractableState();
     }
     #endregion

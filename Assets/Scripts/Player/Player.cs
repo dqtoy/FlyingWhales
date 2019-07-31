@@ -97,12 +97,14 @@ public class Player : ILeader {
         AddWinListener();
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener(Signals.TICK_STARTED, EverydayAction);
+
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
 
         //goap
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
     }
     private void EverydayAction() {
         //DepleteThreatLevel();
@@ -151,6 +153,14 @@ public class Player : ILeader {
     private void OnTileRemovedFromPlayerArea(Area affectedArea, HexTile removedTile) {
         if (playerArea != null && affectedArea.id == playerArea.id) {
             Biomes.Instance.UpdateTileVisuals(removedTile);
+        }
+    }
+    private void OnAreaMapOpened(Area area) {
+        for (int i = 0; i < minions.Length; i++) {
+            if(minions[i] != null) {
+                minions[i].ResetCombatAbilityCD();
+                minions[i].ResetInterventionAbilitiesCD();
+            }
         }
     }
     #endregion
@@ -222,6 +232,9 @@ public class Player : ILeader {
         } else {
             minion.SetIndexDefaultSort(currentMinionCount);
             minions[currentMinionCount] = minion;
+            if(currentMinionLeader == null) {
+                SetMinionLeader(minion);
+            }
             PlayerUI.Instance.UpdateRoleSlots();
         }
     }
@@ -278,6 +291,9 @@ public class Player : ILeader {
             if(minions[i] == minionToBeReplaced) {
                 minionToBeAdded.SetIndexDefaultSort(i);
                 minions[i] = minionToBeAdded;
+                if(currentMinionLeader == minionToBeReplaced) {
+                    SetMinionLeader(minionToBeAdded);
+                }
                 PlayerUI.Instance.UpdateRoleSlots();
             }
         }
@@ -304,6 +320,16 @@ public class Player : ILeader {
             }
         }
         return false;
+    }
+    public Minion GetRandomMinion() {
+        List<Minion> minionChoices = new List<Minion>();
+        for (int i = 0; i < minions.Length; i++) {
+            Minion currMinion = minions[i];
+            if (currMinion != null) {
+                minionChoices.Add(currMinion);
+            }
+        }
+        return minionChoices[UnityEngine.Random.Range(0, minionChoices.Count)];
     }
     #endregion
 

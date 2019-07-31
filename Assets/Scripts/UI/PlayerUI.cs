@@ -67,13 +67,9 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private MinionCard startingMinionCard3;
     [SerializeField] private GameObject minionLeaderPickerParent;
     [SerializeField] private GameObject minionLeaderPickerPrefab;
+    [SerializeField] private TextMeshProUGUI selectMinionLeaderText;
     private List<MinionLeaderPicker> minionLeaderPickers;
     private MinionLeaderPicker tempCurrentMinionLeaderPicker;
-
-    [Header("Corruption and Threat")]
-    [SerializeField] private GameObject corruptTileConfirmationGO;
-    [SerializeField] private TextMeshProUGUI corruptTileConfirmationLbl;
-    [SerializeField] private Slider threatMeter;
 
     [Header("Summons")]
     [SerializeField] private Image currentSummonImg;
@@ -107,6 +103,15 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("New Ability UI")]
     public NewAbilityUI newAbilityUI;
+
+    [Header("New Minion Ability UI")]
+    public NewMinionAbilityUI newMinionAbilityUI;
+
+    [Header("Skirmish UI")]
+    public SkirmishUI skirmishUI;
+    public CharacterPortrait skirmishEnemyPortrait;
+    public TextMeshProUGUI skirmishEnemyText;
+    public GameObject skirmishConfirmationGO;
 
     [Header("Saving/Loading")]
     public Button saveGameButton;
@@ -753,6 +758,7 @@ public class PlayerUI : MonoBehaviour {
     private void ShowSelectMinionLeader() {
         Utilities.DestroyChildren(minionLeaderPickerParent.transform);
         minionLeaderPickers.Clear();
+        selectMinionLeaderText.gameObject.SetActive(true);
         tempCurrentMinionLeaderPicker = null;
         for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
             Minion minion = PlayerManager.Instance.player.minions[i];
@@ -781,29 +787,37 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Corruption and Threat
-    public void InitializeThreatMeter() {
-        threatMeter.minValue = 0f;
-        threatMeter.maxValue = Player.MAX_THREAT;
-        threatMeter.value = 0f;
-    }
     public void ShowCorruptTileConfirmation(HexTile tile) {
         if (tile.CanBeCorrupted() && !tile.isCorrupted) {//&& tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted
             PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
-            if (tile.areaOfTile != null) {
-                corruptTileConfirmationLbl.text = "To corrupt this area, you must defeat all residents within. Once you proceeed there is no going back. Do you wish to take on this settlement?";
+            if(tile.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
+                tile.landmarkOnTile.GenerateSkirmishEnemy();
+                skirmishEnemyPortrait.GeneratePortrait(tile.landmarkOnTile.skirmishEnemy);
+                string text = tile.landmarkOnTile.skirmishEnemy.name;
+                text += "\nLvl." + tile.landmarkOnTile.skirmishEnemy.level + " " + tile.landmarkOnTile.skirmishEnemy.raceClassName;
+                skirmishEnemyText.text = text;
+                skirmishConfirmationGO.SetActive(true);
+                ShowSelectMinionLeader();
             } else {
-                corruptTileConfirmationLbl.text = "Corrupt this Area?";
+                tempCurrentMinionLeaderPicker = null;
+                OnClickYesCorruption();
             }
-            corruptTileConfirmationGO.SetActive(true);
-            ShowSelectMinionLeader();
         }
     }
     public void HideCorruptTileConfirmation() {
-        corruptTileConfirmationGO.SetActive(false);
+        skirmishConfirmationGO.SetActive(false);
     }
     public void OnClickYesCorruption() {
         HideCorruptTileConfirmation();
-        PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
+        if(tempCurrentMinionLeaderPicker != null) {
+            PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
+        } else {
+            //If story event, randomize minion leader, if not, keep current minion leader
+            if(PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.STORY_EVENT) {
+                Minion minion = PlayerManager.Instance.player.GetRandomMinion();
+                PlayerManager.Instance.player.SetMinionLeader(minion);
+            }
+        }
         if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile != null) {
             GameManager.Instance.SetOnlyTickDays(false);
             InteriorMapManager.Instance.TryShowAreaMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);
@@ -837,9 +851,9 @@ public class PlayerUI : MonoBehaviour {
     public void OnClickNoCorruption() {
         HideCorruptTileConfirmation();
     }
-    public void UpdateThreatMeter() {
-        threatMeter.value = PlayerManager.Instance.player.threat;
-    }
+    //public void UpdateThreatMeter() {
+    //    threatMeter.value = PlayerManager.Instance.player.threat;
+    //}
     #endregion
 
     #region Summons

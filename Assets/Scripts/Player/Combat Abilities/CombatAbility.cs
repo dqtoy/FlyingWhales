@@ -49,8 +49,11 @@ public class CombatAbility {
             StopCooldown();
         }
     }
-    private void StopCooldown() {
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
+    public void StopCooldown() {
+        _currentCooldown = cooldown;
+        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickCooldown);
+        }
         Messenger.Broadcast(Signals.COMBAT_ABILITY_UPDATE_BUTTON, this);
     }
 
