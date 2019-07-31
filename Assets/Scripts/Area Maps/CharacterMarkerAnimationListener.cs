@@ -31,6 +31,9 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         if (currentProjectile != null) {
             return; //only 1 projectile at a time!
         }
+        if (target.marker == null) {
+            return;
+        }
         //Create projectile here and set the on hit action to combat state OnAttackHit
         GameObject projectileGO = GameObject.Instantiate(projectilePrefab, Vector3.zero, Quaternion.identity, parentMarker.projectileParent);
         projectileGO.transform.localPosition = Vector3.zero;

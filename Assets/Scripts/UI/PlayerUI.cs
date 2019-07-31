@@ -215,6 +215,7 @@ public class PlayerUI : MonoBehaviour {
         //Kill Count UI
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
 
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
@@ -270,6 +271,12 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
+        if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+            UpdateKillCount();
+            OrderKillSummaryItems();
+        }
+    }
+    private void OnCharacterLostTrait(Character character, Trait trait) {
         if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
             UpdateKillCount();
             OrderKillSummaryItems();

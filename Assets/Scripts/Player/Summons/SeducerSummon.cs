@@ -93,6 +93,10 @@ public class SeducerSummon : Summon {
             }
         }
     }
+    public override void LevelUp() {
+        base.LevelUp();
+        seduceChance += 10;
+    }
     #endregion
 
     private void Disappear() {

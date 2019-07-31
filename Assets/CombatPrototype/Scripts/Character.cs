@@ -2388,7 +2388,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         _characterColor = CombatManager.Instance.UseRandomCharacterColor();
         _characterColorCode = ColorUtility.ToHtmlStringRGBA(_characterColor).Substring(0, 6);
     }
-    private void OnOtherCharacterDied(Character characterThatDied) {
+    internal void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != this.id) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
             marker.OnOtherCharacterDied(characterThatDied);
@@ -3415,7 +3415,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
 
     #region RPG
     private bool hpMagicRangedStatMod;
-    public void LevelUp() {
+    public virtual void LevelUp() {
         //Only level up once per day
         //if (_lastLevelUpDay == GameManager.Instance.continuousDays) {
         //    return;

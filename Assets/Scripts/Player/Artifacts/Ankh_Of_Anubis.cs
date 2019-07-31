@@ -34,6 +34,10 @@ public class Ankh_Of_Anubis : Artifact {
         Messenger.RemoveListener(Signals.TICK_ENDED, CheckPerTick);
         ObjectPoolManager.Instance.DestroyObject(particle.gameObject);
     }
+    public override void LevelUp() {
+        base.LevelUp();
+        duration += 10;
+    }
     #endregion
 
     private void CheckPerTick() {

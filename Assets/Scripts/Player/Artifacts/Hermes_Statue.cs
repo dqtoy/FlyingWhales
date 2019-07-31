@@ -11,11 +11,11 @@ public class Hermes_Statue : Artifact {
 
     public Hermes_Statue() : base(ARTIFACT_TYPE.Hermes_Statue) {
         poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
-        uses = 3;
+        uses = 1;
     }
     public Hermes_Statue(SaveDataArtifact data) : base(data) {
         poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
-        uses = 3;
+        uses = 1;
     }
 
     #region Overrides

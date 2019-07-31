@@ -33,7 +33,7 @@ public class LevelUpUI : MonoBehaviour {
             pendingReplaceActions.Add(() => ShowLevelUpUI(minionToLevelUp, identifierToLevelUp));
             return;
         }
-        UIManager.Instance.Pause();
+        //UIManager.Instance.Pause();
         Utilities.DestroyChildren(choicesParent);
         UpdateMinionToLevelUp(minionToLevelUp);
 
@@ -79,7 +79,7 @@ public class LevelUpUI : MonoBehaviour {
 
 
     private void Close() {
-        UIManager.Instance.Unpause();
+        //UIManager.Instance.Unpause();
         this.gameObject.SetActive(false);
         if (pendingReplaceActions.Count > 0) {
             System.Action pending = pendingReplaceActions[0];

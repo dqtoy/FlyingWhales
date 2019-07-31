@@ -24093,6 +24093,8 @@ MonoBehaviour:
     type: 2}
   aoeParticlesPrefab: {fileID: 1513875034276412, guid: 061f2e4dfec38354189b89610d3cabd6,
     type: 2}
+  aoeParticlesAutoDestroyPrefab: {fileID: 1567879278629922, guid: dc7f162dba7b8db4a91545a576dc0867,
+    type: 2}
   pauseTickEnded2: 0
 --- !u!114 &557822220
 MonoBehaviour:

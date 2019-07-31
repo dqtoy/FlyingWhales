@@ -113,7 +113,7 @@ public class KillCountCharacterItem : PooledObject {
         float scrollDirection = -1f;
 
         while (true) {
-            float newX = deathLblRT.anchoredPosition.x + (0.25f * scrollDirection);
+            float newX = deathLblRT.anchoredPosition.x + (0.5f * scrollDirection);
             deathLblRT.anchoredPosition = new Vector3(newX, startPosition.y, startPosition.z);
             if (deathLblRT.anchoredPosition.x < difference) {
                 scrollDirection = 1f;

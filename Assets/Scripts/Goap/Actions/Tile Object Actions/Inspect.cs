@@ -40,6 +40,7 @@ public class Inspect : GoapAction {
     #region State Effects
     public void PreInspectSuccess() {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     public void AfterInspectSuccess() {
         if (poiTarget is Artifact) {

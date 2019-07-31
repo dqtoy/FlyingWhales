@@ -959,25 +959,25 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Hosility Collision
-    public bool AddHostileInRange(Character poi, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE, bool checkHostility = true, bool processCombatBehavior = true) {
-        if (!hostilesInRange.Contains(poi)) {
-            if (character.GetNormalTrait("Zapped") == null && !poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) &&
-                (!checkHostility || forcedReaction != CHARACTER_STATE.NONE || this.character.IsHostileWith(poi))) {
+    public bool AddHostileInRange(Character character, CHARACTER_STATE forcedReaction = CHARACTER_STATE.NONE, bool checkHostility = true, bool processCombatBehavior = true) {
+        if (!hostilesInRange.Contains(character)) {
+            if (this.character.GetNormalTrait("Zapped") == null && !character.isDead && !character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) &&
+                (!checkHostility || forcedReaction != CHARACTER_STATE.NONE || this.character.IsHostileWith(character))) {
                 if (!WillCharacterTransferEngageToFleeList()) {
-                    hostilesInRange.Add(poi);
+                    hostilesInRange.Add(character);
                     //NormalReactToHostileCharacter(poi, forcedReaction);
-
+                    Debug.Log(character.name + " was added to " + this.character.name + "'s hostile range!");
                     //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
                     if (processCombatBehavior) {
-                        if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                        if (this.character.stateComponent.currentState != null && this.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                             Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
                         } else {
-                            character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+                            this.character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
                         }
                     }
                 } else {
                     //Transfer to flee list
-                    return AddAvoidInRange(poi, processCombatBehavior);
+                    return AddAvoidInRange(character, processCombatBehavior);
                 }
                 return true;
             }
@@ -1029,7 +1029,7 @@ public class CharacterMarker : PooledObject {
             //UnhighlightMarker(); //This is for testing only!
             //OnHostileInRangeRemoved(poi);
             string removeHostileSummary = poi.name + " was removed from " + character.name + "'s hostile range.";
-            character.PrintLogIfActive(removeHostileSummary);
+            Debug.Log(removeHostileSummary);
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
             if (processCombatBehavior && character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                 CombatState combatState = character.stateComponent.currentState as CombatState;

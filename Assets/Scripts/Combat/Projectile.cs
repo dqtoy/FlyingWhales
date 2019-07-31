@@ -22,18 +22,12 @@ public class Projectile : MonoBehaviour {
 
 
     #region Monobehaviours
-    private void Awake() {
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
-    }
-    private void OnEnable() {
-        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
-    }
-    private void OnDisable() {
-        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
-        if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
-            Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-        }
-    }
+    //private void OnDisable() {
+    //    Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
+    //    if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
+    //        Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+    //    }
+    //}
     private void OnDestroy() {
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
@@ -50,10 +44,14 @@ public class Projectile : MonoBehaviour {
         this.target = target;
         this.targetCharacter = targetCharacter;
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
     }
 
     private void FixedUpdate() {
         if (target == null) {
+            return;
+        }
+        if (GameManager.Instance.isPaused) {
             return;
         }
         Vector2 direction = (Vector2)target.position - rigidBody.position;
@@ -78,6 +76,8 @@ public class Projectile : MonoBehaviour {
         if (isPaused) {
             _pausedVelocity = rigidBody.velocity;
             _pausedAngularVelocity = rigidBody.angularVelocity;
+            rigidBody.velocity = Vector2.zero;
+            rigidBody.angularVelocity = 0f;
             rigidBody.isKinematic = true;
         } else {
             rigidBody.isKinematic = false;

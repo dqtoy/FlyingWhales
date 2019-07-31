@@ -26,6 +26,7 @@ public class Flamestrike : CombatAbility {
         }
     }
     public override void ActivateAbility(List<IPointOfInterest> targetPOIs) {
+        GameManager.Instance.CreateAOEEffectAt(InteriorMapManager.Instance.GetTileFromMousePosition(), abilityRadius, true);
         for (int i = 0; i < targetPOIs.Count; i++) {
             if (targetPOIs[i] is Character) {
                 Character character = targetPOIs[i] as Character;
