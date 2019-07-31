@@ -27,7 +27,7 @@ public class NewAbilityUI : MonoBehaviour {
             pendingReplaceActions.Add(() => ShowNewAbilityUI(minionToLevelUp, ability));
             return;
         }
-        UIManager.Instance.Pause();
+        //UIManager.Instance.Pause();
         UpdateMinionToLevelUp(minionToLevelUp);
         UpdateNewAbility(ability);
         this.gameObject.SetActive(true);
@@ -78,7 +78,7 @@ public class NewAbilityUI : MonoBehaviour {
     }
 
     private void Close() {
-        UIManager.Instance.Unpause();
+        //UIManager.Instance.Unpause();
         this.gameObject.SetActive(false);
         if (pendingReplaceActions.Count > 0) {
             System.Action pending = pendingReplaceActions[0];

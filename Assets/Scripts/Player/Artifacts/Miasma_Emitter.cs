@@ -16,7 +16,7 @@ public class Miasma_Emitter : Artifact {
     public Miasma_Emitter() : base(ARTIFACT_TYPE.Miasma_Emitter) {
         range = 3;
         duration = 50;
-    }
+    }   
     public Miasma_Emitter(SaveDataArtifact data) : base(data) {
         range = 3;
         duration = 50;

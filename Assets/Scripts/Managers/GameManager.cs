@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private GameObject hitEffectPrefab;
     [SerializeField] private GameObject fireEffectPrefab;
     [SerializeField] private GameObject aoeParticlesPrefab;
+    [SerializeField] private GameObject aoeParticlesAutoDestroyPrefab;
 
     private const float X1_SPEED = 0.75f;
     private const float X2_SPEED = 0.5f;
@@ -390,10 +391,15 @@ public class GameManager : MonoBehaviour {
         go.SetActive(true);
         //StartCoroutine(FireEffect(character));
     }
-    public AOEParticle CreateAOEEffectAt(LocationGridTile tile, int range) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(aoeParticlesPrefab.name, Vector3.zero, Quaternion.identity, tile.parentAreaMap.objectsParent);
+    public AOEParticle CreateAOEEffectAt(LocationGridTile tile, int range, bool autoDestroy = false) {
+        GameObject go;
+        if (autoDestroy) {
+            go = ObjectPoolManager.Instance.InstantiateObjectFromPool(aoeParticlesAutoDestroyPrefab.name, Vector3.zero, Quaternion.identity, tile.parentAreaMap.objectsParent);
+        } else {
+            go = ObjectPoolManager.Instance.InstantiateObjectFromPool(aoeParticlesPrefab.name, Vector3.zero, Quaternion.identity, tile.parentAreaMap.objectsParent);
+        }
         AOEParticle particle = go.GetComponent<AOEParticle>();
-        particle.PlaceParticleEffect(tile, range);
+        particle.PlaceParticleEffect(tile, range, autoDestroy);
         return particle;
     }
     #endregion

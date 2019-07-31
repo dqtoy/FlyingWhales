@@ -16326,58 +16326,60 @@ MonoBehaviour:
   gridSizeX: 20
   gridSizeY: 15
   regionCount: 5
-  minColumnsBetweenSettlements: 3
-  maxColumnsBetweenSettlements: 5
+  minColumnsBetweenSettlements: 5
+  maxColumnsBetweenSettlements: 8
   tileColumnRows: 3
   tileCollectionWidth: 4
   tileCollectionHeight: 4
   minSettltementCount: 5
   maxSettltementCount: 7
-  minCitizenCount: 5
-  maxCitizenCount: 10
+  minCitizenCountFirstSettlement: 4
+  maxCitizenCountFirstSettlement: 6
+  minCitizenCountIncreasePerSettlement: 1
+  maxCitizenCountIncreasePerSettlement: 3
   landmarkGenTable:
     m_keys: 0000000001000000020000000300000004000000
     m_values:
     - landmarkTypes:
         m_keys: 0000000001000000020000000300000004000000
         m_values:
-        - data: 1e000000
+        - data: 2a000000
         - data: 2d000000
-        - data: 1b000000
+        - data: 17000000
         - data: 18000000
-        - data: 1f000000
+        - data: 19000000
     - landmarkTypes:
         m_keys: 0000000001000000020000000300000004000000
         m_values:
-        - data: 1e000000
+        - data: 2a000000
         - data: 2d000000
-        - data: 1b000000
+        - data: 17000000
         - data: 18000000
-        - data: 1f000000
+        - data: 19000000
     - landmarkTypes:
         m_keys: 0000000001000000020000000300000004000000
         m_values:
-        - data: 1e000000
+        - data: 2a000000
         - data: 2d000000
-        - data: 1b000000
+        - data: 17000000
         - data: 18000000
-        - data: 1f000000
+        - data: 19000000
     - landmarkTypes:
         m_keys: 0000000001000000020000000300000004000000
         m_values:
-        - data: 1e000000
+        - data: 2a000000
         - data: 2d000000
-        - data: 1b000000
+        - data: 17000000
         - data: 18000000
-        - data: 1f000000
+        - data: 19000000
     - landmarkTypes:
         m_keys: 0000000001000000020000000300000004000000
         m_values:
-        - data: 1e000000
+        - data: 2a000000
         - data: 2d000000
-        - data: 1b000000
+        - data: 17000000
         - data: 18000000
-        - data: 1f000000
+        - data: 19000000
 --- !u!1 &1665094242
 GameObject:
   m_ObjectHideFlags: 0

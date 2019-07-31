@@ -65,9 +65,9 @@ public class StoryEventUI : MonoBehaviour {
         this.gameObject.SetActive(true);
     }
     public void CloseMenu() {
-        if (rootEvent.trigger != STORY_EVENT_TRIGGER.END) {
-            UIManager.Instance.Unpause();
-        }
+        //if (rootEvent.trigger != STORY_EVENT_TRIGGER.END) {
+        //    UIManager.Instance.Unpause();
+        //}
         this.gameObject.SetActive(false);
     }
 

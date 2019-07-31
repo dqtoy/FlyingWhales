@@ -36,6 +36,8 @@ public class Sacrifice : CombatAbility {
         if (targetPOI is Character) {
             Character character = targetPOI as Character;
 
+            GameManager.Instance.CreateAOEEffectAt(character.gridTileLocation, _explosionRadius, true);
+
             List<LocationGridTile> tilesInRadius = character.gridTileLocation.parentAreaMap.GetTilesInRadius(character.gridTileLocation, _explosionRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
             List<Character> affectedByExplosion = new List<Character>();
             for (int i = 0; i < character.specificLocation.charactersAtLocation.Count; i++) {

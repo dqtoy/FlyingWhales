@@ -24,10 +24,14 @@ public class WorldConfigManager : MonoBehaviour {
     public int minSettltementCount;
     [Tooltip("Maximum number of settlements to generate")]
     public int maxSettltementCount;
-    [Tooltip("Minimum number of citizens to generate per settlement")]
-    public int minCitizenCount;
-    [Tooltip("Maximum number of citizens to generate per settlement")]
-    public int maxCitizenCount;
+    [Tooltip("Minimum number of citizens to generate on the first settlement")]
+    public int minCitizenCountFirstSettlement;
+    [Tooltip("Maximum number of citizens to generate on the first settlement")]
+    public int maxCitizenCountFirstSettlement;
+    [Tooltip("Minimum number of citizens to increase per settlement")]
+    public int minCitizenCountIncreasePerSettlement;
+    [Tooltip("Maximum number of citizens to increase per settlement")]
+    public int maxCitizenCountIncreasePerSettlement;
 
     [Header("Landmark Settings")]
     [SerializeField] private LandmarkGenerationDictionary landmarkGenTable;
@@ -55,7 +59,7 @@ public class WorldConfigManager : MonoBehaviour {
             columns.Add(new TileColumn(tileColumnRows, true, width));
             width += tileCollectionWidth; //1 column for settlement
             if (i + 1 != settlementCount) { //do not add tiles after last settlement
-                int columnsInBetween = Random.Range(minColumnsBetweenSettlements, maxColumnsBetweenSettlements);
+                int columnsInBetween = Random.Range(minColumnsBetweenSettlements, maxColumnsBetweenSettlements + 1);
                 for (int j = 0; j < columnsInBetween; j++) {
                     columns.Add(new TileColumn(tileColumnRows, false, width));
                     width += tileCollectionWidth; //random number of columns after settlement
@@ -112,7 +116,6 @@ public class RandomWorld {
         summary += "\nColumns: " + columns.Count.ToString();
         Debug.Log(summary);
     }
-
     public void ColorColumns() {
         for (int i = 0; i < columns.Count; i++) {
             TileColumn column = columns[i];
@@ -123,9 +126,7 @@ public class RandomWorld {
             for (int j = 0; j < column.rows.Length; j++) {
                 HexTile[] tiles = column.rows[j].GetAllTiles(GridMap.Instance.map);
                 for (int k = 0; k < tiles.Length; k++) {
-                    if (tiles[k] != null) {
-                        tiles[k].spriteRenderer.color = columnColor;
-                    }
+                    tiles[k].spriteRenderer.color = columnColor;
                 }
             }
         }
@@ -243,7 +244,9 @@ public class TileRow {
     }
 
     public HexTile[] GetAllTiles(HexTile[,] map) {
-        HexTile[] tiles = new HexTile[(maxX + 1) * (maxY + 1)];
+        int differenceX = maxX - minX;
+        int differenceY = maxY - minY;
+        HexTile[] tiles = new HexTile[(differenceX + 1) * (differenceY + 1)];
         int count = 0;
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {

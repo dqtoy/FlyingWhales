@@ -308,6 +308,7 @@ public class LandmarkManager : MonoBehaviour {
         yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.SKIRMISH, 25);
         yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.STORY_EVENT, 25);
 
+        int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCountFirstSettlement, WorldConfigManager.Instance.maxCitizenCountFirstSettlement + 1);
         //create player portal
         portal = CreateMajorLandmarkOnColumn(world.columns.First(), LANDMARK_TYPE.DEMONIC_PORTAL, AREA_TYPE.DEMONIC_INTRUSION, 0);
 
@@ -345,10 +346,10 @@ public class LandmarkManager : MonoBehaviour {
                     //create settlement first
                     TileRow rowInNextColumnWithMajorLandmark = nextColumn.GetRowWithMajorLandmark();
                     if (rowInNextColumnWithMajorLandmark == null) {
-                        BaseLandmark landmark = CreateMajorLandmarkOnColumn(nextColumn, LANDMARK_TYPE.PALACE, Utilities.RandomSettlementType(), Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount));
+                        BaseLandmark landmark = CreateMajorLandmarkOnColumn(nextColumn, LANDMARK_TYPE.PALACE, Utilities.RandomSettlementType(), citizenCount);
                         rowInNextColumnWithMajorLandmark = nextColumn.GetRowWithMajorLandmark();
+                        citizenCount += Random.Range(WorldConfigManager.Instance.minCitizenCountIncreasePerSettlement, WorldConfigManager.Instance.maxCitizenCountIncreasePerSettlement + 1);
                     }
-                    
                     //next column has a settlement, connect all landmarks to that
                     connections = 1;
                     for (int j = 0; j < currColumn.rows.Length; j++) {
