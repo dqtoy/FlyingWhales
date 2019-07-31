@@ -73,6 +73,7 @@ public class Miasma_Emitter : Artifact {
                 currCharacter.marker.RemoveTerrifyingObject(this);
             }
         }
+        ObjectPoolManager.Instance.DestroyObject(particle.gameObject);
     }
     #endregion
 
