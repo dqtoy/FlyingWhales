@@ -97,12 +97,14 @@ public class Player : ILeader {
         AddWinListener();
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
         Messenger.AddListener(Signals.TICK_STARTED, EverydayAction);
+
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
 
         //goap
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
     }
     private void EverydayAction() {
         //DepleteThreatLevel();
@@ -151,6 +153,14 @@ public class Player : ILeader {
     private void OnTileRemovedFromPlayerArea(Area affectedArea, HexTile removedTile) {
         if (playerArea != null && affectedArea.id == playerArea.id) {
             Biomes.Instance.UpdateTileVisuals(removedTile);
+        }
+    }
+    private void OnAreaMapOpened(Area area) {
+        for (int i = 0; i < minions.Length; i++) {
+            if(minions[i] != null) {
+                minions[i].ResetCombatAbilityCD();
+                minions[i].ResetInterventionAbilitiesCD();
+            }
         }
     }
     #endregion

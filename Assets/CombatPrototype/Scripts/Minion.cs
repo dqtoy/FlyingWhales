@@ -215,6 +215,13 @@ public class Minion {
         }
         return all;
     }
+    public void ResetInterventionAbilitiesCD() {
+        for (int i = 0; i < interventionAbilities.Length; i++) {
+            if(interventionAbilities[i] != null) {
+                interventionAbilities[i].InstantCooldown();
+            }
+        }
+    }
     #endregion
 
     #region Combat Ability
@@ -237,6 +244,9 @@ public class Minion {
     }
     private void RejectCombatAbility(object objToReplace) {
 
+    }
+    public void ResetCombatAbilityCD() {
+        combatAbility.StopCooldown();
     }
     #endregion
 

@@ -26,6 +26,7 @@ public class BaseLandmark {
     public List<BaseLandmark> outGoingConnections { get; private set; }
     public List<BaseLandmark> sameColumnLandmarks { get; private set; }
     public List<HexTile> sameRowTiles { get; private set; }
+    public Character skirmishEnemy { get; private set; }
 
     #region getters/setters
     public int id {
@@ -501,25 +502,34 @@ public class BaseLandmark {
                 PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
             }
         } else if (yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
-            Area area = GetUpcomingSettlement();
-            if(area != null) {
-                if(area.owner.leader is Character) {
-                    Character areaLeader = area.owner.leader as Character;
+            PlayerUI.Instance.skirmishUI.ShowSkirmishUI(PlayerManager.Instance.player.currentMinionLeader.character, skirmishEnemy);
+        }
+    }
+    #endregion
 
-                    WeightedDictionary<CharacterRole> roleChoices = new WeightedDictionary<CharacterRole>();
-                    roleChoices.AddElement(CharacterRole.CIVILIAN, 30);
-                    roleChoices.AddElement(CharacterRole.ADVENTURER, 35);
-                    roleChoices.AddElement(CharacterRole.SOLDIER, 35);
+    #region Skirmish
+    public void GenerateSkirmishEnemy() {
+        if(skirmishEnemy != null) {
+            return;
+        }
+        Area area = GetUpcomingSettlement();
+        if (area != null) {
+            if (area.owner.leader is Character) {
+                Character areaLeader = area.owner.leader as Character;
 
-                    Character enemy = new Character(roleChoices.PickRandomElementGivenWeights(), areaLeader.race, Utilities.GetRandomGender());
-                    enemy.OnUpdateRace();
-                    enemy.SetLevel(areaLeader.level - 1);
+                WeightedDictionary<CharacterRole> roleChoices = new WeightedDictionary<CharacterRole>();
+                roleChoices.AddElement(CharacterRole.CIVILIAN, 30);
+                roleChoices.AddElement(CharacterRole.ADVENTURER, 35);
+                roleChoices.AddElement(CharacterRole.SOLDIER, 35);
 
-                    PlayerUI.Instance.skirmishUI.ShowSkirmishUI(PlayerManager.Instance.player.currentMinionLeader.character, enemy);
-                }
-            } else {
-                throw new System.Exception(tileLocation.name + " has no upcoming settlement!");
+                Character enemy = new Character(roleChoices.PickRandomElementGivenWeights(), areaLeader.race, Utilities.GetRandomGender());
+                enemy.OnUpdateRace();
+                enemy.SetLevel(areaLeader.level - 1);
+
+                skirmishEnemy = enemy;
             }
+        } else {
+            throw new System.Exception(tileLocation.name + " has no upcoming settlement!");
         }
     }
     #endregion

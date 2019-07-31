@@ -10,6 +10,7 @@ public class JobQueueItem {
     public bool cannotCancelJob { get; private set; }
     public bool cancelJobOnFail { get; private set; }
     public bool cannotOverrideJob { get; private set; }
+    public bool isStealth { get; private set; }
     public List<Character> blacklistedCharacters { get; private set; }
     public int priority { get { return GetPriority(); } }
 

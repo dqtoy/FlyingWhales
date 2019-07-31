@@ -71,11 +71,6 @@ public class PlayerUI : MonoBehaviour {
     private List<MinionLeaderPicker> minionLeaderPickers;
     private MinionLeaderPicker tempCurrentMinionLeaderPicker;
 
-    [Header("Corruption and Threat")]
-    [SerializeField] private GameObject corruptTileConfirmationGO;
-    [SerializeField] private TextMeshProUGUI corruptTileConfirmationLbl;
-    [SerializeField] private Slider threatMeter;
-
     [Header("Summons")]
     [SerializeField] private Image currentSummonImg;
     [SerializeField] private TextMeshProUGUI currentSummonCountLbl;
@@ -114,6 +109,9 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("Skirmish UI")]
     public SkirmishUI skirmishUI;
+    public CharacterPortrait skirmishEnemyPortrait;
+    public TextMeshProUGUI skirmishEnemyText;
+    public GameObject skirmishConfirmationGO;
 
     [Header("Saving/Loading")]
     public Button saveGameButton;
@@ -789,32 +787,25 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Corruption and Threat
-    public void InitializeThreatMeter() {
-        threatMeter.minValue = 0f;
-        threatMeter.maxValue = Player.MAX_THREAT;
-        threatMeter.value = 0f;
-    }
     public void ShowCorruptTileConfirmation(HexTile tile) {
         if (tile.CanBeCorrupted() && !tile.isCorrupted) {//&& tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted
             PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
-            if (tile.areaOfTile != null) {
-                corruptTileConfirmationLbl.text = "To corrupt this area, you must defeat all residents within. Once you proceeed there is no going back. Do you wish to take on this settlement?";
-            } else {
-                corruptTileConfirmationLbl.text = "Corrupt this Area?";
-            }
-            corruptTileConfirmationGO.SetActive(true);
             if(tile.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
+                tile.landmarkOnTile.GenerateSkirmishEnemy();
+                skirmishEnemyPortrait.GeneratePortrait(tile.landmarkOnTile.skirmishEnemy);
+                string text = tile.landmarkOnTile.skirmishEnemy.name;
+                text += "\nLvl." + tile.landmarkOnTile.skirmishEnemy.level + " " + tile.landmarkOnTile.skirmishEnemy.raceClassName;
+                skirmishEnemyText.text = text;
+                skirmishConfirmationGO.SetActive(true);
                 ShowSelectMinionLeader();
             } else {
-                Utilities.DestroyChildren(minionLeaderPickerParent.transform);
-                minionLeaderPickers.Clear();
                 tempCurrentMinionLeaderPicker = null;
-                selectMinionLeaderText.gameObject.SetActive(false);
+                OnClickYesCorruption();
             }
         }
     }
     public void HideCorruptTileConfirmation() {
-        corruptTileConfirmationGO.SetActive(false);
+        skirmishConfirmationGO.SetActive(false);
     }
     public void OnClickYesCorruption() {
         HideCorruptTileConfirmation();
@@ -860,9 +851,9 @@ public class PlayerUI : MonoBehaviour {
     public void OnClickNoCorruption() {
         HideCorruptTileConfirmation();
     }
-    public void UpdateThreatMeter() {
-        threatMeter.value = PlayerManager.Instance.player.threat;
-    }
+    //public void UpdateThreatMeter() {
+    //    threatMeter.value = PlayerManager.Instance.player.threat;
+    //}
     #endregion
 
     #region Summons
