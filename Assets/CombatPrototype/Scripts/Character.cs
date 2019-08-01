@@ -140,10 +140,10 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     //alter egos
     public string currentAlterEgoName { get; private set; } //this character's currently active alter ego. Usually just Original.
     public Dictionary<string, AlterEgoData> alterEgos { get; private set; }
-
     public string originalClassName { get; private set; } //the class that this character started with
-
     private List<Action> pendingActionsAfterMultiThread; //List of actions to perform after a character is finished with all his/her multithread processing (This is to prevent errors while the character has a thread running)
+
+    public bool isFollowingPlayerInstruction { get; private set; } //is this character moving/attacking because of the players instruction
 
     //For Testing
     public List<string> locationHistory { get; private set; }
@@ -2538,6 +2538,28 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     public bool IsAble() {
         return currentHP > 0 && !HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !isDead;
+    }
+    public void SetIsFollowingPlayerInstruction(bool state) {
+        isFollowingPlayerInstruction = state;
+    }
+    /// <summary>
+    /// Can this character be instructed by the player?
+    /// </summary>
+    /// <returns>True or false.</returns>
+    public virtual bool CanBeInstructedByPlayer() {
+        if (PlayerManager.Instance.player.playerFaction != this.faction) {
+            return false;
+        }
+        if (isDead) {
+            return false;
+        }
+        if (stateComponent.currentState is CombatState && !(stateComponent.currentState as CombatState).isAttacking) {
+            return false; //character is fleeing
+        }
+        if (HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
+        return true;
     }
     #endregion
 
@@ -7282,7 +7304,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                         crimeToReport = witnessedCrime;
                         //if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
                         if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
-                            this.marker.AddHostileInRange(criminal.owner, CHARACTER_STATE.COMBAT);
+                            this.marker.AddHostileInRange(criminal.owner, false);
                         }
                     }
                     job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
@@ -7494,7 +7516,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             }
         }
     }
-    private void OnCharacterEndedState(Character character, CharacterState state) {
+    public void OnCharacterEndedState(Character character, CharacterState state) {
         if (character == this) {
             if (state is CombatState && marker != null) {
                 marker.OnThisCharacterEndedCombatState();

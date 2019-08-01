@@ -97,6 +97,15 @@ public class SeducerSummon : Summon {
         base.LevelUp();
         seduceChance += 10;
     }
+    public override bool CanBeInstructedByPlayer() {
+        bool canBeInstructed = base.CanBeInstructedByPlayer();
+        if (canBeInstructed) {
+            if (ignoreHostility > 0) {
+                canBeInstructed = false;
+            }
+        }
+        return canBeInstructed;
+    }
     #endregion
 
     private void Disappear() {

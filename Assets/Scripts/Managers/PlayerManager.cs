@@ -11,25 +11,13 @@ public class PlayerManager : MonoBehaviour {
     public const int MAX_LEVEL_COMBAT_ABILITY = 3;
     public const int MAX_LEVEL_INTERVENTION_ABILITY = 3;
 
-    public int totalLifestonesInWorld;
     public bool isChoosingStartingTile = false;
     public Player player = null;
-    public Character playerCharacter;
     public INTERVENTION_ABILITY[] allInterventionAbilities;
     public COMBAT_ABILITY[] allCombatAbilities;
 
     [SerializeField] private Sprite[] _playerAreaFloorSprites;
     [SerializeField] private LandmarkStructureSprite[] _playerAreaDefaultStructureSprites;
-
-    public Dictionary<LANDMARK_TYPE, CurrenyCost> playerStructureTypes = new Dictionary<LANDMARK_TYPE, CurrenyCost>() {
-        { LANDMARK_TYPE.DEMONIC_PORTAL, new CurrenyCost{ amount = 0, currency = CURRENCY.SUPPLY } },
-        { LANDMARK_TYPE.CORRUPTION_NODE, new CurrenyCost{ amount = 50, currency = CURRENCY.SUPPLY } },
-        { LANDMARK_TYPE.TRAINING_ARENA, new CurrenyCost{ amount = 100, currency = CURRENCY.SUPPLY } },
-        { LANDMARK_TYPE.RITUAL_CIRCLE, new CurrenyCost{ amount = 200, currency = CURRENCY.SUPPLY } },
-        { LANDMARK_TYPE.PENANCE_TEMPLE, new CurrenyCost{ amount = 100, currency = CURRENCY.SUPPLY } },
-        { LANDMARK_TYPE.MANA_EXTRACTOR, new CurrenyCost{ amount = 100, currency = CURRENCY.SUPPLY } },
-        { LANDMARK_TYPE.RAMPART, new CurrenyCost{ amount = 0, currency = CURRENCY.SUPPLY } },
-    };
 
     [Header("Job Action Icons")]
     [SerializeField] private StringSpriteDictionary jobActionIcons;
@@ -58,9 +46,9 @@ public class PlayerManager : MonoBehaviour {
         allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
 
         //Unit Selection
-        //Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
-        //Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        //Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
+        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
     }
 
     public void LoadStartingTile() {
@@ -178,10 +166,6 @@ public class PlayerManager : MonoBehaviour {
             sameRowTile.SetCorruption(true);
         }
         //tile.StopCorruptionAnimation();
-    }
-    public void AdjustTotalLifestones(int amount) {
-        totalLifestonesInWorld += amount;
-        Debug.Log("Adjusted lifestones in world by " + amount + ". New total is " + totalLifestonesInWorld);
     }
 
     #region Utilities
@@ -304,19 +288,6 @@ public class PlayerManager : MonoBehaviour {
         return null;
     }
     #endregion
-    //#region Minion
-    //[ContextMenu("Create And Add New Minion")]
-    //public void CreateMinionForTesting() {
-    //    Minion minion = CreateNewMinion("Pride");
-    //    player.AddMinion(minion);
-    //}
-    //public Minion CreateNewMinion(string className, int level = 1) {
-    //    Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, RACE.HUMANS, GENDER.MALE,
-    //        player.playerFaction, player.playerArea), false);
-    //    minion.SetLevel(level);
-    //    return minion;
-    //}
-    //#endregion
 
     #region Unit Selection
     private List<Character> selectedUnits = new List<Character>();
@@ -340,9 +311,10 @@ public class PlayerManager : MonoBehaviour {
         if (menu is CharacterInfoUI) {
             DeselectAllUnits();
             CharacterInfoUI infoUI = menu as CharacterInfoUI;
-            if (infoUI.activeCharacter.faction == PlayerManager.Instance.player.playerFaction) {
-                SelectUnit(infoUI.activeCharacter);
-            }
+            SelectUnit(infoUI.activeCharacter);
+            //if (infoUI.activeCharacter.CanBeInstructedByPlayer()) {
+            //    SelectUnit(infoUI.activeCharacter);
+            //}
         }
     }
     private void OnMenuClosed(UIMenu menu) {
@@ -355,12 +327,43 @@ public class PlayerManager : MonoBehaviour {
             if (keyCode == KeyCode.Mouse1) {
                 //right click
                 for (int i = 0; i < selectedUnits.Count; i++) {
-                    selectedUnits[i].marker.GoTo(InteriorMapManager.Instance.currentlyShowingMap.worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
+                    Character character = selectedUnits[i];
+                    if (!character.CanBeInstructedByPlayer()) {
+                        continue;
+                    }
+                    IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
+                    character.StopCurrentAction(false);
+                    if (character.stateComponent.currentState != null) {
+                        character.stateComponent.currentState.OnExitThisState();
+                    }
+                    character.marker.ClearHostilesInRange();
+                    character.marker.ClearAvoidInRange();
+                    character.SetIsFollowingPlayerInstruction(false); //need to reset before giving commands
+                    if (hoveredPOI is Character) {
+                        Character target = hoveredPOI as Character;
+                        if (character.IsHostileWith(target) && character.IsCombatReady()) {
+                            character.marker.AddHostileInRange(target);
+                            CombatState cs = character.stateComponent.currentState as CombatState;
+                            if (cs != null) {
+                                cs.SetForcedTarget(target);
+                            } else {
+                                throw new System.Exception(character.name + " was instructed to attack " + target.name + " but did not enter combat state!");
+                            }
+                        } else {
+                            Debug.Log(character.name + " is not combat ready or is not hostile with " + target.name + ". Ignoring command.");
+                        }
+                    } else {
+                        character.marker.GoTo(InteriorMapManager.Instance.currentlyShowingMap.worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition), () => OnFinishInstructionFromPlayer(character));
+                    }
+                    character.SetIsFollowingPlayerInstruction(true);
                 }
             } else if (keyCode == KeyCode.Mouse0) {
                 DeselectAllUnits();
             }
         }
+    }
+    private void OnFinishInstructionFromPlayer(Character character) {
+        character.SetIsFollowingPlayerInstruction(false);
     }
     #endregion
 }

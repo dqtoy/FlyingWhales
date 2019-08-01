@@ -498,7 +498,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         if (objHere == null) {
 #if UNITY_EDITOR
             if (inputButton == PointerEventData.InputButton.Right) {
-                UIManager.Instance.poiTestingUI.ShowUI(this);
+                //UIManager.Instance.poiTestingUI.ShowUI(this);
                 //if (InteriorMapManager.Instance.IsHoldingPOI()) {
                 //    InteriorMapManager.Instance.PlaceHeldPOI(this);
                 //}
@@ -516,7 +516,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 }
             } else if (inputButton == PointerEventData.InputButton.Right) {
                 if (objHere is TileObject) {
-                    UIManager.Instance.poiTestingUI.ShowUI(objHere);
+                    //UIManager.Instance.poiTestingUI.ShowUI(objHere);
                 }
             } else {
                 if (objHere is TileObject) {

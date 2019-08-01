@@ -64,6 +64,17 @@ public class ThiefSummon : Summon {
         base.LevelUp();
         itemsToSteal += 1;
     }
+    public override bool CanBeInstructedByPlayer() {
+        bool canBeInstructed = base.CanBeInstructedByPlayer();
+        if (canBeInstructed) {
+            if (currentAction != null && !currentAction.goapType.IsHostileAction()) {
+                canBeInstructed = false;
+            } else if (stateComponent.currentState == null || !(stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT || stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)) {
+                canBeInstructed = false;
+            }
+        }
+        return canBeInstructed;
+    }
     #endregion
 
     private void OnReachExitAction() {

@@ -1241,22 +1241,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             purchaseTileItem.onClickAction += () => PlayerManager.Instance.PurchaseTile(this);
             settings.AddMenuItem(purchaseTileItem);
         }
-        if (this.areaOfTile != null && this.areaOfTile.id == PlayerManager.Instance.player.playerArea.id && this.landmarkOnTile == null) {
-            ContextMenuItemSettings createLandmarkItem = new ContextMenuItemSettings("Create Landmark");
-            ContextMenuSettings createLandmarkSettings = new ContextMenuSettings();
-            createLandmarkItem.SetSubMenu(createLandmarkSettings);
-            settings.AddMenuItem(createLandmarkItem);
-
-            foreach (LANDMARK_TYPE landmarkType in PlayerManager.Instance.playerStructureTypes.Keys) {
-                if (landmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
-                    //if (PlayerManager.Instance.CanCreateLandmarkOnTile(landmarkType, this)) {
-                    //    ContextMenuItemSettings createLandmark = new ContextMenuItemSettings(Utilities.NormalizeStringUpperCaseFirstLetters(landmarkType.ToString()));
-                    //    createLandmark.onClickAction = () => PlayerManager.Instance.CreatePlayerLandmarkOnTile(this, landmarkType);
-                    //    createLandmarkSettings.AddMenuItem(createLandmark);
-                    //}
-                }
-            }
-        }
 #if UNITY_EDITOR
         //if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.isShowing) {
         //    if (this.landmarkOnTile != null) {
