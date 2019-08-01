@@ -11,6 +11,7 @@ public class CombatState : CharacterState {
     public Character currentClosestHostile { get; private set; }
     private System.Action onEndStateAction; // What should happen when this state ends?
     public GoapAction actionThatTriggeredThisState { get; private set; }
+    public Character forcedTarget { get; private set; }
 
     public CombatState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Combat State";
@@ -182,7 +183,10 @@ public class CombatState : CharacterState {
         if (isAttacking) {
             log += "\n" + stateComponent.character.name + " is attacking!";
             Trait taunted = stateComponent.character.GetNormalTrait("Taunted");
-            if (taunted != null) {
+            if (forcedTarget != null) {
+                log += "\n" + stateComponent.character.name + " has a forced target. Setting " + forcedTarget.name + " as target.";
+                SetClosestHostile(forcedTarget);
+            } else if (taunted != null) {
                 log += "\n" + stateComponent.character.name + " is taunted. Setting " + taunted.responsibleCharacter.name + " as target.";
                 SetClosestHostile(taunted.responsibleCharacter);
             } else if (currentClosestHostile != null && !stateComponent.character.marker.hostilesInRange.Contains(currentClosestHostile)) {
@@ -346,7 +350,7 @@ public class CombatState : CharacterState {
                 //If character that attacked is not invisible or invisible but can be seen by character hit, character hit should react
                 Invisible invisible = stateComponent.character.GetNormalTrait("Invisible") as Invisible;
                 if (invisible == null || invisible.charactersThatCanSee.Contains(characterHit)) {
-                    currentClosestHostile.marker.AddHostileInRange(stateComponent.character, CHARACTER_STATE.COMBAT); //When the target is hit and it is still alive, add hostile
+                    currentClosestHostile.marker.AddHostileInRange(stateComponent.character, false); //When the target is hit and it is still alive, add hostile
                 }
             }
         }
@@ -430,6 +434,12 @@ public class CombatState : CharacterState {
             stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
         } else {
             stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
+        }
+    }
+    public void SetForcedTarget(Character character) {
+        forcedTarget = character;
+        if (forcedTarget == null) {
+            stateComponent.character.SetIsFollowingPlayerInstruction(false); //the force target has been removed.
         }
     }
     #endregion

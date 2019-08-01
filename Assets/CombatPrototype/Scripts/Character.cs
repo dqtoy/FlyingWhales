@@ -140,10 +140,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     //alter egos
     public string currentAlterEgoName { get; private set; } //this character's currently active alter ego. Usually just Original.
     public Dictionary<string, AlterEgoData> alterEgos { get; private set; }
-
     public string originalClassName { get; private set; } //the class that this character started with
-
     private List<Action> pendingActionsAfterMultiThread; //List of actions to perform after a character is finished with all his/her multithread processing (This is to prevent errors while the character has a thread running)
+
+    public bool isFollowingPlayerInstruction { get; private set; } //is this character moving/attacking because of the players instruction
+    public bool returnedToLife { get; private set; }
 
     //For Testing
     public List<string> locationHistory { get; private set; }
@@ -685,6 +686,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
 
     }
     public virtual void UnsubscribeSignals() {
@@ -703,6 +705,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
     }
     #endregion
 
@@ -851,6 +854,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     private void ReturnToLife(Faction faction) {
         if (_isDead) {
+            returnedToLife = true;
             SetIsDead(false);
             SubscribeToSignals();
             ResetToFullHP();
@@ -2386,7 +2390,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     //    return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.PASSABLE, _faction) != null;
     //}
     public void CenterOnCharacter(bool clickTravelLine = true) {
-        if (!isDead && minion == null) {
+        if (!isDead && marker != null) {
             if (currentParty.icon.isTravelling) {
                 if (currentParty.icon.travelLine != null) {
                     if (specificLocation.areaMap.isShowing) {
@@ -2564,6 +2568,28 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     public bool IsAble() {
         return currentHP > 0 && !HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !isDead;
+    }
+    public void SetIsFollowingPlayerInstruction(bool state) {
+        isFollowingPlayerInstruction = state;
+    }
+    /// <summary>
+    /// Can this character be instructed by the player?
+    /// </summary>
+    /// <returns>True or false.</returns>
+    public virtual bool CanBeInstructedByPlayer() {
+        if (PlayerManager.Instance.player.playerFaction != this.faction) {
+            return false;
+        }
+        if (isDead) {
+            return false;
+        }
+        if (stateComponent.currentState is CombatState && !(stateComponent.currentState as CombatState).isAttacking) {
+            return false; //character is fleeing
+        }
+        if (HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
+        return true;
     }
     #endregion
 
@@ -3251,11 +3277,29 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                                     CreateWatchEvent(null, targetCombatState, targetCharacter);
                                 } else {
-                                    marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false);
+                                    if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false)) {
+                                        List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCharacter).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
+                                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
+                                        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                        joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+                                        joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
+                                        joinLog.AddLogToInvolvedObjects();
+                                        PlayerManager.Instance.player.ShowNotification(joinLog);
+                                    }
                                 }
                             } else {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                    marker.AddHostileInRange(targetCharacter, checkHostility: false);
+                                    if (marker.AddHostileInRange(targetCharacter, checkHostility: false)) {
+                                        List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCombatState.currentClosestHostile).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
+                                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
+                                        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                        joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
+                                        joinLog.AddLogToInvolvedObjects();
+                                        joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
+                                        PlayerManager.Instance.player.ShowNotification(joinLog);
+                                    }
                                 } else {
                                     CreateWatchEvent(null, targetCombatState, targetCharacter);
                                 }
@@ -4614,6 +4658,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (_hasAlreadyAskedForPlan) {
             return;
         }
+        if (returnedToLife) {
+            //characters that have returned to life will just stroll.
+            PlanIdleStrollOutside(currentStructure);
+            return;
+        }
         SetHasAlreadyAskedForPlan(true);
         if (!PlanJobQueueFirst()) {
             if (!PlanFullnessRecoveryActions()) {
@@ -4912,7 +4961,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
-                    if (chance < 25 && name != "Fiona") { //For Trailer Build Only
+                    if (chance < 25) {
                         log += "\n  -Morning, Afternoon, or Early Night: " + name + " will enter Stroll Outside Mode";
                         PlanIdleStrollOutside(currentStructure);
                         return log;
@@ -4986,7 +5035,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
-                    if (chance < 25 && name != "Fiona") { //For Trailer Build Only
+                    if (chance < 25) {
                         log += "\n  -Morning or Afternoon: " + name + " will enter Stroll Outside State";
                         PlanIdleStrollOutside(currentStructure);
                         return log;
@@ -7320,7 +7369,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                         crimeToReport = witnessedCrime;
                         //if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
                         if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
-                            this.marker.AddHostileInRange(criminal.owner, CHARACTER_STATE.COMBAT);
+                            this.marker.AddHostileInRange(criminal.owner, false);
                         }
                     }
                     job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
@@ -7429,11 +7478,6 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
 
             tantrumLog += "\nRolled: " + chance.ToString();
 
-#if TRAILER_BUILD
-            if (name == "Fiona" || name == "Jamie" || name == "Audrey") {
-                chance = 100; //do not make main cast have tantrum
-            }
-#endif
             if (chance < 20) {
                 CancelAllJobsAndPlans();
                 //Create Tantrum action
@@ -7529,6 +7573,13 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                 if (marker.inVisionPOIs.Contains(character)) {
                     ThisCharacterWatchEvent(character, null, null);
                 }
+            }
+        }
+    }
+    public void OnCharacterEndedState(Character character, CharacterState state) {
+        if (character == this) {
+            if (state is CombatState && marker != null) {
+                marker.OnThisCharacterEndedCombatState();
             }
         }
     }

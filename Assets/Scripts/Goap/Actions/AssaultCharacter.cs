@@ -36,7 +36,7 @@ public class AssaultCharacter : GoapAction {
             if (actor.IsCombatReady()) {
                 CharacterState combatState;
                 if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {
-                    actor.marker.AddHostileInRange(targetCharacter, out combatState, CHARACTER_STATE.COMBAT, false);
+                    actor.marker.AddHostileInRange(targetCharacter, out combatState, false);
                 } else {
                     combatState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
                 }

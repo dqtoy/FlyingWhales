@@ -150,7 +150,7 @@ public class InviteToMakeLove : GoapAction {
         if (actor is SeducerSummon) {
             //Start Combat between actor and target
             Character target = poiTarget as Character;
-            target.marker.AddHostileInRange(actor, CHARACTER_STATE.COMBAT);
+            target.marker.AddHostileInRange(actor, false);
         } else {
             //**After Effect 1**: Actor gains Annoyed trait.
             AddTraitTo(actor, "Annoyed", actor);

@@ -20,7 +20,7 @@ public class Taunted : Trait {
         base.OnAddTrait(sourcePOI);
         _sourceCharacter = sourcePOI as Character;
         if (_sourceCharacter.stateComponent.currentState == null || _sourceCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
-            _sourceCharacter.marker.AddHostileInRange(responsibleCharacter, CHARACTER_STATE.COMBAT);
+            _sourceCharacter.marker.AddHostileInRange(responsibleCharacter, false);
         } else {
             Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, _sourceCharacter);
         }
