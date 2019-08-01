@@ -144,6 +144,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     private List<Action> pendingActionsAfterMultiThread; //List of actions to perform after a character is finished with all his/her multithread processing (This is to prevent errors while the character has a thread running)
 
     public bool isFollowingPlayerInstruction { get; private set; } //is this character moving/attacking because of the players instruction
+    public bool returnedToLife { get; private set; }
 
     //For Testing
     public List<string> locationHistory { get; private set; }
@@ -853,6 +854,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     }
     private void ReturnToLife(Faction faction) {
         if (_isDead) {
+            returnedToLife = true;
             SetIsDead(false);
             SubscribeToSignals();
             ResetToFullHP();
@@ -4608,6 +4610,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (_hasAlreadyAskedForPlan) {
             return;
         }
+        if (returnedToLife) {
+            //characters that have returned to life will just stroll.
+            PlanIdleStrollOutside(currentStructure);
+            return;
+        }
         SetHasAlreadyAskedForPlan(true);
         if (!PlanJobQueueFirst()) {
             if (!PlanFullnessRecoveryActions()) {
@@ -4904,7 +4911,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
-                    if (chance < 25 && name != "Fiona") { //For Trailer Build Only
+                    if (chance < 25) {
                         log += "\n  -Morning, Afternoon, or Early Night: " + name + " will enter Stroll Outside Mode";
                         PlanIdleStrollOutside(currentStructure);
                         return log;
@@ -4978,7 +4985,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
-                    if (chance < 25 && name != "Fiona") { //For Trailer Build Only
+                    if (chance < 25) {
                         log += "\n  -Morning or Afternoon: " + name + " will enter Stroll Outside State";
                         PlanIdleStrollOutside(currentStructure);
                         return log;
@@ -7413,11 +7420,6 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
 
             tantrumLog += "\nRolled: " + chance.ToString();
 
-#if TRAILER_BUILD
-            if (name == "Fiona" || name == "Jamie" || name == "Audrey") {
-                chance = 100; //do not make main cast have tantrum
-            }
-#endif
             if (chance < 20) {
                 CancelAllJobsAndPlans();
                 //Create Tantrum action
