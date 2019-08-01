@@ -59,6 +59,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject gameOverGO;
     [SerializeField] private TextMeshProUGUI gameOverDescriptionText;
     [SerializeField] private GameObject successfulAreaCorruptionGO;
+    [SerializeField] private ScrollRect killSummaryScrollView;
 
     [Header("Minions")]
     [SerializeField] private GameObject startingMinionPickerGO;
@@ -121,7 +122,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI killCountLbl;
     [SerializeField] private GameObject killSummaryGO;
     [SerializeField] private GameObject killCharacterItemPrefab;
-    [SerializeField] private ScrollRect killSummaryScrollView;
+    [SerializeField] private ScrollRect killCountScrollView;
     [SerializeField] private RectTransform aliveHeader;
     [SerializeField] private RectTransform deadHeader;
 
@@ -231,7 +232,7 @@ public class PlayerUI : MonoBehaviour {
 
         //Kill count UI
         UpdateKillCountActiveState();
-        LoadKillSummaryCharacterItems(area);
+        LoadKillCountCharacterItems(area);
         UpdateKillCount();
     }
     private void OnAreaMapClosed(Area area) {
@@ -788,7 +789,7 @@ public class PlayerUI : MonoBehaviour {
 
     #region Corruption and Threat
     public void ShowCorruptTileConfirmation(HexTile tile) {
-        if (tile.CanBeCorrupted() && !tile.isCorrupted) {//&& tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted
+        if (!tile.isCorrupted) {//&& tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted tile.CanBeCorrupted() && 
             PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
             if(tile.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
                 tile.landmarkOnTile.GenerateSkirmishEnemy();
@@ -985,6 +986,15 @@ public class PlayerUI : MonoBehaviour {
     #region Area Corruption
     public void SuccessfulAreaCorruption() {
         successfulAreaCorruptionGO.SetActive(true);
+        //Utilities.DestroyChildren(killSummaryScrollView.content);
+        LoadKillSummaryCharacterItems();
+    }
+    private void LoadKillSummaryCharacterItems() {
+        KillCountCharacterItem[] items = Utilities.GetComponentsInDirectChildren<KillCountCharacterItem>(killCountScrollView.content.gameObject);
+        for (int i = 0; i < items.Length; i++) {
+            KillCountCharacterItem item = items[i];
+            item.transform.SetParent(killSummaryScrollView.content);
+        }
     }
     public void BackToWorld() {
         Area closedArea = InteriorMapManager.Instance.HideAreaMap();
@@ -1167,14 +1177,14 @@ public class PlayerUI : MonoBehaviour {
         killCountGO.SetActive(state);
         killSummaryGO.SetActive(false);
     }
-    private void LoadKillSummaryCharacterItems(Area area) {
-        KillCountCharacterItem[] items = Utilities.GetComponentsInDirectChildren<KillCountCharacterItem>(killSummaryScrollView.content.gameObject);
+    private void LoadKillCountCharacterItems(Area area) {
+        KillCountCharacterItem[] items = Utilities.GetComponentsInDirectChildren<KillCountCharacterItem>(killCountScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             ObjectPoolManager.Instance.DestroyObject(items[i].gameObject);
         }
         for (int i = 0; i < area.areaResidents.Count; i++) {
             Character character = area.areaResidents[i];
-            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killSummaryScrollView.content);
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killCountScrollView.content);
             KillCountCharacterItem item = go.GetComponent<KillCountCharacterItem>();
             item.SetCharacter(character);
         }
@@ -1184,7 +1194,7 @@ public class PlayerUI : MonoBehaviour {
         killCountLbl.text = InteriorMapManager.Instance.currentlyShowingArea.areaResidents.Where(x => x.IsAble()).Count().ToString() + "/" + InteriorMapManager.Instance.currentlyShowingArea.citizenCount.ToString();
     }
     private void OrderKillSummaryItems() {
-        KillCountCharacterItem[] items = Utilities.GetComponentsInDirectChildren<KillCountCharacterItem>(killSummaryScrollView.content.gameObject);
+        KillCountCharacterItem[] items = Utilities.GetComponentsInDirectChildren<KillCountCharacterItem>(killCountScrollView.content.gameObject);
         List<KillCountCharacterItem> alive = new List<KillCountCharacterItem>();
         List<KillCountCharacterItem> dead = new List<KillCountCharacterItem>();
         for (int i = 0; i < items.Length; i++) {
