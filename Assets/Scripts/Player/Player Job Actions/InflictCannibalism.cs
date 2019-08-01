@@ -60,7 +60,7 @@ public class InflictCannibalism : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Cannibal") != null) {
+        if (targetCharacter.GetNormalTrait("Cannibal", "Vampiric") != null) {
             return false;
         }
         if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -94,7 +94,7 @@ public class InflictCannibalism : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Cannibal") != null) {
+        if (targetCharacter.GetNormalTrait("Cannibal", "Vampiric") != null) {
             return false;
         }
         if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {

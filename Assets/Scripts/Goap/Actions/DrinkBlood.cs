@@ -22,9 +22,9 @@ public class DrinkBlood : GoapAction {
         //if (actor.isStarving) {
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget }, HasUnconsciousOrRestingTarget);
         //}
-        if (actor.GetNormalTrait("Vampiric") != null) {
-            AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
-        }
+        //if (actor.GetNormalTrait("Vampiric") != null) {
+        //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
+        //}
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Lethargic", targetPOI = poiTarget });
     }
     public override void PerformActualAction() {

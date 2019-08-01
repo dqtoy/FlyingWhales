@@ -189,29 +189,37 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         if (GameManager.Instance.gameHasStarted) {
             if (parentMarker.character.stateComponent.currentState != null) {
                 if (!parentMarker.character.stateComponent.currentState.OnEnterVisionWith(poi)) {
-                    if (targetCharacter != null && !parentMarker.AddHostileInRange(targetCharacter)) {
-                        if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
+                    if (targetCharacter != null) {
+                        if (!parentMarker.AddHostileInRange(targetCharacter)) {
+                            if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
 #if TRAILER_BUILD
                             if (parentMarker.character.name != "Jamie" && parentMarker.character.name != "Audrey" && parentMarker.character.name != "Fiona") { //For Trailer Build Only
                                 ChatHandling(targetCharacter);
                             }
 #else
-                            ChatHandling(targetCharacter);
+                                ChatHandling(targetCharacter);
 #endif
+                            }
                         }
+                    } else {
+                        parentMarker.character.CreateJobsOnEnterVisionWith(poi, true);
                     }
                 }
             } else {
-                if (targetCharacter != null && !parentMarker.AddHostileInRange(targetCharacter)) {
-                    if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
+                if (targetCharacter != null) {
+                    if (parentMarker.AddHostileInRange(targetCharacter)) {
+                        if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
 #if TRAILER_BUILD
                         if (parentMarker.character.name != "Jamie" && parentMarker.character.name != "Audrey" && parentMarker.character.name != "Fiona") { //For Trailer Build Only
                             ChatHandling(targetCharacter);
                         }
 #else
-                        ChatHandling(targetCharacter);
+                            ChatHandling(targetCharacter);
 #endif
+                        }
                     }
+                } else {
+                    parentMarker.character.CreateJobsOnEnterVisionWith(poi, true);
                 }
             }
         }

@@ -23,9 +23,9 @@ public class StealFromCharacter : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        if (actor.GetNormalTrait("Kleptomaniac") != null) {
-            AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
-        }
+        //if (actor.GetNormalTrait("Kleptomaniac") != null) {
+        //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
+        //}
         Character target = poiTarget as Character;
         for (int i = 0; i < target.items.Count; i++) {
             SpecialToken currItem = target.items[i];

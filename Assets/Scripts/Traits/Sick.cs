@@ -42,18 +42,20 @@ public class Sick : Trait {
         //Messenger.Broadcast(Signals.OLD_NEWS_TRIGGER, sourceCharacter, gainedFromDoing);
     }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-        Character targetCharacter = traitOwner as Character;
-        if (targetCharacter.isDead || !characterThatWillDoJob.isAtHomeArea) {
-            return false;
-        }
-        if (targetCharacter.GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
-            if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name)) {
-                if (CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
-                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect);
-                    //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    return true;
+        if (traitOwner is Character) {
+            Character targetCharacter = traitOwner as Character;
+            if (targetCharacter.isDead || !characterThatWillDoJob.isAtHomeArea) {
+                return false;
+            }
+            if (targetCharacter.GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
+                if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name)) {
+                    if (CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
+                        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
+                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect);
+                        //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                        characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                        return true;
+                    }
                 }
             }
         }

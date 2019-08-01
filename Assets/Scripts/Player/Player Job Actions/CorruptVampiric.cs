@@ -59,7 +59,7 @@ public class CorruptVampiric : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Vampiric") != null) {
+        if (targetCharacter.GetNormalTrait("Vampiric", "Cannibal") != null) {
             return false;
         }
         if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -93,7 +93,8 @@ public class CorruptVampiric : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Vampiric") != null) {
+        if (targetCharacter.GetNormalTrait("Vampiric", "Cannibal") != null) {
+
             return false;
         }
         if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {

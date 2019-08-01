@@ -49,6 +49,7 @@ public class CharacterMarker : PooledObject {
 
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
+    public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<Character> avoidInRange { get; private set; } //POI's in this characters hostility collider
     public Action arrivalAction {
@@ -91,6 +92,7 @@ public class CharacterMarker : PooledObject {
         UpdateActionIcon();
 
         inVisionPOIs = new List<IPointOfInterest>();
+        inVisionCharacters = new List<Character>();
         hostilesInRange = new List<Character>();
         terrifyingObjects = new List<IPointOfInterest>();
         avoidInRange = new List<Character>();
@@ -458,9 +460,9 @@ public class CharacterMarker : PooledObject {
             //} else {
             //    Debug.Log(character.name + " is already at " + destinationTile.ToString() + " executing action null.");
             //}
-            
-            this.arrivalAction?.Invoke();
+            Action action = this.arrivalAction;
             ClearArrivalAction();
+            action?.Invoke();
         } else {
             SetDestination(destinationTile.centeredWorldLocation);
             StartMovement();
@@ -610,7 +612,7 @@ public class CharacterMarker : PooledObject {
         //}
     }
     public void ClearArrivalAction() {
-        arrivalAction = null;
+         arrivalAction = null;
     }
     #endregion
 
@@ -904,6 +906,22 @@ public class CharacterMarker : PooledObject {
     public void SetTargetPOI(IPointOfInterest poi) {
         this.targetPOI = poi;
     }
+    public bool CanDoStealthActionToTarget(Character target) {
+        if (target.marker.inVisionCharacters.Count > 1) {
+            return false; //if there are 2 or more in vision of target character it means he is not alone anymore
+        } else if (target.marker.inVisionCharacters.Count == 1) {
+            if (!target.marker.inVisionCharacters.Contains(character)) {
+                return false; //if there is only one in vision of target character and it is not this character, it means he is not alone
+            }
+        }
+        return true;
+    }
+    public bool CanDoStealthActionToTarget(IPointOfInterest target) {
+        if (inVisionCharacters.Count > 0) {
+            return false;
+        }
+        return true;
+    }
     #endregion
 
     #region Vision Collision
@@ -916,6 +934,9 @@ public class CharacterMarker : PooledObject {
     public void AddPOIAsInVisionRange(IPointOfInterest poi) {
         if (!inVisionPOIs.Contains(poi)) {
             inVisionPOIs.Add(poi);
+            if (poi is Character) {
+                inVisionCharacters.Add(poi as Character);
+            }
             //if (poi is Character) {
             //    //Debug.Log(character.name + " saw " + (poi as Character).name);
             //    Character character = poi as Character;
@@ -930,6 +951,7 @@ public class CharacterMarker : PooledObject {
     public void RemovePOIFromInVisionRange(IPointOfInterest poi) {
         if (inVisionPOIs.Remove(poi)) {
             if (poi is Character) {
+                inVisionCharacters.Remove(poi as Character);
                 Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_VISION, character, poi as Character);
             }
         }
@@ -943,6 +965,7 @@ public class CharacterMarker : PooledObject {
     }
     public void ClearPOIsInVisionRange() {
         inVisionPOIs.Clear();
+        inVisionCharacters.Clear();
     }
     private void OnAddPOIAsInVisionRange(IPointOfInterest poi) {
         if(poi is Character) {

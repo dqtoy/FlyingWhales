@@ -448,6 +448,15 @@ public class InteriorMapManager : MonoBehaviour {
         } else {
             summary += "None";
         }
+        summary += "\n\tCharacters in Vision: ";
+        if (character.marker.inVisionCharacters.Count > 0) {
+            for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
+                Character poi = character.marker.inVisionCharacters.ElementAt(i);
+                summary += poi.name + ", ";
+            }
+        } else {
+            summary += "None";
+        }
         summary += "\n\tPOI's in Range but different structures: ";
         if (character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0) {
             for (int i = 0; i < character.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {

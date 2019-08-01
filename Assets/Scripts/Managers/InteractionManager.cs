@@ -273,6 +273,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.EAT_CHARACTER:
                 goapAction = new EatCharacter(actor, target);
                 break;
+            case INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD:
+                goapAction = new HuntingToDrinkBlood(actor, target);
+                break;
+            case INTERACTION_TYPE.ROAMING_TO_STEAL:
+                goapAction = new RoamingToSteal(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

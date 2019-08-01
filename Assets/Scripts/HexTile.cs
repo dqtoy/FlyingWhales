@@ -1066,6 +1066,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return 0;
     }
     public bool CanBeCorrupted() {
+        return true;
+
         bool canBeCorrupted = false;
         if (landmarkOnTile != null && landmarkOnTile.inGoingConnections != null) {
             for (int i = 0; i < landmarkOnTile.inGoingConnections.Count; i++) {

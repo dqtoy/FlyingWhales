@@ -1503,6 +1503,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             }
         }
         bool hasCreatedJob = false;
+        for (int i = 0; i < normalTraits.Count; i++) {
+            if(normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetCharacter, this)) {
+                hasCreatedJob = true;
+            }
+        }
         for (int i = 0; i < targetCharacter.normalTraits.Count; i++) {
             if (targetCharacter.normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetCharacter, this)) {
                 hasCreatedJob = true;
@@ -1515,6 +1520,29 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                 }
             }
         }
+        return hasCreatedJob;
+    }
+    public bool CreateJobsOnEnterVisionWith(IPointOfInterest targetPOI, bool bypassInvisibilityCheck = false) {
+        if (!CanCharacterReact()) {
+            return true;
+        }
+        if (!bypassInvisibilityCheck) {
+            Invisible invisible = targetPOI.GetNormalTrait("Invisible") as Invisible;
+            if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
+                return true;
+            }
+        }
+        bool hasCreatedJob = false;
+        for (int i = 0; i < normalTraits.Count; i++) {
+            if (normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetPOI, this)) {
+                hasCreatedJob = true;
+            }
+        }
+        //for (int i = 0; i < targetPOI.normalTraits.Count; i++) {
+        //    if (targetPOI.normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetPOI, this)) {
+        //        hasCreatedJob = true;
+        //    }
+        //}
         return hasCreatedJob;
     }
     /// <summary>
@@ -2995,6 +3023,26 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             return;
         }
         target.OnSeenBy(this); //trigger that the target character was seen by this character.
+        if(currentAction != null && currentAction.poiTarget == target && currentAction.parentPlan != null && currentAction.parentPlan.job != null && currentAction.parentPlan.job.isStealth) {
+            //Upon seeing the target while performing a stealth job action, check if it can do the action
+            if (!marker.CanDoStealthActionToTarget(target)) {
+                currentAction.parentPlan.job.jobQueueParent.CancelJob(currentAction.parentPlan.job);
+            }
+        }else if (target.allJobsTargettingThis.Count > 0) {
+            //Upon seeing a character and that character is is being targetted by a stealth job and the actor of that job is not this one, and the actor is performing that job and the actor already sees the target
+            List<JobQueueItem> allJobsTargettingTargetCharacter = new List<JobQueueItem>(target.allJobsTargettingThis);
+            for (int i = 0; i < allJobsTargettingTargetCharacter.Count; i++) {
+                JobQueueItem job = allJobsTargettingTargetCharacter[i];
+                if (job.isStealth && job.assignedCharacter != null && job.assignedCharacter != this) {
+                    if(job.assignedCharacter.currentAction != null && !job.assignedCharacter.currentAction.isDone && !job.assignedCharacter.currentAction.isPerformingActualAction
+                        && job.assignedCharacter.currentAction.poiTarget == target && job.assignedCharacter.currentAction.parentPlan != null 
+                        && job.assignedCharacter.currentAction.parentPlan.job != null 
+                        && job.assignedCharacter.currentAction.parentPlan.job == job && job.assignedCharacter.marker.inVisionPOIs.Contains(target)) {
+                        job.jobQueueParent.CancelJob(job);
+                    }
+                }
+            }
+        }
         if (target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone && target.currentAction.goapType != INTERACTION_TYPE.WATCH) {
             //Cannot witness/watch a watch action
             IPointOfInterest poiTarget = null;
@@ -4624,7 +4672,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                 if (chance < value) {
                     GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
                     if(GetNormalTrait("Vampiric") != null) {
-                        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.DRINK_BLOOD);
+                        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                    }else if (GetNormalTrait("Cannibal") != null) {
+                        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
                     }
                     //if (hungryOrStarving.name == "Starving") {
                     //    job.SetCannotOverrideJob(true);
@@ -6279,7 +6329,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP);
         poiGoapActions.Add(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE);
         poiGoapActions.Add(INTERACTION_TYPE.BREAK_UP);
-        
+        poiGoapActions.Add(INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+        poiGoapActions.Add(INTERACTION_TYPE.ROAMING_TO_STEAL);
+
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
             poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
@@ -6573,6 +6625,12 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                                 } else {
                                     DropPlan(plan, true);
                                     i--;
+                                    continue;
+                                }
+                            }
+                            //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
+                            else if (plan.job != null && plan.job.isStealth) {
+                                if (marker.inVisionPOIs.Contains(targetCharacter) && !marker.CanDoStealthActionToTarget(targetCharacter)) {
                                     continue;
                                 }
                             }

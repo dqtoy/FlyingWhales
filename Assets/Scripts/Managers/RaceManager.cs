@@ -121,6 +121,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.WATCH,
                 INTERACTION_TYPE.INSPECT,
                 INTERACTION_TYPE.EAT_CHARACTER,
+                INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD,
+                INTERACTION_TYPE.ROAMING_TO_STEAL,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -204,6 +206,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.WATCH,
                 INTERACTION_TYPE.INSPECT,
                 INTERACTION_TYPE.EAT_CHARACTER,
+                INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD,
+                INTERACTION_TYPE.ROAMING_TO_STEAL,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -288,6 +292,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.WATCH,
                 INTERACTION_TYPE.INSPECT,
                 INTERACTION_TYPE.EAT_CHARACTER,
+                INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD,
+                INTERACTION_TYPE.ROAMING_TO_STEAL,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -372,6 +378,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.WATCH,
                 INTERACTION_TYPE.INSPECT,
                 INTERACTION_TYPE.EAT_CHARACTER,
+                INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD,
+                INTERACTION_TYPE.ROAMING_TO_STEAL,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
