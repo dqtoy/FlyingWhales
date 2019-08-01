@@ -685,6 +685,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
 
     }
     public virtual void UnsubscribeSignals() {
@@ -703,6 +704,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
     }
     #endregion
 
@@ -2358,7 +2360,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     //    return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.PASSABLE, _faction) != null;
     //}
     public void CenterOnCharacter(bool clickTravelLine = true) {
-        if (!isDead && minion == null) {
+        if (!isDead && marker != null) {
             if (currentParty.icon.isTravelling) {
                 if (currentParty.icon.travelLine != null) {
                     if (specificLocation.areaMap.isShowing) {
@@ -3203,11 +3205,29 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                                     CreateWatchEvent(null, targetCombatState, targetCharacter);
                                 } else {
-                                    marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false);
+                                    if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false)) {
+                                        List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCharacter).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
+                                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
+                                        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                        joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+                                        joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
+                                        joinLog.AddLogToInvolvedObjects();
+                                        PlayerManager.Instance.player.ShowNotification(joinLog);
+                                    }
                                 }
                             } else {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                    marker.AddHostileInRange(targetCharacter, checkHostility: false);
+                                    if (marker.AddHostileInRange(targetCharacter, checkHostility: false)) {
+                                        List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCombatState.currentClosestHostile).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
+                                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
+                                        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                        joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
+                                        joinLog.AddLogToInvolvedObjects();
+                                        joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
+                                        PlayerManager.Instance.player.ShowNotification(joinLog);
+                                    }
                                 } else {
                                     CreateWatchEvent(null, targetCombatState, targetCharacter);
                                 }
@@ -7471,6 +7491,13 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                 if (marker.inVisionPOIs.Contains(character)) {
                     ThisCharacterWatchEvent(character, null, null);
                 }
+            }
+        }
+    }
+    private void OnCharacterEndedState(Character character, CharacterState state) {
+        if (character == this) {
+            if (state is CombatState && marker != null) {
+                marker.OnThisCharacterEndedCombatState();
             }
         }
     }

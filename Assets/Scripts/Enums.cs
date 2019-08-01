@@ -1186,16 +1186,16 @@ public enum STRUCTURE_TYPE {
     PRISON,
 }
 public enum RELATIONSHIP_TRAIT {
-    NONE,
-    ENEMY,
-    FRIEND,
-    RELATIVE,
-    LOVER,
-    PARAMOUR,
-    MASTER,
-    SERVANT,
-    SAVER,
-    SAVE_TARGET,
+    NONE = 0,
+    ENEMY = 1,
+    FRIEND = 2,
+    RELATIVE = 3,
+    LOVER = 4,
+    PARAMOUR = 5,
+    MASTER = 6,
+    SERVANT = 7,
+    SAVER = 8,
+    SAVE_TARGET = 9,
 }
 
 public enum POINT_OF_INTEREST_TYPE {

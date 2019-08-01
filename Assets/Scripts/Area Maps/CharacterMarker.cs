@@ -735,6 +735,10 @@ public class CharacterMarker : PooledObject {
         if (speed <= 0f) {
             speed = 0.5f;
         }
+        speed += (speed * fleeSpeedModifier);
+        if (speed <= 0f) {
+            speed = 0.1f;
+        }
         speed *= progressionSpeedMultiplier;
         return speed;
     }
@@ -1263,6 +1267,8 @@ public class CharacterMarker : PooledObject {
 
     #region Flee
     public bool hasFleePath { get; private set; }
+    private float fleeSpeedModifier;
+    private const float Starting_Flee_Modifier = 0.5f; //starts at positive value, increase speed by 30%, then gradually reduce every other tick, eventually becoming negative.
     public void OnStartFlee() {
         if (avoidInRange.Count == 0) {
             return;
@@ -1270,7 +1276,7 @@ public class CharacterMarker : PooledObject {
         pathfindingAI.ClearAllCurrentPathData();
         SetHasFleePath(true);
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidInRange.Select(x => x.marker.transform.position).ToArray(), 10000);
+        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidInRange.Select(x => x.marker.transform.position).ToArray(), 20000);
         fleePath.aimStrength = 1;
         fleePath.spread = 4000;
         seeker.StartPath(fleePath);
@@ -1283,6 +1289,8 @@ public class CharacterMarker : PooledObject {
         //Debug.Log(character.name + " computed flee path");
         arrivalAction = OnFinishedTraversingFleePath;
         StartMovement();
+        fleeSpeedModifier = Starting_Flee_Modifier;
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickFlee);
     }
     public void OnFinishedTraversingFleePath() {
         //Debug.Log(name + " has finished traversing flee path.");
@@ -1290,6 +1298,7 @@ public class CharacterMarker : PooledObject {
         (character.stateComponent.currentState as CombatState).FinishedTravellingFleePath();
         UpdateAnimation();
         UpdateActionIcon();
+        StopPerTickFlee();
     }
     public void SetHasFleePath(bool state) {
         hasFleePath = state;
@@ -1367,6 +1376,15 @@ public class CharacterMarker : PooledObject {
             }
             Debug.Log(summary);
         }
+    }
+    private void PerTickFlee() {
+        if (GameManager.Instance.tick % 2 == 0) {
+            fleeSpeedModifier -= 0.3f;
+        }
+    }
+    private void StopPerTickFlee() {
+        fleeSpeedModifier = 0f;
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickFlee);
     }
     #endregion
 
@@ -1660,6 +1678,9 @@ public class CharacterMarker : PooledObject {
             willTransfer = true;
         }
         return willTransfer;
+    }
+    public void OnThisCharacterEndedCombatState() {
+        StopPerTickFlee();
     }
     #endregion
 }
