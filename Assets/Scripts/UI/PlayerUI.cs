@@ -789,7 +789,7 @@ public class PlayerUI : MonoBehaviour {
 
     #region Corruption and Threat
     public void ShowCorruptTileConfirmation(HexTile tile) {
-        if (!tile.isCorrupted) {//&& tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted tile.CanBeCorrupted() && 
+        if (tile.CanBeCorrupted() && !tile.isCorrupted) {//&& tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted 
             PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
             if(tile.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
                 tile.landmarkOnTile.GenerateSkirmishEnemy();
