@@ -3255,6 +3255,12 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             }
         }
     }
+    /// <summary>
+    /// This character watched an action happen.
+    /// </summary>
+    /// <param name="targetCharacter">The character that was performing the action.</param>
+    /// <param name="action">The action that was performed.</param>
+    /// <param name="state">The state the action was in when this character watched it.</param>
     public void ThisCharacterWatchEvent(Character targetCharacter, GoapAction action, GoapActionState state) {
         if(faction == PlayerManager.Instance.player.playerFaction) {
             //Player characters cannot watch events
@@ -3303,6 +3309,16 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
                                 } else {
                                     CreateWatchEvent(null, targetCombatState, targetCharacter);
                                 }
+                            }
+                        } else {
+                            //the target of the combat state is not part of this character's faction
+                            if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false)) {
+                                Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
+                                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+                                joinLog.AddLogToInvolvedObjects();
+                                PlayerManager.Instance.player.ShowNotification(joinLog);
                             }
                         }
                     }
