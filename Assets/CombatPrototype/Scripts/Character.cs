@@ -1549,19 +1549,29 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         return hasCreatedJob;
     }
     public bool CreateJobsOnEnterVisionWith(IPointOfInterest targetPOI, bool bypassInvisibilityCheck = false) {
+        string log = name + " saw " + targetPOI.name + ", will try to create jobs on enter vision...";
         if (!CanCharacterReact()) {
+            log += "\nCharacter cannot react!";
+            Debug.Log(log);
             return true;
         }
         if (!bypassInvisibilityCheck) {
             Invisible invisible = targetPOI.GetNormalTrait("Invisible") as Invisible;
             if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
+                log += "\nCharacter is invisible!";
+                Debug.Log(log);
                 return true;
             }
         }
         bool hasCreatedJob = false;
+        log += "\nChecking source character traits...";
         for (int i = 0; i < normalTraits.Count; i++) {
+            log += "\n- " + normalTraits[i].name;
             if (normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetPOI, this)) {
+                log += ": created a job!";
                 hasCreatedJob = true;
+            } else {
+                log += ": did not create a job!";
             }
         }
         //for (int i = 0; i < targetPOI.normalTraits.Count; i++) {
@@ -1569,6 +1579,7 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         //        hasCreatedJob = true;
         //    }
         //}
+        Debug.Log(log);
         return hasCreatedJob;
     }
     /// <summary>

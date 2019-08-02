@@ -207,7 +207,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 }
             } else {
                 if (targetCharacter != null) {
-                    if (parentMarker.AddHostileInRange(targetCharacter)) {
+                    if (!parentMarker.AddHostileInRange(targetCharacter)) {
                         if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
 #if TRAILER_BUILD
                         if (parentMarker.character.name != "Jamie" && parentMarker.character.name != "Audrey" && parentMarker.character.name != "Fiona") { //For Trailer Build Only
