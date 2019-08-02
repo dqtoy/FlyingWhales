@@ -1497,33 +1497,55 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         }
     }
     public bool CreateJobsOnEnterVisionWith(Character targetCharacter, bool bypassInvisibilityCheck = false) {
+        string log = name + " saw " + targetCharacter.name + ", will try to create jobs on enter vision...";
         if (!CanCharacterReact()) {
+            log += "\nCharacter cannot react!";
+            Debug.Log(log);
             return true;
         }
         if (!bypassInvisibilityCheck) {
             Invisible invisible = targetCharacter.GetNormalTrait("Invisible") as Invisible;
             if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
+                log += "\nCharacter is invisible!";
+                Debug.Log(log);
                 return true;
             }
         }
         bool hasCreatedJob = false;
+        log += "\nChecking source character traits...";
         for (int i = 0; i < normalTraits.Count; i++) {
-            if(normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetCharacter, this)) {
+            log += "\n- " + normalTraits[i].name;
+            if (normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetCharacter, this)) {
+                log += ": created a job!";
                 hasCreatedJob = true;
+            } else {
+                log += ": did not create a job!";
             }
         }
+
+        log += "\nChecking target character traits...";
         for (int i = 0; i < targetCharacter.normalTraits.Count; i++) {
+            log += "\n- " + targetCharacter.normalTraits[i].name;
             if (targetCharacter.normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetCharacter, this)) {
                 hasCreatedJob = true;
+                log += ": created a job!";
+            } else {
+                log += ": did not create a job!";
             }
         }
+        log += "\nChecking relationship traits...";
         for (int i = 0; i < relationshipTraits.Count; i++) {
-            if(relationshipTraits[i].targetCharacter == targetCharacter) {
+            if (relationshipTraits[i].targetCharacter == targetCharacter) {
+                log += "\n- " + relationshipTraits[i].name;
                 if (relationshipTraits[i].CreateJobsOnEnterVisionBasedOnTrait(this, this)) {
                     hasCreatedJob = true;
+                    log += ": created a job!";
+                } else {
+                    log += ": did not create a job!";
                 }
             }
         }
+        Debug.Log(log);
         return hasCreatedJob;
     }
     public bool CreateJobsOnEnterVisionWith(IPointOfInterest targetPOI, bool bypassInvisibilityCheck = false) {
