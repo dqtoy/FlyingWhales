@@ -102,6 +102,11 @@ public class DrinkBlood : GoapAction {
         } else {
             Vampiric vampiric = new Vampiric();
             AddTraitTo(poiTarget, vampiric, actor);
+            Log log = new Log(GameManager.Instance.Today(), "GoapAction", GetType().ToString(), "contracted", this);
+            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddLogToInvolvedObjects();
+            PlayerManager.Instance.player.ShowNotification(log);
         }
     }
     //private void PreDrinkFail() {
