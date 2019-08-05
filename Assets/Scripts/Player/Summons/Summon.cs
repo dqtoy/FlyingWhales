@@ -72,7 +72,11 @@ public class Summon : Character {
             } else if (stateComponent.stateToDo != null) {
                 stateComponent.SetStateToDo(null);
             }
-            CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            if (deathFromAction != null) { //if this character died from an action, do not cancel the action that he/she died from. so that the action will just end as normal.
+                CancelAllJobsTargettingThisCharacterExcept(deathFromAction, "target is already dead", false);
+            } else {
+                CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            }
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this as Character, "target is already dead");
             if (currentAction != null && !currentAction.cannotCancelAction) {
                 currentAction.StopAction();

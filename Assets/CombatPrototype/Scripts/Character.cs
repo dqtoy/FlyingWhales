@@ -904,7 +904,11 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             }else if (stateComponent.stateToDo != null) {
                 stateComponent.SetStateToDo(null);
             }
-            CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            if (deathFromAction != null) { //if this character died from an action, do not cancel the action that he/she died from. so that the action will just end as normal.
+                CancelAllJobsTargettingThisCharacterExcept(deathFromAction, "target is already dead", false);
+            } else {
+                CancelAllJobsTargettingThisCharacter("target is already dead", false);
+            }
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is already dead");
             if (currentAction != null && !currentAction.cannotCancelAction) {
                 currentAction.StopAction();
@@ -1400,6 +1404,23 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
     public void CancelAllJobsTargettingThisCharacter(string cause = "", bool shouldDoAfterEffect = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
+            if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect)) {
+                i--;
+            }
+        }
+    }
+    /// <summary>
+    /// Cancel all jobs that are targetting this character, except job that has the given action.
+    /// </summary>
+    /// <param name="except">The exception.</param>
+    /// <param name="cause">The cause for cancelling</param>
+    /// <param name="shouldDoAfterEffect">Should the effect of the cancelled action be executed.</param>
+    public void CancelAllJobsTargettingThisCharacterExcept(GoapAction except, string cause = "", bool shouldDoAfterEffect = true) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            JobQueueItem job = allJobsTargettingThis[i];
+            if (except.parentPlan != null && except.parentPlan.job == job) {
+                continue; //skip
+            }
             if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect)) {
                 i--;
             }
