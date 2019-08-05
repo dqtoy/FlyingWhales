@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 //Log and Memory are the same now so assume that this class will have data that the Memory uses
 public class Log {
@@ -97,6 +98,24 @@ public class Log {
             LogFiller currFiller = fillers[i];
             object obj = currFiller.obj;
             if (obj != null) {
+                if (obj is Character) {
+                    (obj as Character).AddHistory(this);
+                } else if (obj is Area) {
+                    (obj as Area).AddHistory(this);
+                } else if (obj is Minion) {
+                    (obj as Minion).character.AddHistory(this);
+                } else if (obj is Faction) {
+                    (obj as Faction).AddHistory(this);
+                }
+            }
+        }
+    }
+    public void AddLogToSpecificObjects(params LOG_IDENTIFIER[] identifiers) {
+        List<LOG_IDENTIFIER> identifiersList = identifiers.ToList();
+        for (int i = 0; i < fillers.Count; i++) {
+            LogFiller currFiller = fillers[i];
+            object obj = currFiller.obj;
+            if (obj != null && identifiersList.Contains(currFiller.identifier)) {
                 if (obj is Character) {
                     (obj as Character).AddHistory(this);
                 } else if (obj is Area) {
