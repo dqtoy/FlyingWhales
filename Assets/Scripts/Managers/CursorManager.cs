@@ -15,6 +15,7 @@ public class CursorManager : MonoBehaviour {
 //#endif
 
     private List<System.Action> leftClickActions = new List<System.Action>();
+    private List<System.Action> pendingLeftClickActions = new List<System.Action>();
     private List<System.Action> rightClickActions = new List<System.Action>();
 
     [SerializeField] private CursorTextureDictionary cursors;
@@ -31,6 +32,8 @@ public class CursorManager : MonoBehaviour {
     public Cursor_Type currentCursorType { get; private set; }
 
     public PointerEventData cursorPointerEventData { get; private set; }
+
+    private LocationGridTile _currentHoveredTile;
 
     #region Monobehaviours
     private void Awake() {
@@ -52,6 +55,12 @@ public class CursorManager : MonoBehaviour {
                 IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
                 if (hoveredPOI != null) {
                     if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI)) {
+                        SetCursorTo(Cursor_Type.Check);
+                    } else {
+                        SetCursorTo(Cursor_Type.Cross);
+                    }
+                }else if (InteriorMapManager.Instance.currentlyHoveredTile != null){
+                    if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(InteriorMapManager.Instance.currentlyHoveredTile)) {
                         SetCursorTo(Cursor_Type.Check);
                     } else {
                         SetCursorTo(Cursor_Type.Cross);
@@ -84,11 +93,12 @@ public class CursorManager : MonoBehaviour {
                         }
                     }
                 } else {
-                    LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
+                    LocationGridTile hoveredTile = InteriorMapManager.Instance.currentlyHoveredTile;
                     if(hoveredTile != null) {
                         SetCursorTo(Cursor_Type.Check);
-                        if(hoveredTile != InteriorMapManager.Instance.currentlyHoveredTile) {
-                            InteriorMapManager.Instance.SetCurrentlyHoveredTile(hoveredTile);
+                        if(hoveredTile != _currentHoveredTile) {
+                            _currentHoveredTile = hoveredTile;
+                            //InteriorMapManager.Instance.SetCurrentlyHoveredTile(hoveredTile);
                             List<LocationGridTile> highlightTiles = hoveredTile.parentAreaMap.GetTilesInRadius(hoveredTile, ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
                             if(InteriorMapManager.Instance.currentlyHighlightedTiles != null) {
                                 InteriorMapManager.Instance.UnhighlightTiles();
@@ -117,6 +127,7 @@ public class CursorManager : MonoBehaviour {
             //left click
             ExecuteLeftClickActions();
             ClearLeftClickActions();
+            TransferPendingLeftClickActions();
             Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Mouse0);
         }else if (Input.GetMouseButtonDown(1)) {
             //right click
@@ -157,8 +168,17 @@ public class CursorManager : MonoBehaviour {
     }
 
     #region Click Actions
+    private void TransferPendingLeftClickActions() {
+        for (int i = 0; i < pendingLeftClickActions.Count; i++) {
+            leftClickActions.Add(pendingLeftClickActions[i]);
+        }
+        pendingLeftClickActions.Clear();
+    }
     public void AddLeftClickAction(System.Action action) {
         leftClickActions.Add(action);
+    }
+    public void AddPendingLeftClickAction(System.Action action) {
+        pendingLeftClickActions.Add(action);
     }
     private void ExecuteLeftClickActions() {
         for (int i = 0; i < leftClickActions.Count; i++) {

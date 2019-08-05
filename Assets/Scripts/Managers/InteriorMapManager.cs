@@ -36,7 +36,7 @@ public class InteriorMapManager : MonoBehaviour {
             return null;
         }
     }
-    public LocationGridTile currentlyHoveredTile { get; private set; }
+    public LocationGridTile currentlyHoveredTile { get { return GetTileFromMousePosition(); } }
     public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
 
     //Used for generating the inner map of an area, structure templates are first placed here before generating the actual map
@@ -249,9 +249,9 @@ public class InteriorMapManager : MonoBehaviour {
         }
         return false;
     }
-    public void SetCurrentlyHoveredTile(LocationGridTile tile) {
-       currentlyHoveredTile = tile;
-    }
+    //public void SetCurrentlyHoveredTile(LocationGridTile tile) {
+    //   currentlyHoveredTile = tile;
+    //}
     public void HighlightTiles(List<LocationGridTile> tiles) {
         if (tiles != null) {
             for (int i = 0; i < tiles.Count; i++) {

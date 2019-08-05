@@ -18,6 +18,8 @@ public class PlayerJobAction {
     public int ticksInCooldown { get; private set; } //how many ticks has this action been in cooldown?
     public int lvl { get; protected set; }
     public List<ABILITY_TAG> abilityTags { get; protected set; }
+    public bool hasSecondPhase { get; protected set; }
+    public bool isInSecondPhase { get; protected set; }
 
     public bool isInCooldown {
         get { return ticksInCooldown != cooldown; } //check if the ticks this action has been in cooldown is the same as cooldown
@@ -36,6 +38,7 @@ public class PlayerJobAction {
         abilityTags = new List<ABILITY_TAG>();
         this.lvl = 1;
         this.tier = 3;
+        hasSecondPhase = false;
         OnLevelUp();
     }
 
@@ -130,10 +133,14 @@ public class PlayerJobAction {
     public virtual bool CanTarget(IPointOfInterest poi) {
         return true;
     }
+    public virtual bool CanTarget(LocationGridTile gridTile) {
+        return false;
+    }
     public virtual string GetActionName(Character target) {
         return name;
     }
     protected virtual void OnLevelUp() { }
+    public virtual void SecondPhase() { }
     #endregion
 
     #region Cooldown
