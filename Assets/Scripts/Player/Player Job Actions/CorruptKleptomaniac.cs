@@ -7,7 +7,7 @@ public class CorruptKleptomaniac : PlayerJobAction {
     public CorruptKleptomaniac() : base(INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA) {
         description = "Makes a character enjoy stealing other people's items.";
         SetDefaultCooldownTime(24);
-        targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        targetType = JOB_ACTION_TARGET.CHARACTER;
         abilityTags.Add(ABILITY_TAG.CRIME);
     }
 

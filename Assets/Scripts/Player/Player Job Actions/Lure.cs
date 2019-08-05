@@ -14,7 +14,6 @@ public class Lure : PlayerJobAction {
     public Lure() : base(INTERVENTION_ABILITY.LURE) {
         description = "Force a character to go to a specified nearby location.";
         SetDefaultCooldownTime(24);
-        targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         abilityTags.Add(ABILITY_TAG.NONE);
         targetCharacters = new List<Character>();
         tileChoices = new List<LocationGridTile>();

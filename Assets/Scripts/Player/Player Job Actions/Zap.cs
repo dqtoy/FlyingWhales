@@ -8,7 +8,7 @@ public class Zap : PlayerJobAction {
     public Zap() : base(INTERVENTION_ABILITY.ZAP) {
         description = "Stops a character from his/her action and temporarily paralyzes him/her.";
         SetDefaultCooldownTime(24);
-        targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        targetType = JOB_ACTION_TARGET.CHARACTER;
         abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 

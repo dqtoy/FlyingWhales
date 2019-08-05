@@ -9,7 +9,7 @@ public class ShareIntel : PlayerJobAction {
     public ShareIntel() : base(INTERVENTION_ABILITY.ABDUCT) {
         description = "The Diplomat will reach out to a character and share a piece of information with them.";
         SetDefaultCooldownTime(24);
-        targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        targetType = JOB_ACTION_TARGET.CHARACTER;
     }
 
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {

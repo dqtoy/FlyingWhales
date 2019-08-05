@@ -23,16 +23,18 @@ public class Resting : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourceCharacter) {
-        _character = sourceCharacter as Character;
-        lycanthropyTrait = _character.GetNormalTrait("Lycanthropy") as Lycanthropy;
-        //if(lycanthropyTrait != null) {
-        //    Messenger.AddListener(Signals.HOUR_STARTED, CheckForLycanthropy);
-        //}
-        Messenger.AddListener(Signals.TICK_STARTED, RecoverHP);
+    public override void OnAddTrait(ITraitable sourceCharacter) {
+        if (sourceCharacter is Character) {
+            _character = sourceCharacter as Character;
+            lycanthropyTrait = _character.GetNormalTrait("Lycanthropy") as Lycanthropy;
+            //if(lycanthropyTrait != null) {
+            //    Messenger.AddListener(Signals.HOUR_STARTED, CheckForLycanthropy);
+            //}
+            Messenger.AddListener(Signals.TICK_STARTED, RecoverHP);
+        }
         base.OnAddTrait(sourceCharacter);
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         //if (lycanthropyTrait != null) {
         //    Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForLycanthropy);
         //}

@@ -82,6 +82,8 @@ public class AttributeManager : MonoBehaviour {
             new Invisible(),
             new Unfaithful(),
             new Drunk(),
+            new Burning(),
+            new Burnt(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

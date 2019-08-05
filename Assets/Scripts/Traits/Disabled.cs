@@ -14,13 +14,18 @@ public class Disabled : Trait {
         //effects = new List<TraitEffect>();
     }
 
-    public override void OnAddTrait(IPointOfInterest targetPOI) {
+    public override void OnAddTrait(ITraitable targetPOI) {
         base.OnAddTrait(targetPOI);
-        targetPOI.SetIsDisabledByPlayer(true);
+        if (targetPOI is IPointOfInterest) {
+            (targetPOI as IPointOfInterest).SetIsDisabledByPlayer(true);
+        }
+        
     }
 
-    public override void OnRemoveTrait(IPointOfInterest targetPOI, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable targetPOI, Character removedBy) {
         base.OnRemoveTrait(targetPOI, removedBy);
-        targetPOI.SetIsDisabledByPlayer(false);
+        if (targetPOI is IPointOfInterest) {
+            (targetPOI as IPointOfInterest).SetIsDisabledByPlayer(false);
+        }
     }
 }

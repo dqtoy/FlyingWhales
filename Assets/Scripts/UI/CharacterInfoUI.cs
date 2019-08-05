@@ -349,6 +349,9 @@ public class CharacterInfoUI : UIMenu {
 
         for (int i = 0; i < _activeCharacter.normalTraits.Count; i++) {
             Trait currTrait = _activeCharacter.normalTraits[i];
+            if (currTrait.isHidden) {
+                continue; //skip
+            }
             if (currTrait.type == TRAIT_TYPE.ABILITY || currTrait.type == TRAIT_TYPE.ATTACK || currTrait.type == TRAIT_TYPE.COMBAT_POSITION
                 || currTrait.name == "Herbivore" || currTrait.name == "Carnivore") {
                 continue; //hide combat traits

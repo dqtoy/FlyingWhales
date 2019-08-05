@@ -22,18 +22,21 @@ public class Trait {
     public int daysDuration; //Zero (0) means Permanent
     public int level;
     public List<TraitEffect> effects;
-    public Dictionary<IPointOfInterest, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
+    public bool isHidden;
+
+    public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
     public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
     public bool isDisabled { get; private set; }
     public virtual bool broadcastDuplicates { get { return false; } }
     public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
     public GameDate dateEstablished { get; protected set; }
+    
     //private Character _responsibleCharacter;
 
     private System.Action onRemoveAction;
 
     #region Virtuals
-    public virtual void OnAddTrait(IPointOfInterest sourceCharacter) {
+    public virtual void OnAddTrait(ITraitable addedTo) {
         //if(type == TRAIT_TYPE.CRIMINAL && sourceCharacter is Character) {
         //    Character character = sourceCharacter as Character;
         //    character.CreateApprehendJob();
@@ -45,12 +48,12 @@ public class Trait {
         SetDateEstablished(GameManager.Instance.Today());
 #endif
     }
-    public virtual void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+    public virtual void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
         if (onRemoveAction != null) {
             onRemoveAction();
         }
-        if (type == TRAIT_TYPE.CRIMINAL && sourceCharacter is Character) {
-            Character character = sourceCharacter as Character;
+        if (type == TRAIT_TYPE.CRIMINAL && removedFrom is Character) {
+            Character character = removedFrom as Character;
             if (!character.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                 character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
             }
@@ -100,19 +103,19 @@ public class Trait {
         }
         return false;
     }
-    public void SetExpiryTicket(IPointOfInterest poi, string expiryTicket) {
+    public void SetExpiryTicket(ITraitable obj, string expiryTicket) {
         if (expiryTickets == null) {
-            expiryTickets = new Dictionary<IPointOfInterest, string>();
+            expiryTickets = new Dictionary<ITraitable, string>();
         }
-        if (!expiryTickets.ContainsKey(poi)) {
-            expiryTickets.Add(poi, expiryTicket);
+        if (!expiryTickets.ContainsKey(obj)) {
+            expiryTickets.Add(obj, expiryTicket);
         } else {
-            expiryTickets[poi] = expiryTicket;
+            expiryTickets[obj] = expiryTicket;
         }
     }
-    public void RemoveExpiryTicket(IPointOfInterest poi) {
+    public void RemoveExpiryTicket(ITraitable traitable) {
         if (expiryTickets != null) {
-            expiryTickets.Remove(poi);
+            expiryTickets.Remove(traitable);
         }
     }
     public void LevelUp() {

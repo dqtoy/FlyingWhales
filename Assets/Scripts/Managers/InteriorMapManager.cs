@@ -363,6 +363,17 @@ public class InteriorMapManager : MonoBehaviour {
         if (tile.hasFurnitureSpot) {
             summary += "\nFurniture Spot: " + tile.furnitureSpot.ToString();
         }
+        summary += "\nTile Traits: ";
+        if (tile.normalTraits.Count > 0) {
+            summary += "\n";
+            for (int i = 0; i < tile.normalTraits.Count; i++) {
+                summary += "|" + tile.normalTraits[i].name + "|";
+            }
+
+        } else {
+            summary += "None";
+        }
+
         summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
         if (tile.objHere != null) {
             summary += "\n\tObject State: " + tile.objHere.state.ToString();
@@ -376,7 +387,7 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "\n\tCharacter Owner: " + (tile.objHere as SpecialToken).characterOwner?.name ?? "None";
                 summary += "\n\tFaction Owner: " + (tile.objHere as SpecialToken).factionOwner?.name ?? "None";
             }
-            summary += "\n\tTraits: ";
+            summary += "\n\tObject Traits: ";
             if (tile.objHere.normalTraits.Count > 0) {
                 for (int i = 0; i < tile.objHere.normalTraits.Count; i++) {
                     summary += "\n\t\t- " + tile.objHere.normalTraits[i].name;

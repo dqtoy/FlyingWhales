@@ -17,7 +17,7 @@ public class Cannibal : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourcePOI) {
+    public override void OnAddTrait(ITraitable sourcePOI) {
         base.OnAddTrait(sourcePOI);
         if (sourcePOI is Character) {
             Character owner = sourcePOI as Character;

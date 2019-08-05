@@ -7,15 +7,15 @@ using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
-public class LocationGridTile : IHasNeighbours<LocationGridTile> {
+public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
 
     public enum Tile_Type { Empty, Wall, Structure, Gate, Road, Structure_Entrance }
     public enum Tile_State { Empty, Occupied }
     public enum Tile_Access { Passable, Impassable, }
-    public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble }
+    public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, }
 
-    public bool hasDetail = false;
-
+    protected List<Trait> _traits;
+    public bool hasDetail { get; set; }
     public AreaInnerTileMap parentAreaMap { get; private set; }
     public Tilemap parentTileMap { get; private set; }
     public Vector3Int localPlace { get; private set; }
@@ -27,7 +27,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public Tile_Type tileType { get; private set; }
     public Tile_State tileState { get; private set; }
     public Tile_Access tileAccess { get; private set; }
-    public Ground_Type groundType { get; set; }
+    public Ground_Type groundType { get; private set; }
     public LocationStructure structure { get; private set; }
     public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
     public List<LocationGridTile> neighbourList { get; private set; }
@@ -38,6 +38,10 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
     public TILE_OBJECT_TYPE reservedObjectType { get; private set; } //the only type of tile object that can be placed here
     public FurnitureSpot furnitureSpot { get; private set; }
     public bool hasFurnitureSpot { get; private set; }
+    public List<Trait> normalTraits {
+        get { return _traits; }
+    }
+    public LocationGridTile gridTileLocation { get { return this; } }
 
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> RealisticTiles { get { return FourNeighbours().Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
@@ -59,6 +63,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         tileState = Tile_State.Empty;
         tileAccess = Tile_Access.Passable;
         charactersHere = new List<Character>();
+        _traits = new List<Trait>();
         SetLockedState(false);
         SetReservedType(TILE_OBJECT_TYPE.NONE);
     }
@@ -140,12 +145,29 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             case Tile_Type.Gate:
                 SetTileAccess(Tile_Access.Passable);
                 break;
+            case Tile_Type.Structure:
+                if (parentTileMap.GetTile(localPlace).name.Contains("Structure Floor Tile")) { //wood
+                    SetGroundType(Ground_Type.Wood);
+                }
+                break;
                 //default:
                 //    SetTileState(Tile_State.Empty);
                 //    break;
         }
     }
-
+    public void SetGroundType(Ground_Type groundType) {
+        this.groundType = groundType;
+        switch (groundType) {
+            case Ground_Type.Grass:
+            case Ground_Type.Tundra:
+            case Ground_Type.Wood:
+                AddTrait("Flammable");
+                break;
+            default:
+                RemoveTrait("Flammable");
+                break;
+        }
+    }
     public List<TileNeighbourDirection> GetSameStructureNeighbourDirections() {
         List<TileNeighbourDirection> dirs = new List<TileNeighbourDirection>();
         foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in neighbours) {
@@ -502,6 +524,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
                 //if (InteriorMapManager.Instance.IsHoldingPOI()) {
                 //    InteriorMapManager.Instance.PlaceHeldPOI(this);
                 //}
+                //this.AddTrait("Burning");
             } else {
                 Messenger.Broadcast(Signals.HIDE_MENUS);
             }
@@ -517,6 +540,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             } else if (inputButton == PointerEventData.InputButton.Right) {
                 if (objHere is TileObject) {
                     //UIManager.Instance.poiTestingUI.ShowUI(objHere);
+                    //objHere.AddTrait("Burning");
                 }
             } else {
                 if (objHere is TileObject) {
@@ -557,6 +581,134 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
             return choices[UnityEngine.Random.Range(0, choices.Count)];
         }
         throw new System.Exception("Furniture spot at " + this.ToString() + " cannot provide facility " + facility.ToString() + "! Should not reach this point if that is the case!");
+    }
+    #endregion
+
+    #region Traits
+    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
+        if (AttributeManager.Instance.IsInstancedTrait(traitName)) {
+            return AddTrait(AttributeManager.Instance.CreateNewInstancedTraitClass(traitName), characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
+        } else {
+            return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
+        }
+    }
+    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
+        if (trait.IsUnique()) {
+            Trait oldTrait = GetNormalTrait(trait.name);
+            if (oldTrait != null) {
+                oldTrait.SetCharacterResponsibleForTrait(characterResponsible);
+                oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
+                return false;
+            }
+            //return false;
+        }
+        _traits.Add(trait);
+        trait.SetGainedFromDoing(gainedFromDoing);
+        trait.SetOnRemoveAction(onRemoveAction);
+        trait.SetCharacterResponsibleForTrait(characterResponsible);
+        trait.AddCharacterResponsibleForTrait(characterResponsible);
+        //ApplyTraitEffects(trait);
+        //ApplyPOITraitInteractions(trait);
+        if (trait.daysDuration > 0) {
+            GameDate removeDate = GameManager.Instance.Today();
+            removeDate.AddTicks(trait.daysDuration);
+            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait), this);
+            trait.SetExpiryTicket(this, ticket);
+        }
+        if (triggerOnAdd) {
+            trait.OnAddTrait(this);
+        }
+        return true;
+    }
+    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
+        if (_traits.Remove(trait)) {
+            trait.RemoveExpiryTicket(this);
+            if (triggerOnRemove) {
+                trait.OnRemoveTrait(this, removedBy);
+            }
+            return true;
+        }
+        return false;
+    }
+    public bool RemoveTrait(string traitName, bool triggerOnRemove = true, Character removedBy = null) {
+        Trait trait = GetNormalTrait(traitName);
+        if (trait != null) {
+            return RemoveTrait(trait, triggerOnRemove, removedBy);
+        }
+        return false;
+    }
+    public void RemoveTrait(List<Trait> traits) {
+        for (int i = 0; i < traits.Count; i++) {
+            RemoveTrait(traits[i]);
+        }
+    }
+    public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
+        List<Trait> removedTraits = new List<Trait>();
+        for (int i = 0; i < _traits.Count; i++) {
+            if (_traits[i].type == traitType) {
+                removedTraits.Add(_traits[i]);
+                _traits.RemoveAt(i);
+                i--;
+            }
+        }
+        return removedTraits;
+    }
+    public Trait GetNormalTrait(params string[] traitNames) {
+        for (int i = 0; i < _traits.Count; i++) {
+            Trait trait = _traits[i];
+
+            for (int j = 0; j < traitNames.Length; j++) {
+                if (trait.name == traitNames[j] && !trait.isDisabled) {
+                    return trait;
+                }
+            }
+        }
+        return null;
+    }
+    public void RefreshTraitExpiry(Trait trait) {
+        if (trait.expiryTickets.ContainsKey(this)) {
+            SchedulingManager.Instance.RemoveSpecificEntry(trait.expiryTickets[this]);
+        }
+        if (trait.daysDuration > 0) {
+            GameDate removeDate = GameManager.Instance.Today();
+            removeDate.AddTicks(trait.daysDuration);
+            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait), this);
+            trait.SetExpiryTicket(this, ticket);
+        }
+
+    }
+    private void RemoveAllTraits() {
+        List<Trait> allTraits = new List<Trait>(normalTraits);
+        for (int i = 0; i < allTraits.Count; i++) {
+            RemoveTrait(allTraits[i]);
+        }
+    }
+    public List<ITraitable> GetAllTraitablesOnTile() {
+        List<ITraitable> traitables = new List<ITraitable>();
+        traitables.Add(this);
+        if (objHere != null) {
+            traitables.Add(objHere);
+        }
+        for (int i = 0; i < charactersHere.Count; i++) {
+            traitables.Add(charactersHere[i]);
+        }
+        return traitables;
+    }
+    public List<ITraitable> GetAllTraitablesOnTileWithTrait(string requiredTrait) {
+        List<ITraitable> traitables = new List<ITraitable>();
+        if (this.GetNormalTrait(requiredTrait) != null) {
+            traitables.Add(this);
+        }
+        if (objHere != null && objHere.GetNormalTrait(requiredTrait) != null) {
+            traitables.Add(objHere);
+        }
+        for (int i = 0; i < charactersHere.Count; i++) {
+            Character character = charactersHere[i];
+            if (character.GetNormalTrait(requiredTrait) != null) {
+                traitables.Add(character);
+            }
+        }
+        return traitables;
     }
     #endregion
 }

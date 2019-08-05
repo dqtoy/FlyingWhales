@@ -10,7 +10,7 @@ public class RaiseDead : PlayerJobAction {
         description = "Returns a character to life.";
         tier = 2;
         SetDefaultCooldownTime(24);
-        targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        targetType = JOB_ACTION_TARGET.CHARACTER;
         abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 

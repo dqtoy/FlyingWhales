@@ -19,26 +19,26 @@ public class Friend : RelationshipTrait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourcePOI) {
+    public override void OnAddTrait(ITraitable sourcePOI) {
         if (sourcePOI is Character) {
             Character sourceCharacter = sourcePOI as Character;
             if (!GameManager.Instance.gameHasStarted) {
                 return; //do not log initial relationships
             }
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "friend");
-            log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             sourceCharacter.AddHistory(log);
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
         if (sourcePOI is Character) {
             Character sourceCharacter = sourcePOI as Character;
             if (!GameManager.Instance.gameHasStarted) {
                 return; //do not log initial relationships
             }
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "not_friend");
-            log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             sourceCharacter.AddHistory(log);
         }

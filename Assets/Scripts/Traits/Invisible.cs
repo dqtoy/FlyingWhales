@@ -36,7 +36,7 @@ public class Invisible : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourcePOI) {
+    public override void OnAddTrait(ITraitable sourcePOI) {
         base.OnAddTrait(sourcePOI);
         if (sourcePOI is Character) {
             owner = sourcePOI as Character;
@@ -44,9 +44,11 @@ public class Invisible : Trait {
             owner.CancelAllJobsTargettingThisCharacter();
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
         base.OnRemoveTrait(sourcePOI, removedBy);
-        GameManager.Instance.StartCoroutine(RetriggerVisionCollision(owner));
+        if (sourcePOI is Character) {
+            GameManager.Instance.StartCoroutine(RetriggerVisionCollision(owner));
+        }
     }
     #endregion
 

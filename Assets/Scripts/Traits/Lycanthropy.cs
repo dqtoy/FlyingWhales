@@ -25,26 +25,28 @@ public class Lycanthropy : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourceCharacter) {
-        _character = sourceCharacter as Character;
-        data = new LycanthropyData();
-        //_character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, name);
-        AlterEgoData lycanthropeAlterEgo = _character.CreateNewAlterEgo("Lycanthrope");
+    public override void OnAddTrait(ITraitable sourceCharacter) {
+        if (sourceCharacter is Character) {
+            _character = sourceCharacter as Character;
+            data = new LycanthropyData();
+            //_character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, name);
+            AlterEgoData lycanthropeAlterEgo = _character.CreateNewAlterEgo("Lycanthrope");
 
-        //setup all alter ego data
-        lycanthropeAlterEgo.SetFaction(FactionManager.Instance.neutralFaction);
-        lycanthropeAlterEgo.SetRace(RACE.WOLF);
-        lycanthropeAlterEgo.SetRole(CharacterRole.BEAST);
-        lycanthropeAlterEgo.SetCharacterClass(CharacterManager.Instance.CreateNewCharacterClass(Utilities.GetRespectiveBeastClassNameFromByRace(RACE.WOLF)));
-        lycanthropeAlterEgo.SetLevel(level);
-        foreach (List<LocationStructure> structures in _character.specificLocation.structures.Values) {
-            for (int i = 0; i < structures.Count; i++) {
-                for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
-                    IPointOfInterest poi = structures[i].pointsOfInterest[j];
-                    if (poi is TileObject) {
-                        TileObject tileObj = poi as TileObject;
-                        if (tileObj.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL || tileObj.tileObjectType == TILE_OBJECT_TYPE.EDIBLE_PLANT) {
-                            lycanthropeAlterEgo.AddAwareness(tileObj);
+            //setup all alter ego data
+            lycanthropeAlterEgo.SetFaction(FactionManager.Instance.neutralFaction);
+            lycanthropeAlterEgo.SetRace(RACE.WOLF);
+            lycanthropeAlterEgo.SetRole(CharacterRole.BEAST);
+            lycanthropeAlterEgo.SetCharacterClass(CharacterManager.Instance.CreateNewCharacterClass(Utilities.GetRespectiveBeastClassNameFromByRace(RACE.WOLF)));
+            lycanthropeAlterEgo.SetLevel(level);
+            foreach (List<LocationStructure> structures in _character.specificLocation.structures.Values) {
+                for (int i = 0; i < structures.Count; i++) {
+                    for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {
+                        IPointOfInterest poi = structures[i].pointsOfInterest[j];
+                        if (poi is TileObject) {
+                            TileObject tileObj = poi as TileObject;
+                            if (tileObj.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL || tileObj.tileObjectType == TILE_OBJECT_TYPE.EDIBLE_PLANT) {
+                                lycanthropeAlterEgo.AddAwareness(tileObj);
+                            }
                         }
                     }
                 }
@@ -53,7 +55,7 @@ public class Lycanthropy : Trait {
 
         base.OnAddTrait(sourceCharacter);
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         _character.RemoveAlterEgo("Lycanthrope");
         _character = null;
         base.OnRemoveTrait(sourceCharacter, removedBy);

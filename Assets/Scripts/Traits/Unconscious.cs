@@ -28,7 +28,7 @@ public class Unconscious : Trait {
         }
         return "This character has been knocked out by " + responsibleCharacter.name;
     }
-    public override void OnAddTrait(IPointOfInterest sourceCharacter) {
+    public override void OnAddTrait(ITraitable sourceCharacter) {
         base.OnAddTrait(sourceCharacter);
         if(sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
@@ -48,7 +48,7 @@ public class Unconscious : Trait {
             }
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         //if (_restrainJob != null) {
         //    _restrainJob.jobQueueParent.CancelJob(_restrainJob);
         //}
