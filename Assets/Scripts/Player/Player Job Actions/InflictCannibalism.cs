@@ -6,6 +6,7 @@ public class InflictCannibalism : PlayerJobAction {
 
     public InflictCannibalism() : base(INTERVENTION_ABILITY.INFLICT_CANNIBALISM) {
         description = "Makes a character eat other characters with the same race for sustenance.";
+        tier = 2;
         SetDefaultCooldownTime(24);
         targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
         abilityTags.Add(ABILITY_TAG.MAGIC);

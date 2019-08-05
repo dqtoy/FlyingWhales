@@ -17,7 +17,7 @@ public class BerserkBuff : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 
     #region Overrides

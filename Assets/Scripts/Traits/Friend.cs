@@ -15,7 +15,7 @@ public class Friend : RelationshipTrait {
         effect = TRAIT_EFFECT.POSITIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 
     #region Overrides

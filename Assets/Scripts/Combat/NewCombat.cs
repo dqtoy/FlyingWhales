@@ -425,12 +425,14 @@ public class NewCombat : MonoBehaviour {
             CombatCharacter combatCharacter = _combatOrder[i];
             for (int j = 0; j < combatCharacter.character.normalTraits.Count; j++) {
                 if(combatCharacter.character.normalTraits[j].trigger == TRAIT_TRIGGER.START_OF_COMBAT) {
-                    for (int k = 0; k < combatCharacter.character.normalTraits[j].effects.Count; k++) {
-                        TraitEffect traitEffect = combatCharacter.character.normalTraits[j].effects[k];
-                        if (combatCharacter.side == SIDES.A) {
-                            ApplyTraitEffectsOfStartCombat(combatCharacter, _leftSideCombatOrder, _rightSideCombatOrder, traitEffect);
-                        } else {
-                            ApplyTraitEffectsOfStartCombat(combatCharacter, _rightSideCombatOrder, _leftSideCombatOrder, traitEffect);
+                    if (combatCharacter.character.normalTraits[j].effects != null) {
+                        for (int k = 0; k < combatCharacter.character.normalTraits[j].effects.Count; k++) {
+                            TraitEffect traitEffect = combatCharacter.character.normalTraits[j].effects[k];
+                            if (combatCharacter.side == SIDES.A) {
+                                ApplyTraitEffectsOfStartCombat(combatCharacter, _leftSideCombatOrder, _rightSideCombatOrder, traitEffect);
+                            } else {
+                                ApplyTraitEffectsOfStartCombat(combatCharacter, _rightSideCombatOrder, _leftSideCombatOrder, traitEffect);
+                            }
                         }
                     }
                 }
@@ -800,16 +802,18 @@ public class NewCombat : MonoBehaviour {
         for (int i = 0; i < sourceCombatCharacter.character.normalTraits.Count; i++) {
             Trait trait = sourceCombatCharacter.character.normalTraits[i];
             if(trait.trigger == TRAIT_TRIGGER.DURING_COMBAT) {
-                for (int j = 0; j < trait.effects.Count; j++) {
-                    TraitEffect traitEffect = trait.effects[j];
-                    if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF && traitEffect.stat == STAT.ATTACK && traitEffect.damageIdentifier == DAMAGE_IDENTIFIER.DEALT
-                        && WillTraitApplyDuringCombat(traitEffect, sourceCombatCharacter, sourceCombatCharacter, specificTarget, targets)) {
-                        if(traitEffect.requirementType == TRAIT_REQUIREMENT.EVERY_MISSING_HP_25PCT) {
-                            int percent = (int)(sourceCombatCharacter.maxHP * 0.25f);
-                            int multiplier = sourceCombatCharacter.missingHP / percent;
-                            damageIncreasePercentage += (traitEffect.amount * multiplier);
-                        } else {
-                            damageIncreasePercentage += traitEffect.amount;
+                if (trait.effects != null) {
+                    for (int j = 0; j < trait.effects.Count; j++) {
+                        TraitEffect traitEffect = trait.effects[j];
+                        if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF && traitEffect.stat == STAT.ATTACK && traitEffect.damageIdentifier == DAMAGE_IDENTIFIER.DEALT
+                            && WillTraitApplyDuringCombat(traitEffect, sourceCombatCharacter, sourceCombatCharacter, specificTarget, targets)) {
+                            if (traitEffect.requirementType == TRAIT_REQUIREMENT.EVERY_MISSING_HP_25PCT) {
+                                int percent = (int) (sourceCombatCharacter.maxHP * 0.25f);
+                                int multiplier = sourceCombatCharacter.missingHP / percent;
+                                damageIncreasePercentage += (traitEffect.amount * multiplier);
+                            } else {
+                                damageIncreasePercentage += traitEffect.amount;
+                            }
                         }
                     }
                 }
@@ -818,16 +822,18 @@ public class NewCombat : MonoBehaviour {
         for (int i = 0; i < specificTarget.character.normalTraits.Count; i++) {
             Trait trait = specificTarget.character.normalTraits[i];
             if (trait.trigger == TRAIT_TRIGGER.DURING_COMBAT) {
-                for (int j = 0; j < trait.effects.Count; j++) {
-                    TraitEffect traitEffect = trait.effects[j];
-                    if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF && traitEffect.stat == STAT.ATTACK && traitEffect.damageIdentifier == DAMAGE_IDENTIFIER.RECEIVED
-                        && WillTraitApplyDuringCombat(traitEffect, specificTarget, specificTarget, sourceCombatCharacter, targets)) {
-                        if (traitEffect.requirementType == TRAIT_REQUIREMENT.EVERY_MISSING_HP_25PCT) {
-                            int percent = (int) (specificTarget.maxHP * 0.25f);
-                            int multiplier = specificTarget.missingHP / percent;
-                            damageIncreasePercentage += (traitEffect.amount * multiplier);
-                        } else {
-                            damageIncreasePercentage += traitEffect.amount;
+                if (trait.effects != null) {
+                    for (int j = 0; j < trait.effects.Count; j++) {
+                        TraitEffect traitEffect = trait.effects[j];
+                        if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF && traitEffect.stat == STAT.ATTACK && traitEffect.damageIdentifier == DAMAGE_IDENTIFIER.RECEIVED
+                            && WillTraitApplyDuringCombat(traitEffect, specificTarget, specificTarget, sourceCombatCharacter, targets)) {
+                            if (traitEffect.requirementType == TRAIT_REQUIREMENT.EVERY_MISSING_HP_25PCT) {
+                                int percent = (int) (specificTarget.maxHP * 0.25f);
+                                int multiplier = specificTarget.missingHP / percent;
+                                damageIncreasePercentage += (traitEffect.amount * multiplier);
+                            } else {
+                                damageIncreasePercentage += traitEffect.amount;
+                            }
                         }
                     }
                 }

@@ -16,7 +16,7 @@ public class Abducted : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION };
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 
     #region Overrides

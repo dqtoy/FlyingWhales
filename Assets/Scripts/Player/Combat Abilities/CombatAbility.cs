@@ -6,6 +6,7 @@ public class CombatAbility {
     public COMBAT_ABILITY type { get; protected set; }
     public string name { get; protected set; }
     public string description { get; protected set; }
+    public int tier { get; protected set; }
     public virtual string dynamicDescription { get { return description; } }
     public int lvl { get; protected set; }
     public int abilityRadius { get; protected set; } //0 means single target
@@ -18,6 +19,7 @@ public class CombatAbility {
         this.type = type;
         name = Utilities.NormalizeStringUpperCaseFirstLetters(this.type.ToString());
         lvl = 1;
+        tier = 3;
         OnLevelUp();
         abilityRadius = 0;
         cooldown = 0;

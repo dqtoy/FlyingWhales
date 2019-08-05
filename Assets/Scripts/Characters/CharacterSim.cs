@@ -497,29 +497,33 @@ public class CharacterSim : ICharacterSim {
         return new Trait();
     }
     private void ApplyFlatCombatAttributeEffects(Trait trait) {
-        for (int i = 0; i < trait.effects.Count; i++) {
-            TraitEffect traitEffect = trait.effects[i];
-            if (!traitEffect.hasRequirement && !traitEffect.isPercentage) {
-                if (traitEffect.stat == STAT.ATTACK) {
-                    _attackPower += (int) traitEffect.amount;
-                } else if (traitEffect.stat == STAT.HP) {
-                    _hp += (int) traitEffect.amount;
-                } else if (traitEffect.stat == STAT.SPEED) {
-                    _speed += (int) traitEffect.amount;
+        if (trait.effects != null) {
+            for (int i = 0; i < trait.effects.Count; i++) {
+                TraitEffect traitEffect = trait.effects[i];
+                if (!traitEffect.hasRequirement && !traitEffect.isPercentage) {
+                    if (traitEffect.stat == STAT.ATTACK) {
+                        _attackPower += (int) traitEffect.amount;
+                    } else if (traitEffect.stat == STAT.HP) {
+                        _hp += (int) traitEffect.amount;
+                    } else if (traitEffect.stat == STAT.SPEED) {
+                        _speed += (int) traitEffect.amount;
+                    }
                 }
             }
         }
     }
     private void UnapplyFlatCombatAttributeEffects(Trait trait) {
-        for (int i = 0; i < trait.effects.Count; i++) {
-            TraitEffect traitEffect = trait.effects[i];
-            if (!traitEffect.hasRequirement && !traitEffect.isPercentage) {
-                if (traitEffect.stat == STAT.ATTACK) {
-                    _attackPower -= (int) traitEffect.amount;
-                } else if (traitEffect.stat == STAT.HP) {
-                    _hp -= (int) traitEffect.amount;
-                } else if (traitEffect.stat == STAT.SPEED) {
-                    _speed -= (int) traitEffect.amount;
+        if (trait.effects != null) {
+            for (int i = 0; i < trait.effects.Count; i++) {
+                TraitEffect traitEffect = trait.effects[i];
+                if (!traitEffect.hasRequirement && !traitEffect.isPercentage) {
+                    if (traitEffect.stat == STAT.ATTACK) {
+                        _attackPower -= (int) traitEffect.amount;
+                    } else if (traitEffect.stat == STAT.HP) {
+                        _hp -= (int) traitEffect.amount;
+                    } else if (traitEffect.stat == STAT.SPEED) {
+                        _speed -= (int) traitEffect.amount;
+                    }
                 }
             }
         }

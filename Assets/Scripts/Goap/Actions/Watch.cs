@@ -121,8 +121,14 @@ public class Watch : GoapAction {
 
         if(!actor.currentParty.icon.isTravelling && !actor.marker.inVisionPOIs.Contains(poiTarget)) {
             //Go to target because target is not in vision
-            actor.marker.GoTo(poiTarget);
-        }else if (actor.currentParty.icon.isTravelling && actor.marker.inVisionPOIs.Contains(poiTarget)) {
+            if(actor.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+                currentState.EndPerTickEffect();
+                return;
+            } else {
+                actor.marker.GoTo(poiTarget);
+            }
+        } else if (actor.currentParty.icon.isTravelling && actor.marker.inVisionPOIs.Contains(poiTarget)) {
             //Stop moving when in vision already
             actor.marker.StopMovement();
         }

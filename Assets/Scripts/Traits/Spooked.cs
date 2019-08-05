@@ -12,7 +12,7 @@ public class Spooked : Trait {
         effect = TRAIT_EFFECT.NEUTRAL;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = GameManager.Instance.GetTicksBasedOnMinutes(30);
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
         terrifyingCharacters = new List<Character>();
     }
 

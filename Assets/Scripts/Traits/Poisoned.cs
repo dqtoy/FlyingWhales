@@ -15,7 +15,7 @@ public class Poisoned : Trait {
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
         _responsibleCharacters = new List<Character>();
         awareCharacters = new List<Character>();
     }

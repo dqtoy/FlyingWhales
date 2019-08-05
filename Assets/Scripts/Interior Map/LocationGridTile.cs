@@ -498,7 +498,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile> {
         if (objHere == null) {
 #if UNITY_EDITOR
             if (inputButton == PointerEventData.InputButton.Right) {
-                //UIManager.Instance.poiTestingUI.ShowUI(this);
+                UIManager.Instance.poiTestingUI.ShowUI(this);
                 //if (InteriorMapManager.Instance.IsHoldingPOI()) {
                 //    InteriorMapManager.Instance.PlaceHeldPOI(this);
                 //}

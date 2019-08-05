@@ -9,6 +9,7 @@ public class PlayerJobAction {
     public INTERVENTION_ABILITY abilityType { get; protected set; }
     public string name { get; protected set; }
     public string description { get; protected set; }
+    public int tier { get; protected set; }
     public virtual string dynamicDescription { get { return description; } }
     public int cooldown { get; protected set; } //cooldown in ticks
     public Character assignedCharacter { get; protected set; }
@@ -34,6 +35,7 @@ public class PlayerJobAction {
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.abilityType.ToString());
         abilityTags = new List<ABILITY_TAG>();
         this.lvl = 1;
+        this.tier = 3;
         OnLevelUp();
     }
 

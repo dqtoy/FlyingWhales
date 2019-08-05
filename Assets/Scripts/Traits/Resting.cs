@@ -18,7 +18,7 @@ public class Resting : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
         //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DRINK_BLOOD };
     }
 

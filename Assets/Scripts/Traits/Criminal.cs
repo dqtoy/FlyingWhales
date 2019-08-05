@@ -11,7 +11,7 @@ public class Criminal : Trait {
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 
     #region Overrides
@@ -46,16 +46,20 @@ public class Criminal : Trait {
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (traitOwner is Character) {
             Character targetCharacter = traitOwner as Character;
-            if (characterThatWillDoJob.isAtHomeArea && targetCharacter.isAtHomeArea && !targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.APPREHEND)
-                && targetCharacter.GetNormalTrait("Restrained") == null && !characterThatWillDoJob.HasTraitOf(TRAIT_TYPE.CRIMINAL) && gainedFromDoing.awareCharactersOfThisAction.Contains(characterThatWillDoJob)) {
+            if (gainedFromDoing.awareCharactersOfThisAction.Contains(characterThatWillDoJob) && targetCharacter.isAtHomeArea && !targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.APPREHEND)
+                && targetCharacter.GetNormalTrait("Restrained") == null) {
+                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = characterThatWillDoJob.homeArea, targetPOI = targetCharacter };
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, goapEffect);
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                 if (CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, null)) {
-                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = characterThatWillDoJob.homeArea, targetPOI = targetCharacter };
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, goapEffect);
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;
+                } else {
+                    job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
+                    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                    return false;
                 }
             }
         }

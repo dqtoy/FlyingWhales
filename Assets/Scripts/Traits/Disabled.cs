@@ -11,7 +11,7 @@ public class Disabled : Trait {
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = GameManager.Instance.GetTicksBasedOnHour(4);
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 
     public override void OnAddTrait(IPointOfInterest targetPOI) {

@@ -15,7 +15,7 @@ public class Relative : RelationshipTrait {
         relType = RELATIONSHIP_TRAIT.RELATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 
     #region overrides

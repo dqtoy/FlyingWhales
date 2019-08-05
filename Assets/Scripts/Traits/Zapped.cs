@@ -11,7 +11,7 @@ public class Zapped : Trait {
         effect = TRAIT_EFFECT.NEUTRAL;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 3;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 
     #region Overrides

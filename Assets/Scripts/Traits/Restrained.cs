@@ -19,7 +19,7 @@ public class Restrained : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED, INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION };
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
         //_createdFeedJob = false;
     }
 
@@ -74,22 +74,26 @@ public class Restrained : Trait {
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (traitOwner is Character) {
             Character targetCharacter = traitOwner as Character;
-            if (targetCharacter.isDead || !characterThatWillDoJob.isAtHomeArea) {
+            if (targetCharacter.isDead) {
                 return false;
             }
-            if (targetCharacter.GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
-                if (!targetCharacter.isAtHomeArea) {
+            if (!targetCharacter.isAtHomeArea) {
+                if(CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                     characterThatWillDoJob.CreateSaveCharacterJob(targetCharacter, false);
                     return true;
-                } else {
-                    if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name)) {
-                        if (CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
-                            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
-                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect);
-                            //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-                            characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                            return true;
-                        }
+                }
+            } else {
+                if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect);
+                    if (CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
+                        //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                        characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                        return true;
+                    } else {
+                        job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                        return false;
                     }
                 }
             }

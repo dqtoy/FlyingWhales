@@ -2597,6 +2597,9 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             //Returns true so that it will create an impression that the character actually created a job even if he/she didn't, so that the character will not chat, etc.
             return false;
         }
+        if(HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
         return true;
     }
     public bool IsAble() {
@@ -4324,24 +4327,26 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         //} else if (trait.name == "Starving") {
         //    MoveFeedJobToTopPriority();
         //}
-        for (int i = 0; i < trait.effects.Count; i++) {
-            TraitEffect traitEffect = trait.effects[i];
-            if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-                if (traitEffect.isPercentage) {
-                    if (traitEffect.stat == STAT.ATTACK) {
-                        AdjustAttackPercentMod((int) traitEffect.amount);
-                    } else if (traitEffect.stat == STAT.HP) {
-                        AdjustMaxHPPercentMod((int) traitEffect.amount);
-                    } else if (traitEffect.stat == STAT.SPEED) {
-                        AdjustSpeedPercentMod((int) traitEffect.amount);
-                    }
-                } else {
-                    if (traitEffect.stat == STAT.ATTACK) {
-                        AdjustAttackMod((int) traitEffect.amount);
-                    } else if (traitEffect.stat == STAT.HP) {
-                        AdjustMaxHPMod((int) traitEffect.amount);
-                    } else if (traitEffect.stat == STAT.SPEED) {
-                        AdjustSpeedMod((int) traitEffect.amount);
+        if(trait.effects != null) {
+            for (int i = 0; i < trait.effects.Count; i++) {
+                TraitEffect traitEffect = trait.effects[i];
+                if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
+                    if (traitEffect.isPercentage) {
+                        if (traitEffect.stat == STAT.ATTACK) {
+                            AdjustAttackPercentMod((int) traitEffect.amount);
+                        } else if (traitEffect.stat == STAT.HP) {
+                            AdjustMaxHPPercentMod((int) traitEffect.amount);
+                        } else if (traitEffect.stat == STAT.SPEED) {
+                            AdjustSpeedPercentMod((int) traitEffect.amount);
+                        }
+                    } else {
+                        if (traitEffect.stat == STAT.ATTACK) {
+                            AdjustAttackMod((int) traitEffect.amount);
+                        } else if (traitEffect.stat == STAT.HP) {
+                            AdjustMaxHPMod((int) traitEffect.amount);
+                        } else if (traitEffect.stat == STAT.SPEED) {
+                            AdjustSpeedMod((int) traitEffect.amount);
+                        }
                     }
                 }
             }
@@ -4411,24 +4416,26 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
             AdjustSpeedModifier(0.5f);
         }
 
-        for (int i = 0; i < trait.effects.Count; i++) {
-            TraitEffect traitEffect = trait.effects[i];
-            if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-                if (traitEffect.isPercentage) {
-                    if (traitEffect.stat == STAT.ATTACK) {
-                        AdjustAttackPercentMod(-(int) traitEffect.amount);
-                    } else if (traitEffect.stat == STAT.HP) {
-                        AdjustMaxHPPercentMod(-(int) traitEffect.amount);
-                    } else if (traitEffect.stat == STAT.SPEED) {
-                        AdjustSpeedPercentMod(-(int) traitEffect.amount);
-                    }
-                } else {
-                    if (traitEffect.stat == STAT.ATTACK) {
-                        AdjustAttackMod(-(int) traitEffect.amount);
-                    } else if (traitEffect.stat == STAT.HP) {
-                        AdjustMaxHPMod(-(int) traitEffect.amount);
-                    } else if (traitEffect.stat == STAT.SPEED) {
-                        AdjustSpeedMod(-(int) traitEffect.amount);
+        if (trait.effects != null) {
+            for (int i = 0; i < trait.effects.Count; i++) {
+                TraitEffect traitEffect = trait.effects[i];
+                if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
+                    if (traitEffect.isPercentage) {
+                        if (traitEffect.stat == STAT.ATTACK) {
+                            AdjustAttackPercentMod(-(int) traitEffect.amount);
+                        } else if (traitEffect.stat == STAT.HP) {
+                            AdjustMaxHPPercentMod(-(int) traitEffect.amount);
+                        } else if (traitEffect.stat == STAT.SPEED) {
+                            AdjustSpeedPercentMod(-(int) traitEffect.amount);
+                        }
+                    } else {
+                        if (traitEffect.stat == STAT.ATTACK) {
+                            AdjustAttackMod(-(int) traitEffect.amount);
+                        } else if (traitEffect.stat == STAT.HP) {
+                            AdjustMaxHPMod(-(int) traitEffect.amount);
+                        } else if (traitEffect.stat == STAT.SPEED) {
+                            AdjustSpeedMod(-(int) traitEffect.amount);
+                        }
                     }
                 }
             }

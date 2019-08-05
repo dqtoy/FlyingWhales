@@ -11,7 +11,7 @@ public class Betrayed : Trait {
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = GameManager.Instance.GetTicksBasedOnHour(12);
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
         //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CRAFT_ITEM, INTERACTION_TYPE.CRAFT_FURNITURE };
     }
 }

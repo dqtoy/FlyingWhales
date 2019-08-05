@@ -134,7 +134,7 @@ public class Trait {
 
     #region Jobs
     protected bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction) {
+        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
             if (responsibleCharacter != null && responsibleCharacter == character) {
                 return false;
             }
@@ -149,13 +149,22 @@ public class Trait {
         return false;
     }
     protected bool CanTakeBuryJob(Character character, JobQueueItem job) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+        if(!character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.isAtHomeArea
+                && character.role.roleType != CHARACTER_ROLE.BEAST) {
+            return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+        }
+        return false;
     }
     protected bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
+        if(character.isAtHomeArea && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+            return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
+        }
+        return false;
     }
     protected bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter, JobQueueItem job) {
-        return (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN) && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE; // || character.role.roleType == CHARACTER_ROLE.ADVENTURER
+        return targetCharacter.faction != character.faction && character.isAtHomeArea && character.faction == character.homeArea.owner 
+            && (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER)
+            && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL);
     }
     #endregion
 }

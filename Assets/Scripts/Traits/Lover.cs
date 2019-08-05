@@ -16,7 +16,7 @@ public class Lover : RelationshipTrait {
         relType = RELATIONSHIP_TRAIT.LOVER;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 
 }

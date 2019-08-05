@@ -15,7 +15,7 @@ public class Master : RelationshipTrait {
         relType = RELATIONSHIP_TRAIT.MASTER;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 
     public override bool IsUnique() {

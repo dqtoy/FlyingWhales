@@ -16,6 +16,6 @@ public class SaveTarget : RelationshipTrait {
         effect = TRAIT_EFFECT.NEUTRAL;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 }

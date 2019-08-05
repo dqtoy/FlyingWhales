@@ -966,7 +966,7 @@ public class CharacterMarker : PooledObject {
     #region Hosility Collision
     public bool AddHostileInRange(Character character, bool checkHostility = true, bool processCombatBehavior = true) {
         if (!hostilesInRange.Contains(character)) {
-            if (this.character.GetNormalTrait("Zapped") == null && !character.isDead && !character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !this.character.isFollowingPlayerInstruction &&
+            if (this.character.GetNormalTrait("Zapped") == null && !this.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !character.isDead && !this.character.isFollowingPlayerInstruction &&
                 (!checkHostility || this.character.IsHostileWith(character))) {
                 if (!WillCharacterTransferEngageToFleeList()) {
                     hostilesInRange.Add(character);

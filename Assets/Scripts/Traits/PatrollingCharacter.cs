@@ -12,7 +12,7 @@ public class PatrollingCharacter : Trait {
         effect = TRAIT_EFFECT.POSITIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 
     public PatrollingCharacter(Character target) : base (){
@@ -23,7 +23,7 @@ public class PatrollingCharacter : Trait {
         effect = TRAIT_EFFECT.POSITIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 
     #region Overrides

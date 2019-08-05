@@ -16,7 +16,7 @@ public class Invisible : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
         charactersThatCanSee = new List<Character>();
         inRangeOfVisionCharacters = new List<Character>();
     }

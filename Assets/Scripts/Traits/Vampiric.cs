@@ -19,7 +19,7 @@ public class Vampiric : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
         _flatAttackMod = 100;
         _flatHPMod = 500;
         _flatSpeedMod = 100;

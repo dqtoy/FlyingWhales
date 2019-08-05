@@ -16,6 +16,6 @@ public class Paramour : RelationshipTrait {
         relType = RELATIONSHIP_TRAIT.PARAMOUR;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 }

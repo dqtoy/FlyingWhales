@@ -18,7 +18,7 @@ public class Unconscious : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0; //144
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FIRST_AID_CHARACTER }; //, INTERACTION_TYPE.DRINK_BLOOD
-        effects = new List<TraitEffect>();
+        //effects = new List<TraitEffect>();
     }
 
     #region Overrides
@@ -64,29 +64,31 @@ public class Unconscious : Trait {
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (traitOwner is Character) {
             Character targetCharacter = traitOwner as Character;
-            if (!targetCharacter.isDead && characterThatWillDoJob.isAtHomeArea && targetCharacter.GetTraitOf(TRAIT_TYPE.CRIMINAL) == null && CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
-                if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name)) {
-                    if (CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
-                        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect);
-                        //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                        return true;
-                    }
+            if (!targetCharacter.isDead && targetCharacter.faction == targetCharacter.specificLocation.owner && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect);
+                if (CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
+                    //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    return true;
+                } else {
+                    job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                    return false;
                 }
             }
-            if (characterThatWillDoJob.isAtHomeArea && characterThatWillDoJob.faction == characterThatWillDoJob.homeArea.owner && !targetCharacter.isDead && targetCharacter.faction != characterThatWillDoJob.faction
-                && (characterThatWillDoJob.role.roleType == CHARACTER_ROLE.SOLDIER || characterThatWillDoJob.role.roleType == CHARACTER_ROLE.CIVILIAN || characterThatWillDoJob.role.roleType == CHARACTER_ROLE.ADVENTURER)) {
-                if (!characterThatWillDoJob.HasTraitOf(TRAIT_TYPE.CRIMINAL) && targetCharacter.GetNormalTrait("Restrained") == null && characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE
-                    && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.RESTRAIN)) {
-                    if (CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, null)) {
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.RESTRAIN, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = characterThatWillDoJob.specificLocation, targetPOI = targetCharacter });
-                        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
-                        //job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
-                        //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                        return true;
-                    }
+            if (!targetCharacter.isDead && targetCharacter.faction != targetCharacter.specificLocation.owner && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.RESTRAIN) && targetCharacter.GetNormalTrait("Restrained") == null) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.RESTRAIN, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = characterThatWillDoJob.specificLocation, targetPOI = targetCharacter });
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+                if (CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, null)) {
+                    //job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
+                    //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    return true;
+                } else {
+                    job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
+                    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                    return false;
                 }
             }
         }
