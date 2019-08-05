@@ -8,7 +8,7 @@ public class Provoke : PlayerJobAction {
         description = "Makes a character undermine his/her enemies.";
         tier = 2;
         SetDefaultCooldownTime(24);
-        targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.CHARACTER };
+        targetType = JOB_ACTION_TARGET.CHARACTER;
         abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 

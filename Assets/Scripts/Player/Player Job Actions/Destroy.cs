@@ -7,7 +7,7 @@ public class Destroy : PlayerJobAction {
     public Destroy() : base(INTERVENTION_ABILITY.DESTROY) {
         description = "Remove this object from the world.";
         SetDefaultCooldownTime(24);
-        targettableTypes = new List<JOB_ACTION_TARGET>() { JOB_ACTION_TARGET.TILE_OBJECT };
+        targetType = JOB_ACTION_TARGET.TILE_OBJECT;
     }
 
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {

@@ -21,13 +21,13 @@ public class SeducerSummon : Summon {
     private bool hasSucceeded;
 
     public SeducerSummon(SUMMON_TYPE type, GENDER gender) : base(type, CharacterRole.MINION, RACE.DEMON, gender) {
-        seduceChance = 50;
+        seduceChance = 0;
         doneCharacters = new List<Character>();
         AddInteractionType(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
         AddInteractionType(INTERACTION_TYPE.MAKE_LOVE);
     }
     public SeducerSummon(SaveDataCharacter data) : base(data) {
-        seduceChance = 50;
+        seduceChance = 0;
         doneCharacters = new List<Character>();
     }
 

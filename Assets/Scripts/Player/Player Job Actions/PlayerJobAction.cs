@@ -13,7 +13,7 @@ public class PlayerJobAction {
     public virtual string dynamicDescription { get { return description; } }
     public int cooldown { get; protected set; } //cooldown in ticks
     public Character assignedCharacter { get; protected set; }
-    public List<JOB_ACTION_TARGET> targettableTypes { get; protected set; } //what sort of objects can this action target
+    public JOB_ACTION_TARGET targetType { get; protected set; } //what sort of object does this action target
     public bool isActive { get; protected set; }
     public int ticksInCooldown { get; private set; } //how many ticks has this action been in cooldown?
     public int lvl { get; protected set; }
@@ -68,6 +68,9 @@ public class PlayerJobAction {
     public virtual void ActivateAction(Character assignedCharacter, Area targetArea) { //this is called when the actions button is pressed
         ActivateAction(assignedCharacter);
     }
+    public virtual void ActivateAction(Character assignedCharacter, LocationGridTile targetTile) { 
+        ActivateAction(assignedCharacter);
+    }
     public virtual void DeactivateAction() { //this is typically called when the character is assigned to another action or the assigned character dies
         this.assignedCharacter = null;
         isActive = false;
@@ -102,13 +105,15 @@ public class PlayerJobAction {
     /// <param name="character">The character that will perform the action (Minion).</param>
     /// <param name="obj">The target object.</param>
     /// <returns>True or False.</returns>
-    public virtual bool CanPerformActionTowards(Character character, object obj) {
+    public bool CanPerformActionTowards(Character character, object obj) {
         if (obj is Character) {
             return CanPerformActionTowards(character, obj as Character);
         } else if (obj is Area) {
             return CanPerformActionTowards(character, obj as Area);
         } else if (obj is IPointOfInterest) {
             return CanPerformActionTowards(character, obj as IPointOfInterest);
+        } else if (obj is LocationGridTile) {
+            return CanPerformActionTowards(character, obj as LocationGridTile);
         }
         return CanPerformAction();
     }
@@ -121,13 +126,19 @@ public class PlayerJobAction {
     protected virtual bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
         return CanPerformAction();
     }
+    protected virtual bool CanPerformActionTowards(Character character, LocationGridTile tile) {
+        return CanPerformAction();
+    }
     /// <summary>
     /// Function that determines whether this action can target the given character or not.
     /// Regardless of cooldown state.
     /// </summary>
-    /// <param name="character">The target poi</param>
+    /// <param name="poi">The target poi</param>
     /// <returns>true or false</returns>
     public virtual bool CanTarget(IPointOfInterest poi) {
+        return true;
+    }
+    public virtual bool CanTarget(LocationGridTile tile) {
         return true;
     }
     public virtual string GetActionName(Character target) {

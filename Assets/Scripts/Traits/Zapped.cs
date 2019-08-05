@@ -15,7 +15,7 @@ public class Zapped : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourcePOI) {
+    public override void OnAddTrait(ITraitable sourcePOI) {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             if (character.currentParty.icon.isTravelling) {
@@ -50,7 +50,7 @@ public class Zapped : Trait {
         }
         base.OnAddTrait(sourcePOI);
     }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             character.AdjustDoNotDisturb(-1);

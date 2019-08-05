@@ -26,7 +26,7 @@ public class Injured : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourceCharacter) {
+    public override void OnAddTrait(ITraitable sourceCharacter) {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
@@ -47,7 +47,7 @@ public class Injured : Trait {
             //Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _sourceCharacter);
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         _sourceCharacter.UpdateIsCombatantState();
         _sourceCharacter.AdjustSpeedModifier(0.15f);
         //if (_removeTraitJob != null) {

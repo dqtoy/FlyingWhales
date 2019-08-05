@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Character : ICharacter, ILeader, IPointOfInterest {
+public class Character : ILeader, IPointOfInterest {
 
     public delegate void DailyAction();
     public DailyAction onDailyAction;
@@ -3980,10 +3980,10 @@ public class Character : ICharacter, ILeader, IPointOfInterest {
         if (chance < 35 || role.roleType == CHARACTER_ROLE.CIVILIAN) { //ensured that all civilans are craftsmen
             AddTrait("Craftsman");
         }
-        if (UnityEngine.Random.Range(0, 100) < 100) {
+        if (UnityEngine.Random.Range(0, 100) < 50) {
             AddTrait("Curious");
         }
-        //AddTrait(new Kleptomaniac());
+        AddTrait("Flammable");
     }
     public void CreateInitialTraitsByRace() {
         if (race == RACE.HUMANS) {

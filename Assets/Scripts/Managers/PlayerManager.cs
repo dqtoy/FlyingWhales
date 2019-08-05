@@ -38,10 +38,11 @@ public class PlayerManager : MonoBehaviour {
         Instance = this;
     }
     public void Initialize() {
-        //allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.INFLICT_CANNIBALISM };
+        //allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.EXPLOSION, INTERVENTION_ABILITY.IGNITE };
         allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.ZAP, INTERVENTION_ABILITY.RAISE_DEAD, INTERVENTION_ABILITY.INFLICT_CANNIBALISM
             , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY, INTERVENTION_ABILITY.INFLICT_LYCANTHROPY, INTERVENTION_ABILITY.INFLICT_VAMPIRISM, INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA
-            , INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS, INTERVENTION_ABILITY.JOLT, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE };
+            , INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS, INTERVENTION_ABILITY.JOLT, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE, INTERVENTION_ABILITY.EXPLOSION
+            , INTERVENTION_ABILITY.IGNITE, };
         //allInterventionAbilities = (INTERVENTION_ABILITY[]) System.Enum.GetValues(typeof(INTERVENTION_ABILITY));
         allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
 
@@ -222,6 +223,10 @@ public class PlayerManager : MonoBehaviour {
                 return new InflictCannibalism();
             case INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY:
                 return new CloakOfInvisibility();
+            case INTERVENTION_ABILITY.EXPLOSION:
+                return new Explosion();
+            case INTERVENTION_ABILITY.IGNITE:
+                return new Ignite();
         }
         return null;
     }

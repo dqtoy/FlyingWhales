@@ -37,6 +37,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
     public Toggle percentageToggle;
     public Toggle hasRequirementToggle;
     public Toggle isNotToggle;
+    public Toggle _isHidden;
     public ScrollRect requirementsScrollRect;
     public ScrollRect effectsScrollRect;
     public GameObject traitEffectBtnGO;
@@ -182,7 +183,8 @@ public class CombatAttributePanelUI : MonoBehaviour {
             associatedInteraction = (INTERACTION_TYPE) System.Enum.Parse(typeof(INTERACTION_TYPE), associatedInteractionOptions.options[associatedInteractionOptions.value].text),
             crimeSeverity = (CRIME_CATEGORY) System.Enum.Parse(typeof(CRIME_CATEGORY), crimeSeverityOptions.options[crimeSeverityOptions.value].text),
             daysDuration = int.Parse(durationInput.text),
-            effects = _effects
+            effects = _effects,
+            isHidden = _isHidden.isOn,
         };
         string jsonString = JsonUtility.ToJson(newTrait);
 
@@ -271,6 +273,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
     private void RequirementOptionsActivation(bool state) {
         requirementsParentGO.SetActive(state);
     }
+
     #region Button Clicks
     public void OnClickAddNewAttribute() {
         ClearData();

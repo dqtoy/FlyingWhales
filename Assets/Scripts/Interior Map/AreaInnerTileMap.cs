@@ -978,7 +978,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     tile.hasDetail = true;
                     tile.SetTileState(LocationGridTile.Tile_State.Occupied);
                 } else if (tilemap == groundTilemap && assetUsed.name.Contains("cobble")) {
-                    tile.groundType = LocationGridTile.Ground_Type.Cobble;
+                    tile.SetGroundType(LocationGridTile.Ground_Type.Cobble);
                 }
             }
             //} else {
@@ -1230,24 +1230,24 @@ public class AreaInnerTileMap : MonoBehaviour {
             //ground
             if (area.coreTile.biomeType == BIOMES.SNOW || area.coreTile.biomeType == BIOMES.TUNDRA) {
                 if (sample < 0.5f) {
-                    currTile.groundType = LocationGridTile.Ground_Type.Snow;
+                    currTile.SetGroundType(LocationGridTile.Ground_Type.Snow);
                     groundTilemap.SetTile(currTile.localPlace, snowTile);
                 } else if (sample >= 0.5f && sample < 0.8f) {
-                    currTile.groundType = LocationGridTile.Ground_Type.Stone;
+                    currTile.SetGroundType(LocationGridTile.Ground_Type.Stone);
                     groundTilemap.SetTile(currTile.localPlace, stoneTile);
                 } else {
-                    currTile.groundType = LocationGridTile.Ground_Type.Tundra;
+                    currTile.SetGroundType(LocationGridTile.Ground_Type.Tundra);
                     groundTilemap.SetTile(currTile.localPlace, tundraTile);
                 }
             } else {
                 if (sample < 0.5f) {
-                    currTile.groundType = LocationGridTile.Ground_Type.Grass;
+                    currTile.SetGroundType(LocationGridTile.Ground_Type.Grass);
                     groundTilemap.SetTile(currTile.localPlace, grassTile);
                 } else if (sample >= 0.5f && sample < 0.8f) {
-                    currTile.groundType = LocationGridTile.Ground_Type.Soil;
+                    currTile.SetGroundType(LocationGridTile.Ground_Type.Soil);
                     groundTilemap.SetTile(currTile.localPlace, soilTile);
                 } else {
-                    currTile.groundType = LocationGridTile.Ground_Type.Stone;
+                    currTile.SetGroundType(LocationGridTile.Ground_Type.Stone);
                     groundTilemap.SetTile(currTile.localPlace, stoneTile);
                 }
                

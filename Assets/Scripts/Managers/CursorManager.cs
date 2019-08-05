@@ -49,14 +49,38 @@ public class CursorManager : MonoBehaviour {
     private void Update() {
         if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
             if(PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
+                LocationGridTile hoveredTile;
+                bool canTarget = false;
                 IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
-                if (hoveredPOI != null) {
-                    if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI)) {
-                        SetCursorTo(Cursor_Type.Check);
-                    } else {
-                        SetCursorTo(Cursor_Type.Cross);
-                    }
+                switch (PlayerManager.Instance.player.currentActivePlayerJobAction.targetType) {
+                    case JOB_ACTION_TARGET.CHARACTER:
+                    case JOB_ACTION_TARGET.TILE_OBJECT:
+                        if (hoveredPOI != null) {
+                            canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI);
+                        }
+                        break;
+                    case JOB_ACTION_TARGET.TILE:
+                        hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
+                        if (hoveredTile != null) {
+                            canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredTile);
+                        } 
+                        break;
+                    default:
+                        break;
                 }
+                if (canTarget) {
+                    SetCursorTo(Cursor_Type.Check);
+                } else {
+                    SetCursorTo(Cursor_Type.Cross);
+                }
+                //IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
+                //if (hoveredPOI != null) {
+                //    if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI)) {
+                //        SetCursorTo(Cursor_Type.Check);
+                //    } else {
+                //        SetCursorTo(Cursor_Type.Cross);
+                //    }
+                //}
                 //else if (cursorPointerEventData.pointerEnter != null) {
                 //    LandmarkCharacterItem charItem = cursorPointerEventData.pointerEnter.transform.parent.GetComponent<LandmarkCharacterItem>();
                 //    if (charItem != null) {
@@ -69,9 +93,9 @@ public class CursorManager : MonoBehaviour {
                 //        SetCursorTo(Cursor_Type.Cross);
                 //    }
                 //}
-                else {
-                    SetCursorTo(Cursor_Type.Cross);
-                }
+                //else {
+                //    SetCursorTo(Cursor_Type.Cross);
+                //}
             }else if (PlayerManager.Instance.player.currentActiveCombatAbility != null) {
                 CombatAbility ability = PlayerManager.Instance.player.currentActiveCombatAbility;
                 if(ability.abilityRadius == 0) {

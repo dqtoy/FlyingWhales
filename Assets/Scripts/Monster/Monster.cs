@@ -5,7 +5,7 @@ using UnityEngine;
 
 using System.IO;
 
-public class Monster : ICharacter, ICharacterSim, IInteractable {
+public class Monster : ICharacterSim, IInteractable {
     //Serialized fields
     [SerializeField] protected string _name;
     [SerializeField] protected MONSTER_TYPE _type;

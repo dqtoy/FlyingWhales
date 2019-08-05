@@ -21,7 +21,7 @@ public class BerserkBuff : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourceCharacter) {
+    public override void OnAddTrait(ITraitable sourceCharacter) {
         if(sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
             character.AdjustAttackMod(_flatAttackMod);
@@ -30,7 +30,7 @@ public class BerserkBuff : Trait {
         }
         base.OnAddTrait(sourceCharacter);
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         base.OnRemoveTrait(sourceCharacter, removedBy);
         if (sourceCharacter is Character) {
             Character character = sourceCharacter as Character;

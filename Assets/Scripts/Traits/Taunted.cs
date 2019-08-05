@@ -16,7 +16,7 @@ public class Taunted : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourcePOI) {
+    public override void OnAddTrait(ITraitable sourcePOI) {
         base.OnAddTrait(sourcePOI);
         _sourceCharacter = sourcePOI as Character;
         if (_sourceCharacter.stateComponent.currentState == null || _sourceCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
@@ -27,7 +27,7 @@ public class Taunted : Trait {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Character>(Signals.CHARACTER_REMOVED_FROM_VISION, OnCharacterRemovedFromVision);
     }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
         base.OnRemoveTrait(sourcePOI, removedBy);
         Character character = sourcePOI as Character;
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);

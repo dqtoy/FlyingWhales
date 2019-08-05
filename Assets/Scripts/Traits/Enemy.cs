@@ -19,7 +19,7 @@ public class Enemy : RelationshipTrait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourcePOI) {
+    public override void OnAddTrait(ITraitable sourcePOI) {
         if (sourcePOI is Character) {
             Character sourceCharacter = sourcePOI as Character;
             if (!GameManager.Instance.gameHasStarted) {
@@ -31,7 +31,7 @@ public class Enemy : RelationshipTrait {
             sourceCharacter.AddHistory(log);
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
         if (sourcePOI is Character) {
             Character sourceCharacter = sourcePOI as Character;
             if (!GameManager.Instance.gameHasStarted) {

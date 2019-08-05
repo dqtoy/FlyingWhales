@@ -30,7 +30,7 @@ public class Restrained : Trait {
         }
         return "This character is restrained by " + responsibleCharacter.name;
     }
-    public override void OnAddTrait(IPointOfInterest sourceCharacter) {
+    public override void OnAddTrait(ITraitable sourceCharacter) {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
@@ -48,7 +48,7 @@ public class Restrained : Trait {
             }
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         if(sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
             character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.FEED);

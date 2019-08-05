@@ -8,7 +8,7 @@ public class Poisoned : Trait {
 
     private List<Character> _responsibleCharacters;
 
-    public IPointOfInterest poi { get; private set; } //poi that has the poison
+    public ITraitable poi { get; private set; } //poi that has the poison
     public Poisoned() {
         name = "Poisoned";
         description = "This object is poisoned.";
@@ -21,11 +21,11 @@ public class Poisoned : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourceCharacter) {
+    public override void OnAddTrait(ITraitable sourceCharacter) {
         base.OnAddTrait(sourceCharacter);
         poi = sourceCharacter;
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         base.OnRemoveTrait(sourceCharacter, removedBy);
         awareCharacters.Clear();
         responsibleCharacters.Clear(); //Cleared list, for garbage collection

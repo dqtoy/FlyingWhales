@@ -20,7 +20,7 @@ public class Cursed : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourceCharacter) {
+    public override void OnAddTrait(ITraitable sourceCharacter) {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
@@ -29,7 +29,7 @@ public class Cursed : Trait {
             _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         //if (_removeTraitJob != null) {
         //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         //}

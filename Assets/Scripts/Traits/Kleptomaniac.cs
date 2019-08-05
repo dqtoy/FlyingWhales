@@ -22,7 +22,7 @@ public class Kleptomaniac : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourceCharacter) {
+    public override void OnAddTrait(ITraitable sourceCharacter) {
         //(sourceCharacter as Character).RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, "Kleptomania");
         owner = sourceCharacter as Character;
         owner.AdjustHappinessDecreaseRate(_happinessDecreaseRate);
@@ -31,7 +31,7 @@ public class Kleptomaniac : Trait {
         owner.AddInteractionType(INTERACTION_TYPE.STEAL);
         Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
     }
-    public override void OnRemoveTrait(IPointOfInterest sourceCharacter, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         base.OnRemoveTrait(sourceCharacter, removedBy);
         owner.RemoveInteractionType(INTERACTION_TYPE.STEAL_CHARACTER);
         owner.RemoveInteractionType(INTERACTION_TYPE.STEAL);

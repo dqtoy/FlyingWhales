@@ -21,7 +21,7 @@ public class Craftsman : Trait {
     }
 
     #region Overrides
-    public override void OnAddTrait(IPointOfInterest sourcePOI) {
+    public override void OnAddTrait(ITraitable sourcePOI) {
         //if(sourceCharacter.race == RACE.HUMANS) {
         //    craftedItemName = SPECIAL_TOKEN.HEALING_POTION;
         //}else if (sourceCharacter.race == RACE.ELVES) {
@@ -39,7 +39,7 @@ public class Craftsman : Trait {
             }
         }
     }
-    public override void OnRemoveTrait(IPointOfInterest sourcePOI, Character removedBy) {
+    public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
             for (int i = 0; i < advertisedInteractions.Count; i++) {
