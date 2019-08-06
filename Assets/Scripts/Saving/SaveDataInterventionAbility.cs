@@ -9,7 +9,7 @@ public class SaveDataInterventionAbility {
 
     public void Save(PlayerJobAction ability) {
         abilityType = ability.abilityType;
-        lvl = ability.lvl;
+        lvl = ability.level;
     }
     public void Load(Minion minion) {
         PlayerJobAction ability = PlayerManager.Instance.CreateNewInterventionAbility(abilityType);

@@ -95,11 +95,11 @@ public class Lure : PlayerJobAction {
     }
     protected override void OnLevelUp() {
         base.OnLevelUp();
-        if (lvl == 1) {
+        if (level == 1) {
             _lureRange = 3;
-        } else if (lvl == 2) {
+        } else if (level == 2) {
             _lureRange = 4;
-        } else if (lvl == 3) {
+        } else if (level == 3) {
             _lureRange = 5;
         }
     }
@@ -153,7 +153,9 @@ public class Lure : PlayerJobAction {
                         //}
                     }
                     character.AdjustIsWaitingForInteraction(1);
-                    character.currentAction.StopAction(true);
+                    if (character.currentAction != null) {
+                        character.currentAction.StopAction(true);
+                    }
                     character.AdjustIsWaitingForInteraction(-1);
                 }
                 character.marker.UpdateActionIcon();

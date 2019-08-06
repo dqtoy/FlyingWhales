@@ -16,7 +16,7 @@ public class CursedObject : PlayerJobAction {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             Trait newTrait = new Cursed();
-            newTrait.SetLevel(lvl);
+            newTrait.SetLevel(level);
             targetPOI.AddTrait(newTrait);
             base.ActivateAction(assignedCharacter, targetPOI);
         }

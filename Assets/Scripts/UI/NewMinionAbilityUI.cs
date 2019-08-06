@@ -58,7 +58,7 @@ public class NewMinionAbilityUI : MonoBehaviour {
         if (obj is PlayerJobAction) {
             PlayerJobAction action = obj as PlayerJobAction;
             string text = action.name;
-            text += "\nLevel: " + action.lvl;
+            text += "\nLevel: " + action.level;
             text += "\nDescription: " + action.description;
             otaText.text = text;
             otaImage.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);

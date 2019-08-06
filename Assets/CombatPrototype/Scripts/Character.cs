@@ -5867,6 +5867,12 @@ public class Character : ILeader, IPointOfInterest {
             RemoveTiredOrExhausted();
         }
     }
+    public void ExhaustCharacter() {
+        if (!isExhausted) {
+            int diff = tiredness - TIREDNESS_THRESHOLD_2;
+            AdjustTiredness(-diff);
+        }
+    }
     public void DecreaseTirednessMeter() { //this is used for when tiredness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
         tiredness -= 1;
         tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);

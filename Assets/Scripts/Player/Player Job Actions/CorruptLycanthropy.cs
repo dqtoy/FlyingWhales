@@ -30,7 +30,7 @@ public class CorruptLycanthropy : PlayerJobAction {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
                     Trait newTrait = new Lycanthropy();
-                    newTrait.SetLevel(lvl);
+                    newTrait.SetLevel(level);
                     currTarget.AddTrait(newTrait);
                     //AlterEgoData alterEgoData = currTarget.GetAlterEgoData("Lycanthrope");
                     //alterEgoData.SetLevel(_level);
@@ -92,11 +92,11 @@ public class CorruptLycanthropy : PlayerJobAction {
     }
     protected override void OnLevelUp() {
         base.OnLevelUp();
-        if (lvl == 1) {
+        if (level == 1) {
             _level = 1;
-        } else if (lvl == 2) {
+        } else if (level == 2) {
             _level = 3;
-        } else if (lvl == 3) {
+        } else if (level == 3) {
             _level = 6;
         }
     }

@@ -15,7 +15,7 @@ public class Spoil : PlayerJobAction {
         if (targetPOI is TileObject) {
             base.ActivateAction(assignedCharacter, targetPOI);
             Poisoned poison = new Poisoned();
-            poison.SetLevel(lvl);
+            poison.SetLevel(level);
             targetPOI.AddTrait(poison);
         }
         

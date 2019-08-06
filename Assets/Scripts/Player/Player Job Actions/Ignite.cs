@@ -38,9 +38,9 @@ public class Ignite : PlayerJobAction {
     private List<LocationGridTile> GetTargetTiles(LocationGridTile origin) {
         List<LocationGridTile> tiles = new List<LocationGridTile>();
         tiles.Add(origin);
-         if (lvl == 2) {
+         if (level == 2) {
             tiles.AddRange(origin.FourNeighbours());
-        } else if (lvl >= 3) {
+        } else if (level >= 3) {
             tiles.AddRange(origin.neighbourList);
         }
         return tiles.Where(x => x.GetNormalTrait("Burning", "Burnt", "Wet") == null && x.GetNormalTrait("Flammable") != null).ToList();
