@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Drink : GoapAction {
-    public Trait poisonedTrait { get; private set; }
+    public Poisoned poisonedTrait { get; private set; }
 
     public Drink(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //shouldIntelNotificationOnlyIfActorIsActive = true;
@@ -26,7 +26,7 @@ public class Drink : GoapAction {
         base.PerformActualAction();
         if (!isTargetMissing) {
             //SetState("Drink Success");
-            poisonedTrait = poiTarget.GetNormalTrait("Poisoned");
+            poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
             if (poisonedTrait != null) {
                 SetState("Drink Poisoned");
             } else {
@@ -37,6 +37,11 @@ public class Drink : GoapAction {
         }
     }
     protected override int GetCost() {
+        if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN) {
+            if (actor.GetNormalTrait("Alcoholic") != null) {
+                return 10;
+            }
+        }
         return Utilities.rng.Next(15, 26);
     }
     //public override void FailAction() {
@@ -70,8 +75,9 @@ public class Drink : GoapAction {
     }
     public void AfterDrinkPoisoned() {
         actor.AdjustDoNotGetLonely(-1);
-        int chance = UnityEngine.Random.Range(0, 2);
-        if (chance == 0) {
+        WeightedDictionary<string> result = poisonedTrait.GetResultWeights();
+        string res = result.PickRandomElementGivenWeights();
+        if (res == "Sick") {
             Sick sick = new Sick();
             for (int i = 0; i < poisonedTrait.responsibleCharacters.Count; i++) {
                 AddTraitTo(actor, sick, poisonedTrait.responsibleCharacters[i]);

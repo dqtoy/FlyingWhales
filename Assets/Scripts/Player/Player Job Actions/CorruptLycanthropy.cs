@@ -10,7 +10,7 @@ public class CorruptLycanthropy : PlayerJobAction {
         description = "Makes a character transform into a wild wolf whenever he/she sleeps.";
         tier = 1;
         SetDefaultCooldownTime(24);
-        targetType = JOB_ACTION_TARGET.CHARACTER;
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
         abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 

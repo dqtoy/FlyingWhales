@@ -10,8 +10,7 @@ public class Ignite : PlayerJobAction {
     public Ignite() : base(INTERVENTION_ABILITY.IGNITE) {
         description = "Targets a spot. Target will ignite and start spreading fire.";
         SetDefaultCooldownTime(24);
-        targetType = JOB_ACTION_TARGET.TILE;
-        lvl = 2;
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
         highlightedTiles = new List<LocationGridTile>();
     }
 

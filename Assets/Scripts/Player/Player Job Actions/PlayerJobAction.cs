@@ -13,7 +13,7 @@ public class PlayerJobAction {
     public virtual string dynamicDescription { get { return description; } }
     public int cooldown { get; protected set; } //cooldown in ticks
     public Character assignedCharacter { get; protected set; }
-    public JOB_ACTION_TARGET targetType { get; protected set; } //what sort of object does this action target
+    public JOB_ACTION_TARGET[] targetTypes { get; protected set; } //what sort of object does this action target
     public bool isActive { get; protected set; }
     public int ticksInCooldown { get; private set; } //how many ticks has this action been in cooldown?
     public int lvl { get; protected set; }

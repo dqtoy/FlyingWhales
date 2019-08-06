@@ -53,27 +53,30 @@ public class CursorManager : MonoBehaviour {
                 }
                 bool canTarget = false;
                 IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
-                switch (PlayerManager.Instance.player.currentActivePlayerJobAction.targetType) {
-                    case JOB_ACTION_TARGET.CHARACTER:
-                    case JOB_ACTION_TARGET.TILE_OBJECT:
-                        if (hoveredPOI != null) {
-                            canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI);
-                        }
+                for (int i = 0; i < PlayerManager.Instance.player.currentActivePlayerJobAction.targetTypes.Length; i++) {
+                    switch (PlayerManager.Instance.player.currentActivePlayerJobAction.targetTypes[i]) {
+                        case JOB_ACTION_TARGET.CHARACTER:
+                        case JOB_ACTION_TARGET.TILE_OBJECT:
+                            if (hoveredPOI != null) {
+                                canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI);
+                            }
+                            break;
+                        case JOB_ACTION_TARGET.TILE:
+                            if (hoveredTile != null) {
+                                canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredTile);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    if (canTarget) {
+                        SetCursorTo(Cursor_Type.Check);
+                        PlayerManager.Instance.player.currentActivePlayerJobAction.ShowRange(hoveredTile);
                         break;
-                    case JOB_ACTION_TARGET.TILE:
-                        if (hoveredTile != null) {
-                            canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredTile);
-                        } 
-                        break;
-                    default:
-                        break;
-                }
-                if (canTarget) {
-                    SetCursorTo(Cursor_Type.Check);
-                    PlayerManager.Instance.player.currentActivePlayerJobAction.ShowRange(hoveredTile);
-                } else {
-                    SetCursorTo(Cursor_Type.Cross);
-                    PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(hoveredTile);
+                    } else {
+                        SetCursorTo(Cursor_Type.Cross);
+                        PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(hoveredTile);
+                    }
                 }
                 previousHoveredTile = hoveredTile;
                 //IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;

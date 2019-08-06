@@ -7,7 +7,7 @@ public class AccessMemories : PlayerJobAction {
     public AccessMemories() : base(INTERVENTION_ABILITY.ACCESS_MEMORIES) {
         description = "Access the memories of a character.";
         SetDefaultCooldownTime(24);
-        targetType = JOB_ACTION_TARGET.CHARACTER;
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
     }
 
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {

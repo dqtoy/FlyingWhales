@@ -7,7 +7,7 @@ public class CloakOfInvisibility : PlayerJobAction {
     public CloakOfInvisibility() : base(INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY) {
         description = "Makes a character invisible from all other characters.";
         SetDefaultCooldownTime(24);
-        targetType = JOB_ACTION_TARGET.CHARACTER;
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
         abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 

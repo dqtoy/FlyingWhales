@@ -10,7 +10,7 @@ public class Abduct : PlayerJobAction {
     public Abduct() : base(INTERVENTION_ABILITY.ABDUCT) {
         description = "Makes a character abduct other characters of different race.";
         SetDefaultCooldownTime(24);
-        targetType = JOB_ACTION_TARGET.CHARACTER;
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
         _abductAreas = new List<Area>();
         for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
             Area area = LandmarkManager.Instance.allAreas[i];

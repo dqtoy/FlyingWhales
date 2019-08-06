@@ -10,7 +10,7 @@ public class Explosion : PlayerJobAction {
     public Explosion() : base(INTERVENTION_ABILITY.EXPLOSION) {
         description = "Destroy objects and structures within a huge radius and significantly damage characters within.";
         SetDefaultCooldownTime(24);
-        targetType = JOB_ACTION_TARGET.TILE;
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
         radius = 1;
     }
 
