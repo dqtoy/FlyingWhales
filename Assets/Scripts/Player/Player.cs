@@ -331,6 +331,14 @@ public class Player : ILeader {
         }
         return minionChoices[UnityEngine.Random.Range(0, minionChoices.Count)];
     }
+    public void LevelUpAllMinions() {
+        for (int i = 0; i < minions.Length; i++) {
+            Minion currMinion = minions[i];
+            if (currMinion != null) {
+                currMinion.LevelUp();
+            }
+        }
+    }
     #endregion
 
     #region Win/Lose Conditions
@@ -1330,6 +1338,7 @@ public class Player : ILeader {
             Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, corruptedArea);
             ResetSummons();
             ResetArtifacts();
+            LevelUpAllMinions();
         } else {
             string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
             PlayerUI.Instance.GameOver(gameOverText);
