@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private GameObject fireEffectPrefab;
     [SerializeField] private GameObject aoeParticlesPrefab;
     [SerializeField] private GameObject aoeParticlesAutoDestroyPrefab;
+    [SerializeField] private GameObject burningEffectPrefab;
 
     private const float X1_SPEED = 0.75f;
     private const float X2_SPEED = 0.5f;
@@ -380,7 +381,6 @@ public class GameManager : MonoBehaviour {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
-        //StartCoroutine(HitEffect(character));
     }
     public void CreateFireEffectAt(Character character) {
         if (character.marker == null) {
@@ -401,6 +401,43 @@ public class GameManager : MonoBehaviour {
         AOEParticle particle = go.GetComponent<AOEParticle>();
         particle.PlaceParticleEffect(tile, range, autoDestroy);
         return particle;
+    }
+    public GameObject CreateBurningEffectAt(LocationGridTile tile) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(burningEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentAreaMap.objectsParent);
+        go.transform.localPosition = tile.centeredLocalLocation;
+        go.SetActive(true);
+        return go;
+    }
+    public GameObject CreateBurningEffectAt(Character character) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(burningEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
+        go.transform.localPosition = Vector3.zero;
+        go.SetActive(true);
+        return go;
+    }
+    public GameObject CreateBurningEffectAt(TileObject obj) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(burningEffectPrefab.name, Vector3.zero, Quaternion.identity, obj.collisionTrigger.transform);
+        go.transform.localPosition = Vector3.zero;
+        go.SetActive(true);
+        return go;
+    }
+    public GameObject CreateBurningEffectAt(SpecialToken obj) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(burningEffectPrefab.name, Vector3.zero, Quaternion.identity, obj.collisionTrigger.transform);
+        go.transform.localPosition = Vector3.zero;
+        go.SetActive(true);
+        return go;
+    }
+    public void CreateExplodeEffectAt(Character character) {
+        if (character.marker == null) {
+            return;
+        }
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
+        go.transform.localPosition = Vector3.zero;
+        go.SetActive(true);
+    }
+    public void CreateExplodeEffectAt(LocationGridTile tile) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentAreaMap.objectsParent);
+        go.transform.localPosition = tile.centeredLocalLocation;
+        go.SetActive(true);
     }
     #endregion
 

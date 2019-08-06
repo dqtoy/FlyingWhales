@@ -331,6 +331,14 @@ public class Player : ILeader {
         }
         return minionChoices[UnityEngine.Random.Range(0, minionChoices.Count)];
     }
+    public void LevelUpAllMinions() {
+        for (int i = 0; i < minions.Length; i++) {
+            Minion currMinion = minions[i];
+            if (currMinion != null) {
+                currMinion.LevelUp();
+            }
+        }
+    }
     #endregion
 
     #region Win/Lose Conditions
@@ -516,7 +524,9 @@ public class Player : ILeader {
             PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(previousActiveAction);
             jobActionButton?.UpdateInteractableState();
             jobActionButton?.SetSelectedIconState(false);
-            //CursorManager.Instance.SetElectricEffectState(false);
+            if (previousActiveAction != null) {
+                previousActiveAction.HideRange(InteriorMapManager.Instance.GetTileFromMousePosition());
+            }
         } else {
             PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(currentActivePlayerJobAction);
             //change the cursor
@@ -524,66 +534,73 @@ public class Player : ILeader {
             CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveAction);
             CursorManager.Instance.AddLeftClickAction(() => SetCurrentlyActivePlayerJobAction(null));
             jobActionButton?.SetSelectedIconState(true);
-            //if (action is Zap) {
-            //    CursorManager.Instance.SetElectricEffectState(true);
-            //}
         }
     }
     private void TryExecuteCurrentActiveAction() {
         string summary = "Mouse was clicked. Will try to execute " + currentActivePlayerJobAction.name;
         LocationGridTile hoveredTile;
-        switch (currentActivePlayerJobAction.targetType) {
-            case JOB_ACTION_TARGET.NONE:
-                summary += "\nNo Target!";
-                break;
-            case JOB_ACTION_TARGET.CHARACTER:
-                if (InteriorMapManager.Instance.currentlyShowingMap != null && InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
-                    summary += " targetting " + InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter.name;
-                    if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
-                        summary += "\nActivated action!";
-                        currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
+        for (int i = 0; i < currentActivePlayerJobAction.targetTypes.Length; i++) {
+            bool activatedAction = false;
+            switch (currentActivePlayerJobAction.targetTypes[i]) {
+                case JOB_ACTION_TARGET.NONE:
+                    summary += "\nNo Target!";
+                    break;
+                case JOB_ACTION_TARGET.CHARACTER:
+                    if (InteriorMapManager.Instance.currentlyShowingMap != null && InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
+                        summary += " targetting " + InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter.name;
+                        if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
+                            summary += "\nActivated action!";
+                            currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
+                            activatedAction = true;
+                        } else {
+                            summary += "\nDid not activate action! Did not meet requirements";
+                        }
+                        UIManager.Instance.SetTempDisableShowInfoUI(true);
                     } else {
-                        summary += "\nDid not activate action! Did not meet requirements";
+                        summary += "\nThere is no hovered character!";
                     }
-                    UIManager.Instance.SetTempDisableShowInfoUI(true);
-                } else {
-                    summary += "\nThere is no hovered character!";
-                }
-                break;
-            case JOB_ACTION_TARGET.TILE_OBJECT:
-                hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
-                if (hoveredTile != null && hoveredTile.objHere != null) {
-                    summary += " targetting " + hoveredTile.objHere.name;
-                    if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, hoveredTile.objHere)) {
-                        summary += "\nActivated action!";
-                        currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, hoveredTile.objHere);
+                    break;
+                case JOB_ACTION_TARGET.TILE_OBJECT:
+                    hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
+                    if (hoveredTile != null && hoveredTile.objHere != null) {
+                        summary += " targetting " + hoveredTile.objHere.name;
+                        if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, hoveredTile.objHere)) {
+                            summary += "\nActivated action!";
+                            currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, hoveredTile.objHere);
+                            activatedAction = true;
+                        } else {
+                            summary += "\nDid not activate action! Did not meet requirements";
+                        }
+                        UIManager.Instance.SetTempDisableShowInfoUI(true);
                     } else {
-                        summary += "\nDid not activate action! Did not meet requirements";
+                        summary += "\nThere is no hovered tile object!";
                     }
-                    UIManager.Instance.SetTempDisableShowInfoUI(true);
-                } else {
-                    summary += "\nThere is no hovered tile object!";
-                }
-                break;
-            case JOB_ACTION_TARGET.TILE:
-                hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
-                if (hoveredTile != null) {
-                    summary += " targetting " + hoveredTile.ToString();
-                    if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, hoveredTile)) {
-                        summary += "\nActivated action!";
-                        currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, hoveredTile);
+                    break;
+                case JOB_ACTION_TARGET.TILE:
+                    hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
+                    if (hoveredTile != null) {
+                        summary += " targetting " + hoveredTile.ToString();
+                        if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, hoveredTile)) {
+                            summary += "\nActivated action!";
+                            currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, hoveredTile);
+                            activatedAction = true;
+                        } else {
+                            summary += "\nDid not activate action! Did not meet requirements";
+                        }
+                        UIManager.Instance.SetTempDisableShowInfoUI(true);
                     } else {
-                        summary += "\nDid not activate action! Did not meet requirements";
+                        summary += "\nThere is no hovered tile object!";
                     }
-                    UIManager.Instance.SetTempDisableShowInfoUI(true);
-                } else {
-                    summary += "\nThere is no hovered tile object!";
-                }
+                    break;
+                default:
+                    summary += "\nNo casing for target type: " + currentActivePlayerJobAction.targetTypes.ToString();
+                    break;
+            }
+            if (activatedAction) {
                 break;
-            default:
-                summary += "\nNo casing for target type: " + currentActivePlayerJobAction.targetType.ToString();
-                break;
+            }
         }
+        
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
         Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
@@ -1331,6 +1348,7 @@ public class Player : ILeader {
             Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, corruptedArea);
             ResetSummons();
             ResetArtifacts();
+            LevelUpAllMinions();
         } else {
             string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
             PlayerUI.Instance.GameOver(gameOverText);

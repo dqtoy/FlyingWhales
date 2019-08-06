@@ -8,11 +8,7 @@ public class CursorManager : MonoBehaviour {
     public static CursorManager Instance = null;
     public bool isDraggingItem = false;
 
-//#if UNITY_EDITOR
-//    private CursorMode cursorMode = CursorMode.Auto;
-//#else
     private CursorMode cursorMode = CursorMode.ForceSoftware;
-//#endif
 
     private List<System.Action> leftClickActions = new List<System.Action>();
     private List<System.Action> pendingLeftClickActions = new List<System.Action>();
@@ -32,6 +28,7 @@ public class CursorManager : MonoBehaviour {
     public Cursor_Type currentCursorType { get; private set; }
 
     public PointerEventData cursorPointerEventData { get; private set; }
+    private LocationGridTile previousHoveredTile;
 
     #region Monobehaviours
     private void Awake() {
@@ -50,30 +47,38 @@ public class CursorManager : MonoBehaviour {
     private void Update() {
         if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
             if(PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
-                LocationGridTile hoveredTile;
+                LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
+                if (previousHoveredTile != null && previousHoveredTile != hoveredTile) {
+                    PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(previousHoveredTile);
+                }
                 bool canTarget = false;
                 IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
-                switch (PlayerManager.Instance.player.currentActivePlayerJobAction.targetType) {
-                    case JOB_ACTION_TARGET.CHARACTER:
-                    case JOB_ACTION_TARGET.TILE_OBJECT:
-                        if (hoveredPOI != null) {
-                            canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI);
-                        }
+                for (int i = 0; i < PlayerManager.Instance.player.currentActivePlayerJobAction.targetTypes.Length; i++) {
+                    switch (PlayerManager.Instance.player.currentActivePlayerJobAction.targetTypes[i]) {
+                        case JOB_ACTION_TARGET.CHARACTER:
+                        case JOB_ACTION_TARGET.TILE_OBJECT:
+                            if (hoveredPOI != null) {
+                                canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI);
+                            }
+                            break;
+                        case JOB_ACTION_TARGET.TILE:
+                            if (hoveredTile != null) {
+                                canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredTile);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    if (canTarget) {
+                        SetCursorTo(Cursor_Type.Check);
+                        PlayerManager.Instance.player.currentActivePlayerJobAction.ShowRange(hoveredTile);
                         break;
-                    case JOB_ACTION_TARGET.TILE:
-                        hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
-                        if (hoveredTile != null) {
-                            canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredTile);
-                        } 
-                        break;
-                    default:
-                        break;
+                    } else {
+                        SetCursorTo(Cursor_Type.Cross);
+                        PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(hoveredTile);
+                    }
                 }
-                if (canTarget) {
-                    SetCursorTo(Cursor_Type.Check);
-                } else {
-                    SetCursorTo(Cursor_Type.Cross);
-                }
+                previousHoveredTile = hoveredTile;
                 //IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
                 //if (hoveredPOI != null) {
                 //    if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI)) {
@@ -97,7 +102,7 @@ public class CursorManager : MonoBehaviour {
                 //else {
                 //    SetCursorTo(Cursor_Type.Cross);
                 //}
-            }else if (PlayerManager.Instance.player.currentActiveCombatAbility != null) {
+            } else if (PlayerManager.Instance.player.currentActiveCombatAbility != null) {
                 CombatAbility ability = PlayerManager.Instance.player.currentActiveCombatAbility;
                 if(ability.abilityRadius == 0) {
                     IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;

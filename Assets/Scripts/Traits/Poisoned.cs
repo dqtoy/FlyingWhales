@@ -18,6 +18,7 @@ public class Poisoned : Trait {
         //effects = new List<TraitEffect>();
         _responsibleCharacters = new List<Character>();
         awareCharacters = new List<Character>();
+        SetLevel(2);
     }
 
     #region Overrides
@@ -31,6 +32,14 @@ public class Poisoned : Trait {
         responsibleCharacters.Clear(); //Cleared list, for garbage collection
         //Messenger.Broadcast(Signals.OLD_NEWS_TRIGGER, sourceCharacter, gainedFromDoing);
     }
+    public override string GetTestingData() {
+        string summary = string.Empty;
+        WeightedDictionary<string> weights = GetResultWeights();
+        foreach (KeyValuePair<string, int> kvp in weights.dictionary) {
+            summary += "(" + kvp.Key + "-" + kvp.Value.ToString() + ")";
+        }
+        return summary;
+    }
     #endregion
 
     #region Aware Characters
@@ -43,4 +52,19 @@ public class Poisoned : Trait {
         awareCharacters.Remove(character);
     }
     #endregion
+
+    public WeightedDictionary<string> GetResultWeights() {
+        WeightedDictionary<string> weights = new WeightedDictionary<string>();
+        if (level == 1) {
+            weights.AddElement("Sick", 80);
+            weights.AddElement("Death", 20);
+        } else if (level == 2) {
+            weights.AddElement("Sick", 50);
+            weights.AddElement("Death", 50);
+        } else {
+            weights.AddElement("Sick", 20);
+            weights.AddElement("Death", 80);
+        }
+        return weights;
+    }
 }

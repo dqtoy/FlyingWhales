@@ -8,7 +8,7 @@ public class Spook : PlayerJobAction {
     public Spook() : base(INTERVENTION_ABILITY.SPOOK) {
         description = "Temporarily forces a character to flee from all other nearby characters.";
         SetDefaultCooldownTime(24);
-        targetType = JOB_ACTION_TARGET.CHARACTER;
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
     }
 
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {

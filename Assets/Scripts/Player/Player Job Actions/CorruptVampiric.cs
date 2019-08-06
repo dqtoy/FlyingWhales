@@ -8,7 +8,7 @@ public class CorruptVampiric : PlayerJobAction {
         description = "Makes a character have uncontrollable urge to drink blood for sustenance.";
         tier = 1;
         SetDefaultCooldownTime(24);
-        targetType = JOB_ACTION_TARGET.CHARACTER;
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
         abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 

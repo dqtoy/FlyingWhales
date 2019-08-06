@@ -7,7 +7,7 @@ public class CorruptUnfaithful : PlayerJobAction {
     public CorruptUnfaithful() : base(INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS) {
         description = "Makes a character mory horny and prone to have affairs.";
         SetDefaultCooldownTime(24);
-        targetType = JOB_ACTION_TARGET.CHARACTER;
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
         abilityTags.Add(ABILITY_TAG.CRIME);
     }
 

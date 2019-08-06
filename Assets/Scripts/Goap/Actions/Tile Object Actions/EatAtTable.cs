@@ -110,16 +110,14 @@ public class EatAtTable : GoapAction {
         actor.AdjustDoNotGetHungry(1);
         RemoveTraitFrom(poiTarget, "Poisoned");
         Log log = null;
-        int chance = UnityEngine.Random.Range(0, 2);
-        if (actor.name == "Fiona") {
-            chance = 1; //forced death
-        }
-        if (chance == 0) {
+        WeightedDictionary<string> result = poisonedTrait.GetResultWeights();
+        string res = result.PickRandomElementGivenWeights();
+        if (res == "Sick") {
             log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_sick", this);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
             poisonedResult = "Sick";
-        } else {
+        } else if (res == "Death"){
             log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_killed", this);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

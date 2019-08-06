@@ -28,7 +28,6 @@ public class TileObject : IPointOfInterest {
         }
     }//array of characters, currently using the tile object
 
-
     //tile slots
     public TileObjectSlotItem[] slots { get; protected set; } //for users
     private GameObject slotsParent;

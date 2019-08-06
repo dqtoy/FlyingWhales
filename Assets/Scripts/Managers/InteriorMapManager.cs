@@ -268,6 +268,11 @@ public class InteriorMapManager : MonoBehaviour {
         }
         currentlyHighlightedTiles = null;
     }
+    public void UnhighlightTiles(List<LocationGridTile> tiles) {
+        for (int i = 0; i < tiles.Count; i++) {
+            tiles[i].UnhighlightTile();
+        }
+    }
     #endregion
 
     #region Structure Templates
@@ -390,7 +395,7 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "\n\tObject Traits: ";
             if (tile.objHere.normalTraits.Count > 0) {
                 for (int i = 0; i < tile.objHere.normalTraits.Count; i++) {
-                    summary += "\n\t\t- " + tile.objHere.normalTraits[i].name;
+                    summary += "\n\t\t- " + tile.objHere.normalTraits[i].name + " - " + tile.objHere.normalTraits[i].GetTestingData();
                 }
 
             } else {

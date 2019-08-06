@@ -8,6 +8,8 @@ public class Burning : Trait {
     private ITraitable owner;
     public override bool isPersistent { get { return true; } }
 
+    private GameObject burningEffect;
+
     public Burning() {
         name = "Burning";
         description = "This is burning.";
@@ -24,20 +26,25 @@ public class Burning : Trait {
         owner = addedTo;
         if (addedTo is LocationGridTile) {
             LocationGridTile tile = addedTo as LocationGridTile;
-            tile.parentTileMap.SetColor(tile.localPlace, Color.red);
+            burningEffect = GameManager.Instance.CreateBurningEffectAt(tile);
         } else if (addedTo is TileObject) {
             TileObject obj = addedTo as TileObject;
-            obj.gridTileLocation.parentAreaMap.objectsTilemap.SetColor(obj.gridTileLocation.localPlace, Color.red);
+            burningEffect = GameManager.Instance.CreateBurningEffectAt(obj);
+            obj.SetPOIState(POI_STATE.INACTIVE);
         } else if (addedTo is SpecialToken) {
             SpecialToken token = addedTo as SpecialToken;
-            token.gridTileLocation.parentAreaMap.objectsTilemap.SetColor(token.gridTileLocation.localPlace, Color.red);
+            burningEffect = GameManager.Instance.CreateBurningEffectAt(token);
+            token.SetPOIState(POI_STATE.INACTIVE);
+        } else if (addedTo is Character) {
+            Character character = addedTo as Character;
+            burningEffect = GameManager.Instance.CreateBurningEffectAt(character);
         }
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
     }
     public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
         base.OnRemoveTrait(removedFrom, removedBy);
-        removedFrom.gridTileLocation.parentTileMap.SetColor(removedFrom.gridTileLocation.localPlace, Color.white);
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
+        ObjectPoolManager.Instance.DestroyObject(burningEffect);
     }
     #endregion
 

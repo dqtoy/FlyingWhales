@@ -8,7 +8,7 @@ public class RileUp : PlayerJobAction {
     public RileUp() : base(INTERVENTION_ABILITY.RILE_UP) {
         description = "Enrages a beast to attack other characters in a settlement.";
         SetDefaultCooldownTime(24);
-        targetType = JOB_ACTION_TARGET.CHARACTER;
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
     }
 
     public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
