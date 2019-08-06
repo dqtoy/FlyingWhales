@@ -17,7 +17,7 @@ public class Lure : PlayerJobAction {
         abilityTags.Add(ABILITY_TAG.NONE);
         targetCharacters = new List<Character>();
         tileChoices = new List<LocationGridTile>();
-        targetType = JOB_ACTION_TARGET.CHARACTER;
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
         hasSecondPhase = true;
     }
 

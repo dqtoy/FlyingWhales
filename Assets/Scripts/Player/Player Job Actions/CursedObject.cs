@@ -7,7 +7,7 @@ public class CursedObject : PlayerJobAction {
         description = "Put a curse on an object";
         tier = 2;
         SetDefaultCooldownTime(24);
-        targetType = JOB_ACTION_TARGET.TILE_OBJECT;
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE_OBJECT };
         abilityTags.Add(ABILITY_TAG.NONE);
     }
 
