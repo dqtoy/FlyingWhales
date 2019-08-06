@@ -17,6 +17,7 @@ public class Lure : PlayerJobAction {
         abilityTags.Add(ABILITY_TAG.NONE);
         targetCharacters = new List<Character>();
         tileChoices = new List<LocationGridTile>();
+        targetType = JOB_ACTION_TARGET.CHARACTER;
         hasSecondPhase = true;
     }
 
@@ -123,7 +124,7 @@ public class Lure : PlayerJobAction {
         GameManager.Instance.SetPausedState(true);
         InteriorMapManager.Instance.HighlightTiles(tileChoices);
         CursorManager.Instance.AddRightClickAction(() => PickTileToGoTo());
-        CursorManager.Instance.AddPendingLeftClickAction(() => CancelLure());
+        CursorManager.Instance.AddPendingLeftClickAction(() => PickTileToGoTo());
     }
     private void CancelLure() {
         InteriorMapManager.Instance.UnhighlightTiles();
@@ -159,6 +160,8 @@ public class Lure : PlayerJobAction {
                 character.marker.GoTo(hoveredTile);
             }
         }
+        CursorManager.Instance.ClearLeftClickActions();
+        CursorManager.Instance.ClearRightClickActions();
         InteriorMapManager.Instance.UnhighlightTiles();
         GameManager.Instance.SetPausedState(isGamePausedOnLure);
     }

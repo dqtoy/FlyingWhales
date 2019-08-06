@@ -6,7 +6,7 @@ using UnityEngine;
 /// Interface for objects that can have traits.
 /// </summary>
 public interface ITraitable {
-
+    string name { get; }
     List<Trait> normalTraits { get; }
     LocationGridTile gridTileLocation { get; }
 

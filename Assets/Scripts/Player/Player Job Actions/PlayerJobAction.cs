@@ -10,6 +10,7 @@ public class PlayerJobAction {
     public string name { get; protected set; }
     public string description { get; protected set; }
     public int tier { get; protected set; }
+    public int abilityRadius { get; protected set; } //0 means single target
     public virtual string dynamicDescription { get { return description; } }
     public int cooldown { get; protected set; } //cooldown in ticks
     public Character assignedCharacter { get; protected set; }
@@ -38,6 +39,7 @@ public class PlayerJobAction {
         abilityTags = new List<ABILITY_TAG>();
         this.lvl = 1;
         this.tier = 3;
+        this.abilityRadius = 0;
         hasSecondPhase = false;
         OnLevelUp();
     }

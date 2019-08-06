@@ -224,6 +224,10 @@ public class GoapAction {
                 }
             }
         } else {
+            Cursed cursed = poiTarget.GetNormalTrait("Cursed") as Cursed;
+            if (cursed != null) {
+                cursed.Interact(actor, this);
+            }
             Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
             Messenger.AddListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
         }

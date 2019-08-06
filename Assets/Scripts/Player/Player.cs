@@ -779,7 +779,7 @@ public class Player : ILeader {
         return false;
 #endif
 
-        if (!onlyClickedCharacter && !character.isDead && AreaMapCameraMove.Instance.gameObject.activeSelf) {
+        if (!onlyClickedCharacter && AreaMapCameraMove.Instance.gameObject.activeSelf) { //&& !character.isDead
             if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || (character.marker != null &&  AreaMapCameraMove.Instance.CanSee(character.marker.gameObject))) {
                 return true;
             }

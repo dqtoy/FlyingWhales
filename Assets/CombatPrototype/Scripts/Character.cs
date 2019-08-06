@@ -1536,7 +1536,7 @@ public class Character : ILeader, IPointOfInterest {
         log += "\nChecking source character traits...";
         for (int i = 0; i < normalTraits.Count; i++) {
             log += "\n- " + normalTraits[i].name;
-            if (normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetCharacter, this)) {
+            if (normalTraits[i].CreateJobsOnEnterVisionBasedOnOwnerTrait(targetCharacter, this)) {
                 log += ": created a job!";
                 hasCreatedJob = true;
             } else {
@@ -1588,7 +1588,7 @@ public class Character : ILeader, IPointOfInterest {
         log += "\nChecking source character traits...";
         for (int i = 0; i < normalTraits.Count; i++) {
             log += "\n- " + normalTraits[i].name;
-            if (normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetPOI, this)) {
+            if (normalTraits[i].CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, this)) {
                 log += ": created a job!";
                 hasCreatedJob = true;
             } else {

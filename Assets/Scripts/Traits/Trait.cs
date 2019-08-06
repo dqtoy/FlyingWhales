@@ -69,6 +69,7 @@ public class Trait {
     public virtual void OnDeath(Character character) { }
     public virtual string GetTestingData() { return string.Empty; }
     public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; }
+    public virtual bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; }
     protected virtual void OnChangeLevel() { }
     #endregion
 

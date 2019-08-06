@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Cursed : Trait {
-    private Character _sourceCharacter;
-    //private GoapPlanJob _removeTraitJob;
+    public ITraitable sourcePOI { get; private set; }
+    public List<CursedInteraction> cursedInteractions { get; private set; }
 
     public Cursed() {
         name = "Cursed";
@@ -16,26 +16,32 @@ public class Cursed : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL_MAGIC, };
+        cursedInteractions = new List<CursedInteraction>();
         //effects = new List<TraitEffect>();
     }
 
     #region Overrides
     public override void OnAddTrait(ITraitable sourceCharacter) {
         base.OnAddTrait(sourceCharacter);
-        if (sourceCharacter is Character) {
-            _sourceCharacter = sourceCharacter as Character;
+        sourcePOI = sourceCharacter;
+        if (sourcePOI is Character) {
+            Character character = sourcePOI as Character;
             //_sourceCharacter.CreateRemoveTraitJob(name);
-            _sourceCharacter.AddTraitNeededToBeRemoved(this);
-            _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+            character.AddTraitNeededToBeRemoved(this);
+            character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+        }else if(sourcePOI is TileObject) {
+            Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedInteraction);
         }
     }
     public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-        //if (_removeTraitJob != null) {
-        //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
-        //}
-        _sourceCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
-        _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
-        _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
+        if(sourcePOI is Character) {
+            Character character = sourcePOI as Character;
+            character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
+            character.RemoveTraitNeededToBeRemoved(this);
+            character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
+        } else if (sourceCharacter is TileObject) {
+            Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedInteraction);
+        }
         base.OnRemoveTrait(sourceCharacter, removedBy);
     }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
@@ -57,5 +63,96 @@ public class Cursed : Trait {
         }
         return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
     }
+    
     #endregion
+
+    public void Interact(Character characterThatInteracted, GoapAction actionDone) {
+        string result = string.Empty;
+        int chance = UnityEngine.Random.Range(0, 100);
+        if (level == 1) {
+            if(chance < 80) {
+                result = "injury";
+            } else {
+                result = "death";
+            }
+        } else if (level == 2) {
+            if (chance < 50) {
+                result = "injury";
+            } else if (chance < 30) {
+                result = "death";
+            } else {
+                result = "flaw";
+            }
+        } else if (level == 3) {
+            if (chance < 30) {
+                result = "injury";
+            } else if (chance < 30) {
+                result = "death";
+            } else if (chance < 20) {
+                result = "flaw";
+            } else {
+                result = "losebuff";
+            }
+        }
+        cursedInteractions.Add(new CursedInteraction() { characterThatInteracted = characterThatInteracted, actionDone = actionDone, result = result });
+    }
+    private void OnCharacterFinishedInteraction(Character character, GoapAction action, string result) {
+        for (int i = 0; i < cursedInteractions.Count; i++) {
+            CursedInteraction interaction = cursedInteractions[i];
+            if(interaction.characterThatInteracted == character && interaction.actionDone == action) {
+                InteractionEffectApplication(character, interaction.result);
+                cursedInteractions.RemoveAt(i);
+                break;
+            }
+        }
+    }
+    private void InteractionEffectApplication(Character character, string result) {
+        if(result == "injury") {
+            InjureCharacter(character);
+        } else if (result == "death") {
+            DeathCharacter(character);
+        } else if (result == "flaw") {
+            FlawCharacter(character);
+        } else if (result == "losebuff") {
+            LoseBuffCharacter(character);
+        }
+    }
+    private void InjureCharacter(Character character) {
+        character.AddTrait("Injured");
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cursed_injury");
+        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //log.AddLogToInvolvedObjects();
+        character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+    }
+    private void DeathCharacter(Character character) {
+        character.Death();
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cursed_death");
+        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //log.AddLogToInvolvedObjects();
+        character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+    }
+    private void FlawCharacter(Character character) {
+        //Trait name in fillers is STRING_1
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cursed_flaw");
+        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //log.AddLogToInvolvedObjects();
+        character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+    }
+    private void LoseBuffCharacter(Character character) {
+        //Trait name in fillers is STRING_1
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cursed_losebuff");
+        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //log.AddLogToInvolvedObjects();
+        character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+    }
+}
+
+public struct CursedInteraction {
+    public Character characterThatInteracted;
+    public GoapAction actionDone;
+    public string result;
 }
