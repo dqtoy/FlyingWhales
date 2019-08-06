@@ -956,10 +956,7 @@ public class CharacterMarker : PooledObject {
         inVisionCharacters.Clear();
     }
     private void OnAddPOIAsInVisionRange(IPointOfInterest poi) {
-        if(poi is Character) {
-            Character target = poi as Character;
-            character.ThisCharacterSaw(target);
-        }
+        character.ThisCharacterSaw(poi);
     }
     #endregion
 

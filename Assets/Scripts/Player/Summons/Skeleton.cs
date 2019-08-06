@@ -16,15 +16,18 @@ public class Skeleton : Summon {
         CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, tile.parentAreaMap.area);
         state.SetIsUnending(true);
     }
-    public override void ThisCharacterSaw(Character target) {
+    public override void ThisCharacterSaw(IPointOfInterest target) {
         if (GetNormalTrait("Unconscious", "Resting") != null) {
             return;
         }
-        //NOTE: removed ability of skeletons to watch/witness an event
-        Spooked spooked = GetNormalTrait("Spooked") as Spooked;
-        if (spooked != null) {
-            if (marker.AddAvoidInRange(target)) {
-                spooked.AddTerrifyingCharacter(target);
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            //NOTE: removed ability of skeletons to watch/witness an event
+            Spooked spooked = GetNormalTrait("Spooked") as Spooked;
+            if (spooked != null) {
+                if (marker.AddAvoidInRange(targetCharacter)) {
+                    spooked.AddTerrifyingCharacter(targetCharacter);
+                }
             }
         }
     }

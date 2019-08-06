@@ -3101,54 +3101,65 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
-    public virtual void ThisCharacterSaw(Character target) {
+    public virtual void ThisCharacterSaw(IPointOfInterest target) {
         if (GetNormalTrait("Unconscious", "Resting") != null) {
             return;
         }
-        target.OnSeenBy(this); //trigger that the target character was seen by this character.
-        if(currentAction != null && currentAction.poiTarget == target && currentAction.parentPlan != null && currentAction.parentPlan.job != null && currentAction.parentPlan.job.isStealth) {
-            //Upon seeing the target while performing a stealth job action, check if it can do the action
-            if (!marker.CanDoStealthActionToTarget(target)) {
-                currentAction.parentPlan.job.jobQueueParent.CancelJob(currentAction.parentPlan.job);
-            }
-        }else if (target.allJobsTargettingThis.Count > 0) {
-            //Upon seeing a character and that character is is being targetted by a stealth job and the actor of that job is not this one, and the actor is performing that job and the actor already sees the target
-            List<JobQueueItem> allJobsTargettingTargetCharacter = new List<JobQueueItem>(target.allJobsTargettingThis);
-            for (int i = 0; i < allJobsTargettingTargetCharacter.Count; i++) {
-                JobQueueItem job = allJobsTargettingTargetCharacter[i];
-                if (job.isStealth && job.assignedCharacter != null && job.assignedCharacter != this) {
-                    if(job.assignedCharacter.currentAction != null && !job.assignedCharacter.currentAction.isDone && !job.assignedCharacter.currentAction.isPerformingActualAction
-                        && job.assignedCharacter.currentAction.poiTarget == target && job.assignedCharacter.currentAction.parentPlan != null 
-                        && job.assignedCharacter.currentAction.parentPlan.job != null 
-                        && job.assignedCharacter.currentAction.parentPlan.job == job && job.assignedCharacter.marker.inVisionPOIs.Contains(target)) {
-                        job.jobQueueParent.CancelJob(job);
+        if(target is Character) {
+            Character targetCharacter = target as Character;
+            targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
+            if (currentAction != null && currentAction.poiTarget == targetCharacter && currentAction.parentPlan != null && currentAction.parentPlan.job != null && currentAction.parentPlan.job.isStealth) {
+                //Upon seeing the target while performing a stealth job action, check if it can do the action
+                if (!marker.CanDoStealthActionToTarget(targetCharacter)) {
+                    currentAction.parentPlan.job.jobQueueParent.CancelJob(currentAction.parentPlan.job);
+                }
+            } else if (targetCharacter.allJobsTargettingThis.Count > 0) {
+                //Upon seeing a character and that character is is being targetted by a stealth job and the actor of that job is not this one, and the actor is performing that job and the actor already sees the target
+                List<JobQueueItem> allJobsTargettingTargetCharacter = new List<JobQueueItem>(targetCharacter.allJobsTargettingThis);
+                for (int i = 0; i < allJobsTargettingTargetCharacter.Count; i++) {
+                    JobQueueItem job = allJobsTargettingTargetCharacter[i];
+                    if (job.isStealth && job.assignedCharacter != null && job.assignedCharacter != this) {
+                        if (job.assignedCharacter.currentAction != null && !job.assignedCharacter.currentAction.isDone && !job.assignedCharacter.currentAction.isPerformingActualAction
+                            && job.assignedCharacter.currentAction.poiTarget == targetCharacter && job.assignedCharacter.currentAction.parentPlan != null
+                            && job.assignedCharacter.currentAction.parentPlan.job != null
+                            && job.assignedCharacter.currentAction.parentPlan.job == job && job.assignedCharacter.marker.inVisionPOIs.Contains(targetCharacter)) {
+                            job.jobQueueParent.CancelJob(job);
+                        }
                     }
                 }
             }
-        }
-        if (target.currentAction != null && target.currentAction.isPerformingActualAction && !target.currentAction.isDone && target.currentAction.goapType != INTERACTION_TYPE.WATCH) {
-            //Cannot witness/watch a watch action
-            IPointOfInterest poiTarget = null;
-            if (target.currentAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-                poiTarget = (target.currentAction as MakeLove).targetCharacter;
-            } else {
-                poiTarget = target.currentAction.poiTarget;
+            Spooked spooked = GetNormalTrait("Spooked") as Spooked;
+            if (spooked != null) {
+                if (marker.AddAvoidInRange(targetCharacter)) {
+                    spooked.AddTerrifyingCharacter(targetCharacter);
+                }
+                return;
             }
-            if (target.currentAction.actor != this && poiTarget != this) {
-                ThisCharacterWitnessedEvent(target.currentAction); 
-                ThisCharacterWatchEvent(target, target.currentAction, target.currentAction.currentState);
+            for (int i = 0; i < normalTraits.Count; i++) {
+                normalTraits[i].OnSeePOI(target, this);
             }
-        }
-        Spooked spooked = GetNormalTrait("Spooked") as Spooked;
-        if (spooked != null) {
-            if (marker.AddAvoidInRange(target)) {
-                spooked.AddTerrifyingCharacter(target);
-            }
-            return;
-        }
 
-        //This will only happen if target is in combat
-        ThisCharacterWatchEvent(target, null, null);
+            //Must not witness/watch if spooked
+            if (targetCharacter.currentAction != null && targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone && targetCharacter.currentAction.goapType != INTERACTION_TYPE.WATCH) {
+                //Cannot witness/watch a watch action
+                IPointOfInterest poiTarget = null;
+                if (targetCharacter.currentAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                    poiTarget = (targetCharacter.currentAction as MakeLove).targetCharacter;
+                } else {
+                    poiTarget = targetCharacter.currentAction.poiTarget;
+                }
+                if (targetCharacter.currentAction.actor != this && poiTarget != this) {
+                    ThisCharacterWitnessedEvent(targetCharacter.currentAction);
+                    ThisCharacterWatchEvent(targetCharacter, targetCharacter.currentAction, targetCharacter.currentAction.currentState);
+                }
+            }
+            //This will only happen if target is in combat
+            ThisCharacterWatchEvent(targetCharacter, null, null);
+        } else {
+            for (int i = 0; i < normalTraits.Count; i++) {
+                normalTraits[i].OnSeePOI(target, this);
+            }
+        }
     }
     /// <summary>
     /// What should happen if another character sees this character?
