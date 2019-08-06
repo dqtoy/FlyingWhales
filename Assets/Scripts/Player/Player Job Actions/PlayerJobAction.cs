@@ -149,6 +149,11 @@ public class PlayerJobAction {
     }
     protected virtual void OnLevelUp() { }
     public virtual void SecondPhase() { }
+    /// <summary>
+    /// If the ability has a range, override this to show that range. <see cref="CursorManager.Update"/>
+    /// </summary>
+    public virtual void ShowRange(LocationGridTile tile) { }
+    public virtual void HideRange(LocationGridTile tile) { }
     #endregion
 
     #region Cooldown

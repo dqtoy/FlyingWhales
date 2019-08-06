@@ -18,13 +18,13 @@ public class Burnt : Trait {
         base.OnAddTrait(addedTo);
         if (addedTo is LocationGridTile) {
             LocationGridTile tile = addedTo as LocationGridTile;
-            tile.parentTileMap.SetColor(tile.localPlace, Color.black);
+            //tile.parentTileMap.SetColor(tile.localPlace, Color.black);
         } else if (addedTo is TileObject) {
             TileObject obj = addedTo as TileObject;
-            obj.gridTileLocation.parentAreaMap.objectsTilemap.SetColor(obj.gridTileLocation.localPlace, Color.black);
+            obj.SetPOIState(POI_STATE.INACTIVE);
         } else if (addedTo is SpecialToken) {
             SpecialToken token = addedTo as SpecialToken;
-            token.gridTileLocation.parentAreaMap.objectsTilemap.SetColor(token.gridTileLocation.localPlace, Color.black);
+            token.SetPOIState(POI_STATE.INACTIVE);
         }
     }
 }

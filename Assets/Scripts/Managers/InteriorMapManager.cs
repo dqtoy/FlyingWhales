@@ -268,6 +268,11 @@ public class InteriorMapManager : MonoBehaviour {
         }
         currentlyHighlightedTiles = null;
     }
+    public void UnhighlightTiles(List<LocationGridTile> tiles) {
+        for (int i = 0; i < tiles.Count; i++) {
+            tiles[i].UnhighlightTile();
+        }
+    }
     #endregion
 
     #region Structure Templates

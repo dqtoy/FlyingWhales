@@ -26,9 +26,18 @@ public class Explosion : PlayerJobAction {
         flammables = flammables.Where(x => x.GetNormalTrait("Burning", "Burnt", "Wet") == null).ToList();
         for (int i = 0; i < flammables.Count; i++) {
             ITraitable flammable = flammables[i];
-            if (flammable is Character) {
+            GameManager.Instance.CreateExplodeEffectAt(flammable.gridTileLocation);
+            if (flammable is TileObject) {
+                TileObject obj = flammable as TileObject;
+                obj.gridTileLocation.structure.RemovePOI(obj);
+                continue; //go to next item
+            } else if (flammable is SpecialToken) {
+                SpecialToken token = flammable as SpecialToken;
+                token.gridTileLocation.structure.RemovePOI(token);
+                continue; //go to next item
+            } else if (flammable is Character) {
                 Character character = flammable as Character;
-                character.AdjustHP(-(int)(character.maxHP * 0.02f));
+                character.AdjustHP(-(int)(character.maxHP * 0.4f));
             }
             if (Random.Range(0, 100) < 25) {
                 flammable.AddTrait("Burning");
@@ -38,6 +47,16 @@ public class Explosion : PlayerJobAction {
     protected override void OnLevelUp() {
         base.OnLevelUp();
         radius++;
+    }
+    public override void ShowRange(LocationGridTile targetTile) {
+        base.ShowRange(targetTile);
+        List<LocationGridTile> tiles = targetTile.parentAreaMap.GetTilesInRadius(targetTile, radius, 0, true);
+        InteriorMapManager.Instance.HighlightTiles(tiles);
+    }
+    public override void HideRange(LocationGridTile targetTile) {
+        base.HideRange(targetTile);
+        List<LocationGridTile> tiles = targetTile.parentAreaMap.GetTilesInRadius(targetTile, radius, 0, true);
+        InteriorMapManager.Instance.UnhighlightTiles(tiles);
     }
     #endregion
 }
