@@ -136,6 +136,7 @@ public class CombatState : CharacterState {
                         //I added checking for poisInRangeButDiffStructure beacuse characters are being removed from the character's avoid range when they exit a structure. (Myk)
                         OnFinishedFleeingFrom(currCharacter);
                         stateComponent.character.marker.RemoveAvoidInRange(currCharacter, false);
+                        i--;
                     }
                 }
                 if (stateComponent.character.marker.avoidInRange.Count > 0) {
