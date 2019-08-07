@@ -6,6 +6,7 @@ public class InflictAlcoholic : PlayerJobAction {
 
     public InflictAlcoholic() : base(INTERVENTION_ABILITY.INFLICT_ALCOHOLIC) {
         description = "Makes a character often want to drink.";
+        tier = 3;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
     }
@@ -54,12 +55,18 @@ public class InflictAlcoholic : PlayerJobAction {
         return false;
     }
     private bool CanTarget(Character targetCharacter) {
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
+            return false;
+        }
         if (targetCharacter.GetNormalTrait("Alcoholic") == null) {
             return true;
         }
         return false;
     }
     protected override bool CanPerformActionTowards(Character character, Character targetPOI) {
+        if (targetPOI.isDead) {
+            return false;
+        }
         if (targetPOI is Character && targetPOI.GetNormalTrait("Alcoholic") == null) {
             return true;
         }

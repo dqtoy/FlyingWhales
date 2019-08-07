@@ -604,7 +604,7 @@ public class GoapAction {
         //}
         if (actor.currentParty.icon.isTravelling && actor.currentParty.icon.travelLine == null) {
             //This means that the actor currently travelling to another tile in tilemap
-            actor.marker.StopMovement(() => SetState(failActionState));
+            actor.marker.StopMovement();
         } else {
             SetState(failActionState);
         }

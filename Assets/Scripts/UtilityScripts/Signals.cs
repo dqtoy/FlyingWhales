@@ -111,6 +111,14 @@ public static class Signals {
     /// Parameters (Character characterWithVision, Character characterRemovedFromVision)
     /// </summary>
     public static string CHARACTER_REMOVED_FROM_VISION = "OnCharacterRemovedFromVision";
+    /// <summary>
+    /// Parameters (Character)
+    /// </summary>
+    public static string CHARACTER_STARTED_MOVING = "OnCharacterStartedMoving";
+    /// <summary>
+    /// Parameters (Character)
+    /// </summary>
+    public static string CHARACTER_STOPPED_MOVING = "OnCharacterStoppedMoving";
     #endregion
 
     #region UI

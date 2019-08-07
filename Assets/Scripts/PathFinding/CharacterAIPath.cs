@@ -190,7 +190,7 @@ public class CharacterAIPath : AILerp {
         marker.SetDestination(Vector3.positiveInfinity);
         marker.ClearArrivalAction();
         interpolator.SetPath(null);
-        marker.StopMovementOnly();
+        marker.StopMovement();
     }
     public void ResetThis() {
         ResetEndReachedDistance();

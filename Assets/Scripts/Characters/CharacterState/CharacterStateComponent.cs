@@ -66,7 +66,7 @@ public class CharacterStateComponent {
         //Stop the movement of character because the new state probably has different movement behavior
         if(character.currentParty.icon.isTravelling) {
             if (character.currentParty.icon.travelLine == null) {
-                character.marker.StopMovementOnly();
+                character.marker.StopMovement();
             }
         }
 
@@ -122,7 +122,7 @@ public class CharacterStateComponent {
             if(!(currentState != null && character.currentAction != null && character.currentAction.parentPlan == null)) {
                 if (character.currentParty.icon.isTravelling) {
                     if (character.currentParty.icon.travelLine == null) {
-                        character.marker.StopMovementOnly();
+                        character.marker.StopMovement();
                     }
                 }
             }

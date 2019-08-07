@@ -6457,6 +6457,8 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.BREAK_UP);
         poiGoapActions.Add(INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
         poiGoapActions.Add(INTERACTION_TYPE.ROAMING_TO_STEAL);
+        poiGoapActions.Add(INTERACTION_TYPE.PUKE);
+        poiGoapActions.Add(INTERACTION_TYPE.SEPTIC_SHOCK);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

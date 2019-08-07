@@ -12,6 +12,7 @@ public class Explosion : PlayerJobAction {
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
         radius = 1;
+        tier = 1;
     }
 
     #region Overrides

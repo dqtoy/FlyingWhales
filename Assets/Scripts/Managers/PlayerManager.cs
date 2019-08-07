@@ -233,6 +233,8 @@ public class PlayerManager : MonoBehaviour {
                 return new Spoil();
             case INTERVENTION_ABILITY.INFLICT_ALCOHOLIC:
                 return new InflictAlcoholic();
+            case INTERVENTION_ABILITY.PESTILENCE:
+                return new Pestilence();
         }
         return null;
     }

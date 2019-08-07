@@ -214,6 +214,14 @@ public class CharacterInfoUI : UIMenu {
             }
         }
 
+        //Action
+        if (_activeCharacter.currentAction != null && !_activeCharacter.currentAction.isStopped) {
+            Log currentLog = _activeCharacter.currentAction.GetCurrentLog();
+            plansLblLogItem.SetLog(currentLog);
+            plansLbl.text = Utilities.LogReplacer(currentLog);
+            return;
+        }
+
         //Character State
         if (_activeCharacter.stateComponent.currentState != null) {
             plansLblLogItem.SetLog(_activeCharacter.stateComponent.currentState.thoughtBubbleLog);
@@ -236,37 +244,6 @@ public class CharacterInfoUI : UIMenu {
                 plansLbl.text = Utilities.LogReplacer(targetLog);
                 return;
             }
-        }
-
-        //Action
-        if (_activeCharacter.currentAction != null && !_activeCharacter.currentAction.isStopped) {
-            Log currentLog = _activeCharacter.currentAction.GetCurrentLog();
-            plansLblLogItem.SetLog(currentLog);
-            plansLbl.text = Utilities.LogReplacer(currentLog);
-            //if (_activeCharacter.currentParty.icon.isTravelling) {
-            //    //character is travelling
-            //    plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleMovingLog);
-            //    plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleMovingLog);
-            //} else {
-            //    //character is not travelling
-            //    if (_activeCharacter.currentAction.isDone) {
-            //        //action is already done
-            //        plansLblLogItem.SetLog(_activeCharacter.currentAction.currentState.descriptionLog);
-            //        plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.currentState.descriptionLog);
-            //    } else {
-            //        //action is not yet done
-            //        if (activeCharacter.currentAction.currentState == null) {
-            //            //if the actions' current state is null, Use moving log
-            //            plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleMovingLog);
-            //            plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleMovingLog);
-            //        } else {
-            //            //if the actions current state has a duration
-            //            plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleLog);
-            //            plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleLog);
-            //        }
-            //    }
-            //}
-            return;
         }
 
         //State Job To Do
