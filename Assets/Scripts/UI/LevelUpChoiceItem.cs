@@ -28,7 +28,7 @@ public class LevelUpChoiceItem : PooledObject {
             img.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
         } else if (obj is PlayerJobAction) {
             PlayerJobAction interventionAbility = obj as PlayerJobAction;
-            toggle.interactable = interventionAbility.lvl < PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY;
+            toggle.interactable = interventionAbility.level < PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY;
             img.sprite = PlayerManager.Instance.GetJobActionSprite(interventionAbility.name);
         } else if (obj is CombatAbility) {
             CombatAbility combatAbility = obj as CombatAbility;

@@ -43,17 +43,21 @@ public class SeducerSummon : Summon {
         Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
         AdjustIgnoreHostilities(1);
     }
-    public override void ThisCharacterSaw(Character target) {
+    public override void ThisCharacterSaw(IPointOfInterest target) {
         if (GetNormalTrait("Unconscious", "Resting") != null) {
             return;
         }
-        //NOTE: removed ability of skeletons to watch/witness an event
-        Spooked spooked = GetNormalTrait("Spooked") as Spooked;
-        if (spooked != null) {
-            if (marker.AddAvoidInRange(target)) {
-                spooked.AddTerrifyingCharacter(target);
+        if(target is Character) {
+            Character targetCharacter = target as Character;
+            //NOTE: removed ability of skeletons to watch/witness an event
+            Spooked spooked = GetNormalTrait("Spooked") as Spooked;
+            if (spooked != null) {
+                if (marker.AddAvoidInRange(targetCharacter)) {
+                    spooked.AddTerrifyingCharacter(targetCharacter);
+                }
             }
         }
+        
     }
     protected override void IdlePlans() {
         if (_hasAlreadyAskedForPlan) {

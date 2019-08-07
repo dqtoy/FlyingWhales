@@ -17,9 +17,9 @@ public class Drunk : Trait {
     }
 
     #region Overrides
-    public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-        if (traitOwner is Character) {
-            Character targetCharacter = traitOwner as Character;
+    public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+        if (targetPOI is Character) {
+            Character targetCharacter = targetPOI as Character;
             if (!targetCharacter.isDead) {
                 int value = 5;
                 RELATIONSHIP_EFFECT relEffect = characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter);
@@ -34,14 +34,14 @@ public class Drunk : Trait {
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
                         log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        log.AddLogToInvolvedObjects();
-                        characterThatWillDoJob.RegisterLogAndShowNotifToThisCharacterOnly(log);
+                        //log.AddLogToInvolvedObjects();
+                        characterThatWillDoJob.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                     }
                     return true;
                 }
             }
         }
-        return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
     }
     #endregion
 }

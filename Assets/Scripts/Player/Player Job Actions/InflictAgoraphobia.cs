@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Jolt : PlayerJobAction {
+public class InflictAgoraphobia : PlayerJobAction {
 
-    private int _durationInMinutes;
-    public Jolt() : base(INTERVENTION_ABILITY.JOLT) {
-        description = "Temporarily speeds up the movement of a character.";
+    public InflictAgoraphobia() : base(INTERVENTION_ABILITY.INFLICT_AGORAPHOBIA) {
+        description = "Makes a character fear crowds.";
+        tier = 3;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
-        abilityTags.Add(ABILITY_TAG.MAGIC);
+        abilityTags.Add(ABILITY_TAG.NONE);
     }
 
     #region Overrides
@@ -27,15 +27,12 @@ public class Jolt : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
-                    Trait newTrait = new Jolted();
-                    newTrait.OverrideDuration(GameManager.Instance.GetTicksBasedOnMinutes(_durationInMinutes));
+                    Trait newTrait = new Agoraphobia();
+                    newTrait.SetLevel(level);
                     currTarget.AddTrait(newTrait);
-                    if (UIManager.Instance.characterInfoUI.isShowing) {
-                        UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
-                    }
-                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(null, "jolted", LOG_IDENTIFIER.STRING_1);
+                    log.AddToFillers(newTrait, newTrait.name, LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
                     PlayerManager.Instance.player.ShowNotification(log);
                 }
@@ -57,10 +54,10 @@ public class Jolt : PlayerJobAction {
         return false;
     }
     protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
-        if (targetCharacter.isDead) {
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Jolted") != null) {
+        if (targetCharacter.GetNormalTrait("Agoraphobia") != null) {
             return false;
         }
         if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -85,23 +82,13 @@ public class Jolt : PlayerJobAction {
         }
         return false;
     }
-    protected override void OnLevelUp() {
-        base.OnLevelUp();
-        if (level == 1) {
-            _durationInMinutes = 30;
-        } else if (level == 2) {
-            _durationInMinutes = 60;
-        } else if (level == 3) {
-            _durationInMinutes = 90;
-        }
-    }
     #endregion
 
     private bool CanTarget(Character targetCharacter) {
-        if (targetCharacter.isDead) {
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Jolted") != null) {
+        if (targetCharacter.GetNormalTrait("Agoraphobia") != null) {
             return false;
         }
         if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {

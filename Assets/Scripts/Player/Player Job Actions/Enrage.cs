@@ -29,7 +29,7 @@ public class Enrage : PlayerJobAction {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
                     BerserkBuff berserkBuff = new BerserkBuff();
-                    berserkBuff.SetLevel(lvl);
+                    berserkBuff.SetLevel(level);
                     currTarget.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, null, GameManager.Instance.GetTicksBasedOnMinutes(_durationInMinutes)
                         ,startStateAction: ()=> currTarget.AddTrait(berserkBuff), endStateAction: () => currTarget.RemoveTrait("Berserk Buff"));
                     if (UIManager.Instance.characterInfoUI.isShowing) {
@@ -93,11 +93,11 @@ public class Enrage : PlayerJobAction {
     }
     protected override void OnLevelUp() {
         base.OnLevelUp();
-        if (lvl == 1) {
+        if (level == 1) {
             _durationInMinutes = 30;
-        } else if (lvl == 2) {
+        } else if (level == 2) {
             _durationInMinutes = 60;
-        } else if (lvl == 3) {
+        } else if (level == 3) {
             _durationInMinutes = 90;
         }
     }

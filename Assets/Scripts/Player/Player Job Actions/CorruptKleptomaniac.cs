@@ -27,7 +27,7 @@ public class CorruptKleptomaniac : PlayerJobAction {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(assignedCharacter, currTarget)) {
                     Trait newTrait = new Kleptomaniac();
-                    newTrait.SetLevel(lvl);
+                    newTrait.SetLevel(level);
                     currTarget.AddTrait(newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

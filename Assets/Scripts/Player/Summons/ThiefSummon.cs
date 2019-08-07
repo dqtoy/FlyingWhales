@@ -28,11 +28,14 @@ public class ThiefSummon : Summon {
         //    }
         //}
     }
-    public override void ThisCharacterSaw(Character target) {
+    public override void ThisCharacterSaw(IPointOfInterest target) {
         base.ThisCharacterSaw(target);
-        //if the target is not from the player faction, add them to the terrifying characters list
-        if (target.faction != this.faction) {
-            marker.AddTerrifyingObject(target);
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            //if the target is not from the player faction, add them to the terrifying characters list
+            if (targetCharacter.faction != this.faction) {
+                marker.AddTerrifyingObject(target);
+            }
         }
     }
     protected override void IdlePlans() {

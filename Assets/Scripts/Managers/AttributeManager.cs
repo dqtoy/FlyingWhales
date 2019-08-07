@@ -84,6 +84,7 @@ public class AttributeManager : MonoBehaviour {
             new Drunk(),
             new Burning(),
             new Burnt(),
+            new Agoraphobia(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

@@ -16,6 +16,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
 
     protected List<Trait> _traits;
     public bool hasDetail { get; set; }
+    public string name { get { return localPlace.ToString(); } }
     public AreaInnerTileMap parentAreaMap { get; private set; }
     public Tilemap parentTileMap { get; private set; }
     public Vector3Int localPlace { get; private set; }

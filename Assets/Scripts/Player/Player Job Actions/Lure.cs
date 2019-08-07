@@ -17,6 +17,7 @@ public class Lure : PlayerJobAction {
         abilityTags.Add(ABILITY_TAG.NONE);
         targetCharacters = new List<Character>();
         tileChoices = new List<LocationGridTile>();
+        targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
         hasSecondPhase = true;
     }
 
@@ -94,11 +95,11 @@ public class Lure : PlayerJobAction {
     }
     protected override void OnLevelUp() {
         base.OnLevelUp();
-        if (lvl == 1) {
+        if (level == 1) {
             _lureRange = 3;
-        } else if (lvl == 2) {
+        } else if (level == 2) {
             _lureRange = 4;
-        } else if (lvl == 3) {
+        } else if (level == 3) {
             _lureRange = 5;
         }
     }
@@ -123,7 +124,7 @@ public class Lure : PlayerJobAction {
         GameManager.Instance.SetPausedState(true);
         InteriorMapManager.Instance.HighlightTiles(tileChoices);
         CursorManager.Instance.AddRightClickAction(() => PickTileToGoTo());
-        CursorManager.Instance.AddPendingLeftClickAction(() => CancelLure());
+        CursorManager.Instance.AddPendingLeftClickAction(() => PickTileToGoTo());
     }
     private void CancelLure() {
         InteriorMapManager.Instance.UnhighlightTiles();
@@ -152,13 +153,17 @@ public class Lure : PlayerJobAction {
                         //}
                     }
                     character.AdjustIsWaitingForInteraction(1);
-                    character.currentAction.StopAction(true);
+                    if (character.currentAction != null) {
+                        character.currentAction.StopAction(true);
+                    }
                     character.AdjustIsWaitingForInteraction(-1);
                 }
                 character.marker.UpdateActionIcon();
                 character.marker.GoTo(hoveredTile);
             }
         }
+        CursorManager.Instance.ClearLeftClickActions();
+        CursorManager.Instance.ClearRightClickActions();
         InteriorMapManager.Instance.UnhighlightTiles();
         GameManager.Instance.SetPausedState(isGamePausedOnLure);
     }

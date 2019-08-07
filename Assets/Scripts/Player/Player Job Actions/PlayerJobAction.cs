@@ -10,13 +10,14 @@ public class PlayerJobAction {
     public string name { get; protected set; }
     public string description { get; protected set; }
     public int tier { get; protected set; }
+    public int abilityRadius { get; protected set; } //0 means single target
     public virtual string dynamicDescription { get { return description; } }
     public int cooldown { get; protected set; } //cooldown in ticks
     public Character assignedCharacter { get; protected set; }
     public JOB_ACTION_TARGET[] targetTypes { get; protected set; } //what sort of object does this action target
     public bool isActive { get; protected set; }
     public int ticksInCooldown { get; private set; } //how many ticks has this action been in cooldown?
-    public int lvl { get; protected set; }
+    public int level { get; protected set; }
     public List<ABILITY_TAG> abilityTags { get; protected set; }
     public bool hasSecondPhase { get; protected set; }
     public bool isInSecondPhase { get; protected set; }
@@ -36,20 +37,21 @@ public class PlayerJobAction {
         this.abilityType = abilityType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.abilityType.ToString());
         abilityTags = new List<ABILITY_TAG>();
-        this.lvl = 1;
+        this.level = 1;
         this.tier = 3;
+        this.abilityRadius = 0;
         hasSecondPhase = false;
         OnLevelUp();
     }
 
     public void LevelUp() {
-        lvl++;
-        lvl = Mathf.Clamp(lvl, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+        level++;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
         OnLevelUp();
     }
     public void SetLevel(int amount) {
-        lvl = amount;
-        lvl = Mathf.Clamp(lvl, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+        level = amount;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
         OnLevelUp();
     }
 
@@ -72,6 +74,9 @@ public class PlayerJobAction {
         ActivateAction(assignedCharacter);
     }
     public virtual void ActivateAction(Character assignedCharacter, LocationGridTile targetTile) { 
+        ActivateAction(assignedCharacter);
+    }
+    public virtual void ActivateAction(Character assignedCharacter, List<IPointOfInterest> targetPOIs) {
         ActivateAction(assignedCharacter);
     }
     public virtual void DeactivateAction() { //this is typically called when the character is assigned to another action or the assigned character dies
@@ -132,6 +137,9 @@ public class PlayerJobAction {
     protected virtual bool CanPerformActionTowards(Character character, LocationGridTile tile) {
         return CanPerformAction();
     }
+    public virtual bool CanPerformActionTowards(Character character, List<IPointOfInterest> targetPOIs) {
+        return CanPerformAction();
+    }
     /// <summary>
     /// Function that determines whether this action can target the given character or not.
     /// Regardless of cooldown state.
@@ -142,6 +150,9 @@ public class PlayerJobAction {
         return true;
     }
     public virtual bool CanTarget(LocationGridTile tile) {
+        return true;
+    }
+    public virtual bool CanTarget(List<IPointOfInterest> targetPOIs) {
         return true;
     }
     public virtual string GetActionName(Character target) {

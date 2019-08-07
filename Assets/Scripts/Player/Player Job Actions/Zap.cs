@@ -92,11 +92,11 @@ public class Zap : PlayerJobAction {
     }
     protected override void OnLevelUp() {
         base.OnLevelUp();
-        if(lvl == 1) {
+        if(level == 1) {
             _zapDuration = 3;
-        }else if (lvl == 2) {
+        }else if (level == 2) {
             _zapDuration = 6;
-        }else if (lvl == 3) {
+        }else if (level == 3) {
             _zapDuration = 9;
         }
     }

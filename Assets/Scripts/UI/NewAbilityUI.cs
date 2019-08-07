@@ -51,7 +51,7 @@ public class NewAbilityUI : MonoBehaviour {
             PlayerJobAction action = obj as PlayerJobAction;
             abilityIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
             string text = action.name;
-            text += "\nLevel: " + action.lvl;
+            text += "\nLevel: " + action.level;
             text += "\nDescription: " + action.description;
             abilityText.text = text;
             minionGO.SetActive(true);
