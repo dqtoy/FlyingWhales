@@ -516,7 +516,7 @@ public class CharacterMarker : PooledObject {
                 return;
             }
         }
-        StopMovementOnly();
+        StopMovement();
         Action action = arrivalAction;
         //set arrival action to null, because some arrival actions set it
         ClearArrivalAction();
@@ -529,11 +529,9 @@ public class CharacterMarker : PooledObject {
         pathfindingAI.SetIsStopMovement(false);
         character.currentParty.icon.SetIsTravelling(true);
         UpdateAnimation();
+        Messenger.Broadcast(Signals.CHARACTER_STARTED_MOVING, character);
     }
-    public void StopMovement(Action afterStoppingAction = null) {
-        StopMovementOnly();
-    }
-    public void StopMovementOnly() {
+    public void StopMovement() {
         string log = character.name + " StopMovement function is called!";
         character.PrintLogIfActive(log);
         if (character.currentParty.icon != null) {
@@ -541,6 +539,7 @@ public class CharacterMarker : PooledObject {
         }
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
+        Messenger.Broadcast(Signals.CHARACTER_STOPPED_MOVING, character);
     }
     /// <summary>
     /// Make this marker look at a specific point (In World Space).

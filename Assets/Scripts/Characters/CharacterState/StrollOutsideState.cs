@@ -26,11 +26,6 @@ public class StrollOutsideState : CharacterState {
         if (!isDone && !isPaused && !isUnending) {
             if(_currentDuration >= 4) {
                 _currentDuration = 0;
-#if TRAILER_BUILD
-                if (stateComponent.character.name == "Fiona" || stateComponent.character.name == "Jamie" || stateComponent.character.name == "Audrey") {
-                    return;
-                }
-#endif
                 if (!stateComponent.character.PlanFullnessRecoveryActions()) {
                     if (!stateComponent.character.PlanTirednessRecoveryActions()) {
                         stateComponent.character.PlanHappinessRecoveryActions();

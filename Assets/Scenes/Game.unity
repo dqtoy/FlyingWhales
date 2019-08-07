@@ -33473,7 +33473,7 @@ MonoBehaviour:
     - Inflict Agoraphobia
     - Spoil
     - Inflict Alcoholic
-    - Inflict Paralysis
+    - Pestilence
     m_values:
     - {fileID: 21300000, guid: 360bd7c134b76554488e42b1b995ce62, type: 3}
     - {fileID: 21300000, guid: 69b99f864b21aaf468543d8e4f78d683, type: 3}

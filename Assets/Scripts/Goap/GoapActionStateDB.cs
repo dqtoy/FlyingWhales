@@ -371,6 +371,12 @@ public static class GoapActionStateDB {
         { INTERACTION_TYPE.ROAMING_TO_STEAL, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "In Progress", status = InteractionManager.Goap_State_Success, duration = -1 },
         } },
+        { INTERACTION_TYPE.PUKE, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Puke Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+         { INTERACTION_TYPE.SEPTIC_SHOCK, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Septic Shock Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
     };
 }
 

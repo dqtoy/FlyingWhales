@@ -123,6 +123,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_CHARACTER,
                 INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD,
                 INTERACTION_TYPE.ROAMING_TO_STEAL,
+                INTERACTION_TYPE.PUKE,
+                INTERACTION_TYPE.SEPTIC_SHOCK,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -208,6 +210,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_CHARACTER,
                 INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD,
                 INTERACTION_TYPE.ROAMING_TO_STEAL,
+                INTERACTION_TYPE.PUKE,
+                INTERACTION_TYPE.SEPTIC_SHOCK,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -294,6 +298,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_CHARACTER,
                 INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD,
                 INTERACTION_TYPE.ROAMING_TO_STEAL,
+                INTERACTION_TYPE.PUKE,
+                INTERACTION_TYPE.SEPTIC_SHOCK,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -380,6 +386,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_CHARACTER,
                 INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD,
                 INTERACTION_TYPE.ROAMING_TO_STEAL,
+                INTERACTION_TYPE.PUKE,
+                INTERACTION_TYPE.SEPTIC_SHOCK,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 INTERACTION_TYPE.MOVE_TO_VISIT,

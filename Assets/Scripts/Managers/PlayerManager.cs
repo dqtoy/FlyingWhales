@@ -238,6 +238,8 @@ public class PlayerManager : MonoBehaviour {
                 return new InflictAlcoholic();
             case INTERVENTION_ABILITY.LULLABY:
                 return new Lullaby();
+            case INTERVENTION_ABILITY.PESTILENCE:
+                return new Pestilence();
             case INTERVENTION_ABILITY.INFLICT_AGORAPHOBIA:
                 return new InflictAgoraphobia();
             case INTERVENTION_ABILITY.INFLICT_PARALYSIS:

@@ -117,7 +117,7 @@ public class GoapPlanJob : JobQueueItem {
             if (character.currentAction != null && character.currentAction.parentPlan == assignedPlan) {
                 if (character.currentParty.icon.isTravelling) {
                     if (character.currentParty.icon.travelLine == null) {
-                        character.marker.StopMovementOnly();
+                        character.marker.StopMovement();
                     } else {
                         character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
                     }

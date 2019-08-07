@@ -49,10 +49,12 @@ public class GoapActionState {
 
     #region Logs
     private void CreateLog() {
-        descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description", parentAction);
-        AddLogFiller(parentAction.actor, parentAction.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        if(parentAction.poiTarget is Character) {
-            AddLogFiller(parentAction.poiTarget as Character, parentAction.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description")) {
+            descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description", parentAction);
+            AddLogFiller(parentAction.actor, parentAction.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            if (parentAction.poiTarget is Character) {
+                AddLogFiller(parentAction.poiTarget as Character, parentAction.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            }
         }
     }
     public void OverrideDescriptionLog(Log log) {
@@ -103,7 +105,9 @@ public class GoapActionState {
                 afterEffect();
             }
             if (parentAction.shouldAddLogs && this.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
-                AddArrangedLog("description", descriptionLog, null);
+                if (descriptionLog != null) {
+                    AddArrangedLog("description", descriptionLog, null);
+                }
                 for (int i = 0; i < arrangedLogs.Count; i++) {
                     arrangedLogs[i].log.SetDate(GameManager.Instance.Today());
                     arrangedLogs[i].log.AddLogToInvolvedObjects();
