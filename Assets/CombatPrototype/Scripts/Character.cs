@@ -435,6 +435,11 @@ public class Character : ILeader, IPointOfInterest {
     public bool isStarving { get { return fullness <= FULLNESS_THRESHOLD_2; } }
     public bool isExhausted { get { return tiredness <= TIREDNESS_THRESHOLD_2; } }
     public bool isForlorn { get { return happiness <= HAPPINESS_THRESHOLD_2; } }
+
+    public bool isHungry { get { return fullness <= FULLNESS_THRESHOLD_1; } }
+    public bool isTired { get { return tiredness <= TIREDNESS_THRESHOLD_1; } }
+    public bool isLonely { get { return happiness <= HAPPINESS_THRESHOLD_1; } }
+
     public Tombstone grave { get; private set; }
     public AlterEgoData currentAlterEgo {
         get {
@@ -5867,7 +5872,7 @@ public class Character : ILeader, IPointOfInterest {
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
             }
             //PlanTirednessRecoveryActions();
-        } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
+        } else if (isTired) {
             RemoveTrait("Exhausted");
             if (AddTrait("Tired")) {
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
@@ -5897,7 +5902,7 @@ public class Character : ILeader, IPointOfInterest {
                 }
             }
             //PlanTirednessRecoveryActions();
-        } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
+        } else if (isTired) {
             if (tiredness == TIREDNESS_THRESHOLD_1) {
                 if (AddTrait("Tired")) {
                     //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
@@ -5917,7 +5922,7 @@ public class Character : ILeader, IPointOfInterest {
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
             }
             //PlanTirednessRecoveryActions();
-        } else if (tiredness <= TIREDNESS_THRESHOLD_1) {
+        } else if (isTired) {
             RemoveTrait("Exhausted");
             if (AddTrait("Tired")) {
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "tired");
@@ -5959,7 +5964,7 @@ public class Character : ILeader, IPointOfInterest {
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
             }
             //PlanFullnessRecoveryActions();
-        } else if (fullness <= FULLNESS_THRESHOLD_1) {
+        } else if (isHungry) {
             RemoveTrait("Starving");
             if (AddTrait("Hungry")) {
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
@@ -5983,7 +5988,7 @@ public class Character : ILeader, IPointOfInterest {
                 }
             }
             //PlanFullnessRecoveryActions();
-        } else if (fullness <= FULLNESS_THRESHOLD_1) {
+        } else if (isHungry) {
             if (fullness == FULLNESS_THRESHOLD_1) {
                 if (AddTrait("Hungry")) {
                     //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
@@ -6003,7 +6008,7 @@ public class Character : ILeader, IPointOfInterest {
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
             }
             //PlanFullnessRecoveryActions();
-        } else if (fullness <= FULLNESS_THRESHOLD_1) {
+        } else if (isHungry) {
             RemoveTrait("Starving");
             if (AddTrait("Hungry")) {
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "hungry");
@@ -6039,7 +6044,7 @@ public class Character : ILeader, IPointOfInterest {
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "forlorn");
             }
             //PlanHappinessRecoveryActions();
-        } else if (happiness <= HAPPINESS_THRESHOLD_1) {
+        } else if (isLonely) {
             RemoveTrait("Forlorn");
             if (AddTrait("Lonely")) {
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "lonely");
@@ -6058,7 +6063,7 @@ public class Character : ILeader, IPointOfInterest {
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "depressed");
             }
             //PlanHappinessRecoveryActions();
-        } else if (happiness <= HAPPINESS_THRESHOLD_1) {
+        } else if (isLonely) {
             RemoveTrait("Forlorn");
             if (AddTrait("Lonely")) {
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "lonely");
