@@ -348,7 +348,8 @@ public class CharacterMarker : PooledObject {
         if (character == null) {
             return;
         }
-        if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) || character.isDead) {
+        int negativeDisablerCount = character.GetNumberOfTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+        if ((negativeDisablerCount >= 2 || (negativeDisablerCount == 1 && character.GetNormalTrait("Paralyzed") == null)) || character.isDead) {
             actionIcon.gameObject.SetActive(false);
             return;
         }

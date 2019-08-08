@@ -285,6 +285,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SEPTIC_SHOCK:
                 goapAction = new SepticShock(actor, target);
                 break;
+            case INTERACTION_TYPE.CARRY:
+                goapAction = new Carry(actor, target);
+                break;
+            case INTERACTION_TYPE.DROP:
+                goapAction = new Drop(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
@@ -497,6 +503,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.CRAFT_TOOL:
             case JOB_TYPE.BREW_POTION:
             case JOB_TYPE.OBTAIN_SUPPLY:
+            case JOB_TYPE.DROP:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:

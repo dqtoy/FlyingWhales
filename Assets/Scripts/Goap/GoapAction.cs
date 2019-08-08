@@ -33,7 +33,7 @@ public class GoapAction {
             } catch {
                 throw new Exception("Error with target structure in " + goapName + " targetting " + poiTarget.ToString() + " by " + actor.name);
             }
-            
+
         }
     }
     public LocationGridTile targetTile { get; protected set; }
@@ -81,7 +81,7 @@ public class GoapAction {
             if (targetMissing) {
                 return targetMissing;
             } else {
-                if(actor != poiTarget) {
+                if (actor != poiTarget) {
                     Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
                     if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
                         return true;
@@ -166,13 +166,13 @@ public class GoapAction {
                 Action perAction = null;
                 Action afterAction = null;
                 if (preMethod != null) {
-                    preAction = (Action)Delegate.CreateDelegate(typeof(Action), this, preMethod, false);
+                    preAction = (Action) Delegate.CreateDelegate(typeof(Action), this, preMethod, false);
                 }
                 if (perMethod != null) {
-                    perAction = (Action)Delegate.CreateDelegate(typeof(Action), this, perMethod, false);
+                    perAction = (Action) Delegate.CreateDelegate(typeof(Action), this, perMethod, false);
                 }
                 if (afterMethod != null) {
-                    afterAction = (Action)Delegate.CreateDelegate(typeof(Action), this, afterMethod, false);
+                    afterAction = (Action) Delegate.CreateDelegate(typeof(Action), this, afterMethod, false);
                 }
                 GoapActionState newState = new GoapActionState(state.name, this, preAction, perAction, afterAction, state.duration, state.status);
                 states.Add(state.name, newState);
@@ -215,7 +215,7 @@ public class GoapAction {
                     }
                     if (targetCharacter.stateComponent.currentState != null) {
                         targetCharacter.stateComponent.currentState.PauseState();
-                    }else if (targetCharacter.stateComponent.stateToDo != null) {
+                    } else if (targetCharacter.stateComponent.stateToDo != null) {
                         targetCharacter.stateComponent.SetStateToDo(null, false, false);
                     }
                     targetCharacter.marker.pathfindingAI.AdjustDoNotMove(1);
@@ -272,7 +272,7 @@ public class GoapAction {
 
         Character targetCharacter = null;
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            if((poiTarget as Character) != actor) {
+            if ((poiTarget as Character) != actor) {
                 targetCharacter = poiTarget as Character;
             }
         }
@@ -283,7 +283,7 @@ public class GoapAction {
         if (poiTarget is TileObject || poiTarget is SpecialToken) {
             //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
             IAwareness awareness = actor.GetAwareness(poiTarget);
-            if(awareness != null) {
+            if (awareness != null) {
                 knownTargetLocation = awareness.knownGridLocation;
             } else {
                 knownTargetLocation = poiTarget.gridTileLocation;
@@ -298,7 +298,7 @@ public class GoapAction {
         return null;
     }
     public virtual void SetTargetStructure() {
-        if(targetStructure != null) {
+        if (targetStructure != null) {
             targetTile = GetTargetLocationTile();
         }
     }
@@ -428,7 +428,7 @@ public class GoapAction {
     }
     public bool CanSatisfyRequirements() {
         bool requirementActionSatisfied = true;
-        if(_requirementAction != null) {
+        if (_requirementAction != null) {
             requirementActionSatisfied = _requirementAction();
         }
         if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
@@ -479,7 +479,7 @@ public class GoapAction {
         if (endAction != null) {
             endAction(result, this);
         } else {
-            if(parentPlan != null) {
+            if (parentPlan != null) {
                 //Do not go to result if there is no parent plan, this might mean that the action is just a forced action
                 actor.GoapActionResult(result, this);
             }
@@ -499,7 +499,7 @@ public class GoapAction {
         //}
         actor.SetCurrentAction(null);
         if (actor.currentParty.icon.isTravelling) {
-            if(actor.currentParty.icon.travelLine == null) {
+            if (actor.currentParty.icon.travelLine == null) {
                 //This means that the actor currently travelling to another tile in tilemap
                 actor.marker.StopMovement();
             } else {
@@ -539,7 +539,7 @@ public class GoapAction {
                 //actor.PlanGoapActions();
             }
         }
-        if(removeJobInQueue && job != null && job.jobQueueParent.character != null) {
+        if (removeJobInQueue && job != null && job.jobQueueParent.character != null) {
             job.jobQueueParent.RemoveJobInQueue(job);
         }
         if (UIManager.Instance.characterInfoUI.isShowing) {
@@ -564,7 +564,7 @@ public class GoapAction {
             tile = poiTarget.gridTileLocation;
         }
         //try {
-        if(actor.gridTileLocation != null && tile != null) {
+        if (actor.gridTileLocation != null && tile != null) {
             int distance = Mathf.RoundToInt(Vector2.Distance(actor.gridTileLocation.centeredWorldLocation, tile.centeredWorldLocation));
             distance = (int) (distance * 0.25f);
             if (actor.specificLocation != targetStructure.location) {
@@ -621,7 +621,7 @@ public class GoapAction {
         showIntelNotification = state;
     }
     public bool IsFromApprehendJob() {
-        if (parentPlan != null && parentPlan.job != null && 
+        if (parentPlan != null && parentPlan.job != null &&
             (parentPlan.job.jobType == JOB_TYPE.KNOCKOUT || parentPlan.job.jobType == JOB_TYPE.APPREHEND)) {
             return true;
         }
@@ -660,7 +660,7 @@ public class GoapAction {
         return actor.gridTileLocation == targetTile;
     }
     public int CostMultiplier() {
-        if(validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())){
+        if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())) {
             return 1;
         }
         return 3;
@@ -671,7 +671,7 @@ public class GoapAction {
         }
     }
     public void SetIsOldNews(bool state) {
-        if(isOldNews != state) {
+        if (isOldNews != state) {
             isOldNews = state;
             if (isOldNews) {
                 if (Messenger.eventTable.ContainsKey(Signals.OLD_NEWS_TRIGGER)) {
@@ -683,9 +683,13 @@ public class GoapAction {
     public void AdjustReferenceCount(int amount) {
         referenceCount += amount;
         referenceCount = Mathf.Max(0, referenceCount);
-        if(referenceCount == 0) {
+        if (referenceCount == 0) {
             SetIsOldNews(true);
         }
+    }
+    public void SetActionLocationType(ACTION_LOCATION_TYPE locType) {
+        actionLocationType = locType;
+        SetTargetStructure();
     }
     #endregion
 

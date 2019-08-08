@@ -73,9 +73,11 @@ public class Abduct : PlayerJobAction {
         base.ActivateAction(assignedCharacter, _targetCharacter);
         UIManager.Instance.HideObjectPicker();
 
-        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character };
-        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.ABDUCT, goapEffect);
+        //GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character };
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.DROP_CHARACTER, character);
+        //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = _targetCharacter, targetPOI = character }, INTERACTION_TYPE.CARRY_CHARACTER);
         job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = character }, INTERACTION_TYPE.ABDUCT_ACTION);
+        //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character }, INTERACTION_TYPE.DROP_CHARACTER);
         job.SetCannotOverrideJob(true);
         //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
         _targetCharacter.jobQueue.AddJobInQueue(job);
