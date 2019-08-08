@@ -18,6 +18,11 @@ public class CursedObject : PlayerJobAction {
             Trait newTrait = new Cursed();
             newTrait.SetLevel(level);
             targetPOI.AddTrait(newTrait);
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cursed_object");
+            log.AddToFillers(to, to.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddLogToInvolvedObjects();
+            PlayerManager.Instance.player.ShowNotification(log);
+
             base.ActivateAction(assignedCharacter, targetPOI);
         }
     }
