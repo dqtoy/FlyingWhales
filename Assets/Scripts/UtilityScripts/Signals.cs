@@ -119,6 +119,14 @@ public static class Signals {
     /// Parameters (Character)
     /// </summary>
     public static string CHARACTER_STOPPED_MOVING = "OnCharacterStoppedMoving";
+    /// <summary>
+    /// Parameters (Character characterHit, Character chaarcterHitBy)
+    /// </summary>
+    public static string CHARACTER_WAS_HIT = "OnCharacterHit";
+    /// <summary>
+    /// Parameters (Character)
+    /// </summary>
+    public static string CHARACTER_RETURNED_TO_LIFE = "OnCharacterReturnedToLife";
     #endregion
 
     #region UI

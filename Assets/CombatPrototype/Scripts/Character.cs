@@ -76,11 +76,6 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     public List<INTERACTION_TYPE> currentInteractionTypes { get; private set; }
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness {
-        get {
-            return currentAlterEgo.awareness;
-        }
-    }
     public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
     public List<GoapPlan> allGoapPlans { get; private set; }
     public GoapPlanner planner { get; set; }
@@ -143,8 +138,10 @@ public class Character : ILeader, IPointOfInterest {
     public string originalClassName { get; private set; } //the class that this character started with
     private List<Action> pendingActionsAfterMultiThread; //List of actions to perform after a character is finished with all his/her multithread processing (This is to prevent errors while the character has a thread running)
 
+    //misc
     public bool isFollowingPlayerInstruction { get; private set; } //is this character moving/attacking because of the players instruction
     public bool returnedToLife { get; private set; }
+    public Tombstone grave { get; private set; }
 
     //For Testing
     public List<string> locationHistory { get; private set; }
@@ -211,6 +208,9 @@ public class Character : ILeader, IPointOfInterest {
     }
     public bool isAtHomeArea {
         get { return specificLocation.id == homeArea.id; }
+    }
+    public bool isPartOfHomeFaction { //is this character part of the faction that owns his home area
+        get { return homeArea.owner.id == faction.id; }
     }
     public bool isTracked {
         get {
@@ -435,12 +435,9 @@ public class Character : ILeader, IPointOfInterest {
     public bool isStarving { get { return fullness <= FULLNESS_THRESHOLD_2; } }
     public bool isExhausted { get { return tiredness <= TIREDNESS_THRESHOLD_2; } }
     public bool isForlorn { get { return happiness <= HAPPINESS_THRESHOLD_2; } }
-
     public bool isHungry { get { return fullness <= FULLNESS_THRESHOLD_1; } }
     public bool isTired { get { return tiredness <= TIREDNESS_THRESHOLD_1; } }
     public bool isLonely { get { return happiness <= HAPPINESS_THRESHOLD_1; } }
-
-    public Tombstone grave { get; private set; }
     public AlterEgoData currentAlterEgo {
         get {
             if (alterEgos == null || !alterEgos.ContainsKey(currentAlterEgoName)) {
@@ -450,6 +447,11 @@ public class Character : ILeader, IPointOfInterest {
             return alterEgos[currentAlterEgoName];
         }
     }
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness {
+        get {
+            return currentAlterEgo.awareness;
+        }
+    }
     public LocationStructure currentStructure {
         get {
             if (!IsInOwnParty()) {
@@ -457,6 +459,12 @@ public class Character : ILeader, IPointOfInterest {
             }
             return _currentStructure;
         }
+    }
+    public float walkSpeed {
+        get { return raceSetting.walkSpeed + (raceSetting.walkSpeed * characterClass.walkSpeedMod); }
+    }
+    public float runSpeed {
+        get { return raceSetting.runSpeed + (raceSetting.runSpeed * characterClass.runSpeedMod); }
     }
     #endregion
 
@@ -841,23 +849,23 @@ public class Character : ILeader, IPointOfInterest {
     public void SetIsDead(bool isDead) {
         _isDead = isDead;
     }
-    public void RaiseFromDeath(int level = 1, System.Action<Character> onReturnToLifeAction = null, Faction faction = null) {
+    public void RaiseFromDeath(int level = 1, System.Action<Character> onReturnToLifeAction = null, Faction faction = null, RACE race = RACE.SKELETON, string className = "") {
         if (faction == null) {
-            GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction, FactionManager.Instance.neutralFaction));
+            GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction, FactionManager.Instance.neutralFaction, race, className));
         } else {
-            GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction, faction));
+            GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction, faction, race, className));
         }
         
     }
-    private IEnumerator Raise(Character target, int level, System.Action<Character> onReturnToLifeAction, Faction faction) {
+    private IEnumerator Raise(Character target, int level, System.Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
         target.marker.PlayAnimation("Raise Dead");
         yield return new WaitForSeconds(0.7f);
-        target.ReturnToLife(faction);
+        target.ReturnToLife(faction, race, className);
         target.SetLevel(level);
         yield return null;
         onReturnToLifeAction?.Invoke(this);
     }
-    private void ReturnToLife(Faction faction) {
+    private void ReturnToLife(Faction faction, RACE race, string className) {
         if (_isDead) {
             returnedToLife = true;
             SetIsDead(false);
@@ -868,9 +876,13 @@ public class Character : ILeader, IPointOfInterest {
             ResetHappinessMeter();
             SetPOIState(POI_STATE.ACTIVE);
             ChangeFactionTo(faction);
-            ChangeRace(RACE.SKELETON);
+            ChangeRace(race);
             AssignRole(CharacterRole.SOLDIER);
-            AssignClassByRole(this.role);
+            if (string.IsNullOrEmpty(className)) {
+                AssignClassByRole(this.role);
+            } else {
+                AssignClass(className);
+            }
             _ownParty.ReturnToLife();
             marker.OnReturnToLife();
             if (grave != null) {
@@ -885,9 +897,10 @@ public class Character : ILeader, IPointOfInterest {
             MigrateHomeStructureTo(null);
             //MigrateHomeTo(null);
             //AddInitialAwareness(gloomhollow);
+            Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
         }
     }
-    public virtual void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null) {
+    public virtual void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null) {
         if(minion != null) {
             minion.Death(cause, deathFromAction, responsibleCharacter);
             return;
@@ -982,15 +995,21 @@ public class Character : ILeader, IPointOfInterest {
             CancelAllJobsAndPlans();            
 
             Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
-            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
-            log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            if (responsibleCharacter != null) {
-                log.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            Log deathLog;
+            if (_deathLog == null) {
+                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+                deathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                if (responsibleCharacter != null) {
+                    deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                }
+                //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
+                AddHistory(deathLog);
+                specificLocation.AddHistory(deathLog);
+                PlayerManager.Instance.player.ShowNotification(deathLog);
+            } else {
+                deathLog = _deathLog;
             }
-            deathStr = Utilities.LogReplacer(log);
-
-            AddHistory(log);
-            specificLocation.AddHistory(log);
+            deathStr = Utilities.LogReplacer(deathLog);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
         }
     }
@@ -1294,6 +1313,9 @@ public class Character : ILeader, IPointOfInterest {
     }
     protected void OnUpdateCharacterClass() {
         SetTraitsFromClass();
+        if (marker != null) {
+            marker.UpdateMarkerVisuals();
+        }
     }
     public void AssignClass(CharacterClass characterClass) {
         if (_characterClass != null) {
@@ -1737,7 +1759,7 @@ public class Character : ILeader, IPointOfInterest {
         return false;
     }
     public void CreateLocationKnockoutJobs(Character targetCharacter, int amount) {
-        if (isAtHomeArea && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {//&& !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
+        if (isAtHomeArea && isPartOfHomeFaction && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {//&& !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
             for (int i = 0; i < amount; i++) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = targetCharacter });
                 job.SetCanTakeThisJobChecker(CanCharacterTakeKnockoutJob);
@@ -2380,10 +2402,10 @@ public class Character : ILeader, IPointOfInterest {
         _gender = gender;
         Messenger.Broadcast(Signals.GENDER_CHANGED, this, gender);
     }
-    public void ChangeRace(RACE race) {
+    public bool ChangeRace(RACE race) {
         if (_raceSetting != null) {
             if (_raceSetting.race == race) {
-                return; //current race is already the new race, no change
+                return false; //current race is already the new race, no change
             }
             RemoveTraitsFromRace();
         }
@@ -2391,6 +2413,7 @@ public class Character : ILeader, IPointOfInterest {
         _raceSetting = raceSetting.CreateNewCopy();
         OnUpdateRace();
         Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
+        return true;
     }
     public void OnUpdateRace() {
         SetTraitsFromRace();
@@ -2629,7 +2652,7 @@ public class Character : ILeader, IPointOfInterest {
         return true;
     }
     public bool IsAble() {
-        return currentHP > 0 && !HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !isDead;
+        return currentHP > 0 && !HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !isDead && characterClass.className != "Zombie";
     }
     public void SetIsFollowingPlayerInstruction(bool state) {
         isFollowingPlayerInstruction = state;
@@ -3044,7 +3067,7 @@ public class Character : ILeader, IPointOfInterest {
     #endregion
 
     #region History/Logs
-    public void AddHistory(Log log) {
+    public bool AddHistory(Log log) {
         if (!_history.Contains(log)) {
             _history.Add(log);
             //if (UIManager.Instance.characterInfoUI.currentlyShowingCharacter != null && this.id == UIManager.Instance.characterInfoUI.currentlyShowingCharacter.id) {
@@ -3060,7 +3083,9 @@ public class Character : ILeader, IPointOfInterest {
                 log.goapAction.AdjustReferenceCount(1);
             }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
+            return true;
         }
+        return false;
     }
     //Add log to this character and show notif of that log only if this character is clicked or tracked, otherwise, add log only
     public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "", GoapAction goapAction = null, bool onlyClickedCharacter = true) {
@@ -3564,6 +3589,8 @@ public class Character : ILeader, IPointOfInterest {
                 //Level 3 = will not be seen forever
             }
         }
+
+        Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }
     /// <summary>
     /// Function to check what a character will do when he/she sees a hostile.
@@ -4931,7 +4958,7 @@ public class Character : ILeader, IPointOfInterest {
     private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
-                if (isAtHomeArea && faction == homeArea.owner) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
+                if (isAtHomeArea && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
                     return homeArea.jobQueue.ProcessFirstJobInQueue(this);
                 } else {
                     return false;
@@ -4945,7 +4972,7 @@ public class Character : ILeader, IPointOfInterest {
     private bool PlanJobQueueFirst() {
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null && !isStarving && !isExhausted && !isForlorn) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
-                if (isAtHomeArea && faction == homeArea.owner) {
+                if (isAtHomeArea && isPartOfHomeFaction) {
                     return homeArea.jobQueue.ProcessFirstJobInQueue(this);
                 } else {
                     return false;
@@ -5812,8 +5839,11 @@ public class Character : ILeader, IPointOfInterest {
     #endregion
 
     #region Needs
+    public bool HasNeeds() {
+        return race != RACE.SKELETON && characterClass.className != "Zombie";
+    }
     protected void DecreaseNeeds() {
-        if (race == RACE.SKELETON) {
+        if (!HasNeeds()) {
             return;
         }
         //if (stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {

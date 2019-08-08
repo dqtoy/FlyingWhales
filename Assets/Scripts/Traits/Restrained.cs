@@ -77,7 +77,7 @@ public class Restrained : Trait {
             if (targetCharacter.isDead) {
                 return false;
             }
-            if (!targetCharacter.isAtHomeArea) {
+            if (!targetCharacter.isAtHomeArea && !targetCharacter.isPartOfHomeFaction) {
                 if(CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                     characterThatWillDoJob.CreateSaveCharacterJob(targetCharacter, false);
                     return true;

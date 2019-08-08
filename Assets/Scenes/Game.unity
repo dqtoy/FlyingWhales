@@ -7212,11 +7212,11 @@ MonoBehaviour:
     lineCount: 3
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -33475,6 +33475,8 @@ MonoBehaviour:
     - Inflict Alcoholic
     - Pestilence
     - Inflict Paralysis
+    - Release
+    - Inflict Zombie Virus
     m_values:
     - {fileID: 21300000, guid: 360bd7c134b76554488e42b1b995ce62, type: 3}
     - {fileID: 21300000, guid: 69b99f864b21aaf468543d8e4f78d683, type: 3}
@@ -33497,6 +33499,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 00c146ecfee6b7c4fb1138f861d0a9f4, type: 3}
     - {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
     - {fileID: 21300000, guid: 00c146ecfee6b7c4fb1138f861d0a9f4, type: 3}
+    - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
+    - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
     - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
     - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
     - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
@@ -36226,11 +36230,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -80124,6 +80128,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 1664721691}
+  - component: {fileID: 1664721694}
+  - component: {fileID: 1664721693}
   - component: {fileID: 1664721692}
   m_Layer: 5
   m_Name: Viewport
@@ -80155,15 +80161,48 @@ RectTransform:
 --- !u!114 &1664721692
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 114743891052967802, guid: 5a3188033d793804794fed4637bda424,
-    type: 2}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1664721690}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -146154839, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+--- !u!222 &1664721693
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1664721690}
+--- !u!114 &1664721694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1664721690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShowMaskGraphic: 0
 --- !u!1 &1665024767
 GameObject:
   m_ObjectHideFlags: 0
@@ -81055,11 +81094,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:

@@ -85,6 +85,7 @@ public class AttributeManager : MonoBehaviour {
             new Burning(),
             new Burnt(),
             new Agoraphobia(),
+            new Zombie_Virus(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);
@@ -111,7 +112,7 @@ public class AttributeManager : MonoBehaviour {
     public bool IsInstancedTrait(string traitName) {
         for (int i = 0; i < instancedTraits.Length; i++) {
             Trait currTrait = instancedTraits[i];
-            if (string.Equals(currTrait.name, traitName, StringComparison.OrdinalIgnoreCase)) {
+            if (string.Equals(currTrait.name, traitName, StringComparison.OrdinalIgnoreCase) || string.Equals(currTrait.GetType().ToString(), traitName, StringComparison.OrdinalIgnoreCase)) {
                 return true;
             }
         }

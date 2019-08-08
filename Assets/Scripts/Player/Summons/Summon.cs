@@ -55,7 +55,7 @@ public class Summon : Character {
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
         ResetToFullHP();
     }
-    public override void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null) {
+    public override void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null) {
         if (!_isDead) {
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;

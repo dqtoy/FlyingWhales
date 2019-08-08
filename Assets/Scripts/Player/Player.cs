@@ -38,6 +38,8 @@ public class Player : ILeader {
     public int maxSummonSlots { get; private set; } //how many summons can the player have
     public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
 
+    public Faction currentTargetFaction { get; private set; } //the current faction that the player is targeting.
+
     #region getters/setters
     public int id {
         get { return -645; }
@@ -105,6 +107,7 @@ public class Player : ILeader {
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
+        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
     private void EverydayAction() {
         //DepleteThreatLevel();
@@ -162,12 +165,16 @@ public class Player : ILeader {
                 minions[i].ResetInterventionAbilitiesCD();
             }
         }
+        currentTargetFaction = area.owner;
+    }
+    private void OnAreaMapClosed(Area area) {
+        currentTargetFaction = null;
     }
     #endregion
 
     #region Faction
     public void CreatePlayerFaction() {
-        Faction playerFaction = FactionManager.Instance.CreateNewFaction(true);
+        Faction playerFaction = FactionManager.Instance.CreateNewFaction(true, "Player faction");
         playerFaction.SetLeader(this);
         playerFaction.SetEmblem(FactionManager.Instance.GetFactionEmblem(6));
         SetPlayerFaction(playerFaction);
@@ -1320,13 +1327,20 @@ public class Player : ILeader {
         }
 
         bool stillHasResidents = false;
-        for (int i = 0; i < currentAreaBeingInvaded.areaResidents.Count; i++) {
-            Character currCharacter = currentAreaBeingInvaded.areaResidents[i];
+        for (int i = 0; i < currentTargetFaction.characters.Count; i++) { //Changed checking to faction members, because some characters may still consider the area as their home, but are no longer part of the faction
+            Character currCharacter = currentTargetFaction.characters[i];
             if (currCharacter.IsAble() && currCharacter.specificLocation == currentAreaBeingInvaded) {
                 stillHasResidents = true;
                 break;
             }
         }
+        //for (int i = 0; i < currentAreaBeingInvaded.areaResidents.Count; i++) {
+        //    Character currCharacter = currentAreaBeingInvaded.areaResidents[i];
+        //    if (currCharacter.IsAble() && currCharacter.specificLocation == currentAreaBeingInvaded) {
+        //        stillHasResidents = true;
+        //        break;
+        //    }
+        //}
         if (!stillHasResidents) {
             StopInvasion(true);
             return;

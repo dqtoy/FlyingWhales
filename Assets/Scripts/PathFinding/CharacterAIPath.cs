@@ -51,6 +51,10 @@ public class CharacterAIPath : AILerp {
         }
     }
     protected override void OnPathComplete(Path newPath) {
+        if (marker.character.isDead) {
+            ClearAllCurrentPathData();
+            return;
+        }
         if (newPath.CompleteState == PathCompleteState.Error) {
             Debug.LogWarning(marker.character.name + " path request returned a path with errors! Arrival action is: " + marker.arrivalAction?.Method.Name ?? "None" + "Destination is " + destination.ToString());
         }
@@ -131,7 +135,7 @@ public class CharacterAIPath : AILerp {
         //seeker.StartPath(start, end);
     }
     public override void UpdateMe() {
-        if (!marker.gameObject.activeSelf) {
+        if (!marker.gameObject.activeSelf || marker.character.isDead) {
             return;
         }
         marker.UpdatePosition();

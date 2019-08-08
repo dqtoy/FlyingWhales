@@ -107,13 +107,13 @@ public class AreaInfoUI : UIMenu {
             PlayerUI.Instance.attackSlot.ShowAttackButton();
         }
 
-        if (InteriorMapManager.Instance.isAnAreaMapShowing && activeArea.areaMap != null) {
-            bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != activeArea;
-            InteriorMapManager.Instance.HideAreaMap();
-            hideOnShowAreaMap = false;
-            InteriorMapManager.Instance.ShowAreaMap(activeArea, true, instantCenter);
-            hideOnShowAreaMap = true;
-        }
+        //if (InteriorMapManager.Instance.isAnAreaMapShowing && activeArea.areaMap != null) {
+        //    bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != activeArea;
+        //    InteriorMapManager.Instance.HideAreaMap();
+        //    hideOnShowAreaMap = false;
+        //    InteriorMapManager.Instance.ShowAreaMap(activeArea, true, instantCenter);
+        //    hideOnShowAreaMap = true;
+        //}
     }
     public override void CloseMenu() {
         //Utilities.DestroyChildren(charactersScrollView.content);

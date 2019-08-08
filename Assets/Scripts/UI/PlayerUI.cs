@@ -215,6 +215,7 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
+        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
 
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
@@ -280,6 +281,10 @@ public class PlayerUI : MonoBehaviour {
             UpdateKillCount();
             OrderKillSummaryItems();
         }
+    }
+    private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
+        UpdateKillCount();
+        OrderKillSummaryItems();
     }
     #endregion
 
@@ -997,6 +1002,7 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     public void BackToWorld() {
+        Utilities.DestroyChildren(killSummaryScrollView.content);
         Area closedArea = InteriorMapManager.Instance.HideAreaMap();
         if (PlayerManager.Instance.player.summons.Count > 0) {
             SetCurrentlySelectedSummon(PlayerManager.Instance.player.summons.Keys.FirstOrDefault());
@@ -1199,7 +1205,7 @@ public class PlayerUI : MonoBehaviour {
         List<KillCountCharacterItem> dead = new List<KillCountCharacterItem>();
         for (int i = 0; i < items.Length; i++) {
             KillCountCharacterItem currItem = items[i];
-            if (!currItem.character.IsAble() || currItem.character.faction == PlayerManager.Instance.player.playerFaction) { //added checking for faction in cases that the character was raised from dead
+            if (!currItem.character.IsAble() || currItem.character.faction != InteriorMapManager.Instance.currentlyShowingArea.owner) { //added checking for faction in cases that the character was raised from dead
                 dead.Add(currItem);
             } else {
                 alive.Add(currItem);

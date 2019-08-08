@@ -11,6 +11,9 @@ public class FactionManager : MonoBehaviour {
     public List<Faction> allFactions = new List<Faction>();
     public Faction neutralFaction { get; private set; }
 
+    private Faction _zombieFaction;
+    
+
     [Space(10)]
     [Header("Visuals")]
     [SerializeField] private List<FactionEmblemSetting> _factionEmblems;
@@ -31,6 +34,14 @@ public class FactionManager : MonoBehaviour {
     }
     public List<FactionEmblemSetting> factionEmblems {
         get { return _factionEmblems; }
+    }
+    public Faction zombieFaction {
+        get {
+            if (_zombieFaction == null) {
+                _zombieFaction = CreateNewFaction(factionName: "Zombies");
+            }
+            return _zombieFaction;
+        }
     }
     #endregion
 
@@ -243,15 +254,16 @@ public class FactionManager : MonoBehaviour {
             }
         }
 	}
-    public Faction CreateNewFaction(bool isPlayerFaction = false) {
+    public Faction CreateNewFaction(bool isPlayerFaction = false, string factionName = "") {
         Faction newFaction = new Faction(isPlayerFaction);
         allFactions.Add(newFaction);
         //CreateRelationshipsForFaction(newFaction);
         //CreateFavorsForFaction(newFaction);
+        if (!string.IsNullOrEmpty(factionName)) {
+            newFaction.SetName(factionName);
+        }
         if (!isPlayerFaction) {
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
-        } else {
-            newFaction.SetName("Player faction");
         }
         return newFaction;
     }

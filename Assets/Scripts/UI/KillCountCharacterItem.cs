@@ -25,6 +25,7 @@ public class KillCountCharacterItem : PooledObject {
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<Character>(Signals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnedToLife);
     }
     public void ShowCharacterInfo() {
         UIManager.Instance.ShowCharacterInfo(character);
@@ -40,9 +41,15 @@ public class KillCountCharacterItem : PooledObject {
             string text = string.Empty;
             Trait negDisTrait = character.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
             if (negDisTrait is Unconscious) {
-                text = "\"" + character.name + " was knocked out by " + negDisTrait.responsibleCharacter.name + "\"";
+                text = "\"" + character.name + " was knocked out by " + negDisTrait.responsibleCharacter.name + ".\"";
             } else if (negDisTrait is Restrained) {
-                text = "\"" + character.name + " was restrained by " + negDisTrait.responsibleCharacter.name + "\"";
+                text = "\"" + character.name + " was restrained by " + negDisTrait.responsibleCharacter.name + ".\"";
+            } else if (character.returnedToLife) {
+                if (character.characterClass.className == "Zombie") {
+                    text = "\"" + character.name + " turned into a zombie.\"";
+                } else {
+                    text = "\"" + character.name + " was resurrected into a mindless skeleton.\"";
+                }
             }
             deathLbl.text = text;
         }
@@ -84,6 +91,11 @@ public class KillCountCharacterItem : PooledObject {
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
         if (character.id == this.character.id && trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+            UpdateInfo();
+        }
+    }
+    private void OnCharacterReturnedToLife(Character character) {
+        if (character.id == this.character.id) {
             UpdateInfo();
         }
     }

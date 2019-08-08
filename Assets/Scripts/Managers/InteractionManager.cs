@@ -285,6 +285,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.SEPTIC_SHOCK:
                 goapAction = new SepticShock(actor, target);
                 break;
+            case INTERACTION_TYPE.ZOMBIE_DEATH:
+                goapAction = new ZombieDeath(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

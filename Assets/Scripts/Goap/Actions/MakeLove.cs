@@ -105,6 +105,39 @@ public class MakeLove : GoapAction {
             //kill the target character
             targetCharacter.Death("seduced", this, actor);
         }
+
+        //Plagued chances
+        Plagued actorPlagued = actor.GetNormalTrait("Plagued") as Plagued;
+        Plagued targetPlagued = poiTarget.GetNormalTrait("Plagued") as Plagued;
+        if ((actorPlagued == null || targetPlagued == null) && (actorPlagued != null || targetPlagued != null)) {
+            //if either the actor or the target is not yet plagued and one of them is plagued, check for infection chance
+            if (actorPlagued != null) {
+                //actor has plagued trait
+                int roll = Random.Range(0, 100);
+                if (roll < actorPlagued.GetMakeLoveInfectChance()) {
+                    //target will be infected with plague
+                    if (AddTraitTo(poiTarget, "Plagued", actor)) {
+                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
+                        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddLogToInvolvedObjects();
+                    }
+                }
+            } else if (targetPlagued != null) {
+                //target has plagued trait
+                int roll = Random.Range(0, 100);
+                if (roll < targetPlagued.GetMakeLoveInfectChance()) {
+                    //actor will be infected with plague
+                    if (AddTraitTo(actor, "Plagued", poiTarget as Character)) {
+                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
+                        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        log.AddLogToInvolvedObjects();
+                    }
+                }
+            }
+        }
+
     }
     private void PreMakeLoveFail() {
         currentState.AddLogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

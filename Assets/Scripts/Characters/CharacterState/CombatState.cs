@@ -403,8 +403,8 @@ public class CombatState : CharacterState {
                     stateComponent.character.CreateLocationKnockoutJobs(targetCharacter, numOfJobs);
                 }
             } else {
-                if (!(targetCharacter.isDead || targetCharacter.isAtHomeArea)) { //|| targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
-                    if (stateComponent.character.isAtHomeArea) {
+                if (!(targetCharacter.isDead || (targetCharacter.isAtHomeArea && targetCharacter.isPartOfHomeFaction))) { //|| targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
+                    if (stateComponent.character.isAtHomeArea && stateComponent.character.isPartOfHomeFaction) {
                         if (!stateComponent.character.jobQueue.HasJobWithOtherData(JOB_TYPE.REPORT_HOSTILE, targetCharacter)) {
                             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
                                 { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { targetCharacter }}

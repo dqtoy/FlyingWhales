@@ -154,7 +154,7 @@ public class Trait {
         return false;
     }
     protected bool CanTakeBuryJob(Character character, JobQueueItem job) {
-        if(!character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.isAtHomeArea
+        if(!character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.isAtHomeArea && character.isPartOfHomeFaction
                 && character.role.roleType != CHARACTER_ROLE.BEAST) {
             return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
         }

@@ -195,6 +195,38 @@ public class ChatCharacter : GoapAction {
         dueDate.AddTicks(2);
         SchedulingManager.Instance.AddEntry(dueDate, () => actor.EndChatCharacter(targetCharacter), actor);
 
+        Plagued actorPlagued = actor.GetNormalTrait("Plagued") as Plagued;
+        Plagued targetPlagued = poiTarget.GetNormalTrait("Plagued") as Plagued;
+        //Plagued chances
+        if ((actorPlagued == null || targetPlagued == null) && (actorPlagued != null || targetPlagued != null)) {
+            //if either the actor or the target is not yet plagued and one of them is plagued, check for infection chance
+            if (actorPlagued != null) {
+                //actor has plagued trait
+                int roll = Random.Range(0, 100);
+                if (roll < actorPlagued.GetChatInfectChance()) {
+                    //target will be infected with plague
+                    if (AddTraitTo(poiTarget, "Plagued", actor)) {
+                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
+                        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddLogToInvolvedObjects();
+                    }
+                }
+            } else if (targetPlagued != null) {
+                //target has plagued trait
+                int roll = Random.Range(0, 100);
+                if (roll < targetPlagued.GetChatInfectChance()) {
+                    //actor will be infected with plague
+                    if (AddTraitTo(actor, "Plagued", poiTarget as Character)) {
+                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
+                        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        log.AddLogToInvolvedObjects();
+                    }
+                }
+            }
+        }
+
         SetState(chatResult);
     }
     protected override int GetCost() {

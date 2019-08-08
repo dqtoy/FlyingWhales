@@ -692,12 +692,12 @@ public class CharacterMarker : PooledObject {
 
     #region Utilities
     private float GetSpeed() {
-        float speed = character.raceSetting.runSpeed;
+        float speed = character.runSpeed;
         if(targettedByRemoveNegativeTraitActionsCounter > 0) {
-            speed = character.raceSetting.walkSpeed;
+            speed = character.walkSpeed;
         } else {
             if (useWalkSpeed > 0) {
-                speed = character.raceSetting.walkSpeed;
+                speed = character.walkSpeed;
             } else {
                 if (character.stateComponent.currentState != null) {
                     if (character.stateComponent.currentState.characterState == CHARACTER_STATE.EXPLORE 
@@ -705,13 +705,13 @@ public class CharacterMarker : PooledObject {
                         || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
                         || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE) {
                         //Walk
-                        speed = character.raceSetting.walkSpeed;
+                        speed = character.walkSpeed;
                     }
                 } 
                 if (character.currentAction != null) {
                     if (character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
-                        //Walk
-                        speed = character.raceSetting.runSpeed;
+                        //Run
+                        speed = character.runSpeed;
                     }
                 }
             }

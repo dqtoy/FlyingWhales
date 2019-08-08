@@ -13,6 +13,8 @@ public class CharacterClass : EntityComponent {
     [SerializeField] private int _baseHP;
     [SerializeField] private int _baseAttackSpeed; //The lower the amount the faster the attack rate
     [SerializeField] private float _attackRange;
+    [SerializeField] private float _runSpeedMod;
+    [SerializeField] private float _walkSpeedMod;
     //[SerializeField] private string _skillName;
 
     [SerializeField] private string[] _traitNames;
@@ -64,6 +66,12 @@ public class CharacterClass : EntityComponent {
     }
     public float attackRange {
         get { return _attackRange; }
+    }
+    public float runSpeedMod {
+        get { return _runSpeedMod; }
+    }
+    public float walkSpeedMod {
+        get { return _walkSpeedMod; }
     }
     public int baseAttackSpeed {
         get { return _baseAttackSpeed; }
@@ -118,6 +126,8 @@ public class CharacterClass : EntityComponent {
 		newClass._speedPerLevel = this._speedPerLevel;
         newClass._hpPerLevel = this._hpPerLevel;
         newClass._attackRange = this._attackRange;
+        newClass._runSpeedMod = this._runSpeedMod;
+        newClass._walkSpeedMod = this._walkSpeedMod;
         newClass._baseAttackSpeed = this._baseAttackSpeed;
         //newClass._workActionType = this._workActionType;
         newClass._combatPosition = this._combatPosition;
@@ -163,6 +173,8 @@ public class CharacterClass : EntityComponent {
         this._hpPerLevel = int.Parse(ClassPanelUI.Instance.hpPerLevelInput.text);
         this._baseAttackSpeed = int.Parse(ClassPanelUI.Instance.baseAttackSpeedInput.text);
         this._attackRange = float.Parse(ClassPanelUI.Instance.attackRangeInput.text);
+        this._runSpeedMod = float.Parse(ClassPanelUI.Instance.runSpeedModInput.text);
+        this._walkSpeedMod = float.Parse(ClassPanelUI.Instance.walkSpeedModInput.text);
         this._combatPosition = (COMBAT_POSITION) System.Enum.Parse(typeof(COMBAT_POSITION), ClassPanelUI.Instance.combatPositionOptions.options[ClassPanelUI.Instance.combatPositionOptions.value].text);
         this._combatTarget = (COMBAT_TARGET)System.Enum.Parse(typeof(COMBAT_TARGET), ClassPanelUI.Instance.combatTargetOptions.options[ClassPanelUI.Instance.combatTargetOptions.value].text);
         this._attackType = (ATTACK_TYPE) System.Enum.Parse(typeof(ATTACK_TYPE), ClassPanelUI.Instance.attackTypeOptions.options[ClassPanelUI.Instance.attackTypeOptions.value].text);

@@ -26,6 +26,8 @@ public class ClassPanelUI : MonoBehaviour {
     public InputField recruitmentCostInput;
     public InputField baseAttackSpeedInput;
     public InputField attackRangeInput;
+    public InputField walkSpeedModInput;
+    public InputField runSpeedModInput;
 
     public Toggle nonCombatantToggle;
 
@@ -275,6 +277,8 @@ public class ClassPanelUI : MonoBehaviour {
         recruitmentCostInput.text = characterClass.recruitmentCost.amount.ToString();
         baseAttackSpeedInput.text = characterClass.baseAttackSpeed.ToString();
         attackRangeInput.text = characterClass.attackRange.ToString();
+        runSpeedModInput.text = characterClass.runSpeedMod.ToString();
+        walkSpeedModInput.text = characterClass.walkSpeedMod.ToString();
 
         combatPositionOptions.value = GetDropdownIndex(combatPositionOptions, characterClass.combatPosition.ToString());
         combatTargetOptions.value = GetDropdownIndex(combatTargetOptions, characterClass.combatTarget.ToString());

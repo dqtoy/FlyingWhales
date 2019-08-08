@@ -228,7 +228,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1700488925132308
 GameObject:
   m_ObjectHideFlags: 0
@@ -800,7 +800,6 @@ MonoBehaviour:
   colliders:
   - {fileID: 58282679592281158}
   - {fileID: 58535005990234766}
-  rgBodies: []
   visionCollision: {fileID: 114699231813471468}
   hpBarGO: {fileID: 1700488925132308}
   hpFill: {fileID: 114503541738452620}
@@ -899,6 +898,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentMarker: {fileID: 114379759619008666}
+  isInitialized: 0
 --- !u!114 &114720397635659402
 MonoBehaviour:
   m_ObjectHideFlags: 1

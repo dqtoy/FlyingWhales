@@ -43,7 +43,7 @@ public class PlayerManager : MonoBehaviour {
             , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY, INTERVENTION_ABILITY.INFLICT_LYCANTHROPY, INTERVENTION_ABILITY.INFLICT_VAMPIRISM, INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA
             , INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS, INTERVENTION_ABILITY.JOLT, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE, INTERVENTION_ABILITY.EXPLOSION
             , INTERVENTION_ABILITY.IGNITE, INTERVENTION_ABILITY.LURE, INTERVENTION_ABILITY.CURSED_OBJECT, INTERVENTION_ABILITY.SPOIL, INTERVENTION_ABILITY.INFLICT_ALCOHOLIC
-            , INTERVENTION_ABILITY.LULLABY, INTERVENTION_ABILITY.INFLICT_AGORAPHOBIA, INTERVENTION_ABILITY.INFLICT_PARALYSIS };
+            , INTERVENTION_ABILITY.LULLABY, INTERVENTION_ABILITY.INFLICT_AGORAPHOBIA, INTERVENTION_ABILITY.INFLICT_PARALYSIS, INTERVENTION_ABILITY.RELEASE, INTERVENTION_ABILITY.INFLICT_ZOMBIE_VIRUS };
         //allInterventionAbilities = (INTERVENTION_ABILITY[]) System.Enum.GetValues(typeof(INTERVENTION_ABILITY));
         allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
 
@@ -155,7 +155,6 @@ public class PlayerManager : MonoBehaviour {
             }
         }
     }
-
     public void PurchaseTile(HexTile tile) {
         AddTileToPlayerArea(tile);
     }
@@ -244,6 +243,10 @@ public class PlayerManager : MonoBehaviour {
                 return new InflictAgoraphobia();
             case INTERVENTION_ABILITY.INFLICT_PARALYSIS:
                 return new InflictParalysis();
+            case INTERVENTION_ABILITY.RELEASE:
+                return new Release();
+            case INTERVENTION_ABILITY.INFLICT_ZOMBIE_VIRUS:
+                return new InflictZombieVirus();
         }
         return null;
     }
@@ -293,7 +296,6 @@ public class PlayerManager : MonoBehaviour {
         var typeName = artifactType.ToString();
         return System.Activator.CreateInstance(System.Type.GetType(typeName));
     }
-
     private Artifact CreateNewArtifactClassFromType(SaveDataArtifact data) {
         switch (data.type) {
             case ARTIFACT_TYPE.Ankh_Of_Anubis:

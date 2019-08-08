@@ -698,15 +698,19 @@ public class GoapAction {
     /// </summary>
     /// <param name="target">POI that gains a trait</param>
     /// <param name="traitName">Trait to be gained</param>
-    protected void AddTraitTo(IPointOfInterest target, string traitName, Character characterResponsible = null, System.Action onRemoveAction = null) {
+    protected bool AddTraitTo(IPointOfInterest target, string traitName, Character characterResponsible = null, System.Action onRemoveAction = null) {
         if (target.AddTrait(traitName, characterResponsible, onRemoveAction, this)) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = traitName, targetPOI = target });
+            return true;
         }
+        return false;
     }
-    protected void AddTraitTo(IPointOfInterest target, Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
+    protected bool AddTraitTo(IPointOfInterest target, Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
         if (target.AddTrait(trait, characterResponsible, onRemoveAction, this)) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = trait.name, targetPOI = target });
+            return true;
         }
+        return false;
     }
     /// <summary>
     /// Helper function to encapsulate removing a trait from a poi and adding actual effect data based on the removed trait.

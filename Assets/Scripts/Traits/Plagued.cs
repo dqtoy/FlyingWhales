@@ -113,8 +113,7 @@ public class Plagued : Trait {
                 owner.SetCurrentAction(goapAction);
                 owner.currentAction.PerformActualAction();
             } else if (owner.stateComponent.currentState != null) {
-                pausedState = owner.stateComponent.currentState;
-                owner.stateComponent.currentState.PauseState();
+                owner.stateComponent.currentState.OnExitThisState();
                 owner.marker.StopMovement();
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
                 
@@ -138,6 +137,26 @@ public class Plagued : Trait {
         
     }
     private void ResumePausedState(string result, GoapAction action) {
+        owner.GoapActionResult(result, action);
         pausedState.ResumeState();
+    }
+
+    public int GetChatInfectChance() {
+        if (level == 1) {
+            return 5;
+        } else if (level == 2) {
+            return 7;
+        } else {
+            return 9;
+        }
+    }
+    public int GetMakeLoveInfectChance() {
+        if (level == 1) {
+            return 20;
+        } else if (level == 2) {
+            return 30;
+        } else {
+            return 40;
+        }
     }
 }
