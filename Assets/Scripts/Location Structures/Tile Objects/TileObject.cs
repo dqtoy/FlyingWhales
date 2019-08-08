@@ -502,9 +502,10 @@ public class TileObject : IPointOfInterest {
     #endregion
 
     #region Users
-    protected virtual void AddUser(Character newUser) {
+    public virtual void AddUser(Character newUser) {
         TileObjectSlotItem availableSlot = GetNearestUnoccupiedSlot(newUser);
         if (availableSlot != null) {
+            newUser.SetTileObjectLocation(this);
             availableSlot.Use(newUser);
             if (!HasUnoccupiedSlot()) {
                 SetPOIState(POI_STATE.INACTIVE);
@@ -514,6 +515,7 @@ public class TileObject : IPointOfInterest {
     protected virtual void RemoveUser(Character user) {
         TileObjectSlotItem slot = GetSlotUsedBy(user);
         if (slot != null) {
+            user.SetTileObjectLocation(null);
             slot.StopUsing();
             SetPOIState(POI_STATE.ACTIVE);
         }

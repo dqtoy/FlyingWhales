@@ -240,7 +240,7 @@ public class Party {
         }
         return false;
     }
-    public void RemoveCharacter(Character character, bool addToLocation = true) {
+    public void RemoveCharacter(Character character, bool addToLocation = true, LocationGridTile dropLocation = null) {
         if(_owner == character) {
             return;
         }
@@ -248,17 +248,22 @@ public class Party {
             //LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
             //_owner.specificLocation.AddCharacterToLocation(character);
             character.OnRemovedFromParty();
-            if (_owner.gridTileLocation.isOccupied) {
-                LocationGridTile chosenTile = _owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
-                if(chosenTile != null) {
-                    character.marker.PlaceMarkerAt(chosenTile, addToLocation);
+            if (dropLocation == null) {
+                if (_owner.gridTileLocation.isOccupied) {
+                    LocationGridTile chosenTile = _owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
+                    if (chosenTile != null) {
+                        character.marker.PlaceMarkerAt(chosenTile, addToLocation);
+                    } else {
+                        Debug.LogWarning(GameManager.Instance.TodayLogString() + character.name + " is being dropped by " + _owner.name + " but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
+                        character.marker.PlaceMarkerAt(_owner.gridTileLocation, addToLocation);
+                    }
                 } else {
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + character.name + " is being dropped by " + _owner.name + " but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
                     character.marker.PlaceMarkerAt(_owner.gridTileLocation, addToLocation);
                 }
             } else {
-                character.marker.PlaceMarkerAt(_owner.gridTileLocation, addToLocation);
+                character.marker.PlaceMarkerAt(dropLocation, addToLocation);
             }
+
             character.marker.transform.eulerAngles = Vector3.zero;
             character.marker.nameLbl.gameObject.SetActive(true);
             //character.marker.gameObject.transform.localPosition = gridTile.centeredLocalLocation;

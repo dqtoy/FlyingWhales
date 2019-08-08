@@ -98,6 +98,7 @@ public class Character : ILeader, IPointOfInterest {
     public bool isDisabledByPlayer { get; protected set; }
     public float speedModifier { get; private set; }
     public string deathStr { get; private set; }
+    public TileObject tileObjectLocation { get; private set; }
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -465,6 +466,9 @@ public class Character : ILeader, IPointOfInterest {
     }
     public float runSpeed {
         get { return raceSetting.runSpeed + (raceSetting.runSpeed * characterClass.runSpeedMod); }
+    }
+    public bool isInTileObject {
+        get { return tileObjectLocation != null; }
     }
     #endregion
 
@@ -1786,9 +1790,11 @@ public class Character : ILeader, IPointOfInterest {
     public GoapPlanJob CreateApprehendJobFor(Character targetCharacter, bool assignSelfToJob = false) {
         //if (homeArea.id == specificLocation.id) {
         if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.APPREHEND) && targetCharacter.GetNormalTrait("Restrained") == null && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = targetCharacter };
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, goapEffect);
+            //GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = targetCharacter };
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
             job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+            //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
+            //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
             job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
             //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
             homeArea.jobQueue.AddJobInQueue(job);
@@ -2011,7 +2017,9 @@ public class Character : ILeader, IPointOfInterest {
                 return;
             }
             if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.SAVE_CHARACTER)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SAVE_CHARACTER, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = targetCharacter.homeArea, targetPOI = targetCharacter });
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SAVE_CHARACTER, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
+                //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = targetCharacter.homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
                 jobQueue.AddJobInQueue(job, processLogicForPersonalJob);
                 log += "\n" + name + " created save character job.";
                 //return job;
@@ -2675,6 +2683,9 @@ public class Character : ILeader, IPointOfInterest {
             return false;
         }
         return true;
+    }
+    public void SetTileObjectLocation(TileObject tileObject) {
+        tileObjectLocation = tileObject;
     }
     #endregion
 
@@ -4291,6 +4302,16 @@ public class Character : ILeader, IPointOfInterest {
         }
         return false;
     }
+    public int GetNumberOfTraitOf(TRAIT_EFFECT effect, TRAIT_TYPE type) {
+        int count = 0;
+        for (int i = 0; i < normalTraits.Count; i++) {
+            Trait currTrait = normalTraits[i];
+            if (currTrait.effect == effect && currTrait.type == type && !currTrait.isDisabled) {
+                count++;
+            }
+        }
+        return count;
+    }
     public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
         List<Trait> removedTraits = new List<Trait>();
         if (traitType == TRAIT_TYPE.RELATIONSHIP) {
@@ -4730,9 +4751,12 @@ public class Character : ILeader, IPointOfInterest {
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
         //so start doing actions again
         SetHasAlreadyAskedForPlan(false);
-        if (currentAction == null && _numOfWaitingForGoapThread <= 0) {
+        if (CanPlanGoap()) {
             PlanGoapActions();
         }
+    }
+    public bool CanPlanGoap() {
+        return currentAction == null && _numOfWaitingForGoapThread <= 0;
     }
     public void SetDailyGoapGenerationTick() {
         int remainingDaysInWeek = 6 - (GameManager.Instance.tick % 6);
@@ -4820,6 +4844,9 @@ public class Character : ILeader, IPointOfInterest {
         return false;
     }
     public bool PlanFullnessRecoveryActions() {
+        if(doNotDisturb > 0) {
+            return false;
+        }
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait hungryOrStarving = GetNormalTrait("Starving", "Hungry");
 
@@ -4866,6 +4893,9 @@ public class Character : ILeader, IPointOfInterest {
         return false;
     }
     public bool PlanTirednessRecoveryActions() {
+        if (doNotDisturb > 0) {
+            return false;
+        }
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait tiredOrExhausted = GetNormalTrait("Exhausted", "Tired");
 
@@ -4911,6 +4941,9 @@ public class Character : ILeader, IPointOfInterest {
         return false;
     }
     public bool PlanHappinessRecoveryActions() {
+        if (doNotDisturb > 0) {
+            return false;
+        }
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         Trait lonelyOrForlorn = GetNormalTrait("Forlorn", "Lonely");
 
@@ -6511,6 +6544,8 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.ROAMING_TO_STEAL);
         poiGoapActions.Add(INTERACTION_TYPE.PUKE);
         poiGoapActions.Add(INTERACTION_TYPE.SEPTIC_SHOCK);
+        poiGoapActions.Add(INTERACTION_TYPE.CARRY);
+        poiGoapActions.Add(INTERACTION_TYPE.DROP);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
@@ -6606,7 +6641,8 @@ public class Character : ILeader, IPointOfInterest {
         PrintLogIfActive(goapThread.log);
         if (goapThread.createdPlan != null) {
             if (goapThread.recalculationPlan == null) {
-                if (HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                int count = GetNumberOfTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+                if (count >= 2 || (count == 1 && GetNormalTrait("Paralyzed") == null)) {
                     PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping plan since " + name + " has a negative disabler trait. " + goapThread.job.name + " is the job.");
                     if (goapThread.job != null) {
                         if (goapThread.job.assignedCharacter == this) {
@@ -6667,7 +6703,8 @@ public class Character : ILeader, IPointOfInterest {
             } else {
                 //Receive plan recalculation
                 goapThread.createdPlan.SetIsBeingRecalculated(false);
-                if (HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                int count = GetNumberOfTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+                if (count >= 2 || (count == 1 && GetNormalTrait("Paralyzed") == null)) {
                     PrintLogIfActive(GameManager.Instance.TodayLogString() + name + " is scrapping recalculated plan since " + name + " has a negative disabler trait. " + goapThread.job.name + " is the job.");
                     DropPlan(goapThread.recalculationPlan, true);
                     return;

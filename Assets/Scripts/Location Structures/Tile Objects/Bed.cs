@@ -114,10 +114,11 @@ public class Bed : TileObject {
     #endregion
 
     #region Users
-    protected override void AddUser(Character character) {
+    public override void AddUser(Character character) {
         for (int i = 0; i < bedUsers.Length; i++) {
             if (bedUsers[i] == null) {
                 bedUsers[i] = character;
+                character.SetTileObjectLocation(this);
                 UpdateUsedBedAsset();
                 if (!IsSlotAvailable()) {
                     SetPOIState(POI_STATE.INACTIVE); //if all slots in the bed are occupied, set it as inactive
@@ -132,6 +133,7 @@ public class Bed : TileObject {
         for (int i = 0; i < bedUsers.Length; i++) {
             if (bedUsers[i] == character) {
                 bedUsers[i] = null;
+                character.SetTileObjectLocation(null);
                 UpdateUsedBedAsset();
                 if (IsSlotAvailable()) {
                     SetPOIState(POI_STATE.ACTIVE); //if a slots in the bed is unoccupied, set it as active
