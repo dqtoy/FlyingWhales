@@ -117,15 +117,12 @@ public class CursorManager : MonoBehaviour {
                     LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
                     if(hoveredTile != null) {
                         SetCursorTo(Cursor_Type.Check);
-                        if(hoveredTile != InteriorMapManager.Instance.currentlyHoveredTile) {
-                            //InteriorMapManager.Instance.SetCurrentlyHoveredTile(hoveredTile);
-                            List<LocationGridTile> highlightTiles = hoveredTile.parentAreaMap.GetTilesInRadius(hoveredTile, ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
-                            if(InteriorMapManager.Instance.currentlyHighlightedTiles != null) {
-                                InteriorMapManager.Instance.UnhighlightTiles();
-                                InteriorMapManager.Instance.HighlightTiles(highlightTiles);
-                            } else {
-                                InteriorMapManager.Instance.HighlightTiles(highlightTiles);
-                            }
+                        List<LocationGridTile> highlightTiles = hoveredTile.parentAreaMap.GetTilesInRadius(hoveredTile, ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                        if(InteriorMapManager.Instance.currentlyHighlightedTiles != null) {
+                            InteriorMapManager.Instance.UnhighlightTiles();
+                            InteriorMapManager.Instance.HighlightTiles(highlightTiles);
+                        } else {
+                            InteriorMapManager.Instance.HighlightTiles(highlightTiles);
                         }
                     }
                 }

@@ -23,6 +23,8 @@ public class Ignite : PlayerJobAction {
             LocationGridTile tile = tiles[i];
             tile.AddTrait("Burning");
         }
+        Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", this.GetType().ToString(), "activated");
+        PlayerManager.Instance.player.ShowNotification(log);
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
