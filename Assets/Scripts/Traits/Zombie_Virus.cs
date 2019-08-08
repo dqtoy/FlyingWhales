@@ -94,7 +94,7 @@ public class Zombie_Virus : Trait {
             int roll = Random.Range(0, 100);
             if (roll < 15) { //15
                 if (hitCharacter.AddTrait("Zombie_Virus")) {
-                    Log log = new Log(GameManager.Instance.Today(), "Chaarcter", "NonIntel", "contracted_zombie");
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_zombie");
                     log.AddToFillers(hitCharacter, hitCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(hitBy, hitBy.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddLogToInvolvedObjects();
