@@ -709,8 +709,8 @@ public class CharacterManager : MonoBehaviour {
                         break;
                     case RELATIONSHIP_TRAIT.LOVER:
                         //- a character has a 20% chance to have a lover
-                        //if (chance < 20) relsToCreate = 1;
-                        relsToCreate = 1;
+                        if (chance < 20) relsToCreate = 1;
+                        //relsToCreate = 1;
                         break;
                     case RELATIONSHIP_TRAIT.ENEMY:
                         //- a character may have either zero (75%), one (20%) or two (5%) enemies
