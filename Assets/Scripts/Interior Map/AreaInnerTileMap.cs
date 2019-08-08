@@ -977,8 +977,11 @@ public class AreaInnerTileMap : MonoBehaviour {
                 if (tilemap == detailsTilemap) {
                     tile.hasDetail = true;
                     tile.SetTileState(LocationGridTile.Tile_State.Occupied);
-                } else if (tilemap == groundTilemap && assetUsed.name.Contains("cobble")) {
-                    tile.SetGroundType(LocationGridTile.Ground_Type.Cobble);
+                } else if (tilemap == groundTilemap) {
+                    //tilemap.RemoveTileFlags(pos, TileFlags.LockColor);
+                    if (assetUsed.name.Contains("cobble")) {
+                        tile.SetGroundType(LocationGridTile.Ground_Type.Cobble);
+                    }
                 }
             }
             //} else {

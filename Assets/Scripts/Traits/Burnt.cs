@@ -18,7 +18,8 @@ public class Burnt : Trait {
         base.OnAddTrait(addedTo);
         if (addedTo is LocationGridTile) {
             LocationGridTile tile = addedTo as LocationGridTile;
-            //tile.parentTileMap.SetColor(tile.localPlace, Color.black);
+            tile.parentTileMap.SetColor(tile.localPlace, Color.black);
+            tile.SetDefaultTileColor(Color.black);
         } else if (addedTo is TileObject) {
             TileObject obj = addedTo as TileObject;
             obj.SetPOIState(POI_STATE.INACTIVE);

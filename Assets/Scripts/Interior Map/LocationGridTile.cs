@@ -44,6 +44,8 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
     }
     public LocationGridTile gridTileLocation { get { return this; } }
 
+    private Color defaultTileColor;
+
     public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty || o.tileType == Tile_Type.Gate || o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> RealisticTiles { get { return FourNeighbours().Where(o => o.tileAccess == Tile_Access.Passable && (o.structure != null || o.tileType == Tile_Type.Road || o.tileType == Tile_Type.Gate)).ToList(); } }
     public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
@@ -67,6 +69,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         _traits = new List<Trait>();
         SetLockedState(false);
         SetReservedType(TILE_OBJECT_TYPE.NONE);
+        defaultTileColor = Color.white;
     }
     public void UpdateWorldLocation() {
         worldLocation = parentTileMap.CellToWorld(localPlace);
@@ -497,7 +500,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         parentAreaMap.groundTilemap.SetColor(localPlace, Color.blue);
     }
     public void UnhighlightTile() {
-        parentAreaMap.groundTilemap.SetColor(localPlace, Color.white);
+        parentAreaMap.groundTilemap.SetColor(localPlace, defaultTileColor);
     }
     public bool HasCardinalNeighbourOfDifferentGroundType(out Dictionary<TileNeighbourDirection, LocationGridTile> differentTiles) {
         bool hasDiff = false;
@@ -510,6 +513,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
             }
         }
         return hasDiff;
+    }
+    public void SetDefaultTileColor(Color color) {
+        defaultTileColor = color;
     }
     #endregion
 
