@@ -50,20 +50,20 @@ public class Burning : Trait {
 
     private void PerTick() {
         //Burning characters reduce their current hp by 2% of maxhp every tick. 
-        //They also have a 10% chance to remove Burning effect but will not gain a Burnt trait afterwards. 
+        //They also have a 6% chance to remove Burning effect but will not gain a Burnt trait afterwards. 
         //If a character dies and becomes a corpse, it may still continue to burn.
         if (owner is Character) {
             Character character = owner as Character;
             if (!character.isDead) {
                 character.AdjustHP(-(int)(character.maxHP * 0.02f));
             }
-            if (Random.Range(0, 100) < 10) {
+            if (Random.Range(0, 100) < 6) {
                 owner.RemoveTrait(this);
             }
         } else {
-            //Every tick, a Burning tile or object also has a 5% chance to remove Burning effect. 
+            //Every tick, a Burning tile or object also has a 3% chance to remove Burning effect. 
             //Afterwards, it will have a Burnt trait, which disables its Flammable trait (meaning it can no longer gain a Burning status).
-            if (Random.Range(0, 100) < 5) {
+            if (Random.Range(0, 100) < 3) {
                 owner.RemoveTrait(this);
                 owner.AddTrait("Burnt");
                 return; //do not execute other effecs.
