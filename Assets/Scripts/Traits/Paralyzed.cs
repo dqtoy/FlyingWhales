@@ -23,11 +23,13 @@ public class Paralyzed : Trait {
             character = addedTo as Character;
             character.CancelAllJobsAndPlans();
             Messenger.AddListener(Signals.TICK_STARTED, CheckParalyzedTrait);
+            Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         }
     }
     public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         if (character != null) {
             Messenger.RemoveListener(Signals.TICK_STARTED, CheckParalyzedTrait);
+            Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         }
         base.OnRemoveTrait(sourceCharacter, removedBy);
     }
@@ -53,6 +55,8 @@ public class Paralyzed : Trait {
             }
         }
     }
+
+    #region Carry/Drop
     private bool CreateActualDropJob(LocationStructure dropLocationStructure) {
         if (!character.HasJobTargettingThisCharacter(JOB_TYPE.DROP) && !character.HasJobTargettingThisCharacter(JOB_TYPE.FEED)) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, character,
@@ -80,6 +84,18 @@ public class Paralyzed : Trait {
     private bool CanCharacterTakeDropJob(Character character, JobQueueItem job) {
         return this.character != character && this.character.faction == character.faction && character.GetRelationshipEffectWith(this.character) != RELATIONSHIP_EFFECT.NEGATIVE;
     }
+    private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
+        if(action.goapType == INTERACTION_TYPE.DROP && action.poiTarget == this.character) {
+            if(this.character.gridTileLocation.objHere != null && this.character.gridTileLocation.objHere is Bed) {
+                CreateActualSleepJob(this.character.gridTileLocation.objHere as Bed);
+            }else if(this.character.gridTileLocation.structure == this.character.homeStructure) {
+                CreateActualHappinessRecoveryJob(INTERACTION_TYPE.PRAY);
+            } else {
+                CreateActualHappinessRecoveryJob(INTERACTION_TYPE.DAYDREAM);
+            }
+        }
+    }
+    #endregion
 
     #region Fullness Recovery
     private bool PlanFullnessRecovery() {
@@ -107,44 +123,51 @@ public class Paralyzed : Trait {
     private bool recentlyBeenMoved = false;
     private bool PlanHappinessRecovery() {
         if(character.isForlorn || character.isLonely) {
-            int chance = UnityEngine.Random.Range(0, 2);
-            if(chance == 0 || recentlyBeenMoved) {
-                recentlyBeenMoved = false;
-                return CreateDaydreamOrPrayJob();
-            } else {
-                //Ask to be moved to another place
-                bool isAtHome = character.currentStructure == character.homeStructure;
-                bool isAtWorkArea = character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA;
+            return CreateDaydreamOrPrayJob();
+            //int chance = UnityEngine.Random.Range(0, 2);
+            //if(chance == 0 || recentlyBeenMoved) {
+            //    recentlyBeenMoved = false;
+            //    return CreateDaydreamOrPrayJob();
+            //} else {
+            //    //Ask to be moved to another place
+            //    bool isAtHome = character.currentStructure == character.homeStructure;
+            //    bool isAtWorkArea = character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA;
 
-                List<LocationStructure> structureChoices = new List<LocationStructure>();
-                if (!isAtHome && character.homeStructure != null) {
-                    structureChoices.Add(character.homeStructure);
-                }
-                if (!isAtWorkArea) {
-                    LocationStructure structure = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
-                    if(structure != null) {
-                        structureChoices.Add(structure);
-                    }
-                }
+            //    List<LocationStructure> structureChoices = new List<LocationStructure>();
+            //    if (!isAtHome && character.homeStructure != null) {
+            //        structureChoices.Add(character.homeStructure);
+            //    }
+            //    if (!isAtWorkArea) {
+            //        LocationStructure structure = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+            //        if(structure != null) {
+            //            structureChoices.Add(structure);
+            //        }
+            //    }
 
-                if(structureChoices.Count > 0) {
-                    recentlyBeenMoved = true;
-                    return CreateActualDropJob(structureChoices[UnityEngine.Random.Range(0, structureChoices.Count)]);
-                } else {
-                    return CreateDaydreamOrPrayJob();
-                }
-            }
+            //    if(structureChoices.Count > 0) {
+            //        recentlyBeenMoved = true;
+            //        return CreateActualDropJob(structureChoices[UnityEngine.Random.Range(0, structureChoices.Count)]);
+            //    } else {
+            //        return CreateDaydreamOrPrayJob();
+            //    }
+            //}
         }
         return false;
     }
     private bool CreateDaydreamOrPrayJob() {
         if (character.specificLocation.IsResident(character)) {
-            if (character.currentStructure == character.homeStructure) {
-                CreateActualHappinessRecoveryJob(INTERACTION_TYPE.PRAY);
+            int chance = UnityEngine.Random.Range(0, 2);
+            if (chance == 0) {
+                return CreatePrayJob();
             } else {
-                CreateActualHappinessRecoveryJob(INTERACTION_TYPE.DAYDREAM);
+                return CreateDaydreamJob();
             }
-            return true;
+            //if (character.currentStructure == character.homeStructure) {
+            //    CreateActualHappinessRecoveryJob(INTERACTION_TYPE.PRAY);
+            //} else {
+            //    CreateActualHappinessRecoveryJob(INTERACTION_TYPE.DAYDREAM);
+            //}
+            //return true;
         }
         return false;
     }
