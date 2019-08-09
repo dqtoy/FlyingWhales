@@ -63,6 +63,6 @@ public class Agoraphobia : Trait {
     private void ApplyAgoraphobiaEffect(Character character, bool processCombat) {
         character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat);
         character.AdjustHappiness(-50);
-        character.AdjustTiredness(-350);
+        character.AdjustTiredness(-150);
     }
 }
