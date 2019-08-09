@@ -3909,6 +3909,9 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     public void HPRecovery(float maxHPPercentage) {
+        if(currentHP <= 0) {
+            return;
+        }
         if(currentHP < maxHP) {
             AdjustHP(Mathf.CeilToInt(maxHPPercentage * maxHP));
         }

@@ -211,7 +211,7 @@ public class StealFromCharacter : GoapAction {
                             recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         }
                     } else {
-                        reactions.Add("I hate both of them but a crime's a crime.");
+                        reactions.Add(string.Format("Hahaha! It's what {0} deserves.", Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                         AddTraitTo(recipient, "Cheery");
                     }
                 }
