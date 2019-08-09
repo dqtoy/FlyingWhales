@@ -38,7 +38,7 @@ public class Explosion : PlayerJobAction {
                 continue; //go to next item
             } else if (flammable is Character) {
                 Character character = flammable as Character;
-                character.AdjustHP(-(int)(character.maxHP * 0.4f));
+                character.AdjustHP(-(int)(character.maxHP * 0.4f), true);
             }
             if (Random.Range(0, 100) < 25) {
                 flammable.AddTrait("Burning");

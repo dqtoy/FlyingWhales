@@ -40,15 +40,23 @@ public class KillCountCharacterItem : PooledObject {
         } else {
             string text = string.Empty;
             Trait negDisTrait = character.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
-            if (negDisTrait is Unconscious) {
-                text = "\"" + character.name + " was knocked out by " + negDisTrait.responsibleCharacter.name + ".\"";
-            } else if (negDisTrait is Restrained) {
-                text = "\"" + character.name + " was restrained by " + negDisTrait.responsibleCharacter.name + ".\"";
-            } else if (character.returnedToLife) {
-                if (character.characterClass.className == "Zombie") {
-                    text = "\"" + character.name + " turned into a zombie.\"";
-                } else {
-                    text = "\"" + character.name + " was resurrected into a mindless skeleton.\"";
+            if (negDisTrait != null) {
+                if (negDisTrait is Unconscious) {
+                    text = "\"" + character.name + " was knocked out by " + negDisTrait.responsibleCharacter.name + ".\"";
+                } else if (negDisTrait is Restrained) {
+                    text = "\"" + character.name + " was restrained by " + negDisTrait.responsibleCharacter.name + ".\"";
+                } else if (negDisTrait is Paralyzed) {
+                    text = "\"" + character.name + " became paralyzed.\"";
+                }
+            } else {
+                if (character.returnedToLife) {
+                    if (character.characterClass.className == "Zombie") {
+                        text = "\"" + character.name + " turned into a zombie.\"";
+                    } else {
+                        text = "\"" + character.name + " was resurrected into a mindless skeleton.\"";
+                    }
+                } else if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+                    text = "\"" + character.name + " turned into a warewolf.\"";
                 }
             }
             deathLbl.text = text;

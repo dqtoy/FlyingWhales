@@ -357,29 +357,23 @@ public class CharacterMarker : PooledObject {
             actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Social_Icon];
             actionIcon.gameObject.SetActive(true);
         } else {
-            if (character.stateComponent.currentState != null) {
+            if (character.currentAction != null) {
+                if (character.currentAction.actionIconString != GoapActionStateDB.No_Icon) {
+                    actionIcon.sprite = actionIconDictionary[character.currentAction.actionIconString];
+                    actionIcon.gameObject.SetActive(true);
+                } else {
+                    actionIcon.gameObject.SetActive(false);
+                }
+            } else if (character.stateComponent.currentState != null) {
                 if (character.stateComponent.currentState.actionIconString != GoapActionStateDB.No_Icon) {
                     actionIcon.sprite = actionIconDictionary[character.stateComponent.currentState.actionIconString];
                     actionIcon.gameObject.SetActive(true);
                 } else {
                     actionIcon.gameObject.SetActive(false);
                 }
-            }
-            //else if (character.targettedByAction.Count > 0) {
-            //    if (character.targettedByAction != null && character.targettedByAction[0].actionIconString != GoapActionStateDB.No_Icon) {
-            //        actionIcon.sprite = actionIconDictionary[character.targettedByAction[0].actionIconString];
-            //        actionIcon.gameObject.SetActive(true);
-            //    } else {
-            //        actionIcon.gameObject.SetActive(false);
-            //    }
-            //} 
-            else {
-                if (character.currentAction != null && character.currentAction.actionIconString != GoapActionStateDB.No_Icon) {
-                    actionIcon.sprite = actionIconDictionary[character.currentAction.actionIconString];
-                    actionIcon.gameObject.SetActive(true);
-                } else {
-                    actionIcon.gameObject.SetActive(false);
-                }
+            } else {
+                //no action or state
+                actionIcon.gameObject.SetActive(false);
             }
         }
     }
@@ -1135,7 +1129,9 @@ public class CharacterMarker : PooledObject {
     #region Flee
     public bool hasFleePath { get; private set; }
     private float fleeSpeedModifier;
-    private const float Starting_Flee_Modifier = 0.5f; //starts at positive value, increase speed by 30%, then gradually reduce every other tick, eventually becoming negative.
+    private const float Starting_Flee_Modifier = 0.3f; //starts at positive value, increase speed by 30%, then gradually reduce every other tick, eventually becoming negative.
+    private const int Tick_Flee_Will_Slow_Down = 4; //What tick will the fleeing character slow down at.
+    private int ticksInFlee;
     public void OnStartFlee() {
         if (avoidInRange.Count == 0) {
             return;
@@ -1158,6 +1154,8 @@ public class CharacterMarker : PooledObject {
         StartMovement();
         fleeSpeedModifier = Starting_Flee_Modifier;
         Messenger.AddListener(Signals.TICK_STARTED, PerTickFlee);
+        ticksInFlee = 0;
+        Debug.Log(GameManager.Instance.TodayLogString() + character.name + " will start fleeing");
     }
     public void OnFinishedTraversingFleePath() {
         //Debug.Log(name + " has finished traversing flee path.");
@@ -1238,8 +1236,12 @@ public class CharacterMarker : PooledObject {
         }
     }
     private void PerTickFlee() {
-        if (GameManager.Instance.tick % 2 == 0) {
-            fleeSpeedModifier -= 0.3f;
+        ticksInFlee++;
+        if (ticksInFlee >= Tick_Flee_Will_Slow_Down) {
+            ticksInFlee = 0;
+            fleeSpeedModifier -= 0.5f;
+            UpdateSpeed();
+            Debug.Log(GameManager.Instance.TodayLogString() + character.name + " has met flee slow down tick, slowing down flee speed. New speed is " + pathfindingAI.speed.ToString());
         }
     }
     private void StopPerTickFlee() {
