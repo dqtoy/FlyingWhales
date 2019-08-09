@@ -87,6 +87,7 @@ public class AttributeManager : MonoBehaviour {
             new Agoraphobia(),
             new Zombie_Virus(),
             new SerialKiller(),
+            new Plagued(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);
