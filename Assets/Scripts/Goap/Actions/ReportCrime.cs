@@ -74,6 +74,9 @@ public class ReportCrime : GoapAction {
     public void PreReportCrimeFail() {
         currentState.AddLogFiller(criminal, criminal.owner.name, LOG_IDENTIFIER.CHARACTER_3);
     }
+    public void PreTargetMissing() {
+        currentState.AddLogFiller(criminal, criminal.owner.name, LOG_IDENTIFIER.CHARACTER_3);
+    }
     #endregion
 
     #region Requirements
