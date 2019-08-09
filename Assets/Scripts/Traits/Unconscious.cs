@@ -32,6 +32,9 @@ public class Unconscious : Trait {
         base.OnAddTrait(sourceCharacter);
         if(sourceCharacter is Character) {
             _sourceCharacter = sourceCharacter as Character;
+            if (_sourceCharacter.currentHP <= 0) {
+                _sourceCharacter.SetHP(1);
+            }
             //CheckToApplyRestrainJob();
             //_sourceCharacter.CreateRemoveTraitJob(name);
             _sourceCharacter.CancelAllJobsAndPlans();
