@@ -28,6 +28,16 @@ public class RememberFallen : GoapAction {
         //**Cost**: randomize between 5-35
         return Utilities.rng.Next(5, 36);
     }
+    protected override void AddDefaultObjectsToLog(Log log) {
+        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        Tombstone tombstone = poiTarget as Tombstone;
+        log.AddToFillers(tombstone.character, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+        if (targetStructure != null) {
+            log.AddToFillers(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        } else {
+            log.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
+    }
     #endregion
 
     #region Requirement

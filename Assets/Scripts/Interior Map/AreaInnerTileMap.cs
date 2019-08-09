@@ -78,6 +78,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private TileBase snowTile;
     [SerializeField] private TileBase tundraTile;
     [SerializeField] private TileBase snowStoneFloorTile;
+    [SerializeField] private TileBase snowDirt;
 
     [Header("Oustide Detail Tiles")]
     [SerializeField] private TileBase bigTreeTile;
@@ -115,10 +116,10 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private float offsetY;
 
     [Header("Seamless Edges")]
-    [SerializeField] private Tilemap northEdgeTilemap;
-    [SerializeField] private Tilemap southEdgeTilemap;
-    [SerializeField] private Tilemap westEdgeTilemap;
-    [SerializeField] private Tilemap eastEdgeTilemap;
+    public Tilemap northEdgeTilemap;
+    public Tilemap southEdgeTilemap;
+    public Tilemap westEdgeTilemap;
+    public Tilemap eastEdgeTilemap;
     [SerializeField] private SeamlessEdgeAssetsDictionary edgeAssets; //0-north, 1-south, 2-west, 3-east
 
     public Character hoveredCharacter { get; private set; }
@@ -855,7 +856,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                 if (tb != null) {
                     if (structure.structureType == STRUCTURE_TYPE.CEMETERY) {
                         //if the structure is a cemetery, only set dirt as part of it
-                        if (tb.name.Contains("Dirt")) {
+                        if (tb.name.Contains("Dirt") || tb.name.Contains("Tundra")) {
                             tile.SetStructure(structure);
                             tile.SetTileType(LocationGridTile.Tile_Type.Structure);
                         }
@@ -981,6 +982,9 @@ public class AreaInnerTileMap : MonoBehaviour {
                     //tilemap.RemoveTileFlags(pos, TileFlags.LockColor);
                     if (assetUsed.name.Contains("cobble")) {
                         tile.SetGroundType(LocationGridTile.Ground_Type.Cobble);
+                    } else if ((assetUsed.name.Contains("Dirt") || assetUsed.name.Contains("dirt")) && (area.coreTile.biomeType == BIOMES.SNOW || area.coreTile.biomeType == BIOMES.TUNDRA)) {
+                        tile.SetGroundType(LocationGridTile.Ground_Type.Tundra);
+                        tilemap.SetTile(pos, tundraTile);
                     }
                 }
             }
@@ -1239,8 +1243,8 @@ public class AreaInnerTileMap : MonoBehaviour {
                     currTile.SetGroundType(LocationGridTile.Ground_Type.Stone);
                     groundTilemap.SetTile(currTile.localPlace, stoneTile);
                 } else {
-                    currTile.SetGroundType(LocationGridTile.Ground_Type.Tundra);
-                    groundTilemap.SetTile(currTile.localPlace, tundraTile);
+                    currTile.SetGroundType(LocationGridTile.Ground_Type.Snow_Dirt);
+                    groundTilemap.SetTile(currTile.localPlace, snowDirt);
                 }
             } else {
                 if (sample < 0.5f) {
@@ -1533,7 +1537,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                         createEdge = true;
                     } else if (tile.groundType == LocationGridTile.Ground_Type.Cobble && currNeighbour.groundType != LocationGridTile.Ground_Type.Snow) {
                         createEdge = true;
-                    } else if (tile.groundType == LocationGridTile.Ground_Type.Tundra && 
+                    } else if ((tile.groundType == LocationGridTile.Ground_Type.Tundra || tile.groundType == LocationGridTile.Ground_Type.Snow_Dirt) && 
                         (currNeighbour.groundType == LocationGridTile.Ground_Type.Stone || currNeighbour.groundType == LocationGridTile.Ground_Type.Soil)) {
                         createEdge = true;
                     } else if (tile.groundType == LocationGridTile.Ground_Type.Grass && currNeighbour.groundType == LocationGridTile.Ground_Type.Soil) {

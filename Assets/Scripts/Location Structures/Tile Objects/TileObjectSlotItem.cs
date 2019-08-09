@@ -20,6 +20,10 @@ public class TileObjectSlotItem : MonoBehaviour {
         UnusedPosition();
     }
 
+    public void SetSlotColor(Color color) {
+        slotVisual.color = color;
+    }
+
     private void UnusedPosition() {
         transform.localPosition = settings.unusedPosition;
     }

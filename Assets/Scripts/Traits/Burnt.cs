@@ -6,9 +6,7 @@ public class Burnt : Trait {
 
     private Color burntColor {
         get {
-            Color color = Color.black;
-            color.a = 75f / 255f;
-            return color;
+            return Color.gray;
         }
     }
 
@@ -28,10 +26,19 @@ public class Burnt : Trait {
             LocationGridTile tile = addedTo as LocationGridTile;
             tile.parentTileMap.SetColor(tile.localPlace, burntColor);
             tile.SetDefaultTileColor(burntColor);
+            tile.parentAreaMap.detailsTilemap.SetColor(tile.localPlace, burntColor);
+            tile.parentAreaMap.northEdgeTilemap.SetColor(tile.localPlace, burntColor);
+            tile.parentAreaMap.southEdgeTilemap.SetColor(tile.localPlace, burntColor);
+            tile.parentAreaMap.eastEdgeTilemap.SetColor(tile.localPlace, burntColor);
+            tile.parentAreaMap.westEdgeTilemap.SetColor(tile.localPlace, burntColor);
+            if (tile.objHere == null) {
+                tile.parentAreaMap.objectsTilemap.SetColor(tile.localPlace, burntColor);
+            }
         } else if (addedTo is TileObject) {
             TileObject obj = addedTo as TileObject;
             obj.SetPOIState(POI_STATE.INACTIVE);
             obj.gridTileLocation.parentAreaMap.objectsTilemap.SetColor(obj.gridTileLocation.localPlace, burntColor);
+            obj.SetSlotColor(burntColor);
         } else if (addedTo is SpecialToken) {
             SpecialToken token = addedTo as SpecialToken;
             token.SetPOIState(POI_STATE.INACTIVE);

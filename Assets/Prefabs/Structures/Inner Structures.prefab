@@ -1167,6 +1167,7 @@ MonoBehaviour:
   snowTile: {fileID: 11400000, guid: 9c49ed01e47d38948bdb1fa1595e8183, type: 2}
   tundraTile: {fileID: 11400000, guid: d50f2fc723074ad4d91fea1cde34cbba, type: 2}
   snowStoneFloorTile: {fileID: 11400000, guid: 223ec6e7f4915bf4b99adff35de3ab6e, type: 2}
+  snowDirt: {fileID: 11400000, guid: f661c32973f40b2459dd33272f6fd9c3, type: 2}
   bigTreeTile: {fileID: 11400000, guid: 9a1c438dfdf8358469ee6162915febde, type: 2}
   treeTile: {fileID: 11400000, guid: 2e58fd5b2fae6c04d9113fc8182a44ae, type: 2}
   shrubTile: {fileID: 11400000, guid: 07b6bc752c932e947966bff1fa3f91b9, type: 2}
@@ -1194,7 +1195,7 @@ MonoBehaviour:
   westEdgeTilemap: {fileID: 8195094281662849848}
   eastEdgeTilemap: {fileID: 8195094281482662224}
   edgeAssets:
-    m_keys: 010000000000000002000000050000000400000003000000
+    m_keys: 01000000000000000200000005000000040000000300000007000000
     m_values:
     - data:
       - {fileID: 11400000, guid: 5f5d103960aee5b4ba5ff30798d87e1c, type: 2}
@@ -1217,15 +1218,20 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 5409e79fb4b2c7444aee567133a3dda2, type: 2}
       - {fileID: 11400000, guid: 5409e79fb4b2c7444aee567133a3dda2, type: 2}
     - data:
-      - {fileID: 11400000, guid: 6cbb5edb889dcba4291c859ace37a439, type: 2}
-      - {fileID: 11400000, guid: 11423206383496e459fbf151edef22c4, type: 2}
-      - {fileID: 11400000, guid: 37274f75ef63c0f4292e508426bfef2e, type: 2}
-      - {fileID: 11400000, guid: d520aa2b48359b042afccd326dfb1ab0, type: 2}
+      - {fileID: 11400000, guid: c84dcaddc85c726408dd1a3714e4fcbf, type: 2}
+      - {fileID: 11400000, guid: 6a7f1d6d6cb01a14abe1705c7f94c04a, type: 2}
+      - {fileID: 11400000, guid: 9ce5f8384ca8aef47abef1d424565c26, type: 2}
+      - {fileID: 11400000, guid: f4f0c62b08d6c8846b1d9af318ae4b9c, type: 2}
     - data:
       - {fileID: 11400000, guid: 2a4b37ba517e6434db743b7b84dfb039, type: 2}
       - {fileID: 11400000, guid: f668d2d1bf694464da37a248dd175bd1, type: 2}
       - {fileID: 11400000, guid: 8f4852fde8ae56048b407eac69808ee5, type: 2}
       - {fileID: 11400000, guid: 461a31f8687bbeb4ca299dadfa27ef1f, type: 2}
+    - data:
+      - {fileID: 11400000, guid: 6cbb5edb889dcba4291c859ace37a439, type: 2}
+      - {fileID: 11400000, guid: 11423206383496e459fbf151edef22c4, type: 2}
+      - {fileID: 11400000, guid: 37274f75ef63c0f4292e508426bfef2e, type: 2}
+      - {fileID: 11400000, guid: d520aa2b48359b042afccd326dfb1ab0, type: 2}
   mapsToClear:
   - {fileID: 8195094281662849848}
   - {fileID: 8195094281692177958}

@@ -499,6 +499,14 @@ public class TileObject : IPointOfInterest {
         }
         return null;
     }
+    public void SetSlotColor(Color color) {
+        if (slots != null) {
+            for (int i = 0; i < slots.Length; i++) {
+                TileObjectSlotItem slot = slots[i];
+                slot.SetSlotColor(color);
+            }
+        }
+    }
     #endregion
 
     #region Users
