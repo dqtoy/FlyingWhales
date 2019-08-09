@@ -39,7 +39,7 @@ public class Drink : GoapAction {
     protected override int GetCost() {
         if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN) {
             if (actor.GetNormalTrait("Alcoholic") != null) {
-                return 10;
+                return Utilities.rng.Next(5, 15);
             }
         }
         return Utilities.rng.Next(15, 26);

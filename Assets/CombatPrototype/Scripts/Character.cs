@@ -3909,10 +3909,7 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     public void HPRecovery(float maxHPPercentage) {
-        if(currentHP <= 0) {
-            return;
-        }
-        if(currentHP < maxHP) {
+        if(currentHP < maxHP && currentHP > 0) {
             AdjustHP(Mathf.CeilToInt(maxHPPercentage * maxHP));
         }
     }
@@ -6977,7 +6974,7 @@ public class Character : ILeader, IPointOfInterest {
             log += "\n" + name + " is dead!";
             if (plan.job != null) {
                 if (result == InteractionManager.Goap_State_Success) {
-                    if (plan.currentNode.parent == null) {
+                    if (plan.currentNode.parent == null && plan.job.jobQueueParent != null) {
                         log += "This plan has a job and the result of action " + action.goapName + " is " + result + " and this is the last action for this plan, removing job in job queue...";
                         plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
                     }
@@ -7045,7 +7042,7 @@ public class Character : ILeader, IPointOfInterest {
         plan.SetNextNode();
         if (plan.currentNode == null) {
             log += "\nThis action is the end of plan.";
-            if (plan.job != null) {
+            if (plan.job != null && plan.job.jobQueueParent != null) {
                 log += "\nRemoving job in queue...";
                 plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
             }

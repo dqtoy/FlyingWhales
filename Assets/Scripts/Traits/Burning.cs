@@ -55,7 +55,7 @@ public class Burning : Trait {
         if (owner is Character) {
             Character character = owner as Character;
             if (!character.isDead) {
-                character.AdjustHP(-(int)(character.maxHP * 0.02f));
+                character.AdjustHP(-(int)(character.maxHP * 0.02f), true);
             }
             if (Random.Range(0, 100) < 6) {
                 owner.RemoveTrait(this);
