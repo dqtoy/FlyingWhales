@@ -72,6 +72,7 @@ public class Trait {
     public virtual bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; }
     public virtual void OnSeePOI(IPointOfInterest targetPOI, Character character) { }
     protected virtual void OnChangeLevel() { }
+    public virtual void OnOwnerInitiallyPlaced(Character owner) { }
     #endregion
 
     public void SetOnRemoveAction(System.Action onRemoveAction) {
