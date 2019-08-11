@@ -294,6 +294,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DROP:
                 goapAction = new Drop(actor, target);
                 break;
+            case INTERACTION_TYPE.KNOCKOUT_CHARACTER:
+                goapAction = new KnockoutCharacter(actor, target);
+                break;
+            case INTERACTION_TYPE.RITUAL_KILLING:
+                goapAction = new RitualKilling(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
@@ -508,6 +514,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.BREW_POTION:
             case JOB_TYPE.OBTAIN_SUPPLY:
             case JOB_TYPE.DROP:
+            case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:

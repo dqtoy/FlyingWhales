@@ -4844,7 +4844,7 @@ public class Character : ILeader, IPointOfInterest {
         return false;
     }
     public bool PlanFullnessRecoveryActions() {
-        if(doNotDisturb > 0) {
+        if(doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return false;
         }
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
@@ -4893,7 +4893,7 @@ public class Character : ILeader, IPointOfInterest {
         return false;
     }
     public bool PlanTirednessRecoveryActions() {
-        if (doNotDisturb > 0) {
+        if (doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return false;
         }
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
@@ -4941,7 +4941,7 @@ public class Character : ILeader, IPointOfInterest {
         return false;
     }
     public bool PlanHappinessRecoveryActions() {
-        if (doNotDisturb > 0) {
+        if (doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return false;
         }
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
@@ -6847,7 +6847,7 @@ public class Character : ILeader, IPointOfInterest {
                             }
                             //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
                             else if (plan.job != null && plan.job.isStealth) {
-                                if (marker.inVisionPOIs.Contains(targetCharacter) && !marker.CanDoStealthActionToTarget(targetCharacter)) {
+                                if (marker.inVisionCharacters.Contains(targetCharacter) && !marker.CanDoStealthActionToTarget(targetCharacter)) {
                                     continue;
                                 }
                             }

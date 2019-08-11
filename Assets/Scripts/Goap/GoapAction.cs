@@ -72,6 +72,7 @@ public class GoapAction {
     public List<Character> awareCharactersOfThisAction { get; protected set; } //all characters that witnessed/aware of this action
     public bool isOldNews { get; protected set; }
     public int referenceCount { get; protected set; }
+    public bool willAvoidCharactersWhileMoving { get; protected set; }
 
     protected virtual bool isTargetMissing {
         get {
@@ -690,6 +691,9 @@ public class GoapAction {
     public void SetActionLocationType(ACTION_LOCATION_TYPE locType) {
         actionLocationType = locType;
         SetTargetStructure();
+    }
+    public void SetWillAvoidCharactersWhileMoving(bool state) {
+        willAvoidCharactersWhileMoving = state;
     }
     #endregion
 

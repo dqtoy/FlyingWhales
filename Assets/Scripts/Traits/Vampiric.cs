@@ -71,7 +71,8 @@ public class Vampiric : Trait {
                     GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentAction.parentPlan.job.jobType, INTERACTION_TYPE.DRINK_BLOOD, targetCharacter);
                     job.SetIsStealth(true);
                     characterThatWillDoJob.currentAction.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentAction.parentPlan.job);
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);
+                    characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, characterThatWillDoJob);
                     return true;
                 }
             }

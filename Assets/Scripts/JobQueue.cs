@@ -37,32 +37,7 @@ public class JobQueue {
             //Sometimes, in rare cases, the character still cannot be assigned to a job even if it is a personal job,
             //It might be because CanTakeJob/CanCharacterTakeThisJob function is not satisfied
             if (character.CanCurrentJobBeOverriddenByJob(job)) {
-                if(AssignCharacterToJob(job, character)) {
-                    if(job is CharacterStateJob) {
-                        //Will no longer stop what is currently doing if job is a state job because it will already be done by that state
-                        return;
-                    }
-                    if (character.stateComponent.currentState != null) {
-                        character.stateComponent.currentState.OnExitThisState();
-                        //This call is doubled so that it will also exit the previous major state if there's any
-                        if (character.stateComponent.currentState != null) {
-                            character.stateComponent.currentState.OnExitThisState();
-                        }
-                    } else if (character.stateComponent.stateToDo != null) {
-                        character.stateComponent.SetStateToDo(null);
-                    } else {
-                        if (character.currentParty.icon.isTravelling) {
-                            if (character.currentParty.icon.travelLine == null) {
-                                character.marker.StopMovement();
-                            } else {
-                                character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
-                            }
-                        }
-                        character.AdjustIsWaitingForInteraction(1);
-                        character.StopCurrentAction(false);
-                        character.AdjustIsWaitingForInteraction(-1);
-                    }
-                }
+                AssignCharacterToJobAndCancelCurrentAction(job, character);
             }
             //if (processLogicForPersonalJob && !hasProcessed) {
             //    if ((character.stateComponent.currentState != null && (character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE))
@@ -176,6 +151,34 @@ public class JobQueue {
         }
         return false;
     }
+    public void AssignCharacterToJobAndCancelCurrentAction(JobQueueItem job, Character character) {
+        if (AssignCharacterToJob(job, character)) {
+            if (job is CharacterStateJob) {
+                //Will no longer stop what is currently doing if job is a state job because it will already be done by that state
+                return;
+            }
+            if (character.stateComponent.currentState != null) {
+                character.stateComponent.currentState.OnExitThisState();
+                //This call is doubled so that it will also exit the previous major state if there's any
+                if (character.stateComponent.currentState != null) {
+                    character.stateComponent.currentState.OnExitThisState();
+                }
+            } else if (character.stateComponent.stateToDo != null) {
+                character.stateComponent.SetStateToDo(null);
+            } else {
+                if (character.currentParty.icon.isTravelling) {
+                    if (character.currentParty.icon.travelLine == null) {
+                        character.marker.StopMovement();
+                    } else {
+                        character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+                    }
+                }
+                character.AdjustIsWaitingForInteraction(1);
+                character.StopCurrentAction(false);
+                character.AdjustIsWaitingForInteraction(-1);
+            }
+        }
+    }
     public void ForceAssignCharacterToJob(JobQueueItem job, Character characterToDoJob) {
         if (job.assignedCharacter == null) {
             job.SetAssignedCharacter(characterToDoJob);
@@ -197,6 +200,7 @@ public class JobQueue {
             }
         }
     }
+
     public void CancelAllJobsRelatedTo(GOAP_EFFECT_CONDITION conditionType, IPointOfInterest poi) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if(jobsInQueue[i] is GoapPlanJob) {

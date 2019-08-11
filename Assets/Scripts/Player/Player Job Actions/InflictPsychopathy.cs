@@ -28,7 +28,7 @@ public class InflictPsychopathy : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.race == RACE.SKELETON) {
+        if (targetCharacter.race == RACE.SKELETON || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Serial Killer") != null) {
@@ -45,7 +45,7 @@ public class InflictPsychopathy : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.race == RACE.SKELETON) {
+        if (targetCharacter.race == RACE.SKELETON || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Serial Killer") != null) {

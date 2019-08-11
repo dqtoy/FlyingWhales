@@ -21,16 +21,18 @@ public class BuryCharacter : GoapAction {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     public override void SetTargetStructure() {
-        //first check if the actor's current location has a cemetery
-        _targetStructure = actor.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
-        //if the target structure is null, check the actor's home area, if it has a cemetery and use that
         if (_targetStructure == null) {
-            _targetStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
-        }
-        //if the target structure is still null, get a random area that has a cemetery, then target that
-        if (_targetStructure == null) {
-            List<Area> choices = LandmarkManager.Instance.allAreas.Where(x => x.HasStructure(STRUCTURE_TYPE.CEMETERY)).ToList();
-            _targetStructure = choices[Utilities.rng.Next(0, choices.Count)].GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
+            //first check if the actor's current location has a cemetery
+            _targetStructure = actor.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
+            //if the target structure is null, check the actor's home area, if it has a cemetery and use that
+            if (_targetStructure == null) {
+                _targetStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
+            }
+            //if the target structure is still null, get a random area that has a cemetery, then target that
+            if (_targetStructure == null) {
+                List<Area> choices = LandmarkManager.Instance.allAreas.Where(x => x.HasStructure(STRUCTURE_TYPE.CEMETERY)).ToList();
+                _targetStructure = choices[Utilities.rng.Next(0, choices.Count)].GetRandomStructureOfType(STRUCTURE_TYPE.CEMETERY);
+            }
         }
         base.SetTargetStructure();
     }
@@ -50,6 +52,14 @@ public class BuryCharacter : GoapAction {
         Character targetCharacter = poiTarget as Character;
         actor.ownParty.RemoveCharacter(targetCharacter, false);
         targetCharacter.SetCurrentStructureLocation(targetCharacter.gridTileLocation.structure, false);
+    }
+    public override bool InitializeOtherData(object[] otherData) {
+        if (otherData.Length == 1 && otherData[0] is LocationStructure) {
+            _targetStructure = otherData[0] as LocationStructure;
+            SetTargetStructure();
+            return true;
+        }
+        return base.InitializeOtherData(otherData);
     }
     #endregion
 

@@ -9,6 +9,8 @@ public class SerialKiller : Trait {
     public Character character { get; private set; }
 
     public Character targetVictim { get; private set; }
+    public bool isFollowing { get; private set; }
+    public bool hasStartedFollowing { get; private set; }
 
     public SerialKiller() {
         name = "Serial Killer";
@@ -28,11 +30,14 @@ public class SerialKiller : Trait {
         if (sourceCharacter is Character) {
             character = sourceCharacter as Character;
             GenerateSerialVictims();
+            Messenger.AddListener(Signals.TICK_STARTED, CheckSerialKiller);
+            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
     }
     public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         if (character != null) {
-            
+            Messenger.RemoveListener(Signals.TICK_STARTED, CheckSerialKiller);
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
         base.OnRemoveTrait(sourceCharacter, removedBy);
     }
@@ -43,11 +48,7 @@ public class SerialKiller : Trait {
         base.OnSeePOI(targetPOI, character);
         if(targetPOI is Character) {
             Character potentialVictim = targetPOI as Character;
-            if (targetVictim != null) {
-                if (targetVictim.specificLocation != this.character.specificLocation || targetVictim.isDead) {
-                    targetVictim = null;
-                }
-            }
+            CheckTargetVictimIfStillAvailable();
             if (targetVictim == null) {
                 if (DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
                     targetVictim = potentialVictim;
@@ -62,6 +63,170 @@ public class SerialKiller : Trait {
     }
     #endregion
 
+    private void OnCharacterDied(Character deadCharacter) {
+        if(deadCharacter == targetVictim) {
+            CheckTargetVictimIfStillAvailable();
+        }
+    }
+
+    private void CheckSerialKiller() {
+        if(character.isDead || character.doNotDisturb > 0 || character.specificLocation != InteriorMapManager.Instance.currentlyShowingArea) {
+            if (hasStartedFollowing) {
+                StopFollowing();
+                SetHasStartedFollowing(false);
+            }
+            return;
+        }
+        if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
+            return;
+        }
+        if (!hasStartedFollowing) {
+            HuntVictim();
+        } else {
+            CheckerWhileFollowingTargetVictim();
+        }
+    }
+
+    
+    private void HuntVictim() {
+        if (character.isForlorn || character.isLonely) {
+            int chance = UnityEngine.Random.Range(0, 100);
+            if(chance < 20) {
+                CheckTargetVictimIfStillAvailable();
+                if (targetVictim != null) {
+                    character.CancelAllJobsAndPlans();
+                    FollowTargetVictim();
+                    SetHasStartedFollowing(true);
+                }
+            }
+        }
+    }
+    private void CheckerWhileFollowingTargetVictim() {
+        if (isFollowing) {
+            if(!character.currentParty.icon.isTravelling || character.marker.targetPOI != targetVictim) {
+                isFollowing = false;
+                SetHasStartedFollowing(false);
+                return;
+            }
+
+            CheckTargetVictimIfStillAvailable();
+            if (targetVictim != null) {
+                if (character.marker.inVisionCharacters.Contains(targetVictim)) {
+                    StopFollowing();
+                }
+                if (character.marker.CanDoStealthActionToTarget(targetVictim)) {
+                    CreateHuntVictimJob();
+                }
+            }
+        } else {
+            if (targetVictim != null) {
+                if (!character.marker.inVisionCharacters.Contains(targetVictim)) {
+                    FollowTargetVictim();
+                }
+            }
+        }
+    }
+    private void StopFollowing() {
+        if (isFollowing) {
+            isFollowing = false;
+            character.marker.StopMovement();
+        }
+    }
+    private void FollowTargetVictim() {
+        if (!isFollowing) {
+            isFollowing = true;
+            character.marker.GoTo(targetVictim);
+        }
+    }
+    public void SetHasStartedFollowing(bool state) {
+        if(hasStartedFollowing != state) {
+            hasStartedFollowing = state;
+            if (hasStartedFollowing) {
+                character.AdjustIsWaitingForInteraction(1);
+            } else {
+                character.AdjustIsWaitingForInteraction(-1);
+            }
+        }
+    }
+    private void CheckTargetVictimIfStillAvailable() {
+        if (targetVictim != null) {
+            if (targetVictim.specificLocation != this.character.specificLocation || targetVictim.isDead) {
+                targetVictim = null;
+                if (hasStartedFollowing) {
+                    StopFollowing();
+                    SetHasStartedFollowing(false);
+                }
+            }
+        }
+    }
+    private void CreateHuntVictimJob() {
+        if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
+            return;
+        }
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim);
+        GoapAction goapAction6 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.BURY_CHARACTER, character, targetVictim);
+        GoapAction goapAction5 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY_CORPSE, character, targetVictim);
+        GoapAction goapAction4 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RITUAL_KILLING, character, targetVictim);
+        GoapAction goapAction3 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DROP, character, targetVictim);
+        GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY, character, targetVictim);
+        GoapAction goapAction1 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.KNOCKOUT_CHARACTER, character, targetVictim);
+
+        goapAction3.SetWillAvoidCharactersWhileMoving(true);
+        goapAction6.SetWillAvoidCharactersWhileMoving(true);
+
+        LocationStructure wilderness = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        if (character.homeStructure.residents.Count > 1) {
+            goapAction3.InitializeOtherData(new object[] { wilderness });
+        } else {
+            goapAction3.InitializeOtherData(new object[] { character.homeStructure });
+        }
+        goapAction6.InitializeOtherData(new object[] { wilderness });
+
+        GoapNode goalNode = new GoapNode(null, goapAction6.cost, goapAction6);
+        GoapNode fifthNode = new GoapNode(goalNode, goapAction5.cost, goapAction5);
+        GoapNode fourthNode = new GoapNode(fifthNode, goapAction4.cost, goapAction4);
+        GoapNode thirdNode = new GoapNode(fourthNode, goapAction3.cost, goapAction3);
+        GoapNode secondNode = new GoapNode(thirdNode, goapAction2.cost, goapAction2);
+        GoapNode startingNode = new GoapNode(secondNode, goapAction1.cost, goapAction1);
+
+        GoapPlan plan = new GoapPlan(startingNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY }, GOAP_CATEGORY.WORK);
+        plan.ConstructAllNodes();
+        plan.SetDoNotRecalculate(true);
+        job.SetAssignedPlan(plan);
+        job.SetAssignedCharacter(character);
+        job.SetCancelOnFail(true);
+        job.SetIsStealth(true);
+
+        character.jobQueue.AddJobInQueue(job, false);
+
+        character.AdjustIsWaitingForInteraction(1);
+        if (character.stateComponent.currentState != null) {
+            character.stateComponent.currentState.OnExitThisState();
+            //This call is doubled so that it will also exit the previous major state if there's any
+            if (character.stateComponent.currentState != null) {
+                character.stateComponent.currentState.OnExitThisState();
+            }
+        } else if (character.stateComponent.stateToDo != null) {
+            character.stateComponent.SetStateToDo(null);
+        } else {
+            if (character.currentParty.icon.isTravelling) {
+                if (character.currentParty.icon.travelLine == null) {
+                    character.marker.StopMovement();
+                } else {
+                    character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
+                }
+            }
+            character.StopCurrentAction(false);
+        }
+        character.AdjustIsWaitingForInteraction(-1);
+
+        character.AddPlan(plan, true);
+
+        if (hasStartedFollowing) {
+            StopFollowing();
+            SetHasStartedFollowing(false);
+        }
+    }
     private void GenerateSerialVictims() {
         victim1Requirement = new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false));
         victim2Requirement = new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false));

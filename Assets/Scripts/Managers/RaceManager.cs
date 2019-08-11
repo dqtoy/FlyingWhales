@@ -127,6 +127,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SEPTIC_SHOCK,
                 INTERACTION_TYPE.CARRY,
                 INTERACTION_TYPE.DROP,
+                INTERACTION_TYPE.KNOCKOUT_CHARACTER,
+                INTERACTION_TYPE.RITUAL_KILLING,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -216,6 +218,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SEPTIC_SHOCK,
                 INTERACTION_TYPE.CARRY,
                 INTERACTION_TYPE.DROP,
+                INTERACTION_TYPE.KNOCKOUT_CHARACTER,
+                INTERACTION_TYPE.RITUAL_KILLING,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -306,6 +310,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SEPTIC_SHOCK,
                 INTERACTION_TYPE.CARRY,
                 INTERACTION_TYPE.DROP,
+                INTERACTION_TYPE.KNOCKOUT_CHARACTER,
+                INTERACTION_TYPE.RITUAL_KILLING,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -396,6 +402,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.SEPTIC_SHOCK,
                 INTERACTION_TYPE.CARRY,
                 INTERACTION_TYPE.DROP,
+                INTERACTION_TYPE.KNOCKOUT_CHARACTER,
+                INTERACTION_TYPE.RITUAL_KILLING,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,

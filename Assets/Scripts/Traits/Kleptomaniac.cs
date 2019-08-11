@@ -68,7 +68,8 @@ public class Kleptomaniac : Trait {
                     GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentAction.parentPlan.job.jobType, INTERACTION_TYPE.STEAL, targetPOI);
                     job.SetIsStealth(true);
                     characterThatWillDoJob.currentAction.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentAction.parentPlan.job);
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);
+                    characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, characterThatWillDoJob);
                     return true;
                 }
             }
@@ -79,7 +80,8 @@ public class Kleptomaniac : Trait {
                     GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentAction.parentPlan.job.jobType, INTERACTION_TYPE.STEAL_CHARACTER, targetCharacter);
                     job.SetIsStealth(true);
                     characterThatWillDoJob.currentAction.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentAction.parentPlan.job);
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);
+                    characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, characterThatWillDoJob);
                     return true;
                 }
             }
