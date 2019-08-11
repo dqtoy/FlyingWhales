@@ -87,15 +87,15 @@ public class PlayerJobAction {
         //Messenger.RemoveListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
     }
     protected virtual void OnCharacterDied(Character characterThatDied) {
-        if (assignedCharacter != null && characterThatDied.id == assignedCharacter.id) {
-            DeactivateAction();
-            ResetCooldown(); //only reset cooldown if the assigned character dies
-        }
+        //if (assignedCharacter != null && characterThatDied.id == assignedCharacter.id) {
+        //    DeactivateAction();
+        //    //ResetCooldown(); //only reset cooldown if the assigned character dies
+        //}
     }
     protected virtual void OnCharacterUnassignedFromJob(JOB job, Character character) {
-        if (character.id == assignedCharacter.id) {
-            DeactivateAction();
-        }
+        //if (character.id == assignedCharacter.id) {
+        //    DeactivateAction();
+        //}
     }
     /// <summary>
     /// Can this action currently be performed.

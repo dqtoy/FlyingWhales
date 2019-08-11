@@ -89,6 +89,14 @@ public class EatAtTable : GoapAction {
             }
         }
     }
+    public override int GetArrangedLogPriorityIndex(string priorityID) {
+        if (priorityID == "description") {
+            return 0;
+        } else if (priorityID == "sick") {
+            return 1;
+        }
+        return base.GetArrangedLogPriorityIndex(priorityID);
+    }
     #endregion
 
     #region Effects

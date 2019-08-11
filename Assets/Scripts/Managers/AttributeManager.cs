@@ -88,6 +88,8 @@ public class AttributeManager : MonoBehaviour {
             new Zombie_Virus(),
             new MusicLover(),
             new MusicHater(),
+            new SerialKiller(),
+            new Plagued(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

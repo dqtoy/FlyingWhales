@@ -18,8 +18,9 @@ public class Spoil : PlayerJobAction {
             Poisoned poison = new Poisoned();
             poison.SetLevel(level);
             targetPOI.AddTrait(poison);
+            Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", this.GetType().ToString(), "activated");
+            PlayerManager.Instance.player.ShowNotification(log);
         }
-        
     }
     public override bool CanTarget(IPointOfInterest poi) {
         if (poi is Table && poi.GetNormalTrait("Poisoned") == null) {

@@ -32,7 +32,7 @@ public class SepticShock : GoapAction {
     }
     private void AfterSepticShockSuccess() {
         actor.SetPOIState(POI_STATE.ACTIVE);
-        actor.Death("Septic Shock", this);
+        actor.Death("Septic Shock", this, _deathLog: currentState.descriptionLog);
     }
     #endregion
 }

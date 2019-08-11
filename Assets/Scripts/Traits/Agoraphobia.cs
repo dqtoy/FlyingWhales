@@ -7,7 +7,7 @@ public class Agoraphobia : Trait {
     public Agoraphobia() {
         name = "Agoraphobia";
         description = "This is afraid of crowds.";
-        type = TRAIT_TYPE.STATUS;
+        type = TRAIT_TYPE.SPECIAL;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         associatedInteraction = INTERACTION_TYPE.NONE;
@@ -63,6 +63,6 @@ public class Agoraphobia : Trait {
     private void ApplyAgoraphobiaEffect(Character character, bool processCombat) {
         character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat);
         character.AdjustHappiness(-50);
-        character.AdjustTiredness(-350);
+        character.AdjustTiredness(-150);
     }
 }

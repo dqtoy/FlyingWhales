@@ -99,6 +99,9 @@ public class JobQueueItem {
     public void RemoveBlacklistedCharacter(Character character) {
         blacklistedCharacters.Remove(character);
     }
+    public void SetIsStealth(bool state) {
+        isStealth = state;
+    }
 
     #region Priority
     public int GetPriority() {

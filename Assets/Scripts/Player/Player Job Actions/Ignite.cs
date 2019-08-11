@@ -19,12 +19,20 @@ public class Ignite : PlayerJobAction {
     public override void ActivateAction(Character assignedCharacter, LocationGridTile targetTile) {
         base.ActivateAction(assignedCharacter, targetTile);
         List<LocationGridTile> tiles = GetTargetTiles(targetTile);
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile tile = tiles[i];
-            tile.AddTrait("Burning");
+        if (tiles.Count > 0) {
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile tile = tiles[i];
+                tile.AddTrait("Burning");
+            }
+            Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", this.GetType().ToString(), "activated");
+            PlayerManager.Instance.player.ShowNotification(log);
         }
-        Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", this.GetType().ToString(), "activated");
-        PlayerManager.Instance.player.ShowNotification(log);
+    }
+    public override bool CanTarget(LocationGridTile tile) {
+        return GetTargetTiles(tile).Count > 0;
+    }
+    protected override bool CanPerformActionTowards(Character character, LocationGridTile tile) {
+        return GetTargetTiles(tile).Count > 0;
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);

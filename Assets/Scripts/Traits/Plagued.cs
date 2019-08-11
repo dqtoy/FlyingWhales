@@ -64,9 +64,13 @@ public class Plagued : Trait {
     }
 
     private void PerMovementTick() {
+        string summary = owner.name + " is rolling for plagued chances....";
         float pukeRoll = Random.Range(0f, 100f);
         float septicRoll = Random.Range(0f, 100f);
+        summary += "\nPuke roll is: " + pukeRoll.ToString();
+        summary += "\nSeptic Shock roll is: " + septicRoll.ToString();
         if (pukeRoll < pukeChance) {
+            summary += "\nPuke chance met. Doing puke action.";
             //do puke action
             if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.PUKE) {
                 stoppedAction = owner.currentAction;
@@ -77,12 +81,14 @@ public class Plagued : Trait {
 
                 GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
                 GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
+                job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
                 owner.SetCurrentAction(goapAction);
                 owner.currentAction.SetEndAction(ResumeLastAction);
-                owner.currentAction.PerformActualAction();
+                owner.currentAction.DoAction();
             } else if (owner.stateComponent.currentState != null) {
                 pausedState = owner.stateComponent.currentState;
                 owner.stateComponent.currentState.PauseState();
@@ -91,14 +97,30 @@ public class Plagued : Trait {
 
                 GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
                 GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
+                job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
                 owner.SetCurrentAction(goapAction);
                 owner.currentAction.SetEndAction(ResumePausedState);
-                owner.currentAction.PerformActualAction();
+                owner.currentAction.DoAction();
+            } else {
+                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
+
+                GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+                GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
+                job.SetAssignedPlan(goapPlan);
+                goapPlan.ConstructAllNodes();
+
+                goapAction.CreateStates();
+                owner.SetCurrentAction(goapAction);
+                owner.currentAction.DoAction();
             }
+            Debug.Log(summary);
         } else if (septicRoll < septicChance) {
+            summary += "\nSeptic Shock chance met. Doing septic shock action.";
             if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.SEPTIC_SHOCK) {
                 stoppedAction = owner.currentAction;
                 owner.StopCurrentAction(false);
@@ -107,11 +129,13 @@ public class Plagued : Trait {
 
                 GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
                 GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK);
+                job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
                 owner.SetCurrentAction(goapAction);
-                owner.currentAction.PerformActualAction();
+                owner.currentAction.DoAction();
             } else if (owner.stateComponent.currentState != null) {
                 owner.stateComponent.currentState.OnExitThisState();
                 owner.marker.StopMovement();
@@ -119,12 +143,27 @@ public class Plagued : Trait {
                 
                 GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
                 GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK);
+                job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
                 owner.SetCurrentAction(goapAction);
-                owner.currentAction.PerformActualAction();
+                owner.currentAction.DoAction();
+            } else {
+                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
+
+                GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+                GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK);
+                job.SetAssignedPlan(goapPlan);
+                goapPlan.ConstructAllNodes();
+
+                goapAction.CreateStates();
+                owner.SetCurrentAction(goapAction);
+                owner.currentAction.DoAction();
             }
+            Debug.Log(summary);
         }
     }
 

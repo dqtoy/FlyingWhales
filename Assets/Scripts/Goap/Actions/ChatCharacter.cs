@@ -195,16 +195,22 @@ public class ChatCharacter : GoapAction {
         dueDate.AddTicks(2);
         SchedulingManager.Instance.AddEntry(dueDate, () => actor.EndChatCharacter(targetCharacter), actor);
 
+        SetState(chatResult);
+
         Plagued actorPlagued = actor.GetNormalTrait("Plagued") as Plagued;
         Plagued targetPlagued = poiTarget.GetNormalTrait("Plagued") as Plagued;
         //Plagued chances
         if ((actorPlagued == null || targetPlagued == null) && (actorPlagued != null || targetPlagued != null)) {
+            string plaguedSummary = "Chat with plagued character.";
             //if either the actor or the target is not yet plagued and one of them is plagued, check for infection chance
             if (actorPlagued != null) {
+                plaguedSummary += "\nPlagued character is " + actor.name + ", will roll to infect " + poiTarget.name;
                 //actor has plagued trait
                 int roll = Random.Range(0, 100);
+                plaguedSummary += "\nRoll is: " + roll.ToString() + ", Chance is: " + actorPlagued.GetChatInfectChance().ToString();
                 if (roll < actorPlagued.GetChatInfectChance()) {
                     //target will be infected with plague
+                    plaguedSummary += "\nWill infect " + poiTarget.name + " with plague!";
                     if (AddTraitTo(poiTarget, "Plagued", actor)) {
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
                         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -212,11 +218,15 @@ public class ChatCharacter : GoapAction {
                         log.AddLogToInvolvedObjects();
                     }
                 }
+                Debug.Log(plaguedSummary);
             } else if (targetPlagued != null) {
+                plaguedSummary += "\nPlagued character is " + poiTarget.name + ", will roll to infect " + actor.name;
                 //target has plagued trait
                 int roll = Random.Range(0, 100);
+                plaguedSummary += "\nRoll is: " + roll.ToString() + ", Chance is: " + targetPlagued.GetChatInfectChance().ToString();
                 if (roll < targetPlagued.GetChatInfectChance()) {
                     //actor will be infected with plague
+                    plaguedSummary += "\nWill infect " + actor.name + " with plague!";
                     if (AddTraitTo(actor, "Plagued", poiTarget as Character)) {
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
                         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -224,10 +234,9 @@ public class ChatCharacter : GoapAction {
                         log.AddLogToInvolvedObjects();
                     }
                 }
+                Debug.Log(plaguedSummary);
             }
         }
-
-        SetState(chatResult);
     }
     protected override int GetCost() {
         return 1;

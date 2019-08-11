@@ -43,6 +43,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0055a2017efc0894aab2c627d9d18254, type: 3}
   - {fileID: 21300000, guid: 8b976801d4e1b28449de778bbadd6ae8, type: 3}
   - {fileID: 21300000, guid: 054caa11da93f5441bb8b61f61323e76, type: 3}
+  - {fileID: 21300000, guid: 9e9f9d219129d1f408f722139d2d2e06, type: 3}
   - {fileID: 21300000, guid: 51b8d9413124c5b4ab5d4d0957dc7b0d, type: 3}
   - {fileID: 21300000, guid: 6903df416ac9e9b4c815481a9ca6e082, type: 3}
   - {fileID: 21300000, guid: 2417b851f27359d4c811378d4fc90b09, type: 3}
@@ -83,6 +84,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 34a6f5e2ed4f9844ca33ede5d41c5d98, type: 3}
   - {fileID: 21300000, guid: e2250ae249624ce43a49fb7189bb3814, type: 3}
   - {fileID: 21300000, guid: dba2db03a9806054a80deaacdb6184a0, type: 3}
+  - {fileID: 21300000, guid: 2c5c5213b4934e64d97d81b698b53300, type: 3}
+  - {fileID: 21300000, guid: 405c671361b9fbf488f2263c1aa41203, type: 3}
   - {fileID: 21300000, guid: 84de5f136a48b644688b5bca6a49bddc, type: 3}
   - {fileID: 21300000, guid: 1889d52389b197e4da9efb50a66f475f, type: 3}
   - {fileID: 21300000, guid: e1a91923bf57b1c4597fe45997ac451c, type: 3}
@@ -181,6 +184,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ee3014572f016804ab67286f8f090022, type: 3}
   - {fileID: 21300000, guid: 9de607579992d7946a9c068fbf86e380, type: 3}
   - {fileID: 21300000, guid: 5274dc57ab8285046bed37ceb3fe073d, type: 3}
+  - {fileID: 21300000, guid: 33750a67a94ff56448262d2d58e2fa0f, type: 3}
   - {fileID: 21300000, guid: 1572937726e25fc48b5316b837c3a653, type: 3}
   - {fileID: 21300000, guid: 26c83677e033ab44792f31e7242f071d, type: 3}
   - {fileID: 21300000, guid: 0f57c397cb1f07b42be11276bc6c879e, type: 3}
@@ -345,6 +349,7 @@ SpriteAtlas:
   - rocks00
   - caveWallA-0101-00
   - wall1010-00
+  - tundraDirt01
   - wall1010-01
   - obelisk00
   - wallA-0100-00
@@ -385,6 +390,8 @@ SpriteAtlas:
   - caveWallA-1100-00
   - rocks01
   - wallA-1001-00
+  - tundraDirt03
+  - tundraDirt00
   - grass03
   - tableDecor00_occ3
   - wall1010-01 - Copy
@@ -483,6 +490,7 @@ SpriteAtlas:
   - wall0011-00
   - berryBushEmpty00
   - tundraDirt_v01
+  - tundraDirt02
   - debrisBones01
   - wallA-1010-01
   - tableDecor00_occ4

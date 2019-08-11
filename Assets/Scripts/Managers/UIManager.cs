@@ -1192,10 +1192,7 @@ public class UIManager : MonoBehaviour {
             int index = (itemToReplace.transform as RectTransform).GetSiblingIndex();
             itemToReplace.DeleteNotification();
             (newNotif.gameObject.transform as RectTransform).SetSiblingIndex(index);
-        } 
-        //else {
-        //    (newNotif.gameObject.transform as RectTransform).SetAsFirstSibling();
-        //}
+        }
         activeNotifications.Add(newNotif);
     }
     private void OnNotificationDestroyed(PlayerNotificationItem item) {

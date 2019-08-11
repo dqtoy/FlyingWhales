@@ -12,7 +12,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
     public enum Tile_Type { Empty, Wall, Structure, Gate, Road, Structure_Entrance }
     public enum Tile_State { Empty, Occupied }
     public enum Tile_Access { Passable, Impassable, }
-    public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, }
+    public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt }
 
     protected List<Trait> _traits;
     public bool hasDetail { get; set; }
@@ -548,7 +548,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
                 }
             } else if (inputButton == PointerEventData.InputButton.Right) {
                 if (objHere is TileObject) {
-                    //UIManager.Instance.poiTestingUI.ShowUI(objHere);
+                    UIManager.Instance.poiTestingUI.ShowUI(objHere);
                     //objHere.AddTrait("Burning");
                 }
             } else {

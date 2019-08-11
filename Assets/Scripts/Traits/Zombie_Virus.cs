@@ -5,7 +5,6 @@ using UnityEngine;
 public class Zombie_Virus : Trait {
     private Character owner;
     public override bool isPersistent { get { return true; } }
-
     public Zombie_Virus() {
         name = "Zombie Virus";
         description = "This character is infected with a Zombie Virus.";
@@ -32,7 +31,7 @@ public class Zombie_Virus : Trait {
             owner.RemoveTrait(this);
         } else {
             Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
-            SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(30)), CheckForReanimation, this);
+            SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(30)), StartReanimationCheck, this);
         }
     }
     #endregion
@@ -50,6 +49,8 @@ public class Zombie_Virus : Trait {
 
             GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
             GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.ZOMBIE_DEATH);
+            job.SetAssignedPlan(goapPlan);
             goapPlan.ConstructAllNodes();
 
             goapAction.CreateStates();
@@ -58,11 +59,17 @@ public class Zombie_Virus : Trait {
         }
     }
 
-    private void CheckForReanimation() {
+    private void StartReanimationCheck() {
+        Messenger.AddListener(Signals.TICK_ENDED, RollForReanimation);
+        RollForReanimation(); //called this so, check will run immediately after the first 30 mins of being dead.
+    }
+
+    private void RollForReanimation() {
         string summary = owner.name + " will roll for reanimation...";
         int roll = Random.Range(0, 100);
         summary += "\nRoll is: " + roll.ToString(); 
         if (roll < 15) { //15
+            Messenger.RemoveListener(Signals.TICK_ENDED, RollForReanimation);
             //reanimate
             summary += "\n" + owner.name + " is being reanimated.";
             if (!owner.IsInOwnParty()) {

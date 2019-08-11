@@ -345,13 +345,14 @@ public class JobQueue {
         if (job.assignedCharacter == null 
             || job.assignedCharacter.currentAction != null && job.assignedCharacter.currentAction.parentPlan != null && job.assignedCharacter.currentAction.parentPlan.job != null && job.assignedCharacter.currentAction.parentPlan.job == job) {
             if(job is GoapPlanJob && cause != "") {
+                GoapPlanJob planJob = job as GoapPlanJob;
                 Character actor = null;
                 if(this.character != null) {
                     actor = this.character;
                 } else if(job.assignedCharacter != null) {
                     actor = job.assignedCharacter;
                 }
-                if(actor != null) {
+                if(actor != null && actor != planJob.targetPOI) { //only log if the actor is not the same as the target poi.
                     actor.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, cause);
                 }
             }
