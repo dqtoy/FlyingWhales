@@ -1076,6 +1076,8 @@ public enum TRAIT_TYPE {
     CRIMINAL,
     SPECIAL,
     RELATIONSHIP,
+    BUFF,
+    FLAW,
 }
 public enum TRAIT_EFFECT {
     NEUTRAL,

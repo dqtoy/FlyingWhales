@@ -134,20 +134,38 @@ public class Cursed : Trait {
         character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
     }
     private void FlawCharacter(Character character) {
-        //Trait name in fillers is STRING_1
+        List<Trait> flawTraits = AttributeManager.Instance.GetAllTraitsOfType(TRAIT_TYPE.FLAW);
+        string chosenFlawTraitName = string.Empty;
+        if (flawTraits.Count > 0) {
+            chosenFlawTraitName = flawTraits[UnityEngine.Random.Range(0, flawTraits.Count)].name;
+        }
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cursed_flaw");
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddToFillers(null, chosenFlawTraitName, LOG_IDENTIFIER.STRING_1);
         //log.AddLogToInvolvedObjects();
         character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+
+        character.AddTrait(chosenFlawTraitName);
     }
     private void LoseBuffCharacter(Character character) {
-        //Trait name in fillers is STRING_1
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cursed_losebuff");
-        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        //log.AddLogToInvolvedObjects();
-        character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+        List<Trait> characterBuffTraits = character.GetTraitsOf(TRAIT_TYPE.BUFF);
+        if(characterBuffTraits.Count > 0) {
+            Trait chosenBuffTrait = characterBuffTraits[UnityEngine.Random.Range(0, characterBuffTraits.Count)];
+
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cursed_losebuff");
+            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            log.AddToFillers(null, chosenBuffTrait.name, LOG_IDENTIFIER.STRING_1);
+            //log.AddLogToInvolvedObjects();
+            character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+
+            character.RemoveTrait(chosenBuffTrait);
+        } else {
+            //If there is no buff trait to lose, injure character instead
+            InjureCharacter(character);
+        }
+
     }
 }
 

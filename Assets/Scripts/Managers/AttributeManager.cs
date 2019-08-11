@@ -90,6 +90,7 @@ public class AttributeManager : MonoBehaviour {
             new MusicHater(),
             new SerialKiller(),
             new Plagued(),
+            new Vigilant(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);
@@ -124,6 +125,15 @@ public class AttributeManager : MonoBehaviour {
     }
     public Trait CreateNewInstancedTraitClass(string traitName) {
         return System.Activator.CreateInstance(System.Type.GetType(traitName)) as Trait;
+    }
+    public List<Trait> GetAllTraitsOfType(TRAIT_TYPE type) {
+        List<Trait> traits = new List<Trait>();
+        foreach (Trait trait in _allTraits.Values) {
+            if(trait.type == type) {
+                traits.Add(trait);
+            }
+        }
+        return traits;
     }
     #endregion
 }

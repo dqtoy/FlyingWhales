@@ -4293,6 +4293,16 @@ public class Character : ILeader, IPointOfInterest {
         }
         return null;
     }
+    public List<Trait> GetTraitsOf(TRAIT_TYPE type) {
+        List<Trait> traits = new List<Trait>();
+        for (int i = 0; i < normalTraits.Count; i++) {
+            Trait currTrait = normalTraits[i];
+            if (currTrait.type == type && !currTrait.isDisabled) {
+                traits.Add(currTrait);
+            }
+        }
+        return traits;
+    }
     public bool HasTraitOf(System.Type traitType) {
         for (int i = 0; i < normalTraits.Count; i++) {
             System.Type type = normalTraits[i].GetType();

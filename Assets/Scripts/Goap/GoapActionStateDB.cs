@@ -257,6 +257,7 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.STEAL_CHARACTER, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Steal Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Steal Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
+            new StateNameAndDuration(){ name = "Steal Vigilant", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
         {INTERACTION_TYPE.DROP_ITEM, new StateNameAndDuration[]{

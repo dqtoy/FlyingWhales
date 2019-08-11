@@ -38,7 +38,11 @@ public class StealFromCharacter : GoapAction {
         base.PerformActualAction();
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             if (_targetCharacter.isHoldingItem) {
-                SetState("Steal Success");
+                if (_targetCharacter.GetNormalTrait("Vigilant") != null) {
+                    SetState("Steal Vigilant");
+                } else {
+                    SetState("Steal Success");
+                }
             } else {
                 SetState("Steal Fail");
             }
@@ -84,14 +88,6 @@ public class StealFromCharacter : GoapAction {
         if (actor.GetNormalTrait("Kleptomaniac") != null) {
             actor.AdjustHappiness(60);
         }
-    }
-    private void PreStealFail() {
-        Trait trait = actor.GetNormalTrait("Kleptomaniac");
-        if (trait != null) {
-            Kleptomaniac kleptomaniac = trait as Kleptomaniac;
-            kleptomaniac.AddNoItemCharacter(poiTarget as Character);
-        }
-        currentState.SetIntelReaction(StealFailReactions);
     }
     #endregion
 
