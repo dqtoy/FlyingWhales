@@ -83,7 +83,7 @@ public class CharacterAIPath : AILerp {
                 for (int i = 0; i < currentPath.vectorPath.Count; i++) {
                     costLog += "\n-> " + currentPath.vectorPath[i] + "(" + GetNodePenalty(currentPath.vectorPath[i]) + GetNodePenaltyForStructures(currentPath, currentPath.vectorPath[i]) + ")";
                 }
-                Debug.LogWarning(costLog);
+                //Debug.LogWarning(costLog);
             }
         }
         base.OnPathComplete(newPath);
