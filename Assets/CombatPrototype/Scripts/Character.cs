@@ -4037,6 +4037,9 @@ public class Character : ILeader, IPointOfInterest {
         if (UnityEngine.Random.Range(0, 100) < 50) {
             AddTrait("Curious");
         }
+        if (UnityEngine.Random.Range(0, 100) < 30) {
+            AddTrait("Vigilant");
+        }
         AddTrait("Flammable");
     }
     public void CreateInitialTraitsByRace() {

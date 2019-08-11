@@ -61,7 +61,7 @@ public class StealFromCharacter : GoapAction {
         if (currentState.name == "Steal Vigilant") {
             if (poiTarget is Character) {
                 Character targetCharacter = poiTarget as Character;
-                targetCharacter.marker.AddHostileInRange(actor);
+                targetCharacter.marker.AddHostileInRange(actor, false);
             }
         }
     }

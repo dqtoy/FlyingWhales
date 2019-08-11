@@ -44,7 +44,7 @@ public class KnockoutCharacter : GoapAction {
         if(currentState.name == "Knockout Fail") {
             if (poiTarget is Character) {
                 Character targetCharacter = poiTarget as Character;
-                targetCharacter.marker.AddHostileInRange(actor);
+                targetCharacter.marker.AddHostileInRange(actor, false);
             }
         }
     }
