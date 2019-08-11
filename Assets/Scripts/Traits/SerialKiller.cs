@@ -229,8 +229,25 @@ public class SerialKiller : Trait {
     }
     private void GenerateSerialVictims() {
         victim1Requirement = new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false));
-        victim2Requirement = new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false));
 
+        bool hasCreatedRequirement = false;
+        while (!hasCreatedRequirement) {
+            SERIAL_VICTIM_TYPE victim2FirstType = RandomizeVictimType(true);
+            SERIAL_VICTIM_TYPE victim2SecondType = RandomizeVictimType(false);
+
+            string victim2FirstDesc = victim1Requirement.GenerateVictimDescription(victim2FirstType);
+            string victim2SecondDesc = victim1Requirement.GenerateVictimDescription(victim2SecondType);
+
+            if(victim1Requirement.victimFirstType == victim2FirstType && victim1Requirement.victimSecondType == victim2SecondType
+                && victim1Requirement.victimFirstDescription == victim2FirstDesc && victim1Requirement.victimSecondDescription == victim2SecondDesc) {
+                continue;
+            } else {
+                victim2Requirement = new SerialVictim(victim2FirstType, victim2FirstDesc, victim2SecondType, victim2SecondDesc);
+                hasCreatedRequirement = true;
+                break;
+            }
+        }
+       
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer");
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
@@ -273,13 +290,20 @@ public class SerialVictim {
         this.victimSecondType = victimSecondType;
         GenerateVictim();
     }
+    public SerialVictim(SERIAL_VICTIM_TYPE victimFirstType, string victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, string victimSecondDesc) {
+        this.victimFirstType = victimFirstType;
+        this.victimSecondType = victimSecondType;
+        victimFirstDescription = victimFirstDesc;
+        victimSecondDescription = victimSecondDesc;
+        GenerateText();
+    }
 
     private void GenerateVictim() {
         victimFirstDescription = GenerateVictimDescription(victimFirstType);
         victimSecondDescription = GenerateVictimDescription(victimSecondType);
         GenerateText();
     }
-    private string GenerateVictimDescription(SERIAL_VICTIM_TYPE victimType) {
+    public string GenerateVictimDescription(SERIAL_VICTIM_TYPE victimType) {
         if (victimType == SERIAL_VICTIM_TYPE.GENDER) {
             GENDER gender = Utilities.GetRandomEnumValue<GENDER>();
             return gender.ToString();

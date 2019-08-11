@@ -14,6 +14,7 @@ public class Curious : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
+        alreadyInspectedTileObjects = new List<TileObject>();
         //effects = new List<TraitEffect>();
     }
 

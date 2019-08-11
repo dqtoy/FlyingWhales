@@ -60,7 +60,7 @@ public class TileObject : IPointOfInterest {
         _traits = new List<Trait>();
         actionHistory = new List<string>();
         awareCharacters = new List<Character>();
-        poiGoapActions = new List<INTERACTION_TYPE>();
+        //poiGoapActions = new List<INTERACTION_TYPE>();
         hasCreatedSlots = false;
         AddTrait("Flammable");
         InitializeCollisionTrigger();
@@ -71,7 +71,7 @@ public class TileObject : IPointOfInterest {
         _traits = new List<Trait>();
         actionHistory = new List<string>();
         awareCharacters = new List<Character>();
-        poiGoapActions = new List<INTERACTION_TYPE>();
+        //poiGoapActions = new List<INTERACTION_TYPE>();
         hasCreatedSlots = false;
         InitializeCollisionTrigger();
     }
@@ -197,11 +197,16 @@ public class TileObject : IPointOfInterest {
         if(isSummonedByPlayer != state) {
             isSummonedByPlayer = state;
             if (isSummonedByPlayer) {
+                if(poiGoapActions == null) {
+                    poiGoapActions = new List<INTERACTION_TYPE>();
+                }
                 if (!poiGoapActions.Contains(INTERACTION_TYPE.INSPECT)) {
                     poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
                 }
             } else {
-                poiGoapActions.Remove(INTERACTION_TYPE.INSPECT);
+                if (poiGoapActions != null) {
+                    poiGoapActions.Remove(INTERACTION_TYPE.INSPECT);
+                }
             }
         }
     }
