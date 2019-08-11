@@ -86,6 +86,8 @@ public class AttributeManager : MonoBehaviour {
             new Burnt(),
             new Agoraphobia(),
             new Zombie_Virus(),
+            new MusicLover(),
+            new MusicHater(),
             new SerialKiller(),
             new Plagued(),
         };

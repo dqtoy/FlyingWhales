@@ -40,10 +40,14 @@ public class PlayGuitar : GoapAction {
         //- Actor is resident of the Guitar's Dwelling: 4-10
         //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 7-12
         IAwareness awareness = actor.GetAwareness(poiTarget);
+        Trait musicLover = actor.GetNormalTrait("MusicLover");
         if (awareness != null) {
             LocationGridTile knownLoc = awareness.knownGridLocation;
             if (actor.homeStructure == knownLoc.structure) {
-                return Utilities.rng.Next(20, 36);
+                if (musicLover != null) {
+                    return Utilities.rng.Next(3, 7);
+                }
+                return Utilities.rng.Next(4, 10);
             } else {
                 if (knownLoc.structure is Dwelling) {
                     Dwelling dwelling = knownLoc.structure as Dwelling;
@@ -51,27 +55,34 @@ public class PlayGuitar : GoapAction {
                         for (int i = 0; i < dwelling.residents.Count; i++) {
                             Character currResident = dwelling.residents[i];
                             if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
-                                return Utilities.rng.Next(30, 46);
+                                if (musicLover != null) {
+                                    return Utilities.rng.Next(4, 10);
+                                }
+                                return Utilities.rng.Next(7, 12);
                             }
                         }
                         //the actor does NOT have any positive relations with any resident
                         return 99999; //NOTE: Should never reach here since Requirement prevents this.
                     } else {
-                        //in cases that the guitar is at a dwelling with no residents, always allow.
+                        //in cases that the guitar is at a dwelling with no residents, always allow.\
+                        if (musicLover != null) {
+                            return Utilities.rng.Next(15, 25);
+                        }
                         return Utilities.rng.Next(25, 41);
                     }
                 } else {
+                    if (musicLover != null) {
+                        return Utilities.rng.Next(15, 25);
+                    }
                     return Utilities.rng.Next(25, 41);
                 }
             }
         }
+        if (musicLover != null) {
+            return Utilities.rng.Next(15, 25);
+        }
         return Utilities.rng.Next(25, 41);
-        //return Utilities.rng.Next(3, 10);
     }
-    //public override void FailAction() {
-    //    base.FailAction();
-    //    SetState("Play Fail");
-    //}
     public override void OnStopActionDuringCurrentState() {
         if (currentState.name == "Play Success") {
             actor.AdjustDoNotGetLonely(-1);
@@ -86,7 +97,12 @@ public class PlayGuitar : GoapAction {
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
     }
     public void PerTickPlaySuccess() {
-        actor.AdjustHappiness(18);
+        //**Per Tick Effect 1**: Actor's Happiness Meter +12 (+20 if https://trello.com/c/CvvzA9OJ/2497-music-lover)
+        if (actor.GetNormalTrait("MusicLover") != null) {
+            actor.AdjustHappiness(20);
+        } else {
+            actor.AdjustHappiness(12);
+        }
     }
     public void AfterPlaySuccess() {
         actor.AdjustDoNotGetLonely(-1);
@@ -104,6 +120,9 @@ public class PlayGuitar : GoapAction {
         }
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
+        }
+        if (actor.GetNormalTrait("MusicHater") != null) {
+            return false; //music haters will never play guitar
         }
         IAwareness awareness = actor.GetAwareness(poiTarget);
         if (awareness == null) {

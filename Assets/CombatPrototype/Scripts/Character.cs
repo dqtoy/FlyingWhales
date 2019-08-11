@@ -681,6 +681,9 @@ public class Character : ILeader, IPointOfInterest {
         marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
         AddInitialAwareness();
         SubscribeToSignals();
+        for (int i = 0; i < normalTraits.Count; i++) {
+            normalTraits[i].OnOwnerInitiallyPlaced(this);
+        }
     }
 
     #region Signals
@@ -3446,7 +3449,7 @@ public class Character : ILeader, IPointOfInterest {
             //        marker.AddAvoidInRange(target);
             //    }
             //} else 
-            if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success") {
+            if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success" && GetNormalTrait("MusicHater") == null) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 25) { //25
                     if (!HasRelationshipOfTypeWith(action.actor, RELATIONSHIP_TRAIT.ENEMY)) {
@@ -4037,6 +4040,11 @@ public class Character : ILeader, IPointOfInterest {
         if (UnityEngine.Random.Range(0, 100) < 50) {
             AddTrait("Curious");
         }
+        if (UnityEngine.Random.Range(0, 100) < 50) {
+            AddTrait("MusicLover");
+        } else {
+            AddTrait("MusicHater");
+        }
         AddTrait("Flammable");
     }
     public void CreateInitialTraitsByRace() {
@@ -4217,7 +4225,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public Trait GetNormalTrait(string traitName) {
         for (int i = 0; i < normalTraits.Count; i++) {
-            if (normalTraits[i].name == traitName && !normalTraits[i].isDisabled) {
+            if ((normalTraits[i].name == traitName || normalTraits[i].GetType().ToString() == traitName) && !normalTraits[i].isDisabled) {
                 return normalTraits[i];
             }
         }
@@ -7730,6 +7738,7 @@ public class Character : ILeader, IPointOfInterest {
     #endregion
 
     #region States
+    private const float Combat_Signal_Distance = 1.5f;
     private void OnCharacterStartedState(Character character, CharacterState state) {
         if (character == this) {
             marker.UpdateActionIcon();
@@ -7738,6 +7747,17 @@ public class Character : ILeader, IPointOfInterest {
             }
         } else {
             if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null) {
+                //CombatState combatState = state as CombatState;
+                //if (this.isPartOfHomeFaction && character.isPartOfHomeFaction && character.homeArea == this.homeArea && this.IsHostileOutsider(combatState.currentClosestHostile) && this.IsCombatReady()) {
+                //    if (this.marker.AddHostileInRange(combatState.currentClosestHostile)) {
+                //        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
+                //        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                //        joinLog.AddToFillers(combatState.currentClosestHostile, combatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                //        joinLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_3);
+                //        joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+                //        PlayerManager.Instance.player.ShowNotification(joinLog);
+                //    }
+                //} else 
                 if (marker.inVisionPOIs.Contains(character)) {
                     ThisCharacterWatchEvent(character, null, null);
                 }

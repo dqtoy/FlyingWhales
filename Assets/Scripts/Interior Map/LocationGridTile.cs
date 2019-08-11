@@ -227,14 +227,16 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         if (hasFurnitureSpot && poi is TileObject) {
             FURNITURE_TYPE furnitureType = (poi as TileObject).tileObjectType.ConvertTileObjectToFurniture();
             if (furnitureType != FURNITURE_TYPE.NONE) {
-                FurnitureSetting settings = furnitureSpot.GetFurnitureSettings(furnitureType);
-                TileBase usedAsset = InteriorMapManager.Instance.GetTileAsset(settings.tileAssetName);
-                parentAreaMap.objectsTilemap.SetTile(localPlace, usedAsset);
-                Matrix4x4 m = parentAreaMap.objectsTilemap.GetTransformMatrix(localPlace);
-                m.SetTRS(Vector3.zero, Quaternion.Euler(settings.rotation), Vector3.one);
-                parentAreaMap.objectsTilemap.SetTransformMatrix(localPlace, m);
-                if (poi is Table) {
-                    (poi as Table).SetUsedAsset(usedAsset);
+                FurnitureSetting settings;
+                if (furnitureSpot.TryGetFurnitureSettings(furnitureType, out settings)) {
+                    TileBase usedAsset = InteriorMapManager.Instance.GetTileAsset(settings.tileAssetName);
+                    parentAreaMap.objectsTilemap.SetTile(localPlace, usedAsset);
+                    Matrix4x4 m = parentAreaMap.objectsTilemap.GetTransformMatrix(localPlace);
+                    m.SetTRS(Vector3.zero, Quaternion.Euler(settings.rotation), Vector3.one);
+                    parentAreaMap.objectsTilemap.SetTransformMatrix(localPlace, m);
+                    if (poi is Table) {
+                        (poi as Table).SetUsedAsset(usedAsset);
+                    }
                 }
             }
         }

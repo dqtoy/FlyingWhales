@@ -17,13 +17,15 @@ public struct FurnitureSpot {
         return summary;
     }
 
-    public FurnitureSetting GetFurnitureSettings(FURNITURE_TYPE type) {
+    public bool TryGetFurnitureSettings(FURNITURE_TYPE type, out FurnitureSetting setting) {
         for (int i = 0; i < furnitureSettings.Count; i++) {
             FurnitureSetting currSetting = furnitureSettings[i];
             if (currSetting.type == type) {
-                return currSetting;
+                setting = currSetting;
+                return true;
             }
         }
-        throw new System.Exception("No Setting for furniture type " + type.ToString());
+        setting = default(FurnitureSetting);
+        return false;
     }
 }
