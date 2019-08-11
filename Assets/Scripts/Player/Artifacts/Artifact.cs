@@ -13,14 +13,14 @@ public class Artifact : TileObject {
         this.type = type;
         level = 1;
         TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
-        poiGoapActions = new List<INTERACTION_TYPE>();
+        //poiGoapActions = new List<INTERACTION_TYPE>();
         Initialize(parsed);
     }
     public Artifact(SaveDataArtifact data) {
         this.type = data.type;
         level = 1;
         TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
-        poiGoapActions = new List<INTERACTION_TYPE>();
+        //poiGoapActions = new List<INTERACTION_TYPE>();
         Initialize(data, parsed);
     }
 

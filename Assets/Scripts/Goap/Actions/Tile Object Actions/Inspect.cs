@@ -13,11 +13,11 @@ public class Inspect : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
-        if (actor.GetNormalTrait("Curious") != null) {
-            AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
-        }
-    }
+    //protected override void ConstructPreconditionsAndEffects() {
+    //    if (actor.GetNormalTrait("Curious") != null) {
+    //        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
+    //    }
+    //}
     public override void PerformActualAction() {
         base.PerformActualAction();
         if (!isTargetMissing) {
@@ -51,6 +51,11 @@ public class Inspect : GoapAction {
             } else {
                 currentState.AddLogFiller(null, "and nothing happened", LOG_IDENTIFIER.STRING_1);
             }
+        }
+        if(poiTarget is TileObject) {
+            TileObject to = poiTarget as TileObject;
+            Curious curios = actor.GetNormalTrait("Curious") as Curious;
+            curios.AddAlreadyInspectedObject(to);
         }
     }
     public void PreTargetMissing() {

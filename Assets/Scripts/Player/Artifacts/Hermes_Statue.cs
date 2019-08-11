@@ -10,11 +10,11 @@ public class Hermes_Statue : Artifact {
     private int currentUses;
 
     public Hermes_Statue() : base(ARTIFACT_TYPE.Hermes_Statue) {
-        poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
+        //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
         uses = 1;
     }
     public Hermes_Statue(SaveDataArtifact data) : base(data) {
-        poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
+        //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
         uses = 1;
     }
 

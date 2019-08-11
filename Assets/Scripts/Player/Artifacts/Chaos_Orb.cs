@@ -5,10 +5,10 @@ using UnityEngine;
 public class Chaos_Orb : Artifact {
 
     public Chaos_Orb() : base(ARTIFACT_TYPE.Chaos_Orb) {
-        poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
+        //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
     }
     public Chaos_Orb(SaveDataArtifact data) : base(data) {
-        poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
+        //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
     }
 
     public override void OnInspect(Character inspectedBy, out Log result) {

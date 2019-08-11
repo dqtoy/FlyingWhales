@@ -333,7 +333,8 @@ public class CharacterInfoUI : UIMenu {
                 || currTrait.name == "Herbivore" || currTrait.name == "Carnivore") {
                 continue; //hide combat traits
             }
-            if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER || currTrait.type == TRAIT_TYPE.ENCHANTMENT || currTrait.type == TRAIT_TYPE.EMOTION) {
+            if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER || currTrait.type == TRAIT_TYPE.ENCHANTMENT || currTrait.type == TRAIT_TYPE.EMOTION
+                || currTrait.type == TRAIT_TYPE.BUFF || currTrait.type == TRAIT_TYPE.FLAW) {
                 //CreateTraitGO(currTrait, statusTraitsScrollView.content);
                 if (lastStatusIndex < statusTraitContainers.Length) {
                     statusTraitContainers[lastStatusIndex].SetCombatAttribute(currTrait);

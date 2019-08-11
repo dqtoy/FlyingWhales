@@ -19,6 +19,7 @@ public class TileObject : IPointOfInterest {
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
     public LocationStructure structureLocation { get; protected set; }
     public bool isDisabledByPlayer { get; protected set; }
+    public bool isSummonedByPlayer { get; protected set; }
     public virtual Character[] users {
         get {
             if (slots == null) {
@@ -59,6 +60,7 @@ public class TileObject : IPointOfInterest {
         _traits = new List<Trait>();
         actionHistory = new List<string>();
         awareCharacters = new List<Character>();
+        poiGoapActions = new List<INTERACTION_TYPE>();
         hasCreatedSlots = false;
         AddTrait("Flammable");
         InitializeCollisionTrigger();
@@ -69,6 +71,7 @@ public class TileObject : IPointOfInterest {
         _traits = new List<Trait>();
         actionHistory = new List<string>();
         awareCharacters = new List<Character>();
+        poiGoapActions = new List<INTERACTION_TYPE>();
         hasCreatedSlots = false;
         InitializeCollisionTrigger();
     }
@@ -187,6 +190,18 @@ public class TileObject : IPointOfInterest {
             if (isDisabledByPlayer) {
                 Character character = null;
                 Messenger.Broadcast(Signals.TILE_OBJECT_DISABLED, this, character);
+            }
+        }
+    }
+    public void SetIsSummonedByPlayer(bool state) {
+        if(isSummonedByPlayer != state) {
+            isSummonedByPlayer = state;
+            if (isSummonedByPlayer) {
+                if (!poiGoapActions.Contains(INTERACTION_TYPE.INSPECT)) {
+                    poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
+                }
+            } else {
+                poiGoapActions.Remove(INTERACTION_TYPE.INSPECT);
             }
         }
     }
@@ -375,6 +390,9 @@ public class TileObject : IPointOfInterest {
     #endregion
 
     #region GOAP
+    private void ConstructInitialGoapAdvertisements() {
+        poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
+    }
     /// <summary>
     /// Does this tile object advertise a given action type.
     /// </summary>

@@ -1132,6 +1132,7 @@ public class PlayerUI : MonoBehaviour {
             if (tile.objHere == null) {
                 Artifact artifactToPlace = currentlySelectedArtifact;
                 if (tile.structure.AddPOI(artifactToPlace, tile)) {
+                    artifactToPlace.SetIsSummonedByPlayer(true);
                     Messenger.Broadcast(Signals.PLAYER_USED_ARTIFACT, artifactToPlace);
                 }
                 //PlayerManager.Instance.player.RemoveArtifact(artifactToPlace);

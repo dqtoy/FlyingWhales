@@ -91,6 +91,7 @@ public class AttributeManager : MonoBehaviour {
             new SerialKiller(),
             new Plagued(),
             new Vigilant(),
+            new Curious(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

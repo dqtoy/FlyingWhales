@@ -515,6 +515,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.OBTAIN_SUPPLY:
             case JOB_TYPE.DROP:
             case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
+            case JOB_TYPE.INSPECT:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:
