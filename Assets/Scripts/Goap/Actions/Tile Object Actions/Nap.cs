@@ -72,18 +72,13 @@ public class Nap : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        IAwareness awareness = actor.GetAwareness(poiTarget);
-        if (awareness == null) {
-            return false;
-        }
-        LocationGridTile knownLoc = awareness.knownGridLocation;
         //if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING && knownLoc != null) {
         //    TileObject obj = poiTarget as TileObject;
         //    return obj.IsAvailable();
         //}
         //return false;
 
-        return knownLoc != null && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion
 

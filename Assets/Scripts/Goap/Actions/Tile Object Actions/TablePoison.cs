@@ -21,11 +21,7 @@ public class TablePoison : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         //**Effect 1**: Table - Add Trait (Poisoned)
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
-        IAwareness awareness = actor.GetAwareness(poiTarget);
-        LocationGridTile knownLoc = null;
-        if (awareness != null) {
-            knownLoc = awareness.knownGridLocation;
-        }
+        LocationGridTile knownLoc = poiTarget.gridTileLocation;
         //LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
         if (knownLoc != null && knownLoc.structure is Dwelling) {
             Dwelling dwelling = knownLoc.structure as Dwelling;
@@ -166,13 +162,9 @@ public class TablePoison : GoapAction {
         if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
             return false;
         }
-        IAwareness awareness = actor.GetAwareness(poiTarget);
-        LocationGridTile knownLoc = null;
-        if (awareness != null) {
-            knownLoc = awareness.knownGridLocation;
-        }
+        LocationGridTile knownLoc = poiTarget.gridTileLocation;
         //LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
-        if (knownLoc != null && knownLoc.structure is Dwelling) {
+        if (knownLoc.structure is Dwelling) {
             Dwelling d = knownLoc.structure as Dwelling;
             if (d.residents.Count == 0) {
                 return false;

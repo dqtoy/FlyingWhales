@@ -106,18 +106,14 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     private void GhostCollisionHandling(GhostCollisionTrigger collidedWith) {
         string ghostCollisionSummary = parentMarker.character.name + " collided with a ghost collider! " + collidedWith.poi.name;
         //when a character collides with a ghost collision trigger
-        IAwareness awareness = parentMarker.character.GetAwareness(collidedWith.poi);
-        if (awareness != null) { //it will check if it is aware of the associated poi
+        if (parentMarker.character.HasAwareness(collidedWith.poi)) { //it will check if it is aware of the associated poi
             //if it is aware of the poi
             ghostCollisionSummary += "\n" + parentMarker.character.name + " is aware of " + collidedWith.poi.name;
-            if (awareness.knownGridLocation == collidedWith.gridTileLocation) { //check if the character's known location is the location of this trigger
-                //if it is, remove the poi from the characters awareness (Object Missing)
-                parentMarker.character.RemoveAwareness(collidedWith.poi);
-                ghostCollisionSummary += "\n" + parentMarker.character.name + "'s known location of " + collidedWith.poi.name + " is same as this ghost colliders position, removing it from it's awareness...";
-                if (parentMarker.character.currentAction != null && parentMarker.character.currentAction.poiTarget == collidedWith.poi) {
-                    //trigger target missing state
-                    parentMarker.character.currentAction.ExecuteTargetMissing();
-                }
+            parentMarker.character.RemoveAwareness(collidedWith.poi);
+            ghostCollisionSummary += "\n" + parentMarker.character.name + "'s known location of " + collidedWith.poi.name + " is same as this ghost colliders position, removing it from it's awareness...";
+            if (parentMarker.character.currentAction != null && parentMarker.character.currentAction.poiTarget == collidedWith.poi) {
+                //trigger target missing state
+                parentMarker.character.currentAction.ExecuteTargetMissing();
             }
         }
         Debug.Log(ghostCollisionSummary);

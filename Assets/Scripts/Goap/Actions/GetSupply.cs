@@ -40,11 +40,10 @@ public class GetSupply : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        IAwareness awareness = actor.GetAwareness(poiTarget);
-        if (awareness == null) {
+        if (poiTarget.gridTileLocation == null) {
             return false;
         }
-        LocationGridTile knownLoc = awareness.knownGridLocation;
+        LocationGridTile knownLoc = poiTarget.gridTileLocation;
         if (actor.role.roleType != CHARACTER_ROLE.CIVILIAN && actor.homeArea == knownLoc.structure.location && actor.supply < actor.role.reservedSupply) {
             if (poiTarget is SupplyPile) {
                 SupplyPile supplyPile = poiTarget as SupplyPile;

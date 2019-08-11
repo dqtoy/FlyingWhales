@@ -12,7 +12,7 @@ public class GoapThread : Multithread {
     public bool isPriority { get; private set; }
     public bool isPersonalPlan { get; private set; }
     public GOAP_CATEGORY category { get; private set; }
-    public List<CharacterAwareness> characterTargetsAwareness { get; private set; }
+    public List<IPointOfInterest> characterTargetsAwareness { get; private set; }
     public GoapPlanJob job { get; private set; }
     public bool allowDeadTargets { get; private set; }
     //public List<INTERACTION_TYPE> actorAllowedActions { get; private set; }
@@ -23,7 +23,7 @@ public class GoapThread : Multithread {
     //For recalculation
     public GoapPlan recalculationPlan;
 
-    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness
+    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority, List<IPointOfInterest> characterTargetsAwareness
         , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
@@ -39,7 +39,7 @@ public class GoapThread : Multithread {
         this.job = job;
         this.allowDeadTargets = allowDeadTargets;
     }
-    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness
+    public GoapThread(Character actor, IPointOfInterest target, GoapEffect goalEffect, GOAP_CATEGORY category, bool isPriority, List<IPointOfInterest> characterTargetsAwareness
         , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
@@ -56,7 +56,7 @@ public class GoapThread : Multithread {
         this.allowDeadTargets = allowDeadTargets;
         this.otherData = otherData;
     }
-    public GoapThread(Character actor, IPointOfInterest target, GoapAction goalAction, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness
+    public GoapThread(Character actor, IPointOfInterest target, GoapAction goalAction, GOAP_CATEGORY category, bool isPriority, List<IPointOfInterest> characterTargetsAwareness
         , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
@@ -72,7 +72,7 @@ public class GoapThread : Multithread {
         this.job = job;
         this.allowDeadTargets = allowDeadTargets;
     }
-    public GoapThread(Character actor, INTERACTION_TYPE goalType, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness
+    public GoapThread(Character actor, INTERACTION_TYPE goalType, GOAP_CATEGORY category, bool isPriority, List<IPointOfInterest> characterTargetsAwareness
         , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
@@ -88,7 +88,7 @@ public class GoapThread : Multithread {
         this.allowDeadTargets = allowDeadTargets;
         this.otherData = otherData;
     }
-    public GoapThread(Character actor, INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority, List<CharacterAwareness> characterTargetsAwareness
+    public GoapThread(Character actor, INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority, List<IPointOfInterest> characterTargetsAwareness
         , bool isPersonalPlan, GoapPlanJob job, bool allowDeadTargets, Dictionary<INTERACTION_TYPE, object[]> otherData = null) {//, List<INTERACTION_TYPE> actorAllowedActions, List<GoapAction> usableActions
         this.createdPlan = null;
         this.recalculationPlan = null;
@@ -145,11 +145,11 @@ public class GoapThread : Multithread {
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
         List<GoapAction> usableActions = new List<GoapAction>();
         //Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> orderedAwareness = actor.OrderAwarenessByStructure();
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>(actor.awareness);
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
+        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>(actor.awareness);
+        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in awareness) {
             if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 for (int i = 0; i < kvp.Value.Count; i++) {
-                    Character character = kvp.Value[i].poi as Character;
+                    Character character = kvp.Value[i] as Character;
                     if (character.isDead) {
                         //kvp.Value.RemoveAt(i);
                         //i--;
@@ -173,13 +173,13 @@ public class GoapThread : Multithread {
                 //NOTE: Not happy about this, very unoptimized. Need to think of a way to make this more performant.
                 Dictionary<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>> sorted = new Dictionary<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>>();
                 for (int i = 0; i < kvp.Value.Count; i++) {
-                    IAwareness currAwareness = kvp.Value[i];
-                    if (currAwareness.poi.gridTileLocation != null && currAwareness.poi.gridTileLocation.structure != null) {
-                        LocationStructure objStructure = currAwareness.poi.gridTileLocation.structure;
+                    IPointOfInterest currAwareness = kvp.Value[i];
+                    if (currAwareness.gridTileLocation != null && currAwareness.gridTileLocation.structure != null) {
+                        LocationStructure objStructure = currAwareness.gridTileLocation.structure;
                         if (!sorted.ContainsKey(objStructure)) {
                             sorted.Add(objStructure, new Dictionary<INTERACTION_TYPE, List<GoapAction>>());
                         }
-                        List<GoapAction> awarenessActions = currAwareness.poi.AdvertiseActionsToActor(actor, actorAllowedActions);
+                        List<GoapAction> awarenessActions = currAwareness.AdvertiseActionsToActor(actor, actorAllowedActions);
                         if (awarenessActions != null) {
                             for (int j = 0; j < awarenessActions.Count; j++) {
                                 GoapAction currAction = awarenessActions[j];
@@ -206,7 +206,7 @@ public class GoapThread : Multithread {
                 }
             } else {
                 for (int i = 0; i < kvp.Value.Count; i++) {
-                    List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(actor, actorAllowedActions);
+                    List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor, actorAllowedActions);
                     if (awarenessActions != null && awarenessActions.Count > 0) {
                         usableActions.AddRange(awarenessActions);
                     }
@@ -392,16 +392,16 @@ public class GoapThread : Multithread {
         log += "\nGOAL ACTION: " + recalculationPlan.endNode.action.goapName + " - " + recalculationPlan.endNode.action.poiTarget.name;
         List<GoapAction> usableActions = new List<GoapAction>();
         List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in actor.awareness) {
+        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in actor.awareness) {
             if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 for (int i = 0; i < kvp.Value.Count; i++) {
-                    Character character = kvp.Value[i].poi as Character;
+                    Character character = kvp.Value[i] as Character;
                     if (character.isDead) {
                         //kvp.Value.RemoveAt(i);
                         //i--;
                     } else {
                         if (character.specificLocation == actor.specificLocation || character == actor || actor.IsPOIInCharacterAwarenessList(character, recalculationPlan.goalCharacterTargets)) {
-                            List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(actor, actorAllowedActions);
+                            List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor, actorAllowedActions);
                             if (awarenessActions != null && awarenessActions.Count > 0) {
                                 usableActions.AddRange(awarenessActions);
                             }
@@ -410,7 +410,7 @@ public class GoapThread : Multithread {
                 }
             } else {
                 for (int i = 0; i < kvp.Value.Count; i++) {
-                    List<GoapAction> awarenessActions = kvp.Value[i].poi.AdvertiseActionsToActor(actor, actorAllowedActions);
+                    List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor, actorAllowedActions);
                     if (awarenessActions != null && awarenessActions.Count > 0) {
                         usableActions.AddRange(awarenessActions);
                     }

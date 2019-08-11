@@ -39,10 +39,9 @@ public class PlayGuitar : GoapAction {
         //Cost:
         //- Actor is resident of the Guitar's Dwelling: 4-10
         //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 7-12
-        IAwareness awareness = actor.GetAwareness(poiTarget);
         Trait musicLover = actor.GetNormalTrait("MusicLover");
-        if (awareness != null) {
-            LocationGridTile knownLoc = awareness.knownGridLocation;
+        if (poiTarget.gridTileLocation != null) {
+            LocationGridTile knownLoc = poiTarget.gridTileLocation;
             if (actor.homeStructure == knownLoc.structure) {
                 if (musicLover != null) {
                     return Utilities.rng.Next(3, 7);
@@ -124,11 +123,10 @@ public class PlayGuitar : GoapAction {
         if (actor.GetNormalTrait("MusicHater") != null) {
             return false; //music haters will never play guitar
         }
-        IAwareness awareness = actor.GetAwareness(poiTarget);
-        if (awareness == null) {
+        if (poiTarget.gridTileLocation == null) {
             return false;
         }
-        LocationGridTile knownLoc = awareness.knownGridLocation;
+        LocationGridTile knownLoc = poiTarget.gridTileLocation;
         //**Advertised To**: Residents of the dwelling or characters with a positive relationship with a Resident
         if (knownLoc.structure is Dwelling) {
             if (actor.homeStructure == knownLoc.structure) {

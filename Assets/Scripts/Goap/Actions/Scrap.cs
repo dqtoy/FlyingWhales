@@ -55,12 +55,7 @@ public class Scrap : GoapAction {
                 return false;
             }
         }
-        IAwareness awareness = actor.GetAwareness(poiTarget);
-        if (awareness == null) {
-            return false;
-        }
-        LocationGridTile knownLoc = awareness.knownGridLocation;
-        if (knownLoc != null) {
+        if (poiTarget.gridTileLocation != null) {
             if (poiTarget.factionOwner != null) {
                 if (actor.faction == poiTarget.factionOwner) {
                     return true;

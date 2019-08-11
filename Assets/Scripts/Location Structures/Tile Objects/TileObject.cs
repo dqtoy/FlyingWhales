@@ -342,10 +342,10 @@ public class TileObject : IPointOfInterest {
             //loop through all the characters that are currently aware of this object
             for (int i = 0; i < awareCharacters.Count; i++) {
                 Character currCharacter = awareCharacters[i];
-                IAwareness awareness = currCharacter.GetAwareness(this);
-                if (awareness != null && !knownLocations.Contains(awareness.knownGridLocation)) {
+                //IAwareness awareness = currCharacter.HasAwareness(this);
+                if (gridTileLocation != null && !knownLocations.Contains(gridTileLocation)) {
                     //for each character, store in a list all their known locations of this object
-                    knownLocations.Add(awareness.knownGridLocation);
+                    knownLocations.Add(gridTileLocation);
                 }
             }
             //then broadcast that list to all ghost colliders of this object

@@ -16,7 +16,7 @@ public class AlterEgoData {
     public int level { get; private set; }
 
     //Awareness
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness { get; private set; }
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
 
     //Relationships
 	public Dictionary<AlterEgoData, CharacterRelationshipData> relationships { get; private set; }
@@ -32,7 +32,7 @@ public class AlterEgoData {
         role = null;
         characterClass = null;
         homeStructure = null;
-        awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
+        awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
         relationships = new Dictionary<AlterEgoData, CharacterRelationshipData>();
         traits = new List<Trait>();
         level = 1;
@@ -76,49 +76,36 @@ public class AlterEgoData {
     }
 
     #region Awareness
-    public void SetAwareness(Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness) {
+    public void SetAwareness(Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness) {
         if (owner.isSwitchingAlterEgo) {
             return; //ignore any changes while the owner is switching alter egos
         }
         this.awareness = awareness;
     }
-    public IAwareness AddAwareness(IPointOfInterest pointOfInterest) {
-        IAwareness iawareness = GetAwareness(pointOfInterest);
-        if (iawareness == null) {
-            iawareness = CreateNewAwareness(pointOfInterest);
-            if (iawareness != null) {
-                if (!awareness.ContainsKey(pointOfInterest.poiType)) {
-                    awareness.Add(pointOfInterest.poiType, new List<IAwareness>());
-                }
-                awareness[pointOfInterest.poiType].Add(iawareness);
-                iawareness.OnAddAwareness(owner);
+    public bool AddAwareness(IPointOfInterest pointOfInterest) {
+        if (!HasAwareness(pointOfInterest)) {
+            if (!awareness.ContainsKey(pointOfInterest.poiType)) {
+                awareness.Add(pointOfInterest.poiType, new List<IPointOfInterest>());
             }
+            awareness[pointOfInterest.poiType].Add(pointOfInterest);
 
             if (pointOfInterest is TreeObject) {
-                List<IAwareness> treeAwareness = GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE.TREE);
+                List<IPointOfInterest> treeAwareness = GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE.TREE);
                 if (treeAwareness.Count >= Character.TREE_AWARENESS_LIMIT) {
-                    RemoveAwareness(treeAwareness[0].poi);
+                    RemoveAwareness(treeAwareness[0]);
                 }
             }
-        } else {
-            if (pointOfInterest.gridTileLocation != null) {
-                //if already has awareness for that poi, just update it's known location. 
-                //Except if it's null, because if it's null, it ususally means the poi is travelling 
-                //and setting it's location to null should be ignored to prevent unexpected behaviour.
-                iawareness.SetKnownGridLocation(pointOfInterest.gridTileLocation);
-            }
-
+            return true;
         }
-        return iawareness;
+        return false;
     }
     public void RemoveAwareness(IPointOfInterest pointOfInterest) {
         if (awareness.ContainsKey(pointOfInterest.poiType)) {
-            List<IAwareness> awarenesses = awareness[pointOfInterest.poiType];
+            List<IPointOfInterest> awarenesses = awareness[pointOfInterest.poiType];
             for (int i = 0; i < awarenesses.Count; i++) {
-                IAwareness iawareness = awarenesses[i];
-                if (iawareness.poi == pointOfInterest) {
+                IPointOfInterest iawareness = awarenesses[i];
+                if (iawareness == pointOfInterest) {
                     awarenesses.RemoveAt(i);
-                    iawareness.OnRemoveAwareness(owner);
                     break;
                 }
             }
@@ -126,35 +113,29 @@ public class AlterEgoData {
     }
     public void RemoveAwareness(POINT_OF_INTEREST_TYPE poiType) {
         if (awareness.ContainsKey(poiType)) {
-            List<IAwareness> awarenesses = new List<IAwareness>(awareness[poiType]);
-            for (int i = 0; i < awarenesses.Count; i++) {
-                IAwareness iawareness = awarenesses[i];
-                awareness[poiType].Remove(iawareness);
-                iawareness.OnRemoveAwareness(owner);
-            }
             awareness.Remove(poiType);
         }
     }
-    public IAwareness GetAwareness(IPointOfInterest poi) {
+    public bool HasAwareness(IPointOfInterest poi) {
         if (awareness.ContainsKey(poi.poiType)) {
-            List<IAwareness> awarenesses = awareness[poi.poiType];
+            List<IPointOfInterest> awarenesses = awareness[poi.poiType];
             for (int i = 0; i < awarenesses.Count; i++) {
-                IAwareness iawareness = awarenesses[i];
-                if (iawareness.poi == poi) {
-                    return iawareness;
+                IPointOfInterest currPOI = awarenesses[i];
+                if (currPOI == poi) {
+                    return true;
                 }
             }
-            return null;
+            return false;
         }
-        return null;
+        return false;
     }
-    public List<IAwareness> GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE tileObjectType) {
-        List<IAwareness> objects = new List<IAwareness>();
+    public List<IPointOfInterest> GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE tileObjectType) {
+        List<IPointOfInterest> objects = new List<IPointOfInterest>();
         if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.TILE_OBJECT)) {
-            List<IAwareness> awarenesses = awareness[POINT_OF_INTEREST_TYPE.TILE_OBJECT];
+            List<IPointOfInterest> awarenesses = awareness[POINT_OF_INTEREST_TYPE.TILE_OBJECT];
             for (int i = 0; i < awarenesses.Count; i++) {
-                TileObjectAwareness iawareness = awarenesses[i] as TileObjectAwareness;
-                if (iawareness.tileObject.tileObjectType == tileObjectType) {
+                TileObject iawareness = awarenesses[i] as TileObject;
+                if (iawareness.tileObjectType == tileObjectType) {
                     objects.Add(iawareness);
                 }
             }

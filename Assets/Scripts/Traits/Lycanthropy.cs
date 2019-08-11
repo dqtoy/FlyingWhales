@@ -181,7 +181,7 @@ public class LycanthropyData {
     public int tiredness { get; private set; }
     public int happiness { get; private set; }
     public Faction faction { get; private set; }
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness { get; private set; }
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
     //public List<RelationshipLycanthropyData> relationships { get; private set; }
     public List<Trait> traits { get; set; }
     public Dwelling homeStructure { get; private set; }
@@ -194,7 +194,7 @@ public class LycanthropyData {
         this.tiredness = character.tiredness;
         this.happiness = character.happiness;
         this.faction = character.faction;
-        this.awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>(character.awareness);
+        this.awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>(character.awareness);
         this.homeStructure = character.homeStructure;
         this.race = character.race;
         this.role = character.role;

@@ -33,14 +33,6 @@ public class EatAtTable : GoapAction {
         }
     }
     protected override int GetCost() {
-        IAwareness awareness = actor.GetAwareness(poiTarget);
-        LocationGridTile knownLoc = null;
-        if (awareness != null) {
-            knownLoc = awareness.knownGridLocation;
-        } else {
-            return 100;
-        }
-
         //if the table is poisoned, check if the actor knows about it, if he/she does, increase cost
         Poisoned poisoned = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
         if (poisoned != null) {
@@ -49,8 +41,8 @@ public class EatAtTable : GoapAction {
             }
         }
 
-        if(knownLoc.structure.structureType == STRUCTURE_TYPE.DWELLING) {
-            Dwelling dwelling = knownLoc.structure as Dwelling;
+        if(poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING) {
+            Dwelling dwelling = poiTarget.gridTileLocation.structure as Dwelling;
             if (!dwelling.IsOccupied()) {
                 return 12;
             } else {
@@ -69,7 +61,7 @@ public class EatAtTable : GoapAction {
                     return 28;
                 }
             }
-        } else if(knownLoc.structure.structureType == STRUCTURE_TYPE.INN) {
+        } else if(poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN) {
             return 28;
         }
         return 100;
@@ -181,12 +173,7 @@ public class EatAtTable : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        IAwareness awareness = actor.GetAwareness(poiTarget);
-        if (awareness == null) {
-            return false;
-        }
-        LocationGridTile knownLoc = awareness.knownGridLocation;
-        return knownLoc != null && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
     #endregion
 

@@ -48,12 +48,10 @@ public class DropSupply : GoapAction {
     #endregion
     #region Requirements
     protected bool Requirement() {
-        IAwareness awareness = actor.GetAwareness(poiTarget);
-        if (awareness == null) {
+        if (poiTarget.gridTileLocation == null) {
             return false;
         }
-        LocationGridTile knownLoc = awareness.knownGridLocation;
-        return actor.homeArea == knownLoc.structure.location;
+        return actor.homeArea == poiTarget.gridTileLocation.structure.location;
     }
     #endregion
 

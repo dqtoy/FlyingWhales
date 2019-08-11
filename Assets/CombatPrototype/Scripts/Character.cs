@@ -448,7 +448,7 @@ public class Character : ILeader, IPointOfInterest {
             return alterEgos[currentAlterEgoName];
         }
     }
-    public Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> awareness {
+    public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness {
         get {
             return currentAlterEgo.awareness;
         }
@@ -681,9 +681,6 @@ public class Character : ILeader, IPointOfInterest {
         marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
         AddInitialAwareness();
         SubscribeToSignals();
-        for (int i = 0; i < normalTraits.Count; i++) {
-            normalTraits[i].OnOwnerInitiallyPlaced(this);
-        }
     }
 
     #region Signals
@@ -3449,7 +3446,7 @@ public class Character : ILeader, IPointOfInterest {
             //        marker.AddAvoidInRange(target);
             //    }
             //} else 
-            if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success" && GetNormalTrait("MusicHater") == null) {
+            if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success") {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 25) { //25
                     if (!HasRelationshipOfTypeWith(action.actor, RELATIONSHIP_TRAIT.ENEMY)) {
@@ -4040,11 +4037,6 @@ public class Character : ILeader, IPointOfInterest {
         if (UnityEngine.Random.Range(0, 100) < 50) {
             AddTrait("Curious");
         }
-        if (UnityEngine.Random.Range(0, 100) < 50) {
-            AddTrait("MusicLover");
-        } else {
-            AddTrait("MusicHater");
-        }
         AddTrait("Flammable");
     }
     public void CreateInitialTraitsByRace() {
@@ -4225,7 +4217,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public Trait GetNormalTrait(string traitName) {
         for (int i = 0; i < normalTraits.Count; i++) {
-            if ((normalTraits[i].name == traitName || normalTraits[i].GetType().ToString() == traitName) && !normalTraits[i].isDisabled) {
+            if (normalTraits[i].name == traitName && !normalTraits[i].isDisabled) {
                 return normalTraits[i];
             }
         }
@@ -6160,7 +6152,7 @@ public class Character : ILeader, IPointOfInterest {
         List<string> dialogReactions = new List<string>();
         if (intel is TileObjectIntel) {
             TileObjectIntel toi = intel as TileObjectIntel;
-            if (GetAwareness(toi.obj) != null) {
+            if (HasAwareness(toi.obj) != null) {
                 dialogReactions.Add("I already know about that.");
             } else {
                 AddAwareness(toi.obj);
@@ -6256,28 +6248,8 @@ public class Character : ILeader, IPointOfInterest {
     #endregion
 
     #region Awareness
-    public IAwareness AddAwareness(IPointOfInterest pointOfInterest) {
+    public bool AddAwareness(IPointOfInterest pointOfInterest) {
         return currentAlterEgo.AddAwareness(pointOfInterest);
-        //IAwareness iawareness = GetAwareness(pointOfInterest);
-        //if (iawareness == null) {
-        //    iawareness = CreateNewAwareness(pointOfInterest);
-        //    if (iawareness != null) {
-        //        if (!awareness.ContainsKey(pointOfInterest.poiType)) {
-        //            awareness.Add(pointOfInterest.poiType, new List<IAwareness>());
-        //        }
-        //        awareness[pointOfInterest.poiType].Add(iawareness);
-        //        iawareness.OnAddAwareness(this);
-        //    }
-        //} else {
-        //    if (pointOfInterest.gridTileLocation != null) {
-        //        //if already has awareness for that poi, just update it's known location. 
-        //        //Except if it's null, because if it's null, it ususally means the poi is travelling 
-        //        //and setting it's location to null should be ignored to prevent unexpected behaviour.
-        //        iawareness.SetKnownGridLocation(pointOfInterest.gridTileLocation);
-        //    }
-
-        //}
-        //return iawareness;
     }
     public void RemoveAwareness(IPointOfInterest pointOfInterest) {
         if (_numOfWaitingForGoapThread > 0) {
@@ -6297,8 +6269,8 @@ public class Character : ILeader, IPointOfInterest {
         //    }
         //}
     }
-    public IAwareness GetAwareness(IPointOfInterest poi) {
-        return currentAlterEgo.GetAwareness(poi);
+    public bool HasAwareness(IPointOfInterest poi) {
+        return currentAlterEgo.HasAwareness(poi);
         //if (awareness.ContainsKey(poi.poiType)) {
         //    List<IAwareness> awarenesses = awareness[poi.poiType];
         //    for (int i = 0; i < awarenesses.Count; i++) {
@@ -6409,19 +6381,16 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void LogAwarenessList() {
         string log = "--------------AWARENESS LIST OF " + name + "-----------------";
-        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IAwareness>> kvp in awareness) {
+        foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in awareness) {
             log += "\n" + kvp.Key.ToString() + ": ";
             for (int i = 0; i < kvp.Value.Count; i++) {
                 if (i > 0) {
                     log += ", ";
                 }
-                log += kvp.Value[i].poi.name;
+                log += kvp.Value[i].name;
             }
         }
         Debug.Log(log);
-    }
-    public void CopyAwareness(Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> newAwareness) {
-        currentAlterEgo.SetAwareness(newAwareness);
     }
     public void ClearAllAwareness() {
         currentAlterEgo.ClearAllAwareness();
@@ -6562,20 +6531,16 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {
-        List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
+        List<IPointOfInterest> characterTargetsAwareness = new List<IPointOfInterest>();
         if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
-            if (characterAwareness != null) {
-                characterTargetsAwareness.Add(characterAwareness);
-            }
+            AddAwareness(target);
+            characterTargetsAwareness.Add(target);
         }
 
         if (otherCharactePOIs != null) {
             for (int i = 0; i < otherCharactePOIs.Count; i++) {
-                CharacterAwareness characterAwareness = AddAwareness(otherCharactePOIs[i]) as CharacterAwareness;
-                if (characterAwareness != null) {
-                    characterTargetsAwareness.Add(characterAwareness);
-                }
+                AddAwareness(otherCharactePOIs[i]);
+                characterTargetsAwareness.Add(otherCharactePOIs[i]);
             }
         }
         if (job != null) {
@@ -6586,20 +6551,16 @@ public class Character : ILeader, IPointOfInterest {
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets, otherData));
     }
     public void StartGOAP(GoapAction goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
-        List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
+        List<IPointOfInterest> characterTargetsAwareness = new List<IPointOfInterest>();
         if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
-            if (characterAwareness != null) {
-                characterTargetsAwareness.Add(characterAwareness);
-            }
+            AddAwareness(target);
+            characterTargetsAwareness.Add(target);
         }
 
         if (otherCharactePOIs != null) {
             for (int i = 0; i < otherCharactePOIs.Count; i++) {
-                CharacterAwareness characterAwareness = AddAwareness(otherCharactePOIs[i]) as CharacterAwareness;
-                if (characterAwareness != null) {
-                    characterTargetsAwareness.Add(characterAwareness);
-                }
+                AddAwareness(otherCharactePOIs[i]);
+                characterTargetsAwareness.Add(otherCharactePOIs[i]);
             }
         }
         if (job != null) {
@@ -6609,12 +6570,10 @@ public class Character : ILeader, IPointOfInterest {
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets));
     }
     public void StartGOAP(INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {
-        List<CharacterAwareness> characterTargetsAwareness = new List<CharacterAwareness>();
+        List<IPointOfInterest> characterTargetsAwareness = new List<IPointOfInterest>();
         if (target != null && target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            CharacterAwareness characterAwareness = AddAwareness(target) as CharacterAwareness;
-            if (characterAwareness != null) {
-                characterTargetsAwareness.Add(characterAwareness);
-            }
+            AddAwareness(target);
+            characterTargetsAwareness.Add(target);
         }
         if (job != null) {
             job.SetAssignedPlan(null);
@@ -6754,10 +6713,10 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
-    public bool IsPOIInCharacterAwarenessList(IPointOfInterest poi, List<CharacterAwareness> awarenesses) {
+    public bool IsPOIInCharacterAwarenessList(IPointOfInterest poi, List<IPointOfInterest> awarenesses) {
         if (awarenesses != null && awarenesses.Count > 0) {
             for (int i = 0; i < awarenesses.Count; i++) {
-                if (awarenesses[i].poi == poi) {
+                if (awarenesses[i] == poi) {
                     return true;
                 }
             }
@@ -7165,8 +7124,8 @@ public class Character : ILeader, IPointOfInterest {
     //For testing: Drop Character
     public void DropACharacter() {
         if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.CHARACTER)) {
-            List<IAwareness> characterAwarenesses = awareness[POINT_OF_INTEREST_TYPE.CHARACTER];
-            Character randomTarget = characterAwarenesses[UnityEngine.Random.Range(0, characterAwarenesses.Count)].poi as Character;
+            List<IPointOfInterest> characterAwarenesses = awareness[POINT_OF_INTEREST_TYPE.CHARACTER];
+            Character randomTarget = characterAwarenesses[UnityEngine.Random.Range(0, characterAwarenesses.Count)] as Character;
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = randomTarget };
             StartGOAP(goapEffect, randomTarget, GOAP_CATEGORY.REACTION);
         }
@@ -7738,7 +7697,6 @@ public class Character : ILeader, IPointOfInterest {
     #endregion
 
     #region States
-    private const float Combat_Signal_Distance = 1.5f;
     private void OnCharacterStartedState(Character character, CharacterState state) {
         if (character == this) {
             marker.UpdateActionIcon();
@@ -7747,17 +7705,6 @@ public class Character : ILeader, IPointOfInterest {
             }
         } else {
             if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null) {
-                //CombatState combatState = state as CombatState;
-                //if (this.isPartOfHomeFaction && character.isPartOfHomeFaction && character.homeArea == this.homeArea && this.IsHostileOutsider(combatState.currentClosestHostile) && this.IsCombatReady()) {
-                //    if (this.marker.AddHostileInRange(combatState.currentClosestHostile)) {
-                //        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
-                //        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                //        joinLog.AddToFillers(combatState.currentClosestHostile, combatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                //        joinLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_3);
-                //        joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                //        PlayerManager.Instance.player.ShowNotification(joinLog);
-                //    }
-                //} else 
                 if (marker.inVisionPOIs.Contains(character)) {
                     ThisCharacterWatchEvent(character, null, null);
                 }

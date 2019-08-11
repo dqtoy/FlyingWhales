@@ -20,13 +20,14 @@ public class GoapAction {
     public virtual LocationStructure targetStructure {
         get {
             try {
-                if (poiTarget is TileObject || poiTarget is SpecialToken) {
-                    //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
-                    IAwareness awareness = actor.GetAwareness(poiTarget);
-                    if (awareness != null) {
-                        return awareness.knownGridLocation.structure;
-                    }
-                } else if (poiTarget is Character) {
+                //if (poiTarget is TileObject || poiTarget is SpecialToken) {
+                //    //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
+                //    IAwareness awareness = actor.HasAwareness(poiTarget);
+                //    if (awareness != null) {
+                //        return awareness.knownGridLocation.structure;
+                //    }
+                //} else 
+                if (poiTarget is Character) {
                     return (poiTarget as Character).currentStructure;
                 }
                 return poiTarget.gridTileLocation.structure;
@@ -280,16 +281,16 @@ public class GoapAction {
         MoveToDoAction(targetCharacter);
     }
     public virtual LocationGridTile GetTargetLocationTile() {
-        LocationGridTile knownTargetLocation = null;
+        //LocationGridTile knownTargetLocation = null;
         if (poiTarget is TileObject || poiTarget is SpecialToken) {
             //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
-            IAwareness awareness = actor.GetAwareness(poiTarget);
-            if (awareness != null) {
-                knownTargetLocation = awareness.knownGridLocation;
-            } else {
-                knownTargetLocation = poiTarget.gridTileLocation;
-            }
-            return knownTargetLocation;
+            //IAwareness awareness = actor.HasAwareness(poiTarget);
+            //if (awareness != null) {
+            //    knownTargetLocation = awareness.knownGridLocation;
+            //} else {
+            //    knownTargetLocation = poiTarget.gridTileLocation;
+            //}
+            return poiTarget.gridTileLocation;
 
             //return InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.NEAR_TARGET, actor, knownTargetLocation, targetStructure);
         }
