@@ -19,6 +19,9 @@ public class CureCharacter : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = actor }, HasItemInInventory);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Zombie Virus", targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Plagued", targetPOI = poiTarget });
+
     }
     public override void PerformActualAction() {
         base.PerformActualAction();

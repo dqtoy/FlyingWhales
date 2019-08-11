@@ -92,6 +92,7 @@ public class AttributeManager : MonoBehaviour {
             new Plagued(),
             new Vigilant(),
             new Curious(),
+            new Doctor(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

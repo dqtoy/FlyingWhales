@@ -34,6 +34,24 @@ public class Zombie_Virus : Trait {
             SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(GameManager.Instance.GetTicksBasedOnMinutes(30)), StartReanimationCheck, this);
         }
     }
+    public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+        if (traitOwner is Character) {
+            Character targetCharacter = traitOwner as Character;
+            if (!targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect);
+                if (CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, null)) {
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    return true;
+                } else {
+                    job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveIllnessesJob);
+                    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                    return false;
+                }
+            }
+        }
+        return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+    }
     #endregion
 
     private void PerHour() {

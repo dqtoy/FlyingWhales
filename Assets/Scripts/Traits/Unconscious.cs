@@ -72,12 +72,12 @@ public class Unconscious : Trait {
             if (!targetCharacter.isDead && targetCharacter.faction == targetCharacter.specificLocation.owner && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect);
-                if (CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
+                if (CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, null)) {
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;
                 } else {
-                    job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                    job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveIllnessesJob);
                     characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
                     return false;
                 }

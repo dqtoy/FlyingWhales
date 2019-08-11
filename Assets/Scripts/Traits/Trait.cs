@@ -154,6 +154,21 @@ public class Trait {
         }
         return false;
     }
+    protected bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
+        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
+            if (responsibleCharacter != null && responsibleCharacter == character) {
+                return false;
+            }
+            if (responsibleCharacters != null && responsibleCharacters.Contains(character)) {
+                return false;
+            }
+            if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
+                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
+            }
+            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.GetNormalTrait("Doctor") != null;
+        }
+        return false;
+    }
     protected bool CanTakeBuryJob(Character character, JobQueueItem job) {
         if(!character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.isAtHomeArea && character.isPartOfHomeFaction
                 && character.role.roleType != CHARACTER_ROLE.BEAST) {
