@@ -56,6 +56,15 @@ public class StealFromCharacter : GoapAction {
         }
         return Utilities.rng.Next(35, 56);
     }
+    public override void OnResultReturnedToActor() {
+        base.OnResultReturnedToActor();
+        if (currentState.name == "Steal Vigilant") {
+            if (poiTarget is Character) {
+                Character targetCharacter = poiTarget as Character;
+                targetCharacter.marker.AddHostileInRange(actor);
+            }
+        }
+    }
     #endregion
 
     #region Requirements
@@ -87,6 +96,17 @@ public class StealFromCharacter : GoapAction {
         actor.ObtainTokenFrom(_targetCharacter, _targetItem, false);
         if (actor.GetNormalTrait("Kleptomaniac") != null) {
             actor.AdjustHappiness(60);
+        }
+    }
+    public void AfterStealVigilant() {
+        SetCommittedCrime(CRIME.THEFT, new Character[] { actor });
+        if (poiTarget is Character) {
+            Character targetCharacter = poiTarget as Character;
+            if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
+                CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
+
+                //NOTE: Adding hostile in range is done after the action is done processing fully, See OnResultReturnedToActor
+            }
         }
     }
     #endregion
