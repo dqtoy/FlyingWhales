@@ -91,8 +91,10 @@ public class Restrained : Trait {
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
                     } else {
-                        job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-                        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                        if (!IsResponsibleForTrait(characterThatWillDoJob)) {
+                            job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                            characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                        }
                         return false;
                     }
                 }
