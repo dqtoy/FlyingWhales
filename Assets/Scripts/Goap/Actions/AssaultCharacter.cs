@@ -203,9 +203,14 @@ public class AssaultCharacter : GoapAction {
         SetCannotCancelAction(true);
         //loser.Death(deathFromAction: this);
     }
-    //public void PreAssaultFailed() {
-    //    currentState.AddLogFiller(poiTarget as Character, (poiTarget as Character).name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //}
+    public void PreAssaultFailed() {
+        //**Note**: If the actor is from the same faction as the witness and the target is not considered hostile, this is an Assault crime
+        if (!actor.IsHostileWith(poiTarget as Character)
+            //Assaulting a criminal as part of apprehending him should not be considered a crime
+            && !IsFromApprehendJob()) {
+            SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
+        }
+    }
     //public void PreTargetMissing() {
     //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}
