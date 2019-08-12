@@ -3572,6 +3572,16 @@ public class Character : ILeader, IPointOfInterest {
         if (this.currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
+
+        //If someone is attacked, relationship should deteriorate
+        if (characterThatAttacked.stateComponent.currentState != null && characterThatAttacked.stateComponent.currentState is CombatState) {
+            CombatState combat = characterThatAttacked.stateComponent.currentState as CombatState;
+            if(combat.currentClosestHostile == this && !combat.allCharactersThatDegradedRel.Contains(this)) {
+                CharacterManager.Instance.RelationshipDegradation(characterThatAttacked, this);
+                combat.AddCharacterThatDegradedRel(this);
+            }
+        }
+
         //TODO: For readjustment, attack power is the old computation
         this.AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
         attackSummary += "\nDealt damage " + stateComponent.character.attackPower.ToString();
