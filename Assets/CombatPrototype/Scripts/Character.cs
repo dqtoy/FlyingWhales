@@ -704,6 +704,8 @@ public class Character : ILeader, IPointOfInterest {
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
 
     }
     public virtual void UnsubscribeSignals() {
@@ -723,6 +725,8 @@ public class Character : ILeader, IPointOfInterest {
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
     }
     #endregion
 
@@ -767,6 +771,39 @@ public class Character : ILeader, IPointOfInterest {
             SchedulingManager.Instance.ClearAllSchedulesBy(this);
             if (marker != null) {
                 DestroyMarker();
+            }
+        }
+    }
+    private void OnTraitableGainedTrait(ITraitable traitable, Trait gainedTrait) {
+        if (gainedTrait.name == "Burning") { //so that when something starts burning, and it is already in this character's vision, vision job will execute.
+            if (traitable is IPointOfInterest) {
+                IPointOfInterest poi = traitable as IPointOfInterest;
+                if (marker.inVisionPOIs.Contains(poi) || poi == this) {
+                    gainedTrait.CreateJobsOnEnterVisionBasedOnTrait(poi, this);
+                }
+            } else if (traitable is LocationGridTile) {
+                IPointOfInterest poi = (traitable as LocationGridTile).genericTileObject;
+                if (marker.inVisionPOIs.Contains(poi) || poi == this) {
+                    gainedTrait.CreateJobsOnEnterVisionBasedOnTrait(poi, this);
+                }
+            }
+        }
+    }
+    private void OnTraitableLostTrait(ITraitable traitable, Trait lostTrait, Character removedBy) {
+        if (lostTrait.name == "Burning" && removedBy != this) { 
+            //so that when something stops burning, and it is already in this character's vision and he/she is not the one that doused the flames, this character will cancel remove fire job targetting that object.
+            if (traitable is IPointOfInterest) {
+                IPointOfInterest poi = traitable as IPointOfInterest;
+                JobQueueItem item = jobQueue.GetJob(JOB_TYPE.REMOVE_FIRE, poi);
+                if (item != null) {
+                    jobQueue.CancelJob(item, traitable.name + " is no longer burning", shouldDoAfterEffect: false);
+                }
+            } else if (traitable is LocationGridTile) {
+                IPointOfInterest poi = (traitable as LocationGridTile).genericTileObject;
+                JobQueueItem item = jobQueue.GetJob(JOB_TYPE.REMOVE_FIRE, poi);
+                if (item != null) {
+                    jobQueue.CancelJob(item, traitable.ToString() +  " is no longer burning", shouldDoAfterEffect: false);
+                }
             }
         }
     }
@@ -1626,11 +1663,16 @@ public class Character : ILeader, IPointOfInterest {
                 log += ": did not create a job!";
             }
         }
-        //for (int i = 0; i < targetPOI.normalTraits.Count; i++) {
-        //    if (targetPOI.normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetPOI, this)) {
-        //        hasCreatedJob = true;
-        //    }
-        //}
+        log += "\nChecking target poi traits...";
+        for (int i = 0; i < targetPOI.normalTraits.Count; i++) {
+            log += "\n- " + targetPOI.normalTraits[i].name;
+            if (targetPOI.normalTraits[i].CreateJobsOnEnterVisionBasedOnTrait(targetPOI, this)) {
+                log += ": created a job!";
+                hasCreatedJob = true;
+            } else {
+                log += ": did not create a job!";
+            }
+        }
         Debug.Log(log);
         return hasCreatedJob;
     }
@@ -3884,9 +3926,8 @@ public class Character : ILeader, IPointOfInterest {
         }
         if (triggerDeath && previous != this._currentHP) {
             if (this._currentHP <= 0) {
-                Character character = null;
                 if (source is Character) {
-                    character = source as Character;
+                    Character character = source as Character;
                     Death("attacked", responsibleCharacter: character);
                 } else {
                     string cause = "attacked";
@@ -4164,13 +4205,6 @@ public class Character : ILeader, IPointOfInterest {
             homeArea.jobQueue.UnassignAllJobsTakenBy(this);
         }
         return true;
-    }
-    private void ScheduleChat() {
-        GoapAction chatCharacter = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, CharacterManager.Instance.GetCharacterByName("Fiona"));
-        GoapNode node = new GoapNode(null, chatCharacter.cost, chatCharacter);
-        GoapPlan plan = new GoapPlan(node, new GOAP_EFFECT_CONDITION[] { }, GOAP_CATEGORY.IDLE);
-        plan.ConstructAllNodes();
-        AddPlan(plan, true);
     }
     private bool RemoveTraitOnSchedule(Trait trait, bool triggerOnRemove = true) {
         if (isDead) {
@@ -4845,7 +4879,27 @@ public class Character : ILeader, IPointOfInterest {
         } else {
             IdlePlans();
         }
+    }
+    private bool HasMoreUrgentJobWaiting() {
+        if (_hasAlreadyAskedForPlan) {
+            return false; //this character has already asked for a plan.
+        }
+        int highestPriorityPlan = 99999; //lower is higher
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            GoapPlan currentPlan = allGoapPlans[i];
+            if (currentPlan.job != null && currentPlan.job.priority < highestPriorityPlan) {
+                highestPriorityPlan = currentPlan.job.priority;
+            }
+        }
+        int highestPriorityJob = 99999; //lower is higher
+        for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+            JobQueueItem currJob = jobQueue.jobsInQueue[i];
+            if (currJob.priority < highestPriorityJob) {
+                highestPriorityJob = currJob.priority;
+            }
+        }
         
+        return highestPriorityJob < highestPriorityPlan;
     }
     protected virtual void IdlePlans() {
         if (_hasAlreadyAskedForPlan) {
@@ -5667,12 +5721,18 @@ public class Character : ILeader, IPointOfInterest {
                 }
             }
 
-            if (plan.job != null && plan.job.jobType.IsNeedsTypeJob()) {
+            if (plan.job != null && (plan.job.jobType.IsNeedsTypeJob() || plan.job.jobType.IsEmergencyTypeJob())) {
                 //Unassign Location Job if character decides to rest, eat or have fun.
                 homeArea.jobQueue.UnassignAllJobsTakenBy(this);
             }
 
         }
+    }
+    public void AddAdvertisedAction(INTERACTION_TYPE type) {
+        poiGoapActions.Add(type);
+    }
+    public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
+        poiGoapActions.Add(type);
     }
     #endregion
 
@@ -5708,9 +5768,9 @@ public class Character : ILeader, IPointOfInterest {
         return false;
     }
     public bool ConsumeToken(SpecialToken token) {
-        if (RemoveToken(token)) {
-            token.OnConsumeToken(this);
-            return true;
+        token.OnConsumeToken(this);
+        if (token.uses <= 0) {
+            return RemoveToken(token);
         }
         return false;
     }
@@ -5731,12 +5791,14 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void DropToken(SpecialToken token, Area location, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
         if (UnobtainToken(token)) {
-            if(location.AddSpecialTokenToLocation(token, structure, gridTile)) {
-                //When items are dropped into the warehouse, make all residents aware of it.
-                if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-                    for (int i = 0; i < structure.location.areaResidents.Count; i++) {
-                        Character resident = structure.location.areaResidents[i];
-                        resident.AddAwareness(token);
+            if (token.createsObjectWhenDropped) {
+                if (location.AddSpecialTokenToLocation(token, structure, gridTile)) {
+                    //When items are dropped into the warehouse, make all residents aware of it.
+                    if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+                        for (int i = 0; i < structure.location.areaResidents.Count; i++) {
+                            Character resident = structure.location.areaResidents[i];
+                            resident.AddAwareness(token);
+                        }
                     }
                 }
             }
@@ -5756,10 +5818,14 @@ public class Character : ILeader, IPointOfInterest {
                 if (removeFactionOwner) {
                     token.SetOwner(null);
                 }
-                LocationGridTile targetTile = tile.GetNearestUnoccupiedTileFromThis();
-                location.AddSpecialTokenToLocation(token, structure, targetTile);
-                if (structure != homeStructure) {
-                    //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
+                if (token.createsObjectWhenDropped) {
+                    LocationGridTile targetTile = tile.GetNearestUnoccupiedTileFromThis();
+                    location.AddSpecialTokenToLocation(token, structure, targetTile);
+                    if (structure != homeStructure) {
+                        //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
+                        token.SetCharacterOwner(null);
+                    }
+                } else {
                     token.SetCharacterOwner(null);
                 }
             }
@@ -6306,6 +6372,7 @@ public class Character : ILeader, IPointOfInterest {
             return;
         }
         currentAlterEgo.RemoveAwareness(pointOfInterest);
+        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " removed awareness of " + pointOfInterest.name);
         //if (awareness.ContainsKey(pointOfInterest.poiType)) {
         //    List<IAwareness> awarenesses = awareness[pointOfInterest.poiType];
         //    for (int i = 0; i < awarenesses.Count; i++) {
@@ -6743,10 +6810,20 @@ public class Character : ILeader, IPointOfInterest {
                     goapThread.job.SetAssignedCharacter(null);
                     if (goapThread.job.jobQueueParent.character != null) {
                         goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
-                        log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
-                        RegisterLogAndShowNotifToThisCharacterOnly(log);
+                        if (goapThread.job.jobType == JOB_TYPE.REMOVE_FIRE) {
+                            if (goapThread.job.targetPOI.gridTileLocation != null) { //this happens because sometimes the target that was burning is now put out.
+                                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
+                                log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
+                                RegisterLogAndShowNotifToThisCharacterOnly(log);
+                            }
+                        } else {
+                            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
+                            log.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
+                            RegisterLogAndShowNotifToThisCharacterOnly(log);
+                        }
+                        
                         //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, "Cancel Job No Plan Notif! " + name, 5, null);
                         //UIManager.Instance.Pause();
                     } else {
@@ -6879,6 +6956,12 @@ public class Character : ILeader, IPointOfInterest {
                     log += "\n - Action's preconditions are all satisfied, doing action...";
                     PrintLogIfActive(log);
                     Messenger.Broadcast(Signals.CHARACTER_WILL_DO_PLAN, this, plan);
+                    if (plan.currentNode.parent != null && plan.currentNode.parent.action.CanSatisfyAllPreconditions() && plan.currentNode.parent.action.CanSatisfyRequirements()) {
+                        log += "\n - All Preconditions of next action in plan already met, skipping action: " + plan.currentNode.action.goapName;
+                        //set next node to parent node instead
+                        plan.SetNextNode();
+                        log += "\n - Next action is: " + plan.currentNode.action.goapName;
+                    }
                     plan.currentNode.action.DoAction();
                     willGoIdleState = false;
                     break;
@@ -7048,6 +7131,12 @@ public class Character : ILeader, IPointOfInterest {
                     TileObject chosenObject = objs[UnityEngine.Random.Range(0, objs.Count)];
                     GoapAction newAction = chosenObject.Advertise(action.goapType, this);
                     if (newAction != null) {
+                        if (action.parentPlan != null && action.parentPlan.job != null) { //if the character already has a job of type that targets the randomly chosen object, then remove that job since it's intended action will be done in this job.
+                            JobQueueItem existingItem = jobQueue.GetJob(action.parentPlan.job.jobType, chosenObject);
+                            if (existingItem != null) {
+                                jobQueue.RemoveJobInQueue(existingItem);
+                            }
+                        }
                         plan.InsertAction(newAction);
                     } else {
                         Debug.LogWarning(chosenObject.ToString() + " did not return an action of type " + action.goapType.ToString());

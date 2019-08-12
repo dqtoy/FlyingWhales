@@ -33,7 +33,7 @@ public class TokenManager : MonoBehaviour {
                     if (createdToken != null) {
                         chosenArea.AddSpecialTokenToLocation(createdToken);
                         //createdToken.SetOwner(chosenArea.owner); //Removed this because of redundancy, SetOwner is already being called inside AddSpecialTokenToLocation
-                        Messenger.Broadcast<SpecialToken>(Signals.SPECIAL_TOKEN_CREATED, createdToken);
+                        //Messenger.Broadcast<SpecialToken>(Signals.SPECIAL_TOKEN_CREATED, createdToken);
                     }
                 }
             }
@@ -73,6 +73,8 @@ public class TokenManager : MonoBehaviour {
                 return new AcidFlask();
             case SPECIAL_TOKEN.HEALING_POTION:
                 return new HealingPotion();
+            case SPECIAL_TOKEN.WATER_BUCKET:
+                return new WaterBucket();
             default:
                 return new SpecialToken(tokenType, appearanceWeight);
         }

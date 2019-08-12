@@ -4,10 +4,8 @@ using UnityEngine;
 
 public interface IPointOfInterest : ITraitable{
 
-    string name { get; }
     POINT_OF_INTEREST_TYPE poiType { get; }
     POI_STATE state { get; }
-    LocationGridTile gridTileLocation { get; }
     Area specificLocation { get; }
     List<INTERACTION_TYPE> poiGoapActions { get; }
     //List<Trait> normalTraits { get; }
@@ -18,6 +16,8 @@ public interface IPointOfInterest : ITraitable{
     void SetGridTileLocation(LocationGridTile tile);
     List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions);
     LocationGridTile GetNearestUnoccupiedTileFromThis();
+    void AddAdvertisedAction(INTERACTION_TYPE actionType);
+    void RemoveAdvertisedAction(INTERACTION_TYPE actionType);
 
     void SetPOIState(POI_STATE state);
     void SetIsDisabledByPlayer(bool state);

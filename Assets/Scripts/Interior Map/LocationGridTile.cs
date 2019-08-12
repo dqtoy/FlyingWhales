@@ -51,6 +51,8 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
     public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == this.structure).ToList(); } }
 
+    public TileObject genericTileObject { get; private set; }
+
     public LocationGridTile(int x, int y, Tilemap tilemap, AreaInnerTileMap parentAreaMap) {
         this.parentAreaMap = parentAreaMap;
         parentTileMap = tilemap;
@@ -70,6 +72,11 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         SetLockedState(false);
         SetReservedType(TILE_OBJECT_TYPE.NONE);
         defaultTileColor = Color.white;
+    }
+    private void CreateGenericTileObject() {
+        genericTileObject = new GenericTileObject(this.structure);
+        genericTileObject.SetGridTileLocation(this);
+        genericTileObject.DisableCollisionTrigger();
     }
     public void UpdateWorldLocation() {
         worldLocation = parentTileMap.CellToWorld(localPlace);
@@ -163,7 +170,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         this.groundType = groundType;
         switch (groundType) {
             case Ground_Type.Grass:
-            case Ground_Type.Tundra:
             case Ground_Type.Wood:
                 AddTrait("Flammable");
                 break;
@@ -198,6 +204,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         }
         this.structure = structure;
         this.structure.AddTile(this);
+        CreateGenericTileObject();
     }
     public void SetTileState(Tile_State state) {
         this.tileState = state;
@@ -627,6 +634,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         if (triggerOnAdd) {
             trait.OnAddTrait(this);
         }
+        if (trait.IsTangible()) {
+            genericTileObject?.SetGridTileLocation(this);
+        }
         return true;
     }
     public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
@@ -635,7 +645,18 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
             if (triggerOnRemove) {
                 trait.OnRemoveTrait(this, removedBy);
             }
+            if (!HasTangibleTrait()) {
+                genericTileObject?.RemoveTileObject(removedBy);
+            }
             return true;
+        }
+        return false;
+    }
+    private bool HasTangibleTrait() {
+        for (int i = 0; i < _traits.Count; i++) {
+            if (_traits[i].IsTangible()) {
+                return true;
+            }
         }
         return false;
     }

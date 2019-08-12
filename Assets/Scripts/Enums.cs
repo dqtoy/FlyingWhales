@@ -1032,6 +1032,8 @@ public enum INTERACTION_TYPE {
     KNOCKOUT_CHARACTER,
     RITUAL_KILLING,
     RESOLVE_CONFLICT,
+    DOUSE_FIRE,
+    GET_WATER,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
@@ -1158,6 +1160,7 @@ public enum SPECIAL_TOKEN {
     ACID_FLASK,
     SCROLL_OF_FRENZY,
     TOOL,
+    WATER_BUCKET,
 }
 public enum COMBAT_POSITION {
     FRONTLINE,
@@ -1196,6 +1199,7 @@ public enum STRUCTURE_TYPE {
     EXPLORE_AREA,
     CEMETERY,
     PRISON,
+    POND,
 }
 public enum RELATIONSHIP_TRAIT {
     NONE = 0,
@@ -1238,6 +1242,8 @@ public enum TILE_OBJECT_TYPE {
     HERMES_STATUE,
     ANKH_OF_ANUBIS,
     MIASMA_EMITTER,
+    WATER_WELL,
+    GENERIC,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1269,7 +1275,7 @@ public enum JOB_TYPE { NONE, UNDERMINE_ENEMY, TIREDNESS_RECOVERY_EXHAUSTED, HUNG
         , REMOVE_POISON, ASK_FOR_HELP_REMOVE_POISON_TABLE, FEED, KNOCKOUT, APPREHEND, ABDUCT, DESTROY_FRIENDSHIP
         , DESTROY_LOVE, REPORT_HOSTILE, REPORT_CRIME, BURY, DELIVER_TREASURE, CRAFT_TOOL, REPLACE_TILE_OBJECT, BREW_POTION
         , JUDGEMENT, BREAK_UP, SAVE_CHARACTER, ASK_FOR_HELP_SAVE_CHARACTER, TANTRUM, SHARE_INFORMATION, BUILD_FURNITURE, STEAL
-        , BERSERK, PATROL, EXPLORE, OBTAIN_ITEM, WATCH, DROP, DEATH, HUNT_SERIAL_KILLER_VICTIM, INSPECT, RESOLVE_CONFLICT, }
+        , BERSERK, PATROL, EXPLORE, OBTAIN_ITEM, WATCH, DROP, DEATH, HUNT_SERIAL_KILLER_VICTIM, INSPECT, RESOLVE_CONFLICT, REMOVE_FIRE}
 public enum Cardinal_Direction { North, South, East, West };
 public enum ACTION_LOCATION_TYPE {
     IN_PLACE,
@@ -1381,7 +1387,8 @@ public static class Extensions {
             case STRUCTURE_TYPE.DWELLING:
             case STRUCTURE_TYPE.EXPLORE_AREA:
             case STRUCTURE_TYPE.PRISON:
-            //case STRUCTURE_TYPE.CEMETERY:
+            case STRUCTURE_TYPE.POND:
+                //case STRUCTURE_TYPE.CEMETERY:
                 return false;
             default:
                 return true;
@@ -1394,6 +1401,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.DWELLING:
             case STRUCTURE_TYPE.CEMETERY:
             case STRUCTURE_TYPE.PRISON:
+            case STRUCTURE_TYPE.POND:
                 return true;
             default:
                 return false;
@@ -1464,6 +1472,16 @@ public static class Extensions {
             case INTERACTION_TYPE.DRINK:
             case INTERACTION_TYPE.EAT_DWELLING_TABLE:
             case INTERACTION_TYPE.SIT:
+            case INTERACTION_TYPE.DOUSE_FIRE:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsEmergencyAction(this INTERACTION_TYPE type) {
+        switch (type) {
+            case INTERACTION_TYPE.DOUSE_FIRE:
+            case INTERACTION_TYPE.GET_WATER:
                 return true;
             default:
                 return false;
@@ -1546,6 +1564,14 @@ public static class Extensions {
             case JOB_TYPE.TIREDNESS_RECOVERY:
             case JOB_TYPE.HUNGER_RECOVERY:
             case JOB_TYPE.HAPPINESS_RECOVERY:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static bool IsEmergencyTypeJob(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.REMOVE_FIRE:
                 return true;
             default:
                 return false;

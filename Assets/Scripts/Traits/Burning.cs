@@ -27,17 +27,21 @@ public class Burning : Trait {
         if (addedTo is LocationGridTile) {
             LocationGridTile tile = addedTo as LocationGridTile;
             burningEffect = GameManager.Instance.CreateBurningEffectAt(tile);
+            tile.genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
         } else if (addedTo is TileObject) {
             TileObject obj = addedTo as TileObject;
             burningEffect = GameManager.Instance.CreateBurningEffectAt(obj);
             obj.SetPOIState(POI_STATE.INACTIVE);
+            obj.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
         } else if (addedTo is SpecialToken) {
             SpecialToken token = addedTo as SpecialToken;
             burningEffect = GameManager.Instance.CreateBurningEffectAt(token);
             token.SetPOIState(POI_STATE.INACTIVE);
+            token.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
         } else if (addedTo is Character) {
             Character character = addedTo as Character;
             burningEffect = GameManager.Instance.CreateBurningEffectAt(character);
+            character.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
         }
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
     }
@@ -45,8 +49,85 @@ public class Burning : Trait {
         base.OnRemoveTrait(removedFrom, removedBy);
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
         ObjectPoolManager.Instance.DestroyObject(burningEffect);
+        if (removedFrom is IPointOfInterest) {
+            if (removedFrom is Character) {
+                (removedFrom as Character).CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_FIRE);
+            }
+            (removedFrom as IPointOfInterest).RemoveAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
+        } else if (removedFrom is LocationGridTile) {
+            (removedFrom as LocationGridTile).genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
+        }
+        
+    }
+    public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+        if (traitOwner is Character) {
+            Character targetCharacter = traitOwner as Character;
+            //When a character sees someone burning, it must create a Remove Fire job targetting that character (if they are not enemies).
+            if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_FIRE) 
+                && (targetCharacter == characterThatWillDoJob || !characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY))) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_FIRE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", targetPOI = traitOwner });
+                if (CanTakeRemoveFireJob(characterThatWillDoJob, targetCharacter)) {
+                    //job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    if (characterThatWillDoJob.allGoapPlans.Count == 0 || characterThatWillDoJob.allGoapPlans.First().job == null || characterThatWillDoJob.allGoapPlans.First().job.priority > job.priority) {
+                        characterThatWillDoJob.jobQueue.ProcessFirstJobInQueue(characterThatWillDoJob);
+                    }
+                    return true;
+                } 
+                //else {
+                //    job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
+                //    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                //    return false;
+                //}
+            }
+        } else {
+            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_FIRE, traitOwner)) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_FIRE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", targetPOI = traitOwner });
+                if (CanTakeRemoveFireJob(characterThatWillDoJob, traitOwner)) {
+                    //job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    if (characterThatWillDoJob.allGoapPlans.Count == 0 || characterThatWillDoJob.allGoapPlans.First().job == null || characterThatWillDoJob.allGoapPlans.First().job.priority > job.priority) {
+                        characterThatWillDoJob.jobQueue.ProcessFirstJobInQueue(characterThatWillDoJob);
+                    }
+                    return true;
+                }
+            }
+            
+            //else {
+            //    job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
+            //    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+            //    return false;
+            //}
+        }
+        return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+    }
+    public override bool IsTangible() {
+        return true;
     }
     #endregion
+
+    private bool CanTakeRemoveFireJob(Character character, JobQueueItem item) {
+        if (item is GoapPlanJob) {
+            GoapPlanJob job = item as GoapPlanJob;
+            return CanTakeRemoveFireJob(character, job.targetPOI);
+        }
+        return false;
+    }
+    private bool CanTakeRemoveFireJob(Character character, IPointOfInterest target) {
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            if (character == target) {
+                //the burning character is himself
+                return true;
+            } else {
+                //if burning character is other character, make sure that the character that will do the job is not burning.
+                return character.GetNormalTrait("Burning") == null && !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
+            }
+        } else {
+            //make sure that the character that will do the job is not burning.
+            return character.GetNormalTrait("Burning") == null;
+        }
+    }
 
     private void PerTick() {
         //Burning characters reduce their current hp by 2% of maxhp every tick. 
@@ -55,7 +136,7 @@ public class Burning : Trait {
         if (owner is Character) {
             Character character = owner as Character;
             if (!character.isDead) {
-                character.AdjustHP(-(int)(character.maxHP * 0.02f), true);
+                character.AdjustHP(-(int)(character.maxHP * 0.02f), true, this);
             }
             if (Random.Range(0, 100) < 6) {
                 owner.RemoveTrait(this);
@@ -86,6 +167,5 @@ public class Burning : Trait {
                 chosen.AddTrait("Burning");
             }
         }
-       
     }
 }

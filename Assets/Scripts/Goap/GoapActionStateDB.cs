@@ -402,6 +402,14 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Resolve Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
+        {INTERACTION_TYPE.DOUSE_FIRE, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Douse Fire Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
+        {INTERACTION_TYPE.GET_WATER, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Obtain Water Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
     };
 }
 

@@ -868,7 +868,7 @@ public class Area {
         List<LocationStructure> choices = new List<LocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in structures) {
             if (kvp.Key != STRUCTURE_TYPE.DWELLING && kvp.Key != STRUCTURE_TYPE.EXIT && kvp.Key != STRUCTURE_TYPE.CEMETERY
-                && kvp.Key != STRUCTURE_TYPE.INN && kvp.Key != STRUCTURE_TYPE.WORK_AREA && kvp.Key != STRUCTURE_TYPE.PRISON) {
+                && kvp.Key != STRUCTURE_TYPE.INN && kvp.Key != STRUCTURE_TYPE.WORK_AREA && kvp.Key != STRUCTURE_TYPE.PRISON && kvp.Key != STRUCTURE_TYPE.POND) {
                 choices.AddRange(kvp.Value);
             }
         }
@@ -923,6 +923,7 @@ public class Area {
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.CEMETERY, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WORK_AREA, true);
         LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.WILDERNESS, false);
+        LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.POND, true);
         for (int i = 0; i < citizenCount; i++) {
             LandmarkManager.Instance.CreateNewStructureAt(this, STRUCTURE_TYPE.DWELLING, true);
         }

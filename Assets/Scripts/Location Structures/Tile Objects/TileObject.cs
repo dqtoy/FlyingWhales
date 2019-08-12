@@ -12,7 +12,7 @@ public class TileObject : IPointOfInterest {
     public List<INTERACTION_TYPE> poiGoapActions { get; protected set; }
     public Area specificLocation { get { return gridTileLocation.structure.location; } }
     protected List<Trait> _traits;
-    public List<Trait> normalTraits {
+    public virtual List<Trait> normalTraits {
         get { return _traits; }
     }
     public List<Character> awareCharacters { get; private set; } //characters that are aware of this object (Used for checking if a ghost trigger should be destroyed)
@@ -32,12 +32,12 @@ public class TileObject : IPointOfInterest {
     //tile slots
     public TileObjectSlotItem[] slots { get; protected set; } //for users
     private GameObject slotsParent;
-    private bool hasCreatedSlots;
+    protected bool hasCreatedSlots;
     private UnityEngine.Tilemaps.TileBase usedAsset;
 
     protected LocationGridTile tile;
     private POI_STATE _state;
-    private POICollisionTrigger _collisionTrigger;
+    protected POICollisionTrigger _collisionTrigger;
     protected LocationGridTile previousTile;
     #region getters/setters
     public POINT_OF_INTEREST_TYPE poiType {
@@ -118,7 +118,7 @@ public class TileObject : IPointOfInterest {
             SetPOIState(POI_STATE.ACTIVE);
         }
     }
-    public void RemoveTileObject(Character removedBy) {
+    public virtual void RemoveTileObject(Character removedBy) {
         LocationGridTile previousTile = this.tile;
         this.tile = null;
         DisableCollisionTrigger();
@@ -140,7 +140,7 @@ public class TileObject : IPointOfInterest {
         return null;
     }
     public virtual List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0 && gridTileLocation != null) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
@@ -210,6 +210,15 @@ public class TileObject : IPointOfInterest {
             }
         }
     }
+    public void AddAdvertisedAction(INTERACTION_TYPE type) {
+        if (poiGoapActions == null) {
+            poiGoapActions = new List<INTERACTION_TYPE>();
+        }
+        poiGoapActions.Add(type);
+    }
+    public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
+        poiGoapActions.Add(type);
+    }
     #endregion
 
     #region Traits
@@ -220,7 +229,7 @@ public class TileObject : IPointOfInterest {
             return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
         }
     }
-    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
+    public virtual bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
         if (trait.IsUnique()) {
             Trait oldTrait = GetNormalTrait(trait.name);
             if (oldTrait != null) {
@@ -248,7 +257,7 @@ public class TileObject : IPointOfInterest {
         }
         return true;
     }
-    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
+    public virtual bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
         if (_traits.Remove(trait)) {
             trait.RemoveExpiryTicket(this);
             if (triggerOnRemove) {
@@ -270,7 +279,7 @@ public class TileObject : IPointOfInterest {
             RemoveTrait(traits[i]);
         }
     }
-    public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
+    public virtual List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
         List<Trait> removedTraits = new List<Trait>();
         for (int i = 0; i < _traits.Count; i++) {
             if (_traits[i].type == traitType) {
@@ -282,8 +291,8 @@ public class TileObject : IPointOfInterest {
         return removedTraits;
     }
     public Trait GetNormalTrait(params string[] traitNames) {
-        for (int i = 0; i < _traits.Count; i++) {
-            Trait trait = _traits[i];
+        for (int i = 0; i < normalTraits.Count; i++) {
+            Trait trait = normalTraits[i];
 
             for (int j = 0; j < traitNames.Length; j++) {
                 if (trait.name == traitNames[j] && !trait.isDisabled) {
@@ -329,8 +338,11 @@ public class TileObject : IPointOfInterest {
         _collisionTrigger.gameObject.SetActive(true);
         _collisionTrigger.SetLocation(tile);
     }
-    public void DisableCollisionTrigger() {
+    public virtual void DisableCollisionTrigger() {
         _collisionTrigger.gameObject.SetActive(false);
+    }
+    public virtual void EnableCollisionTrigger() {
+        _collisionTrigger.gameObject.SetActive(true);
     }
     public void SetCollisionTrigger(POICollisionTrigger trigger) {
         _collisionTrigger = trigger;
@@ -447,7 +459,7 @@ public class TileObject : IPointOfInterest {
     #endregion
 
     #region Tile Object Slots
-    private void OnPlaceObjectAtTile(LocationGridTile tile) {
+    protected void OnPlaceObjectAtTile(LocationGridTile tile) {
         if (hasCreatedSlots) {
             RepositionTileSlots(tile);
         } else {
@@ -479,7 +491,7 @@ public class TileObject : IPointOfInterest {
             slotsParent.transform.localPosition = tile.centeredLocalLocation;
         }
     }
-    private void DestroyTileSlots() {
+    protected void DestroyTileSlots() {
         if (slots == null) {
             return;
         }

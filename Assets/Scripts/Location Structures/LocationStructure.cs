@@ -309,6 +309,7 @@ public class LocationStructure {
             case STRUCTURE_TYPE.DUNGEON:
             case STRUCTURE_TYPE.WORK_AREA:
             case STRUCTURE_TYPE.EXPLORE_AREA:
+            case STRUCTURE_TYPE.POND:
                 return location.name;
             default:
                 return ToString();
@@ -403,6 +404,10 @@ public class LocationStructure {
                         AddPOI(new Guitar(this), currTile, false);
                         currTile.SetReservedType(TILE_OBJECT_TYPE.GUITAR);
                         break;
+                    case "WaterWell":
+                        AddPOI(new WaterWell(this), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.WATER_WELL);
+                        break;
                     default:
                         break;
                 }
@@ -457,6 +462,9 @@ public class LocationStructure {
             case TILE_OBJECT_TYPE.MUSHROOM:
                 AddPOI(new Mushroom(this), tile, placeAsset);
                 break;
+            case TILE_OBJECT_TYPE.WATER_WELL:
+                AddPOI(new WaterWell(this), tile, placeAsset);
+                break;
             default:
                 break;
         }
@@ -480,6 +488,12 @@ public class LocationStructure {
                 if (obj.IsAvailable() && obj.AdvertisesAll(types)) {
                     objs.Add(obj);
                 }
+            }
+        }
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            if (currTile.genericTileObject.IsAvailable() && currTile.genericTileObject.AdvertisesAll(types)) {
+                objs.Add(currTile.genericTileObject);
             }
         }
         return objs;

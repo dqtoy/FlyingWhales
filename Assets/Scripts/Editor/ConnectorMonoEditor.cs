@@ -13,13 +13,15 @@ public class ConnectorMonoEditor : Editor {
         { STRUCTURE_TYPE.WAREHOUSE, new Vector2(7, 6) },
         { STRUCTURE_TYPE.PRISON, new Vector2(5, 6) },
         { STRUCTURE_TYPE.CEMETERY, new Vector2(11, 7) },
+        { STRUCTURE_TYPE.POND, new Vector2(4, 3) },
     };
     private static Dictionary<STRUCTURE_TYPE, Color> structureColor = new Dictionary<STRUCTURE_TYPE, Color>() {
         { STRUCTURE_TYPE.DWELLING, Color.white },
-        { STRUCTURE_TYPE.INN, Color.blue },
+        { STRUCTURE_TYPE.INN, Color.green },
         { STRUCTURE_TYPE.WAREHOUSE, Color.red },
         { STRUCTURE_TYPE.PRISON, Color.cyan },
         { STRUCTURE_TYPE.CEMETERY, Color.black },
+        { STRUCTURE_TYPE.POND, Color.blue },
     };
 
     [DrawGizmo(GizmoType.Selected | GizmoType.Active | GizmoType.NonSelected)]

@@ -861,7 +861,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                             tile.SetTileType(LocationGridTile.Tile_Type.Structure);
                         }
                     } else {
-                        if (tb.name.Contains("floor") || tb.name.Contains("Floor")) {
+                        if (tb.name.Contains("floor") || tb.name.Contains("Floor") || tb.name.Contains("Pond")) {
                             tile.SetStructure(structure);
                             tile.SetTileType(LocationGridTile.Tile_Type.Structure);
                         }
