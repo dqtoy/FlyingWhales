@@ -1692,6 +1692,9 @@ public class Character : ILeader, IPointOfInterest {
         if(jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, targetCharacter)) {
             return false;
         }
+        if(GetNormalTrait("Diplomatic") != null) {
+            return false;
+        }
         if(status == SHARE_INTEL_STATUS.WITNESSED) {
             //When creating undermine job and the creator of the job witnessed the event that caused him/her to undermine, mutate undermine job to knockout job
             //This means that all undermine jobs that are caused by witnessing an event will become knockout jobs
@@ -2824,6 +2827,23 @@ public class Character : ILeader, IPointOfInterest {
         }
         return null;
     }
+    public List<RelationshipTrait> GetAllRelationshipsOfType(Character except, params RELATIONSHIP_TRAIT[] type) {
+        List<RelationshipTrait> relationshipTraits = new List<RelationshipTrait>();
+        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
+            if(except != null && kvp.Key.owner == except) {
+                continue;
+            }
+            for (int i = 0; i < type.Length; i++) {
+                if (!kvp.Value.isDisabled) {
+                    RelationshipTrait relTrait = kvp.Value.GetRelationshipTrait(type[i]);
+                    if (relTrait != null) {
+                        relationshipTraits.Add(relTrait);
+                    }
+                }
+            }
+        }
+        return relationshipTraits;
+    }
     public List<Character> GetCharactersWithRelationship(params RELATIONSHIP_TRAIT[] type) {
         List<Character> characters = new List<Character>();
         foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
@@ -3594,6 +3614,16 @@ public class Character : ILeader, IPointOfInterest {
         if (this.currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
+
+        //If someone is attacked, relationship should deteriorate
+        if (characterThatAttacked.stateComponent.currentState != null && characterThatAttacked.stateComponent.currentState is CombatState) {
+            CombatState combat = characterThatAttacked.stateComponent.currentState as CombatState;
+            if(combat.currentClosestHostile == this && !combat.allCharactersThatDegradedRel.Contains(this)) {
+                CharacterManager.Instance.RelationshipDegradation(characterThatAttacked, this);
+                combat.AddCharacterThatDegradedRel(this);
+            }
+        }
+
         //TODO: For readjustment, attack power is the old computation
         this.AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
         attackSummary += "\nDealt damage " + stateComponent.character.attackPower.ToString();
@@ -4083,6 +4113,9 @@ public class Character : ILeader, IPointOfInterest {
         }
         if (UnityEngine.Random.Range(0, 100) < 30) {
             AddTrait("Doctor");
+        }
+        if (UnityEngine.Random.Range(0, 100) < 30) {
+            AddTrait("Diplomatic");
         }
         AddTrait("Flammable");
     }
@@ -6606,6 +6639,7 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.SEPTIC_SHOCK);
         poiGoapActions.Add(INTERACTION_TYPE.CARRY);
         poiGoapActions.Add(INTERACTION_TYPE.DROP);
+        poiGoapActions.Add(INTERACTION_TYPE.RESOLVE_CONFLICT);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

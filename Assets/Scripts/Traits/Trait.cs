@@ -144,10 +144,7 @@ public class Trait {
     #region Jobs
     protected bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter, JobQueueItem job) {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
-            if (responsibleCharacter != null && responsibleCharacter == character) {
-                return false;
-            }
-            if (responsibleCharacters != null && responsibleCharacters.Contains(character)) {
+            if (IsResponsibleForTrait(character)) {
                 return false;
             }
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
@@ -159,10 +156,7 @@ public class Trait {
     }
     protected bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
-            if (responsibleCharacter != null && responsibleCharacter == character) {
-                return false;
-            }
-            if (responsibleCharacters != null && responsibleCharacters.Contains(character)) {
+            if (IsResponsibleForTrait(character)) {
                 return false;
             }
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {

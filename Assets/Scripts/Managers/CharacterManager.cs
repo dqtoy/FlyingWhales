@@ -553,12 +553,18 @@ public class CharacterManager : MonoBehaviour {
     /// <returns>The created relationship data.</returns>
     public CharacterRelationshipData CreateNewOneWayRelationship(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
         if (!currCharacter.HasRelationshipOfTypeWith(targetCharacter, rel)) {
+            if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null) {
+                return currCharacter.GetCharacterRelationshipData(targetCharacter);
+            }
             currCharacter.AddRelationship(targetCharacter, CreateRelationshipTrait(rel, targetCharacter));
         }
         return currCharacter.GetCharacterRelationshipData(targetCharacter);
     }
     public CharacterRelationshipData CreateNewOneWayRelationship(Character currCharacter, AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
         if (!currCharacter.HasRelationshipOfTypeWith(alterEgo, rel)) {
+            if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null) {
+                return currCharacter.GetCharacterRelationshipData(alterEgo.owner);
+            }
             currCharacter.AddRelationship(alterEgo, CreateRelationshipTrait(rel, alterEgo.owner));
         }
         return currCharacter.GetCharacterRelationshipData(alterEgo);
@@ -566,8 +572,12 @@ public class CharacterManager : MonoBehaviour {
     public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
 
-        currCharacter.AddRelationship(targetCharacter, CreateRelationshipTrait(rel, targetCharacter));
-        targetCharacter.AddRelationship(currCharacter, CreateRelationshipTrait(pair, currCharacter));
+        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null)) {
+            currCharacter.AddRelationship(targetCharacter, CreateRelationshipTrait(rel, targetCharacter));
+        }
+        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && targetCharacter.GetNormalTrait("Diplomatic") != null)) {
+            targetCharacter.AddRelationship(currCharacter, CreateRelationshipTrait(pair, currCharacter));
+        }
 
         if (currCharacter.GetRelationshipTraitWith(targetCharacter, rel) == null
             || targetCharacter.GetRelationshipTraitWith(currCharacter, pair) == null) {
@@ -579,8 +589,13 @@ public class CharacterManager : MonoBehaviour {
     public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
 
-        currCharacter.AddRelationship(alterEgo, CreateRelationshipTrait(rel, alterEgo.owner));
-        alterEgo.AddRelationship(currCharacter.currentAlterEgo, CreateRelationshipTrait(pair, currCharacter));
+        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null)) {
+            currCharacter.AddRelationship(alterEgo, CreateRelationshipTrait(rel, alterEgo.owner));
+        }
+
+        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && alterEgo.owner.GetNormalTrait("Diplomatic") != null)) {
+            alterEgo.AddRelationship(currCharacter.currentAlterEgo, CreateRelationshipTrait(pair, currCharacter));
+        }
 
         if (currCharacter.GetRelationshipTraitWith(alterEgo, rel) == null
             || alterEgo.GetRelationshipTraitWith(currCharacter.currentAlterEgo, pair) == null) {
@@ -1129,6 +1144,10 @@ public class CharacterManager : MonoBehaviour {
         }
         if (actorAlterEgo.owner == target) {
             Debug.LogWarning("Relationship degredation was called and provided same characters " + target.name);
+            return hasDegraded;
+        }
+        if (target.GetNormalTrait("Diplomatic") != null) {
+            Debug.LogWarning("Relationship degredation was called but " + target.name + " is Diplomatic");
             return hasDegraded;
         }
         string summary = "Relationship degradation between " + actorAlterEgo.owner.name + " and " + target.name;

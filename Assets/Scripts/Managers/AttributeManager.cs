@@ -93,6 +93,7 @@ public class AttributeManager : MonoBehaviour {
             new Vigilant(),
             new Curious(),
             new Doctor(),
+            new Diplomatic(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

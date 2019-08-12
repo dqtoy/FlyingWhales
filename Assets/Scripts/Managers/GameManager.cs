@@ -252,6 +252,13 @@ public class GameManager : MonoBehaviour {
             Messenger.Broadcast(Signals.PAUSED, isPaused);
         }
 	}
+    public void SetDelayedPausedState(bool state) {
+        StartCoroutine(DelayedPausedState(state));
+    }
+    private IEnumerator DelayedPausedState(bool state) {
+        yield return null;
+        SetPausedState(state);
+    }
     /*
      * Set day progression speed to 1x, 2x of 4x
      * */

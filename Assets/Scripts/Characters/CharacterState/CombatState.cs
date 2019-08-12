@@ -12,6 +12,7 @@ public class CombatState : CharacterState {
     private System.Action onEndStateAction; // What should happen when this state ends?
     public GoapAction actionThatTriggeredThisState { get; private set; }
     public Character forcedTarget { get; private set; }
+    public List<Character> allCharactersThatDegradedRel { get; private set; }
 
     public CombatState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Combat State";
@@ -22,6 +23,7 @@ public class CombatState : CharacterState {
         _currentAttackTimer = 0;
         //Default start of combat state is attacking
         isAttacking = true;
+        allCharactersThatDegradedRel = new List<Character>();
     }
 
     #region Overrides
@@ -442,6 +444,9 @@ public class CombatState : CharacterState {
         if (forcedTarget == null) {
             stateComponent.character.SetIsFollowingPlayerInstruction(false); //the force target has been removed.
         }
+    }
+    public void AddCharacterThatDegradedRel(Character character) {
+        allCharactersThatDegradedRel.Add(character);
     }
     #endregion
 }

@@ -159,7 +159,7 @@ public class CharacterMarker : PooledObject {
         }
 #if UNITY_EDITOR
         else if (ped.button == PointerEventData.InputButton.Right) {
-            //UIManager.Instance.poiTestingUI.ShowUI(character);
+            UIManager.Instance.poiTestingUI.ShowUI(character);
         }
 #endif
     }

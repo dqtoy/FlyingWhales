@@ -131,6 +131,7 @@ public class Lure : PlayerJobAction {
         GameManager.Instance.SetPausedState(isGamePausedOnLure);
     }
     private void PickTileToGoTo() {
+        GameManager.Instance.SetPausedState(false);
         LocationGridTile hoveredTile = InteriorMapManager.Instance.currentlyHoveredTile;
         if (hoveredTile != null && tileChoices.Contains(hoveredTile)) {
             for (int i = 0; i < targetCharacters.Count; i++) {
@@ -160,12 +161,14 @@ public class Lure : PlayerJobAction {
                 }
                 character.marker.UpdateActionIcon();
                 character.marker.GoTo(hoveredTile);
+
+                UIManager.Instance.ShowCharacterInfo(character);
             }
         }
         CursorManager.Instance.ClearLeftClickActions();
         CursorManager.Instance.ClearRightClickActions();
         InteriorMapManager.Instance.UnhighlightTiles();
-        GameManager.Instance.SetPausedState(isGamePausedOnLure);
+        GameManager.Instance.SetDelayedPausedState(isGamePausedOnLure);
     }
     #endregion
 }

@@ -63,8 +63,10 @@ public class Sick : Trait {
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;
                 } else {
-                    job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveIllnessesJob);
-                    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                    if (!IsResponsibleForTrait(characterThatWillDoJob)) {
+                        job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveIllnessesJob);
+                        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                    }
                     return false;
                 }
             }
