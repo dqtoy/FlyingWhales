@@ -300,6 +300,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RITUAL_KILLING:
                 goapAction = new RitualKilling(actor, target);
                 break;
+            case INTERACTION_TYPE.RESOLVE_CONFLICT:
+                goapAction = new ResolveConflict(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();

@@ -41,9 +41,6 @@ public class SerialKiller : Trait {
         }
         base.OnRemoveTrait(sourceCharacter, removedBy);
     }
-    public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-        return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
-    }
     public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
         base.OnSeePOI(targetPOI, character);
         if(targetPOI is Character) {

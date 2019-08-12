@@ -1650,6 +1650,9 @@ public class Character : ILeader, IPointOfInterest {
         if(jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, targetCharacter)) {
             return false;
         }
+        if(GetNormalTrait("Diplomatic") != null) {
+            return false;
+        }
         if(status == SHARE_INTEL_STATUS.WITNESSED) {
             //When creating undermine job and the creator of the job witnessed the event that caused him/her to undermine, mutate undermine job to knockout job
             //This means that all undermine jobs that are caused by witnessing an event will become knockout jobs
@@ -2781,6 +2784,23 @@ public class Character : ILeader, IPointOfInterest {
             return new List<RELATIONSHIP_TRAIT>(relationships[alterEgo].rels.Where(x => !x.isDisabled).Select(x => x.relType));
         }
         return null;
+    }
+    public List<RelationshipTrait> GetAllRelationshipsOfType(Character except, params RELATIONSHIP_TRAIT[] type) {
+        List<RelationshipTrait> relationshipTraits = new List<RelationshipTrait>();
+        foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
+            if(except != null && kvp.Key.owner == except) {
+                continue;
+            }
+            for (int i = 0; i < type.Length; i++) {
+                if (!kvp.Value.isDisabled) {
+                    RelationshipTrait relTrait = kvp.Value.GetRelationshipTrait(type[i]);
+                    if (relTrait != null) {
+                        relationshipTraits.Add(relTrait);
+                    }
+                }
+            }
+        }
+        return relationshipTraits;
     }
     public List<Character> GetCharactersWithRelationship(params RELATIONSHIP_TRAIT[] type) {
         List<Character> characters = new List<Character>();
@@ -4042,6 +4062,9 @@ public class Character : ILeader, IPointOfInterest {
         }
         if (UnityEngine.Random.Range(0, 100) < 30) {
             AddTrait("Doctor");
+        }
+        if (UnityEngine.Random.Range(0, 100) < 30) {
+            AddTrait("Diplomatic");
         }
         AddTrait("Flammable");
     }
@@ -6539,6 +6562,7 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.SEPTIC_SHOCK);
         poiGoapActions.Add(INTERACTION_TYPE.CARRY);
         poiGoapActions.Add(INTERACTION_TYPE.DROP);
+        poiGoapActions.Add(INTERACTION_TYPE.RESOLVE_CONFLICT);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

@@ -398,6 +398,10 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Killing Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
+        {INTERACTION_TYPE.RESOLVE_CONFLICT, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Resolve Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
     };
 }
 
