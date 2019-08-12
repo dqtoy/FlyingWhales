@@ -196,6 +196,9 @@ public class GoapThread : Multithread {
                         if (actions.Key == INTERACTION_TYPE.CHOP_WOOD) {
                             //allow all chop wood actions to be advertised
                             usableActions.AddRange(actions.Value);
+                        } else if (actions.Key == INTERACTION_TYPE.DOUSE_FIRE) {
+                            //allow all douse fire actions to be advertised
+                            usableActions.AddRange(actions.Value);
                         } else if (actions.Value.Count > 1) { //if there are multiple advertised actions of a type in the given structure, pick a random one
                             GoapAction chosenAction = actions.Value[Utilities.rng.Next(0, actions.Value.Count)];
                             usableActions.Add(chosenAction);

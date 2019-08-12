@@ -66,7 +66,7 @@ public class Zombie_Virus : Trait {
             GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ZOMBIE_DEATH, owner, owner);
 
             GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-            GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+            GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.ZOMBIE_DEATH);
             job.SetAssignedPlan(goapPlan);
             goapPlan.ConstructAllNodes();
@@ -118,7 +118,7 @@ public class Zombie_Virus : Trait {
             //a character was hit by the owner of this trait, check if the character that was hit becomes infected.
             int roll = Random.Range(0, 100);
             if (roll < 15) { //15
-                if (hitCharacter.AddTrait("Zombie_Virus")) {
+                if (hitCharacter.AddTrait("Zombie_Virus", characterResponsible: hitBy)) {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_zombie");
                     log.AddToFillers(hitCharacter, hitCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(hitBy, hitBy.name, LOG_IDENTIFIER.TARGET_CHARACTER);

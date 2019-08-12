@@ -47,6 +47,7 @@ public class Trait {
 #if !WORLD_CREATION_TOOL
         SetDateEstablished(GameManager.Instance.Today());
 #endif
+        Messenger.Broadcast(Signals.TRAITABLE_GAINED_TRAIT, addedTo, this);
     }
     public virtual void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
         if (onRemoveAction != null) {
@@ -58,6 +59,7 @@ public class Trait {
                 character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
             }
         }
+        Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, removedFrom, this, removedBy);
     }
     public virtual string GetToolTipText() { return string.Empty; }
     public virtual bool IsUnique() { return true; }
@@ -73,6 +75,7 @@ public class Trait {
     public virtual void OnSeePOI(IPointOfInterest targetPOI, Character character) { }
     protected virtual void OnChangeLevel() { }
     public virtual void OnOwnerInitiallyPlaced(Character owner) { }
+    public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait
     #endregion
 
     public void SetOnRemoveAction(System.Action onRemoveAction) {

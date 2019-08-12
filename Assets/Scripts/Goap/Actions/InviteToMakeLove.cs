@@ -25,7 +25,7 @@ public class InviteToMakeLove : GoapAction {
             if (actor is SeducerSummon) {
                 SeducerSummon seducer = actor as SeducerSummon;
                 if (UnityEngine.Random.Range(0, 100) < seducer.seduceChance && !targetCharacter.HasOtherCharacterInParty()
-                     && targetCharacter.stateComponent.currentState == null) {
+                     && targetCharacter.stateComponent.currentState == null && targetCharacter.IsAvailable()) {
                     SetState("Invite Success");
                 } else {
                     SetState("Invite Fail");
@@ -33,7 +33,7 @@ public class InviteToMakeLove : GoapAction {
             } else {
                 if (!targetCharacter.isStarving && !targetCharacter.isExhausted
                 && targetCharacter.GetNormalTrait("Annoyed") == null && !targetCharacter.HasOtherCharacterInParty()
-                && targetCharacter.stateComponent.currentState == null) {
+                && targetCharacter.stateComponent.currentState == null && targetCharacter.IsAvailable()) {
                     SetState("Invite Success");
                 } else {
                     SetState("Invite Fail");

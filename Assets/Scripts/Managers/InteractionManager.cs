@@ -300,6 +300,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.RITUAL_KILLING:
                 goapAction = new RitualKilling(actor, target);
                 break;
+            case INTERACTION_TYPE.DOUSE_FIRE:
+                goapAction = new DouseFire(actor, target);
+                break;
+            case INTERACTION_TYPE.GET_WATER:
+                goapAction = new GetWater(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
@@ -462,6 +468,7 @@ public class InteractionManager : MonoBehaviour {
     public int GetInitialPriority(JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
+            case JOB_TYPE.REMOVE_FIRE:
             case JOB_TYPE.DEATH:
             case JOB_TYPE.BERSERK:
             case JOB_TYPE.TANTRUM:

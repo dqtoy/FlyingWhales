@@ -20,6 +20,8 @@ public class SpecialToken : IPointOfInterest {
     public bool isDisabledByPlayer { get; protected set; }
     public POI_STATE state { get; protected set; }
     public POICollisionTrigger collisionTrigger { get; protected set; }
+    public int uses { get; protected set; } //how many times can this item be used?
+    public bool createsObjectWhenDropped { get; protected set; } //does this item create an object on the tile map when it is dropped?
 
     protected List<Trait> _traits;
     private LocationGridTile tile;
@@ -64,17 +66,17 @@ public class SpecialToken : IPointOfInterest {
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_TYPE.DROP_ITEM};
         _traits = new List<Trait>();
         allJobsTargettingThis = new List<JobQueueItem>();
+        uses = 1;
+        createsObjectWhenDropped = true;
         InitializeCollisionTrigger();
     }
 
     #region Virtuals
-    public virtual Character GetTargetCharacterFor(Character sourceCharacter) {
-        return null;
-    }
-    public virtual bool CanBeUsedForTarget(Character sourceCharacter, Character targetCharacter) { return false; }
     public virtual void OnObtainToken(Character character) { }
     public virtual void OnUnobtainToken(Character character) { }
-    public virtual void OnConsumeToken(Character character) { }
+    public virtual void OnConsumeToken(Character character) {
+        uses -= 1;
+    }
     #endregion
 
     public void SetOwner(Faction owner) {
@@ -153,6 +155,12 @@ public class SpecialToken : IPointOfInterest {
     }
     public void SetIsDisabledByPlayer(bool state) {
         isDisabledByPlayer = state;
+    }
+    public void AddAdvertisedAction(INTERACTION_TYPE type) {
+        poiGoapActions.Add(type);
+    }
+    public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
+        poiGoapActions.Add(type);
     }
     #endregion
 

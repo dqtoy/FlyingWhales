@@ -102,7 +102,7 @@ public class JudgeCharacter : GoapAction {
         target.AddOnLeaveAreaAction(() => target.AdjustIgnoreHostilities(-1));
         target.AddOnLeaveAreaAction(() => target.ClearAllAwarenessOfType(POINT_OF_INTEREST_TYPE.ITEM, POINT_OF_INTEREST_TYPE.TILE_OBJECT));
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
         goapPlan.ConstructAllNodes();
         target.AddPlan(goapPlan, true);
     }

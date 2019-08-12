@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -73985,6 +73985,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ebb862fbf056c2649971676936e867eb, type: 2}
   - {fileID: 11400000, guid: d855b9adcb25c324a8c20945831a0cc9, type: 2}
   - {fileID: 11400000, guid: 801dc14b009276d4cb7b1cc2212bceee, type: 2}
+  - {fileID: 11400000, guid: 0580722c747d85b419fd83ad076ca427, type: 2}
+  - {fileID: 11400000, guid: b308642aab2548f4c8cd8347b5b8cbeb, type: 2}
+  - {fileID: 11400000, guid: 2c86b7460490b544c9afc02a1a07f6f7, type: 2}
 --- !u!114 &1536722385
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81855,7 +81858,7 @@ MonoBehaviour:
     - Moringa
     - Lamina
   itemSpritesDictionary:
-    m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f000000100000001100000012000000
+    m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f00000010000000110000001200000013000000
     m_values:
     - {fileID: 21300000, guid: 109a1b6288dbc5942848a1c4ffa87a64, type: 3}
     - {fileID: 21300000, guid: d426d16409b59454aa161e09a6069d8a, type: 3}
@@ -81875,6 +81878,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: d426d16409b59454aa161e09a6069d8a, type: 3}
     - {fileID: 21300000, guid: 109a1b6288dbc5942848a1c4ffa87a64, type: 3}
     - {fileID: 21300000, guid: d426d16409b59454aa161e09a6069d8a, type: 3}
+    - {fileID: 21300000, guid: e9d4f66032ff69240af62af9bcc8ec06, type: 3}
     - {fileID: 21300000, guid: e9d4f66032ff69240af62af9bcc8ec06, type: 3}
 --- !u!1 &1690958292
 GameObject:

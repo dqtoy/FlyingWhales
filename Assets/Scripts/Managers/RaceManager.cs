@@ -129,6 +129,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP,
                 INTERACTION_TYPE.KNOCKOUT_CHARACTER,
                 INTERACTION_TYPE.RITUAL_KILLING,
+                INTERACTION_TYPE.GET_WATER,
+                INTERACTION_TYPE.DOUSE_FIRE,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -220,6 +222,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP,
                 INTERACTION_TYPE.KNOCKOUT_CHARACTER,
                 INTERACTION_TYPE.RITUAL_KILLING,
+                INTERACTION_TYPE.GET_WATER,
+                INTERACTION_TYPE.DOUSE_FIRE,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -312,6 +316,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP,
                 INTERACTION_TYPE.KNOCKOUT_CHARACTER,
                 INTERACTION_TYPE.RITUAL_KILLING,
+                INTERACTION_TYPE.GET_WATER,
+                INTERACTION_TYPE.DOUSE_FIRE,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -404,6 +410,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.DROP,
                 INTERACTION_TYPE.KNOCKOUT_CHARACTER,
                 INTERACTION_TYPE.RITUAL_KILLING,
+                INTERACTION_TYPE.GET_WATER,
+                INTERACTION_TYPE.DOUSE_FIRE,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,

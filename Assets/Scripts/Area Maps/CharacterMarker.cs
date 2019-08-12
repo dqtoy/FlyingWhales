@@ -704,7 +704,7 @@ public class CharacterMarker : PooledObject {
                     }
                 } 
                 if (character.currentAction != null) {
-                    if (character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
+                    if (character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME || character.currentAction.goapType.IsEmergencyAction()) {
                         //Run
                         speed = character.runSpeed;
                     }

@@ -299,5 +299,14 @@ public static class Signals {
     public static string COMBAT_ABILITY_UPDATE_BUTTON = "OnCombatAbilityStopCooldown";
     #endregion
 
-
+    #region ITraitables
+    /// <summary>
+    /// Parameters (ITraitable, Trait)
+    /// </summary>
+    public static string TRAITABLE_GAINED_TRAIT = "OnTraitableGainedTrait";
+    /// <summary>
+    /// Parameters (ITraitable, Trait, Character removedBy)
+    /// </summary>
+    public static string TRAITABLE_LOST_TRAIT = "OnTraitableLostTrait";
+    #endregion
 }
