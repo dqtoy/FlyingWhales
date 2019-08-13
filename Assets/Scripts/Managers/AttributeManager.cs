@@ -15,6 +15,10 @@ public class AttributeManager : MonoBehaviour {
 
     [SerializeField] private StringSpriteDictionary traitIconDictionary;
 
+    public INTERACTION_TYPE[] excludedActionsFromAccidentProneTrait = new INTERACTION_TYPE[] {
+        INTERACTION_TYPE.STUMBLE, INTERACTION_TYPE.PUKE, INTERACTION_TYPE.SEPTIC_SHOCK, INTERACTION_TYPE.ACCIDENT
+    };
+
     #region getters/setters
     public Dictionary<string, Trait> allTraits {
         get { return _allTraits; }
@@ -94,6 +98,7 @@ public class AttributeManager : MonoBehaviour {
             new Curious(),
             new Doctor(),
             new Diplomatic(),
+            new AccidentProne(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);
@@ -127,7 +132,8 @@ public class AttributeManager : MonoBehaviour {
         return false;
     }
     public Trait CreateNewInstancedTraitClass(string traitName) {
-        return System.Activator.CreateInstance(System.Type.GetType(traitName)) as Trait;
+        string noSpacesTraitName = Utilities.RemoveAllWhiteSpace(traitName);
+        return System.Activator.CreateInstance(System.Type.GetType(noSpacesTraitName)) as Trait;
     }
     public List<Trait> GetAllTraitsOfType(TRAIT_TYPE type) {
         List<Trait> traits = new List<Trait>();

@@ -132,6 +132,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RESOLVE_CONFLICT,
                 INTERACTION_TYPE.GET_WATER,
                 INTERACTION_TYPE.DOUSE_FIRE,
+                INTERACTION_TYPE.STUMBLE,
+                INTERACTION_TYPE.ACCIDENT,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -226,6 +228,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RESOLVE_CONFLICT,
                 INTERACTION_TYPE.GET_WATER,
                 INTERACTION_TYPE.DOUSE_FIRE,
+                INTERACTION_TYPE.STUMBLE,
+                INTERACTION_TYPE.ACCIDENT,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -321,6 +325,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RESOLVE_CONFLICT,
                 INTERACTION_TYPE.GET_WATER,
                 INTERACTION_TYPE.DOUSE_FIRE,
+                INTERACTION_TYPE.STUMBLE,
+                INTERACTION_TYPE.ACCIDENT,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -416,6 +422,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.RESOLVE_CONFLICT,
                 INTERACTION_TYPE.GET_WATER,
                 INTERACTION_TYPE.DOUSE_FIRE,
+                INTERACTION_TYPE.STUMBLE,
+                INTERACTION_TYPE.ACCIDENT,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -492,6 +500,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.INSPECT,
                 INTERACTION_TYPE.CARRY,
                 INTERACTION_TYPE.DROP,
+                INTERACTION_TYPE.STUMBLE,
+                INTERACTION_TYPE.ACCIDENT,
             } },
             { RACE.SPIDER, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -540,6 +550,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_CHARACTER,
                 INTERACTION_TYPE.CARRY,
                 INTERACTION_TYPE.DROP,
+                INTERACTION_TYPE.STUMBLE,
+                INTERACTION_TYPE.ACCIDENT,
             } },
             { RACE.WOLF, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -589,6 +601,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_CHARACTER,
                 INTERACTION_TYPE.CARRY,
                 INTERACTION_TYPE.DROP,
+                INTERACTION_TYPE.STUMBLE,
+                INTERACTION_TYPE.ACCIDENT,
             } },
             { RACE.DRAGON, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -637,6 +651,8 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.EAT_CHARACTER,
                 INTERACTION_TYPE.CARRY,
                 INTERACTION_TYPE.DROP,
+                INTERACTION_TYPE.STUMBLE,
+                INTERACTION_TYPE.ACCIDENT,
             } },
         };
     }

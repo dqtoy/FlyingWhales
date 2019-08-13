@@ -16,6 +16,7 @@ public class AskForHelpRemovePoisonTable : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
         };
+        //isNotificationAnIntel = false;
     }
 
     #region Overrides

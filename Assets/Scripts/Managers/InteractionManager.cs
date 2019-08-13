@@ -309,6 +309,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.GET_WATER:
                 goapAction = new GetWater(actor, target);
                 break;
+            case INTERACTION_TYPE.ACCIDENT:
+                goapAction = new Accident(actor, target);
+                break;
+            case INTERACTION_TYPE.STUMBLE:
+                goapAction = new Stumble(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
@@ -527,6 +533,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.DROP:
             case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
             case JOB_TYPE.INSPECT:
+            case JOB_TYPE.MISC:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:

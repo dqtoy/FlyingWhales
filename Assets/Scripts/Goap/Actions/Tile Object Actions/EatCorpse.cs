@@ -7,6 +7,7 @@ public class EatCorpse : GoapAction {
 
     public EatCorpse(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_CORPSE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Eat_Icon;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

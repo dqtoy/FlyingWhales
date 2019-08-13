@@ -7,6 +7,7 @@ public class Inspect : GoapAction {
     private int _gainedSupply;
     public Inspect(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.INSPECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides
