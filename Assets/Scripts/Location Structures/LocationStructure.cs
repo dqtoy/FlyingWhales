@@ -207,7 +207,7 @@ public class LocationStructure {
                 if (poi is MagicCircle) {
                     return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)).ToList();
                 } else if (poi is WaterWell) {
-                    return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && x.parentAreaMap.GetTilesInRadius(x, 5).Where(y => y.objHere is WaterWell).Count() == 0 && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance, true)).ToList();
+                    return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && x.parentAreaMap.GetTilesInRadius(x, 3).Where(y => y.objHere is WaterWell).Count() == 0 && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure, true)).ToList();
                 } else if (poi is Guitar || poi is Bed || poi is Table) {
                     return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
                 } else {

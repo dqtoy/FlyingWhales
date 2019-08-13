@@ -10,7 +10,7 @@ public class Wet : Trait {
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEUTRAL;
         associatedInteraction = INTERACTION_TYPE.NONE;
-        daysDuration = 0;
+        daysDuration = 10; //if this trait is only temporary, then it should not advertise GET_WATER
         effects = new List<TraitEffect>();
     }
 
@@ -18,13 +18,13 @@ public class Wet : Trait {
     public override void OnAddTrait(ITraitable addedTo) {
         base.OnAddTrait(addedTo);
         addedTo.RemoveTrait("Burning");
-        if (addedTo is IPointOfInterest) {
+        if (addedTo is IPointOfInterest && this.daysDuration == 0) {
             (addedTo as IPointOfInterest).AddAdvertisedAction(INTERACTION_TYPE.GET_WATER);
         }
     }
     public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
         base.OnRemoveTrait(removedFrom, removedBy);
-        if (removedFrom is IPointOfInterest) {
+        if (removedFrom is IPointOfInterest && this.daysDuration == 0) {
             (removedFrom as IPointOfInterest).RemoveAdvertisedAction(INTERACTION_TYPE.GET_WATER);
         }
     }

@@ -82,6 +82,7 @@ public class DouseFire : GoapAction {
             //Reduce water count by 1.
             actor.ConsumeToken(water);
         }
+        poiTarget.AddTrait("Wet", actor);
     }
     //private void PreTargetMissing() {
     //    if (poiTarget is TileObject) {
