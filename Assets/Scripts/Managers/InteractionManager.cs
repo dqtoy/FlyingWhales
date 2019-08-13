@@ -471,14 +471,12 @@ public class InteractionManager : MonoBehaviour {
     public int GetInitialPriority(JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
-            case JOB_TYPE.REMOVE_FIRE_SELF:
-                priority = 9;
-                break;
             case JOB_TYPE.REMOVE_FIRE:
             case JOB_TYPE.DEATH:
             case JOB_TYPE.BERSERK:
             case JOB_TYPE.TANTRUM:
             case JOB_TYPE.STEAL:
+            case JOB_TYPE.RESOLVE_CONFLICT:
                 priority = 10;
                 break;
             case JOB_TYPE.KNOCKOUT:

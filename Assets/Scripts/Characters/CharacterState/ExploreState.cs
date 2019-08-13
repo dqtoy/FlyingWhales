@@ -27,7 +27,6 @@ public class ExploreState : CharacterState {
         hasStateStarted = true;
         stateComponent.character.SetLastExploreState(null);
     }
-
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
         //if (stateComponent.character.specificLocation != targetArea

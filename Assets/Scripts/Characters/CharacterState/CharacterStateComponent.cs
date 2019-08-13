@@ -228,6 +228,9 @@ public class CharacterStateComponent {
             case CHARACTER_STATE.COMBAT:
                 newState = new CombatState(this);
                 break;
+            case CHARACTER_STATE.DOUSE_FIRE:
+                newState = new DouseFireState(this);
+                break;
         }
         return newState;
     }

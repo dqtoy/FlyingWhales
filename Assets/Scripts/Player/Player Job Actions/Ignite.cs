@@ -22,7 +22,9 @@ public class Ignite : PlayerJobAction {
         if (tiles.Count > 0) {
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
-                tile.AddTrait("Burning");
+                Burning burning = new Burning();
+                burning.SetSourceOfBurning(this);
+                tile.AddTrait(burning);
             }
             Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", this.GetType().ToString(), "activated");
             PlayerManager.Instance.player.ShowNotification(log);

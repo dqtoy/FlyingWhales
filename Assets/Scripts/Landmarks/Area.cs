@@ -1079,7 +1079,13 @@ public class Area {
                 }
             }
         }
-
+        //Well
+        if (structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
+            for (int i = 0; i < 3; i++) {
+                LocationStructure structure = structures[STRUCTURE_TYPE.WORK_AREA][0];
+                structure.AddPOI(new WaterWell(structure));
+            }
+        }
     }
     //private void PlaceBedsAndTables() {
     //    if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
@@ -1229,6 +1235,15 @@ public class Area {
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
                 objs.AddRange(keyValuePair.Value[i].GetTileObjectsOfType(type));
+            }
+        }
+        return objs;
+    }
+    public List<TileObject> GetTileObjectsThatAdvertise(params INTERACTION_TYPE[] types) {
+        List<TileObject> objs = new List<TileObject>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                objs.AddRange(keyValuePair.Value[i].GetTileObjectsThatAdvertise(types));
             }
         }
         return objs;

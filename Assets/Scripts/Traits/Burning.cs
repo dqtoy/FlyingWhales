@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class Burning : Trait {
 
-    private ITraitable owner;
+    public IPointOfInterest owner { get; private set; }
     public override bool isPersistent { get { return true; } }
-
     private GameObject burningEffect;
+
+    public object sourceOfBurning { get; private set; }
 
     public Burning() {
         name = "Burning";
@@ -22,28 +23,31 @@ public class Burning : Trait {
 
     #region Overrides
     public override void OnAddTrait(ITraitable addedTo) {
-        base.OnAddTrait(addedTo);
-        owner = addedTo;
         if (addedTo is LocationGridTile) {
             LocationGridTile tile = addedTo as LocationGridTile;
             burningEffect = GameManager.Instance.CreateBurningEffectAt(tile);
             tile.genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
-        } else if (addedTo is TileObject) {
-            TileObject obj = addedTo as TileObject;
-            burningEffect = GameManager.Instance.CreateBurningEffectAt(obj);
-            obj.SetPOIState(POI_STATE.INACTIVE);
-            obj.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
-        } else if (addedTo is SpecialToken) {
-            SpecialToken token = addedTo as SpecialToken;
-            burningEffect = GameManager.Instance.CreateBurningEffectAt(token);
-            token.SetPOIState(POI_STATE.INACTIVE);
-            token.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
-        } else if (addedTo is Character) {
-            Character character = addedTo as Character;
-            burningEffect = GameManager.Instance.CreateBurningEffectAt(character);
-            character.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
-        }
+            owner = tile.genericTileObject;
+        } else if (addedTo is IPointOfInterest) {
+            owner = addedTo as IPointOfInterest;
+            if (addedTo is TileObject) {
+                TileObject obj = addedTo as TileObject;
+                burningEffect = GameManager.Instance.CreateBurningEffectAt(obj);
+                obj.SetPOIState(POI_STATE.INACTIVE);
+                obj.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
+            } else if (addedTo is SpecialToken) {
+                SpecialToken token = addedTo as SpecialToken;
+                burningEffect = GameManager.Instance.CreateBurningEffectAt(token);
+                token.SetPOIState(POI_STATE.INACTIVE);
+                token.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
+            } else if (addedTo is Character) {
+                Character character = addedTo as Character;
+                burningEffect = GameManager.Instance.CreateBurningEffectAt(character);
+                character.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
+            }
+        } 
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
+        base.OnAddTrait(addedTo);
     }
     public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
         base.OnRemoveTrait(removedFrom, removedBy);
@@ -60,55 +64,50 @@ public class Burning : Trait {
         
     }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-        if (traitOwner is Character) {
+        if (characterThatWillDoJob.stateComponent.currentState == null || characterThatWillDoJob.stateComponent.currentState.characterState != CHARACTER_STATE.DOUSE_FIRE) {
+            return TryToCreateJob(traitOwner, characterThatWillDoJob);
+        } 
+        //else if (characterThatWillDoJob.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE) {
+        //    DouseFireState state = characterThatWillDoJob.stateComponent.currentState as DouseFireState;
+        //    if (state.sourceOfBurning != this.sourceOfBurning) {
+        //        return TryToCreateJob(traitOwner, characterThatWillDoJob);
+        //    }
+        //}
+        return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+    }
+    private bool TryToCreateJob(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+        if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_FIRE)) {
+            if (traitOwner is Character) {
             Character targetCharacter = traitOwner as Character;
             //When a character sees someone burning, it must create a Remove Fire job targetting that character (if they are not enemies).
-            if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_FIRE) 
+            if (targetCharacter.isPartOfHomeFaction && characterThatWillDoJob.isPartOfHomeFaction
                 && (targetCharacter == characterThatWillDoJob || !characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY))) {
-                GoapPlanJob job;
-                if (targetCharacter == characterThatWillDoJob) {
-                    job = new GoapPlanJob(JOB_TYPE.REMOVE_FIRE_SELF, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", targetPOI = traitOwner });
-                } else {
-                    job = new GoapPlanJob(JOB_TYPE.REMOVE_FIRE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", targetPOI = traitOwner });
+                    CharacterStateJob job = new CharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE, characterThatWillDoJob.specificLocation);
+                    if (CanTakeRemoveFireJob(characterThatWillDoJob, targetCharacter)) {
+                        characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE);
+                        characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                        return true;
+                    }
                 }
-                if (CanTakeRemoveFireJob(characterThatWillDoJob, targetCharacter)) {
-                    //job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE, JOB_TYPE.REMOVE_FIRE_SELF);
-                    //if (characterThatWillDoJob.allGoapPlans.Count == 0 || characterThatWillDoJob.allGoapPlans.First().job == null || characterThatWillDoJob.allGoapPlans.First().job.priority > job.priority) {
-                        //characterThatWillDoJob.jobQueue.ProcessFirstJobInQueue(characterThatWillDoJob);
-                    //}
-                    return true;
-                } 
-                //else {
-                //    job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
-                //    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
-                //    return false;
-                //}
-            }
-        } else {
-            if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_FIRE, traitOwner)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_FIRE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", targetPOI = traitOwner });
+            } else {
+                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE, characterThatWillDoJob.specificLocation);
                 if (CanTakeRemoveFireJob(characterThatWillDoJob, traitOwner)) {
-                    //job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
+                    characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE, JOB_TYPE.REMOVE_FIRE_SELF);
                     return true;
                 }
             }
-            
-            //else {
-            //    job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
-            //    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
-            //    return false;
-            //}
         }
-        return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+        return false;
     }
     public override bool IsTangible() {
         return true;
     }
     #endregion
+
+    public void SetSourceOfBurning(object obj) {
+        sourceOfBurning = obj;
+    }
 
     private bool CanTakeRemoveFireJob(Character character, JobQueueItem item) {
         if (item is GoapPlanJob) {
@@ -168,7 +167,9 @@ public class Burning : Trait {
             choices = choices.Where(x => x.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
             if (choices.Count > 0) {
                 ITraitable chosen = choices[Random.Range(0, choices.Count)];
-                chosen.AddTrait("Burning");
+                Burning burning = new Burning();
+                burning.SetSourceOfBurning(sourceOfBurning);
+                chosen.AddTrait(burning);
             }
         }
     }
