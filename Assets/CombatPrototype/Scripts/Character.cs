@@ -794,15 +794,19 @@ public class Character : ILeader, IPointOfInterest {
             //so that when something stops burning, and it is already in this character's vision and he/she is not the one that doused the flames, this character will cancel remove fire job targetting that object.
             if (traitable is IPointOfInterest) {
                 IPointOfInterest poi = traitable as IPointOfInterest;
-                JobQueueItem item = jobQueue.GetJob(JOB_TYPE.REMOVE_FIRE, poi);
-                if (item != null) {
-                    jobQueue.CancelJob(item, traitable.name + " is no longer burning", shouldDoAfterEffect: false);
+                if (marker.inVisionPOIs.Contains(poi)) {
+                    JobQueueItem item = jobQueue.GetJob(JOB_TYPE.REMOVE_FIRE, poi);
+                    if (item != null) {
+                        jobQueue.CancelJob(item, traitable.name + " is no longer burning", shouldDoAfterEffect: false);
+                    }
                 }
             } else if (traitable is LocationGridTile) {
                 IPointOfInterest poi = (traitable as LocationGridTile).genericTileObject;
-                JobQueueItem item = jobQueue.GetJob(JOB_TYPE.REMOVE_FIRE, poi);
-                if (item != null) {
-                    jobQueue.CancelJob(item, traitable.ToString() +  " is no longer burning", shouldDoAfterEffect: false);
+                if (marker.inVisionPOIs.Contains(poi)) {
+                    JobQueueItem item = jobQueue.GetJob(JOB_TYPE.REMOVE_FIRE, poi);
+                    if (item != null) {
+                        jobQueue.CancelJob(item, traitable.ToString() + " is no longer burning", shouldDoAfterEffect: false);
+                    }
                 }
             }
         }
@@ -2112,6 +2116,27 @@ public class Character : ILeader, IPointOfInterest {
         for (int i = 0; i < allGoapPlans.Count; i++) {
             if (DropPlan(allGoapPlans[i])) {
                 i--;
+            }
+        }
+        AdjustIsWaitingForInteraction(-1);
+    }
+    public void CancelAllJobsAndPlansExcept(JOB_TYPE job) {
+        AdjustIsWaitingForInteraction(1);
+        for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+            JobQueueItem item = jobQueue.jobsInQueue[i];
+            if (item.jobType != job && jobQueue.CancelJob(jobQueue.jobsInQueue[i])) {
+                i--;
+            }
+        }
+        homeArea.jobQueue.UnassignAllJobsTakenBy(this);
+
+        StopCurrentAction(false);
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            GoapPlan currPlan = allGoapPlans[i];
+            if (currPlan.job == null || currPlan.job.jobType != job) {
+                if (DropPlan(allGoapPlans[i])) {
+                    i--;
+                }
             }
         }
         AdjustIsWaitingForInteraction(-1);
@@ -7836,6 +7861,7 @@ public class Character : ILeader, IPointOfInterest {
     #endregion
 
     #region States
+    private const float Combat_Signalled_Distance = 1.5f;
     private void OnCharacterStartedState(Character character, CharacterState state) {
         if (character == this) {
             marker.UpdateActionIcon();
@@ -7844,6 +7870,21 @@ public class Character : ILeader, IPointOfInterest {
             }
         } else {
             if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null) {
+                //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
+                CombatState combatState = state as CombatState;
+                if (this.isPartOfHomeFaction && character.isAtHomeArea && character.isPartOfHomeFaction && this.IsCombatReady() 
+                    && this.IsHostileOutsider(combatState.currentClosestHostile) && this.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.POSITIVE 
+                    && Vector2.Distance(this.marker.transform.position, character.marker.transform.position) <= Combat_Signalled_Distance) {
+                    if (marker.AddHostileInRange(combatState.currentClosestHostile)) {
+                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
+                        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        joinLog.AddToFillers(combatState.currentClosestHostile, combatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        joinLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_3);
+                        joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        PlayerManager.Instance.player.ShowNotification(joinLog);
+                        return; //do not do watch.
+                    }
+                }
                 if (marker.inVisionPOIs.Contains(character)) {
                     ThisCharacterWatchEvent(character, null, null);
                 }

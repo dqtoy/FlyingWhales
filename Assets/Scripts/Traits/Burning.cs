@@ -69,9 +69,10 @@ public class Burning : Trait {
                 if (CanTakeRemoveFireJob(characterThatWillDoJob, targetCharacter)) {
                     //job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    if (characterThatWillDoJob.allGoapPlans.Count == 0 || characterThatWillDoJob.allGoapPlans.First().job == null || characterThatWillDoJob.allGoapPlans.First().job.priority > job.priority) {
-                        characterThatWillDoJob.jobQueue.ProcessFirstJobInQueue(characterThatWillDoJob);
-                    }
+                    characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE);
+                    //if (characterThatWillDoJob.allGoapPlans.Count == 0 || characterThatWillDoJob.allGoapPlans.First().job == null || characterThatWillDoJob.allGoapPlans.First().job.priority > job.priority) {
+                        //characterThatWillDoJob.jobQueue.ProcessFirstJobInQueue(characterThatWillDoJob);
+                    //}
                     return true;
                 } 
                 //else {
