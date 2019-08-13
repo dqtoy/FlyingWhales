@@ -94,6 +94,20 @@ public class Bed : TileObject {
                 break;
         }
     }
+    protected override void OnTileObjectGainedTrait(Trait trait) {
+        base.OnTileObjectGainedTrait(trait);
+        if (trait.name == "Burning") {
+            for (int i = 0; i < bedUsers.Length; i++) {
+                if (bedUsers[i] != null) {
+                    Character currUser = bedUsers[i];
+                    Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, currUser, "bed is burning");
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region Users
     private bool IsSlotAvailable() {
         for (int i = 0; i < bedUsers.Length; i++) {
             if (bedUsers[i] == null) {
@@ -102,18 +116,6 @@ public class Bed : TileObject {
         }
         return false;
     }
-    //protected override void OnDestroyTileObject() {
-    //    base.OnDestroyTileObject();
-    //    for (int i = 0; i < users.Length; i++) {
-    //        Character character = users[i];
-    //        if (character != null) {
-    //            character.currentAction.StopAction();
-    //        }
-    //    }
-    //}
-    #endregion
-
-    #region Users
     public override void AddUser(Character character) {
         for (int i = 0; i < bedUsers.Length; i++) {
             if (bedUsers[i] == null) {

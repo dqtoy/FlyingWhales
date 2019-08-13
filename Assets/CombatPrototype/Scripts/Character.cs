@@ -783,7 +783,7 @@ public class Character : ILeader, IPointOfInterest {
                 }
             } else if (traitable is LocationGridTile) {
                 IPointOfInterest poi = (traitable as LocationGridTile).genericTileObject;
-                if (marker.inVisionPOIs.Contains(poi) || poi == this) {
+                if (marker.inVisionPOIs.Contains(poi)) {
                     gainedTrait.CreateJobsOnEnterVisionBasedOnTrait(poi, this);
                 }
             }
@@ -805,7 +805,7 @@ public class Character : ILeader, IPointOfInterest {
                 if (marker.inVisionPOIs.Contains(poi)) {
                     JobQueueItem item = jobQueue.GetJob(JOB_TYPE.REMOVE_FIRE, poi);
                     if (item != null) {
-                        jobQueue.CancelJob(item, traitable.ToString() + " is no longer burning", shouldDoAfterEffect: false);
+                        jobQueue.CancelJob(item, "floor is no longer burning", shouldDoAfterEffect: false);
                     }
                 }
             }
@@ -2756,6 +2756,9 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void SetTileObjectLocation(TileObject tileObject) {
         tileObjectLocation = tileObject;
+    }
+    public bool IsDoingEmergencyAction() {
+        return currentAction != null && currentAction.goapType.IsEmergencyAction();
     }
     #endregion
 

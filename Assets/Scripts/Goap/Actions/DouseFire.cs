@@ -47,7 +47,12 @@ public class DouseFire : GoapAction {
                 LocationGridTile tile = poiTarget.gridTileLocation;
                 log.AddToFillers(null, tile.structure.GetNameRelativeTo(actor) + " floor", LOG_IDENTIFIER.TARGET_CHARACTER);
             } else {
-                log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                if (poiTarget == actor) {
+                    Character character = poiTarget as Character;
+                    log.AddToFillers(poiTarget, Utilities.GetPronounString(character.gender, PRONOUN_TYPE.REFLEXIVE, false), LOG_IDENTIFIER.TARGET_CHARACTER);
+                } else {
+                    log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                }
             }
         }
     }
@@ -60,7 +65,12 @@ public class DouseFire : GoapAction {
                 LocationGridTile tile = poiTarget.gridTileLocation;
                 currentState.AddLogFiller(null, tile.structure.GetNameRelativeTo(actor) + " floor", LOG_IDENTIFIER.TARGET_CHARACTER);
             } else {
-                currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                if (poiTarget == actor) {
+                    Character character = poiTarget as Character;
+                    currentState.AddLogFiller(poiTarget, Utilities.GetPronounString(character.gender, PRONOUN_TYPE.REFLEXIVE, false), LOG_IDENTIFIER.TARGET_CHARACTER);
+                } else {
+                    currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                }
             }
         }
     }
