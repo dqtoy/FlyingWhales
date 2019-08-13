@@ -72,6 +72,19 @@ public class Dwelling : LocationStructure {
         }
         return false;
     }
+    public bool HasEnemyOrNoRelationshipWithAnyResident(Character character) {
+        //if (residents.Contains(character)) {
+        //    return true; //if the provided character is a resident of this dwelling, then yes, consider relationship as positive
+        //}
+        for (int i = 0; i < residents.Count; i++) {
+            Character currResident = residents[i];
+            RELATIONSHIP_EFFECT effect = character.GetRelationshipEffectWith(currResident);
+            if (effect == RELATIONSHIP_EFFECT.NEGATIVE || effect == RELATIONSHIP_EFFECT.NONE) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Misc
