@@ -6,6 +6,7 @@ public class Carry : GoapAction {
 
     public Carry(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CARRY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

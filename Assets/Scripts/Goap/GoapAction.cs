@@ -159,7 +159,7 @@ public class GoapAction {
             StateNameAndDuration[] statesSetup = GoapActionStateDB.goapActionStates[this.goapType];
             for (int i = 0; i < statesSetup.Length; i++) {
                 StateNameAndDuration state = statesSetup[i];
-                string trimmedState = Utilities.RemoveWhitespace(state.name);
+                string trimmedState = Utilities.RemoveAllWhiteSpace(state.name);
                 Type thisType = this.GetType();
                 MethodInfo preMethod = thisType.GetMethod("Pre" + trimmedState, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
                 MethodInfo perMethod = thisType.GetMethod("PerTick" + trimmedState, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
@@ -203,16 +203,16 @@ public class GoapAction {
             if (poiTarget != actor && !targetCharacter.isDead) {
                 targetCharacter.OnTargettedByAction(this);
                 if (!doesNotStopTargetCharacter) {
-                    if (targetCharacter.currentAction != null) {
-                        if (targetCharacter.currentParty.icon.isTravelling) {
-                            if (targetCharacter.currentParty.icon.travelLine == null) {
-                                //This means that the actor currently travelling to another tile in tilemap
-                                targetCharacter.marker.StopMovement();
-                            } else {
-                                //This means that the actor is currently travelling to another area
-                                targetCharacter.currentParty.icon.SetOnArriveAction(() => targetCharacter.OnArriveAtAreaStopMovement());
-                            }
+                    if (targetCharacter.currentParty.icon.isTravelling) {
+                        if (targetCharacter.currentParty.icon.travelLine == null) {
+                            //This means that the actor currently travelling to another tile in tilemap
+                            targetCharacter.marker.StopMovement();
+                        } else {
+                            //This means that the actor is currently travelling to another area
+                            targetCharacter.currentParty.icon.SetOnArriveAction(() => targetCharacter.OnArriveAtAreaStopMovement());
                         }
+                    }
+                    if (targetCharacter.currentAction != null) {
                         targetCharacter.StopCurrentAction(false);
                     }
                     if (targetCharacter.stateComponent.currentState != null) {

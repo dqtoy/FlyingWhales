@@ -524,7 +524,8 @@ public class CharacterMarker : PooledObject {
         pathfindingAI.SetIsStopMovement(false);
         character.currentParty.icon.SetIsTravelling(true);
         UpdateAnimation();
-        Messenger.Broadcast(Signals.CHARACTER_STARTED_MOVING, character);
+        Messenger.AddListener(Signals.TICK_ENDED, PerTickMovement);
+        //Messenger.Broadcast(Signals.CHARACTER_STARTED_MOVING, character);
     }
     public void StopMovement() {
         string log = character.name + " StopMovement function is called!";
@@ -534,8 +535,13 @@ public class CharacterMarker : PooledObject {
         }
         pathfindingAI.SetIsStopMovement(true);
         UpdateAnimation();
-        Messenger.Broadcast(Signals.CHARACTER_STOPPED_MOVING, character);
+        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
+        //Messenger.Broadcast(Signals.CHARACTER_STOPPED_MOVING, character);
     }
+    private void PerTickMovement() {
+        character.PerTickDuringMovement();
+    }
+
     /// <summary>
     /// Make this marker look at a specific point (In World Space).
     /// </summary>

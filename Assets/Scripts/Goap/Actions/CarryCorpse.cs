@@ -23,6 +23,7 @@ public class CarryCorpse : GoapAction {
 
     public CarryCorpse(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CARRY_CORPSE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

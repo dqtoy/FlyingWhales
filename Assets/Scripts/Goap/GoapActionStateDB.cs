@@ -410,6 +410,12 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Obtain Water Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
+        { INTERACTION_TYPE.ACCIDENT, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Accident Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+        { INTERACTION_TYPE.STUMBLE, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Stumble Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(10) },
+        } },
     };
 }
 

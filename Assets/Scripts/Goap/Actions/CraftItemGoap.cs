@@ -14,6 +14,7 @@ public class CraftItemGoap : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Work_Icon;
         hasSetCraftedItem = false;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

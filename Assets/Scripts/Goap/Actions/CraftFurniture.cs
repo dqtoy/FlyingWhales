@@ -14,7 +14,8 @@ public class CraftFurniture : GoapAction {
     public CraftFurniture(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRAFT_FURNITURE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Work_Icon;
-        showIntelNotification = false;
+        SetShowIntelNotification(false);
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

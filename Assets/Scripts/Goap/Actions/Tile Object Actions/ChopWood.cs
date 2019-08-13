@@ -14,6 +14,7 @@ public class ChopWood : GoapAction {
         //    TIME_IN_WORDS.EARLY_NIGHT,
         //};
         actionIconString = GoapActionStateDB.Work_Icon;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

@@ -76,6 +76,8 @@ public class Trait {
     protected virtual void OnChangeLevel() { }
     public virtual void OnOwnerInitiallyPlaced(Character owner) { }
     public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait
+    public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action
+    public virtual bool OnStartPerformGoapAction(GoapAction action, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action
     #endregion
 
     public void SetOnRemoveAction(System.Action onRemoveAction) {

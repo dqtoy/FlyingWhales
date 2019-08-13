@@ -25,18 +25,7 @@ public class Plagued : Trait {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             owner = sourceCharacter as Character;
-            Messenger.AddListener<Character>(Signals.CHARACTER_STARTED_MOVING, OnCharacterStartedMoving);
-            Messenger.AddListener<Character>(Signals.CHARACTER_STOPPED_MOVING, OnCharacterStoppedMoving);
-            if (owner.currentParty.icon.isTravelling) {
-                OnCharacterStartedMoving(owner);
-            }
         }
-    }
-    public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-        base.OnRemoveTrait(sourceCharacter, removedBy);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_STARTED_MOVING, OnCharacterStartedMoving);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_STOPPED_MOVING, OnCharacterStoppedMoving);
-        Messenger.RemoveListener(Signals.TICK_ENDED, PerMovementTick);
     }
     protected override void OnChangeLevel() {
         if (level == 1) {
@@ -70,25 +59,13 @@ public class Plagued : Trait {
         }
         return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
     }
-    #endregion
-
-    private void OnCharacterStartedMoving(Character character) {
-        if (character == owner) {
-            Messenger.AddListener(Signals.TICK_ENDED, PerMovementTick);
-        }
-    }
-    private void OnCharacterStoppedMoving(Character character) {
-        if (character == owner) {
-            Messenger.RemoveListener(Signals.TICK_ENDED, PerMovementTick);
-        }
-    }
-
-    private void PerMovementTick() {
+    public override bool PerTickOwnerMovement() {
         string summary = owner.name + " is rolling for plagued chances....";
         float pukeRoll = Random.Range(0f, 100f);
         float septicRoll = Random.Range(0f, 100f);
         summary += "\nPuke roll is: " + pukeRoll.ToString();
         summary += "\nSeptic Shock roll is: " + septicRoll.ToString();
+        bool hasCreatedJob = false;
         if (pukeRoll < pukeChance) {
             summary += "\nPuke chance met. Doing puke action.";
             //do puke action
@@ -96,7 +73,7 @@ public class Plagued : Trait {
                 stoppedAction = owner.currentAction;
                 owner.StopCurrentAction(false);
                 owner.marker.StopMovement();
-                
+
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
 
                 GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
@@ -109,6 +86,7 @@ public class Plagued : Trait {
                 owner.SetCurrentAction(goapAction);
                 owner.currentAction.SetEndAction(ResumeLastAction);
                 owner.currentAction.DoAction();
+                hasCreatedJob = true;
             } else if (owner.stateComponent.currentState != null) {
                 pausedState = owner.stateComponent.currentState;
                 owner.stateComponent.currentState.PauseState();
@@ -125,6 +103,7 @@ public class Plagued : Trait {
                 owner.SetCurrentAction(goapAction);
                 owner.currentAction.SetEndAction(ResumePausedState);
                 owner.currentAction.DoAction();
+                hasCreatedJob = true;
             } else {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
 
@@ -137,6 +116,7 @@ public class Plagued : Trait {
                 goapAction.CreateStates();
                 owner.SetCurrentAction(goapAction);
                 owner.currentAction.DoAction();
+                hasCreatedJob = true;
             }
             Debug.Log(summary);
         } else if (septicRoll < septicChance) {
@@ -156,11 +136,12 @@ public class Plagued : Trait {
                 goapAction.CreateStates();
                 owner.SetCurrentAction(goapAction);
                 owner.currentAction.DoAction();
+                hasCreatedJob = true;
             } else if (owner.stateComponent.currentState != null) {
                 owner.stateComponent.currentState.OnExitThisState();
                 owner.marker.StopMovement();
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
-                
+
                 GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
                 GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK);
@@ -170,6 +151,7 @@ public class Plagued : Trait {
                 goapAction.CreateStates();
                 owner.SetCurrentAction(goapAction);
                 owner.currentAction.DoAction();
+                hasCreatedJob = true;
             } else {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
 
@@ -182,10 +164,13 @@ public class Plagued : Trait {
                 goapAction.CreateStates();
                 owner.SetCurrentAction(goapAction);
                 owner.currentAction.DoAction();
+                hasCreatedJob = true;
             }
             Debug.Log(summary);
         }
+        return hasCreatedJob;
     }
+    #endregion
 
     private void ResumeLastAction(string result, GoapAction action) {
         if (stoppedAction.CanSatisfyRequirements()) {

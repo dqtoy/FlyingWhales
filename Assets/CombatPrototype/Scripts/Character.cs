@@ -681,6 +681,9 @@ public class Character : ILeader, IPointOfInterest {
         marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
         AddInitialAwareness();
         SubscribeToSignals();
+        for (int i = 0; i < normalTraits.Count; i++) {
+            normalTraits[i].OnOwnerInitiallyPlaced(this);
+        }
     }
 
     #region Signals
@@ -878,6 +881,16 @@ public class Character : ILeader, IPointOfInterest {
         speedModifier += amount;
         if (marker != null) {
             marker.UpdateSpeed();
+        }
+    }
+    public void PerTickDuringMovement() {
+        for (int i = 0; i  < normalTraits.Count; i++) {
+            Trait trait = normalTraits[i];
+            if (!trait.isDisabled) {
+                if (trait.PerTickOwnerMovement()) {
+                    break;
+                }
+            }
         }
     }
     #endregion
@@ -3521,33 +3534,30 @@ public class Character : ILeader, IPointOfInterest {
                 }
             }
         } else if (!action.isDone) {
-            //if (action.goapType == INTERACTION_TYPE.MAKE_LOVE && state.name == "Make Love Success") {
-            //    MakeLove makeLove = action as MakeLove;
-            //    Character target = makeLove.targetCharacter;
-            //    if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-            //        CreateWatchEvent(action, null, action.actor);
-            //    } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-            //        CreateWatchEvent(action, null, target);
-            //    } else {
-            //        marker.AddAvoidInRange(action.actor, false);
-            //        marker.AddAvoidInRange(target);
-            //    }
-            //} else 
-            if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success") {
+            if (action.goapType == INTERACTION_TYPE.MAKE_LOVE && state.name == "Make Love Success") {
+                MakeLove makeLove = action as MakeLove;
+                Character target = makeLove.targetCharacter;
+                if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    CreateWatchEvent(action, null, action.actor);
+                } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    CreateWatchEvent(action, null, target);
+                } else {
+                    marker.AddAvoidInRange(action.actor, false);
+                    marker.AddAvoidInRange(target);
+                }
+            } else if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success" && GetNormalTrait("MusicHater") == null) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 25) { //25
                     if (!HasRelationshipOfTypeWith(action.actor, RELATIONSHIP_TRAIT.ENEMY)) {
                         CreateWatchEvent(action, null, action.actor);
                     }
                 }
-            }
-            //else if (action.goapType == INTERACTION_TYPE.TABLE_POISON) {
-            //    int chance = UnityEngine.Random.Range(0, 100);
-            //    if (chance < 35) {
-            //        CreateWatchEvent(action, null, action.actor);
-            //    }
-            //} 
-            else if (action.goapType == INTERACTION_TYPE.CURSE_CHARACTER && state.name == "Curse Success") {
+            } else if (action.goapType == INTERACTION_TYPE.TABLE_POISON) {
+                int chance = UnityEngine.Random.Range(0, 100);
+                if (chance < 35) {
+                    CreateWatchEvent(action, null, action.actor);
+                }
+            } else if (action.goapType == INTERACTION_TYPE.CURSE_CHARACTER && state.name == "Curse Success") {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 35) {
                     CreateWatchEvent(action, null, action.actor);
@@ -4147,6 +4157,14 @@ public class Character : ILeader, IPointOfInterest {
         } else {
             AddTrait("Flammable");
         }
+        if (UnityEngine.Random.Range(0, 2) == 0) {
+            AddTrait("MusicLover");
+        } else {
+            AddTrait("MusicHater");
+        }
+        if (UnityEngine.Random.Range(0, 100) < 15) {
+            AddTrait("Accident Prone");
+        }
     }
     public void CreateInitialTraitsByRace() {
         if (race == RACE.HUMANS) {
@@ -4319,7 +4337,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public Trait GetNormalTrait(string traitName) {
         for (int i = 0; i < normalTraits.Count; i++) {
-            if (normalTraits[i].name == traitName && !normalTraits[i].isDisabled) {
+            if ((normalTraits[i].name == traitName || normalTraits[i].GetType().ToString() == traitName) && !normalTraits[i].isDisabled) {
                 return normalTraits[i];
             }
         }
@@ -5711,7 +5729,7 @@ public class Character : ILeader, IPointOfInterest {
     /// This should only be used for plans that come/constructed from the outside.
     /// </summary>
     /// <param name="plan">Plan to be added</param>
-    public void AddPlan(GoapPlan plan, bool isPriority = false) {
+    public void AddPlan(GoapPlan plan, bool isPriority = false, bool processPlanSpecialCases = true) {
         if (!allGoapPlans.Contains(plan)) {
             plan.SetPriorityState(isPriority);
             if (isPriority) {
@@ -5735,26 +5753,28 @@ public class Character : ILeader, IPointOfInterest {
                     allGoapPlans.Add(plan);
                 }
             }
-            //If a character is strolling or idly returning home and a plan is added to this character, end the action/state
-            if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.STROLL 
-                || stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE 
-                || stateComponent.currentState.characterState == CHARACTER_STATE.PATROL)) {
-                stateComponent.currentState.OnExitThisState();
-            }else if (stateComponent.stateToDo != null && (stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL
-                || stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL_OUTSIDE
-                || stateComponent.stateToDo.characterState == CHARACTER_STATE.PATROL)) {
-                stateComponent.SetStateToDo(null);
-            } else if (currentAction != null && currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
-                if (currentAction.parentPlan == null || currentAction.parentPlan.category == GOAP_CATEGORY.IDLE) {
-                    currentAction.StopAction();
+
+            if (processPlanSpecialCases) {
+                //If a character is strolling or idly returning home and a plan is added to this character, end the action/state
+                if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
+                    || stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE
+                    || stateComponent.currentState.characterState == CHARACTER_STATE.PATROL)) {
+                    stateComponent.currentState.OnExitThisState();
+                } else if (stateComponent.stateToDo != null && (stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL
+                     || stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL_OUTSIDE
+                     || stateComponent.stateToDo.characterState == CHARACTER_STATE.PATROL)) {
+                    stateComponent.SetStateToDo(null);
+                } else if (currentAction != null && currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
+                    if (currentAction.parentPlan == null || currentAction.parentPlan.category == GOAP_CATEGORY.IDLE) {
+                        currentAction.StopAction();
+                    }
+                }
+
+                if (plan.job != null && (plan.job.jobType.IsNeedsTypeJob() || plan.job.jobType.IsEmergencyTypeJob())) {
+                    //Unassign Location Job if character decides to rest, eat or have fun.
+                    homeArea.jobQueue.UnassignAllJobsTakenBy(this);
                 }
             }
-
-            if (plan.job != null && (plan.job.jobType.IsNeedsTypeJob() || plan.job.jobType.IsEmergencyTypeJob())) {
-                //Unassign Location Job if character decides to rest, eat or have fun.
-                homeArea.jobQueue.UnassignAllJobsTakenBy(this);
-            }
-
         }
     }
     public void AddAdvertisedAction(INTERACTION_TYPE type) {
@@ -7053,6 +7073,11 @@ public class Character : ILeader, IPointOfInterest {
                 //PlanGoapActions();
             }
         } else {
+            bool willStillContinueAction = true;
+            OnStartPerformGoapAction(currentAction, ref willStillContinueAction);
+            if (!willStillContinueAction) {
+                return;
+            }
             if (currentAction.IsHalted()) {
                 log += "\n Action is waiting! Not doing action...";
                 //if (currentAction.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -7196,7 +7221,7 @@ public class Character : ILeader, IPointOfInterest {
             PrintLogIfActive(log);
             //PlanGoapActions();
         }
-        
+        action.OnResultReturnedToActor();
         //if (result == InteractionManager.Goap_State_Success) {
         //    log += "\nAction performed is a success!";
         //    plan.SetNextNode();
@@ -7238,7 +7263,6 @@ public class Character : ILeader, IPointOfInterest {
         //        }
         //    }
         //}
-        action.OnResultReturnedToActor();
     }
     public bool DropPlan(GoapPlan plan, bool forceCancelJob = false) {
         if (allGoapPlans.Remove(plan)) {
@@ -7418,6 +7442,20 @@ public class Character : ILeader, IPointOfInterest {
             } else {
                 currentAction.OnStopActionWhileTravelling();
                 SetCurrentAction(null);
+            }
+        }
+    }
+    public void OnStartPerformGoapAction(GoapAction action, ref bool willStillContinueAction) {
+        bool stillContinueCurrentAction = true;
+        for (int i = 0; i < normalTraits.Count; i++) {
+            Trait trait = normalTraits[i];
+            if (!trait.isDisabled) {
+                if (trait.OnStartPerformGoapAction(action, ref stillContinueCurrentAction)) {
+                    willStillContinueAction = stillContinueCurrentAction;
+                    break;
+                } else {
+                    stillContinueCurrentAction = true;
+                }
             }
         }
     }
@@ -7875,20 +7913,20 @@ public class Character : ILeader, IPointOfInterest {
         } else {
             if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null) {
                 //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
-                CombatState combatState = state as CombatState;
-                if (this.isPartOfHomeFaction && character.isAtHomeArea && character.isPartOfHomeFaction && this.IsCombatReady() 
-                    && this.IsHostileOutsider(combatState.currentClosestHostile) && this.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.POSITIVE 
-                    && Vector2.Distance(this.marker.transform.position, character.marker.transform.position) <= Combat_Signalled_Distance) {
-                    if (marker.AddHostileInRange(combatState.currentClosestHostile)) {
-                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
-                        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        joinLog.AddToFillers(combatState.currentClosestHostile, combatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        joinLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_3);
-                        joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        PlayerManager.Instance.player.ShowNotification(joinLog);
-                        return; //do not do watch.
-                    }
-                }
+                //CombatState combatState = state as CombatState;
+                //if (this.isPartOfHomeFaction && character.isAtHomeArea && character.isPartOfHomeFaction && this.IsCombatReady() 
+                //    && this.IsHostileOutsider(combatState.currentClosestHostile) && this.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.POSITIVE 
+                //    && Vector2.Distance(this.marker.transform.position, character.marker.transform.position) <= Combat_Signalled_Distance) {
+                //    if (marker.AddHostileInRange(combatState.currentClosestHostile)) {
+                //        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
+                //        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                //        joinLog.AddToFillers(combatState.currentClosestHostile, combatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                //        joinLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_3);
+                //        joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+                //        PlayerManager.Instance.player.ShowNotification(joinLog);
+                //        return; //do not do watch.
+                //    }
+                //}
                 if (marker.inVisionPOIs.Contains(character)) {
                     ThisCharacterWatchEvent(character, null, null);
                 }
