@@ -1012,6 +1012,19 @@ public class Area {
         }
         return null;
     }
+    public List<LocationStructure> GetStructuresOfType(STRUCTURE_TYPE structureType, LocationStructure except) {
+        if (structures.ContainsKey(structureType)) {
+            List<LocationStructure> currentStructures = structures[structureType];
+            List<LocationStructure> newStructures = new List<LocationStructure>();
+            for (int i = 0; i < currentStructures.Count; i++) {
+                if(currentStructures[i] != except) {
+                    newStructures.Add(currentStructures[i]);
+                }
+            }
+            return newStructures;
+        }
+        return null;
+    }
     public List<LocationStructure> GetStructuresAtLocation(bool inside) {
         List<LocationStructure> structures = new List<LocationStructure>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in this.structures) {

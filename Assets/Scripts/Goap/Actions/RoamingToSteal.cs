@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RoamingToSteal : GoapAction {
@@ -51,12 +52,30 @@ public class RoamingToSteal : GoapAction {
         }
         RoamAround();
     }
+    private void AfterInProgress() {
+        if (actor.currentParty.icon.isTravelling) {
+            actor.marker.StopMovement();
+        }
+    }
+    #endregion
 
     private void RoamAround() {
         actor.marker.GoTo(PickRandomTileToGoTo(), RoamAround);
     }
     private LocationGridTile PickRandomTileToGoTo() {
-        LocationStructure chosenStructure = actor.specificLocation.GetRandomStructure();
+        LocationStructure chosenStructure = null;
+        List<LocationStructure> dwellings = actor.specificLocation.GetStructuresOfType(STRUCTURE_TYPE.DWELLING, actor.currentStructure);
+        if(dwellings != null && dwellings.Count > 0) {
+            List<LocationStructure> dwellingsOfEnemies = dwellings.Where(x => (x as Dwelling).HasEnemyOrNoRelationshipWithAnyResident(actor)).ToList();
+            if (dwellingsOfEnemies != null && dwellingsOfEnemies.Count > 0) {
+                chosenStructure = dwellingsOfEnemies[UnityEngine.Random.Range(0, dwellingsOfEnemies.Count)];
+            } else {
+                chosenStructure = dwellings[UnityEngine.Random.Range(0, dwellings.Count)];
+            }
+        } else {
+            chosenStructure = actor.specificLocation.GetRandomStructure();
+        }
+
         LocationGridTile chosenTile = chosenStructure.GetRandomTile();
         if (chosenTile != null) {
             return chosenTile;
@@ -64,5 +83,4 @@ public class RoamingToSteal : GoapAction {
             throw new System.Exception("No tile in " + chosenStructure.name + " for " + actor.name + " to go to in " + goapType.ToString());
         }
     }
-    #endregion
 }

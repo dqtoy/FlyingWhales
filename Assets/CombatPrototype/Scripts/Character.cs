@@ -3671,14 +3671,31 @@ public class Character : ILeader, IPointOfInterest {
             CombatState state = characterThatAttacked.stateComponent.currentState as CombatState;
             attackSummary += "\n" + this.name + "'s hp has reached 0.";
             WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
+
+            int deathWeight = 0;
+            int unconsciousWeight = 0;
+            if (isAtHomeArea) {
+                if (characterThatAttacked.faction == this.faction) {
+                    deathWeight = 25;
+                    unconsciousWeight = 75;
+                } else {
+                    deathWeight = 75;
+                    unconsciousWeight = 25;
+                }
+            } else {
+                deathWeight = 50;
+                unconsciousWeight = 50;
+            }
+            
+
             if (this.GetNormalTrait("Unconscious") == null) {
-                loserResults.AddElement("Unconscious", 30);
+                loserResults.AddElement("Unconscious", unconsciousWeight);
             }
             //if (currentClosestHostile.GetNormalTrait("Injured") == null) {
             //    loserResults.AddElement("Injured", 10);
             //}
             if (!isDead) {
-                loserResults.AddElement("Death", 5);
+                loserResults.AddElement("Death", deathWeight);
             }
 
             if (loserResults.Count > 0) {
@@ -7442,7 +7459,11 @@ public class Character : ILeader, IPointOfInterest {
                 if (!shouldDoAfterEffect) {
                     currentAction.OnStopActionDuringCurrentState();
                 }
-                currentAction.currentState?.EndPerTickEffect(shouldDoAfterEffect);
+                if(currentAction.currentState != null) {
+                    currentAction.currentState.EndPerTickEffect(shouldDoAfterEffect);
+                } else {
+                    SetCurrentAction(null);
+                }
             } else {
                 currentAction.OnStopActionWhileTravelling();
                 SetCurrentAction(null);

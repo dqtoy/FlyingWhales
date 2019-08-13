@@ -367,10 +367,10 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
         { INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "In Progress", status = InteractionManager.Goap_State_Success, duration = -1 },
+            new StateNameAndDuration(){ name = "In Progress", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(4) },
         } },
         { INTERACTION_TYPE.ROAMING_TO_STEAL, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "In Progress", status = InteractionManager.Goap_State_Success, duration = -1 },
+            new StateNameAndDuration(){ name = "In Progress", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(4) },
         } },
         { INTERACTION_TYPE.PUKE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Puke Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
