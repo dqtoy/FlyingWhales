@@ -41,7 +41,9 @@ public class Explosion : PlayerJobAction {
                 character.AdjustHP(-(int)(character.maxHP * 0.4f), true);
             }
             if (Random.Range(0, 100) < 25) {
-                flammable.AddTrait("Burning");
+                Burning burning = new Burning();
+                burning.SetSourceOfBurning(this);
+                flammable.AddTrait(burning);
             }
         }
     }

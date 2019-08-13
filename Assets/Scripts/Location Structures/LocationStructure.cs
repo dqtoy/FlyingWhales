@@ -206,6 +206,8 @@ public class LocationStructure {
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:
                 if (poi is MagicCircle) {
                     return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)).ToList();
+                } else if (poi is WaterWell) {
+                    return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && x.parentAreaMap.GetTilesInRadius(x, 5).Where(y => y.objHere is WaterWell).Count() == 0 && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure_Entrance, true)).ToList();
                 } else if (poi is Guitar || poi is Bed || poi is Table) {
                     return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
                 } else {

@@ -212,9 +212,11 @@ static internal class Messenger {
  
 	//Three parameters
 	static public void RemoveListener<T, U, V>(string eventType, Callback<T, U, V> handler) {
-        OnListenerRemoving(eventType, handler);
-        eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] - handler;
-        OnListenerRemoved(eventType);
+        if (eventTable.ContainsKey(eventType)) {
+            OnListenerRemoving(eventType, handler);
+            eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] - handler;
+            OnListenerRemoved(eventType);
+        }
     }
 	#endregion
  
