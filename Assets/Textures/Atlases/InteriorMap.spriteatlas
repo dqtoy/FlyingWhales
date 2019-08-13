@@ -97,6 +97,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ba852783ee8d3244299fbb253966f8bc, type: 3}
   - {fileID: 21300000, guid: 931db39314af6aa4b863b2996aac60a4, type: 3}
   - {fileID: 21300000, guid: 6b7c02b397c346041950c5017864df79, type: 3}
+  - {fileID: 21300000, guid: dde5a7c3c54a000408ba4ab161ebdda5, type: 3}
   - {fileID: 21300000, guid: f5c023d3c98be3840af100b295f7873f, type: 3}
   - {fileID: 21300000, guid: 98e705d3f5887a84a8d5fc81530362dd, type: 3}
   - {fileID: 21300000, guid: f3d6a1e3f40d32b4e86600a009bd6033, type: 3}
@@ -206,6 +207,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b6503b88d4f05ba45952c4c941e2ccf9, type: 3}
   - {fileID: 21300000, guid: ce7fa298e4478584393245d871ecd743, type: 3}
   - {fileID: 21300000, guid: cbcaf8a872766104b9933560e0d06e55, type: 3}
+  - {fileID: 21300000, guid: 694d89a8bcd92864aa2df8096da51bda, type: 3}
   - {fileID: 21300000, guid: bdedeeb895713fd43ada0354788ce6ec, type: 3}
   - {fileID: 21300000, guid: bde443c87e13c7d46901411b7c6cf310, type: 3}
   - {fileID: 21300000, guid: ee29e4c8b11a88c449a51aacc7c063b3, type: 3}
@@ -229,6 +231,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
   - {fileID: 21300000, guid: c7c885c979ee2f0478de6efd8a687e80, type: 3}
   - {fileID: 21300000, guid: a9b153d972870a24abeb826b0c38ea0b, type: 3}
+  - {fileID: 21300000, guid: b89d8cd91f5cc544ca9d4dfa7989c828, type: 3}
   - {fileID: 21300000, guid: 3bcb53e9cf5da944e9ce47d767ac583c, type: 3}
   - {fileID: 21300000, guid: 556f49e9a96e81d489e091b17c46d44e, type: 3}
   - {fileID: 21300000, guid: fb1a6ce9958395a44a4b2d8c350575b9, type: 3}
@@ -403,6 +406,7 @@ SpriteAtlas:
   - wallA-1100-00
   - grave00
   - character_default
+  - PondWall
   - dirtSnow_v01
   - fireplace01
   - shrineCandles00
@@ -512,6 +516,7 @@ SpriteAtlas:
   - stone_v00
   - wallA-1010-wall0001
   - floorRuins01
+  - Pond
   - wall1010-01
   - wall0101-00
   - dirt03
@@ -535,6 +540,7 @@ SpriteAtlas:
   - supplies
   - wallA-1111-00
   - shelfDecor00
+  - WaterWell
   - caveWallA-0111-03
   - cobble00
   - guitar

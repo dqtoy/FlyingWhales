@@ -4145,7 +4145,11 @@ public class Character : ILeader, IPointOfInterest {
         if (UnityEngine.Random.Range(0, 100) < 30) {
             AddTrait("Diplomatic");
         }
-        AddTrait("Flammable");
+        if (UnityEngine.Random.Range(0, 100) < 30) {
+            AddTrait("Fireproof");
+        } else {
+            AddTrait("Flammable");
+        }
     }
     public void CreateInitialTraitsByRace() {
         if (race == RACE.HUMANS) {
