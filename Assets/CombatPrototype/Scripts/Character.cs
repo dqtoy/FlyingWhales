@@ -2120,11 +2120,12 @@ public class Character : ILeader, IPointOfInterest {
         }
         AdjustIsWaitingForInteraction(-1);
     }
-    public void CancelAllJobsAndPlansExcept(JOB_TYPE job) {
+    public void CancelAllJobsAndPlansExcept(params JOB_TYPE[] job) {
+        List<JOB_TYPE> exceptions = job.ToList();
         AdjustIsWaitingForInteraction(1);
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
             JobQueueItem item = jobQueue.jobsInQueue[i];
-            if (item.jobType != job && jobQueue.CancelJob(jobQueue.jobsInQueue[i])) {
+            if (!exceptions.Contains(item.jobType) && jobQueue.CancelJob(jobQueue.jobsInQueue[i])) {
                 i--;
             }
         }
@@ -2133,7 +2134,7 @@ public class Character : ILeader, IPointOfInterest {
         StopCurrentAction(false);
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan currPlan = allGoapPlans[i];
-            if (currPlan.job == null || currPlan.job.jobType != job) {
+            if (currPlan.job == null || !exceptions.Contains(currPlan.job.jobType)) {
                 if (DropPlan(allGoapPlans[i])) {
                     i--;
                 }
