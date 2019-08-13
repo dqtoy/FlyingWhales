@@ -786,7 +786,7 @@ public class Character : ILeader, IPointOfInterest {
                 }
             } else if (traitable is LocationGridTile) {
                 IPointOfInterest poi = (traitable as LocationGridTile).genericTileObject;
-                if (marker.inVisionPOIs.Contains(poi) || poi == this) {
+                if (marker.inVisionPOIs.Contains(poi)) {
                     gainedTrait.CreateJobsOnEnterVisionBasedOnTrait(poi, this);
                 }
             }
@@ -808,7 +808,7 @@ public class Character : ILeader, IPointOfInterest {
                 if (marker.inVisionPOIs.Contains(poi)) {
                     JobQueueItem item = jobQueue.GetJob(JOB_TYPE.REMOVE_FIRE, poi);
                     if (item != null) {
-                        jobQueue.CancelJob(item, traitable.ToString() + " is no longer burning", shouldDoAfterEffect: false);
+                        jobQueue.CancelJob(item, "floor is no longer burning", shouldDoAfterEffect: false);
                     }
                 }
             }
@@ -2133,11 +2133,12 @@ public class Character : ILeader, IPointOfInterest {
         }
         AdjustIsWaitingForInteraction(-1);
     }
-    public void CancelAllJobsAndPlansExcept(JOB_TYPE job) {
+    public void CancelAllJobsAndPlansExcept(params JOB_TYPE[] job) {
+        List<JOB_TYPE> exceptions = job.ToList();
         AdjustIsWaitingForInteraction(1);
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
             JobQueueItem item = jobQueue.jobsInQueue[i];
-            if (item.jobType != job && jobQueue.CancelJob(jobQueue.jobsInQueue[i])) {
+            if (!exceptions.Contains(item.jobType) && jobQueue.CancelJob(jobQueue.jobsInQueue[i])) {
                 i--;
             }
         }
@@ -2146,7 +2147,7 @@ public class Character : ILeader, IPointOfInterest {
         StopCurrentAction(false);
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan currPlan = allGoapPlans[i];
-            if (currPlan.job == null || currPlan.job.jobType != job) {
+            if (currPlan.job == null || !exceptions.Contains(currPlan.job.jobType)) {
                 if (DropPlan(allGoapPlans[i])) {
                     i--;
                 }
@@ -2769,6 +2770,9 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void SetTileObjectLocation(TileObject tileObject) {
         tileObjectLocation = tileObject;
+    }
+    public bool IsDoingEmergencyAction() {
+        return currentAction != null && currentAction.goapType.IsEmergencyAction();
     }
     #endregion
 

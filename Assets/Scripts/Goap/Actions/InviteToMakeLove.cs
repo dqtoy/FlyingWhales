@@ -33,7 +33,7 @@ public class InviteToMakeLove : GoapAction {
             } else {
                 if (!targetCharacter.isStarving && !targetCharacter.isExhausted
                 && targetCharacter.GetNormalTrait("Annoyed") == null && !targetCharacter.HasOtherCharacterInParty()
-                && targetCharacter.stateComponent.currentState == null && targetCharacter.IsAvailable()) {
+                && targetCharacter.stateComponent.currentState == null && targetCharacter.IsAvailable() && !targetCharacter.IsDoingEmergencyAction()) {
                     SetState("Invite Success");
                 } else {
                     SetState("Invite Fail");

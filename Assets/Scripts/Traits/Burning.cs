@@ -65,11 +65,16 @@ public class Burning : Trait {
             //When a character sees someone burning, it must create a Remove Fire job targetting that character (if they are not enemies).
             if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_FIRE) 
                 && (targetCharacter == characterThatWillDoJob || !characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY))) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_FIRE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", targetPOI = traitOwner });
+                GoapPlanJob job;
+                if (targetCharacter == characterThatWillDoJob) {
+                    job = new GoapPlanJob(JOB_TYPE.REMOVE_FIRE_SELF, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", targetPOI = traitOwner });
+                } else {
+                    job = new GoapPlanJob(JOB_TYPE.REMOVE_FIRE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", targetPOI = traitOwner });
+                }
                 if (CanTakeRemoveFireJob(characterThatWillDoJob, targetCharacter)) {
                     //job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE);
+                    characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE, JOB_TYPE.REMOVE_FIRE_SELF);
                     //if (characterThatWillDoJob.allGoapPlans.Count == 0 || characterThatWillDoJob.allGoapPlans.First().job == null || characterThatWillDoJob.allGoapPlans.First().job.priority > job.priority) {
                         //characterThatWillDoJob.jobQueue.ProcessFirstJobInQueue(characterThatWillDoJob);
                     //}
@@ -87,9 +92,7 @@ public class Burning : Trait {
                 if (CanTakeRemoveFireJob(characterThatWillDoJob, traitOwner)) {
                     //job.SetCanTakeThisJobChecker(CanTakeRemoveFireJob);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    if (characterThatWillDoJob.allGoapPlans.Count == 0 || characterThatWillDoJob.allGoapPlans.First().job == null || characterThatWillDoJob.allGoapPlans.First().job.priority > job.priority) {
-                        characterThatWillDoJob.jobQueue.ProcessFirstJobInQueue(characterThatWillDoJob);
-                    }
+                    characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE, JOB_TYPE.REMOVE_FIRE_SELF);
                     return true;
                 }
             }

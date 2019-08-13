@@ -178,6 +178,7 @@ public class TileObject : IPointOfInterest {
     public virtual bool CanBeReplaced() {
         return false;
     }
+    protected virtual void OnTileObjectGainedTrait(Trait trait) { }
     #endregion
 
     #region IPointOfInterest
@@ -255,6 +256,7 @@ public class TileObject : IPointOfInterest {
         if (triggerOnAdd) {
             trait.OnAddTrait(this);
         }
+        OnTileObjectGainedTrait(trait);
         return true;
     }
     public virtual bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
@@ -459,7 +461,7 @@ public class TileObject : IPointOfInterest {
     #endregion
 
     #region Tile Object Slots
-    protected void OnPlaceObjectAtTile(LocationGridTile tile) {
+    protected virtual void OnPlaceObjectAtTile(LocationGridTile tile) {
         if (hasCreatedSlots) {
             RepositionTileSlots(tile);
         } else {
