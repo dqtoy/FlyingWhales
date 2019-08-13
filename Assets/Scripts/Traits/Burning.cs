@@ -161,7 +161,7 @@ public class Burning : Trait {
             for (int i = 0; i < neighbours.Count; i++) {
                 choices.AddRange(neighbours[i].GetAllTraitablesOnTileWithTrait("Flammable"));
             }
-            choices = choices.Where(x => x.GetNormalTrait("Burning", "Burnt", "Wet") == null).ToList();
+            choices = choices.Where(x => x.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
             if (choices.Count > 0) {
                 ITraitable chosen = choices[Random.Range(0, choices.Count)];
                 chosen.AddTrait("Burning");

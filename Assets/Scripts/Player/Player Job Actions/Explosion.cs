@@ -24,7 +24,7 @@ public class Explosion : PlayerJobAction {
             LocationGridTile tile = tiles[i];
             flammables.AddRange(tile.GetAllTraitablesOnTileWithTrait("Flammable"));
         }
-        flammables = flammables.Where(x => x.GetNormalTrait("Burning", "Burnt", "Wet") == null).ToList();
+        flammables = flammables.Where(x => x.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
         for (int i = 0; i < flammables.Count; i++) {
             ITraitable flammable = flammables[i];
             GameManager.Instance.CreateExplodeEffectAt(flammable.gridTileLocation);
