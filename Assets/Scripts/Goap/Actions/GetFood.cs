@@ -31,7 +31,7 @@ public class GetFood : GoapAction {
         }
     }
     protected override int GetCost() {
-        return 3;
+        return Utilities.rng.Next(10, 21);
     }
     //public override void FailAction() {
     //    base.FailAction();
@@ -77,7 +77,7 @@ public class GetFood : GoapAction {
         if (foodPile.foodInPile < takenFood) {
             takenFood = foodPile.foodInPile;
         }
-        actor.AdjustSupply(takenFood);
+        actor.AdjustFood(takenFood);
         foodPile.AdjustFoodInPile(-takenFood);
     }
     //private void PreTakeFail() {

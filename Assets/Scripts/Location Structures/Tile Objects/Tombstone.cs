@@ -13,7 +13,7 @@ public class Tombstone : TileObject {
     public Tombstone(Character character, LocationStructure structure) {
         this.character = character;
         structureLocation = structure;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.TRANSFORM_FOOD };
         Initialize(TILE_OBJECT_TYPE.TOMBSTONE);
     }
 

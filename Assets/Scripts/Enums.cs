@@ -1038,6 +1038,7 @@ public enum INTERACTION_TYPE {
     ACCIDENT,
     GET_FOOD,
     DROP_FOOD,
+    TRANSFORM_FOOD,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,

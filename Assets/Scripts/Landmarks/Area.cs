@@ -1110,6 +1110,7 @@ public class Area {
         //PlaceBedsAndTables();
         PlaceOres();
         PlaceSupplyPiles();
+        PlaceFoodPiles();
         SpawnFoodNow();
 
         //magic circle
@@ -1186,6 +1187,22 @@ public class Area {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
                 if (!structure.isFromTemplate) {
                     structure.AddPOI(new SupplyPile(structure));
+                }
+            }
+        }
+    }
+    private void PlaceFoodPiles() {
+        if (structures.ContainsKey(STRUCTURE_TYPE.DUNGEON)) {
+            for (int i = 0; i < structures[STRUCTURE_TYPE.DUNGEON].Count; i++) {
+                LocationStructure structure = structures[STRUCTURE_TYPE.DUNGEON][i];
+                structure.AddPOI(new FoodPile(structure));
+            }
+        }
+        if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
+            for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
+                LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
+                if (!structure.isFromTemplate) {
+                    structure.AddPOI(new FoodPile(structure));
                 }
             }
         }

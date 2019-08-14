@@ -425,6 +425,10 @@ public static class GoapActionStateDB {
         { INTERACTION_TYPE.STUMBLE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Stumble Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(10) },
         } },
+        {INTERACTION_TYPE.TRANSFORM_FOOD, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Transform Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
     };
 }
 

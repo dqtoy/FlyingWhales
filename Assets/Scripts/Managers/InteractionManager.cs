@@ -142,7 +142,7 @@ public class InteractionManager : MonoBehaviour {
                 goapAction = new GetFood(actor, target);
                 break;
             case INTERACTION_TYPE.DROP_FOOD:
-                goapAction = new DropSupply(actor, target);
+                goapAction = new DropFood(actor, target);
                 break;
             case INTERACTION_TYPE.TILE_OBJECT_DESTROY:
                 goapAction = new TileObjectDestroy(actor, target);
@@ -320,6 +320,9 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case INTERACTION_TYPE.STUMBLE:
                 goapAction = new Stumble(actor, target);
+                break;
+            case INTERACTION_TYPE.TRANSFORM_FOOD:
+                goapAction = new TransformFood(actor, target);
                 break;
         }
         if(goapAction != null && willInitialize) {
