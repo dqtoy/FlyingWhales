@@ -20,6 +20,8 @@ public class TileObject : IPointOfInterest {
     public LocationStructure structureLocation { get; protected set; }
     public bool isDisabledByPlayer { get; protected set; }
     public bool isSummonedByPlayer { get; protected set; }
+    public List<JobQueueItem> allJobsTargettingThis { get; protected set; }
+
     public virtual Character[] users {
         get {
             if (slots == null) {
@@ -60,6 +62,7 @@ public class TileObject : IPointOfInterest {
         _traits = new List<Trait>();
         actionHistory = new List<string>();
         awareCharacters = new List<Character>();
+        allJobsTargettingThis = new List<JobQueueItem>();
         //poiGoapActions = new List<INTERACTION_TYPE>();
         hasCreatedSlots = false;
         AddTrait("Flammable");
@@ -71,6 +74,7 @@ public class TileObject : IPointOfInterest {
         _traits = new List<Trait>();
         actionHistory = new List<string>();
         awareCharacters = new List<Character>();
+        allJobsTargettingThis = new List<JobQueueItem>();
         //poiGoapActions = new List<INTERACTION_TYPE>();
         hasCreatedSlots = false;
         InitializeCollisionTrigger();
@@ -457,6 +461,21 @@ public class TileObject : IPointOfInterest {
             return goapAction;
         }
         return null;
+    }
+    public void AddJobTargettingThis(JobQueueItem job) {
+        allJobsTargettingThis.Add(job);
+    }
+    public bool RemoveJobTargettingThis(JobQueueItem job) {
+        return allJobsTargettingThis.Remove(job);
+    }
+    public bool HasJobTargettingThis(JOB_TYPE jobType) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            JobQueueItem job = allJobsTargettingThis[i];
+            if (job.jobType == jobType) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 

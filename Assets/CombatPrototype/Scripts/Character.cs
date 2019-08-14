@@ -80,6 +80,7 @@ public class Character : ILeader, IPointOfInterest {
     public List<GoapPlan> allGoapPlans { get; private set; }
     public GoapPlanner planner { get; set; }
     public int supply { get; set; }
+    public int food { get; set; }
     public int isWaitingForInteraction { get; private set; }
     public CharacterMarker marker { get; private set; }
     public GoapAction currentAction { get; private set; }
@@ -1649,6 +1650,12 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
         Debug.Log(log);
+        return hasCreatedJob;
+    }
+    private bool NormalJobsOnEnterVision(IPointOfInterest targetPOI) {
+        bool hasCreatedJob = false;
+        
+
         return hasCreatedJob;
     }
     /// <summary>
@@ -4146,6 +4153,7 @@ public class Character : ILeader, IPointOfInterest {
         if (UnityEngine.Random.Range(0, 100) < 15) {
             AddTrait("Accident Prone");
         }
+        AddTrait("Character Trait");
     }
     public void CreateInitialTraitsByRace() {
         if (race == RACE.HUMANS) {
@@ -7429,6 +7437,21 @@ public class Character : ILeader, IPointOfInterest {
         supply = amount;
         if (supply < 0) {
             supply = 0;
+        }
+    }
+    #endregion
+
+    #region Food
+    public void AdjustFood(int amount) {
+        food += amount;
+        if (food < 0) {
+            food = 0;
+        }
+    }
+    public void SetFood(int amount) {
+        food = amount;
+        if (food < 0) {
+            food = 0;
         }
     }
     #endregion

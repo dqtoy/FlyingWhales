@@ -100,6 +100,7 @@ public class AttributeManager : MonoBehaviour {
             new Diplomatic(),
             new AccidentProne(),
             new Wet(),
+            new CharacterTrait(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

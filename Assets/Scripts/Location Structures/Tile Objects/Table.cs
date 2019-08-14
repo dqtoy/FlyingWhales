@@ -7,14 +7,14 @@ using UnityEngine.Tilemaps;
 public class Table : TileObject {
     //private Character[] users;
     public TileBase usedAsset { get; private set; }
-
+    public int food { get; private set; }
     //private int slots {
     //    get { return users.Length;}
     //}
 
     public Table(LocationStructure location) {
         this.structureLocation = location;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_DWELLING_TABLE, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_TYPE.TABLE_POISON, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_DWELLING_TABLE, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.REMOVE_POISON_TABLE, INTERACTION_TYPE.TABLE_POISON, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.DROP_FOOD };
         Initialize(TILE_OBJECT_TYPE.TABLE);
         //int slots = 4;
         //if (usedAsset.name.Contains("2")) {
@@ -266,6 +266,22 @@ public class Table : TileObject {
     //    }
     //}
     #endregion
+
+    #region Food
+    public void AdjustFood(int amount) {
+        food += amount;
+        if (food < 0) {
+            food = 0;
+        }
+    }
+    public void SetFood(int amount) {
+        food = amount;
+        if (food < 0) {
+            food = 0;
+        }
+    }
+    #endregion
+
     //private void UpdateUsedTableAsset() {
     //    if (gridTileLocation == null) {
     //        return;

@@ -780,6 +780,7 @@ public class GoapAction {
             if(effect.conditionKey != null && precondition.conditionKey != null) {
                 switch (effect.conditionType) {
                     case GOAP_EFFECT_CONDITION.HAS_SUPPLY:
+                    case GOAP_EFFECT_CONDITION.HAS_FOOD:
                         int effectInt = (int) effect.conditionKey;
                         int preconditionInt = (int) precondition.conditionKey;
                         return effectInt >= preconditionInt;

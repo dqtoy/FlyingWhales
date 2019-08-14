@@ -1,0 +1,1 @@
+{"items":[{"key":"take success_description","value":"%00@ obtained %111% Food from %04@."},{"key":"take fail_description","value":"%00@ wanted to obtain Food but there was none available."},{"key":"target missing_description","value":"%00@ wanted to obtain Food but there was none available."},{"key":"thought_bubble_m","value":"%00@ is going to obtain Food from %04@."}]}

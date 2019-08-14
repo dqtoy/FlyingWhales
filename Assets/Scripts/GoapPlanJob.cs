@@ -147,15 +147,21 @@ public class GoapPlanJob : JobQueueItem {
         }else if (this.targetPOI is SpecialToken) {
             SpecialToken target = this.targetPOI as SpecialToken;
             target.AddJobTargettingThis(this);
+        } else if (this.targetPOI is TileObject) {
+            TileObject target = this.targetPOI as TileObject;
+            target.AddJobTargettingThis(this);
         }
     }
     public override bool OnRemoveJobFromQueue() {
         if (this.targetPOI is Character) {
             Character target = this.targetPOI as Character;
             return target.RemoveJobTargettingThisCharacter(this);
-        }else if (this.targetPOI is SpecialToken) {
+        } else if (this.targetPOI is SpecialToken) {
             SpecialToken target = this.targetPOI as SpecialToken;
             return target.RemoveJobTargettingThis(this);
+        } else if (this.targetPOI is TileObject) {
+            TileObject target = this.targetPOI as TileObject;
+            target.RemoveJobTargettingThis(this);
         }
         return false;
     }

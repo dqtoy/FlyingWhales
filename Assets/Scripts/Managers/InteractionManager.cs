@@ -138,6 +138,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.DROP_SUPPLY:
                 goapAction = new DropSupply(actor, target);
                 break;
+            case INTERACTION_TYPE.GET_FOOD:
+                goapAction = new GetFood(actor, target);
+                break;
+            case INTERACTION_TYPE.DROP_FOOD:
+                goapAction = new DropSupply(actor, target);
+                break;
             case INTERACTION_TYPE.TILE_OBJECT_DESTROY:
                 goapAction = new TileObjectDestroy(actor, target);
                 break;
@@ -530,6 +536,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.CRAFT_TOOL:
             case JOB_TYPE.BREW_POTION:
             case JOB_TYPE.OBTAIN_SUPPLY:
+            case JOB_TYPE.OBTAIN_FOOD:
             case JOB_TYPE.DROP:
             case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
             case JOB_TYPE.INSPECT:

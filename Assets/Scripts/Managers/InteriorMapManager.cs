@@ -388,6 +388,10 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "\n\tYield: " + (tile.objHere as Ore).yield.ToString();
             } else if (tile.objHere is SupplyPile) {
                 summary += "\n\tSupplies in Pile: " + (tile.objHere as SupplyPile).suppliesInPile.ToString();
+            } else if (tile.objHere is FoodPile) {
+                summary += "\n\tFood in Pile: " + (tile.objHere as FoodPile).foodInPile.ToString();
+            } else if (tile.objHere is Table) {
+                summary += "\n\tFood in Table: " + (tile.objHere as Table).food.ToString();
             } else if (tile.objHere is SpecialToken) {
                 summary += "\n\tCharacter Owner: " + (tile.objHere as SpecialToken).characterOwner?.name ?? "None";
                 summary += "\n\tFaction Owner: " + (tile.objHere as SpecialToken).factionOwner?.name ?? "None";

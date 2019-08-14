@@ -6,10 +6,13 @@ public class EatAtTable : GoapAction {
 
     public Poisoned poisonedTrait { get; private set; }
     private string poisonedResult;
+    public Table targetTable { get; private set; }
+
     public EatAtTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_DWELLING_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Eat_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         //isNotificationAnIntel = false;
+        targetTable = poiTarget as Table;
     }
 
     #region Overrides
@@ -100,6 +103,11 @@ public class EatAtTable : GoapAction {
     }
     private void PerTickEatSuccess() {
         actor.AdjustFullness(18);
+        if (currentState.currentDuration <= 10) {
+            targetTable.AdjustFood(-2);
+        } else {
+            targetTable.AdjustFood(-1);
+        }
     }
     private void AfterEatSuccess() {
         actor.AdjustDoNotGetHungry(-1);
@@ -129,6 +137,11 @@ public class EatAtTable : GoapAction {
     }
     private void PerTickEatPoisoned() {
         actor.AdjustFullness(18);
+        if(currentState.currentDuration <= 10) {
+            targetTable.AdjustFood(-2);
+        } else {
+            targetTable.AdjustFood(-1);
+        }
     }
    
     private void AfterEatPoisoned() {
@@ -173,7 +186,12 @@ public class EatAtTable : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+        bool isFoodEnough = false;
+        if(poiTarget is Table) {
+            Table table = poiTarget as Table;
+            isFoodEnough = table.food >= 20;
+        }
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && isFoodEnough;
     }
     #endregion
 

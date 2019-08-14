@@ -180,6 +180,15 @@ public class LocationStructure {
         }
         return null;
     }
+    public FoodPile GetFoodPile() {
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            IPointOfInterest poi = pointsOfInterest[i];
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT && (poi as TileObject).tileObjectType == TILE_OBJECT_TYPE.FOOD_PILE) {
+                return poi as FoodPile;
+            }
+        }
+        return null;
+    }
     private bool PlacePOIAtAppropriateTile(IPointOfInterest poi, LocationGridTile tile, bool placeAsset = true) {
         if (tile != null) {
             location.areaMap.PlaceObject(poi, tile, placeAsset);
@@ -401,6 +410,10 @@ public class LocationStructure {
                     case "SupplyPile":
                         AddPOI(new SupplyPile(this), currTile, false);
                         currTile.SetReservedType(TILE_OBJECT_TYPE.SUPPLY_PILE);
+                        break;
+                    case "FoodPile":
+                        AddPOI(new FoodPile(this), currTile, false);
+                        currTile.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
                         break;
                     case "Guitar":
                         AddPOI(new Guitar(this), currTile, false);

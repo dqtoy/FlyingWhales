@@ -73,6 +73,24 @@ public class Area {
             return warehouse.GetSupplyPile();
         }
     }
+    public int foodInBank {
+        get {
+            FoodPile currFoodPile = foodPile;
+            if (currFoodPile == null) {
+                return 0;
+            }
+            return currFoodPile.foodInPile;
+        }
+    }
+    public FoodPile foodPile {
+        get {
+            LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE, 1);
+            if (warehouse == null) {
+                return null;
+            }
+            return warehouse.GetFoodPile();
+        }
+    }
     public int residentCapacity {
         get {
             if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
@@ -480,6 +498,25 @@ public class Area {
         supplyPile.AdjustSuppliesInPile(amount);
         Messenger.Broadcast(Signals.AREA_SUPPLIES_CHANGED, this);
         //suppliesInBank = Mathf.Clamp(suppliesInBank, 0, supplyCapacity);
+    }
+    #endregion
+
+    #region Food
+    public void SetFoodInBank(int amount) {
+        FoodPile currFoodPile = foodPile;
+        if (currFoodPile == null) {
+            return;
+        }
+        currFoodPile.SetFoodInPile(amount);
+        Messenger.Broadcast(Signals.AREA_FOOD_CHANGED, this);
+    }
+    public void AdjustFoodInBank(int amount) {
+        FoodPile currFoodPile = foodPile;
+        if (currFoodPile == null) {
+            return;
+        }
+        currFoodPile.AdjustFoodInPile(amount);
+        Messenger.Broadcast(Signals.AREA_FOOD_CHANGED, this);
     }
     #endregion
 
