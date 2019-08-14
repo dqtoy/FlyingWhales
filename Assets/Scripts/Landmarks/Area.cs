@@ -1201,9 +1201,7 @@ public class Area {
         if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
-                if (!structure.isFromTemplate) {
-                    structure.AddPOI(new FoodPile(structure));
-                }
+                structure.AddPOI(new FoodPile(structure));
             }
         }
     }

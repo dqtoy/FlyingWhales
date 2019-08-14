@@ -25,7 +25,7 @@ public class CharacterTrait : Trait {
                 if (dwelling.IsResident(characterThatWillDoJob)) {
                     if (!targetTable.HasJobTargettingThis(JOB_TYPE.OBTAIN_FOOD)) {
                         int neededFood = 60 - targetTable.food;
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_FOOD, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = targetPOI }
+                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_FOOD, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = 0, targetPOI = targetPOI }
                         , new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.GET_FOOD, new object[] { neededFood } }, });
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
