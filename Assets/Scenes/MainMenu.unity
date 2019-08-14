@@ -16325,7 +16325,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gridSizeX: 20
   gridSizeY: 15
-  regionCount: 5
+  minRegionCount: 18
+  maxRegionCount: 22
+  minRegionTileCount: 10
+  maxRegionTileCount: 14
+  minRegionWidthCount: 3
+  maxRegionWidthCount: 4
+  minRegionHeightCount: 3
+  maxRegionHeightCount: 4
   minColumnsBetweenSettlements: 5
   maxColumnsBetweenSettlements: 8
   tileColumnRows: 3

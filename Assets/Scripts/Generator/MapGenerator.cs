@@ -27,9 +27,15 @@ public class MapGenerator : MonoBehaviour {
 
         LevelLoaderManager.UpdateLoadingInfo("Generating Map...");
         yield return null;
+        //int regionCount = Random.Range(WorldConfigManager.Instance.minRegionCount, WorldConfigManager.Instance.maxRegionCount + 1);
+        //int width;
+        //int height;
+        //GenerateMapWidthAndHeightFromRegionCount(regionCount, out width, out height);
+        //Debug.Log("Width: " + width + " Height: " + height + " Region Count: " + regionCount);
+        //GridMap.Instance.SetupInitialData(width, height);
         RandomWorld world = WorldConfigManager.Instance.GenerateRandomWorldData();
         world.LogWorldData();
-        //GridMap.Instance.SetupInitialData(WorldConfigManager.Instance.gridSizeX, WorldConfigManager.Instance.gridSizeY);
+        GridMap.Instance.SetupInitialData(WorldConfigManager.Instance.gridSizeX, WorldConfigManager.Instance.gridSizeY);
         GridMap.Instance.SetupInitialData(world.mapWidth, world.mapHeight);
         GridMap.Instance.GenerateGrid();
         EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);
@@ -45,24 +51,21 @@ public class MapGenerator : MonoBehaviour {
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         yield return null;
         BaseLandmark portal;
+        //BaseLandmark settlement;
+
+        //GridMap.Instance.DivideToRegions(GridMap.Instance.hexTiles, regionCount, width * height);
+        //LandmarkManager.Instance.GenerateLandmarksNew(GridMap.Instance.allRegions, out portal, out settlement);
+        //StartCoroutine(LandmarkManager.Instance.GenerateConnections(portal, settlement));
+
 
         LandmarkManager.Instance.GenerateLandmarks(world, out portal);
         FactionManager.Instance.CreateNeutralFaction();
-
 
         LandmarkManager.Instance.SetCascadingLevelsForAllCharacters(portal.tileLocation);
         LandmarkManager.Instance.LoadAdditionalAreaData();
         GridMap.Instance.GenerateInitialTileTags();
         yield return null;
 
-        //Region[] generatedRegions;
-        //LandmarkManager.Instance.DivideToRegions(GridMap.Instance.hexTiles, WorldConfigManager.Instance.regionCount, WorldConfigManager.Instance.gridSizeX * WorldConfigManager.Instance.gridSizeY, out generatedRegions);
-        //LandmarkManager.Instance.GenerateSettlements(new IntRange(WorldConfigManager.Instance.minSettltementCount, WorldConfigManager.Instance.maxSettltementCount), generatedRegions, new IntRange(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount), out portal);
-        //LandmarkManager.Instance.SetCascadingLevelsForAllCharacters(portal.tileLocation);
-        //LandmarkManager.Instance.LoadAdditionalAreaData();
-        //LandmarkManager.Instance.GenerateMinorLandmarks(GridMap.Instance.hexTiles);
-        //GridMap.Instance.GenerateInitialTileTags();
-        //yield return null;
 
         GridMap.Instance.GenerateOuterGrid();
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
@@ -166,7 +169,6 @@ public class MapGenerator : MonoBehaviour {
         yield return new WaitForSeconds(1f);
         PlayerManager.Instance.LoadStartingTile();
     }
-
     private IEnumerator InitializeWorldCoroutine(Save data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
         System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
@@ -227,5 +229,50 @@ public class MapGenerator : MonoBehaviour {
 
     internal void ReloadScene() {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void GenerateMapWidthAndHeightFromRegionCount(int regionCount, out int width, out int height) {
+        width = 0;
+        height = 0;
+
+        int maxColumns = 6;
+        int currColumn = 0;
+
+        int currentRowWidth = 0;
+
+        string summary = "Map Size Generation: ";
+        for (int i = 0; i < regionCount; i++) {
+            int regionWidth = Random.Range(WorldConfigManager.Instance.minRegionWidthCount, WorldConfigManager.Instance.maxRegionWidthCount + 1);
+            int regionHeight = Random.Range(WorldConfigManager.Instance.minRegionHeightCount, WorldConfigManager.Instance.maxRegionHeightCount + 1);
+            if (currColumn < maxColumns) {
+                //only directly add to width
+                currentRowWidth += regionWidth;
+                if (currentRowWidth > width) {
+                    width = currentRowWidth;
+                }
+                if (regionHeight > height) {
+                    height = regionHeight;
+                }
+                currColumn++;
+            } else {
+                //place next set into next row
+                currColumn = 1;
+                currentRowWidth = 0;
+                height += regionHeight;
+            }
+            
+            //if (Utilities.IsEven(i)) {
+            //    width += regionWidth;
+            //} else {
+            //    height += regionHeight;
+            //}
+            
+            //totalTiles += regionWidth * regionHeight;
+            summary += "\n" + i + " - Width: " + regionWidth + " Height: " + regionHeight;
+        }
+        //summary += "\nComputed total tiles : " + totalTiles.ToString();
+        summary += "\nTotal tiles : " + (width * height).ToString();
+
+        Debug.Log(summary);
     }
 }

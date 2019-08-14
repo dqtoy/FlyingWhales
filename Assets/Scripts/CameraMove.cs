@@ -384,7 +384,7 @@ public class CameraMove : MonoBehaviour {
         int borderCount = GridMap.Instance._borderThickness;
 #endif
         MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * (borderCount - 1));
-        MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * (borderCount - 1));
+        MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * (borderCount)); //removed -1 because of UI
         MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * (borderCount - 1));
         MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * (borderCount - 1));
     }
