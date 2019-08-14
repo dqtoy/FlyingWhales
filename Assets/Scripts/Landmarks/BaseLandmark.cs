@@ -22,7 +22,7 @@ public class BaseLandmark {
     protected List<Item> _itemsInLandmark;
     protected List<LANDMARK_TAG> _landmarkTags;
     public LANDMARK_YIELD_TYPE yieldType;
-    public List<BaseLandmark> inGoingConnections { get; private set; }
+    public List<BaseLandmark> inComingConnections { get; private set; }
     public List<BaseLandmark> outGoingConnections { get; private set; }
     public List<BaseLandmark> sameColumnLandmarks { get; private set; }
     public List<HexTile> sameRowTiles { get; private set; }
@@ -77,7 +77,7 @@ public class BaseLandmark {
         _owner = null; //landmark has no owner yet
         _hasBeenCorrupted = false;
         _itemsInLandmark = new List<Item>();
-        inGoingConnections = new List<BaseLandmark>();
+        inComingConnections = new List<BaseLandmark>();
         outGoingConnections = new List<BaseLandmark>();
         sameColumnLandmarks = new List<BaseLandmark>();
     }
@@ -447,14 +447,14 @@ public class BaseLandmark {
     #endregion
 
     #region Connections
-    public void AddInGoingConnection(BaseLandmark newConnection) {
-        inGoingConnections.Add(newConnection);
+    public void AddIncomingConnection(BaseLandmark newConnection) {
+        inComingConnections.Add(newConnection);
     }
     public void AddOutGoingConnection(BaseLandmark newConnection) {
         outGoingConnections.Add(newConnection);
     }
     public bool IsConnectedWith(BaseLandmark otherLandmark) {
-        return inGoingConnections.Contains(otherLandmark) || outGoingConnections.Contains(otherLandmark);
+        return inComingConnections.Contains(otherLandmark) || outGoingConnections.Contains(otherLandmark);
     }
     public void SetSameColumnLandmarks(List<BaseLandmark> landmarks) {
         sameColumnLandmarks = landmarks;
@@ -474,6 +474,9 @@ public class BaseLandmark {
         //    return outGoingConnections[i].GetUpcomingSettlement();
         //}
         return null;
+    }
+    public bool HasMaximumConnections() {
+        return inComingConnections.Count >= LandmarkManager.Max_Connections;
     }
     #endregion
 

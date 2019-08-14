@@ -161,6 +161,9 @@ public class UIManager : MonoBehaviour {
             else if (currentTileHovered.landmarkOnTile != null) {
                 currentTileHovered.ShowTileInfo();
             }
+            //else  {
+            //    currentTileHovered.ShowTileInfo();
+            //}
 #endif
         }
     }

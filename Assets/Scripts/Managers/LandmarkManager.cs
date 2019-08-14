@@ -129,106 +129,6 @@ public class LandmarkManager : MonoBehaviour {
     #endregion
 
     #region Landmark Generation
-    public void GenerateSettlements(IntRange settlementRange, Region[] regions, IntRange citizenRange, out BaseLandmark portal) {
-        //place portal first
-        Region chosenPlayerRegion = regions[Random.Range(0, regions.Length)];
-        List<HexTile> playerTileChoices = chosenPlayerRegion.GetValidTilesForLandmarks();
-        HexTile chosenTile = playerTileChoices[Random.Range(0, playerTileChoices.Count)];
-        Area playerArea = CreateNewArea(chosenTile, AREA_TYPE.DEMONIC_INTRUSION, 0);
-        playerArea.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
-        portal = CreateNewLandmarkOnTile(chosenTile, LANDMARK_TYPE.DEMONIC_PORTAL);
-
-        //order regions based on distance from the player portal
-        List<Region> orderedRegions = new List<Region>(regions);
-        orderedRegions = orderedRegions.OrderBy(x => Vector2.Distance(chosenPlayerRegion.coreTile.transform.position, x.coreTile.transform.position)).ToList();
-
-        string orderedLog = string.Empty;
-        for (int i = 0; i < orderedRegions.Count; i++) {
-            orderedLog += i.ToString() + " " + orderedRegions[i].coreTile.ToString() + "(" + orderedRegions[i].regionColor.ToString() + ")\n";
-        }
-        Debug.Log(orderedLog);
-
-        //separate regions based on their distance from the player area
-        List<Region> nearRegions = new List<Region>(); //regions that are near the player area
-        List<Region> farRegions = new List<Region>(); //regions that are far from the player area
-        int nearRegionCutoff = regions.Length / 3;
-        for (int i = 0; i < orderedRegions.Count; i++) {
-            Region currRegion = orderedRegions[i];
-            if (i <= nearRegionCutoff) {
-                //near region
-                nearRegions.Add(currRegion);
-            } else {
-                farRegions.Add(currRegion);
-            }
-        }
-
-        int settlementCount = settlementRange.Random();
-        Debug.Log("Will generate " + settlementCount.ToString() + " settlements");
-        AREA_TYPE[] validSettlementTypes = new AREA_TYPE[] { AREA_TYPE.HUMAN_SETTLEMENT, AREA_TYPE.ELVEN_SETTLEMENT };
-
-        //generate all settlement settings first, then order them by citizen count. This is to ensure that settlements with lower citizen counts will be placed first, 
-        //and so can be placed closer to the player portal, without being limited by other settlements with higher citizen counts.
-        List<SettlementSettings> settlementSettings = new List<SettlementSettings>();
-        for (int i = 0; i < settlementCount; i++) {
-            AREA_TYPE chosenSettlementType = validSettlementTypes[Random.Range(0, validSettlementTypes.Length)];
-            int cc = citizenRange.Random();
-            settlementSettings.Add(new SettlementSettings { citizenCount = cc, settlementType = chosenSettlementType });
-        }
-        settlementSettings = settlementSettings.OrderBy(x => x.citizenCount).ToList();
-
-        //create the given settlements
-        for (int i = 0; i < settlementSettings.Count; i++) {
-            SettlementSettings currSetting = settlementSettings[i];
-            AREA_TYPE settlementType = currSetting.settlementType;
-            int citizenCount = currSetting.citizenCount;
-            List<Region> regionChoices;
-            bool isNear = false;
-            //Settlements with fewer inhabitants are spawned near the portal, while stronger, more populated settlements are spawned further away. 
-            if (citizenRange.IsNearUpperBound(citizenCount)) {
-                //citizen count is more than half of the range. Place settlement at a far away region
-                regionChoices = farRegions.Where(x => x.GetValidTilesForLandmarks().Count > 0).ToList();
-                if (regionChoices.Count == 0) { //if there are no valid far regions, place the landmark at a near region instead
-                    regionChoices = nearRegions.Where(x => x.GetValidTilesForLandmarks().Count > 0).ToList();
-                }
-            } else {
-                isNear = true;
-                regionChoices = nearRegions.Where(x => x.GetValidTilesForLandmarks().Count > 0).ToList();
-                if (regionChoices.Count == 0) { //if there are no valid near regions, place the landmark at a far region instead
-                    regionChoices = farRegions.Where(x => x.GetValidTilesForLandmarks().Count > 0).ToList();
-                }
-            }
-
-            if (regionChoices.Count == 0) {
-                throw new System.Exception("There are no valid regions to place a settlement!");
-            }
-            Region chosenRegion = regionChoices[Random.Range(0, regionChoices.Count)];
-            List<HexTile> tileChoices = chosenRegion.GetValidTilesForLandmarks();
-            tileChoices = tileChoices.OrderBy(x => Vector2.Distance(playerArea.coreTile.transform.position, x.transform.position)).ToList();
-            HexTile chosenRegionTile = null;
-            if (isNear) {
-                chosenRegionTile = tileChoices[0];
-            } else {
-                chosenRegionTile = tileChoices[Random.Range(tileChoices.Count / 2, tileChoices.Count)];
-            }
-            
-            Area newArea = CreateNewArea(chosenRegionTile, settlementType, citizenCount);
-            CreateNewLandmarkOnTile(chosenRegionTile, LANDMARK_TYPE.PALACE);
-            Faction faction = FactionManager.Instance.CreateNewFaction();
-            if (settlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
-                faction.SetInitialFactionLeaderClass("Queen");
-                faction.SetInitialFactionLeaderGender(GENDER.FEMALE);
-                faction.SetRace(RACE.ELVES);
-            } else if (settlementType == AREA_TYPE.HUMAN_SETTLEMENT) {
-                faction.SetInitialFactionLeaderClass("King");
-                faction.SetInitialFactionLeaderGender(GENDER.MALE);
-                faction.SetRace(RACE.HUMANS);
-            }
-            OwnArea(faction, faction.race, newArea);
-            newArea.GenerateStructures(citizenCount);
-            //GenerateAreaMap(newArea);
-            faction.GenerateStartingCitizens(2, 1, citizenCount); //9,7
-        }
-    }
     public void SetCascadingLevelsForAllCharacters(HexTile portalTile) {
         List<Area> arrangedAreas = allAreas.OrderBy(x => x.coreTile.GetTileDistanceTo(portalTile)).ToList();
         int initialLeaderLevel = 2;
@@ -300,6 +200,48 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
     }
+    public void GenerateLandmarksNew(Region[] regions, out BaseLandmark portal, out BaseLandmark settlement) {
+        //place portal first
+        Region[] corners = GetCornerRegions();
+        int portalCorner = Random.Range(0, 4);
+        Region portalRegion = corners[portalCorner];
+        Area portalArea = CreateNewArea(portalRegion.coreTile, AREA_TYPE.DEMONIC_INTRUSION, 0);
+        BaseLandmark portalLandmark = CreateNewLandmarkOnTile(portalRegion.coreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
+        portalArea.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
+        portal = portalLandmark;
+
+        //place settlement at opposite corner
+        int oppositeCorner = GetOppositeCorner(portalCorner);
+        Region settlementRegion = corners[oppositeCorner];
+        AREA_TYPE settlementType = Utilities.RandomSettlementType();
+        Area settlementArea = CreateNewArea(settlementRegion.coreTile, settlementType, Random.Range(WorldConfigManager.Instance.minCitizenCountFirstSettlement, WorldConfigManager.Instance.maxCitizenCountFirstSettlement + 1));
+        BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE);
+        settlement = settlementLandmark;
+        Faction faction = FactionManager.Instance.CreateNewFaction();
+        if (settlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
+            faction.SetInitialFactionLeaderClass("Queen");
+            faction.SetInitialFactionLeaderGender(GENDER.FEMALE);
+            faction.SetRace(RACE.ELVES);
+        } else if (settlementType == AREA_TYPE.HUMAN_SETTLEMENT) {
+            faction.SetInitialFactionLeaderClass("King");
+            faction.SetInitialFactionLeaderGender(GENDER.MALE);
+            faction.SetRace(RACE.HUMANS);
+        }
+
+        List<Region> availableRegions = new List<Region>(regions);
+        availableRegions.Remove(portalRegion);
+        availableRegions.Remove(settlementRegion);
+
+        //place all other landmarks
+        Dictionary<LANDMARK_TYPE, int> landmarks = WorldConfigManager.Instance.GetLandmarksForGeneration(regions.Length - 2); //subtracted 2 because of portal and settlement
+        foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in landmarks) {
+            for (int i = 0; i < kvp.Value; i++) {
+                Region chosenRegion = availableRegions[Random.Range(0, availableRegions.Count)];
+                BaseLandmark landmark = CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key);
+                availableRegions.Remove(chosenRegion);
+            }
+        }
+    }
     public void GenerateLandmarks(RandomWorld world, out BaseLandmark portal) {
         WeightedDictionary<LANDMARK_YIELD_TYPE> yieldTypeChances = new WeightedDictionary<LANDMARK_YIELD_TYPE>();
         yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.SUMMON, 15);
@@ -327,7 +269,7 @@ public class LandmarkManager : MonoBehaviour {
                     for (int j = 0; j < connections; j++) {
                         //only choose rows that don't have landmarks or rows that have landmarks but are not yet connected to the current columns major landmark
                         List<TileRow> rowChoices = currColumn.GetValidRowsInNextColumnForLandmarks(rowWithMajorLandmark, nextColumn)
-                            .Where(x => x.landmark == null || !x.landmark.IsConnectedWith(rowWithMajorLandmark.landmark)).ToList(); 
+                            .Where(x => x.landmark == null || !x.landmark.IsConnectedWith(rowWithMajorLandmark.landmark)).ToList();
                         if (rowChoices.Count == 0) {
                             break;
                         }
@@ -397,12 +339,33 @@ public class LandmarkManager : MonoBehaviour {
             }
 
             for (int j = 0; j < currColumn.rows.Length; j++) {
-                if(currColumn.rows[j] != null && currColumn.rows[j].landmark != null) {
+                if (currColumn.rows[j] != null && currColumn.rows[j].landmark != null) {
                     BaseLandmark rowLandmark = currColumn.rows[j].landmark;
                     rowLandmark.SetSameColumnLandmarks(currColumn.GetAllLandmarksInColumn(rowLandmark));
                     rowLandmark.SetSameRowTiles(currColumn.rows[j].GetAllTiles(GridMap.Instance.map).ToList());
                 }
             }
+        }
+    }
+    private Region[] GetCornerRegions() {
+        //Get the regions in the 4 corners of the map. NOTE: it is possible that there are multiple corners that belong to the same region.
+        HexTile topLeftTile = GridMap.Instance.map[0, GridMap.Instance.height - 1]; //0
+        HexTile topRightTile = GridMap.Instance.map[GridMap.Instance.width - 1, GridMap.Instance.height - 1]; //1
+        HexTile botRightTile = GridMap.Instance.map[GridMap.Instance.width - 1, 0]; //2
+        HexTile botLeftTile = GridMap.Instance.map[0, 0]; //3
+
+        return new Region[] { topLeftTile.region, topRightTile.region, botRightTile.region, botLeftTile.region };
+    }
+    private int GetOppositeCorner(int corner) {
+        if (corner == 0) {
+            return 2;
+        } else if (corner == 1) {
+            return 3;
+        } else if (corner == 2) {
+            return 0;
+        } else {
+            return 1;
+
         }
     }
     /// <summary>
@@ -411,14 +374,14 @@ public class LandmarkManager : MonoBehaviour {
     /// <param name="landmark1">The landmark that will connect to landmark 2.</param>
     /// <param name="landmark2">The landmark accepting the connection from landmark 1.</param>
     public void ConnectLandmarks(BaseLandmark landmark1, BaseLandmark landmark2) {
+        //landmark1.AddConnection(landmark2);
         landmark1.AddOutGoingConnection(landmark2);
-        landmark2.AddInGoingConnection(landmark1);
+        landmark2.AddIncomingConnection(landmark1);
         GameObject lineGO = GameObject.Instantiate(landmarkConnectionPrefab, landmark1.tileLocation.transform);
         LineRenderer line = lineGO.GetComponent<LineRenderer>();
         line.positionCount = 2;
         line.SetPosition(0, landmark1.tileLocation.transform.position);
         line.SetPosition(1, landmark2.tileLocation.transform.position);
-
     }
     private BaseLandmark CreateMinorLandmarkOnRow(TileRow row, WeightedDictionary<LANDMARK_YIELD_TYPE> yieldTypeChances) {
         LANDMARK_YIELD_TYPE chosenYieldType = yieldTypeChances.PickRandomElementGivenWeights();
@@ -438,7 +401,7 @@ public class LandmarkManager : MonoBehaviour {
         TileRow chosenRow = currColumn.rows[randomRow];
         List<HexTile> choices = chosenRow.GetElligibleTilesForLandmark(GridMap.Instance.map);
         HexTile chosenTile = choices[Random.Range(0, choices.Count)];
-        
+
         Area newArea = CreateNewArea(chosenTile, areaType, citizenCount);
         BaseLandmark landmark = CreateNewLandmarkOnTile(chosenTile, type);
         chosenRow.SetLandmark(landmark);
@@ -458,8 +421,63 @@ public class LandmarkManager : MonoBehaviour {
             OwnArea(faction, faction.race, newArea);
             newArea.GenerateStructures(citizenCount);
             faction.GenerateStartingCitizens(2, 1, citizenCount); //9,7
-        }        
+        }
         return landmark;
+    }
+
+    public static readonly int Max_Connections = 3;
+    public IEnumerator GenerateConnections(BaseLandmark portal, BaseLandmark settlement) {
+        List<BaseLandmark> pendingConnections = new List<BaseLandmark>();
+
+        //connect portal to all adjacent regions
+        List<Region> portalAdjacent = portal.tileLocation.region.AdjacentRegions();
+        for (int i = 0; i < portalAdjacent.Count; i++) {
+            Region currRegion = portalAdjacent[i];
+            ConnectLandmarks(portal, currRegion.coreTile.landmarkOnTile);
+            pendingConnections.Add(currRegion.coreTile.landmarkOnTile);
+            if (portal.HasMaximumConnections()) { break; }
+        }
+
+        //connect settlement to all adjacent regions
+        List<Region> settlementAdjacent = settlement.tileLocation.region.AdjacentRegions();
+        for (int i = 0; i < settlementAdjacent.Count; i++) {
+            Region currRegion = settlementAdjacent[i];
+            ConnectLandmarks(settlement, currRegion.coreTile.landmarkOnTile);
+            if (settlement.HasMaximumConnections()) { break; }
+        }
+
+        while (pendingConnections.Count > 0) {
+            BaseLandmark currLandmark = pendingConnections[0];
+            if (currLandmark.HasMaximumConnections()) {
+                pendingConnections.Remove(currLandmark);
+                if (pendingConnections.Count == 0) {
+                    List<BaseLandmark> choices = GetAllLandmarksExcept(portal, settlement).Where(x => !x.HasMaximumConnections()).ToList();
+                    if (choices.Count > 0) {
+                        pendingConnections.Add(choices[Random.Range(0, choices.Count)]);
+                    }
+                }
+            } else {
+                //pick from adjacent regions to connect
+                List<Region> adjacentRegions = currLandmark.tileLocation.region.AdjacentRegions().Where(x => !x.coreTile.landmarkOnTile.HasMaximumConnections()).ToList();
+                if (adjacentRegions.Count > 0) {
+                    Region chosenRegion = adjacentRegions[Random.Range(0, adjacentRegions.Count)];
+                    ConnectLandmarks(currLandmark, chosenRegion.coreTile.landmarkOnTile);
+                    pendingConnections.Remove(currLandmark);
+                    pendingConnections.Add(chosenRegion.coreTile.landmarkOnTile);
+                } else {
+                    //no more adjacent regions that have available slot
+                    if (currLandmark.inComingConnections.Count == 0) {
+                        //if the current landmark does not have any connections yet, allow it to connect to any adjacent region, even if it already has maximum connections
+                        adjacentRegions = currLandmark.tileLocation.region.AdjacentRegions();
+                        Region chosenRegion = adjacentRegions[Random.Range(0, adjacentRegions.Count)];
+                        ConnectLandmarks(currLandmark, chosenRegion.coreTile.landmarkOnTile);
+                        pendingConnections.Remove(currLandmark);
+                        pendingConnections.Add(chosenRegion.coreTile.landmarkOnTile);
+                    }
+                }
+            }
+            yield return new WaitForSeconds(1f);
+        }
     }
     #endregion
 
@@ -516,6 +534,22 @@ public class LandmarkManager : MonoBehaviour {
         for (int i = 0; i < choices.Count; i++) {
             HexTile currTile = choices[i];
             if (currTile.landmarkOnTile != null) {
+                allLandmarks.Add(currTile.landmarkOnTile);
+            }
+        }
+        return allLandmarks;
+    }
+    public List<BaseLandmark> GetAllLandmarksExcept(params BaseLandmark[] landmarks) {
+        List<BaseLandmark> exceptions = landmarks.ToList();
+        List<BaseLandmark> allLandmarks = new List<BaseLandmark>();
+#if WORLD_CREATION_TOOL
+        List<HexTile> choices = worldcreator.WorldCreatorManager.Instance.allTiles;
+#else
+        List<HexTile> choices = GridMap.Instance.hexTiles;
+#endif
+        for (int i = 0; i < choices.Count; i++) {
+            HexTile currTile = choices[i];
+            if (currTile.landmarkOnTile != null && !exceptions.Contains(currTile.landmarkOnTile)) {
                 allLandmarks.Add(currTile.landmarkOnTile);
             }
         }
@@ -755,208 +789,5 @@ public class LandmarkManager : MonoBehaviour {
     }
     #endregion
 
-    #region Regions
-    public void DivideToRegions(List<HexTile> tiles, int regionCount, int mapSize, out Region[] generatedRegions) {
-        List<HexTile> regionCoreTileChoices = new List<HexTile>(tiles.Where(x => x.elevationType != ELEVATION.WATER));
-        List<HexTile> remainingTiles = new List<HexTile>(tiles);
-        Region[] regions = new Region[regionCount];
-        for (int i = 0; i < regionCount; i++) {
-            HexTile chosenTile = regionCoreTileChoices[Random.Range(0, regionCoreTileChoices.Count)];
-            Region newRegion = new Region(chosenTile);
-            int range = Mathf.CeilToInt(mapSize * 0.01f);//1% of map size
-            List<HexTile> tilesInRange = chosenTile.GetTilesInRange(range);
-            Utilities.ListRemoveRange(regionCoreTileChoices, tilesInRange);
-            regions[i] = newRegion;
-            remainingTiles.Remove(chosenTile);
-        }
-
-        //assign each remaining tile to a region, based on each tiles distance from a core tile.
-        for (int i = 0; i < remainingTiles.Count; i++) {
-            HexTile currTile = remainingTiles[i];
-            Region nearestRegion = null;
-            float nearestDistance = 99999f;
-            for (int j = 0; j < regions.Length; j++) {
-                Region currRegion = regions[j];
-                float dist = Vector2.Distance(currTile.transform.position, currRegion.coreTile.transform.position);
-                if (dist < nearestDistance) {
-                    nearestRegion = currRegion;
-                    nearestDistance = dist;
-                }
-            }
-            nearestRegion.AddTile(currTile);
-        }
-        generatedRegions = regions;
-        //for (int i = 0; i < generatedRegions.Length; i++) {
-        //    generatedRegions[i].RedetermineCore();
-        //}
-    }
-    #endregion
+   
 }
-
-public class Region {
-    public List<HexTile> tiles { get; private set; }
-    public HexTile coreTile { get; private set; }
-
-    public Color regionColor;
-    private List<HexTile> allTiles {
-        get {
-            return tiles;
-        }
-    }
-
-    public Region(HexTile coreTile) {
-        this.coreTile = coreTile;
-        tiles = new List<HexTile>();
-        AddTile(coreTile);
-        regionColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-    }
-
-    public void AddTile(HexTile tile) {
-        if (!tiles.Contains(tile)) {
-            tiles.Add(tile);
-            //if (tile != coreTile) {
-            //    tile.spriteRenderer.color = regionColor;
-            //}
-        }
-    }
-
-    /// <summary>
-    /// Get all tiles in this region that don't have landmarks
-    /// and are not near any landmarks. (3 tiles to be exact)
-    /// </summary>
-    /// <returns>List of valid tiles.</returns>
-    public List<HexTile> GetValidTilesForLandmarks() {
-        List<HexTile> valid = new List<HexTile>();
-        for (int i = 0; i < allTiles.Count; i++) {
-            HexTile currTile = allTiles[i];
-            List<HexTile> tilesInRange = currTile.GetTilesInRange(3);
-            //if current tile meets the ff requirements, it is valid
-            // - Does not have a landamrk on it yet.
-            // - Is not a water tile.
-            // - Does not have a landmark within range.(3 tiles)
-            if (currTile.landmarkOnTile == null
-                && currTile.elevationType == ELEVATION.PLAIN
-                && !currTile.IsAtEdgeOfMap()
-                && tilesInRange.Where(x => x.landmarkOnTile != null).Count() == 0) {
-                valid.Add(currTile);
-            } 
-        }
-        return valid;
-    }
-
-    public void RedetermineCore() {
-        int maxX = tiles.Max(t => t.data.xCoordinate);
-        int minX = tiles.Min(t => t.data.xCoordinate);
-        int maxY = tiles.Max(t => t.data.yCoordinate);
-        int minY = tiles.Min(t => t.data.yCoordinate);
-
-        int x = (minX + maxX) / 2;
-        int y = (minY + maxY) / 2;
-
-        coreTile = GridMap.Instance.map[x, y];
-        if (!tiles.Contains(coreTile)) {
-            throw new System.Exception("Region does not contain new core tile! " + coreTile.ToString());
-        }
-    }
-}
-
-public struct SettlementSettings {
-    public AREA_TYPE settlementType;
-    public int citizenCount;
-}
-
-//#region Map Job
-//public struct AreaMapGenerationJob : IJob {
-
-//    public string areaName;
-//    public AREA_TYPE areaType;
-//    public NativeArray<StructureTemplate> validTownCenterTemplates; //get VALID town center templates before executing this job
-//    public NativeHashMap<int, NativeArray<StructureTemplate>> structureTemplates; //int is the STRUCTURE_TYPE enum converted to int
-//    public NativeHashMap<int, int> areaStructures; //Key int is the STRUCTURE_TYPE enum converted to int, Value int is the number of structures of that type
-
-//    public void Execute() {
-//        GenerateInnerStructures();
-//    }
-
-//    public void GenerateInnerStructures() {
-//        //ClearAllTilemaps();
-//        //insideTiles = new List<LocationGridTile>();
-//        //outsideTiles = new List<LocationGridTile>();
-//        if (areaType != AREA_TYPE.DUNGEON && areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-//            //if this area is not a dungeon type
-//            InteriorMapManager.Instance.CleanupForTownGeneration();
-//            //first get a town center template that has the needed connections for the structures in the area
-//            NativeArray<StructureTemplate> validTownCenters = validTownCenterTemplates;
-//            //Once a town center is chosen
-//            StructureTemplate chosenTownCenter = validTownCenters[Utilities.rng.Next(0, validTownCenters.Length)];
-            
-//            ////Place that template in the area generation tilemap
-//            //InteriorMapManager.Instance.DrawTownCenterTemplateForGeneration(chosenTownCenter, Vector3Int.zero);
-//            ////DrawTiles(InteriorMapManager.Instance.agGroundTilemap, chosenTownCenter.groundTiles, Vector3Int.zero);
-//            //chosenTownCenter.UpdatePositionsGivenOrigin(Vector3Int.zero);
-//            ////then iterate through all the structures in this area, making sure that the chosen template for the structure can connect to the town center
-//            //foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
-//            //    if (area.name == "Gloomhollow") {
-//            //        if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate() && keyValuePair.Key != STRUCTURE_TYPE.EXPLORE_AREA) {
-//            //            //allow explore areas to be generated in gloomhollow
-//            //            continue; //skip
-//            //        }
-//            //    } else {
-//            //        if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
-//            //            continue; //skip
-//            //        }
-//            //    }
-
-//            //    int structuresToCreate = keyValuePair.Value.Count;
-//            //    if (area.name == "Gloomhollow") {
-//            //        structuresToCreate = 5; //hardcoded to 5
-//            //    }
-
-//            //    for (int i = 0; i < structuresToCreate; i++) {
-//            //        List<StructureTemplate> templates = InteriorMapManager.Instance.GetStructureTemplates(keyValuePair.Key); //placed this inside loop so that instance of template is unique per iteration
-//            //        List<StructureTemplate> choices = GetTemplatesThatCanConnectTo(chosenTownCenter, templates);
-//            //        if (choices.Count == 0) {
-//            //            //NOTE: Show a warning log when there are no valid structure templates for the current structure
-//            //            throw new System.Exception("There are no valid " + keyValuePair.Key.ToString() + " templates to connect to town center in area " + area.name);
-//            //        }
-//            //        StructureTemplate chosenTemplate = choices[Random.Range(0, choices.Count)];
-//            //        StructureConnector townCenterConnector;
-//            //        StructureConnector chosenTemplateConnector = chosenTemplate.GetValidConnectorTo(chosenTownCenter, out townCenterConnector);
-
-//            //        Vector3Int shiftTemplateBy = InteriorMapManager.Instance.GetMoveUnitsOfTemplateGivenConnections(chosenTemplate, chosenTemplateConnector, townCenterConnector);
-//            //        townCenterConnector.SetIsOpen(false);
-//            //        chosenTemplateConnector.SetIsOpen(false);
-//            //        InteriorMapManager.Instance.DrawStructureTemplateForGeneration(chosenTemplate, shiftTemplateBy, keyValuePair.Key);
-//            //    }
-//            //}
-//            ////once all structures are placed, get the occupied bounds in the area generation tilemap, and use that size to generate the actual grid for this map
-//            //TownMapSettings generatedSettings = InteriorMapManager.Instance.GetTownMapSettings();
-//            //GenerateGrid(generatedSettings);
-//            //SplitMap();
-//            //Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
-//            //DrawTownMap(generatedSettings, startPoint);
-//            ////once generated, just copy the generated structures to the actual map.
-//            //if (area.name == "Gloomhollow") {
-//            //    LocationStructure exploreArea = area.GetRandomStructureOfType(STRUCTURE_TYPE.EXPLORE_AREA);
-//            //    for (int i = 0; i < insideTiles.Count; i++) {
-//            //        LocationGridTile currTile = insideTiles[i];
-//            //        TileBase structureAsset = structureTilemap.GetTile(currTile.localPlace);
-//            //        if (structureAsset == null || !structureAsset.name.Contains("wall")) {
-//            //            currTile.SetStructure(exploreArea);
-//            //            currTile.SetTileType(LocationGridTile.Tile_Type.Structure);
-//            //        }
-//            //    }
-//            //} else {
-//            //    PlaceStructures(generatedSettings, startPoint);
-//            //}
-//            //AssignOuterAreas(insideTiles, outsideTiles);
-//            //else use the old structure generation
-//        } 
-//        //else {
-//        //    OldStructureGeneration();
-//        //}
-//    }
-
-
-//}
-//#endregion

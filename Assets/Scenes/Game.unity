@@ -42587,6 +42587,7 @@ GameObject:
   - component: {fileID: 930355349}
   - component: {fileID: 930355351}
   - component: {fileID: 930355347}
+  - component: {fileID: 930355346}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -42594,6 +42595,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &930355346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 930355345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  profile: {fileID: 11400000, guid: eb61b37790c165446b5921ae728df1ca, type: 2}
 --- !u!114 &930355347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42671,7 +42684,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _minFov: 5
-  _maxFov: 8
+  _maxFov: 10
   sensitivity: 20
   _zoomSpeed: 15
   nameplateCamera: {fileID: 252774528}
@@ -61826,8 +61839,6 @@ MonoBehaviour:
   tileSize: 1
   elevationFrequency: 0
   moistureFrequency: 0
-  numOfRegions: 6
-  refinementLevel: 5
   listHexes: []
   outerGridList: []
   hexTiles: []

@@ -10,8 +10,8 @@ public class GridMap : MonoBehaviour {
 	public GameObject goHex;
     [Space(10)]
     [Header("Map Settings")]
-    public float width;
-	public float height;
+    public int width;
+	public int height;
     [SerializeField] private Transform _borderParent;
     [SerializeField] internal int _borderThickness;
 
@@ -24,11 +24,6 @@ public class GridMap : MonoBehaviour {
     public float moistureFrequency;
 
     [Space(10)]
-    [Header("Region Settings")]
-    public int numOfRegions;
-    public int refinementLevel;
-
-    [Space(10)]
 	public List<GameObject> listHexes;
     public List<HexTile> outerGridList;
     public List<HexTile> hexTiles;
@@ -36,6 +31,9 @@ public class GridMap : MonoBehaviour {
 
 	internal float mapWidth;
 	internal float mapHeight;
+
+    public Region[] allRegions { get; private set; }
+
 
     #region getters/setters
     public List<HexTile> allTiles {
@@ -336,12 +334,6 @@ public class GridMap : MonoBehaviour {
         //Biomes.Instance.UpdateTileVisuals(outerGridList);
         outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighboursForBorders());
     }
-    //public void GenerateNeighboursWithSameTag() {
-    //    for (int i = 0; i < listHexes.Count; i++) {
-    //        HexTile currHex = listHexes[i].GetComponent<HexTile>();
-    //        currHex.sameTagNeighbours = currHex.AllNeighbours.Where(x => x.tileTag == currHex.tileTag).ToList();
-    //    }
-    //}
     public HexTile GetTileFromCoordinates(int x, int y) {
         if ((x < 0 || x > width - 1) || (y < 0 || y > height - 1)) {
             //outer tile
@@ -428,6 +420,143 @@ public class GridMap : MonoBehaviour {
         return new CubeCoordinate(x, y, z);
     }
     #endregion
+
+    #region Regions
+    public void DivideToRegions(List<HexTile> tiles, int regionCount, int mapSize) {
+        List<HexTile> regionCoreTileChoices = new List<HexTile>(tiles);
+        List<HexTile> remainingTiles = new List<HexTile>(tiles);
+        allRegions = new Region[regionCount];
+        for (int i = 0; i < regionCount; i++) {
+            if (regionCoreTileChoices.Count == 0) {
+                throw new System.Exception("No more core tiles for regions!");
+            }
+            HexTile chosenTile = regionCoreTileChoices[Random.Range(0, regionCoreTileChoices.Count)];
+            Region newRegion = new Region(chosenTile);
+            int range = 2;
+            List<HexTile> tilesInRange = chosenTile.GetTilesInRange(range);
+            regionCoreTileChoices.Remove(chosenTile);
+            remainingTiles.Remove(chosenTile);
+            for (int j = 0; j < tilesInRange.Count; j++) {
+                regionCoreTileChoices.Remove(tilesInRange[j]);
+            }
+            allRegions[i] = newRegion;
+        }
+        //assign each remaining tile to a region, based on each tiles distance from a core tile.
+        for (int i = 0; i < remainingTiles.Count; i++) {
+            HexTile currTile = remainingTiles[i];
+            Region nearestRegion = null;
+            float nearestDistance = 99999f;
+            for (int j = 0; j < allRegions.Length; j++) {
+                Region currRegion = allRegions[j];
+                float dist = Vector2.Distance(currTile.transform.position, currRegion.coreTile.transform.position);
+                if (dist < nearestDistance) {
+                    nearestRegion = currRegion;
+                    nearestDistance = dist;
+                }
+            }
+            nearestRegion.AddTile(currTile);
+        }
+        string summary = "Generated regions: ";
+        for (int i = 0; i < allRegions.Length; i++) {
+            allRegions[i].ShowRegionHighlight();
+            summary += "\n" + i.ToString() + " - " + allRegions[i].tiles.Count.ToString();
+        }
+        Debug.Log(summary);
+    }
+    #endregion
 }
 
 
+public class Region {
+    public int id { get; private set; }
+    public List<HexTile> tiles { get; private set; }
+    public HexTile coreTile { get; private set; }
+    private Color regionColor;
+
+    public Region(HexTile coreTile) {
+        id = Utilities.SetID(this);
+        this.coreTile = coreTile;
+        tiles = new List<HexTile>();
+        AddTile(coreTile);
+        regionColor = Random.ColorHSV();
+    }
+
+    public void AddTile(HexTile tile) {
+        if (!tiles.Contains(tile)) {
+            tiles.Add(tile);
+            tile.SetRegion(this);
+            //if (tile != coreTile) {
+            //    tile.spriteRenderer.color = regionColor;
+            //}
+        }
+    }
+
+    #region Utilities
+    public void RedetermineCore() {
+        int maxX = tiles.Max(t => t.data.xCoordinate);
+        int minX = tiles.Min(t => t.data.xCoordinate);
+        int maxY = tiles.Max(t => t.data.yCoordinate);
+        int minY = tiles.Min(t => t.data.yCoordinate);
+
+        int x = (minX + maxX) / 2;
+        int y = (minY + maxY) / 2;
+
+        //coreTile.spriteRenderer.color = regionColor;
+
+        coreTile = GridMap.Instance.map[x, y];
+        //coreTile.spriteRenderer.color = Color.white;
+
+        if (!tiles.Contains(coreTile)) {
+            throw new System.Exception("Region does not contain new core tile! " + coreTile.ToString());
+        }
+    }
+    /// <summary>
+    /// Get the outer tiles of this region. NOTE: Made this into a getter instead of saving it in a variable, to save memory.
+    /// </summary>
+    /// <returns>List of outer tiles.</returns>
+    private List<HexTile> GetOuterTiles() {
+        List<HexTile> outerTiles = new List<HexTile>();
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            if (currTile.AllNeighbours.Count != 6 || currTile.HasNeighbourFromOtherRegion()) {
+                outerTiles.Add(currTile);
+            }
+        }
+        return outerTiles;
+    }
+    public void ShowRegionHighlight() {
+        List<HexTile> outerTiles = GetOuterTiles();
+        HEXTILE_DIRECTION[] dirs = Utilities.GetEnumValues<HEXTILE_DIRECTION>();
+        for (int i = 0; i < outerTiles.Count; i++) {
+            HexTile currTile = outerTiles[i];
+            for (int j = 0; j < dirs.Length; j++) {
+                HEXTILE_DIRECTION dir = dirs[j];
+                if (dir == HEXTILE_DIRECTION.NONE) { continue; }
+                HexTile neighbour = currTile.GetNeighbour(dir);
+                if (neighbour == null || neighbour.region != currTile.region) {
+                    SpriteRenderer border = currTile.GetBorder(dir);
+                    border.gameObject.SetActive(true);
+                    currTile.SetBorderColor(regionColor);
+                }
+            }
+        }
+    }
+    public List<Region> AdjacentRegions() {
+        List<Region> adjacent = new List<Region>();
+        for (int i = 0; i < tiles.Count; i++) {
+            HexTile currTile = tiles[i];
+            List<Region> regions;
+            if (currTile.TryGetDifferentRegionNeighbours(out regions)) {
+                for (int j = 0; j < regions.Count; j++) {
+                    Region currRegion = regions[j];
+                    if (!adjacent.Contains(currRegion)) {
+                        adjacent.Add(currRegion);
+                    }
+                }
+            }
+        }
+        return adjacent;
+    }
+    #endregion
+
+}
