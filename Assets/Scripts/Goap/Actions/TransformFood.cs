@@ -58,11 +58,11 @@ public class TransformFood : GoapAction {
         }
         if (deadCharacter != null) {
             if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
-                return true;
-                //if (actor.GetNormalTrait("Cannibal") != null) {
-                //    return true;
-                //}
-                //return false;
+                //return true;
+                if (actor.GetNormalTrait("Cannibal") != null) {
+                    return true;
+                }
+                return false;
             }
             return true;
         }
@@ -85,6 +85,9 @@ public class TransformFood : GoapAction {
     private void AfterTransformSuccess() {
         deadCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
         actor.AdjustFood(transformedFood);
+    }
+    private void PreTargetMissing() {
+        currentState.AddLogFiller(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     #endregion
 }

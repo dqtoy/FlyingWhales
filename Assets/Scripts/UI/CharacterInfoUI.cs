@@ -610,6 +610,9 @@ public class CharacterInfoUI : UIMenu {
         _activeCharacter.marker.LogPOIsInVisionRange();
         _activeCharacter.LogAwarenessList();
     }
+    public void Death() {
+        _activeCharacter.Death();
+    }
     public void AssaultACharacter() {
         List<Character> characterPool = new List<Character>();
         for (int i = 0; i < _activeCharacter.specificLocation.charactersAtLocation.Count; i++) {
