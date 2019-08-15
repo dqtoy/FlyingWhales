@@ -1392,10 +1392,10 @@ public class Character : ILeader, IPointOfInterest {
     public void SetCurrentJob(JobQueueItem job) {
         currentJob = job;
     }
-    public void AddJobTargettingThisCharacter(JobQueueItem job) {
+    public void AddJobTargettingThis(JobQueueItem job) {
         allJobsTargettingThis.Add(job);
     }
-    public bool RemoveJobTargettingThisCharacter(JobQueueItem job) {
+    public bool RemoveJobTargettingThis(JobQueueItem job) {
         return allJobsTargettingThis.Remove(job);
     }
     public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType) {
@@ -1470,7 +1470,7 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
-    public bool HasJobTargettingThisCharacter(JOB_TYPE jobType) {
+    public bool HasJobTargettingThis(JOB_TYPE jobType) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType) {
@@ -1816,7 +1816,7 @@ public class Character : ILeader, IPointOfInterest {
     /// <returns>The created job.</returns>
     public GoapPlanJob CreateApprehendJobFor(Character targetCharacter, bool assignSelfToJob = false) {
         //if (homeArea.id == specificLocation.id) {
-        if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.APPREHEND) && targetCharacter.GetNormalTrait("Restrained") == null && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND) && targetCharacter.GetNormalTrait("Restrained") == null && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             //GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = targetCharacter };
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
             job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
@@ -1926,7 +1926,7 @@ public class Character : ILeader, IPointOfInterest {
                 while (chosenCharacter == null && enemyCharacters.Count > 0) {
                     int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
                     Character character = enemyCharacters[index];
-                    if (character.HasJobTargettingThisCharacter(JOB_TYPE.UNDERMINE_ENEMY) || jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, character)) {
+                    if (character.HasJobTargettingThis(JOB_TYPE.UNDERMINE_ENEMY) || jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, character)) {
                         enemyCharacters.RemoveAt(index);
                     } else {
                         chosenCharacter = character;
@@ -2043,7 +2043,7 @@ public class Character : ILeader, IPointOfInterest {
                 log += "\n" + name + " is either a Civilian/Leader/Noble and cannot save a character, thus, will try to ask for help.";
                 return;
             }
-            if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.SAVE_CHARACTER)) {
+            if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.SAVE_CHARACTER)) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SAVE_CHARACTER, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
                 job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
                 //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = targetCharacter.homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
@@ -3217,29 +3217,30 @@ public class Character : ILeader, IPointOfInterest {
         if (GetNormalTrait("Unconscious", "Resting") != null) {
             return;
         }
-        if(target is Character) {
-            Character targetCharacter = target as Character;
-            targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
-            if (currentAction != null && currentAction.poiTarget == targetCharacter && currentAction.parentPlan != null && currentAction.parentPlan.job != null && currentAction.parentPlan.job.isStealth) {
-                //Upon seeing the target while performing a stealth job action, check if it can do the action
-                if (!marker.CanDoStealthActionToTarget(targetCharacter)) {
-                    currentAction.parentPlan.job.jobQueueParent.CancelJob(currentAction.parentPlan.job);
-                }
-            } else if (targetCharacter.allJobsTargettingThis.Count > 0) {
-                //Upon seeing a character and that character is is being targetted by a stealth job and the actor of that job is not this one, and the actor is performing that job and the actor already sees the target
-                List<JobQueueItem> allJobsTargettingTargetCharacter = new List<JobQueueItem>(targetCharacter.allJobsTargettingThis);
-                for (int i = 0; i < allJobsTargettingTargetCharacter.Count; i++) {
-                    JobQueueItem job = allJobsTargettingTargetCharacter[i];
-                    if (job.isStealth && job.assignedCharacter != null && job.assignedCharacter != this) {
-                        if (job.assignedCharacter.currentAction != null && !job.assignedCharacter.currentAction.isDone && !job.assignedCharacter.currentAction.isPerformingActualAction
-                            && job.assignedCharacter.currentAction.poiTarget == targetCharacter && job.assignedCharacter.currentAction.parentPlan != null
-                            && job.assignedCharacter.currentAction.parentPlan.job != null
-                            && job.assignedCharacter.currentAction.parentPlan.job == job && job.assignedCharacter.marker.inVisionPOIs.Contains(targetCharacter)) {
-                            job.jobQueueParent.CancelJob(job);
-                        }
+        
+        if (currentAction != null && currentAction.poiTarget == target && currentAction.isStealth) {
+            //Upon seeing the target while performing a stealth job action, check if it can do the action
+            if (!marker.CanDoStealthActionToTarget(target)) {
+                currentAction.parentPlan.job.jobQueueParent.CancelJob(currentAction.parentPlan.job);
+            }
+        }
+        if (target.targettedByAction.Count > 0) {
+            //Upon seeing a character and that character is being targetted by a stealth job and the actor of that job is not this one, and the actor is performing that job and the actor already sees the target
+            List<GoapAction> allActionsTargettingTargetCharacter = new List<GoapAction>(target.targettedByAction);
+            for (int i = 0; i < allActionsTargettingTargetCharacter.Count; i++) {
+                GoapAction action = allActionsTargettingTargetCharacter[i];
+                if (action.isStealth && action.actor != this) {
+                    if (!action.isDone && !action.isPerformingActualAction && action.actor.currentAction == action
+                        && action.actor.marker.inVisionPOIs.Contains(target)) {
+                        action.StopAction(true);
                     }
                 }
             }
+        }
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
+            
             Spooked spooked = GetNormalTrait("Spooked") as Spooked;
             if (spooked != null) {
                 if (marker.AddAvoidInRange(targetCharacter)) {
@@ -6956,17 +6957,17 @@ public class Character : ILeader, IPointOfInterest {
                                     continue;
                                 }
                             }
-                            //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
-                            else if (plan.job != null && plan.job.isStealth) {
-                                if (marker.inVisionCharacters.Contains(targetCharacter) && !marker.CanDoStealthActionToTarget(targetCharacter)) {
-                                    continue;
-                                }
-                            }
                         }
 
                         if (!targetCharacter.IsInOwnParty() && targetCharacter.currentParty != _ownParty) {
                             log += "\n - " + targetCharacter.name + " is not in its own party, waiting and skipping...";
                             PrintLogIfActive(log);
+                            continue;
+                        }
+                    }
+                    if(plan.currentNode.action.poiTarget != this && plan.currentNode.action.isStealth) {
+                        //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
+                        if (marker.inVisionPOIs.Contains(plan.currentNode.action.poiTarget) && !marker.CanDoStealthActionToTarget(plan.currentNode.action.poiTarget)) {
                             continue;
                         }
                     }
@@ -7087,10 +7088,8 @@ public class Character : ILeader, IPointOfInterest {
         if (action == currentAction) {
             SetCurrentAction(null);
         }
-        if (action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            Character targetCharacter = action.poiTarget as Character;
-            targetCharacter.RemoveTargettedByAction(action);
-        }
+        action.poiTarget.RemoveTargettedByAction(action);
+
         GoapPlan plan = action.parentPlan;
         if (isDead) {
             log += "\n" + name + " is dead!";
@@ -7359,10 +7358,12 @@ public class Character : ILeader, IPointOfInterest {
             Debug.Log(log);
         }
     }
-    public void OnTargettedByAction(GoapAction action) {
-        targettedByAction.Add(action);
-        if (marker != null) {
-            marker.OnCharacterTargettedByAction(action);
+    public void AddTargettedByAction(GoapAction action) {
+        if (this != action.actor) { // && !isDead
+            targettedByAction.Add(action);
+            if (marker != null) {
+                marker.OnCharacterTargettedByAction(action);
+            }
         }
     }
     public void RemoveTargettedByAction(GoapAction action) {

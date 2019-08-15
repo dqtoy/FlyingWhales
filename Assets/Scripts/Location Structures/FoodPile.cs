@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class FoodPile : TileObject, IPointOfInterest {
+public class FoodPile : TileObject {
     public LocationStructure location { get; private set; }
     public int foodInPile { get; private set; }
 

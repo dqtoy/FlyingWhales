@@ -21,6 +21,7 @@ public class TileObject : IPointOfInterest {
     public bool isDisabledByPlayer { get; protected set; }
     public bool isSummonedByPlayer { get; protected set; }
     public List<JobQueueItem> allJobsTargettingThis { get; protected set; }
+    public List<GoapAction> targettedByAction { get; protected set; }
 
     public virtual Character[] users {
         get {
@@ -63,6 +64,7 @@ public class TileObject : IPointOfInterest {
         actionHistory = new List<string>();
         awareCharacters = new List<Character>();
         allJobsTargettingThis = new List<JobQueueItem>();
+        targettedByAction = new List<GoapAction>();
         //poiGoapActions = new List<INTERACTION_TYPE>();
         hasCreatedSlots = false;
         AddTrait("Flammable");
@@ -223,6 +225,27 @@ public class TileObject : IPointOfInterest {
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
         poiGoapActions.Add(type);
+    }
+    public void AddJobTargettingThis(JobQueueItem job) {
+        allJobsTargettingThis.Add(job);
+    }
+    public bool RemoveJobTargettingThis(JobQueueItem job) {
+        return allJobsTargettingThis.Remove(job);
+    }
+    public bool HasJobTargettingThis(JOB_TYPE jobType) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            JobQueueItem job = allJobsTargettingThis[i];
+            if (job.jobType == jobType) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void AddTargettedByAction(GoapAction action) {
+        targettedByAction.Add(action);
+    }
+    public void RemoveTargettedByAction(GoapAction action) {
+        targettedByAction.Remove(action);
     }
     #endregion
 
@@ -461,21 +484,6 @@ public class TileObject : IPointOfInterest {
             return goapAction;
         }
         return null;
-    }
-    public void AddJobTargettingThis(JobQueueItem job) {
-        allJobsTargettingThis.Add(job);
-    }
-    public bool RemoveJobTargettingThis(JobQueueItem job) {
-        return allJobsTargettingThis.Remove(job);
-    }
-    public bool HasJobTargettingThis(JOB_TYPE jobType) {
-        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
-            JobQueueItem job = allJobsTargettingThis[i];
-            if (job.jobType == jobType) {
-                return true;
-            }
-        }
-        return false;
     }
     #endregion
 

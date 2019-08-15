@@ -7,6 +7,24 @@ public class TransformFood : GoapAction {
     private int transformedFood;
     private Character deadCharacter;
 
+    protected override bool isTargetMissing {
+        get {
+            bool targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+              || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation) || !(poiTarget as Character).isDead);
+
+            if (targetMissing) {
+                return targetMissing;
+            } else {
+                Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
+                if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
+                    return true;
+                }
+                return targetMissing;
+            }
+        }
+    }
+
+
     public TransformFood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TRANSFORM_FOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
 
@@ -14,6 +32,9 @@ public class TransformFood : GoapAction {
             deadCharacter = poiTarget as Character;
         } else if (poiTarget is Tombstone) {
             deadCharacter = (poiTarget as Tombstone).character;
+        }
+        if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+            SetIsStealth(true);
         }
     }
 
@@ -57,7 +78,7 @@ public class TransformFood : GoapAction {
             return false;
         }
         if (deadCharacter != null) {
-            if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+            if (isStealth) {
                 //return true;
                 if (actor.GetNormalTrait("Cannibal") != null) {
                     return true;

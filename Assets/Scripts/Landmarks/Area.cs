@@ -4,7 +4,8 @@ using System.Linq;
 using System;
 using UnityEngine;
 
-public class Area {
+public class 
+    Area {
 
     public int id { get; private set; }
     public string name { get; private set; }

@@ -16,7 +16,6 @@ public class MakeLove : GoapAction {
     //}
     public override void PerformActualAction() {
         base.PerformActualAction();
-        targetCharacter.OnTargettedByAction(this);
         if (!isTargetMissing) {
             Bed bed = poiTarget as Bed;
             poiTargetAlterEgo = targetCharacter.currentAlterEgo;
@@ -79,6 +78,10 @@ public class MakeLove : GoapAction {
             targetCharacter.SetCurrentAction(null);
         }
         actor.DropPlan(parentPlan, true);
+    }
+    public override void DoAction() {
+        base.DoAction();
+        targetCharacter.AddTargettedByAction(this);
     }
     #endregion
 

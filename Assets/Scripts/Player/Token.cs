@@ -15,13 +15,14 @@ public class SpecialToken : IPointOfInterest {
     public int supplyValue { get { return ItemManager.Instance.itemData[specialTokenType].supplyValue; } }
     public int craftCost { get { return ItemManager.Instance.itemData[specialTokenType].craftCost; } }
     public int purchaseCost { get { return ItemManager.Instance.itemData[specialTokenType].purchaseCost; } }
-    public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public Area specificLocation { get { return gridTileLocation.structure.location; } }
     public bool isDisabledByPlayer { get; protected set; }
     public POI_STATE state { get; protected set; }
     public POICollisionTrigger collisionTrigger { get; protected set; }
     public int uses { get; protected set; } //how many times can this item be used?
     public bool createsObjectWhenDropped { get; protected set; } //does this item create an object on the tile map when it is dropped?
+    public List<JobQueueItem> allJobsTargettingThis { get; private set; }
+    public List<GoapAction> targettedByAction { get; protected set; }
 
     protected List<Trait> _traits;
     private LocationGridTile tile;
@@ -66,6 +67,7 @@ public class SpecialToken : IPointOfInterest {
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_TYPE.DROP_ITEM};
         _traits = new List<Trait>();
         allJobsTargettingThis = new List<JobQueueItem>();
+        targettedByAction = new List<GoapAction>();
         uses = 1;
         createsObjectWhenDropped = true;
         InitializeCollisionTrigger();
@@ -105,6 +107,12 @@ public class SpecialToken : IPointOfInterest {
             }
         }
         return false;
+    }
+    public void AddTargettedByAction(GoapAction action) {
+        targettedByAction.Add(action);
+    }
+    public void RemoveTargettedByAction(GoapAction action) {
+        targettedByAction.Remove(action);
     }
 
     #region Area Map

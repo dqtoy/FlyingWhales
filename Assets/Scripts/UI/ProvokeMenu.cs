@@ -85,7 +85,7 @@ public class ProvokeMenu : MonoBehaviour {
             while (chosenCharacter == null && enemyCharacters.Count > 0) {
                 int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
                 Character character = enemyCharacters[index];
-                if (character.HasJobTargettingThisCharacter(JOB_TYPE.UNDERMINE_ENEMY) || targetCharacter.jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, character)) {
+                if (character.HasJobTargettingThis(JOB_TYPE.UNDERMINE_ENEMY) || targetCharacter.jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, character)) {
                     enemyCharacters.RemoveAt(index);
                 } else {
                     chosenCharacter = character;

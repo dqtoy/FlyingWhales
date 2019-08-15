@@ -894,17 +894,26 @@ public class CharacterMarker : PooledObject {
     public void SetTargetPOI(IPointOfInterest poi) {
         this.targetPOI = poi;
     }
-    public bool CanDoStealthActionToTarget(Character target) {
-        if (target.marker.inVisionCharacters.Count > 1) {
-            return false; //if there are 2 or more in vision of target character it means he is not alone anymore
-        } else if (target.marker.inVisionCharacters.Count == 1) {
-            if (!target.marker.inVisionCharacters.Contains(character)) {
-                return false; //if there is only one in vision of target character and it is not this character, it means he is not alone
+    private bool CanDoStealthActionToTarget(Character target) {
+        if (!target.isDead) {
+            if (target.marker.inVisionCharacters.Count > 1) {
+                return false; //if there are 2 or more in vision of target character it means he is not alone anymore
+            } else if (target.marker.inVisionCharacters.Count == 1) {
+                if (!target.marker.inVisionCharacters.Contains(character)) {
+                    return false; //if there is only one in vision of target character and it is not this character, it means he is not alone
+                }
+            }
+        } else {
+            if (inVisionCharacters.Count > 1) {
+                return false;
             }
         }
         return true;
     }
     public bool CanDoStealthActionToTarget(IPointOfInterest target) {
+        if(target is Character) {
+            return CanDoStealthActionToTarget(target as Character);
+        }
         if (inVisionCharacters.Count > 0) {
             return false;
         }

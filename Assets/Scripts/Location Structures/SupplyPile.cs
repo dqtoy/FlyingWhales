@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class SupplyPile : TileObject, IPointOfInterest {
+public class SupplyPile : TileObject {
     public LocationStructure location { get; private set; }
     public int suppliesInPile { get; private set; }
 

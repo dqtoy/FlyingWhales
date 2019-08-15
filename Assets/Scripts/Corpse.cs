@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Corpse : TileObject, IPointOfInterest {
+public class Corpse : TileObject {
     public Character character { get; private set; }
     public LocationStructure location { get; private set; }
 

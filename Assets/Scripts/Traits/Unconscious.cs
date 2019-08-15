@@ -84,7 +84,7 @@ public class Unconscious : Trait {
                     return false;
                 }
             }
-            if (!targetCharacter.isDead && targetCharacter.faction != targetCharacter.specificLocation.owner && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.RESTRAIN) && targetCharacter.GetNormalTrait("Restrained") == null) {
+            if (!targetCharacter.isDead && targetCharacter.faction != targetCharacter.specificLocation.owner && !targetCharacter.HasJobTargettingThis(JOB_TYPE.RESTRAIN) && targetCharacter.GetNormalTrait("Restrained") == null) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
                 //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = characterThatWillDoJob, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
                 job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);

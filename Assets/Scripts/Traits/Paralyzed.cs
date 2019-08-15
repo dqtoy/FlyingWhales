@@ -42,7 +42,7 @@ public class Paralyzed : Trait {
         if (!character.IsInOwnParty()) {
             return;
         }
-        if (character.HasJobTargettingThisCharacter(JOB_TYPE.DROP) || character.HasJobTargettingThisCharacter(JOB_TYPE.FEED)) {
+        if (character.HasJobTargettingThis(JOB_TYPE.DROP) || character.HasJobTargettingThis(JOB_TYPE.FEED)) {
             return;
         }
         if(character.allGoapPlans.Count > 0) {
@@ -58,7 +58,7 @@ public class Paralyzed : Trait {
 
     #region Carry/Drop
     private bool CreateActualDropJob(LocationStructure dropLocationStructure) {
-        if (!character.HasJobTargettingThisCharacter(JOB_TYPE.DROP) && !character.HasJobTargettingThisCharacter(JOB_TYPE.FEED)) {
+        if (!character.HasJobTargettingThis(JOB_TYPE.DROP) && !character.HasJobTargettingThis(JOB_TYPE.FEED)) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, character,
                 new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.DROP, new object[] { dropLocationStructure }
@@ -70,7 +70,7 @@ public class Paralyzed : Trait {
         return false;
     }
     private bool CreateActualDropJob(LocationStructure dropLocationStructure, LocationGridTile dropGridTile) {
-        if (!character.HasJobTargettingThisCharacter(JOB_TYPE.DROP) && !character.HasJobTargettingThisCharacter(JOB_TYPE.FEED)) {
+        if (!character.HasJobTargettingThis(JOB_TYPE.DROP) && !character.HasJobTargettingThis(JOB_TYPE.FEED)) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DROP, INTERACTION_TYPE.DROP, character,
                 new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.DROP, new object[] { dropLocationStructure, dropGridTile }
@@ -105,7 +105,7 @@ public class Paralyzed : Trait {
         return false;
     }
     private bool CreateFeedJob() {
-        if (!character.HasJobTargettingThisCharacter(JOB_TYPE.FEED) && !character.HasJobTargettingThisCharacter(JOB_TYPE.DROP) && character.specificLocation.IsResident(character)) {
+        if (!character.HasJobTargettingThis(JOB_TYPE.FEED) && !character.HasJobTargettingThis(JOB_TYPE.DROP) && character.specificLocation.IsResident(character)) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = character };
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect);
             job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);

@@ -107,7 +107,7 @@ public class Sleep : GoapAction {
                 //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
                 bool isTargettedByDrinkBlood = false;
                 for (int i = 0; i < actor.targettedByAction.Count; i++) {
-                    if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone) {
+                    if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
                         isTargettedByDrinkBlood = true;
                         break;
                     }
@@ -119,7 +119,7 @@ public class Sleep : GoapAction {
         } else {
             bool isTargettedByDrinkBlood = false;
             for (int i = 0; i < actor.targettedByAction.Count; i++) {
-                if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone) {
+                if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
                     isTargettedByDrinkBlood = true;
                     break;
                 }

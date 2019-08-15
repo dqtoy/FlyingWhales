@@ -32,20 +32,20 @@ public class Craftsman : Trait {
         //    craftedItemName = SPECIAL_TOKEN.JUNK;
         //}
         base.OnAddTrait(sourcePOI);
-        if (sourcePOI is Character) {
-            Character character = sourcePOI as Character;
-            for (int i = 0; i < advertisedInteractions.Count; i++) {
-                character.AddInteractionType(advertisedInteractions[i]);
-            }
-        }
+        //if (sourcePOI is Character) {
+        //    Character character = sourcePOI as Character;
+        //    for (int i = 0; i < advertisedInteractions.Count; i++) {
+        //        character.AddInteractionType(advertisedInteractions[i]);
+        //    }
+        //}
     }
     public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
-        if (sourcePOI is Character) {
-            Character character = sourcePOI as Character;
-            for (int i = 0; i < advertisedInteractions.Count; i++) {
-                character.RemoveInteractionType(advertisedInteractions[i]);
-            }
-        }
+        //if (sourcePOI is Character) {
+        //    Character character = sourcePOI as Character;
+        //    for (int i = 0; i < advertisedInteractions.Count; i++) {
+        //        character.RemoveInteractionType(advertisedInteractions[i]);
+        //    }
+        //}
         base.OnRemoveTrait(sourcePOI, removedBy);
     }
     #endregion

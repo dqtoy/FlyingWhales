@@ -115,7 +115,7 @@ public class Restrained : Trait {
     }
 
     private void CreateFeedJob() {
-        if (!_sourceCharacter.HasJobTargettingThisCharacter(JOB_TYPE.FEED)) {
+        if (!_sourceCharacter.HasJobTargettingThis(JOB_TYPE.FEED)) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = _sourceCharacter };
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect);
             job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);
@@ -146,7 +146,7 @@ public class Restrained : Trait {
         return false;
     }
     private void CreateJudgementJob() {
-        if (!_sourceCharacter.HasJobTargettingThisCharacter(JOB_TYPE.JUDGEMENT)) {
+        if (!_sourceCharacter.HasJobTargettingThis(JOB_TYPE.JUDGEMENT)) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, _sourceCharacter);
             job.SetCanTakeThisJobChecker(CanDoJudgementJob);
             _sourceCharacter.gridTileLocation.structure.location.jobQueue.AddJobInQueue(job);

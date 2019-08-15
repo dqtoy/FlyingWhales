@@ -8,20 +8,27 @@ public interface IPointOfInterest : ITraitable{
     POI_STATE state { get; }
     Area specificLocation { get; }
     List<INTERACTION_TYPE> poiGoapActions { get; }
+    List<JobQueueItem> allJobsTargettingThis { get; }
+    List<GoapAction> targettedByAction { get; }
     //List<Trait> normalTraits { get; }
     Faction factionOwner { get; }
     POICollisionTrigger collisionTrigger { get; } //Each poi must only hav 1 at a time.
     bool isDisabledByPlayer { get; }
 
     void SetGridTileLocation(LocationGridTile tile);
-    List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions);
-    LocationGridTile GetNearestUnoccupiedTileFromThis();
     void AddAdvertisedAction(INTERACTION_TYPE actionType);
     void RemoveAdvertisedAction(INTERACTION_TYPE actionType);
-
+    void AddJobTargettingThis(JobQueueItem job);
     void SetPOIState(POI_STATE state);
     void SetIsDisabledByPlayer(bool state);
+    void AddTargettedByAction(GoapAction action);
+    void RemoveTargettedByAction(GoapAction action);
+    bool HasJobTargettingThis(JOB_TYPE jobType);
     bool IsAvailable();
+    bool RemoveJobTargettingThis(JobQueueItem job);
+    LocationGridTile GetNearestUnoccupiedTileFromThis();
+    List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions);
+
 
     //#region Traits
     //bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);

@@ -74,8 +74,10 @@ public class GoapAction {
     public bool isOldNews { get; protected set; }
     public int referenceCount { get; protected set; }
     public bool willAvoidCharactersWhileMoving { get; protected set; }
+    public bool isStealth { get; protected set; }
 
-    protected virtual bool isTargetMissing {
+
+protected virtual bool isTargetMissing {
         get {
             bool targetMissing = !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
                 || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
@@ -96,7 +98,6 @@ public class GoapAction {
 
     //Stealth
     protected int _numOfTries;
-    protected bool _isStealthAction; //Should this action check for characters in radius before performing this action?
 
     protected bool _stayInArea; //if the character should stay at his/her current area to do this action
 
@@ -123,7 +124,6 @@ public class GoapAction {
         committedCrime = CRIME.NONE;
         animationName = string.Empty;
         _numOfTries = 0;
-        _isStealthAction = false;
         resumeTargetCharacterState = true;
         isNotificationAnIntel = true;
         canBeAddedToMemory = true;
@@ -197,11 +197,11 @@ public class GoapAction {
         actorAlterEgo = actor.currentAlterEgo;
         //Messenger.AddListener<IPointOfInterest, GoapAction>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
         AddAwareCharacter(actor);
+        //poiTarget.AddTargettedByAction(this);
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character targetCharacter = poiTarget as Character;
             poiTargetAlterEgo = targetCharacter.currentAlterEgo;
             if (poiTarget != actor && !targetCharacter.isDead) {
-                targetCharacter.OnTargettedByAction(this);
                 if (!doesNotStopTargetCharacter) {
                     if (targetCharacter.currentParty.icon.isTravelling) {
                         if (targetCharacter.currentParty.icon.travelLine == null) {
@@ -278,6 +278,7 @@ public class GoapAction {
                 targetCharacter = poiTarget as Character;
             }
         }
+        poiTarget.AddTargettedByAction(this);
         MoveToDoAction(targetCharacter);
     }
     public virtual LocationGridTile GetTargetLocationTile() {
@@ -313,12 +314,12 @@ public class GoapAction {
         //}
 
         //if this action is a stealth action, check if there are any characters around, if yes, halt(suspend) this action
-        if (_isStealthAction) {
-            if (_numOfTries < 18 && HasOtherCharacterInRadius()) {
-                _numOfTries++;
-                return true;
-            }
-        }
+        //if (_isStealthAction) {
+        //    if (_numOfTries < 18 && HasOtherCharacterInRadius()) {
+        //        _numOfTries++;
+        //        return true;
+        //    }
+        //}
         return false;
     }
     /// <summary>
@@ -403,7 +404,11 @@ public class GoapAction {
     /// <summary>
     /// What happens when the parent plan of this action has a job
     /// </summary>
-    public virtual void OnSetJob(GoapPlanJob job) { }
+    public virtual void OnSetJob(GoapPlanJob job) {
+        if (job.isStealth) {
+            SetIsStealth(true);
+        }
+    }
     /// <summary>
     /// What should happen when an action is stopped while the actor is still travelling towards it's target?
     /// </summary>
@@ -696,6 +701,9 @@ public class GoapAction {
     }
     public void SetWillAvoidCharactersWhileMoving(bool state) {
         willAvoidCharactersWhileMoving = state;
+    }
+    public void SetIsStealth(bool state) {
+        isStealth = state;
     }
     #endregion
 

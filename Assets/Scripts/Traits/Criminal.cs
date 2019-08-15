@@ -46,7 +46,7 @@ public class Criminal : Trait {
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (traitOwner is Character) {
             Character targetCharacter = traitOwner as Character;
-            if (gainedFromDoing.awareCharactersOfThisAction.Contains(characterThatWillDoJob) && targetCharacter.isAtHomeArea && !targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.APPREHEND)
+            if (gainedFromDoing.awareCharactersOfThisAction.Contains(characterThatWillDoJob) && targetCharacter.isAtHomeArea && !targetCharacter.isDead && !targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND)
                 && targetCharacter.GetNormalTrait("Restrained") == null) {
                 //GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = characterThatWillDoJob.homeArea, targetPOI = targetCharacter };
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);

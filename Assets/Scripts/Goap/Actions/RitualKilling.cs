@@ -19,7 +19,7 @@ public class RitualKilling : GoapAction {
         base.PerformActualAction();
         //rather than checking location check if the character is not in anyone elses party and is still active
         if (!isTargetMissing) {
-            if (actor.marker.CanDoStealthActionToTarget(poiTarget as Character)) {
+            if (actor.marker.CanDoStealthActionToTarget(poiTarget)) {
                 SetState("Killing Success");
             } else {
                 SetState("Killing Fail");
