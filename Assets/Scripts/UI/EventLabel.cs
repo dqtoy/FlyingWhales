@@ -74,6 +74,9 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                         }else if (poi is TileObject) {
                             UIManager.Instance.ShowTileObjectInfo(poi as TileObject);
                         }
+                    } else if (lf.obj is Region) {
+                        Region region = lf.obj as Region;
+                        UIManager.Instance.ShowRegionInfo(region);
                     }
                 }
             }

@@ -17405,7 +17405,7 @@ Prefab:
     - target: {fileID: 224725604692175578, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
         type: 2}
       propertyPath: m_RootOrder
-      value: 16
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 224725604692175578, guid: c38c7e75a0c6c0e46888d93ecdc69be4,
         type: 2}
@@ -28523,7 +28523,7 @@ RectTransform:
   - {fileID: 1390232342}
   - {fileID: 808260737}
   m_Father: {fileID: 1538653384}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -36739,7 +36739,7 @@ RectTransform:
   - {fileID: 1158430139}
   - {fileID: 1062417862}
   m_Father: {fileID: 1538653384}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
@@ -42251,7 +42251,7 @@ RectTransform:
   - {fileID: 317123070}
   - {fileID: 1011765364}
   m_Father: {fileID: 1538653384}
-  m_RootOrder: 17
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -42316,10 +42316,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   backButton: {fileID: 1497309329}
   isShowing: 0
-  regionNameLbl: {fileID: 0}
-  regionTypeLbl: {fileID: 0}
-  worldObjLbl: {fileID: 0}
-  invadeBtn: {fileID: 0}
+  regionNameLbl: {fileID: 128920672}
+  regionTypeLbl: {fileID: 127331442}
+  worldObjLbl: {fileID: 1272104792}
+  invadeBtn: {fileID: 1011765365}
+  invadeProgress: {fileID: 1716395156}
 --- !u!1 &869095767
 GameObject:
   m_ObjectHideFlags: 0
@@ -45557,7 +45558,7 @@ Prefab:
     - target: {fileID: 224325019918282922, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8,
         type: 2}
       propertyPath: m_RootOrder
-      value: 15
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 224325019918282922, guid: 6ab55ee3f9f6e1a44ba35e024088b2a8,
         type: 2}
@@ -49158,6 +49159,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1922560288}
+  - {fileID: 1716395158}
   m_Father: {fileID: 867287450}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -49201,11 +49203,22 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1011765366}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 867287454}
+        m_MethodName: OnClickInvade
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1011765366
@@ -49414,7 +49427,7 @@ Prefab:
     - target: {fileID: 224579316077557694, guid: 806752206f775b240af4069999713824,
         type: 2}
       propertyPath: m_RootOrder
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 224579316077557694, guid: 806752206f775b240af4069999713824,
         type: 2}
@@ -53450,7 +53463,7 @@ Prefab:
     - target: {fileID: 224519580947173752, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
         type: 2}
       propertyPath: m_RootOrder
-      value: 14
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 224519580947173752, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
         type: 2}
@@ -63328,7 +63341,7 @@ Prefab:
     - target: {fileID: 224975986086156516, guid: 1343fb7b1218afd4a81d7f444bd9624f,
         type: 2}
       propertyPath: m_RootOrder
-      value: 13
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 224975986086156516, guid: 1343fb7b1218afd4a81d7f444bd9624f,
         type: 2}
@@ -64890,7 +64903,7 @@ MonoBehaviour:
   width: 35
   height: 45
   _borderParent: {fileID: 1771222031}
-  _borderThickness: 2
+  _borderThickness: 4
   xOffset: 2.56
   yOffset: 1.93
   tileSize: 1
@@ -74874,7 +74887,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 867287454}
         m_MethodName: GoBack
         m_Mode: 1
         m_Arguments:
@@ -77930,6 +77943,7 @@ RectTransform:
   - {fileID: 1297442066}
   - {fileID: 329766524}
   - {fileID: 1101261086}
+  - {fileID: 867287450}
   - {fileID: 606078597}
   - {fileID: 752113108}
   - {fileID: 572338041}
@@ -77937,7 +77951,6 @@ RectTransform:
   - {fileID: 1741253391}
   - {fileID: 104126177}
   - {fileID: 388044834}
-  - {fileID: 867287450}
   - {fileID: 1372200831}
   - {fileID: 517622789}
   - {fileID: 431201650}
@@ -77970,17 +77983,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainRT: {fileID: 1538653384}
   eventSystem: {fileID: 886860826}
-  allMenus:
-  - {fileID: 572338040}
-  - {fileID: 258663800}
-  - {fileID: 1485930123}
-  - {fileID: 65978408}
-  - {fileID: 914495163}
-  - {fileID: 1810423191}
-  - {fileID: 1297442069}
-  - {fileID: 497507705}
-  - {fileID: 1741253390}
-  - {fileID: 388044833}
   speedToggleGroup: {fileID: 1335387234}
   pauseBtn: {fileID: 42023239}
   x1Btn: {fileID: 1788548037}
@@ -78063,6 +78065,7 @@ MonoBehaviour:
   interiorMapLoadingGO: {fileID: 1005575185}
   interiorMapLoadingBGImage: {fileID: 1005575187}
   interiorMapLoadingDetailsGO: {fileID: 1163511682}
+  regionInfoUI: {fileID: 867287454}
 --- !u!114 &1538653386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87777,6 +87780,74 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   profile: {fileID: 11400000, guid: eb61b37790c165446b5921ae728df1ca, type: 2}
+--- !u!1 &1716395155
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1716395158}
+  - component: {fileID: 1716395157}
+  - component: {fileID: 1716395156}
+  m_Layer: 5
+  m_Name: Progress
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1716395156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1716395155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 21300000, guid: eee2f85024a0c2d48a5b06a6a5e09559, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 0
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+--- !u!222 &1716395157
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1716395155}
+--- !u!224 &1716395158
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1716395155}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1011765364}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 124, y: -30}
+  m_SizeDelta: {x: 248, y: 60}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1719621709
 GameObject:
   m_ObjectHideFlags: 0
@@ -89816,8 +89887,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: OnClickCloseMenu
+      - m_Target: {fileID: 867287454}
+        m_MethodName: CloseMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

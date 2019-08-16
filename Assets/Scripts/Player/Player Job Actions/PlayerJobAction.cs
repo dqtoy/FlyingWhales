@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerJobAction : IWorldObject {
+public class PlayerJobAction {
 
     //public PlayerJobData parentData { get; protected set; }
     public Minion minion { get; protected set; }
@@ -22,9 +22,16 @@ public class PlayerJobAction : IWorldObject {
     public bool hasSecondPhase { get; protected set; }
     public bool isInSecondPhase { get; protected set; }
 
+    #region getters/setters
+    public string worldObjectName {
+        get { return name; }
+    }
     public bool isInCooldown {
         get { return ticksInCooldown != cooldown; } //check if the ticks this action has been in cooldown is the same as cooldown
     }
+    #endregion
+
+
 
     //public void SetParentData(PlayerJobData data) {
     //    parentData = data;

@@ -749,6 +749,7 @@ public class PlayerUI : MonoBehaviour {
             PlayerManager.Instance.player.GainNewInterventionAbility(startingAbilities[i]);
         }
         startingAbilities = null;
+        UIManager.Instance.SetTimeControlsState(true);
     }
     private void ShowSelectMinionLeader() {
         Utilities.DestroyChildren(minionLeaderPickerParent.transform);
@@ -827,7 +828,6 @@ public class PlayerUI : MonoBehaviour {
             //}
         }
         if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile != null) {
-            GameManager.Instance.SetOnlyTickDays(false);
             InteriorMapManager.Instance.TryShowAreaMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);
         } else {
             //PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.ShowEventBasedOnYieldType();

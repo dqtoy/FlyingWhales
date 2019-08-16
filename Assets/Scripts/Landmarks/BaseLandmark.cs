@@ -24,6 +24,7 @@ public class BaseLandmark {
     public List<BaseLandmark> connections { get; private set; }
     public Character skirmishEnemy { get; private set; }
     public IWorldObject worldObj { get; private set; }
+    public int invasionTicks { get; private set; } //how many ticks until this landmark is invaded. NOTE: This is in raw ticks so if the landmark should be invaded in 1 hour, this should be set to the number of ticks in an hour.
 
     #region getters/setters
     public int id {
@@ -75,6 +76,7 @@ public class BaseLandmark {
         _hasBeenCorrupted = false;
         _itemsInLandmark = new List<Item>();
         connections = new List<BaseLandmark>();
+        invasionTicks = 5 * GameManager.ticksPerHour;
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
@@ -387,6 +389,19 @@ public class BaseLandmark {
             pathTiles[i].SetCorruption(true, this);
         }
     }
+    /// <summary>
+    /// Is this landmark connected to another landmark that has been corrupted?
+    /// </summary>
+    /// <returns>True or false</returns>
+    public bool HasCorruptedConnection() {
+        for (int i = 0; i < connections.Count; i++) {
+            BaseLandmark connection = connections[i];
+            if (connection.tileLocation.isCorrupted) {
+                return true;
+            }
+        }
+        return false;
+    }
     #endregion
 
     #region Civilians
@@ -464,6 +479,9 @@ public class BaseLandmark {
     #region World Objects
     public void SetWorldObject(IWorldObject obj) {
         worldObj = obj;
+    }
+    public void ObtainWorldWobject() {
+        worldObj?.Obtain();
     }
     #endregion
 }
