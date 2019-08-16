@@ -12,9 +12,16 @@ public class Region {
     public string name { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public HexTile coreTile { get; private set; }
+    public int ticksInInvasion { get; private set; }
     private Color regionColor;
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> borderSprites;
+
+    #region getter/setter
+    public BaseLandmark mainLandmark {
+        get { return coreTile.landmarkOnTile; }
+    }
+    #endregion
 
     public Region(HexTile coreTile) {
         id = Utilities.SetID(this);
@@ -90,15 +97,6 @@ public class Region {
         }
         return borders;
     }
-    public void ShowRegionHighlight() {
-        for (int i = 0; i < borderSprites.Count; i++) {
-            SpriteRenderer s = borderSprites[i];
-            Color color = Color.white;
-            color.a = Unhovered_Border_Alpha;
-            s.color = color;
-            s.gameObject.SetActive(true);
-        }
-    }
     public List<Region> AdjacentRegions() {
         List<Region> adjacent = new List<Region>();
         for (int i = 0; i < tiles.Count; i++) {
@@ -116,6 +114,19 @@ public class Region {
         return adjacent;
     }
     public void OnHoverOverAction() {
+        ShowSolidBorder();
+    }
+    public void OnHoverOutAction() {
+        if (UIManager.Instance.regionInfoUI.isShowing) {
+            if (UIManager.Instance.regionInfoUI.activeRegion != this) {
+                ShowTransparentBorder();
+            }
+        } else {
+            ShowTransparentBorder();
+        }
+        
+    }
+    public void ShowSolidBorder() {
         for (int i = 0; i < borderSprites.Count; i++) {
             SpriteRenderer s = borderSprites[i];
             Color color = s.color;
@@ -124,13 +135,43 @@ public class Region {
             s.gameObject.SetActive(true);
         }
     }
-    public void OnHoverOutAction() {
+    public void ShowTransparentBorder() {
         for (int i = 0; i < borderSprites.Count; i++) {
             SpriteRenderer s = borderSprites[i];
             Color color = s.color;
             color.a = Unhovered_Border_Alpha;
             s.color = color;
             s.gameObject.SetActive(true);
+        }
+    }
+    public void CenterCameraOnRegion() {
+        CameraMove.Instance.CenterCameraOn(this.coreTile.gameObject);
+    }
+    #endregion
+
+    #region Invasion
+    public bool CanBeInvaded() {
+        return mainLandmark.HasCorruptedConnection() && !coreTile.isCorrupted && !PlayerManager.Instance.player.isInvadingRegion;
+    }
+    public void StartInvasion() {
+        PlayerManager.Instance.player.SetInvadingRegion(this);
+        ticksInInvasion = 0;
+        Messenger.AddListener(Signals.TICK_STARTED, PerInvasionTick);
+    }
+    private void Invade() {
+        //corrupt region
+        PlayerManager.Instance.AddTileToPlayerArea(coreTile);
+        mainLandmark.ObtainWorldWobject();
+        PlayerManager.Instance.player.SetInvadingRegion(null);
+        //TODO: Place invasion actions here
+    }
+    private void PerInvasionTick() {
+        if (ticksInInvasion >= mainLandmark.invasionTicks) {
+            //invaded.
+            Invade();
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerInvasionTick);
+        } else {
+            ticksInInvasion += GameManager.Instance.ticksToAddPerTick;
         }
     }
     #endregion

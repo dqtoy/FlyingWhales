@@ -459,7 +459,7 @@ public class GridMap : MonoBehaviour {
         string summary = "Generated regions: ";
         for (int i = 0; i < allRegions.Length; i++) {
             allRegions[i].FinalizeData();
-            allRegions[i].ShowRegionHighlight();
+            allRegions[i].ShowTransparentBorder();
             summary += "\n" + i.ToString() + " - " + allRegions[i].tiles.Count.ToString();
         }
         Debug.Log(summary);

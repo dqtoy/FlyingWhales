@@ -155,7 +155,7 @@ public class InteriorMapManager : MonoBehaviour {
         area.areaMap.Open();
         currentlyShowingMap = area.areaMap;
         currentlyShowingArea = area;
-        UIManager.Instance.SetTimeControlsState(true);
+        GameManager.Instance.SetTicksToAddPerTick(1); //When area map is shown, ticks will progress normally
         Messenger.Broadcast(Signals.AREA_MAP_OPENED, area);
 
         if (centerCameraOnMapCenter) {
@@ -171,12 +171,12 @@ public class InteriorMapManager : MonoBehaviour {
         AreaMapCameraMove.Instance.CenterCameraOn(null);
         currentlyShowingMap = null;
         currentlyShowingArea = null;
+        GameManager.Instance.SetTicksToAddPerTick(GameManager.ticksPerHour); //When area map is shown, ticks will progress by 1 hour
         PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
         Messenger.Broadcast(Signals.AREA_MAP_CLOSED, closedArea);
-        UIManager.Instance.SetTimeControlsState(false);
         GameManager.Instance.SetPausedState(true);
         GameManager.Instance.DayStarted(false);
-        GameManager.Instance.SetTick(96);
+        //GameManager.Instance.SetTick(96);
         return closedArea;
     }
     public void OnCreateAreaMap(AreaInnerTileMap newMap) {

@@ -467,8 +467,8 @@ public class LandmarkManager : MonoBehaviour {
         List<Region> portalAdjacent = portal.tileLocation.region.AdjacentRegions();
         for (int i = 0; i < portalAdjacent.Count; i++) {
             Region currRegion = portalAdjacent[i];
-            ConnectLandmarks(portal, currRegion.coreTile.landmarkOnTile, ref islands);
-            pendingConnections.Add(currRegion.coreTile.landmarkOnTile);
+            ConnectLandmarks(portal, currRegion.mainLandmark, ref islands);
+            pendingConnections.Add(currRegion.mainLandmark);
             if (portal.HasMaximumConnections()) { break; }
         }
 
@@ -476,8 +476,8 @@ public class LandmarkManager : MonoBehaviour {
         List<Region> settlementAdjacent = settlement.tileLocation.region.AdjacentRegions();
         for (int i = 0; i < settlementAdjacent.Count; i++) {
             Region currRegion = settlementAdjacent[i];
-            ConnectLandmarks(settlement, currRegion.coreTile.landmarkOnTile, ref islands);
-            pendingConnections.Add(currRegion.coreTile.landmarkOnTile);
+            ConnectLandmarks(settlement, currRegion.mainLandmark, ref islands);
+            pendingConnections.Add(currRegion.mainLandmark);
             if (settlement.HasMaximumConnections()) { break; }
         }
 
@@ -491,7 +491,7 @@ public class LandmarkManager : MonoBehaviour {
             if (!currLandmark.HasMaximumConnections()) {
                 //current landmark can still have connections
                 int connectionsToCreate = Mathf.Max(0, connectionWeights.PickRandomElementGivenWeights() - currLandmark.connections.Count);
-                List<Region> availableAdjacent = currLandmark.tileLocation.region.AdjacentRegions().Where(x => !x.coreTile.landmarkOnTile.IsConnectedWith(currLandmark) && !x.coreTile.landmarkOnTile.HasMaximumConnections()).ToList();
+                List<Region> availableAdjacent = currLandmark.tileLocation.region.AdjacentRegions().Where(x => !x.mainLandmark.IsConnectedWith(currLandmark) && !x.mainLandmark.HasMaximumConnections()).ToList();
                 if (availableAdjacent.Count == 0 && currLandmark.connections.Count == 0) {
                     //there are no available adjacent connections and this landmark has no connections yet, allow it to connect to any of its adjacent regions.
                     availableAdjacent = currLandmark.tileLocation.region.AdjacentRegions();
@@ -499,9 +499,9 @@ public class LandmarkManager : MonoBehaviour {
                 for (int i = 0; i < connectionsToCreate; i++) {
                     if (availableAdjacent.Count > 0) {
                         Region chosenRegion = availableAdjacent[Random.Range(0, availableAdjacent.Count)];
-                        ConnectLandmarks(currLandmark, chosenRegion.coreTile.landmarkOnTile, ref islands);
-                        if (!chosenRegion.coreTile.landmarkOnTile.HasMaximumConnections() && !pendingConnections.Contains(chosenRegion.coreTile.landmarkOnTile)) {
-                            pendingConnections.Add(chosenRegion.coreTile.landmarkOnTile);
+                        ConnectLandmarks(currLandmark, chosenRegion.mainLandmark, ref islands);
+                        if (!chosenRegion.mainLandmark.HasMaximumConnections() && !pendingConnections.Contains(chosenRegion.mainLandmark)) {
+                            pendingConnections.Add(chosenRegion.mainLandmark);
                         }
                         availableAdjacent.Remove(chosenRegion);
                     } else {
@@ -514,9 +514,9 @@ public class LandmarkManager : MonoBehaviour {
                 pendingConnections.Remove(currLandmark);
             }
             if (pendingConnections.Count == 0) {
-                List<Region> noConnectionRegions = GridMap.Instance.allRegions.Where(x => x.coreTile.landmarkOnTile.connections.Count == 0).ToList();
+                List<Region> noConnectionRegions = GridMap.Instance.allRegions.Where(x => x.mainLandmark.connections.Count == 0).ToList();
                 if (noConnectionRegions.Count > 0) {
-                    pendingConnections.Add(noConnectionRegions[Random.Range(0, noConnectionRegions.Count)].coreTile.landmarkOnTile);
+                    pendingConnections.Add(noConnectionRegions[Random.Range(0, noConnectionRegions.Count)].mainLandmark);
                 }
             }
         }
@@ -920,9 +920,9 @@ public class Island {
     public bool TryGetLandmarkThatCanConnectToOtherIsland(Island otherIsland, List<Island> allIslands, out BaseLandmark landmarkToConnectTo, out BaseLandmark landmarkThatWillConnect) {
         for (int i = 0; i < landmarksInIsland.Count; i++) {
             BaseLandmark currLandmark = landmarksInIsland[i];
-            List<Region> adjacent = currLandmark.tileLocation.region.AdjacentRegions().Where(x => LandmarkManager.Instance.GetIslandOfLandmark(x.coreTile.landmarkOnTile, allIslands) != this).ToList(); //get all adjacent regions, that does not belong to this island.
+            List<Region> adjacent = currLandmark.tileLocation.region.AdjacentRegions().Where(x => LandmarkManager.Instance.GetIslandOfLandmark(x.mainLandmark, allIslands) != this).ToList(); //get all adjacent regions, that does not belong to this island.
             if (adjacent.Count > 0) {
-                landmarkToConnectTo = adjacent[Random.Range(0, adjacent.Count)].coreTile.landmarkOnTile;
+                landmarkToConnectTo = adjacent[Random.Range(0, adjacent.Count)].mainLandmark;
                 landmarkThatWillConnect = currLandmark;
                 return true;
 

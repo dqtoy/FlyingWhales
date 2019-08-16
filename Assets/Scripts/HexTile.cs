@@ -821,25 +821,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             return;
         }
 
-        if (this.areaOfTile != null) {
-            if(this.areaOfTile == PlayerManager.Instance.player.homeArea) {
-                if(this.landmarkOnTile != null && this.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.DEMONIC_PORTAL) {
-                    UIManager.Instance.ShowAreaInfo(this.areaOfTile);
-                } else {
-                    Messenger.Broadcast(Signals.HIDE_MENUS);
-                }
-            } else {
+        if (this.region != null) {
+            if (this.region.mainLandmark.tileLocation.areaOfTile != null) {
                 UIManager.Instance.ShowAreaInfo(this.areaOfTile);
+            } else {
+                UIManager.Instance.ShowRegionInfo(this.region);
             }
-            //if (!this.landmarkOnTile.tileLocation.isCorrupted) {
-            //    UIManager.Instance.ShowAreaInfo(this.areaOfTile);
-            //} else {
-            //    UIManager.Instance.ShowPlayerLandmarkInfo(this.landmarkOnTile);
-            //}
         } else {
             Messenger.Broadcast(Signals.HIDE_MENUS);
         }
-        //UIManager.Instance.playerActionsUI.CloseMenu();
 #endif
     }
     public void RightClick() {

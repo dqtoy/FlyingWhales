@@ -38,6 +38,7 @@ public class Player : ILeader {
     public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
     public Faction currentTargetFaction { get; private set; } //the current faction that the player is targeting.
     public PlayerJobAction[] interventionAbilities { get; private set; }
+    public Region invadingRegion { get; private set; }
 
     #region getters/setters
     public int id {
@@ -57,6 +58,9 @@ public class Player : ILeader {
     }
     public List<Character> allOwnedCharacters {
         get { return minions.Select(x => x.character).ToList(); }
+    }
+    public bool isInvadingRegion {
+        get { return invadingRegion != null; }
     }
     #endregion
 
@@ -101,7 +105,6 @@ public class Player : ILeader {
     private void AddListeners() {
         AddWinListener();
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
-        Messenger.AddListener(Signals.TICK_STARTED, EverydayAction);
 
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
 
@@ -111,9 +114,6 @@ public class Player : ILeader {
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
-    }
-    private void EverydayAction() {
-        //DepleteThreatLevel();
     }
     #endregion
 
@@ -954,11 +954,14 @@ public class Player : ILeader {
     public void GainSummon(SUMMON_TYPE type, int level = 1, bool showNewSummonUI = false) {
         Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, playerFaction, playerArea);
         newSummon.SetLevel(level);
+        GainSummon(newSummon, showNewSummonUI);
+    }
+    public void GainSummon(Summon summon, bool showNewSummonUI = false) {
         if (GetTotalSummonsCount() < maxSummonSlots) {
-            AddSummon(newSummon, showNewSummonUI);
+            AddSummon(summon, showNewSummonUI);
         } else {
             Debug.LogWarning("Max summons has been reached!");
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), newSummon, ReplaceSummon, RejectSummon);
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), summon, ReplaceSummon, RejectSummon);
         }
     }
     private void ReplaceSummon(object summonToReplace, object summonToAdd) {
@@ -966,14 +969,6 @@ public class Player : ILeader {
         Summon add = summonToAdd as Summon;
         RemoveSummon(replace);
         AddSummon(add);
-    }
-    public void AddASummon(Summon summon, bool showNewSummonUI = false) {
-        if (GetTotalSummonsCount() < maxSummonSlots) {
-            AddSummon(summon, showNewSummonUI);
-        } else {
-            Debug.LogWarning("Max summons has been reached!");
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), summon, ReplaceSummon, RejectSummon);
-        }
     }
     private void RejectSummon(object rejectedSummon) {
         ClearSummonData(rejectedSummon as Summon);
@@ -1176,11 +1171,14 @@ public class Player : ILeader {
     }
     public void GainArtifact(ARTIFACT_TYPE type, bool showNewArtifactUI = false) {
         Artifact newArtifact = PlayerManager.Instance.CreateNewArtifact(type);
+        GainArtifact(newArtifact, showNewArtifactUI);
+    }
+    public void GainArtifact(Artifact artifact, bool showNewArtifactUI = false) {
         if (GetTotalArtifactCount() < maxArtifactSlots) {
-            AddArtifact(newArtifact, showNewArtifactUI);
+            AddArtifact(artifact, showNewArtifactUI);
         } else {
             Debug.LogWarning("Max artifacts has been reached!");
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllArtifacts(), newArtifact, ReplaceArtifact, RejectArtifact);
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllArtifacts(), artifact, ReplaceArtifact, RejectArtifact);
         }
     }
     private void ReplaceArtifact(object objToReplace, object objToAdd) {
@@ -1189,14 +1187,7 @@ public class Player : ILeader {
         RemoveArtifact(replace);
         AddArtifact(add);
     }
-    public void AddAnArtifact(Artifact artifact, bool showNewArtifactUI = false) {
-        if (GetTotalArtifactCount() < maxArtifactSlots) {
-            AddArtifact(artifact, showNewArtifactUI);
-        } else {
-            Debug.LogWarning("Max artifacts has been reached!");
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllArtifacts(), artifact, ReplaceArtifact, RejectArtifact);
-        }
-    }
+    
     private void RejectArtifact(object rejectedObj) { }
     public void LoseArtifact(ARTIFACT_TYPE type) {
         if (GetAvailableArtifactsOfTypeCount(type) > 0) {
@@ -1499,6 +1490,9 @@ public class Player : ILeader {
                 currMinion.StopInvasionProtocol();
             }
         }
+    }
+    public void SetInvadingRegion(Region region) {
+        invadingRegion = region;
     }
     #endregion
 

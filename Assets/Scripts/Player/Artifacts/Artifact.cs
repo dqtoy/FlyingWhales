@@ -7,8 +7,14 @@ public class Artifact : TileObject, IWorldObject {
 
     public ARTIFACT_TYPE type { get; private set; }
     public int level { get; private set; }
-
     public bool hasBeenUsed { get; private set; }
+
+    #region getters/setters
+    public string worldObjectName {
+        get { return name; }
+    }
+    #endregion
+
     public Artifact(ARTIFACT_TYPE type) {
         this.type = type;
         level = 1;
@@ -66,6 +72,13 @@ public class Artifact : TileObject, IWorldObject {
     public void Reset() {
         hasBeenUsed = false;
     }
+
+    #region World Object
+    public void Obtain() {
+        //- invading a region with an artifact will obtain that artifact for the player
+        PlayerManager.Instance.player.GainArtifact(this, true);
+    }
+    #endregion
 
 }
 

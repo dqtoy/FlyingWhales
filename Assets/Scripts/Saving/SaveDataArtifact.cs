@@ -16,6 +16,6 @@ public class SaveDataArtifact {
 
     public void Load(Player player) {
         Artifact artifact = PlayerManager.Instance.CreateNewArtifact(this);
-        player.AddAnArtifact(artifact);
+        player.GainArtifact(artifact);
     }
 }

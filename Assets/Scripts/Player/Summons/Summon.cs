@@ -8,6 +8,12 @@ public class Summon : Character, IWorldObject {
 	public SUMMON_TYPE summonType { get; private set; }
     public bool hasBeenUsed { get; private set; } //has this summon been used in the current map. TODO: Set this to false at end of invasion of map.
 
+    #region getters/setters
+    public virtual string worldObjectName {
+        get { return name + " (" + Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString()) + ")"; }
+    }
+    #endregion
+
     public Summon(SUMMON_TYPE summonType, CharacterRole role, RACE race, GENDER gender) : base(role, race, gender) {
         this.summonType = summonType;
     }
@@ -149,6 +155,13 @@ public class Summon : Character, IWorldObject {
         CancelAllJobsAndPlans();
         ResetToFullHP();
     }
+
+    #region World Object
+    public void Obtain() {
+        //invading a region with a summon will recruit that summon for the player
+        PlayerManager.Instance.player.GainSummon(this, true);
+    }
+    #endregion
 
 }
 

@@ -37,20 +37,20 @@ public class ConnectorMonoEditor : Editor {
             Vector2 size = structureSizes[connector.allowedStructureType];
             switch (connector.connectionDirection) {
                 case Cardinal_Direction.North:
-                    origin.y += (size.y / 2f) + 0.5f;
+                    origin.y += (size.y / 2f) + 3f;
                     origin.x -= 0.5f;
                     break;
                 case Cardinal_Direction.South:
-                    origin.y -= (size.y / 2f) + 0.5f; 
+                    origin.y -= (size.y / 2f); 
                     origin.x -= 0.5f;
                     break;
                 case Cardinal_Direction.East:
-                    origin.x += (size.x / 2f) + 0.5f;
-                    origin.y += 0.5f;
+                    origin.x += (size.x / 2f) + 1f;
+                    origin.y += 1.5f;
                     break;
                 case Cardinal_Direction.West:
-                    origin.x -= (size.x /2f) + 0.5f;
-                    origin.y += 0.5f;
+                    origin.x -= (size.x /2f) + 2f;
+                    origin.y += 1.5f;
                     break;
                 default:
                     break;
