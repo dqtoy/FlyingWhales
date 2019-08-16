@@ -880,7 +880,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnGainNewSummon(Summon newSummon) {
         UpdateSummonsInteraction();
-        if (currentlySelectedSummonSlot.summon == null) {
+        if (currentlySelectedSummonSlot.summon == null || currentlySelectedSummonSlot.summon == newSummon) {
             SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.GetSummonSlotBySummon(newSummon));
         }
         //ShowNewObjectInfo(newSummon);
@@ -1010,7 +1010,7 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnGainNewArtifact(Artifact newArtifact) {
         UpdateArtifactsInteraction();
-        if (currentlySelectedArtifactSlot.artifact == null) {
+        if (currentlySelectedArtifactSlot.artifact == null || currentlySelectedArtifactSlot.artifact == newArtifact) {
             SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.GetArtifactSlotByArtifact(newArtifact));
         }
         //ShowNewObjectInfo(newArtifact);
