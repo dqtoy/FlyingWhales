@@ -888,7 +888,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     private bool hasPendingJob = false;
     private void DoubleLeftClick() {
         //Debug.Log("double click");
-        PlayerUI.Instance.ShowCorruptTileConfirmation(this);
+        //PlayerUI.Instance.ShowCorruptTileConfirmation(this);
     }
     public void PointerClick(BaseEventData bed) {
         PointerEventData ped = bed as PointerEventData;
