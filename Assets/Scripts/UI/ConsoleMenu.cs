@@ -31,6 +31,10 @@ public class ConsoleMenu : UIMenu {
     [SerializeField] private TextMeshProUGUI fullDebugLbl;
     [SerializeField] private TextMeshProUGUI fullDebug2Lbl;
 
+    void Awake() {
+        Initialize();
+    }
+
     internal override void Initialize() {
         commandHistory = new List<string>();
         _consoleActions = new Dictionary<string, Action<string[]>>() {
