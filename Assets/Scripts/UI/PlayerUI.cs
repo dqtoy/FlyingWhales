@@ -17,7 +17,6 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject actionBtnPrefab;
     [SerializeField] private GameObject actionBtnTooltipGO;
     [SerializeField] private TextMeshProUGUI actionBtnTooltipLbl;
-    [SerializeField] private GameObject actionBtnPointer;
     [SerializeField] private TextMeshProUGUI activeMinionTypeLbl;
     [SerializeField] private RectTransform activeMinionActionsParent;
     [SerializeField] private UI_InfiniteScroll roleSlotsInfiniteScroll;
@@ -61,7 +60,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject successfulAreaCorruptionGO;
     [SerializeField] private ScrollRect killSummaryScrollView;
 
-    [Header("Minions")]
+    [Header("Start Picker")]
     [SerializeField] private GameObject startingMinionPickerGO;
     [SerializeField] private MinionCard startingMinionCard1;
     [SerializeField] private MinionCard startingMinionCard2;
@@ -71,6 +70,9 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI selectMinionLeaderText;
     private List<MinionLeaderPicker> minionLeaderPickers;
     private MinionLeaderPicker tempCurrentMinionLeaderPicker;
+    [SerializeField] private Image[] startingAbilityIcons;
+    [SerializeField] private TextMeshProUGUI[] startingAbilityLbls; //NOTE: This must always have the same length as startingAbilityIcons
+
 
     [Header("Summons")]
     [SerializeField] private Image currentSummonImg;
@@ -198,7 +200,6 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
 
         //job action buttons
-        Messenger.AddListener(Signals.HAS_SEEN_ACTION_BUTTONS, OnSeenActionButtons);
         Messenger.AddListener<Minion, PlayerJobAction>(Signals.MINION_LEARNED_INTERVENE_ABILITY, OnMinionLearnedInterventionAbility);
 
         //summons
@@ -289,9 +290,6 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Role Slots
-    private void OnSeenActionButtons() {
-        actionBtnPointer.SetActive(!PlayerManager.Instance.player.hasSeenActionButtonsOnce);
-    }
     int currentlyShowingSlotIndex = 0;
     private void LoadRoleSlots() {
         roleSlots = new RoleSlotItem[PlayerManager.Instance.player.minions.Length];
@@ -371,9 +369,6 @@ public class PlayerUI : MonoBehaviour {
     //    jobActionsParent.gameObject.SetActive(true);
     //    actionBtnPointer.SetActive(!PlayerManager.Instance.player.hasSeenActionButtonsOnce);
     //}
-    private void HideActionButtons() {
-        actionBtnPointer.SetActive(false);
-    }
     public void ShowActionBtnTooltip(string message, string header) {
         string m = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
@@ -722,12 +717,14 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 
-    #region Minions
+    #region Start Picker
+    private INTERVENTION_ABILITY[] startingAbilities;
     public void ShowStartingMinionPicker() {
         startingMinionCard1.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
         startingMinionCard2.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
         startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-
+        startingAbilities = new INTERVENTION_ABILITY[PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES];
+        RandomizeStartingAbilities();
         startingMinionPickerGO.SetActive(true);
     }
     public void HideStartingMinionPicker() {
@@ -743,23 +740,15 @@ public class PlayerUI : MonoBehaviour {
         startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
     }
     public void OnClickStartGame() {
-        //TODO: add minions to minion list
         HideStartingMinionPicker();
         PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
         PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Wolf);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Skeleton);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Golem);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Succubus);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.Incubus);
-        //PlayerManager.Instance.player.GainSummon(SUMMON_TYPE.ThiefSummon);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Necronomicon);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Chaos_Orb);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Hermes_Statue);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Ankh_Of_Anubis);
-        //PlayerManager.Instance.player.GainArtifact(ARTIFACT_TYPE.Miasma_Emitter);
         PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
+        for (int i = 0; i < startingAbilities.Length; i++) {
+            PlayerManager.Instance.player.GainNewInterventionAbility(startingAbilities[i]);
+        }
+        startingAbilities = null;
     }
     private void ShowSelectMinionLeader() {
         Utilities.DestroyChildren(minionLeaderPickerParent.transform);
@@ -790,24 +779,37 @@ public class PlayerUI : MonoBehaviour {
         leaderPicker.imgHighlight.gameObject.SetActive(true);
         tempCurrentMinionLeaderPicker = leaderPicker;
     }
+    private void RandomizeStartingAbilities() {
+        INTERVENTION_ABILITY[] abilities = PlayerManager.Instance.allInterventionAbilities;
+        for (int i = 0; i < startingAbilityIcons.Length; i++) {
+            INTERVENTION_ABILITY randomAbility = abilities[UnityEngine.Random.Range(0, abilities.Length)];
+            string abilityName = Utilities.NormalizeStringUpperCaseFirstLetters(randomAbility.ToString());
+            startingAbilityIcons[i].sprite = PlayerManager.Instance.GetJobActionSprite(abilityName);
+            startingAbilityLbls[i].text = abilityName;
+            startingAbilities[i] = randomAbility;
+        }
+    }
+    public void RerollAbilities() {
+        RandomizeStartingAbilities();
+    }
     #endregion
 
     #region Corruption and Threat
     public void ShowCorruptTileConfirmation(HexTile tile) {
         if (tile.CanBeCorrupted() && !tile.isCorrupted) {//&& tile.elevationType != ELEVATION.WATER && !PlayerManager.Instance.player.isTileCurrentlyBeingCorrupted 
             PlayerManager.Instance.player.SetCurrentTileBeingCorrupted(tile);
-            if(tile.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
-                tile.landmarkOnTile.GenerateSkirmishEnemy();
-                skirmishEnemyPortrait.GeneratePortrait(tile.landmarkOnTile.skirmishEnemy);
-                string text = tile.landmarkOnTile.skirmishEnemy.name;
-                text += "\nLvl." + tile.landmarkOnTile.skirmishEnemy.level + " " + tile.landmarkOnTile.skirmishEnemy.raceClassName;
-                skirmishEnemyText.text = text;
-                skirmishConfirmationGO.SetActive(true);
-                ShowSelectMinionLeader();
-            } else {
+            //if(tile.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
+            //    //tile.landmarkOnTile.GenerateSkirmishEnemy();
+            //    skirmishEnemyPortrait.GeneratePortrait(tile.landmarkOnTile.skirmishEnemy);
+            //    string text = tile.landmarkOnTile.skirmishEnemy.name;
+            //    text += "\nLvl." + tile.landmarkOnTile.skirmishEnemy.level + " " + tile.landmarkOnTile.skirmishEnemy.raceClassName;
+            //    skirmishEnemyText.text = text;
+            //    skirmishConfirmationGO.SetActive(true);
+            //    ShowSelectMinionLeader();
+            //} else {
                 tempCurrentMinionLeaderPicker = null;
                 OnClickYesCorruption();
-            }
+            //}
         }
     }
     public void HideCorruptTileConfirmation() {
@@ -819,16 +821,16 @@ public class PlayerUI : MonoBehaviour {
             PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
         } else {
             //If story event, randomize minion leader, if not, keep current minion leader
-            if(PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.STORY_EVENT) {
-                Minion minion = PlayerManager.Instance.player.GetRandomMinion();
-                PlayerManager.Instance.player.SetMinionLeader(minion);
-            }
+            //if(PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.yieldType == LANDMARK_YIELD_TYPE.STORY_EVENT) {
+            //    Minion minion = PlayerManager.Instance.player.GetRandomMinion();
+            //    PlayerManager.Instance.player.SetMinionLeader(minion);
+            //}
         }
         if (PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile != null) {
             GameManager.Instance.SetOnlyTickDays(false);
             InteriorMapManager.Instance.TryShowAreaMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);
         } else {
-            PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.ShowEventBasedOnYieldType();
+            //PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.ShowEventBasedOnYieldType();
             PlayerManager.Instance.player.CorruptATile();
         }
         //if (tempCurrentMinionLeaderPicker != null) {
@@ -1152,24 +1154,6 @@ public class PlayerUI : MonoBehaviour {
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
     }
     #endregion
-
-    //#region Actions
-    //private void AssignNewActionToLatestItem(object obj) {
-    //    ActionItem assignedTo = null;
-    //    for (int i = 0; i < actionPages.Length; i++) {
-    //        ActionsPage currPage = actionPages[i];
-    //        ActionItem availableItem = currPage.GetUnoccupiedActionItem();
-    //        if (availableItem != null) {
-    //            availableItem.SetAction(obj);
-    //            assignedTo = availableItem;
-    //            break;
-    //        }
-    //    }
-    //    if (assignedTo == null) {
-    //        Debug.LogWarning("Could not assign new action " + obj.ToString() + " to an action item, because all pages are occupied!");
-    //    }
-    //}
-    //#endregion
 
     #region Saving/Loading
     public void SaveGame() {

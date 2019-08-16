@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CombatAbility {
+public class CombatAbility : IWorldObject {
     public COMBAT_ABILITY type { get; protected set; }
     public string name { get; protected set; }
     public string description { get; protected set; }

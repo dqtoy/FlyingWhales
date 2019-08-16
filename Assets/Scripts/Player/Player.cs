@@ -11,6 +11,7 @@ public class Player : ILeader {
     public const int MAX_THREAT = 100;
     private const int MAX_SUMMONS = 3;
     private const int MAX_ARTIFACT = 3;
+    public readonly int MAX_INTERVENTION_ABILITIES = 4;
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
@@ -25,7 +26,6 @@ public class Player : ILeader {
     public Artifact[] artifacts { get; private set; }
     //Unique ability of player
     //public ShareIntel shareIntelAbility { get; private set; }
-
     public int currentCorruptionDuration { get; private set; }
     public int currentCorruptionTick { get; private set; }
     public bool isTileCurrentlyBeingCorrupted { get; private set; }
@@ -34,11 +34,10 @@ public class Player : ILeader {
     public Area currentAreaBeingInvaded { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public Intel currentActiveIntel { get; private set; }
-
     public int maxSummonSlots { get; private set; } //how many summons can the player have
     public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
-
     public Faction currentTargetFaction { get; private set; } //the current faction that the player is targeting.
+    public PlayerJobAction[] interventionAbilities { get; private set; }
 
     #region getters/setters
     public int id {
@@ -61,8 +60,6 @@ public class Player : ILeader {
     }
     #endregion
 
-    public bool hasSeenActionButtonsOnce = false;
-
     public Player() {
         playerArea = null;
         attackGrid = new CombatGrid();
@@ -73,6 +70,7 @@ public class Player : ILeader {
         minions = new Minion[MAX_MINIONS];
         summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
         artifacts = new Artifact[MAX_ARTIFACT];
+        interventionAbilities = new PlayerJobAction[MAX_INTERVENTION_ABILITIES];
         //shareIntelAbility = new ShareIntel();
         maxSummonSlots = 1;
         maxArtifactSlots = 1;
@@ -88,6 +86,7 @@ public class Player : ILeader {
         minions = new Minion[MAX_MINIONS];
         summons = new Dictionary<SUMMON_TYPE, List<Summon>>();
         artifacts = new Artifact[MAX_ARTIFACT];
+        interventionAbilities = new PlayerJobAction[MAX_INTERVENTION_ABILITIES];
         maxSummonSlots = data.maxSummonSlots;
         maxArtifactSlots = data.maxArtifactSlots;
         threat = data.threat;
@@ -214,6 +213,12 @@ public class Player : ILeader {
     public Minion CreateNewMinionRandomClass(RACE race) {
         string className = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
         Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea), false);
+        InitializeMinion(minion);
+        return minion;
+    }
+    public Minion CreateNewMinionRandomClass() {
+        string className = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, RACE.DEMON, GENDER.MALE, playerFaction, playerArea), false);
         InitializeMinion(minion);
         return minion;
     }
@@ -657,12 +662,6 @@ public class Player : ILeader {
     //        UnassignCharacterFromJob(job);
     //    }
     //}
-    public void SeenActionButtonsOnce() {
-        if (!hasSeenActionButtonsOnce) {
-            hasSeenActionButtonsOnce = true;
-            Messenger.Broadcast(Signals.HAS_SEEN_ACTION_BUTTONS);
-        }
-    }
     #endregion
 
     #region Intel
@@ -1428,6 +1427,32 @@ public class Player : ILeader {
             }
         }
         Debug.Log(GameManager.Instance.TodayLogString() + summary);
+    }
+    #endregion
+
+    #region Intervention Ability
+    public void GainNewInterventionAbility(INTERVENTION_ABILITY ability) {
+        PlayerJobAction playerJobAction = PlayerManager.Instance.CreateNewInterventionAbility(ability);
+        GainNewInterventionAbility(playerJobAction);
+    }
+    public void GainNewInterventionAbility(PlayerJobAction ability) {
+        int abilityCount = GetInterventionAbilityCount();
+        if (abilityCount == minions.Length) {
+            //Broadcast minion is full, must be received by a UI that will pop up and let the player whether it will replace or be discarded
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(interventionAbilities.ToList(), ability, ReplaceMinion, RejectMinion);
+        } else {
+            interventionAbilities[abilityCount] = ability;
+            //PlayerUI.Instance.UpdateRoleSlots();
+        }
+    }
+    private int GetInterventionAbilityCount() {
+        int count = 0;
+        for (int i = 0; i < interventionAbilities.Length; i++) {
+            if (interventionAbilities[i] != null) {
+                count++;
+            }
+        }
+        return count;
     }
     #endregion
 }

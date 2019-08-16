@@ -9,6 +9,7 @@ using Unity.Collections;
 public class LandmarkManager : MonoBehaviour {
 
     public static LandmarkManager Instance = null;
+    public static readonly int Max_Connections = 3;
 
     public int initialLandmarkCount;
 
@@ -169,37 +170,37 @@ public class LandmarkManager : MonoBehaviour {
             currLandmark.Initialize();
         }
     }
-    public void GenerateMinorLandmarks(List<HexTile> allTiles) {
-        Dictionary<BIOMES, LANDMARK_TYPE[]> landmarkChoices = new Dictionary<BIOMES, LANDMARK_TYPE[]>() {
-            { BIOMES.GRASSLAND, new LANDMARK_TYPE[] {
-                LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.HERMIT_HUT, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.CATACOMB, LANDMARK_TYPE.PYRAMID, LANDMARK_TYPE.CAVE
-            } },
-            { BIOMES.FOREST, new LANDMARK_TYPE[] {
-                LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.HERMIT_HUT, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.CATACOMB, LANDMARK_TYPE.PYRAMID, LANDMARK_TYPE.CAVE
-            } },
-            { BIOMES.DESERT, new LANDMARK_TYPE[] {
-                LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.CATACOMB, LANDMARK_TYPE.PYRAMID, LANDMARK_TYPE.CAVE
-            } },
-            { BIOMES.SNOW, new LANDMARK_TYPE[] {
-                LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.HERMIT_HUT, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.CATACOMB, LANDMARK_TYPE.ICE_PIT, LANDMARK_TYPE.CAVE
-            } },
-            { BIOMES.TUNDRA, new LANDMARK_TYPE[] {
-                LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.HERMIT_HUT, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.CATACOMB, LANDMARK_TYPE.ICE_PIT, LANDMARK_TYPE.CAVE
-            } },
-        };
-        for (int i = 0; i < allTiles.Count; i++) {
-            HexTile currTile = allTiles[i];
-            List<HexTile> tilesInRange = currTile.GetTilesInRange(2);
-            if (currTile.landmarkOnTile == null
-                && currTile.elevationType == ELEVATION.PLAIN
-                && !currTile.IsAtEdgeOfMap()
-                && tilesInRange.Where(x => x.landmarkOnTile != null).Count() == 0) {
-                LANDMARK_TYPE[] minorLandmarkTypes = landmarkChoices[currTile.biomeType];
-                LANDMARK_TYPE chosenLandmarkType = minorLandmarkTypes[Random.Range(0, minorLandmarkTypes.Length)];
-                CreateNewLandmarkOnTile(currTile, chosenLandmarkType);
-            }
-        }
-    }
+    //public void GenerateMinorLandmarks(List<HexTile> allTiles) {
+    //    Dictionary<BIOMES, LANDMARK_TYPE[]> landmarkChoices = new Dictionary<BIOMES, LANDMARK_TYPE[]>() {
+    //        { BIOMES.GRASSLAND, new LANDMARK_TYPE[] {
+    //            LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.OUTPOST, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.ANCIENT_RUIN, LANDMARK_TYPE.PYRAMID, LANDMARK_TYPE.CAVE
+    //        } },
+    //        { BIOMES.FOREST, new LANDMARK_TYPE[] {
+    //            LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.OUTPOST, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.ANCIENT_RUIN, LANDMARK_TYPE.PYRAMID, LANDMARK_TYPE.CAVE
+    //        } },
+    //        { BIOMES.DESERT, new LANDMARK_TYPE[] {
+    //            LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.ANCIENT_RUIN, LANDMARK_TYPE.PYRAMID, LANDMARK_TYPE.CAVE
+    //        } },
+    //        { BIOMES.SNOW, new LANDMARK_TYPE[] {
+    //            LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.OUTPOST, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.ANCIENT_RUIN, LANDMARK_TYPE.ICE_PIT, LANDMARK_TYPE.CAVE
+    //        } },
+    //        { BIOMES.TUNDRA, new LANDMARK_TYPE[] {
+    //            LANDMARK_TYPE.ABANDONED_MINE, LANDMARK_TYPE.OUTPOST, LANDMARK_TYPE.BANDIT_CAMP, LANDMARK_TYPE.ANCIENT_RUIN, LANDMARK_TYPE.ICE_PIT, LANDMARK_TYPE.CAVE
+    //        } },
+    //    };
+    //    for (int i = 0; i < allTiles.Count; i++) {
+    //        HexTile currTile = allTiles[i];
+    //        List<HexTile> tilesInRange = currTile.GetTilesInRange(2);
+    //        if (currTile.landmarkOnTile == null
+    //            && currTile.elevationType == ELEVATION.PLAIN
+    //            && !currTile.IsAtEdgeOfMap()
+    //            && tilesInRange.Where(x => x.landmarkOnTile != null).Count() == 0) {
+    //            LANDMARK_TYPE[] minorLandmarkTypes = landmarkChoices[currTile.biomeType];
+    //            LANDMARK_TYPE chosenLandmarkType = minorLandmarkTypes[Random.Range(0, minorLandmarkTypes.Length)];
+    //            CreateNewLandmarkOnTile(currTile, chosenLandmarkType);
+    //        }
+    //    }
+    //}
     public void GenerateLandmarksNew(Region[] regions, out BaseLandmark portal, out BaseLandmark settlement) {
         //place portal first
         Region[] corners = GetCornerRegions();
@@ -214,7 +215,8 @@ public class LandmarkManager : MonoBehaviour {
         int oppositeCorner = GetOppositeCorner(portalCorner);
         Region settlementRegion = corners[oppositeCorner];
         AREA_TYPE settlementType = Utilities.RandomSettlementType();
-        Area settlementArea = CreateNewArea(settlementRegion.coreTile, settlementType, Random.Range(WorldConfigManager.Instance.minCitizenCountFirstSettlement, WorldConfigManager.Instance.maxCitizenCountFirstSettlement + 1));
+        int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCountFirstSettlement, WorldConfigManager.Instance.maxCitizenCountFirstSettlement + 1);
+        Area settlementArea = CreateNewArea(settlementRegion.coreTile, settlementType, citizenCount);
         BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE);
         settlement = settlementLandmark;
         Faction faction = FactionManager.Instance.CreateNewFaction();
@@ -227,6 +229,9 @@ public class LandmarkManager : MonoBehaviour {
             faction.SetInitialFactionLeaderGender(GENDER.MALE);
             faction.SetRace(RACE.HUMANS);
         }
+        OwnArea(faction, faction.race, settlementArea);
+        settlementArea.GenerateStructures(citizenCount);
+        faction.GenerateStartingCitizens(2, 1, citizenCount); //9,7
 
         List<Region> availableRegions = new List<Region>(regions);
         availableRegions.Remove(portalRegion);
@@ -234,119 +239,122 @@ public class LandmarkManager : MonoBehaviour {
 
         //place all other landmarks
         Dictionary<LANDMARK_TYPE, int> landmarks = WorldConfigManager.Instance.GetLandmarksForGeneration(regions.Length - 2); //subtracted 2 because of portal and settlement
+        string otherLandmarkSummary = "Will generate the following landmarks: ";
         foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in landmarks) {
+            otherLandmarkSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
             for (int i = 0; i < kvp.Value; i++) {
                 Region chosenRegion = availableRegions[Random.Range(0, availableRegions.Count)];
                 BaseLandmark landmark = CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key);
                 availableRegions.Remove(chosenRegion);
             }
         }
+        Debug.Log(otherLandmarkSummary);
     }
-    public void GenerateLandmarks(RandomWorld world, out BaseLandmark portal) {
-        WeightedDictionary<LANDMARK_YIELD_TYPE> yieldTypeChances = new WeightedDictionary<LANDMARK_YIELD_TYPE>();
-        yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.SUMMON, 15);
-        yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.ARTIFACT, 15);
-        yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.ABILITY, 20);
-        yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.SKIRMISH, 25);
-        yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.STORY_EVENT, 25);
+    //public void GenerateLandmarks(RandomWorld world, out BaseLandmark portal) {
+    //    WeightedDictionary<LANDMARK_YIELD_TYPE> yieldTypeChances = new WeightedDictionary<LANDMARK_YIELD_TYPE>();
+    //    yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.SUMMON, 15);
+    //    yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.ARTIFACT, 15);
+    //    yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.ABILITY, 20);
+    //    yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.SKIRMISH, 25);
+    //    yieldTypeChances.AddElement(LANDMARK_YIELD_TYPE.STORY_EVENT, 25);
 
-        int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCountFirstSettlement, WorldConfigManager.Instance.maxCitizenCountFirstSettlement + 1);
-        //create player portal
-        portal = CreateMajorLandmarkOnColumn(world.columns.First(), LANDMARK_TYPE.DEMONIC_PORTAL, AREA_TYPE.DEMONIC_INTRUSION, 0);
+    //    int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCountFirstSettlement, WorldConfigManager.Instance.maxCitizenCountFirstSettlement + 1);
+    //    //create player portal
+    //    portal = CreateMajorLandmarkOnColumn(world.columns.First(), LANDMARK_TYPE.DEMONIC_PORTAL, AREA_TYPE.DEMONIC_INTRUSION, 0);
 
-        for (int i = 0; i < world.columns.Count; i++) {
-            TileColumn previousColumn = world.columns.ElementAtOrDefault(i - 1);
-            TileColumn currColumn = world.columns[i];
-            TileColumn nextColumn = world.columns.ElementAtOrDefault(i + 1);
-            if (nextColumn != null) {
-                int connections = 0;
-                //create connections to nextColumn
-                if (currColumn.hasMajorLandmark) {
-                    //current column has a settlement, create 2 connections outward
-                    connections = 2;
-                    //create connections
-                    TileRow rowWithMajorLandmark = currColumn.GetRowWithMajorLandmark();
-                    for (int j = 0; j < connections; j++) {
-                        //only choose rows that don't have landmarks or rows that have landmarks but are not yet connected to the current columns major landmark
-                        List<TileRow> rowChoices = currColumn.GetValidRowsInNextColumnForLandmarks(rowWithMajorLandmark, nextColumn)
-                            .Where(x => x.landmark == null || !x.landmark.IsConnectedWith(rowWithMajorLandmark.landmark)).ToList();
-                        if (rowChoices.Count == 0) {
-                            break;
-                        }
-                        TileRow chosenRow = rowChoices[Random.Range(0, rowChoices.Count)];
-                        BaseLandmark landmark;
-                        if (chosenRow.hasLandmark) {
-                            //connect to that landmark
-                            landmark = chosenRow.landmark;
-                        } else {
-                            //create landmark on that row, and connect to it.
-                            landmark = CreateMinorLandmarkOnRow(chosenRow, yieldTypeChances);
-                        }
-                        ConnectLandmarks(rowWithMajorLandmark.landmark, landmark);
-                    }
-                } else if (nextColumn.hasMajorLandmark) {
-                    //create settlement first
-                    TileRow rowInNextColumnWithMajorLandmark = nextColumn.GetRowWithMajorLandmark();
-                    if (rowInNextColumnWithMajorLandmark == null) {
-                        BaseLandmark landmark = CreateMajorLandmarkOnColumn(nextColumn, LANDMARK_TYPE.PALACE, Utilities.RandomSettlementType(), citizenCount);
-                        rowInNextColumnWithMajorLandmark = nextColumn.GetRowWithMajorLandmark();
-                        citizenCount += Random.Range(WorldConfigManager.Instance.minCitizenCountIncreasePerSettlement, WorldConfigManager.Instance.maxCitizenCountIncreasePerSettlement + 1);
-                    }
-                    //next column has a settlement, connect all landmarks to that
-                    connections = 1;
-                    for (int j = 0; j < currColumn.rows.Length; j++) {
-                        TileRow currRow = currColumn.rows[j];
-                        if (currRow.hasLandmark) {
-                            BaseLandmark currLandmark = currRow.landmark;
-                            //create connections
-                            for (int k = 0; k < connections; k++) {
-                                //connect to that settlement
-                                ConnectLandmarks(currRow.landmark, rowInNextColumnWithMajorLandmark.landmark);
-                            }
-                        }
-                    }
-                } else {
-                    //create connections per Landmark in the current column
-                    for (int j = 0; j < currColumn.rows.Length; j++) {
-                        TileRow currRow = currColumn.rows[j];
-                        if (currRow.hasLandmark) {
-                            BaseLandmark currLandmark = currRow.landmark;
-                            connections = 1; //75% 1 connection
-                            if (Random.Range(0, 100) < 25) { //25% 2 connections
-                                connections = 2;
-                            }
-                            //create connections
-                            for (int k = 0; k < connections; k++) {
-                                List<TileRow> rowChoices = currColumn.GetValidRowsInNextColumnForLandmarks(currRow, nextColumn)
-                                    .Where(x => x.landmark == null || !x.landmark.IsConnectedWith(currLandmark)).ToList();
-                                if (rowChoices.Count == 0) {
-                                    break;
-                                }
-                                TileRow chosenRow = rowChoices[Random.Range(0, rowChoices.Count)];
-                                BaseLandmark landmark;
-                                if (chosenRow.hasLandmark) {
-                                    landmark = chosenRow.landmark;
-                                    //connect to that landmark
-                                } else {
-                                    //create landmark on that row, and connect to it.
-                                    landmark = CreateMinorLandmarkOnRow(chosenRow, yieldTypeChances);
-                                }
-                                ConnectLandmarks(currLandmark, landmark);
-                            }
-                        }
-                    }
-                }
-            }
+    //    for (int i = 0; i < world.columns.Count; i++) {
+    //        TileColumn previousColumn = world.columns.ElementAtOrDefault(i - 1);
+    //        TileColumn currColumn = world.columns[i];
+    //        TileColumn nextColumn = world.columns.ElementAtOrDefault(i + 1);
+    //        if (nextColumn != null) {
+    //            int connections = 0;
+    //            //create connections to nextColumn
+    //            if (currColumn.hasMajorLandmark) {
+    //                //current column has a settlement, create 2 connections outward
+    //                connections = 2;
+    //                //create connections
+    //                TileRow rowWithMajorLandmark = currColumn.GetRowWithMajorLandmark();
+    //                for (int j = 0; j < connections; j++) {
+    //                    //only choose rows that don't have landmarks or rows that have landmarks but are not yet connected to the current columns major landmark
+    //                    List<TileRow> rowChoices = currColumn.GetValidRowsInNextColumnForLandmarks(rowWithMajorLandmark, nextColumn)
+    //                        .Where(x => x.landmark == null || !x.landmark.IsConnectedWith(rowWithMajorLandmark.landmark)).ToList();
+    //                    if (rowChoices.Count == 0) {
+    //                        break;
+    //                    }
+    //                    TileRow chosenRow = rowChoices[Random.Range(0, rowChoices.Count)];
+    //                    BaseLandmark landmark;
+    //                    if (chosenRow.hasLandmark) {
+    //                        //connect to that landmark
+    //                        landmark = chosenRow.landmark;
+    //                    } else {
+    //                        //create landmark on that row, and connect to it.
+    //                        landmark = CreateMinorLandmarkOnRow(chosenRow, yieldTypeChances);
+    //                    }
+    //                    ConnectLandmarks(rowWithMajorLandmark.landmark, landmark);
+    //                }
+    //            } else if (nextColumn.hasMajorLandmark) {
+    //                //create settlement first
+    //                TileRow rowInNextColumnWithMajorLandmark = nextColumn.GetRowWithMajorLandmark();
+    //                if (rowInNextColumnWithMajorLandmark == null) {
+    //                    BaseLandmark landmark = CreateMajorLandmarkOnColumn(nextColumn, LANDMARK_TYPE.PALACE, Utilities.RandomSettlementType(), citizenCount);
+    //                    rowInNextColumnWithMajorLandmark = nextColumn.GetRowWithMajorLandmark();
+    //                    citizenCount += Random.Range(WorldConfigManager.Instance.minCitizenCountIncreasePerSettlement, WorldConfigManager.Instance.maxCitizenCountIncreasePerSettlement + 1);
+    //                }
+    //                //next column has a settlement, connect all landmarks to that
+    //                connections = 1;
+    //                for (int j = 0; j < currColumn.rows.Length; j++) {
+    //                    TileRow currRow = currColumn.rows[j];
+    //                    if (currRow.hasLandmark) {
+    //                        BaseLandmark currLandmark = currRow.landmark;
+    //                        //create connections
+    //                        for (int k = 0; k < connections; k++) {
+    //                            //connect to that settlement
+    //                            ConnectLandmarks(currRow.landmark, rowInNextColumnWithMajorLandmark.landmark);
+    //                        }
+    //                    }
+    //                }
+    //            } else {
+    //                //create connections per Landmark in the current column
+    //                for (int j = 0; j < currColumn.rows.Length; j++) {
+    //                    TileRow currRow = currColumn.rows[j];
+    //                    if (currRow.hasLandmark) {
+    //                        BaseLandmark currLandmark = currRow.landmark;
+    //                        connections = 1; //75% 1 connection
+    //                        if (Random.Range(0, 100) < 25) { //25% 2 connections
+    //                            connections = 2;
+    //                        }
+    //                        //create connections
+    //                        for (int k = 0; k < connections; k++) {
+    //                            List<TileRow> rowChoices = currColumn.GetValidRowsInNextColumnForLandmarks(currRow, nextColumn)
+    //                                .Where(x => x.landmark == null || !x.landmark.IsConnectedWith(currLandmark)).ToList();
+    //                            if (rowChoices.Count == 0) {
+    //                                break;
+    //                            }
+    //                            TileRow chosenRow = rowChoices[Random.Range(0, rowChoices.Count)];
+    //                            BaseLandmark landmark;
+    //                            if (chosenRow.hasLandmark) {
+    //                                landmark = chosenRow.landmark;
+    //                                //connect to that landmark
+    //                            } else {
+    //                                //create landmark on that row, and connect to it.
+    //                                landmark = CreateMinorLandmarkOnRow(chosenRow, yieldTypeChances);
+    //                            }
+    //                            ConnectLandmarks(currLandmark, landmark);
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        }
 
-            for (int j = 0; j < currColumn.rows.Length; j++) {
-                if (currColumn.rows[j] != null && currColumn.rows[j].landmark != null) {
-                    BaseLandmark rowLandmark = currColumn.rows[j].landmark;
-                    rowLandmark.SetSameColumnLandmarks(currColumn.GetAllLandmarksInColumn(rowLandmark));
-                    rowLandmark.SetSameRowTiles(currColumn.rows[j].GetAllTiles(GridMap.Instance.map).ToList());
-                }
-            }
-        }
-    }
+    //        //for (int j = 0; j < currColumn.rows.Length; j++) {
+    //        //    if (currColumn.rows[j] != null && currColumn.rows[j].landmark != null) {
+    //        //        BaseLandmark rowLandmark = currColumn.rows[j].landmark;
+    //        //        rowLandmark.SetSameColumnLandmarks(currColumn.GetAllLandmarksInColumn(rowLandmark));
+    //        //        rowLandmark.SetSameRowTiles(currColumn.rows[j].GetAllTiles(GridMap.Instance.map).ToList());
+    //        //    }
+    //        //}
+    //    }
+    //}
     private Region[] GetCornerRegions() {
         //Get the regions in the 4 corners of the map. NOTE: it is possible that there are multiple corners that belong to the same region.
         HexTile topLeftTile = GridMap.Instance.map[0, GridMap.Instance.height - 1]; //0
@@ -374,66 +382,92 @@ public class LandmarkManager : MonoBehaviour {
     /// <param name="landmark1">The landmark that will connect to landmark 2.</param>
     /// <param name="landmark2">The landmark accepting the connection from landmark 1.</param>
     public void ConnectLandmarks(BaseLandmark landmark1, BaseLandmark landmark2) {
-        //landmark1.AddConnection(landmark2);
-        landmark1.AddOutGoingConnection(landmark2);
-        landmark2.AddIncomingConnection(landmark1);
+        landmark1.AddConnection(landmark2);
+        //landmark1.AddOutGoingConnection(landmark2);
+        landmark2.AddConnection(landmark1);
         GameObject lineGO = GameObject.Instantiate(landmarkConnectionPrefab, landmark1.tileLocation.transform);
         LineRenderer line = lineGO.GetComponent<LineRenderer>();
         line.positionCount = 2;
         line.SetPosition(0, landmark1.tileLocation.transform.position);
         line.SetPosition(1, landmark2.tileLocation.transform.position);
     }
-    private BaseLandmark CreateMinorLandmarkOnRow(TileRow row, WeightedDictionary<LANDMARK_YIELD_TYPE> yieldTypeChances) {
-        LANDMARK_YIELD_TYPE chosenYieldType = yieldTypeChances.PickRandomElementGivenWeights();
-        List<HexTile> tiles = row.GetElligibleTilesForLandmark(GridMap.Instance.map);
-        HexTile chosenTile = tiles[Random.Range(0, tiles.Count)];
-
-        List<LANDMARK_TYPE> landmarkChoices = WorldConfigManager.Instance.GetPossibleLandmarks(chosenTile.biomeType, chosenYieldType);
-        LANDMARK_TYPE chosenType = landmarkChoices[Random.Range(0, landmarkChoices.Count)];
-
-        BaseLandmark landmark = CreateNewLandmarkOnTile(chosenTile, chosenType);
-        row.SetLandmark(landmark);
-        landmark.SetYieldType(chosenYieldType);
-        return landmark;
-    }
-    private BaseLandmark CreateMajorLandmarkOnColumn(TileColumn currColumn, LANDMARK_TYPE type, AREA_TYPE areaType, int citizenCount) {
-        int randomRow = Random.Range(0, currColumn.rows.Length);
-        TileRow chosenRow = currColumn.rows[randomRow];
-        List<HexTile> choices = chosenRow.GetElligibleTilesForLandmark(GridMap.Instance.map);
-        HexTile chosenTile = choices[Random.Range(0, choices.Count)];
-
-        Area newArea = CreateNewArea(chosenTile, areaType, citizenCount);
-        BaseLandmark landmark = CreateNewLandmarkOnTile(chosenTile, type);
-        chosenRow.SetLandmark(landmark);
-        if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-            newArea.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
-        } else {
-            Faction faction = FactionManager.Instance.CreateNewFaction();
-            if (areaType == AREA_TYPE.ELVEN_SETTLEMENT) {
-                faction.SetInitialFactionLeaderClass("Queen");
-                faction.SetInitialFactionLeaderGender(GENDER.FEMALE);
-                faction.SetRace(RACE.ELVES);
-            } else if (areaType == AREA_TYPE.HUMAN_SETTLEMENT) {
-                faction.SetInitialFactionLeaderClass("King");
-                faction.SetInitialFactionLeaderGender(GENDER.MALE);
-                faction.SetRace(RACE.HUMANS);
-            }
-            OwnArea(faction, faction.race, newArea);
-            newArea.GenerateStructures(citizenCount);
-            faction.GenerateStartingCitizens(2, 1, citizenCount); //9,7
+    public void ConnectLandmarks(BaseLandmark landmark1, BaseLandmark landmark2, ref List<Island> islands) {
+        Island landmark1Island = GetIslandOfLandmark(landmark1, islands);
+        Island landmark2Island = GetIslandOfLandmark(landmark2, islands);
+        ConnectLandmarks(landmark1, landmark2);
+        if (landmark1Island != landmark2Island) {
+            MergeIslands(landmark1Island, landmark2Island, ref islands);
         }
-        return landmark;
     }
+    public Island GetIslandOfLandmark(BaseLandmark landmark, List<Island> islands) {
+        for (int i = 0; i < islands.Count; i++) {
+            Island currIsland = islands[i];
+            if (currIsland.landmarksInIsland.Contains(landmark)) {
+                return currIsland;
+            }
+        }
+        return null;
+    }
+    private void MergeIslands(Island island1, Island island2, ref List<Island> islands) {
+        island1.landmarksInIsland.AddRange(island2.landmarksInIsland);
+        islands.Remove(island2);
+    }
+    //private BaseLandmark CreateMinorLandmarkOnRow(TileRow row, WeightedDictionary<LANDMARK_YIELD_TYPE> yieldTypeChances) {
+    //    LANDMARK_YIELD_TYPE chosenYieldType = yieldTypeChances.PickRandomElementGivenWeights();
+    //    List<HexTile> tiles = row.GetElligibleTilesForLandmark(GridMap.Instance.map);
+    //    HexTile chosenTile = tiles[Random.Range(0, tiles.Count)];
 
-    public static readonly int Max_Connections = 3;
-    public IEnumerator GenerateConnections(BaseLandmark portal, BaseLandmark settlement) {
+    //    List<LANDMARK_TYPE> landmarkChoices = WorldConfigManager.Instance.GetPossibleLandmarks(chosenTile.biomeType, chosenYieldType);
+    //    LANDMARK_TYPE chosenType = landmarkChoices[Random.Range(0, landmarkChoices.Count)];
+
+    //    BaseLandmark landmark = CreateNewLandmarkOnTile(chosenTile, chosenType);
+    //    row.SetLandmark(landmark);
+    //    return landmark;
+    //}
+    //private BaseLandmark CreateMajorLandmarkOnColumn(TileColumn currColumn, LANDMARK_TYPE type, AREA_TYPE areaType, int citizenCount) {
+    //    int randomRow = Random.Range(0, currColumn.rows.Length);
+    //    TileRow chosenRow = currColumn.rows[randomRow];
+    //    List<HexTile> choices = chosenRow.GetElligibleTilesForLandmark(GridMap.Instance.map);
+    //    HexTile chosenTile = choices[Random.Range(0, choices.Count)];
+
+    //    Area newArea = CreateNewArea(chosenTile, areaType, citizenCount);
+    //    BaseLandmark landmark = CreateNewLandmarkOnTile(chosenTile, type);
+    //    chosenRow.SetLandmark(landmark);
+    //    if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
+    //        newArea.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
+    //    } else {
+    //        Faction faction = FactionManager.Instance.CreateNewFaction();
+    //        if (areaType == AREA_TYPE.ELVEN_SETTLEMENT) {
+    //            faction.SetInitialFactionLeaderClass("Queen");
+    //            faction.SetInitialFactionLeaderGender(GENDER.FEMALE);
+    //            faction.SetRace(RACE.ELVES);
+    //        } else if (areaType == AREA_TYPE.HUMAN_SETTLEMENT) {
+    //            faction.SetInitialFactionLeaderClass("King");
+    //            faction.SetInitialFactionLeaderGender(GENDER.MALE);
+    //            faction.SetRace(RACE.HUMANS);
+    //        }
+    //        OwnArea(faction, faction.race, newArea);
+    //        newArea.GenerateStructures(citizenCount);
+    //        faction.GenerateStartingCitizens(2, 1, citizenCount); //9,7
+    //    }
+    //    return landmark;
+    //}
+    public void GenerateConnections(BaseLandmark portal, BaseLandmark settlement) {
         List<BaseLandmark> pendingConnections = new List<BaseLandmark>();
+
+        List<BaseLandmark> allLandmarks = GetAllLandmarks();
+        List<Island> islands = new List<Island>();
+        for (int i = 0; i < allLandmarks.Count; i++) {
+            BaseLandmark landmark = allLandmarks[i];
+            Island island = new Island(landmark);
+            islands.Add(island);
+        }
 
         //connect portal to all adjacent regions
         List<Region> portalAdjacent = portal.tileLocation.region.AdjacentRegions();
         for (int i = 0; i < portalAdjacent.Count; i++) {
             Region currRegion = portalAdjacent[i];
-            ConnectLandmarks(portal, currRegion.coreTile.landmarkOnTile);
+            ConnectLandmarks(portal, currRegion.coreTile.landmarkOnTile, ref islands);
             pendingConnections.Add(currRegion.coreTile.landmarkOnTile);
             if (portal.HasMaximumConnections()) { break; }
         }
@@ -442,41 +476,125 @@ public class LandmarkManager : MonoBehaviour {
         List<Region> settlementAdjacent = settlement.tileLocation.region.AdjacentRegions();
         for (int i = 0; i < settlementAdjacent.Count; i++) {
             Region currRegion = settlementAdjacent[i];
-            ConnectLandmarks(settlement, currRegion.coreTile.landmarkOnTile);
+            ConnectLandmarks(settlement, currRegion.coreTile.landmarkOnTile, ref islands);
+            pendingConnections.Add(currRegion.coreTile.landmarkOnTile);
             if (settlement.HasMaximumConnections()) { break; }
         }
 
+        WeightedDictionary<int> connectionWeights = new WeightedDictionary<int>();
+        connectionWeights.AddElement(3, 75); //3 connections - 75%
+        connectionWeights.AddElement(2, 25); //2 connections - 25%
+
         while (pendingConnections.Count > 0) {
             BaseLandmark currLandmark = pendingConnections[0];
-            if (currLandmark.HasMaximumConnections()) {
-                pendingConnections.Remove(currLandmark);
-                if (pendingConnections.Count == 0) {
-                    List<BaseLandmark> choices = GetAllLandmarksExcept(portal, settlement).Where(x => !x.HasMaximumConnections()).ToList();
-                    if (choices.Count > 0) {
-                        pendingConnections.Add(choices[Random.Range(0, choices.Count)]);
+            CameraMove.Instance.CenterCameraOn(currLandmark.tileLocation.gameObject);
+            if (!currLandmark.HasMaximumConnections()) {
+                //current landmark can still have connections
+                int connectionsToCreate = Mathf.Max(0, connectionWeights.PickRandomElementGivenWeights() - currLandmark.connections.Count);
+                List<Region> availableAdjacent = currLandmark.tileLocation.region.AdjacentRegions().Where(x => !x.coreTile.landmarkOnTile.IsConnectedWith(currLandmark) && !x.coreTile.landmarkOnTile.HasMaximumConnections()).ToList();
+                if (availableAdjacent.Count == 0 && currLandmark.connections.Count == 0) {
+                    //there are no available adjacent connections and this landmark has no connections yet, allow it to connect to any of its adjacent regions.
+                    availableAdjacent = currLandmark.tileLocation.region.AdjacentRegions();
+                }
+                for (int i = 0; i < connectionsToCreate; i++) {
+                    if (availableAdjacent.Count > 0) {
+                        Region chosenRegion = availableAdjacent[Random.Range(0, availableAdjacent.Count)];
+                        ConnectLandmarks(currLandmark, chosenRegion.coreTile.landmarkOnTile, ref islands);
+                        if (!chosenRegion.coreTile.landmarkOnTile.HasMaximumConnections() && !pendingConnections.Contains(chosenRegion.coreTile.landmarkOnTile)) {
+                            pendingConnections.Add(chosenRegion.coreTile.landmarkOnTile);
+                        }
+                        availableAdjacent.Remove(chosenRegion);
+                    } else {
+                        break; //no more adjacent unconnected regions
                     }
                 }
+                pendingConnections.Remove(currLandmark);
             } else {
-                //pick from adjacent regions to connect
-                List<Region> adjacentRegions = currLandmark.tileLocation.region.AdjacentRegions().Where(x => !x.coreTile.landmarkOnTile.HasMaximumConnections()).ToList();
-                if (adjacentRegions.Count > 0) {
-                    Region chosenRegion = adjacentRegions[Random.Range(0, adjacentRegions.Count)];
-                    ConnectLandmarks(currLandmark, chosenRegion.coreTile.landmarkOnTile);
-                    pendingConnections.Remove(currLandmark);
-                    pendingConnections.Add(chosenRegion.coreTile.landmarkOnTile);
-                } else {
-                    //no more adjacent regions that have available slot
-                    if (currLandmark.inComingConnections.Count == 0) {
-                        //if the current landmark does not have any connections yet, allow it to connect to any adjacent region, even if it already has maximum connections
-                        adjacentRegions = currLandmark.tileLocation.region.AdjacentRegions();
-                        Region chosenRegion = adjacentRegions[Random.Range(0, adjacentRegions.Count)];
-                        ConnectLandmarks(currLandmark, chosenRegion.coreTile.landmarkOnTile);
-                        pendingConnections.Remove(currLandmark);
-                        pendingConnections.Add(chosenRegion.coreTile.landmarkOnTile);
+                //current landmark can have no more connections
+                pendingConnections.Remove(currLandmark);
+            }
+            if (pendingConnections.Count == 0) {
+                List<Region> noConnectionRegions = GridMap.Instance.allRegions.Where(x => x.coreTile.landmarkOnTile.connections.Count == 0).ToList();
+                if (noConnectionRegions.Count > 0) {
+                    pendingConnections.Add(noConnectionRegions[Random.Range(0, noConnectionRegions.Count)].coreTile.landmarkOnTile);
+                }
+            }
+        }
+
+        if (islands.Count > 1) {
+            //Connect islands
+            while (islands.Count > 1) {
+                for (int i = 0; i < islands.Count; i++) {
+                    Island currIsland = islands[i];
+                    for (int j = 0; j < islands.Count; j++) {
+                        Island otherIsland = islands[j];
+                        if (currIsland != otherIsland) {
+                            BaseLandmark landmarkToConnectTo;
+                            BaseLandmark landmarkThatWillConnect;
+                            if (currIsland.TryGetLandmarkThatCanConnectToOtherIsland(otherIsland, islands, out landmarkToConnectTo, out landmarkThatWillConnect)) {
+                                ConnectLandmarks(landmarkThatWillConnect, landmarkToConnectTo, ref islands);
+                                if (islands.Count == 1) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (islands.Count == 1) {
+                        break;
                     }
                 }
             }
-            yield return new WaitForSeconds(1f);
+        }
+    }
+    public void GenerateWorldObjects() {
+        List<BaseLandmark> allLandmarks = GetAllLandmarks();
+        for (int i = 0; i < allLandmarks.Count; i++) {
+            BaseLandmark landmark = allLandmarks[i];
+            WeightedDictionary<string> worldObjWeights = new WeightedDictionary<string>();
+            switch (landmark.specificLandmarkType) {
+                case LANDMARK_TYPE.MONSTER_LAIR:
+                    worldObjWeights.AddElement("summon", 100);
+                    break;
+                case LANDMARK_TYPE.CAVE:
+                    worldObjWeights.AddElement("summon", 25);
+                    worldObjWeights.AddElement("artifact", 25);
+                    worldObjWeights.AddElement("SpellScroll", 20);
+                    worldObjWeights.AddElement("SkillScroll", 15);
+                    worldObjWeights.AddElement("DemonStone", 15);
+                    break;
+                case LANDMARK_TYPE.ANCIENT_RUIN:
+                    worldObjWeights.AddElement("summon", 10);
+                    worldObjWeights.AddElement("artifact", 15);
+                    worldObjWeights.AddElement("SpellScroll", 35);
+                    worldObjWeights.AddElement("SkillScroll", 25);
+                    worldObjWeights.AddElement("DemonStone", 15);
+                    break;
+                case LANDMARK_TYPE.BARRACKS:
+                case LANDMARK_TYPE.OUTPOST:
+                    worldObjWeights.AddElement("SkillScroll", 35);
+                    worldObjWeights.AddElement("nothing", 65);
+                    break;
+                case LANDMARK_TYPE.TEMPLE:
+                    worldObjWeights.AddElement("SpellScroll", 35);
+                    worldObjWeights.AddElement("nothing", 65);
+                    break;
+            }
+            if (worldObjWeights.GetTotalOfWeights() > 0) {
+                IWorldObject worldObj = null;
+                string worldObjStr = worldObjWeights.PickRandomElementGivenWeights();
+                if (worldObjStr == "summon") {
+                    SUMMON_TYPE[] summonTypes = Utilities.GetEnumValues<SUMMON_TYPE>();
+                    worldObj = CharacterManager.Instance.CreateNewSummon(summonTypes[Random.Range(1, summonTypes.Length)]);
+                } else if (worldObjStr == "artifact") {
+                    ARTIFACT_TYPE[] artifactTypes = Utilities.GetEnumValues<ARTIFACT_TYPE>();
+                    worldObj = PlayerManager.Instance.CreateNewArtifact(artifactTypes[Random.Range(1, artifactTypes.Length)]);
+                } else if (worldObjStr == "SpellScroll" || worldObjStr == "SkillScroll" || worldObjStr == "DemonStone") {
+                    worldObj = PlayerManager.Instance.CreateNewSpecialObject(worldObjStr);
+                }
+                if (worldObj != null) {
+                    landmark.SetWorldObject(worldObj);
+                }
+            }
         }
     }
     #endregion
@@ -788,6 +906,30 @@ public class LandmarkManager : MonoBehaviour {
         return createdStructure;
     }
     #endregion
+}
 
-   
+public class Island {
+
+    public List<BaseLandmark> landmarksInIsland;
+
+    public Island(BaseLandmark mainLandmark) {
+        landmarksInIsland = new List<BaseLandmark>();
+        landmarksInIsland.Add(mainLandmark);
+    }
+
+    public bool TryGetLandmarkThatCanConnectToOtherIsland(Island otherIsland, List<Island> allIslands, out BaseLandmark landmarkToConnectTo, out BaseLandmark landmarkThatWillConnect) {
+        for (int i = 0; i < landmarksInIsland.Count; i++) {
+            BaseLandmark currLandmark = landmarksInIsland[i];
+            List<Region> adjacent = currLandmark.tileLocation.region.AdjacentRegions().Where(x => LandmarkManager.Instance.GetIslandOfLandmark(x.coreTile.landmarkOnTile, allIslands) != this).ToList(); //get all adjacent regions, that does not belong to this island.
+            if (adjacent.Count > 0) {
+                landmarkToConnectTo = adjacent[Random.Range(0, adjacent.Count)].coreTile.landmarkOnTile;
+                landmarkThatWillConnect = currLandmark;
+                return true;
+
+            }
+        }
+        landmarkToConnectTo = null;
+        landmarkThatWillConnect = null;
+        return false;
+    }
 }

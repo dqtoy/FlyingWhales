@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerJobAction {
+public class PlayerJobAction : IWorldObject {
 
     //public PlayerJobData parentData { get; protected set; }
     public Minion minion { get; protected set; }

@@ -256,7 +256,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             SetElevation(ELEVATION.PLAIN);
         }
         Biomes.Instance.UpdateTileVisuals(this);
-        Debug.Log("Created new  " + landmarkType.ToString() + " on " + this.ToString());
         return landmarkOnTile;
     }
     public BaseLandmark CreateLandmarkOfType(LandmarkSaveData saveData) {
@@ -975,15 +974,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void ShowTileInfo() {
         string summary = "Landmark: " + landmarkOnTile?.specificLandmarkType.ToString();
         if (landmarkOnTile != null) {
-            summary += "\n\t- Yield Type: " + landmarkOnTile.yieldType.ToString();
-            summary += "\n\t- In Going Connections: " + landmarkOnTile.inComingConnections.Count.ToString();
-            for (int i = 0; i < landmarkOnTile.inComingConnections.Count; i++) {
-                BaseLandmark connection = landmarkOnTile.inComingConnections[i];
-                summary += "\n\t\t- " + connection.specificLandmarkType.ToString() + " " + connection.tileLocation.locationName;
-            }
-            summary += "\n\t- Out Going Connections: " + landmarkOnTile.outGoingConnections.Count.ToString();
-            for (int i = 0; i < landmarkOnTile.outGoingConnections.Count; i++) {
-                BaseLandmark connection = landmarkOnTile.outGoingConnections[i];
+            summary += "\n\t- World Object: " + landmarkOnTile.worldObj?.ToString();
+            summary += "\n\t- Connections: " + landmarkOnTile.connections.Count.ToString();
+            for (int i = 0; i < landmarkOnTile.connections.Count; i++) {
+                BaseLandmark connection = landmarkOnTile.connections[i];
                 summary += "\n\t\t- " + connection.specificLandmarkType.ToString() + " " + connection.tileLocation.locationName;
             }
         }
@@ -1093,20 +1087,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         return true;
 
         bool canBeCorrupted = false;
-        if (landmarkOnTile != null && landmarkOnTile.inComingConnections != null) {
-            for (int i = 0; i < landmarkOnTile.inComingConnections.Count; i++) {
-                BaseLandmark connection = landmarkOnTile.inComingConnections[i];
+        if (landmarkOnTile != null && landmarkOnTile.connections != null) {
+            for (int i = 0; i < landmarkOnTile.connections.Count; i++) {
+                BaseLandmark connection = landmarkOnTile.connections[i];
                 if (connection.tileLocation.isCorrupted) {
                     canBeCorrupted = true;
                     break;
-                }
-            }
-            if (canBeCorrupted && landmarkOnTile.sameColumnLandmarks != null) {
-                for (int i = 0; i < landmarkOnTile.sameColumnLandmarks.Count; i++) {
-                    if (landmarkOnTile.sameColumnLandmarks[i].tileLocation.isCorrupted) {
-                        canBeCorrupted = false;
-                        break;
-                    }
                 }
             }
         }

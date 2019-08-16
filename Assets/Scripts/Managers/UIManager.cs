@@ -160,7 +160,9 @@ public class UIManager : MonoBehaviour {
 #if UNITY_EDITOR
             else if (currentTileHovered.landmarkOnTile != null) {
                 currentTileHovered.ShowTileInfo();
+               
             }
+            currentTileHovered.region?.OnHoverOverAction();
             //else  {
             //    currentTileHovered.ShowTileInfo();
             //}
@@ -1012,6 +1014,7 @@ public class UIManager : MonoBehaviour {
     public void OnHoverOutTile(HexTile tile) {
         currentTileHovered = null;
         isHoveringTile = false;
+        tile.region?.OnHoverOutAction();
         if (tile.areaOfTile != null) {
             HideSmallInfo();
             isShowingAreaTooltip = false;

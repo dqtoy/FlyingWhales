@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Summon : Character {
+public class Summon : Character, IWorldObject {
 
 	public SUMMON_TYPE summonType { get; private set; }
     public bool hasBeenUsed { get; private set; } //has this summon been used in the current map. TODO: Set this to false at end of invasion of map.

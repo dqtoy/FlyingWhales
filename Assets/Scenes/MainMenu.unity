@@ -16340,8 +16340,8 @@ MonoBehaviour:
   tileCollectionHeight: 4
   minSettltementCount: 5
   maxSettltementCount: 7
-  minCitizenCountFirstSettlement: 4
-  maxCitizenCountFirstSettlement: 6
+  minCitizenCountFirstSettlement: 16
+  maxCitizenCountFirstSettlement: 24
   minCitizenCountIncreasePerSettlement: 1
   maxCitizenCountIncreasePerSettlement: 3
   landmarkGenTable:

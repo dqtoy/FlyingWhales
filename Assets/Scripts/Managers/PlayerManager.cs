@@ -120,10 +120,10 @@ public class PlayerManager : MonoBehaviour {
         } else {
             player.LoadPlayerArea(existingPlayerArea);
         }
-        for (int i = 0; i < portal.sameRowTiles.Count; i++) {
-            HexTile sameRowTile = portal.sameRowTiles[i];
-            player.playerArea.AddTile(sameRowTile);
-            sameRowTile.SetCorruption(true);
+        for (int i = 0; i < portal.tileLocation.region.tiles.Count; i++) {
+            HexTile regionTile = portal.tileLocation.region.tiles[i];
+            player.playerArea.AddTile(regionTile);
+            regionTile.SetCorruption(true);
         }
         LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
         PlayerUI.Instance.UpdateUI();
@@ -162,8 +162,8 @@ public class PlayerManager : MonoBehaviour {
     public void AddTileToPlayerArea(HexTile tile) {
         player.playerArea.AddTile(tile);
         tile.SetCorruption(true);
-        for (int i = 0; i < tile.landmarkOnTile.sameRowTiles.Count; i++) {
-            HexTile sameRowTile = tile.landmarkOnTile.sameRowTiles[i];
+        for (int i = 0; i < tile.region.tiles.Count; i++) {
+            HexTile sameRowTile = tile.region.tiles[i];
             player.playerArea.AddTile(sameRowTile);
             sameRowTile.SetCorruption(true);
         }
@@ -391,6 +391,12 @@ public class PlayerManager : MonoBehaviour {
     }
     private void OnFinishInstructionFromPlayer(Character character) {
         character.SetIsFollowingPlayerInstruction(false);
+    }
+    #endregion
+
+    #region Special Objects
+    public SpecialObject CreateNewSpecialObject(string typeName) {
+        return System.Activator.CreateInstance(System.Type.GetType(typeName)) as SpecialObject;
     }
     #endregion
 }

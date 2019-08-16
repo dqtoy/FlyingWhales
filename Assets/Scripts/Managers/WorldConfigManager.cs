@@ -92,15 +92,15 @@ public class WorldConfigManager : MonoBehaviour {
         //The world must have the following landmarks:
         Dictionary<LANDMARK_TYPE, int> landmarks = new Dictionary<LANDMARK_TYPE, int>() {
             { LANDMARK_TYPE.FARM, 3 },  //-3 farm regions
-            { LANDMARK_TYPE.IRON_MINES, 2 }, //-2 mine regions
+            { LANDMARK_TYPE.MINES, 2 }, //-2 mine regions
             { LANDMARK_TYPE.BARRACKS, 1 },//-1 barracks region
             { LANDMARK_TYPE.PYRAMID, 1 }, //-1 factory region
-            { LANDMARK_TYPE.GARRISON, 1 }, //-1 workshop region
-            { LANDMARK_TYPE.ANCIENT_TEMPLE, 1 }, //-1 temple region
+            { LANDMARK_TYPE.WORKSHOP, 1 }, //-1 workshop region
+            { LANDMARK_TYPE.TEMPLE, 1 }, //-1 temple region
         };
 
         //-4 monster lair, cave or ancient ruin region
-        LANDMARK_TYPE[] choices = new LANDMARK_TYPE[] { LANDMARK_TYPE.HIVE_LAIR, LANDMARK_TYPE.CAVE, LANDMARK_TYPE.CATACOMB };
+        LANDMARK_TYPE[] choices = new LANDMARK_TYPE[] { LANDMARK_TYPE.MONSTER_LAIR, LANDMARK_TYPE.CAVE, LANDMARK_TYPE.ANCIENT_RUIN };
         for (int i = 0; i < 4; i++) {
             LANDMARK_TYPE chosenType = choices[Random.Range(0, choices.Length)];
             if (!landmarks.ContainsKey(chosenType)) {
@@ -113,7 +113,7 @@ public class WorldConfigManager : MonoBehaviour {
         int remaining = regionCount - totalLandmarks;
         if (remaining > 0) {
             //-the rest should be randomly determined: farm / mine / barracks / lair / outpost / temple / bandit camp
-            choices = new LANDMARK_TYPE[] { LANDMARK_TYPE.FARM, LANDMARK_TYPE.IRON_MINES, LANDMARK_TYPE.BARRACKS, LANDMARK_TYPE.HIVE_LAIR, LANDMARK_TYPE.HERMIT_HUT, LANDMARK_TYPE.ANCIENT_TEMPLE, LANDMARK_TYPE.BANDIT_CAMP };
+            choices = new LANDMARK_TYPE[] { LANDMARK_TYPE.FARM, LANDMARK_TYPE.MINES, LANDMARK_TYPE.BARRACKS, LANDMARK_TYPE.MONSTER_LAIR, LANDMARK_TYPE.OUTPOST, LANDMARK_TYPE.TEMPLE, LANDMARK_TYPE.BANDIT_CAMP };
             for (int i = 0; i < remaining; i++) {
                 LANDMARK_TYPE chosenType = choices[Random.Range(0, choices.Length)];
                 if (!landmarks.ContainsKey(chosenType)) {
@@ -235,8 +235,8 @@ public class TileColumn {
             //to check if the lower row is valid
             //check if the row adjacent to the current row has a connection
             //if it does, check if it is connected to the landmark below the current row, if it is, then the lower row in the next column is not valid, otherwise, it is.
-            if (equalRowInNextColumn.hasLandmark && equalRowInNextColumn.landmark.inComingConnections.Count > 0) {
-                BaseLandmark otherConnection = equalRowInNextColumn.landmark.inComingConnections.First();
+            if (equalRowInNextColumn.hasLandmark && equalRowInNextColumn.landmark.connections.Count > 0) {
+                BaseLandmark otherConnection = equalRowInNextColumn.landmark.connections.First();
                 TileRow connectedToRow = GetRowThatContainsTile(otherConnection.tileLocation);
                 int indexOfConnectedRow = System.Array.IndexOf(rows, connectedToRow);
                 if (indexOfCurrentRow < indexOfConnectedRow) { //current row is lower than connected row.

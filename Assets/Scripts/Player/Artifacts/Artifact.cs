@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Artifact : TileObject {
+public class Artifact : TileObject, IWorldObject {
 
     public ARTIFACT_TYPE type { get; private set; }
     public int level { get; private set; }

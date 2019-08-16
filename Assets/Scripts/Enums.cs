@@ -253,8 +253,8 @@ public enum LANDMARK_TAG {
 public enum LANDMARK_TYPE {
     NONE = 0,
     DEMONIC_PORTAL = 1,
-    GARRISON = 4,
-    IRON_MINES = 8,
+    WORKSHOP = 4,
+    MINES = 8,
     INN = 9,
     HUNTING_GROUNDS = 11,
     HOUSES = 12,
@@ -268,12 +268,12 @@ public enum LANDMARK_TYPE {
     LAIR = 22,
     ABANDONED_MINE = 23,
     BANDIT_CAMP = 24,
-    HERMIT_HUT = 25,
-    CATACOMB = 26,
+    OUTPOST = 25,
+    ANCIENT_RUIN = 26,
     PYRAMID = 27,
     EXILE_CAMP = 28,
     GIANT_SKELETON = 29,
-    ANCIENT_TEMPLE = 30,
+    TEMPLE = 30,
     CAVE = 31,
     ICE_PIT = 32,
     MANA_EXTRACTOR = 33,
@@ -285,7 +285,7 @@ public enum LANDMARK_TYPE {
     RITUAL_CIRCLE = 39,
     DRAGON_CAVE = 40,
     SKELETON_CEMETERY = 41,
-    HIVE_LAIR = 42,
+    MONSTER_LAIR = 42,
     ZOMBIE_PYRAMID = 43,
     IMP_KENNEL = 44,
     CEMETERY = 45,
@@ -1345,6 +1345,7 @@ public enum ARTIFACT_TYPE { None, Necronomicon, Chaos_Orb, Hermes_Statue, Ankh_O
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
 public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
 public enum SERIAL_VICTIM_TYPE { GENDER, ROLE, TRAIT, STATUS }
+public enum SPECIAL_OBJECT_TYPE { DEMON_STONE, SPELL_SCROLL, SKILL_SCROLL }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
