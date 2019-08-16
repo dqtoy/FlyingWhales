@@ -151,3 +151,37 @@ public class Summon : Character, IWorldObject {
     }
 
 }
+
+public class SummonSlot {
+    public int level;
+    public Summon summon;
+
+    public SummonSlot() {
+        level = 1;
+        summon = null;
+    }
+
+    public void SetSummon(Summon summon) {
+        this.summon = summon;
+        if (this.summon != null) {
+            this.summon.SetLevel(level);
+        }
+    }
+
+    public void LevelUp() {
+        level++;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_SUMMON);
+        if (this.summon != null) {
+            this.summon.SetLevel(level);
+        }
+        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
+    }
+    public void SetLevel(int amount) {
+        level = amount;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_SUMMON);
+        if (this.summon != null) {
+            this.summon.SetLevel(level);
+        }
+        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
+    }
+}

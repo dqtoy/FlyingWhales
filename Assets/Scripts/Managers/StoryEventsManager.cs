@@ -201,9 +201,9 @@ public class StoryEventsManager : MonoBehaviour {
                         summons[i].LevelUp();
                     }
                 } else if (effect.effectValue.ToLower() == "artifact") {
-                    for (int i = 0; i < PlayerManager.Instance.player.artifacts.Length; i++) {
-                        if (PlayerManager.Instance.player.artifacts[i] != null) {
-                            PlayerManager.Instance.player.artifacts[i].LevelUp();
+                    for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Length; i++) {
+                        if (PlayerManager.Instance.player.artifactSlots[i] != null) {
+                            PlayerManager.Instance.player.artifactSlots[i].LevelUp();
                         }
                     }
                 }

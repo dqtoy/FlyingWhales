@@ -11,6 +11,8 @@ public class LevelUpChoiceItem : PooledObject {
 
     [SerializeField] private Image img;
     [SerializeField] private TextMeshProUGUI info;
+    [SerializeField] private Sprite defaultSprite;
+
     public Toggle toggle;
 
     private System.Action<object> onSelected;
@@ -18,14 +20,19 @@ public class LevelUpChoiceItem : PooledObject {
     public void SetObject(object obj, System.Action<object> onSelected) {
         this.obj = obj;
         this.onSelected = onSelected;
-        if (obj is Summon) {
-            Summon summon = obj as Summon;
-            toggle.interactable = summon.level < PlayerManager.MAX_LEVEL_SUMMON;
-            img.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
-        } else if (obj is Artifact) {
-            Artifact artifact = obj as Artifact;
-            toggle.interactable = artifact.level < PlayerManager.MAX_LEVEL_ARTIFACT;
-            img.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
+        img.sprite = defaultSprite;
+        if (obj is SummonSlot) {
+            SummonSlot summonSlot = obj as SummonSlot;
+            toggle.interactable = summonSlot.level < PlayerManager.MAX_LEVEL_SUMMON;
+            if (summonSlot.summon != null) {
+                img.sprite = CharacterManager.Instance.GetSummonSettings(summonSlot.summon.summonType).summonPortrait;
+            }
+        } else if (obj is ArtifactSlot) {
+            ArtifactSlot artifactSlot = obj as ArtifactSlot;
+            toggle.interactable = artifactSlot.level < PlayerManager.MAX_LEVEL_ARTIFACT;
+            if(artifactSlot.artifact != null) {
+                img.sprite = CharacterManager.Instance.GetArtifactSettings(artifactSlot.artifact.type).artifactPortrait;
+            }
         } else if (obj is PlayerJobAction) {
             PlayerJobAction interventionAbility = obj as PlayerJobAction;
             toggle.interactable = interventionAbility.level < PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY;
@@ -45,17 +52,25 @@ public class LevelUpChoiceItem : PooledObject {
     }
 
     private void UpdateTextInfo() {
-        if (obj is Summon) {
-            Summon summon = obj as Summon;
-            string text = summon.name + " (" + summon.summonType.SummonName() + ")";
-            text += "\nLevel: " + summon.level.ToString();
-            text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
+        if (obj is SummonSlot) {
+            SummonSlot summonSlot = obj as SummonSlot;
+            string text = "Summon Slot";
+            text += "\nLevel: " + summonSlot.level.ToString();
+            if (summonSlot.summon != null) {
+                text += "\nAttached Summon: " + summonSlot.summon.summonType.SummonName();
+            } else {
+                text += "\nAttached Summon: None";
+            }
             info.text = text;
-        } else if (obj is Artifact) {
-            Artifact artifact = obj as Artifact;
-            string text = artifact.name;
-            text += "\nLevel: " + artifact.level.ToString();
-            text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
+        } else if (obj is ArtifactSlot) {
+            ArtifactSlot artifactSlot = obj as ArtifactSlot;
+            string text = "Artifact Slot";
+            text += "\nLevel: " + artifactSlot.level.ToString();
+            if(artifactSlot.artifact != null) {
+                text += "\nAttached Artifact: " + artifactSlot.artifact.name;
+            } else {
+                text += "\nAttached Artifact: None";
+            }
             info.text = text;
         } else if (obj is PlayerJobAction) {
             PlayerJobAction action = obj as PlayerJobAction;
