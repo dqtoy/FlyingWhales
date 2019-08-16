@@ -27,13 +27,13 @@ public class MinionCard : MonoBehaviour {
             txtName.text = minion.character.name;
             txtClass.text = minion.character.raceClassName;
 
-            PlayerJobAction ability1 = minion.interventionAbilities[0];
-            imgAbility1.sprite = PlayerManager.Instance.GetJobActionSprite(ability1.name);
-            txtAbility1.text = ability1.name;
+            //PlayerJobAction ability1 = minion.interventionAbilities[0];
+            //imgAbility1.sprite = PlayerManager.Instance.GetJobActionSprite(ability1.name);
+            //txtAbility1.text = ability1.name;
 
-            PlayerJobAction ability2 = minion.interventionAbilities[1];
-            imgAbility2.sprite = PlayerManager.Instance.GetJobActionSprite(ability2.name);
-            txtAbility2.text = ability2.name;
+            //PlayerJobAction ability2 = minion.interventionAbilities[1];
+            //imgAbility2.sprite = PlayerManager.Instance.GetJobActionSprite(ability2.name);
+            //txtAbility2.text = ability2.name;
 
             txtCombatAbility.text = minion.combatAbility.name;
 
@@ -41,15 +41,15 @@ public class MinionCard : MonoBehaviour {
         }
     }
 
-    public void OnHoverInterventionAbility1() {
-        UIManager.Instance.ShowSmallInfo(minion.interventionAbilities[0].dynamicDescription);
-    }
+    //public void OnHoverInterventionAbility1() {
+    //    UIManager.Instance.ShowSmallInfo(minion.interventionAbilities[0].dynamicDescription);
+    //}
     public void OnExitHoverInterventionAbility1() {
         UIManager.Instance.HideSmallInfo();
     }
-    public void OnHoverInterventionAbility2() {
-        UIManager.Instance.ShowSmallInfo(minion.interventionAbilities[1].dynamicDescription);
-    }
+    //public void OnHoverInterventionAbility2() {
+    //    UIManager.Instance.ShowSmallInfo(minion.interventionAbilities[1].dynamicDescription);
+    //}
     public void OnExitHoverInterventionAbility2() {
         UIManager.Instance.HideSmallInfo();
     }

@@ -9,9 +9,7 @@ public class Minion {
     public Character character { get; private set; }
     public int exp { get; private set; }
     public int indexDefaultSort { get; private set; }
-    public int unlockedInterventionSlots { get; private set; }
-    //public bool isEnabled { get; private set; }
-    public PlayerJobAction[] interventionAbilities { get; private set; }
+    //public int unlockedInterventionSlots { get; private set; }
     public CombatAbility combatAbility { get; private set; }
 
     public List<string> traitsToAdd { get; private set; }
@@ -19,9 +17,8 @@ public class Minion {
     public Minion(Character character, bool keepData) {
         this.character = character;
         this.exp = 0;
-        this.interventionAbilities = new PlayerJobAction[MAX_INTERVENTION_ABILITY_SLOT];
         traitsToAdd = new List<string>();
-        SetUnlockedInterventionSlots(0);
+        //SetUnlockedInterventionSlots(0);
         character.SetMinion(this);
         SetLevel(1);
         //character.characterToken.SetObtainedState(true);
@@ -35,9 +32,8 @@ public class Minion {
         this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);
         this.exp = data.exp;
         traitsToAdd = data.traitsToAdd;
-        this.interventionAbilities = new PlayerJobAction[MAX_INTERVENTION_ABILITY_SLOT];
         SetIndexDefaultSort(data.indexDefaultSort);
-        SetUnlockedInterventionSlots(data.unlockedInterventionSlots);
+        //SetUnlockedInterventionSlots(data.unlockedInterventionSlots);
         character.SetMinion(this);
         character.ownParty.icon.SetVisualState(true);
     }
@@ -153,75 +149,75 @@ public class Minion {
     }
 
     #region Intervention Abilities
-    public void SetUnlockedInterventionSlots(int amount) {
-        unlockedInterventionSlots = amount;
-        unlockedInterventionSlots = Mathf.Clamp(unlockedInterventionSlots, 0, MAX_INTERVENTION_ABILITY_SLOT);
-    }
-    public void AdjustUnlockedInterventionSlots(int amount) {
-        unlockedInterventionSlots += amount;
-        unlockedInterventionSlots = Mathf.Clamp(unlockedInterventionSlots, 0, MAX_INTERVENTION_ABILITY_SLOT);
-    }
-    public void AddInterventionAbility(PlayerJobAction ability, bool showNewAbilityUI = false) {
-        int currentInterventionAbilityCount = GetCurrentInterventionAbilityCount();
-        if(currentInterventionAbilityCount < unlockedInterventionSlots) {
-            for (int i = 0; i < interventionAbilities.Length; i++) {
-                if (interventionAbilities[i] == null) {
-                    interventionAbilities[i] = ability;
-                    ability.SetMinion(this);
-                    Messenger.Broadcast(Signals.MINION_LEARNED_INTERVENE_ABILITY, this, ability);
-                    if (showNewAbilityUI) {
-                        PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(this, ability);
-                    }
-                    break;
-                }
-            }
-        } else {
-            //Broadcast intervention ability is full, must open UI whether player wants to replace ability or discard it
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(GeAllInterventionAbilities(), ability, ReplaceAbility, RejectAbility);
-        }
-    }
-    private void ReplaceAbility(object objToReplace, object objToAdd) {
-        PlayerJobAction replace = objToReplace as PlayerJobAction;
-        PlayerJobAction add = objToAdd as PlayerJobAction;
-        for (int i = 0; i < interventionAbilities.Length; i++) {
-            if (interventionAbilities[i] == replace) {
-                interventionAbilities[i] = add;
-                add.SetMinion(this);
-                replace.SetMinion(null);
-                Messenger.Broadcast(Signals.MINION_LEARNED_INTERVENE_ABILITY, this, add);
-                break;
-            }
-        }
-    }
-    private void RejectAbility(object rejectedObj) { }
-    public void AddInterventionAbility(INTERVENTION_ABILITY ability, bool showNewAbilityUI = false) {
-        AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(ability), showNewAbilityUI);
-    }
-    public int GetCurrentInterventionAbilityCount() {
-        int count = 0;
-        for (int i = 0; i < interventionAbilities.Length; i++) {
-            if (interventionAbilities[i] != null) {
-                count++;
-            }
-        }
-        return count;
-    }
-    public List<PlayerJobAction> GeAllInterventionAbilities() {
-        List<PlayerJobAction> all = new List<PlayerJobAction>();
-        for (int i = 0; i < interventionAbilities.Length; i++) {
-            if (interventionAbilities[i] != null) {
-                all.Add(interventionAbilities[i]);
-            }
-        }
-        return all;
-    }
-    public void ResetInterventionAbilitiesCD() {
-        for (int i = 0; i < interventionAbilities.Length; i++) {
-            if(interventionAbilities[i] != null) {
-                interventionAbilities[i].InstantCooldown();
-            }
-        }
-    }
+    //public void SetUnlockedInterventionSlots(int amount) {
+    //    unlockedInterventionSlots = amount;
+    //    unlockedInterventionSlots = Mathf.Clamp(unlockedInterventionSlots, 0, MAX_INTERVENTION_ABILITY_SLOT);
+    //}
+    //public void AdjustUnlockedInterventionSlots(int amount) {
+    //    unlockedInterventionSlots += amount;
+    //    unlockedInterventionSlots = Mathf.Clamp(unlockedInterventionSlots, 0, MAX_INTERVENTION_ABILITY_SLOT);
+    //}
+    //public void GainNewInterventionAbility(PlayerJobAction ability, bool showNewAbilityUI = false) {
+    //    int currentInterventionAbilityCount = GetCurrentInterventionAbilityCount();
+    //    if(currentInterventionAbilityCount < unlockedInterventionSlots) {
+    //        for (int i = 0; i < interventionAbilities.Length; i++) {
+    //            if (interventionAbilities[i] == null) {
+    //                interventionAbilities[i] = ability;
+    //                ability.SetMinion(this);
+    //                Messenger.Broadcast(Signals.MINION_LEARNED_INTERVENE_ABILITY, this, ability);
+    //                if (showNewAbilityUI) {
+    //                    PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(this, ability);
+    //                }
+    //                break;
+    //            }
+    //        }
+    //    } else {
+    //        //Broadcast intervention ability is full, must open UI whether player wants to replace ability or discard it
+    //        PlayerUI.Instance.replaceUI.ShowReplaceUI(GeAllInterventionAbilities(), ability, ReplaceAbility, RejectAbility);
+    //    }
+    //}
+    //private void ReplaceAbility(object objToReplace, object objToAdd) {
+    //    PlayerJobAction replace = objToReplace as PlayerJobAction;
+    //    PlayerJobAction add = objToAdd as PlayerJobAction;
+    //    for (int i = 0; i < interventionAbilities.Length; i++) {
+    //        if (interventionAbilities[i] == replace) {
+    //            interventionAbilities[i] = add;
+    //            add.SetMinion(this);
+    //            replace.SetMinion(null);
+    //            Messenger.Broadcast(Signals.MINION_LEARNED_INTERVENE_ABILITY, this, add);
+    //            break;
+    //        }
+    //    }
+    //}
+    //private void RejectAbility(object rejectedObj) { }
+    //public void AddInterventionAbility(INTERVENTION_ABILITY ability, bool showNewAbilityUI = false) {
+    //    GainNewInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(ability), showNewAbilityUI);
+    //}
+    //public int GetCurrentInterventionAbilityCount() {
+    //    int count = 0;
+    //    for (int i = 0; i < interventionAbilities.Length; i++) {
+    //        if (interventionAbilities[i] != null) {
+    //            count++;
+    //        }
+    //    }
+    //    return count;
+    //}
+    //public List<PlayerJobAction> GeAllInterventionAbilities() {
+    //    List<PlayerJobAction> all = new List<PlayerJobAction>();
+    //    for (int i = 0; i < interventionAbilities.Length; i++) {
+    //        if (interventionAbilities[i] != null) {
+    //            all.Add(interventionAbilities[i]);
+    //        }
+    //    }
+    //    return all;
+    //}
+    //public void ResetInterventionAbilitiesCD() {
+    //    for (int i = 0; i < interventionAbilities.Length; i++) {
+    //        if(interventionAbilities[i] != null) {
+    //            interventionAbilities[i].InstantCooldown();
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Combat Ability

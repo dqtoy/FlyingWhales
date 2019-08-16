@@ -255,7 +255,7 @@ public static class Signals {
     /// <summary>
     /// parameters (Minion affectedMinion, PlayerJobAction)
     /// </summary>
-    public static string MINION_LEARNED_INTERVENE_ABILITY = "OnMinionLearnedInterveneAbility";
+    public static string PLAYER_LEARNED_INTERVENE_ABILITY = "OnMinionLearnedInterveneAbility";
     #endregion
 
     #region Interaction

@@ -41,13 +41,15 @@ public class LevelUpUI : MonoBehaviour {
         List<object> choices = new List<object>();
         if(identifierToLevelUp.ToLower() == "combat ability") {
             choices.Add(minionToLevelUp.combatAbility);
-        } else if (identifierToLevelUp.ToLower() == "intervention ability") {
-            for (int i = 0; i < minionToLevelUp.interventionAbilities.Length; i++) {
-                if(minionToLevelUp.interventionAbilities[i] != null) {
-                    choices.Add(minionToLevelUp.interventionAbilities[i]);
-                }
-            }
-        } else if (identifierToLevelUp.ToLower() == "summon_slot") {
+        }
+         //else if (identifierToLevelUp.ToLower() == "intervention ability") {
+         //    for (int i = 0; i < minionToLevelUp.interventionAbilities.Length; i++) {
+         //        if(minionToLevelUp.interventionAbilities[i] != null) {
+         //            choices.Add(minionToLevelUp.interventionAbilities[i]);
+         //        }
+         //    }
+         //} 
+         else if (identifierToLevelUp.ToLower() == "summon_slot") {
             for (int i = 0; i < PlayerManager.Instance.player.maxSummonSlots; i++) {
                 choices.Add(PlayerManager.Instance.player.summonSlots[i]);
             }

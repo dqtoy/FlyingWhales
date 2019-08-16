@@ -11,9 +11,9 @@ public class SaveDataInterventionAbility {
         abilityType = ability.abilityType;
         lvl = ability.level;
     }
-    public void Load(Minion minion) {
+    public void Load(Player player) {
         PlayerJobAction ability = PlayerManager.Instance.CreateNewInterventionAbility(abilityType);
-        minion.AddInterventionAbility(ability);
+        player.GainNewInterventionAbility(ability);
         ability.SetLevel(lvl);
     }
 }

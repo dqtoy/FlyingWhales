@@ -165,9 +165,9 @@ public class Player : ILeader {
         for (int i = 0; i < minions.Length; i++) {
             if(minions[i] != null) {
                 minions[i].ResetCombatAbilityCD();
-                minions[i].ResetInterventionAbilitiesCD();
             }
         }
+        ResetInterventionAbilitiesCD();
         currentTargetFaction = area.owner;
     }
     private void OnAreaMapClosed(Area area) {
@@ -228,16 +228,16 @@ public class Player : ILeader {
     }
     public void InitializeMinion(Minion minion) {
         //minion.SetLevel(30);
-        minion.SetUnlockedInterventionSlots(3);
-        minion.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
-        minion.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
+        //minion.SetUnlockedInterventionSlots(3);
+        //minion.GainNewInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
+        //minion.GainNewInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
         minion.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
         //TODO: Add one positive and one negative trait
     }
     public void InitializeMinion(SaveDataMinion data, Minion minion) {
-        for (int i = 0; i < data.interventionAbilities.Count; i++) {
-            data.interventionAbilities[i].Load(minion);
-        }
+        //for (int i = 0; i < data.interventionAbilities.Count; i++) {
+        //    data.interventionAbilities[i].Load(minion);
+        //}
         data.combatAbility.Load(minion);
     }
     public void AddMinion(Minion minion) {
@@ -324,19 +324,19 @@ public class Player : ILeader {
         }
         return false;
     }
-    public bool HasMinionWithInterventionAbility(INTERVENTION_ABILITY ability) {
-        for (int i = 0; i < minions.Length; i++) {
-            Minion currMinion = minions[i];
-            if (currMinion != null) {
-                for (int j = 0; j < currMinion.interventionAbilities.Length; j++) {
-                    if(currMinion.interventionAbilities[j] != null && currMinion.interventionAbilities[j].abilityType == ability) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+    //public bool HasMinionWithInterventionAbility(INTERVENTION_ABILITY ability) {
+    //    for (int i = 0; i < minions.Length; i++) {
+    //        Minion currMinion = minions[i];
+    //        if (currMinion != null) {
+    //            for (int j = 0; j < currMinion.interventionAbilities.Length; j++) {
+    //                if(currMinion.interventionAbilities[j] != null && currMinion.interventionAbilities[j].abilityType == ability) {
+    //                    return true;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
     public Minion GetRandomMinion() {
         List<Minion> minionChoices = new List<Minion>();
         for (int i = 0; i < minions.Length; i++) {
@@ -1552,18 +1552,25 @@ public class Player : ILeader {
     #endregion
 
     #region Intervention Ability
-    public void GainNewInterventionAbility(INTERVENTION_ABILITY ability) {
+    public void GainNewInterventionAbility(INTERVENTION_ABILITY ability, bool showNewAbilityUI = false) {
         PlayerJobAction playerJobAction = PlayerManager.Instance.CreateNewInterventionAbility(ability);
         GainNewInterventionAbility(playerJobAction);
     }
-    public void GainNewInterventionAbility(PlayerJobAction ability) {
+    public void GainNewInterventionAbility(PlayerJobAction ability, bool showNewAbilityUI = false) {
         int abilityCount = GetInterventionAbilityCount();
-        if (abilityCount == minions.Length) {
-            //Broadcast minion is full, must be received by a UI that will pop up and let the player whether it will replace or be discarded
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(interventionAbilities.ToList(), ability, ReplaceMinion, RejectMinion);
+        if (abilityCount == interventionAbilities.Length) {
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(interventionAbilities.ToList(), ability, null, null);
         } else {
-            interventionAbilities[abilityCount] = ability;
-            //PlayerUI.Instance.UpdateRoleSlots();
+            for (int i = 0; i < interventionAbilities.Length; i++) {
+                if (interventionAbilities[i] == null) {
+                    interventionAbilities[i] = ability;
+                    Messenger.Broadcast(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, ability);
+                    if (showNewAbilityUI) {
+                        PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(null, ability);
+                    }
+                    break;
+                }
+            }
         }
     }
     private int GetInterventionAbilityCount() {
@@ -1574,6 +1581,13 @@ public class Player : ILeader {
             }
         }
         return count;
+    }
+    public void ResetInterventionAbilitiesCD() {
+        for (int i = 0; i < interventionAbilities.Length; i++) {
+            if (interventionAbilities[i] != null) {
+                interventionAbilities[i].InstantCooldown();
+            }
+        }
     }
     #endregion
 }

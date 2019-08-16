@@ -14,14 +14,11 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private RectTransform roleSlotsParent;
     [SerializeField] private RoleSlotItem[] roleSlots;
     [SerializeField] private GameObject roleSlotItemPrefab;
-    [SerializeField] private GameObject actionBtnPrefab;
     [SerializeField] private GameObject actionBtnTooltipGO;
     [SerializeField] private TextMeshProUGUI actionBtnTooltipLbl;
     [SerializeField] private TextMeshProUGUI activeMinionTypeLbl;
-    [SerializeField] private RectTransform activeMinionActionsParent;
     [SerializeField] private UI_InfiniteScroll roleSlotsInfiniteScroll;
     [SerializeField] private ScrollRect roleSlotsScrollRect;
-    public UIHoverPosition roleSlotTooltipPos;
 
     [Header("Attack")]
     public GameObject attackGridGO;
@@ -76,7 +73,6 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private Image[] startingAbilityIcons;
     [SerializeField] private TextMeshProUGUI[] startingAbilityLbls; //NOTE: This must always have the same length as startingAbilityIcons
 
-
     [Header("Summons")]
     [SerializeField] private Image currentSummonImg;
     [SerializeField] private TextMeshProUGUI currentSummonCountLbl;
@@ -92,6 +88,11 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject summonArtifactCover;
     [SerializeField] private UIHoverPosition summonArtifactTooltipPos;
     private bool isSummoningArtifact = false; //if the player has clicked the summon artifact button and is targetting a tile to place the summon on.
+
+    [Header("Intervention Abilities")]
+    [SerializeField] private RectTransform activeMinionActionsParent;
+    [SerializeField] private GameObject actionBtnPrefab;
+    public UIHoverPosition roleSlotTooltipPos;
 
     [Header("Combat Abilities")]
     public GameObject combatAbilityGO;
@@ -143,6 +144,8 @@ public class PlayerUI : MonoBehaviour {
     public CombatGrid attackGridReference { get; private set; }
     public CombatGrid defenseGridReference { get; private set; }
 
+    private PlayerJobActionButton[] interventionAbilityBtns;
+
     void Awake() {
         Instance = this;
         //minionItems = new List<PlayerCharacterItem>();
@@ -178,21 +181,13 @@ public class PlayerUI : MonoBehaviour {
 
         LoadRoleSlots();
         LoadAttackSlot();
+        LoadInterventionAbilitySlots();
 
         UpdateIntel();
         InitializeMemoriesMenu();
         SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots[0]);
         SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots[0]);
         //UpdateArtifactsInteraction();
-
-        //actions
-        //actionPages = new ActionsPage[maxActionPages];
-        //for (int i = 0; i < maxActionPages; i++) {
-        //    GameObject pageGO = GameObject.Instantiate(actionPagePrefab, actionPageParent);
-        //    ActionsPage page = pageGO.GetComponent<ActionsPage>();
-        //    page.Initialize();
-        //    actionPages[i] = page;
-        //}
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -204,7 +199,7 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
 
         //job action buttons
-        Messenger.AddListener<Minion, PlayerJobAction>(Signals.MINION_LEARNED_INTERVENE_ABILITY, OnMinionLearnedInterventionAbility);
+        Messenger.AddListener<PlayerJobAction>(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, OnPlayerLearnedInterventionAbility);
 
         //summons
         Messenger.AddListener<Summon>(Signals.PLAYER_GAINED_SUMMON, OnGainNewSummon);
@@ -400,19 +395,19 @@ public class PlayerUI : MonoBehaviour {
     //    LoadActionButtonsForActiveJob(slot);
     //}
     private void LoadActionButtonsForActiveJob(RoleSlotItem active) {
-        Utilities.DestroyChildren(activeMinionActionsParent);
-        Minion minion = active.minion;
-        if(minion != null) {
-            for (int i = 0; i < minion.interventionAbilities.Length; i++) {
-                PlayerJobAction jobAction = minion.interventionAbilities[i];
-                if(jobAction != null) {
-                    GameObject jobGO = UIManager.Instance.InstantiateUIObject(actionBtnPrefab.name, activeMinionActionsParent);
-                    PlayerJobActionButton actionBtn = jobGO.GetComponent<PlayerJobActionButton>();
-                    actionBtn.SetJobAction(jobAction, minion.character);
-                    actionBtn.SetClickAction(() => PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(jobAction));
-                }
-            }
-        }
+        //Utilities.DestroyChildren(activeMinionActionsParent);
+        //Minion minion = active.minion;
+        //if(minion != null) {
+        //    //for (int i = 0; i < minion.interventionAbilities.Length; i++) {
+        //    //    PlayerJobAction jobAction = minion.interventionAbilities[i];
+        //    //    if(jobAction != null) {
+        //    //        GameObject jobGO = UIManager.Instance.InstantiateUIObject(actionBtnPrefab.name, activeMinionActionsParent);
+        //    //        PlayerJobActionButton actionBtn = jobGO.GetComponent<PlayerJobActionButton>();
+        //    //        actionBtn.SetJobAction(jobAction, minion.character);
+        //    //        actionBtn.SetClickAction(() => PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(jobAction));
+        //    //    }
+        //    //}
+        //}
 
     }
     public PlayerJobActionButton GetPlayerJobActionButton(PlayerJobAction action) {
@@ -425,11 +420,8 @@ public class PlayerUI : MonoBehaviour {
         }
         return null;
     }
-    private void OnMinionLearnedInterventionAbility(Minion minion, PlayerJobAction action) {
-        RoleSlotItem currActive = roleSlots[currentlyShowingSlotIndex];
-        if (currActive.minion == minion) {
-            LoadActionButtonsForActiveJob(currActive);
-        }
+    private void OnPlayerLearnedInterventionAbility(PlayerJobAction action) {
+        UpdateInterventionAbilitySlots();
     }
     #endregion
 
@@ -1250,7 +1242,33 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 
-    #region General Confirmation
+    #region Intervention Abilities
+    private void LoadInterventionAbilitySlots() {
+        interventionAbilityBtns = new PlayerJobActionButton[PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES];
+        for (int i = 0; i < PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES; i++) {
+            GameObject jobGO = UIManager.Instance.InstantiateUIObject(actionBtnPrefab.name, activeMinionActionsParent);
+            PlayerJobActionButton actionBtn = jobGO.GetComponent<PlayerJobActionButton>();
+            actionBtn.gameObject.SetActive(false);
+            interventionAbilityBtns[i] = actionBtn;
+        }
+    }
+    private void UpdateInterventionAbilitySlots() {
+        for (int i = 0; i < PlayerManager.Instance.player.interventionAbilities.Length; i++) {
+            PlayerJobAction jobAction = PlayerManager.Instance.player.interventionAbilities[i];
+            PlayerJobActionButton actionBtn = interventionAbilityBtns[i];
+            if (jobAction == null) {
+                actionBtn.gameObject.SetActive(false);
+            } else {
+                actionBtn.SetJobAction(jobAction);
+                actionBtn.SetClickAction(() => PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(jobAction));
+                actionBtn.gameObject.SetActive(true);
+            }
+            
+        }
+    }
+    #endregion
+    
+     #region General Confirmation
     public void ShowGeneralConfirmation(string header, string body) {
         generalConfirmationTitleText.text = header.ToUpper();
         generalConfirmationBodyText.text = body;

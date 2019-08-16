@@ -34,9 +34,8 @@ public class PlayerJobActionButton : MonoBehaviour {
         Messenger.RemoveListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
 
-    public void SetJobAction(PlayerJobAction action, Character character) {
+    public void SetJobAction(PlayerJobAction action) {
         this.action = action;
-        //this.character = character;
         actionIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
         UpdateInteractableState();
         UpdateButtonText();

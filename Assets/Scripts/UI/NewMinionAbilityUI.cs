@@ -92,10 +92,11 @@ public class NewMinionAbilityUI : MonoBehaviour {
         if (objToAdd is CombatAbility) {
             CombatAbility ability = objToAdd as CombatAbility;
             selectedMinion.SetCombatAbility(ability, true);
-        } else if (objToAdd is PlayerJobAction) {
-            PlayerJobAction ability = objToAdd as PlayerJobAction;
-            selectedMinion.AddInterventionAbility(ability, true);
-        }
+        } 
+        //else if (objToAdd is PlayerJobAction) {
+        //    PlayerJobAction ability = objToAdd as PlayerJobAction;
+        //    selectedMinion.GainNewInterventionAbility(ability, true);
+        //}
     }
     public void OnClickCancel() {
         Close();

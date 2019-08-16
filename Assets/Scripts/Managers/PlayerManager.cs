@@ -116,7 +116,9 @@ public class PlayerManager : MonoBehaviour {
         for (int i = 0; i < data.artifacts.Count; i++) {
             data.artifacts[i].Load(player);
         }
-
+        for (int i = 0; i < data.interventionAbilities.Count; i++) {
+            data.interventionAbilities[i].Load(player);
+        }
         for (int i = 0; i < player.minions.Length; i++) {
             if(player.minions[i] != null && player.minions[i].character.id == data.currentMinionLeaderID) {
                 player.SetMinionLeader(player.minions[i]);
