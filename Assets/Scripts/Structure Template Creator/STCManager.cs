@@ -197,7 +197,7 @@ public class STCManager : MonoBehaviour {
             for (int i = 0; i < st.connectors.Length; i++) {
                 StructureConnector connector = st.connectors[i];
                 GameObject newConnector = GameObject.Instantiate(connectorPrefab, connectorsParent);
-                newConnector.transform.localPosition = new Vector3(connector.location.x + 0.5f, connector.location.y + 0.5f, 0);
+                newConnector.transform.localPosition = new Vector3(connector.location.x, connector.location.y, 0);
                 ConnectorMono cm = newConnector.GetComponent<ConnectorMono>();
                 cm.connectionDirection = connector.neededDirection;
                 cm.allowedStructureType = connector.allowedStructureType;
