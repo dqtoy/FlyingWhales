@@ -314,6 +314,9 @@ public class RandomNameGenerator : MonoBehaviour {
     }
 
     public string GenerateMinionName() {
+        if (availableMinionNames.Count <= 0) {
+            availableMinionNames.AddRange(minionNames);
+        }
         string chosenName = availableMinionNames[Random.Range(0, availableMinionNames.Count)];
         availableMinionNames.Remove(chosenName);
         //if (availableMinionNames.Count == 0) {
