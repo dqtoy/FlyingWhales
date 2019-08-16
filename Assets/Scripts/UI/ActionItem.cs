@@ -37,7 +37,7 @@ public class ActionItem : MonoBehaviour {
     #region Interactions
     public void OnClick() {
         if (obj is Summon) {
-            PlayerUI.Instance.SetCurrentlySelectedSummon((obj as Summon).summonType);
+            PlayerUI.Instance.SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.GetSummonSlotBySummon((obj as Summon)));
             PlayerUI.Instance.OnClickSummon();
         }
     }

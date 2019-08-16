@@ -17,6 +17,7 @@ public class LevelUpUI : MonoBehaviour {
 
     [Header("Other")]
     [SerializeField] private Button levelUpBtn;
+    [SerializeField] private TextMeshProUGUI titleText;
 
     private System.Action<object, object> onClickOk; //object1 is object to replace and object2 is objectToAdd
     private System.Action<object> onClickCancel; //object is the rejected object
@@ -35,7 +36,7 @@ public class LevelUpUI : MonoBehaviour {
         }
         //UIManager.Instance.Pause();
         Utilities.DestroyChildren(choicesParent);
-        UpdateMinionToLevelUp(minionToLevelUp);
+        UpdateMinionToLevelUp(minionToLevelUp, identifierToLevelUp);
 
         List<object> choices = new List<object>();
         if(identifierToLevelUp.ToLower() == "combat ability") {
@@ -46,16 +47,13 @@ public class LevelUpUI : MonoBehaviour {
                     choices.Add(minionToLevelUp.interventionAbilities[i]);
                 }
             }
-        } else if (identifierToLevelUp.ToLower() == "summon") {
-            List<Summon> summons = PlayerManager.Instance.player.GetAllSummons();
-            for (int i = 0; i < summons.Count; i++) {
-                choices.Add(summons[i]);
+        } else if (identifierToLevelUp.ToLower() == "summon_slot") {
+            for (int i = 0; i < PlayerManager.Instance.player.maxSummonSlots; i++) {
+                choices.Add(PlayerManager.Instance.player.summonSlots[i]);
             }
-        } else if (identifierToLevelUp.ToLower() == "artifact") {
-            for (int i = 0; i < PlayerManager.Instance.player.artifacts.Length; i++) {
-                if (PlayerManager.Instance.player.artifacts[i] != null) {
-                    choices.Add(PlayerManager.Instance.player.artifacts[i]);
-                }
+        } else if (identifierToLevelUp.ToLower() == "artifact_slot") {
+            for (int i = 0; i < PlayerManager.Instance.player.maxArtifactSlots; i++) {
+                choices.Add(PlayerManager.Instance.player.artifactSlots[i]);
             }
         }
         for (int i = 0; i < choices.Count; i++) {
@@ -69,12 +67,30 @@ public class LevelUpUI : MonoBehaviour {
         this.gameObject.SetActive(true);
     }
 
-    private void UpdateMinionToLevelUp(Minion minion) {
-        minionToLevelUp = minion;
-        minionPortrait.GeneratePortrait(minionToLevelUp.character);
-        string text = minionToLevelUp.character.name;
-        text += "\nLvl. " + minionToLevelUp.character.level + " " + minionToLevelUp.character.raceClassName;
-        minionText.text = text;
+    private void UpdateMinionToLevelUp(Minion minion, string identifierToLevelUp) {
+        minionPortrait.gameObject.SetActive(false);
+        minionText.gameObject.SetActive(false);
+        titleText.gameObject.SetActive(false);
+        if(minion != null) {
+            minionToLevelUp = minion;
+            minionPortrait.GeneratePortrait(minionToLevelUp.character);
+            string text = minionToLevelUp.character.name;
+            text += "\nLvl. " + minionToLevelUp.character.level + " " + minionToLevelUp.character.raceClassName;
+            minionText.text = text;
+            minionPortrait.gameObject.SetActive(true);
+            minionText.gameObject.SetActive(true);
+        } else {
+            if (identifierToLevelUp.ToLower() == "combat ability") {
+                titleText.text = "Gain a level for a Combat Ability!";
+            } else if (identifierToLevelUp.ToLower() == "intervention ability") {
+                titleText.text = "Gain a level for an Intervention Ability!";
+            } else if (identifierToLevelUp.ToLower() == "summon_slot") {
+                titleText.text = "Gain a level for a Summon Slot!";
+            } else if (identifierToLevelUp.ToLower() == "artifact_slot") {
+                titleText.text = "Gain a level for an Artifact Slot!";
+            }
+            titleText.gameObject.SetActive(true);
+        }
     }
 
 
@@ -99,10 +115,10 @@ public class LevelUpUI : MonoBehaviour {
                 (selectedObj as CombatAbility).LevelUp();
             }else if (selectedObj is PlayerJobAction) {
                 (selectedObj as PlayerJobAction).LevelUp();
-            }else if (selectedObj is Summon) {
-                (selectedObj as Summon).LevelUp();
-            }else if (selectedObj is Artifact) {
-                (selectedObj as Artifact).LevelUp();
+            }else if (selectedObj is SummonSlot) {
+                (selectedObj as SummonSlot).LevelUp();
+            }else if (selectedObj is ArtifactSlot) {
+                (selectedObj as ArtifactSlot).LevelUp();
             }
         }
         Close();

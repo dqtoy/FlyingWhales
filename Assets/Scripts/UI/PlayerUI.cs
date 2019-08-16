@@ -59,6 +59,9 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI gameOverDescriptionText;
     [SerializeField] private GameObject successfulAreaCorruptionGO;
     [SerializeField] private ScrollRect killSummaryScrollView;
+    [SerializeField] private GameObject generalConfirmationGO;
+    [SerializeField] private TextMeshProUGUI generalConfirmationTitleText;
+    [SerializeField] private TextMeshProUGUI generalConfirmationBodyText;
 
     [Header("Start Picker")]
     [SerializeField] private GameObject startingMinionPickerGO;
@@ -178,8 +181,9 @@ public class PlayerUI : MonoBehaviour {
 
         UpdateIntel();
         InitializeMemoriesMenu();
-        UpdateSummonsInteraction();
-        UpdateArtifactsInteraction();
+        SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots[0]);
+        SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots[0]);
+        //UpdateArtifactsInteraction();
 
         //actions
         //actionPages = new ActionsPage[maxActionPages];
@@ -206,11 +210,14 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Summon>(Signals.PLAYER_GAINED_SUMMON, OnGainNewSummon);
         Messenger.AddListener<Summon>(Signals.PLAYER_REMOVED_SUMMON, OnRemoveSummon);
         Messenger.AddListener<Summon>(Signals.PLAYER_PLACED_SUMMON, OnSummonUsed);
+        Messenger.AddListener<SummonSlot>(Signals.PLAYER_GAINED_SUMMON_LEVEL, UpdateCurrentlySelectedSummonSlotLevel);
 
         //Artifacts
         Messenger.AddListener<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, OnGainNewArtifact);
         Messenger.AddListener<Artifact>(Signals.PLAYER_REMOVED_ARTIFACT, OnRemoveArtifact);
         Messenger.AddListener<Artifact>(Signals.PLAYER_USED_ARTIFACT, OnUsedArtifact);
+        Messenger.AddListener<ArtifactSlot>(Signals.PLAYER_GAINED_ARTIFACT_LEVEL, UpdateCurrentlySelectedArtifactSlotLevel);
+
 
         //Kill Count UI
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -426,7 +433,7 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 
-    #region Attack UI
+    #region Attack UI/Invasion
     private void LoadAttackSlot() {
         attackGridReference = new CombatGrid();
         defenseGridReference = new CombatGrid();
@@ -831,7 +838,7 @@ public class PlayerUI : MonoBehaviour {
             InteriorMapManager.Instance.TryShowAreaMap(PlayerManager.Instance.player.currentTileBeingCorrupted.areaOfTile);
         } else {
             //PlayerManager.Instance.player.currentTileBeingCorrupted.landmarkOnTile.ShowEventBasedOnYieldType();
-            PlayerManager.Instance.player.CorruptATile();
+            PlayerManager.Instance.player.InvadeATile();
         }
         //if (tempCurrentMinionLeaderPicker != null) {
         //    PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
@@ -865,94 +872,108 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Summons
-    private SUMMON_TYPE currentlySelectedSummon; //the summon type that is currently shown in the UI
+    private SummonSlot currentlySelectedSummonSlot; //the summon type that is currently shown in the UI
     private void UpdateSummonsInteraction() {
-        bool state = PlayerManager.Instance.player.GetTotalAvailableSummonsCount() == 0;
-        summonCover.SetActive(state);
-        if (currentlySelectedSummon == SUMMON_TYPE.None) {
-            summonBtn.interactable = !state && InteriorMapManager.Instance.isAnAreaMapShowing;
-        } else {
-            summonBtn.interactable = !state && InteriorMapManager.Instance.isAnAreaMapShowing && PlayerManager.Instance.player.GetAvailableSummonsOfTypeCount(currentlySelectedSummon) > 0;
-        }
-       
+        bool state = currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed;
+        //summonCover.SetActive(!state);
+        summonBtn.interactable = state && InteriorMapManager.Instance.isAnAreaMapShowing;
     }
     public void OnGainNewSummon(Summon newSummon) {
         UpdateSummonsInteraction();
-        if (currentlySelectedSummon == SUMMON_TYPE.None) {
-            SetCurrentlySelectedSummon(newSummon.summonType);
+        if (currentlySelectedSummonSlot.summon == null) {
+            SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.GetSummonSlotBySummon(newSummon));
         }
         //ShowNewObjectInfo(newSummon);
         //AssignNewActionToLatestItem(newSummon);
     }
     public void OnRemoveSummon(Summon summon) {
         UpdateSummonsInteraction();
-        if (PlayerManager.Instance.player.GetTotalAvailableSummonsCount() == 0) { //the player has no more summons left
-            SetCurrentlySelectedSummon(SUMMON_TYPE.None);
-        } else if (summon.summonType == currentlySelectedSummon 
-            && PlayerManager.Instance.player.GetAvailableSummonsOfTypeCount(summon.summonType) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+        if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
+            SetCurrentlySelectedSummonSlot(null);
+        } else if (currentlySelectedSummonSlot.summon == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
             CycleSummons(1);
         }
     }
     private void OnSummonUsed(Summon summon) {
         UpdateSummonsInteraction();
-        if (PlayerManager.Instance.player.GetTotalAvailableSummonsCount() == 0) { //the player has no more summons left
-            SetCurrentlySelectedSummon(SUMMON_TYPE.None);
-        } else if (summon.summonType == currentlySelectedSummon
-            && PlayerManager.Instance.player.GetAvailableSummonsOfTypeCount(summon.summonType) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+        if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
+            SetCurrentlySelectedSummonSlot(null);
+        } else if (currentlySelectedSummonSlot.summon == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
             CycleSummons(1);
         }
     }
-    public void SetCurrentlySelectedSummon(SUMMON_TYPE type) {
-        currentlySelectedSummon = type;
-        currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(type).summonPortrait;
-        currentSummonCountLbl.text = PlayerManager.Instance.player.GetAvailableSummonsOfTypeCount(type).ToString();
+    public void SetCurrentlySelectedSummonSlot(SummonSlot summonSlot) {
+        if (summonSlot == null) {
+            //If null, just set the first slot so that currentlySelectedArtifactSlot will not be null
+            summonSlot = PlayerManager.Instance.player.summonSlots[0];
+        }
+        currentlySelectedSummonSlot = summonSlot;
+        if (currentlySelectedSummonSlot.summon == null) {
+            currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(SUMMON_TYPE.None).summonPortrait;
+        } else {
+            currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(currentlySelectedSummonSlot.summon.summonType).summonPortrait;
+        }
+        currentSummonCountLbl.text = currentlySelectedSummonSlot.level.ToString();
         UpdateSummonsInteraction();
     }
+    public void UpdateCurrentlySelectedSummonSlotLevel(SummonSlot summonSlot) {
+        if(currentlySelectedSummonSlot == summonSlot) {
+            currentSummonCountLbl.text = currentlySelectedSummonSlot.level.ToString();
+        }
+    }
     public void CycleSummons(int cycleDirection) {
-        SUMMON_TYPE[] types = Utilities.GetEnumValues<SUMMON_TYPE>();
-        int index = Array.IndexOf(types, currentlySelectedSummon);
+        int currentSelectedSummonSlotIndex = PlayerManager.Instance.player.GetIndexForSummonSlot(currentlySelectedSummonSlot);
+        int index = currentSelectedSummonSlotIndex;
+        int currentSummonCount = PlayerManager.Instance.player.GetTotalSummonsCount();
         while (true) {
             int next = index + cycleDirection;
-            if (next >= types.Length) {
+            if (next >= currentSummonCount) {
                 next = 0;
             } else if (next <= 0) {
-                next = types.Length - 1;
+                next = currentSummonCount - 1;
+            }
+            if(next < 0) {
+                next = 0;
             }
             index = next;
-            SUMMON_TYPE type = types[index];
-            if (PlayerManager.Instance.player.GetAvailableSummonsOfTypeCount(type) > 0) { //Player has a summon of that type, select that.
-                SetCurrentlySelectedSummon(type);
+            if (PlayerManager.Instance.player.summonSlots[index].summon != null) {
+                SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots[index]);
+                break;
+            } else if (index == currentSelectedSummonSlotIndex) {//This means that summon slots was already cycled through all of it and it can't find an summon, end the loop when it happens
+                SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots[currentSelectedSummonSlotIndex]);
                 break;
             }
         }
     }
     public void ShowSummonTooltip() {
-        string header = currentlySelectedSummon.SummonName();
-        string message;
-        switch (currentlySelectedSummon) {
-            case SUMMON_TYPE.Wolf:
-                message = "Summon a wolf to run amok.";
-                break;
-            case SUMMON_TYPE.Skeleton:
-                message = "Summon a skeleton that will abduct a random character.";
-                break;
-            case SUMMON_TYPE.Golem:
-                message = "Summon a stone golem that can sustain alot of hits.";
-                break;
-            case SUMMON_TYPE.Succubus:
-                message = "Summon a succubus that will seduce a male character and eliminate him.";
-                break;
-            case SUMMON_TYPE.Incubus:
-                message = "Summon a succubus that will seduce a female character and eliminate her.";
-                break;
-            case SUMMON_TYPE.ThiefSummon:
-                message = "Summon a thief that will steal items from the settlements warehouse.";
-                break;
-            default:
-                message = "Summon a " + Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
-                break;
+        if(currentlySelectedSummonSlot.summon != null) {
+            string header = currentlySelectedSummonSlot.summon.summonType.SummonName();
+            string message;
+            switch (currentlySelectedSummonSlot.summon.summonType) {
+                case SUMMON_TYPE.Wolf:
+                    message = "Summon a wolf to run amok.";
+                    break;
+                case SUMMON_TYPE.Skeleton:
+                    message = "Summon a skeleton that will abduct a random character.";
+                    break;
+                case SUMMON_TYPE.Golem:
+                    message = "Summon a stone golem that can sustain alot of hits.";
+                    break;
+                case SUMMON_TYPE.Succubus:
+                    message = "Summon a succubus that will seduce a male character and eliminate him.";
+                    break;
+                case SUMMON_TYPE.Incubus:
+                    message = "Summon a succubus that will seduce a female character and eliminate her.";
+                    break;
+                case SUMMON_TYPE.ThiefSummon:
+                    message = "Summon a thief that will steal items from the settlements warehouse.";
+                    break;
+                default:
+                    message = "Summon a " + Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummonSlot.ToString());
+                    break;
+            }
+            UIManager.Instance.ShowSmallInfo(message, summonTooltipPos, header);
         }
-        UIManager.Instance.ShowSmallInfo(message, summonTooltipPos, header);
     }
     public void HideSummonTooltip() {
         UIManager.Instance.HideSmallInfo();
@@ -965,7 +986,7 @@ public class PlayerUI : MonoBehaviour {
         isSummoning = false;
         if (!UIManager.Instance.IsMouseOnUI()) {
             LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
-            Summon summonToPlace = PlayerManager.Instance.player.GetAvailableSummonOfType(currentlySelectedSummon);
+            Summon summonToPlace = currentlySelectedSummonSlot.summon;
             summonToPlace.CreateMarker();
             summonToPlace.marker.InitialPlaceMarkerAt(tile);
             //PlayerManager.Instance.player.RemoveSummon(summonToPlace);
@@ -976,6 +997,127 @@ public class PlayerUI : MonoBehaviour {
     }
     private void CancelSummon() {
         isSummoning = false;
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+    }
+    #endregion
+
+    #region Artifacts
+    private ArtifactSlot currentlySelectedArtifactSlot; //the artifact that is currently shown in the UI
+    private void UpdateArtifactsInteraction() {
+        bool state = currentlySelectedArtifactSlot.artifact != null && !currentlySelectedArtifactSlot.artifact.hasBeenUsed;
+        //summonArtifactCover.SetActive(!state);
+        summonArtifactBtn.interactable = state && InteriorMapManager.Instance.isAnAreaMapShowing;
+    }
+    private void OnGainNewArtifact(Artifact newArtifact) {
+        UpdateArtifactsInteraction();
+        if (currentlySelectedArtifactSlot.artifact == null) {
+            SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.GetArtifactSlotByArtifact(newArtifact));
+        }
+        //ShowNewObjectInfo(newArtifact);
+        //AssignNewActionToLatestItem(newSummon);
+    }
+    private void OnRemoveArtifact(Artifact artifact) {
+        UpdateArtifactsInteraction();
+        if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more artifacts left
+            SetCurrentlySelectedArtifactSlot(null);
+        } else if (currentlySelectedArtifactSlot.artifact == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+            CycleArtifacts(1);
+        }
+    }
+    private void OnUsedArtifact(Artifact artifact) {
+        UpdateArtifactsInteraction();
+        if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more artifacts left
+            SetCurrentlySelectedArtifactSlot(null);
+        } else if (currentlySelectedArtifactSlot.artifact == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+            CycleArtifacts(1);
+        }
+        //else if (artifact == currentlySelectedArtifactSlot
+        //    && PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(artifact.type) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+        //    CycleArtifacts(1);
+        //}
+    }
+    public void SetCurrentlySelectedArtifactSlot(ArtifactSlot artifactSlot) {
+        if (artifactSlot == null) {
+            //If null, just set the first slot so that currentlySelectedArtifactSlot will not be null
+            artifactSlot = PlayerManager.Instance.player.artifactSlots[0];
+        }
+        currentlySelectedArtifactSlot = artifactSlot;
+        if (currentlySelectedArtifactSlot.artifact == null) {
+            currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(ARTIFACT_TYPE.None).artifactPortrait;
+        } else {
+            currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(currentlySelectedArtifactSlot.artifact.type).artifactPortrait;
+            //currentArtifactCountLbl.text = PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(currentlySelectedArtifactSlot.artifact.type).ToString();
+        }
+        currentArtifactCountLbl.text = currentlySelectedArtifactSlot.level.ToString();
+        UpdateArtifactsInteraction();
+    }
+    public void UpdateCurrentlySelectedArtifactSlotLevel(ArtifactSlot artifactSlot) {
+        if (currentlySelectedArtifactSlot == artifactSlot) {
+            currentArtifactCountLbl.text = currentlySelectedArtifactSlot.level.ToString();
+        }
+    }
+    public void CycleArtifacts(int cycleDirection) {
+        int currentSelectedArtifactSlotIndex = PlayerManager.Instance.player.GetIndexForArtifactSlot(currentlySelectedArtifactSlot);
+        int index = currentSelectedArtifactSlotIndex;
+        int currentArtifactCount = PlayerManager.Instance.player.GetTotalArtifactCount();
+        while (true) {
+            int next = index + cycleDirection;
+            if (next >= currentArtifactCount) {
+                next = 0;
+            } else if (next <= 0) {
+                next = currentArtifactCount - 1;
+            }
+            if (next < 0) {
+                next = 0;
+            }
+            index = next;
+            if (PlayerManager.Instance.player.artifactSlots[index].artifact != null) {
+                SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots[index]);
+                break;
+            } else if (index == currentSelectedArtifactSlotIndex) {//This means that artifact slots was already cycled through all of it and it can't find an artifact, end the loop when it happens
+                SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots[currentSelectedArtifactSlotIndex]);
+                break;
+            }
+        }
+    }
+    public void ShowArtifactTooltip() {
+        if (currentlySelectedArtifactSlot.artifact != null) {
+            string header = Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedArtifactSlot.artifact.type.ToString());
+            string message = PlayerManager.Instance.player.GetArtifactDescription(currentlySelectedArtifactSlot.artifact.type);
+            UIManager.Instance.ShowSmallInfo(message, summonArtifactTooltipPos, header);
+        }
+    }
+    public void HideArtifactTooltip() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    public void OnClickSummonArtifact() {
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Target);
+        isSummoningArtifact = true;
+    }
+    private void TryPlaceArtifact() {
+        isSummoningArtifact = false;
+        if (!UIManager.Instance.IsMouseOnUI()) {
+            LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
+            if (tile.objHere == null) {
+                Artifact artifactToPlace = currentlySelectedArtifactSlot.artifact;
+                if (tile.structure.AddPOI(artifactToPlace, tile)) {
+                    artifactToPlace.SetIsSummonedByPlayer(true);
+                    Messenger.Broadcast(Signals.PLAYER_USED_ARTIFACT, artifactToPlace);
+                }
+                //PlayerManager.Instance.player.RemoveArtifact(artifactToPlace);
+            } else {
+                Debug.LogWarning("There is already an object placed there. Not placing artifact");
+            }
+            //summonToPlace.CreateMarker();
+            //summonToPlace.marker.InitialPlaceMarkerAt(tile);
+            //PlayerManager.Instance.player.RemoveSummon(summonToPlace);
+            //summonToPlace.OnPlaceSummon(tile);
+            //Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summonToPlace);
+        }
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+    }
+    private void CancelSummonArtifact() {
+        isSummoningArtifact = false;
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
     }
     #endregion
@@ -1006,12 +1148,8 @@ public class PlayerUI : MonoBehaviour {
     public void BackToWorld() {
         Utilities.DestroyChildren(killSummaryScrollView.content);
         Area closedArea = InteriorMapManager.Instance.HideAreaMap();
-        if (PlayerManager.Instance.player.summons.Count > 0) {
-            SetCurrentlySelectedSummon(PlayerManager.Instance.player.summons.Keys.FirstOrDefault());
-        } else {
-            SetCurrentlySelectedSummon(SUMMON_TYPE.None);
-        }
-        SetCurrentlySelectedArtifact(PlayerManager.Instance.player.artifacts.FirstOrDefault());
+        SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots.FirstOrDefault());
+        SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots.FirstOrDefault());
         successfulAreaCorruptionGO.SetActive(false);
         InteriorMapManager.Instance.DestroyAreaMap(closedArea);
 
@@ -1049,109 +1187,6 @@ public class PlayerUI : MonoBehaviour {
             }
         }
         return null;
-    }
-    #endregion
-
-    #region Artifacts
-    private Artifact currentlySelectedArtifact; //the artifact that is currently shown in the UI
-    private void UpdateArtifactsInteraction() {
-        bool state = PlayerManager.Instance.player.GetTotalAvailableArtifactCount() == 0;
-        summonArtifactCover.SetActive(state);
-        summonArtifactBtn.interactable = !state && InteriorMapManager.Instance.isAnAreaMapShowing;
-    }
-    private void OnGainNewArtifact(Artifact newArtifact) {
-        UpdateArtifactsInteraction();
-        if (currentlySelectedArtifact == null) {
-            SetCurrentlySelectedArtifact(newArtifact);
-        }
-        //ShowNewObjectInfo(newArtifact);
-        //AssignNewActionToLatestItem(newSummon);
-    }
-    private void OnRemoveArtifact(Artifact artifact) {
-        UpdateArtifactsInteraction();
-        if (PlayerManager.Instance.player.GetTotalAvailableArtifactCount() == 0) { //the player has no more artifacts left
-            SetCurrentlySelectedArtifact(null);
-        } else if (artifact == currentlySelectedArtifact
-            && PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(artifact.type) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
-            CycleArtifacts(1);
-        }
-    }
-    private void OnUsedArtifact(Artifact artifact) {
-        UpdateArtifactsInteraction();
-        if (PlayerManager.Instance.player.GetTotalAvailableArtifactCount() == 0) { //the player has no more artifacts left
-            SetCurrentlySelectedArtifact(null);
-        } else if (artifact == currentlySelectedArtifact
-            && PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(artifact.type) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
-            CycleArtifacts(1);
-        }
-    }
-    public void SetCurrentlySelectedArtifact(Artifact artifact) {
-        currentlySelectedArtifact = artifact;
-        if (currentlySelectedArtifact == null) {
-            currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(ARTIFACT_TYPE.None).artifactPortrait;
-            currentArtifactCountLbl.text = "0";
-        } else {
-            currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
-            currentArtifactCountLbl.text = PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(artifact.type).ToString();
-        }
-        UpdateArtifactsInteraction();
-    }
-    public void CycleArtifacts(int cycleDirection) {
-        ARTIFACT_TYPE[] types = Utilities.GetEnumValues<ARTIFACT_TYPE>();
-        int index = Array.IndexOf(types, currentlySelectedArtifact?.type ?? ARTIFACT_TYPE.None);
-        while (true) {
-            int next = index + cycleDirection;
-            if (next >= types.Length) {
-                next = 0;
-            } else if (next <= 0) {
-                next = types.Length - 1;
-            }
-            index = next;
-            ARTIFACT_TYPE type = types[index];
-            Artifact artifact;
-            if (PlayerManager.Instance.player.TryGetAvailableArtifactOfType(type, out artifact)) { //Player has a summon of that type, select that.
-                SetCurrentlySelectedArtifact(artifact);
-                break;
-            }
-        }
-    }
-    public void ShowArtifactTooltip() {
-        string header = Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedArtifact.type.ToString());
-        string message = PlayerManager.Instance.player.GetArtifactDescription(currentlySelectedArtifact.type);
-        UIManager.Instance.ShowSmallInfo(message, summonArtifactTooltipPos, header);
-    }
-    public void HideArtifactTooltip() {
-        UIManager.Instance.HideSmallInfo();
-    }
-    public void OnClickSummonArtifact() {
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Target);
-        isSummoningArtifact = true;
-    }
-    private void TryPlaceArtifact() {
-        isSummoningArtifact = false;
-        if (!UIManager.Instance.IsMouseOnUI()) {
-            LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
-            if (tile.objHere == null) {
-                Artifact artifactToPlace = currentlySelectedArtifact;
-                if (tile.structure.AddPOI(artifactToPlace, tile)) {
-                    artifactToPlace.SetIsSummonedByPlayer(true);
-                    Messenger.Broadcast(Signals.PLAYER_USED_ARTIFACT, artifactToPlace);
-                }
-                //PlayerManager.Instance.player.RemoveArtifact(artifactToPlace);
-            } else {
-                Debug.LogWarning("There is already an object placed there. Not placing artifact");
-            }
-            //summonToPlace.CreateMarker();
-            //summonToPlace.marker.InitialPlaceMarkerAt(tile);
-            //PlayerManager.Instance.player.RemoveSummon(summonToPlace);
-            //summonToPlace.OnPlaceSummon(tile);
-            //Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summonToPlace);
-        }
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
-    }
-    private void CancelSummonArtifact() {
-        isSummoningArtifact = false;
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
     }
     #endregion
 
@@ -1212,6 +1247,17 @@ public class PlayerUI : MonoBehaviour {
     }
     public void HideKillSummary() {
         killSummaryGO.SetActive(false);
+    }
+    #endregion
+
+    #region General Confirmation
+    public void ShowGeneralConfirmation(string header, string body) {
+        generalConfirmationTitleText.text = header.ToUpper();
+        generalConfirmationBodyText.text = body;
+        generalConfirmationGO.SetActive(true);
+    }
+    public void OnClickOKGeneralConfirmation() {
+        generalConfirmationGO.SetActive(false);
     }
     #endregion
 }

@@ -229,6 +229,7 @@ public static class Signals {
     /// Parameters (Summon newSummon)
     /// </summary>
     public static string PLAYER_GAINED_SUMMON = "OnPlayerGainedSummon";
+    public static string PLAYER_GAINED_SUMMON_LEVEL = "OnPlayerGainedSummonLevel";
     /// <summary>
     /// Parameters (Summon removedSummon)
     /// </summary>
@@ -241,6 +242,7 @@ public static class Signals {
     /// Parameters (Artifact newArtifact)
     /// </summary>
     public static string PLAYER_GAINED_ARTIFACT = "OnPlayerGainedArtifact";
+    public static string PLAYER_GAINED_ARTIFACT_LEVEL = "OnPlayerGainedArtifactLevel";
     /// <summary>
     /// Parameters (Artifact removedArtifact)
     /// </summary>

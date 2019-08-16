@@ -175,7 +175,7 @@ public class BaseLandmark {
     }
     #endregion
 
-    #region Corruption
+    #region Corruption/Invasion
     public void ToggleCorruption(bool state) {
         if (state) {
             LandmarkManager.Instance.corruptedLandmarksCount++;
@@ -250,134 +250,6 @@ public class BaseLandmark {
             //}
         }
     }
-    public void ALandmarkHasStartedCorruption(BaseLandmark corruptedLandmark) {
-        //Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
-
-        //int corruptedX = corruptedLandmark.tileLocation.xCoordinate;
-        //int corruptedY = corruptedLandmark.tileLocation.yCoordinate;
-
-        //string direction = "horizontal";
-        ////if same column, the wall is automatically horizontal, if not, enter here
-        //if (tileLocation.xCoordinate != corruptedX) {
-        //    if (tileLocation.yCoordinate == corruptedY) {
-        //        int chance = UnityEngine.Random.Range(0, 2);
-        //        if (chance == 0) {
-        //            direction = "diagonalleft";
-        //        } else {
-        //            direction = "diagonalright";
-        //        }
-        //    } else if (tileLocation.yCoordinate < corruptedY) {
-        //        if (tileLocation.xCoordinate < corruptedX) {
-        //            direction = "diagonalleft";
-        //        } else {
-        //            direction = "diagonalright";
-        //        }
-        //    } else {
-        //        if (tileLocation.xCoordinate < corruptedX) {
-        //            direction = "diagonalright";
-        //        } else {
-        //            direction = "diagonalleft";
-        //        }
-        //    }
-        //}
-        //int chance = UnityEngine.Random.Range(0, 3);
-        //if (chance == 0) {
-        //    direction = "diagonalleft";
-        //} else {
-        //    direction = "diagonalright";
-        //}
-        // if (tileLocation.xCoordinate != corruptedX) {
-        //    if (tileLocation.xCoordinate < corruptedX) {
-        //        if(tileLocation.yCoordinate == corruptedY) {
-        //            if(_diagonalLeftBlocked > 0 && _diagonalRightBlocked <= 0) {
-        //                direction = "diagonalright";
-        //            }else if (_diagonalLeftBlocked <= 0 && _diagonalRightBlocked > 0) {
-        //                direction = "diagonalleft";
-        //            } else {
-        //                if (chance == 0) {
-        //                    direction = "diagonalleft";
-        //                } else {
-        //                    direction = "diagonalright";
-        //                }
-        //            }
-        //        } else {
-        //            if(tileLocation.yCoordinate < corruptedY) {
-        //                if (_diagonalLeftBlocked <= 0 && _horizontalBlocked > 0) {
-        //                    direction = "diagonalleft";
-        //                } else if (_diagonalLeftBlocked > 0 && _horizontalBlocked <= 0) {
-        //                    direction = "horizontal";
-        //                } else {
-        //                    if (chance == 0) {
-        //                        direction = "diagonalleft";
-        //                    }
-        //                }
-        //            } else {
-        //                if (_diagonalRightBlocked <= 0 && _horizontalBlocked > 0) {
-        //                    direction = "diagonalright";
-        //                } else if (_diagonalRightBlocked > 0 && _horizontalBlocked <= 0) {
-        //                    direction = "horizontal";
-        //                } else {
-        //                    if (chance == 0) {
-        //                        direction = "diagonalright";
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    } else {
-        //        if (tileLocation.yCoordinate == corruptedY) {
-        //            if (_diagonalLeftBlocked > 0 && _diagonalRightBlocked <= 0) {
-        //                direction = "diagonalright";
-        //            } else if (_diagonalLeftBlocked <= 0 && _diagonalRightBlocked > 0) {
-        //                direction = "diagonalleft";
-        //            } else {
-        //                if (chance == 0) {
-        //                    direction = "diagonalleft";
-        //                } else {
-        //                    direction = "diagonalright";
-        //                }
-        //            }
-        //        } else {
-        //            if (tileLocation.yCoordinate < corruptedY) {
-        //                if (_diagonalRightBlocked <= 0 && _horizontalBlocked > 0) {
-        //                    direction = "diagonalright";
-        //                } else if (_diagonalRightBlocked > 0 && _horizontalBlocked <= 0) {
-        //                    direction = "horizontal";
-        //                } else {
-        //                    if (chance == 0) {
-        //                        direction = "diagonalright";
-        //                    }
-        //                }
-        //            } else {
-        //                if (_diagonalLeftBlocked <= 0 && _horizontalBlocked > 0) {
-        //                    direction = "diagonalleft";
-        //                } else if (_diagonalLeftBlocked > 0 && _horizontalBlocked <= 0) {
-        //                    direction = "horizontal";
-        //                } else {
-        //                    if (chance == 0) {
-        //                        direction = "diagonalleft";
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //} else {
-        //    if (_horizontalBlocked > 0 && _diagonalLeftBlocked > 0 && _diagonalRightBlocked <= 0) {
-        //        direction = "diagonalright";
-        //    } else if (_horizontalBlocked > 0 && _diagonalLeftBlocked <= 0 && _diagonalRightBlocked > 0) {
-        //        direction = "diagonalleft";
-        //    } else if (_horizontalBlocked <= 0 && _diagonalLeftBlocked > 0 && _diagonalRightBlocked > 0) {
-        //        direction = "horizontal";
-        //    } else {
-        //        if (chance == 0) {
-        //            direction = "diagonalleft";
-        //        } else {
-        //            direction = "diagonalright";
-        //        }
-        //    }
-        //}
-        //AdjustDirectionBlocked(direction, 1);
-        //_blockedLandmarkDirection.Add(corruptedLandmark, direction);
-    }
     public void ReceivePath(List<HexTile> pathTiles) {
         if (pathTiles != null) {
             ConnectCorruption(pathTiles);
@@ -387,6 +259,31 @@ public class BaseLandmark {
         for (int i = 0; i < pathTiles.Count; i++) {
             pathTiles[i].SetUncorruptibleLandmarkNeighbors(0);
             pathTiles[i].SetCorruption(true, this);
+        }
+    }
+    public void InvadeThisLandmark() {
+        switch (specificLandmarkType) {
+            case LANDMARK_TYPE.NONE:
+            case LANDMARK_TYPE.CAVE:
+            case LANDMARK_TYPE.MONSTER_LAIR:
+            case LANDMARK_TYPE.ANCIENT_RUIN:
+            case LANDMARK_TYPE.TEMPLE:
+            case LANDMARK_TYPE.BANDIT_CAMP:
+                //No base effect upon invading
+                break;
+            case LANDMARK_TYPE.BARRACKS:
+            case LANDMARK_TYPE.OUTPOST:
+                PlayerManager.Instance.player.LevelUpAllMinions();
+                PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "All your minions gained 1 level.");
+                break;
+            case LANDMARK_TYPE.FARM:
+                PlayerManager.Instance.player.UnlockASummonSlotOrUpgradeExisting();
+                break;
+            case LANDMARK_TYPE.MINES:
+            case LANDMARK_TYPE.PYRAMID: //This is FACTORY
+            case LANDMARK_TYPE.WORKSHOP:
+                PlayerManager.Instance.player.UnlockAnArtifactSlotOrUpgradeExisting();
+                break;
         }
     }
     /// <summary>

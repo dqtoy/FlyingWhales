@@ -81,3 +81,37 @@ public class Artifact : TileObject, IWorldObject {
     #endregion
 
 }
+
+public class ArtifactSlot {
+    public int level;
+    public Artifact artifact;
+
+    public ArtifactSlot() {
+        level = 1;
+        artifact = null;
+    }
+
+    public void SetArtifact(Artifact artifact) {
+        this.artifact = artifact;
+        if(this.artifact != null) {
+            this.artifact.SetLevel(level);
+        }
+    }
+    
+    public void LevelUp() {
+        level++;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_ARTIFACT);
+        if (this.artifact != null) {
+            this.artifact.SetLevel(level);
+        }
+        Messenger.Broadcast(Signals.PLAYER_GAINED_ARTIFACT_LEVEL, this);
+    }
+    public void SetLevel(int amount) {
+        level = amount;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_ARTIFACT);
+        if (this.artifact != null) {
+            this.artifact.SetLevel(level);
+        }
+        Messenger.Broadcast(Signals.PLAYER_GAINED_ARTIFACT_LEVEL, this);
+    }
+}
