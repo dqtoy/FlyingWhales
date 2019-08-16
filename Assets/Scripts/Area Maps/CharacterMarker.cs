@@ -421,6 +421,7 @@ public class CharacterMarker : PooledObject {
         hoverEnterAction = null;
         hoverExitAction = null;
         destinationTile = null;
+        SetMarkerColor(Color.white);
         actionIcon.gameObject.SetActive(false);
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
@@ -918,6 +919,9 @@ public class CharacterMarker : PooledObject {
             return false;
         }
         return true;
+    }
+    public void SetMarkerColor(Color color) {
+        mainImg.color = color;
     }
     #endregion
 

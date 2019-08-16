@@ -22,6 +22,7 @@ public class Zombie_Virus : Trait {
     public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
         base.OnRemoveTrait(removedFrom, removedBy);
         Messenger.RemoveListener(Signals.HOUR_STARTED, PerHour);
+        owner.marker.SetMarkerColor(Color.white);
     }
     public override void OnDeath(Character character) {
         base.OnDeath(character);
@@ -112,6 +113,7 @@ public class Zombie_Virus : Trait {
 
     private void Reanimate() {
         owner.RaiseFromDeath(faction: FactionManager.Instance.zombieFaction, race: owner.race, className: "Zombie");
+        owner.marker.SetMarkerColor(Color.grey);
         Messenger.AddListener<Character, Character>(Signals.CHARACTER_WAS_HIT, OnCharacterHit);
     }
 
