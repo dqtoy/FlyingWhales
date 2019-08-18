@@ -12,7 +12,7 @@ public class CursedObject : PlayerJobAction {
     }
 
     #region Overrides
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             Trait newTrait = new Cursed();
@@ -23,10 +23,10 @@ public class CursedObject : PlayerJobAction {
             log.AddLogToInvolvedObjects();
             PlayerManager.Instance.player.ShowNotification(log);
 
-            base.ActivateAction(assignedCharacter, targetPOI);
+            base.ActivateAction(targetPOI);
         }
     }
-    protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
+    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             if(to.GetNormalTrait("Cursed") == null){

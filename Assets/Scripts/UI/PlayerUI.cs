@@ -676,8 +676,8 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Provoke
-    public void OpenProvoke(Character minion, Character target) {
-        provokeMenu.Open(target, minion);
+    public void OpenProvoke(Character target) {
+        provokeMenu.Open(target);
     }
     #endregion
 

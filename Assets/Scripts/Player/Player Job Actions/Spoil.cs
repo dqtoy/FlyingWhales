@@ -12,9 +12,9 @@ public class Spoil : PlayerJobAction {
     }
 
     #region Overrides
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {
-            base.ActivateAction(assignedCharacter, targetPOI);
+            base.ActivateAction(targetPOI);
             Poisoned poison = new Poisoned();
             poison.SetLevel(level);
             targetPOI.AddTrait(poison);
@@ -28,7 +28,7 @@ public class Spoil : PlayerJobAction {
         }
         return false;
     }
-    protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
+    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is Table && targetPOI.GetNormalTrait("Poisoned") == null) {
             return true;
         }

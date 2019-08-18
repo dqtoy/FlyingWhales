@@ -20,7 +20,7 @@ public class Abduct : PlayerJobAction {
         }
     }
 
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         if (!(targetPOI is Character)) {
             return;
         }
@@ -29,8 +29,8 @@ public class Abduct : PlayerJobAction {
         UIManager.Instance.ShowClickableObjectPicker(_abductAreas, OnClickArea, null, CanClickArea, titleText);
     }
 
-    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
-        if (targetCharacter.isDead || character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
+    protected override bool CanPerformActionTowards(Character targetCharacter) {
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
         if (targetCharacter.race != RACE.SKELETON && targetCharacter.race != RACE.GOBLIN) {
@@ -39,7 +39,7 @@ public class Abduct : PlayerJobAction {
         if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
-        return base.CanPerformActionTowards(character, targetCharacter);
+        return base.CanPerformActionTowards(targetCharacter);
     }
 
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -47,7 +47,7 @@ public class Abduct : PlayerJobAction {
             return false;
         }
         Character targetCharacter = targetPOI as Character;
-        if (targetCharacter.isDead || assignedCharacter == targetCharacter) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
         if (targetCharacter.race != RACE.SKELETON && targetCharacter.race != RACE.GOBLIN) {
@@ -70,7 +70,7 @@ public class Abduct : PlayerJobAction {
 
     #region Character Checkers
     private void RileUpCharacter(Character character) {
-        base.ActivateAction(assignedCharacter, _targetCharacter);
+        base.ActivateAction(_targetCharacter);
         UIManager.Instance.HideObjectPicker();
 
         //GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character };

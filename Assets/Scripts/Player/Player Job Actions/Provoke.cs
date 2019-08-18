@@ -12,16 +12,16 @@ public class Provoke : PlayerJobAction {
         abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         if (!(targetPOI is Character)) {
             return;
         }
         Character targetCharacter = targetPOI as Character;
-        PlayerUI.Instance.OpenProvoke(assignedCharacter, targetCharacter);
-        base.ActivateAction(assignedCharacter, targetCharacter);
+        PlayerUI.Instance.OpenProvoke(targetCharacter);
+        base.ActivateAction(targetCharacter);
     }
 
-    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;
         }
@@ -31,7 +31,7 @@ public class Provoke : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Unconscious") != null) {
             return false;
         }
-        return base.CanPerformActionTowards(character, targetCharacter);
+        return base.CanPerformActionTowards(targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if (!(targetPOI is Character)) {

@@ -572,9 +572,9 @@ public class Player : ILeader {
                 case JOB_ACTION_TARGET.CHARACTER:
                     if (InteriorMapManager.Instance.currentlyShowingMap != null && InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
                         summary += " targetting " + InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter.name;
-                        if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
+                        if (currentActivePlayerJobAction.CanPerformActionTowards(InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
                             summary += "\nActivated action!";
-                            currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
+                            currentActivePlayerJobAction.ActivateAction(InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
                             activatedAction = true;
                         } else {
                             summary += "\nDid not activate action! Did not meet requirements";
@@ -588,9 +588,9 @@ public class Player : ILeader {
                     hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null && hoveredTile.objHere != null) {
                         summary += " targetting " + hoveredTile.objHere.name;
-                        if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, hoveredTile.objHere)) {
+                        if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile.objHere)) {
                             summary += "\nActivated action!";
-                            currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, hoveredTile.objHere);
+                            currentActivePlayerJobAction.ActivateAction(hoveredTile.objHere);
                             activatedAction = true;
                         } else {
                             summary += "\nDid not activate action! Did not meet requirements";
@@ -604,9 +604,9 @@ public class Player : ILeader {
                     hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
                         summary += " targetting " + hoveredTile.ToString();
-                        if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, hoveredTile)) {
+                        if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile)) {
                             summary += "\nActivated action!";
-                            currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, hoveredTile);
+                            currentActivePlayerJobAction.ActivateAction(hoveredTile);
                             activatedAction = true;
                         } else {
                             summary += "\nDid not activate action! Did not meet requirements";
@@ -1554,12 +1554,12 @@ public class Player : ILeader {
     #region Intervention Ability
     public void GainNewInterventionAbility(INTERVENTION_ABILITY ability, bool showNewAbilityUI = false) {
         PlayerJobAction playerJobAction = PlayerManager.Instance.CreateNewInterventionAbility(ability);
-        GainNewInterventionAbility(playerJobAction);
+        GainNewInterventionAbility(playerJobAction, showNewAbilityUI);
     }
     public void GainNewInterventionAbility(PlayerJobAction ability, bool showNewAbilityUI = false) {
         int abilityCount = GetInterventionAbilityCount();
         if (abilityCount == interventionAbilities.Length) {
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(interventionAbilities.ToList(), ability, null, null);
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(interventionAbilities.ToList(), ability, OnReplaceInterventionAbility, OnRejectInterventionAbility);
         } else {
             for (int i = 0; i < interventionAbilities.Length; i++) {
                 if (interventionAbilities[i] == null) {
@@ -1573,6 +1573,18 @@ public class Player : ILeader {
             }
         }
     }
+    private void OnReplaceInterventionAbility(object objToReplace, object objToAdd) {
+        PlayerJobAction replace = objToReplace as PlayerJobAction;
+        PlayerJobAction add = objToAdd as PlayerJobAction;
+        for (int i = 0; i < interventionAbilities.Length; i++) {
+            if (interventionAbilities[i] == replace) {
+                interventionAbilities[i] = add;
+                Messenger.Broadcast(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, add);
+                break;
+            }
+        }
+    }
+    private void OnRejectInterventionAbility(object rejectedObj) { }
     private int GetInterventionAbilityCount() {
         int count = 0;
         for (int i = 0; i < interventionAbilities.Length; i++) {

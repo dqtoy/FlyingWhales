@@ -22,7 +22,7 @@ public class ShareIntelMenu : MonoBehaviour {
     private Character actor;
 
     private bool wasPausedOnOpen;
-    public void Open(Character targetCharacter, Character actor) {
+    public void Open(Character targetCharacter) {
         //UIManager.Instance.SetCoverState(true);
         //UIManager.Instance.Pause();
         //UIManager.Instance.SetSpeedTogglesState(false);
@@ -46,9 +46,9 @@ public class ShareIntelMenu : MonoBehaviour {
         DialogItem item = targetDialog.GetComponent<DialogItem>();
         item.SetData(targetCharacter, "What do you want from me?");
 
-        GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
-        DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        actorItem.SetData(actor, "I am here to share information with you.", DialogItem.Position.Right);
+        //GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        //DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
+        //actorItem.SetData(actor, "I am here to share information with you.", DialogItem.Position.Right);
 
         UpdateIntel(PlayerManager.Instance.player.allIntel);
     }

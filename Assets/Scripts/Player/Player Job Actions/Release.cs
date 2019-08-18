@@ -13,7 +13,7 @@ public class Release : PlayerJobAction {
     }
 
     #region Overrides
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         if (targetPOI is Character) {
             Character target = targetPOI as Character;
 
@@ -24,17 +24,17 @@ public class Release : PlayerJobAction {
             log.AddLogToInvolvedObjects();
             PlayerManager.Instance.player.ShowNotification(log);
 
-            base.ActivateAction(assignedCharacter, target);
+            base.ActivateAction(target);
         }
     }
-    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Restrained") == null) {
             return false;
         }
-        return base.CanPerformActionTowards(character, targetCharacter);
+        return base.CanPerformActionTowards(targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if (targetPOI is Character) {

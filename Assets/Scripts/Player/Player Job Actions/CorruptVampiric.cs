@@ -13,7 +13,7 @@ public class CorruptVampiric : PlayerJobAction {
     }
 
     #region Overrides
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         List<Character> targets = new List<Character>();
         if (targetPOI is Character) {
             targets.Add(targetPOI as Character);
@@ -26,7 +26,7 @@ public class CorruptVampiric : PlayerJobAction {
         if (targets.Count > 0) {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
-                if (CanPerformActionTowards(assignedCharacter, currTarget)) {
+                if (CanPerformActionTowards(currTarget)) {
                     Trait newTrait = new Vampiric();
                     newTrait.SetLevel(level);
                     currTarget.AddTrait(newTrait);
@@ -37,23 +37,23 @@ public class CorruptVampiric : PlayerJobAction {
                     PlayerManager.Instance.player.ShowNotification(log);
                 }
             }
-            base.ActivateAction(assignedCharacter, targets[0]);
+            base.ActivateAction(targets[0]);
         }
     }
-    protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
+    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             if (to.users != null) {
                 for (int i = 0; i < to.users.Length; i++) {
                     Character currUser = to.users[i];
-                    bool canTarget = CanPerformActionTowards(character, currUser);
+                    bool canTarget = CanPerformActionTowards(currUser);
                     if (canTarget) { return true; }
                 }
             }
         }
         return false;
     }
-    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character targetCharacter) {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
@@ -66,7 +66,7 @@ public class CorruptVampiric : PlayerJobAction {
         if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
-        return base.CanPerformActionTowards(character, targetCharacter);
+        return base.CanPerformActionTowards(targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if (targetPOI is Character) {

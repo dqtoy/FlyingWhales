@@ -17,8 +17,8 @@ public class Lullaby : PlayerJobAction {
         base.OnLevelUp();
         abilityRadius = level;
     }
-    public override void ActivateAction(Character assignedCharacter, LocationGridTile targetTile) {
-        base.ActivateAction(assignedCharacter, targetTile);
+    public override void ActivateAction(LocationGridTile targetTile) {
+        base.ActivateAction(targetTile);
         //List<ITraitable> flammables = new List<ITraitable>();
         List<LocationGridTile> tiles = targetTile.parentAreaMap.GetTilesInRadius(targetTile, abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
 

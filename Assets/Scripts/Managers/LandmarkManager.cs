@@ -215,7 +215,7 @@ public class LandmarkManager : MonoBehaviour {
         int oppositeCorner = GetOppositeCorner(portalCorner);
         Region settlementRegion = corners[oppositeCorner];
         AREA_TYPE settlementType = Utilities.RandomSettlementType();
-        int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCountFirstSettlement, WorldConfigManager.Instance.maxCitizenCountFirstSettlement + 1);
+        int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount + 1);
         Area settlementArea = CreateNewArea(settlementRegion.coreTile, settlementType, citizenCount);
         BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE);
         settlement = settlementLandmark;

@@ -18,7 +18,7 @@ public class ProvokeMenu : MonoBehaviour {
 
     private bool wasPausedOnOpen;
 
-    public void Open(Character targetCharacter, Character actor) {
+    public void Open(Character targetCharacter) {
         this.gameObject.SetActive(true);
 
         this.targetCharacter = targetCharacter;
@@ -32,9 +32,9 @@ public class ProvokeMenu : MonoBehaviour {
 
         ProvokeAction(ref targetDialogText, ref actorDialogText);
 
-        GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
-        DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        actorItem.SetData(actor, actorDialogText, DialogItem.Position.Right);
+        //GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        //DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
+        //actorItem.SetData(actor, actorDialogText, DialogItem.Position.Right);
 
         GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem item = targetDialog.GetComponent<DialogItem>();
