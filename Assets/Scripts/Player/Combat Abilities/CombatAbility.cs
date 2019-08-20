@@ -12,10 +12,15 @@ public class CombatAbility {
     public int abilityRadius { get; protected set; } //0 means single target
     public int cooldown { get; protected set; } //0 means 1 time use only
     public List<ABILITY_TAG> abilityTags { get; protected set; }
-
     protected int _currentCooldown;
 
-	public CombatAbility(COMBAT_ABILITY type) {
+    #region getters/setters
+    public string worldObjectName {
+        get { return name; }
+    }
+    #endregion
+
+    public CombatAbility(COMBAT_ABILITY type) {
         this.type = type;
         name = Utilities.NormalizeStringUpperCaseFirstLetters(this.type.ToString());
         lvl = 1;

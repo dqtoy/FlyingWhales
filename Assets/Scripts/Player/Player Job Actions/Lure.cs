@@ -8,7 +8,6 @@ public class Lure : PlayerJobAction {
 
     public List<Character> targetCharacters { get; private set; }
     public List<LocationGridTile> tileChoices { get; private set; }
-    public Character currentAssignedCharacter { get; private set; }
     public bool isGamePausedOnLure { get; private set; }
 
     public Lure() : base(INTERVENTION_ABILITY.LURE) {
@@ -22,10 +21,9 @@ public class Lure : PlayerJobAction {
     }
 
     #region Overrides
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         targetCharacters.Clear();
         tileChoices.Clear();
-        currentAssignedCharacter = null;
 
         List<Character> targets = new List<Character>();
         if (targetPOI is Character) {
@@ -39,42 +37,41 @@ public class Lure : PlayerJobAction {
         if (targets.Count > 0) {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
-                if (CanPerformActionTowards(assignedCharacter, currTarget)) {
+                if (CanPerformActionTowards(currTarget)) {
                     targetCharacters.Add(currTarget);
                 }
             }
             if(targetCharacters.Count > 0) {
-                currentAssignedCharacter = assignedCharacter;
                 tileChoices = targetCharacters[0].GetTilesInRadius(_lureRange, includeTilesInDifferentStructure: true);
                 LurePhase2();
-                base.ActivateAction(currentAssignedCharacter, targetCharacters[0]);
+                base.ActivateAction(targetCharacters[0]);
             }
         }
     }
-    protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
+    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             if (to.users != null) {
                 for (int i = 0; i < to.users.Length; i++) {
                     Character currUser = to.users[i];
-                    bool canTarget = CanPerformActionTowards(character, currUser);
+                    bool canTarget = CanPerformActionTowards(currUser);
                     if (canTarget) { return true; }
                 }
             }
         }
         return false;
     }
-    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;
         }
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
-        return base.CanPerformActionTowards(character, targetCharacter);
+        return base.CanPerformActionTowards(targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if (targetPOI is Character) {

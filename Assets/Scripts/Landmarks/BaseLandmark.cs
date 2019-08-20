@@ -21,12 +21,10 @@ public class BaseLandmark {
     protected LandmarkVisual _landmarkVisual;
     protected List<Item> _itemsInLandmark;
     protected List<LANDMARK_TAG> _landmarkTags;
-    public LANDMARK_YIELD_TYPE yieldType;
-    public List<BaseLandmark> inComingConnections { get; private set; }
-    public List<BaseLandmark> outGoingConnections { get; private set; }
-    public List<BaseLandmark> sameColumnLandmarks { get; private set; }
-    public List<HexTile> sameRowTiles { get; private set; }
+    public List<BaseLandmark> connections { get; private set; }
     public Character skirmishEnemy { get; private set; }
+    public IWorldObject worldObj { get; private set; }
+    public int invasionTicks { get; private set; } //how many ticks until this landmark is invaded. NOTE: This is in raw ticks so if the landmark should be invaded in 1 hour, this should be set to the number of ticks in an hour.
 
     #region getters/setters
     public int id {
@@ -77,9 +75,8 @@ public class BaseLandmark {
         _owner = null; //landmark has no owner yet
         _hasBeenCorrupted = false;
         _itemsInLandmark = new List<Item>();
-        inComingConnections = new List<BaseLandmark>();
-        outGoingConnections = new List<BaseLandmark>();
-        sameColumnLandmarks = new List<BaseLandmark>();
+        connections = new List<BaseLandmark>();
+        invasionTicks = 5 * GameManager.ticksPerHour;
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
@@ -156,49 +153,6 @@ public class BaseLandmark {
     }
     #endregion
 
-    #region Location
-    public void AddCharacterToLocation(Party iparty) {
-//        //if(iparty.owner.homeLandmark == this) {
-//        if (!_charactersAtLocation.Contains(iparty)) {
-//            //if (!IsDefenderOfLandmark(iparty)) {
-//            _charactersAtLocation.Add(iparty); //only add to characters list if the party is not a defender of the landmark
-//            //}
-//            //this.tileLocation.RemoveCharacterFromLocation(iparty);
-//            //if (iparty.specificLocation != null) {
-//            //    iparty.specificLocation.RemoveCharacterFromLocation(iparty);
-//            //}
-//            iparty.SetSpecificLocation(this.tileLocation.areaOfTile);
-//            tileLocation.areaOfTile.AddCharacterToLocation(iparty.owner);
-//#if !WORLD_CREATION_TOOL
-//            //_landmarkVisual.OnCharacterEnteredLandmark(iparty);
-//            Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_ENTERED_LANDMARK, iparty, this);
-//#endif
-//        }
-//        //}
-    }
-    public void RemoveCharacterFromLocation(Party iparty, bool addToTile = false) {
-//        if (_charactersAtLocation.Remove(iparty)) {
-//            if (addToTile) {
-//                this.tileLocation.AddCharacterToLocation(iparty);
-//            }
-//            tileLocation.areaOfTile.RemoveCharacterFromLocation(iparty.owner);
-//#if !WORLD_CREATION_TOOL
-//            Messenger.Broadcast<Party, BaseLandmark>(Signals.PARTY_EXITED_LANDMARK, iparty, this);
-//#endif
-//        } else {
-//            Debug.LogWarning("Cannot remove character from " + this.name + " because he/she is not here");
-//        }
-    }
-    public void ReplaceCharacterAtLocation(Party ipartyToReplace, Party ipartyToAdd) {
-        //if (_charactersAtLocation.Contains(ipartyToReplace)) {
-        //    int indexOfCharacterToReplace = _charactersAtLocation.IndexOf(ipartyToReplace);
-        //    _charactersAtLocation.Insert(indexOfCharacterToReplace, ipartyToAdd);
-        //    _charactersAtLocation.Remove(ipartyToReplace);
-        //    ipartyToAdd.SetSpecificLocation(this.tileLocation.areaOfTile);
-        //}
-    }
-    #endregion
-
     #region Utilities
     public void SetLandmarkObject(LandmarkVisual obj) {
         _landmarkVisual = obj;
@@ -221,7 +175,7 @@ public class BaseLandmark {
     }
     #endregion
 
-    #region Corruption
+    #region Corruption/Invasion
     public void ToggleCorruption(bool state) {
         if (state) {
             LandmarkManager.Instance.corruptedLandmarksCount++;
@@ -296,134 +250,6 @@ public class BaseLandmark {
             //}
         }
     }
-    public void ALandmarkHasStartedCorruption(BaseLandmark corruptedLandmark) {
-        //Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
-
-        //int corruptedX = corruptedLandmark.tileLocation.xCoordinate;
-        //int corruptedY = corruptedLandmark.tileLocation.yCoordinate;
-
-        //string direction = "horizontal";
-        ////if same column, the wall is automatically horizontal, if not, enter here
-        //if (tileLocation.xCoordinate != corruptedX) {
-        //    if (tileLocation.yCoordinate == corruptedY) {
-        //        int chance = UnityEngine.Random.Range(0, 2);
-        //        if (chance == 0) {
-        //            direction = "diagonalleft";
-        //        } else {
-        //            direction = "diagonalright";
-        //        }
-        //    } else if (tileLocation.yCoordinate < corruptedY) {
-        //        if (tileLocation.xCoordinate < corruptedX) {
-        //            direction = "diagonalleft";
-        //        } else {
-        //            direction = "diagonalright";
-        //        }
-        //    } else {
-        //        if (tileLocation.xCoordinate < corruptedX) {
-        //            direction = "diagonalright";
-        //        } else {
-        //            direction = "diagonalleft";
-        //        }
-        //    }
-        //}
-        //int chance = UnityEngine.Random.Range(0, 3);
-        //if (chance == 0) {
-        //    direction = "diagonalleft";
-        //} else {
-        //    direction = "diagonalright";
-        //}
-        // if (tileLocation.xCoordinate != corruptedX) {
-        //    if (tileLocation.xCoordinate < corruptedX) {
-        //        if(tileLocation.yCoordinate == corruptedY) {
-        //            if(_diagonalLeftBlocked > 0 && _diagonalRightBlocked <= 0) {
-        //                direction = "diagonalright";
-        //            }else if (_diagonalLeftBlocked <= 0 && _diagonalRightBlocked > 0) {
-        //                direction = "diagonalleft";
-        //            } else {
-        //                if (chance == 0) {
-        //                    direction = "diagonalleft";
-        //                } else {
-        //                    direction = "diagonalright";
-        //                }
-        //            }
-        //        } else {
-        //            if(tileLocation.yCoordinate < corruptedY) {
-        //                if (_diagonalLeftBlocked <= 0 && _horizontalBlocked > 0) {
-        //                    direction = "diagonalleft";
-        //                } else if (_diagonalLeftBlocked > 0 && _horizontalBlocked <= 0) {
-        //                    direction = "horizontal";
-        //                } else {
-        //                    if (chance == 0) {
-        //                        direction = "diagonalleft";
-        //                    }
-        //                }
-        //            } else {
-        //                if (_diagonalRightBlocked <= 0 && _horizontalBlocked > 0) {
-        //                    direction = "diagonalright";
-        //                } else if (_diagonalRightBlocked > 0 && _horizontalBlocked <= 0) {
-        //                    direction = "horizontal";
-        //                } else {
-        //                    if (chance == 0) {
-        //                        direction = "diagonalright";
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    } else {
-        //        if (tileLocation.yCoordinate == corruptedY) {
-        //            if (_diagonalLeftBlocked > 0 && _diagonalRightBlocked <= 0) {
-        //                direction = "diagonalright";
-        //            } else if (_diagonalLeftBlocked <= 0 && _diagonalRightBlocked > 0) {
-        //                direction = "diagonalleft";
-        //            } else {
-        //                if (chance == 0) {
-        //                    direction = "diagonalleft";
-        //                } else {
-        //                    direction = "diagonalright";
-        //                }
-        //            }
-        //        } else {
-        //            if (tileLocation.yCoordinate < corruptedY) {
-        //                if (_diagonalRightBlocked <= 0 && _horizontalBlocked > 0) {
-        //                    direction = "diagonalright";
-        //                } else if (_diagonalRightBlocked > 0 && _horizontalBlocked <= 0) {
-        //                    direction = "horizontal";
-        //                } else {
-        //                    if (chance == 0) {
-        //                        direction = "diagonalright";
-        //                    }
-        //                }
-        //            } else {
-        //                if (_diagonalLeftBlocked <= 0 && _horizontalBlocked > 0) {
-        //                    direction = "diagonalleft";
-        //                } else if (_diagonalLeftBlocked > 0 && _horizontalBlocked <= 0) {
-        //                    direction = "horizontal";
-        //                } else {
-        //                    if (chance == 0) {
-        //                        direction = "diagonalleft";
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //} else {
-        //    if (_horizontalBlocked > 0 && _diagonalLeftBlocked > 0 && _diagonalRightBlocked <= 0) {
-        //        direction = "diagonalright";
-        //    } else if (_horizontalBlocked > 0 && _diagonalLeftBlocked <= 0 && _diagonalRightBlocked > 0) {
-        //        direction = "diagonalleft";
-        //    } else if (_horizontalBlocked <= 0 && _diagonalLeftBlocked > 0 && _diagonalRightBlocked > 0) {
-        //        direction = "horizontal";
-        //    } else {
-        //        if (chance == 0) {
-        //            direction = "diagonalleft";
-        //        } else {
-        //            direction = "diagonalright";
-        //        }
-        //    }
-        //}
-        //AdjustDirectionBlocked(direction, 1);
-        //_blockedLandmarkDirection.Add(corruptedLandmark, direction);
-    }
     public void ReceivePath(List<HexTile> pathTiles) {
         if (pathTiles != null) {
             ConnectCorruption(pathTiles);
@@ -434,6 +260,44 @@ public class BaseLandmark {
             pathTiles[i].SetUncorruptibleLandmarkNeighbors(0);
             pathTiles[i].SetCorruption(true, this);
         }
+    }
+    public void InvadeThisLandmark() {
+        switch (specificLandmarkType) {
+            case LANDMARK_TYPE.NONE:
+            case LANDMARK_TYPE.CAVE:
+            case LANDMARK_TYPE.MONSTER_LAIR:
+            case LANDMARK_TYPE.ANCIENT_RUIN:
+            case LANDMARK_TYPE.TEMPLE:
+            case LANDMARK_TYPE.BANDIT_CAMP:
+                //No base effect upon invading
+                break;
+            case LANDMARK_TYPE.BARRACKS:
+            case LANDMARK_TYPE.OUTPOST:
+                PlayerManager.Instance.player.LevelUpAllMinions();
+                PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "All your minions gained 1 level.");
+                break;
+            case LANDMARK_TYPE.FARM:
+                PlayerManager.Instance.player.UnlockASummonSlotOrUpgradeExisting();
+                break;
+            case LANDMARK_TYPE.MINES:
+            case LANDMARK_TYPE.PYRAMID: //This is FACTORY
+            case LANDMARK_TYPE.WORKSHOP:
+                PlayerManager.Instance.player.UnlockAnArtifactSlotOrUpgradeExisting();
+                break;
+        }
+    }
+    /// <summary>
+    /// Is this landmark connected to another landmark that has been corrupted?
+    /// </summary>
+    /// <returns>True or false</returns>
+    public bool HasCorruptedConnection() {
+        for (int i = 0; i < connections.Count; i++) {
+            BaseLandmark connection = connections[i];
+            if (connection.tileLocation.isCorrupted) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -447,93 +311,74 @@ public class BaseLandmark {
     #endregion
 
     #region Connections
-    public void AddIncomingConnection(BaseLandmark newConnection) {
-        inComingConnections.Add(newConnection);
-    }
-    public void AddOutGoingConnection(BaseLandmark newConnection) {
-        outGoingConnections.Add(newConnection);
+    public void AddConnection(BaseLandmark newConnection) {
+        connections.Add(newConnection);
     }
     public bool IsConnectedWith(BaseLandmark otherLandmark) {
-        return inComingConnections.Contains(otherLandmark) || outGoingConnections.Contains(otherLandmark);
-    }
-    public void SetSameColumnLandmarks(List<BaseLandmark> landmarks) {
-        sameColumnLandmarks = landmarks;
-    }
-    public void SetSameRowTiles(List<HexTile> tiles) {
-        sameRowTiles = tiles;
-    }
-    public Area GetUpcomingSettlement() {
-        for (int i = 0; i < outGoingConnections.Count; i++) {
-            if(outGoingConnections[i].tileLocation.areaOfTile != null) {
-                return outGoingConnections[i].tileLocation.areaOfTile;
-            } else {
-                return outGoingConnections[i].GetUpcomingSettlement();
-            }
-        }
-        //for (int i = 0; i < outGoingConnections.Count; i++) {
-        //    return outGoingConnections[i].GetUpcomingSettlement();
-        //}
-        return null;
+        return connections.Contains(otherLandmark);
     }
     public bool HasMaximumConnections() {
-        return inComingConnections.Count >= LandmarkManager.Max_Connections;
-    }
-    #endregion
-
-    #region Yield Types
-    public void SetYieldType(LANDMARK_YIELD_TYPE type) {
-        yieldType = type;
+        return connections.Count >= LandmarkManager.Max_Connections;
     }
     #endregion
 
     #region Events
-    public void ShowEventBasedOnYieldType() {
-        if (yieldType == LANDMARK_YIELD_TYPE.STORY_EVENT) {
-            StoryEvent e = tileLocation.GetRandomStoryEvent();
-            PlayerUI.Instance.storyEventUI.ShowEvent(e, true);
-        } else if (yieldType == LANDMARK_YIELD_TYPE.SUMMON) {
-            SUMMON_TYPE[] types = Utilities.GetEnumValues<SUMMON_TYPE>();
-            PlayerManager.Instance.player.GainSummon(types[UnityEngine.Random.Range(1, types.Length)], showNewSummonUI: true);
-        } else if (yieldType == LANDMARK_YIELD_TYPE.ARTIFACT) {
-            ARTIFACT_TYPE[] types = Utilities.GetEnumValues<ARTIFACT_TYPE>();
-            PlayerManager.Instance.player.GainArtifact(types[UnityEngine.Random.Range(1, types.Length)], true); //Started at 1 index to ignore None choice.
-        } else if (yieldType == LANDMARK_YIELD_TYPE.ABILITY) {
-            int chance = UnityEngine.Random.Range(0, 2);
-            if(chance == 0) {
-                PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
-            } else {
-                PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
-            }
-        } else if (yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
-            PlayerUI.Instance.skirmishUI.ShowSkirmishUI(PlayerManager.Instance.player.currentMinionLeader.character, skirmishEnemy);
-        }
-    }
+    //public void ShowEventBasedOnYieldType() {
+    //    if (yieldType == LANDMARK_YIELD_TYPE.STORY_EVENT) {
+    //        StoryEvent e = tileLocation.GetRandomStoryEvent();
+    //        PlayerUI.Instance.storyEventUI.ShowEvent(e, true);
+    //    } else if (yieldType == LANDMARK_YIELD_TYPE.SUMMON) {
+    //        SUMMON_TYPE[] types = Utilities.GetEnumValues<SUMMON_TYPE>();
+    //        PlayerManager.Instance.player.GainSummon(types[UnityEngine.Random.Range(1, types.Length)], showNewSummonUI: true);
+    //    } else if (yieldType == LANDMARK_YIELD_TYPE.ARTIFACT) {
+    //        ARTIFACT_TYPE[] types = Utilities.GetEnumValues<ARTIFACT_TYPE>();
+    //        PlayerManager.Instance.player.GainArtifact(types[UnityEngine.Random.Range(1, types.Length)], true); //Started at 1 index to ignore None choice.
+    //    } else if (yieldType == LANDMARK_YIELD_TYPE.ABILITY) {
+    //        int chance = UnityEngine.Random.Range(0, 2);
+    //        if(chance == 0) {
+    //            PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
+    //        } else {
+    //            PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
+    //        }
+    //    } else if (yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
+    //        PlayerUI.Instance.skirmishUI.ShowSkirmishUI(PlayerManager.Instance.player.currentMinionLeader.character, skirmishEnemy);
+    //    }
+    //}
     #endregion
 
     #region Skirmish
-    public void GenerateSkirmishEnemy() {
-        if(skirmishEnemy != null) {
-            return;
-        }
-        Area area = GetUpcomingSettlement();
-        if (area != null) {
-            if (area.owner.leader is Character) {
-                Character areaLeader = area.owner.leader as Character;
+    //public void GenerateSkirmishEnemy() {
+    //    if(skirmishEnemy != null) {
+    //        return;
+    //    }
+    //    Area area = GetUpcomingSettlement();
+    //    if (area != null) {
+    //        if (area.owner.leader is Character) {
+    //            Character areaLeader = area.owner.leader as Character;
 
-                WeightedDictionary<CharacterRole> roleChoices = new WeightedDictionary<CharacterRole>();
-                roleChoices.AddElement(CharacterRole.CIVILIAN, 30);
-                roleChoices.AddElement(CharacterRole.ADVENTURER, 35);
-                roleChoices.AddElement(CharacterRole.SOLDIER, 35);
+    //            WeightedDictionary<CharacterRole> roleChoices = new WeightedDictionary<CharacterRole>();
+    //            roleChoices.AddElement(CharacterRole.CIVILIAN, 30);
+    //            roleChoices.AddElement(CharacterRole.ADVENTURER, 35);
+    //            roleChoices.AddElement(CharacterRole.SOLDIER, 35);
 
-                Character enemy = new Character(roleChoices.PickRandomElementGivenWeights(), areaLeader.race, Utilities.GetRandomGender());
-                enemy.OnUpdateRace();
-                enemy.SetLevel(areaLeader.level - 1);
+    //            Character enemy = new Character(roleChoices.PickRandomElementGivenWeights(), areaLeader.race, Utilities.GetRandomGender());
+    //            enemy.OnUpdateRace();
+    //            enemy.SetLevel(areaLeader.level - 1);
 
-                skirmishEnemy = enemy;
-            }
-        } else {
-            throw new System.Exception(tileLocation.name + " has no upcoming settlement!");
-        }
+    //            skirmishEnemy = enemy;
+    //        }
+    //    } else {
+    //        throw new System.Exception(tileLocation.name + " has no upcoming settlement!");
+    //    }
+    //}
+    #endregion
+
+    #region World Objects
+    public void SetWorldObject(IWorldObject obj) {
+        worldObj = obj;
+    }
+    public void ObtainWorldWobject() {
+        worldObj?.Obtain();
     }
     #endregion
 }

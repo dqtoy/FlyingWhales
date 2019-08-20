@@ -34,9 +34,8 @@ public class PlayerJobActionButton : MonoBehaviour {
         Messenger.RemoveListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
     }
 
-    public void SetJobAction(PlayerJobAction action, Character character) {
+    public void SetJobAction(PlayerJobAction action) {
         this.action = action;
-        //this.character = character;
         actionIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
         UpdateInteractableState();
         UpdateButtonText();
@@ -83,60 +82,6 @@ public class PlayerJobActionButton : MonoBehaviour {
     public void ShowHoverText() {
         string header = action.name;
         string message = action.description;
-        //if (action is ShareIntel) {
-        //    message = "The Diplomat will reach out to a character and share a piece of information with them.";
-        //    header += "(Diplomat Action)";
-        //} else if (action is RileUp) {
-        //    message = "The Instigator will rile up a character and goad him into attacking people in a specified location. This action only works for beasts.";
-        //    header += "(Instigator Action)";
-        //}  else if (action is Provoke) {
-        //    message = "The Instigator will provoke a character into attacking one of his/her enemies. This is more likely to succeed if he/she is in a bad mood.";
-        //    header += "(Instigator Action)";
-        //} else if (action is Destroy) {
-        //    message = "Remove this object from the world.";
-        //    header += "(Instigator Action)";
-        //} else if (action is Disable) {
-        //    message = "Prevent characters from using this object for 4 hours.";
-        //    header += "(Debilitator Action)";
-        //} else if (action is AccessMemories) {
-        //    message = "Access the memories of a character.";
-        //    header += "(Spy Action)";
-        //} else if (action is Abduct) {
-        //    message = "The Instigator will goad a character into abducting a specified character. This action only works on goblins and skeletons.";
-        //    header += "(Instigator Action)";
-        //} else if (action is Zap) {
-        //    message = "Temporarily prevents a character from moving for 30 minutes.";
-        //    header += "(Debilitator Action)";
-        //} else if (action is Jolt) {
-        //    message = "Temporarily speeds up the movement of a character.";
-        //    header += "(Debilitator Action)";
-        //} else if (action is Spook) {
-        //    message = "Temporarily forces a character to flee from all other nearby characters.";
-        //    header += "(Debilitator Action)";
-        //} else if (action is Enrage) {
-        //    message = "Temporarily enrages a character.";
-        //    header += "(Debilitator Action)";
-        //} else if (action is CorruptLycanthropy) {
-        //    message = "Inflict a character with Lycanthropy, which gives a character a chance to transform into a wild wolf whenever he/she sleeps.";
-        //    header += "(Seducer Action)";
-        //} else if (action is CorruptKleptomaniac) {
-        //    message = "Inflict a character with Kleptomania, which will make that character enjoy stealing other people's items.";
-        //    header += "(Seducer Action)";
-        //} else if (action is CorruptVampiric) {
-        //    message = "Inflict a character with Vampirism, which will make that character need blood for sustenance.";
-        //    header += "(Seducer Action)";
-        //} else if (action is CorruptUnfaithful) {
-        //    message = "Make a character prone to have affairs.";
-        //    header += "(Seducer Action)";
-        //} else if (action is RaiseDead) {
-        //    message = "Return a character to life.";
-        //    header += "(Instigator Action)";
-        //}
-
-        //if (action.parentData.hasActionInCooldown) {
-        //    header += " (On Cooldown)";
-        //}
-        PlayerManager.Instance.player.SeenActionButtonsOnce();
         PlayerUI.Instance.ShowActionBtnTooltip(message, header);
     }
     public void HideHoverText() {

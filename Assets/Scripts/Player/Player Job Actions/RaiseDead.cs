@@ -15,7 +15,7 @@ public class RaiseDead : PlayerJobAction {
     }
 
     #region Overrides
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         Character target;
         if (targetPOI is Character) {
             target = targetPOI as Character;
@@ -24,7 +24,7 @@ public class RaiseDead : PlayerJobAction {
         } else {
             return;
         }
-        base.ActivateAction(assignedCharacter, target);
+        base.ActivateAction(target);
         target.RaiseFromDeath(_level, faction:PlayerManager.Instance.player.playerFaction);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_raise_dead");
@@ -33,10 +33,10 @@ public class RaiseDead : PlayerJobAction {
         PlayerManager.Instance.player.ShowNotification(log);
     }
 
-    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character targetCharacter) {
         return targetCharacter.isDead && targetCharacter.IsInOwnParty();
     }
-    protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
+    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         return targetPOI is Tombstone || (targetPOI is Character && (targetPOI as Character).IsInOwnParty()) ;
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {

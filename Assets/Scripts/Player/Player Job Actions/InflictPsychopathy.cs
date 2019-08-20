@@ -13,18 +13,18 @@ public class InflictPsychopathy : PlayerJobAction {
     }
 
     #region Overrides
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         if (targetPOI is Character) {
             Character currTarget = targetPOI as Character;
-            if (CanPerformActionTowards(assignedCharacter, currTarget)) {
+            if (CanPerformActionTowards(currTarget)) {
                 Trait newTrait = new SerialKiller();
                 newTrait.SetLevel(level);
                 currTarget.AddTrait(newTrait);
             }
-            base.ActivateAction(assignedCharacter, targetPOI);
+            base.ActivateAction(targetPOI);
         }
     }
-    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character targetCharacter) {
         if (targetCharacter.isDead) {
             return false;
         }
@@ -37,7 +37,7 @@ public class InflictPsychopathy : PlayerJobAction {
         if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
-        return base.CanPerformActionTowards(character, targetCharacter);
+        return base.CanPerformActionTowards(targetCharacter);
     }
     #endregion
 

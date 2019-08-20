@@ -3,12 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Artifact : TileObject {
+public class Artifact : TileObject, IWorldObject {
 
     public ARTIFACT_TYPE type { get; private set; }
     public int level { get; private set; }
-
     public bool hasBeenUsed { get; private set; }
+
+    #region getters/setters
+    public string worldObjectName {
+        get { return name; }
+    }
+    #endregion
+
     public Artifact(ARTIFACT_TYPE type) {
         this.type = type;
         level = 1;
@@ -67,4 +73,45 @@ public class Artifact : TileObject {
         hasBeenUsed = false;
     }
 
+    #region World Object
+    public void Obtain() {
+        //- invading a region with an artifact will obtain that artifact for the player
+        PlayerManager.Instance.player.GainArtifact(this, true);
+    }
+    #endregion
+
+}
+
+public class ArtifactSlot {
+    public int level;
+    public Artifact artifact;
+
+    public ArtifactSlot() {
+        level = 1;
+        artifact = null;
+    }
+
+    public void SetArtifact(Artifact artifact) {
+        this.artifact = artifact;
+        if(this.artifact != null) {
+            this.artifact.SetLevel(level);
+        }
+    }
+    
+    public void LevelUp() {
+        level++;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_ARTIFACT);
+        if (this.artifact != null) {
+            this.artifact.SetLevel(level);
+        }
+        Messenger.Broadcast(Signals.PLAYER_GAINED_ARTIFACT_LEVEL, this);
+    }
+    public void SetLevel(int amount) {
+        level = amount;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_ARTIFACT);
+        if (this.artifact != null) {
+            this.artifact.SetLevel(level);
+        }
+        Messenger.Broadcast(Signals.PLAYER_GAINED_ARTIFACT_LEVEL, this);
+    }
 }

@@ -7892,14 +7892,13 @@ public class Character : ILeader, IPointOfInterest {
                 ClearIgnoreHostilities();
             }
         } else {
-            // && this.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.POSITIVE 
             if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null) {
                 //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
                 CombatState combatState = state as CombatState;
                 float distance = Vector2.Distance(this.marker.transform.position, character.marker.transform.position);
                 Debug.Log(this.name + " distance with " + character.name + " is " + distance.ToString());
                 if (this.isPartOfHomeFaction && character.isAtHomeArea && character.isPartOfHomeFaction && this.IsCombatReady() 
-                    && this.IsHostileOutsider(combatState.currentClosestHostile)
+                    && this.IsHostileOutsider(combatState.currentClosestHostile) && (this.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.POSITIVE || character.role.roleType == CHARACTER_ROLE.SOLDIER)
                     && distance <= Combat_Signalled_Distance) {
                     if (marker.AddHostileInRange(combatState.currentClosestHostile)) {
                         CombatState hostileCombatState = combatState.currentClosestHostile.stateComponent.currentState as CombatState;

@@ -458,7 +458,8 @@ public class GridMap : MonoBehaviour {
         }
         string summary = "Generated regions: ";
         for (int i = 0; i < allRegions.Length; i++) {
-            allRegions[i].ShowRegionHighlight();
+            allRegions[i].FinalizeData();
+            allRegions[i].ShowTransparentBorder();
             summary += "\n" + i.ToString() + " - " + allRegions[i].tiles.Count.ToString();
         }
         Debug.Log(summary);
@@ -467,96 +468,3 @@ public class GridMap : MonoBehaviour {
 }
 
 
-public class Region {
-    public int id { get; private set; }
-    public List<HexTile> tiles { get; private set; }
-    public HexTile coreTile { get; private set; }
-    private Color regionColor;
-
-    public Region(HexTile coreTile) {
-        id = Utilities.SetID(this);
-        this.coreTile = coreTile;
-        tiles = new List<HexTile>();
-        AddTile(coreTile);
-        regionColor = Random.ColorHSV();
-    }
-
-    public void AddTile(HexTile tile) {
-        if (!tiles.Contains(tile)) {
-            tiles.Add(tile);
-            tile.SetRegion(this);
-            //if (tile != coreTile) {
-            //    tile.spriteRenderer.color = regionColor;
-            //}
-        }
-    }
-
-    #region Utilities
-    public void RedetermineCore() {
-        int maxX = tiles.Max(t => t.data.xCoordinate);
-        int minX = tiles.Min(t => t.data.xCoordinate);
-        int maxY = tiles.Max(t => t.data.yCoordinate);
-        int minY = tiles.Min(t => t.data.yCoordinate);
-
-        int x = (minX + maxX) / 2;
-        int y = (minY + maxY) / 2;
-
-        //coreTile.spriteRenderer.color = regionColor;
-
-        coreTile = GridMap.Instance.map[x, y];
-        //coreTile.spriteRenderer.color = Color.white;
-
-        if (!tiles.Contains(coreTile)) {
-            throw new System.Exception("Region does not contain new core tile! " + coreTile.ToString());
-        }
-    }
-    /// <summary>
-    /// Get the outer tiles of this region. NOTE: Made this into a getter instead of saving it in a variable, to save memory.
-    /// </summary>
-    /// <returns>List of outer tiles.</returns>
-    private List<HexTile> GetOuterTiles() {
-        List<HexTile> outerTiles = new List<HexTile>();
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            if (currTile.AllNeighbours.Count != 6 || currTile.HasNeighbourFromOtherRegion()) {
-                outerTiles.Add(currTile);
-            }
-        }
-        return outerTiles;
-    }
-    public void ShowRegionHighlight() {
-        List<HexTile> outerTiles = GetOuterTiles();
-        HEXTILE_DIRECTION[] dirs = Utilities.GetEnumValues<HEXTILE_DIRECTION>();
-        for (int i = 0; i < outerTiles.Count; i++) {
-            HexTile currTile = outerTiles[i];
-            for (int j = 0; j < dirs.Length; j++) {
-                HEXTILE_DIRECTION dir = dirs[j];
-                if (dir == HEXTILE_DIRECTION.NONE) { continue; }
-                HexTile neighbour = currTile.GetNeighbour(dir);
-                if (neighbour == null || neighbour.region != currTile.region) {
-                    SpriteRenderer border = currTile.GetBorder(dir);
-                    border.gameObject.SetActive(true);
-                    currTile.SetBorderColor(regionColor);
-                }
-            }
-        }
-    }
-    public List<Region> AdjacentRegions() {
-        List<Region> adjacent = new List<Region>();
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            List<Region> regions;
-            if (currTile.TryGetDifferentRegionNeighbours(out regions)) {
-                for (int j = 0; j < regions.Count; j++) {
-                    Region currRegion = regions[j];
-                    if (!adjacent.Contains(currRegion)) {
-                        adjacent.Add(currRegion);
-                    }
-                }
-            }
-        }
-        return adjacent;
-    }
-    #endregion
-
-}

@@ -155,7 +155,6 @@ public static class Signals {
     public static string CAMERA_OUT_OF_FOCUS = "CameraOutOfFocus";
     public static string ON_OPEN_SHARE_INTEL = "OnOpenShareIntel";
     public static string ON_CLOSE_SHARE_INTEL = "OnCloseShareIntel";
-    public static string HAS_SEEN_ACTION_BUTTONS = "OnSeeActionButtons";
     #endregion
 
     #region Quest Signals
@@ -230,6 +229,7 @@ public static class Signals {
     /// Parameters (Summon newSummon)
     /// </summary>
     public static string PLAYER_GAINED_SUMMON = "OnPlayerGainedSummon";
+    public static string PLAYER_GAINED_SUMMON_LEVEL = "OnPlayerGainedSummonLevel";
     /// <summary>
     /// Parameters (Summon removedSummon)
     /// </summary>
@@ -242,6 +242,7 @@ public static class Signals {
     /// Parameters (Artifact newArtifact)
     /// </summary>
     public static string PLAYER_GAINED_ARTIFACT = "OnPlayerGainedArtifact";
+    public static string PLAYER_GAINED_ARTIFACT_LEVEL = "OnPlayerGainedArtifactLevel";
     /// <summary>
     /// Parameters (Artifact removedArtifact)
     /// </summary>
@@ -254,7 +255,7 @@ public static class Signals {
     /// <summary>
     /// parameters (Minion affectedMinion, PlayerJobAction)
     /// </summary>
-    public static string MINION_LEARNED_INTERVENE_ABILITY = "OnMinionLearnedInterveneAbility";
+    public static string PLAYER_LEARNED_INTERVENE_ABILITY = "OnMinionLearnedInterveneAbility";
     #endregion
 
     #region Interaction

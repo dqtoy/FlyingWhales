@@ -100,7 +100,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 51cc2170d7bb77744b58e9a139303d2d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -122,6 +122,7 @@ MonoBehaviour:
   ParentPool: {fileID: 0}
   img: {fileID: 114088507031208276}
   info: {fileID: 114161180852822196}
+  defaultSprite: {fileID: 21300000, guid: 51cc2170d7bb77744b58e9a139303d2d, type: 3}
   toggle: {fileID: 114631966326842410}
 --- !u!114 &114161180852822196
 MonoBehaviour:

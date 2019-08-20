@@ -31,6 +31,10 @@ public class ConsoleMenu : UIMenu {
     [SerializeField] private TextMeshProUGUI fullDebugLbl;
     [SerializeField] private TextMeshProUGUI fullDebug2Lbl;
 
+    void Awake() {
+        Initialize();
+    }
+
     internal override void Initialize() {
         commandHistory = new List<string>();
         _consoleActions = new Dictionary<string, Action<string[]>>() {
@@ -79,22 +83,25 @@ public class ConsoleMenu : UIMenu {
         if (isShowing && consoleInputField.text != "" && Input.GetKeyDown(KeyCode.Return)) {
             SubmitCommand();
         }
-        if (Input.GetKeyDown(KeyCode.UpArrow)) {
-            int newIndex = currentHistoryIndex - 1;
-            string command = commandHistory.ElementAtOrDefault(newIndex);
-            if (!string.IsNullOrEmpty(command)) {
-                consoleLbl.text = command;
-                currentHistoryIndex = newIndex;
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.DownArrow)) {
-            int newIndex = currentHistoryIndex + 1;
-            string command = commandHistory.ElementAtOrDefault(newIndex);
-            if (!string.IsNullOrEmpty(command)) {
-                consoleLbl.text = command;
-                currentHistoryIndex = newIndex;
-            }
-        }
+        //if (isShowing) {
+        //    if (Input.GetKeyDown(KeyCode.UpArrow)) {
+        //        int newIndex = currentHistoryIndex - 1;
+        //        string command = commandHistory.ElementAtOrDefault(newIndex);
+        //        if (!string.IsNullOrEmpty(command)) {
+        //            consoleLbl.text = command;
+        //            currentHistoryIndex = newIndex;
+        //        }
+        //    }
+        //    if (Input.GetKeyDown(KeyCode.DownArrow)) {
+        //        int newIndex = currentHistoryIndex + 1;
+        //        string command = commandHistory.ElementAtOrDefault(newIndex);
+        //        if (!string.IsNullOrEmpty(command)) {
+        //            consoleLbl.text = command;
+        //            currentHistoryIndex = newIndex;
+        //        }
+        //    }
+        //}
+        
     }
 
     #region Full Debug

@@ -74,9 +74,11 @@ public class StoryEventsManager : MonoBehaviour {
                 }
             } else if (choice.reqType == "Combat_Ability") {
                 return PlayerManager.Instance.player.HasMinionWithCombatAbility((COMBAT_ABILITY)System.Enum.Parse(typeof(COMBAT_ABILITY), choice.reqName));
-            } else if (choice.reqType == "Intervention_Ability") {
-                return PlayerManager.Instance.player.HasMinionWithInterventionAbility((INTERVENTION_ABILITY) System.Enum.Parse(typeof(INTERVENTION_ABILITY), choice.reqName));
-            } else if (choice.reqType == "Minion") {
+            } 
+            //else if (choice.reqType == "Intervention_Ability") {
+            //    return PlayerManager.Instance.player.HasMinionWithInterventionAbility((INTERVENTION_ABILITY) System.Enum.Parse(typeof(INTERVENTION_ABILITY), choice.reqName));
+            //}
+            else if (choice.reqType == "Minion") {
                 if (choice.reqName.Contains("Quantity")) {
                     int neededQuantity = System.Int32.Parse(choice.reqName.Substring(choice.reqName.IndexOf("_") + 1));
                     return PlayerManager.Instance.player.GetCurrentMinionCount() >= neededQuantity;
@@ -116,18 +118,18 @@ public class StoryEventsManager : MonoBehaviour {
         } else if (string.Equals(effect.effectType, "Intervention_Ability", System.StringComparison.OrdinalIgnoreCase)) {
             //Gain Ability
             if (effect.effectValue.ToLower() == "random") {
-                PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]), true);
+                PlayerManager.Instance.player.GainNewInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]), true);
             } else {
                 INTERVENTION_ABILITY ability;
                 ABILITY_TAG abilityTag;
                 if (System.Enum.TryParse(effect.effectValue.ToUpper(), out ability)) {
                     //intervention ability
-                    PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(ability, true);
+                    PlayerManager.Instance.player.GainNewInterventionAbility(ability, true);
                 } else if (System.Enum.TryParse(effect.effectValue.ToUpper(), out abilityTag)) {
                     //ability tag
                     List<INTERVENTION_ABILITY> abilities = PlayerManager.Instance.GetInterventionAbilitiesWithTag(abilityTag);
                     if (abilities.Count > 0) {
-                        PlayerManager.Instance.player.currentMinionLeader.AddInterventionAbility(abilities[Random.Range(0, abilities.Count)], true);
+                        PlayerManager.Instance.player.GainNewInterventionAbility(abilities[Random.Range(0, abilities.Count)], true);
                     } else {
                         Debug.LogWarning("There are no intervention abilities with tag " + abilityTag.ToString());
                     }
@@ -184,26 +186,28 @@ public class StoryEventsManager : MonoBehaviour {
                             minion.combatAbility.LevelUp();
                         }
                     }
-                } else if (effect.effectValue.ToLower() == "intervention ability") {
-                    for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
-                        Minion minion = PlayerManager.Instance.player.minions[i];
-                        if (minion != null) {
-                            for (int j = 0; j < minion.interventionAbilities.Length; j++) {
-                                if(minion.interventionAbilities[j] != null) {
-                                    minion.interventionAbilities[j].LevelUp();
-                                }
-                            }
-                        }
-                    }
-                } else if (effect.effectValue.ToLower() == "summon") {
+                } 
+                //else if (effect.effectValue.ToLower() == "intervention ability") {
+                //    for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+                //        Minion minion = PlayerManager.Instance.player.minions[i];
+                //        if (minion != null) {
+                //            for (int j = 0; j < minion.interventionAbilities.Length; j++) {
+                //                if(minion.interventionAbilities[j] != null) {
+                //                    minion.interventionAbilities[j].LevelUp();
+                //                }
+                //            }
+                //        }
+                //    }
+                //}
+                else if (effect.effectValue.ToLower() == "summon") {
                     List<Summon> summons = PlayerManager.Instance.player.GetAllSummons();
                     for (int i = 0; i < summons.Count; i++) {
                         summons[i].LevelUp();
                     }
                 } else if (effect.effectValue.ToLower() == "artifact") {
-                    for (int i = 0; i < PlayerManager.Instance.player.artifacts.Length; i++) {
-                        if (PlayerManager.Instance.player.artifacts[i] != null) {
-                            PlayerManager.Instance.player.artifacts[i].LevelUp();
+                    for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Length; i++) {
+                        if (PlayerManager.Instance.player.artifactSlots[i] != null) {
+                            PlayerManager.Instance.player.artifactSlots[i].LevelUp();
                         }
                     }
                 }

@@ -12,13 +12,13 @@ public class ShareIntel : PlayerJobAction {
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
     }
 
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         //base.ActivateAction(assignedCharacter, targetCharacter);
         if (!(targetPOI is Character)) {
             return;
         }
         Character targetCharacter = targetPOI as Character;
-        UIManager.Instance.OpenShareIntelMenu(targetCharacter, assignedCharacter);
+        UIManager.Instance.OpenShareIntelMenu(targetCharacter);
         
         //PlayerUI.Instance.SetIntelMenuState(true);
         //PlayerUI.Instance.SetIntelItemClickActions(targetCharacter.ShareIntel);
@@ -28,24 +28,20 @@ public class ShareIntel : PlayerJobAction {
         //PlayerUI.Instance.AddIntelItemOtherClickActions(() => PlayerUI.Instance.SetIntelItemClickActions(null));
     }
     public void BaseActivate(Character targetCharacter) {
-        base.ActivateAction(assignedCharacter, targetCharacter);
+        base.ActivateAction(targetCharacter);
         SetTargetCharacter(targetCharacter);
     }
     public override void DeactivateAction() {
-        this.assignedCharacter = null;
         isActive = false;
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener<JOB, Character>(Signals.MINION_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
         targetCharacter = null;
     }
-    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character targetCharacter) {
         if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
             return false;
         }
         if (targetCharacter.isDead) {
-            return false;
-        }
-        if (character.id == targetCharacter.id) {
             return false;
         }
         if (this.targetCharacter != null && targetCharacter.id == this.targetCharacter.id) {
@@ -60,7 +56,7 @@ public class ShareIntel : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Unconscious", "Resting") != null) {
             return false;
         }
-        return base.CanPerformActionTowards(character, targetCharacter);
+        return base.CanPerformActionTowards(targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if (!(targetPOI is Character)) {
@@ -71,9 +67,6 @@ public class ShareIntel : PlayerJobAction {
             return false;
         }
         if (targetCharacter.isDead) {
-            return false;
-        }
-        if (assignedCharacter == targetCharacter) {
             return false;
         }
         if (this.targetCharacter != null && targetCharacter.id == this.targetCharacter.id) {

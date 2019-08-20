@@ -12,6 +12,7 @@ public class SaveDataPlayer {
     public List<SaveDataMinion> minions;
     public List<int> summonIDs;
     public List<SaveDataArtifact> artifacts;
+    public List<SaveDataInterventionAbility> interventionAbilities;
 
     public int currentMinionLeaderID;
 
@@ -34,24 +35,34 @@ public class SaveDataPlayer {
             }
         }
 
-        summonIDs = new List<int>();
-        foreach(List<Summon> summons in player.summons.Values) {
-            for (int i = 0; i < summons.Count; i++) {
-                summonIDs.Add(summons[i].id);
-            }
-        }
+        //summonIDs = new List<int>();
+        //foreach(List<Summon> summons in player.summonSlots.Values) {
+        //    for (int i = 0; i < summons.Count; i++) {
+        //        summonIDs.Add(summons[i].id);
+        //    }
+        //}
 
+        //TODO: SAVE DATA ARTIFACT TO SAVE DATA ARTIFACT SLOT
         //Sort artifacts by id
-        artifacts = new List<SaveDataArtifact>();
-        for (int i = 0; i < player.artifacts.Length; i++) {
-            if(player.artifacts[i] != null) {
-                SaveDataArtifact saveDataArtifact = new SaveDataArtifact();
-                saveDataArtifact.Save(player.artifacts[i]);
-                SortAddSaveDataArtifact(saveDataArtifact);
-            }
-        }
+        //artifacts = new List<SaveDataArtifact>();
+        //for (int i = 0; i < player.artifactSlots.Length; i++) {
+        //    if(player.artifactSlots[i] != null) {
+        //        SaveDataArtifact saveDataArtifact = new SaveDataArtifact();
+        //        saveDataArtifact.Save(player.artifactSlots[i]);
+        //        SortAddSaveDataArtifact(saveDataArtifact);
+        //    }
+        //}
 
         currentMinionLeaderID = player.currentMinionLeader.character.id;
+
+        interventionAbilities = new List<SaveDataInterventionAbility>();
+        for (int i = 0; i < player.interventionAbilities.Length; i++) {
+            if (player.interventionAbilities[i] != null) {
+                SaveDataInterventionAbility saveDataInterventionAbility = new SaveDataInterventionAbility();
+                saveDataInterventionAbility.Save(player.interventionAbilities[i]);
+                interventionAbilities.Add(saveDataInterventionAbility);
+            }
+        }
     }
     public void Load() {
         PlayerManager.Instance.InitializePlayer(this);

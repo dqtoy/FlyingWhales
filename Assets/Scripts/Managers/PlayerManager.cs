@@ -56,40 +56,7 @@ public class PlayerManager : MonoBehaviour {
 
     public void LoadStartingTile() {
         BaseLandmark portal = LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.DEMONIC_PORTAL);
-        if (portal == null) {
-            //choose a starting tile
-            ChooseStartingTile();
-        } else {
-            OnLoadStartingTile(portal);
-        }
-    }
-    public void ChooseStartingTile() {
-        Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "Pick a starting tile", false);
-        isChoosingStartingTile = true;
-        Messenger.AddListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnChooseStartingTile);
-        UIManager.Instance.SetTimeControlsState(false);
-    }
-    private void OnChooseStartingTile(HexTile tile) {
-        if (tile.areaOfTile != null || tile.landmarkOnTile != null) {
-            Messenger.Broadcast(Signals.SHOW_POPUP_MESSAGE, "That is not a valid starting tile!", false);
-            return;
-        }
-        player = new Player();
-        PlayerUI.Instance.Initialize();
-        player.CreatePlayerFaction();
-        player.CreatePlayerArea(tile);
-        //player.SetMaxMinions(9);
-        //player.CreateInitialMinions();
-        //player.PreAssignJobSlots();
-        LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
-        Messenger.RemoveListener<HexTile>(Signals.TILE_LEFT_CLICKED, OnChooseStartingTile);
-        Messenger.Broadcast(Signals.HIDE_POPUP_MESSAGE);
-        GameManager.Instance.StartProgression();
-        isChoosingStartingTile = false;
-        UIManager.Instance.SetTimeControlsState(true);
-        PlayerUI.Instance.UpdateUI();
-        //PlayerUI.Instance.InitializeThreatMeter();
-        //LandmarkManager.Instance.CreateNewArea(tile, AREA_TYPE.DEMONIC_INTRUSION);
+        OnLoadStartingTile(portal);
     }
     private void OnLoadStartingTile(BaseLandmark portal) {
         player = new Player();
@@ -120,10 +87,10 @@ public class PlayerManager : MonoBehaviour {
         } else {
             player.LoadPlayerArea(existingPlayerArea);
         }
-        for (int i = 0; i < portal.sameRowTiles.Count; i++) {
-            HexTile sameRowTile = portal.sameRowTiles[i];
-            player.playerArea.AddTile(sameRowTile);
-            sameRowTile.SetCorruption(true);
+        for (int i = 0; i < portal.tileLocation.region.tiles.Count; i++) {
+            HexTile regionTile = portal.tileLocation.region.tiles[i];
+            player.playerArea.AddTile(regionTile);
+            regionTile.SetCorruption(true);
         }
         LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
         PlayerUI.Instance.UpdateUI();
@@ -144,12 +111,14 @@ public class PlayerManager : MonoBehaviour {
         }
         for (int i = 0; i < data.summonIDs.Count; i++) {
             Summon summon = CharacterManager.Instance.GetCharacterByID(data.summonIDs[i]) as Summon;
-            player.AddASummon(summon);
+            player.GainSummon(summon);
         }
         for (int i = 0; i < data.artifacts.Count; i++) {
             data.artifacts[i].Load(player);
         }
-
+        for (int i = 0; i < data.interventionAbilities.Count; i++) {
+            data.interventionAbilities[i].Load(player);
+        }
         for (int i = 0; i < player.minions.Length; i++) {
             if(player.minions[i] != null && player.minions[i].character.id == data.currentMinionLeaderID) {
                 player.SetMinionLeader(player.minions[i]);
@@ -162,10 +131,10 @@ public class PlayerManager : MonoBehaviour {
     public void AddTileToPlayerArea(HexTile tile) {
         player.playerArea.AddTile(tile);
         tile.SetCorruption(true);
-        for (int i = 0; i < tile.landmarkOnTile.sameRowTiles.Count; i++) {
-            HexTile sameRowTile = tile.landmarkOnTile.sameRowTiles[i];
-            player.playerArea.AddTile(sameRowTile);
-            sameRowTile.SetCorruption(true);
+        for (int i = 0; i < tile.region.tiles.Count; i++) {
+            HexTile regionTile = tile.region.tiles[i];
+            player.playerArea.AddTile(regionTile);
+            regionTile.SetCorruption(true);
         }
         //tile.StopCorruptionAnimation();
     }
@@ -391,6 +360,12 @@ public class PlayerManager : MonoBehaviour {
     }
     private void OnFinishInstructionFromPlayer(Character character) {
         character.SetIsFollowingPlayerInstruction(false);
+    }
+    #endregion
+
+    #region Special Objects
+    public SpecialObject CreateNewSpecialObject(string typeName) {
+        return System.Activator.CreateInstance(System.Type.GetType(typeName)) as SpecialObject;
     }
     #endregion
 }

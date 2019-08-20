@@ -19,8 +19,7 @@ public class UIManager : MonoBehaviour {
     public RectTransform mainRT;
     [SerializeField] private EventSystem eventSystem;
 
-    [Space(10)]
-    [SerializeField] UIMenu[] allMenus;
+    private UIMenu[] allMenus;
 
     [Space(10)]
     [Header("Date Objects")]
@@ -160,7 +159,9 @@ public class UIManager : MonoBehaviour {
 #if UNITY_EDITOR
             else if (currentTileHovered.landmarkOnTile != null) {
                 currentTileHovered.ShowTileInfo();
+               
             }
+            currentTileHovered.region?.OnHoverOverAction();
             //else  {
             //    currentTileHovered.ShowTileInfo();
             //}
@@ -180,6 +181,7 @@ public class UIManager : MonoBehaviour {
         x4Btn.interactable = state;
     }
     internal void InitializeUI() {
+        allMenus = this.transform.GetComponentsInChildren<UIMenu>(true);
         for (int i = 0; i < allMenus.Length; i++) {
             allMenus[i].Initialize();
             //allMenus[i].ApplyUnifiedSettings(settings);
@@ -231,6 +233,9 @@ public class UIManager : MonoBehaviour {
         }
         if (areaInfoUI.isShowing) {
             areaInfoUI.CloseMenu();
+        }
+        if (regionInfoUI.isShowing) {
+            regionInfoUI.CloseMenu();
         }
         if (tileObjectInfoUI.isShowing) {
             tileObjectInfoUI.CloseMenu();
@@ -322,6 +327,7 @@ public class UIManager : MonoBehaviour {
     private void UpdateInteractableInfoUI() {
         UpdateCharacterInfo();
         UpdateTileObjectInfo();
+        UpdateRegionInfo();
     }
 
     #region World Controls
@@ -761,7 +767,7 @@ public class UIManager : MonoBehaviour {
     [Header("Area Info")]
     [SerializeField]
     internal AreaInfoUI areaInfoUI;
-    public void ShowAreaInfo(Area area, int indexToggleToBeActivated = 0) {
+    public void ShowAreaInfo(Area area) {
         if (PlayerManager.Instance.player.homeArea == area) {
             UIManager.Instance.portalPopup.SetActive(true);
         } else {
@@ -773,6 +779,9 @@ public class UIManager : MonoBehaviour {
             }
             if (tileObjectInfoUI.isShowing) {
                 tileObjectInfoUI.CloseMenu();
+            }
+            if (regionInfoUI.isShowing) {
+                regionInfoUI.CloseMenu();
             }
             areaInfoUI.SetData(area);
             areaInfoUI.OpenMenu();
@@ -800,8 +809,6 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     internal FactionInfoUI factionInfoUI;
     public void ShowFactionInfo(Faction faction) {
-        //BeforeOpeningMenu(factionInfoUI);
-        //HideMainUI();
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
@@ -814,6 +821,9 @@ public class UIManager : MonoBehaviour {
         }
         if (tileObjectInfoUI.isShowing) {
             tileObjectInfoUI.CloseMenu();
+        }
+        if (regionInfoUI.isShowing) {
+            regionInfoUI.CloseMenu();
         }
         factionInfoUI.SetData(faction);
         factionInfoUI.OpenMenu();
@@ -830,8 +840,6 @@ public class UIManager : MonoBehaviour {
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
     public void ShowCharacterInfo(Character character) {
-        //BeforeOpeningMenu(characterInfoUI);
-        //HideMainUI();
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
@@ -845,24 +853,11 @@ public class UIManager : MonoBehaviour {
         if (tileObjectInfoUI.isShowing) {
             tileObjectInfoUI.CloseMenu();
         }
-        //if (hexTileInfoUI.isShowing) {
-        //    hexTileInfoUI.HideMenu();
-        //}
-        //if (questInfoUI.isShowing) {
-        //    questInfoUI.HideMenu();
-        //}
-        //if (partyinfoUI.isShowing) {
-        //    partyinfoUI.CloseMenu();
-        //}
-
+        if (regionInfoUI.isShowing) {
+            regionInfoUI.CloseMenu();
+        }
         characterInfoUI.SetData(character);
-        //if(character.role.roleType != CHARACTER_ROLE.PLAYER) {
         characterInfoUI.OpenMenu();
-        //} else {
-        //    characterInfoUI.CloseMenu();
-        //}
-        //character.CenterOnCharacter();
-        //		playerActionsUI.ShowPlayerActionsUI ();
     }
     public void UpdateCharacterInfo() {
         if (characterInfoUI.isShowing) {
@@ -904,6 +899,9 @@ public class UIManager : MonoBehaviour {
         }
         if (areaInfoUI.isShowing) {
             areaInfoUI.CloseMenu();
+        }
+        if (regionInfoUI.isShowing) {
+            regionInfoUI.CloseMenu();
         }
         tileObjectInfoUI.SetData(tileObject);
         tileObjectInfoUI.OpenMenu();
@@ -1012,6 +1010,7 @@ public class UIManager : MonoBehaviour {
     public void OnHoverOutTile(HexTile tile) {
         currentTileHovered = null;
         isHoveringTile = false;
+        tile.region?.OnHoverOutAction();
         if (tile.areaOfTile != null) {
             HideSmallInfo();
             isShowingAreaTooltip = false;
@@ -1122,8 +1121,8 @@ public class UIManager : MonoBehaviour {
     #region Share Intel
     [Header("Share Intel")]
     [SerializeField] private ShareIntelMenu shareIntelMenu;
-    public void OpenShareIntelMenu(Character targetCharacter, Character actor) {
-        shareIntelMenu.Open(targetCharacter, actor);
+    public void OpenShareIntelMenu(Character targetCharacter) {
+        shareIntelMenu.Open(targetCharacter);
     }
     public void OpenShareIntelMenu(Character targetCharacter, Character actor, Intel intel) {
         shareIntelMenu.Open(targetCharacter, actor, intel);
@@ -1253,6 +1252,37 @@ public class UIManager : MonoBehaviour {
         //    //interiorMapLoadingBGImage.CrossFadeAlpha(0, 0.5f, true);
         //    //StartCoroutine(LoadingCoroutine(0f / 255f));
         //}
+    }
+    #endregion
+
+    #region Area Info
+    [Space(10)]
+    [Header("Region Info")]
+    public RegionInfoUI regionInfoUI;
+    public void ShowRegionInfo(Region region) {
+        if (PlayerManager.Instance.player.homeArea == region.mainLandmark.tileLocation.areaOfTile) {
+            UIManager.Instance.portalPopup.SetActive(true);
+        } else {
+            if (factionInfoUI.isShowing) {
+                factionInfoUI.CloseMenu();
+            }
+            if (characterInfoUI.isShowing) {
+                characterInfoUI.CloseMenu();
+            }
+            if (tileObjectInfoUI.isShowing) {
+                tileObjectInfoUI.CloseMenu();
+            }
+            if (areaInfoUI.isShowing) {
+                areaInfoUI.CloseMenu();
+            }
+            regionInfoUI.SetData(region);
+            regionInfoUI.OpenMenu();
+        }
+    }
+    public void UpdateRegionInfo() {
+        if (regionInfoUI.isShowing) {
+            regionInfoUI.UpdateAllInfo();
+        }
     }
     #endregion
 }

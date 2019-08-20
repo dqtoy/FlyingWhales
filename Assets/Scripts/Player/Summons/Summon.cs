@@ -3,10 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Summon : Character {
+public class Summon : Character, IWorldObject {
 
 	public SUMMON_TYPE summonType { get; private set; }
     public bool hasBeenUsed { get; private set; } //has this summon been used in the current map. TODO: Set this to false at end of invasion of map.
+
+    #region getters/setters
+    public virtual string worldObjectName {
+        get { return name + " (" + Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString()) + ")"; }
+    }
+    #endregion
 
     public Summon(SUMMON_TYPE summonType, CharacterRole role, RACE race, GENDER gender) : base(role, race, gender) {
         this.summonType = summonType;
@@ -150,4 +156,45 @@ public class Summon : Character {
         ResetToFullHP();
     }
 
+    #region World Object
+    public void Obtain() {
+        //invading a region with a summon will recruit that summon for the player
+        PlayerManager.Instance.player.GainSummon(this, true);
+    }
+    #endregion
+
+}
+
+public class SummonSlot {
+    public int level;
+    public Summon summon;
+
+    public SummonSlot() {
+        level = 1;
+        summon = null;
+    }
+
+    public void SetSummon(Summon summon) {
+        this.summon = summon;
+        if (this.summon != null) {
+            this.summon.SetLevel(level);
+        }
+    }
+
+    public void LevelUp() {
+        level++;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_SUMMON);
+        if (this.summon != null) {
+            this.summon.SetLevel(level);
+        }
+        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
+    }
+    public void SetLevel(int amount) {
+        level = amount;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_SUMMON);
+        if (this.summon != null) {
+            this.summon.SetLevel(level);
+        }
+        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON_LEVEL, this);
+    }
 }

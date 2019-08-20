@@ -10,12 +10,12 @@ public class Destroy : PlayerJobAction {
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE_OBJECT };
     }
 
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         if (!(targetPOI is TileObject)) {
             return;
         }
         targetPOI.gridTileLocation.structure.RemovePOI(targetPOI);
-        base.ActivateAction(assignedCharacter, targetPOI);
+        base.ActivateAction(targetPOI);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

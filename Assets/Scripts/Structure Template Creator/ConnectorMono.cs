@@ -21,7 +21,7 @@ public class ConnectorMono : MonoBehaviour {
         return new StructureConnector() {
             allowedStructureType = allowedStructureType,
             neededDirection = connectionDirection,
-            location = new Vector3Int((int)(transform.localPosition.x - 0.5f), (int)(transform.localPosition.y - 0.5f), 0),
+            location = new Vector3Int((int)(transform.localPosition.x), (int)(transform.localPosition.y), 0),
             isOpen = true
         };
     }

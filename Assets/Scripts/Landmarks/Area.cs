@@ -350,12 +350,6 @@ public class
                     currTile.HighlightTile(areaColor, 128f/255f);
                 }
             }
-#else
-            if (currTile.id == coreTile.id) {
-                currTile.HighlightTile(areaColor, 255f / 255f);
-            } else {
-                currTile.HighlightTile(areaColor, 128f / 255f);
-            }
 #endif
         }
     }

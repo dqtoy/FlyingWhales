@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerJobAction {
 
     //public PlayerJobData parentData { get; protected set; }
-    public Minion minion { get; protected set; }
+    //public Minion minion { get; protected set; }
     public INTERVENTION_ABILITY abilityType { get; protected set; }
     public string name { get; protected set; }
     public string description { get; protected set; }
@@ -13,7 +13,7 @@ public class PlayerJobAction {
     public int abilityRadius { get; protected set; } //0 means single target
     public virtual string dynamicDescription { get { return description; } }
     public int cooldown { get; protected set; } //cooldown in ticks
-    public Character assignedCharacter { get; protected set; }
+    //public Character assignedCharacter { get; protected set; }
     public JOB_ACTION_TARGET[] targetTypes { get; protected set; } //what sort of object does this action target
     public bool isActive { get; protected set; }
     public int ticksInCooldown { get; private set; } //how many ticks has this action been in cooldown?
@@ -22,16 +22,23 @@ public class PlayerJobAction {
     public bool hasSecondPhase { get; protected set; }
     public bool isInSecondPhase { get; protected set; }
 
+    #region getters/setters
+    public string worldObjectName {
+        get { return name; }
+    }
     public bool isInCooldown {
         get { return ticksInCooldown != cooldown; } //check if the ticks this action has been in cooldown is the same as cooldown
     }
+    #endregion
+
+
 
     //public void SetParentData(PlayerJobData data) {
     //    parentData = data;
     //}
-    public void SetMinion(Minion minion) {
-        this.minion = minion;
-    }
+    //public void SetMinion(Minion minion) {
+    //    this.minion = minion;
+    //}
 
     public PlayerJobAction(INTERVENTION_ABILITY abilityType) {
         this.abilityType = abilityType;
@@ -56,31 +63,30 @@ public class PlayerJobAction {
     }
 
     #region Virtuals
-    public virtual void ActivateAction(Character assignedCharacter) { //this is called when the actions button is pressed
+    public virtual void ActivateAction() { //this is called when the actions button is pressed
         if (this.isActive) { //if this action is still active, deactivate it first
             DeactivateAction();
         }
-        this.assignedCharacter = assignedCharacter;
+        //this.assignedCharacter = assignedCharacter;
         isActive = true;
         //parentData.SetActiveAction(this);
         ActivateCooldown();
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //Messenger.AddListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
     }
-    public virtual void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) { //this is called when the actions button is pressed
-        ActivateAction(assignedCharacter);
+    public virtual void ActivateAction(IPointOfInterest targetPOI) { //this is called when the actions button is pressed
+        ActivateAction();
     }
-    public virtual void ActivateAction(Character assignedCharacter, Area targetArea) { //this is called when the actions button is pressed
-        ActivateAction(assignedCharacter);
+    public virtual void ActivateAction(Area targetArea) { //this is called when the actions button is pressed
+        ActivateAction();
     }
-    public virtual void ActivateAction(Character assignedCharacter, LocationGridTile targetTile) { 
-        ActivateAction(assignedCharacter);
+    public virtual void ActivateAction(LocationGridTile targetTile) { 
+        ActivateAction();
     }
-    public virtual void ActivateAction(Character assignedCharacter, List<IPointOfInterest> targetPOIs) {
-        ActivateAction(assignedCharacter);
+    public virtual void ActivateAction(List<IPointOfInterest> targetPOIs) {
+        ActivateAction();
     }
     public virtual void DeactivateAction() { //this is typically called when the character is assigned to another action or the assigned character dies
-        this.assignedCharacter = null;
         isActive = false;
         //parentData.SetActiveAction(null);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -113,31 +119,31 @@ public class PlayerJobAction {
     /// <param name="character">The character that will perform the action (Minion).</param>
     /// <param name="obj">The target object.</param>
     /// <returns>True or False.</returns>
-    public bool CanPerformActionTowards(Character character, object obj) {
+    public bool CanPerformActionTowards(object obj) {
         if (obj is Character) {
-            return CanPerformActionTowards(character, obj as Character);
+            return CanPerformActionTowards(obj as Character);
         } else if (obj is Area) {
-            return CanPerformActionTowards(character, obj as Area);
+            return CanPerformActionTowards(obj as Area);
         } else if (obj is IPointOfInterest) {
-            return CanPerformActionTowards(character, obj as IPointOfInterest);
+            return CanPerformActionTowards(obj as IPointOfInterest);
         } else if (obj is LocationGridTile) {
-            return CanPerformActionTowards(character, obj as LocationGridTile);
+            return CanPerformActionTowards(obj as LocationGridTile);
         }
         return CanPerformAction();
     }
-    protected virtual bool CanPerformActionTowards(Character character, Character targetCharacter) {
+    protected virtual bool CanPerformActionTowards(Character targetCharacter) {
         return CanPerformAction();
     }
-    protected virtual bool CanPerformActionTowards(Character character, Area targetCharacter) {
+    protected virtual bool CanPerformActionTowards(Area targetCharacter) {
         return CanPerformAction();
     }
-    protected virtual bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
+    protected virtual bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         return CanPerformAction();
     }
-    protected virtual bool CanPerformActionTowards(Character character, LocationGridTile tile) {
+    protected virtual bool CanPerformActionTowards(LocationGridTile tile) {
         return CanPerformAction();
     }
-    public virtual bool CanPerformActionTowards(Character character, List<IPointOfInterest> targetPOIs) {
+    public virtual bool CanPerformActionTowards(List<IPointOfInterest> targetPOIs) {
         return CanPerformAction();
     }
     /// <summary>

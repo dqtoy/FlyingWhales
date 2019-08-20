@@ -10,12 +10,12 @@ public class AccessMemories : PlayerJobAction {
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
     }
 
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         if (!(targetPOI is Character)) {
             return;
         }
         Character targetCharacter = targetPOI as Character;
-        base.ActivateAction(assignedCharacter, targetCharacter);
+        base.ActivateAction(targetCharacter);
         UIManager.Instance.ShowCharacterInfo(targetCharacter);
         PlayerUI.Instance.ShowMemories(targetCharacter);
 
@@ -24,11 +24,8 @@ public class AccessMemories : PlayerJobAction {
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
     }
-    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
-        if (character.id == targetCharacter.id) {
-            return false;
-        }
-        return base.CanPerformActionTowards(character, targetCharacter);
+    protected override bool CanPerformActionTowards(Character targetCharacter) {
+        return base.CanPerformActionTowards(targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if (!(targetPOI is Character)) {
@@ -36,9 +33,6 @@ public class AccessMemories : PlayerJobAction {
         }
         Character targetCharacter = targetPOI as Character;
         if (targetCharacter.isDead) {
-            return false;
-        }
-        if (assignedCharacter == targetCharacter) {
             return false;
         }
         return base.CanTarget(targetCharacter);

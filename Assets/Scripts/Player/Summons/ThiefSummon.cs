@@ -6,6 +6,12 @@ public class ThiefSummon : Summon {
 
     private int itemsToSteal; //number of items that the thief will steal.
 
+    #region getters/setters
+    public override string worldObjectName {
+        get { return name + " (Thief)"; }
+    }
+    #endregion
+
     public ThiefSummon() : base(SUMMON_TYPE.ThiefSummon, CharacterRole.BANDIT, RACE.HUMANS, Utilities.GetRandomGender()) {
         itemsToSteal = 1;
         AddInteractionType(INTERACTION_TYPE.STEAL);

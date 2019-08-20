@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour {
     //[SerializeField] private Vector2 hotSpot = Vector2.zero;
 
     public bool pauseTickEnded2 = false;
-    public bool onlyTickDays { get; private set; }
+    public int ticksToAddPerTick { get; private set; } //how many ticks to add per tick of progression? Set this to another value to advance ticks by more than 1. 
     //public bool isDraggingItem = false;
 
     #region getters/setters
@@ -85,6 +85,7 @@ public class GameManager : MonoBehaviour {
         Instance = this;
         this.timeElapsed = 0f;
         _gameHasStarted = false;
+        SetTicksToAddPerTick(ticksPerHour); //so that at start of the game time will advance by one hour per tick.
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
 #if !WORLD_CREATION_TOOL
         //Application.logMessageReceived += LogCallback;
@@ -121,21 +122,13 @@ public class GameManager : MonoBehaviour {
     }
     private void FixedUpdate() {
         if (_gameHasStarted && !isPaused) {
-            if (onlyTickDays) {
-                this.timeElapsed += Time.deltaTime;
-                if (this.timeElapsed >= this.progressionSpeed) {
-                    this.timeElapsed = 0f;
-                    DayStarted();
-                }
-            } else {
-                if (this.timeElapsed == 0f) {
-                    this.TickStarted();
-                }
-                this.timeElapsed += Time.deltaTime;
-                if (this.timeElapsed >= this.progressionSpeed) {
-                    this.timeElapsed = 0f;
-                    TickEnded();
-                }
+            if (this.timeElapsed == 0f) {
+                this.TickStarted();
+            }
+            this.timeElapsed += Time.deltaTime;
+            if (this.timeElapsed >= this.progressionSpeed) {
+                this.timeElapsed = 0f;
+                TickEnded();
             }
         }
     }
@@ -281,7 +274,6 @@ public class GameManager : MonoBehaviour {
             Messenger.Broadcast(Signals.HOUR_STARTED);
         }
         Messenger.Broadcast(Signals.TICK_STARTED);
-        //Messenger.Broadcast(Signals.TICK_STARTED_2);
         Messenger.Broadcast(Signals.UPDATE_UI);
     }
     /*
@@ -289,15 +281,12 @@ public class GameManager : MonoBehaviour {
      * */
     public void TickEnded(){
         Messenger.Broadcast(Signals.TICK_ENDED);
-        //Messenger.Broadcast(Signals.TICK_ENDED_2);
-        //while (pauseTickEnded2) {
-        //    yield return null;
-        //}
         Messenger.Broadcast(Signals.UPDATE_UI);
 
-        this.tick += 1;
+        this.tick += ticksToAddPerTick;
         if (this.tick > ticksPerDay) {
-            this.tick = 1;
+            int difference = this.tick - ticksPerDay; //Added this for cases when the ticks to be added per tick is greater than 1, so it is possible that the excess ticks over ticksPerDay can also be greater than 1
+            this.tick = difference;
             DayStarted(false);
         }
     }
@@ -367,8 +356,8 @@ public class GameManager : MonoBehaviour {
         float percent = (float)minutes/60f;
         return Mathf.FloorToInt(ticksPerHour * percent);
     }
-    public void SetOnlyTickDays(bool state) {
-        onlyTickDays = state;
+    public void SetTicksToAddPerTick(int amount) {
+        ticksToAddPerTick = amount;
     }
 
     #region Particle Effects

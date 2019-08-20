@@ -11,7 +11,7 @@ public class RileUp : PlayerJobAction {
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
     }
 
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         if (!(targetPOI is Character)) {
             return;
         }
@@ -20,9 +20,9 @@ public class RileUp : PlayerJobAction {
         UIManager.Instance.ShowClickableObjectPicker(LandmarkManager.Instance.allAreas, OnClickArea, null, CanClickArea, titleText);
     }
 
-    protected override bool CanPerformActionTowards(Character character, Character targetCharacter) {
+    protected override bool CanPerformActionTowards(Character targetCharacter) {
         name = GetActionName(targetCharacter);
-        if (targetCharacter.isDead || character.id == targetCharacter.id) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
+        if (targetCharacter.isDead) {
             return false;
         }
         if(targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
@@ -31,7 +31,7 @@ public class RileUp : PlayerJobAction {
         if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
-        return base.CanPerformActionTowards(character, targetCharacter);
+        return base.CanPerformActionTowards(targetCharacter);
     }
 
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -39,7 +39,7 @@ public class RileUp : PlayerJobAction {
             return false;
         }
         Character targetCharacter = targetPOI as Character;
-        if (targetCharacter.isDead || assignedCharacter == targetCharacter) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
         if (targetCharacter.role.roleType != CHARACTER_ROLE.BEAST) {
@@ -65,7 +65,7 @@ public class RileUp : PlayerJobAction {
 
     #region Character Checkers
     private void RileUpCharacter(Area area) {
-        base.ActivateAction(assignedCharacter, _targetCharacter);
+        base.ActivateAction(_targetCharacter);
         UIManager.Instance.HideObjectPicker();
 
         //_targetCharacter.AdjustIsWaitingForInteraction(1);
