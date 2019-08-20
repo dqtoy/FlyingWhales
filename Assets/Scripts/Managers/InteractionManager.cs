@@ -324,6 +324,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.TRANSFORM_FOOD:
                 goapAction = new TransformFood(actor, target);
                 break;
+            case INTERACTION_TYPE.ASK_TO_STOP_JOB:
+                goapAction = new AskToStopJob(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
@@ -506,6 +509,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.REPORT_HOSTILE:
             case JOB_TYPE.APPREHEND:
             case JOB_TYPE.REPORT_CRIME:
+            case JOB_TYPE.ATTEMPT_TO_STOP_JOB:
                 priority = 40;
                 break;
             case JOB_TYPE.REMOVE_TRAIT:

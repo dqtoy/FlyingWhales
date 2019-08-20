@@ -1844,6 +1844,16 @@ public class Character : ILeader, IPointOfInterest {
     private bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
     }
+    public GoapPlanJob CreateAttemptToStopCurrentActionAndJob(Character targetCharacter, GoapPlanJob jobToStop) {
+        if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.ATTEMPT_TO_STOP_JOB)) {
+            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_STOP_ACTION_AND_JOB, targetPOI = targetCharacter };
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.ATTEMPT_TO_STOP_JOB, goapEffect,
+                new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.ASK_TO_STOP_JOB, new object[] { jobToStop } }, });
+            jobQueue.AddJobInQueue(job);
+            return job;
+        }
+        return null;
+    }
     public void CreatePersonalJobs() {
         //Claim Item Job
         bool hasCreatedJob = false;
@@ -6658,6 +6668,7 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.CARRY);
         poiGoapActions.Add(INTERACTION_TYPE.DROP);
         poiGoapActions.Add(INTERACTION_TYPE.RESOLVE_CONFLICT);
+        poiGoapActions.Add(INTERACTION_TYPE.ASK_TO_STOP_JOB);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

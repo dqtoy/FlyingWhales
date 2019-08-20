@@ -137,6 +137,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STUMBLE,
                 INTERACTION_TYPE.ACCIDENT,
                 INTERACTION_TYPE.TRANSFORM_FOOD,
+                INTERACTION_TYPE.ASK_TO_STOP_JOB,
             } },
             { RACE.ELVES, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -236,6 +237,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STUMBLE,
                 INTERACTION_TYPE.ACCIDENT,
                 INTERACTION_TYPE.TRANSFORM_FOOD,
+                INTERACTION_TYPE.ASK_TO_STOP_JOB,
             } },
             { RACE.GOBLIN, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -336,6 +338,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STUMBLE,
                 INTERACTION_TYPE.ACCIDENT,
                 INTERACTION_TYPE.TRANSFORM_FOOD,
+                INTERACTION_TYPE.ASK_TO_STOP_JOB,
             } },
             { RACE.FAERY, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,
@@ -436,6 +439,7 @@ public class RaceManager : MonoBehaviour {
                 INTERACTION_TYPE.STUMBLE,
                 INTERACTION_TYPE.ACCIDENT,
                 INTERACTION_TYPE.TRANSFORM_FOOD,
+                INTERACTION_TYPE.ASK_TO_STOP_JOB,
             } },
             { RACE.SKELETON, new INTERACTION_TYPE[] {
                 //INTERACTION_TYPE.MOVE_TO_VISIT,

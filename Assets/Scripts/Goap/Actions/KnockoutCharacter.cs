@@ -108,8 +108,7 @@ public class KnockoutCharacter : GoapAction {
                     if (relationshipWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                         recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            //Add Attempt to Stop Job
-                            //recipient.CreateKnockoutJob(actor);
+                            recipient.CreateAttemptToStopCurrentActionAndJob(actor, parentPlan.job);
                         }
                         reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, targetCharacter.name));
                     } else if (relationshipWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
