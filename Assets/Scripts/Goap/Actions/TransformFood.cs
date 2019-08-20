@@ -100,6 +100,12 @@ public class TransformFood : GoapAction {
         } else if (deadCharacter.race == RACE.ELVES) {
             transformedFood = 120;
         }
+        if (isStealth) {
+            SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
+            currentState.SetIntelReaction(CannibalTransformSuccessIntelReaction);
+        } else {
+            currentState.SetIntelReaction(NormalTransformSuccessIntelReaction);
+        }
         currentState.AddLogFiller(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         currentState.AddLogFiller(null, transformedFood.ToString(), LOG_IDENTIFIER.STRING_1);
     }
@@ -109,6 +115,108 @@ public class TransformFood : GoapAction {
     }
     private void PreTargetMissing() {
         currentState.AddLogFiller(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    }
+    #endregion
+
+    #region Intel Reactions
+    private List<string> NormalTransformSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+
+        if (isOldNews) {
+            //Old News
+            reactions.Add("This is old news.");
+        } else {
+            //Not Yet Old News
+            if (awareCharactersOfThisAction.Contains(recipient)) {
+                //- If Recipient is Aware
+                reactions.Add("I know that already.");
+            } else {
+                reactions.Add("This isn't important.");
+            }
+        }
+        return reactions;
+    }
+    private List<string> CannibalTransformSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+        Character targetCharacter = poiTarget as Character;
+
+        RELATIONSHIP_EFFECT relWithActor = recipient.GetRelationshipEffectWith(actor);
+        RELATIONSHIP_EFFECT relWithTarget = recipient.GetRelationshipEffectWith(targetCharacter);
+
+        if (isOldNews) {
+            //Old News
+            reactions.Add("This is old news.");
+        } else {
+            //Not Yet Old News
+            if (awareCharactersOfThisAction.Contains(recipient)) {
+                //- If Recipient is Aware
+                reactions.Add("I know that already.");
+            } else {
+                //- Recipient is Actor
+                if (recipient == actor) {
+                    reactions.Add("Do not tell anybody, please!");
+                }
+                //- Positive Relationship with Actor
+                else if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
+                    recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                        recipient.marker.AddAvoidInRange(actor);
+                    }
+                    reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
+                }
+                //- Negative Relationship with Actor
+                else if (relWithActor == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
+                        recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            recipient.CreateKnockoutJob(actor);
+                        } else if (status == SHARE_INTEL_STATUS.INFORMED) {
+                            recipient.CreateUndermineJobOnly(actor, "informed");
+                        }
+                        reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
+                    } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            recipient.marker.AddAvoidInRange(actor);
+                        }
+                        reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
+                    } else {
+                        recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            recipient.CreateKnockoutJob(actor);
+                        } else if (status == SHARE_INTEL_STATUS.INFORMED) {
+                            recipient.CreateUndermineJobOnly(actor, "informed");
+                        }
+                        reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
+                    }
+                }
+                //- No Relationship with Actor
+                else if (relWithActor == RELATIONSHIP_EFFECT.NONE) {
+                    if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
+                        recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            recipient.CreateKnockoutJob(actor);
+                        } else if (status == SHARE_INTEL_STATUS.INFORMED) {
+                            recipient.CreateUndermineJobOnly(actor, "informed");
+                        }
+                        reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
+                    } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            recipient.marker.AddAvoidInRange(actor);
+                        }
+                        reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
+                    } else {
+                        recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
+                        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                            recipient.marker.AddAvoidInRange(actor);
+                        }
+                        reactions.Add(string.Format("What a sick monster! {0} should be restrained!", actor.name));
+                    }
+                }
+            }
+        }
+        return reactions;
     }
     #endregion
 }

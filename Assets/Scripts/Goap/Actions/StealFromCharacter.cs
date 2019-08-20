@@ -98,8 +98,10 @@ public class StealFromCharacter : GoapAction {
             actor.AdjustHappiness(60);
         }
     }
-    public void AfterStealVigilant() {
+    private void PreStealVigilant() {
         SetCommittedCrime(CRIME.THEFT, new Character[] { actor });
+    }
+    private void AfterStealVigilant() {
         if (poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
             if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
