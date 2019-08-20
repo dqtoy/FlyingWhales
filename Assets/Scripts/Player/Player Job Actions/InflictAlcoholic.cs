@@ -12,7 +12,7 @@ public class InflictAlcoholic : PlayerJobAction {
     }
 
     #region Overrides
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest poi) {
+    public override void ActivateAction(IPointOfInterest poi) {
         List<Character> targets = new List<Character>();
         if (poi is Character) {
             targets.Add(poi as Character);
@@ -25,7 +25,7 @@ public class InflictAlcoholic : PlayerJobAction {
         if (targets.Count > 0) {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
-                if (CanPerformActionTowards(assignedCharacter, currTarget)) {
+                if (CanPerformActionTowards(currTarget)) {
                     currTarget.AddTrait("Alcoholic");
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -34,7 +34,7 @@ public class InflictAlcoholic : PlayerJobAction {
                     PlayerManager.Instance.player.ShowNotification(log);
                 }
             }
-            base.ActivateAction(assignedCharacter, targets[0]);
+            base.ActivateAction(targets[0]);
         }        
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -63,7 +63,7 @@ public class InflictAlcoholic : PlayerJobAction {
         }
         return false;
     }
-    protected override bool CanPerformActionTowards(Character character, Character targetPOI) {
+    protected override bool CanPerformActionTowards(Character targetPOI) {
         if (targetPOI.isDead) {
             return false;
         }
@@ -72,13 +72,13 @@ public class InflictAlcoholic : PlayerJobAction {
         }
         return false;
     }
-    protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
+    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             if (to.users != null) {
                 for (int i = 0; i < to.users.Length; i++) {
                     Character currUser = to.users[i];
-                    bool canTarget = CanPerformActionTowards(character, currUser);
+                    bool canTarget = CanPerformActionTowards(currUser);
                     if (canTarget) { return true; }
                 }
             }

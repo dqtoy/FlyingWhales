@@ -12,6 +12,7 @@ public class SaveDataPlayer {
     public List<SaveDataMinion> minions;
     public List<int> summonIDs;
     public List<SaveDataArtifact> artifacts;
+    public List<SaveDataInterventionAbility> interventionAbilities;
 
     public int currentMinionLeaderID;
 
@@ -53,6 +54,15 @@ public class SaveDataPlayer {
         //}
 
         currentMinionLeaderID = player.currentMinionLeader.character.id;
+
+        interventionAbilities = new List<SaveDataInterventionAbility>();
+        for (int i = 0; i < player.interventionAbilities.Length; i++) {
+            if (player.interventionAbilities[i] != null) {
+                SaveDataInterventionAbility saveDataInterventionAbility = new SaveDataInterventionAbility();
+                saveDataInterventionAbility.Save(player.interventionAbilities[i]);
+                interventionAbilities.Add(saveDataInterventionAbility);
+            }
+        }
     }
     public void Load() {
         PlayerManager.Instance.InitializePlayer(this);

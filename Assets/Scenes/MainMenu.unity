@@ -16323,70 +16323,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed50c8ff9e1a3604cb589243a79c9bd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSizeX: 20
-  gridSizeY: 15
   minRegionCount: 18
   maxRegionCount: 22
-  minRegionTileCount: 10
-  maxRegionTileCount: 14
   minRegionWidthCount: 3
   maxRegionWidthCount: 4
   minRegionHeightCount: 3
   maxRegionHeightCount: 4
-  minColumnsBetweenSettlements: 5
-  maxColumnsBetweenSettlements: 8
-  tileColumnRows: 3
-  tileCollectionWidth: 4
-  tileCollectionHeight: 4
-  minSettltementCount: 5
-  maxSettltementCount: 7
-  minCitizenCountFirstSettlement: 16
-  maxCitizenCountFirstSettlement: 24
-  minCitizenCountIncreasePerSettlement: 1
-  maxCitizenCountIncreasePerSettlement: 3
-  landmarkGenTable:
-    m_keys: 0000000001000000020000000300000004000000
-    m_values:
-    - landmarkTypes:
-        m_keys: 0000000001000000020000000300000004000000
-        m_values:
-        - data: 2a000000
-        - data: 2d000000
-        - data: 17000000
-        - data: 18000000
-        - data: 19000000
-    - landmarkTypes:
-        m_keys: 0000000001000000020000000300000004000000
-        m_values:
-        - data: 2a000000
-        - data: 2d000000
-        - data: 17000000
-        - data: 18000000
-        - data: 19000000
-    - landmarkTypes:
-        m_keys: 0000000001000000020000000300000004000000
-        m_values:
-        - data: 2a000000
-        - data: 2d000000
-        - data: 17000000
-        - data: 18000000
-        - data: 19000000
-    - landmarkTypes:
-        m_keys: 0000000001000000020000000300000004000000
-        m_values:
-        - data: 2a000000
-        - data: 2d000000
-        - data: 17000000
-        - data: 18000000
-        - data: 19000000
-    - landmarkTypes:
-        m_keys: 0000000001000000020000000300000004000000
-        m_values:
-        - data: 2a000000
-        - data: 2d000000
-        - data: 17000000
-        - data: 18000000
-        - data: 19000000
+  minCitizenCount: 5
+  maxCitizenCount: 10
 --- !u!1 &1665094242
 GameObject:
   m_ObjectHideFlags: 0

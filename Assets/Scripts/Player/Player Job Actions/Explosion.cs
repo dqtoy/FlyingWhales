@@ -16,8 +16,8 @@ public class Explosion : PlayerJobAction {
     }
 
     #region Overrides
-    public override void ActivateAction(Character assignedCharacter, LocationGridTile targetTile) {
-        base.ActivateAction(assignedCharacter, targetTile);
+    public override void ActivateAction(LocationGridTile targetTile) {
+        base.ActivateAction(targetTile);
         List<ITraitable> flammables = new List<ITraitable>();
         List<LocationGridTile> tiles = targetTile.parentAreaMap.GetTilesInRadius(targetTile, radius, 0, true);
         for (int i = 0; i < tiles.Count; i++) {

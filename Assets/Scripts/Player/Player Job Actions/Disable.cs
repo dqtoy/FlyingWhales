@@ -10,7 +10,7 @@ public class Disable : PlayerJobAction {
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE_OBJECT };
     }
 
-    public override void ActivateAction(Character assignedCharacter, IPointOfInterest targetPOI) {
+    public override void ActivateAction(IPointOfInterest targetPOI) {
         if (!(targetPOI is TileObject)) {
             return;
         }
@@ -21,7 +21,7 @@ public class Disable : PlayerJobAction {
         //GameDate dueDate = GameManager.Instance.Today();
         //dueDate.AddTicks(GameManager.Instance.GetTicksBasedOnHour(4));
         //SchedulingManager.Instance.AddEntry(dueDate, () => targetPOI.SetIsDisabledByPlayer(false));
-        base.ActivateAction(assignedCharacter, targetPOI);
+        base.ActivateAction(targetPOI);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_intervention");
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -30,11 +30,11 @@ public class Disable : PlayerJobAction {
         PlayerManager.Instance.player.ShowNotification(log);
     }
 
-    protected override bool CanPerformActionTowards(Character character, IPointOfInterest targetPOI) {
+    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (!(targetPOI is TileObject) || targetPOI.gridTileLocation == null || targetPOI.isDisabledByPlayer) {
             return false;
         }
-        return base.CanPerformActionTowards(character, targetPOI);
+        return base.CanPerformActionTowards(targetPOI);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
         if (!(targetPOI is TileObject) || targetPOI.gridTileLocation == null || targetPOI.isDisabledByPlayer) {

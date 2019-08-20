@@ -34,20 +34,22 @@ public class LevelUpUI : MonoBehaviour {
             pendingReplaceActions.Add(() => ShowLevelUpUI(minionToLevelUp, identifierToLevelUp));
             return;
         }
-        //UIManager.Instance.Pause();
+        UIManager.Instance.Pause();
         Utilities.DestroyChildren(choicesParent);
         UpdateMinionToLevelUp(minionToLevelUp, identifierToLevelUp);
 
         List<object> choices = new List<object>();
         if(identifierToLevelUp.ToLower() == "combat ability") {
             choices.Add(minionToLevelUp.combatAbility);
-        } else if (identifierToLevelUp.ToLower() == "intervention ability") {
-            for (int i = 0; i < minionToLevelUp.interventionAbilities.Length; i++) {
-                if(minionToLevelUp.interventionAbilities[i] != null) {
-                    choices.Add(minionToLevelUp.interventionAbilities[i]);
-                }
-            }
-        } else if (identifierToLevelUp.ToLower() == "summon_slot") {
+        }
+         //else if (identifierToLevelUp.ToLower() == "intervention ability") {
+         //    for (int i = 0; i < minionToLevelUp.interventionAbilities.Length; i++) {
+         //        if(minionToLevelUp.interventionAbilities[i] != null) {
+         //            choices.Add(minionToLevelUp.interventionAbilities[i]);
+         //        }
+         //    }
+         //} 
+         else if (identifierToLevelUp.ToLower() == "summon_slot") {
             for (int i = 0; i < PlayerManager.Instance.player.maxSummonSlots; i++) {
                 choices.Add(PlayerManager.Instance.player.summonSlots[i]);
             }
@@ -95,7 +97,7 @@ public class LevelUpUI : MonoBehaviour {
 
 
     private void Close() {
-        //UIManager.Instance.Unpause();
+        UIManager.Instance.Unpause();
         this.gameObject.SetActive(false);
         if (pendingReplaceActions.Count > 0) {
             System.Action pending = pendingReplaceActions[0];

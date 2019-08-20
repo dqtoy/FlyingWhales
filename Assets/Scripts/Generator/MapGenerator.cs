@@ -33,10 +33,6 @@ public class MapGenerator : MonoBehaviour {
         GenerateMapWidthAndHeightFromRegionCount(regionCount, out width, out height);
         Debug.Log("Width: " + width + " Height: " + height + " Region Count: " + regionCount);
         GridMap.Instance.SetupInitialData(width, height);
-        //RandomWorld world = WorldConfigManager.Instance.GenerateRandomWorldData();
-        //world.LogWorldData();
-        //GridMap.Instance.SetupInitialData(WorldConfigManager.Instance.gridSizeX, WorldConfigManager.Instance.gridSizeY);
-        //GridMap.Instance.SetupInitialData(world.mapWidth, world.mapHeight);
         GridMap.Instance.GenerateGrid();
         EquatorGenerator.Instance.GenerateEquator((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance.hexTiles);
         Biomes.Instance.GenerateElevation(GridMap.Instance.hexTiles, (int)GridMap.Instance.width, (int)GridMap.Instance.height);
@@ -57,9 +53,6 @@ public class MapGenerator : MonoBehaviour {
         GridMap.Instance.DivideToRegions(GridMap.Instance.hexTiles, regionCount, width * height);
         LandmarkManager.Instance.GenerateLandmarksNew(GridMap.Instance.allRegions, out portal, out settlement);
         LandmarkManager.Instance.GenerateConnections(portal, settlement);
-
-        //Old Map Generation
-        //LandmarkManager.Instance.GenerateLandmarks(world, out portal);
 
         FactionManager.Instance.CreateNeutralFaction();
         //LandmarkManager.Instance.SetCascadingLevelsForAllCharacters(portal.tileLocation);

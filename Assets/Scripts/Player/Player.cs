@@ -165,9 +165,9 @@ public class Player : ILeader {
         for (int i = 0; i < minions.Length; i++) {
             if(minions[i] != null) {
                 minions[i].ResetCombatAbilityCD();
-                minions[i].ResetInterventionAbilitiesCD();
             }
         }
+        ResetInterventionAbilitiesCD();
         currentTargetFaction = area.owner;
     }
     private void OnAreaMapClosed(Area area) {
@@ -228,16 +228,16 @@ public class Player : ILeader {
     }
     public void InitializeMinion(Minion minion) {
         //minion.SetLevel(30);
-        minion.SetUnlockedInterventionSlots(3);
-        minion.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
-        minion.AddInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
+        //minion.SetUnlockedInterventionSlots(3);
+        //minion.GainNewInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
+        //minion.GainNewInterventionAbility(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
         minion.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
         //TODO: Add one positive and one negative trait
     }
     public void InitializeMinion(SaveDataMinion data, Minion minion) {
-        for (int i = 0; i < data.interventionAbilities.Count; i++) {
-            data.interventionAbilities[i].Load(minion);
-        }
+        //for (int i = 0; i < data.interventionAbilities.Count; i++) {
+        //    data.interventionAbilities[i].Load(minion);
+        //}
         data.combatAbility.Load(minion);
     }
     public void AddMinion(Minion minion) {
@@ -248,9 +248,9 @@ public class Player : ILeader {
         } else {
             minion.SetIndexDefaultSort(currentMinionCount);
             minions[currentMinionCount] = minion;
-            if(currentMinionLeader == null) {
-                SetMinionLeader(minion);
-            }
+            //if(currentMinionLeader == null) {
+            //    SetMinionLeader(minion);
+            //}
             PlayerUI.Instance.UpdateRoleSlots();
         }
     }
@@ -320,19 +320,6 @@ public class Player : ILeader {
             Minion currMinion = minions[i];
             if (currMinion != null && currMinion.combatAbility.type == ability) {
                 return true;
-            }
-        }
-        return false;
-    }
-    public bool HasMinionWithInterventionAbility(INTERVENTION_ABILITY ability) {
-        for (int i = 0; i < minions.Length; i++) {
-            Minion currMinion = minions[i];
-            if (currMinion != null) {
-                for (int j = 0; j < currMinion.interventionAbilities.Length; j++) {
-                    if(currMinion.interventionAbilities[j] != null && currMinion.interventionAbilities[j].abilityType == ability) {
-                        return true;
-                    }
-                }
             }
         }
         return false;
@@ -572,9 +559,9 @@ public class Player : ILeader {
                 case JOB_ACTION_TARGET.CHARACTER:
                     if (InteriorMapManager.Instance.currentlyShowingMap != null && InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
                         summary += " targetting " + InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter.name;
-                        if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
+                        if (currentActivePlayerJobAction.CanPerformActionTowards(InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
                             summary += "\nActivated action!";
-                            currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
+                            currentActivePlayerJobAction.ActivateAction(InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
                             activatedAction = true;
                         } else {
                             summary += "\nDid not activate action! Did not meet requirements";
@@ -588,9 +575,9 @@ public class Player : ILeader {
                     hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null && hoveredTile.objHere != null) {
                         summary += " targetting " + hoveredTile.objHere.name;
-                        if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, hoveredTile.objHere)) {
+                        if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile.objHere)) {
                             summary += "\nActivated action!";
-                            currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, hoveredTile.objHere);
+                            currentActivePlayerJobAction.ActivateAction(hoveredTile.objHere);
                             activatedAction = true;
                         } else {
                             summary += "\nDid not activate action! Did not meet requirements";
@@ -604,9 +591,9 @@ public class Player : ILeader {
                     hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
                         summary += " targetting " + hoveredTile.ToString();
-                        if (currentActivePlayerJobAction.CanPerformActionTowards(currentActivePlayerJobAction.minion.character, hoveredTile)) {
+                        if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile)) {
                             summary += "\nActivated action!";
-                            currentActivePlayerJobAction.ActivateAction(currentActivePlayerJobAction.minion.character, hoveredTile);
+                            currentActivePlayerJobAction.ActivateAction(hoveredTile);
                             activatedAction = true;
                         } else {
                             summary += "\nDid not activate action! Did not meet requirements";
@@ -1552,20 +1539,39 @@ public class Player : ILeader {
     #endregion
 
     #region Intervention Ability
-    public void GainNewInterventionAbility(INTERVENTION_ABILITY ability) {
+    public void GainNewInterventionAbility(INTERVENTION_ABILITY ability, bool showNewAbilityUI = false) {
         PlayerJobAction playerJobAction = PlayerManager.Instance.CreateNewInterventionAbility(ability);
-        GainNewInterventionAbility(playerJobAction);
+        GainNewInterventionAbility(playerJobAction, showNewAbilityUI);
     }
-    public void GainNewInterventionAbility(PlayerJobAction ability) {
+    public void GainNewInterventionAbility(PlayerJobAction ability, bool showNewAbilityUI = false) {
         int abilityCount = GetInterventionAbilityCount();
-        if (abilityCount == minions.Length) {
-            //Broadcast minion is full, must be received by a UI that will pop up and let the player whether it will replace or be discarded
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(interventionAbilities.ToList(), ability, ReplaceMinion, RejectMinion);
+        if (abilityCount == interventionAbilities.Length) {
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(interventionAbilities.ToList(), ability, OnReplaceInterventionAbility, OnRejectInterventionAbility);
         } else {
-            interventionAbilities[abilityCount] = ability;
-            //PlayerUI.Instance.UpdateRoleSlots();
+            for (int i = 0; i < interventionAbilities.Length; i++) {
+                if (interventionAbilities[i] == null) {
+                    interventionAbilities[i] = ability;
+                    Messenger.Broadcast(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, ability);
+                    if (showNewAbilityUI) {
+                        PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(null, ability);
+                    }
+                    break;
+                }
+            }
         }
     }
+    private void OnReplaceInterventionAbility(object objToReplace, object objToAdd) {
+        PlayerJobAction replace = objToReplace as PlayerJobAction;
+        PlayerJobAction add = objToAdd as PlayerJobAction;
+        for (int i = 0; i < interventionAbilities.Length; i++) {
+            if (interventionAbilities[i] == replace) {
+                interventionAbilities[i] = add;
+                Messenger.Broadcast(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, add);
+                break;
+            }
+        }
+    }
+    private void OnRejectInterventionAbility(object rejectedObj) { }
     private int GetInterventionAbilityCount() {
         int count = 0;
         for (int i = 0; i < interventionAbilities.Length; i++) {
@@ -1574,6 +1580,13 @@ public class Player : ILeader {
             }
         }
         return count;
+    }
+    public void ResetInterventionAbilitiesCD() {
+        for (int i = 0; i < interventionAbilities.Length; i++) {
+            if (interventionAbilities[i] != null) {
+                interventionAbilities[i].InstantCooldown();
+            }
+        }
     }
     #endregion
 }

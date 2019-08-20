@@ -16,8 +16,8 @@ public class Ignite : PlayerJobAction {
     }
 
     #region Overrides
-    public override void ActivateAction(Character assignedCharacter, LocationGridTile targetTile) {
-        base.ActivateAction(assignedCharacter, targetTile);
+    public override void ActivateAction(LocationGridTile targetTile) {
+        base.ActivateAction(targetTile);
         List<LocationGridTile> tiles = GetTargetTiles(targetTile);
         if (tiles.Count > 0) {
             for (int i = 0; i < tiles.Count; i++) {
@@ -33,7 +33,7 @@ public class Ignite : PlayerJobAction {
     public override bool CanTarget(LocationGridTile tile) {
         return GetTargetTiles(tile).Count > 0;
     }
-    protected override bool CanPerformActionTowards(Character character, LocationGridTile tile) {
+    protected override bool CanPerformActionTowards(LocationGridTile tile) {
         return GetTargetTiles(tile).Count > 0;
     }
     public override void ShowRange(LocationGridTile targetTile) {
