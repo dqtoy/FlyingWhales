@@ -28,7 +28,7 @@ public class Inspect : GoapAction {
         }
     }
     protected override int GetCost() {
-        return 3;
+        return 4;
     }
     #endregion
 

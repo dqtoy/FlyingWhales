@@ -144,7 +144,7 @@ RectTransform:
   m_Children:
   - {fileID: 1441338108}
   m_Father: {fileID: 606078597}
-  m_RootOrder: 21
+  m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -28442,11 +28442,11 @@ RectTransform:
   - {fileID: 208233343}
   - {fileID: 299459096}
   - {fileID: 145692320}
-  - {fileID: 1165945286}
   - {fileID: 1822834}
+  - {fileID: 1165945286}
+  - {fileID: 1390232342}
   - {fileID: 410691204}
   - {fileID: 196280313}
-  - {fileID: 1390232342}
   - {fileID: 808260737}
   m_Father: {fileID: 1538653384}
   m_RootOrder: 11
@@ -69132,7 +69132,7 @@ RectTransform:
   - {fileID: 1187700191}
   - {fileID: 753889844}
   m_Father: {fileID: 606078597}
-  m_RootOrder: 24
+  m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -73472,21 +73472,6 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 2080112258}
     m_Modifications:
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 2}
-      propertyPath: landmarkData.Array.data[11].biomeTileSprites.m_keys.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 2}
-      propertyPath: landmarkData.Array.data[11].biomeTileSprites.m_values.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
-        type: 2}
-      propertyPath: landmarkData.Array.data[11].biomeTileSprites.m_values.Array.data[0].data.Array.size
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4032634498680816, guid: 5265a95405071234ca6e83f73bf3868d, type: 2}
       propertyPath: m_LocalPosition.x
       value: 0
