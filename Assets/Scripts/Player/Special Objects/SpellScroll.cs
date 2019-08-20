@@ -9,8 +9,8 @@ public class SpellScroll : SpecialObject {
     #region Overrides
     public override void Obtain() {
         base.Obtain();
-        INTERVENTION_ABILITY[] spells = Utilities.GetEnumValues<INTERVENTION_ABILITY>();
-        PlayerManager.Instance.player.GainNewInterventionAbility(spells[Random.Range(1, spells.Length)]);
+        INTERVENTION_ABILITY[] spells = PlayerManager.Instance.allInterventionAbilities;
+        PlayerManager.Instance.player.GainNewInterventionAbility(spells[Random.Range(0, spells.Length)]);
     }
     #endregion
 }

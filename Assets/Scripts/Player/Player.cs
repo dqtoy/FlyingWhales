@@ -248,9 +248,9 @@ public class Player : ILeader {
         } else {
             minion.SetIndexDefaultSort(currentMinionCount);
             minions[currentMinionCount] = minion;
-            if(currentMinionLeader == null) {
-                SetMinionLeader(minion);
-            }
+            //if(currentMinionLeader == null) {
+            //    SetMinionLeader(minion);
+            //}
             PlayerUI.Instance.UpdateRoleSlots();
         }
     }
@@ -324,19 +324,6 @@ public class Player : ILeader {
         }
         return false;
     }
-    //public bool HasMinionWithInterventionAbility(INTERVENTION_ABILITY ability) {
-    //    for (int i = 0; i < minions.Length; i++) {
-    //        Minion currMinion = minions[i];
-    //        if (currMinion != null) {
-    //            for (int j = 0; j < currMinion.interventionAbilities.Length; j++) {
-    //                if(currMinion.interventionAbilities[j] != null && currMinion.interventionAbilities[j].abilityType == ability) {
-    //                    return true;
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return false;
-    //}
     public Minion GetRandomMinion() {
         List<Minion> minionChoices = new List<Minion>();
         for (int i = 0; i < minions.Length; i++) {

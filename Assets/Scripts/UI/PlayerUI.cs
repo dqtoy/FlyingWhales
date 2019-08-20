@@ -1273,9 +1273,11 @@ public class PlayerUI : MonoBehaviour {
         generalConfirmationTitleText.text = header.ToUpper();
         generalConfirmationBodyText.text = body;
         generalConfirmationGO.SetActive(true);
+        UIManager.Instance.Pause();
     }
     public void OnClickOKGeneralConfirmation() {
         generalConfirmationGO.SetActive(false);
+        UIManager.Instance.Unpause();
     }
     #endregion
 }

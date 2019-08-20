@@ -1076,17 +1076,17 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public bool CanBeCorrupted() {
         return true;
 
-        bool canBeCorrupted = false;
-        if (landmarkOnTile != null && landmarkOnTile.connections != null) {
-            for (int i = 0; i < landmarkOnTile.connections.Count; i++) {
-                BaseLandmark connection = landmarkOnTile.connections[i];
-                if (connection.tileLocation.isCorrupted) {
-                    canBeCorrupted = true;
-                    break;
-                }
-            }
-        }
-        return canBeCorrupted;
+        //bool canBeCorrupted = false;
+        //if (landmarkOnTile != null && landmarkOnTile.connections != null) {
+        //    for (int i = 0; i < landmarkOnTile.connections.Count; i++) {
+        //        BaseLandmark connection = landmarkOnTile.connections[i];
+        //        if (connection.tileLocation.isCorrupted) {
+        //            canBeCorrupted = true;
+        //            break;
+        //        }
+        //    }
+        //}
+        return region.CanBeInvaded();
     }
     #endregion
 

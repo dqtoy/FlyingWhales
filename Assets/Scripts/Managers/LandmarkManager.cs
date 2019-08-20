@@ -552,35 +552,35 @@ public class LandmarkManager : MonoBehaviour {
             BaseLandmark landmark = allLandmarks[i];
             WeightedDictionary<string> worldObjWeights = new WeightedDictionary<string>();
             switch (landmark.specificLandmarkType) {
-                //case LANDMARK_TYPE.MONSTER_LAIR:
-                //    worldObjWeights.AddElement("summon", 100);
-                //    break;
-                //case LANDMARK_TYPE.CAVE:
-                //    worldObjWeights.AddElement("summon", 25);
-                //    worldObjWeights.AddElement("artifact", 25);
-                //    worldObjWeights.AddElement("SpellScroll", 20);
-                //    worldObjWeights.AddElement("SkillScroll", 15);
-                //    worldObjWeights.AddElement("DemonStone", 15);
-                //    break;
-                //case LANDMARK_TYPE.ANCIENT_RUIN:
-                //    worldObjWeights.AddElement("summon", 10);
-                //    worldObjWeights.AddElement("artifact", 15);
-                //    worldObjWeights.AddElement("SpellScroll", 35);
-                //    worldObjWeights.AddElement("SkillScroll", 25);
-                //    worldObjWeights.AddElement("DemonStone", 15);
-                //    break;
-                //case LANDMARK_TYPE.BARRACKS:
-                //case LANDMARK_TYPE.OUTPOST:
-                //    worldObjWeights.AddElement("SkillScroll", 35);
-                //    worldObjWeights.AddElement("nothing", 65);
-                //    break;
-                //case LANDMARK_TYPE.TEMPLE:
-                //    worldObjWeights.AddElement("SpellScroll", 35);
-                //    worldObjWeights.AddElement("nothing", 65);
-                //    break;
-                default:
-                    worldObjWeights.AddElement("SpellScroll", 100);
+                case LANDMARK_TYPE.MONSTER_LAIR:
+                    worldObjWeights.AddElement("summon", 100);
                     break;
+                case LANDMARK_TYPE.CAVE:
+                    worldObjWeights.AddElement("summon", 25);
+                    worldObjWeights.AddElement("artifact", 25);
+                    worldObjWeights.AddElement("SpellScroll", 20);
+                    worldObjWeights.AddElement("SkillScroll", 15);
+                    worldObjWeights.AddElement("DemonStone", 15);
+                    break;
+                case LANDMARK_TYPE.ANCIENT_RUIN:
+                    worldObjWeights.AddElement("summon", 10);
+                    worldObjWeights.AddElement("artifact", 15);
+                    worldObjWeights.AddElement("SpellScroll", 35);
+                    worldObjWeights.AddElement("SkillScroll", 25);
+                    worldObjWeights.AddElement("DemonStone", 15);
+                    break;
+                case LANDMARK_TYPE.BARRACKS:
+                case LANDMARK_TYPE.OUTPOST:
+                    worldObjWeights.AddElement("SkillScroll", 35);
+                    worldObjWeights.AddElement("nothing", 65);
+                    break;
+                case LANDMARK_TYPE.TEMPLE:
+                    worldObjWeights.AddElement("SpellScroll", 35);
+                    worldObjWeights.AddElement("nothing", 65);
+                    break;
+                //default:
+                //    worldObjWeights.AddElement("SpellScroll", 100);
+                //    break;
             }
             if (worldObjWeights.GetTotalOfWeights() > 0) {
                 IWorldObject worldObj = null;
