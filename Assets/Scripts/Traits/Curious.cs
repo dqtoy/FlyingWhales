@@ -28,8 +28,10 @@ public class Curious : Trait {
         if (targetPOI is TileObject) {
             TileObject objectToBeInspected = targetPOI as TileObject;
             if(objectToBeInspected.isSummonedByPlayer && !alreadyInspectedTileObjects.Contains(objectToBeInspected)) {
-                GoapPlanJob inspectJob = new GoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, objectToBeInspected);
-                characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
+                if(!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, objectToBeInspected)){
+                    GoapPlanJob inspectJob = new GoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, objectToBeInspected);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
+                }
             }
         }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
