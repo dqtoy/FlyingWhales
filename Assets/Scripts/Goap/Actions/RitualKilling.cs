@@ -40,8 +40,10 @@ public class RitualKilling : GoapAction {
     #endregion
 
     #region State Effects
-    public void AfterKillingSuccess() {
+    private void PreKillingSuccess() {
         SetCommittedCrime(CRIME.MURDER, new Character[] { actor });
+    }
+    private void AfterKillingSuccess() {
         if (poiTarget is Character) {
             SetCannotCancelAction(true);
             Character targetCharacter = poiTarget as Character;
