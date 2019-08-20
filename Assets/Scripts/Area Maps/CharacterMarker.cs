@@ -58,7 +58,6 @@ public class CharacterMarker : PooledObject {
             _arrivalAction = value;
         }
     }
-
     //movement
     private Action _arrivalAction;
     public IPointOfInterest targetPOI { get; private set; }
@@ -71,6 +70,7 @@ public class CharacterMarker : PooledObject {
     public int targettedByRemoveNegativeTraitActionsCounter { get; private set; }
     public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
     public List<IPointOfInterest> terrifyingObjects { get; private set; } //list of objects that this character is terrified of and must avoid
+    public bool isMoving { get; private set; }
 
     private LocationGridTile _previousGridTile;
     private float progressionSpeedMultiplier;
@@ -521,6 +521,7 @@ public class CharacterMarker : PooledObject {
         targetPOI = null;
     }
     private void StartMovement() {
+        isMoving = true;
         UpdateSpeed();
         pathfindingAI.SetIsStopMovement(false);
         character.currentParty.icon.SetIsTravelling(true);
@@ -529,6 +530,7 @@ public class CharacterMarker : PooledObject {
         //Messenger.Broadcast(Signals.CHARACTER_STARTED_MOVING, character);
     }
     public void StopMovement() {
+        isMoving = false;
         string log = character.name + " StopMovement function is called!";
         character.PrintLogIfActive(log);
         if (character.currentParty.icon != null) {

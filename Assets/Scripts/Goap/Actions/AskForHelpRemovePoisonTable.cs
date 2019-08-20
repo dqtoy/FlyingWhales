@@ -6,6 +6,7 @@ public class AskForHelpRemovePoisonTable : GoapAction {
 
     private Character troubledCharacter;
     private IPointOfInterest targetTable;
+    private Poisoned poison;
 
     public AskForHelpRemovePoisonTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         troubledCharacter = actor.troubledCharacter;
@@ -47,6 +48,7 @@ public class AskForHelpRemovePoisonTable : GoapAction {
     public override bool InitializeOtherData(object[] otherData) {
         if(otherData.Length == 1 && otherData[0] is IPointOfInterest) {
             targetTable = otherData[0] as IPointOfInterest;
+            poison = targetTable.GetNormalTrait("Poisoned") as Poisoned;
             if (thoughtBubbleMovingLog != null) {
                 thoughtBubbleMovingLog.AddToFillers(targetTable.gridTileLocation.structure, targetTable.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
             }
@@ -66,6 +68,7 @@ public class AskForHelpRemovePoisonTable : GoapAction {
     public void PreAskSuccess() {
         currentState.AddLogFiller(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
         currentState.AddLogFiller(targetTable.gridTileLocation.structure, targetTable.gridTileLocation.structure.name, LOG_IDENTIFIER.LANDMARK_1);
+        currentState.SetIntelReaction(SuccessReactions);
     }
     public void AfterAskSuccess() {
         Character target = poiTarget as Character;
@@ -76,5 +79,38 @@ public class AskForHelpRemovePoisonTable : GoapAction {
     //public void PreTargetMissing() {
     //    currentState.AddLogFiller(troubledCharacter, troubledCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
     //}
+    #endregion
+
+    #region Intel Reactions
+    private List<string> SuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+        Character target = poiTarget as Character;
+        TileObject table = targetTable as TileObject;
+        if (poison.responsibleCharacters.Contains(recipient)) {
+            if (target.jobQueue.HasJob(JOB_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, targetTable)) {
+                //TODO: - Create an Attempt to Stop Job targeting Target with Remove Poison Table as the target job
+                if (status == SHARE_INTEL_STATUS.INFORMED) {
+                    //- If informed: "I will not let [Target Name] prevent me from achieving my goal."
+                    reactions.Add(string.Format("I will not let {0} prevent me from achieving my goal.", target.name));
+                }
+            } else {
+                if (status == SHARE_INTEL_STATUS.INFORMED) {
+                    // - If informed: "Unfortunate that my plans have been thwarted."   
+                    reactions.Add("Unfortunate that my plans have been thwarted.");
+                }
+            }
+        } else if (table.IsOwnedBy(recipient)) {
+            if (status == SHARE_INTEL_STATUS.INFORMED) {
+                //- If informed: "I appreciate [Target Name]'s help." 
+                reactions.Add(string.Format("I appreciate {0}'s help.", target.name));
+            }
+        } else {
+            if (status == SHARE_INTEL_STATUS.INFORMED) {
+                //- If informed: "This isn't relevant to me."
+                reactions.Add("This isn't relevant to me.");
+            }
+        }
+        return reactions;
+    }
     #endregion
 }

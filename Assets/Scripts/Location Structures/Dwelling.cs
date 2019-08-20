@@ -23,11 +23,21 @@ public class Dwelling : LocationStructure {
         if (!residents.Contains(character)) {
             residents.Add(character);
             character.SetHomeStructure(this);
+            List<TileObject> objs = GetTileObjects();
+            for (int i = 0; i < objs.Count; i++) {
+                TileObject obj = objs[i];
+                obj.UpdateOwners();
+            }
         }
     }
     public void RemoveResident(Character character) {
         if (residents.Remove(character)) {
             character.SetHomeStructure(null);
+            List<TileObject> objs = GetTileObjects();
+            for (int i = 0; i < objs.Count; i++) {
+                TileObject obj = objs[i];
+                obj.UpdateOwners();
+            }
         }
     }
     public bool IsResident(Character character) {

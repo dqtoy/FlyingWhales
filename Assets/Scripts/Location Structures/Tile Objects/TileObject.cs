@@ -22,6 +22,7 @@ public class TileObject : IPointOfInterest {
     public bool isSummonedByPlayer { get; protected set; }
     public List<JobQueueItem> allJobsTargettingThis { get; protected set; }
     public List<GoapAction> targettedByAction { get; protected set; }
+    public List<Character> owners { get; private set; }
 
     public virtual Character[] users {
         get {
@@ -65,6 +66,7 @@ public class TileObject : IPointOfInterest {
         awareCharacters = new List<Character>();
         allJobsTargettingThis = new List<JobQueueItem>();
         targettedByAction = new List<GoapAction>();
+        owners = new List<Character>();
         //poiGoapActions = new List<INTERACTION_TYPE>();
         hasCreatedSlots = false;
         AddTrait("Flammable");
@@ -77,6 +79,7 @@ public class TileObject : IPointOfInterest {
         actionHistory = new List<string>();
         awareCharacters = new List<Character>();
         allJobsTargettingThis = new List<JobQueueItem>();
+        owners = new List<Character>();
         //poiGoapActions = new List<INTERACTION_TYPE>();
         hasCreatedSlots = false;
         InitializeCollisionTrigger();
@@ -165,7 +168,7 @@ public class TileObject : IPointOfInterest {
         _state = state;
     }
     public virtual bool IsOwnedBy(Character character) {
-        return false;
+        return owners.Contains(character);
     }
     /// <summary>
     /// Action to do when the player clicks this object on the map.
@@ -494,6 +497,7 @@ public class TileObject : IPointOfInterest {
         } else {
             CreateTileObjectSlots();
         }
+        UpdateOwners();
         Messenger.Broadcast(Signals.TILE_OBJECT_PLACED, this, tile);
     }
     private void CreateTileObjectSlots() {
@@ -597,6 +601,12 @@ public class TileObject : IPointOfInterest {
     #region Utilities
     public void DoCleanup() {
         RemoveAllTraits();
+    }
+    public void UpdateOwners() {
+        if (tile.structure is Dwelling) {
+            owners.Clear();
+            owners.AddRange((tile.structure as Dwelling).residents);
+        }
     }
     #endregion
 
