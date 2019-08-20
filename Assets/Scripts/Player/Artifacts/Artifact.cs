@@ -53,8 +53,12 @@ public class Artifact : TileObject, IWorldObject {
     protected virtual void OnRemoveArtifact() {
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
     }
-    public virtual void OnInspect(Character inspectedBy, out Log result) {
-        result = new Log(GameManager.Instance.Today(), "Artifact", this.GetType().ToString(), "on_inspect");
+    public override void OnInspect(Character inspectedBy, out Log result) {
+        if (LocalizationManager.Instance.HasLocalizedValue("Artifact", this.GetType().ToString(), "on_inspect")) {
+            result = new Log(GameManager.Instance.Today(), "Artifact", this.GetType().ToString(), "on_inspect");
+        } else {
+            result = null;
+        }
     }
     public virtual void LevelUp() {
         level++;

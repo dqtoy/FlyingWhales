@@ -599,6 +599,17 @@ public class TileObject : IPointOfInterest {
         RemoveAllTraits();
     }
     #endregion
+
+    #region Inspect
+    public virtual void OnInspect(Character inspector, out Log log) {
+        if (LocalizationManager.Instance.HasLocalizedValue("TileObject", this.GetType().ToString(), "on_inspect")) {
+            log = new Log(GameManager.Instance.Today(), "TileObject", this.GetType().ToString(), "on_inspect");
+        } else {
+            log = null;
+        }
+        
+    }
+    #endregion
 }
 
 [System.Serializable]

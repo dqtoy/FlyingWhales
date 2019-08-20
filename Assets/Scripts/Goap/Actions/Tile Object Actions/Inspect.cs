@@ -44,20 +44,19 @@ public class Inspect : GoapAction {
         currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     public void AfterInspectSuccess() {
-        if (poiTarget is Artifact) {
+        if (poiTarget is TileObject) {
+            TileObject to = poiTarget as TileObject;
+            Curious curios = actor.GetNormalTrait("Curious") as Curious;
+            curios.AddAlreadyInspectedObject(to);
             Log result;
-            (poiTarget as Artifact).OnInspect(actor, out result);
+            (poiTarget as TileObject).OnInspect(actor, out result);
             if (result != null) {
                 currentState.AddLogFiller(null, Utilities.LogReplacer(result), LOG_IDENTIFIER.STRING_1);
             } else {
                 currentState.AddLogFiller(null, "and nothing happened", LOG_IDENTIFIER.STRING_1);
             }
         }
-        if(poiTarget is TileObject) {
-            TileObject to = poiTarget as TileObject;
-            Curious curios = actor.GetNormalTrait("Curious") as Curious;
-            curios.AddAlreadyInspectedObject(to);
-        }
+        
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
