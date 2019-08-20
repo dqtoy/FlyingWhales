@@ -404,15 +404,12 @@ MonoBehaviour:
     biomeTileSprites:
       m_keys: 
       m_values: []
-    neutralTileSprites: []
-    humansLandmarkTileSprites:
+    neutralTileSprites:
     - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
-    elvenLandmarkTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
-      tintSprite: {fileID: 0}
-      animation: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
   - landmarkTypeString: Ancient Ruin
     landmarkType: 26
     minimumTileCount: 1

@@ -26,7 +26,6 @@ public class ReplaceUI : MonoBehaviour {
     private object selectedObj;
     private object objToAdd;
 
-    private List<System.Action> pendingReplaceActions = new List<System.Action>();
 
     /// <summary>
     /// Show Replace Object UI.
@@ -38,9 +37,10 @@ public class ReplaceUI : MonoBehaviour {
     /// <param name="onClickCancel">What should happen when the offer was rejected.</param>
     public void ShowReplaceUI<T>(List<T> choices, T objectToAdd, System.Action<object, object> onClickReplace, System.Action<object> onClickCancel) {
         if (this.gameObject.activeInHierarchy) {
-            pendingReplaceActions.Add(() => ShowReplaceUI(choices, objectToAdd, onClickReplace, onClickCancel));
+            PlayerUI.Instance.AddPendingUI(() => ShowReplaceUI(choices, objectToAdd, onClickReplace, onClickCancel));
             return;
         }
+        UIManager.Instance.Pause();
         Utilities.DestroyChildren(choicesParent);
         if(objectToAdd is Minion) {
             newObjectLbl.text = "New Minion!";
@@ -108,10 +108,8 @@ public class ReplaceUI : MonoBehaviour {
 
     private void Close() {
         this.gameObject.SetActive(false);
-        if (pendingReplaceActions.Count > 0) {
-            System.Action pending = pendingReplaceActions[0];
-            pendingReplaceActions.RemoveAt(0);
-            pending.Invoke();
+        if (!PlayerUI.Instance.TryShowPendingUI()) {
+            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
         }
     }
 

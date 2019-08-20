@@ -20,13 +20,11 @@ public class NewAbilityUI : MonoBehaviour {
 
     private Minion minion;
 
-    private List<System.Action> pendingReplaceActions = new List<System.Action>();
-
     //string identifierToLevelUp = this identifies what to level up for the particular minion, whether it's Combat Ability, Intervention Ability, Summon, or Artifact
     //if it is a Summon or Artifact, since it is not attached to a minion, load all player summons or artifacts
     public void ShowNewAbilityUI(Minion minionToLevelUp, object ability) {
         if (this.gameObject.activeInHierarchy) {
-            pendingReplaceActions.Add(() => ShowNewAbilityUI(minionToLevelUp, ability));
+            PlayerUI.Instance.AddPendingUI(() => ShowNewAbilityUI(minionToLevelUp, ability));
             return;
         }
         UIManager.Instance.Pause();
@@ -88,12 +86,9 @@ public class NewAbilityUI : MonoBehaviour {
     }
 
     private void Close() {
-        UIManager.Instance.Unpause();
         this.gameObject.SetActive(false);
-        if (pendingReplaceActions.Count > 0) {
-            System.Action pending = pendingReplaceActions[0];
-            pendingReplaceActions.RemoveAt(0);
-            pending.Invoke();
+        if (!PlayerUI.Instance.TryShowPendingUI()) {
+            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
         }
     }
 

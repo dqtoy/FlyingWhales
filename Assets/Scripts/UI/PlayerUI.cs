@@ -132,6 +132,9 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private RectTransform aliveHeader;
     [SerializeField] private RectTransform deadHeader;
 
+    public List<System.Action> pendingUIToShow { get; private set; }
+
+
     //[Header("Actions")]
     //[SerializeField] private int maxActionPages;
     //[SerializeField] private GameObject actionPagePrefab;
@@ -176,6 +179,7 @@ public class PlayerUI : MonoBehaviour {
         }
         minionLeaderPickers = new List<MinionLeaderPicker>();
         currentCombatAbilityButtons = new List<CombatAbilityButton>();
+        pendingUIToShow = new List<Action>();
 
         storyEventUI.Initialize();
 
@@ -553,8 +557,19 @@ public class PlayerUI : MonoBehaviour {
     public void SetBottomMenuTogglesState(bool isOn) {
         intelToggle.isOn = isOn;
     }
+    public void AddPendingUI(System.Action pendingUIAction) {
+        pendingUIToShow.Add(pendingUIAction);
+    }
+    public bool TryShowPendingUI() {
+        if (pendingUIToShow.Count > 0) {
+            System.Action pending = pendingUIToShow[0];
+            pendingUIToShow.RemoveAt(0);
+            pending.Invoke();
+            return true;
+        }
+        return false;
+    }
     #endregion
-
 
     public string previousMenu;
     private void OnMenuOpened(UIMenu menu) {
@@ -1268,16 +1283,22 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
     
-     #region General Confirmation
+    #region General Confirmation
     public void ShowGeneralConfirmation(string header, string body) {
+        if (generalConfirmationGO.activeInHierarchy) {
+            AddPendingUI(() => ShowGeneralConfirmation(header, body));
+            return;
+        }
+        UIManager.Instance.Pause();
         generalConfirmationTitleText.text = header.ToUpper();
         generalConfirmationBodyText.text = body;
         generalConfirmationGO.SetActive(true);
-        UIManager.Instance.Pause();
     }
     public void OnClickOKGeneralConfirmation() {
         generalConfirmationGO.SetActive(false);
-        UIManager.Instance.Unpause();
+        if (!TryShowPendingUI()) {
+            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
+        }
     }
     #endregion
 }

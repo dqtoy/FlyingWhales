@@ -23,13 +23,12 @@ public class NewMinionAbilityUI : MonoBehaviour {
     public Minion selectedMinion { get; private set; }
     private object objToAdd;
 
-    private List<System.Action> pendingReplaceActions = new List<System.Action>();
-
     public void ShowNewMinionAbilityUI<T>(T objectToAdd) {
         if (this.gameObject.activeInHierarchy) {
-            pendingReplaceActions.Add(() => ShowNewMinionAbilityUI(objectToAdd));
+            PlayerUI.Instance.AddPendingUI(() => ShowNewMinionAbilityUI(objectToAdd));
             return;
         }
+        UIManager.Instance.Pause();
         Utilities.DestroyChildren(choicesParent);
         string identifier = string.Empty;
         if (objectToAdd is CombatAbility) {
@@ -75,10 +74,8 @@ public class NewMinionAbilityUI : MonoBehaviour {
 
     private void Close() {
         this.gameObject.SetActive(false);
-        if (pendingReplaceActions.Count > 0) {
-            System.Action pending = pendingReplaceActions[0];
-            pendingReplaceActions.RemoveAt(0);
-            pending.Invoke();
+        if (!PlayerUI.Instance.TryShowPendingUI()) {
+            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
         }
     }
 
