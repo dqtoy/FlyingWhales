@@ -63,6 +63,9 @@ public class ConsoleMenu : UIMenu {
             {"/kill_res",  KillResidents},
             {"/gain_summon",  GainSummon},
             {"/gain_artifact",  GainArtifact},
+            {"/set_fullness", SetFullness },
+            {"/set_tiredness", SetTiredness },
+            {"/set_happiness", SetHappiness },
         };
 
 #if UNITY_EDITOR
@@ -779,6 +782,78 @@ public class ConsoleMenu : UIMenu {
         }
         character.SetMoodValue(moodValue);
         AddSuccessMessage("Set Mood Value of " + character.name + " to " + moodValue);
+    }
+    private void SetFullness(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of SetFullness");
+            return;
+        }
+        string characterParameterString = parameters[0];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage("There is no character named " + characterParameterString);
+            return;
+        }
+        string fullnessParameterString = parameters[1];
+
+        int fullness = character.fullness;
+        if (!int.TryParse(fullnessParameterString, out fullness)) {
+            AddErrorMessage("Fullness parameter is not an integer: " + fullnessParameterString);
+            return;
+        }
+        character.SetFullness(fullness);
+        AddSuccessMessage("Set Fullness Value of " + character.name + " to " + fullness);
+    }
+    private void SetHappiness(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of SetHappiness");
+            return;
+        }
+        string characterParameterString = parameters[0];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage("There is no character named " + characterParameterString);
+            return;
+        }
+        string happinessParameterString = parameters[1];
+
+        int happiness = character.happiness;
+        if (!int.TryParse(happinessParameterString, out happiness)) {
+            AddErrorMessage("Happiness parameter is not an integer: " + happinessParameterString);
+            return;
+        }
+        character.SetHappiness(happiness);
+        AddSuccessMessage("Set Happiness Value of " + character.name + " to " + happiness);
+    }
+    private void SetTiredness(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of SetTiredness");
+            return;
+        }
+        string characterParameterString = parameters[0];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+            AddErrorMessage("There is no character named " + characterParameterString);
+            return;
+        }
+        string tirednessParameterString = parameters[1];
+
+        int tiredness = character.tiredness;
+        if (!int.TryParse(tirednessParameterString, out tiredness)) {
+            AddErrorMessage("Tiredness parameter is not an integer: " + tirednessParameterString);
+            return;
+        }
+        character.SetTiredness(tiredness);
+        AddSuccessMessage("Set Tiredness Value of " + character.name + " to " + tiredness);
     }
     private void LogAwareness(string[] parameters) {
         if (parameters.Length != 1) { //parameters command, item

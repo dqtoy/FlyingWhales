@@ -430,8 +430,8 @@ public class GoapThread : Multithread {
                 log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
             }
             bool success = actor.planner.RecalculatePathForPlan(recalculationPlan, usableActions);
-            recalculationPlan.ConstructAllNodes();
             if (success) {
+                recalculationPlan.ConstructAllNodes();
                 log += "\nSUCCESSFULLY RECALCULATED PLAN!";
                 log += recalculationPlan.LogPlan();
                 createdPlan = recalculationPlan;

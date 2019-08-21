@@ -7904,35 +7904,35 @@ public class Character : ILeader, IPointOfInterest {
                 ClearIgnoreHostilities();
             }
         } else {
-            if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null) {
-                //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
-                CombatState combatState = state as CombatState;
-                float distance = Vector2.Distance(this.marker.transform.position, character.marker.transform.position);
-                Debug.Log(this.name + " distance with " + character.name + " is " + distance.ToString());
-                if (this.isPartOfHomeFaction && character.isAtHomeArea && character.isPartOfHomeFaction && this.IsCombatReady() 
-                    && this.IsHostileOutsider(combatState.currentClosestHostile) && (this.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.POSITIVE || character.role.roleType == CHARACTER_ROLE.SOLDIER)
-                    && distance <= Combat_Signalled_Distance) {
-                    if (marker.AddHostileInRange(combatState.currentClosestHostile)) {
-                        CombatState hostileCombatState = combatState.currentClosestHostile.stateComponent.currentState as CombatState;
+            //if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null) {
+            //    //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
+            //    CombatState combatState = state as CombatState;
+            //    float distance = Vector2.Distance(this.marker.transform.position, character.marker.transform.position);
+            //    Debug.Log(this.name + " distance with " + character.name + " is " + distance.ToString());
+            //    if (this.isPartOfHomeFaction && character.isAtHomeArea && character.isPartOfHomeFaction && this.IsCombatReady() 
+            //        && this.IsHostileOutsider(combatState.currentClosestHostile) && (this.GetRelationshipEffectWith(character) == RELATIONSHIP_EFFECT.POSITIVE || character.role.roleType == CHARACTER_ROLE.SOLDIER)
+            //        && distance <= Combat_Signalled_Distance) {
+            //        if (marker.AddHostileInRange(combatState.currentClosestHostile)) {
+            //            CombatState hostileCombatState = combatState.currentClosestHostile.stateComponent.currentState as CombatState;
 
-                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
-                        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        joinLog.AddToFillers(combatState.currentClosestHostile, combatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        if (hostileCombatState != null) {
-                            joinLog.AddToFillers(hostileCombatState.currentClosestHostile, hostileCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
-                        } else {
-                            joinLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_3);
-                        }
-                        joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        PlayerManager.Instance.player.ShowNotification(joinLog);
-                        return; //do not do watch.
-                    }
-                }
+            //            Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
+            //            joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //            joinLog.AddToFillers(combatState.currentClosestHostile, combatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            //            if (hostileCombatState != null) {
+            //                joinLog.AddToFillers(hostileCombatState.currentClosestHostile, hostileCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
+            //            } else {
+            //                joinLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_3);
+            //            }
+            //            joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+            //            PlayerManager.Instance.player.ShowNotification(joinLog);
+            //            return; //do not do watch.
+            //        }
+            //    }
 
-                if (marker.inVisionPOIs.Contains(character)) {
-                    ThisCharacterWatchEvent(character, null, null);
-                }
-            }
+            //    if (marker.inVisionPOIs.Contains(character)) {
+            //        ThisCharacterWatchEvent(character, null, null);
+            //    }
+            //}
         }
     }
     public void OnCharacterEndedState(Character character, CharacterState state) {

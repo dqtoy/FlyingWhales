@@ -8,6 +8,7 @@ public class AskToStopJob : GoapAction {
 
     public AskToStopJob(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASK_TO_STOP_JOB, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
+        doesNotStopTargetCharacter = true;
     }
 
     #region Overrides
@@ -54,18 +55,18 @@ public class AskToStopJob : GoapAction {
     #region Requirements
     protected bool Requirement() {
         bool targetDoesNotConsiderActorEnemy = true;
-        bool canDoAction = false;
+        //bool canDoAction = false;
         if (poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
-            if(jobToStop == null) {
-                canDoAction = true;
-            } else if (targetCharacter.currentAction != null && targetCharacter.currentAction.parentPlan != null && targetCharacter.currentAction.parentPlan.job != null
-                && targetCharacter.currentAction.parentPlan.job == jobToStop) {
-                canDoAction = true;
-            }
+            //if(jobToStop == null) {
+            //    canDoAction = true;
+            //} else if (targetCharacter.currentAction != null && targetCharacter.currentAction.parentPlan != null && targetCharacter.currentAction.parentPlan.job != null
+            //    && targetCharacter.currentAction.parentPlan.job == jobToStop) {
+            //    canDoAction = true;
+            //}
             targetDoesNotConsiderActorEnemy = !targetCharacter.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY);
         }
-        return actor != poiTarget && targetDoesNotConsiderActorEnemy && canDoAction;
+        return actor != poiTarget && targetDoesNotConsiderActorEnemy; //&& canDoAction
     }
     #endregion
 
