@@ -78,6 +78,10 @@ public class MapGenerator : MonoBehaviour {
 
         PlayerManager.Instance.InitializePlayer(portal);
 
+        yield return null;
+        LandmarkManager.Instance.GenerateAreaMap(settlement.tileLocation.areaOfTile, false);
+        yield return null;
+
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
         LevelLoaderManager.SetLoadingState(false);

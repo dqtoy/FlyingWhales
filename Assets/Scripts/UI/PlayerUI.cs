@@ -236,7 +236,7 @@ public class PlayerUI : MonoBehaviour {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(true);
-        saveGameButton.gameObject.SetActive(false);
+        //saveGameButton.gameObject.SetActive(false);
 
         //Kill count UI
         UpdateKillCountActiveState();
@@ -247,7 +247,7 @@ public class PlayerUI : MonoBehaviour {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(false);
-        saveGameButton.gameObject.SetActive(true);
+        //saveGameButton.gameObject.SetActive(true);
 
         UpdateKillCountActiveState();
     }

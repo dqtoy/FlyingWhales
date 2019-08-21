@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour {
         Instance = this;
         this.timeElapsed = 0f;
         _gameHasStarted = false;
-        SetTicksToAddPerTick(ticksPerHour); //so that at start of the game time will advance by one hour per tick.
+        SetTicksToAddPerTick(1); //ticksPerHour //so that at start of the game time will advance by one hour per tick.
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
 #if !WORLD_CREATION_TOOL
         //Application.logMessageReceived += LogCallback;

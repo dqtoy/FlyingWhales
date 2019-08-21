@@ -1094,11 +1094,11 @@ public class UIManager : MonoBehaviour {
     #region Area Map
     [SerializeField] private Button returnToWorldBtn;
     private void OnAreaMapOpened(Area area) {
-        returnToWorldBtn.interactable = true;
+        //returnToWorldBtn.interactable = true;
         ShowPlayerNotificationArea();
     }
     private void OnAreaMapClosed(Area area) {
-        returnToWorldBtn.interactable = false;
+        //returnToWorldBtn.interactable = false;
         HidePlayerNotificationArea();
     }
     //public void PointerClickWorldMap(BaseEventData bed) {
@@ -1107,13 +1107,19 @@ public class UIManager : MonoBehaviour {
     //        ReturnToWorlMap();
     //    //}
     //}
-    public void ReturnToWorlMap() {
-        InteriorMapManager.Instance.HideAreaMap();
-        OnCameraOutOfFocus();
+    public void ToggleBetweenMaps() {
+        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+            InteriorMapManager.Instance.HideAreaMap();
+            OnCameraOutOfFocus();
+        } else {
+            InteriorMapManager.Instance.TryShowAreaMap(LandmarkManager.Instance.enemyPlayerArea);
+        }
     }
-    public void ReturnToWorldMapHover() {
+    public void ToggleMapsHover() {
         if (InteriorMapManager.Instance.currentlyShowingArea != null) {
             ShowSmallInfo("Click to exit " + InteriorMapManager.Instance.currentlyShowingArea.name + ".");
+        } else {
+            ShowSmallInfo("Click to enter " + LandmarkManager.Instance.enemyPlayerArea.name + ".");
         }
     }
     #endregion

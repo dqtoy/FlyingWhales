@@ -37,6 +37,8 @@ public class LandmarkManager : MonoBehaviour {
     [Header("Connections")]
     [SerializeField] private GameObject landmarkConnectionPrefab;
 
+    public Area enemyPlayerArea { get; private set; }
+
     #region Monobehaviours
     private void Awake() {
         Instance = this;
@@ -217,6 +219,7 @@ public class LandmarkManager : MonoBehaviour {
         AREA_TYPE settlementType = Utilities.RandomSettlementType();
         int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount + 1);
         Area settlementArea = CreateNewArea(settlementRegion.coreTile, settlementType, citizenCount);
+        enemyPlayerArea = settlementArea;
         BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE);
         settlement = settlementLandmark;
         Faction faction = FactionManager.Instance.CreateNewFaction();
@@ -811,12 +814,36 @@ public class LandmarkManager : MonoBehaviour {
     //private bool hasPendingMapGenerationJob = false;
     //private Area pendingAreaMap;
     //private JobHandle pendingJob;
-    public void GenerateAreaMap(Area area) {
+    public void GenerateAreaMap(Area area, bool doMultiThread = true) {
         GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
         AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
         areaMap.ClearAllTilemaps();
         InteriorMapManager.Instance.CleanupForTownGeneration();
-        MultiThreadPool.Instance.AddToThreadPool(new AreaMapGenerationThread(area, areaMap));
+        if (doMultiThread) {
+            MultiThreadPool.Instance.AddToThreadPool(new AreaMapGenerationThread(area, areaMap));
+        } else {
+            OnFinishedGeneratingAreaMap(area, areaMap);
+        }
+    }
+    private void OnFinishedGeneratingAreaMap(Area area, AreaInnerTileMap areaMap) {
+        Debug.Log("Finished generating map for " + area.name);
+        string log = string.Empty;
+        areaMap.Initialize(area);
+        TownMapSettings generatedSettings = areaMap.GenerateInnerStructures(out log);
+        Debug.Log(log);
+        areaMap.DrawMap(generatedSettings);
+        area.SetAreaMap(areaMap);
+        areaMap.GenerateDetails();
+        area.PlaceTileObjects();
+        //thread.areaMap.RotateTiles();
+
+        areaMap.OnMapGenerationFinished();
+        area.OnMapGenerationFinished();
+        InteriorMapManager.Instance.OnCreateAreaMap(areaMap);
+        CharacterManager.Instance.PlaceInitialCharacters(area);
+        //InteriorMapManager.Instance.ShowAreaMap(thread.area);
+        area.OnAreaSetAsActive();
+        UIManager.Instance.SetInteriorMapLoadingState(false);
     }
     public void OnFinishedGeneratingAreaMap(AreaMapGenerationThread thread) {
         Debug.Log("Finished generating map for " + thread.area.name);
@@ -831,7 +858,7 @@ public class LandmarkManager : MonoBehaviour {
         thread.area.OnMapGenerationFinished();
         InteriorMapManager.Instance.OnCreateAreaMap(thread.areaMap);
         CharacterManager.Instance.PlaceInitialCharacters(thread.area);
-        InteriorMapManager.Instance.ShowAreaMap(thread.area);
+        //InteriorMapManager.Instance.ShowAreaMap(thread.area);
         thread.area.OnAreaSetAsActive();
         UIManager.Instance.SetInteriorMapLoadingState(false);
     }
