@@ -9,11 +9,12 @@ public class PlayerJobActionButton : MonoBehaviour {
 
     private Action clickAction;
 
-    public PlayerJobAction action { get; private set; }
+    public PlayerJobActionSlot actionSlot { get; private set; }
 
     [SerializeField] private Button btn;
     [SerializeField] private TextMeshProUGUI btnLbl;
     [SerializeField] private TextMeshProUGUI subTextLbl;
+    [SerializeField] private TextMeshProUGUI levelLbl;
     [SerializeField] private Image actionIcon;
     [SerializeField] private Image selectedIcon;
     [SerializeField] private GameObject cover;
@@ -26,20 +27,29 @@ public class PlayerJobActionButton : MonoBehaviour {
         Messenger.AddListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.AddListener<PlayerJobActionSlot>(Signals.PLAYER_GAINED_INTERVENE_LEVEL, OnJobActionGainLevel);
     }
     private void OnDisable() {
         Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_ACTIVATED, OnJobActionCooldownActivated);
         Messenger.RemoveListener<PlayerJobAction>(Signals.JOB_ACTION_COOLDOWN_DONE, OnJobActionCooldownDone);
         Messenger.RemoveListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.RemoveListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+        Messenger.RemoveListener<PlayerJobActionSlot>(Signals.PLAYER_GAINED_INTERVENE_LEVEL, OnJobActionGainLevel);
     }
 
-    public void SetJobAction(PlayerJobAction action) {
-        this.action = action;
-        actionIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
+    public void SetJobAction(PlayerJobActionSlot actionSlot) {
+        this.actionSlot = actionSlot;
+        if(actionSlot.ability != null) {
+            actionIcon.sprite = PlayerManager.Instance.GetJobActionSprite(actionSlot.ability.name);
+            UpdateButtonText();
+            SetSelectedIconState(false);
+            actionIcon.gameObject.SetActive(true);
+        } else {
+            SetSelectedIconState(false);
+            actionIcon.gameObject.SetActive(false);
+        }
         UpdateInteractableState();
-        UpdateButtonText();
-        SetSelectedIconState(false);
+        UpdateLevel();
     }
 
     //private void OnSeenActionButtons() {
@@ -51,7 +61,8 @@ public class PlayerJobActionButton : MonoBehaviour {
         SetInteractableState(
             //!action.parentData.hasActionInCooldown &&
             InteriorMapManager.Instance.isAnAreaMapShowing 
-            && PlayerManager.Instance.player.currentActivePlayerJobAction != this.action && !action.isInCooldown
+            && actionSlot.ability != null
+            && PlayerManager.Instance.player.currentActivePlayerJobAction != this.actionSlot.ability && !actionSlot.ability.isInCooldown
         );
     }
     private void SetInteractableState(bool state) {
@@ -59,7 +70,10 @@ public class PlayerJobActionButton : MonoBehaviour {
         cover.SetActive(!state);
     }
     private void UpdateButtonText() {
-        btnLbl.text = action.name;
+        btnLbl.text = actionSlot.ability.name;
+    }
+    private void UpdateLevel() {
+        levelLbl.text = actionSlot.level.ToString();
     }
     #endregion
 
@@ -80,9 +94,11 @@ public class PlayerJobActionButton : MonoBehaviour {
 
     #region Hover
     public void ShowHoverText() {
-        string header = action.name;
-        string message = action.description;
-        PlayerUI.Instance.ShowActionBtnTooltip(message, header);
+        if(actionSlot.ability != null) {
+            string header = actionSlot.ability.name;
+            string message = actionSlot.ability.description;
+            PlayerUI.Instance.ShowActionBtnTooltip(message, header);
+        }
     }
     public void HideHoverText() {
         PlayerUI.Instance.HideActionBtnTooltip();
@@ -91,13 +107,18 @@ public class PlayerJobActionButton : MonoBehaviour {
 
     #region Listeners
     private void OnJobActionCooldownActivated(PlayerJobAction jobAction) {
-        if (jobAction == this.action) {
+        if (jobAction == this.actionSlot.ability) {
             UpdateInteractableState();
         }
     }
     private void OnJobActionCooldownDone(PlayerJobAction jobAction) {
-        if (jobAction == this.action) {
+        if (jobAction == this.actionSlot.ability) {
             UpdateInteractableState();
+        }
+    }
+    private void OnJobActionGainLevel(PlayerJobActionSlot jobActionSlot) {
+        if (jobActionSlot == this.actionSlot) {
+            UpdateLevel();
         }
     }
     private void OnAreaMapOpened(Area area) {

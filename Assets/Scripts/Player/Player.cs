@@ -37,8 +37,11 @@ public class Player : ILeader {
     public int maxSummonSlots { get; private set; } //how many summons can the player have
     public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
     public Faction currentTargetFaction { get; private set; } //the current faction that the player is targeting.
-    public PlayerJobAction[] interventionAbilities { get; private set; }
+    public PlayerJobActionSlot[] interventionAbilitySlots { get; private set; }
     public Region invadingRegion { get; private set; }
+    public int currentInterventionAbilityTimerTick { get; private set; }
+    public int newInterventionAbilityTimerTicks { get; private set; }
+    public int currentNewInterventionAbilityCycleIndex { get; private set; }
 
     #region getters/setters
     public int id {
@@ -74,11 +77,13 @@ public class Player : ILeader {
         minions = new Minion[MAX_MINIONS];
         summonSlots = new SummonSlot[MAX_SUMMONS];
         artifactSlots = new ArtifactSlot[MAX_ARTIFACT];
-        interventionAbilities = new PlayerJobAction[MAX_INTERVENTION_ABILITIES];
+        interventionAbilitySlots = new PlayerJobActionSlot[MAX_INTERVENTION_ABILITIES];
         //shareIntelAbility = new ShareIntel();
         maxSummonSlots = 1;
         maxArtifactSlots = 1;
         //ConstructRoleSlots();
+        InitializeNewInterventionAbilityCycle();
+        ConstructAllInterventionAbilitySlots();
         ConstructAllSummonSlots();
         ConstructAllArtifactSlots();
         AddListeners();
@@ -92,10 +97,12 @@ public class Player : ILeader {
         minions = new Minion[MAX_MINIONS];
         summonSlots = new SummonSlot[MAX_SUMMONS];
         artifactSlots = new ArtifactSlot[MAX_ARTIFACT];
-        interventionAbilities = new PlayerJobAction[MAX_INTERVENTION_ABILITIES];
+        interventionAbilitySlots = new PlayerJobActionSlot[MAX_INTERVENTION_ABILITIES];
         maxSummonSlots = data.maxSummonSlots;
         maxArtifactSlots = data.maxArtifactSlots;
-        threat = data.threat;
+        //threat = data.threat;
+        InitializeNewInterventionAbilityCycle();
+        ConstructAllInterventionAbilitySlots();
         ConstructAllSummonSlots();
         ConstructAllArtifactSlots();
         AddListeners();
@@ -105,6 +112,7 @@ public class Player : ILeader {
     private void AddListeners() {
         AddWinListener();
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickPlayer);
 
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
 
@@ -661,6 +669,9 @@ public class Player : ILeader {
     //        UnassignCharacterFromJob(job);
     //    }
     //}
+    private void PerTickPlayer() {
+        PerTickInterventionAbility();
+    }
     #endregion
 
     #region Intel
@@ -1539,18 +1550,24 @@ public class Player : ILeader {
     #endregion
 
     #region Intervention Ability
+    private void ConstructAllInterventionAbilitySlots() {
+        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+            if (interventionAbilitySlots[i] == null) {
+                interventionAbilitySlots[i] = new PlayerJobActionSlot();
+            }
+        }
+    }
     public void GainNewInterventionAbility(INTERVENTION_ABILITY ability, bool showNewAbilityUI = false) {
         PlayerJobAction playerJobAction = PlayerManager.Instance.CreateNewInterventionAbility(ability);
         GainNewInterventionAbility(playerJobAction, showNewAbilityUI);
     }
     public void GainNewInterventionAbility(PlayerJobAction ability, bool showNewAbilityUI = false) {
-        int abilityCount = GetInterventionAbilityCount();
-        if (abilityCount == interventionAbilities.Length) {
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(interventionAbilities.ToList(), ability, OnReplaceInterventionAbility, OnRejectInterventionAbility);
+        if (!HasEmptyInterventionSlot()) {
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllInterventionAbilities(), ability, OnReplaceInterventionAbility, OnRejectInterventionAbility);
         } else {
-            for (int i = 0; i < interventionAbilities.Length; i++) {
-                if (interventionAbilities[i] == null) {
-                    interventionAbilities[i] = ability;
+            for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+                if (interventionAbilitySlots[i].ability == null) {
+                    interventionAbilitySlots[i].SetAbility(ability);
                     Messenger.Broadcast(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, ability);
                     if (showNewAbilityUI) {
                         PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(null, ability);
@@ -1560,12 +1577,21 @@ public class Player : ILeader {
             }
         }
     }
+    public void ConsumeAbility(PlayerJobAction ability) {
+        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+            if (interventionAbilitySlots[i].ability == ability) {
+                interventionAbilitySlots[i].SetAbility(null);
+                Messenger.Broadcast(Signals.PLAYER_CONSUMED_INTERVENE_ABILITY, ability);
+                break;
+            }
+        }
+    }
     private void OnReplaceInterventionAbility(object objToReplace, object objToAdd) {
         PlayerJobAction replace = objToReplace as PlayerJobAction;
         PlayerJobAction add = objToAdd as PlayerJobAction;
-        for (int i = 0; i < interventionAbilities.Length; i++) {
-            if (interventionAbilities[i] == replace) {
-                interventionAbilities[i] = add;
+        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+            if (interventionAbilitySlots[i].ability == replace) {
+                interventionAbilitySlots[i].SetAbility(add);
                 Messenger.Broadcast(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, add);
                 break;
             }
@@ -1574,19 +1600,62 @@ public class Player : ILeader {
     private void OnRejectInterventionAbility(object rejectedObj) { }
     private int GetInterventionAbilityCount() {
         int count = 0;
-        for (int i = 0; i < interventionAbilities.Length; i++) {
-            if (interventionAbilities[i] != null) {
+        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+            if (interventionAbilitySlots[i].ability != null) {
                 count++;
             }
         }
         return count;
     }
-    public void ResetInterventionAbilitiesCD() {
-        for (int i = 0; i < interventionAbilities.Length; i++) {
-            if (interventionAbilities[i] != null) {
-                interventionAbilities[i].InstantCooldown();
+    public bool HasEmptyInterventionSlot() {
+        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+            if (interventionAbilitySlots[i].ability == null) {
+                return true;
             }
         }
+        return false;
+    }
+    public List<PlayerJobAction> GetAllInterventionAbilities() {
+        List<PlayerJobAction> abilities = new List<PlayerJobAction>();
+        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+            if (interventionAbilitySlots[i].ability != null) {
+                abilities.Add(interventionAbilitySlots[i].ability);
+            }
+        }
+        return abilities;
+    }
+    public void ResetInterventionAbilitiesCD() {
+        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+            if (interventionAbilitySlots[i].ability != null) {
+                interventionAbilitySlots[i].ability.InstantCooldown();
+            }
+        }
+    }
+    private void InitializeNewInterventionAbilityCycle() {
+        currentNewInterventionAbilityCycleIndex = 0;
+        currentInterventionAbilityTimerTick = 0;
+        newInterventionAbilityTimerTicks = GameManager.Instance.GetTicksBasedOnHour(6);
+    }
+    private void PerTickInterventionAbility() {
+        currentInterventionAbilityTimerTick++;
+        if (currentInterventionAbilityTimerTick >= newInterventionAbilityTimerTicks) {
+            currentInterventionAbilityTimerTick = 0;
+            int tier = GetTierBasedOnCycle();
+            GainNewInterventionAbility(PlayerManager.Instance.GetRandomAbilityByTier(tier), true);
+            currentNewInterventionAbilityCycleIndex++;
+            if (currentNewInterventionAbilityCycleIndex > 3) {
+                currentNewInterventionAbilityCycleIndex = 0;
+            }
+        }
+        PlayerUI.Instance.UpdateNewInterventionAbilityMeter();
+    }
+    private int GetTierBasedOnCycle() {
+        //Tier Cycle - 3, 3, 2, 1
+        if (currentNewInterventionAbilityCycleIndex == 0) return 3;
+        else if (currentNewInterventionAbilityCycleIndex == 1) return 3;
+        else if (currentNewInterventionAbilityCycleIndex == 2) return 2;
+        else if (currentNewInterventionAbilityCycleIndex == 3) return 1;
+        return 3;
     }
     #endregion
 }

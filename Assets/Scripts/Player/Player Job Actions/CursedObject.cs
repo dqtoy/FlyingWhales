@@ -8,7 +8,7 @@ public class CursedObject : PlayerJobAction {
         tier = 2;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE_OBJECT };
-        abilityTags.Add(ABILITY_TAG.NONE);
+        //abilityTags.Add(ABILITY_TAG.NONE);
     }
 
     #region Overrides

@@ -63,6 +63,8 @@ public class SeamlessEdgeAssetsDictionary : SerializableDictionary<LocationGridT
 public class LandmarkGenerationDictionary : SerializableDictionary<BIOMES, YieldTypeLandmarks> { }
 [System.Serializable]
 public class YieldTypeLandmarksDictionary : SerializableDictionary<LANDMARK_YIELD_TYPE, List<LANDMARK_TYPE>, LandmarkTypeListStorage> { }
+[System.Serializable]
+public class InterventionAbilityTierDictionary : SerializableDictionary<INTERVENTION_ABILITY, int> { }
 
 //List storage
 [System.Serializable]

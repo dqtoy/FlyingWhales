@@ -63,7 +63,7 @@ public class ReplaceChoiceItem : PooledObject {
         } else if (obj is PlayerJobAction) {
             PlayerJobAction action = obj as PlayerJobAction;
             string text = action.name;
-            text += "\nDescription: " + action.description;
+            text += "\nSlot Level: " + action.level;
             info.text = text;
         } else if (obj is CombatAbility) {
             CombatAbility ability = obj as CombatAbility;

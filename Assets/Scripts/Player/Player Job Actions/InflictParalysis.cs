@@ -8,7 +8,7 @@ public class InflictParalysis : PlayerJobAction {
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
-        abilityTags.Add(ABILITY_TAG.PHYSICAL);
+        //abilityTags.Add(ABILITY_TAG.PHYSICAL);
     }
 
     #region Overrides

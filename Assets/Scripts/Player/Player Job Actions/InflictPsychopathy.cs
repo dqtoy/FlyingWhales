@@ -9,7 +9,7 @@ public class InflictPsychopathy : PlayerJobAction {
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
-        abilityTags.Add(ABILITY_TAG.NONE);
+        //abilityTags.Add(ABILITY_TAG.NONE);
     }
 
     #region Overrides

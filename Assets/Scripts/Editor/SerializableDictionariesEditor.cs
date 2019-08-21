@@ -65,6 +65,8 @@ public class SeamlessEdgeAssetsDictionaryPropertyDrawer : SerializableDictionary
 public class LandmarkGenerationDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(YieldTypeLandmarksDictionary))]
 public class YieldTypeLandmarksDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(InterventionAbilityTierDictionary))]
+public class InterventionAbilityTierDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(CharacterTagListStorage))]

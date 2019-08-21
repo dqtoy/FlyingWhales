@@ -9,7 +9,7 @@ public class Lullaby : PlayerJobAction {
         abilityRadius = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
-        abilityTags.Add(ABILITY_TAG.NONE);
+        //abilityTags.Add(ABILITY_TAG.NONE);
     }
 
     #region Overrides
