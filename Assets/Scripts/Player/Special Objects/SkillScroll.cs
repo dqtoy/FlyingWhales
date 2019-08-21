@@ -10,7 +10,8 @@ public class SkillScroll : SpecialObject {
     public override void Obtain() {
         base.Obtain();
         COMBAT_ABILITY[] skills = Utilities.GetEnumValues<COMBAT_ABILITY>();
-        PlayerManager.Instance.CreateNewCombatAbility(skills[Random.Range(1, skills.Length)]);
+        CombatAbility newAbility = PlayerManager.Instance.CreateNewCombatAbility(skills[Random.Range(1, skills.Length)]);
+        PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(newAbility);    
     }
     #endregion
 }

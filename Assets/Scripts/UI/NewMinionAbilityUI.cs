@@ -24,7 +24,7 @@ public class NewMinionAbilityUI : MonoBehaviour {
     private object objToAdd;
 
     public void ShowNewMinionAbilityUI<T>(T objectToAdd) {
-        if (this.gameObject.activeInHierarchy) {
+        if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowNewMinionAbilityUI(objectToAdd));
             return;
         }

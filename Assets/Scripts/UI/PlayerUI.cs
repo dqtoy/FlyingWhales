@@ -571,6 +571,9 @@ public class PlayerUI : MonoBehaviour {
         }
         return false;
     }
+    public bool IsMajorUIShowing() {
+        return levelUpUI.gameObject.activeInHierarchy || newAbilityUI.gameObject.activeInHierarchy || newMinionAbilityUI.gameObject.activeInHierarchy || replaceUI.gameObject.activeInHierarchy || generalConfirmationGO.activeInHierarchy;
+    }
     #endregion
 
     public string previousMenu;
@@ -1287,7 +1290,7 @@ public class PlayerUI : MonoBehaviour {
     
     #region General Confirmation
     public void ShowGeneralConfirmation(string header, string body) {
-        if (generalConfirmationGO.activeInHierarchy) {
+        if (PlayerUI.Instance.IsMajorUIShowing()) {
             AddPendingUI(() => ShowGeneralConfirmation(header, body));
             return;
         }

@@ -36,7 +36,7 @@ public class ReplaceUI : MonoBehaviour {
     /// <param name="onClickReplace">What should happen when an object is replaced.</param>
     /// <param name="onClickCancel">What should happen when the offer was rejected.</param>
     public void ShowReplaceUI<T>(List<T> choices, T objectToAdd, System.Action<object, object> onClickReplace, System.Action<object> onClickCancel) {
-        if (this.gameObject.activeInHierarchy) {
+        if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowReplaceUI(choices, objectToAdd, onClickReplace, onClickCancel));
             return;
         }
