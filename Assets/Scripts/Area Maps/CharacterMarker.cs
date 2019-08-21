@@ -1046,15 +1046,9 @@ public class CharacterMarker : PooledObject {
         if (inVisionPOIs.Contains(otherCharacter)) {
             character.CreateJobsOnEnterVisionWith(otherCharacter); //this is used to create jobs that involve characters that died within the character's range of vision
         }
-        RemovePOIFromInVisionRange(otherCharacter);
-        visionCollision.RemovePOIAsInRangeButDifferentStructure(otherCharacter);
-        //RemoveHostileInRange(otherCharacter);
+        //RemovePOIFromInVisionRange(otherCharacter);
+        //visionCollision.RemovePOIAsInRangeButDifferentStructure(otherCharacter);
 
-        //if (this.hasFleePath) { //if this character is fleeing, remove the character that died from his/her hostile list
-        //    //this is for cases when this character is fleeing from a character that died because another character assaulted them,
-        //    //and so, the character that died was not removed from this character's hostile list
-        //    hostilesInRange.Remove(otherCharacter);
-        //}
         RemoveHostileInRange(otherCharacter); //removed hostile because he/she died.
         RemoveAvoidInRange(otherCharacter);
 
