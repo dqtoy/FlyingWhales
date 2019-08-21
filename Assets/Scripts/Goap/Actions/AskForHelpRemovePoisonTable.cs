@@ -87,8 +87,10 @@ public class AskForHelpRemovePoisonTable : GoapAction {
         Character target = poiTarget as Character;
         TileObject table = targetTable as TileObject;
         if (poison.responsibleCharacters.Contains(recipient)) {
-            if (target.jobQueue.HasJob(JOB_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, targetTable)) {
-                //TODO: - Create an Attempt to Stop Job targeting Target with Remove Poison Table as the target job
+            JobQueueItem jqi = target.jobQueue.GetJob(JOB_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE, targetTable);
+            if (jqi is GoapPlanJob) {
+                //- Create an Attempt to Stop Job targeting Target with Remove Poison Table as the target job
+                recipient.CreateAttemptToStopCurrentActionAndJob(target, jqi as GoapPlanJob);
                 if (status == SHARE_INTEL_STATUS.INFORMED) {
                     //- If informed: "I will not let [Target Name] prevent me from achieving my goal."
                     reactions.Add(string.Format("I will not let {0} prevent me from achieving my goal.", target.name));

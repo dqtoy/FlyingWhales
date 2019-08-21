@@ -187,20 +187,20 @@ public class Plagued : Trait {
 
     public int GetChatInfectChance() {
         if (level == 1) {
-            return 5;
+            return 25;
         } else if (level == 2) {
-            return 7;
+            return 35;
         } else {
-            return 9;
+            return 45;
         }
     }
     public int GetMakeLoveInfectChance() {
         if (level == 1) {
-            return 20;
+            return 50;
         } else if (level == 2) {
-            return 30;
+            return 75;
         } else {
-            return 40;
+            return 100;
         }
     }
 }

@@ -160,13 +160,9 @@ public class Region {
     }
     private void Invade() {
         //corrupt region
-        if (coreTile.landmarkOnTile != null) {
-            coreTile.landmarkOnTile.InvadeThisLandmark();
-        }
+        mainLandmark?.InvadeThisLandmark();
         PlayerManager.Instance.AddTileToPlayerArea(coreTile);
-        mainLandmark.ObtainWorldWobject();
         PlayerManager.Instance.player.SetInvadingRegion(null);
-        //TODO: Place invasion actions here
     }
     private void PerInvasionTick() {
         if (ticksInInvasion >= mainLandmark.invasionTicks) {

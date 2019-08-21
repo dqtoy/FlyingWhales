@@ -10,7 +10,7 @@ public class SpellScroll : SpecialObject {
     public override void Obtain() {
         base.Obtain();
         INTERVENTION_ABILITY[] spells = PlayerManager.Instance.allInterventionAbilities;
-        PlayerManager.Instance.player.GainNewInterventionAbility(spells[Random.Range(0, spells.Length)]);
+        PlayerManager.Instance.player.GainNewInterventionAbility(spells[Random.Range(0, spells.Length)], true);
     }
     #endregion
 }

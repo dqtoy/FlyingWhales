@@ -290,8 +290,10 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
-        UpdateKillCount();
-        OrderKillSummaryItems();
+        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+            UpdateKillCount();
+            OrderKillSummaryItems();
+        }
     }
     #endregion
 

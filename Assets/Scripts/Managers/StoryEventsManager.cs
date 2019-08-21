@@ -145,7 +145,6 @@ public class StoryEventsManager : MonoBehaviour {
                     PlayerManager.Instance.player.currentMinionLeader.SetCombatAbility(ability, true);
                 }
             }
-            //TODO: Add casing for when provided value is The type of ability (Magic, Crime, etc.)
         } else if (string.Equals(effect.effectType, "Minion", System.StringComparison.OrdinalIgnoreCase)) {
             //Gain Minion
             //effectValue = class name

@@ -107,7 +107,11 @@ public class RestrainCharacter : GoapAction {
                 if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                     CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it an Assault
-                    //TODO: -If witnessed: Add Attempt to Stop Job targeting Actor
+                    recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
+                    if (status == SHARE_INTEL_STATUS.WITNESSED && actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null) {
+                        //-If witnessed: Add Attempt to Stop Job targeting Actor
+                        recipient.CreateAttemptToStopCurrentActionAndJob(target, actor.currentAction.parentPlan.job);
+                    }
                     if (status == SHARE_INTEL_STATUS.INFORMED) {
                         //- If informed: "[Actor Name] shouldn't have done that to [Target Name]!"
                         reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, target.name));
@@ -127,6 +131,7 @@ public class RestrainCharacter : GoapAction {
                 if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                     CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it an Assault
+                    recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
                         //- If witnessed: Add Assault Job targeting Actor
                         recipient.CreateKnockoutJob(actor);
@@ -137,6 +142,7 @@ public class RestrainCharacter : GoapAction {
                 } else if (relWithTarget == RELATIONSHIP_EFFECT.NONE) {
                     CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it an Assault
+                    recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
                         //- If witnessed: Temporarily add Actor to Avoid List
                         recipient.marker.AddAvoidInRange(actor);
@@ -157,6 +163,7 @@ public class RestrainCharacter : GoapAction {
                 if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                     CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it an Assault
+                    recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
                         //- If witnessed: Add Assault Job targeting Actor
                         recipient.CreateKnockoutJob(actor);
@@ -169,6 +176,7 @@ public class RestrainCharacter : GoapAction {
                 } else if (relWithTarget == RELATIONSHIP_EFFECT.NONE) {
                     CharacterManager.Instance.RelationshipDegradation(actor, recipient, this);
                     //- Considers it Aberration
+                    recipient.ReactToCrime(CRIME.ABERRATION, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
                         //- If witnessed: Add Assault Job targeting Actor
                         recipient.CreateKnockoutJob(actor);
@@ -180,6 +188,7 @@ public class RestrainCharacter : GoapAction {
                     }
                 } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
                     //- Considers it an Assault
+                    recipient.ReactToCrime(CRIME.ASSAULT, this, actorAlterEgo, status);
                     if (status == SHARE_INTEL_STATUS.WITNESSED) {
                         //- If witnessed: Temporarily add Actor to Avoid List
                         recipient.marker.AddAvoidInRange(actor);

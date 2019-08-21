@@ -285,6 +285,7 @@ public class BaseLandmark {
                 PlayerManager.Instance.player.UnlockAnArtifactSlotOrUpgradeExisting();
                 break;
         }
+        ObtainWorldObject();
     }
     /// <summary>
     /// Is this landmark connected to another landmark that has been corrupted?
@@ -377,7 +378,7 @@ public class BaseLandmark {
     public void SetWorldObject(IWorldObject obj) {
         worldObj = obj;
     }
-    public void ObtainWorldWobject() {
+    private void ObtainWorldObject() {
         worldObj?.Obtain();
     }
     #endregion
