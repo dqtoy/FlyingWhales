@@ -1395,7 +1395,7 @@ public static class Extensions {
             case STRUCTURE_TYPE.DWELLING:
             case STRUCTURE_TYPE.EXPLORE_AREA:
             case STRUCTURE_TYPE.PRISON:
-            case STRUCTURE_TYPE.POND:
+            //case STRUCTURE_TYPE.POND:
                 //case STRUCTURE_TYPE.CEMETERY:
                 return false;
             default:

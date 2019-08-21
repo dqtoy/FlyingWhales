@@ -821,15 +821,8 @@ public class AreaInnerTileMap : MonoBehaviour {
     private void PlaceStructures(TownMapSettings settings, Vector3Int startPoint) {
         Dictionary<STRUCTURE_TYPE, List<StructureSlot>> slots = settings.structureSlots;
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
-            if (area.name == "Gloomhollow") {
-                if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate() && keyValuePair.Key != STRUCTURE_TYPE.EXPLORE_AREA) {
-                    //allow explore areas to be generated in gloomhollow
-                    continue; //skip
-                }
-            } else {
-                if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
-                    continue; //skip
-                }
+            if (!keyValuePair.Key.ShouldBeGeneratedFromTemplate()) {
+                continue; //skip
             }
             if (slots[keyValuePair.Key].Count == 0) {
                 throw new System.Exception("No existing slots for " + keyValuePair.Key.ToString());
@@ -860,8 +853,14 @@ public class AreaInnerTileMap : MonoBehaviour {
                             tile.SetStructure(structure);
                             tile.SetTileType(LocationGridTile.Tile_Type.Structure);
                         }
+                    } else if (structure.structureType == STRUCTURE_TYPE.POND) {
+                        if (tb.name.Contains("water") || tb.name.Contains("Pond")) {
+                            tile.SetStructure(structure);
+                            tile.SetTileType(LocationGridTile.Tile_Type.Structure);
+                            tile.SetGroundType(LocationGridTile.Ground_Type.Water);
+                        }
                     } else {
-                        if (tb.name.Contains("floor") || tb.name.Contains("Floor") || tb.name.Contains("Pond")) {
+                        if (tb.name.Contains("floor") || tb.name.Contains("Floor")) {
                             tile.SetStructure(structure);
                             tile.SetTileType(LocationGridTile.Tile_Type.Structure);
                         }
@@ -968,7 +967,6 @@ public class AreaInnerTileMap : MonoBehaviour {
             Vector3Int pos = new Vector3Int((int)currData.tilePosition.x, (int)currData.tilePosition.y, 0);
             pos.x += startPos.x;
             pos.y += startPos.y;
-            //if (tilemap.gameObject.name.Contains("Ground")) {
             if (!string.IsNullOrEmpty(currData.tileAssetName)) {
                 TileBase assetUsed = InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName, true);
                 tilemap.SetTile(pos, assetUsed);
@@ -979,18 +977,16 @@ public class AreaInnerTileMap : MonoBehaviour {
                     tile.hasDetail = true;
                     tile.SetTileState(LocationGridTile.Tile_State.Occupied);
                 } else if (tilemap == groundTilemap) {
-                    //tilemap.RemoveTileFlags(pos, TileFlags.LockColor);
                     if (assetUsed.name.Contains("cobble")) {
                         tile.SetGroundType(LocationGridTile.Ground_Type.Cobble);
                     } else if ((assetUsed.name.Contains("Dirt") || assetUsed.name.Contains("dirt")) && (area.coreTile.biomeType == BIOMES.SNOW || area.coreTile.biomeType == BIOMES.TUNDRA)) {
                         tile.SetGroundType(LocationGridTile.Ground_Type.Tundra);
                         tilemap.SetTile(pos, tundraTile);
+                    } else if (assetUsed.name.Contains("water")) {
+                        tile.SetGroundType(LocationGridTile.Ground_Type.Water);
                     }
                 }
             }
-            //} else {
-            //    tilemap.SetTile(pos, InteriorMapManager.Instance.GetTileAsset(currData.tileAssetName));
-            //}
             tilemap.SetTransformMatrix(pos, currData.matrix);
 
         }
@@ -1531,7 +1527,10 @@ public class AreaInnerTileMap : MonoBehaviour {
                     LocationGridTile currNeighbour = keyValuePair.Value;
                     if (currNeighbour.structure != null && !currNeighbour.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
                     bool createEdge = false;
-                    if (tile.groundType == currNeighbour.groundType) {
+                    //if (tile.groundType == currNeighbour.groundType) {
+                    //    createEdge = true;
+                    //} else 
+                    if (tile.groundType != LocationGridTile.Ground_Type.Water && currNeighbour.groundType == LocationGridTile.Ground_Type.Water) {
                         createEdge = true;
                     } else if (tile.groundType == LocationGridTile.Ground_Type.Snow) {
                         createEdge = true;
