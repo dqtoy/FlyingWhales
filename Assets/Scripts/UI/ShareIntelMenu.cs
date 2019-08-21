@@ -35,7 +35,7 @@ public class ShareIntelMenu : MonoBehaviour {
         Messenger.Broadcast(Signals.ON_OPEN_SHARE_INTEL);
 
         this.targetCharacter = targetCharacter;
-        this.actor = actor;
+        this.actor = PlayerManager.Instance.player.minions.FirstOrDefault()?.character ?? null;
         instructionLbl.text = "Share Intel with " + targetCharacter.name;
         endOfConversationLbl.transform.SetParent(this.transform);
         endOfConversationLbl.gameObject.SetActive(false);
@@ -46,9 +46,9 @@ public class ShareIntelMenu : MonoBehaviour {
         DialogItem item = targetDialog.GetComponent<DialogItem>();
         item.SetData(targetCharacter, "What do you want from me?");
 
-        //GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
-        //DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        //actorItem.SetData(actor, "I am here to share information with you.", DialogItem.Position.Right);
+        GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+        DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
+        actorItem.SetData(actor, "I am here to share information with you.", DialogItem.Position.Right);
 
         UpdateIntel(PlayerManager.Instance.player.allIntel);
     }

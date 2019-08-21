@@ -23,7 +23,7 @@ public class NewAbilityUI : MonoBehaviour {
     //string identifierToLevelUp = this identifies what to level up for the particular minion, whether it's Combat Ability, Intervention Ability, Summon, or Artifact
     //if it is a Summon or Artifact, since it is not attached to a minion, load all player summons or artifacts
     public void ShowNewAbilityUI(Minion minionToLevelUp, object ability) {
-        if (this.gameObject.activeInHierarchy) {
+        if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowNewAbilityUI(minionToLevelUp, ability));
             return;
         }
