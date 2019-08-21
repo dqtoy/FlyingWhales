@@ -16,7 +16,6 @@ public class CharacterState {
     public CharacterStateJob job { get; protected set; }
     public string actionIconString { get; protected set; }
     public GoapAction currentlyDoingAction { get; protected set; }
-
     public Character targetCharacter { get; protected set; } //Target character of current state
     public Area targetArea { get; protected set; }
     public bool isUnending { get; protected set; } //is this state unending?
@@ -203,6 +202,9 @@ public class CharacterState {
     }
     //Resumes the state and its movement behavior
     public void ResumeState() {
+        if (isDone) {
+            return; //if the state has already been exited. Do not resume.
+        }
         Debug.Log(GameManager.Instance.TodayLogString() + "Resuming " + stateName + " for " + stateComponent.character.name);
         isPaused = false;
         StartStatePerTick();

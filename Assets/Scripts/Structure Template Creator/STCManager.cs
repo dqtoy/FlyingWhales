@@ -14,6 +14,7 @@ using UnityEditor;
 public class STCManager : MonoBehaviour {
 
     [SerializeField] private Tilemap groundTilemap;
+    [SerializeField] private Tilemap groundWallTilemap;
     [SerializeField] private Tilemap structureWallTilemap;
     [SerializeField] private Tilemap objectsTilemap;
     [SerializeField] private Tilemap detailsTilemap;
@@ -133,6 +134,7 @@ public class STCManager : MonoBehaviour {
         PlaceAtOrigin();
         //get all tiles based on the bounds of the ground tile
         TileTemplateData[] groundTiles = GetTileData(groundTilemap, groundTilemap.cellBounds);
+        TileTemplateData[] groundWallTiles = GetTileData(groundWallTilemap, groundTilemap.cellBounds);
         TileTemplateData[] wallTiles = GetTileData(structureWallTilemap, groundTilemap.cellBounds);
         TileTemplateData[] objectTiles = GetTileData(objectsTilemap, groundTilemap.cellBounds);
         TileTemplateData[] detailTiles = GetTileData(detailsTilemap, groundTilemap.cellBounds);
@@ -156,7 +158,7 @@ public class STCManager : MonoBehaviour {
 
         Debug.Log("Got " + groundTiles.Length + " tiles");
 
-        StructureTemplate newTemplate = new StructureTemplate("Structure_Template", groundTiles, wallTiles, objectTiles, detailTiles,
+        StructureTemplate newTemplate = new StructureTemplate("Structure_Template", groundTiles, groundWallTiles, wallTiles, objectTiles, detailTiles,
             new Point(groundTilemap.cellBounds.size.x, groundTilemap.cellBounds.size.y), connectors, furnitureSpots);
 
         string dataAsJson = JsonUtility.ToJson(newTemplate);
@@ -187,6 +189,7 @@ public class STCManager : MonoBehaviour {
     private void LoadTemplate(StructureTemplate st) {
         ClearTiles();
         DrawTiles(groundTilemap, st.groundTiles);
+        DrawTiles(groundWallTilemap, st.groundWallTiles);
         DrawTiles(structureWallTilemap, st.structureWallTiles);
         DrawTiles(objectsTilemap, st.objectTiles);
         DrawTiles(detailsTilemap, st.detailTiles);
@@ -243,6 +246,7 @@ public class STCManager : MonoBehaviour {
     [ContextMenu("Clear Tiles")]
     public void ClearTiles() {
         groundTilemap.ClearAllTiles();
+        groundWallTilemap.ClearAllTiles();
         structureWallTilemap.ClearAllTiles();
         objectsTilemap.ClearAllTiles();
         detailsTilemap.ClearAllTiles();
@@ -373,17 +377,19 @@ public struct StructureTemplate {
     public string name;
     public Point size;
     public TileTemplateData[] groundTiles;
+    public TileTemplateData[] groundWallTiles;
     public TileTemplateData[] structureWallTiles;
     public TileTemplateData[] objectTiles;
     public TileTemplateData[] detailTiles;
     public StructureConnector[] connectors;
     public FurnitureSpot[] furnitureSpots;
 
-    public StructureTemplate(string _name, TileTemplateData[] _ground, TileTemplateData[] _walls,
+    public StructureTemplate(string _name, TileTemplateData[] _ground, TileTemplateData[] _groundWalls, TileTemplateData[] _walls,
         TileTemplateData[] _objects, TileTemplateData[] _details, Point _size, StructureConnector[] _connectors, FurnitureSpot[] _furnitureSpots) {
         name = _name;
         size = _size;
         groundTiles = _ground;
+        groundWallTiles = _groundWalls;
         structureWallTiles = _walls;
         objectTiles = _objects;
         detailTiles = _details;
