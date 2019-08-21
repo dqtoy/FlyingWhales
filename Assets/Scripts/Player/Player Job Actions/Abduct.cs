@@ -36,9 +36,9 @@ public class Abduct : PlayerJobAction {
         if (targetCharacter.race != RACE.SKELETON && targetCharacter.race != RACE.GOBLIN) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return base.CanPerformActionTowards(targetCharacter);
     }
 

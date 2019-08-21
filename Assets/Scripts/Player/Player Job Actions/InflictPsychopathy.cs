@@ -34,9 +34,9 @@ public class InflictPsychopathy : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Serial Killer") != null) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return base.CanPerformActionTowards(targetCharacter);
     }
     #endregion
@@ -51,9 +51,9 @@ public class InflictPsychopathy : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Serial Killer") != null) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return true;
     }
 }

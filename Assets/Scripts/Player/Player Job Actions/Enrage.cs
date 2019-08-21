@@ -69,9 +69,9 @@ public class Enrage : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Enrage") != null) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return base.CanPerformActionTowards(targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -113,9 +113,9 @@ public class Enrage : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Enrage") != null) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return true;
     }
 }
