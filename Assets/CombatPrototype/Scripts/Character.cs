@@ -2000,8 +2000,9 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (targetCharacter != null) {
                 JOB_TYPE jobType = (JOB_TYPE) Enum.Parse(typeof(JOB_TYPE), "ASK_FOR_HELP_" + helpType.ToString());
-                GoapPlanJob job = new GoapPlanJob(jobType, helpType, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { helpType, otherData }
+                INTERACTION_TYPE interactionType = (INTERACTION_TYPE)Enum.Parse(typeof(INTERACTION_TYPE), "ASK_FOR_HELP_" + helpType.ToString());
+                GoapPlanJob job = new GoapPlanJob(jobType, interactionType, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
+                    { interactionType, otherData }
                 });
                 jobQueue.AddJobInQueue(job);
             } else {

@@ -281,7 +281,7 @@ public class GoapThread : Multithread {
                             plan.SetListOfCharacterAwareness(characterTargetsAwareness);
                         }
                     }
-                    log += planLog;
+                    //log += planLog;
                 }
             } else {
                 for (int i = 0; i < usableActions.Count; i++) {
@@ -342,7 +342,7 @@ public class GoapThread : Multithread {
                                 allPlans.Add(plan);
                                 plan.SetListOfCharacterAwareness(characterTargetsAwareness);
                             }
-                            log += planLog;
+                            //log += planLog;
                         }
                     } else {
                         string planLog = string.Empty;
@@ -351,7 +351,7 @@ public class GoapThread : Multithread {
                             allPlans.Add(plan);
                             plan.SetListOfCharacterAwareness(characterTargetsAwareness);
                         }
-                        log += planLog;
+                        //log += planLog;
                         //Debug.Log(planLog);
                     }
                 }
