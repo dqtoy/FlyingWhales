@@ -9,7 +9,7 @@ public class Release : PlayerJobAction {
         tier = 3;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
-        abilityTags.Add(ABILITY_TAG.MAGIC);
+        //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
     #region Overrides

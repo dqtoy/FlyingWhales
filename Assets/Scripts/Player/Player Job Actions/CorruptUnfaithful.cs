@@ -8,7 +8,7 @@ public class CorruptUnfaithful : PlayerJobAction {
         description = "Makes a character mory horny and prone to have affairs.";
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
-        abilityTags.Add(ABILITY_TAG.CRIME);
+        //abilityTags.Add(ABILITY_TAG.CRIME);
     }
 
     #region Overrides
@@ -64,9 +64,9 @@ public class CorruptUnfaithful : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Unfaithful") != null) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return base.CanPerformActionTowards(targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -98,9 +98,9 @@ public class CorruptUnfaithful : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Unfaithful") != null) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return true;
     }
 }

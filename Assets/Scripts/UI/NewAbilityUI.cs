@@ -34,25 +34,29 @@ public class NewAbilityUI : MonoBehaviour {
     }
 
     private void UpdateMinionToLevelUp(Minion minion) {
-        this.minion = minion;
-        minionPortrait.GeneratePortrait(this.minion.character);
-        string text = this.minion.character.name;
-        text += "\nLvl. " + this.minion.character.level + " " + this.minion.character.raceClassName;
-        minionText.text = text;
+        if(minion != null) {
+            this.minion = minion;
+            minionPortrait.GeneratePortrait(this.minion.character);
+            string text = this.minion.character.name;
+            text += "\nLvl. " + this.minion.character.level + " " + this.minion.character.raceClassName;
+            minionText.text = text;
+        }
     }
 
     public void UpdateNewAbility(object obj) {
         obtainText.gameObject.SetActive(false);
         minionGO.SetActive(false);
+        obtainText.gameObject.SetActive(false);
         if (obj is PlayerJobAction) {
             titleText.text = "New Intervention Ability";
+            obtainText.text = "You obtained a new Intervention Ability!";
             PlayerJobAction action = obj as PlayerJobAction;
             abilityIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
             string text = action.name;
-            text += "\nLevel: " + action.level;
+            //text += "\nLevel: " + action.level;
             text += "\nDescription: " + action.description;
             abilityText.text = text;
-            minionGO.SetActive(true);
+            obtainText.gameObject.SetActive(true);
         } else if (obj is CombatAbility) {
             titleText.text = "New Combat Ability";
             CombatAbility ability = obj as CombatAbility;

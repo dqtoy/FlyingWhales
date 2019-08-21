@@ -9,7 +9,7 @@ public class InflictAgoraphobia : PlayerJobAction {
         tier = 3;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
-        abilityTags.Add(ABILITY_TAG.NONE);
+        //abilityTags.Add(ABILITY_TAG.NONE);
     }
 
     #region Overrides
@@ -60,9 +60,9 @@ public class InflictAgoraphobia : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Agoraphobia") != null) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return base.CanPerformActionTowards(targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -91,9 +91,9 @@ public class InflictAgoraphobia : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Agoraphobia") != null) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return true;
     }
 }

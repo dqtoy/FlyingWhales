@@ -55,14 +55,14 @@ public class SaveDataPlayer {
 
         currentMinionLeaderID = player.currentMinionLeader.character.id;
 
-        interventionAbilities = new List<SaveDataInterventionAbility>();
-        for (int i = 0; i < player.interventionAbilities.Length; i++) {
-            if (player.interventionAbilities[i] != null) {
-                SaveDataInterventionAbility saveDataInterventionAbility = new SaveDataInterventionAbility();
-                saveDataInterventionAbility.Save(player.interventionAbilities[i]);
-                interventionAbilities.Add(saveDataInterventionAbility);
-            }
-        }
+        //interventionAbilities = new List<SaveDataInterventionAbility>();
+        //for (int i = 0; i < player.interventionAbilitySlots.Length; i++) {
+        //    if (player.interventionAbilitySlots[i] != null) {
+        //        SaveDataInterventionAbility saveDataInterventionAbility = new SaveDataInterventionAbility();
+        //        saveDataInterventionAbility.Save(player.interventionAbilitySlots[i]);
+        //        interventionAbilities.Add(saveDataInterventionAbility);
+        //    }
+        //}
     }
     public void Load() {
         PlayerManager.Instance.InitializePlayer(this);

@@ -92,6 +92,7 @@ public class PlayerUI : MonoBehaviour {
     [Header("Intervention Abilities")]
     [SerializeField] private RectTransform activeMinionActionsParent;
     [SerializeField] private GameObject actionBtnPrefab;
+    [SerializeField] private Slider newInterventionAbilityMeter;
     public UIHoverPosition roleSlotTooltipPos;
 
     [Header("Combat Abilities")]
@@ -186,6 +187,7 @@ public class PlayerUI : MonoBehaviour {
         LoadRoleSlots();
         LoadAttackSlot();
         LoadInterventionAbilitySlots();
+        InitializeNewInterventionAbilityMeter();
 
         UpdateIntel();
         InitializeMemoriesMenu();
@@ -204,6 +206,7 @@ public class PlayerUI : MonoBehaviour {
 
         //job action buttons
         Messenger.AddListener<PlayerJobAction>(Signals.PLAYER_LEARNED_INTERVENE_ABILITY, OnPlayerLearnedInterventionAbility);
+        Messenger.AddListener<PlayerJobAction>(Signals.PLAYER_CONSUMED_INTERVENE_ABILITY, OnPlayerLearnedInterventionAbility);
 
         //summons
         Messenger.AddListener<Summon>(Signals.PLAYER_GAINED_SUMMON, OnGainNewSummon);
@@ -420,7 +423,7 @@ public class PlayerUI : MonoBehaviour {
         PlayerJobActionButton[] buttons = Utilities.GetComponentsInDirectChildren<PlayerJobActionButton>(activeMinionActionsParent.gameObject);
         for (int i = 0; i < buttons.Length; i++) {
             PlayerJobActionButton currButton = buttons[i];
-            if (currButton.action == action) {
+            if (currButton.actionSlot.ability == action) {
                 return currButton;
             }
         }
@@ -1268,26 +1271,32 @@ public class PlayerUI : MonoBehaviour {
         for (int i = 0; i < PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES; i++) {
             GameObject jobGO = UIManager.Instance.InstantiateUIObject(actionBtnPrefab.name, activeMinionActionsParent);
             PlayerJobActionButton actionBtn = jobGO.GetComponent<PlayerJobActionButton>();
-            actionBtn.gameObject.SetActive(false);
+            //actionBtn.gameObject.SetActive(false);
             interventionAbilityBtns[i] = actionBtn;
         }
     }
     private void UpdateInterventionAbilitySlots() {
-        for (int i = 0; i < PlayerManager.Instance.player.interventionAbilities.Length; i++) {
-            PlayerJobAction jobAction = PlayerManager.Instance.player.interventionAbilities[i];
+        for (int i = 0; i < PlayerManager.Instance.player.interventionAbilitySlots.Length; i++) {
+            PlayerJobActionSlot jobActionSlot = PlayerManager.Instance.player.interventionAbilitySlots[i];
             PlayerJobActionButton actionBtn = interventionAbilityBtns[i];
-            if (jobAction == null) {
-                actionBtn.gameObject.SetActive(false);
+            actionBtn.SetJobAction(jobActionSlot);
+            if (jobActionSlot.ability != null) {
+                actionBtn.SetClickAction(() => PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(jobActionSlot.ability));
             } else {
-                actionBtn.SetJobAction(jobAction);
-                actionBtn.SetClickAction(() => PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(jobAction));
-                actionBtn.gameObject.SetActive(true);
+                actionBtn.SetClickAction(null);
             }
-            
         }
     }
+    public void InitializeNewInterventionAbilityMeter() {
+        newInterventionAbilityMeter.minValue = 0;
+        newInterventionAbilityMeter.maxValue = PlayerManager.Instance.player.newInterventionAbilityTimerTicks;
+        newInterventionAbilityMeter.value = 0;
+    }
+    public void UpdateNewInterventionAbilityMeter() {
+        newInterventionAbilityMeter.value = PlayerManager.Instance.player.currentInterventionAbilityTimerTick;
+    }
     #endregion
-    
+
     #region General Confirmation
     public void ShowGeneralConfirmation(string header, string body) {
         if (PlayerUI.Instance.IsMajorUIShowing()) {

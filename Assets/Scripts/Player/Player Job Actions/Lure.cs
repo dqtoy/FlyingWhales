@@ -13,7 +13,7 @@ public class Lure : PlayerJobAction {
     public Lure() : base(INTERVENTION_ABILITY.LURE) {
         description = "Force a character to go to a specified nearby location.";
         SetDefaultCooldownTime(24);
-        abilityTags.Add(ABILITY_TAG.NONE);
+        //abilityTags.Add(ABILITY_TAG.NONE);
         targetCharacters = new List<Character>();
         tileChoices = new List<LocationGridTile>();
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
@@ -68,9 +68,9 @@ public class Lure : PlayerJobAction {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return base.CanPerformActionTowards(targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -109,9 +109,9 @@ public class Lure : PlayerJobAction {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return true;
     }
 

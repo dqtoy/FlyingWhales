@@ -89,6 +89,9 @@ public class Artifact : TileObject, IWorldObject {
 public class ArtifactSlot {
     public int level;
     public Artifact artifact;
+    public bool isLocked {
+        get { return PlayerManager.Instance.player.GetIndexForArtifactSlot(this) >= PlayerManager.Instance.player.maxArtifactSlots; }
+    }
 
     public ArtifactSlot() {
         level = 1;

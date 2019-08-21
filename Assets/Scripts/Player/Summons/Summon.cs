@@ -168,6 +168,9 @@ public class Summon : Character, IWorldObject {
 public class SummonSlot {
     public int level;
     public Summon summon;
+    public bool isLocked {
+        get { return PlayerManager.Instance.player.GetIndexForSummonSlot(this) >= PlayerManager.Instance.player.maxSummonSlots; }
+    }
 
     public SummonSlot() {
         level = 1;

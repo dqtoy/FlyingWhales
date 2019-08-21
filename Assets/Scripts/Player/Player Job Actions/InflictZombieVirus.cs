@@ -9,8 +9,8 @@ public class InflictZombieVirus : PlayerJobAction {
         tier = 2;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT};
-        abilityTags.Add(ABILITY_TAG.MAGIC);
-        abilityTags.Add(ABILITY_TAG.CRIME);
+        //abilityTags.Add(ABILITY_TAG.MAGIC);
+        //abilityTags.Add(ABILITY_TAG.CRIME);
     }
 
     #region Overrides

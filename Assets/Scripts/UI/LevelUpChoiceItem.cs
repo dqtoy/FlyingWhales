@@ -12,6 +12,7 @@ public class LevelUpChoiceItem : PooledObject {
     [SerializeField] private Image img;
     [SerializeField] private TextMeshProUGUI info;
     [SerializeField] private Sprite defaultSprite;
+    [SerializeField] private Sprite lockedSprite;
 
     public Toggle toggle;
 
@@ -24,13 +25,17 @@ public class LevelUpChoiceItem : PooledObject {
         if (obj is SummonSlot) {
             SummonSlot summonSlot = obj as SummonSlot;
             toggle.interactable = summonSlot.level < PlayerManager.MAX_LEVEL_SUMMON;
-            if (summonSlot.summon != null) {
+            if (summonSlot.isLocked) {
+                img.sprite = lockedSprite;
+            } else if (summonSlot.summon != null) {
                 img.sprite = CharacterManager.Instance.GetSummonSettings(summonSlot.summon.summonType).summonPortrait;
             }
         } else if (obj is ArtifactSlot) {
             ArtifactSlot artifactSlot = obj as ArtifactSlot;
             toggle.interactable = artifactSlot.level < PlayerManager.MAX_LEVEL_ARTIFACT;
-            if(artifactSlot.artifact != null) {
+            if (artifactSlot.isLocked) {
+                img.sprite = lockedSprite;
+            } else if (artifactSlot.artifact != null) {
                 img.sprite = CharacterManager.Instance.GetArtifactSettings(artifactSlot.artifact.type).artifactPortrait;
             }
         } else if (obj is PlayerJobAction) {

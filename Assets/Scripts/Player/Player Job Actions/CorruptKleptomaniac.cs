@@ -8,7 +8,7 @@ public class CorruptKleptomaniac : PlayerJobAction {
         description = "Makes a character enjoy stealing other people's items.";
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
-        abilityTags.Add(ABILITY_TAG.CRIME);
+        //abilityTags.Add(ABILITY_TAG.CRIME);
     }
 
     #region Overrides
@@ -62,9 +62,9 @@ public class CorruptKleptomaniac : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Kleptomaniac") != null) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return base.CanPerformActionTowards(targetCharacter);
     }
     public override bool CanTarget(IPointOfInterest targetPOI) {
@@ -96,9 +96,9 @@ public class CorruptKleptomaniac : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Kleptomaniac") != null) {
             return false;
         }
-        if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-            return false;
-        }
+        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //    return false;
+        //}
         return true;
     }
 }

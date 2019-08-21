@@ -18,7 +18,7 @@ public class PlayerJobAction {
     public bool isActive { get; protected set; }
     public int ticksInCooldown { get; private set; } //how many ticks has this action been in cooldown?
     public int level { get; protected set; }
-    public List<ABILITY_TAG> abilityTags { get; protected set; }
+    //public List<ABILITY_TAG> abilityTags { get; protected set; }
     public bool hasSecondPhase { get; protected set; }
     public bool isInSecondPhase { get; protected set; }
 
@@ -43,9 +43,9 @@ public class PlayerJobAction {
     public PlayerJobAction(INTERVENTION_ABILITY abilityType) {
         this.abilityType = abilityType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.abilityType.ToString());
-        abilityTags = new List<ABILITY_TAG>();
+        //abilityTags = new List<ABILITY_TAG>();
         this.level = 1;
-        this.tier = 3;
+        this.tier = PlayerManager.Instance.GetInterventionAbilityTier(abilityType);
         this.abilityRadius = 0;
         hasSecondPhase = false;
         OnLevelUp();
@@ -70,9 +70,10 @@ public class PlayerJobAction {
         //this.assignedCharacter = assignedCharacter;
         isActive = true;
         //parentData.SetActiveAction(this);
-        ActivateCooldown();
+        //ActivateCooldown();
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //Messenger.AddListener<JOB, Character>(Signals.CHARACTER_UNASSIGNED_FROM_JOB, OnCharacterUnassignedFromJob);
+        PlayerManager.Instance.player.ConsumeAbility(this);
     }
     public virtual void ActivateAction(IPointOfInterest targetPOI) { //this is called when the actions button is pressed
         ActivateAction();
@@ -206,4 +207,38 @@ public class PlayerJobAction {
         //parentData.SetLockedState(false);
     }
     #endregion
+}
+
+public class PlayerJobActionSlot {
+    public int level;
+    public PlayerJobAction ability;
+
+    public PlayerJobActionSlot() {
+        level = 1;
+        ability = null;
+    }
+
+    public void SetAbility(PlayerJobAction ability) {
+        this.ability = ability;
+        if (this.ability != null) {
+            this.ability.SetLevel(level);
+        }
+    }
+
+    public void LevelUp() {
+        level++;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+        if (this.ability != null) {
+            this.ability.SetLevel(level);
+        }
+        Messenger.Broadcast(Signals.PLAYER_GAINED_INTERVENE_LEVEL, this);
+    }
+    public void SetLevel(int amount) {
+        level = amount;
+        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+        if (this.ability != null) {
+            this.ability.SetLevel(level);
+        }
+        Messenger.Broadcast(Signals.PLAYER_GAINED_INTERVENE_LEVEL, this);
+    }
 }

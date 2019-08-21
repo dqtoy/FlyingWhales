@@ -9,7 +9,7 @@ public class Provoke : PlayerJobAction {
         tier = 2;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
-        abilityTags.Add(ABILITY_TAG.MAGIC);
+        //abilityTags.Add(ABILITY_TAG.MAGIC);
     }
 
     public override void ActivateAction(IPointOfInterest targetPOI) {

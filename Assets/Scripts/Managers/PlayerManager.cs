@@ -25,6 +25,9 @@ public class PlayerManager : MonoBehaviour {
     [Header("Combat Ability Icons")]
     [SerializeField] private StringSpriteDictionary combatAbilityIcons;
 
+    [Header("Intervention Ability Tiers")]
+    [SerializeField] private InterventionAbilityTierDictionary interventionAbilityTiers;
+
     #region getters/setters
     public Sprite[] playerAreaFloorSprites {
         get { return _playerAreaFloorSprites; }
@@ -233,6 +236,24 @@ public class PlayerManager : MonoBehaviour {
             }
         }
         return valid;
+    }
+    public int GetInterventionAbilityTier(INTERVENTION_ABILITY abilityType) {
+        if (interventionAbilityTiers.ContainsKey(abilityType)) {
+            return interventionAbilityTiers[abilityType];
+        }
+        return 3;
+    }
+    public INTERVENTION_ABILITY GetRandomAbilityByTier(int tier) {
+        List<INTERVENTION_ABILITY> abilityTiers = new List<INTERVENTION_ABILITY>();
+        foreach (KeyValuePair<INTERVENTION_ABILITY, int> kvp in interventionAbilityTiers) {
+            if(kvp.Value == tier) {
+                abilityTiers.Add(kvp.Key);
+            }
+        }
+        if (abilityTiers.Count > 0) {
+            return abilityTiers[UnityEngine.Random.Range(0, abilityTiers.Count)];
+        }
+        return INTERVENTION_ABILITY.ABDUCT;
     }
     #endregion
 
