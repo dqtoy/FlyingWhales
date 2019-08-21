@@ -86,7 +86,12 @@ public class DouseFireState : CharacterState {
             isFetchingWater = false;
         }
     }
-    protected override void PerTickInState() { }
+    protected override void PerTickInState() {
+        if (!StillHasFire() && stateComponent.character.currentAction == null && stateComponent.currentState == this) {
+            //if there is no longer any fire, and the character is still trying to douse fire, exit this state
+            OnExitThisState();
+        }
+    }
     #endregion
 
     #region Utilities

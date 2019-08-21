@@ -84,7 +84,7 @@ public class Plagued : Trait {
 
                 goapAction.CreateStates();
                 owner.SetCurrentAction(goapAction);
-                owner.currentAction.SetEndAction(ResumeLastAction);
+                //owner.currentAction.SetEndAction(ResumeLastAction);
                 owner.currentAction.DoAction();
                 hasCreatedJob = true;
             } else if (owner.stateComponent.currentState != null) {
@@ -172,14 +172,13 @@ public class Plagued : Trait {
     }
     #endregion
 
-    private void ResumeLastAction(string result, GoapAction action) {
-        if (stoppedAction.CanSatisfyRequirements()) {
-            stoppedAction.DoAction();
-        } else {
-            owner.GoapActionResult(result, action);
-        }
-        
-    }
+    //private void ResumeLastAction(string result, GoapAction action) {
+    //    if (stoppedAction.CanSatisfyRequirements()) {
+    //        stoppedAction.DoAction();
+    //    } else {
+    //        owner.GoapActionResult(result, action);
+    //    }
+    //}
     private void ResumePausedState(string result, GoapAction action) {
         owner.GoapActionResult(result, action);
         pausedState.ResumeState();

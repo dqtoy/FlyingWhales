@@ -929,6 +929,9 @@ public class AreaInnerTileMap : MonoBehaviour {
         List<LocationGridTile> tilesUsed = new List<LocationGridTile>();
 
         List<LocationGridTile> used = DrawTiles(groundTilemap, st.groundTiles, startingTile);
+        if (st.groundWallTiles != null) {
+            DrawTiles(wallTilemap, st.groundWallTiles, startingTile);
+        }
         DrawTiles(structureTilemap, st.structureWallTiles, startingTile);
         DrawTiles(objectsTilemap, st.objectTiles, startingTile);
         DrawTiles(detailsTilemap, st.detailTiles, startingTile);
@@ -1027,6 +1030,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     /// <param name="settings">The given settings</param>
     private void DrawTownMap(TownMapSettings settings, Vector3Int startPoint) {
         DrawTiles(groundTilemap, settings.groundTiles, startPoint);
+        DrawTiles(wallTilemap, settings.groundWallTiles, startPoint);
         DrawTiles(structureTilemap, settings.structureTiles, startPoint);
         DrawTiles(objectsTilemap, settings.objectTiles, startPoint);
         DrawTiles(detailsTilemap, settings.detailTiles, startPoint);

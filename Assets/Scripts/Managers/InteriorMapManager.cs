@@ -41,6 +41,7 @@ public class InteriorMapManager : MonoBehaviour {
 
     //Used for generating the inner map of an area, structure templates are first placed here before generating the actual map
     public Tilemap agGroundTilemap;
+    public Tilemap agGroundWallTilemap;
     public Tilemap agStructureTilemap;
     public Tilemap agObjectsTilemap;
     public Tilemap agDetailsTilemap;
@@ -48,7 +49,7 @@ public class InteriorMapManager : MonoBehaviour {
     [Header("Pathfinding")]
     [SerializeField] private AstarPath pathfinder;
     private const float nodeSize = 0.2f;
-    public const int Default_Character_Sorting_Order = 20;
+    public const int Default_Character_Sorting_Order = 82;
 
     [Header("Tile Object Slots")]
     [SerializeField] private TileObjectSlotDictionary tileObjectSlotSettings;
@@ -571,6 +572,7 @@ public class InteriorMapManager : MonoBehaviour {
         s.size = new Point(agGroundTilemap.cellBounds.x, agGroundTilemap.cellBounds.y);
 
         s.groundTiles = GetTileData(agGroundTilemap, agGroundTilemap.cellBounds);
+        s.groundWallTiles = GetTileData(agGroundWallTilemap, agGroundTilemap.cellBounds);
         s.structureTiles = GetTileData(agStructureTilemap, agGroundTilemap.cellBounds);
         s.objectTiles = GetTileData(agObjectsTilemap, agGroundTilemap.cellBounds);
         s.detailTiles = GetTileData(agDetailsTilemap, agGroundTilemap.cellBounds);
@@ -620,6 +622,7 @@ public class InteriorMapManager : MonoBehaviour {
         s.size = new Point(maxX, maxY);
 
         List<TileTemplateData> groundTiles = new List<TileTemplateData>();
+        List<TileTemplateData> groundWallTiles = new List<TileTemplateData>();
         List<TileTemplateData> structureTiles = new List<TileTemplateData>();
         List<TileTemplateData> objectTiles = new List<TileTemplateData>();
         List<TileTemplateData> detailTiles = new List<TileTemplateData>();
@@ -636,6 +639,7 @@ public class InteriorMapManager : MonoBehaviour {
                     LocationGridTileSettings currSetting = shiftedSettings[x][y];
                     currSetting.UpdatePositions(new Vector3(x, y, 0f));
                     groundTiles.Add(currSetting.groundTile);
+                    groundWallTiles.Add(currSetting.groundWallTile);
                     structureTiles.Add(currSetting.structureWallTile);
                     objectTiles.Add(currSetting.objectTile);
                     detailTiles.Add(currSetting.detailTile);
@@ -660,6 +664,7 @@ public class InteriorMapManager : MonoBehaviour {
                 LocationGridTileSettings currSetting = kvp2.Value;
                 currSetting.UpdatePositions(new Vector3(kvp.Key, kvp2.Key, 0f));
                 groundTiles.Add(currSetting.groundTile);
+                groundWallTiles.Add(currSetting.groundWallTile);
                 structureTiles.Add(currSetting.structureWallTile);
                 objectTiles.Add(currSetting.objectTile);
                 detailTiles.Add(currSetting.detailTile);
@@ -668,6 +673,7 @@ public class InteriorMapManager : MonoBehaviour {
         }
 
         s.groundTiles = groundTiles.ToArray();
+        s.groundWallTiles = groundWallTiles.ToArray();
         s.structureTiles = structureTiles.ToArray();
         s.objectTiles = objectTiles.ToArray();
         s.detailTiles = detailTiles.ToArray();
@@ -742,6 +748,13 @@ public class InteriorMapManager : MonoBehaviour {
             tilePos.x += startPos.x;
             tilePos.y += startPos.y;
             TileTemplateData detail = template.detailTiles[i];
+            TileTemplateData groundWall;
+            if (template.groundWallTiles != null) {
+                groundWall = template.groundWallTiles[i];
+            } else {
+                groundWall = TileTemplateData.Empty;
+            }
+            
             TileTemplateData structureWall = template.structureWallTiles[i];
             TileTemplateData obj = template.objectTiles[i];
             if (!generated.ContainsKey((int)tilePos.x)) {
@@ -749,6 +762,7 @@ public class InteriorMapManager : MonoBehaviour {
             }
             generated[(int)tilePos.x].Add((int)tilePos.y, new LocationGridTileSettings() {
                 groundTile = ground,
+                groundWallTile = groundWall,
                 detailTile = detail,
                 structureWallTile = structureWall,
                 objectTile = obj,
@@ -765,6 +779,12 @@ public class InteriorMapManager : MonoBehaviour {
             tilePos.x += startPos.x;
             tilePos.y += startPos.y;
             TileTemplateData detail = template.detailTiles[i];
+            TileTemplateData groundWall;
+            if (template.groundWallTiles != null) {
+                groundWall = template.groundWallTiles[i];
+            } else {
+                groundWall = TileTemplateData.Empty;
+            }
             TileTemplateData structureWall = template.structureWallTiles[i];
             TileTemplateData obj = template.objectTiles[i];
             if (!generated.ContainsKey((int)tilePos.x)) {
@@ -772,6 +792,7 @@ public class InteriorMapManager : MonoBehaviour {
             }
             generated[(int)tilePos.x].Add((int)tilePos.y, new LocationGridTileSettings() {
                 groundTile = ground,
+                groundWallTile = groundWall,
                 detailTile = detail,
                 structureWallTile = structureWall,
                 objectTile = obj,
@@ -786,12 +807,14 @@ public class InteriorMapManager : MonoBehaviour {
     }
     public void DrawTownCenterTemplateForGeneration(StructureTemplate template, Vector3Int startPos) {
         DrawTiles(agGroundTilemap, template.groundTiles, startPos);
+        DrawTiles(agGroundWallTilemap, template.groundWallTiles, startPos);
         DrawTiles(agStructureTilemap, template.structureWallTiles, startPos);
         DrawTiles(agObjectsTilemap, template.objectTiles, startPos);
         DrawTiles(agDetailsTilemap, template.detailTiles, startPos);
     }
     public void DrawStructureTemplateForGeneration(StructureTemplate template, Vector3Int startPos, STRUCTURE_TYPE structureType) {
         DrawTiles(agGroundTilemap, template.groundTiles, startPos);
+        DrawTiles(agGroundWallTilemap, template.groundWallTiles, startPos);
         DrawTiles(agStructureTilemap, template.structureWallTiles, startPos);
         DrawTiles(agObjectsTilemap, template.objectTiles, startPos);
         DrawTiles(agDetailsTilemap, template.detailTiles, startPos);
@@ -936,6 +959,7 @@ public struct TownMapSettings {
 
     public Point size;
     public TileTemplateData[] groundTiles;
+    public TileTemplateData[] groundWallTiles;
     public TileTemplateData[] structureTiles;
     public TileTemplateData[] objectTiles;
     public TileTemplateData[] detailTiles;
@@ -977,6 +1001,7 @@ public class StructureSlot {
 
 public struct LocationGridTileSettings {
     public TileTemplateData groundTile;
+    public TileTemplateData groundWallTile;
     public TileTemplateData detailTile;
     public TileTemplateData structureWallTile;
     public TileTemplateData objectTile;
@@ -989,6 +1014,7 @@ public struct LocationGridTileSettings {
             overrideGroundTile = false;
         }
         setting.groundTile = otherSetting.groundTile;
+        setting.groundWallTile = otherSetting.groundWallTile;
         setting.detailTile = otherSetting.detailTile;
         setting.structureWallTile = otherSetting.structureWallTile;
         setting.objectTile = otherSetting.objectTile;
@@ -997,6 +1023,7 @@ public struct LocationGridTileSettings {
 
     public void UpdatePositions(Vector3 newPos) {
         groundTile.tilePosition = newPos;
+        groundWallTile.tilePosition = newPos;
         detailTile.tilePosition = newPos;
         structureWallTile.tilePosition = newPos;
         objectTile.tilePosition = newPos;

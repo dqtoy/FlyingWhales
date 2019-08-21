@@ -85,6 +85,8 @@ public class CharacterMarker : PooledObject {
         nameLbl.SetText(character.name);
         this.character = character;
         mainImg.sortingOrder = InteriorMapManager.Default_Character_Sorting_Order + character.id;
+        nameLbl.sortingOrder = mainImg.sortingOrder;
+        actionIcon.sortingOrder = mainImg.sortingOrder;
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
         }
