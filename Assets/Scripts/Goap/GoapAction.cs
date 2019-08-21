@@ -542,6 +542,7 @@ protected virtual bool isTargetMissing {
             //    Character targetCharacter = action.poiTarget as Character;
             //    targetCharacter.AdjustIsWaitingForInteraction(-1);
             //}
+            OnStopActionWhileTravelling();
             if (!actor.DropPlan(parentPlan)) {
                 //actor.PlanGoapActions();
             }
