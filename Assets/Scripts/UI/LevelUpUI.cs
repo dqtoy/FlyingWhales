@@ -49,11 +49,11 @@ public class LevelUpUI : MonoBehaviour {
          //    }
          //} 
          else if (identifierToLevelUp.ToLower() == "summon_slot") {
-            for (int i = 0; i < PlayerManager.Instance.player.maxSummonSlots; i++) {
+            for (int i = 0; i < PlayerManager.Instance.player.summonSlots.Length; i++) {
                 choices.Add(PlayerManager.Instance.player.summonSlots[i]);
             }
         } else if (identifierToLevelUp.ToLower() == "artifact_slot") {
-            for (int i = 0; i < PlayerManager.Instance.player.maxArtifactSlots; i++) {
+            for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Length; i++) {
                 choices.Add(PlayerManager.Instance.player.artifactSlots[i]);
             }
         }
@@ -86,9 +86,9 @@ public class LevelUpUI : MonoBehaviour {
             } else if (identifierToLevelUp.ToLower() == "intervention ability") {
                 titleText.text = "Gain a level for an Intervention Ability!";
             } else if (identifierToLevelUp.ToLower() == "summon_slot") {
-                titleText.text = "Gain a level for a Summon Slot!";
+                titleText.text = "Unlock or Level Up a Summon Slot!";
             } else if (identifierToLevelUp.ToLower() == "artifact_slot") {
-                titleText.text = "Gain a level for an Artifact Slot!";
+                titleText.text = "Unlock or Level Up an Artifact Slot!";
             }
             titleText.gameObject.SetActive(true);
         }
@@ -110,14 +110,24 @@ public class LevelUpUI : MonoBehaviour {
 
     public void OnClickLevelUp() {
         if(selectedObj != null) {
-            if(selectedObj is CombatAbility) {
+            if (selectedObj is CombatAbility) {
                 (selectedObj as CombatAbility).LevelUp();
-            }else if (selectedObj is PlayerJobAction) {
+            } else if (selectedObj is PlayerJobAction) {
                 (selectedObj as PlayerJobAction).LevelUp();
-            }else if (selectedObj is SummonSlot) {
-                (selectedObj as SummonSlot).LevelUp();
-            }else if (selectedObj is ArtifactSlot) {
-                (selectedObj as ArtifactSlot).LevelUp();
+            } else if (selectedObj is SummonSlot) {
+                SummonSlot summonSlot = selectedObj as SummonSlot;
+                if (summonSlot.isLocked) {
+                    PlayerManager.Instance.player.AdjustSummonSlot(1);
+                } else {
+                    summonSlot.LevelUp();
+                }
+            } else if (selectedObj is ArtifactSlot) {
+                ArtifactSlot artifactSlot = selectedObj as ArtifactSlot;
+                if (artifactSlot.isLocked) {
+                    PlayerManager.Instance.player.AdjustArtifactSlot(1);
+                } else {
+                    artifactSlot.LevelUp();
+                }
             }
         }
         Close();

@@ -1142,20 +1142,21 @@ public class Player : ILeader {
         return true;
     }
     public void UnlockASummonSlotOrUpgradeExisting() {
-        if (AreAllSummonSlotsMaxLevel()) {
-            AdjustSummonSlot(1);
-            PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Summon Slot.");
-        } else {
-            int chance = UnityEngine.Random.Range(0, 2);
-            if (chance == 0) {
-                //Unlock slot
-                AdjustSummonSlot(1);
-                PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Summon Slot.");
-            } else {
-                //Upgrade slot
-                PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "summon_slot");
-            }
-        }
+        PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "summon_slot");
+        //if (AreAllSummonSlotsMaxLevel()) {
+        //    AdjustSummonSlot(1);
+        //    PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Summon Slot.");
+        //} else {
+        //    int chance = UnityEngine.Random.Range(0, 2);
+        //    if (chance == 0) {
+        //        //Unlock slot
+        //        AdjustSummonSlot(1);
+        //        PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Summon Slot.");
+        //    } else {
+        //        //Upgrade slot
+        //        PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "summon_slot");
+        //    }
+        //}
     }
     #endregion
 
@@ -1358,20 +1359,21 @@ public class Player : ILeader {
         return true;
     }
     public void UnlockAnArtifactSlotOrUpgradeExisting() {
-        if (AreAllArtifactSlotsMaxLevel()) {
-            AdjustArtifactSlot(1);
-            PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Artifact Slot.");
-        } else {
-            int chance = UnityEngine.Random.Range(0, 2);
-            if (chance == 0) {
-                //Unlock slot
-                AdjustArtifactSlot(1);
-                PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Artifact Slot.");
-            } else {
-                //Upgrade slot
-                PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "artifact_slot");
-            }
-        }
+        PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "artifact_slot");
+        //if (AreAllArtifactSlotsMaxLevel()) {
+        //    AdjustArtifactSlot(1);
+        //    PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Artifact Slot.");
+        //} else {
+        //    int chance = UnityEngine.Random.Range(0, 2);
+        //    if (chance == 0) {
+        //        //Unlock slot
+        //        AdjustArtifactSlot(1);
+        //        PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Artifact Slot.");
+        //    } else {
+        //        //Upgrade slot
+        //        PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "artifact_slot");
+        //    }
+        //}
     }
     #endregion
 
