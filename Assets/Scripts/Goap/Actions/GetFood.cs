@@ -6,7 +6,7 @@ public class GetFood : GoapAction {
     public int neededFood { get; private set; }
     public GetFood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.GET_FOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        //isNotificationAnIntel = false;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

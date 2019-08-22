@@ -8,6 +8,7 @@ public class Accident : GoapAction {
     public Accident(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ACCIDENT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

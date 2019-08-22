@@ -5,7 +5,7 @@ using UnityEngine;
 public class DropFood : GoapAction {
     public DropFood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_FOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        //isNotificationAnIntel = false;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

@@ -8,6 +8,7 @@ public class HuntingToDrinkBlood : GoapAction {
     public HuntingToDrinkBlood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Eat_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

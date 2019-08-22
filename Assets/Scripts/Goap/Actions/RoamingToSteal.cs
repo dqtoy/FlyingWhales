@@ -8,6 +8,7 @@ public class RoamingToSteal : GoapAction {
     public RoamingToSteal(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ROAMING_TO_STEAL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

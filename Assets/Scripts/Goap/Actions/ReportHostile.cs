@@ -15,6 +15,7 @@ public class ReportHostile : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
         };
+        isNotificationAnIntel = false;
     }
 
     public void SetHostileToReport(Character hostile) {

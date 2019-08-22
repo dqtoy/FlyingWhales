@@ -7,6 +7,7 @@ public class RememberFallen : GoapAction {
 
     public RememberFallen(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
+        isNotificationAnIntel = false;
     }
 
     #region Overrides

@@ -17,6 +17,7 @@ public class ReportCrime : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
         };
+        isNotificationAnIntel = false;
     }
 
     public void SetCrimeToReport(CRIME crime, AlterEgoData criminal, GoapAction crimeAction) {
