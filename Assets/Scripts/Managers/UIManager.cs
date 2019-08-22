@@ -874,7 +874,7 @@ public class UIManager : MonoBehaviour {
             characterInfoUI.activeCharacter.CenterOnCharacter();
         }
     }
-    private void OnCameraOutOfFocus() {
+    public void OnCameraOutOfFocus() {
         if (characterInfoUI.isShowing) {
             characterInfoUI.OnClickCloseMenu();
         }
@@ -1171,16 +1171,16 @@ public class UIManager : MonoBehaviour {
         IntelNotificationItem newItem = newIntelGO.GetComponent<IntelNotificationItem>();
         newItem.Initialize(intel, true, OnNotificationDestroyed);
         newIntelGO.transform.localScale = Vector3.one;
-        PlaceNewNotificaton(newItem);
+        PlaceNewNotification(newItem);
     }
     private void ShowPlayerNotification(Log log) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         PlayerNotificationItem newItem = newIntelGO.GetComponent<PlayerNotificationItem>();
         newItem.Initialize(log, true, OnNotificationDestroyed);
         newIntelGO.transform.localScale = Vector3.one;
-        PlaceNewNotificaton(newItem);        
+        PlaceNewNotification(newItem);        
     }
-    private void PlaceNewNotificaton(PlayerNotificationItem newNotif) {
+    private void PlaceNewNotification(PlayerNotificationItem newNotif) {
         //check if the log used is from a GoapAction
         //then check all other currently showing notifications, if it is from the same goap action and the active character of both logs are the same.
         //replace that log with this new one

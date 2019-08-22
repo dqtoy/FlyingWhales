@@ -155,6 +155,7 @@ public static class Signals {
     public static string CAMERA_OUT_OF_FOCUS = "CameraOutOfFocus";
     public static string ON_OPEN_SHARE_INTEL = "OnOpenShareIntel";
     public static string ON_CLOSE_SHARE_INTEL = "OnCloseShareIntel";
+    public static string SHOW_TIMER_HUB_ITEM = "ShowTimerHubItem";
     #endregion
 
     #region Quest Signals

@@ -145,6 +145,10 @@ public class Region {
         }
     }
     public void CenterCameraOnRegion() {
+        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+            InteriorMapManager.Instance.HideAreaMap();
+            UIManager.Instance.OnCameraOutOfFocus();
+        }
         CameraMove.Instance.CenterCameraOn(this.coreTile.gameObject);
     }
     #endregion
@@ -157,6 +161,8 @@ public class Region {
         PlayerManager.Instance.player.SetInvadingRegion(this);
         ticksInInvasion = 0;
         Messenger.AddListener(Signals.TICK_STARTED, PerInvasionTick);
+        TimerHubUI.Instance.AddItem("Invasion of " + (mainLandmark.tileLocation.areaOfTile != null ? mainLandmark.tileLocation.areaOfTile.name : name), mainLandmark.invasionTicks, () => UIManager.Instance.ShowRegionInfo(this));
+        //Messenger.Broadcast(Signals.SHOW_TIMER_HUB_ITEM, "Invasion of " + (mainLandmark.tileLocation.areaOfTile != null ? mainLandmark.tileLocation.areaOfTile.name : name), mainLandmark.invasionTicks);
     }
     private void Invade() {
         //corrupt region

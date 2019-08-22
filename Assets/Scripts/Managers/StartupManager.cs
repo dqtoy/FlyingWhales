@@ -16,12 +16,10 @@ public class StartupManager : MonoBehaviour {
 		MaterialManager.Instance.Initialize();
 		ProductionManager.Instance.Initialize();
         PlayerManager.Instance.Initialize();
+        TimerHubUI.Instance.Initialize();
 		//TaskManager.Instance.Initialize ();
 
         LevelLoaderManager.UpdateLoadingInfo("Initializing World...");
-        if(SaveManager.Instance.currentSave != null) {
-
-        }
         if (SaveManager.Instance.currentSave != null) {
             Debug.Log("Loading world from current saved data...");
             this.mapGenerator.InitializeWorld(SaveManager.Instance.currentSave);

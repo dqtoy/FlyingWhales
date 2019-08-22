@@ -356,6 +356,9 @@ public class GameManager : MonoBehaviour {
         float percent = (float)minutes/60f;
         return Mathf.FloorToInt(ticksPerHour * percent);
     }
+    public int GetHoursBasedOnTicks(int ticks) {
+        return ticks / ticksPerHour;
+    }
     public void SetTicksToAddPerTick(int amount) {
         ticksToAddPerTick = amount;
     }

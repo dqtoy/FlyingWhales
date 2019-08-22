@@ -92,7 +92,6 @@ public class PlayerUI : MonoBehaviour {
     [Header("Intervention Abilities")]
     [SerializeField] private RectTransform activeMinionActionsParent;
     [SerializeField] private GameObject actionBtnPrefab;
-    [SerializeField] private Slider newInterventionAbilityMeter;
     public UIHoverPosition roleSlotTooltipPos;
 
     [Header("Combat Abilities")]
@@ -187,7 +186,6 @@ public class PlayerUI : MonoBehaviour {
         LoadRoleSlots();
         LoadAttackSlot();
         LoadInterventionAbilitySlots();
-        InitializeNewInterventionAbilityMeter();
 
         UpdateIntel();
         InitializeMemoriesMenu();
@@ -1286,14 +1284,6 @@ public class PlayerUI : MonoBehaviour {
                 actionBtn.SetClickAction(null);
             }
         }
-    }
-    public void InitializeNewInterventionAbilityMeter() {
-        newInterventionAbilityMeter.minValue = 0;
-        newInterventionAbilityMeter.maxValue = PlayerManager.Instance.player.newInterventionAbilityTimerTicks;
-        newInterventionAbilityMeter.value = 0;
-    }
-    public void UpdateNewInterventionAbilityMeter() {
-        newInterventionAbilityMeter.value = PlayerManager.Instance.player.currentInterventionAbilityTimerTick;
     }
     #endregion
 

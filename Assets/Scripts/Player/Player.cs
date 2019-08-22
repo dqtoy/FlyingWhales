@@ -1634,22 +1634,26 @@ public class Player : ILeader {
         }
     }
     private void InitializeNewInterventionAbilityCycle() {
-        currentNewInterventionAbilityCycleIndex = 0;
-        currentInterventionAbilityTimerTick = 0;
+        currentNewInterventionAbilityCycleIndex = -1;
         newInterventionAbilityTimerTicks = GameManager.Instance.GetTicksBasedOnHour(6);
+        NewCycleForNewInterventionAbility();
     }
     private void PerTickInterventionAbility() {
         currentInterventionAbilityTimerTick++;
         if (currentInterventionAbilityTimerTick >= newInterventionAbilityTimerTicks) {
-            currentInterventionAbilityTimerTick = 0;
             int tier = GetTierBasedOnCycle();
             GainNewInterventionAbility(PlayerManager.Instance.GetRandomAbilityByTier(tier), true);
-            currentNewInterventionAbilityCycleIndex++;
-            if (currentNewInterventionAbilityCycleIndex > 3) {
-                currentNewInterventionAbilityCycleIndex = 0;
-            }
+            NewCycleForNewInterventionAbility();
         }
-        PlayerUI.Instance.UpdateNewInterventionAbilityMeter();
+    }
+    public void NewCycleForNewInterventionAbility() {
+        currentInterventionAbilityTimerTick = 0;
+        currentNewInterventionAbilityCycleIndex++;
+        if (currentNewInterventionAbilityCycleIndex > 3) {
+            currentNewInterventionAbilityCycleIndex = 0;
+        }
+        TimerHubUI.Instance.AddItem("Unlock New Intervention Ability", newInterventionAbilityTimerTicks, null);
+        //Messenger.Broadcast(Signals.SHOW_TIMER_HUB_ITEM, "Unlock New Intervention Ability", newInterventionAbilityTimerTicks);
     }
     private int GetTierBasedOnCycle() {
         //Tier Cycle - 3, 3, 2, 1
