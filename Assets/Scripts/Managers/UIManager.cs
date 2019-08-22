@@ -1163,6 +1163,7 @@ public class UIManager : MonoBehaviour {
     public RectTransform playerNotificationScrollRectTransform;
     public ScrollRect playerNotifScrollRect;
     public Image[] playerNotifTransparentImages;
+    public int maxPlayerNotif;
 
     private List<PlayerNotificationItem> activeNotifications = new List<PlayerNotificationItem>(); //notifications that are currently being shown.
     private void ShowPlayerNotification(Intel intel) {
@@ -1205,6 +1206,9 @@ public class UIManager : MonoBehaviour {
         //    (newNotif.gameObject.transform as RectTransform).SetAsLastSibling();
         //}
         activeNotifications.Add(newNotif);
+        if(activeNotifications.Count > maxPlayerNotif) {
+            activeNotifications[0].DeleteNotification();
+        }
     }
     private void OnNotificationDestroyed(PlayerNotificationItem item) {
         activeNotifications.Remove(item);

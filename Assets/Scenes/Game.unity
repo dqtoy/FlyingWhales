@@ -77466,6 +77466,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  maxPlayerNotif: 20
   interiorMapLoadingGO: {fileID: 1005575185}
   interiorMapLoadingBGImage: {fileID: 1005575187}
   interiorMapLoadingDetailsGO: {fileID: 1163511682}
@@ -82733,20 +82734,6 @@ Prefab:
         type: 2}
       propertyPath: m_AnchorMax.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1722027918295172, guid: bb062f8c3be91104299ceda438b731f4, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 224362300656238626, guid: bb062f8c3be91104299ceda438b731f4,
-        type: 2}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114091021585969558, guid: bb062f8c3be91104299ceda438b731f4,
-        type: 2}
-      propertyPath: m_ChildControlHeight
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bb062f8c3be91104299ceda438b731f4, type: 2}

@@ -209,11 +209,11 @@ MonoBehaviour:
     m_Top: 0
     m_Bottom: 10
   m_ChildAlignment: 6
-  m_Spacing: 0
+  m_Spacing: -1
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
+  m_ChildControlHeight: 1
 --- !u!114 &114136318833100308
 MonoBehaviour:
   m_ObjectHideFlags: 1

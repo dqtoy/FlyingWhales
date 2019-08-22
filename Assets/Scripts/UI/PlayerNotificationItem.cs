@@ -25,10 +25,11 @@ public class PlayerNotificationItem : PooledObject {
         //logEnvelopContent.Execute();
         //mainEnvelopContent.Execute();
 
-        if (hasExpiry) {
-            //schedule expiry
-            Messenger.AddListener(Signals.TICK_ENDED, CheckForExpiry);
-        }
+        //NOTE: THIS IS REMOVED BECAUSE NOTIFICATIONS NO LONGER HAVE TIMERS, INSTEAD THEY WILL JUST BE REPLACED IF NEW ONES ARE ADDED
+        //if (hasExpiry) {
+        //    //schedule expiry
+        //    Messenger.AddListener(Signals.TICK_ENDED, CheckForExpiry);
+        //}
 
         this.onDestroyAction = onDestroyAction;
     }
@@ -50,9 +51,9 @@ public class PlayerNotificationItem : PooledObject {
         this.transform.localScale = Vector3.one;
     }
     public void DeleteNotification() {
-        if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {
-            Messenger.RemoveListener(Signals.TICK_ENDED, CheckForExpiry);
-        }
+        //if (Messenger.eventTable.ContainsKey(Signals.TICK_ENDED)) {
+        //    Messenger.RemoveListener(Signals.TICK_ENDED, CheckForExpiry);
+        //}
         onDestroyAction?.Invoke(this);
         ObjectPoolManager.Instance.DestroyObject(this.gameObject);
     }
