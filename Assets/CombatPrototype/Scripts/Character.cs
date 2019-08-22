@@ -4978,14 +4978,12 @@ public class Character : ILeader, IPointOfInterest {
             return false;
         }
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        Trait hungryOrStarving = GetNormalTrait("Starving", "Hungry");
-
-        if (hungryOrStarving != null) {
+        if (isStarving || isHungry) {
             if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 int value = 0;
                 JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
-                if (hungryOrStarving.name == "Starving") {
+                if (isStarving) {
                     value = 100;
                     jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
                 } else {
@@ -5027,14 +5025,12 @@ public class Character : ILeader, IPointOfInterest {
             return false;
         }
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        Trait tiredOrExhausted = GetNormalTrait("Exhausted", "Tired");
-
-        if (tiredOrExhausted != null) {
+        if (isTired || isExhausted) {
             if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 int value = 0;
                 JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
-                if (tiredOrExhausted.name == "Exhausted") {
+                if (isExhausted) {
                     value = 100;
                     jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
                 } else {
@@ -5075,14 +5071,12 @@ public class Character : ILeader, IPointOfInterest {
             return false;
         }
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        Trait lonelyOrForlorn = GetNormalTrait("Forlorn", "Lonely");
-
-        if (lonelyOrForlorn != null) {
+        if (isLonely || isForlorn) {
             if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 int value = 0;
                 JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
-                if (lonelyOrForlorn.name == "Forlorn") {
+                if (isForlorn) {
                     value = 100;
                     jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
                 } else {
