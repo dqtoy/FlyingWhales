@@ -313,6 +313,15 @@ public class JobQueue {
         }
         return count;
     }
+    public int GetNumberOfJobsWith(JOB_TYPE type) {
+        int count = 0;
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i].jobType == type) {
+                count++;
+            }
+        }
+        return count;
+    }
     public void CancelAllJobs(JOB_TYPE jobType) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if(jobsInQueue[i].jobType == jobType) {

@@ -28,6 +28,7 @@ public class NewAbilityUI : MonoBehaviour {
             return;
         }
         UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
         UpdateMinionToLevelUp(minionToLevelUp);
         UpdateNewAbility(ability);
         this.gameObject.SetActive(true);
@@ -93,6 +94,7 @@ public class NewAbilityUI : MonoBehaviour {
         this.gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
+            UIManager.Instance.SetSpeedTogglesState(true);
         }
     }
 

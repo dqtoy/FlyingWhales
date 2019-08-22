@@ -121,7 +121,7 @@ public class Zombie_Virus : Trait {
         if (hitBy == owner) {
             //a character was hit by the owner of this trait, check if the character that was hit becomes infected.
             int roll = Random.Range(0, 100);
-            if (roll < 15) { //15
+            if (roll < 20) { //15
                 if (hitCharacter.AddTrait("Zombie_Virus", characterResponsible: hitBy)) {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_zombie");
                     log.AddToFillers(hitCharacter, hitCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

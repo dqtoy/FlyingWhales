@@ -36,6 +36,7 @@ public class CharacterAvatar : MonoBehaviour {
     [SerializeField] private bool _isInitialized = false;
     [SerializeField] private bool _isMovementPaused = false;
     [SerializeField] private bool _isTravelling = false;
+    [SerializeField] private bool _isTravellingOutside = false;
     private int _distanceToTarget;
     private bool _isVisualShowing;
     private bool _isTravelCancelled;
@@ -51,8 +52,8 @@ public class CharacterAvatar : MonoBehaviour {
     public bool isTravelling {
         get { return _isTravelling; }
     }
-    public bool isAreaTravelling {
-        get { return _isTravelling && _travelLine != null; } //if the character is travelling from area to area, as oppose to only travelling inside area map
+    public bool isTravellingOutside {
+        get { return _isTravellingOutside; } //if the character is travelling from area to area, as oppose to only travelling inside area map
     }
     public bool isVisualShowing {
         get {
@@ -158,7 +159,7 @@ public class CharacterAvatar : MonoBehaviour {
         }
     }
     private void StartTravelling() {
-        SetIsTravelling(true);
+        SetIsTravellingOutside(true);
         for (int i = 0; i < _party.characters.Count; i++) {
             _party.characters[i].SetPOIState(POI_STATE.INACTIVE);
         }
@@ -206,6 +207,7 @@ public class CharacterAvatar : MonoBehaviour {
     }
     private void ArriveAtLocation() {
         SetIsTravelling(false);
+        SetIsTravellingOutside(false);
         _travelLine.travelLineParent.RemoveChild(_travelLine);
         GameObject.Destroy(_travelLine.gameObject);
         _travelLine = null;
@@ -365,6 +367,9 @@ public class CharacterAvatar : MonoBehaviour {
     }
     public void SetIsTravelling(bool state) {
         _isTravelling = state;
+    }
+    public void SetIsTravellingOutside(bool state) {
+        _isTravellingOutside = state;
     }
     public void SetIsPlaceCharacterAsTileObject(bool state) {
         placeCharacterAsTileObject = state;

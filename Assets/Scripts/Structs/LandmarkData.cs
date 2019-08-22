@@ -12,6 +12,7 @@ public struct LandmarkData {
     public List<LANDMARK_TAG> uniqueTags;
     public Sprite landmarkObjectSprite;
     public Sprite landmarkTypeIcon;
+    public Sprite landmarkPortrait;
     public BiomeLandmarkSpriteListDictionary biomeTileSprites;
     public List<LandmarkStructureSprite> neutralTileSprites; //These are the sprites that will be used if landmark is not owned by a race
     public List<LandmarkStructureSprite> humansLandmarkTileSprites;

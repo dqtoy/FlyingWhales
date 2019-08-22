@@ -487,7 +487,7 @@ public class CharacterMarker : PooledObject {
                 if (targetCharacter.specificLocation != character.specificLocation) {
                     this.arrivalAction?.Invoke();
                     ClearArrivalAction();
-                } else if (targetCharacter.currentParty != null && targetCharacter.currentParty.icon != null && targetCharacter.currentParty.icon.isAreaTravelling) {
+                } else if (targetCharacter.currentParty != null && targetCharacter.currentParty.icon != null && targetCharacter.currentParty.icon.isTravellingOutside) {
                     OnCharacterAreaTravelling(targetCharacter.currentParty);
                 } 
                 break;
@@ -1244,7 +1244,7 @@ public class CharacterMarker : PooledObject {
                 if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                     Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
                 } else {
-                    if (!character.currentParty.icon.isAreaTravelling) {
+                    if (!character.currentParty.icon.isTravellingOutside) {
                         character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
                     }
                 }

@@ -4,8 +4,7 @@ using System.Linq;
 using System;
 using UnityEngine;
 
-public class 
-    Area {
+public class Area {
 
     public int id { get; private set; }
     public string name { get; private set; }
@@ -187,13 +186,11 @@ public class
 
     #region Listeners
     private void SubscribeToSignals() {
-        Messenger.AddListener(Signals.HOUR_STARTED, CreatePatrolAndExploreJobs);
+        Messenger.AddListener(Signals.HOUR_STARTED, HourlyJobActions);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
     }
     private void UnsubscribeToSignals() {
-        if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
-            Messenger.RemoveListener(Signals.HOUR_STARTED, CreatePatrolAndExploreJobs);
-        }
+        Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
@@ -209,9 +206,6 @@ public class
     public void SetName(string name) {
         this.name = name;
     }
-    //public void SetDefaultRace(RACE race) {
-    //    defaultRace = race;
-    //}
     public void AddPossibleOccupant(RACE race) {
         possibleOccupants.Add(race);
     }
@@ -240,15 +234,6 @@ public class
             }
         }
     }
-    //private void GenerateDefaultRace() {
-    //    if (initialSpawnSetup.Count > 0) {
-    //        InitialRaceSetup chosenSetup = initialSpawnSetup[UnityEngine.Random.Range(0, initialSpawnSetup.Count)];
-    //        defaultRace = chosenSetup.race;
-    //        SetRaceType(defaultRace.race);
-    //    } else {
-    //        defaultRace = new Race(RACE.NONE, RACE_SUB_TYPE.NORMAL);
-    //    }
-    //}
     #endregion
 
     #region Tile Management
@@ -395,9 +380,6 @@ public class
         }
         Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, this);
     }
-    //public void SetRaceType(RACE raceType) {
-    //    _raceType = raceType;
-    //}
     #endregion
 
     #region Utilities
@@ -646,81 +628,6 @@ public class
         //    RemoveCharacterFromLocation(party.characters[i]);
         //}
     }
-    //public void AddCharacterToAppropriateStructure(Character character) {
-    //    if (character.GetTraitOr("Abducted", "Restrained") != null) {
-    //        GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA).AddCharacterAtLocation(character);
-    //    } else {
-    //        if (character.homeArea.id == this.id) {
-    //            if (character.homeStructure == null) {
-    //                //throw new Exception(character.name + "'s homeStructure is null!");
-    //                if (UnityEngine.Random.Range(0, 2) == 0) {
-    //                    LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-    //                    if (wilderness != null) {
-    //                        wilderness.AddCharacterAtLocation(character);
-    //                    } else {
-    //                        GetRandomStructureOfType(STRUCTURE_TYPE.DUNGEON).AddCharacterAtLocation(character);
-    //                    }
-    //                } else {
-    //                    LocationStructure dungeon = GetRandomStructureOfType(STRUCTURE_TYPE.DUNGEON);
-    //                    if (dungeon != null) {
-    //                        dungeon.AddCharacterAtLocation(character);
-    //                    } else {
-    //                        GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
-    //                    }
-    //                }
-    //            } else {
-    //                //If this is his home, the character will be placed in his Dwelling.
-    //                character.homeStructure.AddCharacterAtLocation(character);
-    //            }
-    //        } else {
-    //            // Otherwise:
-    //            if (Utilities.IsRaceBeast(character.race)) {
-    //                //- Beasts will be placed at a random Wilderness.
-    //                GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
-    //            } else if (this.owner != null) {
-    //                FACTION_RELATIONSHIP_STATUS relStat;
-    //                if (character.faction.id == this.owner.id) { //character is part of the same faction as the owner of this area
-    //                    relStat = FACTION_RELATIONSHIP_STATUS.ALLY;
-    //                } else {
-    //                    relStat = character.faction.GetRelationshipWith(this.owner).relationshipStatus;
-    //                }
-    //                switch (relStat) {
-    //                    case FACTION_RELATIONSHIP_STATUS.AT_WAR:
-    //                    case FACTION_RELATIONSHIP_STATUS.ENEMY:
-    //                        //- If location is occupied, non-beasts whose faction relationship is Enemy or worse will be placed in a random structure Outside Settlement.
-    //                        List<LocationStructure> choices = GetStructuresAtLocation(false);
-    //                        choices[UnityEngine.Random.Range(0, choices.Count)].AddCharacterAtLocation(character);
-    //                        break;
-    //                    case FACTION_RELATIONSHIP_STATUS.DISLIKED:
-    //                    case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
-    //                    case FACTION_RELATIONSHIP_STATUS.FRIEND:
-    //                    case FACTION_RELATIONSHIP_STATUS.ALLY:
-    //                        LocationStructure inn = GetRandomStructureOfType(STRUCTURE_TYPE.INN);
-    //                        if (inn != null) {
-    //                            //- If location is occupied, non-beasts whose faction relationship is Disliked or better will be placed at the Inn. 
-    //                            inn.AddCharacterAtLocation(character);
-    //                        } else {
-    //                            //If no Inn in the Location, he will be placed in a random Wilderness.
-    //                            LocationStructure wilderness = GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-    //                            wilderness.AddCharacterAtLocation(character);
-    //                        }
-    //                        break;
-    //                }
-    //            } else {
-    //                //- If location is unoccupied, non-beasts will be placed at a random Wilderness.
-    //                GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS).AddCharacterAtLocation(character);
-    //            }
-    //        }
-    //    }
-    //    if (character.currentStructure == null) {
-    //        Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find structure for " + character.name + " at " + this.name);
-    //    } else {
-    //        if (character.currentStructure != character.gridTileLocation.structure && character.marker != null) {
-    //            LocationGridTile tile = character.currentStructure.GetRandomUnoccupiedTile();
-    //            character.marker.PlaceMarkerAt(tile);
-    //        }
-    //    }
-    //}
     private void AddCharacterAtLocationHistory(string str) {
 #if !WORLD_CREATION_TOOL
         charactersAtLocationHistory.Add(GameManager.Instance.TodayLogString() + str);
@@ -1133,28 +1040,6 @@ public class
             }
         }
     }
-    //private void PlaceBedsAndTables() {
-    //    if (structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-    //        for (int i = 0; i < structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
-    //            LocationStructure structure = structures[STRUCTURE_TYPE.DWELLING][i];
-    //            if (!structure.isFromTemplate) {
-    //                structure.AddPOI(new Bed(structure));
-    //                structure.AddPOI(new Table(structure));
-    //            }
-    //        }
-    //    }
-    //    if (structures.ContainsKey(STRUCTURE_TYPE.INN)) {
-    //        int randomInnTables = UnityEngine.Random.Range(2, 5);
-    //        for (int i = 0; i < structures[STRUCTURE_TYPE.INN].Count; i++) {
-    //            LocationStructure structure = structures[STRUCTURE_TYPE.INN][i];
-    //            if (!structure.isFromTemplate) {
-    //                for (int j = 0; j < randomInnTables; j++) {
-    //                    structure.AddPOI(new Table(structure));
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
     private void PlaceOres() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {
             LocationStructure structure = structures[STRUCTURE_TYPE.WILDERNESS][0];
@@ -1311,6 +1196,12 @@ public class
     #endregion
 
     #region Jobs
+    private void HourlyJobActions() {
+        CreatePatrolAndExploreJobs();
+        if (UnityEngine.Random.Range(0, 100) < 100 && currentMoveOutJobs < maxMoveOutJobs) {
+            CreateMoveOutJobs();
+        }
+    }
     private void CreatePatrolAndExploreJobs() {
         int patrolChance = UnityEngine.Random.Range(0, 100);
         if(patrolChance < 25 && jobQueue.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
@@ -1331,13 +1222,6 @@ public class
     private bool CanDoPatrolAndExplore(Character character, JobQueueItem job) {
         return character.GetNormalTrait("Injured") == null;
     }
-    //private void OnTakeExploreJob(Character character) {
-    //    //Explorers should pick up a Tool and a Healing Potion before leaving
-    //    GoapPlanJob toolJob = new GoapPlanJob("Get Tool", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), targetPOI = character });
-    //    character.jobQueue.AddJobInQueue(toolJob, true);
-    //    GoapPlanJob potionJob = new GoapPlanJob("Get Potion", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = character });
-    //    character.jobQueue.AddJobInQueue(potionJob, true);
-    //}
     public void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
         if (affectedStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
             //brew potion
@@ -1414,6 +1298,20 @@ public class
         //job.SetCanTakeThisJobChecker(job.CanCraftItemChecker);
         //job.SetCannotOverrideJob(false);
         jobQueue.AddJobInQueue(job);
+    }
+    private int maxMoveOutJobs {
+        get { return areaResidents.Count / 4; } //There should be at most 1 Move Out Job per 4 residents
+    }
+    private int currentMoveOutJobs {
+        get { return jobQueue.GetNumberOfJobsWith(JOB_TYPE.MOVE_OUT); }
+    }
+    private void CreateMoveOutJobs() {
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.MOVE_OUT, CHARACTER_STATE.MOVE_OUT, this);
+        job.SetCanTakeThisJobChecker(CanMoveOut);
+        jobQueue.AddJobInQueue(job);
+    }
+    private bool CanMoveOut(Character character, JobQueueItem item) {
+        return character.role.roleType != CHARACTER_ROLE.LEADER;
     }
     #endregion
 

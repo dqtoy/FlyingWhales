@@ -14,15 +14,15 @@ public class SchedulingManager : MonoBehaviour {
 	}
 	public void StartScheduleCalls(){
 		this.checkGameDate = new GameDate (GameManager.Instance.month, GameManager.days, GameManager.Instance.year, GameManager.Instance.tick);
-		Messenger.AddListener (Signals.TICK_ENDED, CheckSchedule);
-        Messenger.AddListener(Signals.DAY_STARTED, CheckSchedule);
+		Messenger.AddListener(Signals.TICK_ENDED, CheckSchedule);
+        //Messenger.AddListener(Signals.DAY_STARTED, CheckSchedule);
     }
 	private void CheckSchedule(){
-		this.checkGameDate.month = GameManager.Instance.month;
-		this.checkGameDate.day = GameManager.days;
-		this.checkGameDate.year = GameManager.Instance.year;
+        this.checkGameDate.month = GameManager.Instance.month;
+        this.checkGameDate.day = GameManager.days;
+        this.checkGameDate.year = GameManager.Instance.year;
         this.checkGameDate.tick = GameManager.Instance.tick;
-		if(this.schedules.ContainsKey(this.checkGameDate)){
+        if (this.schedules.ContainsKey(this.checkGameDate)){
 			DoAsScheduled (this.schedules [this.checkGameDate]);
 			RemoveEntry (this.checkGameDate);
 		}
@@ -33,6 +33,7 @@ public class SchedulingManager : MonoBehaviour {
         }
         string newID = GenerateScheduleID();
         this.schedules[gameDate].Add(new ScheduledAction() { scheduleID = newID, action = act, scheduler = adder });
+        Debug.Log(GameManager.Instance.TodayLogString() + "Created new schedule on " + gameDate.ConvertToContinuousDaysWithTime() + ". Action is " + act.Method.Name + ", by " + adder.ToString());
         return newID;
 	}
 	internal void RemoveEntry(GameDate gameDate){
@@ -68,6 +69,7 @@ public class SchedulingManager : MonoBehaviour {
                 ScheduledAction action = acts[i];
                 if (action.scheduleID == id) {
                     this.schedules[date].RemoveAt(i);
+                    Debug.Log("Removed scheduled item " + action.ToString());
                     return true;
                 }
             }
@@ -137,5 +139,9 @@ public struct ScheduledAction {
             return token.gridTileLocation != null;
         }
         return true;
+    }
+
+    public override string ToString() {
+        return scheduleID + " - " + action.Method.Name + " by " + scheduler.ToString();
     }
 }

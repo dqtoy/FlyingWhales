@@ -34,6 +34,7 @@ public class LevelUpUI : MonoBehaviour {
             return;
         }
         UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
         Utilities.DestroyChildren(choicesParent);
         UpdateMinionToLevelUp(minionToLevelUp, identifierToLevelUp);
 
@@ -99,6 +100,7 @@ public class LevelUpUI : MonoBehaviour {
         this.gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
+            UIManager.Instance.SetSpeedTogglesState(true);
         }
         
     }

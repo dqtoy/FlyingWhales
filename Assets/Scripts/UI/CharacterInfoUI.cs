@@ -302,7 +302,11 @@ public class CharacterInfoUI : UIMenu {
 
     #region Location
     private void UpdateLocationInfo() {
-        visitorLocationPortrait.SetLocation(_activeCharacter.specificLocation);
+        if (_activeCharacter.currentLandmark != null) {
+            visitorLocationPortrait.SetLocation(_activeCharacter.currentLandmark);
+        } else {
+            visitorLocationPortrait.SetLocation(_activeCharacter.specificLocation);
+        }
         residentLocationPortrait.SetLocation(_activeCharacter.homeArea);
     }
     #endregion

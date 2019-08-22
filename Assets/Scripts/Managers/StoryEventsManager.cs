@@ -13,12 +13,15 @@ public class StoryEventsManager : MonoBehaviour {
     
     public static StoryEventChoice continueChoice = new StoryEventChoice() { text = "Continue..."};
 
+    private WorldEvent[] worldEvents;
+
     private void Awake() {
         Instance = this;
     }
 
     public void Initialize() {
         LoadEvents();
+        LoadWorldEvents();
     }
 
     private void LoadEvents() {
@@ -379,6 +382,55 @@ public class StoryEventsManager : MonoBehaviour {
             additionalText += " " + currEffect.additionalText;
             chosenEffects.Add(currEffect);
         }
+    }
+    #endregion
+
+    #region World Events
+    private void LoadWorldEvents() {
+        WORLD_EVENT[] events = Utilities.GetEnumValues<WORLD_EVENT>();
+        worldEvents = new WorldEvent[events.Length];
+        for (int i = 0; i < events.Length; i++) {
+            WORLD_EVENT currType = events[i];
+            WorldEvent eventObj = CreateNewWorldEvent(currType);
+            if (eventObj != null) {
+                worldEvents[i] = eventObj;
+            } else {
+                throw new System.Exception("Could not create world event class for type " + currType.ToString() + ". Make sure that it's class is named the EXACT same as its enum value");
+            }
+        }
+    }
+    private WorldEvent CreateNewWorldEvent(WORLD_EVENT eventType) {
+        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(eventType.ToString());
+        return System.Activator.CreateInstance(System.Type.GetType(typeName)) as WorldEvent;
+    }
+    private WorldEvent GetWorldEvent(WORLD_EVENT eventType) {
+        for (int i = 0; i < worldEvents.Length; i++) {
+            WorldEvent currEvent = worldEvents[i];
+            if (currEvent.eventType == eventType) {
+                return currEvent;
+            }
+        }
+        return null;
+    }
+    private bool CanSpawnEventAt(WORLD_EVENT eventType, BaseLandmark landmark) {
+        WorldEvent worldEvent = GetWorldEvent(eventType);
+        if (worldEvent != null) {
+            return worldEvent.CanSpawnEventAt(landmark);
+        }
+        return false;
+    }
+    public List<WorldEvent> GetEventsThatCanSpawnAt(BaseLandmark landmark) {
+        List<WorldEvent> events = new List<WorldEvent>();
+        for (int i = 0; i < worldEvents.Length; i++) {
+            WorldEvent currEvent = worldEvents[i];
+            if (currEvent.CanSpawnEventAt(landmark)) {
+                events.Add(currEvent);
+            }
+        }
+        return events;
+    }
+    public void SpawnEventAt(BaseLandmark landmark, WorldEvent we) {
+
     }
     #endregion
 }

@@ -58,8 +58,8 @@ public static class Signals {
     public static string ITEM_REMOVED_FROM_LANDMARK = "OnItemRemovedFromLandmark"; //Parameters (Item item, BaseLandmark landmark)
     public static string STRUCTURE_STATE_CHANGED = "OnStructureStateChanged"; //Parameters (StructureObj obj, ObjectState newState)
     public static string LANDMARK_ATTACK_TARGET_SELECTED = "OnLandmarkAttackTargetSelected"; //Parameters (BaseLandmark target)
-    public static string PARTY_ENTERED_LANDMARK = "OnPartyEnteredLandmark"; //Parameters (IParty partyThatEntered, BaseLandmark landmark)
-    public static string PARTY_EXITED_LANDMARK = "OnPartyExitedLandmark"; //Parameters (IParty partyThatEntered, BaseLandmark landmark)
+    public static string CHARACTER_ENTERED_LANDMARK = "OnCharacterEnteredLandmark"; //Parameters (Character, BaseLandmark)
+    public static string CHARACTER_EXITED_LANDMARK = "OnCharacterExitedLandmark"; //Parameters (Characte, BaseLandmark)
     public static string DESTROY_LANDMARK = "OnDestroyLandmark"; //Parameteres (BaseLandmark destroyedLandmark)
     public static string LANDMARK_UNDER_ATTACK = "OnLandmarkUnderAttack"; //Parameters (BaseLandmark underAttackedLandmark, GameEvent associatedEvent = null)
     public static string LANDMARK_INSPECTED = "OnLandmarkInspected"; //Parameters (BaseLandmark inspectedLandmark)
@@ -67,6 +67,18 @@ public static class Signals {
     public static string LANDMARK_RESIDENT_REMOVED = "OnLandmarkResidentRemoved"; //Parameters (BaseLandmark affectedLandmark, ICharacter character)
     public static string LANDMARK_INVESTIGATION_ACTIVATED = "OnLandmarkInvestigationActivated"; //Parameters (BaseLandmark investigatedLandmark)
     public static string UPDATE_RITUAL_CIRCLE_TRAIT = "OnUpdateRitualCircleTrait";
+    /// <summary>
+    /// Parameters: BaseLandmark, WorldEvent
+    /// </summary>
+    public static string WORLD_EVENT_SPAWNED = "OnWorldEventSpawnedAtLandmark";
+    /// <summary>
+    /// Parameters: BaseLandmark, WorldEvent
+    /// </summary>
+    public static string WORLD_EVENT_FINISHED_NORMAL = "OnWorldEventFinishedNormallyAtLandmark";
+    /// <summary>
+    /// Parameters: BaseLandmark, WorldEvent
+    /// </summary>
+    public static string WORLD_EVENT_DESPAWNED = "OnWorldEventDespawnedAtLandmark";
     #endregion
 
     #region Character

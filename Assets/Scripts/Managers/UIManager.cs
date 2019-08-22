@@ -80,8 +80,9 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private GameObject cover;
 
     [Space(10)]
-    [Header("Nameplates")]
-    [SerializeField] private RectTransform nameplateParent;
+    [Header("World UI")]
+    [SerializeField] private RectTransform worldUIParent;
+    [SerializeField] private GameObject worldEventIconPrefab;
 
     [Header("Object Picker")]
     [SerializeField] private ObjectPicker objectPicker;
@@ -217,6 +218,9 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
+
+        Messenger.AddListener<BaseLandmark, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
+        Messenger.AddListener<BaseLandmark, WorldEvent>(Signals.WORLD_EVENT_DESPAWNED, OnWorldEventDespawned);
         UpdateUI();
     }
     private void OnGameLoaded() {
@@ -724,7 +728,7 @@ public class UIManager : MonoBehaviour {
 
     #region Nameplate
     public void CreateAreaNameplate(Area area) {
-        GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("AreaNameplate", nameplateParent);
+        GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("AreaNameplate", worldUIParent);
         //nameplateGO.transform.localScale = new Vector3(0.02f, 0.02f, 1f);
         nameplateGO.GetComponent<AreaNameplate>().SetArea(area);
     }
@@ -1095,11 +1099,11 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private Button returnToWorldBtn;
     private void OnAreaMapOpened(Area area) {
         //returnToWorldBtn.interactable = true;
-        ShowPlayerNotificationArea();
+        //ShowPlayerNotificationArea();
     }
     private void OnAreaMapClosed(Area area) {
         //returnToWorldBtn.interactable = false;
-        HidePlayerNotificationArea();
+        //HidePlayerNotificationArea();
     }
     //public void PointerClickWorldMap(BaseEventData bed) {
     //    //PointerEventData ped = bed as PointerEventData;
@@ -1291,8 +1295,21 @@ public class UIManager : MonoBehaviour {
     }
     public void UpdateRegionInfo() {
         if (regionInfoUI.isShowing) {
-            regionInfoUI.UpdateAllInfo();
+            regionInfoUI.UpdateInfo();
         }
+    }
+    #endregion
+
+    #region World Events
+    private void OnWorldEventSpawned(BaseLandmark landmark, WorldEvent we) {
+        //create world event popup
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(worldEventIconPrefab.name, Vector3.zero, Quaternion.identity, worldUIParent);
+        go.transform.position = landmark.tileLocation.transform.position;
+        go.transform.localScale = Vector3.one;
+        landmark.SetEventIcon(go);
+    }
+    private void OnWorldEventDespawned(BaseLandmark landmark, WorldEvent we) {
+        ObjectPoolManager.Instance.DestroyObject(landmark.eventIconGO);
     }
     #endregion
 }

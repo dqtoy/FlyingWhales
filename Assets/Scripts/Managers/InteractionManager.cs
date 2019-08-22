@@ -582,6 +582,7 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case JOB_TYPE.BUILD_FURNITURE:
             case JOB_TYPE.OBTAIN_ITEM:
+            case JOB_TYPE.MOVE_OUT:
                 priority = 230;
                 break;
         }

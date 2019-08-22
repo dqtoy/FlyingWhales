@@ -282,7 +282,7 @@ public class LandmarkInfoUI : UIMenu {
     private LandmarkCharacterItem CreateNewCharacterItem(Character character) {
         GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
         LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(character,this);
+        item.SetCharacter(character, this);
         characterItems.Add(item);
         CheckScrollers();
         return item;

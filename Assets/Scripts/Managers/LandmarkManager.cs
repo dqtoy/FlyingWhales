@@ -23,12 +23,15 @@ public class LandmarkManager : MonoBehaviour {
     public List<Area> allNonPlayerAreas {
         get { return allAreas.Where(x => x != PlayerManager.Instance.player.playerArea).ToList(); }
     }
+    public Area mainSettlement {
+        get { return allAreas.Where(x => x != PlayerManager.Instance.player.playerArea).First(); }
+    }
 
     [SerializeField] private GameObject landmarkGO;
 
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
 
-    public AreaTypeSpriteDictionary locationPortraits; //NOTE: Move this to world creation when time permits.
+    public AreaTypeSpriteDictionary locationPortraits;
 
     [Header("Inner Structures")]
     [SerializeField] private GameObject innerStructurePrefab;

@@ -1,12 +1,14 @@
-﻿using System.Collections;
+﻿using EZObjectPools;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class LocationPortrait : MonoBehaviour, IPointerClickHandler {
+public class LocationPortrait : PooledObject, IPointerClickHandler {
 
     public Area area { get; private set; }
+    public BaseLandmark landmark { get; private set; }
 
     [SerializeField] private Image portrait;
     [SerializeField] private GameObject hoverObj;
@@ -14,14 +16,24 @@ public class LocationPortrait : MonoBehaviour, IPointerClickHandler {
     public bool disableInteraction;
 
     public void OnPointerClick(PointerEventData eventData) {
-        if (!disableInteraction && area != null) {
-            UIManager.Instance.ShowAreaInfo(area);
+        if (!disableInteraction) {
+            if (area != null) {
+                UIManager.Instance.ShowAreaInfo(area);
+            } else if (landmark != null) {
+                UIManager.Instance.ShowRegionInfo(landmark.tileLocation.region);
+            }
         }
     }
 
     public void SetLocation(Area area) {
         this.area = area;
+        this.landmark = null;
         portrait.sprite = area.locationPortrait;
+    }
+    public void SetLocation(BaseLandmark landmark) {
+        this.landmark = landmark;
+        this.area = null;
+        portrait.sprite = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType).landmarkPortrait;
     }
 
     public void SetHoverHighlightState(bool state) {
@@ -31,9 +43,20 @@ public class LocationPortrait : MonoBehaviour, IPointerClickHandler {
     }
 
     public void ShowLocationInfo() {
-        UIManager.Instance.ShowSmallInfo(this.area.name);
+        if (this.area != null) {
+            UIManager.Instance.ShowSmallInfo(this.area.name);
+        } else if (this.landmark != null) {
+            UIManager.Instance.ShowSmallInfo(this.landmark.tileLocation.region.name);
+        }
+        
     }
     public void HideLocationInfo() {
         UIManager.Instance.HideSmallInfo();
+    }
+
+    public override void Reset() {
+        base.Reset();
+        area = null;
+        landmark = null;
     }
 }

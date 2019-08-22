@@ -72,6 +72,8 @@ public class UIMenu : MonoBehaviour {
                 UIManager.Instance.ShowFactionInfo(data as Faction);
             } else if (data is TileObject) {
                 UIManager.Instance.ShowTileObjectInfo(data as TileObject);
+            } else if (data is Region) {
+                UIManager.Instance.ShowRegionInfo(data as Region);
             }
         }
     }
