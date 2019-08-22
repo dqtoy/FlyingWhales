@@ -215,7 +215,7 @@ public class DrinkBlood : GoapAction {
                     if (isRecipientVampire) {
                         //- Recipient is a Vampire
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            if (recipient.marker.inVisionPOIs.Contains(actor)) {
+                            if (recipient.marker.inVisionCharacters.Contains(actor)) {
                                 recipient.marker.AddAvoidInRange(actor);
                             }
                         }

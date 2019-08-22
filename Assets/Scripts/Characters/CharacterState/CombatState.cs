@@ -63,7 +63,7 @@ public class CombatState : CharacterState {
         } else {
             //If character is pursuing the current closest hostile, check if that hostile is in range, if it is, start pursue timer
             if (isAttacking && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
-                if (stateComponent.character.marker.inVisionPOIs.Contains(currentClosestHostile)) {
+                if (stateComponent.character.marker.inVisionCharacters.Contains(currentClosestHostile)) {
                     StartPursueTimer();
                 }
             }
@@ -108,11 +108,9 @@ public class CombatState : CharacterState {
     }
     public override void AfterExitingState() {
         base.AfterExitingState();
-        for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {
-            if(stateComponent.character.marker.inVisionPOIs[i] is Character) {
-                Character currCharacter = stateComponent.character.marker.inVisionPOIs[i] as Character;
-                stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
-            }
+        for (int i = 0; i < stateComponent.character.marker.inVisionCharacters.Count; i++) {
+            Character currCharacter = stateComponent.character.marker.inVisionCharacters[i];
+            stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
         }
     }
     #endregion
@@ -133,7 +131,7 @@ public class CombatState : CharacterState {
                 summary += "\nStill has characters to avoid, checking if those characters are still in range...";
                 for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
                     Character currCharacter = stateComponent.character.marker.avoidInRange[i];
-                    if (!stateComponent.character.marker.inVisionPOIs.Contains(currCharacter) 
+                    if (!stateComponent.character.marker.inVisionCharacters.Contains(currCharacter) 
                         && !stateComponent.character.marker.visionCollision.poisInRangeButDiffStructure.Contains(currCharacter)) {
                         //I added checking for poisInRangeButDiffStructure beacuse characters are being removed from the character's avoid range when they exit a structure. (Myk)
                         OnFinishedFleeingFrom(currCharacter);

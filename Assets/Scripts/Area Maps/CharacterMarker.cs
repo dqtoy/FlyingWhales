@@ -185,7 +185,7 @@ public class CharacterMarker : PooledObject {
             //and that this character can react to a crime (not in flee or engage mode)
             if (action.IsConsideredACrimeBy(this.character)
                 && action.CanReactToThisCrime(this.character)
-                && inVisionPOIs.Contains(character)
+                && inVisionCharacters.Contains(character)
                 && this.character.CanReactToCrime()) {
                 bool hasRelationshipDegraded = false;
                 this.character.ReactToCrime(action, ref hasRelationshipDegraded);
@@ -216,14 +216,11 @@ public class CharacterMarker : PooledObject {
                 case "Unconscious":
                 case "Resting":
                     lostTraitSummary += "\n" + character.name + " is checking for reactions towards characters in vision...";
-                    for (int i = 0; i < inVisionPOIs.Count; i++) {
-                        IPointOfInterest currInVision = inVisionPOIs[i];
-                        if (currInVision is Character) {
-                            Character currCharacter = currInVision as Character;
-                            if (!AddHostileInRange(currCharacter)) {
-                                //If not hostile, try to react to character's action
-                                character.ThisCharacterSaw(currCharacter);
-                            }
+                    for (int i = 0; i < inVisionCharacters.Count; i++) {
+                        Character currCharacter = inVisionCharacters[i];
+                        if (!AddHostileInRange(currCharacter)) {
+                            //If not hostile, try to react to character's action
+                            character.ThisCharacterSaw(currCharacter);
                         }
                     }
                     break;
@@ -231,7 +228,7 @@ public class CharacterMarker : PooledObject {
             Debug.Log(lostTraitSummary);
             UpdateAnimation();
             UpdateActionIcon();
-        } else if (inVisionPOIs.Contains(character)) {
+        } else if (inVisionCharacters.Contains(character)) {
             //if the character that lost a trait is not this character and that character is in this character's hostility range
             //and the trait that was lost is a negative disabler trait, react to them.
             AddHostileInRange(character);
@@ -304,7 +301,7 @@ public class CharacterMarker : PooledObject {
                 character.currentAction.StopAction(true);
             }
         } else {
-            if (inVisionPOIs.Contains(otherCharacter)) {
+            if (inVisionCharacters.Contains(otherCharacter)) {
                 character.CreateJobsOnEnterVisionWith(otherCharacter);
             }
             if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
@@ -964,7 +961,7 @@ public class CharacterMarker : PooledObject {
     public void LogPOIsInVisionRange() {
         string summary = character.name + "'s POIs in range: ";
         for (int i = 0; i < inVisionPOIs.Count; i++) {
-            summary += "\n- " + inVisionPOIs.ElementAt(i).ToString();
+            summary += "\n- " + inVisionPOIs[i].ToString();
         }
         Debug.Log(summary);
     }
@@ -1043,7 +1040,7 @@ public class CharacterMarker : PooledObject {
         }
     }
     public void OnOtherCharacterDied(Character otherCharacter) {
-        if (inVisionPOIs.Contains(otherCharacter)) {
+        if (inVisionCharacters.Contains(otherCharacter)) {
             character.CreateJobsOnEnterVisionWith(otherCharacter); //this is used to create jobs that involve characters that died within the character's range of vision
         }
         //RemovePOIFromInVisionRange(otherCharacter);
@@ -1233,7 +1230,7 @@ public class CharacterMarker : PooledObject {
                 //When transferring to flee list, if the character is not in vision just remove him/her in hostiles range
                 for (int i = 0; i < hostilesInRange.Count; i++) {
                     Character hostile = hostilesInRange[i];
-                    if (inVisionPOIs.Contains(hostile)) {
+                    if (inVisionCharacters.Contains(hostile)) {
                         AddAvoidInRange(hostile, false);
                     } else {
                         RemoveHostileInRange(hostile, false);
