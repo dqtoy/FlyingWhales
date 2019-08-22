@@ -463,7 +463,7 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\n\tPOI's in Vision: ";
         if (character.marker.inVisionPOIs.Count > 0) {
             for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
-                IPointOfInterest poi = character.marker.inVisionPOIs.ElementAt(i);
+                IPointOfInterest poi = character.marker.inVisionPOIs[i];
                 summary += poi.name + ", ";
             }
         } else {

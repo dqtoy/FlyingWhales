@@ -40,13 +40,9 @@ public class Spooked : Trait {
             //character.AdjustDoNotDisturb(1);
 
             if (!character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-                if (character.marker.inVisionPOIs.Count > 0) {
-                    for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
-                        if (character.marker.inVisionPOIs[i] is Character) {
-                            Character characterInVision = character.marker.inVisionPOIs[i] as Character;
-                            AddTerrifyingCharacter(characterInVision);
-                            //AddHostileInRange(characterInVision, CHARACTER_STATE.COMBAT, false);
-                        }
+                if (character.marker.inVisionCharacters.Count > 0) {
+                    for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
+                        AddTerrifyingCharacter(character.marker.inVisionCharacters[i]);
                     }
                     if (terrifyingCharacters.Count > 0) {
                         if ((character.GetNormalTrait("Berserked") != null)

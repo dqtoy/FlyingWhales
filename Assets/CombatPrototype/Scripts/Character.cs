@@ -3218,7 +3218,7 @@ public class Character : ILeader, IPointOfInterest {
             if (GetNormalTrait("Unconscious", "Resting") != null) {
                 return;
             }
-            if (marker.inVisionPOIs.Contains(action.actor)) {
+            if (marker.inVisionCharacters.Contains(action.actor)) {
                 ThisCharacterWitnessedEvent(action);
                 ThisCharacterWatchEvent(null, action, state);
             }
@@ -5343,16 +5343,14 @@ public class Character : ILeader, IPointOfInterest {
                 int chance = UnityEngine.Random.Range(0, 100);
                 log += "\n  -RNG roll: " + chance;
                 if (chance < 15) {
-                    if(marker.inVisionPOIs.Count > 0) {
+                    if(marker.inVisionCharacters.Count > 0) {
                         bool hasForcedChat = false;
-                        for (int i = 0; i < marker.inVisionPOIs.Count; i++) {
-                            if (marker.inVisionPOIs[i] is Character) {
-                                Character targetCharacter = marker.inVisionPOIs[i] as Character;
-                                if (marker.visionCollision.ForceChatHandling(targetCharacter)) {
-                                    log += "\n  -Chat with: " + targetCharacter.name;
-                                    hasForcedChat = true;
-                                    break;
-                                }
+                        for (int i = 0; i < marker.inVisionCharacters.Count; i++) {
+                            Character targetCharacter = marker.inVisionCharacters[i];
+                            if (marker.visionCollision.ForceChatHandling(targetCharacter)) {
+                                log += "\n  -Chat with: " + targetCharacter.name;
+                                hasForcedChat = true;
+                                break;
                             }
                         }
                         if (hasForcedChat) {
@@ -7625,7 +7623,7 @@ public class Character : ILeader, IPointOfInterest {
                     PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
                 } else {
                     if (witnessedCrime != null) {
-                        if (marker.inVisionPOIs.Contains(criminal.owner)) {
+                        if (marker.inVisionCharacters.Contains(criminal.owner)) {
                             marker.AddAvoidInRange(criminal.owner);
                         }
                     }
@@ -7648,7 +7646,7 @@ public class Character : ILeader, IPointOfInterest {
                 PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
             } else {
                 if (witnessedCrime != null) {
-                    if (marker.inVisionPOIs.Contains(criminal.owner)) {
+                    if (marker.inVisionCharacters.Contains(criminal.owner)) {
                         marker.AddAvoidInRange(criminal.owner);
                     }
                 }
@@ -7923,7 +7921,7 @@ public class Character : ILeader, IPointOfInterest {
                         return; //do not do watch.
                     }
                 }
-                if (marker.inVisionPOIs.Contains(characterThatStartedState)) {
+                if (marker.inVisionCharacters.Contains(characterThatStartedState)) {
                     ThisCharacterWatchEvent(characterThatStartedState, null, null);
                 }
             }

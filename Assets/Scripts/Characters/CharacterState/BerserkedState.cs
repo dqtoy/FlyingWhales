@@ -86,7 +86,7 @@ public class BerserkedState : CharacterState {
     public override bool InVisionPOIsOnStartState() {
         for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
             Character hostile = stateComponent.character.marker.avoidInRange[i];
-            if (stateComponent.character.marker.inVisionPOIs.Contains(hostile)) {
+            if (stateComponent.character.marker.inVisionCharacters.Contains(hostile)) {
                 stateComponent.character.marker.AddHostileInRange(hostile, checkHostility: false, processCombatBehavior: false);
             } else {
                 stateComponent.character.marker.RemoveAvoidInRange(hostile, false);
