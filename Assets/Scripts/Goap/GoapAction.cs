@@ -77,7 +77,7 @@ public class GoapAction {
     public bool isStealth { get; protected set; }
 
 
-protected virtual bool isTargetMissing {
+    protected virtual bool isTargetMissing {
         get {
             bool targetMissing = !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
                 || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
@@ -438,8 +438,10 @@ protected virtual bool isTargetMissing {
         if (_requirementAction != null) {
             requirementActionSatisfied = _requirementAction();
         }
-        if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
-            requirementActionSatisfied = actor.IsCombatReady();
+        if (requirementActionSatisfied) {
+            if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
+                requirementActionSatisfied = actor.IsCombatReady();
+            }
         }
         return requirementActionSatisfied; //&& (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }
@@ -448,8 +450,10 @@ protected virtual bool isTargetMissing {
         if (_requirementOnBuildGoapTreeAction != null) {
             requirementActionSatisfied = _requirementOnBuildGoapTreeAction();
         }
-        if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
-            requirementActionSatisfied = actor.IsCombatReady();
+        if (requirementActionSatisfied) {
+            if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
+                requirementActionSatisfied = actor.IsCombatReady();
+            }
         }
         return requirementActionSatisfied;
     }

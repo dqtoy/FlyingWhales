@@ -88,66 +88,12 @@ public class JobQueue {
         if(jobsInQueue.Count > 0) {
             for (int i = 0; i < jobsInQueue.Count; i++) {
                 JobQueueItem job = jobsInQueue[i];
-                if (job.assignedCharacter == null && job.CanCharacterTakeThisJob(characterToDoJob)) {
-                    if (job.blacklistedCharacters.Contains(characterToDoJob)) {
-                        continue;
-                    }
-                    job.SetAssignedCharacter(characterToDoJob);
-                    if(job is GoapPlanJob) {
-                        GoapPlanJob goapPlanJob = job as GoapPlanJob;
-                        if(goapPlanJob.targetPlan != null) {
-                            characterToDoJob.AddPlan(goapPlanJob.targetPlan);
-                            goapPlanJob.SetAssignedPlan(goapPlanJob.targetPlan);
-                        } else {
-                            if (goapPlanJob.targetInteractionType != INTERACTION_TYPE.NONE) {
-                                characterToDoJob.StartGOAP(goapPlanJob.targetInteractionType, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
-                            } else {
-                                characterToDoJob.StartGOAP(goapPlanJob.targetEffect, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
-                            }
-                        }
-                    }else if (job is CharacterStateJob) {
-                        CharacterStateJob stateJob = job as CharacterStateJob;
-                        CharacterState newState = characterToDoJob.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
-                        if(newState != null) {
-                            stateJob.SetAssignedState(newState);
-                        } else {
-                            throw new System.Exception(characterToDoJob.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
-                        }
-                    }
+                if(!AssignCharacterToJob(job, characterToDoJob)) {
+                    continue;
+                } else {
                     return true;
                 }
             }
-        }
-        return false;
-    }
-    public bool AssignCharacterToJob(JobQueueItem job, Character characterToDoJob) {
-        if (job.assignedCharacter == null && job.CanCharacterTakeThisJob(characterToDoJob)) {
-            if (job.blacklistedCharacters.Contains(characterToDoJob)) {
-                return false;
-            }
-            job.SetAssignedCharacter(characterToDoJob);
-            if (job is GoapPlanJob) {
-                GoapPlanJob goapPlanJob = job as GoapPlanJob;
-                if (goapPlanJob.targetPlan != null) {
-                    characterToDoJob.AddPlan(goapPlanJob.targetPlan);
-                    goapPlanJob.SetAssignedPlan(goapPlanJob.targetPlan);
-                } else {
-                    if (goapPlanJob.targetInteractionType != INTERACTION_TYPE.NONE) {
-                        characterToDoJob.StartGOAP(goapPlanJob.targetInteractionType, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
-                    } else {
-                        characterToDoJob.StartGOAP(goapPlanJob.targetEffect, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
-                    }
-                }
-            } else if (job is CharacterStateJob) {
-                CharacterStateJob stateJob = job as CharacterStateJob;
-                CharacterState newState = characterToDoJob.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
-                if (newState != null) {
-                    stateJob.SetAssignedState(newState);
-                } else {
-                    throw new System.Exception(characterToDoJob.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
-                }
-            }
-            return true;
         }
         return false;
     }
@@ -178,6 +124,43 @@ public class JobQueue {
                 character.AdjustIsWaitingForInteraction(-1);
             }
         }
+    }
+    public bool AssignCharacterToJob(JobQueueItem job, Character characterToDoJob) {
+        if (job.assignedCharacter == null && job.CanCharacterTakeThisJob(characterToDoJob)) {
+            if (job.blacklistedCharacters.Contains(characterToDoJob)) {
+                return false;
+            }
+            job.SetAssignedCharacter(characterToDoJob);
+            if (isAreaJobQueue) {
+                if (characterToDoJob.CanCurrentJobBeOverriddenByJob(job)) {
+
+                }
+            } else {
+                if (job is GoapPlanJob) {
+                    GoapPlanJob goapPlanJob = job as GoapPlanJob;
+                    if (goapPlanJob.targetPlan != null) {
+                        characterToDoJob.AddPlan(goapPlanJob.targetPlan);
+                        goapPlanJob.SetAssignedPlan(goapPlanJob.targetPlan);
+                    } else {
+                        if (goapPlanJob.targetInteractionType != INTERACTION_TYPE.NONE) {
+                            characterToDoJob.StartGOAP(goapPlanJob.targetInteractionType, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
+                        } else {
+                            characterToDoJob.StartGOAP(goapPlanJob.targetEffect, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
+                        }
+                    }
+                } else if (job is CharacterStateJob) {
+                    CharacterStateJob stateJob = job as CharacterStateJob;
+                    CharacterState newState = characterToDoJob.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
+                    if (newState != null) {
+                        stateJob.SetAssignedState(newState);
+                    } else {
+                        throw new System.Exception(characterToDoJob.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
     }
     public void ForceAssignCharacterToJob(JobQueueItem job, Character characterToDoJob) {
         if (job.assignedCharacter == null) {

@@ -3690,7 +3690,7 @@ public class Character : ILeader, IPointOfInterest {
                         this.AddTrait(injured, characterThatAttacked, gainedFromDoing: state.actionThatTriggeredThisState);
                         break;
                     case "Death":
-                        this.Death("attacked", responsibleCharacter: characterThatAttacked);
+                        this.Death("attacked", deathFromAction: state.actionThatTriggeredThisState, responsibleCharacter: characterThatAttacked);
                         break;
                 }
             }
