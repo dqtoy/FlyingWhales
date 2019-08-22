@@ -82,7 +82,7 @@ namespace worldcreator {
             int civiliansCount = Int32.Parse(civilians);
             for (int i = 0; i < lastCreatedLandmarks.Count; i++) {
                 BaseLandmark currLandmark = lastCreatedLandmarks[i];
-                currLandmark.SetCivilianCount(civiliansCount);
+                //currLandmark.SetCivilianCount(civiliansCount);
             }
             //WorldCreatorUI.Instance.messageBox.HideMessageBox();
         }
