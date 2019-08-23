@@ -56,7 +56,7 @@ public class ResolveConflict : GoapAction {
     public void PreResolveSuccess() {
         if (poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
-            List<RelationshipTrait> allEnemyTraits = targetCharacter.GetAllRelationshipsOfType(actor, RELATIONSHIP_TRAIT.ENEMY);
+            List<RelationshipTrait> allEnemyTraits = targetCharacter.GetAllRelationshipsOfType(null, RELATIONSHIP_TRAIT.ENEMY);
             if (allEnemyTraits.Count > 0) {
                 chosenEnemyTrait = allEnemyTraits[UnityEngine.Random.Range(0, allEnemyTraits.Count)];
                 currentState.AddLogFiller(chosenEnemyTrait.targetCharacter, chosenEnemyTrait.targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
