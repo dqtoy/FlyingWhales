@@ -102,3 +102,13 @@ public class DouseFire : GoapAction {
     #endregion
 
 }
+
+public class DouseFireData : GoapActionData {
+    public DouseFireData() : base(INTERACTION_TYPE.DOUSE_FIRE) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return poiTarget.gridTileLocation != null;
+    }
+}

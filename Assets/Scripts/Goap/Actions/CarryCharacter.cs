@@ -70,3 +70,13 @@ public class CarryCharacter : GoapAction {
     }
     #endregion
 }
+
+public class CarryCharacterData : GoapActionData {
+    public CarryCharacterData() : base(INTERACTION_TYPE.CARRY_CHARACTER) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor != poiTarget;
+    }
+}

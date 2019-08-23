@@ -993,10 +993,39 @@ public struct GoapEffect {
 }
 
 public class GoapActionData {
-    public RACE[] racesThatCanDoAction;
+    public INTERACTION_TYPE goapType { get; protected set; }
+    public RACE[] racesThatCanDoAction { get; protected set; }
+    public Func<Character, IPointOfInterest, object[], bool> requirementAction { get; protected set; }
+    public Func<Character, IPointOfInterest, object[], bool> requirementOnBuildGoapTreeAction { get; protected set; }
 
     public GoapActionData(INTERACTION_TYPE goapType) {
+        this.goapType = goapType;
         racesThatCanDoAction = RacesThatCanDoAction(goapType);
+    }
+
+    public bool CanSatisfyRequirements(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool requirementActionSatisfied = true;
+        if (requirementAction != null) {
+            requirementActionSatisfied = requirementAction.Invoke(actor, poiTarget, otherData);
+        }
+        if (requirementActionSatisfied) {
+            if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
+                requirementActionSatisfied = actor.IsCombatReady();
+            }
+        }
+        return requirementActionSatisfied;
+    }
+    public bool CanSatisfyRequirementOnBuildGoapTree(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool requirementActionSatisfied = true;
+        if (requirementOnBuildGoapTreeAction != null) {
+            requirementActionSatisfied = requirementOnBuildGoapTreeAction.Invoke(actor, poiTarget, otherData);
+        }
+        if (requirementActionSatisfied) {
+            if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
+                requirementActionSatisfied = actor.IsCombatReady();
+            }
+        }
+        return requirementActionSatisfied;
     }
 
     public bool DoesCharacterMatchRace(Character character) {
@@ -1005,6 +1034,8 @@ public class GoapActionData {
         }
         return false;
     }
+
+    //Put this to each script
     private RACE[] RacesThatCanDoAction(INTERACTION_TYPE goapType) {
         switch (goapType) {
             case INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION: return new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };

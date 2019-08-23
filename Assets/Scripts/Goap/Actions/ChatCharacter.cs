@@ -556,3 +556,8 @@ public class ChatCharacter : GoapAction {
     }
     #endregion
 }
+
+public class ChatCharacterData : GoapActionData {
+    public ChatCharacterData() : base(INTERACTION_TYPE.CHAT_CHARACTER) {
+    }
+}

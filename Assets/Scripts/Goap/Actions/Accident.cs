@@ -67,3 +67,13 @@ public class Accident : GoapAction {
     }
     #endregion
 }
+
+public class AccidentData : GoapActionData {
+    public AccidentData() : base(INTERACTION_TYPE.ACCIDENT) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor == poiTarget;
+    }
+}

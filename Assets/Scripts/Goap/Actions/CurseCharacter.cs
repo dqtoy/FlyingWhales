@@ -186,3 +186,13 @@ public class CurseCharacter : GoapAction {
     }
     #endregion
 }
+
+public class CurseCharacterData : GoapActionData {
+    public CurseCharacterData() : base(INTERACTION_TYPE.CURSE_CHARACTER) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor != poiTarget;
+    }
+}

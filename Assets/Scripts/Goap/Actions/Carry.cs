@@ -52,3 +52,13 @@ public class Carry : GoapAction {
     //}
     #endregion
 }
+
+public class CarryData : GoapActionData {
+    public CarryData() : base(INTERACTION_TYPE.CARRY) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor != poiTarget;
+    }
+}

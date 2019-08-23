@@ -116,3 +116,13 @@ public class AskForHelpRemovePoisonTable : GoapAction {
     }
     #endregion
 }
+
+public class AskForHelpRemovePoisonTableData : GoapActionData {
+    public AskForHelpRemovePoisonTableData() : base(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor != poiTarget;
+    }
+}

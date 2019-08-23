@@ -21,12 +21,12 @@ public class Drunk : Trait {
         if (targetPOI is Character) {
             Character targetCharacter = targetPOI as Character;
             if (!targetCharacter.isDead) {
-                int value = 5;
+                int value = 4;
                 RELATIONSHIP_EFFECT relEffect = characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter);
                 if (relEffect == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    value = 20;
+                    value = 12;
                 } else if (relEffect == RELATIONSHIP_EFFECT.NONE) {
-                    value = 10;
+                    value = 8;
                 }
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < value) {

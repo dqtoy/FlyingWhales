@@ -56,3 +56,8 @@ public class DispelMagic : GoapAction {
     }
     #endregion
 }
+
+public class DispelMagicData : GoapActionData {
+    public DispelMagicData() : base(INTERACTION_TYPE.DISPEL_MAGIC) {
+    }
+}

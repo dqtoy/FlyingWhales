@@ -95,3 +95,22 @@ public class CraftItemGoap : GoapAction {
         hasSetCraftedItem = true;
     }
 }
+
+public class CraftItemGoapData : GoapActionData {
+    public CraftItemGoapData() : base(INTERACTION_TYPE.CRAFT_ITEM) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (actor != poiTarget) {
+            return false;
+        }
+        if (otherData == null) {
+            return true;
+        }
+        SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN) otherData[0];
+        //if the creafted enum has NOT been set, always allow, since we know that the character has the ability to craft an item, 
+        //because craft item action is only added to characters with traits that allow crafting
+        return craftedItem.CanBeCraftedBy(actor);
+    }
+}
