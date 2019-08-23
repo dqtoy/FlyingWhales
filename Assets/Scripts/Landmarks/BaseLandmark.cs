@@ -29,6 +29,8 @@ public class BaseLandmark {
     public Character eventSpawnedBy { get; private set; }
     public GameObject eventIconGO { get; private set; }
 
+    private List<System.Action> otherAfterInvasionActions; //list of other things to do when this landmark is invaded.
+
     private string activeEventAfterEffectScheduleID;
 
     #region getters/setters
@@ -82,6 +84,7 @@ public class BaseLandmark {
         _itemsInLandmark = new List<Item>();
         connections = new List<BaseLandmark>();
         charactersHere = new List<Character>();
+        otherAfterInvasionActions = new List<System.Action>();
         invasionTicks = 5 * GameManager.ticksPerHour;
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
@@ -329,6 +332,16 @@ public class BaseLandmark {
         }
         ObtainWorldObject();
         ExecuteEventAfterInvasion();
+        ExecuteOtherAfterInvasionActions();
+    }
+    private void ExecuteOtherAfterInvasionActions() {
+        for (int i = 0; i < otherAfterInvasionActions.Count; i++) {
+            otherAfterInvasionActions[i].Invoke();
+        }
+        otherAfterInvasionActions.Clear();
+    }
+    public void AddAfterInvasionAction(System.Action action) {
+        otherAfterInvasionActions.Add(action);
     }
     /// <summary>
     /// Is this landmark connected to another landmark that has been corrupted?

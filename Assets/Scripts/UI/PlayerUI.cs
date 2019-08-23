@@ -162,6 +162,9 @@ public class PlayerUI : MonoBehaviour {
         if (PlayerManager.Instance.player == null) {
             return;
         }
+        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+            UpdateStartInvasionButton();
+        }
         //manaText.text = PlayerManager.Instance.player.currencies[CURRENCY.MANA].ToString();
         //redMagicText.text = "" + PlayerManager.Instance.player.redMagic;
         //greenMagicText.text = "" + PlayerManager.Instance.player.greenMagic;
@@ -237,6 +240,7 @@ public class PlayerUI : MonoBehaviour {
     private void OnAreaMapOpened(Area area) {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
+        UpdateStartInvasionButton();
         startInvasionButton.gameObject.SetActive(true);
         //saveGameButton.gameObject.SetActive(false);
 
@@ -887,6 +891,9 @@ public class PlayerUI : MonoBehaviour {
     //public void UpdateThreatMeter() {
     //    threatMeter.value = PlayerManager.Instance.player.threat;
     //}
+    private void UpdateStartInvasionButton() {
+        startInvasionButton.interactable = InteriorMapManager.Instance.currentlyShowingArea.CanInvadeSettlement();
+    }
     #endregion
 
     #region Summons

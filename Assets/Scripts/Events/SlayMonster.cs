@@ -22,7 +22,7 @@ public class SlayMonster : WorldEvent {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanSpawnEventAt(BaseLandmark landmark) {
-        return landmark.HasAnyCharacterOfType(CHARACTER_ROLE.ADVENTURER) && landmark.worldObj is Summon;
+        return landmark.HasAnyCharacterOfType(CHARACTER_ROLE.ADVENTURER) && landmark.worldObj is Summon && base.CanSpawnEventAt(landmark);
     }
     public override Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
         return landmark.GetAnyCharacterOfType(CHARACTER_ROLE.ADVENTURER);

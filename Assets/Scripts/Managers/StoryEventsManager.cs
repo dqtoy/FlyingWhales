@@ -20,7 +20,7 @@ public class StoryEventsManager : MonoBehaviour {
     }
 
     public void Initialize() {
-        LoadEvents();
+        //LoadEvents();
         LoadWorldEvents();
     }
 

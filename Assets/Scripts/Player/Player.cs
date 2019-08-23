@@ -176,10 +176,10 @@ public class Player : ILeader {
             }
         }
         ResetInterventionAbilitiesCD();
-        currentTargetFaction = area.owner;
+        //currentTargetFaction = area.owner;
     }
     private void OnAreaMapClosed(Area area) {
-        currentTargetFaction = null;
+        //currentTargetFaction = null;
     }
     #endregion
 
@@ -1379,6 +1379,7 @@ public class Player : ILeader {
 
     #region Invasion
     public void StartInvasion(Area area) {
+        currentTargetFaction = area.owner;
         List<LocationGridTile> entrances = new List<LocationGridTile>();
         List<Minion> currentMinions = new List<Minion>();
         for (int i = 0; i < minions.Length; i++) {
