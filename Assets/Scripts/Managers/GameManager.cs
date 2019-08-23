@@ -165,6 +165,7 @@ public class GameManager : MonoBehaviour {
         UIManager.Instance.Pause();
 		SchedulingManager.Instance.StartScheduleCalls ();
         Messenger.Broadcast(Signals.MONTH_START); //for the first day
+        TimerHubUI.Instance.AddItem("Hero Party Preparation", 8640, null);
     }
 
     [ContextMenu("Create Travel Line")]
@@ -358,6 +359,12 @@ public class GameManager : MonoBehaviour {
     }
     public int GetHoursBasedOnTicks(int ticks) {
         return ticks / ticksPerHour;
+    }
+    public int GetCeilingHoursBasedOnTicks(int ticks) {
+        return Mathf.CeilToInt(ticks / (float) ticksPerHour);
+    }
+    public int GetCeilingDaysBasedOnTicks(int ticks) {
+        return Mathf.CeilToInt(ticks / (float) ticksPerDay);
     }
     //public void SetTicksToAddPerTick(int amount) {
     //    ticksToAddPerTick = amount;

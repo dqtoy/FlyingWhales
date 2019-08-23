@@ -530,6 +530,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
   timeText: {fileID: 114121204616961508}
+  dayText: {fileID: 114704001420813132}
   descriptionText: {fileID: 114823039731736060}
 --- !u!222 &222342108576467216
 CanvasRenderer:

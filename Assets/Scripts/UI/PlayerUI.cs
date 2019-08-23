@@ -186,6 +186,7 @@ public class PlayerUI : MonoBehaviour {
         LoadRoleSlots();
         LoadAttackSlot();
         LoadInterventionAbilitySlots();
+        UpdateInterventionAbilitySlots();
 
         UpdateIntel();
         InitializeMemoriesMenu();
