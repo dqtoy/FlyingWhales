@@ -44,10 +44,10 @@ public class PlayerManager : MonoBehaviour {
         //allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.IGNITE };
         allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.ZAP, INTERVENTION_ABILITY.RAISE_DEAD, INTERVENTION_ABILITY.INFLICT_CANNIBALISM
             , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY, INTERVENTION_ABILITY.INFLICT_LYCANTHROPY, INTERVENTION_ABILITY.INFLICT_VAMPIRISM, INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA
-            , INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS, INTERVENTION_ABILITY.JOLT, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE, INTERVENTION_ABILITY.EXPLOSION
+            , INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE, INTERVENTION_ABILITY.EXPLOSION
             , INTERVENTION_ABILITY.IGNITE, INTERVENTION_ABILITY.LURE, INTERVENTION_ABILITY.CURSED_OBJECT, INTERVENTION_ABILITY.SPOIL, INTERVENTION_ABILITY.INFLICT_ALCOHOLIC
             , INTERVENTION_ABILITY.LULLABY, INTERVENTION_ABILITY.INFLICT_AGORAPHOBIA, INTERVENTION_ABILITY.INFLICT_PARALYSIS, INTERVENTION_ABILITY.RELEASE, INTERVENTION_ABILITY.INFLICT_ZOMBIE_VIRUS
-            , INTERVENTION_ABILITY.PESTILENCE, INTERVENTION_ABILITY.INFLICT_PSYCHOPATHY };
+            , INTERVENTION_ABILITY.PESTILENCE, INTERVENTION_ABILITY.INFLICT_PSYCHOPATHY }; //INTERVENTION_ABILITY.JOLT, 
         //allInterventionAbilities = (INTERVENTION_ABILITY[]) System.Enum.GetValues(typeof(INTERVENTION_ABILITY));
         allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
 
@@ -227,7 +227,7 @@ public class PlayerManager : MonoBehaviour {
     }
     public List<INTERVENTION_ABILITY> GetInterventionAbilitiesWithTag(ABILITY_TAG tag) {
         List<INTERVENTION_ABILITY> valid = new List<INTERVENTION_ABILITY>();
-        INTERVENTION_ABILITY[] abilities = Utilities.GetEnumValues<INTERVENTION_ABILITY>();
+        INTERVENTION_ABILITY[] abilities = allInterventionAbilities;
         for (int i = 0; i < abilities.Length; i++) {
             INTERVENTION_ABILITY currAbility = abilities[i];
             List<ABILITY_TAG> tags = currAbility.GetAbilityTags();
@@ -245,9 +245,10 @@ public class PlayerManager : MonoBehaviour {
     }
     public INTERVENTION_ABILITY GetRandomAbilityByTier(int tier) {
         List<INTERVENTION_ABILITY> abilityTiers = new List<INTERVENTION_ABILITY>();
-        foreach (KeyValuePair<INTERVENTION_ABILITY, int> kvp in interventionAbilityTiers) {
-            if(kvp.Value == tier) {
-                abilityTiers.Add(kvp.Key);
+        for (int i = 0; i < allInterventionAbilities.Length; i++) {
+            INTERVENTION_ABILITY ability = allInterventionAbilities[i];
+            if (GetInterventionAbilityTier(ability) == tier) {
+                abilityTiers.Add(ability);
             }
         }
         if (abilityTiers.Count > 0) {
