@@ -39,6 +39,11 @@ public class RememberFallen : GoapAction {
             log.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
+    public override void OnStopActionDuringCurrentState() {
+        if (currentState.name == "Remember Success") {
+            actor.AdjustDoNotGetLonely(-1);
+        }
+    }
     #endregion
 
     #region Requirement
@@ -62,9 +67,13 @@ public class RememberFallen : GoapAction {
     private void PreRememberSuccess() {
         Tombstone tombstone = poiTarget as Tombstone;
         currentState.AddLogFiller(null, tombstone.character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        actor.AdjustDoNotGetLonely(1);
     }
     private void PerTickRememberSuccess() {
         actor.AdjustHappiness(16);
+    }
+    private void AfterRememberSuccess() {
+        actor.AdjustDoNotGetLonely(-1);
     }
     private void PreTargetMissing() {
         Tombstone tombstone = poiTarget as Tombstone;

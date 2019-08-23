@@ -8,6 +8,7 @@ using EZObjectPools;
 public class TimerHubItem : PooledObject {
 
     public TextMeshProUGUI timeText;
+    public TextMeshProUGUI dayText;
     public TextMeshProUGUI descriptionText;
 
     public int durationInTicks { get; private set; }
@@ -21,7 +22,13 @@ public class TimerHubItem : PooledObject {
     }
 
     public void UpdateTime() {
-        timeText.text = GameManager.Instance.GetHoursBasedOnTicks(durationInTicks).ToString();
+        if(durationInTicks > GameManager.ticksPerDay) {
+            timeText.text = GameManager.Instance.GetCeilingDaysBasedOnTicks(durationInTicks).ToString();
+            dayText.text = "days";
+        } else {
+            timeText.text = GameManager.Instance.GetCeilingHoursBasedOnTicks(durationInTicks).ToString();
+            dayText.text = "hrs";
+        }
     }
 
     //Returns true if duration is done, else, returns false

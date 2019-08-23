@@ -37,6 +37,10 @@ public class MakeLove : GoapAction {
     }
     public override void OnStopActionDuringCurrentState() {
         actor.ownParty.RemoveCharacter(targetCharacter);
+        if(currentState.name == "Make Love Success") {
+            actor.AdjustDoNotGetLonely(-1);
+            targetCharacter.AdjustDoNotGetLonely(-1);
+        }
         RemoveTraitFrom(targetCharacter, "Wooed");
         targetCharacter.RemoveTargettedByAction(this);
         if (targetCharacter.currentAction == this) {
@@ -87,6 +91,9 @@ public class MakeLove : GoapAction {
 
     #region Effects
     private void PreMakeLoveSuccess() {
+        actor.AdjustDoNotGetLonely(1);
+        targetCharacter.AdjustDoNotGetLonely(1);
+
         targetCharacter.SetCurrentAction(this);
         currentState.AddLogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         currentState.SetIntelReaction(MakeLoveSuccessReactions);
@@ -98,6 +105,9 @@ public class MakeLove : GoapAction {
         targetCharacter.AdjustHappiness(10);
     }
     private void AfterMakeLoveSuccess() {
+        actor.AdjustDoNotGetLonely(-1);
+        targetCharacter.AdjustDoNotGetLonely(-1);
+
         //**After Effect 1**: If Actor and Target are Lovers, they both gain Cheery trait. If Actor and Target are Paramours, they both gain Ashamed trait.
         if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
             SetCommittedCrime(CRIME.INFIDELITY, new Character[] { actor, targetCharacter });
