@@ -70,9 +70,9 @@ public class Summon : Character, IWorldObject {
             SetIsDead(true);
             UnsubscribeSignals();
 
-            if (currentParty.specificLocation == null) {
-                throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
-            }
+            //if (currentParty.specificLocation == null) {
+            //    throw new Exception("Specific location of " + this.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
+            //}
             if (stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
             } else if (stateComponent.stateToDo != null) {
@@ -109,7 +109,7 @@ public class Summon : Character, IWorldObject {
                 normalTraits[i].OnDeath(this);
             }
 
-            marker.OnDeath(deathTile);
+            marker?.OnDeath(deathTile);
             _numOfWaitingForGoapThread = 0; //for raise dead
             Dead dead = new Dead();
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);

@@ -2952,6 +2952,9 @@ public class Character : ILeader, IPointOfInterest {
     }
     public bool CanHaveRelationshipWith(RELATIONSHIP_TRAIT type, Character target) {
         //NOTE: This is only one way checking. This character will only check itself, if he/she meets the requirements of a given relationship
+        if (target.characterClass.className == "Zombie" || this.characterClass.className == "Zombie") {
+            return false; //Zombies cannot create relationships
+        }
         List<RELATIONSHIP_TRAIT> relationshipsWithTarget = GetAllRelationshipTraitTypesWith(target);
         //if(relationshipsWithTarget == null) { return true; }
         switch (type) {

@@ -40,7 +40,7 @@ public class WorldConfigManager : MonoBehaviour {
             { LANDMARK_TYPE.FARM, 3 },  //-3 farm regions
             { LANDMARK_TYPE.MINES, 2 }, //-2 mine regions
             { LANDMARK_TYPE.BARRACKS, 1 },//-1 barracks region
-            { LANDMARK_TYPE.PYRAMID, 1 }, //-1 factory region
+            { LANDMARK_TYPE.FACTORY, 1 }, //-1 factory region
             { LANDMARK_TYPE.WORKSHOP, 1 }, //-1 workshop region
             { LANDMARK_TYPE.TEMPLE, 1 }, //-1 temple region
         };

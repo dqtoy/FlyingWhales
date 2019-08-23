@@ -127,7 +127,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
             || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST
             || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
-            || parentMarker.character.faction == PlayerManager.Instance.player.playerFaction) {
+            || parentMarker.character.faction == PlayerManager.Instance.player.playerFaction
+            || targetCharacter.characterClass.className == "Zombie"
+            || parentMarker.character.characterClass.className == "Zombie") {
             return false;
         }
         if(!parentMarker.character.IsHostileWith(targetCharacter)) {
@@ -152,7 +154,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
             || parentMarker.character.role.roleType == CHARACTER_ROLE.BEAST
             || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
-            || parentMarker.character.faction == PlayerManager.Instance.player.playerFaction) {
+            || parentMarker.character.faction == PlayerManager.Instance.player.playerFaction
+            || targetCharacter.characterClass.className == "Zombie"
+            || parentMarker.character.characterClass.className == "Zombie") {
             return false;
         }
         if (!parentMarker.character.IsHostileWith(targetCharacter)) {
