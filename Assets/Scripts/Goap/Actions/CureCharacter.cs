@@ -103,3 +103,8 @@ public class CureCharacter : GoapAction {
     }
     #endregion
 }
+
+public class CureCharacterData : GoapActionData {
+    public CureCharacterData() : base(INTERACTION_TYPE.CURE_CHARACTER) {
+    }
+}

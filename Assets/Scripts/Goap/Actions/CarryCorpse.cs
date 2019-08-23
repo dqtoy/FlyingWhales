@@ -78,3 +78,20 @@ public class CarryCorpse : GoapAction {
     }
     #endregion
 }
+
+public class CarryCorpseData : GoapActionData {
+    public CarryCorpseData() : base(INTERACTION_TYPE.CARRY_CORPSE) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        Character targetCharacter = poiTarget as Character;
+        if (actor == targetCharacter) {
+            return false;
+        }
+        if (!targetCharacter.isDead) {
+            return false;
+        }
+        return true;
+    }
+}

@@ -285,3 +285,19 @@ public class DrinkBlood : GoapAction {
     }
     #endregion
 }
+
+public class DrinkBloodData : GoapActionData {
+    public DrinkBloodData() : base(INTERACTION_TYPE.DRINK_BLOOD) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        if (actor != poiTarget) {
+            return true;
+        }
+        return false;
+    }
+}

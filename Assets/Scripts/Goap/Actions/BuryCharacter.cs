@@ -274,3 +274,22 @@ public class BuryCharacter : GoapAction {
     }
     #endregion
 }
+
+public class BuryCharacterData : GoapActionData {
+    public BuryCharacterData() : base(INTERACTION_TYPE.BURY_CHARACTER) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        Character targetCharacter = poiTarget as Character;
+        //target character must be dead
+        if (!targetCharacter.isDead) {
+            return false;
+        }
+        //check that the charcater has been buried (has a grave)
+        if (targetCharacter.grave != null) {
+            return false;
+        }
+        return true;
+    }
+}

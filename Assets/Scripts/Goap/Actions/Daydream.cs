@@ -106,3 +106,16 @@ public class Daydream : GoapAction {
     }
     #endregion
 }
+
+public class DaydreamData : GoapActionData {
+    public DaydreamData() : base(INTERACTION_TYPE.DAYDREAM) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        return actor == poiTarget;
+    }
+}

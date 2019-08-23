@@ -93,3 +93,18 @@ public class AskToStopJob : GoapAction {
     }
     #endregion
 }
+
+public class AskToStopJobData : GoapActionData {
+    public AskToStopJobData() : base(INTERACTION_TYPE.ASK_TO_STOP_JOB) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool targetDoesNotConsiderActorEnemy = true;
+        if (poiTarget is Character) {
+            Character targetCharacter = poiTarget as Character;
+            targetDoesNotConsiderActorEnemy = !targetCharacter.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY);
+        }
+        return actor != poiTarget && targetDoesNotConsiderActorEnemy;
+    }
+}

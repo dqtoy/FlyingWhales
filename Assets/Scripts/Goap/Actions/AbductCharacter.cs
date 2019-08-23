@@ -135,3 +135,17 @@ public class AbductCharacter : GoapAction {
     }
     #endregion
 }
+
+public class AbductCharacterData: GoapActionData {
+    public AbductCharacterData() : base(INTERACTION_TYPE.ABDUCT_ACTION) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (actor != poiTarget) {
+            Character target = poiTarget as Character;
+            return target.GetNormalTrait("Restrained") == null;
+        }
+        return false;
+    }
+}

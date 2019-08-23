@@ -106,3 +106,22 @@ public class CraftFurniture : GoapAction {
         _targetStructure = targetSpot.structure;
     }
 }
+
+public class CraftFurnitureData : GoapActionData {
+    public CraftFurnitureData() : base(INTERACTION_TYPE.CRAFT_FURNITURE) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (actor != poiTarget) {
+            return false;
+        }
+        if(otherData == null) {
+            return true;
+        }
+        TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE) otherData[0];
+        //if the creafted enum has NOT been set, always allow, since we know that the character has the ability to craft furniture 
+        //because craft furniture action is only added to characters with traits that allow crafting
+        return furnitureToCreate.CanBeCraftedBy(actor);
+    }
+}

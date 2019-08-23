@@ -484,3 +484,19 @@ public class AssaultCharacter : GoapAction {
     }
     #endregion
 }
+
+public class AssaultCharacterData : GoapActionData {
+    public AssaultCharacterData() : base(INTERACTION_TYPE.ASSAULT_ACTION_NPC) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget is Character && actor != poiTarget) {
+            Character target = poiTarget as Character;
+            if (!target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}

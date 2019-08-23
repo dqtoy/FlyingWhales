@@ -154,3 +154,29 @@ public class BreakUp : GoapAction {
     }
     #endregion
 }
+
+public class BreakUpData : GoapActionData {
+    public BreakUpData() : base(INTERACTION_TYPE.BREAK_UP) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        Character target = poiTarget as Character;
+        if (target == actor) {
+            return false;
+        }
+        if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+            return false;
+        }
+        if (target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            return false;
+        }
+        if (!actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER) && !actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            return false; //**Advertised To**: All characters with Lover or Paramour relationship with the character
+        }
+        return target.IsInOwnParty();
+    }
+}
