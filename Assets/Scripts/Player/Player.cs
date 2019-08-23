@@ -1642,7 +1642,10 @@ public class Player : ILeader {
         currentInterventionAbilityTimerTick++;
         if (currentInterventionAbilityTimerTick >= newInterventionAbilityTimerTicks) {
             int tier = GetTierBasedOnCycle();
-            GainNewInterventionAbility(PlayerManager.Instance.GetRandomAbilityByTier(tier), true);
+            INTERVENTION_ABILITY newAbility = PlayerManager.Instance.GetRandomAbilityByTier(tier);
+            if(newAbility != INTERVENTION_ABILITY.ABDUCT) {
+                GainNewInterventionAbility(newAbility, true);
+            }
             NewCycleForNewInterventionAbility();
         }
     }
