@@ -1304,8 +1304,8 @@ public class UIManager : MonoBehaviour {
     private void OnWorldEventSpawned(BaseLandmark landmark, WorldEvent we) {
         //create world event popup
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(worldEventIconPrefab.name, Vector3.zero, Quaternion.identity, worldUIParent);
-        go.transform.position = landmark.tileLocation.transform.position;
-        go.transform.localScale = Vector3.one;
+        WorldEventIcon icon = go.GetComponent<WorldEventIcon>();
+        icon.PlaceAt(landmark);
         landmark.SetEventIcon(go);
     }
     private void OnWorldEventDespawned(BaseLandmark landmark, WorldEvent we) {
