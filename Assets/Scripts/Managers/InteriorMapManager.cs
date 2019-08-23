@@ -971,7 +971,7 @@ public struct TownMapSettings {
         info += "\nStructure tiles: " + structureTiles.Length.ToString();
         info += "\nObejct tiles: " + objectTiles.Length.ToString();
         info += "\nDetail tiles: " + detailTiles.Length.ToString();
-        Debug.Log(info);
+        //Debug.Log(info);
     }
 
 }

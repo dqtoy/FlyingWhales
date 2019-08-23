@@ -118,7 +118,7 @@ public class Summon : Character, IWorldObject {
 
             CancelAllJobsAndPlans();
 
-            Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
+            //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             AddHistory(log);

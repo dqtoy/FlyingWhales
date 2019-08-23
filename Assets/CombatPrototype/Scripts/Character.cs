@@ -1014,9 +1014,9 @@ public class Character : ILeader, IPointOfInterest {
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             AddTrait(dead, gainedFromDoing: deathFromAction);
 
-            CancelAllJobsAndPlans();            
+            CancelAllJobsAndPlans();
 
-            Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
+            PrintLogIfActive(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log deathLog;
             if (_deathLog == null) {
                 deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
@@ -1570,14 +1570,14 @@ public class Character : ILeader, IPointOfInterest {
         string log = name + " saw " + targetCharacter.name + ", will try to create jobs on enter vision...";
         if (!CanCharacterReact()) {
             log += "\nCharacter cannot react!";
-            Debug.Log(log);
+            PrintLogIfActive(log);
             return true;
         }
         if (!bypassInvisibilityCheck) {
             Invisible invisible = targetCharacter.GetNormalTrait("Invisible") as Invisible;
             if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
                 log += "\nCharacter is invisible!";
-                Debug.Log(log);
+                PrintLogIfActive(log);
                 return true;
             }
         }
@@ -1615,21 +1615,21 @@ public class Character : ILeader, IPointOfInterest {
                 }
             }
         }
-        Debug.Log(log);
+        PrintLogIfActive(log);
         return hasCreatedJob;
     }
     public bool CreateJobsOnEnterVisionWith(IPointOfInterest targetPOI, bool bypassInvisibilityCheck = false) {
         string log = name + " saw " + targetPOI.name + ", will try to create jobs on enter vision...";
         if (!CanCharacterReact()) {
             log += "\nCharacter cannot react!";
-            Debug.Log(log);
+            PrintLogIfActive(log);
             return true;
         }
         if (!bypassInvisibilityCheck) {
             Invisible invisible = targetPOI.GetNormalTrait("Invisible") as Invisible;
             if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
                 log += "\nCharacter is invisible!";
-                Debug.Log(log);
+                PrintLogIfActive(log);
                 return true;
             }
         }
@@ -1654,7 +1654,7 @@ public class Character : ILeader, IPointOfInterest {
                 log += ": did not create a job!";
             }
         }
-        Debug.Log(log);
+        PrintLogIfActive(log);
         return hasCreatedJob;
     }
     private bool NormalJobsOnEnterVision(IPointOfInterest targetPOI) {
@@ -1842,7 +1842,7 @@ public class Character : ILeader, IPointOfInterest {
         GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = item.ToString(), targetPOI = this };
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_ITEM, goapEffect);
         jobQueue.AddJobInQueue(job);
-        Debug.Log(this.name + " created job to obtain item " + item.ToString());
+        //Debug.Log(this.name + " created job to obtain item " + item.ToString());
         //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, this.name + " created job to obtain item " + item.ToString(), 5, null);
         return job;
     }
@@ -1904,22 +1904,22 @@ public class Character : ILeader, IPointOfInterest {
         if (!isFactionless && !jobQueue.HasJob(JOB_TYPE.OBTAIN_ITEM) && !role.HasNeededItems(this)) {
             int numOfItemsOwned = GetNumOfItemsOwned();
             if (numOfItemsOwned < 4) {
-                string obtainSummary = name + " will roll to obtain item.";
+                //string obtainSummary = name + " will roll to obtain item.";
                 int chance = 10 - (3 * numOfItemsOwned);
                 chance = Mathf.Max(0, chance);
                 int roll = UnityEngine.Random.Range(0, 100);
-                obtainSummary += "\nChance to create job is " + chance.ToString() + ". Roll is " + roll.ToString();
+                //obtainSummary += "\nChance to create job is " + chance.ToString() + ". Roll is " + roll.ToString();
                 if (roll < chance) {
                     SPECIAL_TOKEN itemToObtain;
                     if (role.TryGetNeededItem(this, out itemToObtain)) {
                         CreateObtainItemJob(itemToObtain);
                         hasCreatedJob = true;
-                        obtainSummary += "\nCreated job to obtain " + itemToObtain.ToString();
+                        //obtainSummary += "\nCreated job to obtain " + itemToObtain.ToString();
                     } else {
-                        obtainSummary += "\nDoes not have any needed items.";
+                        //obtainSummary += "\nDoes not have any needed items.";
                     }
                 }
-                Debug.Log(obtainSummary);
+                //Debug.Log(obtainSummary);
             }
         }
 
@@ -1979,7 +1979,7 @@ public class Character : ILeader, IPointOfInterest {
                             job.SetCancelOnFail(true);
                             //job.SetCannotOverrideJob(true);
                             jobQueue.AddJobInQueue(job);
-                            Debug.Log(this.name + " created a new build furniture job targetting tile " + chosenTile.ToString() + " with furniture type " + furnitureToCreate.ToString());
+                            //Debug.Log(this.name + " created a new build furniture job targetting tile " + chosenTile.ToString() + " with furniture type " + furnitureToCreate.ToString());
                         }
                     }
                 }
@@ -4091,7 +4091,7 @@ public class Character : ILeader, IPointOfInterest {
             dwelling.AddResident(this);
         }
 #if !WORLD_CREATION_TOOL
-        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " changed home structure to " + dwelling?.ToString() ?? "None");
+        //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " changed home structure to " + dwelling?.ToString() ?? "None");
 #endif
     }
     //private void OnCharacterMigratedHome(Character character, Area previousHome, Area homeArea) {
@@ -4244,13 +4244,13 @@ public class Character : ILeader, IPointOfInterest {
 #if !WORLD_CREATION_TOOL
         if (GameManager.Instance.gameHasStarted) {
             if (trait.name == "Hungry" || trait.name == "Starving") {
-                Debug.Log("Planning fullness recovery from gain trait");
+                //Debug.Log("Planning fullness recovery from gain trait");
                 PlanFullnessRecoveryActions();
             } else if (trait.name == "Lonely" || trait.name == "Forlorn") {
-                Debug.Log("Planning happiness recovery from gain trait");
+                //Debug.Log("Planning happiness recovery from gain trait");
                 PlanHappinessRecoveryActions();
             } else if (trait.name == "Tired" || trait.name == "Exhausted") {
-                Debug.Log("Planning tiredness recovery from gain trait");
+                //Debug.Log("Planning tiredness recovery from gain trait");
                 PlanTirednessRecoveryActions();
             }
         }
@@ -6405,7 +6405,7 @@ public class Character : ILeader, IPointOfInterest {
             return;
         }
         currentAlterEgo.RemoveAwareness(pointOfInterest);
-        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " removed awareness of " + pointOfInterest.name);
+        //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " removed awareness of " + pointOfInterest.name);
         //if (awareness.ContainsKey(pointOfInterest.poiType)) {
         //    List<IAwareness> awarenesses = awareness[pointOfInterest.poiType];
         //    for (int i = 0; i < awarenesses.Count; i++) {
@@ -6543,13 +6543,13 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void ClearAllAwareness() {
         currentAlterEgo.ClearAllAwareness();
-        Debug.Log("Cleared all awareness of " + this.name);
+        //Debug.Log("Cleared all awareness of " + this.name);
     }
     public void ClearAllAwarenessOfType(params POINT_OF_INTEREST_TYPE[] types) {
         for (int i = 0; i < types.Length; i++) {
             POINT_OF_INTEREST_TYPE currType = types[i];
             currentAlterEgo.RemoveAwareness(currType);
-            Debug.Log("Cleared all awareness of type " + currType.ToString() + " of " + this.name);
+            //Debug.Log("Cleared all awareness of type " + currType.ToString() + " of " + this.name);
         }
     }
     #endregion
@@ -7359,7 +7359,7 @@ public class Character : ILeader, IPointOfInterest {
         } else {
             summary += currentAction.goapName + " targetting " + currentAction.poiTarget.name;
         }
-        summary += "\n StackTrace: " + StackTraceUtility.ExtractStackTrace();
+        //summary += "\n StackTrace: " + StackTraceUtility.ExtractStackTrace();
 
         actionHistory.Add(summary);
         if (actionHistory.Count > 10) {
@@ -7411,7 +7411,7 @@ public class Character : ILeader, IPointOfInterest {
     //This does not stop the movement of this character, call StopMovement separately to stop movement
     public void StopCurrentAction(bool shouldDoAfterEffect = true) {
         if(currentAction != null) {
-            Debug.Log("Stopped action of " + name + " which is " + currentAction.goapName);
+            //Debug.Log("Stopped action of " + name + " which is " + currentAction.goapName);
             if (currentAction.isPerformingActualAction && !currentAction.isDone) {
                 if (!shouldDoAfterEffect) {
                     currentAction.OnStopActionDuringCurrentState();
@@ -7596,7 +7596,7 @@ public class Character : ILeader, IPointOfInterest {
         string reactSummary = GameManager.Instance.TodayLogString() + this.name + " will react to crime committed by " + criminal.owner.name;
         if(committedCrime == CRIME.NONE) {
             reactSummary += "\nNo reaction because committed crime is " + committedCrime.ToString();
-            Debug.Log(reactSummary);
+            PrintLogIfActive(reactSummary);
             return;
         }
         Log witnessLog = null;
@@ -7685,7 +7685,7 @@ public class Character : ILeader, IPointOfInterest {
         //    }
         //}
 
-        Debug.Log(reactSummary);
+        PrintLogIfActive(reactSummary);
     }
     /// <summary>
     /// Crime reactions per role.
@@ -7803,18 +7803,18 @@ public class Character : ILeader, IPointOfInterest {
             if(currentAction != null && currentAction.goapType == INTERACTION_TYPE.TANTRUM) {
                 return;
             }
-            string tantrumReason = "Became " +  fromTrait.nameInUI;
+            string tantrumReason = "Became " + fromTrait.nameInUI;
             if (triggerAction != null) {
                 tantrumReason = Utilities.LogReplacer(triggerAction.currentState.descriptionLog);
             }
 
-            string tantrumLog = this.name + "'s mood was adjusted by " + amount.ToString() + " and current mood is " + currentMoodType.ToString() + ".";
-            tantrumLog += "Reason: " + tantrumReason;
-            tantrumLog += "\nRolling for Tantrum..."; 
+            //string tantrumLog = this.name + "'s mood was adjusted by " + amount.ToString() + " and current mood is " + currentMoodType.ToString() + ".";
+            //tantrumLog += "Reason: " + tantrumReason;
+            //tantrumLog += "\nRolling for Tantrum..."; 
 
             int chance = UnityEngine.Random.Range(0, 100);
 
-            tantrumLog += "\nRolled: " + chance.ToString();
+            //tantrumLog += "\nRolled: " + chance.ToString();
 
             if (chance < 20) {
                 CancelAllJobsAndPlans();
@@ -7826,9 +7826,9 @@ public class Character : ILeader, IPointOfInterest {
                 //tantrum.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                 jobQueue.AddJobInQueue(tantrum);
                 //jobQueue.ProcessFirstJobInQueue(this);
-                tantrumLog += "\n" + this.name + " started having a tantrum!";
+                //tantrumLog += "\n" + this.name + " started having a tantrum!";
             }
-            Debug.Log(tantrumLog);
+            //Debug.Log(tantrumLog);
         }
     }
     public CHARACTER_MOOD ConvertCurrentMoodValueToType() {
@@ -7923,7 +7923,7 @@ public class Character : ILeader, IPointOfInterest {
                 } else {
                     targetCharacter = characterThatStartedState.marker.GetNearestValidAvoid();
                 }
-                Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
+                //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
                 if (this.isPartOfHomeFaction && characterThatStartedState.isAtHomeArea && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
                     && this.IsHostileOutsider(targetCharacter) && (this.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
                     && distance <= Combat_Signalled_Distance) {

@@ -97,7 +97,7 @@ public class StructureObject : PooledObject {
     }
 
     public void DestroyStructure() {
-        Debug.Log("DESTROY STRUCTURE!");
+        //Debug.Log("DESTROY STRUCTURE!");
         ObjectPoolManager.Instance.DestroyObject(gameObject);
 		//if(this._hexTile.isHabitable){
 		//	this._hexTile.emptyCityGO.SetActive (true);

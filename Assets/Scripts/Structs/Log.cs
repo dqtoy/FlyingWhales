@@ -52,7 +52,7 @@ public class Log {
         this.fillers = new List<LogFiller>();
         this.lockFillers = false;
         logText = string.Empty;
-        logCallStack = StackTraceUtility.ExtractStackTrace();
+        //logCallStack = StackTraceUtility.ExtractStackTrace();
     }
 
     public Log(GameDate date, string message, GoapAction goapAction = null) {
@@ -66,7 +66,7 @@ public class Log {
         this.fillers = new List<LogFiller>();
         this.lockFillers = false;
         logText = string.Empty;
-        logCallStack = StackTraceUtility.ExtractStackTrace();
+        //logCallStack = StackTraceUtility.ExtractStackTrace();
     }
 
     internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier, bool replaceExisting = true){

@@ -86,13 +86,13 @@ public class Zombie_Virus : Trait {
     }
 
     private void RollForReanimation() {
-        string summary = owner.name + " will roll for reanimation...";
+        //string summary = owner.name + " will roll for reanimation...";
         int roll = Random.Range(0, 100);
-        summary += "\nRoll is: " + roll.ToString(); 
+        //summary += "\nRoll is: " + roll.ToString(); 
         if (roll < 15) { //15
             Messenger.RemoveListener(Signals.TICK_ENDED, RollForReanimation);
             //reanimate
-            summary += "\n" + owner.name + " is being reanimated.";
+            //summary += "\n" + owner.name + " is being reanimated.";
             if (!owner.IsInOwnParty()) {
                 //character is being carried, check per tick if it is dropped or buried, then reanimate
                 Messenger.AddListener(Signals.TICK_ENDED, CheckIfCanReanimate);
@@ -101,7 +101,7 @@ public class Zombie_Virus : Trait {
             }
             
         }
-        Debug.Log(summary);
+        //Debug.Log(summary);
     }
 
     private void CheckIfCanReanimate() {
@@ -128,7 +128,7 @@ public class Zombie_Virus : Trait {
                     log.AddToFillers(hitBy, hitBy.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     log.AddLogToInvolvedObjects();
                     PlayerManager.Instance.player.ShowNotification(log);
-                    Debug.Log(GameManager.Instance.TodayLogString() + Utilities.LogReplacer(log));
+                    //Debug.Log(GameManager.Instance.TodayLogString() + Utilities.LogReplacer(log));
                 }
             }
         }

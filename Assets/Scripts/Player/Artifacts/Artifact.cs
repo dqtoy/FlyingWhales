@@ -34,7 +34,7 @@ public class Artifact : TileObject, IWorldObject {
     public override void SetGridTileLocation(LocationGridTile tile) {
         base.SetGridTileLocation(tile);
         if (tile != null) {
-            Debug.Log("Placed artifact " + type.ToString() + " at " + tile.ToString());
+            //Debug.Log("Placed artifact " + type.ToString() + " at " + tile.ToString());
             OnPlaceArtifactOn(tile);
         } else {
             OnRemoveArtifact();

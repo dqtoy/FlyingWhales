@@ -140,7 +140,7 @@ public class Minion {
 
             character.CancelAllJobsAndPlans();
 
-            Debug.Log(GameManager.Instance.TodayLogString() + character.name + " died of " + cause);
+            //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " died of " + cause);
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             character.AddHistory(log);

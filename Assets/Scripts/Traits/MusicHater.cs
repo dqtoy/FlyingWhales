@@ -60,7 +60,7 @@ public class MusicHater : Trait {
             PlayerManager.Instance.player.ShowNotification(log);
             CharacterManager.Instance.RelationshipDegradation(guitarPlayer, owner);
         }
-        Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became annoyed.");
+        //Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became annoyed.");
         
     }
     private void OnActionStateSet(GoapAction action, GoapActionState state) {

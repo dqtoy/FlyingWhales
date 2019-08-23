@@ -482,7 +482,7 @@ public class AreaInfoUI : UIMenu {
     public void ClearOutFaction() {
         if (activeArea.owner != null) {
             if (activeArea.owner.ownedAreas.Count <= 1) {
-                Debug.Log(activeArea.owner.name + " only has 1 area left! Not allowing clear out this areas faction...");
+                //Debug.Log(activeArea.owner.name + " only has 1 area left! Not allowing clear out this areas faction...");
                 return;
             }
 

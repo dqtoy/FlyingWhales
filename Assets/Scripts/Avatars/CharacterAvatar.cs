@@ -224,7 +224,7 @@ public class CharacterAvatar : MonoBehaviour {
         //_party.owner.marker.gameObject.SetActive(true);
 
         _party.owner.marker.pathfindingAI.SetIsStopMovement(true);
-        Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + _party.owner.gridTileLocation.ToString());
+        //Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + _party.owner.gridTileLocation.ToString());
         if(_party.characters.Count > 0) {
             Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
             for (int i = 0; i < _party.characters.Count; i++) {
@@ -321,7 +321,7 @@ public class CharacterAvatar : MonoBehaviour {
                 //_trackTarget = null;
                 SetHasArrivedState(true);
                 targetLocation.AddCharacterToLocation(_party.owner);
-                Debug.Log(_party.name + " has arrived at " + targetLocation.name + " on " + GameManager.Instance.continuousDays);
+                //Debug.Log(_party.name + " has arrived at " + targetLocation.name + " on " + GameManager.Instance.continuousDays);
                 ////Every time the party arrives at home, check if it still not ruined
                 //if(_party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP) {
                 //    //Check if the location the character arrived at is the character's home landmark

@@ -205,8 +205,8 @@ public class Party {
             return; //ignore change
         }
         _specificLocation = location;
-        specificLocationHistory.Add("Set specific location to " + _specificLocation.ToString() 
-            + " ST: " + StackTraceUtility.ExtractStackTrace());
+        //specificLocationHistory.Add("Set specific location to " + _specificLocation.ToString() 
+        //    + " ST: " + StackTraceUtility.ExtractStackTrace());
         if (specificLocationHistory.Count >= 50) {
             specificLocationHistory.RemoveAt(0);
         }

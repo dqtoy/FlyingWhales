@@ -16329,8 +16329,8 @@ MonoBehaviour:
   maxRegionWidthCount: 4
   minRegionHeightCount: 3
   maxRegionHeightCount: 4
-  minCitizenCount: 5
-  maxCitizenCount: 10
+  minCitizenCount: 24
+  maxCitizenCount: 24
 --- !u!1 &1665094242
 GameObject:
   m_ObjectHideFlags: 0

@@ -245,16 +245,16 @@ public class LandmarkManager : MonoBehaviour {
 
         //place all other landmarks
         Dictionary<LANDMARK_TYPE, int> landmarks = WorldConfigManager.Instance.GetLandmarksForGeneration(regions.Length - 2); //subtracted 2 because of portal and settlement
-        string otherLandmarkSummary = "Will generate the following landmarks: ";
+        //string otherLandmarkSummary = "Will generate the following landmarks: ";
         foreach (KeyValuePair<LANDMARK_TYPE, int> kvp in landmarks) {
-            otherLandmarkSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+            //otherLandmarkSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
             for (int i = 0; i < kvp.Value; i++) {
                 Region chosenRegion = availableRegions[Random.Range(0, availableRegions.Count)];
                 BaseLandmark landmark = CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key);
                 availableRegions.Remove(chosenRegion);
             }
         }
-        Debug.Log(otherLandmarkSummary);
+        //Debug.Log(otherLandmarkSummary);
     }
     //public void GenerateLandmarks(RandomWorld world, out BaseLandmark portal) {
     //    WeightedDictionary<LANDMARK_YIELD_TYPE> yieldTypeChances = new WeightedDictionary<LANDMARK_YIELD_TYPE>();
@@ -829,11 +829,11 @@ public class LandmarkManager : MonoBehaviour {
         }
     }
     private void OnFinishedGeneratingAreaMap(Area area, AreaInnerTileMap areaMap) {
-        Debug.Log("Finished generating map for " + area.name);
+        //Debug.Log("Finished generating map for " + area.name);
         string log = string.Empty;
         areaMap.Initialize(area);
         TownMapSettings generatedSettings = areaMap.GenerateInnerStructures(out log);
-        Debug.Log(log);
+        //Debug.Log(log);
         areaMap.DrawMap(generatedSettings);
         area.SetAreaMap(areaMap);
         areaMap.GenerateDetails();
@@ -849,8 +849,8 @@ public class LandmarkManager : MonoBehaviour {
         UIManager.Instance.SetInteriorMapLoadingState(false);
     }
     public void OnFinishedGeneratingAreaMap(AreaMapGenerationThread thread) {
-        Debug.Log("Finished generating map for " + thread.area.name);
-        Debug.Log(thread.log);
+        //Debug.Log("Finished generating map for " + thread.area.name);
+        //Debug.Log(thread.log);
         thread.areaMap.DrawMap(thread.generatedSettings);
         thread.area.SetAreaMap(thread.areaMap);
         thread.areaMap.GenerateDetails();
