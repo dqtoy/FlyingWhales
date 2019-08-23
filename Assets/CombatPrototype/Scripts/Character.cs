@@ -7913,7 +7913,7 @@ public class Character : ILeader, IPointOfInterest {
                 AdjustDoNotGetTired(1);
             }
         } else {
-            if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null && isAtHomeArea && !ownParty.icon.isTravelling) {
+            if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null && isAtHomeArea && !ownParty.icon.isTravellingOutside) {
                 //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
                 CombatState combatState = state as CombatState;
                 float distance = Vector2.Distance(this.marker.transform.position, characterThatStartedState.marker.transform.position);
