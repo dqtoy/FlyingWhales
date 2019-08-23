@@ -937,7 +937,10 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
-            }else if (stateComponent.stateToDo != null) {
+                if (stateComponent.currentState != null) {
+                    stateComponent.currentState.OnExitThisState();
+                }
+            } else if (stateComponent.stateToDo != null) {
                 stateComponent.SetStateToDo(null);
             }
             if (deathFromAction != null) { //if this character died from an action, do not cancel the action that he/she died from. so that the action will just end as normal.
@@ -3582,8 +3585,13 @@ public class Character : ILeader, IPointOfInterest {
             PrintLogIfActive(summary);
             return;
         }
-        if (stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+        if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT || stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)) {
             summary += "\n-In combat state, must not watch...";
+            PrintLogIfActive(summary);
+            return;
+        }
+        if (HasPlanWithType(INTERACTION_TYPE.WATCH)) {
+            summary += "\n-Already has watch action in queue, will not watch another one...";
             PrintLogIfActive(summary);
             return;
         }
