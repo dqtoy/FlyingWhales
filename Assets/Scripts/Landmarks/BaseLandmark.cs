@@ -14,7 +14,6 @@ public class BaseLandmark {
     protected LANDMARK_TYPE _specificLandmarkType;
     protected bool _isOccupied;
     protected bool _hasBeenCorrupted;
-    protected int _civilianCount;
     protected HexTile _location;
     protected HexTile _connectedTile;
     protected Faction _owner;
@@ -25,6 +24,12 @@ public class BaseLandmark {
     public Character skirmishEnemy { get; private set; }
     public IWorldObject worldObj { get; private set; }
     public int invasionTicks { get; private set; } //how many ticks until this landmark is invaded. NOTE: This is in raw ticks so if the landmark should be invaded in 1 hour, this should be set to the number of ticks in an hour.
+    public List<Character> charactersHere { get; private set; }
+    public WorldEvent activeEvent { get; private set; }
+    public Character eventSpawnedBy { get; private set; }
+    public GameObject eventIconGO { get; private set; }
+
+    private string activeEventAfterEffectScheduleID;
 
     #region getters/setters
     public int id {
@@ -76,6 +81,7 @@ public class BaseLandmark {
         _hasBeenCorrupted = false;
         _itemsInLandmark = new List<Item>();
         connections = new List<BaseLandmark>();
+        charactersHere = new List<Character>();
         invasionTicks = 5 * GameManager.ticksPerHour;
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
@@ -163,6 +169,42 @@ public class BaseLandmark {
     }
     public override string ToString() {
         return this.landmarkName;
+    }
+    public bool HasAnyCharacterOfType(params CHARACTER_ROLE[] roleTypes) {
+        for (int i = 0; i < charactersHere.Count; i++) {
+            Character character = charactersHere[i];
+            if (roleTypes.Contains(character.role.roleType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasAnyCharacterOfType(params ATTACK_TYPE[] attackTypes) {
+        for (int i = 0; i < charactersHere.Count; i++) {
+            Character character = charactersHere[i];
+            if (attackTypes.Contains(character.characterClass.attackType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public Character GetAnyCharacterOfType(params CHARACTER_ROLE[] roleTypes) {
+        for (int i = 0; i < charactersHere.Count; i++) {
+            Character character = charactersHere[i];
+            if (roleTypes.Contains(character.role.roleType)) {
+                return character;
+            }
+        }
+        return null;
+    }
+    public Character GetAnyCharacterOfType(params ATTACK_TYPE[] attackTypes) {
+        for (int i = 0; i < charactersHere.Count; i++) {
+            Character character = charactersHere[i];
+            if (attackTypes.Contains(character.characterClass.attackType)) {
+                return character;
+            }
+        }
+        return null;
     }
     #endregion
 
@@ -286,6 +328,7 @@ public class BaseLandmark {
                 break;
         }
         ObtainWorldObject();
+        ExecuteEventAfterInvasion();
     }
     /// <summary>
     /// Is this landmark connected to another landmark that has been corrupted?
@@ -302,15 +345,6 @@ public class BaseLandmark {
     }
     #endregion
 
-    #region Civilians
-    public void SetCivilianCount(int count) {
-        _civilianCount = count;
-    }
-    public void AdjustCivilianCount(int amount) {
-        _civilianCount += amount;
-    }
-    #endregion
-
     #region Connections
     public void AddConnection(BaseLandmark newConnection) {
         connections.Add(newConnection);
@@ -324,27 +358,57 @@ public class BaseLandmark {
     #endregion
 
     #region Events
-    //public void ShowEventBasedOnYieldType() {
-    //    if (yieldType == LANDMARK_YIELD_TYPE.STORY_EVENT) {
-    //        StoryEvent e = tileLocation.GetRandomStoryEvent();
-    //        PlayerUI.Instance.storyEventUI.ShowEvent(e, true);
-    //    } else if (yieldType == LANDMARK_YIELD_TYPE.SUMMON) {
-    //        SUMMON_TYPE[] types = Utilities.GetEnumValues<SUMMON_TYPE>();
-    //        PlayerManager.Instance.player.GainSummon(types[UnityEngine.Random.Range(1, types.Length)], showNewSummonUI: true);
-    //    } else if (yieldType == LANDMARK_YIELD_TYPE.ARTIFACT) {
-    //        ARTIFACT_TYPE[] types = Utilities.GetEnumValues<ARTIFACT_TYPE>();
-    //        PlayerManager.Instance.player.GainArtifact(types[UnityEngine.Random.Range(1, types.Length)], true); //Started at 1 index to ignore None choice.
-    //    } else if (yieldType == LANDMARK_YIELD_TYPE.ABILITY) {
-    //        int chance = UnityEngine.Random.Range(0, 2);
-    //        if(chance == 0) {
-    //            PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(PlayerManager.Instance.CreateNewInterventionAbility(PlayerManager.Instance.allInterventionAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allInterventionAbilities.Length)]));
-    //        } else {
-    //            PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
-    //        }
-    //    } else if (yieldType == LANDMARK_YIELD_TYPE.SKIRMISH) {
-    //        PlayerUI.Instance.skirmishUI.ShowSkirmishUI(PlayerManager.Instance.player.currentMinionLeader.character, skirmishEnemy);
-    //    }
-    //}
+    public void SpawnEvent(WorldEvent we, Character spawner = null) {
+        activeEvent = we;
+        //set character that spawned event
+        if (spawner == null) {
+            eventSpawnedBy = activeEvent.GetCharacterThatCanSpawnEvent(this);
+        } else {
+            eventSpawnedBy = spawner;
+        }
+        //do not let the character that spawned the event go home
+        if (eventSpawnedBy.stateComponent.currentState is MoveOutState) {
+            MoveOutState state = eventSpawnedBy.stateComponent.currentState as MoveOutState;
+            SchedulingManager.Instance.RemoveSpecificEntry(state.goHomeSchedID);
+        } else {
+            throw new System.Exception(eventSpawnedBy.name + " is at " + tileLocation.region.name + " but is not in move out state!");
+        }
+        //spawn the event
+        activeEvent.Spawn(this, out activeEventAfterEffectScheduleID);
+        Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, we);
+    }
+    public void WorldEventFinished(WorldEvent we) {
+        if (activeEvent != we) {
+            throw new System.Exception("World event " + we.name + " finished, but it is not the active event at " + this.tileLocation.region.name);
+        }
+        //make character that triggered event, go home
+        (eventSpawnedBy.stateComponent.currentState as MoveOutState).GoHome();
+        DespawnEvent();
+        Messenger.Broadcast(Signals.WORLD_EVENT_FINISHED_NORMAL, this, we);
+    }
+    private void DespawnEvent() {
+        WorldEvent despawned = activeEvent;
+        activeEvent = null;
+        Messenger.Broadcast(Signals.WORLD_EVENT_DESPAWNED, this, despawned);
+    }
+    private void ExecuteEventAfterInvasion() {
+        if (activeEvent != null) {
+            SchedulingManager.Instance.RemoveSpecificEntry(activeEventAfterEffectScheduleID); //unschedule the active event after effect schedule
+            activeEvent.ExecuteAfterInvasionEffect(this);
+            DespawnEvent();
+        }
+        //kill all remaining characters
+        while (charactersHere.Count > 0) {
+            Character character = charactersHere[0];
+            character.Death("Invasion");
+        }
+    }
+    public bool CanSpawnNewEvent() {
+        return !tileLocation.isCorrupted && activeEvent == null;
+    }
+    public void SetEventIcon(GameObject go) {
+        eventIconGO = go;
+    }
     #endregion
 
     #region Skirmish
@@ -380,6 +444,19 @@ public class BaseLandmark {
     }
     private void ObtainWorldObject() {
         worldObj?.Obtain();
+    }
+    #endregion
+
+    #region Characters
+    public void AddCharacterHere(Character character) {
+        charactersHere.Add(character);
+        character.SetLandmarkLocation(this);
+        Messenger.Broadcast(Signals.CHARACTER_ENTERED_LANDMARK, character, this);
+    }
+    public void RemoveCharacterHere(Character character) {
+        charactersHere.Remove(character);
+        character.SetLandmarkLocation(null);
+        Messenger.Broadcast(Signals.CHARACTER_EXITED_LANDMARK, character, this);
     }
     #endregion
 }

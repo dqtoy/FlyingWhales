@@ -823,7 +823,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
         if (this.region != null) {
             if (this.region.mainLandmark.tileLocation.areaOfTile != null) {
-                UIManager.Instance.ShowAreaInfo(this.areaOfTile);
+                UIManager.Instance.ShowAreaInfo(this.region.mainLandmark.tileLocation.areaOfTile);
             } else {
                 UIManager.Instance.ShowRegionInfo(this.region);
             }

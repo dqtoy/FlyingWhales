@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour {
 
 
     public int month;
-	public static int days;
+    public static int days;
 	public int year;
     public int tick;
     public int continuousDays;
@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour {
     //[SerializeField] private Vector2 hotSpot = Vector2.zero;
 
     public bool pauseTickEnded2 = false;
-    public int ticksToAddPerTick { get; private set; } //how many ticks to add per tick of progression? Set this to another value to advance ticks by more than 1. 
+    //public int ticksToAddPerTick { get; private set; } //how many ticks to add per tick of progression? Set this to another value to advance ticks by more than 1. 
     //public bool isDraggingItem = false;
 
     #region getters/setters
@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour {
         Instance = this;
         this.timeElapsed = 0f;
         _gameHasStarted = false;
-        SetTicksToAddPerTick(1); //ticksPerHour //so that at start of the game time will advance by one hour per tick.
+        //SetTicksToAddPerTick(1); //ticksPerHour //so that at start of the game time will advance by one hour per tick.
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
 #if !WORLD_CREATION_TOOL
         //Application.logMessageReceived += LogCallback;
@@ -283,10 +283,10 @@ public class GameManager : MonoBehaviour {
         Messenger.Broadcast(Signals.TICK_ENDED);
         Messenger.Broadcast(Signals.UPDATE_UI);
 
-        this.tick += ticksToAddPerTick;
+        this.tick += 1;
         if (this.tick > ticksPerDay) {
-            int difference = this.tick - ticksPerDay; //Added this for cases when the ticks to be added per tick is greater than 1, so it is possible that the excess ticks over ticksPerDay can also be greater than 1
-            this.tick = difference;
+            //int difference = this.tick - ticksPerDay; //Added this for cases when the ticks to be added per tick is greater than 1, so it is possible that the excess ticks over ticksPerDay can also be greater than 1
+            this.tick = 1;
             DayStarted(false);
         }
     }
@@ -359,9 +359,9 @@ public class GameManager : MonoBehaviour {
     public int GetHoursBasedOnTicks(int ticks) {
         return ticks / ticksPerHour;
     }
-    public void SetTicksToAddPerTick(int amount) {
-        ticksToAddPerTick = amount;
-    }
+    //public void SetTicksToAddPerTick(int amount) {
+    //    ticksToAddPerTick = amount;
+    //}
 
     #region Particle Effects
     public void CreateElectricEffectAt(Character character) {

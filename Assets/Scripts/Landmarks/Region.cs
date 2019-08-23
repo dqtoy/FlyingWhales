@@ -176,7 +176,7 @@ public class Region {
             Invade();
             Messenger.RemoveListener(Signals.TICK_STARTED, PerInvasionTick);
         } else {
-            ticksInInvasion += GameManager.Instance.ticksToAddPerTick;
+            ticksInInvasion += 1;
         }
     }
     #endregion

@@ -32,7 +32,7 @@ public class AssaultCharacter : GoapAction {
         actor.marker.pathfindingAI.ResetEndReachedDistance();
         
         Character targetCharacter = poiTarget as Character;
-        if (targetCharacter.specificLocation == actor.specificLocation && !targetCharacter.currentParty.icon.isAreaTravelling) {
+        if (targetCharacter.specificLocation == actor.specificLocation && !targetCharacter.currentParty.icon.isTravellingOutside) {
             if (actor.IsCombatReady()) {
                 CharacterState combatState;
                 if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {

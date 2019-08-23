@@ -20,7 +20,6 @@ public class SpecialToken : IPointOfInterest {
     public POI_STATE state { get; protected set; }
     public POICollisionTrigger collisionTrigger { get; protected set; }
     public int uses { get; protected set; } //how many times can this item be used?
-    public bool createsObjectWhenDropped { get; protected set; } //does this item create an object on the tile map when it is dropped?
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public List<GoapAction> targettedByAction { get; protected set; }
 
@@ -69,7 +68,6 @@ public class SpecialToken : IPointOfInterest {
         allJobsTargettingThis = new List<JobQueueItem>();
         targettedByAction = new List<GoapAction>();
         uses = 1;
-        createsObjectWhenDropped = true;
         InitializeCollisionTrigger();
     }
 

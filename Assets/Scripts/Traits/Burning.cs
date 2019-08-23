@@ -26,6 +26,9 @@ public class Burning : Trait {
         if (addedTo is LocationGridTile) {
             LocationGridTile tile = addedTo as LocationGridTile;
             burningEffect = GameManager.Instance.CreateBurningEffectAt(tile);
+            if (tile.genericTileObject == null) {
+                throw new System.Exception("Generic Tile Object of " + tile.ToString() + " is null!");
+            }
             tile.genericTileObject.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
             owner = tile.genericTileObject;
         } else if (addedTo is IPointOfInterest) {

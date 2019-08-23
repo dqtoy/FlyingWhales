@@ -100,6 +100,7 @@ public class Character : ILeader, IPointOfInterest {
     public float speedModifier { get; private set; }
     public string deathStr { get; private set; }
     public TileObject tileObjectLocation { get; private set; }
+    public BaseLandmark currentLandmark { get; private set; } //current Landmark Location. NOTE: Only has value if character is NOT at an area
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -209,7 +210,7 @@ public class Character : ILeader, IPointOfInterest {
         get { return currentStructure == homeStructure; }
     }
     public bool isAtHomeArea {
-        get { return specificLocation.id == homeArea.id; }
+        get { return currentLandmark == null && specificLocation.id == homeArea.id; }
     }
     public bool isPartOfHomeFaction { //is this character part of the faction that owns his home area
         get { return homeArea.owner.id == faction.id; }
@@ -953,7 +954,11 @@ public class Character : ILeader, IPointOfInterest {
             }
 
             //clear traits that need to be removed
-            traitsNeededToBeRemoved.Clear();           
+            traitsNeededToBeRemoved.Clear();
+
+            if (currentLandmark != null) {
+                currentLandmark.RemoveCharacterHere(this);
+            }
 
             if (!IsInOwnParty()) {
                 _currentParty.RemoveCharacter(this);
@@ -2465,6 +2470,9 @@ public class Character : ILeader, IPointOfInterest {
         }
         onLeaveAreaActions.Clear();
     }
+    public void SetLandmarkLocation(BaseLandmark landmark) {
+        currentLandmark = landmark;
+    }
     #endregion
 
     #region Utilities
@@ -2553,12 +2561,16 @@ public class Character : ILeader, IPointOfInterest {
                     }
                     CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
                 } else {
-                    bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
-                    if (!specificLocation.areaMap.isShowing) {
-                        InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
+                    if (marker.gameObject.activeInHierarchy) {
+                        bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
+                        if (!specificLocation.areaMap.isShowing) {
+                            InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
+                        }
+                        AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                     }
-                    AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 }
+            } else if (currentLandmark != null) {
+                CameraMove.Instance.CenterCameraOn(currentLandmark.tileLocation.gameObject);
             } else {
                 bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
                 if (!specificLocation.areaMap.isShowing) {
@@ -4909,7 +4921,7 @@ public class Character : ILeader, IPointOfInterest {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
         if (stateComponent.currentState != null) {
-            Debug.LogWarning(name + " is currently in " + stateComponent.currentState.stateName + " state, can't plan actions!");
+            //Debug.LogWarning(name + " is currently in " + stateComponent.currentState.stateName + " state, can't plan actions!");
             return;
         }
         if (stateComponent.stateToDo != null) {
@@ -5812,7 +5824,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void DropToken(SpecialToken token, Area location, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
         if (UnobtainToken(token)) {
-            if (token.createsObjectWhenDropped) {
+            if (token.specialTokenType.CreatesObjectWhenDropped()) {
                 if (location.AddSpecialTokenToLocation(token, structure, gridTile)) {
                     //When items are dropped into the warehouse, make all residents aware of it.
                     if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
@@ -5839,7 +5851,7 @@ public class Character : ILeader, IPointOfInterest {
                 if (removeFactionOwner) {
                     token.SetOwner(null);
                 }
-                if (token.createsObjectWhenDropped) {
+                if (token.specialTokenType.CreatesObjectWhenDropped()) {
                     LocationGridTile targetTile = tile.GetNearestUnoccupiedTileFromThis();
                     location.AddSpecialTokenToLocation(token, structure, targetTile);
                     if (structure != homeStructure) {
@@ -7895,8 +7907,13 @@ public class Character : ILeader, IPointOfInterest {
             if (state.characterState.IsCombatState()) {
                 ClearIgnoreHostilities();
             }
+            if (state.characterState == CHARACTER_STATE.MOVE_OUT) {
+                AdjustDoNotGetHungry(1);
+                AdjustDoNotGetLonely(1);
+                AdjustDoNotGetTired(1);
+            }
         } else {
-            if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null) {
+            if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null && isAtHomeArea && !ownParty.icon.isTravellingOutside) {
                 //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
                 CombatState combatState = state as CombatState;
                 float distance = Vector2.Distance(this.marker.transform.position, characterThatStartedState.marker.transform.position);
@@ -7931,6 +7948,11 @@ public class Character : ILeader, IPointOfInterest {
         if (character == this) {
             if (state is CombatState && marker != null) {
                 marker.OnThisCharacterEndedCombatState();
+            }
+            if (state.characterState == CHARACTER_STATE.MOVE_OUT) {
+                AdjustDoNotGetHungry(-1);
+                AdjustDoNotGetLonely(-1);
+                AdjustDoNotGetTired(-1);
             }
         }
     }

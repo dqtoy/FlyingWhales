@@ -82,6 +82,8 @@ MonoBehaviour:
   - {fileID: 1625414310656838, guid: 13f758fd704d448468030c5c3d154c12, type: 2}
   - {fileID: 1621924234816084, guid: b0de90e6b4e4d8c459b67edfe819f072, type: 2}
   - {fileID: 1827661262992834, guid: a97c43b436719044193538536b38cafa, type: 2}
+  - {fileID: 1520567940503540, guid: 21ef6477b7ed64e46b40dbec22f1b3d8, type: 2}
+  - {fileID: 1172894870288550, guid: b859c74fa4b31b04087ade12e87edaac, type: 2}
   otherPrefabs:
   - {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2, type: 2}
   - {fileID: 1674000059252808, guid: 3030287a209452f45ba8aca3380a5e2e, type: 2}

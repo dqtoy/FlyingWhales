@@ -60,6 +60,7 @@ MonoBehaviour:
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -76,6 +77,7 @@ MonoBehaviour:
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff, type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -85,13 +87,14 @@ MonoBehaviour:
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
-  - landmarkTypeString: Iron Mines
+  - landmarkTypeString: Mines
     landmarkType: 8
     minimumTileCount: 1
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -111,6 +114,7 @@ MonoBehaviour:
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -131,6 +135,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300064, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -145,6 +150,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300064, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -186,6 +192,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300064, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -209,6 +216,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300040, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -226,6 +234,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300046, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 070434e37543e004d98c623ba8080920, type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -246,6 +255,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300024, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -266,6 +276,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300018, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -289,6 +300,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -309,6 +321,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -332,6 +345,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 070434e37543e004d98c623ba8080920, type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -355,6 +369,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -378,6 +393,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 070434e37543e004d98c623ba8080920, type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -401,6 +417,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff, type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -418,6 +435,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 0000000004000000030000000100000002000000
       m_values:
@@ -461,6 +479,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
     biomeTileSprites:
       m_keys: 04000000030000000000000007000000
       m_values:
@@ -500,6 +519,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -523,6 +543,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -555,6 +576,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 4ceb2b47beb2817498a263252bf1e68f, type: 3}
     biomeTileSprites:
       m_keys: 07000000
       m_values:
@@ -582,6 +604,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 8b69e1c43d456b1479f998800d8a6f31, type: 3}
     biomeTileSprites:
       m_keys: 0000000004000000010000000200000003000000
       m_values:
@@ -637,6 +660,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 0100000002000000
       m_values:
@@ -668,6 +692,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -691,6 +716,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -708,6 +734,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -725,6 +752,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -742,6 +770,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -759,6 +788,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -776,6 +806,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -790,6 +821,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 0000000003000000010000000200000004000000
       m_values:
@@ -854,6 +886,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -871,6 +904,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -888,6 +922,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -905,6 +940,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -922,6 +958,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -939,6 +976,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -956,6 +994,7 @@ MonoBehaviour:
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
       type: 3}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 0}
     biomeTileSprites:
       m_keys: 
       m_values: []

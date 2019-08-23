@@ -279,15 +279,19 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
-        if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-            UpdateKillCount();
-            OrderKillSummaryItems();
+        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+            if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+                UpdateKillCount();
+                OrderKillSummaryItems();
+            }
         }
     }
     private void OnCharacterLostTrait(Character character, Trait trait) {
-        if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-            UpdateKillCount();
-            OrderKillSummaryItems();
+        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+            if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+                UpdateKillCount();
+                OrderKillSummaryItems();
+            }
         }
     }
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
@@ -1294,6 +1298,7 @@ public class PlayerUI : MonoBehaviour {
             return;
         }
         UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
         generalConfirmationTitleText.text = header.ToUpper();
         generalConfirmationBodyText.text = body;
         generalConfirmationGO.SetActive(true);
@@ -1302,6 +1307,7 @@ public class PlayerUI : MonoBehaviour {
         generalConfirmationGO.SetActive(false);
         if (!TryShowPendingUI()) {
             UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
+            UIManager.Instance.SetSpeedTogglesState(true);
         }
     }
     #endregion

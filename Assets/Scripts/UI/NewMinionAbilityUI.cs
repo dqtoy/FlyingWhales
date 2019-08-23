@@ -29,6 +29,7 @@ public class NewMinionAbilityUI : MonoBehaviour {
             return;
         }
         UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
         Utilities.DestroyChildren(choicesParent);
         string identifier = string.Empty;
         if (objectToAdd is CombatAbility) {
@@ -76,6 +77,7 @@ public class NewMinionAbilityUI : MonoBehaviour {
         this.gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
+            UIManager.Instance.SetSpeedTogglesState(true);
         }
     }
 

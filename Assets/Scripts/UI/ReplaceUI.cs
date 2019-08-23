@@ -41,6 +41,7 @@ public class ReplaceUI : MonoBehaviour {
             return;
         }
         UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
         Utilities.DestroyChildren(choicesParent);
         if(objectToAdd is Minion) {
             newObjectLbl.text = "New Minion!";
@@ -110,6 +111,7 @@ public class ReplaceUI : MonoBehaviour {
         this.gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
             UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
+            UIManager.Instance.SetSpeedTogglesState(true);
         }
     }
 

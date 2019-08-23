@@ -385,7 +385,7 @@ public class CameraMove : MonoBehaviour {
 #endif
         MIN_X = bounds.min.x + horzExtent - (halfOfHexagon * ((float)borderCount - 0.5f));
         MAX_X = bounds.max.x - horzExtent + (halfOfHexagon * (borderCount)); //removed -1 because of UI
-        MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * ((float)borderCount - 0.5f));
+        MIN_Y = bounds.min.y + vertExtent - (halfOfHexagon * ((float)borderCount));
         MAX_Y = bounds.max.y - vertExtent + (halfOfHexagon * (borderCount - 1));
     }
     private Vector2[] GetCameraWorldCorners(Camera camera) {

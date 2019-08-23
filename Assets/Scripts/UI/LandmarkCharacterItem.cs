@@ -61,7 +61,7 @@ public class LandmarkCharacterItem : PooledObject {
                 restrainedIcon.SetActive(false);
                 unrestrainedGO.SetActive(true);
             }
-            if (character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine != null) {
+            if ((character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine != null) || character.currentParty.icon.isTravellingOutside) {
                 travellingIcon.SetActive(true);
                 arrivedIcon.SetActive(false);
                 coverGO.SetActive(true);
@@ -81,6 +81,23 @@ public class LandmarkCharacterItem : PooledObject {
                 coverGO.SetActive(false);
             }
             (parentMenu as AreaInfoUI).OrderCharacterItems();
+        } else if (parentMenu is RegionInfoUI) {
+            if (character.GetNormalTrait("Abducted", "Restrained") != null) {
+                restrainedIcon.SetActive(true);
+                unrestrainedGO.SetActive(false);
+            } else {
+                restrainedIcon.SetActive(false);
+                unrestrainedGO.SetActive(true);
+            }
+            if ((character.currentParty.icon.isTravelling && character.currentParty.icon.travelLine != null) || character.currentParty.icon.isTravellingOutside) {
+                travellingIcon.SetActive(true);
+                arrivedIcon.SetActive(false);
+                coverGO.SetActive(true);
+            } else {
+                travellingIcon.SetActive(false);
+                arrivedIcon.SetActive(false);
+                coverGO.SetActive(false);
+            }
         } else if (parentMenu is TileObjectInfoUI) {
             if (character.GetNormalTrait("Abducted", "Restrained") != null) {
                 restrainedIcon.SetActive(true);
@@ -108,11 +125,12 @@ public class LandmarkCharacterItem : PooledObject {
     public void ShowTravellingTooltip() {
         //UIManager.Instance.ShowSmallInfo("Travelling to " + character.currentParty.icon.targetLocation.tileLocation.areaOfTile.name);
         //UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation.tileLocation.areaOfTile, thisTrans, new Vector3(434f, 0f, 0f), "Travelling to:");
+        if (character.currentParty.icon.targetLocation == null) {
+            return;
+        }
         Area showingArea = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
         if (showingArea == null || showingArea.id != character.currentParty.icon.targetLocation.id) {
-            if (character.currentParty.icon.targetLocation == null) {
-                return;
-            }
+            
             float x = UIManager.Instance.locationSmallInfoRT.position.x;
             //float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
             UIManager.Instance.ShowSmallLocationInfo(character.currentParty.icon.targetLocation, new Vector3(x, thisTrans.position.y - 15f, 0f), "Travelling to:");

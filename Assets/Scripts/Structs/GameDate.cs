@@ -24,7 +24,7 @@ public struct GameDate {
         return this;
     }
 
-	public GameDate AddDays(int amount){
+	public void AddDays(int amount){
 		this.day += amount;
         int count = 0;
 		while (this.day > GameManager.daysPerMonth) {
@@ -34,7 +34,6 @@ public struct GameDate {
         if(count > 0) {
             AddMonths(count);
         }
-        return this;
     }
 	public void AddMonths(int amount){
 		this.month += amount;

@@ -826,6 +826,15 @@ public class Utilities : MonoBehaviour {
         }
         return normalizedString;
     }
+    public static string NormalizeStringUpperCaseFirstLettersNoSpace(string s) {
+        s = s.ToLower();
+        string[] words = s.Split('_');
+        string normalizedString = Utilities.FirstLetterToUpperCase(words[0]);
+        for (int i = 1; i < words.Length; i++) {
+            normalizedString += Utilities.FirstLetterToUpperCase(words[i]);
+        }
+        return normalizedString;
+    }
     public static string FirstLetterToUpperCase(string s) {
         if (string.IsNullOrEmpty(s))
             throw new ArgumentException("There is no first letter");
@@ -1232,6 +1241,15 @@ public class Utilities : MonoBehaviour {
         }
         return copy;
     }
+    //public static bool ContainsElement<T>(this T[] array, T item) {
+    //    for (int i = 0; i < array.Length; i++) {
+    //        T currElement = array[i];
+    //        if (EqualityComparer<T>.Default.Equals(currElement, item)) {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
     #endregion
 
     #region Game Utilities

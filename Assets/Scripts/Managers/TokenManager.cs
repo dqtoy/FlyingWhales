@@ -1,6 +1,7 @@
 ﻿
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TokenManager : MonoBehaviour {
@@ -38,6 +39,11 @@ public class TokenManager : MonoBehaviour {
                 }
             }
         }
+    }
+    public SpecialToken CreateRandomDroppableSpecialToken() {
+        SPECIAL_TOKEN[] choices = Utilities.GetEnumValues<SPECIAL_TOKEN>().Where(x => x.CreatesObjectWhenDropped()).ToArray();
+        SPECIAL_TOKEN random = choices[Random.Range(0, choices.Length)];
+        return CreateSpecialToken(random);
     }
     public SpecialToken CreateSpecialToken(SPECIAL_TOKEN tokenType, int appearanceWeight = 0) {
         switch (tokenType) {
