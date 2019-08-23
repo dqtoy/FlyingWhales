@@ -210,7 +210,7 @@ public class Character : ILeader, IPointOfInterest {
         get { return currentStructure == homeStructure; }
     }
     public bool isAtHomeArea {
-        get { return currentLandmark == null && specificLocation.id == homeArea.id; }
+        get { return currentLandmark == null && specificLocation.id == homeArea.id && !currentParty.icon.isTravellingOutside; }
     }
     public bool isPartOfHomeFaction { //is this character part of the faction that owns his home area
         get { return homeArea.owner.id == faction.id; }
@@ -4151,7 +4151,6 @@ public class Character : ILeader, IPointOfInterest {
         //} else if (characterClass.className == "Envy") {
         //    AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
         //}
-
         //Random Traits
         int chance = UnityEngine.Random.Range(0, 100);
         if (chance < 35 || role.roleType == CHARACTER_ROLE.CIVILIAN) { //ensured that all civilans are craftsmen
@@ -4795,18 +4794,38 @@ public class Character : ILeader, IPointOfInterest {
         //UnsubscribeSignals(); //Removed this since character's listeners are not on by default now.
     }
     public void RecruitAsMinion() {
+        if (stateComponent.currentState != null) {
+            stateComponent.currentState.OnExitThisState();
+        } else if (stateComponent.stateToDo != null) {
+            stateComponent.SetStateToDo(null);
+        }
+
+        CancelAllJobsTargettingThisCharacter("target became a minion", false);
+        Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target became a minion");
+        if (currentAction != null && !currentAction.cannotCancelAction) {
+            currentAction.StopAction();
+        }
+
         if (!IsInOwnParty()) {
             _currentParty.RemoveCharacter(this);
         }
         MigrateHomeTo(PlayerManager.Instance.player.playerArea);
 
         specificLocation.RemoveCharacterFromLocation(this.currentParty);
+        if (currentLandmark != null) {
+            currentLandmark.RemoveCharacterHere(this);
+        }
+        ResetFullnessMeter();
+        ResetHappinessMeter();
+        ResetTirednessMeter();
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(this.currentParty);
 
         ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
 
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this);
         PlayerManager.Instance.player.AddMinion(newMinion);
+
+
 
         //if (!characterToken.isObtainedByPlayer) {
         //    PlayerManager.Instance.player.AddToken(characterToken);

@@ -33,7 +33,7 @@ public class SchedulingManager : MonoBehaviour {
         }
         string newID = GenerateScheduleID();
         this.schedules[gameDate].Add(new ScheduledAction() { scheduleID = newID, action = act, scheduler = adder });
-        //Debug.Log(GameManager.Instance.TodayLogString() + "Created new schedule on " + gameDate.ConvertToContinuousDaysWithTime() + ". Action is " + act.Method.Name + ", by " + adder.ToString());
+        Debug.Log(GameManager.Instance.TodayLogString() + "Created new schedule on " + gameDate.ConvertToContinuousDaysWithTime() + ". Action is " + act.Method.Name + ", by " + adder.ToString());
         return newID;
 	}
 	internal void RemoveEntry(GameDate gameDate){
@@ -69,7 +69,7 @@ public class SchedulingManager : MonoBehaviour {
                 ScheduledAction action = acts[i];
                 if (action.scheduleID == id) {
                     this.schedules[date].RemoveAt(i);
-                    //Debug.Log("Removed scheduled item " + action.ToString());
+                    Debug.Log("Removed scheduled item " + action.ToString());
                     return true;
                 }
             }

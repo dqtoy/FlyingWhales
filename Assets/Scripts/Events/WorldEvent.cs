@@ -13,7 +13,8 @@ public class WorldEvent  {
     public string name { get; private set; }
     public string description { get; private set; }
     public bool isUnique { get; protected set; } //should this event only spawn once?
-    private bool hasBeenSpawnedOnce;
+    private bool hasSuccessfullyExecutedOnce;
+    private bool isCurrentlySpawned;
 
     public WorldEvent(WORLD_EVENT eventType) {
         this.eventType = eventType;
@@ -34,11 +35,12 @@ public class WorldEvent  {
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + landmark.tileLocation.region.name);
         //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
         //AddDefaultFillersToLog(log, landmark);
-        hasBeenSpawnedOnce = true;
+        isCurrentlySpawned = true;
     }
     public virtual void ExecuteAfterEffect(BaseLandmark landmark) {
         landmark.WorldEventFinished(this);
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " after effect executed at " + landmark.tileLocation.region.name);
+        hasSuccessfullyExecutedOnce = true;
     }
     public virtual void ExecuteAfterInvasionEffect(BaseLandmark landmark) {
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " after invasion effect executed at " + landmark.tileLocation.region.name);
@@ -46,16 +48,20 @@ public class WorldEvent  {
             Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_invasion_effect");
             AddDefaultFillersToLog(log, landmark);
             log.AddLogToInvolvedObjects();
+            PlayerManager.Instance.player.ShowNotification(log);
         }
     }
     public virtual bool CanSpawnEventAt(BaseLandmark landmark) {
-        if (this.isUnique && this.hasBeenSpawnedOnce) {
-            return false; //if this event is unique and has been spawned once, do not allow it to spawn again
+        if (this.isUnique && (this.hasSuccessfullyExecutedOnce || this.isCurrentlySpawned)) {
+            return false; //if this event is unique and has been spawned once or is currently spawned, do not allow it to spawn again
         }
         return true;
     }
     public virtual Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
         return null;
+    }
+    public virtual void OnDespawn(BaseLandmark landmark) {
+        isCurrentlySpawned = false;
     }
     #endregion
 

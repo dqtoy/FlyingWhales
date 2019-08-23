@@ -123,6 +123,10 @@ public class BaseLandmark {
     public void SetConnectedTile(HexTile connectedTile) {
         _connectedTile = connectedTile;
     }
+    public void ChangeLandmarkType(LANDMARK_TYPE type) {
+        _specificLandmarkType = type;
+        tileLocation.UpdateLandmarkVisuals();
+    }
 
     #region Virtuals
     public virtual void Initialize() { }
@@ -395,13 +399,16 @@ public class BaseLandmark {
             throw new System.Exception("World event " + we.name + " finished, but it is not the active event at " + this.tileLocation.region.name);
         }
         //make character that triggered event, go home
-        (eventSpawnedBy.stateComponent.currentState as MoveOutState).GoHome();
+        if (eventSpawnedBy.minion == null) {
+            (eventSpawnedBy.stateComponent.currentState as MoveOutState).GoHome();
+        }
         DespawnEvent();
         Messenger.Broadcast(Signals.WORLD_EVENT_FINISHED_NORMAL, this, we);
     }
     private void DespawnEvent() {
         WorldEvent despawned = activeEvent;
         activeEvent = null;
+        despawned.OnDespawn(this);
         Messenger.Broadcast(Signals.WORLD_EVENT_DESPAWNED, this, despawned);
     }
     private void ExecuteEventAfterInvasion() {

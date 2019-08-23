@@ -57,6 +57,8 @@ public class KillCountCharacterItem : PooledObject {
                     }
                 } else if (character.role.roleType == CHARACTER_ROLE.BEAST) {
                     text = "\"" + character.name + " turned into a warewolf.\"";
+                } else if (character.role.roleType == CHARACTER_ROLE.MINION) {
+                    text = "\"" + character.name + " became a minion.\"";
                 }
             }
             deathLbl.text = text;

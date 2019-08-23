@@ -15,6 +15,9 @@ public class StoryEventsManager : MonoBehaviour {
 
     private WorldEvent[] worldEvents;
 
+    //world states
+    public bool isCultActive { get; private set; }
+
     private void Awake() {
         Instance = this;
     }
@@ -429,8 +432,11 @@ public class StoryEventsManager : MonoBehaviour {
         }
         return events;
     }
-    public void SpawnEventAt(BaseLandmark landmark, WorldEvent we) {
+    #endregion
 
+    #region World State
+    public void SetIsCultActive(bool state) {
+        isCultActive = state;
     }
     #endregion
 }
