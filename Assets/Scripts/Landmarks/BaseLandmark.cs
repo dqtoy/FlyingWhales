@@ -322,7 +322,7 @@ public class BaseLandmark {
                 PlayerManager.Instance.player.UnlockASummonSlotOrUpgradeExisting();
                 break;
             case LANDMARK_TYPE.MINES:
-            case LANDMARK_TYPE.PYRAMID: //This is FACTORY
+            case LANDMARK_TYPE.FACTORY: //This is FACTORY
             case LANDMARK_TYPE.WORKSHOP:
                 PlayerManager.Instance.player.UnlockAnArtifactSlotOrUpgradeExisting();
                 break;

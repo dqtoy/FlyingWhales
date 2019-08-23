@@ -270,7 +270,7 @@ public enum LANDMARK_TYPE {
     BANDIT_CAMP = 24,
     OUTPOST = 25,
     ANCIENT_RUIN = 26,
-    PYRAMID = 27,
+    FACTORY = 27,
     EXILE_CAMP = 28,
     GIANT_SKELETON = 29,
     TEMPLE = 30,

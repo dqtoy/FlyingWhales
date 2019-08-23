@@ -15,7 +15,7 @@ public class HousingConstruction : WorldEvent {
     }
     public override bool CanSpawnEventAt(BaseLandmark landmark) {
         return false;
-        return landmark.HasAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN) && landmark.specificLandmarkType == LANDMARK_TYPE.PYRAMID;
+        return landmark.HasAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN) && landmark.specificLandmarkType == LANDMARK_TYPE.FACTORY;
     }
     public override Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
         return landmark.GetAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN);
