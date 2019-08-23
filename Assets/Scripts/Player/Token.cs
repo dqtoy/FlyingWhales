@@ -138,11 +138,11 @@ public class SpecialToken : IPointOfInterest {
     #endregion
 
     #region Point Of Interest
-    public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+    public List<GoapAction> AdvertiseActionsToActor(Character actor) {
         if (poiGoapActions != null && poiGoapActions.Count > 0 && gridTileLocation != null) { //only advertise items that are not being carried
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
-                if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
+                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, poiGoapActions[i])) {
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
                     if (goapAction.CanSatisfyRequirements() && goapAction.CanSatisfyRequirementOnBuildGoapTree()) {
                         usableActions.Add(goapAction);

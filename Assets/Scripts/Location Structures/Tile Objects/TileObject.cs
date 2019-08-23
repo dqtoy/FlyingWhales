@@ -148,11 +148,11 @@ public class TileObject : IPointOfInterest {
         }
         return null;
     }
-    public virtual List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+    public virtual List<GoapAction> AdvertiseActionsToActor(Character actor) {
         if (poiGoapActions != null && poiGoapActions.Count > 0 && gridTileLocation != null) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
-                if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
+                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, poiGoapActions[i])) {
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
                     if (goapAction.CanSatisfyRequirements() && goapAction.CanSatisfyRequirementOnBuildGoapTree()) {
                         usableActions.Add(goapAction);

@@ -6558,12 +6558,12 @@ public class Character : ILeader, IPointOfInterest {
     #endregion
 
     #region Point Of Interest
-    public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+    public List<GoapAction> AdvertiseActionsToActor(Character actor) {
         if (poiGoapActions != null && poiGoapActions.Count > 0 && IsAvailable() && !isDead) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 INTERACTION_TYPE currType = poiGoapActions[i];
-                if (actorAllowedInteractions.Contains(currType)) {
+                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     if (currType == INTERACTION_TYPE.CRAFT_ITEM) {
                         Craftsman craftsman = GetNormalTrait("Craftsman") as Craftsman;
                         for (int j = 0; j < craftsman.craftedItemNames.Length; j++) {
@@ -6589,12 +6589,12 @@ public class Character : ILeader, IPointOfInterest {
         }
         return null;
     }
-    public List<GoapAction> AdvertiseActionsToActorFromDeadCharacter(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+    public List<GoapAction> AdvertiseActionsToActorFromDeadCharacter(Character actor) {
         if (poiGoapActions != null && poiGoapActions.Count > 0) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 INTERACTION_TYPE currType = poiGoapActions[i];
-                if (actorAllowedInteractions.Contains(currType)) {
+                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
                     if (goapAction == null) {
                         throw new Exception("Goap action " + currType.ToString() + " is null!");
@@ -6906,7 +6906,7 @@ public class Character : ILeader, IPointOfInterest {
             PrintLogIfActive(log);
             return;
         }
-        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(this);
+        //List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(this);
         bool willGoIdleState = true;
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
@@ -6915,7 +6915,7 @@ public class Character : ILeader, IPointOfInterest {
                 log += "\n - Plan is currently being recalculated, skipping...";
                 continue; //skip plan
             }
-            if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements()) {
+            if (RaceManager.Instance.CanCharacterDoGoapAction(this, plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements()) {
                 //if (plan.isBeingRecalculated) {
                 //    log += "\n - Plan is currently being recalculated, skipping...";
                 //    continue; //skip plan
