@@ -7943,14 +7943,14 @@ public class Character : ILeader, IPointOfInterest {
                 if (this.isPartOfHomeFaction && characterThatStartedState.isAtHomeArea && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
                     && this.IsHostileOutsider(targetCharacter) && (this.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
                     && distance <= Combat_Signalled_Distance) {
-                    if (marker.AddHostileInRange(targetCharacter)) {
-
+                    if (marker.AddHostileInRange(targetCharacter, processCombatBehavior: false)) {
                         Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
                         joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         joinLog.AddToFillers(combatState.currentClosestHostile, combatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
                         joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                         PlayerManager.Instance.player.ShowNotification(joinLog);
+                        marker.ProcessCombatBehavior();
                         return; //do not do watch.
                     }
                 }
