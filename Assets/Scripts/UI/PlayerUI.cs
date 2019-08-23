@@ -190,6 +190,7 @@ public class PlayerUI : MonoBehaviour {
         LoadAttackSlot();
         LoadInterventionAbilitySlots();
         UpdateInterventionAbilitySlots();
+        LoadKillCountCharacterItems(LandmarkManager.Instance.mainSettlement);
 
         UpdateIntel();
         InitializeMemoriesMenu();
@@ -246,7 +247,7 @@ public class PlayerUI : MonoBehaviour {
 
         //Kill count UI
         UpdateKillCountActiveState();
-        LoadKillCountCharacterItems(area);
+        //LoadKillCountCharacterItems(area);
         UpdateKillCount();
     }
     private void OnAreaMapClosed(Area area) {

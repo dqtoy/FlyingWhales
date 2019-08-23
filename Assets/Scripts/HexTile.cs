@@ -81,7 +81,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
 
-
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
     public List<HexTile> NoWaterTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); } }
@@ -330,6 +329,24 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
         return landmarkGO;
+    }
+    public void UpdateLandmarkVisuals() {
+        LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkOnTile.specificLandmarkType);
+        List<LandmarkStructureSprite> landmarkTileSprites = LandmarkManager.Instance.GetLandmarkTileSprites(this, landmarkOnTile.specificLandmarkType);
+        if (data.minimumTileCount > 1) {
+            SetLandmarkTileSprite(landmarkTileSprites[0]);
+            landmarkOnTile.connectedTile.SetLandmarkTileSprite(landmarkTileSprites[1]);
+            landmarkOnTile.landmarkVisual.SetIconState(false);
+        } else {
+            if (landmarkTileSprites == null || landmarkTileSprites.Count == 0) {
+                //DeactivateCenterPiece();
+                HideLandmarkTileSprites();
+                landmarkOnTile.landmarkVisual.SetIconState(true);
+            } else {
+                SetLandmarkTileSprite(landmarkTileSprites[Random.Range(0, landmarkTileSprites.Count)]);
+                landmarkOnTile.landmarkVisual.SetIconState(false);
+            }
+        }
     }
     public BaseLandmark LoadLandmark(BaseLandmark landmark) {
         GameObject landmarkGO = null;

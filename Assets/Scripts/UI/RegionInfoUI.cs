@@ -60,6 +60,7 @@ public class RegionInfoUI : UIMenu {
     }
 
     public void UpdateInfo() {
+        UpdateBasicInfo();
         UpdateRegionInfo();
         UpdateInvadeBtnState();
         UpdateSpawnEventButton();
