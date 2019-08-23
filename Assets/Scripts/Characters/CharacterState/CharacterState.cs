@@ -158,13 +158,13 @@ public class CharacterState {
         stateComponent.SetStateToDo(this, stopMovement: false);
         targetArea = area;
         if(targetArea == null || targetArea == stateComponent.character.specificLocation) {
-            Debug.Log(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
+            stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
             StartState();
         } else {
             //GameDate dueDate = GameManager.Instance.Today().AddTicks(30);
             //SchedulingManager.Instance.AddEntry(dueDate, () => GoToLocation(targetArea));
             CreateTravellingThoughtBubbleLog(targetArea);
-            Debug.Log(GameManager.Instance.TodayLogString() + "Travelling to " + targetArea.name + " before entering " + stateName + " for " + stateComponent.character.name);
+            stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Travelling to " + targetArea.name + " before entering " + stateName + " for " + stateComponent.character.name);
             stateComponent.character.currentParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => StartState());
         }
         //if(characterState == CHARACTER_STATE.EXPLORE) {
@@ -191,12 +191,12 @@ public class CharacterState {
     //}
     //This is the one must be called to exit and end this state
     public void ExitState() {
-        Debug.Log(GameManager.Instance.TodayLogString() + "Exiting " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name ?? "No One");
+        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Exiting " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name ?? "No One");
         EndState();
     }
     //Pauses this state, used in switching states if this is a major state
     public virtual void PauseState() {
-        Debug.Log(GameManager.Instance.TodayLogString() + "Pausing " + stateName + " for " + stateComponent.character.name);
+        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Pausing " + stateName + " for " + stateComponent.character.name);
         isPaused = true;
         StopStatePerTick();
     }
@@ -205,7 +205,7 @@ public class CharacterState {
         if (isDone) {
             return; //if the state has already been exited. Do not resume.
         }
-        Debug.Log(GameManager.Instance.TodayLogString() + "Resuming " + stateName + " for " + stateComponent.character.name);
+        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Resuming " + stateName + " for " + stateComponent.character.name);
         isPaused = false;
         StartStatePerTick();
         DoMovementBehavior();

@@ -94,7 +94,7 @@ public class CombatManager : MonoBehaviour {
         allyChance = (sideAWeight / (float) totalWeight) * 100f;
         enemyChance = (sideBWeight / (float) totalWeight) * 100f;
 
-        Debug.Log("COMBAT " + allies[0].name + ": " + allyChance + "! " + enemies[0].name + ": " + enemyChance);
+        //Debug.Log("COMBAT " + allies[0].name + ": " + allyChance + "! " + enemies[0].name + ": " + enemyChance);
     }
     public void GetCombatWeightsOfTwoLists(List<Character> allies, List<Character> enemies, out int allyWeight, out int enemyWeight) {
         if(allies == null) {

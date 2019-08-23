@@ -60,14 +60,14 @@ public class Plagued : Trait {
         return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
     }
     public override bool PerTickOwnerMovement() {
-        string summary = owner.name + " is rolling for plagued chances....";
+        //string summary = owner.name + " is rolling for plagued chances....";
         float pukeRoll = Random.Range(0f, 100f);
         float septicRoll = Random.Range(0f, 100f);
-        summary += "\nPuke roll is: " + pukeRoll.ToString();
-        summary += "\nSeptic Shock roll is: " + septicRoll.ToString();
+        //summary += "\nPuke roll is: " + pukeRoll.ToString();
+        //summary += "\nSeptic Shock roll is: " + septicRoll.ToString();
         bool hasCreatedJob = false;
         if (pukeRoll < pukeChance) {
-            summary += "\nPuke chance met. Doing puke action.";
+            //summary += "\nPuke chance met. Doing puke action.";
             //do puke action
             if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.PUKE) {
                 stoppedAction = owner.currentAction;
@@ -118,9 +118,9 @@ public class Plagued : Trait {
                 owner.currentAction.DoAction();
                 hasCreatedJob = true;
             }
-            Debug.Log(summary);
+            //Debug.Log(summary);
         } else if (septicRoll < septicChance) {
-            summary += "\nSeptic Shock chance met. Doing septic shock action.";
+            //summary += "\nSeptic Shock chance met. Doing septic shock action.";
             if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.SEPTIC_SHOCK) {
                 stoppedAction = owner.currentAction;
                 owner.StopCurrentAction(false);
@@ -166,7 +166,7 @@ public class Plagued : Trait {
                 owner.currentAction.DoAction();
                 hasCreatedJob = true;
             }
-            Debug.Log(summary);
+            //Debug.Log(summary);
         }
         return hasCreatedJob;
     }

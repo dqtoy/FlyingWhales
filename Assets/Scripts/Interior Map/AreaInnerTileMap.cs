@@ -588,7 +588,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         }
     }
     private void GenerateGates(List<LocationGridTile> outTiles) {
-        string summary = "Generating gates for " + area.name;
+        //string summary = "Generating gates for " + area.name;
         List<LocationGridTile> wallTiles = new List<LocationGridTile>();
 
         for (int i = 0; i < outTiles.Count; i++) {
@@ -614,7 +614,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         minY = midY - 3; //To ensure that both gates are more or less centered
         maxY = midY + 3;
 
-        summary += "\nMinX: " + minX + ", MaxX: " + maxX + ", MinY: " + minY + ", MaxY: " + maxY + ", MidY: " + midY;
+        //summary += "\nMinX: " + minX + ", MaxX: " + maxX + ", MinY: " + minY + ", MaxY: " + maxY + ", MidY: " + midY;
 
         List<STRUCTURE_TYPE> unallowedNeighbours = new List<STRUCTURE_TYPE>() { STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.INN, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
 
@@ -634,16 +634,16 @@ public class AreaInnerTileMap : MonoBehaviour {
         wallTilemap.SetTile(chosenWestGate.localPlace, null);
 
         westGate = chosenWestGate;
-        summary += "\nWest gate is: " + westGate.ToString();
+        //summary += "\nWest gate is: " + westGate.ToString();
 
         LocationGridTile chosenEastGate = elligibleEastGates[Random.Range(0, elligibleEastGates.Count)];
         chosenEastGate.SetTileType(LocationGridTile.Tile_Type.Gate);
         wallTilemap.SetTile(chosenEastGate.localPlace, null);
 
         eastGate = chosenEastGate;
-        summary += "\nEast gate is: " + eastGate.ToString();
+        //summary += "\nEast gate is: " + eastGate.ToString();
 
-        Debug.Log(summary);
+        //Debug.Log(summary);
     }
     /// <summary>
     /// Generate a dictionary of settings per structure in an area. This is used to determine the size of each map

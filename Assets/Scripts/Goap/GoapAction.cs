@@ -558,7 +558,7 @@ public class GoapAction {
             UIManager.Instance.characterInfoUI.UpdateBasicInfo();
         }
         //Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
-        Debug.Log(GameManager.Instance.TodayLogString() + "Stopped action of " + actor.name + " which is " + this.goapName + " targeting " + poiTarget.name + "!");
+        actor.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Stopped action of " + actor.name + " which is " + this.goapName + " targetting " + poiTarget.name + "!");
     }
     public void SetIsStopped(bool state) {
         isStopped = state;

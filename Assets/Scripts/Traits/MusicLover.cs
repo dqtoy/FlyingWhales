@@ -45,7 +45,7 @@ public class MusicLover : Trait {
         owner.AddTrait("Cheery");
         owner.AdjustTiredness(20);
         owner.AdjustHappiness(40);
-        Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became happier.");
+        //Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became happier.");
         Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicLover", "heard_guitar");
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(guitarPlayer, guitarPlayer.name, LOG_IDENTIFIER.TARGET_CHARACTER);

@@ -56,7 +56,7 @@ public class GoapPlan {
         //if this plan was ended, and it's state has not been set to failed or success, this means that this plan was not completed.
         if (state == GOAP_PLAN_STATE.IN_PROGRESS) SetPlanState(GOAP_PLAN_STATE.CANCELLED);
         Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnActionInPlanFinished);
-        dropPlanCallStack = StackTraceUtility.ExtractStackTrace();
+        //dropPlanCallStack = StackTraceUtility.ExtractStackTrace();
     }
     public void InsertAction(GoapAction action) {
         if (currentNode != null) {
@@ -65,7 +65,7 @@ public class GoapPlan {
             currentNode.parent = newNode;
             newNode.index = currentNode.index;
             newNode.action.SetParentPlan(this);
-            Debug.Log(action.actor.name + " inserted new action " + action.goapName + " to replace action that returned fail. New plan is\n" + GetPlanSummary());
+            //Debug.Log(action.actor.name + " inserted new action " + action.goapName + " to replace action that returned fail. New plan is\n" + GetPlanSummary());
         }
     }
 

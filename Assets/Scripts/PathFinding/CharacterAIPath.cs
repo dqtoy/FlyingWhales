@@ -179,19 +179,19 @@ public class CharacterAIPath : AILerp {
     public void AdjustDoNotMove(int amount) {
         doNotMove += amount;
         doNotMove = Mathf.Max(0, doNotMove);
-        if (!StackTraceUtility.ExtractStackTrace().Contains("Pause")) {
-            if (amount < 0) {
-                lastAdjustNegativeDoNotMoveST = "Adjustment: " + amount.ToString() + "\n" + StackTraceUtility.ExtractStackTrace();
-            } else {
-                lastAdjustPositiveDoNotMoveST = "Adjustment: " + amount.ToString() + "\n" + StackTraceUtility.ExtractStackTrace();
-            }
-        }
+        //if (!StackTraceUtility.ExtractStackTrace().Contains("Pause")) {
+        //    if (amount < 0) {
+        //        lastAdjustNegativeDoNotMoveST = "Adjustment: " + amount.ToString() + "\n" + StackTraceUtility.ExtractStackTrace();
+        //    } else {
+        //        lastAdjustPositiveDoNotMoveST = "Adjustment: " + amount.ToString() + "\n" + StackTraceUtility.ExtractStackTrace();
+        //    }
+        //}
     }
     public void SetIsStopMovement(bool state) {
         isStopMovement = state;
-        if (isStopMovement) {
-            stopMovementST = StackTraceUtility.ExtractStackTrace();
-        }
+        //if (isStopMovement) {
+        //    stopMovementST = StackTraceUtility.ExtractStackTrace();
+        //}
     }
     public void ClearAllCurrentPathData() {
         currentPath = null;

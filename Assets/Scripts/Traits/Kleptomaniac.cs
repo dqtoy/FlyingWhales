@@ -99,7 +99,7 @@ public class Kleptomaniac : Trait {
 
     private void ClearNoItemsList() {
         noItemCharacters.Clear();
-        Debug.Log(GameManager.Instance.TodayLogString() + "Cleared " + owner.name + "'s Kleptomaniac list of character's with no items.");
+        //Debug.Log(GameManager.Instance.TodayLogString() + "Cleared " + owner.name + "'s Kleptomaniac list of character's with no items.");
     }
 
     private void CheckForClearNoItemsList() {

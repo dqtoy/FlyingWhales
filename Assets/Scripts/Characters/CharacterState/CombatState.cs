@@ -168,7 +168,7 @@ public class CombatState : CharacterState {
     }
     private void StartCombatMovement() {
         string log = GameManager.Instance.TodayLogString() + "Starting combat movement for " + stateComponent.character.name;
-        Debug.Log(log);
+        //Debug.Log(log);
         //I set the value to its own because I only want to trigger the movement behavior, I do not want to change the boolean value
         //SetIsAttacking(isAttacking);
         DetermineReaction(stateComponent.character);
@@ -361,7 +361,7 @@ public class CombatState : CharacterState {
         } else {
             attackSummary += "\n" + stateComponent.character.name + "'s state no longer this, NOT running check coroutine. Current state is" + stateComponent.currentState?.stateName ?? "Null";
         }
-        Debug.Log(attackSummary);
+        //Debug.Log(attackSummary);
     }
     private void StartPursueTimer() {
         if (!_hasTimerStarted) {

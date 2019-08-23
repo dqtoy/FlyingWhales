@@ -79,7 +79,7 @@ public class AssaultCharacter : GoapAction {
         base.OnCancelActionTowardsTarget();
     }
     private void OnFinishCombatState() {
-        Debug.Log(actor.name + " finished combat state!");
+        //Debug.Log(actor.name + " finished combat state!");
         Character target = poiTarget as Character;
         loser = target;
         //winner = actor; // TODO: How to determine if actor won?

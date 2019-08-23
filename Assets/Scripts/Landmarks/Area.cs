@@ -611,7 +611,7 @@ public class
         if (!charactersAtLocation.Contains(character)) {
             charactersAtLocation.Add(character);
             character.ownParty.SetSpecificLocation(this);
-            AddCharacterAtLocationHistory("Added " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
+            //AddCharacterAtLocationHistory("Added " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
             //if (tileOverride != null) {
             //    tileOverride.structure.AddCharacterAtLocation(character, tileOverride);
             //} else {
@@ -622,7 +622,7 @@ public class
             //        exit.structure.AddCharacterAtLocation(character, exit);
             //    }
             //}
-            Debug.Log(GameManager.Instance.TodayLogString() + "Added " + character.name + " to location " + name);
+            //Debug.Log(GameManager.Instance.TodayLogString() + "Added " + character.name + " to location " + name);
             Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, this, character);
         }
     }
@@ -635,7 +635,7 @@ public class
             if (character.currentStructure != null) {
                 character.currentStructure.RemoveCharacterAtLocation(character);
             }
-            AddCharacterAtLocationHistory("Removed " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
+            //AddCharacterAtLocationHistory("Removed " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
             Messenger.Broadcast(Signals.CHARACTER_EXITED_AREA, this, character);
         }
 
@@ -884,7 +884,7 @@ public class
                 takenFrom.RemoveItem(token);
                 OnItemRemovedFromLocation(token, takenFrom);
             }
-            Debug.Log(GameManager.Instance.TodayLogString() + "Removed " + token.name + " from " + name);
+            //Debug.Log(GameManager.Instance.TodayLogString() + "Removed " + token.name + " from " + name);
             Messenger.Broadcast(Signals.ITEM_REMOVED_FROM_AREA, this, token);
         }
 

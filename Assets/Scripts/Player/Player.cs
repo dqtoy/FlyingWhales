@@ -556,63 +556,63 @@ public class Player : ILeader {
         }
     }
     private void TryExecuteCurrentActiveAction() {
-        string summary = "Mouse was clicked. Will try to execute " + currentActivePlayerJobAction.name;
+        //string summary = "Mouse was clicked. Will try to execute " + currentActivePlayerJobAction.name;
         LocationGridTile hoveredTile;
         for (int i = 0; i < currentActivePlayerJobAction.targetTypes.Length; i++) {
             bool activatedAction = false;
             switch (currentActivePlayerJobAction.targetTypes[i]) {
                 case JOB_ACTION_TARGET.NONE:
-                    summary += "\nNo Target!";
+                    //summary += "\nNo Target!";
                     break;
                 case JOB_ACTION_TARGET.CHARACTER:
                     if (InteriorMapManager.Instance.currentlyShowingMap != null && InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
-                        summary += " targetting " + InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter.name;
+                        //summary += " targetting " + InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter.name;
                         if (currentActivePlayerJobAction.CanPerformActionTowards(InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
-                            summary += "\nActivated action!";
+                            //summary += "\nActivated action!";
                             currentActivePlayerJobAction.ActivateAction(InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
                             activatedAction = true;
                         } else {
-                            summary += "\nDid not activate action! Did not meet requirements";
+                            //summary += "\nDid not activate action! Did not meet requirements";
                         }
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     } else {
-                        summary += "\nThere is no hovered character!";
+                        //summary += "\nThere is no hovered character!";
                     }
                     break;
                 case JOB_ACTION_TARGET.TILE_OBJECT:
                     hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null && hoveredTile.objHere != null) {
-                        summary += " targetting " + hoveredTile.objHere.name;
+                        //summary += " targetting " + hoveredTile.objHere.name;
                         if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile.objHere)) {
-                            summary += "\nActivated action!";
+                            //summary += "\nActivated action!";
                             currentActivePlayerJobAction.ActivateAction(hoveredTile.objHere);
                             activatedAction = true;
                         } else {
-                            summary += "\nDid not activate action! Did not meet requirements";
+                            //summary += "\nDid not activate action! Did not meet requirements";
                         }
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     } else {
-                        summary += "\nThere is no hovered tile object!";
+                        //summary += "\nThere is no hovered tile object!";
                     }
                     break;
                 case JOB_ACTION_TARGET.TILE:
                     hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
-                        summary += " targetting " + hoveredTile.ToString();
+                        //summary += " targetting " + hoveredTile.ToString();
                         if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile)) {
-                            summary += "\nActivated action!";
+                            //summary += "\nActivated action!";
                             currentActivePlayerJobAction.ActivateAction(hoveredTile);
                             activatedAction = true;
                         } else {
-                            summary += "\nDid not activate action! Did not meet requirements";
+                            //summary += "\nDid not activate action! Did not meet requirements";
                         }
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
                     } else {
-                        summary += "\nThere is no hovered tile object!";
+                        //summary += "\nThere is no hovered tile object!";
                     }
                     break;
                 default:
-                    summary += "\nNo casing for target type: " + currentActivePlayerJobAction.targetTypes.ToString();
+                    //summary += "\nNo casing for target type: " + currentActivePlayerJobAction.targetTypes.ToString();
                     break;
             }
             if (activatedAction) {
@@ -621,7 +621,7 @@ public class Player : ILeader {
         }
         
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
-        Debug.Log(GameManager.Instance.TodayLogString() + summary);
+        //Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
     //public string GetInterventionAbilityDescription(PlayerJobAction action) {
     //    if (action is ShareIntel) {
@@ -1524,7 +1524,7 @@ public class Player : ILeader {
         }
     }
     private void TryExecuteCurrentActiveCombatAbility() {
-        string summary = "Mouse was clicked. Will try to execute " + currentActiveCombatAbility.name;
+        //string summary = "Mouse was clicked. Will try to execute " + currentActiveCombatAbility.name;
         if (currentActiveCombatAbility.abilityRadius == 0) {
             if (currentActiveCombatAbility.CanTarget(InteriorMapManager.Instance.currentlyHoveredPOI)) {
                 currentActiveCombatAbility.ActivateAbility(InteriorMapManager.Instance.currentlyHoveredPOI);
@@ -1547,7 +1547,7 @@ public class Player : ILeader {
                 currentActiveCombatAbility.ActivateAbility(poisInHighlightedTiles);
             }
         }
-        Debug.Log(GameManager.Instance.TodayLogString() + summary);
+        //Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
     #endregion
 

@@ -62,7 +62,7 @@ public class Projectile : MonoBehaviour {
     }
 
     public void ProjectileHit(Character character) {
-        Debug.Log("Hit character " + character?.name);
+        //Debug.Log("Hit character " + character?.name);
         onHitAction?.Invoke(character);
         DestroyProjectile();
     }

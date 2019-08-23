@@ -205,7 +205,7 @@ public class CharacterMarker : PooledObject {
     }
     public void OnCharacterLostTrait(Character character, Trait trait) {
         if (character == this.character) {
-            string lostTraitSummary = character.name + " has lost trait " + trait.name;
+            string lostTraitSummary = GameManager.Instance.TodayLogString() + character.name + " has lost trait " + trait.name;
             if (trait.type == TRAIT_TYPE.DISABLER) { //if the character lost a disabler trait, adjust hinder movement value
                 pathfindingAI.AdjustDoNotMove(-1);
                 lostTraitSummary += "\nLost trait is a disabler trait, adjusting do not move value.";
@@ -225,7 +225,7 @@ public class CharacterMarker : PooledObject {
                     }
                     break;
             }
-            Debug.Log(lostTraitSummary);
+            character.PrintLogIfActive(lostTraitSummary);
             UpdateAnimation();
             UpdateActionIcon();
         } else if (inVisionCharacters.Contains(character)) {
@@ -269,7 +269,7 @@ public class CharacterMarker : PooledObject {
 
     }
     private void SelfGainedTrait(Character characterThatGainedTrait, Trait trait) {
-        string gainTraitSummary = characterThatGainedTrait.name + " has gained trait " + trait.name;
+        string gainTraitSummary = GameManager.Instance.TodayLogString() + characterThatGainedTrait.name + " has gained trait " + trait.name;
         if (trait.type == TRAIT_TYPE.DISABLER) { //if the character gained a disabler trait, hinder movement
             pathfindingAI.ClearAllCurrentPathData();
             pathfindingAI.canSearch = false;
@@ -289,7 +289,7 @@ public class CharacterMarker : PooledObject {
         }
         UpdateAnimation();
         UpdateActionIcon();
-        Debug.Log(gainTraitSummary);
+        character.PrintLogIfActive(gainTraitSummary);
     }
     private void OtherCharacterGainedTrait(Character otherCharacter, Trait trait) {
         if (trait.name == "Invisible") {
@@ -416,7 +416,7 @@ public class CharacterMarker : PooledObject {
     #region Object Pool
     public override void Reset() {
         base.Reset();
-        Debug.Log(GameManager.Instance.TodayLogString() + "reset marker: " + name);
+        //Debug.Log(GameManager.Instance.TodayLogString() + "reset marker: " + name);
         hoverEnterAction = null;
         hoverExitAction = null;
         destinationTile = null;
@@ -981,7 +981,7 @@ public class CharacterMarker : PooledObject {
                 (!checkHostility || this.character.IsHostileWith(character))) {
                 if (!WillCharacterTransferEngageToFleeList()) {
                     hostilesInRange.Add(character);
-                    Debug.Log(character.name + " was added to " + this.character.name + "'s hostile range!");
+                    this.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + character.name + " was added to " + this.character.name + "'s hostile range!");
                     //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
                     if (processCombatBehavior) {
                         if (this.character.stateComponent.currentState != null && this.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
@@ -1009,9 +1009,8 @@ public class CharacterMarker : PooledObject {
     }
     public void RemoveHostileInRange(Character poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Remove(poi)) {
-            //Debug.Log("Removed hostile in range " + poi.name + " from " + this.character.name);
-            string removeHostileSummary = poi.name + " was removed from " + character.name + "'s hostile range.";
-            Debug.Log(removeHostileSummary);
+            string removeHostileSummary = GameManager.Instance.TodayLogString() + poi.name + " was removed from " + character.name + "'s hostile range.";
+            character.PrintLogIfActive(removeHostileSummary);
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
             if (processCombatBehavior && character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                 CombatState combatState = character.stateComponent.currentState as CombatState;
@@ -1114,7 +1113,7 @@ public class CharacterMarker : PooledObject {
     }
     public void RemoveAvoidInRange(Character poi, bool processCombatBehavior = true) {
         if (avoidInRange.Remove(poi)) {
-            Debug.Log("Removed avoid in range " + poi.name + " from " + this.character.name);
+            //Debug.Log("Removed avoid in range " + poi.name + " from " + this.character.name);
             //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
             if (processCombatBehavior) {
                 if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
@@ -1169,7 +1168,7 @@ public class CharacterMarker : PooledObject {
         fleeSpeedModifier = Starting_Flee_Modifier;
         Messenger.AddListener(Signals.TICK_STARTED, PerTickFlee);
         ticksInFlee = 0;
-        Debug.Log(GameManager.Instance.TodayLogString() + character.name + " will start fleeing");
+        //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " will start fleeing");
     }
     public void OnFinishedTraversingFleePath() {
         //Debug.Log(name + " has finished traversing flee path.");
@@ -1207,15 +1206,15 @@ public class CharacterMarker : PooledObject {
     /// <param name="character">The character that should determine the transfer.</param>
     private void TransferEngageToFleeList(Character character) {
         if (this.character == character) {
-            string summary = character.name + " will determine the transfer from engage list to flee list";
+            string summary = GameManager.Instance.TodayLogString() + character.name + " will determine the transfer from engage list to flee list";
             if(character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
                 summary += "\n" + character.name + " has negative disabler trait. Ignoring transfer.";
-                //Debug.Log(summary);
+                character.PrintLogIfActive(summary);
                 return;
             }
             if (hostilesInRange.Count == 0 && avoidInRange.Count == 0) {
                 summary +=  "\n" + character.name + " does not have any characters in engage or avoid list. Ignoring transfer.";
-                //Debug.Log(summary);
+                character.PrintLogIfActive(summary);
                 return;
             }
             //check flee first, the logic determines that this character will not flee, then attack by default
@@ -1246,7 +1245,7 @@ public class CharacterMarker : PooledObject {
                     }
                 }
             }
-            Debug.Log(summary);
+            character.PrintLogIfActive(summary);
         }
     }
     private void PerTickFlee() {
@@ -1255,7 +1254,7 @@ public class CharacterMarker : PooledObject {
             ticksInFlee = 0;
             fleeSpeedModifier -= 0.5f;
             UpdateSpeed();
-            Debug.Log(GameManager.Instance.TodayLogString() + character.name + " has met flee slow down tick, slowing down flee speed. New speed is " + pathfindingAI.speed.ToString());
+            //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " has met flee slow down tick, slowing down flee speed. New speed is " + pathfindingAI.speed.ToString());
         }
     }
     private void StopPerTickFlee() {

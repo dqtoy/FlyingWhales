@@ -456,13 +456,13 @@ public class GridMap : MonoBehaviour {
             }
             nearestRegion.AddTile(currTile);
         }
-        string summary = "Generated regions: ";
+        //string summary = "Generated regions: ";
         for (int i = 0; i < allRegions.Length; i++) {
             allRegions[i].FinalizeData();
             allRegions[i].ShowTransparentBorder();
-            summary += "\n" + i.ToString() + " - " + allRegions[i].tiles.Count.ToString();
+            //summary += "\n" + i.ToString() + " - " + allRegions[i].tiles.Count.ToString();
         }
-        Debug.Log(summary);
+        //Debug.Log(summary);
     }
     #endregion
 }
