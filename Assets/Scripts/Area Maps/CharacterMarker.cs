@@ -725,7 +725,7 @@ public class CharacterMarker : PooledObject {
         }
         speed += (speed * fleeSpeedModifier);
         if (speed <= 0f) {
-            speed = 0.3f;
+            speed = 0.5f;
         }
         speed *= progressionSpeedMultiplier;
         return speed;

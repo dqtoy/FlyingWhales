@@ -2436,7 +2436,8 @@ public class Character : ILeader, IPointOfInterest {
     private void OnLeaveArea(Party party) {
         if (currentParty == party) {
             CheckApprehendRelatedJobsOnLeaveLocation();
-            CancelOrUnassignRemoveTraitRelatedJobs();
+            //CancelOrUnassignRemoveTraitRelatedJobs();
+            CancelAllJobsTargettingThisCharacter();
             marker.ClearTerrifyingObjects();
             ExecuteLeaveAreaActions();
         } else {
@@ -2445,22 +2446,32 @@ public class Character : ILeader, IPointOfInterest {
                     marker.RemoveTerrifyingObject(party.characters[i]);
                 }
             }
+            //remove character from awareness
+            for (int i = 0; i < party.characters.Count; i++) {
+                Character character = party.characters[i];
+                RemoveAwareness(character);
+            }
         }
     }
     private void OnArrivedAtArea(Party party) {
-        //if (currentParty == party) {
-        //    if (isAtHomeArea) {
-        //        if (HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-        //            CreateApprehendJob();
-        //        }
-        //        //for (int i = 0; i < traits.Count; i++) {
-        //        //    if (traits[i].name == "Cursed" || traits[i].name == "Sick"
-        //        //        || traits[i].name == "Injured" || traits[i].name == "Unconscious") {
-        //        //        CreateRemoveTraitJob(traits[i].name);
-        //        //    }
-        //        //}
-        //    }
-        //}
+        if (currentParty == party) {
+            //if (isAtHomeArea) {
+            //    if (HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+            //        CreateApprehendJob();
+            //    }
+            //    //for (int i = 0; i < traits.Count; i++) {
+            //    //    if (traits[i].name == "Cursed" || traits[i].name == "Sick"
+            //    //        || traits[i].name == "Injured" || traits[i].name == "Unconscious") {
+            //    //        CreateRemoveTraitJob(traits[i].name);
+            //    //    }
+            //    //}
+            //}
+        } else {
+            for (int i = 0; i < party.characters.Count; i++) {
+                Character character = party.characters[i];
+                AddAwareness(character); //become re aware of character
+            }
+        }
     }
     public void OnArriveAtAreaStopMovement() {
         currentParty.icon.SetTarget(null, null, null, null);

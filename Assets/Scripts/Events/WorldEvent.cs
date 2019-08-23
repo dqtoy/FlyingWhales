@@ -63,10 +63,27 @@ public class WorldEvent  {
     public virtual void OnDespawn(BaseLandmark landmark) {
         isCurrentlySpawned = false;
     }
+    public virtual IWorldEventData ConstructEventDataForLandmark(BaseLandmark landmark) {
+        IWorldEventData data = new DefaultWorldEventData() {
+            spawner = landmark.eventSpawnedBy
+        };
+        return data;
+    }
     #endregion
 
     protected void AddDefaultFillersToLog(Log log, BaseLandmark landmark) {
         log.AddToFillers(landmark.eventSpawnedBy, landmark.eventSpawnedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(landmark.tileLocation.region, landmark.tileLocation.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
+}
+
+//This is base class where data for each individual landmark is stored.
+public interface IWorldEventData {
+    Character[] involvedCharacters { get; }
+}
+
+public struct DefaultWorldEventData : IWorldEventData {
+    public Character spawner;
+
+    public Character[] involvedCharacters { get { return new Character[] { spawner }; } }
 }

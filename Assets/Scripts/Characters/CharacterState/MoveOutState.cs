@@ -34,7 +34,13 @@ public class MoveOutState : CharacterState {
     protected override void PerTickInState() { }
     #endregion
 
+    bool hasSceduledArriveAtRandomRegion;
+
     private void OnArriveAtNearestEdgeTile() {
+        if (hasSceduledArriveAtRandomRegion) {
+            return;
+        }
+        hasSceduledArriveAtRandomRegion = true;
         stateComponent.character.ownParty.icon.SetIsTravellingOutside(true);
         stateComponent.character.SetPOIState(POI_STATE.INACTIVE);
         stateComponent.character.marker.gameObject.SetActive(false);
@@ -97,6 +103,7 @@ public class MoveOutState : CharacterState {
         stateComponent.character.ownParty.icon.SetIsTravellingOutside(false);
         stateComponent.character.marker.PlaceMarkerAt(stateComponent.character.specificLocation.GetRandomUnoccupiedEdgeTile());
         OnExitThisState();
+        Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, stateComponent.character.currentParty);
         Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "arrive_home");
         log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(stateComponent.character.homeArea, stateComponent.character.homeArea.name, LOG_IDENTIFIER.LANDMARK_1);

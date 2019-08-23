@@ -28,6 +28,7 @@ public class BaseLandmark {
     public WorldEvent activeEvent { get; private set; }
     public Character eventSpawnedBy { get; private set; }
     public GameObject eventIconGO { get; private set; }
+    public IWorldEventData eventData { get; private set; }
 
     private List<System.Action> otherAfterInvasionActions; //list of other things to do when this landmark is invaded.
 
@@ -383,12 +384,17 @@ public class BaseLandmark {
         } else {
             eventSpawnedBy = spawner;
         }
-        //do not let the character that spawned the event go home
-        if (eventSpawnedBy.stateComponent.currentState is MoveOutState) {
-            MoveOutState state = eventSpawnedBy.stateComponent.currentState as MoveOutState;
-            SchedulingManager.Instance.RemoveSpecificEntry(state.goHomeSchedID);
-        } else {
-            throw new System.Exception(eventSpawnedBy.name + " is at " + tileLocation.region.name + " but is not in move out state!");
+        eventData = activeEvent.ConstructEventDataForLandmark(this);        
+        for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
+            Character currCharacter = eventData.involvedCharacters[i];
+            //do not let the character that spawned the event go home
+            if (currCharacter.stateComponent.currentState is MoveOutState) {
+                MoveOutState state = currCharacter.stateComponent.currentState as MoveOutState;
+                SchedulingManager.Instance.RemoveSpecificEntry(state.goHomeSchedID);
+            } else {
+                throw new System.Exception(currCharacter.name + " is at " + tileLocation.region.name + " but is not in move out state!");
+
+            }
         }
         //spawn the event
         activeEvent.Spawn(this, out activeEventAfterEffectScheduleID);
@@ -398,9 +404,12 @@ public class BaseLandmark {
         if (activeEvent != we) {
             throw new System.Exception("World event " + we.name + " finished, but it is not the active event at " + this.tileLocation.region.name);
         }
-        //make character that triggered event, go home
-        if (eventSpawnedBy.minion == null) {
-            (eventSpawnedBy.stateComponent.currentState as MoveOutState).GoHome();
+        for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
+            Character currCharacter = eventData.involvedCharacters[i];
+            //make characters involved in the event, go home
+            if (currCharacter.minion == null) {
+                (currCharacter.stateComponent.currentState as MoveOutState).GoHome();
+            }
         }
         DespawnEvent();
         Messenger.Broadcast(Signals.WORLD_EVENT_FINISHED_NORMAL, this, we);

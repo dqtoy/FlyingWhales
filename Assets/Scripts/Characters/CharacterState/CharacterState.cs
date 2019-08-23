@@ -77,7 +77,7 @@ public class CharacterState {
     
     //This is called per TICK_ENDED if the state has a duration, can be overriden
     protected virtual void PerTickInState() {
-        if (!isPaused && !isUnending) {
+        if (!isPaused && !isUnending && !isDone) {
             if (currentDuration >= duration) {
                 StopStatePerTick();
                 OnExitThisState();
