@@ -2104,7 +2104,9 @@ public class Character : ILeader, IPointOfInterest {
                 i--;
             }
         }
-        homeArea.jobQueue.UnassignAllJobsTakenBy(this);
+        if (homeArea != null) {
+            homeArea.jobQueue.UnassignAllJobsTakenBy(this);
+        }
 
         StopCurrentAction(false);
         for (int i = 0; i < allGoapPlans.Count; i++) {

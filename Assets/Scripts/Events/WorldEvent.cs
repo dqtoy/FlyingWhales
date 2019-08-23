@@ -12,6 +12,8 @@ public class WorldEvent  {
     public WORLD_EVENT eventType { get; protected set; }
     public string name { get; private set; }
     public string description { get; private set; }
+    public bool isUnique { get; protected set; } //should this event only spawn once?
+    private bool hasBeenSpawnedOnce;
 
     public WorldEvent(WORLD_EVENT eventType) {
         this.eventType = eventType;
@@ -30,8 +32,9 @@ public class WorldEvent  {
         afterEffectScheduleID = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(duration), () => ExecuteAfterEffect(landmark), this);
         TimerHubUI.Instance.AddItem(this.name + " event at " + landmark.tileLocation.region.name, duration, () => UIManager.Instance.ShowRegionInfo(landmark.tileLocation.region));
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + landmark.tileLocation.region.name);
-        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
-        AddDefaultFillersToLog(log, landmark);
+        //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
+        //AddDefaultFillersToLog(log, landmark);
+        hasBeenSpawnedOnce = true;
     }
     public virtual void ExecuteAfterEffect(BaseLandmark landmark) {
         landmark.WorldEventFinished(this);
@@ -46,7 +49,10 @@ public class WorldEvent  {
         }
     }
     public virtual bool CanSpawnEventAt(BaseLandmark landmark) {
-        return false;
+        if (this.isUnique && this.hasBeenSpawnedOnce) {
+            return false; //if this event is unique and has been spawned once, do not allow it to spawn again
+        }
+        return true;
     }
     public virtual Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
         return null;

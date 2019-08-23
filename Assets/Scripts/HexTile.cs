@@ -490,6 +490,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
     }
+    public void AddTileTag(TILE_TAG tag) {
+        tileTags.Add(tag);
+    }
+    public void RemoveTileTag(TILE_TAG tag) {
+        tileTags.Remove(tag);
+    }
     public bool HasNeighbourFromOtherRegion() {
         for (int i = 0; i < AllNeighbours.Count; i++) {
             HexTile currNeighbour = AllNeighbours[i];

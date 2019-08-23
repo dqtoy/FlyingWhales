@@ -49,6 +49,7 @@ public class RegionInfoUI : UIMenu {
         UpdateCharacters();
         UpdateInvadeBtnState();
         UpdateEventInfo();
+        eventsListGO.SetActive(false);
         activeRegion.CenterCameraOnRegion();
         activeRegion.ShowSolidBorder();
     }
