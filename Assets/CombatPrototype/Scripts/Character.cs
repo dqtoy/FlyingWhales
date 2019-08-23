@@ -3495,7 +3495,7 @@ public class Character : ILeader, IPointOfInterest {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                                     CreateWatchEvent(null, targetCombatState, targetCharacter);
                                 } else {
-                                    if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false)) {
+                                    if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false)) {
                                         List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCharacter).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
                                         Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
                                         joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -3504,11 +3504,12 @@ public class Character : ILeader, IPointOfInterest {
                                         joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
                                         joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                         PlayerManager.Instance.player.ShowNotification(joinLog);
+                                        marker.ProcessCombatBehavior();
                                     }
                                 }
                             } else {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                    if (marker.AddHostileInRange(targetCharacter, checkHostility: false)) {
+                                    if (marker.AddHostileInRange(targetCharacter, false, false)) {
                                         List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCombatState.currentClosestHostile).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
                                         Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
                                         joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -3517,6 +3518,7 @@ public class Character : ILeader, IPointOfInterest {
                                         joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
                                         joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                         PlayerManager.Instance.player.ShowNotification(joinLog);
+                                        marker.ProcessCombatBehavior();
                                     }
                                 } else {
                                     CreateWatchEvent(null, targetCombatState, targetCharacter);
@@ -3524,13 +3526,14 @@ public class Character : ILeader, IPointOfInterest {
                             }
                         } else {
                             //the target of the combat state is not part of this character's faction
-                            if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false)) {
+                            if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false)) {
                                 Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
                                 joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                 joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                 joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
                                 joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                 PlayerManager.Instance.player.ShowNotification(joinLog);
+                                marker.ProcessCombatBehavior();
                             }
                         }
                     }
