@@ -984,11 +984,7 @@ public class CharacterMarker : PooledObject {
                     this.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + character.name + " was added to " + this.character.name + "'s hostile range!");
                     //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
                     if (processCombatBehavior) {
-                        if (this.character.stateComponent.currentState != null && this.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-                            Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-                        } else {
-                            this.character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
-                        }
+                        ProcessCombatBehavior();
                     }
                 } else {
                     //Transfer to flee list
@@ -1071,11 +1067,7 @@ public class CharacterMarker : PooledObject {
                 //NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
                 //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
                 if (processCombatBehavior) {
-                    if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-                        Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-                    } else {
-                        character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
-                    }
+                    ProcessCombatBehavior();
                 }
                 return true;
             }
@@ -1101,11 +1093,7 @@ public class CharacterMarker : PooledObject {
             //NormalReactToHostileCharacter(otherPOI, CHARACTER_STATE.FLEE);
             //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
             if (processCombatBehavior) {
-                if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-                    Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-                } else {
-                    character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
-                }
+                ProcessCombatBehavior();
             }
             return true;
         }
@@ -1390,6 +1378,13 @@ public class CharacterMarker : PooledObject {
     }
     public void OnThisCharacterEndedCombatState() {
         StopPerTickFlee();
+    }
+    public void ProcessCombatBehavior() {
+        if (this.character.stateComponent.currentState != null && this.character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+            Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
+        } else {
+            this.character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
+        }
     }
     #endregion
 }

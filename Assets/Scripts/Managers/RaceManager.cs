@@ -22,7 +22,7 @@ public class RaceManager : MonoBehaviour {
 
     public void Initialize() {
         ConstructAllRaces();
-        ConstructNPCRaceInteractions();
+        //ConstructNPCRaceInteractions();
     }
 
     private void ConstructAllRaces() {
@@ -542,7 +542,7 @@ public class RaceManager : MonoBehaviour {
                 //INTERACTION_TYPE.EAT_DWELLING_TABLE,
                 //INTERACTION_TYPE.SLEEP,
                 //INTERACTION_TYPE.ASSAULT_ACTION_NPC,
-                INTERACTION_TYPE.ABDUCT_ACTION,
+                //INTERACTION_TYPE.ABDUCT_ACTION,
                 INTERACTION_TYPE.CARRY_CHARACTER,
                 INTERACTION_TYPE.DROP_CHARACTER,
                 //INTERACTION_TYPE.PLAY_GUITAR,
@@ -690,6 +690,21 @@ public class RaceManager : MonoBehaviour {
             interactions.Add(character.currentInteractionTypes[i]);
         }
         return interactions;
+    }
+    public bool CanCharacterDoGoapAction(Character character, INTERACTION_TYPE goapType) {
+        bool isTrue = false;
+        if (InteractionManager.Instance.goapActionData.ContainsKey(goapType)) {
+            isTrue = InteractionManager.Instance.goapActionData[goapType].DoesCharacterMatchRace(character);
+        }
+        if (!isTrue) {
+            if (character.role.allowedInteractions != null) {
+                isTrue = character.role.allowedInteractions.Contains(goapType);
+            }
+        }
+        if (!isTrue) {
+            isTrue = character.currentInteractionTypes.Contains(goapType);
+        }
+        return isTrue;
     }
     #endregion
 }

@@ -30,12 +30,13 @@ public class Drunk : Trait {
                 }
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < value) {
-                    if (characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false)) {
+                    if (characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, false)) {
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
                         log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         //log.AddLogToInvolvedObjects();
                         characterThatWillDoJob.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                        characterThatWillDoJob.marker.ProcessCombatBehavior();
                     }
                     return true;
                 }

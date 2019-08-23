@@ -27,7 +27,7 @@ public interface IPointOfInterest : ITraitable{
     bool IsAvailable();
     bool RemoveJobTargettingThis(JobQueueItem job);
     LocationGridTile GetNearestUnoccupiedTileFromThis();
-    List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions);
+    List<GoapAction> AdvertiseActionsToActor(Character actor);
 
 
     //#region Traits

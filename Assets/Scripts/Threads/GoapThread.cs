@@ -142,7 +142,7 @@ public class GoapThread : Multithread {
         }
        
 
-        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
+        //List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
         List<GoapAction> usableActions = new List<GoapAction>();
         //Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> orderedAwareness = actor.OrderAwarenessByStructure();
         Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>(actor.awareness);
@@ -155,14 +155,14 @@ public class GoapThread : Multithread {
                         //i--;
                         if (allowDeadTargets) {
                             //if dead targets are allowed, advertise actions from dead targets
-                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActorFromDeadCharacter(actor, actorAllowedActions);
+                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActorFromDeadCharacter(actor);
                             if (awarenessActions != null && awarenessActions.Count > 0) {
                                 usableActions.AddRange(awarenessActions);
                             }
                         }
                     } else {
                         if (character.specificLocation == actor.specificLocation || character == actor || actor.IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
-                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActor(actor, actorAllowedActions);
+                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActor(actor);
                             if (awarenessActions != null && awarenessActions.Count > 0) {
                                 usableActions.AddRange(awarenessActions);
                             }
@@ -179,7 +179,7 @@ public class GoapThread : Multithread {
                         if (!sorted.ContainsKey(objStructure)) {
                             sorted.Add(objStructure, new Dictionary<INTERACTION_TYPE, List<GoapAction>>());
                         }
-                        List<GoapAction> awarenessActions = currAwareness.AdvertiseActionsToActor(actor, actorAllowedActions);
+                        List<GoapAction> awarenessActions = currAwareness.AdvertiseActionsToActor(actor);
                         if (awarenessActions != null) {
                             for (int j = 0; j < awarenessActions.Count; j++) {
                                 GoapAction currAction = awarenessActions[j];
@@ -209,7 +209,7 @@ public class GoapThread : Multithread {
                 }
             } else {
                 for (int i = 0; i < kvp.Value.Count; i++) {
-                    List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor, actorAllowedActions);
+                    List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor);
                     if (awarenessActions != null && awarenessActions.Count > 0) {
                         usableActions.AddRange(awarenessActions);
                     }
@@ -394,7 +394,7 @@ public class GoapThread : Multithread {
         log = "-----------------RECALCULATING PLAN OF " + actor.name + " WITH TARGET " + recalculationPlan.target.name + " (" + actor.specificLocation.name + ")-----------------------";
         log += "\nGOAL ACTION: " + recalculationPlan.endNode.action.goapName + " - " + recalculationPlan.endNode.action.poiTarget.name;
         List<GoapAction> usableActions = new List<GoapAction>();
-        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
+        //List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
         foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in actor.awareness) {
             if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 for (int i = 0; i < kvp.Value.Count; i++) {
@@ -404,7 +404,7 @@ public class GoapThread : Multithread {
                         //i--;
                     } else {
                         if (character.specificLocation == actor.specificLocation || character == actor || actor.IsPOIInCharacterAwarenessList(character, recalculationPlan.goalCharacterTargets)) {
-                            List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor, actorAllowedActions);
+                            List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor);
                             if (awarenessActions != null && awarenessActions.Count > 0) {
                                 usableActions.AddRange(awarenessActions);
                             }
@@ -413,7 +413,7 @@ public class GoapThread : Multithread {
                 }
             } else {
                 for (int i = 0; i < kvp.Value.Count; i++) {
-                    List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor, actorAllowedActions);
+                    List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor);
                     if (awarenessActions != null && awarenessActions.Count > 0) {
                         usableActions.AddRange(awarenessActions);
                     }

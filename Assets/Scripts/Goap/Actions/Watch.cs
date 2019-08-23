@@ -99,7 +99,7 @@ public class Watch : GoapAction {
             return;
         }
         if (actionBeingWatched != null) {
-            if (actionBeingWatched.isDone) {
+            if (actionBeingWatched.isDone || actionBeingWatched.actor.currentAction != actionBeingWatched) {
                 Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
                 if (actor.currentParty.icon.isTravelling) {
                     //Stop moving
@@ -109,7 +109,7 @@ public class Watch : GoapAction {
                 return;
             }
         } else if (combatBeingWatched != null) {
-            if (combatBeingWatched.isDone) {
+            if (combatBeingWatched.isDone || combatBeingWatched.stateComponent.currentState != combatBeingWatched) {
                 Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
                 if (actor.currentParty.icon.isTravelling) {
                     //Stop moving

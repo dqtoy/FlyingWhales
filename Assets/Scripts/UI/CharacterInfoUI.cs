@@ -199,6 +199,14 @@ public class CharacterInfoUI : UIMenu {
             plansLbl.text = "Visit " + _activeCharacter.specificLocation.name + " to find out what " + _activeCharacter.name + " is doing.";
             return;
         }
+        //Action
+        if (_activeCharacter.currentAction != null && !_activeCharacter.currentAction.isStopped) {
+            Log currentLog = _activeCharacter.currentAction.GetCurrentLog();
+            plansLblLogItem.SetLog(currentLog);
+            plansLbl.text = Utilities.LogReplacer(currentLog);
+            return;
+        }
+
         //Disabler Thought
         if (_activeCharacter.doNotDisturb > 0) {
             Trait disablerTrait = _activeCharacter.GetTraitOf(TRAIT_TYPE.DISABLER);
@@ -212,14 +220,6 @@ public class CharacterInfoUI : UIMenu {
                 //}
                 //return;
             }
-        }
-
-        //Action
-        if (_activeCharacter.currentAction != null && !_activeCharacter.currentAction.isStopped) {
-            Log currentLog = _activeCharacter.currentAction.GetCurrentLog();
-            plansLblLogItem.SetLog(currentLog);
-            plansLbl.text = Utilities.LogReplacer(currentLog);
-            return;
         }
 
         //Character State

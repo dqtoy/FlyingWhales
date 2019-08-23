@@ -937,7 +937,10 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
-            }else if (stateComponent.stateToDo != null) {
+                if (stateComponent.currentState != null) {
+                    stateComponent.currentState.OnExitThisState();
+                }
+            } else if (stateComponent.stateToDo != null) {
                 stateComponent.SetStateToDo(null);
             }
             if (deathFromAction != null) { //if this character died from an action, do not cancel the action that he/she died from. so that the action will just end as normal.
@@ -3492,7 +3495,7 @@ public class Character : ILeader, IPointOfInterest {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                                     CreateWatchEvent(null, targetCombatState, targetCharacter);
                                 } else {
-                                    if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false)) {
+                                    if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false)) {
                                         List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCharacter).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
                                         Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
                                         joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -3501,11 +3504,12 @@ public class Character : ILeader, IPointOfInterest {
                                         joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
                                         joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                         PlayerManager.Instance.player.ShowNotification(joinLog);
+                                        marker.ProcessCombatBehavior();
                                     }
                                 }
                             } else {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                    if (marker.AddHostileInRange(targetCharacter, checkHostility: false)) {
+                                    if (marker.AddHostileInRange(targetCharacter, false, false)) {
                                         List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCombatState.currentClosestHostile).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
                                         Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
                                         joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -3514,6 +3518,7 @@ public class Character : ILeader, IPointOfInterest {
                                         joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
                                         joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                         PlayerManager.Instance.player.ShowNotification(joinLog);
+                                        marker.ProcessCombatBehavior();
                                     }
                                 } else {
                                     CreateWatchEvent(null, targetCombatState, targetCharacter);
@@ -3521,13 +3526,14 @@ public class Character : ILeader, IPointOfInterest {
                             }
                         } else {
                             //the target of the combat state is not part of this character's faction
-                            if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, checkHostility: false)) {
+                            if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false)) {
                                 Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
                                 joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                 joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                 joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
                                 joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                 PlayerManager.Instance.player.ShowNotification(joinLog);
+                                marker.ProcessCombatBehavior();
                             }
                         }
                     }
@@ -3582,8 +3588,13 @@ public class Character : ILeader, IPointOfInterest {
             PrintLogIfActive(summary);
             return;
         }
-        if (stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+        if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT || stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)) {
             summary += "\n-In combat state, must not watch...";
+            PrintLogIfActive(summary);
+            return;
+        }
+        if (HasPlanWithType(INTERACTION_TYPE.WATCH)) {
+            summary += "\n-Already has watch action in queue, will not watch another one...";
             PrintLogIfActive(summary);
             return;
         }
@@ -6579,12 +6590,12 @@ public class Character : ILeader, IPointOfInterest {
     #endregion
 
     #region Point Of Interest
-    public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+    public List<GoapAction> AdvertiseActionsToActor(Character actor) {
         if (poiGoapActions != null && poiGoapActions.Count > 0 && IsAvailable() && !isDead) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 INTERACTION_TYPE currType = poiGoapActions[i];
-                if (actorAllowedInteractions.Contains(currType)) {
+                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     if (currType == INTERACTION_TYPE.CRAFT_ITEM) {
                         Craftsman craftsman = GetNormalTrait("Craftsman") as Craftsman;
                         for (int j = 0; j < craftsman.craftedItemNames.Length; j++) {
@@ -6610,12 +6621,12 @@ public class Character : ILeader, IPointOfInterest {
         }
         return null;
     }
-    public List<GoapAction> AdvertiseActionsToActorFromDeadCharacter(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
+    public List<GoapAction> AdvertiseActionsToActorFromDeadCharacter(Character actor) {
         if (poiGoapActions != null && poiGoapActions.Count > 0) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 INTERACTION_TYPE currType = poiGoapActions[i];
-                if (actorAllowedInteractions.Contains(currType)) {
+                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
                     if (goapAction == null) {
                         throw new Exception("Goap action " + currType.ToString() + " is null!");
@@ -6927,7 +6938,7 @@ public class Character : ILeader, IPointOfInterest {
             PrintLogIfActive(log);
             return;
         }
-        List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(this);
+        //List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(this);
         bool willGoIdleState = true;
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
@@ -6936,7 +6947,7 @@ public class Character : ILeader, IPointOfInterest {
                 log += "\n - Plan is currently being recalculated, skipping...";
                 continue; //skip plan
             }
-            if (actorAllowedActions.Contains(plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements()) {
+            if (RaceManager.Instance.CanCharacterDoGoapAction(this, plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements()) {
                 //if (plan.isBeingRecalculated) {
                 //    log += "\n - Plan is currently being recalculated, skipping...";
                 //    continue; //skip plan
@@ -7951,14 +7962,14 @@ public class Character : ILeader, IPointOfInterest {
                 if (this.isPartOfHomeFaction && characterThatStartedState.isAtHomeArea && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
                     && this.IsHostileOutsider(targetCharacter) && (this.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
                     && distance <= Combat_Signalled_Distance) {
-                    if (marker.AddHostileInRange(targetCharacter)) {
-
+                    if (marker.AddHostileInRange(targetCharacter, processCombatBehavior: false)) {
                         Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
                         joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         joinLog.AddToFillers(combatState.currentClosestHostile, combatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
                         joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                         PlayerManager.Instance.player.ShowNotification(joinLog);
+                        marker.ProcessCombatBehavior();
                         return; //do not do watch.
                     }
                 }
