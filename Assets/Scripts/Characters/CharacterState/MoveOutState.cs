@@ -52,7 +52,7 @@ public class MoveOutState : CharacterState {
 
     private Region chosenRegion;
     private void ArriveAtRandomRegion() {
-        List<Region> choices = GridMap.Instance.allRegions.Where(x => !x.coreTile.isCorrupted && x.coreTile.areaOfTile != stateComponent.character.homeArea).ToList();
+        List<Region> choices = GetValidRegionsToVisit(stateComponent.character);
         if (choices.Count > 0) {
             stateComponent.character.ownParty.icon.SetIsTravellingOutside(false);
             chosenRegion = choices[Random.Range(0, choices.Count)];
@@ -108,5 +108,34 @@ public class MoveOutState : CharacterState {
 
     public override string ToString() {
         return "Move Out State by " + stateComponent.character.name;
+    }
+
+    private List<Region> GetValidRegionsToVisit(Character character) {
+        List<LANDMARK_TYPE> validLandmarkTypes = new List<LANDMARK_TYPE>();
+        switch (character.role.roleType) {
+            case CHARACTER_ROLE.CIVILIAN:
+            case CHARACTER_ROLE.BANDIT:
+                validLandmarkTypes.Add(LANDMARK_TYPE.FARM);
+                validLandmarkTypes.Add(LANDMARK_TYPE.FACTORY);
+                validLandmarkTypes.Add(LANDMARK_TYPE.WORKSHOP);
+                validLandmarkTypes.Add(LANDMARK_TYPE.MINES);
+                break;
+            case CHARACTER_ROLE.SOLDIER:
+                validLandmarkTypes.Add(LANDMARK_TYPE.BARRACKS);
+                validLandmarkTypes.Add(LANDMARK_TYPE.OUTPOST);
+                validLandmarkTypes.Add(LANDMARK_TYPE.BANDIT_CAMP);
+                break;
+            case CHARACTER_ROLE.ADVENTURER:
+                validLandmarkTypes.Add(LANDMARK_TYPE.CAVE);
+                validLandmarkTypes.Add(LANDMARK_TYPE.MONSTER_LAIR);
+                validLandmarkTypes.Add(LANDMARK_TYPE.ANCIENT_RUIN);
+                validLandmarkTypes.Add(LANDMARK_TYPE.TEMPLE);
+                break;
+        }
+        List<Region> choices = GridMap.Instance.allRegions.Where(x => !x.coreTile.isCorrupted && x.coreTile.areaOfTile != stateComponent.character.homeArea && validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType)).ToList();
+        if (choices.Count == 0) {
+            choices = GridMap.Instance.allRegions.Where(x => !x.coreTile.isCorrupted && x.coreTile.areaOfTile != stateComponent.character.homeArea).ToList();
+        }
+        return choices;
     }
 }
