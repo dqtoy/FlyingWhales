@@ -253,3 +253,21 @@ public class EatAtTable : GoapAction {
     }
     #endregion
 }
+
+public class EatAtTableData : GoapActionData {
+    public EatAtTableData() : base(INTERACTION_TYPE.EAT_DWELLING_TABLE) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        bool isFoodEnough = false;
+        if (poiTarget is Table) {
+            Table table = poiTarget as Table;
+            isFoodEnough = table.food >= 20;
+        }
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && isFoodEnough;
+    }
+}

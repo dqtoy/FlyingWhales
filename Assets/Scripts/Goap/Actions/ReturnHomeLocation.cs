@@ -58,3 +58,13 @@ public class ReturnHomeLocation : GoapAction {
         return actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
     }
 }
+
+public class ReturnHomeLocationData : GoapActionData {
+    public ReturnHomeLocationData() : base(INTERACTION_TYPE.RETURN_HOME_LOCATION) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor == poiTarget;
+    }
+}

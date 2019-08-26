@@ -86,3 +86,25 @@ public class GetSupply : GoapAction {
     //}
     #endregion
 }
+
+public class GetSupplyData : GoapActionData {
+    public GetSupplyData() : base(INTERACTION_TYPE.GET_SUPPLY) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = poiTarget.gridTileLocation;
+        if (actor.role.roleType != CHARACTER_ROLE.CIVILIAN && actor.homeArea == knownLoc.structure.location && actor.supply < actor.role.reservedSupply) {
+            if (poiTarget is SupplyPile) {
+                SupplyPile supplyPile = poiTarget as SupplyPile;
+                if (supplyPile.suppliesInPile > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}

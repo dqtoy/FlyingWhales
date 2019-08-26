@@ -245,3 +245,8 @@ public class JudgeCharacter : GoapAction {
     }
     #endregion
 }
+
+public class JudgeCharacterData : GoapActionData {
+    public JudgeCharacterData() : base(INTERACTION_TYPE.JUDGE_CHARACTER) {
+    }
+}

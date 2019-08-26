@@ -129,3 +129,8 @@ public class RevertToNormalForm : GoapAction {
     }
     #endregion
 }
+
+public class RevertToNormalFormData : GoapActionData {
+    public RevertToNormalFormData() : base(INTERACTION_TYPE.REVERT_TO_NORMAL) {
+    }
+}

@@ -168,3 +168,16 @@ public class Sleep : GoapAction {
         return true;
     }
 }
+
+public class SleepData : GoapActionData {
+    public SleepData() : base(INTERACTION_TYPE.SLEEP) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+    }
+}

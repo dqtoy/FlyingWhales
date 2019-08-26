@@ -37,3 +37,8 @@ public class GetWater : GoapAction {
         actor.ObtainToken(TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.WATER_BUCKET));
     }
 }
+
+public class GetWaterData : GoapActionData {
+    public GetWaterData() : base(INTERACTION_TYPE.GET_WATER) {
+    }
+}

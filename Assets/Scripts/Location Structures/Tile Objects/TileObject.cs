@@ -148,14 +148,32 @@ public class TileObject : IPointOfInterest {
         }
         return null;
     }
-    public virtual List<GoapAction> AdvertiseActionsToActor(Character actor) {
+    public virtual List<GoapAction> AdvertiseActionsToActor(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
         if (poiGoapActions != null && poiGoapActions.Count > 0 && gridTileLocation != null) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
-                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, poiGoapActions[i])) {
-                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
-                    if (goapAction.CanSatisfyRequirements() && goapAction.CanSatisfyRequirementOnBuildGoapTree()) {
-                        usableActions.Add(goapAction);
+                INTERACTION_TYPE currType = poiGoapActions[i];
+                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
+                    object[] data = null;
+                    if (otherData != null) {
+                        if (otherData.ContainsKey(currType)) {
+                            data = otherData[currType];
+                        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                            data = otherData[INTERACTION_TYPE.NONE];
+                        }
+                    }
+                    //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
+                    if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currType, actor, this, data)
+                        && InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)) {
+                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
+                        if (goapAction != null) {
+                            if (data != null) {
+                                goapAction.InitializeOtherData(data);
+                            }
+                            usableActions.Add(goapAction);
+                        } else {
+                            throw new System.Exception("Goap action " + currType.ToString() + " is null!");
+                        }
                     }
                 }
             }
@@ -483,7 +501,8 @@ public class TileObject : IPointOfInterest {
     }
     public GoapAction Advertise(INTERACTION_TYPE type, Character actor) {
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(type, actor, this);
-        if (goapAction.CanSatisfyRequirements() && goapAction.CanSatisfyRequirementOnBuildGoapTree()) {
+        if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(type, actor, this, null)
+            && InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(type, actor, this, null)) {
             return goapAction;
         }
         return null;

@@ -36,3 +36,8 @@ public class SepticShock : GoapAction {
     }
     #endregion
 }
+
+public class SepticShockData : GoapActionData {
+    public SepticShockData() : base(INTERACTION_TYPE.SEPTIC_SHOCK) {
+    }
+}

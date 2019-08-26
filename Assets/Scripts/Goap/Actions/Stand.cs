@@ -38,3 +38,13 @@ public class Stand : GoapAction {
     }
     #endregion
 }
+
+public class StandData : GoapActionData {
+    public StandData() : base(INTERACTION_TYPE.STAND) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor == poiTarget;
+    }
+}

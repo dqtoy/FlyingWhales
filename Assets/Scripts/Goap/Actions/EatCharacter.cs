@@ -115,3 +115,27 @@ public class EatCharacter : GoapAction {
     //}
     #endregion
 }
+
+public class EatCharacterData : GoapActionData {
+    public EatCharacterData() : base(INTERACTION_TYPE.EAT_CHARACTER) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (actor != poiTarget) {
+            if (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+                return false;
+            }
+            if (poiTarget is Character) {
+                Character target = poiTarget as Character;
+                if (actor.race == target.race) {
+                    RELATIONSHIP_EFFECT relEffect = actor.GetRelationshipEffectWith(target);
+                    if (relEffect == RELATIONSHIP_EFFECT.NONE || relEffect == RELATIONSHIP_EFFECT.NEGATIVE) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+}

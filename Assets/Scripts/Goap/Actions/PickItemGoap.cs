@@ -62,3 +62,14 @@ public class PickItemGoap : GoapAction {
     }
     #endregion
 }
+
+public class PickItemGoapData : GoapActionData {
+    public PickItemGoapData() : base(INTERACTION_TYPE.PICK_ITEM) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        SpecialToken token = poiTarget as SpecialToken;
+        return poiTarget.gridTileLocation != null && actor.GetToken(token) == null;
+    }
+}

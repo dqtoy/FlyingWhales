@@ -66,3 +66,13 @@ public class MineGoap : GoapAction {
     }
     #endregion
 }
+
+public class MineGoapData : GoapActionData {
+    public MineGoapData() : base(INTERACTION_TYPE.MINE_ACTION) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+    }
+}

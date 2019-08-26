@@ -35,6 +35,7 @@ public class SpreadRumorRemoveLove : GoapAction {
         return 15;
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 2 && otherData[0] is Character && otherData[1] is List<Log>) {
             rumoredCharacter = otherData[0] as Character;
             affairMemoriesInvolvingRumoredCharacter = otherData[1] as List<Log>;
@@ -105,4 +106,28 @@ public class SpreadRumorRemoveLove : GoapAction {
         currentState.AddLogFiller(rumoredCharacter, rumoredCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
     }
     #endregion
+}
+
+public class SpreadRumorRemoveLoveData : GoapActionData {
+    public SpreadRumorRemoveLoveData() : base(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        Character rumoredCharacter = null;
+        List<Log> affairMemoriesInvolvingRumoredCharacter = null;
+        if (otherData != null && otherData.Length == 2 && otherData[0] is Character && otherData[1] is List<Log>) {
+            rumoredCharacter = otherData[0] as Character;
+            affairMemoriesInvolvingRumoredCharacter = otherData[1] as List<Log>;
+        }
+        if (rumoredCharacter != null) {
+            Character target = poiTarget as Character;
+            if (target.HasRelationshipOfTypeWith(rumoredCharacter, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                return actor != poiTarget && actor != rumoredCharacter
+                    && affairMemoriesInvolvingRumoredCharacter != null && affairMemoriesInvolvingRumoredCharacter.Count > 0;
+            }
+            return false;
+        }
+        return actor != poiTarget;
+    }
 }

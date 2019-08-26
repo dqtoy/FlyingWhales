@@ -43,6 +43,7 @@ public class ReportHostile : GoapAction {
         return 3;
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is Character) {
             //GoapAction crime = otherData[0] as GoapAction;
             SetHostileToReport(otherData[0] as Character);
@@ -87,4 +88,24 @@ public class ReportHostile : GoapAction {
         return false;
     }
     #endregion
+}
+
+public class ReportHostileData : GoapActionData {
+    public ReportHostileData() : base(INTERACTION_TYPE.REPORT_HOSTILE) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        Character hostile = null;
+        if(otherData != null && otherData.Length == 1 && otherData[0] is Character) {
+            hostile = otherData[0] as Character;
+        }
+        if (poiTarget is Character && poiTarget != actor && poiTarget != hostile) {
+            Character character = poiTarget as Character;
+            if (character.role.roleType == CHARACTER_ROLE.LEADER || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

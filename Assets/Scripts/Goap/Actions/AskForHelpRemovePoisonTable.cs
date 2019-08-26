@@ -46,7 +46,8 @@ public class AskForHelpRemovePoisonTable : GoapAction {
     //    //}
     //}
     public override bool InitializeOtherData(object[] otherData) {
-        if(otherData.Length == 1 && otherData[0] is IPointOfInterest) {
+        this.otherData = otherData;
+        if (otherData.Length == 1 && otherData[0] is IPointOfInterest) {
             targetTable = otherData[0] as IPointOfInterest;
             poison = targetTable.GetNormalTrait("Poisoned") as Poisoned;
             if (thoughtBubbleMovingLog != null) {

@@ -98,3 +98,13 @@ public class ItemDestroy : GoapAction {
     }
     #endregion
 }
+
+public class ItemDestroyData : GoapActionData {
+    public ItemDestroyData() : base(INTERACTION_TYPE.ITEM_DESTROY) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+    }
+}

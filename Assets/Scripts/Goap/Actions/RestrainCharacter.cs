@@ -203,3 +203,17 @@ public class RestrainCharacter : GoapAction {
     }
     #endregion
 }
+
+public class RestrainCharacterData : GoapActionData {
+    public RestrainCharacterData() : base(INTERACTION_TYPE.RESTRAIN_CHARACTER) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (actor != poiTarget) {
+            Character target = poiTarget as Character;
+            return target.GetNormalTrait("Restrained") == null;
+        }
+        return false;
+    }
+}

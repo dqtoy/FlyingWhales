@@ -82,3 +82,16 @@ public class EatMushroom : GoapAction {
     }
     #endregion
 }
+
+public class EatMushroomData : GoapActionData {
+    public EatMushroomData() : base(INTERACTION_TYPE.EAT_MUSHROOM) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+    }
+}

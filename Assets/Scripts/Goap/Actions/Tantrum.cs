@@ -43,6 +43,7 @@ public class Tantrum : GoapAction {
         actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is string) {
             reason = otherData[0] as string;
         }
@@ -61,4 +62,14 @@ public class Tantrum : GoapAction {
         return actor == poiTarget;
     }
     #endregion
+}
+
+public class TantrumData : GoapActionData {
+    public TantrumData() : base(INTERACTION_TYPE.TANTRUM) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor == poiTarget;
+    }
 }

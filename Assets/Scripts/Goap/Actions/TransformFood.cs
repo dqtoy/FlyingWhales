@@ -220,3 +220,32 @@ public class TransformFood : GoapAction {
     }
     #endregion
 }
+
+public class TransformFoodData : GoapActionData {
+    public TransformFoodData() : base(INTERACTION_TYPE.TRANSFORM_FOOD) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation == null) {
+            return false;
+        }
+        Character deadCharacter = null;
+        if (poiTarget is Character) {
+            deadCharacter = poiTarget as Character;
+        } else if (poiTarget is Tombstone) {
+            deadCharacter = (poiTarget as Tombstone).character;
+        }
+        if (deadCharacter != null) {
+            if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+                //return true;
+                if (actor.GetNormalTrait("Cannibal") != null) {
+                    return true;
+                }
+                return false;
+            }
+            return true;
+        }
+        return false;
+    }
+}

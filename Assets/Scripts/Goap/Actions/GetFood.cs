@@ -38,6 +38,7 @@ public class GetFood : GoapAction {
     //    SetState("Target Missing");
     //}
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is int) {
             neededFood = (int) otherData[0];
             return true;
@@ -90,4 +91,23 @@ public class GetFood : GoapAction {
     //    actor.RemoveAwareness(poiTarget);
     //}
     #endregion
+}
+
+public class GetFoodData : GoapActionData {
+    public GetFoodData() : base(INTERACTION_TYPE.GET_FOOD) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation == null) {
+            return false;
+        }
+        if (poiTarget is FoodPile) {
+            FoodPile foodPile = poiTarget as FoodPile;
+            if (foodPile.foodInPile > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

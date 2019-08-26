@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Craftsman : Trait {
 
-	public SPECIAL_TOKEN[] craftedItemNames { get; private set; }
-    public FURNITURE_TYPE[] craftedFurnitureNames { get; private set; }
+	//public SPECIAL_TOKEN[] craftedItemNames { get; private set; }
+ //   public FURNITURE_TYPE[] craftedFurnitureNames { get; private set; }
 
     public Craftsman() {
         name = "Craftsman";
-        craftedItemNames = new SPECIAL_TOKEN[] { SPECIAL_TOKEN.TOOL, SPECIAL_TOKEN.HEALING_POTION };
+        //craftedItemNames = new SPECIAL_TOKEN[] { SPECIAL_TOKEN.TOOL, SPECIAL_TOKEN.HEALING_POTION };
         //craftedFurnitureNames = new FURNITURE_TYPE[] { FURNITURE_TYPE.BED, FURNITURE_TYPE.DESK, FURNITURE_TYPE.GUITAR, FURNITURE_TYPE.TABLE };
         description = "This character can create items.";
         type = TRAIT_TYPE.SPECIAL;

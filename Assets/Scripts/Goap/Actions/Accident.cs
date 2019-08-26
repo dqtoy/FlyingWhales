@@ -38,6 +38,7 @@ public class Accident : GoapAction {
         }
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is GoapAction) {
             actionToDo = otherData[0] as GoapAction;
             return true;

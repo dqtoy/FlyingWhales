@@ -138,14 +138,32 @@ public class SpecialToken : IPointOfInterest {
     #endregion
 
     #region Point Of Interest
-    public List<GoapAction> AdvertiseActionsToActor(Character actor) {
+    public List<GoapAction> AdvertiseActionsToActor(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
         if (poiGoapActions != null && poiGoapActions.Count > 0 && gridTileLocation != null) { //only advertise items that are not being carried
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
-                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, poiGoapActions[i])) {
-                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
-                    if (goapAction.CanSatisfyRequirements() && goapAction.CanSatisfyRequirementOnBuildGoapTree()) {
-                        usableActions.Add(goapAction);
+                INTERACTION_TYPE currType = poiGoapActions[i];
+                if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
+                    object[] data = null;
+                    if (otherData != null) {
+                        if (otherData.ContainsKey(currType)) {
+                            data = otherData[currType];
+                        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                            data = otherData[INTERACTION_TYPE.NONE];
+                        }
+                    }
+                    //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
+                    if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currType, actor, this, data)
+                        && InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)) {
+                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
+                        if (goapAction != null) {
+                            if (data != null) {
+                                goapAction.InitializeOtherData(data);
+                            }
+                            usableActions.Add(goapAction);
+                        } else {
+                            throw new System.Exception("Goap action " + currType.ToString() + " is null!");
+                        }
                     }
                 }
             }
@@ -154,7 +172,7 @@ public class SpecialToken : IPointOfInterest {
         return null;
     }
     public void SetPOIState(POI_STATE state) {
-        state = state;
+        this.state = state;
     }
     public bool IsAvailable() {
         return state != POI_STATE.INACTIVE && !isDisabledByPlayer;

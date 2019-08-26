@@ -153,7 +153,7 @@ public class Puke : GoapAction {
     }
 
     private void ResumeLastAction(string result, GoapAction action) {
-        if (stoppedAction.CanSatisfyRequirements()) {
+        if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(stoppedAction.goapType, stoppedAction.actor, stoppedAction.poiTarget, stoppedAction.otherData)) {
             stoppedAction.DoAction();
         } else {
             action.actor.GoapActionResult(result, action);
@@ -173,5 +173,10 @@ public class Puke : GoapAction {
             return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.GetNormalTrait("Doctor") != null;
         }
         return false;
+    }
+}
+
+public class PukeData : GoapActionData {
+    public PukeData() : base(INTERACTION_TYPE.PUKE) {
     }
 }

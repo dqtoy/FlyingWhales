@@ -32,3 +32,8 @@ public class ZombieDeath : GoapAction {
     }
     #endregion
 }
+
+public class ZombieDeathData : GoapActionData {
+    public ZombieDeathData() : base(INTERACTION_TYPE.ZOMBIE_DEATH) {
+    }
+}

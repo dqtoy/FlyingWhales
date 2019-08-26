@@ -54,3 +54,13 @@ public class Stumble : GoapAction {
     }
     #endregion
 }
+
+public class StumbleData : GoapActionData {
+    public StumbleData() : base(INTERACTION_TYPE.STUMBLE) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor == poiTarget;
+    }
+}

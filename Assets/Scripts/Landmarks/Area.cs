@@ -1239,6 +1239,7 @@ public class Area {
                 if (!jobQueue.HasJob(JOB_TYPE.BREW_POTION)) {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
+                        { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
                     });
                     job.SetCanTakeThisJobChecker(CanBrewPotion);
                     job.SetOnTakeJobAction(OnTakeBrewPotion);
@@ -1254,6 +1255,7 @@ public class Area {
                 if (!jobQueue.HasJob(JOB_TYPE.CRAFT_TOOL)) {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.TOOL } },
+                        { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.TOOL } },
                     });
                     job.SetCanTakeThisJobChecker(CanCraftTool);
                     job.SetOnTakeJobAction(OnTakeCraftTool);

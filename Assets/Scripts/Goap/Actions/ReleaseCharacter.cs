@@ -115,3 +115,17 @@ public class ReleaseCharacter : GoapAction {
     }
     #endregion
 }
+
+public class ReleaseCharacterData : GoapActionData {
+    public ReleaseCharacterData() : base(INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget is Character) {
+            Character target = poiTarget as Character;
+            return target.GetNormalTrait("Restrained") != null;
+        }
+        return false;
+    }
+}

@@ -57,3 +57,16 @@ public class Sit : GoapAction {
     }
     #endregion
 }
+
+public class SitData : GoapActionData {
+    public SitData() : base(INTERACTION_TYPE.SIT) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation != null) { //&& poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.DWELLING
+            return poiTarget.IsAvailable();
+        }
+        return false;
+    }
+}

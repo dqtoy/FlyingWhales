@@ -70,3 +70,16 @@ public class TableRemovePoison : GoapAction {
     }
     #endregion
 }
+
+public class TableRemovePoisonData : GoapActionData {
+    public TableRemovePoisonData() : base(INTERACTION_TYPE.REMOVE_POISON_TABLE) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
+            return false;
+        }
+        return poiTarget.GetNormalTrait("Poisoned") != null;
+    }
+}

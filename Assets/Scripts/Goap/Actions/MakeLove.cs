@@ -415,3 +415,8 @@ public class MakeLove : GoapAction {
     }
     #endregion
 }
+
+public class MakeLoveData : GoapActionData {
+    public MakeLoveData() : base(INTERACTION_TYPE.MAKE_LOVE) {
+    }
+}

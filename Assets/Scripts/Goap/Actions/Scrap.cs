@@ -90,3 +90,28 @@ public class Scrap : GoapAction {
     }
     #endregion
 }
+
+public class ScrapData : GoapActionData {
+    public ScrapData() : base(INTERACTION_TYPE.SCRAP) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget is SpecialToken) {
+            SpecialToken token = poiTarget as SpecialToken;
+            if (token.gridTileLocation != null && token.gridTileLocation.structure.location.IsRequiredByWarehouse(token)) {
+                return false;
+            }
+        }
+        if (poiTarget.gridTileLocation != null) {
+            if (poiTarget.factionOwner != null) {
+                if (actor.faction == poiTarget.factionOwner) {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+}

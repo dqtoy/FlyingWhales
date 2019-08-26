@@ -262,3 +262,13 @@ public class KnockoutCharacter : GoapAction {
     }
     #endregion
 }
+
+public class KnockoutCharacterData : GoapActionData {
+    public KnockoutCharacterData() : base(INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor != poiTarget && actor.GetNormalTrait("Serial Killer") != null;
+    }
+}
