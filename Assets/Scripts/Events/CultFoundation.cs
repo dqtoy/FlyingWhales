@@ -5,7 +5,6 @@ using UnityEngine;
 public class CultFoundation : WorldEvent {
 
     public CultFoundation() : base(WORLD_EVENT.CULT_FOUNDATION) {
-        duration = 3 * GameManager.ticksPerHour;
         isUnique = true;
     }
 

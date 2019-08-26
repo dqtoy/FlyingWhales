@@ -994,13 +994,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                 summary += "\n\t\t- " + connection.specificLandmarkType.ToString() + " " + connection.tileLocation.locationName;
             }
         }
-        //summary += "\nRegion: " + region.id + " (Tiles: " + region.tiles.Count.ToString() + ")";
+        summary += "\nRegion: " + region.id + " (Tiles: " + region.tiles.Count.ToString() + ")";
         summary += "\nArea: " + areaOfTile?.name;
-        summary += "\nNeighbours: " + AllNeighbours.Count.ToString();
-        for (int i = 0; i < AllNeighbours.Count; i++) {
-            HexTile currNeighbour = AllNeighbours[i];
-            summary += "\n\t-" + currNeighbour.name;
-        }
+        //summary += "\nNeighbours: " + AllNeighbours.Count.ToString();
+        //for (int i = 0; i < AllNeighbours.Count; i++) {
+        //    HexTile currNeighbour = AllNeighbours[i];
+        //    summary += "\n\t-" + currNeighbour.name;
+        //}
         UIManager.Instance.ShowSmallInfo(summary, this.ToString() + " Info: ");
     }
     #endregion

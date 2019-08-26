@@ -165,7 +165,7 @@ public class GameManager : MonoBehaviour {
         UIManager.Instance.Pause();
 		SchedulingManager.Instance.StartScheduleCalls ();
         Messenger.Broadcast(Signals.MONTH_START); //for the first day
-        TimerHubUI.Instance.AddItem("Hero Party Preparation", 8640, null);
+        TimerHubUI.Instance.AddItem("Until Divine Intervention", 8640, null);
     }
 
     [ContextMenu("Create Travel Line")]

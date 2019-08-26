@@ -432,7 +432,7 @@ public class GridMap : MonoBehaviour {
             }
             HexTile chosenTile = regionCoreTileChoices[Random.Range(0, regionCoreTileChoices.Count)];
             Region newRegion = new Region(chosenTile);
-            int range = 2;
+            int range = 1;
             List<HexTile> tilesInRange = chosenTile.GetTilesInRange(range);
             regionCoreTileChoices.Remove(chosenTile);
             remainingTiles.Remove(chosenTile);

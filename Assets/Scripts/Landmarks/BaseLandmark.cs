@@ -86,7 +86,8 @@ public class BaseLandmark {
         connections = new List<BaseLandmark>();
         charactersHere = new List<Character>();
         otherAfterInvasionActions = new List<System.Action>();
-        invasionTicks = 5 * GameManager.ticksPerHour;
+        invasionTicks = 2 * GameManager.ticksPerDay;
+        //invasionTicks = 2 * GameManager.ticksPerHour;
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
@@ -321,7 +322,7 @@ public class BaseLandmark {
             case LANDMARK_TYPE.BANDIT_CAMP:
                 //No base effect upon invading
                 break;
-            case LANDMARK_TYPE.BARRACKS:
+            case LANDMARK_TYPE.BARRACKS:    
             case LANDMARK_TYPE.OUTPOST:
                 PlayerManager.Instance.player.LevelUpAllMinions();
                 PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "All your minions gained 1 level.");
@@ -335,6 +336,7 @@ public class BaseLandmark {
                 PlayerManager.Instance.player.UnlockAnArtifactSlotOrUpgradeExisting();
                 break;
         }
+        ChangeLandmarkType(LANDMARK_TYPE.NONE);
         ObtainWorldObject();
         ExecuteEventAfterInvasion();
         ExecuteOtherAfterInvasionActions();
@@ -390,6 +392,7 @@ public class BaseLandmark {
             //do not let the character that spawned the event go home
             if (currCharacter.stateComponent.currentState is MoveOutState) {
                 MoveOutState state = currCharacter.stateComponent.currentState as MoveOutState;
+                Debug.Log(GameManager.Instance.TodayLogString() + "Removing go home schedule of " + currCharacter.name);
                 SchedulingManager.Instance.RemoveSpecificEntry(state.goHomeSchedID);
             } else {
                 throw new System.Exception(currCharacter.name + " is at " + tileLocation.region.name + " but is not in move out state!");
@@ -399,6 +402,22 @@ public class BaseLandmark {
         //spawn the event
         activeEvent.Spawn(this, out activeEventAfterEffectScheduleID);
         Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, we);
+    }
+    private void SpawnBasicEvent(Character spawner) {
+        string summary = GameManager.Instance.TodayLogString() + spawner.name + " arrived at " + tileLocation.region.name + " will try to spawn random event.";
+        List<WorldEvent> events = StoryEventsManager.Instance.GetEventsThatCanSpawnAt(this, true);
+        if (events.Count > 0) {
+            summary += "\nPossible events are: ";
+            for (int i = 0; i < events.Count; i++) {
+                summary += "|" + events[i].name + "|";
+            }
+            WorldEvent chosenEvent = events[Random.Range(0, events.Count)];
+            summary += "\nChosen Event is: " + chosenEvent.name;
+            SpawnEvent(chosenEvent, spawner);
+        } else {
+            summary += "\nNo possible events to spawn.";
+        }
+        Debug.Log(summary);
     }
     public void WorldEventFinished(WorldEvent we) {
         if (activeEvent != we) {
@@ -438,6 +457,11 @@ public class BaseLandmark {
     public void SetEventIcon(GameObject go) {
         eventIconGO = go;
     }
+    private void AutomaticEventGeneration(Character characterThatArrived) {
+        if (activeEvent == null) {
+            SpawnBasicEvent(characterThatArrived);
+        }
+    }
     #endregion
 
     #region Skirmish
@@ -473,6 +497,7 @@ public class BaseLandmark {
     }
     private void ObtainWorldObject() {
         worldObj?.Obtain();
+        SetWorldObject(null);
     }
     #endregion
 
@@ -480,6 +505,7 @@ public class BaseLandmark {
     public void AddCharacterHere(Character character) {
         charactersHere.Add(character);
         character.SetLandmarkLocation(this);
+        AutomaticEventGeneration(character);
         Messenger.Broadcast(Signals.CHARACTER_ENTERED_LANDMARK, character, this);
     }
     public void RemoveCharacterHere(Character character) {

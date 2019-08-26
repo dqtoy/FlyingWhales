@@ -5,7 +5,6 @@ using UnityEngine;
 public class HousingConstruction : WorldEvent {
 
     public HousingConstruction() : base(WORLD_EVENT.HOUSING_CONSTRUCTION) {
-        duration = 3 * GameManager.ticksPerHour;
     }
 
     #region Overrides

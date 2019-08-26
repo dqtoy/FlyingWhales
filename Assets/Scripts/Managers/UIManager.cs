@@ -140,17 +140,17 @@ public class UIManager : MonoBehaviour {
         //        }
         //    }
         //} else 
-        if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            PlayerUI.Instance.ScrollRoleSlotTo(0);
-        } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-            PlayerUI.Instance.ScrollRoleSlotTo(1);
-        } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-            PlayerUI.Instance.ScrollRoleSlotTo(2);
-        } else if (Input.GetKeyDown(KeyCode.Alpha4)) {
-            PlayerUI.Instance.ScrollRoleSlotTo(3);
-        } else if (Input.GetKeyDown(KeyCode.Alpha5)) {
-            PlayerUI.Instance.ScrollRoleSlotTo(4);
-        }
+        //if (Input.GetKeyDown(KeyCode.Alpha1)) {
+        //    PlayerUI.Instance.ScrollRoleSlotTo(0);
+        //} else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+        //    PlayerUI.Instance.ScrollRoleSlotTo(1);
+        //} else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+        //    PlayerUI.Instance.ScrollRoleSlotTo(2);
+        //} else if (Input.GetKeyDown(KeyCode.Alpha4)) {
+        //    PlayerUI.Instance.ScrollRoleSlotTo(3);
+        //} else if (Input.GetKeyDown(KeyCode.Alpha5)) {
+        //    PlayerUI.Instance.ScrollRoleSlotTo(4);
+        //}
         UpdateSpeedToggles(GameManager.Instance.isPaused);
         if (isHoveringTile) {
             if (currentTileHovered.areaOfTile != null && currentTileHovered.areaOfTile.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
@@ -162,11 +162,11 @@ public class UIManager : MonoBehaviour {
                 currentTileHovered.ShowTileInfo();
                
             }
-            currentTileHovered.region?.OnHoverOverAction();
             //else  {
             //    currentTileHovered.ShowTileInfo();
             //}
 #endif
+            currentTileHovered.region?.OnHoverOverAction();
         }
     }
     #endregion

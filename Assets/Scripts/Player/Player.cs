@@ -21,7 +21,7 @@ public class Player : ILeader {
     public CombatGrid attackGrid { get; private set; }
     public CombatGrid defenseGrid { get; private set; }
     public List<Intel> allIntel { get; private set; }
-    public Minion[] minions { get; private set; }
+    public List<Minion> minions { get; private set; }
     public SummonSlot[] summonSlots { get; private set; } //Summons that the player can still place. Does NOT include summons that have been placed. Individual summons are responsible for placeing themselves back after the player is done with a map.
     public ArtifactSlot[] artifactSlots { get; private set; }
     //Unique ability of player
@@ -74,7 +74,7 @@ public class Player : ILeader {
         attackGrid.Initialize();
         defenseGrid.Initialize();
         allIntel = new List<Intel>();
-        minions = new Minion[MAX_MINIONS];
+        minions = new List<Minion>();
         summonSlots = new SummonSlot[MAX_SUMMONS];
         artifactSlots = new ArtifactSlot[MAX_ARTIFACT];
         interventionAbilitySlots = new PlayerJobActionSlot[MAX_INTERVENTION_ABILITIES];
@@ -94,7 +94,7 @@ public class Player : ILeader {
         attackGrid.Initialize();
         defenseGrid.Initialize();
         allIntel = new List<Intel>();
-        minions = new Minion[MAX_MINIONS];
+        minions = new List<Minion>();
         summonSlots = new SummonSlot[MAX_SUMMONS];
         artifactSlots = new ArtifactSlot[MAX_ARTIFACT];
         interventionAbilitySlots = new PlayerJobActionSlot[MAX_INTERVENTION_ABILITIES];
@@ -170,10 +170,8 @@ public class Player : ILeader {
         }
     }
     private void OnAreaMapOpened(Area area) {
-        for (int i = 0; i < minions.Length; i++) {
-            if(minions[i] != null) {
-                minions[i].ResetCombatAbilityCD();
-            }
+        for (int i = 0; i < minions.Count; i++) {
+            minions[i].ResetCombatAbilityCD();
         }
         ResetInterventionAbilitiesCD();
         //currentTargetFaction = area.owner;
@@ -248,62 +246,64 @@ public class Player : ILeader {
         //}
         data.combatAbility.Load(minion);
     }
-    public void AddMinion(Minion minion) {
-        int currentMinionCount = GetCurrentMinionCount();
-        if(currentMinionCount == minions.Length) {
-            //Broadcast minion is full, must be received by a UI that will pop up and let the player whether it will replace or be discarded
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(minions.ToList(), minion, ReplaceMinion, RejectMinion);
-        } else {
-            minion.SetIndexDefaultSort(currentMinionCount);
-            minions[currentMinionCount] = minion;
-            //if(currentMinionLeader == null) {
-            //    SetMinionLeader(minion);
-            //}
-            PlayerUI.Instance.UpdateRoleSlots();
+    public void AddMinion(Minion minion, bool showNewMinionUI = false) {
+        //int currentMinionCount = GetCurrentMinionCount();
+        //if(currentMinionCount == minions.Count) {
+        //    //Broadcast minion is full, must be received by a UI that will pop up and let the player whether it will replace or be discarded
+        //    PlayerUI.Instance.replaceUI.ShowReplaceUI(minions.ToList(), minion, ReplaceMinion, RejectMinion);
+        //} else {
+        //    minion.SetIndexDefaultSort(currentMinionCount);
+        //    minions[currentMinionCount] = minion;
+        //    if (showNewMinionUI) {
+        //        PlayerUI.Instance.ShowNewMinionUI(minion);
+        //    }
+        //    PlayerUI.Instance.UpdateRoleSlots();
+        //}
+        if (!minions.Contains(minion)) {
+            minions.Add(minion);
+            if (showNewMinionUI) {
+                PlayerUI.Instance.ShowNewMinionUI(minion);
+            }
+            //PlayerUI.Instance.UpdateRoleSlots();
+            Messenger.Broadcast(Signals.PLAYER_GAINED_MINION, minion);
         }
+        
     }
     public void RemoveMinion(Minion minion) {
-        bool hasRemoved = false;
-        for (int i = 0; i < minions.Length; i++) {
-            if (minions[i] != null && minions[i] == minion) {
-                minions[i] = null;
-                hasRemoved = true;
-                break;
-            }
-        }
-        if (hasRemoved) {
-            RearrangeMinions();
-            PlayerUI.Instance.UpdateRoleSlots();
+        if (minions.Remove(minion)) {
+            //RearrangeMinions();
+            //PlayerUI.Instance.UpdateRoleSlots();
             if (currentMinionLeader == minion) {
                 SetMinionLeader(null);
             }
+            Messenger.Broadcast(Signals.PLAYER_LOST_MINION, minion);
         }
     }
     public int GetCurrentMinionCount() {
-        int count = 0;
-        for (int i = 0; i < minions.Length; i++) {
-            if(minions[i] != null) {
-                count++;
-            }
-        }
-        return count;
+        //int count = 0;
+        //for (int i = 0; i < minions.Count; i++) {
+        //    if(minions[i] != null) {
+        //        count++;
+        //    }
+        //}
+        return minions.Count;
     }
-    public void RearrangeMinions() {
-        List<int> minionIndexesThatAreNotNull = new List<int>();
-        for (int i = 0; i < minions.Length; i++) {
-            if(minions[i] != null) {
-                minionIndexesThatAreNotNull.Add(i);
-            }
-        }
-        for (int i = 0; i < minions.Length; i++) {
-            if(i < minionIndexesThatAreNotNull.Count) {
-                minions[i] = minions[minionIndexesThatAreNotNull[i]];
-            } else {
-                minions[i] = null;
-            }
-        }
-        //Update UI
-    }
+    //public void RearrangeMinions() {
+    //    List<int> minionIndexesThatAreNotNull = new List<int>();
+    //    for (int i = 0; i < minions.Count; i++) {
+    //        if(minions[i] != null) {
+    //            minionIndexesThatAreNotNull.Add(i);
+    //        }
+    //    }
+    //    for (int i = 0; i < minions.Count; i++) {
+    //        if(i < minionIndexesThatAreNotNull.Count) {
+    //            minions[i] = minions[minionIndexesThatAreNotNull[i]];
+    //        } else {
+    //            minions[i] = null;
+    //        }
+    //    }
+    //    //Update UI
+    //}
     public void SetMinionLeader(Minion minion) {
         currentMinionLeader = minion;
     }
@@ -311,20 +311,20 @@ public class Player : ILeader {
         Minion minionToBeReplaced = objToReplace as Minion;
         Minion minionToBeAdded = objToAdd as Minion;
 
-        for (int i = 0; i < minions.Length; i++) {
+        for (int i = 0; i < minions.Count; i++) {
             if(minions[i] == minionToBeReplaced) {
                 minionToBeAdded.SetIndexDefaultSort(i);
                 minions[i] = minionToBeAdded;
                 if(currentMinionLeader == minionToBeReplaced) {
                     SetMinionLeader(minionToBeAdded);
                 }
-                PlayerUI.Instance.UpdateRoleSlots();
+                //PlayerUI.Instance.UpdateRoleSlots();
             }
         }
     }
     private void RejectMinion(object obj) { }
     public bool HasMinionWithCombatAbility(COMBAT_ABILITY ability) {
-        for (int i = 0; i < minions.Length; i++) {
+        for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
             if (currMinion != null && currMinion.combatAbility.type == ability) {
                 return true;
@@ -334,7 +334,7 @@ public class Player : ILeader {
     }
     public Minion GetRandomMinion() {
         List<Minion> minionChoices = new List<Minion>();
-        for (int i = 0; i < minions.Length; i++) {
+        for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
             if (currMinion != null) {
                 minionChoices.Add(currMinion);
@@ -343,7 +343,7 @@ public class Player : ILeader {
         return minionChoices[UnityEngine.Random.Range(0, minionChoices.Count)];
     }
     public void LevelUpAllMinions(int amount) {
-        for (int i = 0; i < minions.Length; i++) {
+        for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
             if (currMinion != null) {
                 currMinion.LevelUp(amount);
@@ -351,7 +351,7 @@ public class Player : ILeader {
         }
     }
     public void LevelUpAllMinions() {
-        for (int i = 0; i < minions.Length; i++) {
+        for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
             if (currMinion != null) {
                 currMinion.LevelUp();
@@ -1382,7 +1382,7 @@ public class Player : ILeader {
         currentTargetFaction = area.owner;
         List<LocationGridTile> entrances = new List<LocationGridTile>();
         List<Minion> currentMinions = new List<Minion>();
-        for (int i = 0; i < minions.Length; i++) {
+        for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
             if (currMinion != null) {
                 currMinion.character.CreateMarker();
@@ -1430,13 +1430,11 @@ public class Player : ILeader {
     }
     private void PerTickInvasion() {
         bool stillHasMinions = false;
-        for (int i = 0; i < minions.Length; i++) {
+        for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
-            if (currMinion != null) {
-                if(currMinion.character.currentHP > 0) {
-                    stillHasMinions = true;
-                    break;
-                }
+            if(currMinion.character.currentHP > 0) {
+                stillHasMinions = true;
+                break;
             }
         }
         if (!stillHasMinions) {
@@ -1485,11 +1483,9 @@ public class Player : ILeader {
             string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
             PlayerUI.Instance.GameOver(gameOverText);
         }
-        for (int i = 0; i < minions.Length; i++) {
+        for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
-            if (currMinion != null) {
-                currMinion.StopInvasionProtocol();
-            }
+            currMinion.StopInvasionProtocol();
         }
     }
     public void SetInvadingRegion(Region region) {
@@ -1636,7 +1632,7 @@ public class Player : ILeader {
     }
     private void InitializeNewInterventionAbilityCycle() {
         currentNewInterventionAbilityCycleIndex = -1;
-        newInterventionAbilityTimerTicks = GameManager.Instance.GetTicksBasedOnHour(6);
+        newInterventionAbilityTimerTicks = GameManager.Instance.GetTicksBasedOnHour(8);
         NewCycleForNewInterventionAbility();
     }
     private void PerTickInterventionAbility() {

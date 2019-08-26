@@ -584,9 +584,9 @@ public class LandmarkManager : MonoBehaviour {
                     worldObjWeights.AddElement("SpellScroll", 35);
                     worldObjWeights.AddElement("nothing", 65);
                     break;
-                //default:
-                //    worldObjWeights.AddElement("SpellScroll", 100);
-                //    break;
+                    //default:
+                    //    worldObjWeights.AddElement("SpellScroll", 100);
+                    //    break;
             }
             if (worldObjWeights.GetTotalOfWeights() > 0) {
                 IWorldObject worldObj = null;

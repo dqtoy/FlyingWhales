@@ -12,7 +12,7 @@ public class PlayerUI : MonoBehaviour {
 
     [Header("Role Slots")]
     [SerializeField] private RectTransform roleSlotsParent;
-    [SerializeField] private RoleSlotItem[] roleSlots;
+    //[SerializeField] private RoleSlotItem[] roleSlots;
     [SerializeField] private GameObject roleSlotItemPrefab;
     [SerializeField] private GameObject actionBtnTooltipGO;
     [SerializeField] private TextMeshProUGUI actionBtnTooltipLbl;
@@ -28,6 +28,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private DefenseSlotItem defenseSlot;
     public SlotItem[] attackGridSlots;
     public Button startInvasionButton;
+    [SerializeField] private UIHoverHandler startInvasionHoverHandler;
 
     [Header("Intel")]
     [SerializeField] private GameObject intelContainer;
@@ -59,6 +60,8 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject generalConfirmationGO;
     [SerializeField] private TextMeshProUGUI generalConfirmationTitleText;
     [SerializeField] private TextMeshProUGUI generalConfirmationBodyText;
+    [SerializeField] private Button generalConfirmationButton;
+    [SerializeField] private TextMeshProUGUI generalConfirmationButtonText;
 
     [Header("Start Picker")]
     [SerializeField] private GameObject startingMinionPickerGO;
@@ -72,22 +75,6 @@ public class PlayerUI : MonoBehaviour {
     private MinionLeaderPicker tempCurrentMinionLeaderPicker;
     [SerializeField] private Image[] startingAbilityIcons;
     [SerializeField] private TextMeshProUGUI[] startingAbilityLbls; //NOTE: This must always have the same length as startingAbilityIcons
-
-    [Header("Summons")]
-    [SerializeField] private Image currentSummonImg;
-    [SerializeField] private TextMeshProUGUI currentSummonCountLbl;
-    [SerializeField] private Button summonBtn;
-    [SerializeField] private GameObject summonCover;
-    [SerializeField] private UIHoverPosition summonTooltipPos;
-    private bool isSummoning = false; //if the player has clicked the summon button and is targetting a tile to place the summon on.
-
-    [Header("Artifacts")]
-    [SerializeField] private Image currentArtifactImg;
-    [SerializeField] private TextMeshProUGUI currentArtifactCountLbl;
-    [SerializeField] private Button summonArtifactBtn;
-    [SerializeField] private GameObject summonArtifactCover;
-    [SerializeField] private UIHoverPosition summonArtifactTooltipPos;
-    private bool isSummoningArtifact = false; //if the player has clicked the summon artifact button and is targetting a tile to place the summon on.
 
     [Header("Intervention Abilities")]
     [SerializeField] private RectTransform activeMinionActionsParent;
@@ -155,9 +142,6 @@ public class PlayerUI : MonoBehaviour {
         //Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         //Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
     }
-    //void Start() {
-    //    Messenger.AddListener(Signals.UPDATED_CURRENCIES, UpdateUI);
-    //}
     public void UpdateUI() {
         if (PlayerManager.Instance.player == null) {
             return;
@@ -186,7 +170,7 @@ public class PlayerUI : MonoBehaviour {
 
         storyEventUI.Initialize();
 
-        LoadRoleSlots();
+        //LoadRoleSlots();
         LoadAttackSlot();
         LoadInterventionAbilitySlots();
         UpdateInterventionAbilitySlots();
@@ -229,6 +213,10 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
+
+        //Minion List
+        Messenger.AddListener<Minion>(Signals.PLAYER_GAINED_MINION, OnGainedMinion);
+        Messenger.AddListener<Minion>(Signals.PLAYER_LOST_MINION, OnLostMinion);
 
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
@@ -301,70 +289,70 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Role Slots
-    int currentlyShowingSlotIndex = 0;
-    private void LoadRoleSlots() {
-        roleSlots = new RoleSlotItem[PlayerManager.Instance.player.minions.Length];
-        for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
-            GameObject roleSlotGO = UIManager.Instance.InstantiateUIObject(roleSlotItemPrefab.name, roleSlotsParent);
-            RoleSlotItem roleSlot = roleSlotGO.GetComponent<RoleSlotItem>();
-            //roleSlot.SetSlotJob(keyValuePair.Key);
-            roleSlot.Initialize();
-            roleSlots[i] = roleSlot;
-        }
-        //foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in PlayerManager.Instance.player.roleSlots) {
-        //    GameObject roleSlotGO = UIManager.Instance.InstantiateUIObject(roleSlotItemPrefab.name, roleSlotsParent);
-        //    RoleSlotItem roleSlot = roleSlotGO.GetComponent<RoleSlotItem>();
-        //    roleSlot.SetSlotJob(keyValuePair.Key);
-        //    roleSlots[currIndex] = roleSlot;
-        //    currIndex++;
-        //}
-        roleSlotsInfiniteScroll.Init();
-        //LoadActionButtonsForActiveJob(roleSlots[currentlyeShowingSlotIndex]);
-        UpdateRoleSlotScroll();
-    }
-    public void UpdateRoleSlots() {
-        for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
-            roleSlots[i].SetMinion(PlayerManager.Instance.player.minions[i]);
-        }
-        int minionCount = PlayerManager.Instance.player.GetCurrentMinionCount();
-        if (currentlyShowingSlotIndex >= minionCount){
-            currentlyShowingSlotIndex = minionCount - 1;
-        }
-        UpdateRoleSlotScroll();
-    }
-    public void ScrollNext() {
-        currentlyShowingSlotIndex += 1;
-        if (currentlyShowingSlotIndex == PlayerManager.Instance.player.GetCurrentMinionCount()) {
-            currentlyShowingSlotIndex = 0;
-        }
-        UpdateRoleSlotScroll();
-    }
-    public void ScrollPrevious() {
-        currentlyShowingSlotIndex -= 1;
-        if (currentlyShowingSlotIndex < 0) {
-            currentlyShowingSlotIndex = PlayerManager.Instance.player.GetCurrentMinionCount() - 1;
-        }
-        UpdateRoleSlotScroll();
-    }
-    public void ScrollRoleSlotTo(int index) {
-        if (currentlyShowingSlotIndex == index) {
-            return;
-        }
-        currentlyShowingSlotIndex = index;
-        int minionCount = PlayerManager.Instance.player.GetCurrentMinionCount();
-        if (currentlyShowingSlotIndex >= minionCount) {
-            currentlyShowingSlotIndex = minionCount - 1;
-        }
-        UpdateRoleSlotScroll();
-        PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
-        CursorManager.Instance.ClearLeftClickActions(); //TODO: Change this to no clear all actions but just the ones concerened with the player abilities
-    }
-    private void UpdateRoleSlotScroll() {
-        RoleSlotItem slotToShow = roleSlots[currentlyShowingSlotIndex];
-        activeMinionTypeLbl.text = Utilities.NormalizeString(slotToShow.slotJob.ToString());
-        Utilities.ScrolRectSnapTo(roleSlotsScrollRect, slotToShow.GetComponent<RectTransform>());
-        LoadActionButtonsForActiveJob(slotToShow);
-    }
+    //int currentlyShowingSlotIndex = 0;
+    //private void LoadRoleSlots() {
+    //    roleSlots = new RoleSlotItem[PlayerManager.Instance.player.minions.Count];
+    //    for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
+    //        GameObject roleSlotGO = UIManager.Instance.InstantiateUIObject(roleSlotItemPrefab.name, roleSlotsParent);
+    //        RoleSlotItem roleSlot = roleSlotGO.GetComponent<RoleSlotItem>();
+    //        //roleSlot.SetSlotJob(keyValuePair.Key);
+    //        roleSlot.Initialize();
+    //        roleSlots[i] = roleSlot;
+    //    }
+    //    //foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in PlayerManager.Instance.player.roleSlots) {
+    //    //    GameObject roleSlotGO = UIManager.Instance.InstantiateUIObject(roleSlotItemPrefab.name, roleSlotsParent);
+    //    //    RoleSlotItem roleSlot = roleSlotGO.GetComponent<RoleSlotItem>();
+    //    //    roleSlot.SetSlotJob(keyValuePair.Key);
+    //    //    roleSlots[currIndex] = roleSlot;
+    //    //    currIndex++;
+    //    //}
+    //    roleSlotsInfiniteScroll.Init();
+    //    //LoadActionButtonsForActiveJob(roleSlots[currentlyeShowingSlotIndex]);
+    //    UpdateRoleSlotScroll();
+    //}
+    //public void UpdateRoleSlots() {
+    //    for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
+    //        roleSlots[i].SetMinion(PlayerManager.Instance.player.minions[i]);
+    //    }
+    //    int minionCount = PlayerManager.Instance.player.GetCurrentMinionCount();
+    //    if (currentlyShowingSlotIndex >= minionCount){
+    //        currentlyShowingSlotIndex = minionCount - 1;
+    //    }
+    //    UpdateRoleSlotScroll();
+    //}
+    //public void ScrollNext() {
+    //    currentlyShowingSlotIndex += 1;
+    //    if (currentlyShowingSlotIndex == PlayerManager.Instance.player.GetCurrentMinionCount()) {
+    //        currentlyShowingSlotIndex = 0;
+    //    }
+    //    UpdateRoleSlotScroll();
+    //}
+    //public void ScrollPrevious() {
+    //    currentlyShowingSlotIndex -= 1;
+    //    if (currentlyShowingSlotIndex < 0) {
+    //        currentlyShowingSlotIndex = PlayerManager.Instance.player.GetCurrentMinionCount() - 1;
+    //    }
+    //    UpdateRoleSlotScroll();
+    //}
+    //public void ScrollRoleSlotTo(int index) {
+    //    if (currentlyShowingSlotIndex == index) {
+    //        return;
+    //    }
+    //    currentlyShowingSlotIndex = index;
+    //    int minionCount = PlayerManager.Instance.player.GetCurrentMinionCount();
+    //    if (currentlyShowingSlotIndex >= minionCount) {
+    //        currentlyShowingSlotIndex = minionCount - 1;
+    //    }
+    //    UpdateRoleSlotScroll();
+    //    PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
+    //    CursorManager.Instance.ClearLeftClickActions(); //TODO: Change this to no clear all actions but just the ones concerened with the player abilities
+    //}
+    //private void UpdateRoleSlotScroll() {
+    //    RoleSlotItem slotToShow = roleSlots[currentlyShowingSlotIndex];
+    //    activeMinionTypeLbl.text = Utilities.NormalizeString(slotToShow.slotJob.ToString());
+    //    Utilities.ScrolRectSnapTo(roleSlotsScrollRect, slotToShow.GetComponent<RectTransform>());
+    //    LoadActionButtonsForActiveJob(slotToShow);
+    //}
 
     //private void ShowActionButtonsFor(IPointOfInterest poi) {
     //    if (UIManager.Instance.IsShareIntelMenuOpen()) {
@@ -556,12 +544,13 @@ public class PlayerUI : MonoBehaviour {
         startInvasionButton.interactable = true;
         HideCombatAbilityUI();
     }
+    private void UpdateStartInvasionButton() {
+        startInvasionButton.interactable = InteriorMapManager.Instance.currentlyShowingArea.CanInvadeSettlement();
+        startInvasionHoverHandler.gameObject.SetActive(!startInvasionButton.interactable);
+    }
     #endregion
 
     #region Miscellaneous
-    public void SetBottomMenuTogglesState(bool isOn) {
-        intelToggle.isOn = isOn;
-    }
     public void AddPendingUI(System.Action pendingUIAction) {
         pendingUIToShow.Add(pendingUIAction);
     }
@@ -575,7 +564,7 @@ public class PlayerUI : MonoBehaviour {
         return false;
     }
     public bool IsMajorUIShowing() {
-        return levelUpUI.gameObject.activeInHierarchy || newAbilityUI.gameObject.activeInHierarchy || newMinionAbilityUI.gameObject.activeInHierarchy || replaceUI.gameObject.activeInHierarchy || generalConfirmationGO.activeInHierarchy;
+        return levelUpUI.gameObject.activeInHierarchy || newAbilityUI.gameObject.activeInHierarchy || newMinionAbilityUI.gameObject.activeInHierarchy || replaceUI.gameObject.activeInHierarchy || generalConfirmationGO.activeInHierarchy || newMinionUIGO.activeInHierarchy;
     }
     #endregion
 
@@ -778,7 +767,7 @@ public class PlayerUI : MonoBehaviour {
         minionLeaderPickers.Clear();
         selectMinionLeaderText.gameObject.SetActive(true);
         tempCurrentMinionLeaderPicker = null;
-        for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+        for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             Minion minion = PlayerManager.Instance.player.minions[i];
             if(minion != null) {
                 GameObject go = GameObject.Instantiate(minionLeaderPickerPrefab, minionLeaderPickerParent.transform);
@@ -884,12 +873,19 @@ public class PlayerUI : MonoBehaviour {
     //public void UpdateThreatMeter() {
     //    threatMeter.value = PlayerManager.Instance.player.threat;
     //}
-    private void UpdateStartInvasionButton() {
-        startInvasionButton.interactable = InteriorMapManager.Instance.currentlyShowingArea.CanInvadeSettlement();
-    }
     #endregion
 
     #region Summons
+    [Header("Summons")]
+    [SerializeField] private Image currentSummonImg;
+    [SerializeField] private GameObject currentSummonLvlGO;
+    [SerializeField] private TextMeshProUGUI currentSummonLvlLbl;
+    [SerializeField] private Button summonBtn;
+    [SerializeField] private GameObject summonCover;
+    [SerializeField] private UIHoverPosition summonTooltipPos;
+    [SerializeField] private Button cycleSummonLeft;
+    [SerializeField] private Button cycleSummonRight;
+    private bool isSummoning = false; //if the player has clicked the summon button and is targetting a tile to place the summon on.
     private SummonSlot currentlySelectedSummonSlot; //the summon type that is currently shown in the UI
     private void UpdateSummonsInteraction() {
         bool state = currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed;
@@ -928,15 +924,33 @@ public class PlayerUI : MonoBehaviour {
         currentlySelectedSummonSlot = summonSlot;
         if (currentlySelectedSummonSlot.summon == null) {
             currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(SUMMON_TYPE.None).summonPortrait;
+            cycleSummonLeft.gameObject.SetActive(false);
+            cycleSummonRight.gameObject.SetActive(false);
+            currentSummonLvlGO.SetActive(false);
         } else {
             currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(currentlySelectedSummonSlot.summon.summonType).summonPortrait;
+            int index = Array.IndexOf(PlayerManager.Instance.player.summonSlots, currentlySelectedSummonSlot);
+            currentSummonLvlGO.SetActive(true);
+            if (PlayerManager.Instance.player.GetTotalSummonsCount() == 1) {
+                cycleSummonLeft.gameObject.SetActive(false);
+                cycleSummonRight.gameObject.SetActive(false);
+            } else if (index == PlayerManager.Instance.player.summonSlots.Length - 1) {
+                cycleSummonLeft.gameObject.SetActive(true);
+                cycleSummonRight.gameObject.SetActive(false);
+            } else if (index == 0) {
+                cycleSummonLeft.gameObject.SetActive(false);
+                cycleSummonRight.gameObject.SetActive(true);
+            } else {
+                cycleSummonLeft.gameObject.SetActive(true);
+                cycleSummonRight.gameObject.SetActive(true);
+            }
         }
-        currentSummonCountLbl.text = currentlySelectedSummonSlot.level.ToString();
+        currentSummonLvlLbl.text = currentlySelectedSummonSlot.level.ToString();
         UpdateSummonsInteraction();
     }
     public void UpdateCurrentlySelectedSummonSlotLevel(SummonSlot summonSlot) {
         if(currentlySelectedSummonSlot == summonSlot) {
-            currentSummonCountLbl.text = currentlySelectedSummonSlot.level.ToString();
+            currentSummonLvlLbl.text = currentlySelectedSummonSlot.level.ToString();
         }
     }
     public void CycleSummons(int cycleDirection) {
@@ -965,7 +979,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void ShowSummonTooltip() {
         if(currentlySelectedSummonSlot.summon != null) {
-            string header = currentlySelectedSummonSlot.summon.summonType.SummonName();
+            string header = currentlySelectedSummonSlot.summon.summonType.SummonName() + " <i>(Click to summon.)</i>";
             string message;
             switch (currentlySelectedSummonSlot.summon.summonType) {
                 case SUMMON_TYPE.Wolf:
@@ -1009,6 +1023,7 @@ public class PlayerUI : MonoBehaviour {
             summonToPlace.marker.InitialPlaceMarkerAt(tile);
             //PlayerManager.Instance.player.RemoveSummon(summonToPlace);
             summonToPlace.OnPlaceSummon(tile);
+            PlayerManager.Instance.player.RemoveSummon(summonToPlace);
             Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summonToPlace);
         }
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
@@ -1020,6 +1035,16 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Artifacts
+    [Header("Artifacts")]
+    [SerializeField] private Image currentArtifactImg;
+    [SerializeField] private GameObject currentArtifactLvlGO;
+    [SerializeField] private TextMeshProUGUI currentArtifactLvlLbl;
+    [SerializeField] private Button summonArtifactBtn;
+    [SerializeField] private GameObject summonArtifactCover;
+    [SerializeField] private UIHoverPosition summonArtifactTooltipPos;
+    [SerializeField] private Button cycleArtifactLeft;
+    [SerializeField] private Button cycleArtifactRight;
+    private bool isSummoningArtifact = false; //if the player has clicked the summon artifact button and is targetting a tile to place the summon on.
     private ArtifactSlot currentlySelectedArtifactSlot; //the artifact that is currently shown in the UI
     private void UpdateArtifactsInteraction() {
         bool state = currentlySelectedArtifactSlot.artifact != null && !currentlySelectedArtifactSlot.artifact.hasBeenUsed;
@@ -1062,16 +1087,34 @@ public class PlayerUI : MonoBehaviour {
         currentlySelectedArtifactSlot = artifactSlot;
         if (currentlySelectedArtifactSlot.artifact == null) {
             currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(ARTIFACT_TYPE.None).artifactPortrait;
+            cycleArtifactLeft.gameObject.SetActive(false);
+            cycleArtifactRight.gameObject.SetActive(false);
+            currentArtifactLvlGO.SetActive(false);
         } else {
             currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(currentlySelectedArtifactSlot.artifact.type).artifactPortrait;
             //currentArtifactCountLbl.text = PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(currentlySelectedArtifactSlot.artifact.type).ToString();
+            int index = Array.IndexOf(PlayerManager.Instance.player.artifactSlots, currentlySelectedArtifactSlot);
+            currentArtifactLvlGO.SetActive(true);
+            if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) {
+                cycleArtifactLeft.gameObject.SetActive(false);
+                cycleArtifactRight.gameObject.SetActive(false);
+            } else if (index == PlayerManager.Instance.player.summonSlots.Length - 1) {
+                cycleArtifactLeft.gameObject.SetActive(true);
+                cycleArtifactRight.gameObject.SetActive(false);
+            } else if (index == 0) {
+                cycleArtifactLeft.gameObject.SetActive(false);
+                cycleArtifactRight.gameObject.SetActive(true);
+            } else {
+                cycleArtifactLeft.gameObject.SetActive(true);
+                cycleArtifactRight.gameObject.SetActive(true);
+            }
         }
-        currentArtifactCountLbl.text = currentlySelectedArtifactSlot.level.ToString();
+        currentArtifactLvlLbl.text = currentlySelectedArtifactSlot.level.ToString();
         UpdateArtifactsInteraction();
     }
     public void UpdateCurrentlySelectedArtifactSlotLevel(ArtifactSlot artifactSlot) {
         if (currentlySelectedArtifactSlot == artifactSlot) {
-            currentArtifactCountLbl.text = currentlySelectedArtifactSlot.level.ToString();
+            currentArtifactLvlLbl.text = currentlySelectedArtifactSlot.level.ToString();
         }
     }
     public void CycleArtifacts(int cycleDirection) {
@@ -1100,7 +1143,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void ShowArtifactTooltip() {
         if (currentlySelectedArtifactSlot.artifact != null) {
-            string header = Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedArtifactSlot.artifact.type.ToString());
+            string header = Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedArtifactSlot.artifact.type.ToString()) + " <i>(Click to place.)</i>";
             string message = PlayerManager.Instance.player.GetArtifactDescription(currentlySelectedArtifactSlot.artifact.type);
             UIManager.Instance.ShowSmallInfo(message, summonArtifactTooltipPos, header);
         }
@@ -1120,6 +1163,7 @@ public class PlayerUI : MonoBehaviour {
                 Artifact artifactToPlace = currentlySelectedArtifactSlot.artifact;
                 if (tile.structure.AddPOI(artifactToPlace, tile)) {
                     artifactToPlace.SetIsSummonedByPlayer(true);
+                    PlayerManager.Instance.player.RemoveArtifact(artifactToPlace);
                     Messenger.Broadcast(Signals.PLAYER_USED_ARTIFACT, artifactToPlace);
                 }
                 //PlayerManager.Instance.player.RemoveArtifact(artifactToPlace);
@@ -1157,9 +1201,9 @@ public class PlayerUI : MonoBehaviour {
         LoadKillSummaryCharacterItems();
     }
     private void LoadKillSummaryCharacterItems() {
-        KillCountCharacterItem[] items = Utilities.GetComponentsInDirectChildren<KillCountCharacterItem>(killCountScrollView.content.gameObject);
+        CharacterItem[] items = Utilities.GetComponentsInDirectChildren<CharacterItem>(killCountScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
-            KillCountCharacterItem item = items[i];
+            CharacterItem item = items[i];
             item.transform.SetParent(killSummaryScrollView.content);
         }
     }
@@ -1188,14 +1232,12 @@ public class PlayerUI : MonoBehaviour {
     private void PopulateCombatAbilities() {
         currentCombatAbilityButtons.Clear();
         Utilities.DestroyChildren(combatAbilityGO.transform);
-        for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+        for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             Minion currMinion = PlayerManager.Instance.player.minions[i];
-            if(currMinion != null) {
-                GameObject go = GameObject.Instantiate(combatAbilityButtonPrefab, combatAbilityGO.transform);
-                CombatAbilityButton abilityButton = go.GetComponent<CombatAbilityButton>();
-                abilityButton.SetCombatAbility(currMinion.combatAbility);
-                currentCombatAbilityButtons.Add(abilityButton);
-            }
+            GameObject go = GameObject.Instantiate(combatAbilityButtonPrefab, combatAbilityGO.transform);
+            CombatAbilityButton abilityButton = go.GetComponent<CombatAbilityButton>();
+            abilityButton.SetCombatAbility(currMinion.combatAbility);
+            currentCombatAbilityButtons.Add(abilityButton);
         }
     }
     public CombatAbilityButton GetCombatAbilityButton(CombatAbility ability) {
@@ -1222,14 +1264,14 @@ public class PlayerUI : MonoBehaviour {
         killSummaryGO.SetActive(false);
     }
     private void LoadKillCountCharacterItems(Area area) {
-        KillCountCharacterItem[] items = Utilities.GetComponentsInDirectChildren<KillCountCharacterItem>(killCountScrollView.content.gameObject);
+        CharacterItem[] items = Utilities.GetComponentsInDirectChildren<CharacterItem>(killCountScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             ObjectPoolManager.Instance.DestroyObject(items[i].gameObject);
         }
         for (int i = 0; i < area.areaResidents.Count; i++) {
             Character character = area.areaResidents[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killCountScrollView.content);
-            KillCountCharacterItem item = go.GetComponent<KillCountCharacterItem>();
+            CharacterItem item = go.GetComponent<CharacterItem>();
             item.SetCharacter(character);
         }
         OrderKillSummaryItems();
@@ -1239,11 +1281,11 @@ public class PlayerUI : MonoBehaviour {
         killCountLbl.text = LandmarkManager.Instance.mainSettlement.areaResidents.Where(x => x.IsAble()).Count().ToString() + "/" + LandmarkManager.Instance.mainSettlement.citizenCount.ToString();
     }
     private void OrderKillSummaryItems() {
-        KillCountCharacterItem[] items = Utilities.GetComponentsInDirectChildren<KillCountCharacterItem>(killCountScrollView.content.gameObject);
-        List<KillCountCharacterItem> alive = new List<KillCountCharacterItem>();
-        List<KillCountCharacterItem> dead = new List<KillCountCharacterItem>();
+        CharacterItem[] items = Utilities.GetComponentsInDirectChildren<CharacterItem>(killCountScrollView.content.gameObject);
+        List<CharacterItem> alive = new List<CharacterItem>();
+        List<CharacterItem> dead = new List<CharacterItem>();
         for (int i = 0; i < items.Length; i++) {
-            KillCountCharacterItem currItem = items[i];
+            CharacterItem currItem = items[i];
             if (!currItem.character.IsAble() || currItem.character.faction != LandmarkManager.Instance.mainSettlement.owner) { //added checking for faction in cases that the character was raised from dead
                 dead.Add(currItem);
             } else {
@@ -1252,17 +1294,20 @@ public class PlayerUI : MonoBehaviour {
         }
         aliveHeader.transform.SetAsFirstSibling();
         for (int i = 0; i < alive.Count; i++) {
-            KillCountCharacterItem currItem = alive[i];
+            CharacterItem currItem = alive[i];
             currItem.transform.SetSiblingIndex(i + 1);
         }
         deadHeader.transform.SetSiblingIndex(alive.Count + 1);
         for (int i = 0; i < dead.Count; i++) {
-            KillCountCharacterItem currItem = dead[i];
+            CharacterItem currItem = dead[i];
             currItem.transform.SetSiblingIndex(alive.Count + i + 2);
         }
     }
     public void ToggleKillSummary() {
         killSummaryGO.SetActive(!killSummaryGO.activeSelf);
+        if (minionListGO.activeSelf) {
+            minionListGO.SetActive(false);
+        }
     }
     public void HideKillSummary() {
         killSummaryGO.SetActive(false);
@@ -1294,15 +1339,21 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region General Confirmation
-    public void ShowGeneralConfirmation(string header, string body) {
-        if (PlayerUI.Instance.IsMajorUIShowing()) {
-            AddPendingUI(() => ShowGeneralConfirmation(header, body));
+    public void ShowGeneralConfirmation(string header, string body, string buttonText = "OK", System.Action onClickOK = null) {
+        if (IsMajorUIShowing()) {
+            AddPendingUI(() => ShowGeneralConfirmation(header, body, buttonText, onClickOK));
             return;
         }
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
         generalConfirmationTitleText.text = header.ToUpper();
         generalConfirmationBodyText.text = body;
+        generalConfirmationButtonText.text = buttonText;
+        generalConfirmationButton.onClick.RemoveAllListeners();
+        generalConfirmationButton.onClick.AddListener(OnClickOKGeneralConfirmation);
+        if (onClickOK != null) {
+            generalConfirmationButton.onClick.AddListener(() => onClickOK.Invoke());
+        }
         generalConfirmationGO.SetActive(true);
     }
     public void OnClickOKGeneralConfirmation() {
@@ -1310,6 +1361,83 @@ public class PlayerUI : MonoBehaviour {
         if (!TryShowPendingUI()) {
             UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
             UIManager.Instance.SetSpeedTogglesState(true);
+        }
+    }
+    #endregion
+
+    #region New Minion
+    [Header("New Minion UI")]
+    [SerializeField] private GameObject newMinionUIGO;
+    [SerializeField] private MinionCard newMinionCard;
+    public void ShowNewMinionUI(Minion minion) {
+        if (IsMajorUIShowing()) {
+            AddPendingUI(() => ShowNewMinionUI(minion));
+            return;
+        }
+        UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
+        newMinionCard.SetMinion(minion);
+        newMinionUIGO.SetActive(true);
+    }
+    public void HideNewMinionUI() {
+        newMinionUIGO.SetActive(false);
+        if (!TryShowPendingUI()) {
+            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
+            UIManager.Instance.SetSpeedTogglesState(true);
+        }
+    }
+    #endregion
+
+    #region Minion List
+    [Header("Minion List")]
+    [SerializeField] private TextMeshProUGUI minionCountLbl;
+    [SerializeField] private GameObject minionItemPrefab;
+    [SerializeField] private ScrollRect minionListScrollView;
+    [SerializeField] private GameObject minionListGO;
+    private void UpdateMinionList() {
+        Utilities.DestroyChildren(minionListScrollView.content);
+        for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
+            Minion currMinion = PlayerManager.Instance.player.minions[i];
+            CreateNewMinionItem(currMinion);
+        }
+        UpdateMinionCount();
+    }
+    private void CreateNewMinionItem(Minion minion) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(minionItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
+        MinionCharacterItem item = go.GetComponent<MinionCharacterItem>();
+        item.SetCharacter(minion.character);
+    }
+    private void DeleteMinionItem(Minion minion) {
+        MinionCharacterItem item = GetMinionItem(minion);
+        if (item != null) {
+            ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+        }
+    }
+    private MinionCharacterItem GetMinionItem(Minion minion) {
+        MinionCharacterItem[] items = Utilities.GetComponentsInDirectChildren<MinionCharacterItem>(minionListScrollView.content.gameObject);
+        for (int i = 0; i < items.Length; i++) {
+            MinionCharacterItem item = items[i];
+            if (item.character == minion.character) {
+                return item;
+            }
+        }
+        return null;
+    }
+    private void UpdateMinionCount() {
+        minionCountLbl.text = PlayerManager.Instance.player.minions.Count.ToString();
+    }
+    private void OnGainedMinion(Minion minion) {
+        CreateNewMinionItem(minion);
+        UpdateMinionCount();
+    }
+    private void OnLostMinion(Minion minion) {
+        DeleteMinionItem(minion);
+        UpdateMinionCount();
+    }
+    public void ToggleMinionList() {
+        minionListGO.SetActive(!minionListGO.activeSelf);
+        if (killSummaryGO.activeSelf) {
+            killSummaryGO.SetActive(false);
         }
     }
     #endregion

@@ -20,6 +20,7 @@ public class WorldEvent  {
         this.eventType = eventType;
         name = Utilities.NormalizeStringUpperCaseFirstLetters(eventType.ToString());
         description = "This is a test description";
+        duration = 6 * GameManager.ticksPerHour;
     }
 
     #region Virtuals
@@ -68,6 +69,9 @@ public class WorldEvent  {
             spawner = landmark.eventSpawnedBy
         };
         return data;
+    }
+    public virtual bool IsBasicEvent() {
+        return false;
     }
     #endregion
 

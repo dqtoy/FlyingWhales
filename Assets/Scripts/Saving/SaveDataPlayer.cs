@@ -27,12 +27,10 @@ public class SaveDataPlayer {
         maxArtifactSlots = player.maxArtifactSlots;
 
         minions = new List<SaveDataMinion>();
-        for (int i = 0; i < player.minions.Length; i++) {
-            if(player.minions[i] != null) {
-                SaveDataMinion saveDataMinion = new SaveDataMinion();
-                saveDataMinion.Save(player.minions[i]);
-                minions.Add(saveDataMinion);
-            }
+        for (int i = 0; i < player.minions.Count; i++) {
+            SaveDataMinion saveDataMinion = new SaveDataMinion();
+            saveDataMinion.Save(player.minions[i]);
+            minions.Add(saveDataMinion);
         }
 
         //summonIDs = new List<int>();

@@ -9,17 +9,12 @@ public class Projectile : MonoBehaviour {
     public float rotateSpeed = 200f;
     public float speed = 5f;
 
-    public System.Action<Character> onHitAction;
+    public System.Action<Character, CombatState> onHitAction;
 
     private Vector3 _pausedVelocity;
     private float _pausedAngularVelocity;
     private Character targetCharacter;
-
-    [ContextMenu("TargetTest")]
-    public void TargetTest() {
-        SetTarget(GameObject.FindGameObjectWithTag("Player").transform, null);
-    }
-
+    private CombatState createdBy;
 
     #region Monobehaviours
     //private void OnDisable() {
@@ -36,13 +31,14 @@ public class Projectile : MonoBehaviour {
     }
     #endregion
 
-    public void SetTarget(Transform target, Character targetCharacter) {
+    public void SetTarget(Transform target, Character targetCharacter, CombatState createdBy) {
         Vector3 diff = target.position - transform.position;
         diff.Normalize();
         float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
         this.target = target;
         this.targetCharacter = targetCharacter;
+        this.createdBy = createdBy;
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
     }
@@ -63,7 +59,7 @@ public class Projectile : MonoBehaviour {
 
     public void ProjectileHit(Character character) {
         //Debug.Log("Hit character " + character?.name);
-        onHitAction?.Invoke(character);
+        onHitAction?.Invoke(character, createdBy);
         DestroyProjectile();
     }
 

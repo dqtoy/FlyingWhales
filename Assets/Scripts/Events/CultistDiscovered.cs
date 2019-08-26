@@ -5,7 +5,6 @@ using UnityEngine;
 public class CultistDiscovered : WorldEvent {
 
     public CultistDiscovered() : base(WORLD_EVENT.CULTIST_DISCOVERED) {
-        duration = 1 * GameManager.ticksPerHour;
     }
 
     #region Overrides

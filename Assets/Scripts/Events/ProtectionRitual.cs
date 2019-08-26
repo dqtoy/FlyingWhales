@@ -5,13 +5,11 @@ using UnityEngine;
 public class ProtectionRitual : WorldEvent {
 
     public ProtectionRitual() : base(WORLD_EVENT.PROTECTION_RITUAL) {
-        duration = 3 * GameManager.ticksPerHour;
         isUnique = true;
     }
 
     #region Overrides
     public override void ExecuteAfterEffect(BaseLandmark landmark) {
-        base.ExecuteAfterEffect(landmark);
         //- after effect: puts a Protective Barrier to the settlement that can only be removed when the Temple's region has been corrupted or the Temple landmark has been destroyed
         LandmarkManager.Instance.mainSettlement.coreTile.AddTileTag(TILE_TAG.PROTECTIVE_BARRIER);
         landmark.AddAfterInvasionAction(() => LandmarkManager.Instance.mainSettlement.coreTile.RemoveTileTag(TILE_TAG.PROTECTIVE_BARRIER));
@@ -21,6 +19,7 @@ public class ProtectionRitual : WorldEvent {
         log.AddToFillers(LandmarkManager.Instance.mainSettlement, LandmarkManager.Instance.mainSettlement.name, LOG_IDENTIFIER.LANDMARK_3);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
+        base.ExecuteAfterEffect(landmark);
     }
     public override bool CanSpawnEventAt(BaseLandmark landmark) {
         return landmark.HasAnyCharacterOfType(ATTACK_TYPE.MAGICAL) && landmark.specificLandmarkType == LANDMARK_TYPE.TEMPLE && base.CanSpawnEventAt(landmark);

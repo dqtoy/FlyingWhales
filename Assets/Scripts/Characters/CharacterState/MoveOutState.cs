@@ -63,8 +63,8 @@ public class MoveOutState : CharacterState {
             stateComponent.character.ownParty.icon.SetIsTravellingOutside(false);
             chosenRegion = choices[Random.Range(0, choices.Count)];
             stateComponent.character.specificLocation.RemoveCharacterFromLocation(stateComponent.character);
-            chosenRegion.mainLandmark.AddCharacterHere(stateComponent.character);
             OnArriveAtRegion();
+            chosenRegion.mainLandmark.AddCharacterHere(stateComponent.character);
         } else {
             throw new System.Exception("There are no more uncorrupted regions for " + stateComponent.character.name);
         }

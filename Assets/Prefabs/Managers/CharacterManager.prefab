@@ -484,7 +484,7 @@ MonoBehaviour:
   summonSettings:
     m_keys: 00000000010000000200000003000000040000000500000006000000
     m_values:
-    - summonPortrait: {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5, type: 3}
+    - summonPortrait: {fileID: 21300000, guid: 9446df3c48b01e7409f52c0e260f7f62, type: 3}
     - summonPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
     - summonPortrait: {fileID: 21300000, guid: 3ea140c9cdcc60b46a257c943a010d0c, type: 3}
     - summonPortrait: {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff, type: 3}
@@ -494,7 +494,7 @@ MonoBehaviour:
   artifactSettings:
     m_keys: 000000000100000002000000030000000400000005000000
     m_values:
-    - artifactPortrait: {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5,
+    - artifactPortrait: {fileID: 21300000, guid: 9446df3c48b01e7409f52c0e260f7f62,
         type: 3}
     - artifactPortrait: {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5,
         type: 3}

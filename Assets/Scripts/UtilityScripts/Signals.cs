@@ -271,6 +271,14 @@ public static class Signals {
     public static string PLAYER_LEARNED_INTERVENE_ABILITY = "OnMinionLearnedInterveneAbility";
     public static string PLAYER_CONSUMED_INTERVENE_ABILITY = "OnPlayerConsumedInterveneAbility";
     public static string PLAYER_GAINED_INTERVENE_LEVEL = "OnPlayerGainedInterveneLevel";
+    /// <summary>
+    /// parameters (Minion)
+    /// </summary>
+    public static string PLAYER_GAINED_MINION = "OnPlayerGainedMinion";
+    /// <summary>
+    /// parameters (Minion)
+    /// </summary>
+    public static string PLAYER_LOST_MINION = "OnPlayerLostMinion";
     #endregion
 
     #region Interaction

@@ -87,6 +87,10 @@ public class CharacterMarker : PooledObject {
         mainImg.sortingOrder = InteriorMapManager.Default_Character_Sorting_Order + character.id;
         nameLbl.sortingOrder = mainImg.sortingOrder;
         actionIcon.sortingOrder = mainImg.sortingOrder;
+        hoveredImg.sortingOrder = mainImg.sortingOrder - 1;
+        clickedImg.sortingOrder = mainImg.sortingOrder - 1;
+        colorHighlight.sortingOrder = mainImg.sortingOrder - 1;
+        hpBarGO.GetComponent<Canvas>().sortingOrder = mainImg.sortingOrder;
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
         }
@@ -695,22 +699,27 @@ public class CharacterMarker : PooledObject {
 
     #region Utilities
     private float GetSpeed() {
+        float speed = GetSpeedWithoutProgressionMultiplier();
+        speed *= progressionSpeedMultiplier;
+        return speed;
+    }
+    private float GetSpeedWithoutProgressionMultiplier() {
         float speed = character.runSpeed;
-        if(targettedByRemoveNegativeTraitActionsCounter > 0) {
+        if (targettedByRemoveNegativeTraitActionsCounter > 0) {
             speed = character.walkSpeed;
         } else {
             if (useWalkSpeed > 0) {
                 speed = character.walkSpeed;
             } else {
                 if (character.stateComponent.currentState != null) {
-                    if (character.stateComponent.currentState.characterState == CHARACTER_STATE.EXPLORE 
+                    if (character.stateComponent.currentState.characterState == CHARACTER_STATE.EXPLORE
                         || character.stateComponent.currentState.characterState == CHARACTER_STATE.PATROL
                         || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
                         || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE) {
                         //Walk
                         speed = character.walkSpeed;
                     }
-                } 
+                }
                 if (character.currentAction != null) {
                     if (character.currentAction.goapType == INTERACTION_TYPE.RETURN_HOME || character.currentAction.goapType.IsEmergencyAction()) {
                         //Run
@@ -727,7 +736,6 @@ public class CharacterMarker : PooledObject {
         if (speed <= 0f) {
             speed = 0.5f;
         }
-        speed *= progressionSpeedMultiplier;
         return speed;
     }
     public void UpdateSpeed() {
@@ -1242,6 +1250,9 @@ public class CharacterMarker : PooledObject {
             ticksInFlee = 0;
             fleeSpeedModifier -= 0.5f;
             UpdateSpeed();
+            //if (GetSpeedWithoutProgressionMultiplier() <= 0.5f && inVisionCharacters.Count == 0 && character.stateComponent.currentState is CombatState) {
+            //    (character.stateComponent.currentState as CombatState).OnReachLowFleeSpeedThreshold();
+            //}
             //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " has met flee slow down tick, slowing down flee speed. New speed is " + pathfindingAI.speed.ToString());
         }
     }

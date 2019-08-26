@@ -177,19 +177,15 @@ public class StoryEventsManager : MonoBehaviour {
             int level = 0;
             bool isNumber = int.TryParse(effect.effectValue, out level);
             if (isNumber) {
-                for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+                for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
                     Minion minion = PlayerManager.Instance.player.minions[i];
-                    if(minion != null) {
-                        minion.LevelUp(level);
-                    }
+                    minion.LevelUp(level);
                 }
             } else {
                 if (effect.effectValue.ToLower() == "combat ability") {
-                    for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+                    for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
                         Minion minion = PlayerManager.Instance.player.minions[i];
-                        if (minion != null) {
-                            minion.combatAbility.LevelUp();
-                        }
+                        minion.combatAbility.LevelUp();
                     }
                 } 
                 //else if (effect.effectValue.ToLower() == "intervention ability") {
@@ -223,11 +219,9 @@ public class StoryEventsManager : MonoBehaviour {
             PlayerManager.Instance.player.currentMinionLeader.AddTrait(effect.effectValue);
         } else if (string.Equals(effect.effectType, "All_Trait", System.StringComparison.OrdinalIgnoreCase)) {
             //Gain Trait for all minions.
-            for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+            for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
                 Minion currMinion = PlayerManager.Instance.player.minions[i];
-                if (currMinion != null) {
-                    currMinion.AddTrait(effect.effectValue);
-                }
+                currMinion.AddTrait(effect.effectValue);
             }
         } else if (string.Equals(effect.effectType, "Slot", System.StringComparison.OrdinalIgnoreCase)) {
             //Gain Slot
@@ -278,60 +272,50 @@ public class StoryEventsManager : MonoBehaviour {
             int level = 0;
             bool isNumber = int.TryParse(effect.effectValue, out level);
             if (isNumber) {
-                for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+                for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
                     Minion minion = PlayerManager.Instance.player.minions[i];
-                    if (minion != null) {
-                        minion.LevelUp(-level);
-                    }
+                    minion.LevelUp(-level);
                 }
             }
         } else if (string.Equals(effect.effectType, "All_Trait", System.StringComparison.OrdinalIgnoreCase)) {
             //Lose Trait for all minions.
             if (effect.effectValue.ToLower() == "negative") {
-                for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+                for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
                     Minion currMinion = PlayerManager.Instance.player.minions[i];
-                    if (currMinion != null) {
                         for (int j = 0; j < currMinion.character.normalTraits.Count; j++) {
-                            Trait currTrait = currMinion.character.normalTraits[j];
-                            if(currTrait.effect == TRAIT_EFFECT.NEGATIVE) {
-                                currMinion.character.RemoveTrait(currTrait);
-                                j--;
-                            }
+                        Trait currTrait = currMinion.character.normalTraits[j];
+                        if(currTrait.effect == TRAIT_EFFECT.NEGATIVE) {
+                            currMinion.character.RemoveTrait(currTrait);
+                            j--;
                         }
                     }
                 }
             } else if (effect.effectValue.ToLower() == "neutral") {
-                for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+                for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
                     Minion currMinion = PlayerManager.Instance.player.minions[i];
-                    if (currMinion != null) {
-                        for (int j = 0; j < currMinion.character.normalTraits.Count; j++) {
-                            Trait currTrait = currMinion.character.normalTraits[j];
-                            if (currTrait.effect == TRAIT_EFFECT.NEUTRAL) {
-                                currMinion.character.RemoveTrait(currTrait);
-                                j--;
-                            }
+                    for (int j = 0; j < currMinion.character.normalTraits.Count; j++) {
+                        Trait currTrait = currMinion.character.normalTraits[j];
+                        if (currTrait.effect == TRAIT_EFFECT.NEUTRAL) {
+                            currMinion.character.RemoveTrait(currTrait);
+                            j--;
                         }
                     }
                 }
             } else if (effect.effectValue.ToLower() == "positive") {
-                for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+                for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
                     Minion currMinion = PlayerManager.Instance.player.minions[i];
-                    if (currMinion != null) {
-                        for (int j = 0; j < currMinion.character.normalTraits.Count; j++) {
-                            Trait currTrait = currMinion.character.normalTraits[j];
-                            if (currTrait.effect == TRAIT_EFFECT.POSITIVE) {
-                                currMinion.character.RemoveTrait(currTrait);
-                                j--;
-                            }
+                    for (int j = 0; j < currMinion.character.normalTraits.Count; j++) {
+                        Trait currTrait = currMinion.character.normalTraits[j];
+                        if (currTrait.effect == TRAIT_EFFECT.POSITIVE) {
+                            currMinion.character.RemoveTrait(currTrait);
+                            j--;
                         }
                     }
                 }
             } else {
-                for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
+                for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
                     Minion currMinion = PlayerManager.Instance.player.minions[i];
-                    if (currMinion != null) {
-                        currMinion.character.RemoveTrait(effect.effectValue);
-                    }
+                    currMinion.character.RemoveTrait(effect.effectValue);
                 }
             }
         } else if (string.Equals(effect.effectType, "Trait", System.StringComparison.OrdinalIgnoreCase)) {
@@ -422,10 +406,13 @@ public class StoryEventsManager : MonoBehaviour {
         }
         return false;
     }
-    public List<WorldEvent> GetEventsThatCanSpawnAt(BaseLandmark landmark) {
+    public List<WorldEvent> GetEventsThatCanSpawnAt(BaseLandmark landmark, bool basicOnly = false) {
         List<WorldEvent> events = new List<WorldEvent>();
         for (int i = 0; i < worldEvents.Length; i++) {
             WorldEvent currEvent = worldEvents[i];
+            if (basicOnly && !currEvent.IsBasicEvent()) {
+                continue; //skip
+            }
             if (currEvent.CanSpawnEventAt(landmark)) {
                 events.Add(currEvent);
             }

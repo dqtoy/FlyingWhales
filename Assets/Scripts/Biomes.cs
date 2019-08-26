@@ -368,7 +368,7 @@ public class Biomes : MonoBehaviour {
             tile.SetBaseSprite(choices[UnityEngine.Random.Range(0, choices.Length)]);
         } else {
             LandmarkStructureSprite sprites = PlayerManager.Instance.playerAreaDefaultStructureSprites[UnityEngine.Random.Range(0, PlayerManager.Instance.playerAreaDefaultStructureSprites.Length)];
-            tile.SetLandmarkTileSprite(sprites);
+            tile.SetLandmarkTileSprite(LandmarkStructureSprite.Empty);
         }
     }
     private void LoadWaterTileVisuals(HexTile tile, int sortingOrder) {

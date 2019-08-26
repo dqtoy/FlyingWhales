@@ -213,7 +213,7 @@ public class Character : ILeader, IPointOfInterest {
         get { return currentLandmark == null && specificLocation.id == homeArea.id && !currentParty.icon.isTravellingOutside; }
     }
     public bool isPartOfHomeFaction { //is this character part of the faction that owns his home area
-        get { return homeArea.owner.id == faction.id; }
+        get { return homeArea != null && homeArea.owner == faction; }
     }
     public bool isTracked {
         get {
@@ -3666,7 +3666,7 @@ public class Character : ILeader, IPointOfInterest {
     public void SetCombatCharacter(CombatCharacter combatCharacter) {
         _currentCombatCharacter = combatCharacter;
     }
-    public void OnHitByAttackFrom(Character characterThatAttacked, ref string attackSummary) {
+    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
         GameManager.Instance.CreateHitEffectAt(this);
         if (this.currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
@@ -3686,7 +3686,6 @@ public class Character : ILeader, IPointOfInterest {
         attackSummary += "\nDealt damage " + stateComponent.character.attackPower.ToString();
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if (this.currentHP <= 0) {
-            CombatState state = characterThatAttacked.stateComponent.currentState as CombatState;
             attackSummary += "\n" + this.name + "'s hp has reached 0.";
             WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
 
@@ -7974,13 +7973,13 @@ public class Character : ILeader, IPointOfInterest {
                     targetCharacter = characterThatStartedState.marker.GetNearestValidAvoid();
                 }
                 //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
-                if (this.isPartOfHomeFaction && characterThatStartedState.isAtHomeArea && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
+                if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeArea && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
                     && this.IsHostileOutsider(targetCharacter) && (this.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
                     && distance <= Combat_Signalled_Distance) {
                     if (marker.AddHostileInRange(targetCharacter, processCombatBehavior: false)) {
                         Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
                         joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        joinLog.AddToFillers(combatState.currentClosestHostile, combatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
                         joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                         PlayerManager.Instance.player.ShowNotification(joinLog);

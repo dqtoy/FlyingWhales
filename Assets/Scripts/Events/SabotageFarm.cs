@@ -5,7 +5,6 @@ using UnityEngine;
 public class SabotageFarm : WorldEvent {
 
     public SabotageFarm() : base(WORLD_EVENT.SABOTAGE_FARM) {
-        duration = 3 * GameManager.ticksPerHour;
     }
 
     #region Overrides

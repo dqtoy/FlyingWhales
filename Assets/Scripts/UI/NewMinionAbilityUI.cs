@@ -40,14 +40,12 @@ public class NewMinionAbilityUI : MonoBehaviour {
             identifier = "intervention";
         }
         UpdateObjectToAdd(objectToAdd);
-        for (int i = 0; i < PlayerManager.Instance.player.minions.Length; i++) {
-            if(PlayerManager.Instance.player.minions[i] != null) {
-                Minion currMinion = PlayerManager.Instance.player.minions[i];
-                GameObject choiceGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(choicePrefab.name, Vector3.zero, Quaternion.identity, choicesParent);
-                MinionAbilityChoiceItem item = choiceGO.GetComponent<MinionAbilityChoiceItem>();
-                item.toggle.group = choiceToggleGroup;
-                item.SetMinion(currMinion, identifier);
-            }
+        for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
+            Minion currMinion = PlayerManager.Instance.player.minions[i];
+            GameObject choiceGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(choicePrefab.name, Vector3.zero, Quaternion.identity, choicesParent);
+            MinionAbilityChoiceItem item = choiceGO.GetComponent<MinionAbilityChoiceItem>();
+            item.toggle.group = choiceToggleGroup;
+            item.SetMinion(currMinion, identifier);
         }
         addBtn.interactable = false;
         this.gameObject.SetActive(true);

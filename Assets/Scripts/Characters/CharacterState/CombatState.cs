@@ -341,7 +341,7 @@ public class CombatState : CharacterState {
 
         //Reset Attack Speed
         stateComponent.character.marker.ResetAttackSpeed();
-        characterHit.OnHitByAttackFrom(stateComponent.character, ref attackSummary);
+        characterHit.OnHitByAttackFrom(stateComponent.character, this, ref attackSummary);
 
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if (characterHit.currentHP > 0) {
@@ -387,6 +387,11 @@ public class CombatState : CharacterState {
         //If it is, end state immediately
         //If not, flee again
         log += "\nFinished travelling flee path, determining action...";
+        stateComponent.character.PrintLogIfActive(log);
+        DetermineReaction(stateComponent.character);
+    }
+    public void OnReachLowFleeSpeedThreshold() {
+        string log = GameManager.Instance.TodayLogString() + stateComponent.character.name + " has reached low flee speed threshold, determining action...";
         stateComponent.character.PrintLogIfActive(log);
         DetermineReaction(stateComponent.character);
     }
