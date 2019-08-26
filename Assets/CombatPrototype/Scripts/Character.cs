@@ -4173,36 +4173,64 @@ public class Character : ILeader, IPointOfInterest {
         //} else if (characterClass.className == "Envy") {
         //    AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
         //}
+
         //Random Traits
-        int chance = UnityEngine.Random.Range(0, 100);
-        if (chance < 35 || role.roleType == CHARACTER_ROLE.CIVILIAN) { //ensured that all civilans are craftsmen
-            AddTrait("Craftsman");
+        string[] completelyRandomTraits = new string[] { "Curious", "Vigilant", "Doctor", "Kleptomaniac", "Diplomatic",
+        "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Craftsman", "Music Lover", "Music Hater", "Ugly" };
+
+        Trait randomTrait = AttributeManager.Instance.allTraits[completelyRandomTraits[UnityEngine.Random.Range(0, completelyRandomTraits.Length)]];
+
+        List<Trait> flawTraits = AttributeManager.Instance.GetAllTraitsOfType(TRAIT_TYPE.FLAW);
+        string chosenFlawTraitName = string.Empty;
+        if (flawTraits.Count > 0) {
+            if(randomTrait.type == TRAIT_TYPE.FLAW) {
+                flawTraits.Remove(randomTrait);
+            }
+            chosenFlawTraitName = flawTraits[UnityEngine.Random.Range(0, flawTraits.Count)].name;
         }
-        if (UnityEngine.Random.Range(0, 100) < 50) {
-            AddTrait("Curious");
+
+        List<Trait> buffTraits = AttributeManager.Instance.GetAllTraitsOfType(TRAIT_TYPE.BUFF);
+        string chosenBuffTraitName = string.Empty;
+        if (buffTraits.Count > 0) {
+            if (randomTrait.type == TRAIT_TYPE.BUFF) {
+                buffTraits.Remove(randomTrait);
+            }
+            chosenBuffTraitName = buffTraits[UnityEngine.Random.Range(0, buffTraits.Count)].name;
         }
-        if (UnityEngine.Random.Range(0, 100) < 30) {
-            AddTrait("Vigilant");
-        }
-        if (UnityEngine.Random.Range(0, 100) < 30) {
-            AddTrait("Doctor");
-        }
-        if (UnityEngine.Random.Range(0, 100) < 30) {
-            AddTrait("Diplomatic");
-        }
-        if (UnityEngine.Random.Range(0, 100) < 30) {
-            AddTrait("Fireproof");
-        } else {
-            AddTrait("Flammable");
-        }
-        if (UnityEngine.Random.Range(0, 2) == 0) {
-            AddTrait("MusicLover");
-        } else {
-            AddTrait("MusicHater");
-        }
-        if (UnityEngine.Random.Range(0, 100) < 15) {
-            AddTrait("Accident Prone");
-        }
+
+        AddTrait(chosenBuffTraitName);
+        AddTrait(chosenFlawTraitName);
+        AddTrait(randomTrait.name);
+
+        //int chance = UnityEngine.Random.Range(0, 100);
+        //if (chance < 35 || role.roleType == CHARACTER_ROLE.CIVILIAN) { //ensured that all civilans are craftsmen
+        //    AddTrait("Craftsman");
+        //}
+        //if (UnityEngine.Random.Range(0, 100) < 50) {
+        //    AddTrait("Curious");
+        //}
+        //if (UnityEngine.Random.Range(0, 100) < 30) {
+        //    AddTrait("Vigilant");
+        //}
+        //if (UnityEngine.Random.Range(0, 100) < 30) {
+        //    AddTrait("Doctor");
+        //}
+        //if (UnityEngine.Random.Range(0, 100) < 30) {
+        //    AddTrait("Diplomatic");
+        //}
+        //if (UnityEngine.Random.Range(0, 100) < 30) {
+        //    AddTrait("Fireproof");
+        //} else {
+        //    AddTrait("Flammable");
+        //}
+        //if (UnityEngine.Random.Range(0, 2) == 0) {
+        //    AddTrait("MusicLover");
+        //} else {
+        //    AddTrait("MusicHater");
+        //}
+        //if (UnityEngine.Random.Range(0, 100) < 15) {
+        //    AddTrait("Accident Prone");
+        //}
         AddTrait("Character Trait");
     }
     public void CreateInitialTraitsByRace() {

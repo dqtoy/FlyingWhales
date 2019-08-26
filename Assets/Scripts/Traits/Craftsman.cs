@@ -12,7 +12,7 @@ public class Craftsman : Trait {
         //craftedItemNames = new SPECIAL_TOKEN[] { SPECIAL_TOKEN.TOOL, SPECIAL_TOKEN.HEALING_POTION };
         //craftedFurnitureNames = new FURNITURE_TYPE[] { FURNITURE_TYPE.BED, FURNITURE_TYPE.DESK, FURNITURE_TYPE.GUITAR, FURNITURE_TYPE.TABLE };
         description = "This character can create items.";
-        type = TRAIT_TYPE.SPECIAL;
+        type = TRAIT_TYPE.BUFF;
         effect = TRAIT_EFFECT.POSITIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
