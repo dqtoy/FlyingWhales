@@ -110,17 +110,17 @@ public class Character : ILeader, IPointOfInterest {
 
     //Needs
     public int tiredness { get; protected set; }
-    protected const int TIREDNESS_DEFAULT = 1200;
-    protected const int TIREDNESS_THRESHOLD_1 = 1040;
-    protected const int TIREDNESS_THRESHOLD_2 = 880;
+    protected const int TIREDNESS_DEFAULT = 10000;
+    protected const int TIREDNESS_THRESHOLD_1 = 5000;
+    protected const int TIREDNESS_THRESHOLD_2 = 2500;
     public int fullness { get; protected set; }
-    protected const int FULLNESS_DEFAULT = 1440;
-    protected const int FULLNESS_THRESHOLD_1 = 1390;
-    protected const int FULLNESS_THRESHOLD_2 = 1200;
+    protected const int FULLNESS_DEFAULT = 10000;
+    protected const int FULLNESS_THRESHOLD_1 = 5000;
+    protected const int FULLNESS_THRESHOLD_2 = 2500;
     public int happiness { get; protected set; }
-    protected const int HAPPINESS_DEFAULT = 240;
-    protected const int HAPPINESS_THRESHOLD_1 = 160;
-    protected const int HAPPINESS_THRESHOLD_2 = 0;
+    protected const int HAPPINESS_DEFAULT = 10000;
+    protected const int HAPPINESS_THRESHOLD_1 = 5000;
+    protected const int HAPPINESS_THRESHOLD_2 = 2500;
     public int fullnessDecreaseRate { get; protected set; }
     public int tirednessDecreaseRate { get; protected set; }
     public int happinessDecreaseRate { get; protected set; }
@@ -665,10 +665,10 @@ public class Character : ILeader, IPointOfInterest {
     public void InitialCharacterPlacement(LocationGridTile tile) {
         tiredness = TIREDNESS_DEFAULT;
         if (role.roleType != CHARACTER_ROLE.MINION) {
-            //Fullness value between 1300 and 1440.
-            SetFullness(UnityEngine.Random.Range(1300, FULLNESS_DEFAULT + 1));
-            //Happiness value between 100 and 240.
-            SetHappiness(UnityEngine.Random.Range(100, HAPPINESS_DEFAULT + 1));
+            //Fullness value between 2600 and full.
+            SetFullness(UnityEngine.Random.Range(2600, FULLNESS_DEFAULT + 1));
+            //Happiness value between 2600 and full.
+            SetHappiness(UnityEngine.Random.Range(2600, HAPPINESS_DEFAULT + 1));
         } else {
             fullness = FULLNESS_DEFAULT;
             happiness = HAPPINESS_DEFAULT;
@@ -4575,13 +4575,15 @@ public class Character : ILeader, IPointOfInterest {
             AdjustMoodValue(-35, trait, trait.gainedFromDoing);
         } else if (trait.name == "Encumbered") {
             AdjustSpeedModifier(-0.5f);
+        } else if (trait.name == "Vampiric") {
+            AdjustDoNotGetTired(1);
         }
         //else if (trait.name == "Hungry") {
         //    CreateFeedJob();
         //} else if (trait.name == "Starving") {
         //    MoveFeedJobToTopPriority();
         //}
-        if(trait.effects != null) {
+        if (trait.effects != null) {
             for (int i = 0; i < trait.effects.Count; i++) {
                 TraitEffect traitEffect = trait.effects[i];
                 if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
@@ -4668,6 +4670,8 @@ public class Character : ILeader, IPointOfInterest {
             AdjustMoodValue(20, trait, trait.gainedFromDoing);
         } else if (trait.name == "Encumbered") {
             AdjustSpeedModifier(0.5f);
+        } else if (trait.name == "Vampiric") {
+            AdjustDoNotGetTired(-1);
         }
 
         if (trait.effects != null) {
@@ -6067,7 +6071,7 @@ public class Character : ILeader, IPointOfInterest {
 
     #region Needs
     public bool HasNeeds() {
-        return race != RACE.SKELETON && characterClass.className != "Zombie";
+        return race != RACE.SKELETON && characterClass.className != "Zombie" && !returnedToLife;
     }
     protected void DecreaseNeeds() {
         if (!HasNeeds()) {

@@ -246,9 +246,9 @@ public class PlayerUI : MonoBehaviour {
         //saveGameButton.gameObject.SetActive(false);
 
         //Kill count UI
-        UpdateKillCountActiveState();
+        //UpdateKillCountActiveState();
         //LoadKillCountCharacterItems(area);
-        UpdateKillCount();
+        //UpdateKillCount();
     }
     private void OnAreaMapClosed(Area area) {
         UpdateSummonsInteraction();
@@ -256,7 +256,7 @@ public class PlayerUI : MonoBehaviour {
         startInvasionButton.gameObject.SetActive(false);
         //saveGameButton.gameObject.SetActive(true);
 
-        UpdateKillCountActiveState();
+        //UpdateKillCountActiveState();
     }
     private void OnKeyPressed(KeyCode pressedKey) {
         if (pressedKey == KeyCode.Escape) {
@@ -279,32 +279,24 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void OnCharacterDied(Character character) {
-        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
-            UpdateKillCount();
-            OrderKillSummaryItems();
-        }
+        UpdateKillCount();
+        OrderKillSummaryItems();
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
-        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
-            if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-                UpdateKillCount();
-                OrderKillSummaryItems();
-            }
+        if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+            UpdateKillCount();
+            OrderKillSummaryItems();
         }
     }
     private void OnCharacterLostTrait(Character character, Trait trait) {
-        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
-            if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
-                UpdateKillCount();
-                OrderKillSummaryItems();
-            }
-        }
-    }
-    private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
-        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+        if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
             UpdateKillCount();
             OrderKillSummaryItems();
         }
+    }
+    private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
+        UpdateKillCount();
+        OrderKillSummaryItems();
     }
     #endregion
 
@@ -1241,9 +1233,10 @@ public class PlayerUI : MonoBehaviour {
             item.SetCharacter(character);
         }
         OrderKillSummaryItems();
+        UpdateKillCount();
     }
     private void UpdateKillCount() {
-        killCountLbl.text = InteriorMapManager.Instance.currentlyShowingArea.areaResidents.Where(x => x.IsAble()).Count().ToString() + "/" + InteriorMapManager.Instance.currentlyShowingArea.citizenCount.ToString();
+        killCountLbl.text = LandmarkManager.Instance.mainSettlement.areaResidents.Where(x => x.IsAble()).Count().ToString() + "/" + LandmarkManager.Instance.mainSettlement.citizenCount.ToString();
     }
     private void OrderKillSummaryItems() {
         KillCountCharacterItem[] items = Utilities.GetComponentsInDirectChildren<KillCountCharacterItem>(killCountScrollView.content.gameObject);
@@ -1251,7 +1244,7 @@ public class PlayerUI : MonoBehaviour {
         List<KillCountCharacterItem> dead = new List<KillCountCharacterItem>();
         for (int i = 0; i < items.Length; i++) {
             KillCountCharacterItem currItem = items[i];
-            if (!currItem.character.IsAble() || currItem.character.faction != InteriorMapManager.Instance.currentlyShowingArea.owner) { //added checking for faction in cases that the character was raised from dead
+            if (!currItem.character.IsAble() || currItem.character.faction != LandmarkManager.Instance.mainSettlement.owner) { //added checking for faction in cases that the character was raised from dead
                 dead.Add(currItem);
             } else {
                 alive.Add(currItem);
