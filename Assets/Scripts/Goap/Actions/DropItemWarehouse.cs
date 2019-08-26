@@ -47,6 +47,7 @@ public class DropItemWarehouse : GoapAction {
         base.SetTargetStructure();
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is SPECIAL_TOKEN) {
             itemTypeToDeposit = (SPECIAL_TOKEN) otherData[0];
             preconditions.Clear();
@@ -108,4 +109,22 @@ public class DropItemWarehouse : GoapAction {
         //return true;
     }
     #endregion
+}
+
+public class DropItemWarehouseData : GoapActionData {
+    public DropItemWarehouseData() : base(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (actor != poiTarget) {
+            return false;
+        }
+        //there must still be an unoccupied tile in the target warehouse
+        LocationStructure warehouse = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        if (warehouse == null) {
+            return false;
+        }
+        return warehouse.unoccupiedTiles.Count > 0;
+    }
 }

@@ -81,3 +81,24 @@ public class RememberFallen : GoapAction {
     }
     #endregion
 }
+
+public class RememberFallenData : GoapActionData {
+    public RememberFallenData() : base(INTERACTION_TYPE.REMEMBER_FALLEN) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
+            return false;
+        }
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        if (poiTarget is Tombstone) {
+            Tombstone tombstone = poiTarget as Tombstone;
+            Character target = tombstone.character;
+            return actor.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.POSITIVE);
+        }
+        return false;
+    }
+}

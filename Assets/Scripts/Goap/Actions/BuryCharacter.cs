@@ -54,6 +54,7 @@ public class BuryCharacter : GoapAction {
         targetCharacter.SetCurrentStructureLocation(targetCharacter.gridTileLocation.structure, false);
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is LocationStructure) {
             _targetStructure = otherData[0] as LocationStructure;
             SetTargetStructure();

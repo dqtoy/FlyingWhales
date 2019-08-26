@@ -10,10 +10,11 @@ public class GameManager : MonoBehaviour {
 
     public static string[] daysInWords = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
     public static TIME_IN_WORDS[] timeInWords = new TIME_IN_WORDS[] {
-        TIME_IN_WORDS.AFTER_MIDNIGHT, TIME_IN_WORDS.AFTER_MIDNIGHT
-        , TIME_IN_WORDS.MORNING, TIME_IN_WORDS.MORNING
-        , TIME_IN_WORDS.AFTERNOON, TIME_IN_WORDS.AFTERNOON
-        , TIME_IN_WORDS.EARLY_NIGHT, TIME_IN_WORDS.LATE_NIGHT };
+        TIME_IN_WORDS.AFTER_MIDNIGHT
+        , TIME_IN_WORDS.MORNING
+        , TIME_IN_WORDS.AFTERNOON
+        , TIME_IN_WORDS.EARLY_NIGHT
+        , TIME_IN_WORDS.LATE_NIGHT };
 
 
     public int month;
@@ -329,26 +330,50 @@ public class GameManager : MonoBehaviour {
         return hour + ":" + minutes.ToString("D2") + " " + timeOfDay;
     }
     public static TIME_IN_WORDS GetTimeInWordsOfTick(int tick) {
-        float time = tick / (float)ticksPerTimeInWords;
-        int intTime = (int) time;
-        if(time == intTime && intTime > 0) {
-            //This will make sure that the 12th tick is still part of the previous time in words
-            //Example: In ticks 1 - 11, the intTime is 0 (AFTER_MIDNIGHT_1), however, in tick 12, intTime is already 1 (AFTER_MIDNIGHT_2), but we still want it to be part of AFTER_MIDNIGHT_1
-            //Hence, this checker ensures that tick 12's intTime is 0
-            intTime -= 1;
+        if (tick >= 1 && GameManager.Instance.tick <= 72) {
+            return timeInWords[0];
+        } else if (tick >= 73 && GameManager.Instance.tick <= 144) {
+            return timeInWords[1];
+        } else if (tick >= 145 && tick <= 204) {
+            return timeInWords[2];
+        } else if (tick >= 205 && tick <= 264) {
+            return timeInWords[3];
+        } else if (tick >= 265 && tick <= 288) {
+            return timeInWords[4];
         }
-        return timeInWords[intTime];
+        throw new System.Exception(GameManager.Instance.tick + " tick has no time in words!");
+        //float time = tick / (float)ticksPerTimeInWords;
+        //int intTime = (int) time;
+        //if(time == intTime && intTime > 0) {
+        //    //This will make sure that the 12th tick is still part of the previous time in words
+        //    //Example: In ticks 1 - 11, the intTime is 0 (AFTER_MIDNIGHT_1), however, in tick 12, intTime is already 1 (AFTER_MIDNIGHT_2), but we still want it to be part of AFTER_MIDNIGHT_1
+        //    //Hence, this checker ensures that tick 12's intTime is 0
+        //    intTime -= 1;
+        //}
+        //return timeInWords[intTime];
     }
     public static TIME_IN_WORDS GetCurrentTimeInWordsOfTick() {
-        float time = GameManager.Instance.tick / (float) ticksPerTimeInWords;
-        int intTime = (int) time;
-        if (time == intTime && intTime > 0) {
-            //This will make sure that the 12th tick is still part of the previous time in words
-            //Example: In ticks 1 - 11, the intTime is 0 (AFTER_MIDNIGHT_1), however, in tick 12, intTime is already 1 (AFTER_MIDNIGHT_2), but we still want it to be part of AFTER_MIDNIGHT_1
-            //Hence, this checker ensures that tick 12's intTime is 0
-            intTime -= 1;
+        if(GameManager.Instance.tick >= 1 && GameManager.Instance.tick <= 72) {
+            return timeInWords[0];
+        } else if (GameManager.Instance.tick >= 73 && GameManager.Instance.tick <= 144) {
+            return timeInWords[1];
+        } else if (GameManager.Instance.tick >= 145 && GameManager.Instance.tick <= 204) {
+            return timeInWords[2];
+        } else if (GameManager.Instance.tick >= 205 && GameManager.Instance.tick <= 264) {
+            return timeInWords[3];
+        } else if (GameManager.Instance.tick >= 265 && GameManager.Instance.tick <= 288) {
+            return timeInWords[4];
         }
-        return timeInWords[intTime];
+        throw new System.Exception(GameManager.Instance.tick + " tick has no time in words!");
+        //float time = GameManager.Instance.tick / (float) ticksPerTimeInWords;
+        //int intTime = (int) time;
+        //if (time == intTime && intTime > 0) {
+        //    //This will make sure that the 12th tick is still part of the previous time in words
+        //    //Example: In ticks 1 - 11, the intTime is 0 (AFTER_MIDNIGHT_1), however, in tick 12, intTime is already 1 (AFTER_MIDNIGHT_2), but we still want it to be part of AFTER_MIDNIGHT_1
+        //    //Hence, this checker ensures that tick 12's intTime is 0
+        //    intTime -= 1;
+        //}
+        //return timeInWords[intTime];
     }
     public int GetTicksBasedOnHour(int hours) {
         return ticksPerHour * hours;

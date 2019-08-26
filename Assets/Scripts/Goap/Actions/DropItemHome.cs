@@ -57,3 +57,13 @@ public class DropItemHome : GoapAction {
     }
     #endregion
 }
+
+public class DropItemHomeData : GoapActionData {
+    public DropItemHomeData() : base(INTERACTION_TYPE.DROP_ITEM) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor.homeStructure != null;
+    }
+}

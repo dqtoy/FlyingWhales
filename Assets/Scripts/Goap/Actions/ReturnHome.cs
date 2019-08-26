@@ -61,3 +61,8 @@ public class ReturnHome : GoapAction {
     }
     #endregion
 }
+
+public class ReturnHomeData : GoapActionData {
+    public ReturnHomeData() : base(INTERACTION_TYPE.RETURN_HOME) {
+    }
+}

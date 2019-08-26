@@ -81,3 +81,16 @@ public class SleepOutside : GoapAction {
     //}
     #endregion
 }
+
+public class SleepOutsideData : GoapActionData {
+    public SleepOutsideData() : base(INTERACTION_TYPE.SLEEP_OUTSIDE) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        return actor == poiTarget;
+    }
+}

@@ -118,3 +118,8 @@ public class TransformToWolfForm : GoapAction {
     }
     #endregion
 }
+
+public class TransformToWolfFormData : GoapActionData {
+    public TransformToWolfFormData() : base(INTERACTION_TYPE.TRANSFORM_TO_WOLF) {
+    }
+}

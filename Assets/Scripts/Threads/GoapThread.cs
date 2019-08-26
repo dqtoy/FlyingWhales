@@ -144,8 +144,9 @@ public class GoapThread : Multithread {
 
         //List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
         List<GoapAction> usableActions = new List<GoapAction>();
+
         //Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>> orderedAwareness = actor.OrderAwarenessByStructure();
-        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>(actor.awareness);
+        Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness = actor.awareness;
         foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in awareness) {
             if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 for (int i = 0; i < kvp.Value.Count; i++) {
@@ -155,14 +156,14 @@ public class GoapThread : Multithread {
                         //i--;
                         if (allowDeadTargets) {
                             //if dead targets are allowed, advertise actions from dead targets
-                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActorFromDeadCharacter(actor);
+                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActorFromDeadCharacter(actor, otherData);
                             if (awarenessActions != null && awarenessActions.Count > 0) {
                                 usableActions.AddRange(awarenessActions);
                             }
                         }
                     } else {
                         if (character.specificLocation == actor.specificLocation || character == actor || actor.IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
-                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActor(actor);
+                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActor(actor, otherData);
                             if (awarenessActions != null && awarenessActions.Count > 0) {
                                 usableActions.AddRange(awarenessActions);
                             }
@@ -170,46 +171,19 @@ public class GoapThread : Multithread {
                     }
                 }
             } else if (kvp.Key == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                //NOTE: Not happy about this, very unoptimized. Need to think of a way to make this more performant.
-                Dictionary<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>> sorted = new Dictionary<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>>();
-                for (int i = 0; i < kvp.Value.Count; i++) {
-                    IPointOfInterest currAwareness = kvp.Value[i];
+                List<IPointOfInterest> shuffledPOIs = Utilities.Shuffle(kvp.Value);
+                for (int i = 0; i < shuffledPOIs.Count; i++) {
+                    IPointOfInterest currAwareness = shuffledPOIs[i];
                     if (currAwareness.gridTileLocation != null && currAwareness.gridTileLocation.structure != null) {
-                        LocationStructure objStructure = currAwareness.gridTileLocation.structure;
-                        if (!sorted.ContainsKey(objStructure)) {
-                            sorted.Add(objStructure, new Dictionary<INTERACTION_TYPE, List<GoapAction>>());
-                        }
-                        List<GoapAction> awarenessActions = currAwareness.AdvertiseActionsToActor(actor);
-                        if (awarenessActions != null) {
-                            for (int j = 0; j < awarenessActions.Count; j++) {
-                                GoapAction currAction = awarenessActions[j];
-                                if (!sorted[objStructure].ContainsKey(currAction.goapType)) {
-                                    sorted[objStructure].Add(currAction.goapType, new List<GoapAction>());
-                                }
-                                sorted[objStructure][currAction.goapType].Add(currAction);
-                            }
-                        }
-                    }
-                }
-                foreach (KeyValuePair<LocationStructure, Dictionary<INTERACTION_TYPE, List<GoapAction>>> structureActions in sorted) {
-                    foreach (KeyValuePair<INTERACTION_TYPE, List<GoapAction>> actions in structureActions.Value) {
-                        if (actions.Key == INTERACTION_TYPE.CHOP_WOOD) {
-                            //allow all chop wood actions to be advertised
-                            usableActions.AddRange(actions.Value);
-                        } else if (actions.Key == INTERACTION_TYPE.DOUSE_FIRE) {
-                            //allow all douse fire actions to be advertised
-                            usableActions.AddRange(actions.Value);
-                        } else if (actions.Value.Count > 1) { //if there are multiple advertised actions of a type in the given structure, pick a random one
-                            GoapAction chosenAction = actions.Value[Utilities.rng.Next(0, actions.Value.Count)];
-                            usableActions.Add(chosenAction);
-                        } else if (actions.Value.Count == 1) { //else if there is only one, just use that
-                            usableActions.Add(actions.Value[0]);
+                        List<GoapAction> awarenessActions = currAwareness.AdvertiseActionsToActor(actor, otherData);
+                        if (awarenessActions != null && awarenessActions.Count > 0) {
+                            usableActions.AddRange(awarenessActions);
                         }
                     }
                 }
             } else {
                 for (int i = 0; i < kvp.Value.Count; i++) {
-                    List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor);
+                    List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor, otherData);
                     if (awarenessActions != null && awarenessActions.Count > 0) {
                         usableActions.AddRange(awarenessActions);
                     }
@@ -217,45 +191,44 @@ public class GoapThread : Multithread {
             }
         }
 
-        //other data handling
-        if (otherData != null) {
-            log += "\nOTHER DATA: ";
-            for (int i = 0; i < usableActions.Count; i++) {
-                GoapAction currAction = usableActions[i];
-                if (otherData.ContainsKey(currAction.goapType)) {
-                    log += currAction.goapName + " (" + currAction.poiTarget.name + ")";
-                    if (currAction.InitializeOtherData(otherData[currAction.goapType])) {
-                        log += ": Initialized!";
-                        //if other data was initialized, check if the action still meets the needed requirements
-                        if (!currAction.CanSatisfyRequirements() || !currAction.CanSatisfyRequirementOnBuildGoapTree()) {
-                            //if it no longer does, add as invalid
-                            log += " Removing!, ";
-                            usableActions.RemoveAt(i);
-                            i--;
-                            continue;
-                        }
-                    }
-                    log += ", ";
-                }
-                if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
-                    log += "Universal " + currAction.goapName + " (" + currAction.poiTarget.name + ")";
-                    if (currAction.InitializeOtherData(otherData[INTERACTION_TYPE.NONE])) {
-                        log += ": Initialized!";
-                        //if other data was initialized, check if the action still meets the needed requirements
-                        if (!currAction.CanSatisfyRequirements() || !currAction.CanSatisfyRequirementOnBuildGoapTree()) {
-                            //if it no longer does, add as invalid
-                            log += " Removing!";
-                            usableActions.RemoveAt(i);
-                            i--;
-                        }
-                    }
-                    log += ", ";
-                }
-            }
-        } else {
-            log += "\nNO OTHER DATA";
-        }
-       
+        ////other data handling
+        //if (otherData != null) {
+        //    log += "\nOTHER DATA: ";
+        //    for (int i = 0; i < usableActions.Count; i++) {
+        //        GoapAction currAction = usableActions[i];
+        //        if (otherData.ContainsKey(currAction.goapType)) {
+        //            log += currAction.goapName + " (" + currAction.poiTarget.name + ")";
+        //            if (currAction.InitializeOtherData(otherData[currAction.goapType])) {
+        //                log += ": Initialized!";
+        //                //if other data was initialized, check if the action still meets the needed requirements
+        //                if (!currAction.CanSatisfyRequirements() || !currAction.CanSatisfyRequirementOnBuildGoapTree()) {
+        //                    //if it no longer does, add as invalid
+        //                    log += " Removing!, ";
+        //                    usableActions.RemoveAt(i);
+        //                    i--;
+        //                    continue;
+        //                }
+        //            }
+        //            log += ", ";
+        //        }
+        //        if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+        //            log += "Universal " + currAction.goapName + " (" + currAction.poiTarget.name + ")";
+        //            if (currAction.InitializeOtherData(otherData[INTERACTION_TYPE.NONE])) {
+        //                log += ": Initialized!";
+        //                //if other data was initialized, check if the action still meets the needed requirements
+        //                if (!currAction.CanSatisfyRequirements() || !currAction.CanSatisfyRequirementOnBuildGoapTree()) {
+        //                    //if it no longer does, add as invalid
+        //                    log += " Removing!";
+        //                    usableActions.RemoveAt(i);
+        //                    i--;
+        //                }
+        //            }
+        //            log += ", ";
+        //        }
+        //    }
+        //} else {
+        //    log += "\nNO OTHER DATA";
+        //}
 
         log += "\nUSABLE ACTIONS: ";
         List<GoapPlan> allPlans = new List<GoapPlan>();
@@ -402,20 +375,40 @@ public class GoapThread : Multithread {
                     if (character.isDead) {
                         //kvp.Value.RemoveAt(i);
                         //i--;
+                        if (allowDeadTargets) {
+                            //if dead targets are allowed, advertise actions from dead targets
+                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActorFromDeadCharacter(actor, otherData);
+                            if (awarenessActions != null && awarenessActions.Count > 0) {
+                                usableActions.AddRange(awarenessActions);
+                            }
+                        }
                     } else {
-                        if (character.specificLocation == actor.specificLocation || character == actor || actor.IsPOIInCharacterAwarenessList(character, recalculationPlan.goalCharacterTargets)) {
-                            List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor);
+                        if (character.specificLocation == actor.specificLocation || character == actor || actor.IsPOIInCharacterAwarenessList(character, characterTargetsAwareness)) {
+                            List<GoapAction> awarenessActions = character.AdvertiseActionsToActor(actor, otherData);
                             if (awarenessActions != null && awarenessActions.Count > 0) {
                                 usableActions.AddRange(awarenessActions);
                             }
                         }
                     }
                 }
+            } else if (kvp.Key == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                List<IPointOfInterest> shuffledPOIs = Utilities.Shuffle(kvp.Value);
+                for (int i = 0; i < shuffledPOIs.Count; i++) {
+                    IPointOfInterest currAwareness = shuffledPOIs[i];
+                    if (currAwareness.gridTileLocation != null && currAwareness.gridTileLocation.structure != null) {
+                        List<GoapAction> awarenessActions = currAwareness.AdvertiseActionsToActor(actor, otherData);
+                        if (awarenessActions != null && awarenessActions.Count > 0) {
+                            usableActions.AddRange(awarenessActions);
+                        }
+                    }
+                }
             } else {
                 for (int i = 0; i < kvp.Value.Count; i++) {
-                    List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor);
+                    List<GoapAction> awarenessActions = kvp.Value[i].AdvertiseActionsToActor(actor, otherData);
                     if (awarenessActions != null && awarenessActions.Count > 0) {
-                        usableActions.AddRange(awarenessActions);
+                        for (int j = 0; j < awarenessActions.Count; j++) {
+                            usableActions.AddRange(awarenessActions);
+                        }
                     }
                 }
             }
@@ -442,6 +435,28 @@ public class GoapThread : Multithread {
             log += "\nNO USABLE ACTIONS! FAILED TO RECALCULATE PLAN!";
         }
     }
+    private GoapAction CreateGoapActionAndInitializeOtherData(INTERACTION_TYPE type, IPointOfInterest poiTarget) {
+        object[] data = null;
+        if (otherData != null) {
+            if (otherData.ContainsKey(type)) {
+                data = otherData[type];
+            } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                data = otherData[INTERACTION_TYPE.NONE];
+            }
+        }
+
+        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(type, actor, poiTarget);
+        if(goapAction != null) {
+            if(data != null) {
+                goapAction.InitializeOtherData(data);
+            }
+            return goapAction;
+        } else {
+            throw new System.Exception("Goap action " + type.ToString() + " is null!");
+        }
+    }
+
+
     public void ReturnPlanFromGoapThread() {
         actor.ReceivePlanFromGoapThread(this);
     }

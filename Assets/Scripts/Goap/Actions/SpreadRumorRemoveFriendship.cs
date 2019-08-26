@@ -34,6 +34,7 @@ public class SpreadRumorRemoveFriendship : GoapAction {
         return 15;
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 2 && otherData[0] is Character && otherData[1] is List<Log>) {
             rumoredCharacter = otherData[0] as Character;
             //int dayTo = GameManager.days;
@@ -109,4 +110,28 @@ public class SpreadRumorRemoveFriendship : GoapAction {
         currentState.AddLogFiller(rumoredCharacter, rumoredCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
     }
     #endregion
+}
+
+public class SpreadRumorRemoveFriendshipData : GoapActionData {
+    public SpreadRumorRemoveFriendshipData() : base(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_FRIENDSHIP) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        Character rumoredCharacter = null;
+        List<Log> crimeMemoriesInvolvingRumoredCharacter = null;
+        if(otherData != null && otherData.Length == 2 && otherData[0] is Character && otherData[1] is List<Log>) {
+            rumoredCharacter = otherData[0] as Character;
+            crimeMemoriesInvolvingRumoredCharacter = otherData[1] as List<Log>;
+        }
+        if (rumoredCharacter != null) {
+            Character target = poiTarget as Character;
+            if (target.HasRelationshipOfTypeWith(rumoredCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
+                return actor != poiTarget && actor != rumoredCharacter 
+                    && crimeMemoriesInvolvingRumoredCharacter != null && crimeMemoriesInvolvingRumoredCharacter.Count > 0;
+            }
+            return false;
+        }
+        return actor != poiTarget;
+    }
 }

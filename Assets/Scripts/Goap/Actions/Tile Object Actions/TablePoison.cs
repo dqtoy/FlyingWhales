@@ -578,3 +578,29 @@ public class TablePoison : GoapAction {
         }
     }
 }
+
+public class TablePoisonData : GoapActionData {
+    public TablePoisonData() : base(INTERACTION_TYPE.TABLE_POISON) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = poiTarget.gridTileLocation;
+        //LocationGridTile knownLoc = actor.GetAwareness(poiTarget).knownGridLocation;
+        if (knownLoc.structure is Dwelling) {
+            Dwelling d = knownLoc.structure as Dwelling;
+            if (d.residents.Count == 0) {
+                return false;
+            }
+            Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
+            if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
+                return false; //to prevent poisoning a table that has been already poisoned by this character
+            }
+            return !d.IsResident(actor);
+        }
+        return false;
+    }
+}

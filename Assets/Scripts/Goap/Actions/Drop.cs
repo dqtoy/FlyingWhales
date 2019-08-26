@@ -46,6 +46,7 @@ public class Drop : GoapAction {
         actor.ownParty.RemoveCharacter(targetCharacter);
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is LocationStructure) {
             structureToBeDropped = otherData[0] as LocationStructure;
             return true;
@@ -85,4 +86,14 @@ public class Drop : GoapAction {
         AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
     }
     #endregion
+}
+
+public class DropData : GoapActionData {
+    public DropData() : base(INTERACTION_TYPE.DROP) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor != poiTarget;
+    }
 }

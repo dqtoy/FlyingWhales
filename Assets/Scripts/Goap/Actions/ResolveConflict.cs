@@ -69,3 +69,18 @@ public class ResolveConflict : GoapAction {
     }
     #endregion
 }
+
+public class ResolveConflictData : GoapActionData {
+    public ResolveConflictData() : base(INTERACTION_TYPE.RESOLVE_CONFLICT) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool hasEnemy = false;
+        if (poiTarget is Character) {
+            Character targetCharacter = poiTarget as Character;
+            hasEnemy = targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY);
+        }
+        return actor != poiTarget && hasEnemy && actor.GetNormalTrait("Diplomatic") != null;
+    }
+}

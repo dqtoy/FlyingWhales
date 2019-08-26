@@ -22,8 +22,10 @@ public class CraftItemGoap : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = ItemManager.Instance.itemData[craftedItem].craftCost, targetPOI = actor }, HasSupply);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = craftedItem.ToString(), targetPOI = actor });
+        if (hasSetCraftedItem) {
+            AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = ItemManager.Instance.itemData[craftedItem].craftCost, targetPOI = actor }, HasSupply);
+            AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = craftedItem.ToString(), targetPOI = actor });
+        }
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
@@ -34,22 +36,28 @@ public class CraftItemGoap : GoapAction {
     }
     protected override void CreateThoughtBubbleLog() {
         base.CreateThoughtBubbleLog();
-        thoughtBubbleLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
-        thoughtBubbleMovingLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
-        planLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+        if (hasSetCraftedItem) {
+            thoughtBubbleLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+            thoughtBubbleMovingLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+            planLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
 
-        thoughtBubbleLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
-        thoughtBubbleMovingLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
-        planLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
+            thoughtBubbleLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
+            thoughtBubbleMovingLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
+            planLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
+        }
     }
-    //public override bool InitializeOtherData(object[] otherData) {
-    //    base.InitializeOtherData(otherData);
-    //    SetCraftedItem((SPECIAL_TOKEN)otherData[0]);
-    //    preconditions.Clear();
-    //    expectedEffects.Clear();
-    //    ConstructPreconditionsAndEffects();
-    //    return true;
-    //}
+    public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
+        if(otherData.Length == 1 && otherData[0] is SPECIAL_TOKEN) {
+            SetCraftedItem((SPECIAL_TOKEN) otherData[0]);
+            preconditions.Clear();
+            expectedEffects.Clear();
+            ConstructPreconditionsAndEffects();
+            CreateThoughtBubbleLog();
+            return true;
+        }
+        return base.InitializeOtherData(otherData);
+    }
     #endregion
 
     #region Preconditions
@@ -90,7 +98,7 @@ public class CraftItemGoap : GoapAction {
     }
     #endregion
 
-    public void SetCraftedItem(SPECIAL_TOKEN item) {
+    private void SetCraftedItem(SPECIAL_TOKEN item) {
         craftedItem = item;
         hasSetCraftedItem = true;
     }
@@ -108,9 +116,12 @@ public class CraftItemGoapData : GoapActionData {
         if (otherData == null) {
             return true;
         }
-        SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN) otherData[0];
-        //if the creafted enum has NOT been set, always allow, since we know that the character has the ability to craft an item, 
-        //because craft item action is only added to characters with traits that allow crafting
-        return craftedItem.CanBeCraftedBy(actor);
+        if (otherData.Length == 1 && otherData[0] is SPECIAL_TOKEN) {
+            SPECIAL_TOKEN craftedItem = (SPECIAL_TOKEN) otherData[0];
+            //if the creafted enum has NOT been set, always allow, since we know that the character has the ability to craft an item, 
+            //because craft item action is only added to characters with traits that allow crafting
+            return craftedItem.CanBeCraftedBy(actor);
+        }
+        return false;
     }
 }

@@ -75,3 +75,16 @@ public class DropSupply : GoapAction {
     //}
     #endregion
 }
+
+public class DropSupplyData : GoapActionData {
+    public DropSupplyData() : base(INTERACTION_TYPE.DROP_SUPPLY) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation == null) {
+            return false;
+        }
+        return actor.homeArea == poiTarget.gridTileLocation.structure.location;
+    }
+}

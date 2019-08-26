@@ -46,6 +46,7 @@ public class ReportCrime : GoapAction {
         return 3;
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 3 && otherData[0] is CRIME && otherData[1] is AlterEgoData && otherData[2] is GoapAction) {
             //GoapAction crime = otherData[0] as GoapAction;
             SetCrimeToReport((CRIME)otherData[0], otherData[1] as AlterEgoData, otherData[2] as GoapAction);
@@ -95,4 +96,27 @@ public class ReportCrime : GoapAction {
         return false;
     }
     #endregion
+}
+
+public class ReportCrimeData : GoapActionData {
+    public ReportCrimeData() : base(INTERACTION_TYPE.REPORT_CRIME) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        AlterEgoData criminal = null;
+        if(otherData != null && otherData.Length == 1 && otherData[0] is AlterEgoData) {
+            criminal = otherData[0] as AlterEgoData;
+        }
+        if (poiTarget is Character && poiTarget != actor && (criminal == null || poiTarget != criminal.owner)) {
+            Character character = poiTarget as Character;
+            if (character.GetNormalTrait("Restrained") != null) {
+                return false; //do not allow restrained
+            }
+            if (character.role.roleType == CHARACTER_ROLE.LEADER || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -66,3 +66,13 @@ public class Inspect : GoapAction {
     }
     #endregion
 }
+
+public class InspectData : GoapActionData {
+    public InspectData() : base(INTERACTION_TYPE.INSPECT) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+    }
+}

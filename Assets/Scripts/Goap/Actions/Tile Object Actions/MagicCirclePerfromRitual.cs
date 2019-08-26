@@ -75,3 +75,13 @@ public class MagicCirclePerformRitual : GoapAction {
     }
     #endregion
 }
+
+public class MagicCirclePerformRitualData : GoapActionData {
+    public MagicCirclePerformRitualData() : base(INTERACTION_TYPE.MAGIC_CIRCLE_PERFORM_RITUAL) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+    }
+}

@@ -52,3 +52,14 @@ public class RitualKilling : GoapAction {
     }
     #endregion
 }
+
+public class RitualKillingData : GoapActionData {
+    public RitualKillingData() : base(INTERACTION_TYPE.RITUAL_KILLING) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor != poiTarget && actor.GetNormalTrait("Serial Killer") != null;
+    }
+}
+

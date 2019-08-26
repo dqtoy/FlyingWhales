@@ -32,6 +32,7 @@ public class ShareInformation : GoapAction {
         return 3;
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is GoapAction) {
             eventToBeShared = otherData[0] as GoapAction;
             if (thoughtBubbleMovingLog != null) {
@@ -66,4 +67,15 @@ public class ShareInformation : GoapAction {
         return actor != target && target.role.roleType != CHARACTER_ROLE.BEAST;
     }
     #endregion
+}
+
+public class ShareInformationData : GoapActionData {
+    public ShareInformationData() : base(INTERACTION_TYPE.SHARE_INFORMATION) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        Character target = poiTarget as Character;
+        return actor != target && target.role.roleType != CHARACTER_ROLE.BEAST;
+    }
 }

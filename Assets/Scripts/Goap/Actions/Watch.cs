@@ -39,6 +39,7 @@ public class Watch : GoapAction {
         return 10;
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 1) {
             if(otherData[0] is GoapAction) {
                 actionBeingWatched = otherData[0] as GoapAction;
@@ -152,4 +153,15 @@ public class Watch : GoapAction {
         return actor != target && target.role.roleType != CHARACTER_ROLE.BEAST;
     }
     #endregion
+}
+
+public class WatchData : GoapActionData {
+    public WatchData() : base(INTERACTION_TYPE.WATCH) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        Character target = poiTarget as Character;
+        return actor != target && target.role.roleType != CHARACTER_ROLE.BEAST;
+    }
 }

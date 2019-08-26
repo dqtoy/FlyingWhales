@@ -101,3 +101,8 @@ public class FirstAidCharacter : GoapAction {
     }
     #endregion
 }
+
+public class FirstAidCharacterData : GoapActionData {
+    public FirstAidCharacterData() : base(INTERACTION_TYPE.FIRST_AID_CHARACTER) {
+    }
+}

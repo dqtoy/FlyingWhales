@@ -69,6 +69,7 @@ public class Daydream : GoapAction {
         }
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is ACTION_LOCATION_TYPE) {
             actionLocationType = (ACTION_LOCATION_TYPE) otherData[0];
             SetTargetStructure();

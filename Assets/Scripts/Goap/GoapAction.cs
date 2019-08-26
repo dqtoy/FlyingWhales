@@ -75,7 +75,7 @@ public class GoapAction {
     public int referenceCount { get; protected set; }
     public bool willAvoidCharactersWhileMoving { get; protected set; }
     public bool isStealth { get; protected set; }
-
+    public object[] otherData { get; protected set; }
 
     protected virtual bool isTargetMissing {
         get {
@@ -423,8 +423,8 @@ public class GoapAction {
     }
     public void Initialize() {
         SetTargetStructure();
-        ConstructRequirement();
-        ConstructRequirementOnBuildGoapTree();
+        //ConstructRequirement();
+        //ConstructRequirementOnBuildGoapTree();
         ConstructPreconditionsAndEffects();
         CreateThoughtBubbleLog();
         CreateStates();

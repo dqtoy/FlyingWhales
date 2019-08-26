@@ -85,3 +85,16 @@ public class RoamingToSteal : GoapAction {
         }
     }
 }
+
+public class RoamingToStealData : GoapActionData {
+    public RoamingToStealData() : base(INTERACTION_TYPE.ROAMING_TO_STEAL) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (actor == poiTarget) {
+            return true;
+        }
+        return false;
+    }
+}

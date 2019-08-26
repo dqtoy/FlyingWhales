@@ -364,3 +364,24 @@ public class StealFromCharacter : GoapAction {
     }
     #endregion
 }
+
+public class StealFromCharacterData : GoapActionData {
+    public StealFromCharacterData() : base(INTERACTION_TYPE.STEAL_CHARACTER) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        //exclude characters that the actor knows has no items.
+        Kleptomaniac kleptomaniacTrait = actor.GetNormalTrait("Kleptomaniac") as Kleptomaniac;
+        if (kleptomaniacTrait != null && kleptomaniacTrait.noItemCharacters.Contains(poiTarget as Character)) {
+            return false;
+        }
+        if (poiTarget != actor) {
+            return true;
+        }
+        return false;
+    }
+}

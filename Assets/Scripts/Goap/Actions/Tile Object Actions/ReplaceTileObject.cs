@@ -49,6 +49,7 @@ public class ReplaceTileObject : GoapAction {
         return 1;
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 2 && otherData[0] is TileObject && otherData[1] is LocationGridTile) {
             tileObjectToReplace = (TileObject) otherData[0];
             whereToPlace = (LocationGridTile) otherData[1];
@@ -90,4 +91,14 @@ public class ReplaceTileObject : GoapAction {
     }
     #endregion
 
+}
+
+public class ReplaceTileObjectData : GoapActionData {
+    public ReplaceTileObjectData() : base(INTERACTION_TYPE.REPLACE_TILE_OBJECT) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor == poiTarget;
+    }
 }

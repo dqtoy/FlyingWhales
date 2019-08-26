@@ -319,7 +319,7 @@ public class UIManager : MonoBehaviour {
         //dateLbl.SetText(GameManager.Instance.continuousDays + "/" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
         dateLbl.SetText("Day " + GameManager.Instance.continuousDays + "\n" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
         //timeLbl.SetText(GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick).ToString());
-        timeLbl.SetText("");
+        //timeLbl.SetText("");
 
         UpdateInteractableInfoUI();
         UpdateFactionInfo();

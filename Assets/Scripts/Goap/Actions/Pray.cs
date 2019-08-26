@@ -56,6 +56,7 @@ public class Pray : GoapAction {
         }
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is ACTION_LOCATION_TYPE) {
             actionLocationType = (ACTION_LOCATION_TYPE) otherData[0];
             SetTargetStructure();
@@ -85,4 +86,17 @@ public class Pray : GoapAction {
         return actor == poiTarget;
     }
     #endregion
+}
+
+public class PrayData : GoapActionData {
+    public PrayData() : base(INTERACTION_TYPE.PRAY) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        return actor == poiTarget;
+    }
 }

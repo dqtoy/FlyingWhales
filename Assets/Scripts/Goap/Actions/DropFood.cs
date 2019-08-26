@@ -79,3 +79,16 @@ public class DropFood : GoapAction {
     }
     #endregion
 }
+
+public class DropFoodData : GoapActionData {
+    public DropFoodData() : base(INTERACTION_TYPE.DROP_FOOD) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation == null) {
+            return false;
+        }
+        return actor.homeArea == poiTarget.gridTileLocation.structure.location;
+    }
+}

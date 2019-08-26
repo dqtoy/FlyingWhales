@@ -44,6 +44,7 @@ public class AskToStopJob : GoapAction {
         return Utilities.rng.Next(20, 45);
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is GoapPlanJob) {
             jobToStop = otherData[0] as GoapPlanJob;
             return true;

@@ -154,3 +154,49 @@ public class PlayGuitar : GoapAction {
     }
     #endregion
 }
+
+public class PlayGuitarData : GoapActionData {
+    public PlayGuitarData() : base(INTERACTION_TYPE.PLAY_GUITAR) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
+            return false;
+        }
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        if (actor.GetNormalTrait("MusicHater") != null) {
+            return false; //music haters will never play guitar
+        }
+        if (poiTarget.gridTileLocation == null) {
+            return false;
+        }
+        LocationGridTile knownLoc = poiTarget.gridTileLocation;
+        //**Advertised To**: Residents of the dwelling or characters with a positive relationship with a Resident
+        if (knownLoc.structure is Dwelling) {
+            if (actor.homeStructure == knownLoc.structure) {
+                return true;
+            } else {
+                Dwelling dwelling = knownLoc.structure as Dwelling;
+                if (dwelling.residents.Count > 0) {
+                    for (int i = 0; i < dwelling.residents.Count; i++) {
+                        Character currResident = dwelling.residents[i];
+                        if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+                            return true;
+                        }
+                    }
+                    //the actor does NOT have any positive relations with any resident
+                    return false;
+                } else {
+                    //in cases that the guitar is at a dwelling with no residents, always allow.
+                    return true;
+                }
+            }
+        } else {
+            //in cases that the guitar is not inside a dwelling, always allow.
+            return true;
+        }
+    }
+}

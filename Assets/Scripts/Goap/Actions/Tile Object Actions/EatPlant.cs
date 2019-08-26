@@ -82,3 +82,16 @@ public class EatPlant : GoapAction {
     }
     #endregion
 }
+
+public class EatPlantData : GoapActionData {
+    public EatPlantData() : base(INTERACTION_TYPE.EAT_PLANT) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+    }
+}

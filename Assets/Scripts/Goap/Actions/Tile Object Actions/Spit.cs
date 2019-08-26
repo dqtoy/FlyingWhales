@@ -113,3 +113,24 @@ public class Spit : GoapAction {
     }
     #endregion
 }
+
+public class SpitData : GoapActionData {
+    public SpitData() : base(INTERACTION_TYPE.SPIT) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
+            return false;
+        }
+        if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+            return false;
+        }
+        if (poiTarget is Tombstone) {
+            Tombstone tombstone = poiTarget as Tombstone;
+            Character target = tombstone.character;
+            return actor.HasRelationshipOfEffectWith(target, TRAIT_EFFECT.NEGATIVE);
+        }
+        return false;
+    }
+}

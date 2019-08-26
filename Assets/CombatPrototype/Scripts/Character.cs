@@ -4172,36 +4172,64 @@ public class Character : ILeader, IPointOfInterest {
         //} else if (characterClass.className == "Envy") {
         //    AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
         //}
+
         //Random Traits
-        int chance = UnityEngine.Random.Range(0, 100);
-        if (chance < 35 || role.roleType == CHARACTER_ROLE.CIVILIAN) { //ensured that all civilans are craftsmen
-            AddTrait("Craftsman");
+        string[] completelyRandomTraits = new string[] { "Curious", "Vigilant", "Doctor", "Kleptomaniac", "Diplomatic",
+        "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Craftsman", "Music Lover", "Music Hater", "Ugly" };
+
+        Trait randomTrait = AttributeManager.Instance.allTraits[completelyRandomTraits[UnityEngine.Random.Range(0, completelyRandomTraits.Length)]];
+
+        List<Trait> flawTraits = AttributeManager.Instance.GetAllTraitsOfType(TRAIT_TYPE.FLAW);
+        string chosenFlawTraitName = string.Empty;
+        if (flawTraits.Count > 0) {
+            if(randomTrait.type == TRAIT_TYPE.FLAW) {
+                flawTraits.Remove(randomTrait);
+            }
+            chosenFlawTraitName = flawTraits[UnityEngine.Random.Range(0, flawTraits.Count)].name;
         }
-        if (UnityEngine.Random.Range(0, 100) < 50) {
-            AddTrait("Curious");
+
+        List<Trait> buffTraits = AttributeManager.Instance.GetAllTraitsOfType(TRAIT_TYPE.BUFF);
+        string chosenBuffTraitName = string.Empty;
+        if (buffTraits.Count > 0) {
+            if (randomTrait.type == TRAIT_TYPE.BUFF) {
+                buffTraits.Remove(randomTrait);
+            }
+            chosenBuffTraitName = buffTraits[UnityEngine.Random.Range(0, buffTraits.Count)].name;
         }
-        if (UnityEngine.Random.Range(0, 100) < 30) {
-            AddTrait("Vigilant");
-        }
-        if (UnityEngine.Random.Range(0, 100) < 30) {
-            AddTrait("Doctor");
-        }
-        if (UnityEngine.Random.Range(0, 100) < 30) {
-            AddTrait("Diplomatic");
-        }
-        if (UnityEngine.Random.Range(0, 100) < 30) {
-            AddTrait("Fireproof");
-        } else {
-            AddTrait("Flammable");
-        }
-        if (UnityEngine.Random.Range(0, 2) == 0) {
-            AddTrait("MusicLover");
-        } else {
-            AddTrait("MusicHater");
-        }
-        if (UnityEngine.Random.Range(0, 100) < 15) {
-            AddTrait("Accident Prone");
-        }
+
+        AddTrait(chosenBuffTraitName);
+        AddTrait(chosenFlawTraitName);
+        AddTrait(randomTrait.name);
+
+        //int chance = UnityEngine.Random.Range(0, 100);
+        //if (chance < 35 || role.roleType == CHARACTER_ROLE.CIVILIAN) { //ensured that all civilans are craftsmen
+        //    AddTrait("Craftsman");
+        //}
+        //if (UnityEngine.Random.Range(0, 100) < 50) {
+        //    AddTrait("Curious");
+        //}
+        //if (UnityEngine.Random.Range(0, 100) < 30) {
+        //    AddTrait("Vigilant");
+        //}
+        //if (UnityEngine.Random.Range(0, 100) < 30) {
+        //    AddTrait("Doctor");
+        //}
+        //if (UnityEngine.Random.Range(0, 100) < 30) {
+        //    AddTrait("Diplomatic");
+        //}
+        //if (UnityEngine.Random.Range(0, 100) < 30) {
+        //    AddTrait("Fireproof");
+        //} else {
+        //    AddTrait("Flammable");
+        //}
+        //if (UnityEngine.Random.Range(0, 2) == 0) {
+        //    AddTrait("MusicLover");
+        //} else {
+        //    AddTrait("MusicHater");
+        //}
+        //if (UnityEngine.Random.Range(0, 100) < 15) {
+        //    AddTrait("Accident Prone");
+        //}
         AddTrait("Character Trait");
     }
     public void CreateInitialTraitsByRace() {
@@ -6604,49 +6632,91 @@ public class Character : ILeader, IPointOfInterest {
     #endregion
 
     #region Point Of Interest
-    public List<GoapAction> AdvertiseActionsToActor(Character actor) {
+    public List<GoapAction> AdvertiseActionsToActor(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
         if (poiGoapActions != null && poiGoapActions.Count > 0 && IsAvailable() && !isDead) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 INTERACTION_TYPE currType = poiGoapActions[i];
                 if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
-                    if (currType == INTERACTION_TYPE.CRAFT_ITEM) {
-                        Craftsman craftsman = GetNormalTrait("Craftsman") as Craftsman;
-                        for (int j = 0; j < craftsman.craftedItemNames.Length; j++) {
-                            CraftItemGoap goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this, false) as CraftItemGoap;
-                            goapAction.SetCraftedItem(craftsman.craftedItemNames[j]);
-                            goapAction.Initialize();
-                            if (goapAction.CanSatisfyRequirements() && goapAction.CanSatisfyRequirementOnBuildGoapTree()) {
-                                usableActions.Add(goapAction);
-                            }
-                        }
-                    } else {
-                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-                        if (goapAction == null) {
-                            throw new Exception("Goap action " + currType.ToString() + " is null!");
-                        }
-                        if (goapAction.CanSatisfyRequirements() && goapAction.CanSatisfyRequirementOnBuildGoapTree()) {
-                            usableActions.Add(goapAction);
+                    object[] data = null;
+                    if(otherData != null) {
+                        if (otherData.ContainsKey(currType)) {
+                            data = otherData[currType];
+                        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                            data = otherData[INTERACTION_TYPE.NONE];
                         }
                     }
+
+                    if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currType, actor, this, data)
+                        && InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)) {
+                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
+                        if (goapAction != null) {
+                            if (data != null) {
+                                goapAction.InitializeOtherData(data);
+                            }
+                            usableActions.Add(goapAction);
+                        } else {
+                            throw new System.Exception("Goap action " + currType.ToString() + " is null!");
+                        }
+                    }
+                    //if (currType == INTERACTION_TYPE.CRAFT_ITEM) {
+                    //    Craftsman craftsman = GetNormalTrait("Craftsman") as Craftsman;
+                    //    for (int j = 0; j < craftsman.craftedItemNames.Length; j++) {
+                    //        //CraftItemGoap goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this, false) as CraftItemGoap;
+                    //        //goapAction.SetCraftedItem(craftsman.craftedItemNames[j]);
+                    //        //goapAction.Initialize();
+                    //        object[] otherData = new object[] { craftsman.craftedItemNames[j] };
+                    //        if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currType, actor, this, otherData)
+                    //            && InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, otherData) {
+                    //            usableActions.Add(currType);
+                    //        }
+                    //    }
+                    //} else {
+                    //    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
+                    //    if (goapAction == null) {
+                    //        throw new Exception("Goap action " + currType.ToString() + " is null!");
+                    //    }
+                    //    if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currType, actor, this, null)
+                    //            && InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, null)) {
+                    //        usableActions.Add(goapAction);
+                    //    }
+                    //}
                 }
             }
             return usableActions;
         }
         return null;
     }
-    public List<GoapAction> AdvertiseActionsToActorFromDeadCharacter(Character actor) {
+    public List<GoapAction> AdvertiseActionsToActorFromDeadCharacter(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
         if (poiGoapActions != null && poiGoapActions.Count > 0) {
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 INTERACTION_TYPE currType = poiGoapActions[i];
                 if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
-                    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
-                    if (goapAction == null) {
-                        throw new Exception("Goap action " + currType.ToString() + " is null!");
+                    object[] data = null;
+                    if (otherData != null) {
+                        if (otherData.ContainsKey(currType)) {
+                            data = otherData[currType];
+                        } else if (otherData.ContainsKey(INTERACTION_TYPE.NONE)) {
+                            data = otherData[INTERACTION_TYPE.NONE];
+                        }
                     }
-                    if (goapAction.CanSatisfyRequirements() && goapAction.CanSatisfyRequirementOnBuildGoapTree()) {
-                        usableActions.Add(goapAction);
+                    //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
+                    //if (goapAction == null) {
+                    //    throw new Exception("Goap action " + currType.ToString() + " is null!");
+                    //}
+                    if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currType, actor, this, data)
+                        && InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)) {
+
+                        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(currType, actor, this);
+                        if (goapAction != null) {
+                            if (data != null) {
+                                goapAction.InitializeOtherData(data);
+                            }
+                            usableActions.Add(goapAction);
+                        } else {
+                            throw new System.Exception("Goap action " + currType.ToString() + " is null!");
+                        }
                     }
                     //if (currType == INTERACTION_TYPE.CRAFT_ITEM) {
                     //    Craftsman craftsman = GetTrait("Craftsman") as Craftsman;
@@ -6961,7 +7031,8 @@ public class Character : ILeader, IPointOfInterest {
                 log += "\n - Plan is currently being recalculated, skipping...";
                 continue; //skip plan
             }
-            if (RaceManager.Instance.CanCharacterDoGoapAction(this, plan.currentNode.action.goapType) && plan.currentNode.action.CanSatisfyRequirements()) {
+            if (RaceManager.Instance.CanCharacterDoGoapAction(this, plan.currentNode.action.goapType) 
+                && InteractionManager.Instance.CanSatisfyGoapActionRequirements(plan.currentNode.action.goapType, plan.currentNode.action.actor, plan.currentNode.action.poiTarget, plan.currentNode.action.otherData)) {
                 //if (plan.isBeingRecalculated) {
                 //    log += "\n - Plan is currently being recalculated, skipping...";
                 //    continue; //skip plan
@@ -7121,7 +7192,8 @@ public class Character : ILeader, IPointOfInterest {
                 SetCurrentAction(null);
                 return;
             }
-            if (currentAction.CanSatisfyRequirements() && currentAction.CanSatisfyAllPreconditions()) {
+            if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentAction.goapType, currentAction.actor, currentAction.poiTarget, currentAction.otherData) 
+                && currentAction.CanSatisfyAllPreconditions()) {
                 log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentAction.goapName + " to " + currentAction.poiTarget.name + " at " + currentAction.poiTarget.gridTileLocation?.ToString() ?? "No Tile Location";
                 PrintLogIfActive(log);
                 currentAction.PerformActualAction();

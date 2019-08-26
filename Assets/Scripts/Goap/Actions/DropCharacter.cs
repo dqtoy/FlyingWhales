@@ -147,3 +147,13 @@ public class DropCharacter : GoapAction {
     }
     #endregion
 }
+
+public class DropCharacterData : GoapActionData {
+    public DropCharacterData() : base(INTERACTION_TYPE.DROP_CHARACTER) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor != poiTarget;
+    }
+}

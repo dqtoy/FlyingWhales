@@ -53,6 +53,7 @@ public class CraftFurniture : GoapAction {
         }
     }
     public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
         if (otherData.Length == 2 && otherData[0] is LocationGridTile && otherData[1] is FURNITURE_TYPE) {
             SetTargetSpot(otherData[0] as LocationGridTile);
             SetFurnitureToCraft((FURNITURE_TYPE) otherData[1]);
@@ -119,9 +120,12 @@ public class CraftFurnitureData : GoapActionData {
         if(otherData == null) {
             return true;
         }
-        TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE) otherData[0];
-        //if the creafted enum has NOT been set, always allow, since we know that the character has the ability to craft furniture 
-        //because craft furniture action is only added to characters with traits that allow crafting
-        return furnitureToCreate.CanBeCraftedBy(actor);
+        if (otherData.Length == 1 && otherData[0] is TILE_OBJECT_TYPE) {
+            TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE) otherData[0];
+            //if the creafted enum has NOT been set, always allow, since we know that the character has the ability to craft furniture 
+            //because craft furniture action is only added to characters with traits that allow crafting
+            return furnitureToCreate.CanBeCraftedBy(actor);
+        }
+        return false;
     }
 }

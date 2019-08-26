@@ -85,3 +85,16 @@ public class HuntingToDrinkBlood : GoapAction {
         }
     }
 }
+
+public class HuntingToDrinkBloodData : GoapActionData {
+    public HuntingToDrinkBloodData() : base(INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD) {
+        requirementAction = Requirement;
+    }
+
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        if (actor == poiTarget) {
+            return true;
+        }
+        return false;
+    }
+}
