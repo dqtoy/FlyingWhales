@@ -7,10 +7,21 @@ public class Drink : GoapAction {
 
     public Drink(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //shouldIntelNotificationOnlyIfActorIsActive = true;
-        validTimeOfDays = new TIME_IN_WORDS[] {
-            TIME_IN_WORDS.EARLY_NIGHT,
-            TIME_IN_WORDS.LATE_NIGHT,
-        };
+        if (actor.GetNormalTrait("Alcoholic") != null) {
+            validTimeOfDays = new TIME_IN_WORDS[] {
+                TIME_IN_WORDS.MORNING,
+                TIME_IN_WORDS.AFTERNOON,
+                TIME_IN_WORDS.AFTER_MIDNIGHT,
+                TIME_IN_WORDS.EARLY_NIGHT,
+                TIME_IN_WORDS.LATE_NIGHT,
+            };
+        } else {
+            validTimeOfDays = new TIME_IN_WORDS[] {
+                TIME_IN_WORDS.EARLY_NIGHT,
+                TIME_IN_WORDS.LATE_NIGHT,
+            };
+        }
+        
         actionIconString = GoapActionStateDB.Drink_Icon;
         isNotificationAnIntel = false;
     }

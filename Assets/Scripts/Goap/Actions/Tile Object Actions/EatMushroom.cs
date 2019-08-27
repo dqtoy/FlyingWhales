@@ -56,7 +56,7 @@ public class EatMushroom : GoapAction {
         //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
-        actor.AdjustFullness(8);
+        actor.AdjustFullness(520);
     }
     private void AfterEatSuccess() {
         actor.AdjustDoNotGetHungry(-1);

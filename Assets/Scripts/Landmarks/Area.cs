@@ -1319,7 +1319,7 @@ public class Area {
         jobQueue.AddJobInQueue(job);
     }
     private bool CanMoveOut(Character character, JobQueueItem item) {
-        return character.role.roleType != CHARACTER_ROLE.LEADER;
+        return character.role.roleType != CHARACTER_ROLE.LEADER && GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick) == TIME_IN_WORDS.MORNING; //Only non-leaders can take move out job, and it must also be in the morning time.
     }
     #endregion
 

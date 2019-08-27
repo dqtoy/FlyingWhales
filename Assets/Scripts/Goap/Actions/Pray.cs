@@ -12,6 +12,10 @@ public class Pray : GoapAction {
     public Pray(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PRAY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         this.goapName = "Pray";
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
+        validTimeOfDays = new TIME_IN_WORDS[] {
+            TIME_IN_WORDS.EARLY_NIGHT,
+            TIME_IN_WORDS.LATE_NIGHT,
+        };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
@@ -71,7 +75,7 @@ public class Pray : GoapAction {
         actor.AdjustDoNotGetLonely(1);
     }
     public void PerTickPraySuccess() {
-        actor.AdjustHappiness(13);
+        actor.AdjustHappiness(160);
     }
     public void AfterPraySuccess() {
         actor.AdjustDoNotGetLonely(-1);

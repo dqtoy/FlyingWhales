@@ -51,11 +51,11 @@ public class Feed : GoapAction {
     private void PreFeedSuccess() {
         //currentState.AddLogFiller(_target, _target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         _target.AdjustDoNotGetHungry(1);
-        actor.AdjustSupply(-10);
+        actor.AdjustFood(-20);
         currentState.SetIntelReaction(FeedSuccessReactions);
     }
     private void PerTickFeedSuccess() {
-        _target.AdjustFullness(12);
+        _target.AdjustFullness(585);
     }
     private void AfterFeedSuccess() {
         _target.AdjustDoNotGetHungry(-1);
