@@ -15,6 +15,7 @@ public class RegionInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI worldObjLbl;
     [SerializeField] private Button invadeBtn;
     [SerializeField] private Image invadeProgress;
+    [SerializeField] private CharacterPortrait invader;
 
     [Header("Characters")]
     [SerializeField] private ScrollRect charactersScrollView;
@@ -26,6 +27,13 @@ public class RegionInfoUI : UIMenu {
     [SerializeField] private GameObject eventListItemPrefab;
     [SerializeField] private TextMeshProUGUI eventDesctiptionLbl;
     [SerializeField] private Button spawnEventBtn;
+
+    [Header("Invasion")]
+    [SerializeField] private GameObject invConfrimationGO;
+    [SerializeField] private TextMeshProUGUI invDescriptionLbl;
+    [SerializeField] private MinionPicker invMinionPicker;
+    [SerializeField] private Button startInvBtn;
+
 
     public Region activeRegion { get; private set; }
 
@@ -108,13 +116,43 @@ public class RegionInfoUI : UIMenu {
         if (activeRegion == PlayerManager.Instance.player.invadingRegion) {
             invadeProgress.gameObject.SetActive(true);
             invadeProgress.fillAmount = ((float)activeRegion.ticksInInvasion / (float)activeRegion.mainLandmark.invasionTicks);
+            invader.GeneratePortrait(activeRegion.invadingMinion.character);
+            invader.gameObject.SetActive(true);
+            invader.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
         } else {
             invadeProgress.gameObject.SetActive(false);
+            invader.gameObject.SetActive(false);
         }
     }
     public void OnClickInvade() {
-        activeRegion.StartInvasion();
+        ShowInvasionConfirmation();
+    }
+    private Minion chosenMinionToInvade;
+    private void ShowInvasionConfirmation() {
+        invConfrimationGO.SetActive(true);
+        invDescriptionLbl.text = "Choose a minion that will invade " + activeRegion.name + ". NOTE: That minion will be unavailable while the invasion is ongoing.";
+        invMinionPicker.ShowMinionPicker(PlayerManager.Instance.player.minions, CanMinionInvade, ChooseMinionForInvasion);
+        chosenMinionToInvade = null;
+        UpdateStartInvasionBtn();
+    }
+    private bool CanMinionInvade(Minion minion) {
+        return minion.invadingLandmark == null;
+    }
+    private void UpdateStartInvasionBtn() {
+        startInvBtn.interactable = chosenMinionToInvade != null;
+    }
+    private void ChooseMinionForInvasion(Minion minion) {
+        chosenMinionToInvade = minion;
+        UpdateStartInvasionBtn();
+    }
+    public void StartInvasion() {
+        activeRegion.StartInvasion(chosenMinionToInvade);
         UpdateInvadeBtnState();
+        HideStartInvasionConfirmation();
+    }
+    public void HideStartInvasionConfirmation() {
+        chosenMinionToInvade = null;
+        invConfrimationGO.SetActive(false);
     }
     #endregion
 

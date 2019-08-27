@@ -9,10 +9,9 @@ public class Minion {
     public Character character { get; private set; }
     public int exp { get; private set; }
     public int indexDefaultSort { get; private set; }
-    //public int unlockedInterventionSlots { get; private set; }
     public CombatAbility combatAbility { get; private set; }
-
     public List<string> traitsToAdd { get; private set; }
+    public BaseLandmark invadingLandmark { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both settlement and non settlement landmarks
 
     public Minion(Character character, bool keepData) {
         this.character = character;
@@ -247,18 +246,20 @@ public class Minion {
     #endregion
 
     #region Invasion
-    public void StartInvasionProtocol() {
+    public void StartInvasionProtocol(Area area) {
         AddPendingTraits();
         Messenger.AddListener(Signals.TICK_STARTED, PerTickInvasion);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
+        SetInvadingLandmark(area.coreTile.landmarkOnTile);
     }
     public void StopInvasionProtocol() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
+        SetInvadingLandmark(null);
     }
     private void PerTickInvasion() {
         if (character.isDead) {
@@ -315,6 +316,9 @@ public class Minion {
         }
         character.DestroyMarker();
         SchedulingManager.Instance.ClearAllSchedulesBy(this.character);
+    }
+    public void SetInvadingLandmark(BaseLandmark landmark) {
+        invadingLandmark = landmark;
     }
     #endregion
 

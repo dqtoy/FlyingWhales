@@ -17,6 +17,8 @@ public class Region {
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> borderSprites;
 
+    public Minion invadingMinion { get; private set; }
+
     #region getter/setter
     public BaseLandmark mainLandmark {
         get { return coreTile.landmarkOnTile; }
@@ -157,18 +159,22 @@ public class Region {
     public bool CanBeInvaded() {
         return mainLandmark.HasCorruptedConnection() && !coreTile.isCorrupted && !PlayerManager.Instance.player.isInvadingRegion;
     }
-    public void StartInvasion() {
+    public void StartInvasion(Minion assignedMinion) {
         PlayerManager.Instance.player.SetInvadingRegion(this);
+        assignedMinion.SetInvadingLandmark(mainLandmark);
+        invadingMinion = assignedMinion;
+
         ticksInInvasion = 0;
         Messenger.AddListener(Signals.TICK_STARTED, PerInvasionTick);
         TimerHubUI.Instance.AddItem("Invasion of " + (mainLandmark.tileLocation.areaOfTile != null ? mainLandmark.tileLocation.areaOfTile.name : name), mainLandmark.invasionTicks, () => UIManager.Instance.ShowRegionInfo(this));
-        //Messenger.Broadcast(Signals.SHOW_TIMER_HUB_ITEM, "Invasion of " + (mainLandmark.tileLocation.areaOfTile != null ? mainLandmark.tileLocation.areaOfTile.name : name), mainLandmark.invasionTicks);
     }
     private void Invade() {
         //corrupt region
         mainLandmark?.InvadeThisLandmark();
         PlayerManager.Instance.AddTileToPlayerArea(coreTile);
         PlayerManager.Instance.player.SetInvadingRegion(null);
+        invadingMinion.SetInvadingLandmark(null);
+        invadingMinion = null;
     }
     private void PerInvasionTick() {
         if (ticksInInvasion >= mainLandmark.invasionTicks) {

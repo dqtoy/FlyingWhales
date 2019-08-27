@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class CharacterItem : PooledObject {
@@ -15,13 +16,28 @@ public class CharacterItem : PooledObject {
     [SerializeField] private TextMeshProUGUI nameLbl;
     [SerializeField] private TextMeshProUGUI subLbl;
     [SerializeField] private GameObject coverGO;
+    [SerializeField] private Button itemBtn;
+    [SerializeField] private Toggle toggle;
+    [SerializeField] private EventTrigger toggleEventTrigger;
+
+    private List<System.Action> _toggleClickActions;
+
+    public List<System.Action> toggleClickActions {
+        get {
+            if (_toggleClickActions == null) {
+                _toggleClickActions = new List<System.Action>();
+            }
+            return _toggleClickActions;
+        }
+    }
 
     public virtual void SetCharacter(Character character) {
         this.character = character;
         UpdateInfo();
+        AddOnClickAction(ShowCharacterInfo, true);
        
     }
-    public void ShowCharacterInfo() {
+    private void ShowCharacterInfo() {
         UIManager.Instance.ShowCharacterInfo(character);
     }
     protected virtual void UpdateInfo() {
@@ -42,5 +58,46 @@ public class CharacterItem : PooledObject {
     }
     public void HideItemInfo() {
         UIManager.Instance.HideSmallInfo();
+    }
+
+    public void SetCoverState(bool state, bool blockRaycasts = false) {
+        coverGO.SetActive(state);
+        if (state) { //only block raycasts if active
+            coverGO.GetComponent<Image>().raycastTarget = blockRaycasts;
+        }
+    }
+
+    #region Click Action
+    public void AddOnClickAction(System.Action onClick, bool clearAllOtherActions = false) {
+        if (clearAllOtherActions) {
+            itemBtn.onClick.RemoveAllListeners();
+        }
+        itemBtn.onClick.AddListener(onClick.Invoke);
+    }
+    public void AddOnToggleAction(System.Action onClick, bool clearAllOtherActions = false) {
+        if (clearAllOtherActions) {
+            toggleClickActions.Clear();
+        }
+        toggleClickActions.Add(onClick);
+    }
+    public void OnToggleClick() {
+        for (int i = 0; i < _toggleClickActions.Count; i++) {
+            _toggleClickActions[i].Invoke();
+        }
+    }
+    #endregion
+
+    public void SetAsToggle(ToggleGroup group) {
+        itemBtn.gameObject.SetActive(false);
+        toggle.gameObject.SetActive(true);
+        toggle.group = group;
+    }
+    public void ResetToggle() {
+        toggle.group = null;
+        toggle.isOn = false;
+    }
+    public void SetAsButton() {
+        itemBtn.gameObject.SetActive(true);
+        toggle.gameObject.SetActive(false);
     }
 }

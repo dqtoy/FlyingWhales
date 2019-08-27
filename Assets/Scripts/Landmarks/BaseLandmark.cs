@@ -87,7 +87,7 @@ public class BaseLandmark {
         charactersHere = new List<Character>();
         otherAfterInvasionActions = new List<System.Action>();
         invasionTicks = 2 * GameManager.ticksPerDay;
-        //invasionTicks = 2 * GameManager.ticksPerHour;
+        //invasionTicks = 2;
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
