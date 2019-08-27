@@ -12,7 +12,7 @@ public class Wolf : Summon {
         base.OnPlaceSummon(tile);
         CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, tile.parentAreaMap.area);
         state.SetIsUnending(true);
-        Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
     }
     protected override void IdlePlans() {
         base.IdlePlans();

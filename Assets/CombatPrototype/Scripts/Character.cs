@@ -124,6 +124,12 @@ public class Character : ILeader, IPointOfInterest {
     public int fullnessDecreaseRate { get; protected set; }
     public int tirednessDecreaseRate { get; protected set; }
     public int happinessDecreaseRate { get; protected set; }
+    public int fullnessForcedTick { get; protected set; }
+    public int tirednessForcedTick { get; protected set; }
+    public bool hasForcedFullness { get; protected set; }
+    public bool hasForcedTiredness { get; protected set; }
+    public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords { get; protected set; }
+    public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords { get; protected set; }
 
     public static readonly int TREE_AWARENESS_LIMIT = 5; //The number of Tree Objects a character can have in his awareness, everytime a character adds a new tree object to his/her awareness list, remove the oldest one if this limit is reached
 
@@ -623,7 +629,11 @@ public class Character : ILeader, IPointOfInterest {
         //memories = new Memories();
         trapStructure = new TrapStructure();
         SetPOIState(POI_STATE.ACTIVE);
-        
+        SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.AFTERNOON);
+        SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
+        SetFullnessForcedTick();
+        SetTirednessForcedTick();
+
         //for testing
         locationHistory = new List<string>();
         actionHistory = new List<string>();
@@ -665,10 +675,12 @@ public class Character : ILeader, IPointOfInterest {
     public void InitialCharacterPlacement(LocationGridTile tile) {
         tiredness = TIREDNESS_DEFAULT;
         if (role.roleType != CHARACTER_ROLE.MINION) {
-            //Fullness value between 2600 and full.
-            SetFullness(UnityEngine.Random.Range(2600, FULLNESS_DEFAULT + 1));
-            //Happiness value between 2600 and full.
-            SetHappiness(UnityEngine.Random.Range(2600, HAPPINESS_DEFAULT + 1));
+            ////Fullness value between 2600 and full.
+            //SetFullness(UnityEngine.Random.Range(2600, FULLNESS_DEFAULT + 1));
+            ////Happiness value between 2600 and full.
+            //SetHappiness(UnityEngine.Random.Range(2600, HAPPINESS_DEFAULT + 1));
+            fullness = FULLNESS_DEFAULT;
+            happiness = HAPPINESS_DEFAULT;
         } else {
             fullness = FULLNESS_DEFAULT;
             happiness = HAPPINESS_DEFAULT;
@@ -695,7 +707,8 @@ public class Character : ILeader, IPointOfInterest {
         }
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
-        Messenger.AddListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
+        Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.AddListener(Signals.HOUR_STARTED, DecreaseNeeds);
         //Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
@@ -713,7 +726,8 @@ public class Character : ILeader, IPointOfInterest {
     public virtual void UnsubscribeSignals() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
         //Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
-        Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration);
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
+        Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds);
         //Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
@@ -4296,15 +4310,15 @@ public class Character : ILeader, IPointOfInterest {
 
 #if !WORLD_CREATION_TOOL
         if (GameManager.Instance.gameHasStarted) {
-            if (trait.name == "Hungry" || trait.name == "Starving") {
+            if (trait.name == "Starving") {
                 //Debug.Log("Planning fullness recovery from gain trait");
-                PlanFullnessRecoveryActions();
-            } else if (trait.name == "Lonely" || trait.name == "Forlorn") {
+                PlanFullnessRecoveryActions(false);
+            } else if (trait.name == "Forlorn") {
                 //Debug.Log("Planning happiness recovery from gain trait");
-                PlanHappinessRecoveryActions();
-            } else if (trait.name == "Tired" || trait.name == "Exhausted") {
+                PlanHappinessRecoveryActions(false);
+            } else if (trait.name == "Exhausted") {
                 //Debug.Log("Planning tiredness recovery from gain trait");
-                PlanTirednessRecoveryActions();
+                PlanTirednessRecoveryActions(false);
             }
         }
 #endif
@@ -4919,46 +4933,10 @@ public class Character : ILeader, IPointOfInterest {
     public void RemoveInteractionType(INTERACTION_TYPE type) {
         currentInteractionTypes.Remove(type);
     }
-    private int GetMonthInteractionTick() {
-        int daysInMonth = 15; //GameManager.daysInMonth[GameManager.Instance.month]
-        int remainingDaysInMonth = GameManager.Instance.continuousDays % daysInMonth;
-        int startDay = GameManager.Instance.continuousDays + remainingDaysInMonth + 1;
-        return UnityEngine.Random.Range(startDay, startDay + daysInMonth);
-    }
-    public void SetDailyInteractionGenerationTick() {
-        //if(specificLocation == null || specificLocation.id == homeArea.id) {
-        //    _currentInteractionTick = GetMonthInteractionTick();
-        //} else {
-        //    int remainingDaysInWeek = GameManager.Instance.continuousDays % 7;
-        //    int startDay = GameManager.Instance.continuousDays + remainingDaysInWeek + 1;
-        //    _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 7);
-        //}
-        int remainingDaysInWeek = GameManager.ticksPerTimeInWords - (GameManager.Instance.tick % GameManager.ticksPerTimeInWords);
-        if (remainingDaysInWeek == GameManager.ticksPerTimeInWords) {
-            remainingDaysInWeek = 0;
+    protected void PerTickGoapPlanGeneration() {
+        if(isDead || minion != null) {
+            return;
         }
-        int startDay = GameManager.Instance.tick + remainingDaysInWeek + 1;
-        if (startDay > GameManager.ticksPerDay) {
-            startDay -= GameManager.ticksPerDay;
-        }
-        //if (startDay < 25) {
-        //    startDay = 25;
-        //}
-        _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + GameManager.ticksPerTimeInWords);
-    }
-    public void AdjustDailyInteractionGenerationTick() {
-        //Adjusts the tick trigger for this character to compensate for the 5 day delay interaction trigger
-        //Characters trigger AI once every 12 ticks but exclude any tick that will be reached by the 5-tick wait time of the preceding tick.
-        int remainingDaysInWeek = GameManager.ticksPerTimeInWords - (GameManager.Instance.tick % GameManager.ticksPerTimeInWords);
-        if (remainingDaysInWeek < GameManager.ticksPerTimeInWords) {
-            int startDay = GameManager.Instance.tick + remainingDaysInWeek + 1;
-            _currentInteractionTick = UnityEngine.Random.Range(GameManager.Instance.tick + 1, startDay);
-        }
-    }
-    public void SetDailyInteractionGenerationTick(int tick) {
-        _currentInteractionTick = tick;
-    }
-    protected void DailyGoapPlanGeneration() {
         //Check Trap Structure
         trapStructure.IncrementCurrentDuration(1);
 
@@ -4966,6 +4944,8 @@ public class Character : ILeader, IPointOfInterest {
         if(stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
             HPRecovery(0.0025f);
         }
+        PlanForcedFullnessRecovery();
+        PlanForcedFullnessRecovery();
 
         //This is to ensure that this character will not be idle forever
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
@@ -4975,26 +4955,15 @@ public class Character : ILeader, IPointOfInterest {
             PlanGoapActions();
         }
     }
+    private void DailyGoapProcesses() {
+        hasForcedFullness = false;
+        hasForcedTiredness = false;
+    }
     public bool CanPlanGoap() {
         return currentAction == null && _numOfWaitingForGoapThread <= 0;
     }
-    public void SetDailyGoapGenerationTick() {
-        int remainingDaysInWeek = 6 - (GameManager.Instance.tick % 6);
-        if (remainingDaysInWeek == 6) {
-            remainingDaysInWeek = 0;
-        }
-        int startDay = GameManager.Instance.tick + remainingDaysInWeek + 1;
-        if (startDay > GameManager.ticksPerDay) {
-            startDay -= GameManager.ticksPerDay;
-        }
-        _currentInteractionTick = UnityEngine.Random.Range(startDay, startDay + 6);
-    }
     public void PlanGoapActions() {
-        if (isDead) {
-            //StopDailyGoapPlanGeneration();
-            return;
-        }
-        if (minion != null || !IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || isWaitingForInteraction > 0) {
+        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
         if (stateComponent.currentState != null) {
@@ -5028,9 +4997,9 @@ public class Character : ILeader, IPointOfInterest {
         }
         SetHasAlreadyAskedForPlan(true);
         if (!PlanJobQueueFirst()) {
-            if (!PlanFullnessRecoveryActions()) {
-                if (!PlanTirednessRecoveryActions()) {
-                    if (!PlanHappinessRecoveryActions()) {
+            if (!PlanFullnessRecoveryActions(true)) {
+                if (!PlanTirednessRecoveryActions(true)) {
+                    if (!PlanHappinessRecoveryActions(true)) {
                         if (!PlanWorkActions()) {
                             string idleLog = OtherIdlePlans();
                             PrintLogIfActive(idleLog);
@@ -5062,7 +5031,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         return false;
     }
-    public bool PlanFullnessRecoveryActions() {
+    public bool PlanFullnessRecoveryActions(bool processOverrideLogic) {
         if(doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return false;
         }
@@ -5075,13 +5044,14 @@ public class Character : ILeader, IPointOfInterest {
                 if (isStarving) {
                     value = 100;
                     jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
-                } else {
-                    if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
-                        value = 50;
-                    } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-                        value = 50;
-                    }
-                }
+                } 
+                //else {
+                //    if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                //        value = 50;
+                //    } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+                //        value = 50;
+                //    }
+                //}
                 if (chance < value) {
                     GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
                     if(GetNormalTrait("Vampiric") != null) {
@@ -5089,27 +5059,15 @@ public class Character : ILeader, IPointOfInterest {
                     }else if (GetNormalTrait("Cannibal") != null) {
                         job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
                     }
-                    //if (hungryOrStarving.name == "Starving") {
-                    //    job.SetCannotOverrideJob(true);
-                    //    //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                    //}
                     job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job, false);
-                    //jobQueue.ProcessFirstJobInQueue(this);
-                    //StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.FULLNESS, true);
+                    jobQueue.AddJobInQueue(job, processOverrideLogic);
                     return true;
                 }
             } 
-            //else {
-            //    if (hungryOrStarving.name == "Starving") {
-            //        GoapPlanJob job = jobQueue.GetJob(JOB_TYPE.FULLNESS_RECOVERY, JOB_TYPE.FULLNESS_RECOVERY_STARVING) as GoapPlanJob;
-            //        job.SetCannotOverrideJob(true);
-            //    }
-            //}
         }
         return false;
     }
-    public bool PlanTirednessRecoveryActions() {
+    public bool PlanTirednessRecoveryActions(bool processOverrideLogic) {
         if (doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return false;
         }
@@ -5122,40 +5080,29 @@ public class Character : ILeader, IPointOfInterest {
                 if (isExhausted) {
                     value = 100;
                     jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
-                } else {
-                    if (isAtHomeArea) {
-                        if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-                            value = 15;
-                        } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-                            value = 65;
-                        } else if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-                            value = 65;
-                        }
-                    }
                 }
+                //else {
+                //    if (isAtHomeArea) {
+                //        if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+                //            value = 15;
+                //        } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+                //            value = 65;
+                //        } else if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+                //            value = 65;
+                //        }
+                //    }
+                //}
                 if (chance < value) {
                     GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                    //if (tiredOrExhausted.name == "Exhausted") {
-                    //    job.SetCannotOverrideJob(true);
-                    //    //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                    //}
                     job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job, false);
-                    //jobQueue.ProcessFirstJobInQueue(this);
-                    //StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.TIREDNESS, true);
+                    jobQueue.AddJobInQueue(job, processOverrideLogic);
                     return true;
                 }
             } 
-            //else {
-            //    if (tiredOrExhausted.name == "Exhausted") {
-            //        GoapPlanJob job = jobQueue.GetJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED) as GoapPlanJob;
-            //        job.SetCannotOverrideJob(true);
-            //    }
-            //}
         }
         return false;
     }
-    public bool PlanHappinessRecoveryActions() {
+    public bool PlanHappinessRecoveryActions(bool processOverrideLogic) {
         if (doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return false;
         }
@@ -5168,38 +5115,66 @@ public class Character : ILeader, IPointOfInterest {
                 if (isForlorn) {
                     value = 100;
                     jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
-                } else {
-                    if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
-                        value = 30;
-                    } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
-                        value = 45;
-                    } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-                        value = 45;
-                    } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-                        value = 30;
-                    }
-                }
+                } 
+                //else {
+                //    if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                //        value = 30;
+                //    } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                //        value = 45;
+                //    } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+                //        value = 45;
+                //    } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+                //        value = 30;
+                //    }
+                //}
                 if (chance < value) {
                     GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
-                    //if (lonelyOrForlorn.name == "Forlorn") {
-                    //    job.SetCannotOverrideJob(true);
-                    //    //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-                    //}
                     job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job, false);
-                    //jobQueue.ProcessFirstJobInQueue(this);
-                    //StartGOAP(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this }, this, GOAP_CATEGORY.HAPPINESS, true);
+                    jobQueue.AddJobInQueue(job, processOverrideLogic);
                     return true;
                 }
             } 
-            //else {
-            //    if (lonelyOrForlorn.name == "Forlorn") {
-            //        GoapPlanJob job = jobQueue.GetJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN) as GoapPlanJob;
-            //        job.SetCannotOverrideJob(true);
-            //    }
-            //}
         }
         return false;
+    }
+    private void PlanForcedFullnessRecovery() {
+        if (!hasForcedFullness && fullnessForcedTick != 0 && fullnessForcedTick == GameManager.Instance.tick && _doNotDisturb <= 0) {
+            if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
+                JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
+                if (isStarving) {
+                    jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
+                }
+                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                if (GetNormalTrait("Vampiric") != null) {
+                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                } else if (GetNormalTrait("Cannibal") != null) {
+                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                }
+                job.SetCancelOnFail(true);
+                bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
+                    || stateComponent.currentState != null || stateComponent.stateToDo != null;
+                jobQueue.AddJobInQueue(job, !willNotProcess);
+            }
+            hasForcedFullness = true;
+            SetFullnessForcedTick();
+        }
+    }
+    private void PlanForcedTirednessRecovery() {
+        if (!hasForcedTiredness && tirednessForcedTick != 0 && tirednessForcedTick == GameManager.Instance.tick && _doNotDisturb <= 0) {
+            if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
+                JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
+                if (isExhausted) {
+                    jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
+                }
+                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                job.SetCancelOnFail(true);
+                bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
+                    || stateComponent.currentState != null || stateComponent.stateToDo != null;
+                jobQueue.AddJobInQueue(job, !willNotProcess);
+            }
+            hasForcedFullness = true;
+            SetTirednessForcedTick();
+        }
     }
     private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
@@ -6230,6 +6205,31 @@ public class Character : ILeader, IPointOfInterest {
             //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "tired");
         }
     }
+    public void SetTirednessForcedTick() {
+        if (!hasForcedTiredness) {
+            if (forcedTirednessRecoveryTimeInWords == GameManager.GetCurrentTimeInWordsOfTick()) {
+                //If the forced recovery job has not been done yet and the character is already on the time of day when it is supposed to be done,
+                //the tick that will be assigned will be ensured that the character will not miss it
+                //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
+                //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
+                //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
+                int newTick = GameManager.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords, GameManager.Instance.tick + 1);
+                TIME_IN_WORDS timeInWords = GameManager.GetTimeInWordsOfTick(newTick);
+                if(timeInWords != forcedTirednessRecoveryTimeInWords) {
+                    newTick = GameManager.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
+                }
+                tirednessForcedTick = newTick;
+                return;
+            }
+        }
+        tirednessForcedTick = GameManager.GetRandomTickFromTimeInWords(forcedTirednessRecoveryTimeInWords);
+    }
+    public void SetTirednessForcedTick(int tick) {
+        tirednessForcedTick = tick;
+    }
+    public void SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS timeInWords) {
+        forcedTirednessRecoveryTimeInWords = timeInWords;
+    }
     #endregion
 
     #region Fullness
@@ -6315,6 +6315,31 @@ public class Character : ILeader, IPointOfInterest {
         } else {
             //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "hungry");
         }
+    }
+    public void SetFullnessForcedTick() {
+        if (!hasForcedFullness) {
+            if (forcedFullnessRecoveryTimeInWords == GameManager.GetCurrentTimeInWordsOfTick()) {
+                //If the forced recovery job has not been done yet and the character is already on the time of day when it is supposed to be done,
+                //the tick that will be assigned will be ensured that the character will not miss it
+                //Example if the time of day is Afternoon, the supposed tick range for it is 145 - 204
+                //So if the current tick of the game is already in 160, the range must be adjusted to 161 - 204, so as to ensure that the character will hit it
+                //But if the current tick of the game is already in 204, it cannot be 204 - 204, so, it will revert back to 145 - 204 
+                int newTick = GameManager.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords, GameManager.Instance.tick + 1);
+                TIME_IN_WORDS timeInWords = GameManager.GetTimeInWordsOfTick(newTick);
+                if (timeInWords != forcedFullnessRecoveryTimeInWords) {
+                    newTick = GameManager.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
+                }
+                fullnessForcedTick = newTick;
+                return;
+            }
+        }
+        fullnessForcedTick = GameManager.GetRandomTickFromTimeInWords(forcedFullnessRecoveryTimeInWords);
+    }
+    public void SetFullnessForcedTick(int tick) {
+        fullnessForcedTick = tick;
+    }
+    public void SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS timeInWords) {
+        forcedFullnessRecoveryTimeInWords = timeInWords;
     }
     #endregion
 

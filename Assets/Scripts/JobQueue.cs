@@ -331,6 +331,18 @@ public class JobQueue {
             }
         }
     }
+    public void CancelAllJobs(params JOB_TYPE[] jobTypes) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            for (int j = 0; j < jobTypes.Length; j++) {
+                if (jobsInQueue[i].jobType == jobTypes[j]) {
+                    if (CancelJob(jobsInQueue[i])) {
+                        i--;
+                    }
+                    break;
+                }
+            }
+        }
+    }
     public bool CancelJob(JobQueueItem job, string cause = "", bool shouldDoAfterEffect = true) {
         if (job.assignedCharacter == null 
             || job.assignedCharacter.currentAction != null && job.assignedCharacter.currentAction.parentPlan != null && job.assignedCharacter.currentAction.parentPlan.job != null && job.assignedCharacter.currentAction.parentPlan.job == job) {

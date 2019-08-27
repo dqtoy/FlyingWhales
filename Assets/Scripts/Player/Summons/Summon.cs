@@ -135,7 +135,7 @@ public class Summon : Character, IWorldObject {
         hasBeenUsed = true;
         SubscribeToSignals();
         Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds); //do not make summons decrease needs
-        Messenger.RemoveListener(Signals.TICK_STARTED, DailyGoapPlanGeneration); //do not make summons plan goap actions by default
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration); //do not make summons plan goap actions by default
         if (GameManager.Instance.isPaused) {
             marker.pathfindingAI.AdjustDoNotMove(1);
             marker.PauseAnimation();

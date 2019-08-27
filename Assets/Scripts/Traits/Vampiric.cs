@@ -37,8 +37,10 @@ public class Vampiric : Trait {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
-            character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY);
-            character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY_STARVING);
+            character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING, JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED);
+            character.SetTirednessForcedTick(0);
+            character.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
+            character.SetFullnessForcedTick();
             character.AdjustDoNotGetTired(1);
             character.ResetTirednessMeter();
             character.AdjustAttackMod(_flatAttackMod);
@@ -49,8 +51,10 @@ public class Vampiric : Trait {
     public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         if (sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
-            character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY);
-            character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY_STARVING);
+            character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
+            character.SetTirednessForcedTick();
+            character.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.AFTERNOON);
+            character.SetFullnessForcedTick();
             character.AdjustDoNotGetTired(-1);
             character.AdjustAttackMod(-_flatAttackMod);
             character.AdjustMaxHPMod(-_flatHPMod);

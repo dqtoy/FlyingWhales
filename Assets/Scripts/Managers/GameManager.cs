@@ -341,16 +341,7 @@ public class GameManager : MonoBehaviour {
         } else if (tick >= 265 && tick <= 288) {
             return timeInWords[4];
         }
-        throw new System.Exception(GameManager.Instance.tick + " tick has no time in words!");
-        //float time = tick / (float)ticksPerTimeInWords;
-        //int intTime = (int) time;
-        //if(time == intTime && intTime > 0) {
-        //    //This will make sure that the 12th tick is still part of the previous time in words
-        //    //Example: In ticks 1 - 11, the intTime is 0 (AFTER_MIDNIGHT_1), however, in tick 12, intTime is already 1 (AFTER_MIDNIGHT_2), but we still want it to be part of AFTER_MIDNIGHT_1
-        //    //Hence, this checker ensures that tick 12's intTime is 0
-        //    intTime -= 1;
-        //}
-        //return timeInWords[intTime];
+        return TIME_IN_WORDS.NONE;
     }
     public static TIME_IN_WORDS GetCurrentTimeInWordsOfTick() {
         if(GameManager.Instance.tick >= 1 && GameManager.Instance.tick <= 72) {
@@ -374,6 +365,34 @@ public class GameManager : MonoBehaviour {
         //    intTime -= 1;
         //}
         //return timeInWords[intTime];
+    }
+    public static int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords) {
+        if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+            return UnityEngine.Random.Range(1, 73);
+        } else if (timeInWords == TIME_IN_WORDS.MORNING) {
+            return UnityEngine.Random.Range(73, 145);
+        } else if (timeInWords == TIME_IN_WORDS.AFTERNOON) {
+            return UnityEngine.Random.Range(145, 205);
+        } else if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+            return UnityEngine.Random.Range(205, 265);
+        } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+            return UnityEngine.Random.Range(265, 289);
+        }
+        throw new System.Exception(timeInWords.ToString() + " time in words has no tick!");
+    }
+    public static int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords, int minimumThreshold) {
+        if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+            return UnityEngine.Random.Range(minimumThreshold, 73);
+        } else if (timeInWords == TIME_IN_WORDS.MORNING) {
+            return UnityEngine.Random.Range(minimumThreshold, 145);
+        } else if (timeInWords == TIME_IN_WORDS.AFTERNOON) {
+            return UnityEngine.Random.Range(minimumThreshold, 205);
+        } else if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+            return UnityEngine.Random.Range(minimumThreshold, 265);
+        } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+            return UnityEngine.Random.Range(minimumThreshold, 289);
+        }
+        throw new System.Exception(timeInWords.ToString() + " time in words has no tick!");
     }
     public int GetTicksBasedOnHour(int hours) {
         return ticksPerHour * hours;

@@ -89,9 +89,9 @@ public class ExploreState : CharacterState {
             }
             if (_currentDuration >= 4) {
                 _currentDuration = 0;
-                if (!stateComponent.character.PlanFullnessRecoveryActions()) {
-                    if (!stateComponent.character.PlanTirednessRecoveryActions()) {
-                        stateComponent.character.PlanHappinessRecoveryActions();
+                if (!stateComponent.character.PlanFullnessRecoveryActions(true)) {
+                    if (!stateComponent.character.PlanTirednessRecoveryActions(true)) {
+                        stateComponent.character.PlanHappinessRecoveryActions(true);
                     }
                 }
             } else {
