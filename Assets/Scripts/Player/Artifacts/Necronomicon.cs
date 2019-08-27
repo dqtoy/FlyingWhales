@@ -14,18 +14,13 @@ public class Necronomicon : Artifact {
     }
 
     #region Override
-    protected override void OnPlaceArtifactOn(LocationGridTile tile) {
-        base.OnPlaceArtifactOn(tile);
-        List<Character> characters = tile.parentAreaMap.area.GetAllDeadCharactersInArea();
-        for (int i = 0; i < characters.Count; i++) {
-            Character currCharacter = characters[i];
-            if (currCharacter is Summon) {
-                //character is summon, not raising to life
-            } else {
-                currCharacter.RaiseFromDeath(raiseDeadLevel, OnCharacterReturnedToLife, PlayerManager.Instance.player.playerFaction);
-            }
-            
-        }
+    //protected override void OnPlaceArtifactOn(LocationGridTile tile) {
+    //    base.OnPlaceArtifactOn(tile);
+    //    Activate();
+    //}
+    public override void OnInspect(Character inspectedBy, out Log result) {
+        base.OnInspect(inspectedBy, out result);
+        Activate();
     }
     public override void LevelUp() {
         base.LevelUp();
@@ -42,7 +37,18 @@ public class Necronomicon : Artifact {
         CharacterState state = character.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, gridTileLocation.parentAreaMap.area);
         state.SetIsUnending(true);
     }
+    private void Activate() {
+        List<Character> characters = gridTileLocation.parentAreaMap.area.GetAllDeadCharactersInArea();
+        for (int i = 0; i < characters.Count; i++) {
+            Character currCharacter = characters[i];
+            if (currCharacter is Summon) {
+                //character is summon, not raising to life
+            } else {
+                currCharacter.RaiseFromDeath(raiseDeadLevel, OnCharacterReturnedToLife, PlayerManager.Instance.player.playerFaction);
+            }
 
+        }
+    }
 
     public override string ToString() {
         return "Necronomicon";

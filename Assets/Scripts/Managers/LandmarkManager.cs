@@ -592,11 +592,11 @@ public class LandmarkManager : MonoBehaviour {
                 IWorldObject worldObj = null;
                 string worldObjStr = worldObjWeights.PickRandomElementGivenWeights();
                 if (worldObjStr == "summon") {
-                    SUMMON_TYPE[] summonTypes = Utilities.GetEnumValues<SUMMON_TYPE>();
-                    worldObj = CharacterManager.Instance.CreateNewSummon(summonTypes[Random.Range(1, summonTypes.Length)]);
+                    SUMMON_TYPE[] summonTypes = Utilities.GetEnumValues<SUMMON_TYPE>().Where(x => !x.CanBeSummoned()).ToArray();
+                    worldObj = CharacterManager.Instance.CreateNewSummon(summonTypes[Random.Range(0, summonTypes.Length)]);
                 } else if (worldObjStr == "artifact") {
-                    ARTIFACT_TYPE[] artifactTypes = Utilities.GetEnumValues<ARTIFACT_TYPE>();
-                    worldObj = PlayerManager.Instance.CreateNewArtifact(artifactTypes[Random.Range(1, artifactTypes.Length)]);
+                    ARTIFACT_TYPE[] artifactTypes = Utilities.GetEnumValues<ARTIFACT_TYPE>().Where(x => !x.CanBeSummoned()).ToArray();
+                    worldObj = PlayerManager.Instance.CreateNewArtifact(artifactTypes[Random.Range(0, artifactTypes.Length)]);
                 } else if (worldObjStr == "SpellScroll" || worldObjStr == "SkillScroll" || worldObjStr == "DemonStone") {
                     worldObj = PlayerManager.Instance.CreateNewSpecialObject(worldObjStr);
                 }

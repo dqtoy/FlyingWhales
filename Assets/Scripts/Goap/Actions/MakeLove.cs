@@ -8,6 +8,11 @@ public class MakeLove : GoapAction {
 
     public MakeLove(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.MAKE_LOVE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Entertain_Icon;
+        validTimeOfDays = new TIME_IN_WORDS[] {
+            TIME_IN_WORDS.AFTERNOON,
+            TIME_IN_WORDS.EARLY_NIGHT,
+            TIME_IN_WORDS.LATE_NIGHT,
+        };
     }
 
     #region Overrides
@@ -99,10 +104,10 @@ public class MakeLove : GoapAction {
         currentState.SetIntelReaction(MakeLoveSuccessReactions);
     }
     private void PerTickMakeLoveSuccess() {
-        //**Per Tick Effect 1 * *: Actor's Happiness Meter +10
-        actor.AdjustHappiness(10);
-        //**Per Tick Effect 2**: Target's Happiness Meter +10
-        targetCharacter.AdjustHappiness(10);
+        //**Per Tick Effect 1 * *: Actor's Happiness Meter +200
+        actor.AdjustHappiness(200);
+        //**Per Tick Effect 2**: Target's Happiness Meter +200
+        targetCharacter.AdjustHappiness(200);
     }
     private void AfterMakeLoveSuccess() {
         actor.AdjustDoNotGetLonely(-1);

@@ -1604,6 +1604,29 @@ public static class Extensions {
                 return Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
         }
     }
+    public static bool CanBeSummoned(this SUMMON_TYPE type) {
+        switch (type) {
+            case SUMMON_TYPE.None:
+            case SUMMON_TYPE.ThiefSummon:
+            case SUMMON_TYPE.Skeleton:
+                return true;
+            default:
+                return false;
+        }
+    }
+    #endregion
+
+    #region Artifacts
+    public static bool CanBeSummoned(this ARTIFACT_TYPE type) {
+        switch (type) {
+            case ARTIFACT_TYPE.None:
+            case ARTIFACT_TYPE.Hermes_Statue:
+            case ARTIFACT_TYPE.Miasma_Emitter:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     #region Intervention Abilities

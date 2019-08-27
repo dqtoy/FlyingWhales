@@ -194,6 +194,23 @@ public class CharacterInfoUI : UIMenu {
             plansLbl.text = _activeCharacter.name + " has died.";
             return;
         }
+        if (_activeCharacter.minion != null && _activeCharacter.minion.invadingLandmark != null) {
+            if (_activeCharacter.minion.invadingLandmark != null) {
+                Log log = new Log(GameManager.Instance.Today(), "%00@ is currently invading %04@");
+                log.AddToFillers(_activeCharacter, _activeCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                if (_activeCharacter.minion.invadingLandmark.tileLocation.areaOfTile != null) {
+                    log.AddToFillers(_activeCharacter.minion.invadingLandmark.tileLocation.areaOfTile, _activeCharacter.minion.invadingLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
+                } else {
+                    log.AddToFillers(_activeCharacter.minion.invadingLandmark.tileLocation.region, _activeCharacter.minion.invadingLandmark.tileLocation.region.name, LOG_IDENTIFIER.LANDMARK_1);
+                }
+                plansLblLogItem.SetLog(log);
+                plansLbl.text = Utilities.LogReplacer(log);
+            } else {
+                plansLbl.text = _activeCharacter.name + " is ready to do your bidding.";
+            }
+            
+            return;
+        }
         if (_activeCharacter.specificLocation.areaMap == null) {
             //area map has not yet been generated
             plansLbl.text = "Visit " + _activeCharacter.specificLocation.name + " to find out what " + _activeCharacter.name + " is doing.";

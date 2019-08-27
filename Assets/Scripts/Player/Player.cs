@@ -1384,7 +1384,7 @@ public class Player : ILeader {
         List<Minion> currentMinions = new List<Minion>();
         for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
-            if (currMinion != null) {
+            if (currMinion.invadingLandmark == null) { //only include minions that are not currently invading another landmark
                 currMinion.character.CreateMarker();
                 currMinion.character.marker.SetActiveState(false);
                 currentMinions.Add(currMinion);
@@ -1419,7 +1419,7 @@ public class Player : ILeader {
                 if (!currMinion.character.marker.gameObject.activeInHierarchy) {
                     throw new System.Exception(currMinion.character.name + " was not placed!");
                 }
-                currMinion.StartInvasionProtocol();
+                currMinion.StartInvasionProtocol(area);
             }
             PlayerUI.Instance.startInvasionButton.interactable = false;
             currentAreaBeingInvaded = area;
@@ -1432,7 +1432,10 @@ public class Player : ILeader {
         bool stillHasMinions = false;
         for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
-            if(currMinion.character.currentHP > 0) {
+            if (currMinion.invadingLandmark != LandmarkManager.Instance.mainSettlement.coreTile.landmarkOnTile) {
+                continue; //do not include minions that are not invading the main settlement.
+            }
+            if(currMinion.character.currentHP > 0 && !currMinion.character.isDead) {
                 stillHasMinions = true;
                 break;
             }

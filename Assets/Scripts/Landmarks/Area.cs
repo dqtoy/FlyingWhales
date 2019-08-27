@@ -461,7 +461,7 @@ public class Area {
         if (coreTile.tileTags.Contains(TILE_TAG.PROTECTIVE_BARRIER)) { //NOTE: For now only put this specific case, but might convert this to int value instead. Will see what other elements will prevent a settlement from being invaded and change accordingly.
             return false;
         }
-        return coreTile.landmarkOnTile.HasCorruptedConnection();
+        return coreTile.landmarkOnTile.HasCorruptedConnection() && PlayerManager.Instance.player.minions.Count > 0;
     }
     #endregion
 
@@ -1319,7 +1319,7 @@ public class Area {
         jobQueue.AddJobInQueue(job);
     }
     private bool CanMoveOut(Character character, JobQueueItem item) {
-        return character.role.roleType != CHARACTER_ROLE.LEADER;
+        return character.role.roleType != CHARACTER_ROLE.LEADER && GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick) == TIME_IN_WORDS.MORNING; //Only non-leaders can take move out job, and it must also be in the morning time.
     }
     #endregion
 

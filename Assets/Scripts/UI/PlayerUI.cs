@@ -1234,10 +1234,12 @@ public class PlayerUI : MonoBehaviour {
         Utilities.DestroyChildren(combatAbilityGO.transform);
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             Minion currMinion = PlayerManager.Instance.player.minions[i];
-            GameObject go = GameObject.Instantiate(combatAbilityButtonPrefab, combatAbilityGO.transform);
-            CombatAbilityButton abilityButton = go.GetComponent<CombatAbilityButton>();
-            abilityButton.SetCombatAbility(currMinion.combatAbility);
-            currentCombatAbilityButtons.Add(abilityButton);
+            if (currMinion.invadingLandmark == null || currMinion.invadingLandmark == LandmarkManager.Instance.mainSettlement.coreTile.landmarkOnTile) {
+                GameObject go = GameObject.Instantiate(combatAbilityButtonPrefab, combatAbilityGO.transform);
+                CombatAbilityButton abilityButton = go.GetComponent<CombatAbilityButton>();
+                abilityButton.SetCombatAbility(currMinion.combatAbility);
+                currentCombatAbilityButtons.Add(abilityButton);
+            }
         }
     }
     public CombatAbilityButton GetCombatAbilityButton(CombatAbility ability) {

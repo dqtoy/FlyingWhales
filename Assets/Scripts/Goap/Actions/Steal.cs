@@ -5,11 +5,11 @@ using UnityEngine;
 public class Steal : GoapAction {
 
     public Steal(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STEAL, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
-        //validTimeOfDays = new TIME_IN_WORDS[] {
-        //    TIME_IN_WORDS.EARLY_NIGHT,
-        //    TIME_IN_WORDS.LATE_NIGHT,
-        //    TIME_IN_WORDS.AFTER_MIDNIGHT,
-        //};
+        validTimeOfDays = new TIME_IN_WORDS[] {
+            TIME_IN_WORDS.EARLY_NIGHT,
+            TIME_IN_WORDS.LATE_NIGHT,
+            TIME_IN_WORDS.AFTER_MIDNIGHT,
+        };
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
 
@@ -79,7 +79,7 @@ public class Steal : GoapAction {
     private void AfterStealSuccess() {
         actor.PickUpToken(poiTarget as SpecialToken, false);
         if (actor.GetNormalTrait("Kleptomaniac") != null) {
-            actor.AdjustHappiness(75);
+            actor.AdjustHappiness(3500);
         }
     }
     private void PreTargetMissing() {

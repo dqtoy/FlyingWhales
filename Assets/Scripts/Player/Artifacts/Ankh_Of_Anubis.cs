@@ -23,12 +23,10 @@ public class Ankh_Of_Anubis : Artifact {
     }
 
     #region Overrides
-    protected override void OnPlaceArtifactOn(LocationGridTile tile) {
-        base.OnPlaceArtifactOn(tile);
-        currentDuration = 0;
-        Messenger.AddListener(Signals.TICK_ENDED, CheckPerTick);
-        particle = GameManager.Instance.CreateAOEEffectAt(tile, range);
-    }
+    //protected override void OnPlaceArtifactOn(LocationGridTile tile) {
+    //    base.OnPlaceArtifactOn(tile);
+    //    Activate();
+    //}
     protected override void OnRemoveArtifact() {
         base.OnRemoveArtifact();
         Messenger.RemoveListener(Signals.TICK_ENDED, CheckPerTick);
@@ -38,7 +36,17 @@ public class Ankh_Of_Anubis : Artifact {
         base.LevelUp();
         duration += 10;
     }
+    public override void OnInspect(Character inspectedBy, out Log result) {
+        base.OnInspect(inspectedBy, out result);
+        Activate();
+    }
     #endregion
+
+    private void Activate() {
+        currentDuration = 0;
+        Messenger.AddListener(Signals.TICK_ENDED, CheckPerTick);
+        particle = GameManager.Instance.CreateAOEEffectAt(tile, range);
+    }
 
     private void CheckPerTick() {
         if (currentDuration == duration) {

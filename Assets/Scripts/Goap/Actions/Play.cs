@@ -14,10 +14,11 @@ public class Play : GoapAction {
     public Play(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PLAY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         shouldIntelNotificationOnlyIfActorIsActive = true;
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
-        //validTimeOfDays = new TIME_IN_WORDS[] {
-        //    TIME_IN_WORDS.MORNING,
-        //    TIME_IN_WORDS.AFTERNOON,
-        //};
+        validTimeOfDays = new TIME_IN_WORDS[] {
+            TIME_IN_WORDS.MORNING,
+            TIME_IN_WORDS.AFTERNOON,
+            TIME_IN_WORDS.EARLY_NIGHT,
+        };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         isNotificationAnIntel = false;
     }
@@ -71,12 +72,19 @@ public class Play : GoapAction {
     #endregion
 
     #region Effects
+    private bool isMusicLover;
     private void PrePlaySuccess() {
         actor.AdjustDoNotGetLonely(1);
         actor.AdjustDoNotGetTired(1);
+        isMusicLover = actor.GetNormalTrait("Music Lover") != null;
     }
     private void PerTickPlaySuccess() {
-        actor.AdjustHappiness(18);
+        if (isMusicLover) {
+            actor.AdjustHappiness(200);
+        } else {
+            actor.AdjustHappiness(160);
+        }
+        
     }
     private void AfterPlaySuccess() {
         actor.AdjustDoNotGetLonely(-1);

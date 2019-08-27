@@ -460,7 +460,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
                 float nearestDist = 99999f;
                 for (int i = 0; i < this.structure.unoccupiedTiles.Count; i++) {
                     LocationGridTile currTile = this.structure.unoccupiedTiles[i];
-                    if (currTile != this) {
+                    if (currTile != this && currTile.groundType != Ground_Type.Water) {
                         float dist = Vector2.Distance(currTile.localLocation, this.localLocation);
                         if (dist < nearestDist) {
                             nearestTile = currTile;
