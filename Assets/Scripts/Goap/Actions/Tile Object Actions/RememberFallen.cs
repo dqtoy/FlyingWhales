@@ -70,7 +70,7 @@ public class RememberFallen : GoapAction {
         actor.AdjustDoNotGetLonely(1);
     }
     private void PerTickRememberSuccess() {
-        actor.AdjustHappiness(16);
+        actor.AdjustHappiness(200);
     }
     private void AfterRememberSuccess() {
         actor.AdjustDoNotGetLonely(-1);

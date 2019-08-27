@@ -89,7 +89,7 @@ public class Nap : GoapAction {
         actor.AddTrait(_restingTrait);
     }
     private void PerTickNapSuccess() {
-        actor.AdjustTiredness(4);
+        actor.AdjustTiredness(30);
 
         if(_restingTrait.lycanthropyTrait == null) {
             if (currentState.currentDuration == currentState.duration) {

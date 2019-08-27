@@ -51,7 +51,7 @@ public class EatCorpse : GoapAction {
         actor.AdjustDoNotGetHungry(1);
     }
     private void PerTickEatSuccess() {
-        actor.AdjustFullness(8);
+        actor.AdjustFullness(520);
     }
     private void AfterEatSuccess() {
         actor.AdjustDoNotGetHungry(-1);

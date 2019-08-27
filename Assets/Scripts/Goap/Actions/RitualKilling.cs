@@ -44,6 +44,7 @@ public class RitualKilling : GoapAction {
         SetCommittedCrime(CRIME.MURDER, new Character[] { actor });
     }
     private void AfterKillingSuccess() {
+        actor.AdjustHappiness(10000);
         if (poiTarget is Character) {
             SetCannotCancelAction(true);
             Character targetCharacter = poiTarget as Character;

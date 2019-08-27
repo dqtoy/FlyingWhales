@@ -95,7 +95,7 @@ public class StealFromCharacter : GoapAction {
     private void AfterStealSuccess() {
         actor.ObtainTokenFrom(_targetCharacter, _targetItem, false);
         if (actor.GetNormalTrait("Kleptomaniac") != null) {
-            actor.AdjustHappiness(60);
+            actor.AdjustHappiness(3500);
         }
     }
     private void PreStealVigilant() {

@@ -71,7 +71,7 @@ public class Drink : GoapAction {
         actor.AdjustDoNotGetLonely(1);
     }
     public void PerTickDrinkSuccess() {
-        actor.AdjustHappiness(14);
+        actor.AdjustHappiness(200);
     }
     public void AfterDrinkSuccess() {
         actor.AdjustDoNotGetLonely(-1);
@@ -82,7 +82,7 @@ public class Drink : GoapAction {
         RemoveTraitFrom(poiTarget, "Poisoned");
     }
     public void PerTickDrinkPoisoned() {
-        actor.AdjustHappiness(14);
+        actor.AdjustHappiness(200);
     }
     public void AfterDrinkPoisoned() {
         actor.AdjustDoNotGetLonely(-1);

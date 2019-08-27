@@ -102,7 +102,7 @@ public class EatAtTable : GoapAction {
         //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
-        actor.AdjustFullness(18);
+        actor.AdjustFullness(585);
         if (currentState.currentDuration <= 8) {
             targetTable.AdjustFood(-2);
         } else {
@@ -136,7 +136,7 @@ public class EatAtTable : GoapAction {
         currentState.SetIntelReaction(EatPoisonedReactions);
     }
     private void PerTickEatPoisoned() {
-        actor.AdjustFullness(18);
+        actor.AdjustFullness(12);
         if(currentState.currentDuration <= 10) {
             targetTable.AdjustFood(-2);
         } else {

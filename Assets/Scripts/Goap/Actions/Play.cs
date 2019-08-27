@@ -72,19 +72,12 @@ public class Play : GoapAction {
     #endregion
 
     #region Effects
-    private bool isMusicLover;
     private void PrePlaySuccess() {
         actor.AdjustDoNotGetLonely(1);
         actor.AdjustDoNotGetTired(1);
-        isMusicLover = actor.GetNormalTrait("Music Lover") != null;
     }
     private void PerTickPlaySuccess() {
-        if (isMusicLover) {
-            actor.AdjustHappiness(200);
-        } else {
-            actor.AdjustHappiness(160);
-        }
-        
+        actor.AdjustHappiness(200);
     }
     private void AfterPlaySuccess() {
         actor.AdjustDoNotGetLonely(-1);

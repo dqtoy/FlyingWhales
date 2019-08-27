@@ -91,16 +91,18 @@ public class PlayGuitar : GoapAction {
     #endregion
 
     #region State Effects
+    private bool isMusicLover;
     public void PrePlaySuccess() {
         actor.AdjustDoNotGetLonely(1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
+        isMusicLover = actor.GetNormalTrait("Music Lover") != null;
     }
     public void PerTickPlaySuccess() {
         //**Per Tick Effect 1**: Actor's Happiness Meter +12 (+20 if https://trello.com/c/CvvzA9OJ/2497-music-lover)
-        if (actor.GetNormalTrait("MusicLover") != null) {
-            actor.AdjustHappiness(20);
+        if (isMusicLover) {
+            actor.AdjustHappiness(200);
         } else {
-            actor.AdjustHappiness(12);
+            actor.AdjustHappiness(160);
         }
     }
     public void AfterPlaySuccess() {

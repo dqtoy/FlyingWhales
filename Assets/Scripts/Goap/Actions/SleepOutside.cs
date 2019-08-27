@@ -70,7 +70,7 @@ public class SleepOutside : GoapAction {
         currentState.SetAnimation("Sleep Ground");
     }
     private void PerTickRestSuccess() {
-        actor.AdjustTiredness(3);
+        actor.AdjustTiredness(70);
     }
     private void AfterRestSuccess() {
         //actor.AdjustDoNotGetTired(-1);

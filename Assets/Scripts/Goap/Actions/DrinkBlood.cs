@@ -90,7 +90,7 @@ public class DrinkBlood : GoapAction {
         currentState.SetIntelReaction(DrinkBloodSuccessIntelReaction);
     }
     private void PerTickDrinkSuccess() {
-        actor.AdjustFullness(12);
+        actor.AdjustFullness(1100);
     }
     private void AfterDrinkSuccess() {
         //poiTarget.SetPOIState(POI_STATE.ACTIVE);
