@@ -90309,15 +90309,6 @@ MonoBehaviour:
     - Pitthize
     - Moringa
     - Lamina
-  - tokenName: Healing Potion
-    tokenType: 12
-    quantity: 2
-    appearanceWeight: 100
-    areaLocations:
-    - Cardell
-    - Narris
-    - Cindermaul
-    - Denrio
   - tokenName: Enchanted Amulet
     tokenType: 13
     quantity: 1
