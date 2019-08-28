@@ -424,8 +424,10 @@ public class CharacterMarker : PooledObject {
         hoverEnterAction = null;
         hoverExitAction = null;
         destinationTile = null;
+        fleeSpeedModifier = 0;
         SetMarkerColor(Color.white);
         actionIcon.gameObject.SetActive(false);
+        StopPerTickFlee();
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -482,6 +484,11 @@ public class CharacterMarker : PooledObject {
         switch (targetPOI.poiType) {
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 Character targetCharacter = targetPOI as Character;
+                if (targetCharacter.marker == null) {
+                    this.arrivalAction?.Invoke(); //target character is already dead.
+                    ClearArrivalAction();
+                    return;
+                }
                 SetTargetTransform(targetCharacter.marker.transform);
                 //if the target is a character, 
                 //check first if he/she is still at the location, 
@@ -733,7 +740,7 @@ public class CharacterMarker : PooledObject {
             speed = 0.5f;
         }
         speed += (speed * fleeSpeedModifier);
-        if (speed <= 0f) {
+        if (speed < 0.5f) {
             speed = 0.5f;
         }
         return speed;
@@ -1139,7 +1146,8 @@ public class CharacterMarker : PooledObject {
     public bool hasFleePath { get; private set; }
     private float fleeSpeedModifier;
     private const float Starting_Flee_Modifier = 0.3f; //starts at positive value, increase speed by 30%, then gradually reduce every other tick, eventually becoming negative.
-    private const int Tick_Flee_Will_Slow_Down = 4; //What tick will the fleeing character slow down at.
+    private const int Tick_Flee_Will_Slow_Down = 2; //What tick will the fleeing character slow down at.
+    private const int Tick_Flee_In_Slow_Down_Check = 3; //What tick will the fleeing character check for exit state when he/she is at his/her lowest speed.
     private int ticksInFlee;
     public void OnStartFlee() {
         if (avoidInRange.Count == 0) {
@@ -1246,15 +1254,36 @@ public class CharacterMarker : PooledObject {
     }
     private void PerTickFlee() {
         ticksInFlee++;
-        if (ticksInFlee >= Tick_Flee_Will_Slow_Down) {
-            ticksInFlee = 0;
-            fleeSpeedModifier -= 0.5f;
-            UpdateSpeed();
-            //if (GetSpeedWithoutProgressionMultiplier() <= 0.5f && inVisionCharacters.Count == 0 && character.stateComponent.currentState is CombatState) {
-            //    (character.stateComponent.currentState as CombatState).OnReachLowFleeSpeedThreshold();
-            //}
-            //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " has met flee slow down tick, slowing down flee speed. New speed is " + pathfindingAI.speed.ToString());
+        if (GetSpeedWithoutProgressionMultiplier() <= 0.5f) {
+            //lowest speed
+            if (ticksInFlee >= Tick_Flee_In_Slow_Down_Check) {
+                ticksInFlee = 0;
+                if (!StillHasAvoidInActualRange() && character.stateComponent.currentState is CombatState) {
+                    (character.stateComponent.currentState as CombatState).OnReachLowFleeSpeedThreshold();
+                }
+            }
+        } else {
+            //slow down current speed
+            if (ticksInFlee >= Tick_Flee_Will_Slow_Down) {
+                ticksInFlee = 0;
+                fleeSpeedModifier -= 0.4f;
+                UpdateSpeed();
+            }
         }
+    }
+    /// <summary>
+    /// Does this character still have a character that it needs to avoid in its actual visual range?
+    /// </summary>
+    /// <returns>True or false</returns>
+    private bool StillHasAvoidInActualRange() {
+        for (int i = 0; i < avoidInRange.Count; i++) {
+            Character currCharacter = avoidInRange[i];
+            if (inVisionCharacters.Contains(currCharacter)
+                || visionCollision.poisInRangeButDiffStructure.Contains(currCharacter)) {
+                return true;
+            }
+        }
+        return false;
     }
     private void StopPerTickFlee() {
         fleeSpeedModifier = 0f;

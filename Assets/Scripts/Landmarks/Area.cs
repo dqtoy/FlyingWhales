@@ -152,7 +152,7 @@ public class Area {
         }
 
         AddTile(Utilities.GetTilesFromIDs(data.tileData));
-        UpdateBorderColors();
+        //UpdateBorderColors();
         //GenerateDefaultRace();
         nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
     }
@@ -371,7 +371,7 @@ public class Area {
         //        UnsubscribeToSignals();
         //    }
         //}
-        UpdateBorderColors();
+        //UpdateBorderColors();
         /*Whenever a location is occupied, 
          all items in structures Inside Settlement will be owned by the occupying faction.*/
         List<LocationStructure> insideStructures = GetStructuresAtLocation(true);

@@ -6,7 +6,12 @@ public class WaterWell : TileObject {
 
     public WaterWell(LocationStructure location) {
         this.structureLocation = location;
-        poiGoapActions = new List<INTERACTION_TYPE>();
+        if (location.structureType != STRUCTURE_TYPE.POND) {
+            poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP };
+        } else {
+            poiGoapActions = new List<INTERACTION_TYPE>();
+        }
+        
         Initialize(TILE_OBJECT_TYPE.WATER_WELL);
         RemoveTrait("Flammable");
         Wet wet = new Wet();

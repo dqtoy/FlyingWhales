@@ -2233,6 +2233,15 @@ public class Character : ILeader, IPointOfInterest {
         //If nothing applies, always overridable
         return true;
     }
+    private GoapPlanJob CreateSuicideJob() {
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SUICIDE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = this });
+        job.SetCanTakeThisJobChecker(IsSuicideJobStillValid);
+        jobQueue.AddJobInQueue(job);
+        return job;
+    }
+    private bool IsSuicideJobStillValid(Character character, JobQueueItem item) {
+        return character.GetNormalTrait("Forlorn") != null;
+    }
     #endregion
 
     #region Faction
@@ -4353,6 +4362,14 @@ public class Character : ILeader, IPointOfInterest {
             if (triggerOnRemove) {
                 trait.OnRemoveTrait(this, removedBy);
             }
+            if (trait.name == "Forlorn") {
+                JobQueueItem suicideJob = jobQueue.GetJob(JOB_TYPE.SUICIDE);
+                if (suicideJob != null && !jobQueue.CancelJob(suicideJob, "no longer forlorn", false)) {
+                    suicideJob.UnassignJob(false);
+                    jobQueue.RemoveJobInQueue(suicideJob);
+                } 
+            }
+
             Messenger.Broadcast(Signals.TRAIT_REMOVED, this, trait);
             //if (trait is RelationshipTrait) {
             //    RelationshipTrait rel = trait as RelationshipTrait;
@@ -4946,6 +4963,11 @@ public class Character : ILeader, IPointOfInterest {
         }
         PlanForcedFullnessRecovery();
         PlanForcedFullnessRecovery();
+
+        //suicide
+        if (GetNormalTrait("Forlorn") != null && !jobQueue.HasJob(JOB_TYPE.SUICIDE) && UnityEngine.Random.Range(0, 100) < 2 && _doNotDisturb <= 0) {
+            CreateSuicideJob();
+        }
 
         //This is to ensure that this character will not be idle forever
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
@@ -6817,6 +6839,7 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.DROP);
         poiGoapActions.Add(INTERACTION_TYPE.RESOLVE_CONFLICT);
         poiGoapActions.Add(INTERACTION_TYPE.ASK_TO_STOP_JOB);
+        poiGoapActions.Add(INTERACTION_TYPE.STRANGLE);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
@@ -8052,11 +8075,11 @@ public class Character : ILeader, IPointOfInterest {
             if (state.characterState.IsCombatState()) {
                 ClearIgnoreHostilities();
             }
-            if (state.characterState == CHARACTER_STATE.MOVE_OUT) {
-                AdjustDoNotGetHungry(1);
-                AdjustDoNotGetLonely(1);
-                AdjustDoNotGetTired(1);
-            }
+            //if (state.characterState == CHARACTER_STATE.MOVE_OUT) {
+            //    AdjustDoNotGetHungry(1);
+            //    AdjustDoNotGetLonely(1);
+            //    AdjustDoNotGetTired(1);
+            //}
         } else {
             if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null && isAtHomeArea && !ownParty.icon.isTravellingOutside) {
                 //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
