@@ -4313,7 +4313,7 @@ public class Character : ILeader, IPointOfInterest {
             if (trait.name == "Starving") {
                 //Debug.Log("Planning fullness recovery from gain trait");
                 PlanFullnessRecoveryActions(false);
-            } else if (trait.name == "Forlorn") {
+            } else if (trait.name == "Forlorn" || trait.name == "Lonely") {
                 //Debug.Log("Planning happiness recovery from gain trait");
                 PlanHappinessRecoveryActions(false);
             } else if (trait.name == "Exhausted") {
@@ -5115,18 +5115,17 @@ public class Character : ILeader, IPointOfInterest {
                 if (isForlorn) {
                     value = 100;
                     jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
-                } 
-                //else {
-                //    if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
-                //        value = 30;
-                //    } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
-                //        value = 45;
-                //    } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-                //        value = 45;
-                //    } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-                //        value = 30;
-                //    }
-                //}
+                } else {
+                    if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                        value = 30;
+                    } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                        value = 45;
+                    } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+                        value = 45;
+                    } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+                        value = 30;
+                    }
+                }
                 if (chance < value) {
                     GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
                     job.SetCancelOnFail(true);
