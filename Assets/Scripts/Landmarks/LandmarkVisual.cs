@@ -12,21 +12,12 @@ public class LandmarkVisual : MonoBehaviour {
     private BaseLandmark _landmark;
 
     [SerializeField] private TextMeshProUGUI landmarkLbl;
-    //[SerializeField] private TextMeshProUGUI charCountLbl;
     [SerializeField] private SpriteRenderer topSprite;
     [SerializeField] private SpriteRenderer botSprite;
     [SerializeField] private GameObject exploredGO;
     [SerializeField] private GameObject landmarkNameplateGO;
-    //[SerializeField] private GameObject characterIndicatorGO;
     [SerializeField] private SpriteRenderer iconSprite;
     [SerializeField] private Slider hpProgressBar;
-    //[SerializeField] private ScrollRect charactersScrollView;
-    //[SerializeField] private Transform hoverContent;
-    //[SerializeField] private Transform playerContent;
-    //[SerializeField] private AIPath aiPath;
-    //[SerializeField] private Seeker seeker;
-    //[SerializeField] private AIDestinationSetter destinationSetter;
-    //[SerializeField] private LineRenderer lineRenderer;
     public Canvas landmarkCanvas;
     public GameObject landmarkHPGO;
 

@@ -12,6 +12,7 @@ public class SupplyPile : TileObject {
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_SUPPLY };
         Initialize(TILE_OBJECT_TYPE.SUPPLY_PILE);
         SetSuppliesInPile(50);
+        RemoveTrait("Flammable");
         Messenger.AddListener(Signals.TICK_STARTED, CheckSupply);
     }
 

@@ -119,7 +119,7 @@ public class Area {
         SetAreaType(areaType);
         SetCoreTile(coreTile);
         AddTile(coreTile);
-        nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
+        nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
         possibleOccupants = new List<RACE>();
     }
     public Area(AreaSaveData data) {
@@ -154,7 +154,7 @@ public class Area {
         AddTile(Utilities.GetTilesFromIDs(data.tileData));
         //UpdateBorderColors();
         //GenerateDefaultRace();
-        nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
+        nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
     }
 
     public Area(SaveDataArea saveDataArea) {
@@ -177,7 +177,7 @@ public class Area {
         SetAreaType(saveDataArea.areaType);
         SetCoreTile(GridMap.Instance.hexTiles[saveDataArea.coreTileID]);
 
-        nameplatePos = LandmarkManager.Instance.GetAreaNameplatePosition(this);
+        nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
 
         if (citizenCount > 0) {
             GenerateStructures(citizenCount);

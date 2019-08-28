@@ -732,6 +732,13 @@ public class UIManager : MonoBehaviour {
         //nameplateGO.transform.localScale = new Vector3(0.02f, 0.02f, 1f);
         nameplateGO.GetComponent<AreaNameplate>().SetArea(area);
     }
+    public LandmarkNameplate CreateLandmarkNameplate(BaseLandmark landmark) {
+        GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("LandmarkNameplate", worldUIParent);
+        //nameplateGO.transform.localScale = new Vector3(0.02f, 0.02f, 1f);
+        LandmarkNameplate nameplate = nameplateGO.GetComponent<LandmarkNameplate>();
+        nameplate.SetLandmark(landmark);
+        return nameplate;
+    }
     #endregion
 
     #region Object Picker
@@ -1202,9 +1209,9 @@ public class UIManager : MonoBehaviour {
         }
 
         if (itemToReplace != null) {
-            int index = (itemToReplace.transform as RectTransform).GetSiblingIndex();
+            //int index = (itemToReplace.transform as RectTransform).GetSiblingIndex();
             itemToReplace.DeleteNotification();
-            (newNotif.gameObject.transform as RectTransform).SetSiblingIndex(index);
+            //(newNotif.gameObject.transform as RectTransform).SetSiblingIndex(index);
         }
         //else {
         //    (newNotif.gameObject.transform as RectTransform).SetAsLastSibling();

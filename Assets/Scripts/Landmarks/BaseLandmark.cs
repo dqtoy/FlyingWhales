@@ -18,6 +18,7 @@ public class BaseLandmark {
     protected HexTile _connectedTile;
     protected Faction _owner;
     protected LandmarkVisual _landmarkVisual;
+    protected LandmarkNameplate nameplate;
     protected List<Item> _itemsInLandmark;
     protected List<LANDMARK_TAG> _landmarkTags;
     public List<BaseLandmark> connections { get; private set; }
@@ -29,6 +30,7 @@ public class BaseLandmark {
     public Character eventSpawnedBy { get; private set; }
     public GameObject eventIconGO { get; private set; }
     public IWorldEventData eventData { get; private set; }
+    public Vector2 nameplatePos { get; private set; }
 
     private List<System.Action> otherAfterInvasionActions; //list of other things to do when this landmark is invaded.
 
@@ -86,7 +88,7 @@ public class BaseLandmark {
         connections = new List<BaseLandmark>();
         charactersHere = new List<Character>();
         otherAfterInvasionActions = new List<System.Action>();
-        invasionTicks = 2 * GameManager.ticksPerDay;
+        invasionTicks = GameManager.ticksPerDay;
         //invasionTicks = 2;
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
@@ -96,6 +98,8 @@ public class BaseLandmark {
         _specificLandmarkType = specificLandmarkType;
         SetName(RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType));
         ConstructTags(landmarkData);
+        nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
+        //nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
     }
     public BaseLandmark(HexTile location, LandmarkSaveData data) : this() {
         _id = Utilities.SetID(this, data.landmarkID);
@@ -105,6 +109,8 @@ public class BaseLandmark {
         
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
+        nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
+        //nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
     }
     public BaseLandmark(HexTile location, SaveDataLandmark data) : this() {
         _id = Utilities.SetID(this, data.id);
@@ -114,6 +120,8 @@ public class BaseLandmark {
 
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
+        nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
+        //nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
     }
 
     public void SetName(string name) {
@@ -128,6 +136,9 @@ public class BaseLandmark {
     public void ChangeLandmarkType(LANDMARK_TYPE type) {
         _specificLandmarkType = type;
         tileLocation.UpdateLandmarkVisuals();
+        //if (type == LANDMARK_TYPE.NONE) {
+        //    ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
+        //}
     }
 
     #region Virtuals
