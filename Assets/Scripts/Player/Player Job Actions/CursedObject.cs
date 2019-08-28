@@ -35,7 +35,7 @@ public class CursedObject : PlayerJobAction {
         }
         return false;
     }
-    public override bool CanTarget(IPointOfInterest targetPOI) {
+    public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             if (to.GetNormalTrait("Cursed") == null) {

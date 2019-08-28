@@ -34,12 +34,23 @@ public class RaiseDead : PlayerJobAction {
     }
 
     protected override bool CanPerformActionTowards(Character targetCharacter) {
-        return targetCharacter.isDead && targetCharacter.IsInOwnParty();
+        if (!targetCharacter.isDead) {
+            return false;
+        }
+        if (!targetCharacter.IsInOwnParty()) {
+            return false;
+        }
+        return base.CanPerformActionTowards(targetCharacter);
     }
     protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
-        return targetPOI is Tombstone || (targetPOI is Character && (targetPOI as Character).IsInOwnParty()) ;
+        if(targetPOI is Character) {
+            return CanPerformActionTowards(targetPOI as Character);
+        }else if (targetPOI is Tombstone) {
+            return CanPerformActionTowards((targetPOI as Tombstone).character);
+        }
+        return base.CanPerformActionTowards(targetPOI);
     }
-    public override bool CanTarget(IPointOfInterest targetPOI) {
+    public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (!(targetPOI is Character) && !(targetPOI is Tombstone)) {
             return false;
         }
@@ -49,7 +60,13 @@ public class RaiseDead : PlayerJobAction {
         } else {
             targetCharacter = (targetPOI as Tombstone).character;
         }
-        return targetCharacter.isDead && targetCharacter.IsInOwnParty();
+        if (!targetCharacter.isDead) {
+            return false;
+        }
+        if (!targetCharacter.IsInOwnParty()) {
+            return false;
+        }
+        return base.CanTarget(targetCharacter, ref hoverText);
     }
     protected override void OnLevelUp() {
         base.OnLevelUp();

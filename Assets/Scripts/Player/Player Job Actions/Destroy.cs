@@ -30,13 +30,13 @@ public class Destroy : PlayerJobAction {
     //    }
     //    return base.ShouldButtonBeInteractable(character, targetPOI);
     //}
-    public override bool CanTarget(IPointOfInterest targetPOI) {
+    public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (!(targetPOI is TileObject)) {
             return false;
         }
         if (targetPOI.gridTileLocation == null) {
             return false;
         }
-        return base.CanTarget(targetPOI);
+        return base.CanTarget(targetPOI, ref hoverText);
     }
 }

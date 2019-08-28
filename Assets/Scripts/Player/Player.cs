@@ -787,14 +787,20 @@ public class Player : ILeader {
         }
     }
     private void TryExecuteCurrentActiveIntel() {
-        if (CanShareIntel(InteriorMapManager.Instance.currentlyHoveredPOI)) {
+        string hoverText = string.Empty;
+        if (CanShareIntel(InteriorMapManager.Instance.currentlyHoveredPOI, ref hoverText)) {
             Character targetCharacter = InteriorMapManager.Instance.currentlyHoveredPOI as Character;
             UIManager.Instance.OpenShareIntelMenu(targetCharacter, currentMinionLeader.character, currentActiveIntel);
         }
     }
-    public bool CanShareIntel(IPointOfInterest poi) {
+    public bool CanShareIntel(IPointOfInterest poi, ref string hoverText) {
         if(poi is Character) {
             Character character = poi as Character;
+            hoverText = string.Empty;
+            if(character.GetNormalTrait("Blessed") != null) {
+                hoverText = "Blessed characters cannot be targetted.";
+                return false;
+            }
             if(character.faction != PlayerManager.Instance.player.playerFaction && character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER) {
                 return true;
             }

@@ -42,7 +42,7 @@ public class Abduct : PlayerJobAction {
         return base.CanPerformActionTowards(targetCharacter);
     }
 
-    public override bool CanTarget(IPointOfInterest targetPOI) {
+    public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (!(targetPOI is Character)) {
             return false;
         }
@@ -53,7 +53,7 @@ public class Abduct : PlayerJobAction {
         if (targetCharacter.race != RACE.SKELETON && targetCharacter.race != RACE.GOBLIN) {
             return false;
         }
-        return base.CanTarget(targetCharacter);
+        return base.CanTarget(targetCharacter, ref hoverText);
     }
 
     #region Area Checkers

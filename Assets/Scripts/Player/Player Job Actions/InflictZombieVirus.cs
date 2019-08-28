@@ -65,16 +65,16 @@ public class InflictZombieVirus : PlayerJobAction {
         }
         return base.CanPerformActionTowards(targetCharacter);
     }
-    public override bool CanTarget(IPointOfInterest targetPOI) {
+    public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (targetPOI is Character) {
-            return CanTarget(targetPOI as Character);
+            return CanTarget(targetPOI as Character, ref hoverText);
         } else if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             if (to.users != null) {
                 for (int i = 0; i < to.users.Length; i++) {
                     Character currUser = to.users[i];
                     if (currUser != null) {
-                        bool canTarget = CanTarget(currUser);
+                        bool canTarget = CanTarget(currUser, ref hoverText);
                         if (canTarget) { return true; }
                     }
                 }
@@ -84,7 +84,7 @@ public class InflictZombieVirus : PlayerJobAction {
     }
     #endregion
 
-    private bool CanTarget(Character targetCharacter) {
+    private bool CanTarget(Character targetCharacter, ref string hoverText) {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
@@ -94,6 +94,6 @@ public class InflictZombieVirus : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Zombie Virus") != null) {
             return false;
         }
-        return true;
+        return base.CanTarget(targetCharacter, ref hoverText);
     }
 }

@@ -36,21 +36,21 @@ public class Release : PlayerJobAction {
         }
         return base.CanPerformActionTowards(targetCharacter);
     }
-    public override bool CanTarget(IPointOfInterest targetPOI) {
+    public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (targetPOI is Character) {
-            return CanTarget(targetPOI as Character);
+            return CanTarget(targetPOI as Character, ref hoverText);
         }
         return false;
     }
     #endregion
 
-    private bool CanTarget(Character targetCharacter) {
+    private bool CanTarget(Character targetCharacter, ref string hoverText) {
         if (targetCharacter.isDead) {
             return false;
         }
         if (targetCharacter.GetNormalTrait("Restrained") == null) {
             return false;
         }
-        return true;
+        return base.CanTarget(targetCharacter, ref hoverText);
     }
 }

@@ -37,16 +37,16 @@ public class InflictAlcoholic : PlayerJobAction {
             base.ActivateAction(targets[0]);
         }        
     }
-    public override bool CanTarget(IPointOfInterest targetPOI) {
+    public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (targetPOI is Character) {
-            return CanTarget(targetPOI as Character);
+            return CanTarget(targetPOI as Character, ref hoverText);
         } else if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             if (to.users != null) {
                 for (int i = 0; i < to.users.Length; i++) {
                     Character currUser = to.users[i];
                     if (currUser != null) {
-                        bool canTarget = CanTarget(currUser);
+                        bool canTarget = CanTarget(currUser, ref hoverText);
                         if (canTarget) { return true; }
                     }
                 }
@@ -54,23 +54,23 @@ public class InflictAlcoholic : PlayerJobAction {
         }
         return false;
     }
-    private bool CanTarget(Character targetCharacter) {
+    private bool CanTarget(Character targetCharacter, ref string hoverText) {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Alcoholic") == null) {
-            return true;
+        if (targetCharacter.GetNormalTrait("Alcoholic") != null) {
+            return false;
         }
-        return false;
+        return base.CanTarget(targetCharacter, ref hoverText);
     }
     protected override bool CanPerformActionTowards(Character targetPOI) {
         if (targetPOI.isDead) {
             return false;
         }
-        if (targetPOI is Character && targetPOI.GetNormalTrait("Alcoholic") == null) {
-            return true;
+        if (!(targetPOI is Character) || targetPOI.GetNormalTrait("Alcoholic") != null) {
+            return false;
         }
-        return false;
+        return base.CanPerformActionTowards(targetPOI);
     }
     protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {

@@ -27,7 +27,7 @@ public class AccessMemories : PlayerJobAction {
     protected override bool CanPerformActionTowards(Character targetCharacter) {
         return base.CanPerformActionTowards(targetCharacter);
     }
-    public override bool CanTarget(IPointOfInterest targetPOI) {
+    public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (!(targetPOI is Character)) {
             return false;
         }
@@ -35,6 +35,6 @@ public class AccessMemories : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        return base.CanTarget(targetCharacter);
+        return base.CanTarget(targetCharacter, ref hoverText);
     }
 }

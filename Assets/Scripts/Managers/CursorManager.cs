@@ -46,19 +46,20 @@ public class CursorManager : MonoBehaviour {
     //}
     private void Update() {
         if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
-            if(PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
+            if (PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
                 LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
                 if (previousHoveredTile != null && previousHoveredTile != hoveredTile) {
                     PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(previousHoveredTile);
                 }
                 bool canTarget = false;
                 IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
+                string hoverText = string.Empty;
                 for (int i = 0; i < PlayerManager.Instance.player.currentActivePlayerJobAction.targetTypes.Length; i++) {
                     switch (PlayerManager.Instance.player.currentActivePlayerJobAction.targetTypes[i]) {
                         case JOB_ACTION_TARGET.CHARACTER:
                         case JOB_ACTION_TARGET.TILE_OBJECT:
                             if (hoveredPOI != null) {
-                                canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI);
+                                canTarget = PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI, ref hoverText);
                             }
                             break;
                         case JOB_ACTION_TARGET.TILE:
@@ -79,6 +80,13 @@ public class CursorManager : MonoBehaviour {
                     }
                 }
                 previousHoveredTile = hoveredTile;
+                if(hoveredPOI != null) {
+                    if (hoverText != string.Empty) {
+                        UIManager.Instance.ShowSmallInfo(hoverText);
+                    }
+                } else {
+                    UIManager.Instance.HideSmallInfo();
+                }
                 //IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
                 //if (hoveredPOI != null) {
                 //    if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI)) {
@@ -103,8 +111,9 @@ public class CursorManager : MonoBehaviour {
                 //    SetCursorTo(Cursor_Type.Cross);
                 //}
             } else if (PlayerManager.Instance.player.currentActiveCombatAbility != null) {
+                UIManager.Instance.HideSmallInfo();
                 CombatAbility ability = PlayerManager.Instance.player.currentActiveCombatAbility;
-                if(ability.abilityRadius == 0) {
+                if (ability.abilityRadius == 0) {
                     IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
                     if (hoveredPOI != null) {
                         if (ability.CanTarget(hoveredPOI)) {
@@ -115,10 +124,10 @@ public class CursorManager : MonoBehaviour {
                     }
                 } else {
                     LocationGridTile hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
-                    if(hoveredTile != null) {
+                    if (hoveredTile != null) {
                         SetCursorTo(Cursor_Type.Check);
                         List<LocationGridTile> highlightTiles = hoveredTile.parentAreaMap.GetTilesInRadius(hoveredTile, ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
-                        if(InteriorMapManager.Instance.currentlyHighlightedTiles != null) {
+                        if (InteriorMapManager.Instance.currentlyHighlightedTiles != null) {
                             InteriorMapManager.Instance.UnhighlightTiles();
                             InteriorMapManager.Instance.HighlightTiles(highlightTiles);
                         } else {
@@ -129,16 +138,23 @@ public class CursorManager : MonoBehaviour {
             } else if (PlayerManager.Instance.player.currentActiveIntel != null) {
                 IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
                 if (hoveredPOI != null) {
-                    if (PlayerManager.Instance.player.CanShareIntel(hoveredPOI)) {
+                    string hoverText = string.Empty;
+                    if (PlayerManager.Instance.player.CanShareIntel(hoveredPOI, ref hoverText)) {
                         SetCursorTo(Cursor_Type.Check);
                     } else {
                         SetCursorTo(Cursor_Type.Cross);
                     }
+                    if(hoverText != string.Empty) {
+                        UIManager.Instance.ShowSmallInfo(hoverText);
+                    }
                 } else {
+                    UIManager.Instance.HideSmallInfo();
                     SetCursorTo(Cursor_Type.Cross);
                 }
             }
-
+            //else {
+            //    UIManager.Instance.HideSmallInfo();
+            //}
         }
         if (Input.GetMouseButtonDown(0)) {
             //left click

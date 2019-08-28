@@ -33,7 +33,7 @@ public class Provoke : PlayerJobAction {
         }
         return base.CanPerformActionTowards(targetCharacter);
     }
-    public override bool CanTarget(IPointOfInterest targetPOI) {
+    public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (!(targetPOI is Character)) {
             return false;
         }
@@ -47,6 +47,6 @@ public class Provoke : PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Unconscious") != null) {
             return false;
         }
-        return base.CanTarget(targetCharacter);
+        return base.CanTarget(targetCharacter, ref hoverText);
     }
 }

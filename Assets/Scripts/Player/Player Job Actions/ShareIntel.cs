@@ -58,7 +58,7 @@ public class ShareIntel : PlayerJobAction {
         }
         return base.CanPerformActionTowards(targetCharacter);
     }
-    public override bool CanTarget(IPointOfInterest targetPOI) {
+    public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (!(targetPOI is Character)) {
             return false;
         }
@@ -78,7 +78,7 @@ public class ShareIntel : PlayerJobAction {
         if(targetCharacter.GetNormalTrait("Unconscious", "Resting") != null) {
             return false;
         }
-        return base.CanTarget(targetCharacter);
+        return base.CanTarget(targetCharacter, ref hoverText);
     }
     protected override void OnCharacterDied(Character characterThatDied) {
         base.OnCharacterDied(characterThatDied);

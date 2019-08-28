@@ -34,7 +34,7 @@ public class RileUp : PlayerJobAction {
         return base.CanPerformActionTowards(targetCharacter);
     }
 
-    public override bool CanTarget(IPointOfInterest targetPOI) {
+    public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (!(targetPOI is Character)) {
             return false;
         }
@@ -48,7 +48,7 @@ public class RileUp : PlayerJobAction {
         //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
         //    return false;
         //}
-        return base.CanTarget(targetCharacter);
+        return base.CanTarget(targetCharacter, ref hoverText);
     }
 
     #region Area Checkers

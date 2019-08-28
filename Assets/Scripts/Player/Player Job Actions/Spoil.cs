@@ -22,7 +22,7 @@ public class Spoil : PlayerJobAction {
             PlayerManager.Instance.player.ShowNotification(log);
         }
     }
-    public override bool CanTarget(IPointOfInterest poi) {
+    public override bool CanTarget(IPointOfInterest poi, ref string hoverText) {
         if (poi is Table && poi.GetNormalTrait("Poisoned") == null) {
             return true;
         }

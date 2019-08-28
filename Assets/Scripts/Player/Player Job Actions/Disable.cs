@@ -36,10 +36,10 @@ public class Disable : PlayerJobAction {
         }
         return base.CanPerformActionTowards(targetPOI);
     }
-    public override bool CanTarget(IPointOfInterest targetPOI) {
+    public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (!(targetPOI is TileObject) || targetPOI.gridTileLocation == null || targetPOI.isDisabledByPlayer) {
             return false;
         }
-        return base.CanTarget(targetPOI);
+        return base.CanTarget(targetPOI, ref hoverText);
     }
 }
