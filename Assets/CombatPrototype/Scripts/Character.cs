@@ -4965,7 +4965,7 @@ public class Character : ILeader, IPointOfInterest {
         PlanForcedFullnessRecovery();
 
         //suicide
-        if (GetNormalTrait("Forlorn") != null && !jobQueue.HasJob(JOB_TYPE.SUICIDE) && UnityEngine.Random.Range(0, 100) < 2) {
+        if (GetNormalTrait("Forlorn") != null && !jobQueue.HasJob(JOB_TYPE.SUICIDE) && UnityEngine.Random.Range(0, 100) < 2 && _doNotDisturb <= 0) {
             CreateSuicideJob();
         }
 
@@ -8076,11 +8076,11 @@ public class Character : ILeader, IPointOfInterest {
             if (state.characterState.IsCombatState()) {
                 ClearIgnoreHostilities();
             }
-            if (state.characterState == CHARACTER_STATE.MOVE_OUT) {
-                AdjustDoNotGetHungry(1);
-                AdjustDoNotGetLonely(1);
-                AdjustDoNotGetTired(1);
-            }
+            //if (state.characterState == CHARACTER_STATE.MOVE_OUT) {
+            //    AdjustDoNotGetHungry(1);
+            //    AdjustDoNotGetLonely(1);
+            //    AdjustDoNotGetTired(1);
+            //}
         } else {
             if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null && isAtHomeArea && !ownParty.icon.isTravellingOutside) {
                 //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly

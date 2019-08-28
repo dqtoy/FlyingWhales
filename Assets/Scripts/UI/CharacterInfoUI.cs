@@ -595,6 +595,10 @@ public class CharacterInfoUI : UIMenu {
     public void ShowCharacterTestingInfo() {
         string summary = "Home structure: " + activeCharacter.homeStructure?.ToString() ?? "None";
         summary += "\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None";
+        summary += "\nDo Not Disturb: " + activeCharacter.doNotDisturb.ToString();
+        summary += "\nDo Not Get Hungry: " + activeCharacter.doNotGetHungry.ToString();
+        summary += "\nDo Not Get Tired: " + activeCharacter.doNotGetTired.ToString();
+        summary += "\nDo Not Get Lonely: " + activeCharacter.doNotGetLonely.ToString();
         summary += "\nRole: " + activeCharacter.role.roleType.ToString();
         summary += "\nSexuality: " + activeCharacter.sexuality.ToString();
         summary += "\nMood: " + activeCharacter.moodValue.ToString() + "(" + activeCharacter.currentMoodType.ToString() + ")";

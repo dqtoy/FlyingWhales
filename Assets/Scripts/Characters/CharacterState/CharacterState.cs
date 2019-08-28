@@ -201,7 +201,7 @@ public class CharacterState {
         StopStatePerTick();
     }
     //Resumes the state and its movement behavior
-    public void ResumeState() {
+    public virtual void ResumeState() {
         if (isDone) {
             return; //if the state has already been exited. Do not resume.
         }

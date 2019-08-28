@@ -18,6 +18,14 @@ public class MoveOutState : CharacterState {
         base.StartState();
         stateComponent.character.AdjustDoNotDisturb(1);
     }
+    public override void PauseState() {
+        base.PauseState();
+        stateComponent.character.AdjustDoNotDisturb(-1);
+    }
+    public override void ResumeState() {
+        base.ResumeState();
+        stateComponent.character.AdjustDoNotDisturb(1);
+    }
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
         if (stateComponent.character.specificLocation == stateComponent.character.homeArea) {
