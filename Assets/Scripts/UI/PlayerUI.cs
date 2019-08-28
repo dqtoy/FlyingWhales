@@ -104,6 +104,9 @@ public class PlayerUI : MonoBehaviour {
     [Header("Research Intervention Ability UI")]
     public ResearchAbilityUI researchInterventionAbilityUI;
 
+    [Header("Unleash Summon UI")]
+    public UnleashSummonUI unleashSummonUI;
+
     [Header("Skirmish UI")]
     public SkirmishUI skirmishUI;
     public CharacterPortrait skirmishEnemyPortrait;
@@ -262,9 +265,10 @@ public class PlayerUI : MonoBehaviour {
             }
         } else if (pressedKey == KeyCode.Mouse0) {
             //left click
-            if (isSummoning) {
-                TryPlaceSummon();
-            } else if (isSummoningArtifact) {
+            //if (isSummoning) {
+            //    TryPlaceSummon();
+            //} else 
+            if (isSummoningArtifact) {
                 TryPlaceArtifact();
             }
         }
@@ -1015,22 +1019,33 @@ public class PlayerUI : MonoBehaviour {
         UIManager.Instance.HideSmallInfo();
     }
     public void OnClickSummon() {
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Target);
-        isSummoning = true;
+        unleashSummonUI.ShowUnleashSummonUI(currentlySelectedSummonSlot.summon);
+        //CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Target);
+        //isSummoning = true;
     }
-    private void TryPlaceSummon() {
-        isSummoning = false;
-        if (!UIManager.Instance.IsMouseOnUI()) {
-            LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
-            Summon summonToPlace = currentlySelectedSummonSlot.summon;
-            summonToPlace.CreateMarker();
-            summonToPlace.marker.InitialPlaceMarkerAt(tile);
-            //PlayerManager.Instance.player.RemoveSummon(summonToPlace);
-            summonToPlace.OnPlaceSummon(tile);
-            PlayerManager.Instance.player.RemoveSummon(summonToPlace);
-            Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summonToPlace);
-        }
-        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+    public void TryPlaceSummon(Summon summon) {
+        LocationGridTile mainEntrance = LandmarkManager.Instance.enemyPlayerArea.GetRandomUnoccupiedEdgeTile();
+        //LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
+        Summon summonToPlace = summon;
+        summonToPlace.CreateMarker();
+        summonToPlace.marker.InitialPlaceMarkerAt(mainEntrance);
+        //PlayerManager.Instance.player.RemoveSummon(summonToPlace);
+        summonToPlace.OnPlaceSummon(mainEntrance);
+        PlayerManager.Instance.player.RemoveSummon(summonToPlace);
+        Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summonToPlace);
+        summonToPlace.CenterOnCharacter();
+        //isSummoning = false;
+        //if (!UIManager.Instance.IsMouseOnUI()) {
+        //    LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
+        //    Summon summonToPlace = currentlySelectedSummonSlot.summon;
+        //    summonToPlace.CreateMarker();
+        //    summonToPlace.marker.InitialPlaceMarkerAt(mainEntrance);
+        //    //PlayerManager.Instance.player.RemoveSummon(summonToPlace);
+        //    summonToPlace.OnPlaceSummon(mainEntrance);
+        //    PlayerManager.Instance.player.RemoveSummon(summonToPlace);
+        //    Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summonToPlace);
+        //}
+        //CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
     }
     private void CancelSummon() {
         isSummoning = false;

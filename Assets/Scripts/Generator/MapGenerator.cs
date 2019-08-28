@@ -93,6 +93,63 @@ public class MapGenerator : MonoBehaviour {
 
         PlayerUI.Instance.ShowStartingMinionPicker();
     }
+    private IEnumerator InitializeWorldCoroutine(Save data) {
+        System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
+        System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
+        loadingWatch.Start();
+
+        LevelLoaderManager.UpdateLoadingInfo("Loading Map...");
+        GridMap.Instance.SetupInitialData(data.width, data.height);
+        yield return null;
+        CameraMove.Instance.Initialize();
+        InteriorMapManager.Instance.Initialize();
+        ObjectPoolManager.Instance.InitializeObjectPools();
+        yield return null;
+        GridMap.Instance.GenerateGrid(data);
+        yield return null;
+        GridMap.Instance.GenerateOuterGrid(data);
+        yield return null;
+        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
+        yield return null;
+        data.LoadPlayerArea();
+        data.LoadNonPlayerAreas();
+        data.LoadFactions();
+        data.LoadPlayerAreaItems();
+        data.LoadNonPlayerAreaItems();
+        LandmarkManager.Instance.LoadAdditionalAreaData();
+        data.LoadCharacters();
+        yield return null;
+        data.LoadCharacterRelationships();
+        yield return null;
+        data.LoadLandmarks();
+        yield return null;
+        GridMap.Instance.GenerateInitialTileTags();
+        yield return null;
+
+        CameraMove.Instance.CalculateCameraBounds();
+        UIManager.Instance.InitializeUI();
+        LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
+        yield return null;
+
+        TokenManager.Instance.Initialize();
+        //CharacterManager.Instance.GenerateRelationships();
+        InteractionManager.Instance.Initialize();
+        StoryEventsManager.Instance.Initialize();
+
+
+        data.LoadPlayer();
+
+        loadingWatch.Stop();
+        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
+        LevelLoaderManager.SetLoadingState(false);
+        Messenger.Broadcast(Signals.GAME_LOADED);
+        CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
+        yield return new WaitForSeconds(1f);
+        data.LoadCurrentDate();
+        GameManager.Instance.StartProgression();
+        UIManager.Instance.SetTimeControlsState(false);
+        Messenger.Broadcast(Signals.UPDATE_UI);
+    }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
         System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
@@ -167,63 +224,6 @@ public class MapGenerator : MonoBehaviour {
         
         yield return new WaitForSeconds(1f);
         PlayerManager.Instance.LoadStartingTile();
-    }
-    private IEnumerator InitializeWorldCoroutine(Save data) {
-        System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
-        System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
-        loadingWatch.Start();
-
-        LevelLoaderManager.UpdateLoadingInfo("Loading Map...");
-        GridMap.Instance.SetupInitialData(data.width, data.height);
-        yield return null;
-        CameraMove.Instance.Initialize();
-        InteriorMapManager.Instance.Initialize();
-        ObjectPoolManager.Instance.InitializeObjectPools();
-        yield return null;
-        GridMap.Instance.GenerateGrid(data);
-        yield return null;
-        GridMap.Instance.GenerateOuterGrid(data);
-        yield return null;
-        Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
-        yield return null;
-        data.LoadPlayerArea();
-        data.LoadNonPlayerAreas();
-        data.LoadFactions();
-        data.LoadPlayerAreaItems();
-        data.LoadNonPlayerAreaItems();
-        LandmarkManager.Instance.LoadAdditionalAreaData();
-        data.LoadCharacters();
-        yield return null;
-        data.LoadCharacterRelationships();
-        yield return null;
-        data.LoadLandmarks();
-        yield return null;
-        GridMap.Instance.GenerateInitialTileTags();
-        yield return null;
-
-        CameraMove.Instance.CalculateCameraBounds();
-        UIManager.Instance.InitializeUI();
-        LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
-        yield return null;
-
-        TokenManager.Instance.Initialize();
-        //CharacterManager.Instance.GenerateRelationships();
-        InteractionManager.Instance.Initialize();
-        StoryEventsManager.Instance.Initialize();
-
-
-        data.LoadPlayer();
-
-        loadingWatch.Stop();
-        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
-        LevelLoaderManager.SetLoadingState(false);
-        Messenger.Broadcast(Signals.GAME_LOADED);
-        CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
-        yield return new WaitForSeconds(1f);
-        data.LoadCurrentDate();
-        GameManager.Instance.StartProgression();
-        UIManager.Instance.SetTimeControlsState(false);
-        Messenger.Broadcast(Signals.UPDATE_UI);
     }
 
     internal void ReloadScene() {
