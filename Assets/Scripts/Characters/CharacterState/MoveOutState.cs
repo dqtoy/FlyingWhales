@@ -16,6 +16,7 @@ public class MoveOutState : CharacterState {
     #region Overrides
     protected override void StartState() {
         base.StartState();
+        stateComponent.character.AdjustDoNotDisturb(1);
     }
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
@@ -30,6 +31,7 @@ public class MoveOutState : CharacterState {
         if (!string.IsNullOrEmpty(goHomeSchedID)) { //if this state is exited, and its goHomeSchedID is not empty (Usually because character died mid way). Cancel that schedule.
             SchedulingManager.Instance.RemoveSpecificEntry(goHomeSchedID);
         }
+        stateComponent.character.AdjustDoNotDisturb(-1);
     }
     protected override void PerTickInState() { }
     #endregion

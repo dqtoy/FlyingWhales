@@ -329,6 +329,12 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.ASK_TO_STOP_JOB:
                 goapAction = new AskToStopJob(actor, target);
                 break;
+            case INTERACTION_TYPE.WELL_JUMP:
+                goapAction = new WellJump(actor, target);
+                break;
+            case INTERACTION_TYPE.STRANGLE:
+                goapAction = new Strangle(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
@@ -423,6 +429,8 @@ public class InteractionManager : MonoBehaviour {
             { INTERACTION_TYPE.STUMBLE, new StumbleData() },
             { INTERACTION_TYPE.TRANSFORM_FOOD, new TransformFoodData() },
             { INTERACTION_TYPE.ASK_TO_STOP_JOB, new AskToStopJobData() },
+            { INTERACTION_TYPE.WELL_JUMP, new WellJumpData() },
+            { INTERACTION_TYPE.STRANGLE, new StrangleData() },
         };
     }
     public bool CanSatisfyGoapActionRequirements(INTERACTION_TYPE goapType, Character actor, IPointOfInterest poiTarget, object[] otherData) {
@@ -652,6 +660,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
             case JOB_TYPE.INSPECT:
             case JOB_TYPE.MISC:
+            case JOB_TYPE.SUICIDE:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:
