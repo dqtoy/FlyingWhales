@@ -256,6 +256,16 @@ public class PlayerManager : MonoBehaviour {
         }
         return INTERVENTION_ABILITY.ABDUCT;
     }
+    public List<INTERVENTION_ABILITY> GetAbilitiesByTier(int tier) {
+        List<INTERVENTION_ABILITY> abilityTiers = new List<INTERVENTION_ABILITY>();
+        for (int i = 0; i < allInterventionAbilities.Length; i++) {
+            INTERVENTION_ABILITY ability = allInterventionAbilities[i];
+            if (GetInterventionAbilityTier(ability) == tier) {
+                abilityTiers.Add(ability);
+            }
+        }
+        return abilityTiers;
+    }
     #endregion
 
     #region Combat Ability

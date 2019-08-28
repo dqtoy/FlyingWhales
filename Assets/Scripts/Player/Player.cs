@@ -42,6 +42,7 @@ public class Player : ILeader {
     public int currentInterventionAbilityTimerTick { get; private set; }
     public int newInterventionAbilityTimerTicks { get; private set; }
     public int currentNewInterventionAbilityCycleIndex { get; private set; }
+    public INTERVENTION_ABILITY interventionAbilityToResearch { get; private set; }
 
     #region getters/setters
     public int id {
@@ -670,7 +671,7 @@ public class Player : ILeader {
     //    }
     //}
     private void PerTickPlayer() {
-        PerTickInterventionAbility();
+        //PerTickInterventionAbility();
     }
     #endregion
 
@@ -1642,27 +1643,51 @@ public class Player : ILeader {
     private void InitializeNewInterventionAbilityCycle() {
         currentNewInterventionAbilityCycleIndex = -1;
         newInterventionAbilityTimerTicks = GameManager.Instance.GetTicksBasedOnHour(8);
-        NewCycleForNewInterventionAbility();
     }
-    private void PerTickInterventionAbility() {
-        currentInterventionAbilityTimerTick++;
-        if (currentInterventionAbilityTimerTick >= newInterventionAbilityTimerTicks) {
-            int tier = GetTierBasedOnCycle();
-            INTERVENTION_ABILITY newAbility = PlayerManager.Instance.GetRandomAbilityByTier(tier);
-            if(newAbility != INTERVENTION_ABILITY.ABDUCT) {
-                GainNewInterventionAbility(newAbility, true);
-            }
-            NewCycleForNewInterventionAbility();
-        }
-    }
-    public void NewCycleForNewInterventionAbility() {
+    public void StartResearchNewInterventionAbility() {
         currentInterventionAbilityTimerTick = 0;
         currentNewInterventionAbilityCycleIndex++;
         if (currentNewInterventionAbilityCycleIndex > 3) {
             currentNewInterventionAbilityCycleIndex = 0;
         }
-        TimerHubUI.Instance.AddItem("Unlock New Intervention Ability", newInterventionAbilityTimerTicks, null);
-        //Messenger.Broadcast(Signals.SHOW_TIMER_HUB_ITEM, "Unlock New Intervention Ability", newInterventionAbilityTimerTicks);
+
+        int tier = GetTierBasedOnCycle();
+        List<INTERVENTION_ABILITY> abilities = PlayerManager.Instance.GetAbilitiesByTier(tier);
+
+        int index1 = UnityEngine.Random.Range(0, abilities.Count);
+        INTERVENTION_ABILITY ability1 = abilities[index1];
+        abilities.RemoveAt(index1);
+
+        if (abilities.Count <= 0) {
+            abilities = PlayerManager.Instance.GetAbilitiesByTier(tier);
+        }
+        int index2 = UnityEngine.Random.Range(0, abilities.Count);
+        INTERVENTION_ABILITY ability2 = abilities[index2];
+        abilities.RemoveAt(index2);
+
+        if (abilities.Count <= 0) {
+            abilities = PlayerManager.Instance.GetAbilitiesByTier(tier);
+        }
+        int index3 = UnityEngine.Random.Range(0, abilities.Count);
+        INTERVENTION_ABILITY ability3 = abilities[index3];
+
+        PlayerUI.Instance.researchInterventionAbilityUI.SetAbility1(ability1);
+        PlayerUI.Instance.researchInterventionAbilityUI.SetAbility2(ability2);
+        PlayerUI.Instance.researchInterventionAbilityUI.SetAbility3(ability3);
+        PlayerUI.Instance.researchInterventionAbilityUI.ShowResearchUI();
+    }
+    private void PerTickInterventionAbility() {
+        currentInterventionAbilityTimerTick++;
+        if (currentInterventionAbilityTimerTick >= newInterventionAbilityTimerTicks) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInterventionAbility);
+            GainNewInterventionAbility(interventionAbilityToResearch, true);
+            StartResearchNewInterventionAbility();
+        }
+    }
+    public void NewCycleForNewInterventionAbility(INTERVENTION_ABILITY interventionAbilityToResearch) {
+        this.interventionAbilityToResearch = interventionAbilityToResearch;
+        TimerHubUI.Instance.AddItem("Research for " + Utilities.NormalizeStringUpperCaseFirstLetters(interventionAbilityToResearch.ToString()), newInterventionAbilityTimerTicks, null);
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickInterventionAbility);
     }
     private int GetTierBasedOnCycle() {
         //Tier Cycle - 3, 3, 2, 1

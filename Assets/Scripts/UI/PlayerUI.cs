@@ -101,6 +101,9 @@ public class PlayerUI : MonoBehaviour {
     [Header("New Minion Ability UI")]
     public NewMinionAbilityUI newMinionAbilityUI;
 
+    [Header("Research Intervention Ability UI")]
+    public ResearchAbilityUI researchInterventionAbilityUI;
+
     [Header("Skirmish UI")]
     public SkirmishUI skirmishUI;
     public CharacterPortrait skirmishEnemyPortrait;
@@ -761,6 +764,7 @@ public class PlayerUI : MonoBehaviour {
         }
         startingAbilities = null;
         UIManager.Instance.SetTimeControlsState(true);
+        PlayerManager.Instance.player.StartResearchNewInterventionAbility();
     }
     private void ShowSelectMinionLeader() {
         Utilities.DestroyChildren(minionLeaderPickerParent.transform);
