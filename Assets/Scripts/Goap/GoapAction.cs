@@ -345,6 +345,10 @@ public class GoapAction {
     protected virtual void MoveToDoAction(Character targetCharacter) {
         //if the actor is NOT at the area where the target structure is, make him/her go there first.
         actor.marker.pathfindingAI.ResetEndReachedDistance();
+        if (targetStructure == null) {
+            throw new Exception(actor.name + " target structure of action " + this.goapName + " is null.");
+        }
+
         if (actor.specificLocation != targetStructure.location) {
             if (_stayInArea) {
                 actor.PerformGoapAction();

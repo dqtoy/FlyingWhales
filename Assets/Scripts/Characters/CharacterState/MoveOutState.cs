@@ -52,9 +52,11 @@ public class MoveOutState : CharacterState {
             return;
         }
         hasSceduledArriveAtRandomRegion = true;
+        stateComponent.character.CancelAllPlans();
         stateComponent.character.ownParty.icon.SetIsTravellingOutside(true);
         stateComponent.character.SetPOIState(POI_STATE.INACTIVE);
         stateComponent.character.marker.gameObject.SetActive(false);
+        stateComponent.character.marker.StopMovement();
         Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, this.stateComponent.character.ownParty);
         GameDate dueDate = GameManager.Instance.Today();
         dueDate = dueDate.AddTicks(3 * GameManager.ticksPerHour);
@@ -111,6 +113,7 @@ public class MoveOutState : CharacterState {
     }
 
     private void ArriveHome() {
+        stateComponent.character.SetPOIState(POI_STATE.ACTIVE);
         stateComponent.character.ownParty.icon.SetIsTravellingOutside(false);
         stateComponent.character.marker.PlaceMarkerAt(stateComponent.character.specificLocation.GetRandomUnoccupiedEdgeTile());
         OnExitThisState();
