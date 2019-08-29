@@ -85,8 +85,8 @@ public class CharacterInfoUI : UIMenu {
     }
 
     private string normalTextColor = "#CEB67C";
-    private string buffTextColor = "#005500";
-    private string flawTextColor = "#FF0000";
+    private string buffTextColor = "#39FF14";
+    private string flawTextColor = "#FF073A";
 
     internal override void Initialize() {
         base.Initialize();
@@ -378,7 +378,7 @@ public class CharacterInfoUI : UIMenu {
                 if (!string.IsNullOrEmpty(statusTraitsLbl.text)) {
                     statusTraitsLbl.text += ", ";
                 }
-                statusTraitsLbl.text += "<color=" + color + "><link=" + '"' + i.ToString() + '"' + "_trait>" + currTrait.name + "</link></color>";
+                statusTraitsLbl.text += "<b><color=" + color + "><link=" + '"' + i.ToString() + '"' + ">" + currTrait.name + "</link></color></b>";
             } else {
                 //CreateTraitGO(currTrait, normalTraitsScrollView.content);
                 //if (lastNormalIndex < normalTraitContainers.Length) {
@@ -394,7 +394,7 @@ public class CharacterInfoUI : UIMenu {
                 if (!string.IsNullOrEmpty(normalTraitsLbl.text)) {
                     normalTraitsLbl.text += ", ";
                 }
-                normalTraitsLbl.text += "<color=" + color + "><link=" + '"' + i.ToString() + '"' + "_trait>" + currTrait.name + "</link></color>";
+                normalTraitsLbl.text += "<b><color=" + color + "><link=" + '"' + i.ToString() + '"' + ">" + currTrait.name + "</link></color></b>";
             }
         }
         for (int i = 0; i < _activeCharacter.relationshipTraits.Count; i++) {

@@ -253,6 +253,9 @@ public class UIManager : MonoBehaviour {
         if (PlayerUI.Instance.isShowingKillSummary) {
             PlayerUI.Instance.HideKillSummary();
         }
+        if (PlayerUI.Instance.isShowingMinionList) {
+            PlayerUI.Instance.HideMinionList();
+        }
     }
     public void AddToUIMenuHistory(object data) {
         if(_uiMenuHistory.Count > 0 && _uiMenuHistory[_uiMenuHistory.Count - 1] == data) {

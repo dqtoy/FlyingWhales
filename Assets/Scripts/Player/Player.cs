@@ -209,6 +209,9 @@ public class Player : ILeader {
     private void SetPlayerFaction(Faction faction) {
         playerFaction = faction;
     }
+    public void SetPlayerTargetFaction(Faction faction) {
+        currentTargetFaction = faction;
+    }
     #endregion
 
     #region Minions
@@ -1398,7 +1401,6 @@ public class Player : ILeader {
 
     #region Invasion
     public void StartInvasion(Area area) {
-        currentTargetFaction = area.owner;
         List<LocationGridTile> entrances = new List<LocationGridTile>();
         List<Minion> currentMinions = new List<Minion>();
         for (int i = 0; i < minions.Count; i++) {

@@ -66,6 +66,7 @@ public class ConsoleMenu : UIMenu {
             {"/set_fullness", SetFullness },
             {"/set_tiredness", SetTiredness },
             {"/set_happiness", SetHappiness },
+            {"/gain_i_ability", GainInterventionAbility },
         };
 
 #if UNITY_EDITOR
@@ -1114,6 +1115,25 @@ public class ConsoleMenu : UIMenu {
             AddSuccessMessage("Gained new artifact: " + type);
         } else {
             AddErrorMessage("There is no artifact of type " + typeParameterString);
+        }
+
+    }
+    #endregion
+
+    #region Player
+    private void GainInterventionAbility(string[] parameters) {
+        if (parameters.Length != 1) { //intervention ability
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of GainInterventionAbility");
+            return;
+        }
+        string typeParameterString = parameters[0];
+        INTERVENTION_ABILITY type;
+        if (Enum.TryParse(typeParameterString, out type)) {
+            PlayerManager.Instance.player.GainNewInterventionAbility(type, true);
+            AddSuccessMessage("Gained new Intervention Ability: " + type);
+        } else {
+            AddErrorMessage("There is no intervention ability of type " + typeParameterString);
         }
 
     }
