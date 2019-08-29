@@ -1209,9 +1209,9 @@ public class UIManager : MonoBehaviour {
         }
 
         if (itemToReplace != null) {
-            //int index = (itemToReplace.transform as RectTransform).GetSiblingIndex();
+            int index = (itemToReplace.transform as RectTransform).GetSiblingIndex();
             itemToReplace.DeleteNotification();
-            //(newNotif.gameObject.transform as RectTransform).SetSiblingIndex(index);
+            (newNotif.gameObject.transform as RectTransform).SetSiblingIndex(index);
         }
         //else {
         //    (newNotif.gameObject.transform as RectTransform).SetAsLastSibling();
