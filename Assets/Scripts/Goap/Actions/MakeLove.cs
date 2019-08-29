@@ -104,10 +104,10 @@ public class MakeLove : GoapAction {
         currentState.SetIntelReaction(MakeLoveSuccessReactions);
     }
     private void PerTickMakeLoveSuccess() {
-        //**Per Tick Effect 1 * *: Actor's Happiness Meter +200
-        actor.AdjustHappiness(200);
-        //**Per Tick Effect 2**: Target's Happiness Meter +200
-        targetCharacter.AdjustHappiness(200);
+        //**Per Tick Effect 1 * *: Actor's Happiness Meter +500
+        actor.AdjustHappiness(500);
+        //**Per Tick Effect 2**: Target's Happiness Meter +500
+        targetCharacter.AdjustHappiness(500);
     }
     private void AfterMakeLoveSuccess() {
         actor.AdjustDoNotGetLonely(-1);
