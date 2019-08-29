@@ -10,9 +10,9 @@ public class SaveDataPlayer {
     public int threat;
 
     public List<SaveDataMinion> minions;
-    public List<int> summonIDs;
-    public List<SaveDataArtifact> artifacts;
-    public List<SaveDataInterventionAbility> interventionAbilities;
+    public List<SaveDataSummon> summonSlots;
+    public List<SaveDataArtifact> artifactSlots;
+    public List<SaveDataInterventionAbility> interventionAbilitySlots;
 
     public int currentMinionLeaderID;
 
@@ -33,50 +33,44 @@ public class SaveDataPlayer {
             minions.Add(saveDataMinion);
         }
 
-        //summonIDs = new List<int>();
-        //foreach(List<Summon> summons in player.summonSlots.Values) {
-        //    for (int i = 0; i < summons.Count; i++) {
-        //        summonIDs.Add(summons[i].id);
-        //    }
-        //}
+        summonSlots = new List<SaveDataSummon>();
+        for (int i = 0; i < player.summonSlots.Length; i++) {
+            SaveDataSummon data = new SaveDataSummon();
+            data.Save(player.summonSlots[i]);
+            summonSlots.Add(data);
+        }
 
-        //TODO: SAVE DATA ARTIFACT TO SAVE DATA ARTIFACT SLOT
-        //Sort artifacts by id
-        //artifacts = new List<SaveDataArtifact>();
-        //for (int i = 0; i < player.artifactSlots.Length; i++) {
-        //    if(player.artifactSlots[i] != null) {
-        //        SaveDataArtifact saveDataArtifact = new SaveDataArtifact();
-        //        saveDataArtifact.Save(player.artifactSlots[i]);
-        //        SortAddSaveDataArtifact(saveDataArtifact);
-        //    }
-        //}
+        artifactSlots = new List<SaveDataArtifact>();
+        for (int i = 0; i < player.artifactSlots.Length; i++) {
+            SaveDataArtifact saveDataArtifact = new SaveDataArtifact();
+            saveDataArtifact.Save(player.artifactSlots[i]);
+            artifactSlots.Add(saveDataArtifact);
+        }
 
-        currentMinionLeaderID = player.currentMinionLeader.character.id;
+        //currentMinionLeaderID = player.currentMinionLeader.character.id;
 
-        //interventionAbilities = new List<SaveDataInterventionAbility>();
-        //for (int i = 0; i < player.interventionAbilitySlots.Length; i++) {
-        //    if (player.interventionAbilitySlots[i] != null) {
-        //        SaveDataInterventionAbility saveDataInterventionAbility = new SaveDataInterventionAbility();
-        //        saveDataInterventionAbility.Save(player.interventionAbilitySlots[i]);
-        //        interventionAbilities.Add(saveDataInterventionAbility);
-        //    }
-        //}
+        interventionAbilitySlots = new List<SaveDataInterventionAbility>();
+        for (int i = 0; i < player.interventionAbilitySlots.Length; i++) {
+            SaveDataInterventionAbility saveDataInterventionAbility = new SaveDataInterventionAbility();
+            saveDataInterventionAbility.Save(player.interventionAbilitySlots[i]);
+            interventionAbilitySlots.Add(saveDataInterventionAbility);
+        }
     }
     public void Load() {
         PlayerManager.Instance.InitializePlayer(this);
     }
     private void SortAddSaveDataArtifact(SaveDataArtifact newSaveData) {
         bool hasBeenInserted = false;
-        for (int i = 0; i < artifacts.Count; i++) {
-            SaveDataArtifact currSaveData = artifacts[i];
+        for (int i = 0; i < artifactSlots.Count; i++) {
+            SaveDataArtifact currSaveData = artifactSlots[i];
             if (newSaveData.id < currSaveData.id) {
-                artifacts.Insert(i, newSaveData);
+                artifactSlots.Insert(i, newSaveData);
                 hasBeenInserted = true;
                 break;
             }
         }
         if (!hasBeenInserted) {
-            artifacts.Add(newSaveData);
+            artifactSlots.Add(newSaveData);
         }
     }
 }

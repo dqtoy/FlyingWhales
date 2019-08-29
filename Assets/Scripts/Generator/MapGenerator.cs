@@ -111,6 +111,7 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
         Biomes.Instance.UpdateTileVisuals(GridMap.Instance.allTiles);
         yield return null;
+        data.LoadRegions();
         data.LoadPlayerArea();
         data.LoadNonPlayerAreas();
         data.LoadFactions();
@@ -122,6 +123,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadCharacterRelationships();
         yield return null;
         data.LoadLandmarks();
+        data.LoadLandmarkConnections();
         yield return null;
         GridMap.Instance.GenerateInitialTileTags();
         yield return null;
@@ -138,6 +140,10 @@ public class MapGenerator : MonoBehaviour {
 
 
         data.LoadPlayer();
+
+        yield return null;
+        LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyPlayerArea, false);
+        yield return null;
 
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));

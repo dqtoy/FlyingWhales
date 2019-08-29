@@ -422,6 +422,13 @@ public class GridMap : MonoBehaviour {
     #endregion
 
     #region Regions
+    public void LoadRegions(Region[] regions) {
+        allRegions = regions;
+        for (int i = 0; i < allRegions.Length; i++) {
+            allRegions[i].FinalizeData();
+            allRegions[i].ShowTransparentBorder();
+        }
+    }
     public void DivideToRegions(List<HexTile> tiles, int regionCount, int mapSize) {
         List<HexTile> regionCoreTileChoices = new List<HexTile>(tiles);
         List<HexTile> remainingTiles = new List<HexTile>(tiles);

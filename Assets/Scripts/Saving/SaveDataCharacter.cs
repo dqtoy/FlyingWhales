@@ -103,8 +103,16 @@ public class SaveDataCharacter {
         } else {
             factionID = -1;
         }
-        homeID = character.homeArea.id;
-        currentLocationID = character.specificLocation.id;
+        if(character.homeArea != null) {
+            homeID = character.homeArea.id;
+        } else {
+            homeID = -1;
+        }
+        if (character.specificLocation != null) {
+            currentLocationID = character.specificLocation.id;
+        } else {
+            currentLocationID = -1;
+        }
         isDead = character.isDead;
         gender = character.gender;
         sexuality = character.sexuality;

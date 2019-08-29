@@ -10,6 +10,7 @@ public class Save {
     public List<SaveDataHextile> hextileSaves;
     public List<SaveDataHextile> outerHextileSaves;
     public List<SaveDataLandmark> landmarkSaves;
+    public List<SaveDataRegion> regionSaves;
     public List<SaveDataArea> nonPlayerAreaSaves;
     public List<SaveDataFaction> factionSaves;
     public List<SaveDataCharacter> characterSaves;
@@ -94,6 +95,28 @@ public class Save {
                 landmarkSaves[saveDataHextile.landmarkID - 1].Load(currTile);
             }
         }
+    }
+    public void LoadLandmarkConnections() {
+        for (int i = 0; i < landmarkSaves.Count; i++) {
+            SaveDataLandmark data = landmarkSaves[i];
+            data.LoadLandmarkConnections(GridMap.Instance.hexTiles[data.locationID].landmarkOnTile);
+        }
+    }
+
+    public void SaveRegions(Region[] regions) {
+        regionSaves = new List<SaveDataRegion>();
+        for (int i = 0; i < regions.Length; i++) {
+            SaveDataRegion saveDataRegion = new SaveDataRegion();
+            saveDataRegion.Save(regions[i]);
+            regionSaves.Add(saveDataRegion);
+        }
+    }
+    public void LoadRegions() {
+        Region[] regions = new Region[regionSaves.Count];
+        for (int i = 0; i < regionSaves.Count; i++) {
+            regions[i] = regionSaves[i].Load();
+        }
+        GridMap.Instance.LoadRegions(regions);
     }
     public void SavePlayerArea(Area area) {
         playerAreaSave = new SaveDataArea();

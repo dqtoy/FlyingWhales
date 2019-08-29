@@ -252,17 +252,32 @@ public class CharacterManager : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
         newCharacter.ownParty.CreateIcon();
 
-        Area home = LandmarkManager.Instance.GetAreaByID(data.homeID);
-        Area specificLocation = LandmarkManager.Instance.GetAreaByID(data.currentLocationID);
-
-        newCharacter.ownParty.icon.SetPosition(specificLocation.coreTile.transform.position);
+        Area home = null;
+        if (data.homeID != -1) {
+            home = LandmarkManager.Instance.GetAreaByID(data.homeID);
+        }
+        Area specificLocation = null;
+        if (data.currentLocationID != -1) {
+            specificLocation = LandmarkManager.Instance.GetAreaByID(data.currentLocationID);
+        }
+        if (specificLocation != null) {
+            newCharacter.ownParty.icon.SetPosition(specificLocation.coreTile.transform.position);
+        }
         if (data.isDead) {
-            newCharacter.SetHome(home); //keep this data with character to prevent errors
-            home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
-            newCharacter.ownParty.SetSpecificLocation(specificLocation);
+            if (home != null) {
+                newCharacter.SetHome(home); //keep this data with character to prevent errors
+                home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
+            }
+            if(specificLocation != null) {
+                newCharacter.ownParty.SetSpecificLocation(specificLocation);
+            }
         } else {
-            newCharacter.MigrateHomeTo(home, null, false);
-            specificLocation.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
+            if (home != null) {
+                newCharacter.MigrateHomeTo(home, null, false);
+            }
+            if (specificLocation != null) {
+                specificLocation.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
+            }
         }
 #endif
         for (int i = 0; i < data.items.Count; i++) {
@@ -447,18 +462,32 @@ public class CharacterManager : MonoBehaviour {
         }
 
         newCharacter.ownParty.CreateIcon();
-
-        Area home = LandmarkManager.Instance.GetAreaByID(data.homeID);
-        Area specificLocation = LandmarkManager.Instance.GetAreaByID(data.currentLocationID);
-
-        newCharacter.ownParty.icon.SetPosition(specificLocation.coreTile.transform.position);
+        Area home = null;
+        if (data.homeID != -1) {
+            home = LandmarkManager.Instance.GetAreaByID(data.homeID);
+        }
+        Area specificLocation = null;
+        if (data.currentLocationID != -1) {
+            specificLocation = LandmarkManager.Instance.GetAreaByID(data.currentLocationID);
+        }
+        if (specificLocation != null) {
+            newCharacter.ownParty.icon.SetPosition(specificLocation.coreTile.transform.position);
+        }
         if (data.isDead) {
-            newCharacter.SetHome(home); //keep this data with character to prevent errors
-            home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
-            newCharacter.ownParty.SetSpecificLocation(specificLocation);
+            if(home != null) {
+                newCharacter.SetHome(home); //keep this data with character to prevent errors
+                home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
+            }
+            if(specificLocation != null) {
+                newCharacter.ownParty.SetSpecificLocation(specificLocation);
+            }
         } else {
-            newCharacter.MigrateHomeTo(home, null, false);
-            specificLocation.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
+            if (home != null) {
+                newCharacter.MigrateHomeTo(home, null, false);
+            }
+            if (specificLocation != null) {
+                specificLocation.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
+            }
         }
 
         for (int i = 0; i < data.items.Count; i++) {

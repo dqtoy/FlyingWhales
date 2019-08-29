@@ -5,15 +5,23 @@ using UnityEngine;
 [System.Serializable]
 public class SaveDataInterventionAbility {
     public INTERVENTION_ABILITY abilityType;
-    public int lvl;
+    public int level;
 
-    public void Save(PlayerJobAction ability) {
-        abilityType = ability.abilityType;
-        lvl = ability.level;
+    public void Save(PlayerJobActionSlot slot) {
+        if(slot.ability != null) {
+            abilityType = slot.ability.abilityType;
+        } else {
+            abilityType = INTERVENTION_ABILITY.ABDUCT;
+        }
+        level = slot.level;
     }
-    public void Load(Player player) {
-        PlayerJobAction ability = PlayerManager.Instance.CreateNewInterventionAbility(abilityType);
-        player.GainNewInterventionAbility(ability);
-        ability.SetLevel(lvl);
+    public PlayerJobActionSlot Load() {
+        PlayerJobActionSlot slot = new PlayerJobActionSlot();
+        slot.SetLevel(level);
+        if (abilityType != INTERVENTION_ABILITY.ABDUCT) {
+            PlayerJobAction ability = PlayerManager.Instance.CreateNewInterventionAbility(abilityType);
+            slot.SetAbility(ability);
+        }
+        return slot;
     }
 }

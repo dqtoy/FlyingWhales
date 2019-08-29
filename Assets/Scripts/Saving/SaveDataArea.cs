@@ -65,6 +65,7 @@ public class SaveDataArea {
 
     public void Load() {
         Area newArea = LandmarkManager.Instance.CreateNewArea(this);
+        LandmarkManager.Instance.SetEnemyPlayerArea(newArea);
     }
     //Loading area items is called separately because of sequencing issues
     //Since loading an item requires faction owner, if this is called in Load(), there is still no faction owner yet, so it will be an issue

@@ -25,8 +25,9 @@ public class SaveManager : MonoBehaviour {
         Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
         save.SaveHextiles(GridMap.Instance.hexTiles);
         save.SaveOuterHextiles(GridMap.Instance.outerGridList);
+        save.SaveRegions(GridMap.Instance.allRegions);
         save.SavePlayerArea(PlayerManager.Instance.player.playerArea);
-        save.SaveNonPlayerAreas(LandmarkManager.Instance.allNonPlayerAreas);
+        save.SaveNonPlayerAreas(new List<Area>() { LandmarkManager.Instance.enemyPlayerArea });
         save.SaveFactions(FactionManager.Instance.allFactions);
         save.SaveCharacters(CharacterManager.Instance.allCharacters);
         save.SavePlayer(PlayerManager.Instance.player);

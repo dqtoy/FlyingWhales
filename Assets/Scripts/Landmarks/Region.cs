@@ -13,7 +13,7 @@ public class Region {
     public List<HexTile> tiles { get; private set; }
     public HexTile coreTile { get; private set; }
     public int ticksInInvasion { get; private set; }
-    private Color regionColor;
+    public Color regionColor { get; private set; }
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> borderSprites;
 
@@ -32,6 +32,14 @@ public class Region {
         tiles = new List<HexTile>();
         AddTile(coreTile);
         regionColor = Random.ColorHSV();
+    }
+    public Region(SaveDataRegion data) {
+        id = Utilities.SetID(this, data.id);
+        name = data.name;
+        coreTile = GridMap.Instance.hexTiles[data.coreTileID];
+        tiles = new List<HexTile>();
+        regionColor = data.regionColor;
+        ticksInInvasion = data.ticksInInvasion;
     }
     public void AddTile(HexTile tile) {
         if (!tiles.Contains(tile)) {
@@ -162,7 +170,7 @@ public class Region {
     public void StartInvasion(Minion assignedMinion) {
         PlayerManager.Instance.player.SetInvadingRegion(this);
         assignedMinion.SetInvadingLandmark(mainLandmark);
-        invadingMinion = assignedMinion;
+        SetInvadingMinion(assignedMinion);
 
         ticksInInvasion = 0;
         Messenger.AddListener(Signals.TICK_STARTED, PerInvasionTick);
@@ -174,7 +182,10 @@ public class Region {
         PlayerManager.Instance.AddTileToPlayerArea(coreTile);
         PlayerManager.Instance.player.SetInvadingRegion(null);
         invadingMinion.SetInvadingLandmark(null);
-        invadingMinion = null;
+        SetInvadingMinion(null);
+    }
+    public void SetInvadingMinion(Minion minion) {
+        invadingMinion = minion;
     }
     private void PerInvasionTick() {
         if (ticksInInvasion >= mainLandmark.invasionTicks) {

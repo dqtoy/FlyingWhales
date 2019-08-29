@@ -2,15 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SaveDataSummon : MonoBehaviour {
+[System.Serializable]
+public class SaveDataSummon {
+    //Summon slot
+    public int level;
+    public int summonID;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public void Save(SummonSlot summonSlot) {
+        level = summonSlot.level;
+        if(summonSlot.summon != null) {
+            summonID = summonSlot.summon.id;
+        } else {
+            summonID = -1;
+        }
+    }
+
+    public SummonSlot Load() {
+        SummonSlot slot = new SummonSlot();
+        slot.SetLevel(level);
+        if(summonID != -1) {
+            slot.SetSummon(CharacterManager.Instance.GetCharacterByID(summonID) as Summon);
+        }
+        return slot;
+    }
 }

@@ -222,7 +222,7 @@ public class LandmarkManager : MonoBehaviour {
         AREA_TYPE settlementType = Utilities.RandomSettlementType();
         int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount + 1);
         Area settlementArea = CreateNewArea(settlementRegion.coreTile, settlementType, citizenCount);
-        enemyPlayerArea = settlementArea;
+        SetEnemyPlayerArea(settlementArea);
         BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE);
         settlement = settlementLandmark;
         Faction faction = FactionManager.Instance.CreateNewFaction();
@@ -919,6 +919,9 @@ public class LandmarkManager : MonoBehaviour {
         Vector2 defaultPos = area.coreTile.transform.position;
         defaultPos.y -= 1.25f;
         return defaultPos;
+    }
+    public void SetEnemyPlayerArea(Area area) {
+        enemyPlayerArea = area;
     }
     #endregion
 

@@ -112,16 +112,16 @@ public class PlayerManager : MonoBehaviour {
         for (int i = 0; i < data.minions.Count; i++) {
             data.minions[i].Load(player);
         }
-        for (int i = 0; i < data.summonIDs.Count; i++) {
-            Summon summon = CharacterManager.Instance.GetCharacterByID(data.summonIDs[i]) as Summon;
-            player.GainSummon(summon);
-        }
-        for (int i = 0; i < data.artifacts.Count; i++) {
-            data.artifacts[i].Load(player);
-        }
-        for (int i = 0; i < data.interventionAbilities.Count; i++) {
-            data.interventionAbilities[i].Load(player);
-        }
+        //for (int i = 0; i < data.summonSlots.Count; i++) {
+        //    Summon summon = CharacterManager.Instance.GetCharacterByID(data.summonIDs[i]) as Summon;
+        //    player.GainSummon(summon);
+        //}
+        //for (int i = 0; i < data.artifacts.Count; i++) {
+        //    data.artifacts[i].Load(player);
+        //}
+        //for (int i = 0; i < data.interventionAbilities.Count; i++) {
+        //    data.interventionAbilities[i].Load(player);
+        //}
         for (int i = 0; i < player.minions.Count; i++) {
             if(player.minions[i].character.id == data.currentMinionLeaderID) {
                 player.SetMinionLeader(player.minions[i]);

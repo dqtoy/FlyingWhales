@@ -126,7 +126,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is LocationStructure) {
             lastStructureID = idToUse;
         } else if (obj is TileObject) {
-            lastTileObjectID = idToUse;
+            if(lastTileObjectID <= idToUse) {
+                lastTileObjectID = idToUse;
+            }
         } else if (obj is Region) {
             lastRegionID = idToUse;
         }

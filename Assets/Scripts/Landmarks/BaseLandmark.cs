@@ -18,10 +18,10 @@ public class BaseLandmark {
     protected HexTile _connectedTile;
     protected Faction _owner;
     protected LandmarkVisual _landmarkVisual;
-    protected List<Item> _itemsInLandmark;
-    protected List<LANDMARK_TAG> _landmarkTags;
+    //protected List<Item> _itemsInLandmark;
+    public List<LANDMARK_TAG> landmarkTags { get; private set; }
     public List<BaseLandmark> connections { get; private set; }
-    public Character skirmishEnemy { get; private set; }
+    //public Character skirmishEnemy { get; private set; }
     public IWorldObject worldObj { get; private set; }
     public int invasionTicks { get; private set; } //how many ticks until this landmark is invaded. NOTE: This is in raw ticks so if the landmark should be invaded in 1 hour, this should be set to the number of ticks in an hour.
     public List<Character> charactersHere { get; private set; }
@@ -82,7 +82,7 @@ public class BaseLandmark {
     public BaseLandmark() {
         _owner = null; //landmark has no owner yet
         _hasBeenCorrupted = false;
-        _itemsInLandmark = new List<Item>();
+        //_itemsInLandmark = new List<Item>();
         connections = new List<BaseLandmark>();
         charactersHere = new List<Character>();
         otherAfterInvasionActions = new List<System.Action>();
@@ -109,11 +109,14 @@ public class BaseLandmark {
     public BaseLandmark(HexTile location, SaveDataLandmark data) : this() {
         _id = Utilities.SetID(this, data.id);
         _location = location;
+        if(data.connectedTileID != -1) {
+            _connectedTile = GridMap.Instance.hexTiles[data.connectedTileID];
+        }
         _specificLandmarkType = data.landmarkType;
         SetName(data.landmarkName);
+        landmarkTags = data.landmarkTags;
 
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-        ConstructTags(landmarkData);
+        invasionTicks = 2 * GameManager.ticksPerDay;
     }
 
     public void SetName(string name) {
@@ -219,7 +222,7 @@ public class BaseLandmark {
 
     #region Tags
     private void ConstructTags(LandmarkData landmarkData) {
-        _landmarkTags = new List<LANDMARK_TAG>(landmarkData.uniqueTags); //add unique tags
+        landmarkTags = new List<LANDMARK_TAG>(landmarkData.uniqueTags); //add unique tags
         ////add common tags from base landmark type
         //BaseLandmarkData baseLandmarkData = LandmarkManager.Instance.GetBaseLandmarkData(landmarkData.baseLandmarkType);
         //_landmarkTags.AddRange(baseLandmarkData.baseLandmarkTags);
@@ -382,9 +385,9 @@ public class BaseLandmark {
         activeEvent = we;
         //set character that spawned event
         if (spawner == null) {
-            eventSpawnedBy = activeEvent.GetCharacterThatCanSpawnEvent(this);
+            SetCharacterEventSpawner(activeEvent.GetCharacterThatCanSpawnEvent(this));
         } else {
-            eventSpawnedBy = spawner;
+            SetCharacterEventSpawner(spawner);
         }
         eventData = activeEvent.ConstructEventDataForLandmark(this);        
         for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
@@ -402,6 +405,9 @@ public class BaseLandmark {
         //spawn the event
         activeEvent.Spawn(this, out activeEventAfterEffectScheduleID);
         Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, we);
+    }
+    public void SetCharacterEventSpawner(Character character) {
+        eventSpawnedBy = character;
     }
     private void SpawnBasicEvent(Character spawner) {
         string summary = GameManager.Instance.TodayLogString() + spawner.name + " arrived at " + tileLocation.region.name + " will try to spawn random event.";

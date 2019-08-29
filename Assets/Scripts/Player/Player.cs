@@ -96,16 +96,28 @@ public class Player : ILeader {
         defenseGrid.Initialize();
         allIntel = new List<Intel>();
         minions = new List<Minion>();
-        summonSlots = new SummonSlot[MAX_SUMMONS];
-        artifactSlots = new ArtifactSlot[MAX_ARTIFACT];
-        interventionAbilitySlots = new PlayerJobActionSlot[MAX_INTERVENTION_ABILITIES];
         maxSummonSlots = data.maxSummonSlots;
         maxArtifactSlots = data.maxArtifactSlots;
         //threat = data.threat;
+        //ConstructAllInterventionAbilitySlots();
+        //ConstructAllSummonSlots();
+        //ConstructAllArtifactSlots();
+        summonSlots = new SummonSlot[data.summonSlots.Count];
+        for (int i = 0; i < summonSlots.Length; i++) {
+            summonSlots[i] = data.summonSlots[i].Load();
+        }
+
+        artifactSlots = new ArtifactSlot[data.artifactSlots.Count];
+        for (int i = 0; i < artifactSlots.Length; i++) {
+            artifactSlots[i] = data.artifactSlots[i].Load();
+        }
+
+        interventionAbilitySlots = new PlayerJobActionSlot[data.interventionAbilitySlots.Count];
+        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+            interventionAbilitySlots[i] = data.interventionAbilitySlots[i].Load();
+        }
+
         InitializeNewInterventionAbilityCycle();
-        ConstructAllInterventionAbilitySlots();
-        ConstructAllSummonSlots();
-        ConstructAllArtifactSlots();
         AddListeners();
     }
 
