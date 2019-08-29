@@ -71,7 +71,7 @@ public class Drink : GoapAction {
         actor.AdjustDoNotGetLonely(1);
     }
     public void PerTickDrinkSuccess() {
-        actor.AdjustHappiness(200);
+        actor.AdjustHappiness(500);
     }
     public void AfterDrinkSuccess() {
         actor.AdjustDoNotGetLonely(-1);

@@ -79,7 +79,7 @@ public class Steal : GoapAction {
     private void AfterStealSuccess() {
         actor.PickUpToken(poiTarget as SpecialToken, false);
         if (actor.GetNormalTrait("Kleptomaniac") != null) {
-            actor.AdjustHappiness(3500);
+            actor.AdjustHappiness(6000);
         }
     }
     private void PreTargetMissing() {
