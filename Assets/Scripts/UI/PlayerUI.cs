@@ -931,11 +931,13 @@ public class PlayerUI : MonoBehaviour {
         }
         currentlySelectedSummonSlot = summonSlot;
         if (currentlySelectedSummonSlot.summon == null) {
-            currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(SUMMON_TYPE.None).summonPortrait;
+            currentSummonImg.gameObject.SetActive(false);
+            //currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(SUMMON_TYPE.None).summonPortrait;
             cycleSummonLeft.gameObject.SetActive(false);
             cycleSummonRight.gameObject.SetActive(false);
             currentSummonLvlGO.SetActive(false);
         } else {
+            currentSummonImg.gameObject.SetActive(true);
             currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(currentlySelectedSummonSlot.summon.summonType).summonPortrait;
             int index = Array.IndexOf(PlayerManager.Instance.player.summonSlots, currentlySelectedSummonSlot);
             currentSummonLvlGO.SetActive(true);
@@ -1105,11 +1107,13 @@ public class PlayerUI : MonoBehaviour {
         }
         currentlySelectedArtifactSlot = artifactSlot;
         if (currentlySelectedArtifactSlot.artifact == null) {
-            currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(ARTIFACT_TYPE.None).artifactPortrait;
+            currentArtifactImg.gameObject.SetActive(false);
+            //currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(ARTIFACT_TYPE.None).artifactPortrait;
             cycleArtifactLeft.gameObject.SetActive(false);
             cycleArtifactRight.gameObject.SetActive(false);
             currentArtifactLvlGO.SetActive(false);
         } else {
+            currentArtifactImg.gameObject.SetActive(true);
             currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(currentlySelectedArtifactSlot.artifact.type).artifactPortrait;
             //currentArtifactCountLbl.text = PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(currentlySelectedArtifactSlot.artifact.type).ToString();
             int index = Array.IndexOf(PlayerManager.Instance.player.artifactSlots, currentlySelectedArtifactSlot);

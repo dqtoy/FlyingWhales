@@ -521,7 +521,7 @@ public class TileObject : IPointOfInterest {
     }
     private void CreateTileObjectSlots() {
         UnityEngine.Tilemaps.TileBase usedAsset = tile.parentAreaMap.objectsTilemap.GetTile(tile.localPlace);
-        if (usedAsset != null && InteriorMapManager.Instance.HasSettingForTileObjectAsset(usedAsset)) {
+        if (tileObjectType != TILE_OBJECT_TYPE.GENERIC && usedAsset != null && InteriorMapManager.Instance.HasSettingForTileObjectAsset(usedAsset)) {
             List<TileObjectSlotSetting> slotSettings = InteriorMapManager.Instance.GetTileObjectSlotSettings(usedAsset);
             slotsParent = GameObject.Instantiate(InteriorMapManager.Instance.tileObjectSlotsParentPrefab, tile.parentAreaMap.objectsTilemap.transform);
             slotsParent.transform.localPosition = tile.centeredLocalLocation;
