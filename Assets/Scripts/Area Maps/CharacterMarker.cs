@@ -52,6 +52,7 @@ public class CharacterMarker : PooledObject {
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<Character> avoidInRange { get; private set; } //POI's in this characters hostility collider
+    public Dictionary<Character, bool> lethalCharacters { get; private set; }
     public Action arrivalAction {
         get { return _arrivalAction; }
         private set {
@@ -102,6 +103,7 @@ public class CharacterMarker : PooledObject {
         hostilesInRange = new List<Character>();
         terrifyingObjects = new List<IPointOfInterest>();
         avoidInRange = new List<Character>();
+        lethalCharacters = new Dictionary<Character, bool>();
         attackSpeedMeter = 0f;
         //flee
         SetHasFleePath(false);
@@ -990,12 +992,13 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Hosility Collision
-    public bool AddHostileInRange(Character character, bool checkHostility = true, bool processCombatBehavior = true) {
+    public bool AddHostileInRange(Character character, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true) {
         if (!hostilesInRange.Contains(character)) {
             if (this.character.GetNormalTrait("Zapped") == null && !this.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !character.isDead && !this.character.isFollowingPlayerInstruction &&
                 (!checkHostility || this.character.IsHostileWith(character))) {
-                if (!WillCharacterTransferEngageToFleeList()) {
+                if (!WillCharacterTransferEngageToFleeList(isLethal)) {
                     hostilesInRange.Add(character);
+                    lethalCharacters.Add(character, isLethal);
                     this.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + character.name + " was added to " + this.character.name + "'s hostile range!");
                     //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
                     if (processCombatBehavior) {
@@ -1010,8 +1013,8 @@ public class CharacterMarker : PooledObject {
         }
         return false;
     }
-    public bool AddHostileInRange(Character poi, out CharacterState reaction, bool checkHostility = true, bool processCombatBehavior = true) {
-        if (AddHostileInRange(poi, checkHostility, processCombatBehavior)) {
+    public bool AddHostileInRange(Character poi, out CharacterState reaction, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true) {
+        if (AddHostileInRange(poi, checkHostility, processCombatBehavior, isLethal)) {
             reaction = character.stateComponent.currentState;
             return true;
         }
@@ -1020,6 +1023,7 @@ public class CharacterMarker : PooledObject {
     }
     public void RemoveHostileInRange(Character poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Remove(poi)) {
+            lethalCharacters.Remove(poi);
             string removeHostileSummary = GameManager.Instance.TodayLogString() + poi.name + " was removed from " + character.name + "'s hostile range.";
             character.PrintLogIfActive(removeHostileSummary);
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
@@ -1038,6 +1042,7 @@ public class CharacterMarker : PooledObject {
     public void ClearHostilesInRange(bool processCombatBehavior = true) {
         if(hostilesInRange.Count > 0) {
             hostilesInRange.Clear();
+            lethalCharacters.Clear();
             //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
             if (processCombatBehavior) {
                 if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
@@ -1071,6 +1076,21 @@ public class CharacterMarker : PooledObject {
             ClearArrivalAction();
             action?.Invoke();
         }
+    }
+    public bool IsLethalCombatForTarget(Character character) {
+        if (lethalCharacters.ContainsKey(character)) {
+            return lethalCharacters[character];
+        }
+        return true;
+    }
+    public bool HasLethalCombatTarget() {
+        for (int i = 0; i < hostilesInRange.Count; i++) {
+            Character hostile = hostilesInRange[i];
+            if (IsLethalCombatForTarget(hostile)) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -1231,16 +1251,18 @@ public class CharacterMarker : PooledObject {
             //Transfer all from engage list to flee list
             if (willTransfer) {
                 //When transferring to flee list, if the character is not in vision just remove him/her in hostiles range
-                for (int i = 0; i < hostilesInRange.Count; i++) {
-                    Character hostile = hostilesInRange[i];
-                    if (inVisionCharacters.Contains(hostile)) {
-                        AddAvoidInRange(hostile, false);
-                    } else {
-                        RemoveHostileInRange(hostile, false);
-                        i--;
+                if (HasLethalCombatTarget()) {
+                    for (int i = 0; i < hostilesInRange.Count; i++) {
+                        Character hostile = hostilesInRange[i];
+                        if (inVisionCharacters.Contains(hostile)) {
+                            AddAvoidInRange(hostile, false);
+                        } else {
+                            RemoveHostileInRange(hostile, false);
+                            i--;
+                        }
                     }
+                    ClearHostilesInRange(false);
                 }
-                ClearHostilesInRange(false);
                 if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                     Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
                 } else {
@@ -1388,10 +1410,13 @@ public class CharacterMarker : PooledObject {
         }
         return false;
     }
-    public bool WillCharacterTransferEngageToFleeList() {
+    public bool WillCharacterTransferEngageToFleeList(bool isLethal) {
         bool willTransfer = false;
+        if (!isLethal && !HasLethalCombatTarget()) {
+            willTransfer = false;
+        }
         //- if character is berserked, must not flee
-        if (character.GetNormalTrait("Berserked") != null) {
+        else if (character.GetNormalTrait("Berserked") != null) {
             willTransfer = false;
         }
         //- at some point, situation may trigger the character to flee, at which point it will attempt to move far away from target

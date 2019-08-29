@@ -32,7 +32,7 @@ public class PlayerJobData {
         switch (jobType) {
             case JOB.SPY:
                 //jobActions.Add(new Track());
-                jobActions.Add(new AccessMemories());
+                //jobActions.Add(new AccessMemories());
                 break;
             case JOB.SEDUCER:
                 //jobActions.Add(new Corrupt());

@@ -87,9 +87,53 @@ public class CultistDiscovered : WorldEvent {
     #endregion
 }
 
-public struct CultistDiscoveredData : IWorldEventData {
+public class CultistDiscoveredData : IWorldEventData {
     public Character cultist;
     public Character nonCultist;
 
     public Character[] involvedCharacters { get { return new Character[] { cultist, nonCultist }; } }
+
+    public GameDate endDate { get; private set; }
+    public GameDate startDate { get; private set; }
+
+    public void SetEndDate(GameDate date) {
+        endDate = date;
+    }
+    public void SetStartDate(GameDate date) {
+        startDate = date;
+    }
+}
+
+public class SaveDataCultistDiscoveredData : SaveDataWorldEventData {
+    public int cultistID;
+    public int nonCultistID;
+
+    public override void Save(IWorldEventData eventData) {
+        base.Save(eventData);
+        if (eventData is CultistDiscoveredData) {
+            CultistDiscoveredData data = (CultistDiscoveredData) eventData;
+            if (data.cultist != null) {
+                cultistID = data.cultist.id;
+            } else {
+                cultistID = -1;
+            }
+
+            if (data.nonCultist != null) {
+                nonCultistID = data.nonCultist.id;
+            } else {
+                nonCultistID = -1;
+            }
+        }
+    }
+
+    public override IWorldEventData Load() {
+        CultistDiscoveredData worldEventData = new CultistDiscoveredData() {
+            cultist = CharacterManager.Instance.GetCharacterByID(cultistID),
+            nonCultist = CharacterManager.Instance.GetCharacterByID(nonCultistID),
+        };
+        worldEventData.SetEndDate(new GameDate(endMonth, endDay, endYear, endTick));
+        worldEventData.SetStartDate(new GameDate(currentMonth, currentDay, currentYear, currentTick));
+
+        return worldEventData;
+    }
 }

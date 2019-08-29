@@ -471,6 +471,16 @@ public class GridMap : MonoBehaviour {
         }
         //Debug.Log(summary);
     }
+    #region Region
+    public Region GetRegionByID(int id) {
+        for (int i = 0; i < allRegions.Length; i++) {
+            if(allRegions[i].id == id) {
+                return allRegions[i];
+            }
+        }
+        return null;
+    }
+    #endregion
     #endregion
 }
 

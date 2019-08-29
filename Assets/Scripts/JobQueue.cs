@@ -36,7 +36,7 @@ public class JobQueue {
             //then process that job immediately and stop what the character is currently doing
             //Sometimes, in rare cases, the character still cannot be assigned to a job even if it is a personal job,
             //It might be because CanTakeJob/CanCharacterTakeThisJob function is not satisfied
-            if (character.CanCurrentJobBeOverriddenByJob(job)) {
+            if (processLogicForPersonalJob && character.CanCurrentJobBeOverriddenByJob(job)) {
                 AssignCharacterToJobAndCancelCurrentAction(job, character);
             }
             //if (processLogicForPersonalJob && !hasProcessed) {
@@ -340,6 +340,13 @@ public class JobQueue {
                     }
                     break;
                 }
+            }
+        }
+    }
+    public void CancelAllJobs() {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (CancelJob(jobsInQueue[i])) {
+                i--;
             }
         }
     }

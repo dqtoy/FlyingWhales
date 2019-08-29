@@ -176,6 +176,15 @@ public class Region {
         Messenger.AddListener(Signals.TICK_STARTED, PerInvasionTick);
         TimerHubUI.Instance.AddItem("Invasion of " + (mainLandmark.tileLocation.areaOfTile != null ? mainLandmark.tileLocation.areaOfTile.name : name), mainLandmark.invasionTicks, () => UIManager.Instance.ShowRegionInfo(this));
     }
+    public void LoadInvasion(Minion assignedMinion, int ticksInInvasion) {
+        PlayerManager.Instance.player.SetInvadingRegion(this);
+        assignedMinion.SetInvadingLandmark(mainLandmark);
+        SetInvadingMinion(assignedMinion);
+
+        this.ticksInInvasion = ticksInInvasion;
+        Messenger.AddListener(Signals.TICK_STARTED, PerInvasionTick);
+        TimerHubUI.Instance.AddItem("Invasion of " + (mainLandmark.tileLocation.areaOfTile != null ? mainLandmark.tileLocation.areaOfTile.name : name), mainLandmark.invasionTicks - ticksInInvasion, () => UIManager.Instance.ShowRegionInfo(this));
+    }
     private void Invade() {
         //corrupt region
         mainLandmark?.InvadeThisLandmark();

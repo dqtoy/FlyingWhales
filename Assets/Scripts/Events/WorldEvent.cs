@@ -29,10 +29,29 @@ public class WorldEvent  {
     /// </summary>
     /// <param name="landmark">The landmark this event is spawned at.</param>
     /// <param name="afterEffectScheduleID">The schedule id that this event has created for its after effect</param>
-    public virtual void Spawn(BaseLandmark landmark, out string afterEffectScheduleID) {
+    public virtual void Spawn(BaseLandmark landmark, IWorldEventData eventData, out string afterEffectScheduleID) {
+        GameDate startDate = GameManager.Instance.Today();
+        GameDate endDate = GameManager.Instance.Today().AddTicks(duration);
+
+        eventData.SetStartDate(startDate);
+        eventData.SetEndDate(endDate);
+
         //once spawned, schedule the after effect of this event to execute after a set amount of ticks (duration). NOTE: This schedule should be cancelled once the landmark it spawned at 
-        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(duration), () => ExecuteAfterEffect(landmark), this);
+        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => ExecuteAfterEffect(landmark), this);
         TimerHubUI.Instance.AddItem(this.name + " event at " + landmark.tileLocation.region.name, duration, () => UIManager.Instance.ShowRegionInfo(landmark.tileLocation.region));
+        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + landmark.tileLocation.region.name);
+        //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
+        //AddDefaultFillersToLog(log, landmark);
+        isCurrentlySpawned = true;
+    }
+    public virtual void Load(BaseLandmark landmark, IWorldEventData eventData, out string afterEffectScheduleID) {
+        GameDate startDate = GameManager.Instance.Today();
+        GameDate endDate = eventData.endDate;
+
+        int ticksDiff = GameManager.Instance.GetTicksDifferenceOfTwoDates(endDate, startDate);
+        //once spawned, schedule the after effect of this event to execute after a set amount of ticks (duration). NOTE: This schedule should be cancelled once the landmark it spawned at 
+        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => ExecuteAfterEffect(landmark), this);
+        TimerHubUI.Instance.AddItem(this.name + " event at " + landmark.tileLocation.region.name, ticksDiff, () => UIManager.Instance.ShowRegionInfo(landmark.tileLocation.region));
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + landmark.tileLocation.region.name);
         //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
         //AddDefaultFillersToLog(log, landmark);
@@ -84,10 +103,85 @@ public class WorldEvent  {
 //This is base class where data for each individual landmark is stored.
 public interface IWorldEventData {
     Character[] involvedCharacters { get; }
+    GameDate endDate { get; }
+    GameDate startDate { get; }
+
+    void SetEndDate(GameDate date);
+    void SetStartDate(GameDate date);
+
 }
 
-public struct DefaultWorldEventData : IWorldEventData {
+public class DefaultWorldEventData : IWorldEventData {
     public Character spawner;
-
     public Character[] involvedCharacters { get { return new Character[] { spawner }; } }
+
+    public GameDate endDate { get; private set; }
+    public GameDate startDate { get; private set; }
+
+    public void SetEndDate(GameDate date) {
+        endDate = date;
+    }
+    public void SetStartDate(GameDate date) {
+        startDate = date;
+    }
+}
+
+public class SaveDataDefaultWorldEventData : SaveDataWorldEventData {
+    public int spawnerID;
+
+    public override void Save(IWorldEventData eventData) {
+        base.Save(eventData);
+        if(eventData is DefaultWorldEventData) {
+            DefaultWorldEventData data = (DefaultWorldEventData) eventData;
+            if(data.spawner != null) {
+                spawnerID = data.spawner.id;
+            } else {
+                spawnerID = -1;
+            }
+        }
+    }
+    public override IWorldEventData Load() {
+        DefaultWorldEventData worldEventData = new DefaultWorldEventData() {
+            spawner = CharacterManager.Instance.GetCharacterByID(spawnerID),
+        };
+        worldEventData.SetEndDate(new GameDate(endMonth, endDay, endYear, endTick));
+        worldEventData.SetStartDate(new GameDate(currentMonth, currentDay, currentYear, currentTick));
+
+        return worldEventData;
+    }
+}
+
+[System.Serializable]
+public class SaveDataWorldEventData {
+    public int[] involvedCharactersID;
+
+    public int currentMonth;
+    public int currentDay;
+    public int currentYear;
+    public int currentTick;
+
+    public int endMonth;
+    public int endDay;
+    public int endYear;
+    public int endTick;
+
+    public virtual void Save(IWorldEventData eventData) {
+        currentMonth = eventData.startDate.month;
+        currentDay = eventData.startDate.day;
+        currentYear = eventData.startDate.year;
+        currentTick = eventData.startDate.tick;
+
+        endMonth = eventData.endDate.month;
+        endDay = eventData.endDate.day;
+        endYear = eventData.endDate.year;
+        endTick = eventData.endDate.tick;
+
+        involvedCharactersID = new int[eventData.involvedCharacters.Length];
+        for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
+            involvedCharactersID[i] = eventData.involvedCharacters[i].id;
+        }
+    }
+    public virtual IWorldEventData Load() {
+        return null;
+    }
 }

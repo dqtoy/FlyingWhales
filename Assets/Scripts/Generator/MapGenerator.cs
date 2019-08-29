@@ -104,6 +104,7 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
         CameraMove.Instance.Initialize();
         InteriorMapManager.Instance.Initialize();
+        InteractionManager.Instance.Initialize();
         ObjectPoolManager.Instance.InitializeObjectPools();
         yield return null;
         GridMap.Instance.GenerateGrid(data);
@@ -136,7 +137,6 @@ public class MapGenerator : MonoBehaviour {
 
         TokenManager.Instance.Initialize();
         //CharacterManager.Instance.GenerateRelationships();
-        InteractionManager.Instance.Initialize();
         StoryEventsManager.Instance.Initialize();
 
 
@@ -155,7 +155,11 @@ public class MapGenerator : MonoBehaviour {
         data.LoadCurrentDate();
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(false);
+        UIManager.Instance.SetSpeedTogglesState(true);
         Messenger.Broadcast(Signals.UPDATE_UI);
+        data.LoadInvasion();
+        PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
+        data.LoadLandmarkEvents();
     }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();

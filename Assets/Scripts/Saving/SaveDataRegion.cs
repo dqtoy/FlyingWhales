@@ -46,9 +46,11 @@ public class SaveDataRegion {
         return region;
     }
 
-    public void LoadInvadingMinion(Region region) {
+    public Minion LoadInvadingMinion() {
         if(invadingMinionID != -1) {
-            region.SetInvadingMinion(CharacterManager.Instance.GetCharacterByID(invadingMinionID).minion);
+            Minion minion = CharacterManager.Instance.GetCharacterByID(invadingMinionID).minion;
+            return minion;
         }
+        return null;
     }
 }

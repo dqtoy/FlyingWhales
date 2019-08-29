@@ -19,22 +19,28 @@ public class GoapAction {
     public List<GoapEffect> expectedEffects { get; private set; }
     public virtual LocationStructure targetStructure {
         get {
-            try {
-                //if (poiTarget is TileObject || poiTarget is SpecialToken) {
-                //    //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
-                //    IAwareness awareness = actor.HasAwareness(poiTarget);
-                //    if (awareness != null) {
-                //        return awareness.knownGridLocation.structure;
-                //    }
-                //} else 
-                if (poiTarget is Character) {
-                    return (poiTarget as Character).currentStructure;
-                }
-                return poiTarget.gridTileLocation.structure;
-            } catch {
-                throw new Exception("Error with target structure in " + goapName + " targetting " + poiTarget.ToString() + " by " + actor.name);
+            if (poiTarget is Character) {
+                return (poiTarget as Character).currentStructure;
             }
-
+            if(poiTarget.gridTileLocation == null) {
+                return null;
+            }
+            return poiTarget.gridTileLocation.structure;
+            //try {
+            //    //if (poiTarget is TileObject || poiTarget is SpecialToken) {
+            //    //    //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
+            //    //    IAwareness awareness = actor.HasAwareness(poiTarget);
+            //    //    if (awareness != null) {
+            //    //        return awareness.knownGridLocation.structure;
+            //    //    }
+            //    //} else 
+            //    if (poiTarget is Character) {
+            //        return (poiTarget as Character).currentStructure;
+            //    }
+            //    return poiTarget.gridTileLocation.structure;
+            //} catch {
+            //    throw new Exception("Error with target structure in " + goapName + " targetting " + poiTarget.ToString() + " by " + actor.name);
+            //}
         }
     }
     public LocationGridTile targetTile { get; protected set; }

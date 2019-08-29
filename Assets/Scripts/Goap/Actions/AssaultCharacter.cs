@@ -36,7 +36,12 @@ public class AssaultCharacter : GoapAction {
             if (actor.IsCombatReady()) {
                 CharacterState combatState;
                 if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {
-                    actor.marker.AddHostileInRange(targetCharacter, out combatState, false);
+                    bool isLethal = true;
+                    if(parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.UNDERMINE_ENEMY || parentPlan.job.jobType == JOB_TYPE.APPREHEND)) {
+                        //Assaulting characters for imprisonment of criminals and undermining enemies must be non lethal
+                        isLethal = false;
+                    }
+                    actor.marker.AddHostileInRange(targetCharacter, out combatState, false, isLethal: isLethal);
                 } else {
                     combatState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
                 }

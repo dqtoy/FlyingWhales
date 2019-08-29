@@ -351,7 +351,7 @@ public class CombatState : CharacterState {
                 //If character that attacked is not invisible or invisible but can be seen by character hit, character hit should react
                 Invisible invisible = stateComponent.character.GetNormalTrait("Invisible") as Invisible;
                 if (invisible == null || invisible.charactersThatCanSee.Contains(characterHit)) {
-                    currentClosestHostile.marker.AddHostileInRange(stateComponent.character, false); //When the target is hit and it is still alive, add hostile
+                    currentClosestHostile.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(currentClosestHostile)); //When the target is hit and it is still alive, add hostile
                 }
             }
         }

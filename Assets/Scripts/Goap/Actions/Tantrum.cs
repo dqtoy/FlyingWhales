@@ -40,7 +40,8 @@ public class Tantrum : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
+        CharacterState berserkedState = actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
+        (berserkedState as BerserkedState).SetAreaCombatsLethal(false);
     }
     public override bool InitializeOtherData(object[] otherData) {
         this.otherData = otherData;

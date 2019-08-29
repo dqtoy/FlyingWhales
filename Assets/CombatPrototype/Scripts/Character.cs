@@ -966,6 +966,9 @@ public class Character : ILeader, IPointOfInterest {
             if (currentAction != null && !currentAction.cannotCancelAction) {
                 currentAction.StopAction();
             }
+            if(jobQueue.jobsInQueue.Count > 0) {
+                jobQueue.CancelAllJobs();
+            }
             if (ownParty.specificLocation != null && isHoldingItem) {
                 DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
             }
@@ -3529,7 +3532,7 @@ public class Character : ILeader, IPointOfInterest {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                                     CreateWatchEvent(null, targetCombatState, targetCharacter);
                                 } else {
-                                    if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false)) {
+                                    if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(targetCombatState.currentClosestHostile))) {
                                         List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCharacter).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
                                         Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
                                         joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -3543,7 +3546,7 @@ public class Character : ILeader, IPointOfInterest {
                                 }
                             } else {
                                 if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                    if (marker.AddHostileInRange(targetCharacter, false, false)) {
+                                    if (marker.AddHostileInRange(targetCharacter, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(targetCombatState.currentClosestHostile))) {
                                         List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCombatState.currentClosestHostile).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
                                         Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
                                         joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -3560,7 +3563,7 @@ public class Character : ILeader, IPointOfInterest {
                             }
                         } else {
                             //the target of the combat state is not part of this character's faction
-                            if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false)) {
+                            if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(targetCombatState.currentClosestHostile))) {
                                 Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
                                 joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                 joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -3712,19 +3715,23 @@ public class Character : ILeader, IPointOfInterest {
             attackSummary += "\n" + this.name + "'s hp has reached 0.";
             WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
 
-            int deathWeight = 0;
-            int unconsciousWeight = 0;
-            if (isAtHomeArea) {
-                if (characterThatAttacked.faction == this.faction) {
-                    deathWeight = 25;
-                    unconsciousWeight = 75;
-                } else {
-                    deathWeight = 75;
-                    unconsciousWeight = 25;
-                }
-            } else {
-                deathWeight = 50;
-                unconsciousWeight = 50;
+            int deathWeight = 70;
+            int unconsciousWeight = 30;
+            //if (isAtHomeArea) {
+            //    if (characterThatAttacked.faction == this.faction) {
+            //        deathWeight = 25;
+            //        unconsciousWeight = 75;
+            //    } else {
+            //        deathWeight = 75;
+            //        unconsciousWeight = 25;
+            //    }
+            //} else {
+            //    deathWeight = 50;
+            //    unconsciousWeight = 50;
+            //}
+            if (!characterThatAttacked.marker.IsLethalCombatForTarget(this)) {
+                deathWeight = 5;
+                unconsciousWeight = 95;
             }
             
 

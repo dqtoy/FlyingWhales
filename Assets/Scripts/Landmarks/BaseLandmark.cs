@@ -416,8 +416,17 @@ public class BaseLandmark {
             }
         }
         //spawn the event
-        activeEvent.Spawn(this, out activeEventAfterEffectScheduleID);
+        activeEvent.Spawn(this, eventData, out activeEventAfterEffectScheduleID);
         Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, we);
+    }
+    public void LoadEvent(SaveDataLandmark data) {
+        if (data.activeEvent != WORLD_EVENT.NONE) {
+            activeEvent = StoryEventsManager.Instance.GetWorldEvent(data.activeEvent);
+            SetCharacterEventSpawner(CharacterManager.Instance.GetCharacterByID(data.eventSpawnedByCharacterID));
+            eventData = data.eventData.Load();
+            activeEvent.Load(this, eventData, out activeEventAfterEffectScheduleID);
+            Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, activeEvent);
+        }
     }
     public void SetCharacterEventSpawner(Character character) {
         eventSpawnedBy = character;
@@ -521,6 +530,11 @@ public class BaseLandmark {
     #endregion
 
     #region Characters
+    public void LoadCharacterHere(Character character) {
+        charactersHere.Add(character);
+        character.SetLandmarkLocation(this);
+        Messenger.Broadcast(Signals.CHARACTER_ENTERED_LANDMARK, character, this);
+    }
     public void AddCharacterHere(Character character) {
         charactersHere.Add(character);
         character.SetLandmarkLocation(this);

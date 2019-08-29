@@ -5,12 +5,14 @@ using UnityEngine;
 public class BerserkedState : CharacterState {
 
     private System.Func<Character, bool> hostileChecker;
+    public bool areCombatsLethal { get; private set; }
 
     public BerserkedState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Berserked State";
         characterState = CHARACTER_STATE.BERSERKED;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 100;
+        SetAreaCombatsLethal(true);
     }
 
     #region Overrides
@@ -37,14 +39,14 @@ public class BerserkedState : CharacterState {
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if(targetPOI is Character) {
             if (stateComponent.character.faction == PlayerManager.Instance.player.playerFaction) {
-                return stateComponent.character.marker.AddHostileInRange(targetPOI as Character); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
+                return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, isLethal: areCombatsLethal); //check hostility if from player faction, so as not to attack other characters that are also from the same faction.
             } else {
                 if (hostileChecker != null) {
                     if (hostileChecker.Invoke(targetPOI as Character)) {
-                        return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, checkHostility: false);
+                        return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, checkHostility: false, isLethal: areCombatsLethal);
                     }
                 } else {
-                    return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, checkHostility: false);
+                    return stateComponent.character.marker.AddHostileInRange(targetPOI as Character, checkHostility: false, isLethal: areCombatsLethal);
                 }
             }
             //return true;
@@ -163,5 +165,8 @@ public class BerserkedState : CharacterState {
 
     public void SetHostileChecker(System.Func<Character, bool> hostileChecker) {
         this.hostileChecker = hostileChecker;
+    }
+    public void SetAreaCombatsLethal(bool state) {
+        areCombatsLethal = state;
     }
 }

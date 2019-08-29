@@ -102,6 +102,12 @@ public class Save {
             data.LoadLandmarkConnections(GridMap.Instance.hexTiles[data.locationID].landmarkOnTile);
         }
     }
+    public void LoadLandmarkEvents() {
+        for (int i = 0; i < landmarkSaves.Count; i++) {
+            SaveDataLandmark data = landmarkSaves[i];
+            data.LoadActiveEvent(GridMap.Instance.hexTiles[data.locationID].landmarkOnTile);
+        }
+    }
 
     public void SaveRegions(Region[] regions) {
         regionSaves = new List<SaveDataRegion>();
@@ -188,6 +194,9 @@ public class Save {
     }
     public void LoadPlayer() {
         playerSave.Load();
+    }
+    public void LoadInvasion() {
+        playerSave.LoadInvasion(this);
     }
 
     public void SaveCurrentDate() {

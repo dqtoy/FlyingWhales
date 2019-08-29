@@ -13,10 +13,10 @@ public class SaveDataLandmark {
     public List<int> connectionsTileIDs;
     public List<int> charactersHereIDs;
     //public IWorldObject worldObj;
-    //public WorldEvent activeEvent;
+    public WORLD_EVENT activeEvent;
     public int eventSpawnedByCharacterID;
     public bool hasEventIconGO;
-    //public IWorldEventData eventData;
+    public SaveDataWorldEventData eventData;
 
     public void Save(BaseLandmark landmark) {
         id = landmark.id;
@@ -40,18 +40,23 @@ public class SaveDataLandmark {
             charactersHereIDs.Add(landmark.charactersHere[i].id);
         }
 
-        if (landmark.eventSpawnedBy != null) {
+        if(landmark.activeEvent != null) {
+            activeEvent = landmark.activeEvent.eventType;
             eventSpawnedByCharacterID = landmark.eventSpawnedBy.id;
-        }
 
+            var typeName = "SaveData" + landmark.eventData.GetType().ToString();
+            eventData = System.Activator.CreateInstance(System.Type.GetType(typeName)) as SaveDataWorldEventData;
+            eventData.Save(landmark.eventData);
+        } else {
+            activeEvent = WORLD_EVENT.NONE;
+        }
         hasEventIconGO = landmark.eventIconGO != null;
     }
     public void Load(HexTile tile) {
         BaseLandmark landmark = tile.CreateLandmarkOfType(this);
         for (int i = 0; i < charactersHereIDs.Count; i++) {
-            landmark.AddCharacterHere(CharacterManager.Instance.GetCharacterByID(charactersHereIDs[i]));
+            landmark.LoadCharacterHere(CharacterManager.Instance.GetCharacterByID(charactersHereIDs[i]));
         }
-        landmark.SetCharacterEventSpawner(CharacterManager.Instance.GetCharacterByID(eventSpawnedByCharacterID));
     }
     public void LoadLandmarkConnections(BaseLandmark landmark) {
         for (int i = 0; i < connectionsTileIDs.Count; i++) {
@@ -60,5 +65,8 @@ public class SaveDataLandmark {
                 LandmarkManager.Instance.ConnectLandmarks(landmark, landmarkToConnect);
             }
         }
+    }
+    public void LoadActiveEvent(BaseLandmark landmark) {
+        landmark.LoadEvent(this);
     }
 }

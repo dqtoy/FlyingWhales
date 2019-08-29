@@ -11,14 +11,14 @@ public class SaveDataInterventionAbility {
         if(slot.ability != null) {
             abilityType = slot.ability.abilityType;
         } else {
-            abilityType = INTERVENTION_ABILITY.ABDUCT;
+            abilityType = INTERVENTION_ABILITY.NONE;
         }
         level = slot.level;
     }
     public PlayerJobActionSlot Load() {
         PlayerJobActionSlot slot = new PlayerJobActionSlot();
         slot.SetLevel(level);
-        if (abilityType != INTERVENTION_ABILITY.ABDUCT) {
+        if (abilityType != INTERVENTION_ABILITY.NONE) {
             PlayerJobAction ability = PlayerManager.Instance.CreateNewInterventionAbility(abilityType);
             slot.SetAbility(ability);
         }

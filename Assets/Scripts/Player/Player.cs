@@ -1652,9 +1652,19 @@ public class Player : ILeader {
             }
         }
     }
+    public void LoadResearchNewInterventionAbility(SaveDataPlayer data) {
+        if(data.interventionAbilityToResearch != INTERVENTION_ABILITY.NONE) {
+            currentNewInterventionAbilityCycleIndex = data.currentNewInterventionAbilityCycleIndex;
+            currentInterventionAbilityTimerTick = data.currentInterventionAbilityTimerTick;
+            NewCycleForNewInterventionAbility(data.interventionAbilityToResearch);
+        } else {
+            StartResearchNewInterventionAbility();
+        }
+    }
     private void InitializeNewInterventionAbilityCycle() {
         currentNewInterventionAbilityCycleIndex = -1;
         newInterventionAbilityTimerTicks = GameManager.Instance.GetTicksBasedOnHour(8);
+        interventionAbilityToResearch = INTERVENTION_ABILITY.NONE;
     }
     public void StartResearchNewInterventionAbility() {
         currentInterventionAbilityTimerTick = 0;
@@ -1698,7 +1708,7 @@ public class Player : ILeader {
     }
     public void NewCycleForNewInterventionAbility(INTERVENTION_ABILITY interventionAbilityToResearch) {
         this.interventionAbilityToResearch = interventionAbilityToResearch;
-        TimerHubUI.Instance.AddItem("Research for " + Utilities.NormalizeStringUpperCaseFirstLetters(interventionAbilityToResearch.ToString()), newInterventionAbilityTimerTicks, null);
+        TimerHubUI.Instance.AddItem("Research for " + Utilities.NormalizeStringUpperCaseFirstLetters(interventionAbilityToResearch.ToString()), newInterventionAbilityTimerTicks - currentInterventionAbilityTimerTick, null);
         Messenger.AddListener(Signals.TICK_STARTED, PerTickInterventionAbility);
     }
     private int GetTierBasedOnCycle() {

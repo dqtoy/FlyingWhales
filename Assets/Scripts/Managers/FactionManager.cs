@@ -76,10 +76,13 @@ public class FactionManager : MonoBehaviour {
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(GetFactionEmblem(4));
         allFactions.Add(newFaction);
-        neutralFaction = newFaction;
-        CreateRelationshipsForFaction(newFaction);
-        CreateFavorsForFaction(newFaction);
+        SetNeutralFaction(newFaction);
+        //CreateRelationshipsForFaction(newFaction);
+        //CreateFavorsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+    }
+    public void SetNeutralFaction(Faction faction) {
+        neutralFaction = faction;
     }
     public void RandomizeStartingFactions(WorldSaveData data) {
         string log = "Starting Factions are: ";
@@ -277,6 +280,9 @@ public class FactionManager : MonoBehaviour {
     }
     public Faction CreateNewFaction(SaveDataFaction data) {
         Faction newFaction = new Faction(data);
+        if(data.name == "Neutral") {
+            SetNeutralFaction(newFaction);
+        }
         allFactions.Add(newFaction);
         if (!newFaction.isPlayerFaction) {
             Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);

@@ -19,6 +19,12 @@ public class SaveDataPlayer {
     public int maxSummonSlots;
     public int maxArtifactSlots;
 
+    public int invadingRegionID;
+
+    public int currentInterventionAbilityTimerTick;
+    public int currentNewInterventionAbilityCycleIndex;
+    public INTERVENTION_ABILITY interventionAbilityToResearch;
+
     public void Save(Player player) {
         playerFactionID = player.playerFaction.id;
         playerAreaID = player.playerArea.id;
@@ -55,9 +61,33 @@ public class SaveDataPlayer {
             saveDataInterventionAbility.Save(player.interventionAbilitySlots[i]);
             interventionAbilitySlots.Add(saveDataInterventionAbility);
         }
+
+        if(player.isInvadingRegion) {
+            invadingRegionID = player.invadingRegion.id;
+        } else {
+            invadingRegionID = -1;
+        }
+
+        interventionAbilityToResearch = player.interventionAbilityToResearch;
+        currentInterventionAbilityTimerTick = player.currentInterventionAbilityTimerTick;
+        currentNewInterventionAbilityCycleIndex = player.currentNewInterventionAbilityCycleIndex;
     }
     public void Load() {
         PlayerManager.Instance.InitializePlayer(this);
+    }
+    public void LoadInvasion(Save save) {
+        if (invadingRegionID != -1) {
+            SaveDataRegion invadingRegionSave = null;
+            for (int i = 0; i < save.regionSaves.Count; i++) {
+                if (save.regionSaves[i].id == invadingRegionID) {
+                    invadingRegionSave = save.regionSaves[i];
+                    break;
+                }
+            }
+
+            Region region = GridMap.Instance.GetRegionByID(invadingRegionSave.id);
+            region.LoadInvasion(invadingRegionSave.LoadInvadingMinion(), invadingRegionSave.ticksInInvasion);
+        }
     }
     private void SortAddSaveDataArtifact(SaveDataArtifact newSaveData) {
         bool hasBeenInserted = false;

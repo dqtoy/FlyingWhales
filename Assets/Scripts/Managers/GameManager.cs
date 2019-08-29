@@ -234,7 +234,12 @@ public class GameManager : MonoBehaviour {
             yearDiff = fromDate.year - toDate.year;
         }
 
-        int tickDifference = (daysDiff + (yearDiff * 365)) * daysPerMonth;
+        int daysDifference = (daysDiff + (yearDiff * 365)) * daysPerMonth;
+        int tickDifference = fromDate.tick - toDate.tick;
+        if (daysDifference > 0) {
+            tickDifference = daysDifference * ticksPerDay;
+            tickDifference = (tickDifference - toDate.tick) + fromDate.tick;
+        }
         return tickDifference;
     }
     public GameDate FirstDayOfTheMonth() {

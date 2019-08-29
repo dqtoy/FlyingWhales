@@ -24,7 +24,8 @@ public class LandmarkManager : MonoBehaviour {
         get { return allAreas.Where(x => x != PlayerManager.Instance.player.playerArea).ToList(); }
     }
     public Area mainSettlement {
-        get { return allAreas.Where(x => x != PlayerManager.Instance.player.playerArea && x.areaType != AREA_TYPE.DEMONIC_INTRUSION).First(); }
+        //get { return allAreas.Where(x => x != PlayerManager.Instance.player.playerArea && x.areaType != AREA_TYPE.DEMONIC_INTRUSION).First(); }
+        get { return enemyPlayerArea; }
     }
 
     [SerializeField] private GameObject landmarkGO;
