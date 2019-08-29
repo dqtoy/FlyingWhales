@@ -279,6 +279,10 @@ public static class Signals {
     /// parameters (Minion)
     /// </summary>
     public static string PLAYER_LOST_MINION = "OnPlayerLostMinion";
+    /// <summary>
+    /// parameters (Minion, BaseLandmark)
+    /// </summary>
+    public static string MINION_CHANGED_INVADING_LANDMARK = "OnMinionChangedInvadingLandmark";
     #endregion
 
     #region Interaction

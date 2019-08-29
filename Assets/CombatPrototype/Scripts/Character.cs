@@ -110,14 +110,17 @@ public class Character : ILeader, IPointOfInterest {
 
     //Needs
     public int tiredness { get; protected set; }
+    private int tirednessLowerBound; //how low can this characters tiredness go
     protected const int TIREDNESS_DEFAULT = 10000;
     protected const int TIREDNESS_THRESHOLD_1 = 5000;
     protected const int TIREDNESS_THRESHOLD_2 = 2500;
     public int fullness { get; protected set; }
+    private int fullnessLowerBound; //how low can this characters fullness go
     protected const int FULLNESS_DEFAULT = 10000;
     protected const int FULLNESS_THRESHOLD_1 = 5000;
     protected const int FULLNESS_THRESHOLD_2 = 2500;
     public int happiness { get; protected set; }
+    private int happinessLowerBound; //how low can this characters happiness go
     protected const int HAPPINESS_DEFAULT = 10000;
     protected const int HAPPINESS_THRESHOLD_1 = 5000;
     protected const int HAPPINESS_THRESHOLD_2 = 2500;
@@ -628,6 +631,9 @@ public class Character : ILeader, IPointOfInterest {
         pendingActionsAfterMultiThread = new List<Action>();
         //memories = new Memories();
         trapStructure = new TrapStructure();
+        tirednessLowerBound = 0;
+        fullnessLowerBound = 0;
+        happinessLowerBound = 0;
         SetPOIState(POI_STATE.ACTIVE);
         SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.AFTERNOON);
         SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
@@ -6137,6 +6143,15 @@ public class Character : ILeader, IPointOfInterest {
     //public void SetHappinessDecreaseRate(int amount) {
     //    happinessDecreaseRate = amount;
     //}
+    private void SetTirednessLowerBound(int amount) {
+        tirednessLowerBound = amount;
+    }
+    private void SetFullnessLowerBound(int amount) {
+        fullnessLowerBound = amount;
+    }
+    private void SetHappinessLowerBound(int amount) {
+        happinessLowerBound = amount;
+    }
     #endregion
 
     #region Tiredness
@@ -6146,7 +6161,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void AdjustTiredness(int adjustment) {
         tiredness += adjustment;
-        tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
+        tiredness = Mathf.Clamp(tiredness, tirednessLowerBound, TIREDNESS_DEFAULT);
         if (tiredness == 0) {
             Death("exhaustion");
         } else if (isExhausted) {
@@ -6175,7 +6190,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void DecreaseTirednessMeter() { //this is used for when tiredness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
         tiredness -= 1;
-        tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
+        tiredness = Mathf.Clamp(tiredness, tirednessLowerBound, TIREDNESS_DEFAULT);
         if (tiredness == 0) {
             Death("exhaustion");
         } else if (isExhausted) {
@@ -6197,7 +6212,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void SetTiredness(int amount) {
         tiredness = amount;
-        tiredness = Mathf.Clamp(tiredness, 0, TIREDNESS_DEFAULT);
+        tiredness = Mathf.Clamp(tiredness, tirednessLowerBound, TIREDNESS_DEFAULT);
         if (tiredness == 0) {
             Death("exhaustion");
         } else if (isExhausted) {
@@ -6260,7 +6275,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void AdjustFullness(int adjustment) {
         fullness += adjustment;
-        fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
+        fullness = Mathf.Clamp(fullness, fullnessLowerBound, FULLNESS_DEFAULT);
         if(adjustment > 0) {
             HPRecovery(0.02f);
         }
@@ -6286,7 +6301,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void DecreaseFullnessMeter() { //this is used for when fullness is only decreased by 1 (I did this for optimization, so as not to check for traits everytime)
         fullness -= 1;
-        fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
+        fullness = Mathf.Clamp(fullness, fullnessLowerBound, FULLNESS_DEFAULT);
         if (fullness == 0) {
             Death("starvation");
         } else if (isStarving) {
@@ -6308,7 +6323,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void SetFullness(int amount) {
         fullness = amount;
-        fullness = Mathf.Clamp(fullness, 0, FULLNESS_DEFAULT);
+        fullness = Mathf.Clamp(fullness, fullnessLowerBound, FULLNESS_DEFAULT);
         if (fullness == 0) {
             Death("starvation");
         } else if (isStarving) {
@@ -6371,7 +6386,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void AdjustHappiness(int adjustment) {
         happiness += adjustment;
-        happiness = Mathf.Clamp(happiness, 0, HAPPINESS_DEFAULT);
+        happiness = Mathf.Clamp(happiness, happinessLowerBound, HAPPINESS_DEFAULT);
         if (isForlorn) {
             RemoveTrait("Lonely");
             if (AddTrait("Forlorn")) {
@@ -6390,7 +6405,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void SetHappiness(int amount) {
         happiness = amount;
-        happiness = Mathf.Clamp(happiness, 0, HAPPINESS_DEFAULT);
+        happiness = Mathf.Clamp(happiness, happinessLowerBound, HAPPINESS_DEFAULT);
         if (isForlorn) {
             RemoveTrait("Lonely");
             if (AddTrait("Forlorn")) {
@@ -8075,11 +8090,11 @@ public class Character : ILeader, IPointOfInterest {
             if (state.characterState.IsCombatState()) {
                 ClearIgnoreHostilities();
             }
-            //if (state.characterState == CHARACTER_STATE.MOVE_OUT) {
-            //    AdjustDoNotGetHungry(1);
-            //    AdjustDoNotGetLonely(1);
-            //    AdjustDoNotGetTired(1);
-            //}
+            if (state.characterState == CHARACTER_STATE.MOVE_OUT) {
+                SetTirednessLowerBound(TIREDNESS_THRESHOLD_2);
+                SetFullnessLowerBound(FULLNESS_THRESHOLD_2);
+                SetHappinessLowerBound(HAPPINESS_THRESHOLD_2);
+            }
         } else {
             if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null && isAtHomeArea && !ownParty.icon.isTravellingOutside) {
                 //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
@@ -8118,9 +8133,9 @@ public class Character : ILeader, IPointOfInterest {
                 marker.OnThisCharacterEndedCombatState();
             }
             if (state.characterState == CHARACTER_STATE.MOVE_OUT) {
-                AdjustDoNotGetHungry(-1);
-                AdjustDoNotGetLonely(-1);
-                AdjustDoNotGetTired(-1);
+                SetTirednessLowerBound(0);
+                SetFullnessLowerBound(0);
+                SetHappinessLowerBound(0);
             }
         }
     }

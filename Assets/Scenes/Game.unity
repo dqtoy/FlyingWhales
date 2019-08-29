@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311992, g: 0.38074034, b: 0.35872713, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -37297,11 +37297,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -37456,11 +37456,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -43544,7 +43544,7 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
@@ -46332,11 +46332,11 @@ MonoBehaviour:
     lineCount: 3
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -47295,11 +47295,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -48076,7 +48076,6 @@ GameObject:
   - component: {fileID: 930355349}
   - component: {fileID: 930355351}
   - component: {fileID: 930355347}
-  - component: {fileID: 930355346}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -48084,18 +48083,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &930355346
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 930355345}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  profile: {fileID: 11400000, guid: eb61b37790c165446b5921ae728df1ca, type: 2}
 --- !u!114 &930355347
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64280,7 +64267,7 @@ MonoBehaviour:
     m_HighlightedTrigger: Highlighted
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1234170943}
   m_OnClick:
     m_PersistentCalls:
@@ -76994,11 +76981,11 @@ MonoBehaviour:
     lineCount: 3
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -87279,10 +87266,10 @@ RectTransform:
   m_Father: {fileID: 2094642954}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -91.434875, y: -1065}
-  m_SizeDelta: {x: 100, y: 50.19}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -139.4, y: 84.099976}
+  m_SizeDelta: {x: 100, y: 50.18994}
   m_Pivot: {x: 1, y: 0}
 --- !u!1001 &1652705543
 Prefab:
@@ -103105,11 +103092,11 @@ MonoBehaviour:
     lineCount: 3
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -104060,7 +104047,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -215.43481, y: 45}
+  m_AnchoredPosition: {x: -261.8, y: 45}
   m_SizeDelta: {x: 248, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1978547267

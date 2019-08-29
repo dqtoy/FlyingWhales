@@ -39,12 +39,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private SpriteRenderer rightBorder;
     [SerializeField] private SpriteRenderer topRightBorder;
 
-    [SerializeField] private SpriteGlowEffect topLeftBorderSGE;
-    [SerializeField] private SpriteGlowEffect leftBorderSGE;
-    [SerializeField] private SpriteGlowEffect botLeftBorderSGE;
-    [SerializeField] private SpriteGlowEffect botRightBorderSGE;
-    [SerializeField] private SpriteGlowEffect rightBorderSGE;
-    [SerializeField] private SpriteGlowEffect topRightBorderSGE;
+    //[SerializeField] private SpriteGlowEffect topLeftBorderSGE;
+    //[SerializeField] private SpriteGlowEffect leftBorderSGE;
+    //[SerializeField] private SpriteGlowEffect botLeftBorderSGE;
+    //[SerializeField] private SpriteGlowEffect botRightBorderSGE;
+    //[SerializeField] private SpriteGlowEffect rightBorderSGE;
+    //[SerializeField] private SpriteGlowEffect topRightBorderSGE;
 
     [Space(10)]
     [Header("Structure Objects")]
@@ -714,12 +714,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         rightBeach.sortingOrder = sortingOrder + 1;
         topRightBeach.sortingOrder = sortingOrder + 1;
 
-        topLeftBorder.sortingOrder = sortingOrder;
-        topRightBorder.sortingOrder = sortingOrder;
-        leftBorder.sortingOrder = sortingOrder + 2;
-        botLeftBorder.sortingOrder = sortingOrder + 2;
-        botRightBorder.sortingOrder = sortingOrder + 2;
-        rightBorder.sortingOrder = sortingOrder + 2;
+        topLeftBorder.sortingOrder = sortingOrder + 12;
+        topRightBorder.sortingOrder = sortingOrder + 12;
+        leftBorder.sortingOrder = sortingOrder + 12;
+        botLeftBorder.sortingOrder = sortingOrder + 12;
+        botRightBorder.sortingOrder = sortingOrder + 12;
+        rightBorder.sortingOrder = sortingOrder + 12;
         
 
         mainStructure.sortingOrder = sortingOrder + 3;
@@ -796,12 +796,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         leftBorder.color = color;
         rightBorder.color = color;
 
-        topLeftBorderSGE.GlowColor = color;
-        botLeftBorderSGE.GlowColor = color;
-        topRightBorderSGE.GlowColor = color;
-        botRightBorderSGE.GlowColor = color;
-        leftBorderSGE.GlowColor = color;
-        rightBorderSGE.GlowColor = color;
+        //topLeftBorderSGE.GlowColor = color;
+        //botLeftBorderSGE.GlowColor = color;
+        //topRightBorderSGE.GlowColor = color;
+        //botRightBorderSGE.GlowColor = color;
+        //leftBorderSGE.GlowColor = color;
+        //rightBorderSGE.GlowColor = color;
     }
     #endregion
 
