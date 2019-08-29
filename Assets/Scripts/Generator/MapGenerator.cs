@@ -68,7 +68,6 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
         UIManager.Instance.InitializeUI();
 
-        TokenManager.Instance.Initialize();
         CharacterManager.Instance.GenerateRelationships();
         //CharacterManager.Instance.PlaceInitialCharacters();
         CharacterManager.Instance.GiveInitialItems();
@@ -81,6 +80,8 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
         LandmarkManager.Instance.GenerateAreaMap(settlement.tileLocation.areaOfTile, false);
         yield return null;
+
+        TokenManager.Instance.Initialize();
 
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));

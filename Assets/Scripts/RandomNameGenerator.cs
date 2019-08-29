@@ -95,7 +95,13 @@ public class RandomNameGenerator : MonoBehaviour {
 
     private string[] baseRegionNames = new string[] {
         "Caloocan", "Las Piñas", "Makati", "Malabon", "Mandaluyong", "Manila", "Marikina", "Muntinlupa", "Navotas",
-        "Parañaque", "Pasay", "Pasig", "Quezon", "San Juan", "Taguig", "Valenzuela"
+        "Parañaque", "Pasay", "Pasig", "Quezon", "San Juan", "Taguig", "Valenzuela", "Atlantis", "Albane", "Alamid", "Anderland", "Aurelia", "Ashanti", "Bathria", "Benin", "Bismuth", "Boron", "Burgundy", "Calabon", "Canton", "Chyland", "Croatia", "Ceres",
+        "Darmid", "Delta", "Dirland", "Dohati", "Duscany", "Elarus", "Esmeris", "Erebor", "Emusil", "Erathia", "Folgeron", "Fernica", "Fuchia", "Friedland", "Farrah", "Garwinia", "Grazil", "Gunark",
+        "Gehenna", "Gladius", "Hacatid", "Hermani", "Hisoka", "Howland", "Hunan", "Ianland", "Iridia", "Israel", "Indosin", "Illumina", "Jamalaya", "Jinni", "Jorara", "Justinia", "Jelsebed",
+        "Karamba", "Kaedwen", "Korolus", "Kumael", "Kestrella", "Losendro", "Liria", "Lunesta", "Lusland", "Lyrica", "Makuria", "Meridian", "Mykland", "Morland", "Muskovich", "Nestori", "Norsica",
+        "Nubland", "Naralan", "Nissin", "Obelin", "Ovid", "Opera", "Osmud", "Obelisk", "Patani", "Petersen", "Polaris", "Prissia", "Pusant", "Quatar", "Qualia", "Quenden", "Rastafar", "Remedi", "Russo",
+        "Roveri", "Scythra", "Shetland", "Sundira", "Silveria", "Sahari", "Takatak", "Thenid", "Tilain", "Tesoro", "Tulisia", "Umbra", "Ulbany", "Uruk", "Unibad", "Virindor", "Visaya", "Vanad", "Vesemin",
+        "Vortex", "Zulu", "Zakrand", "Zerena", "Ziria"
     };
 
     private string[] minionNames = new string[] {
@@ -220,7 +226,7 @@ public class RandomNameGenerator : MonoBehaviour {
 		generatedAncientRuinNames = new Sobriquet.Generator (2, baseAncientRuinPrefixes);
 		generatedTileNames = new Sobriquet.Generator (2, baseTileNames);
 
-        generatedRegionNames = new Sobriquet.Generator(2, baseRegionNames);
+        generatedRegionNames = new Sobriquet.Generator(3, baseRegionNames);
 
         humanKingdomNames = new List<string>();
         for (int i = 5; i <= 8; i++) {
@@ -396,7 +402,6 @@ public class RandomNameGenerator : MonoBehaviour {
         }
         return GenerateElvenName(gender);
 	}
-
 	public string GenerateKingdomName(){
         if(humanKingdomNames.Count <= 0) {
             humanKingdomNames = generatedHumanKingdomNames.AllRaw(12).ToList();
@@ -416,7 +421,6 @@ public class RandomNameGenerator : MonoBehaviour {
   //      }
 		//return "";
 	}
-
 	public string GenerateCityName(RACE race){
         if (race == RACE.HUMANS) {
             if (humanKingdomNames.Count <= 0) {

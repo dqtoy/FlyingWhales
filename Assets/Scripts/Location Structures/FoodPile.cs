@@ -12,6 +12,7 @@ public class FoodPile : TileObject {
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_FOOD, INTERACTION_TYPE.DROP_FOOD };
         Initialize(TILE_OBJECT_TYPE.FOOD_PILE);
         SetFoodInPile(200);
+        RemoveTrait("Flammable");
         Messenger.AddListener(Signals.TICK_STARTED, CheckFood);
     }
 

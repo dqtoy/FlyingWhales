@@ -1693,7 +1693,7 @@ MonoBehaviour:
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114425743848295922}
         m_MethodName: ScrollText
         m_Mode: 1
         m_Arguments:
@@ -1709,7 +1709,7 @@ MonoBehaviour:
   onHoverExitAction:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 114425743848295922}
         m_MethodName: StopScroll
         m_Mode: 1
         m_Arguments:

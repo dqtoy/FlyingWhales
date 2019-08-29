@@ -20,6 +20,15 @@ public class TokenManager : MonoBehaviour {
     }
 
     private void LoadSpecialTokens() {
+        //Reference: https://trello.com/c/Kuqt3ZSP/2610-put-2-healing-potions-in-the-warehouse-at-start-of-the-game
+        LocationStructure warehouse = LandmarkManager.Instance.mainSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        for (int i = 0; i < 4; i++) {
+            LandmarkManager.Instance.mainSettlement.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION), warehouse);
+        }
+        for (int i = 0; i < 2; i++) {
+            LandmarkManager.Instance.mainSettlement.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.TOOL), warehouse);
+        }
+
         for (int i = 0; i < specialTokenSettings.Count; i++) {
             SpecialTokenSettings currSetting = specialTokenSettings[i];
             List<Area> areas = LandmarkManager.Instance.allAreas;

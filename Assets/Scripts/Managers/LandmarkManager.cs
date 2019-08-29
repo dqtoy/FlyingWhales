@@ -907,7 +907,7 @@ public class LandmarkManager : MonoBehaviour {
             currArea.LoadAdditionalData();
         }
     }
-    public Vector2 GetAreaNameplatePosition(Area area) {
+    public Vector2 GetNameplatePosition(HexTile tile) {
         //switch (area.name) {
         //    case "Cardell":
         //        return new Vector2(-1.1f, 4.6f);
@@ -916,7 +916,7 @@ public class LandmarkManager : MonoBehaviour {
         //    default:
         //        break;
         //}
-        Vector2 defaultPos = area.coreTile.transform.position;
+        Vector2 defaultPos = tile.transform.position;
         defaultPos.y -= 1.25f;
         return defaultPos;
     }
