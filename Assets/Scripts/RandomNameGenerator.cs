@@ -94,8 +94,7 @@ public class RandomNameGenerator : MonoBehaviour {
 	};
 
     private string[] baseRegionNames = new string[] {
-        "Caloocan", "Las Piñas", "Makati", "Malabon", "Mandaluyong", "Manila", "Marikina", "Muntinlupa", "Navotas",
-        "Parañaque", "Pasay", "Pasig", "Quezon", "San Juan", "Taguig", "Valenzuela", "Atlantis", "Albane", "Alamid", "Anderland", "Aurelia", "Ashanti", "Bathria", "Benin", "Bismuth", "Boron", "Burgundy", "Calabon", "Canton", "Chyland", "Croatia", "Ceres",
+        "Atlantis", "Albane", "Alamid", "Anderland", "Aurelia", "Ashanti", "Bathria", "Benin", "Bismuth", "Boron", "Burgundy", "Calabon", "Canton", "Chyland", "Croatia", "Ceres",
         "Darmid", "Delta", "Dirland", "Dohati", "Duscany", "Elarus", "Esmeris", "Erebor", "Emusil", "Erathia", "Folgeron", "Fernica", "Fuchia", "Friedland", "Farrah", "Garwinia", "Grazil", "Gunark",
         "Gehenna", "Gladius", "Hacatid", "Hermani", "Hisoka", "Howland", "Hunan", "Ianland", "Iridia", "Israel", "Indosin", "Illumina", "Jamalaya", "Jinni", "Jorara", "Justinia", "Jelsebed",
         "Karamba", "Kaedwen", "Korolus", "Kumael", "Kestrella", "Losendro", "Liria", "Lunesta", "Lusland", "Lyrica", "Makuria", "Meridian", "Mykland", "Morland", "Muskovich", "Nestori", "Norsica",
@@ -103,6 +102,8 @@ public class RandomNameGenerator : MonoBehaviour {
         "Roveri", "Scythra", "Shetland", "Sundira", "Silveria", "Sahari", "Takatak", "Thenid", "Tilain", "Tesoro", "Tulisia", "Umbra", "Ulbany", "Uruk", "Unibad", "Virindor", "Visaya", "Vanad", "Vesemin",
         "Vortex", "Zulu", "Zakrand", "Zerena", "Ziria"
     };
+    // "Caloocan", "Las Piñas", "Makati", "Malabon", "Mandaluyong", "Manila", "Marikina", "Muntinlupa", "Navotas",
+    //    "Parañaque", "Pasay", "Pasig", "Quezon", "San Juan", "Taguig", "Valenzuela",
 
     private string[] minionNames = new string[] {
         "Abraxas", "Agares", "Aim", "Alloces", "Amdusias", "Amon", "Amy", "Andras", "Andrealphus", "Adromalius", "Asmodeus",

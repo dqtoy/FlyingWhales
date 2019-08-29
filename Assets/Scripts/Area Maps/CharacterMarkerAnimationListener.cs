@@ -63,14 +63,14 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
     /// <param name="fromState">The projectile was created from this combat state.</param>
     private void OnProjectileHit(Character character, CombatState fromState) {
         currentProjectile = null;
-        fromState.OnAttackHit(character);
-        //if (parentMarker.character.stateComponent.currentState is CombatState) {
-        //    CombatState combatState = parentMarker.character.stateComponent.currentState as CombatState;
-        //    combatState.OnAttackHit(character);
-        //} else {
-        //    string attackSummary = GameManager.Instance.TodayLogString() + parentMarker.character.name + " hit " + character.name + ", outside of combat state";
-        //    character.OnHitByAttackFrom(parentMarker.character, fromState, ref attackSummary);
-        //    parentMarker.character.PrintLogIfActive(attackSummary);
-        //}
+        //fromState.OnAttackHit(character);
+        if (parentMarker.character.stateComponent.currentState is CombatState) {
+            CombatState combatState = parentMarker.character.stateComponent.currentState as CombatState;
+            combatState.OnAttackHit(character);
+        } else {
+            string attackSummary = GameManager.Instance.TodayLogString() + parentMarker.character.name + " hit " + character.name + ", outside of combat state";
+            character.OnHitByAttackFrom(parentMarker.character, fromState, ref attackSummary);
+            parentMarker.character.PrintLogIfActive(attackSummary);
+        }
     }
 }

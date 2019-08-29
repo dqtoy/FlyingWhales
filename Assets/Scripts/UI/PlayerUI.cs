@@ -213,7 +213,6 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Artifact>(Signals.PLAYER_USED_ARTIFACT, OnUsedArtifact);
         Messenger.AddListener<ArtifactSlot>(Signals.PLAYER_GAINED_ARTIFACT_LEVEL, UpdateCurrentlySelectedArtifactSlotLevel);
 
-
         //Kill Count UI
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
@@ -276,11 +275,13 @@ public class PlayerUI : MonoBehaviour {
     private void OnCharacterDied(Character character) {
         UpdateKillCount();
         OrderKillSummaryItems();
+        CheckIfAllCharactersWipedOut();
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
         if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
             UpdateKillCount();
             OrderKillSummaryItems();
+            CheckIfAllCharactersWipedOut();
         }
     }
     private void OnCharacterLostTrait(Character character, Trait trait) {
@@ -292,6 +293,27 @@ public class PlayerUI : MonoBehaviour {
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
         UpdateKillCount();
         OrderKillSummaryItems();
+        CheckIfAllCharactersWipedOut();
+    }
+    private void CheckIfAllCharactersWipedOut() {
+        if (PlayerManager.Instance.player.currentAreaBeingInvaded != null) {
+            return; //player has initiated invasion of settlement, all checking of win condition will be executed in PerTickInvasion() in Player script. TODO: Unify them!
+        }
+        bool stillHasResidents = false;
+        for (int i = 0; i < PlayerManager.Instance.player.currentTargetFaction.characters.Count; i++) { //Changed checking to faction members, because some characters may still consider the area as their home, but are no longer part of the faction
+            Character currCharacter = PlayerManager.Instance.player.currentTargetFaction.characters[i];
+            if (currCharacter.IsAble() && currCharacter.faction == PlayerManager.Instance.player.currentTargetFaction) {
+                stillHasResidents = true;
+                break;
+            }
+        }
+        if (!stillHasResidents) {
+            //player has won
+            UIManager.Instance.Pause();
+            UIManager.Instance.SetTimeControlsState(false);
+            Messenger.Broadcast(Signals.HIDE_MENUS);
+            SuccessfulAreaCorruption();
+        }
     }
     #endregion
 
@@ -931,11 +953,13 @@ public class PlayerUI : MonoBehaviour {
         }
         currentlySelectedSummonSlot = summonSlot;
         if (currentlySelectedSummonSlot.summon == null) {
-            currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(SUMMON_TYPE.None).summonPortrait;
+            currentSummonImg.gameObject.SetActive(false);
+            //currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(SUMMON_TYPE.None).summonPortrait;
             cycleSummonLeft.gameObject.SetActive(false);
             cycleSummonRight.gameObject.SetActive(false);
             currentSummonLvlGO.SetActive(false);
         } else {
+            currentSummonImg.gameObject.SetActive(true);
             currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(currentlySelectedSummonSlot.summon.summonType).summonPortrait;
             int index = Array.IndexOf(PlayerManager.Instance.player.summonSlots, currentlySelectedSummonSlot);
             currentSummonLvlGO.SetActive(true);
@@ -1105,11 +1129,13 @@ public class PlayerUI : MonoBehaviour {
         }
         currentlySelectedArtifactSlot = artifactSlot;
         if (currentlySelectedArtifactSlot.artifact == null) {
-            currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(ARTIFACT_TYPE.None).artifactPortrait;
+            currentArtifactImg.gameObject.SetActive(false);
+            //currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(ARTIFACT_TYPE.None).artifactPortrait;
             cycleArtifactLeft.gameObject.SetActive(false);
             cycleArtifactRight.gameObject.SetActive(false);
             currentArtifactLvlGO.SetActive(false);
         } else {
+            currentArtifactImg.gameObject.SetActive(true);
             currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(currentlySelectedArtifactSlot.artifact.type).artifactPortrait;
             //currentArtifactCountLbl.text = PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(currentlySelectedArtifactSlot.artifact.type).ToString();
             int index = Array.IndexOf(PlayerManager.Instance.player.artifactSlots, currentlySelectedArtifactSlot);
@@ -1410,6 +1436,7 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Minion List
+    public bool isShowingMinionList { get { return minionListGO.activeSelf; } }
     [Header("Minion List")]
     [SerializeField] private TextMeshProUGUI minionCountLbl;
     [SerializeField] private GameObject minionItemPrefab;
@@ -1460,6 +1487,9 @@ public class PlayerUI : MonoBehaviour {
         if (killSummaryGO.activeSelf) {
             killSummaryGO.SetActive(false);
         }
+    }
+    public void HideMinionList() {
+        minionListGO.SetActive(false);
     }
     #endregion
 }

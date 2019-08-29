@@ -98,14 +98,19 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
             string linkText = linkInfo.GetLinkID();
             object obj = null;
             if (log == null) {
-                string id = linkText.Substring(0, linkText.IndexOf('_'));
-                int idToUse = int.Parse(id);
+                int idToUse;
+                if (!int.TryParse(linkText, out idToUse)) {
+                    string id = linkText.Substring(0, linkText.IndexOf('_'));
+                    idToUse = int.Parse(id);
+                }
                 if (linkText.Contains("_faction")) {
                     obj = UIManager.Instance.characterInfoUI.activeCharacter.faction;
                 } else if (linkText.Contains("_landmark")) {
                     obj = LandmarkManager.Instance.GetLandmarkByID(idToUse);
                 } else if (linkText.Contains("_character")) {
                     obj = CharacterManager.Instance.GetCharacterByID(idToUse);
+                } else {
+                    obj = idToUse;
                 }
             } else {
                 int idToUse = int.Parse(linkText);

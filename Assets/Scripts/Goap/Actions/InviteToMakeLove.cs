@@ -168,13 +168,16 @@ public class InviteToMakeLove : GoapAction {
         if (target == actor) {
             return false;
         }
-        if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+        if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) { //do not woo characters that have transformed to other alter egos
             return false;
         }
         if (target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
         }
         if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
+            return false;
+        }
+        if (target.returnedToLife) { //do not woo characters that have been raised from the dead
             return false;
         }
         if (!(actor is SeducerSummon)) { //ignore relationships if succubus

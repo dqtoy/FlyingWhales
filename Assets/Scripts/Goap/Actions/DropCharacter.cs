@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DropCharacter : GoapAction {
@@ -72,7 +73,12 @@ public class DropCharacter : GoapAction {
     }
     public void AfterDropSuccess() {
         Character target = poiTarget as Character;
-        actor.ownParty.RemoveCharacter(target);
+        LocationGridTile dropLocation = null;
+        List<LocationGridTile> choices = actor.gridTileLocation.UnoccupiedNeighbours.Where(x => x.structure == targetStructure).ToList();
+        if (choices.Count > 0) {
+            dropLocation = choices[Random.Range(0, choices.Count)];
+        }
+        actor.ownParty.RemoveCharacter(target, dropLocation: dropLocation);
         //target.MoveToAnotherStructure(_workAreaStructure);
         AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
 

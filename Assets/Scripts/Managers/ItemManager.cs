@@ -180,7 +180,7 @@ public class ItemManager : MonoBehaviour {
                 supplyValue = 15,
                 craftCost = 25,
                 purchaseCost = 35,
-                neededTraitType = typeof(Craftsman) } },
+                neededTraitType = typeof(Doctor) } },
             {SPECIAL_TOKEN.ENCHANTED_AMULET, new ItemData(){
                 supplyValue = 15,
                 craftCost = 25,

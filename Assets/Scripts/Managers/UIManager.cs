@@ -253,6 +253,9 @@ public class UIManager : MonoBehaviour {
         if (PlayerUI.Instance.isShowingKillSummary) {
             PlayerUI.Instance.HideKillSummary();
         }
+        if (PlayerUI.Instance.isShowingMinionList) {
+            PlayerUI.Instance.HideMinionList();
+        }
     }
     public void AddToUIMenuHistory(object data) {
         if(_uiMenuHistory.Count > 0 && _uiMenuHistory[_uiMenuHistory.Count - 1] == data) {
@@ -1209,9 +1212,9 @@ public class UIManager : MonoBehaviour {
         }
 
         if (itemToReplace != null) {
-            //int index = (itemToReplace.transform as RectTransform).GetSiblingIndex();
+            int index = (itemToReplace.transform as RectTransform).GetSiblingIndex();
             itemToReplace.DeleteNotification();
-            //(newNotif.gameObject.transform as RectTransform).SetSiblingIndex(index);
+            (newNotif.gameObject.transform as RectTransform).SetSiblingIndex(index);
         }
         //else {
         //    (newNotif.gameObject.transform as RectTransform).SetAsLastSibling();

@@ -40,6 +40,7 @@ public class MoveOutState : CharacterState {
             SchedulingManager.Instance.RemoveSpecificEntry(goHomeSchedID);
         }
         stateComponent.character.AdjustDoNotDisturb(-1);
+        SchedulingManager.Instance.ClearAllSchedulesBy(this);
     }
     protected override void PerTickInState() { }
     #endregion

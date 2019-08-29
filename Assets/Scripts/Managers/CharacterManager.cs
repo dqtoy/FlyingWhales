@@ -9,9 +9,9 @@ public class CharacterManager : MonoBehaviour {
 
     public const int MAX_HISTORY_LOGS = 300;
     public const int CHARACTER_MAX_MEMORY = 20;
-    public const int FULLNESS_DECREASE_RATE = 420;
-    public const int TIREDNESS_DECREASE_RATE = 360;
-    public const int HAPPINESS_DECREASE_RATE = 840;
+    public const int FULLNESS_DECREASE_RATE = 380;
+    public const int TIREDNESS_DECREASE_RATE = 340;
+    public const int HAPPINESS_DECREASE_RATE = 640;
 
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;

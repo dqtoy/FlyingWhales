@@ -319,6 +319,7 @@ public class Minion {
     }
     public void SetInvadingLandmark(BaseLandmark landmark) {
         invadingLandmark = landmark;
+        Messenger.Broadcast(Signals.MINION_CHANGED_INVADING_LANDMARK, this, invadingLandmark);
     }
     #endregion
 
