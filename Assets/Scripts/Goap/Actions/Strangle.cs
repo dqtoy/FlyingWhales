@@ -69,6 +69,6 @@ public class StrangleData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
+        return poiTarget == actor && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
     }
 }

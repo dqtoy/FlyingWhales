@@ -2142,6 +2142,14 @@ public class Character : ILeader, IPointOfInterest {
         }
         AdjustIsWaitingForInteraction(-1);
     }
+    public void CancelAllPlans() {
+        StopCurrentAction(false);
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            if (DropPlan(allGoapPlans[i])) {
+                i--;
+            }
+        }
+    }
     public void CancelAllJobsAndPlansExcept(params JOB_TYPE[] job) {
         List<JOB_TYPE> exceptions = job.ToList();
         AdjustIsWaitingForInteraction(1);
@@ -2641,6 +2649,7 @@ public class Character : ILeader, IPointOfInterest {
     public void AdjustDoNotDisturb(int amount) {
         _doNotDisturb += amount;
         _doNotDisturb = Math.Max(_doNotDisturb, 0);
+        Debug.Log(GameManager.Instance.TodayLogString() + " adjusted do not disturb of " + this.name + " by " + amount + " new value is " + _doNotDisturb.ToString());
     }
     public void AdjustDoNotGetHungry(int amount) {
         _doNotGetHungry += amount;
@@ -7990,6 +7999,9 @@ public class Character : ILeader, IPointOfInterest {
         moodValue += amount;
         moodValue = Mathf.Clamp(moodValue, 1, 100);
         if(amount < 0 && currentMoodType == CHARACTER_MOOD.DARK) {
+            if (doNotDisturb > 0) {
+                return;
+            }
             if(currentAction != null && currentAction.goapType == INTERACTION_TYPE.TANTRUM) {
                 return;
             }

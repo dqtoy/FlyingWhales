@@ -14,6 +14,7 @@ public class KillCountCharacterItem : CharacterItem {
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterRemovedTrait);
         Messenger.AddListener<Character>(Signals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnedToLife);
     }
     public override void Reset() {
@@ -21,6 +22,8 @@ public class KillCountCharacterItem : CharacterItem {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
+        Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterRemovedTrait);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnedToLife);
         StopScroll();
     }
     protected override void UpdateInfo() {
@@ -68,6 +71,11 @@ public class KillCountCharacterItem : CharacterItem {
         }
     }
     private void OnCharacterGainedTrait(Character character, Trait trait) {
+        if (character.id == this.character.id && trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
+            UpdateInfo();
+        }
+    }
+    private void OnCharacterRemovedTrait(Character character, Trait trait) {
         if (character.id == this.character.id && trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
             UpdateInfo();
         }
