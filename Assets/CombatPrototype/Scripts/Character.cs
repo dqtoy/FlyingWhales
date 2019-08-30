@@ -4994,7 +4994,7 @@ public class Character : ILeader, IPointOfInterest {
         trapStructure.IncrementCurrentDuration(1);
 
         //Out of combat hp recovery
-        if(stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
+        if(!isDead && (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
             HPRecovery(0.0025f);
         }
         PlanForcedFullnessRecovery();
@@ -5021,7 +5021,7 @@ public class Character : ILeader, IPointOfInterest {
         return currentAction == null && _numOfWaitingForGoapThread <= 0;
     }
     public void PlanGoapActions() {
-        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || isWaitingForInteraction > 0) {
+        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || isWaitingForInteraction > 0 || isDead) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
         if (stateComponent.currentState != null) {
@@ -5045,7 +5045,7 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     protected virtual void IdlePlans() {
-        if (_hasAlreadyAskedForPlan) {
+        if (_hasAlreadyAskedForPlan || isDead) {
             return;
         }
         if (returnedToLife) {
@@ -5295,6 +5295,10 @@ public class Character : ILeader, IPointOfInterest {
     }
     private string OtherIdlePlans() {
         string log = GameManager.Instance.TodayLogString() + " IDLE PLAN FOR " + name;
+        if (isDead) {
+            log += this.name + " is already dead not planning other idle plans.";
+            return log;
+        }
         if (faction.id != FactionManager.Instance.neutralFaction.id) {
             CreatePersonalJobs();
             //NPC with Faction Idle

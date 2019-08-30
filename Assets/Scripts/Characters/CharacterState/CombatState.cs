@@ -182,6 +182,7 @@ public class CombatState : CharacterState {
     private void DoCombatBehavior(Character newTarget = null) {
         string log = GameManager.Instance.TodayLogString() + "Reevaluating combat behavior of " + stateComponent.character.name;
         if (isAttacking) {
+            stateComponent.character.marker.StopPerTickFlee();
             log += "\n" + stateComponent.character.name + " is attacking!";
             Trait taunted = stateComponent.character.GetNormalTrait("Taunted");
             if (forcedTarget != null) {

@@ -1312,7 +1312,7 @@ public class CharacterMarker : PooledObject {
         }
         return false;
     }
-    private void StopPerTickFlee() {
+    public void StopPerTickFlee() {
         fleeSpeedModifier = 0f;
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickFlee);
     }
