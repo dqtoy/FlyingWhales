@@ -353,7 +353,7 @@ public class InteriorMapManager : MonoBehaviour {
         if (tile == null) {
             return;
         }
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         string summary = tile.localPlace.ToString();
         summary += "\nLocal Location: " + tile.localLocation.ToString();
         summary += "\nWorld Location: " + tile.worldLocation.ToString();

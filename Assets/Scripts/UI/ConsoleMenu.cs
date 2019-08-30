@@ -69,7 +69,7 @@ public class ConsoleMenu : UIMenu {
             {"/gain_i_ability", GainInterventionAbility },
         };
 
-#if UNITY_EDITOR
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         Messenger.AddListener(Signals.TICK_ENDED, CheckForWrongCharacterData);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
 #endif

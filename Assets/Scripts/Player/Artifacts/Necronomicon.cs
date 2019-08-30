@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Necronomicon : Artifact {
 
+    private bool isActivated;
+
     private int raiseDeadLevel; //what level will the dead that was risen will be?
 
 	public Necronomicon() : base(ARTIFACT_TYPE.Necronomicon) {
@@ -23,7 +25,9 @@ public class Necronomicon : Artifact {
     //}
     public override void OnInspect(Character inspectedBy, out Log result) {
         base.OnInspect(inspectedBy, out result);
-        Activate();
+        if (!isActivated) {
+            Activate();
+        }
     }
     public override void LevelUp() {
         base.LevelUp();
@@ -41,6 +45,7 @@ public class Necronomicon : Artifact {
         state.SetIsUnending(true);
     }
     private void Activate() {
+        isActivated = true;
         List<Character> characters = gridTileLocation.parentAreaMap.area.GetAllDeadCharactersInArea();
         for (int i = 0; i < characters.Count; i++) {
             Character currCharacter = characters[i];

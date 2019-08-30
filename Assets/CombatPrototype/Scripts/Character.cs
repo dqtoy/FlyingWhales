@@ -4663,6 +4663,10 @@ public class Character : ILeader, IPointOfInterest {
             AdjustSpeedModifier(-0.5f);
         } else if (trait.name == "Vampiric") {
             AdjustDoNotGetTired(1);
+        } else if (trait.name == "Unconscious") {
+            AdjustDoNotGetTired(1);
+            AdjustDoNotGetHungry(1);
+            AdjustDoNotGetLonely(1);
         }
         //else if (trait.name == "Hungry") {
         //    CreateFeedJob();
@@ -4758,6 +4762,10 @@ public class Character : ILeader, IPointOfInterest {
             AdjustSpeedModifier(0.5f);
         } else if (trait.name == "Vampiric") {
             AdjustDoNotGetTired(-1);
+        } else if (trait.name == "Unconscious") {
+            AdjustDoNotGetTired(-1);
+            AdjustDoNotGetHungry(-1);
+            AdjustDoNotGetLonely(-1);
         }
 
         if (trait.effects != null) {
