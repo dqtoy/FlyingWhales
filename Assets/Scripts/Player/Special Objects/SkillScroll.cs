@@ -15,3 +15,9 @@ public class SkillScroll : SpecialObject {
     }
     #endregion
 }
+
+public class SaveDataSkillScroll : SaveDataSpecialObject {
+    public override IWorldObject Load() {
+        return new SkillScroll();
+    }
+}

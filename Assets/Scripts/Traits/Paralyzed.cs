@@ -33,6 +33,24 @@ public class Paralyzed : Trait {
         }
         base.OnRemoveTrait(sourceCharacter, removedBy);
     }
+    public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+        if (traitOwner is Character) {
+            Character targetCharacter = traitOwner as Character;
+            if (!targetCharacter.isDead && targetCharacter.faction != characterThatWillDoJob.faction && !targetCharacter.HasJobTargettingThis(JOB_TYPE.RESTRAIN) && targetCharacter.GetNormalTrait("Restrained") == null) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+                if (CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, null)) {
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    return true;
+                } else {
+                    job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
+                    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                    return false;
+                }
+            }
+        }
+        return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+    }
     #endregion
 
     private void CheckParalyzedTrait() {

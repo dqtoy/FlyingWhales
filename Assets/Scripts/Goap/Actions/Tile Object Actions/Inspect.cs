@@ -46,8 +46,8 @@ public class Inspect : GoapAction {
     public void AfterInspectSuccess() {
         if (poiTarget is TileObject) {
             TileObject to = poiTarget as TileObject;
-            Curious curios = actor.GetNormalTrait("Curious") as Curious;
-            curios.AddAlreadyInspectedObject(to);
+            //Curious curios = actor.GetNormalTrait("Curious") as Curious;
+            actor.defaultCharacterTrait.AddAlreadyInspectedObject(to);
             Log result;
             (poiTarget as TileObject).OnInspect(actor, out result);
             if (result != null) {

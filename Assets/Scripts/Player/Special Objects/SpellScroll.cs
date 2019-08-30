@@ -14,3 +14,9 @@ public class SpellScroll : SpecialObject {
     }
     #endregion
 }
+
+public class SaveDataSpellScroll : SaveDataSpecialObject {
+    public override IWorldObject Load() {
+        return new SpellScroll();
+    }
+}

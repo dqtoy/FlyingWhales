@@ -22,3 +22,18 @@ public class SpecialObject : IWorldObject {
     public virtual void Obtain() { }
     #endregion
 }
+
+public class SaveDataSpecialObject : SaveDataWorldObject {
+    public SPECIAL_OBJECT_TYPE specialObjType;
+
+    public new virtual void Save(IWorldObject worldObject) {
+        base.Save(worldObject);
+        if(worldObject is SpecialObject) {
+            specialObjType = (worldObject as SpecialObject).specialObjType;
+        }
+    }
+
+    public new virtual IWorldObject Load() {
+        return new SpecialObject(specialObjType);
+    }
+}

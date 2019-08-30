@@ -102,10 +102,10 @@ public class Save {
             data.LoadLandmarkConnections(GridMap.Instance.hexTiles[data.locationID].landmarkOnTile);
         }
     }
-    public void LoadLandmarkEvents() {
+    public void LoadLandmarkEventsAndWorldObject() {
         for (int i = 0; i < landmarkSaves.Count; i++) {
             SaveDataLandmark data = landmarkSaves[i];
-            data.LoadActiveEvent(GridMap.Instance.hexTiles[data.locationID].landmarkOnTile);
+            data.LoadActiveEventAndWorldObject(GridMap.Instance.hexTiles[data.locationID].landmarkOnTile);
         }
     }
 

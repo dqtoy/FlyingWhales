@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class SaveDataSummon {
+public class SaveDataSummonSlot {
     //Summon slot
     public int level;
     public int summonID;

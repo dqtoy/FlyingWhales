@@ -10,8 +10,8 @@ public class SaveDataPlayer {
     public int threat;
 
     public List<SaveDataMinion> minions;
-    public List<SaveDataSummon> summonSlots;
-    public List<SaveDataArtifact> artifactSlots;
+    public List<SaveDataSummonSlot> summonSlots;
+    public List<SaveDataArtifactSlot> artifactSlots;
     public List<SaveDataInterventionAbility> interventionAbilitySlots;
 
     public int currentMinionLeaderID;
@@ -39,16 +39,16 @@ public class SaveDataPlayer {
             minions.Add(saveDataMinion);
         }
 
-        summonSlots = new List<SaveDataSummon>();
+        summonSlots = new List<SaveDataSummonSlot>();
         for (int i = 0; i < player.summonSlots.Length; i++) {
-            SaveDataSummon data = new SaveDataSummon();
+            SaveDataSummonSlot data = new SaveDataSummonSlot();
             data.Save(player.summonSlots[i]);
             summonSlots.Add(data);
         }
 
-        artifactSlots = new List<SaveDataArtifact>();
+        artifactSlots = new List<SaveDataArtifactSlot>();
         for (int i = 0; i < player.artifactSlots.Length; i++) {
-            SaveDataArtifact saveDataArtifact = new SaveDataArtifact();
+            SaveDataArtifactSlot saveDataArtifact = new SaveDataArtifactSlot();
             saveDataArtifact.Save(player.artifactSlots[i]);
             artifactSlots.Add(saveDataArtifact);
         }
@@ -89,10 +89,10 @@ public class SaveDataPlayer {
             region.LoadInvasion(invadingRegionSave.LoadInvadingMinion(), invadingRegionSave.ticksInInvasion);
         }
     }
-    private void SortAddSaveDataArtifact(SaveDataArtifact newSaveData) {
+    private void SortAddSaveDataArtifact(SaveDataArtifactSlot newSaveData) {
         bool hasBeenInserted = false;
         for (int i = 0; i < artifactSlots.Count; i++) {
-            SaveDataArtifact currSaveData = artifactSlots[i];
+            SaveDataArtifactSlot currSaveData = artifactSlots[i];
             if (newSaveData.id < currSaveData.id) {
                 artifactSlots.Insert(i, newSaveData);
                 hasBeenInserted = true;

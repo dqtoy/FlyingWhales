@@ -9,6 +9,9 @@ public class Necronomicon : Artifact {
 	public Necronomicon() : base(ARTIFACT_TYPE.Necronomicon) {
         raiseDeadLevel = 5;
     }
+    public Necronomicon(SaveDataArtifactSlot data) : base(data) {
+        raiseDeadLevel = 5;
+    }
     public Necronomicon(SaveDataArtifact data) : base(data) {
         raiseDeadLevel = 5;
     }

@@ -12,7 +12,8 @@ public class SaveDataLandmark {
     public List<LANDMARK_TAG> landmarkTags;
     public List<int> connectionsTileIDs;
     public List<int> charactersHereIDs;
-    //public IWorldObject worldObj;
+    public SaveDataWorldObject worldObj;
+    public bool hasWorldObject;
     public WORLD_EVENT activeEvent;
     public int eventSpawnedByCharacterID;
     public bool hasEventIconGO;
@@ -51,6 +52,22 @@ public class SaveDataLandmark {
             activeEvent = WORLD_EVENT.NONE;
         }
         hasEventIconGO = landmark.eventIconGO != null;
+
+        if(landmark.worldObj != null) {
+            hasWorldObject = true;
+
+            if (landmark.worldObj is Artifact) {
+                worldObj = new SaveDataArtifact();
+            } else if (landmark.worldObj is Summon) {
+                worldObj = new SaveDataSummon();
+            } else {
+                var typeName = "SaveData" + landmark.worldObj.GetType().ToString();
+                worldObj = System.Activator.CreateInstance(System.Type.GetType(typeName)) as SaveDataWorldObject;
+            }
+            worldObj.Save(landmark.worldObj);
+        } else {
+            hasWorldObject = false;
+        }
     }
     public void Load(HexTile tile) {
         BaseLandmark landmark = tile.CreateLandmarkOfType(this);
@@ -66,7 +83,7 @@ public class SaveDataLandmark {
             }
         }
     }
-    public void LoadActiveEvent(BaseLandmark landmark) {
-        landmark.LoadEvent(this);
+    public void LoadActiveEventAndWorldObject(BaseLandmark landmark) {
+        landmark.LoadEventAndWorldObject(this);
     }
 }
