@@ -7,6 +7,9 @@ public class Chaos_Orb : Artifact {
     public Chaos_Orb() : base(ARTIFACT_TYPE.Chaos_Orb) {
         //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
     }
+    public Chaos_Orb(SaveDataArtifactSlot data) : base(data) {
+        //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
+    }
     public Chaos_Orb(SaveDataArtifact data) : base(data) {
         //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
     }

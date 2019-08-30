@@ -294,17 +294,36 @@ public class PlayerManager : MonoBehaviour {
         Artifact newArtifact = CreateNewArtifactClassFromType(artifactType) as Artifact;
         return newArtifact;
     }
-    public Artifact CreateNewArtifact(SaveDataArtifact data) {
+    public Artifact CreateNewArtifact(SaveDataArtifactSlot data) {
         Artifact newArtifact = CreateNewArtifactClassFromType(data);
         newArtifact.SetLevel(data.level);
+        return newArtifact;
+    }
+    public Artifact CreateNewArtifact(SaveDataArtifact data) {
+        Artifact newArtifact = CreateNewArtifactClassFromType(data);
         return newArtifact;
     }
     private object CreateNewArtifactClassFromType(ARTIFACT_TYPE artifactType) {
         var typeName = artifactType.ToString();
         return System.Activator.CreateInstance(System.Type.GetType(typeName));
     }
-    private Artifact CreateNewArtifactClassFromType(SaveDataArtifact data) {
+    private Artifact CreateNewArtifactClassFromType(SaveDataArtifactSlot data) {
         switch (data.type) {
+            case ARTIFACT_TYPE.Ankh_Of_Anubis:
+                return new Ankh_Of_Anubis(data);
+            case ARTIFACT_TYPE.Chaos_Orb:
+                return new Chaos_Orb(data);
+            case ARTIFACT_TYPE.Hermes_Statue:
+                return new Hermes_Statue(data);
+            case ARTIFACT_TYPE.Miasma_Emitter:
+                return new Miasma_Emitter(data);
+            case ARTIFACT_TYPE.Necronomicon:
+                return new Necronomicon(data);
+        }
+        return null;
+    }
+    private Artifact CreateNewArtifactClassFromType(SaveDataArtifact data) {
+        switch (data.artifactType) {
             case ARTIFACT_TYPE.Ankh_Of_Anubis:
                 return new Ankh_Of_Anubis(data);
             case ARTIFACT_TYPE.Chaos_Orb:

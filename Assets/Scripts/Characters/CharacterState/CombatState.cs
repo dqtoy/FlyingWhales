@@ -179,7 +179,7 @@ public class CombatState : CharacterState {
         DoCombatBehavior();
     }
     //Returns true if there is a hostile left, otherwise, returns false
-    private void DoCombatBehavior() {
+    private void DoCombatBehavior(Character newTarget = null) {
         string log = GameManager.Instance.TodayLogString() + "Reevaluating combat behavior of " + stateComponent.character.name;
         if (isAttacking) {
             log += "\n" + stateComponent.character.name + " is attacking!";
@@ -193,13 +193,19 @@ public class CombatState : CharacterState {
             } else if (currentClosestHostile != null && !stateComponent.character.marker.hostilesInRange.Contains(currentClosestHostile)) {
                 log += "\nCurrent closest hostile: " + currentClosestHostile.name + " is no longer in hostile list, setting another closest hostile...";
                 SetClosestHostile();
-            }else if(currentClosestHostile == null) {
+            } else if(currentClosestHostile == null) {
                 log += "\nNo current closest hostile, setting one...";
                 SetClosestHostile();
-            }else if(currentClosestHostile != null && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
-                log += "\nAlready in pursuit of current closest hostile: " + currentClosestHostile.name;
-                stateComponent.character.PrintLogIfActive(log);
-                return;
+            } else {
+                log += "\nChecking if the current closest hostile is still the closest hostile, if not, set new closest hostile...";
+                Character newClosestHostile =  stateComponent.character.marker.GetNearestValidHostile();
+                if(newClosestHostile != null && currentClosestHostile != newClosestHostile) {
+                    SetClosestHostile(newClosestHostile);
+                } else if (currentClosestHostile != null && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
+                    log += "\nAlready in pursuit of current closest hostile: " + currentClosestHostile.name;
+                    stateComponent.character.PrintLogIfActive(log);
+                    return;
+                }
             }
             if (currentClosestHostile == null) {
                 log += "\nNo more hostile characters, exiting combat state...";

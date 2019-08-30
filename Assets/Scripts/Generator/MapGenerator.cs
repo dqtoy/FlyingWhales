@@ -159,7 +159,7 @@ public class MapGenerator : MonoBehaviour {
         Messenger.Broadcast(Signals.UPDATE_UI);
         data.LoadInvasion();
         PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
-        data.LoadLandmarkEvents();
+        data.LoadLandmarkEventsAndWorldObject();
     }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();

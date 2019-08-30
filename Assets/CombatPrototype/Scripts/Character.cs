@@ -101,6 +101,7 @@ public class Character : ILeader, IPointOfInterest {
     public string deathStr { get; private set; }
     public TileObject tileObjectLocation { get; private set; }
     public BaseLandmark currentLandmark { get; private set; } //current Landmark Location. NOTE: Only has value if character is NOT at an area
+    public CharacterTrait defaultCharacterTrait { get; private set; }
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -3699,6 +3700,7 @@ public class Character : ILeader, IPointOfInterest {
         GoapNode goalNode = new GoapNode(null, watchAction.cost, watchAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
         goapPlan.ConstructAllNodes();
+        goapPlan.SetDoNotRecalculate(true);
         AddPlan(goapPlan, true);
     }
     #endregion
@@ -4275,6 +4277,7 @@ public class Character : ILeader, IPointOfInterest {
         //if (UnityEngine.Random.Range(0, 100) < 15) {
         //    AddTrait("Accident Prone");
         //}
+
         AddTrait("Character Trait");
     }
     public void CreateInitialTraitsByRace() {
@@ -4321,6 +4324,9 @@ public class Character : ILeader, IPointOfInterest {
             //Not adding relationship traits to the list of traits, since the getter will combine the traits list from this list and the relationships dictionary.
             //Did this so that relationships can be swappable without having to call RemoveTrait.
             _normalTraits.Add(trait); 
+        }
+        if(trait is CharacterTrait) {
+            defaultCharacterTrait = trait as CharacterTrait;
         }
         trait.SetGainedFromDoing(gainedFromDoing);
         trait.SetOnRemoveAction(onRemoveAction);
@@ -5803,67 +5809,6 @@ public class Character : ILeader, IPointOfInterest {
     public void SetIsChatting(bool state) {
         _isChatting = state;
     }
-    public bool HasPlanWithType(INTERACTION_TYPE type) {
-        for (int i = 0; i < allGoapPlans.Count; i++) {
-            GoapPlan currPlan = allGoapPlans[i];
-            if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
-                return true;
-            }
-        }
-        return false;
-    }
-    /// <summary>
-    /// This should only be used for plans that come/constructed from the outside.
-    /// </summary>
-    /// <param name="plan">Plan to be added</param>
-    public void AddPlan(GoapPlan plan, bool isPriority = false, bool processPlanSpecialCases = true) {
-        if (!allGoapPlans.Contains(plan)) {
-            plan.SetPriorityState(isPriority);
-            if (isPriority) {
-                allGoapPlans.Insert(0, plan);
-            } else {
-                bool hasBeenInserted = false;
-                if(plan.job != null) {
-                    for (int i = 0; i < allGoapPlans.Count; i++) {
-                        GoapPlan currentPlan = allGoapPlans[i];
-                        if (currentPlan.isPriority) {
-                            continue;
-                        }
-                        if (currentPlan.job == null || plan.job.priority < currentPlan.job.priority) {
-                            allGoapPlans.Insert(i, plan);
-                            hasBeenInserted = true;
-                            break;
-                        }
-                    }
-                }
-                if (!hasBeenInserted) {
-                    allGoapPlans.Add(plan);
-                }
-            }
-
-            if (processPlanSpecialCases) {
-                //If a character is strolling or idly returning home and a plan is added to this character, end the action/state
-                if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
-                    || stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE
-                    || stateComponent.currentState.characterState == CHARACTER_STATE.PATROL)) {
-                    stateComponent.currentState.OnExitThisState();
-                } else if (stateComponent.stateToDo != null && (stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL
-                     || stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL_OUTSIDE
-                     || stateComponent.stateToDo.characterState == CHARACTER_STATE.PATROL)) {
-                    stateComponent.SetStateToDo(null);
-                } else if (currentAction != null && currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
-                    if (currentAction.parentPlan == null || currentAction.parentPlan.category == GOAP_CATEGORY.IDLE) {
-                        currentAction.StopAction();
-                    }
-                }
-
-                if (plan.job != null && (plan.job.jobType.IsNeedsTypeJob() || plan.job.jobType.IsEmergencyTypeJob())) {
-                    //Unassign Location Job if character decides to rest, eat or have fun.
-                    homeArea.jobQueue.UnassignAllJobsTakenBy(this);
-                }
-            }
-        }
-    }
     public void AddAdvertisedAction(INTERACTION_TYPE type) {
         poiGoapActions.Add(type);
     }
@@ -6937,6 +6882,58 @@ public class Character : ILeader, IPointOfInterest {
         _numOfWaitingForGoapThread++;
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, goalType, target, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets, otherData));
     }
+    /// <summary>
+    /// This should only be used for plans that come/constructed from the outside.
+    /// </summary>
+    /// <param name="plan">Plan to be added</param>
+    public void AddPlan(GoapPlan plan, bool isPriority = false, bool processPlanSpecialCases = true) {
+        if (!allGoapPlans.Contains(plan)) {
+            plan.SetPriorityState(isPriority);
+            if (isPriority) {
+                allGoapPlans.Insert(0, plan);
+            } else {
+                bool hasBeenInserted = false;
+                if (plan.job != null) {
+                    for (int i = 0; i < allGoapPlans.Count; i++) {
+                        GoapPlan currentPlan = allGoapPlans[i];
+                        if (currentPlan.isPriority) {
+                            continue;
+                        }
+                        if (currentPlan.job == null || plan.job.priority < currentPlan.job.priority) {
+                            allGoapPlans.Insert(i, plan);
+                            hasBeenInserted = true;
+                            break;
+                        }
+                    }
+                }
+                if (!hasBeenInserted) {
+                    allGoapPlans.Add(plan);
+                }
+            }
+
+            if (processPlanSpecialCases) {
+                //If a character is strolling or idly returning home and a plan is added to this character, end the action/state
+                if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
+                    || stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE
+                    || stateComponent.currentState.characterState == CHARACTER_STATE.PATROL)) {
+                    stateComponent.currentState.OnExitThisState();
+                } else if (stateComponent.stateToDo != null && (stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL
+                     || stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL_OUTSIDE
+                     || stateComponent.stateToDo.characterState == CHARACTER_STATE.PATROL)) {
+                    stateComponent.SetStateToDo(null);
+                } else if (currentAction != null && currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
+                    if (currentAction.parentPlan == null || currentAction.parentPlan.category == GOAP_CATEGORY.IDLE) {
+                        currentAction.StopAction();
+                    }
+                }
+
+                if (plan.job != null && (plan.job.jobType.IsNeedsTypeJob() || plan.job.jobType.IsEmergencyTypeJob())) {
+                    //Unassign Location Job if character decides to rest, eat or have fun.
+                    homeArea.jobQueue.UnassignAllJobsTakenBy(this);
+                }
+            }
+        }
+    }
     public void RecalculatePlan(GoapPlan currentPlan) {
         currentPlan.SetIsBeingRecalculated(true);
         MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, currentPlan));
@@ -7467,6 +7464,17 @@ public class Character : ILeader, IPointOfInterest {
         }
         return false;
     }
+    public bool JustDropPlan(GoapPlan plan) {
+        if (allGoapPlans.Remove(plan)) {
+            plan.EndPlan();
+            if (plan.job != null) {
+                plan.job.SetAssignedCharacter(null);
+                plan.job.SetAssignedPlan(null);
+            }
+            return true;
+        }
+        return false;
+    }
     public void DropAllPlans(GoapPlan planException = null) {
         if (planException == null) {
             while (allGoapPlans.Count > 0) {
@@ -7480,6 +7488,35 @@ public class Character : ILeader, IPointOfInterest {
                 }
             }
         }
+    }
+    public void JustDropAllPlansOfType(INTERACTION_TYPE type) {
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            GoapPlan currPlan = allGoapPlans[i];
+            if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
+                if (JustDropPlan(currPlan)) {
+                    i--;
+                }
+            }
+        }
+    }
+    public void DropAllPlansOfType(INTERACTION_TYPE type) {
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            GoapPlan currPlan = allGoapPlans[i];
+            if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
+                if (DropPlan(currPlan)) {
+                    i--;
+                }
+            }
+        }
+    }
+    public bool HasPlanWithType(INTERACTION_TYPE type) {
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            GoapPlan currPlan = allGoapPlans[i];
+            if (currPlan.endNode.action != null && currPlan.endNode.action.goapType == type) {
+                return true;
+            }
+        }
+        return false;
     }
     public GoapPlan GetPlanWithGoalEffect(GOAP_EFFECT_CONDITION goalEffect) {
         for (int i = 0; i < allGoapPlans.Count; i++) {

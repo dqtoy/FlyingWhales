@@ -419,13 +419,16 @@ public class BaseLandmark {
         activeEvent.Spawn(this, eventData, out activeEventAfterEffectScheduleID);
         Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, we);
     }
-    public void LoadEvent(SaveDataLandmark data) {
+    public void LoadEventAndWorldObject(SaveDataLandmark data) {
         if (data.activeEvent != WORLD_EVENT.NONE) {
             activeEvent = StoryEventsManager.Instance.GetWorldEvent(data.activeEvent);
             SetCharacterEventSpawner(CharacterManager.Instance.GetCharacterByID(data.eventSpawnedByCharacterID));
             eventData = data.eventData.Load();
             activeEvent.Load(this, eventData, out activeEventAfterEffectScheduleID);
             Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, activeEvent);
+        }
+        if (data.hasWorldObject) {
+            SetWorldObject(data.worldObj.Load());
         }
     }
     public void SetCharacterEventSpawner(Character character) {

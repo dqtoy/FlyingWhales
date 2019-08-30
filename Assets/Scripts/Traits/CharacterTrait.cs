@@ -5,6 +5,8 @@ using UnityEngine;
 //This trait is present in all characters
 //A dummy trait in order for some jobs to be created
 public class CharacterTrait : Trait {
+    public List<TileObject> alreadyInspectedTileObjects { get; private set; }
+
     public CharacterTrait() {
         name = "Character Trait";
         type = TRAIT_TYPE.PERSONALITY;
@@ -14,6 +16,12 @@ public class CharacterTrait : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
         isHidden = true;
+        alreadyInspectedTileObjects = new List<TileObject>();
+    }
+    public void AddAlreadyInspectedObject(TileObject to) {
+        if (!alreadyInspectedTileObjects.Contains(to)) {
+            alreadyInspectedTileObjects.Add(to);
+        }
     }
 
     #region Overrides
@@ -31,6 +39,14 @@ public class CharacterTrait : Trait {
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
                     }
+                }
+            }
+        }else if (targetPOI is TileObject) {
+            TileObject objectToBeInspected = targetPOI as TileObject;
+            if (objectToBeInspected.isSummonedByPlayer && !alreadyInspectedTileObjects.Contains(objectToBeInspected)) {
+                if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, objectToBeInspected)) {
+                    GoapPlanJob inspectJob = new GoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, objectToBeInspected);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
                 }
             }
         }

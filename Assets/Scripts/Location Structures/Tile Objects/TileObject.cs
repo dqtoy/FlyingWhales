@@ -72,6 +72,18 @@ public class TileObject : IPointOfInterest {
         AddTrait("Flammable");
         InitializeCollisionTrigger();
     }
+    protected void Initialize(SaveDataArtifactSlot data, TILE_OBJECT_TYPE tileObjectType) {
+        id = Utilities.SetID(this, data.id);
+        this.tileObjectType = tileObjectType;
+        _traits = new List<Trait>();
+        actionHistory = new List<string>();
+        awareCharacters = new List<Character>();
+        allJobsTargettingThis = new List<JobQueueItem>();
+        owners = new List<Character>();
+        //poiGoapActions = new List<INTERACTION_TYPE>();
+        hasCreatedSlots = false;
+        InitializeCollisionTrigger();
+    }
     protected void Initialize(SaveDataArtifact data, TILE_OBJECT_TYPE tileObjectType) {
         id = Utilities.SetID(this, data.id);
         this.tileObjectType = tileObjectType;

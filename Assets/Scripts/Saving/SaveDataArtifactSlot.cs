@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class SaveDataArtifact {
+public class SaveDataArtifactSlot {
     public int id;
     public ARTIFACT_TYPE type;
     public int level;

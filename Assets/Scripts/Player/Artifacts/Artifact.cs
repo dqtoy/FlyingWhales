@@ -22,8 +22,15 @@ public class Artifact : TileObject, IWorldObject {
         //poiGoapActions = new List<INTERACTION_TYPE>();
         Initialize(parsed);
     }
-    public Artifact(SaveDataArtifact data) {
+    public Artifact(SaveDataArtifactSlot data) {
         this.type = data.type;
+        level = 1;
+        TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
+        //poiGoapActions = new List<INTERACTION_TYPE>();
+        Initialize(data, parsed);
+    }
+    public Artifact(SaveDataArtifact data) {
+        this.type = data.artifactType;
         level = 1;
         TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
         //poiGoapActions = new List<INTERACTION_TYPE>();
