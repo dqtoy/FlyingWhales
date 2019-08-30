@@ -53,7 +53,7 @@ public class POITestingUI : MonoBehaviour {
             Character target = poi as Character;
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, target);
             job.SetCannotOverrideJob(true);
-            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
             //if (UIManager.Instance.characterInfoUI.activeCharacter.HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
             //    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, target);
             //    job.SetCannotOverrideJob(true);
