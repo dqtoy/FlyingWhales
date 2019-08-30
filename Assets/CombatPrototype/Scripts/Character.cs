@@ -7038,6 +7038,12 @@ public class Character : ILeader, IPointOfInterest {
                 }
             }
         } else {
+            if (goapThread.job != null && goapThread.job.jobType.IsNeedsTypeJob()) {
+                //If unable to do a Need while in a Trapped Structure, remove Trap Structure.
+                if (trapStructure.structure != null) {
+                    trapStructure.SetStructureAndDuration(null, 0);
+                }
+            }
             if (goapThread.recalculationPlan != null) {
                 //This means that the recalculation has failed
                 DropPlan(goapThread.recalculationPlan);

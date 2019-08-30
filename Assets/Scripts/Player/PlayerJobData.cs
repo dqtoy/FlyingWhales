@@ -36,10 +36,10 @@ public class PlayerJobData {
                 break;
             case JOB.SEDUCER:
                 //jobActions.Add(new Corrupt());
-                jobActions.Add(new CorruptLycanthropy());
-                jobActions.Add(new CorruptKleptomaniac());
-                jobActions.Add(new CorruptVampiric());
-                jobActions.Add(new CorruptUnfaithful());
+                jobActions.Add(new InflictLycanthropy());
+                jobActions.Add(new InflictKleptomania());
+                jobActions.Add(new InflictVampirism());
+                jobActions.Add(new InflictUnfaithfulness());
                 break;
             case JOB.DIPLOMAT:
                 jobActions.Add(new ShareIntel());

@@ -7,8 +7,8 @@ public class PlayerJobAction {
     //public PlayerJobData parentData { get; protected set; }
     //public Minion minion { get; protected set; }
     public INTERVENTION_ABILITY abilityType { get; protected set; }
-    public string name { get; protected set; }
-    public string description { get; protected set; }
+    public string name { get { return PlayerManager.Instance.allInterventionAbilitiesData[abilityType].name; } }
+    public string description { get { return PlayerManager.Instance.allInterventionAbilitiesData[abilityType].description; } }
     public int tier { get; protected set; }
     public int abilityRadius { get; protected set; } //0 means single target
     public virtual string dynamicDescription { get { return description; } }
@@ -42,7 +42,7 @@ public class PlayerJobAction {
 
     public PlayerJobAction(INTERVENTION_ABILITY abilityType) {
         this.abilityType = abilityType;
-        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.abilityType.ToString());
+        //this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.abilityType.ToString());
         //abilityTags = new List<ABILITY_TAG>();
         this.level = 1;
         this.tier = PlayerManager.Instance.GetInterventionAbilityTier(abilityType);
@@ -215,6 +215,11 @@ public class PlayerJobAction {
         //parentData.SetLockedState(false);
     }
     #endregion
+}
+
+public class PlayerJobActionData {
+    public virtual string name { get { return string.Empty; } }
+    public virtual string description { get { return string.Empty; } }
 }
 
 public class PlayerJobActionSlot {

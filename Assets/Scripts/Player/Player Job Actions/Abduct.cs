@@ -8,7 +8,6 @@ public class Abduct : PlayerJobAction {
     private List<Area> _abductAreas;
 
     public Abduct() : base(INTERVENTION_ABILITY.ABDUCT) {
-        description = "Makes a character abduct other characters of different race.";
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
         _abductAreas = new List<Area>();
@@ -103,4 +102,9 @@ public class Abduct : PlayerJobAction {
         return true;
     }
     #endregion
+}
+
+public class AbductData : PlayerJobActionData {
+    public override string name { get { return "Abduct"; } }
+    public override string description { get { return "Makes a character abduct other characters of different race."; } }
 }

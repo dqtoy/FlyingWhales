@@ -5,7 +5,6 @@ using UnityEngine;
 public class InflictAgoraphobia : PlayerJobAction {
 
     public InflictAgoraphobia() : base(INTERVENTION_ABILITY.INFLICT_AGORAPHOBIA) {
-        description = "Makes a character fear crowds.";
         tier = 3;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
@@ -96,4 +95,9 @@ public class InflictAgoraphobia : PlayerJobAction {
         //}
         return base.CanTarget(targetCharacter, ref hoverText);
     }
+}
+
+public class InflictAgoraphobiaData : PlayerJobActionData {
+    public override string name { get { return "Inflict Agoraphobia"; } }
+    public override string description { get { return "Makes a character fear crowds."; } }
 }

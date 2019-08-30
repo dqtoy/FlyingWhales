@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class InflictParalysis : PlayerJobAction {
     public InflictParalysis() : base(INTERVENTION_ABILITY.INFLICT_PARALYSIS) {
-        description = "Makes a character unable to move permanently.";
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
@@ -95,4 +94,9 @@ public class InflictParalysis : PlayerJobAction {
         //}
         return base.CanTarget(targetCharacter, ref hoverText);
     }
+}
+
+public class InflictParalysisData : PlayerJobActionData {
+    public override string name { get { return "Inflict Paralysis"; } }
+    public override string description { get { return "Makes a character unable to move permanently."; } }
 }

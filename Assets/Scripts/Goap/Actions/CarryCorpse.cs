@@ -7,7 +7,7 @@ public class CarryCorpse : GoapAction {
     protected override bool isTargetMissing {
         get {
             bool targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
-              || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation) || !(poiTarget as Character).isDead);
+              || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !(poiTarget as Character).isDead;
 
             if (targetMissing) {
                 return targetMissing;

@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CorruptLycanthropy : PlayerJobAction {
+public class InflictUnfaithfulness : PlayerJobAction {
 
-    private int _level;
-
-    public CorruptLycanthropy() : base(INTERVENTION_ABILITY.INFLICT_LYCANTHROPY) {
-        description = "Makes a character transform into a wild wolf whenever he/she sleeps.";
-        tier = 1;
+    public InflictUnfaithfulness() : base(INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS) {
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
-        //abilityTags.Add(ABILITY_TAG.MAGIC);
+        //abilityTags.Add(ABILITY_TAG.CRIME);
     }
 
     #region Overrides
@@ -29,11 +25,9 @@ public class CorruptLycanthropy : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
-                    Trait newTrait = new Lycanthropy();
+                    Trait newTrait = new Unfaithful();
                     newTrait.SetLevel(level);
                     currTarget.AddTrait(newTrait);
-                    //AlterEgoData alterEgoData = currTarget.GetAlterEgoData("Lycanthrope");
-                    //alterEgoData.SetLevel(_level);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(newTrait, newTrait.name, LOG_IDENTIFIER.STRING_1);
@@ -58,14 +52,15 @@ public class CorruptLycanthropy : PlayerJobAction {
         }
         return false;
     }
+
     protected override bool CanPerformActionTowards(Character targetCharacter) {
-        if (targetCharacter.isDead) {
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Lycanthropy") != null) {
+        if (targetCharacter.GetNormalTrait("Unfaithful") != null) {
             return false;
         }
         //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -90,26 +85,16 @@ public class CorruptLycanthropy : PlayerJobAction {
         }
         return false;
     }
-    protected override void OnLevelUp() {
-        base.OnLevelUp();
-        if (level == 1) {
-            _level = 1;
-        } else if (level == 2) {
-            _level = 3;
-        } else if (level == 3) {
-            _level = 6;
-        }
-    }
     #endregion
 
     private bool CanTarget(Character targetCharacter, ref string hoverText) {
-        if (targetCharacter.isDead) {
+        if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Lycanthropy") != null) {
+        if (targetCharacter.GetNormalTrait("Unfaithful") != null) {
             return false;
         }
         //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -117,4 +102,9 @@ public class CorruptLycanthropy : PlayerJobAction {
         //}
         return base.CanTarget(targetCharacter, ref hoverText);
     }
+}
+
+public class InflictUnfaithfulnessData : PlayerJobActionData {
+    public override string name { get { return "Inflict Unfaithfulness"; } }
+    public override string description { get { return "Makes a character mory horny and prone to have affairs."; } }
 }

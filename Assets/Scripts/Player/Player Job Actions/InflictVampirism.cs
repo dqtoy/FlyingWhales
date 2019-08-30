@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CorruptVampiric : PlayerJobAction {
+public class InflictVampirism : PlayerJobAction {
 
-    public CorruptVampiric() : base(INTERVENTION_ABILITY.INFLICT_VAMPIRISM) {
-        description = "Makes a character have uncontrollable urge to drink blood for sustenance.";
+    public InflictVampirism() : base(INTERVENTION_ABILITY.INFLICT_VAMPIRISM) {
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
@@ -103,4 +102,9 @@ public class CorruptVampiric : PlayerJobAction {
         //}
         return base.CanTarget(targetCharacter, ref hoverText);
     }
+}
+
+public class InflictVampirismData : PlayerJobActionData {
+    public override string name { get { return "Inflict Vampirism"; } }
+    public override string description { get { return "Makes a character have uncontrollable urge to drink blood for sustenance."; } }
 }

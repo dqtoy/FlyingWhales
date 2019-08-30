@@ -14,6 +14,7 @@ public class PlayerManager : MonoBehaviour {
     public bool isChoosingStartingTile = false;
     public Player player = null;
     public INTERVENTION_ABILITY[] allInterventionAbilities;
+    public Dictionary<INTERVENTION_ABILITY, PlayerJobActionData> allInterventionAbilitiesData;
     public COMBAT_ABILITY[] allCombatAbilities;
 
     [SerializeField] private Sprite[] _playerAreaFloorSprites;
@@ -51,6 +52,11 @@ public class PlayerManager : MonoBehaviour {
         //allInterventionAbilities = (INTERVENTION_ABILITY[]) System.Enum.GetValues(typeof(INTERVENTION_ABILITY));
         allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
 
+        allInterventionAbilitiesData = new Dictionary<INTERVENTION_ABILITY, PlayerJobActionData>();
+        for (int i = 0; i < allInterventionAbilities.Length; i++) {
+            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allInterventionAbilities[i].ToString()) + "Data";
+            allInterventionAbilitiesData.Add(allInterventionAbilities[i], System.Activator.CreateInstance(System.Type.GetType(typeName)) as PlayerJobActionData);
+        }
         //Unit Selection
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -174,13 +180,13 @@ public class PlayerManager : MonoBehaviour {
             case INTERVENTION_ABILITY.ENRAGE:
                 return new Enrage();
             case INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA:
-                return new CorruptKleptomaniac();
+                return new InflictKleptomania();
             case INTERVENTION_ABILITY.INFLICT_LYCANTHROPY:
-                return new CorruptLycanthropy();
+                return new InflictLycanthropy();
             case INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS:
-                return new CorruptUnfaithful();
+                return new InflictUnfaithfulness();
             case INTERVENTION_ABILITY.INFLICT_VAMPIRISM:
-                return new CorruptVampiric();
+                return new InflictVampirism();
             case INTERVENTION_ABILITY.JOLT:
                 return new Jolt();
             case INTERVENTION_ABILITY.PROVOKE:

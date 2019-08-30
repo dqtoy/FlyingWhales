@@ -5,7 +5,6 @@ using UnityEngine;
 public class Provoke : PlayerJobAction {
 
     public Provoke() : base(INTERVENTION_ABILITY.PROVOKE) {
-        description = "Makes a character undermine his/her enemies.";
         tier = 2;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
@@ -49,4 +48,9 @@ public class Provoke : PlayerJobAction {
         }
         return base.CanTarget(targetCharacter, ref hoverText);
     }
+}
+
+public class ProvokeData : PlayerJobActionData {
+    public override string name { get { return "Provoke"; } }
+    public override string description { get { return "Makes a character undermine his/her enemies."; } }
 }

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CursedObject : PlayerJobAction {
     public CursedObject() : base(INTERVENTION_ABILITY.CURSED_OBJECT) {
-        description = "Put a curse on an object";
         tier = 2;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE_OBJECT };
@@ -45,4 +44,9 @@ public class CursedObject : PlayerJobAction {
         return false;
     }
     #endregion
+}
+
+public class CursedObjectData : PlayerJobActionData {
+    public override string name { get { return "Cursed Object"; } }
+    public override string description { get { return "Put a curse on an object"; } }
 }

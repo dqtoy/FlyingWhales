@@ -8,7 +8,6 @@ public class Ignite : PlayerJobAction {
     private List<LocationGridTile> highlightedTiles;
 
     public Ignite() : base(INTERVENTION_ABILITY.IGNITE) {
-        description = "Targets a spot. Target will ignite and start spreading fire.";
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
@@ -58,4 +57,9 @@ public class Ignite : PlayerJobAction {
         }
         return tiles.Where(x => x.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null && x.GetNormalTrait("Flammable") != null).ToList();
     }
+}
+
+public class IgniteData : PlayerJobActionData {
+    public override string name { get { return "Ignite"; } }
+    public override string description { get { return "Targets a spot. Target will ignite and start spreading fire."; } }
 }

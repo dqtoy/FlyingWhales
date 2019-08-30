@@ -5,7 +5,6 @@ using UnityEngine;
 public class InflictPsychopathy : PlayerJobAction {
 
     public InflictPsychopathy() : base(INTERVENTION_ABILITY.INFLICT_PSYCHOPATHY) {
-        description = "Turns a character into a serial killer.";
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
@@ -56,4 +55,9 @@ public class InflictPsychopathy : PlayerJobAction {
         //}
         return true;
     }
+}
+
+public class InflictPsychopathyData : PlayerJobActionData {
+    public override string name { get { return "Inflict Psychopathy"; } }
+    public override string description { get { return "Turns a character into a serial killer."; } }
 }
