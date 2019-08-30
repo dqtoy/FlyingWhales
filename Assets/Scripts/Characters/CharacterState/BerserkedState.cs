@@ -89,7 +89,7 @@ public class BerserkedState : CharacterState {
         for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
             Character hostile = stateComponent.character.marker.avoidInRange[i];
             if (stateComponent.character.marker.inVisionCharacters.Contains(hostile)) {
-                stateComponent.character.marker.AddHostileInRange(hostile, checkHostility: false, processCombatBehavior: false);
+                stateComponent.character.marker.AddHostileInRange(hostile, checkHostility: false, processCombatBehavior: false, isLethal: areCombatsLethal);
             } else {
                 stateComponent.character.marker.RemoveAvoidInRange(hostile, false);
                 i--;

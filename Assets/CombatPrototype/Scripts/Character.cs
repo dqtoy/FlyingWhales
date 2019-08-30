@@ -909,9 +909,6 @@ public class Character : ILeader, IPointOfInterest {
             SetIsDead(false);
             SubscribeToSignals();
             ResetToFullHP();
-            ResetFullnessMeter();
-            ResetTirednessMeter();
-            ResetHappinessMeter();
             SetPOIState(POI_STATE.ACTIVE);
             ChangeFactionTo(faction);
             ChangeRace(race);
@@ -921,6 +918,9 @@ public class Character : ILeader, IPointOfInterest {
             } else {
                 AssignClass(className);
             }
+            ResetFullnessMeter();
+            ResetTirednessMeter();
+            ResetHappinessMeter();
             _ownParty.ReturnToLife();
             marker.OnReturnToLife();
             if (grave != null) {

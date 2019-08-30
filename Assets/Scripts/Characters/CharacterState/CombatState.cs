@@ -334,6 +334,9 @@ public class CombatState : CharacterState {
     }
     public bool isExecutingAttack;
     public void OnAttackHit(Character characterHit) {
+        if (characterHit == null) {
+            return; //NOTE: Sometimes this happens even though the passed value is this character's currentClosestHostile.
+        }
         string attackSummary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " hit " + characterHit.name;
         if (characterHit != currentClosestHostile) {
             attackSummary = stateComponent.character.name + " hit " + characterHit.name + " instead of " + currentClosestHostile.name + "!";
