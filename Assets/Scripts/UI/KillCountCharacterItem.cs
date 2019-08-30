@@ -16,6 +16,7 @@ public class KillCountCharacterItem : CharacterItem {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterRemovedTrait);
         Messenger.AddListener<Character>(Signals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnedToLife);
+        Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterSwitchedAlterEgo);
     }
     public override void Reset() {
         base.Reset();
@@ -24,11 +25,12 @@ public class KillCountCharacterItem : CharacterItem {
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterRemovedTrait);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnedToLife);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterSwitchedAlterEgo);
         StopScroll();
     }
     protected override void UpdateInfo() {
         base.UpdateInfo();
-        deathLbl.gameObject.SetActive(!character.IsAble());
+        deathLbl.gameObject.SetActive(!character.IsAble() || character.faction != PlayerManager.Instance.player.currentTargetFaction);
         if (character.isDead) {
             deathLbl.text = "\"" + character.deathStr + "\"";
         } else {
@@ -49,8 +51,8 @@ public class KillCountCharacterItem : CharacterItem {
                     } else {
                         text = "\"" + character.name + " was resurrected into a mindless skeleton.\"";
                     }
-                } else if (character.role.roleType == CHARACTER_ROLE.BEAST) {
-                    text = "\"" + character.name + " turned into a warewolf.\"";
+                } else if (character.currentAlterEgo.name != CharacterManager.Original_Alter_Ego) {
+                    text = "\"" + character.name + " turned into a " + character.currentAlterEgo.name + ".\"";
                 } else if (character.role.roleType == CHARACTER_ROLE.MINION) {
                     text = "\"" + character.name + " became a minion.\"";
                 }
@@ -81,6 +83,11 @@ public class KillCountCharacterItem : CharacterItem {
         }
     }
     private void OnCharacterReturnedToLife(Character character) {
+        if (character.id == this.character.id) {
+            UpdateInfo();
+        }
+    }
+    private void OnCharacterSwitchedAlterEgo(Character character) {
         if (character.id == this.character.id) {
             UpdateInfo();
         }

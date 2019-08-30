@@ -3297,7 +3297,7 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     public virtual void ThisCharacterSaw(IPointOfInterest target) {
-        if (GetNormalTrait("Unconscious", "Resting") != null) {
+        if (GetNormalTrait("Unconscious", "Resting") != null || isDead) {
             return;
         }
         
