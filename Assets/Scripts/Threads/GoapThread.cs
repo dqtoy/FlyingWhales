@@ -375,7 +375,7 @@ public class GoapThread : Multithread {
                     if (character.isDead) {
                         //kvp.Value.RemoveAt(i);
                         //i--;
-                        if (allowDeadTargets) {
+                        if (recalculationPlan.job != null && recalculationPlan.job.allowDeadTargets) {
                             //if dead targets are allowed, advertise actions from dead targets
                             List<GoapAction> awarenessActions = character.AdvertiseActionsToActorFromDeadCharacter(actor, otherData);
                             if (awarenessActions != null && awarenessActions.Count > 0) {
