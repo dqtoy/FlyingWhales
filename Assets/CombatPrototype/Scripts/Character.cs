@@ -4227,6 +4227,12 @@ public class Character : ILeader, IPointOfInterest {
         Trait randomTrait = AttributeManager.Instance.allTraits[completelyRandomTraits[UnityEngine.Random.Range(0, completelyRandomTraits.Length)]];
 
         List<Trait> flawTraits = AttributeManager.Instance.GetAllTraitsOfType(TRAIT_TYPE.FLAW);
+        for (int i = 0; i < flawTraits.Count; i++) {
+            if(flawTraits[i].name == "Kleptomaniac") {
+                flawTraits.RemoveAt(i);
+                break;
+            }
+        }
         string chosenFlawTraitName = string.Empty;
         if (flawTraits.Count > 0) {
             if(randomTrait.type == TRAIT_TYPE.FLAW) {
