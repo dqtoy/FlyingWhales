@@ -554,6 +554,10 @@ public class CharacterMarker : PooledObject {
         //Messenger.Broadcast(Signals.CHARACTER_STOPPED_MOVING, character);
     }
     private void PerTickMovement() {
+        if (character == null) {
+            Messenger.RemoveListener(Signals.TICK_ENDED, PerTickMovement);
+            return;
+        }
         character.PerTickDuringMovement();
     }
 
