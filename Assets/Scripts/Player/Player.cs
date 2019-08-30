@@ -43,6 +43,7 @@ public class Player : ILeader {
     public int newInterventionAbilityTimerTicks { get; private set; }
     public int currentNewInterventionAbilityCycleIndex { get; private set; }
     public INTERVENTION_ABILITY interventionAbilityToResearch { get; private set; }
+    public bool isNotFirstResearch { get; private set; }
 
     #region getters/setters
     public int id {
@@ -98,6 +99,7 @@ public class Player : ILeader {
         minions = new List<Minion>();
         maxSummonSlots = data.maxSummonSlots;
         maxArtifactSlots = data.maxArtifactSlots;
+        isNotFirstResearch = data.isNotFirstResearch;
         //threat = data.threat;
         //ConstructAllInterventionAbilitySlots();
         //ConstructAllSummonSlots();
@@ -1709,6 +1711,9 @@ public class Player : ILeader {
         }
     }
     public void NewCycleForNewInterventionAbility(INTERVENTION_ABILITY interventionAbilityToResearch) {
+        if (!isNotFirstResearch) {
+            isNotFirstResearch = true;
+        }
         this.interventionAbilityToResearch = interventionAbilityToResearch;
         TimerHubUI.Instance.AddItem("Research for " + Utilities.NormalizeStringUpperCaseFirstLetters(interventionAbilityToResearch.ToString()), newInterventionAbilityTimerTicks - currentInterventionAbilityTimerTick, null);
         Messenger.AddListener(Signals.TICK_STARTED, PerTickInterventionAbility);

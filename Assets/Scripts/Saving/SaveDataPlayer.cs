@@ -25,12 +25,15 @@ public class SaveDataPlayer {
     public int currentNewInterventionAbilityCycleIndex;
     public INTERVENTION_ABILITY interventionAbilityToResearch;
 
+    public bool isNotFirstResearch;
+
     public void Save(Player player) {
         playerFactionID = player.playerFaction.id;
         playerAreaID = player.playerArea.id;
         threat = player.threat;
         maxSummonSlots = player.maxSummonSlots;
         maxArtifactSlots = player.maxArtifactSlots;
+        isNotFirstResearch = player.isNotFirstResearch;
 
         minions = new List<SaveDataMinion>();
         for (int i = 0; i < player.minions.Count; i++) {
