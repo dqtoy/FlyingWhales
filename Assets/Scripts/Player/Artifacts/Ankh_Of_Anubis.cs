@@ -29,8 +29,8 @@ public class Ankh_Of_Anubis : Artifact {
     //}
     protected override void OnRemoveArtifact() {
         base.OnRemoveArtifact();
-        Messenger.RemoveListener(Signals.TICK_ENDED, CheckPerTick);
-        ObjectPoolManager.Instance.DestroyObject(particle.gameObject);
+        //Messenger.RemoveListener(Signals.TICK_ENDED, CheckPerTick);
+        //ObjectPoolManager.Instance.DestroyObject(particle.gameObject);
     }
     public override void LevelUp() {
         base.LevelUp();
@@ -51,6 +51,8 @@ public class Ankh_Of_Anubis : Artifact {
     private void CheckPerTick() {
         if (currentDuration == duration) {
             gridTileLocation.structure.RemovePOI(this);
+            Messenger.RemoveListener(Signals.TICK_ENDED, CheckPerTick);
+            ObjectPoolManager.Instance.DestroyObject(particle.gameObject);
         } else {
             currentDuration++;
             List<LocationGridTile> tilesInRange = gridTileLocation.parentAreaMap.GetTilesInRadius(gridTileLocation, range);
