@@ -47,10 +47,14 @@ public class JobQueue {
                         for (int i = 0; i < character.allGoapPlans.Count; i++) {
                             GoapPlan plan = character.allGoapPlans[i];
                             if(plan.job == null || (job.priority < plan.job.priority)) {
-                                if (plan.job.jobQueueParent.isAreaJobQueue) {
-                                    plan.job.UnassignJob(false);
-                                } else {
+                                if(plan.job == null) {
                                     character.JustDropPlan(plan);
+                                } else {
+                                    if (plan.job.jobQueueParent.isAreaJobQueue) {
+                                        plan.job.UnassignJob(false);
+                                    } else {
+                                        character.JustDropPlan(plan);
+                                    }
                                 }
                                 i--;
                             }
