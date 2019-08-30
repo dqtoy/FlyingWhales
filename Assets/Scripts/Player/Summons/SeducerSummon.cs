@@ -67,7 +67,7 @@ public class SeducerSummon : Summon {
         if (hasSucceeded) {
             //disappear
             Disappear();
-        } else {
+        } else if (!jobQueue.HasJob(JOB_TYPE.SEDUCE)){
             //pick a random character that is sexually compatible with this character, to seduce. Exclude characters that this succubus has already invited.
             List<Character> choices = specificLocation.charactersAtLocation.Where(x => x.faction != this.faction
             && !doneCharacters.Contains(x)
@@ -76,10 +76,10 @@ public class SeducerSummon : Summon {
             List<TileObject> validBeds = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
             if (choices.Count > 0 && validBeds.Count > 0) {
                 Character chosenCharacter = choices[Random.Range(0, choices.Count)];
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, chosenCharacter);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SEDUCE, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, chosenCharacter);
                 job.SetCannotOverrideJob(true);
                 job.SetCannotCancelJob(true);
-                jobQueue.AddJobInQueue(job, false);
+                jobQueue.AddJobInQueue(job);
             } else {
                 //just enter berserked mode.
                 stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, specificLocation);

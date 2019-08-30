@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Ankh_Of_Anubis : Artifact {
 
+    private bool isActivated;
+
     private int range;
     private int deathChance; //out of 100%
     private int duration; //in ticks
@@ -29,8 +31,8 @@ public class Ankh_Of_Anubis : Artifact {
     //}
     protected override void OnRemoveArtifact() {
         base.OnRemoveArtifact();
-        //Messenger.RemoveListener(Signals.TICK_ENDED, CheckPerTick);
-        //ObjectPoolManager.Instance.DestroyObject(particle.gameObject);
+        Messenger.RemoveListener(Signals.TICK_ENDED, CheckPerTick);
+        ObjectPoolManager.Instance.DestroyObject(particle.gameObject);
     }
     public override void LevelUp() {
         base.LevelUp();
@@ -38,11 +40,14 @@ public class Ankh_Of_Anubis : Artifact {
     }
     public override void OnInspect(Character inspectedBy, out Log result) {
         base.OnInspect(inspectedBy, out result);
-        Activate();
+        if (!isActivated) {
+            Activate();
+        }
     }
     #endregion
 
     private void Activate() {
+        isActivated = true;
         currentDuration = 0;
         Messenger.AddListener(Signals.TICK_ENDED, CheckPerTick);
         particle = GameManager.Instance.CreateAOEEffectAt(tile, range);
@@ -51,8 +56,6 @@ public class Ankh_Of_Anubis : Artifact {
     private void CheckPerTick() {
         if (currentDuration == duration) {
             gridTileLocation.structure.RemovePOI(this);
-            Messenger.RemoveListener(Signals.TICK_ENDED, CheckPerTick);
-            ObjectPoolManager.Instance.DestroyObject(particle.gameObject);
         } else {
             currentDuration++;
             List<LocationGridTile> tilesInRange = gridTileLocation.parentAreaMap.GetTilesInRadius(gridTileLocation, range);

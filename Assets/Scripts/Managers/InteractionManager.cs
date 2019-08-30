@@ -611,6 +611,7 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case JOB_TYPE.KNOCKOUT:
             case JOB_TYPE.ABDUCT:
+            case JOB_TYPE.SEDUCE:
             case JOB_TYPE.UNDERMINE_ENEMY:
                 priority = 20;
                 break;
