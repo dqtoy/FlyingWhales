@@ -897,12 +897,16 @@ public class CharacterMarker : PooledObject {
                 placeMarkerAt = deathTileLocation.GetNearestUnoccupiedTileFromThis();
             }
             transform.position = placeMarkerAt.centeredWorldLocation;
-            UpdatePosition();
             ClearHostilesInRange();
             ClearPOIsInVisionRange();
             ClearAvoidInRange();
             visionCollision.OnDeath();
+            StartCoroutine(UpdatePositionNextFrame());
         }
+    }
+    private IEnumerator UpdatePositionNextFrame() {
+        yield return null;
+        UpdatePosition();
     }
     public void OnReturnToLife() {
         gameObject.SetActive(true);
