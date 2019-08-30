@@ -601,6 +601,7 @@ public class InteractionManager : MonoBehaviour {
     public int GetInitialPriority(JOB_TYPE jobType) {
         int priority = 0;
         switch (jobType) {
+            case JOB_TYPE.MISC:
             case JOB_TYPE.REMOVE_FIRE:
             case JOB_TYPE.DEATH:
             case JOB_TYPE.BERSERK:
@@ -650,15 +651,6 @@ public class InteractionManager : MonoBehaviour {
                 priority = 110;
                 break;
             case JOB_TYPE.BURY:
-            case JOB_TYPE.CRAFT_TOOL:
-            case JOB_TYPE.BREW_POTION:
-            case JOB_TYPE.OBTAIN_SUPPLY:
-            case JOB_TYPE.OBTAIN_FOOD:
-            case JOB_TYPE.DROP:
-            case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
-            case JOB_TYPE.INSPECT:
-            case JOB_TYPE.MISC:
-            case JOB_TYPE.SUICIDE:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:
@@ -691,13 +683,25 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.JUDGEMENT:
                 priority = 220;
                 break;
+            case JOB_TYPE.SUICIDE:
+                priority = 230;
+                break;
+            case JOB_TYPE.CRAFT_TOOL:
+            case JOB_TYPE.BREW_POTION:
+            case JOB_TYPE.OBTAIN_SUPPLY:
+            case JOB_TYPE.OBTAIN_FOOD:
+            case JOB_TYPE.DROP:
+            case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
+            case JOB_TYPE.INSPECT:
+                priority = 240;
+                break;
             case JOB_TYPE.WATCH:
-                priority = 221;
+                priority = 250;
                 break;
             case JOB_TYPE.BUILD_FURNITURE:
             case JOB_TYPE.OBTAIN_ITEM:
             case JOB_TYPE.MOVE_OUT:
-                priority = 230;
+                priority = 300;
                 break;
         }
         return priority;
