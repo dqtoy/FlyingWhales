@@ -180,6 +180,9 @@ public class InviteToMakeLove : GoapAction {
         if (target.returnedToLife) { //do not woo characters that have been raised from the dead
             return false;
         }
+        if (target.currentParty.icon.isTravellingOutside || target.currentLandmark != null) {
+            return false; //target is outside the map
+        }
         if (!(actor is SeducerSummon)) { //ignore relationships if succubus
             if (!actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER) && !actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR)) {
                 return false; //only lovers and paramours can make love
