@@ -4349,13 +4349,13 @@ public class Character : ILeader, IPointOfInterest {
         if (GameManager.Instance.gameHasStarted) {
             if (trait.name == "Starving") {
                 //Debug.Log("Planning fullness recovery from gain trait");
-                PlanFullnessRecoveryActions(false);
+                PlanFullnessRecoveryActions(true);
             } else if (trait.name == "Forlorn" || trait.name == "Lonely") {
                 //Debug.Log("Planning happiness recovery from gain trait");
-                PlanHappinessRecoveryActions(false);
+                PlanHappinessRecoveryActions(true);
             } else if (trait.name == "Exhausted") {
                 //Debug.Log("Planning tiredness recovery from gain trait");
-                PlanTirednessRecoveryActions(false);
+                PlanTirednessRecoveryActions(true);
             }
         }
 #endif
@@ -4990,7 +4990,7 @@ public class Character : ILeader, IPointOfInterest {
             HPRecovery(0.0025f);
         }
         PlanForcedFullnessRecovery();
-        PlanForcedFullnessRecovery();
+        PlanForcedTirednessRecovery();
 
         //suicide
         if (GetNormalTrait("Forlorn") != null && !jobQueue.HasJob(JOB_TYPE.SUICIDE) && UnityEngine.Random.Range(0, 100) < 2 && _doNotDisturb <= 0) {
@@ -5221,7 +5221,7 @@ public class Character : ILeader, IPointOfInterest {
                     || stateComponent.currentState != null || stateComponent.stateToDo != null;
                 jobQueue.AddJobInQueue(job, !willNotProcess);
             }
-            hasForcedFullness = true;
+            hasForcedTiredness = true;
             SetTirednessForcedTick();
         }
     }

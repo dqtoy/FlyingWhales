@@ -28,12 +28,7 @@ public class ResearchAbilityUI : MonoBehaviour {
     private INTERVENTION_ABILITY ability3;
 
     private INTERVENTION_ABILITY chosenAbility;
-    
-    //void Start() {
-    //    ability1Toggle.group = toggleGroup;
-    //    ability2Toggle.group = toggleGroup;
-    //    ability3Toggle.group = toggleGroup;
-    //}
+
     public void ShowResearchUI() {
         if (PlayerUI.Instance.IsMajorUIShowing()) {
             PlayerUI.Instance.AddPendingUI(() => ShowResearchUI());
@@ -87,11 +82,13 @@ public class ResearchAbilityUI : MonoBehaviour {
         okBtn.interactable = true;
     }
     public void OnClickOk() {
-        PlayerManager.Instance.player.NewCycleForNewInterventionAbility(chosenAbility);
         gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            //UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
+            if (PlayerManager.Instance.player.isNotFirstResearch) {
+                UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
+            }
             UIManager.Instance.SetSpeedTogglesState(true);
         }
+        PlayerManager.Instance.player.NewCycleForNewInterventionAbility(chosenAbility);
     }
 }
