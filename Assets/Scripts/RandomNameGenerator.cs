@@ -94,10 +94,10 @@ public class RandomNameGenerator : MonoBehaviour {
 	};
 
     private string[] baseRegionNames = new string[] {
-        "Atlantis", "Albane", "Alamid", "Anderland", "Aurelia", "Ashanti", "Bathria", "Benin", "Bismuth", "Boron", "Burgundy", "Calabon", "Canton", "Chyland", "Croatia", "Ceres",
+        "Atlantis", "Albane", "Alamid", "Anderland", "Aurelia", "Ashanti", "Bathria", "Benin", "Bismuth", "Boron", "Burgundy", "Calabon", "Canton", "Croatia", "Ceres",
         "Darmid", "Delta", "Dirland", "Dohati", "Duscany", "Elarus", "Esmeris", "Erebor", "Emusil", "Erathia", "Folgeron", "Fernica", "Fuchia", "Friedland", "Farrah", "Garwinia", "Grazil", "Gunark",
-        "Gehenna", "Gladius", "Hacatid", "Hermani", "Hisoka", "Howland", "Hunan", "Ianland", "Iridia", "Israel", "Indosin", "Illumina", "Jamalaya", "Jinni", "Jorara", "Justinia", "Jelsebed",
-        "Karamba", "Kaedwen", "Korolus", "Kumael", "Kestrella", "Losendro", "Liria", "Lunesta", "Lusland", "Lyrica", "Makuria", "Meridian", "Mykland", "Morland", "Muskovich", "Nestori", "Norsica",
+        "Gehenna", "Gladius", "Hacatid", "Hermani", "Hisoka", "Howland", "Hunan", "Iridia", "Israel", "Indosin", "Illumina", "Jamalaya", "Jinni", "Jorara", "Justinia", "Jelsebed",
+        "Karamba", "Kaedwen", "Korolus", "Kumael", "Kestrella", "Losendro", "Liria", "Lunesta", "Lusland", "Lyrica", "Makuria", "Meridian", "Morland", "Muskovich", "Nestori", "Norsica",
         "Nubland", "Naralan", "Nissin", "Obelin", "Ovid", "Opera", "Osmud", "Obelisk", "Patani", "Petersen", "Polaris", "Prissia", "Pusant", "Quatar", "Qualia", "Quenden", "Rastafar", "Remedi", "Russo",
         "Roveri", "Scythra", "Shetland", "Sundira", "Silveria", "Sahari", "Takatak", "Thenid", "Tilain", "Tesoro", "Tulisia", "Umbra", "Ulbany", "Uruk", "Unibad", "Virindor", "Visaya", "Vanad", "Vesemin",
         "Vortex", "Zulu", "Zakrand", "Zerena", "Ziria"
