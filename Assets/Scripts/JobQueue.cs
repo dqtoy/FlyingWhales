@@ -36,8 +36,27 @@ public class JobQueue {
             //then process that job immediately and stop what the character is currently doing
             //Sometimes, in rare cases, the character still cannot be assigned to a job even if it is a personal job,
             //It might be because CanTakeJob/CanCharacterTakeThisJob function is not satisfied
-            if (processLogicForPersonalJob && character.CanCurrentJobBeOverriddenByJob(job)) {
-                AssignCharacterToJobAndCancelCurrentAction(job, character);
+            if (processLogicForPersonalJob) {
+                if (character.CanCurrentJobBeOverriddenByJob(job)) {
+                    AssignCharacterToJobAndCancelCurrentAction(job, character);
+                } else {
+                    //If a character is a higher priority than one of the currently existing jobs
+                    //Check all currently existing plans of character
+                    //All plans' job of character that has lower priority than the added job must be dropped so that the job will be prioritized than those 
+                    if (hasBeenInserted) {
+                        for (int i = 0; i < character.allGoapPlans.Count; i++) {
+                            GoapPlan plan = character.allGoapPlans[i];
+                            if(plan.job == null || (job.priority < plan.job.priority)) {
+                                if (plan.job.jobQueueParent.isAreaJobQueue) {
+                                    plan.job.UnassignJob(false);
+                                } else {
+                                    character.JustDropPlan(plan);
+                                }
+                                i--;
+                            }
+                        }
+                    }
+                }
             }
             //if (processLogicForPersonalJob && !hasProcessed) {
             //    if ((character.stateComponent.currentState != null && (character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL || character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE))

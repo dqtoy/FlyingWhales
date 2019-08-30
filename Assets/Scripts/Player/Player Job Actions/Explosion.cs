@@ -8,7 +8,6 @@ public class Explosion : PlayerJobAction {
     private int radius;
 
     public Explosion() : base(INTERVENTION_ABILITY.EXPLOSION) {
-        description = "Destroy objects and structures within a huge radius and significantly damage characters within.";
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
         radius = 1;
@@ -62,4 +61,9 @@ public class Explosion : PlayerJobAction {
         InteriorMapManager.Instance.UnhighlightTiles(tiles);
     }
     #endregion
+}
+
+public class ExplosionData : PlayerJobActionData {
+    public override string name { get { return "Explosion"; } }
+    public override string description { get { return "Destroy objects and structures within a huge radius and significantly damage characters within."; } }
 }

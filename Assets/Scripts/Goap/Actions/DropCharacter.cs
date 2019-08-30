@@ -48,7 +48,12 @@ public class DropCharacter : GoapAction {
     public override void OnStopActionWhileTravelling() {
         base.OnStopActionWhileTravelling();
         Character targetCharacter = poiTarget as Character;
-        actor.ownParty.RemoveCharacter(targetCharacter);
+        actor.currentParty.RemoveCharacter(targetCharacter);
+    }
+    public override void OnStopActionDuringCurrentState() {
+        base.OnStopActionDuringCurrentState();
+        Character targetCharacter = poiTarget as Character;
+        actor.currentParty.RemoveCharacter(targetCharacter);
     }
     #endregion
 
@@ -78,7 +83,7 @@ public class DropCharacter : GoapAction {
         if (choices.Count > 0) {
             dropLocation = choices[Random.Range(0, choices.Count)];
         }
-        actor.ownParty.RemoveCharacter(target, dropLocation: dropLocation);
+        actor.currentParty.RemoveCharacter(target, dropLocation: dropLocation);
         //target.MoveToAnotherStructure(_workAreaStructure);
         AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
 

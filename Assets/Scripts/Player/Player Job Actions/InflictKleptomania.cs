@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CorruptKleptomaniac : PlayerJobAction {
+public class InflictKleptomania : PlayerJobAction {
 
-    public CorruptKleptomaniac() : base(INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA) {
-        description = "Makes a character enjoy stealing other people's items.";
+    public InflictKleptomania() : base(INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA) {
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.CRIME);
@@ -101,4 +100,9 @@ public class CorruptKleptomaniac : PlayerJobAction {
         //}
         return base.CanTarget(targetCharacter, ref hoverText);
     }
+}
+
+public class InflictKleptomaniaData : PlayerJobActionData {
+    public override string name { get { return "Inflict Kleptomania"; } }
+    public override string description { get { return "Makes a character enjoy stealing other people's items."; } }
 }

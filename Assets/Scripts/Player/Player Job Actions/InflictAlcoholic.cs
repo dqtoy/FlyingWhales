@@ -5,7 +5,6 @@ using UnityEngine;
 public class InflictAlcoholic : PlayerJobAction {
 
     public InflictAlcoholic() : base(INTERVENTION_ABILITY.INFLICT_ALCOHOLIC) {
-        description = "Makes a character often want to drink.";
         tier = 3;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
@@ -86,4 +85,9 @@ public class InflictAlcoholic : PlayerJobAction {
         return false;
     }
     #endregion
+}
+
+public class InflictAlcoholicData : PlayerJobActionData {
+    public override string name { get { return "Inflict Alcoholic"; } }
+    public override string description { get { return "Makes a character often want to drink."; } }
 }

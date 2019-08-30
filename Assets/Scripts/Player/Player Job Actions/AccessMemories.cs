@@ -5,7 +5,6 @@ using UnityEngine;
 public class AccessMemories : PlayerJobAction {
 
     public AccessMemories() : base(INTERVENTION_ABILITY.ACCESS_MEMORIES) {
-        description = "Access the memories of a character.";
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
     }
@@ -37,4 +36,9 @@ public class AccessMemories : PlayerJobAction {
         }
         return base.CanTarget(targetCharacter, ref hoverText);
     }
+}
+
+public class AccessMemoriesData : PlayerJobActionData {
+    public override string name { get { return "Access Memories"; } }
+    public override string description { get { return "Access the memories of a character."; } }
 }

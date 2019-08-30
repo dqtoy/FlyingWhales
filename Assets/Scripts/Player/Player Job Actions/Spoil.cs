@@ -5,7 +5,6 @@ using UnityEngine;
 public class Spoil : PlayerJobAction {
 
     public Spoil() : base(INTERVENTION_ABILITY.SPOIL) {
-        description = "Poison the food at the target table.";
         tier = 3;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE_OBJECT };
@@ -35,4 +34,9 @@ public class Spoil : PlayerJobAction {
         return false;
     }
     #endregion
+}
+
+public class SpoilData : PlayerJobActionData {
+    public override string name { get { return "Spoil"; } }
+    public override string description { get { return "Poison the food at the target table."; } }
 }

@@ -6,7 +6,6 @@ public class Zap : PlayerJobAction {
 
     private int _zapDuration;
     public Zap() : base(INTERVENTION_ABILITY.ZAP) {
-        description = "Stops a character from his/her action and temporarily paralyzes him/her.";
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.MAGIC);
@@ -117,4 +116,9 @@ public class Zap : PlayerJobAction {
         //}
         return base.CanTarget(targetCharacter, ref hoverText);
     }
+}
+
+public class ZapData : PlayerJobActionData {
+    public override string name { get { return "Zap"; } }
+    public override string description { get { return "Stops a character from his/her action and temporarily paralyzes him/her."; } }
 }

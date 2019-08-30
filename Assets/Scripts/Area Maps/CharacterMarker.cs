@@ -897,6 +897,7 @@ public class CharacterMarker : PooledObject {
                 placeMarkerAt = deathTileLocation.GetNearestUnoccupiedTileFromThis();
             }
             transform.position = placeMarkerAt.centeredWorldLocation;
+            UpdatePosition();
             ClearHostilesInRange();
             ClearPOIsInVisionRange();
             ClearAvoidInRange();

@@ -43,7 +43,12 @@ public class Drop : GoapAction {
     public override void OnStopActionWhileTravelling() {
         base.OnStopActionWhileTravelling();
         Character targetCharacter = poiTarget as Character;
-        actor.ownParty.RemoveCharacter(targetCharacter);
+        actor.currentParty.RemoveCharacter(targetCharacter);
+    }
+    public override void OnStopActionDuringCurrentState() {
+        base.OnStopActionDuringCurrentState();
+        Character targetCharacter = poiTarget as Character;
+        actor.currentParty.RemoveCharacter(targetCharacter);
     }
     public override bool InitializeOtherData(object[] otherData) {
         this.otherData = otherData;
@@ -78,7 +83,7 @@ public class Drop : GoapAction {
     }
     public void AfterDropSuccess() {
         Character target = poiTarget as Character;
-        actor.ownParty.RemoveCharacter(target, dropLocation: gridTileToBeDropped);
+        actor.currentParty.RemoveCharacter(target, dropLocation: gridTileToBeDropped);
         //if (gridTileToBeDropped.objHere != null && gridTileToBeDropped.objHere is TileObject) {
         //    TileObject to = gridTileToBeDropped.objHere as TileObject;
         //    to.AddUser(target);

@@ -11,7 +11,6 @@ public class Lure : PlayerJobAction {
     public bool isGamePausedOnLure { get; private set; }
 
     public Lure() : base(INTERVENTION_ABILITY.LURE) {
-        description = "Force a character to go to a specified nearby location.";
         SetDefaultCooldownTime(24);
         //abilityTags.Add(ABILITY_TAG.NONE);
         targetCharacters = new List<Character>();
@@ -168,4 +167,9 @@ public class Lure : PlayerJobAction {
         GameManager.Instance.SetDelayedPausedState(isGamePausedOnLure);
     }
     #endregion
+}
+
+public class LureData : PlayerJobActionData {
+    public override string name { get { return "Lure"; } }
+    public override string description { get { return "Force a character to go to a specified nearby location."; } }
 }

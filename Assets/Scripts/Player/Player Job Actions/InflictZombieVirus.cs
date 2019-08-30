@@ -5,7 +5,6 @@ using UnityEngine;
 public class InflictZombieVirus : PlayerJobAction {
 
     public InflictZombieVirus() : base(INTERVENTION_ABILITY.INFLICT_ZOMBIE_VIRUS) {
-        description = "Afflict a character with the zombie virus. When this character dies, it will turn into a zombie. Other characters that gets attacked by a zombie may also contract the zombie virus.";
         tier = 2;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT};
@@ -96,4 +95,9 @@ public class InflictZombieVirus : PlayerJobAction {
         }
         return base.CanTarget(targetCharacter, ref hoverText);
     }
+}
+
+public class InflictZombieVirusData : PlayerJobActionData {
+    public override string name { get { return "Inflict Zombie Virus"; } }
+    public override string description { get { return "Afflict a character with the zombie virus. When this character dies, it will turn into a zombie. Other characters that gets attacked by a zombie may also contract the zombie virus."; } }
 }

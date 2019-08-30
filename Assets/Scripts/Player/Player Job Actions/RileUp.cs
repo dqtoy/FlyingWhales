@@ -6,7 +6,7 @@ public class RileUp : PlayerJobAction {
 
     private Character _targetCharacter;
     public RileUp() : base(INTERVENTION_ABILITY.RILE_UP) {
-        description = "Enrages a beast to attack other characters in a settlement.";
+        //description = "Enrages a beast to attack other characters in a settlement.";
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
     }
@@ -21,7 +21,7 @@ public class RileUp : PlayerJobAction {
     }
 
     protected override bool CanPerformActionTowards(Character targetCharacter) {
-        name = GetActionName(targetCharacter);
+        //name = GetActionName(targetCharacter);
         if (targetCharacter.isDead) {
             return false;
         }

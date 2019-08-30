@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Lullaby : PlayerJobAction {
     public Lullaby() : base(INTERVENTION_ABILITY.LULLABY) {
-        description = "Makes characters in an area exhausted";
         tier = 2;
         abilityRadius = 1;
         SetDefaultCooldownTime(24);
@@ -70,4 +69,9 @@ public class Lullaby : PlayerJobAction {
         InteriorMapManager.Instance.UnhighlightTiles(tiles);
     }
     #endregion
+}
+
+public class LullabyData : PlayerJobActionData {
+    public override string name { get { return "Lullaby"; } }
+    public override string description { get { return "Makes characters in an area exhausted."; } }
 }

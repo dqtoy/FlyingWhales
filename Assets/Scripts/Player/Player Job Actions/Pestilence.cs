@@ -5,7 +5,6 @@ using UnityEngine;
 public class Pestilence : PlayerJobAction {
 
     public Pestilence() : base(INTERVENTION_ABILITY.PESTILENCE) {
-        description = "Afflict a character with a virulent and deadly disease. Disease is spread through chatting and sexual contact.";
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
@@ -103,4 +102,9 @@ public class Pestilence : PlayerJobAction {
         //}
         return base.CanTarget(targetCharacter, ref hoverText);
     }
+}
+
+public class PestilenceData : PlayerJobActionData {
+    public override string name { get { return "Pestilence"; } }
+    public override string description { get { return "Afflict a character with a virulent and deadly disease. Disease is spread through chatting and sexual contact."; } }
 }

@@ -5,7 +5,6 @@ using UnityEngine;
 public class Release : PlayerJobAction {
 
     public Release() : base(INTERVENTION_ABILITY.RELEASE) {
-        description = "Release a prisoner from captivity.";
         tier = 3;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
@@ -53,4 +52,9 @@ public class Release : PlayerJobAction {
         }
         return base.CanTarget(targetCharacter, ref hoverText);
     }
+}
+
+public class ReleaseData : PlayerJobActionData {
+    public override string name { get { return "Release"; } }
+    public override string description { get { return "Release a prisoner from captivity."; } }
 }

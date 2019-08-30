@@ -5,7 +5,6 @@ using UnityEngine;
 public class InflictCannibalism : PlayerJobAction {
 
     public InflictCannibalism() : base(INTERVENTION_ABILITY.INFLICT_CANNIBALISM) {
-        description = "Makes a character eat other characters with the same race for sustenance.";
         tier = 2;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT};
@@ -103,4 +102,9 @@ public class InflictCannibalism : PlayerJobAction {
         //}
         return base.CanTarget(targetCharacter, ref hoverText);
     }
+}
+
+public class InflictCannibalismData : PlayerJobActionData {
+    public override string name { get { return "Inflict Cannibalism"; } }
+    public override string description { get { return "Makes a character eat other characters with the same race for sustenance."; } }
 }

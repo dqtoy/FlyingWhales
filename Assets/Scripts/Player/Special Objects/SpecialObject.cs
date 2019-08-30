@@ -26,14 +26,14 @@ public class SpecialObject : IWorldObject {
 public class SaveDataSpecialObject : SaveDataWorldObject {
     public SPECIAL_OBJECT_TYPE specialObjType;
 
-    public new virtual void Save(IWorldObject worldObject) {
+    public override void Save(IWorldObject worldObject) {
         base.Save(worldObject);
         if(worldObject is SpecialObject) {
             specialObjType = (worldObject as SpecialObject).specialObjType;
         }
     }
 
-    public new virtual IWorldObject Load() {
+    public override IWorldObject Load() {
         return new SpecialObject(specialObjType);
     }
 }
