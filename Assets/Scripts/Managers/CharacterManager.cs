@@ -1121,6 +1121,9 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     public bool RelationshipImprovement(Character actor, Character target, GoapAction cause = null) {
+        if (actor.returnedToLife || target.returnedToLife) {
+            return false; //do not let zombies or skeletons develop other relationships
+        }
         string summary = "Relationship improvement between " + actor.name + " and " + target.name;
         bool hasImproved = false;
         Log log = null;
@@ -1166,6 +1169,10 @@ public class CharacterManager : MonoBehaviour {
         return RelationshipDegradation(actor.currentAlterEgo, target, cause);
     }
     public bool RelationshipDegradation(AlterEgoData actorAlterEgo, Character target, GoapAction cause = null) {
+        if (actorAlterEgo.owner.returnedToLife || target.returnedToLife) {
+            return false; //do not let zombies or skeletons develop other relationships
+        }
+
         bool hasDegraded = false;
         if(actorAlterEgo.owner.isFactionless || target.isFactionless) {
             Debug.LogWarning("Relationship degredation was called and one or both of those characters is factionless");
