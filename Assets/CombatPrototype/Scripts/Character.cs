@@ -4221,9 +4221,9 @@ public class Character : ILeader, IPointOfInterest {
         //}
 
         //Random Traits
-        string[] completelyRandomTraits = new string[] { "Curious", "Vigilant", "Doctor", "Kleptomaniac", "Diplomatic",
+        string[] completelyRandomTraits = new string[] { "Curious", "Vigilant", "Doctor", "Diplomatic",
         "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal" };
-
+        //"Kleptomaniac"
         Trait randomTrait = AttributeManager.Instance.allTraits[completelyRandomTraits[UnityEngine.Random.Range(0, completelyRandomTraits.Length)]];
 
         List<Trait> flawTraits = AttributeManager.Instance.GetAllTraitsOfType(TRAIT_TYPE.FLAW);
