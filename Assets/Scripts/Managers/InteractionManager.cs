@@ -646,9 +646,6 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.HAPPINESS_RECOVERY_FORLORN:
                 priority = 100;
                 break;
-            case JOB_TYPE.WATCH:
-                priority = 109;
-                break;
             case JOB_TYPE.FEED:
                 priority = 110;
                 break;
@@ -693,6 +690,9 @@ public class InteractionManager : MonoBehaviour {
             //break;
             case JOB_TYPE.JUDGEMENT:
                 priority = 220;
+                break;
+            case JOB_TYPE.WATCH:
+                priority = 221;
                 break;
             case JOB_TYPE.BUILD_FURNITURE:
             case JOB_TYPE.OBTAIN_ITEM:
