@@ -1184,6 +1184,7 @@ public class CharacterManager : MonoBehaviour {
         }
         if (target.GetNormalTrait("Diplomatic") != null) {
             Debug.LogWarning("Relationship degredation was called but " + target.name + " is Diplomatic");
+            hasDegraded = true;
             return hasDegraded;
         }
         string summary = "Relationship degradation between " + actorAlterEgo.owner.name + " and " + target.name;
