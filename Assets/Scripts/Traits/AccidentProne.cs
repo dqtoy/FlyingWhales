@@ -50,6 +50,9 @@ public class AccidentProne : Trait {
                 if (owner.currentParty.icon.isTravelling) {
                     owner.marker.StopMovement();
                 }
+                if (owner.IsInOwnParty()) {
+                    owner.ownParty.RemoveAllOtherCharacters();
+                }
                 if (owner.currentAction != null) {
                     owner.StopCurrentAction(false);
                 }
