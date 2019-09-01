@@ -374,8 +374,7 @@ public class JobQueue {
         }
     }
     public bool CancelJob(JobQueueItem job, string cause = "", bool shouldDoAfterEffect = true) {
-        if (job.assignedCharacter == null 
-            || (job.assignedCharacter.currentAction != null && job.assignedCharacter.currentAction.parentPlan != null && job.assignedCharacter.currentAction.parentPlan.job != null && job.assignedCharacter.currentAction.parentPlan.job == job)) {
+        if (RemoveJobInQueue(job)) {
             if(job is GoapPlanJob && cause != "") {
                 GoapPlanJob planJob = job as GoapPlanJob;
                 Character actor = null;
@@ -389,7 +388,7 @@ public class JobQueue {
                 }
             }
             job.UnassignJob(shouldDoAfterEffect);
-            return RemoveJobInQueue(job);
+            return true;
         }
         return false;
     }

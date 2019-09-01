@@ -95,6 +95,7 @@ public class AccidentProne : Trait {
                 owner.jobQueue.AddJobInQueue(job, false);
 
                 owner.AdjustIsWaitingForInteraction(1);
+                owner.currentParty.RemoveAllOtherCharacters();
                 if (owner.currentParty.icon.isTravelling) {
                     owner.marker.StopMovement();
                 }
