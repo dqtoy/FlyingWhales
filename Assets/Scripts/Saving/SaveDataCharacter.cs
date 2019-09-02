@@ -87,6 +87,11 @@ public class SaveDataCharacter {
     public bool isSummon;
     public bool isFactionLeader;
 
+    public int fullnessForcedTick;
+    public int tirednessForcedTick;
+    public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords;
+    public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords;
+
     //For Summons Only
     public SUMMON_TYPE summonType;
 
@@ -188,6 +193,11 @@ public class SaveDataCharacter {
             saveDataAlterEgo.Save(alterEgo);
             alterEgos.Add(saveDataAlterEgo);
         }
+
+        fullnessForcedTick = character.fullnessForcedTick;
+        tirednessForcedTick = character.tirednessForcedTick;
+        forcedFullnessRecoveryTimeInWords = character.forcedFullnessRecoveryTimeInWords;
+        forcedTirednessRecoveryTimeInWords = character.forcedTirednessRecoveryTimeInWords;
     }
 
     public void Load() {

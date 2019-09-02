@@ -39,6 +39,7 @@ public class Paralyzed : Trait {
             if (!targetCharacter.isDead && targetCharacter.faction != characterThatWillDoJob.faction && !targetCharacter.HasJobTargettingThis(JOB_TYPE.RESTRAIN) && targetCharacter.GetNormalTrait("Restrained") == null) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
                 job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+                job.SetCanBeDoneInLocation(true);
                 if (CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, null)) {
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;

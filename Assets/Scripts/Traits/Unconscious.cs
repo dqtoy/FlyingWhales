@@ -73,6 +73,7 @@ public class Unconscious : Trait {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
                     new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
+                job.SetCanBeDoneInLocation(true);
                 if (CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, null)) {
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
@@ -90,6 +91,7 @@ public class Unconscious : Trait {
                 //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = characterThatWillDoJob, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
                 job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                 //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = characterThatWillDoJob.specificLocation, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
+                job.SetCanBeDoneInLocation(true);
                 if (CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, null)) {
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
                     //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);

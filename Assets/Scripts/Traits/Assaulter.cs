@@ -31,6 +31,7 @@ public class Assaulter : Trait {
                 //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = characterThatWillDoJob, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
                 job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                 //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = characterThatWillDoJob.homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
+                job.SetCanBeDoneInLocation(true);
                 if (CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, null)) {
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);

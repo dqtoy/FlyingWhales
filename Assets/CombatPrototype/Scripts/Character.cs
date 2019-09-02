@@ -606,6 +606,11 @@ public class Character : ILeader, IPointOfInterest {
         _normalTraits = new List<Trait>();
         alterEgos = new Dictionary<string, AlterEgoData>();
         items = new List<SpecialToken>();
+
+        SetForcedFullnessRecoveryTimeInWords(data.forcedFullnessRecoveryTimeInWords);
+        SetForcedTirednessRecoveryTimeInWords(data.forcedTirednessRecoveryTimeInWords);
+        SetFullnessForcedTick(data.fullnessForcedTick);
+        SetTirednessForcedTick(data.tirednessForcedTick);
     }
     public Character() {
         SetIsDead(false);
@@ -7055,6 +7060,7 @@ public class Character : ILeader, IPointOfInterest {
                 if (goapThread.job != null) {
                     goapThread.job.SetAssignedCharacter(null);
                     if (goapThread.job.jobQueueParent.character != null) {
+                        //If no plan was generated, automatically remove job from queue if it is a personal job
                         goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
                         if (goapThread.job.jobType == JOB_TYPE.REMOVE_FIRE) {
                             if (goapThread.job.targetPOI.gridTileLocation != null) { //this happens because sometimes the target that was burning is now put out.
@@ -7069,20 +7075,14 @@ public class Character : ILeader, IPointOfInterest {
                             log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
                             RegisterLogAndShowNotifToThisCharacterOnly(log);
                         }
-                        
-                        //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, "Cancel Job No Plan Notif! " + name, 5, null);
-                        //UIManager.Instance.Pause();
+                        if (goapThread.job.canBeDoneInLocation) {
+                            //If a personal job can be done in location job queue, add it once no plan is generated
+                            specificLocation.jobQueue.AddJobInQueue(goapThread.job);
+                        }
                     } else {
                         goapThread.job.AddBlacklistedCharacter(this);
                     }
-                    //if (goapThread.job.cancelJobOnFail) {
-                    //    goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
-                    //}
                 }
-                //if (allGoapPlans.Count <= 0) {
-                //    //StartDailyGoapPlanGeneration();
-                //    PlanGoapActions();
-                //}
             }
         }
     }

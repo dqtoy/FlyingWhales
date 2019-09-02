@@ -22,6 +22,7 @@ public class Dead : Trait {
                 GoapPlanJob buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
                 buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
                 buryJob.AllowDeadTargets();
+                buryJob.SetCanBeDoneInLocation(true);
                 if (CanTakeBuryJob(characterThatWillDoJob, null)) {
                     characterThatWillDoJob.jobQueue.AddJobInQueue(buryJob, false);
                     return true;
