@@ -89,6 +89,7 @@ public class GetSupply : GoapAction {
 
 public class GetSupplyData : GoapActionData {
     public GetSupplyData() : base(INTERACTION_TYPE.GET_SUPPLY) {
+        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

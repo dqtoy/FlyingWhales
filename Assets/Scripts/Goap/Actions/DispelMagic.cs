@@ -59,5 +59,6 @@ public class DispelMagic : GoapAction {
 
 public class DispelMagicData : GoapActionData {
     public DispelMagicData() : base(INTERACTION_TYPE.DISPEL_MAGIC) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
     }
 }

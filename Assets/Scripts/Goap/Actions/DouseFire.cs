@@ -105,6 +105,7 @@ public class DouseFire : GoapAction {
 
 public class DouseFireData : GoapActionData {
     public DouseFireData() : base(INTERACTION_TYPE.DOUSE_FIRE) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

@@ -68,7 +68,7 @@ public class POITestingUI : MonoBehaviour {
     }
     public void StealFromThisCharacter() {
         if (poi is Character) {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN, INTERACTION_TYPE.STEAL_CHARACTER, poi);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN, INTERACTION_TYPE.STEAL_FROM_CHARACTER, poi);
             job.SetCannotOverrideJob(true);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
         } else {
@@ -108,7 +108,7 @@ public class POITestingUI : MonoBehaviour {
     }
     public void EatAtTable() {
         if (poi is Table) {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HUNGER_RECOVERY_STARVING, INTERACTION_TYPE.EAT_DWELLING_TABLE, poi);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HUNGER_RECOVERY_STARVING, INTERACTION_TYPE.EAT_AT_TABLE, poi);
             job.SetCannotOverrideJob(true);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
         } else {

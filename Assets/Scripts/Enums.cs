@@ -941,29 +941,29 @@ public enum INTERACTION_TYPE {
     NONE,
     RETURN_HOME,
     USE_ITEM_ON_CHARACTER,
-    DROP_ITEM,
-    ABDUCT_ACTION,
-    HUNT_ACTION,
+    DROP_ITEM_HOME,
+    ABDUCT_CHARACTER,
+    HUNT,
     EAT_DEFENSELESS,
-    PICK_ITEM,
-    RELEASE_ABDUCTED_ACTION,
+    PICK_ITEM_GOAP,
+    RELEASE_CHARACTER,
     MOVE_TO_VISIT,
     TRANSFER_HOME,
     HANG_OUT_ACTION,
     ARGUE_ACTION,
     CURSE_ACTION,
-    CRAFT_ITEM,
-    MINE_ACTION,
+    CRAFT_ITEM_GOAP,
+    MINE_GOAP,
     ASK_FOR_HELP_SAVE_CHARACTER,
-    ASSAULT_ACTION_NPC,
-    TRANSFORM_TO_WOLF,
-    REVERT_TO_NORMAL,
+    ASSAULT_CHARACTER,
+    TRANSFORM_TO_WOLF_FORM,
+    REVERT_TO_NORMAL_FORM,
     EAT_PLANT,
     SLEEP,
     CARRY_CHARACTER,
     DROP_CHARACTER,
-    EAT_SMALL_ANIMAL,
-    EAT_DWELLING_TABLE,
+    EAT_ANIMAL,
+    EAT_AT_TABLE,
     DAYDREAM,
     PLAY_GUITAR,
     CHAT_CHARACTER,
@@ -973,7 +973,7 @@ public enum INTERACTION_TYPE {
     SLEEP_OUTSIDE,
     EXPLORE,
     PATROL,
-    REMOVE_POISON_TABLE,
+    TABLE_REMOVE_POISON,
     TABLE_POISON,
     PRAY,
     CHOP_WOOD,
@@ -997,7 +997,7 @@ public enum INTERACTION_TYPE {
     JUDGE_CHARACTER,
     REPORT_CRIME,
     FEED,
-    STEAL_CHARACTER,
+    STEAL_FROM_CHARACTER,
     DROP_ITEM_WAREHOUSE,
     ASK_FOR_HELP_REMOVE_POISON_TABLE,
     SIT,
@@ -1456,9 +1456,9 @@ public static class Extensions {
     /// <returns>True or false.</returns>
     public static bool IsHostileAction(this INTERACTION_TYPE type) {
         switch (type) {
-            case INTERACTION_TYPE.ASSAULT_ACTION_NPC:
+            case INTERACTION_TYPE.ASSAULT_CHARACTER:
             case INTERACTION_TYPE.STEAL:
-            case INTERACTION_TYPE.STEAL_CHARACTER:
+            case INTERACTION_TYPE.STEAL_FROM_CHARACTER:
             case INTERACTION_TYPE.TILE_OBJECT_DESTROY:
             case INTERACTION_TYPE.CURSE_CHARACTER:
             case INTERACTION_TYPE.RESTRAIN_CHARACTER:
@@ -1474,7 +1474,7 @@ public static class Extensions {
     /// <returns>True or false</returns>
     public static bool IsDirectCombatAction(this INTERACTION_TYPE type) {
         switch (type) {
-            case INTERACTION_TYPE.ASSAULT_ACTION_NPC:
+            case INTERACTION_TYPE.ASSAULT_CHARACTER:
                 return true;
             default:
                 return false;
@@ -1483,7 +1483,7 @@ public static class Extensions {
     public static bool CanBeReplaced(this INTERACTION_TYPE type) {
         switch (type) {
             case INTERACTION_TYPE.DRINK:
-            case INTERACTION_TYPE.EAT_DWELLING_TABLE:
+            case INTERACTION_TYPE.EAT_AT_TABLE:
             case INTERACTION_TYPE.SIT:
                 return true;
             default:

@@ -43,6 +43,7 @@ public class WellJump : GoapAction {
 
 public class WellJumpData : GoapActionData {
     public WellJumpData() : base(INTERACTION_TYPE.WELL_JUMP) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

@@ -106,5 +106,6 @@ public class CureCharacter : GoapAction {
 
 public class CureCharacterData : GoapActionData {
     public CureCharacterData() : base(INTERACTION_TYPE.CURE_CHARACTER) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
     }
 }

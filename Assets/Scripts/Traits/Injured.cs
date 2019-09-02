@@ -37,7 +37,7 @@ public class Injured : Trait {
             if (gainedFromDoing == null || gainedFromDoing.poiTarget != _sourceCharacter) {
                 _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
             } else {
-                if (gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC) {
+                if (gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER) {
                     Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
                     addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -64,7 +64,7 @@ public class Injured : Trait {
             if (!targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                 GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
-                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
+                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
                 job.SetCanBeDoneInLocation(true);
                 if (CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, null)) {
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);

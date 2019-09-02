@@ -40,5 +40,6 @@ public class GetWater : GoapAction {
 
 public class GetWaterData : GoapActionData {
     public GetWaterData() : base(INTERACTION_TYPE.GET_WATER) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
 }

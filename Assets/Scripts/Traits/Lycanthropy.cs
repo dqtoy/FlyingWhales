@@ -63,14 +63,14 @@ public class Lycanthropy : Trait {
     #endregion
 
     public void PlanTransformToWolf() {
-        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.TRANSFORM_TO_WOLF, _character, _character);
+        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM, _character, _character);
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
         goapPlan.ConstructAllNodes();
         _character.AddPlan(goapPlan, true);
     }
     public void PlanRevertToNormal() {
-        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.REVERT_TO_NORMAL, _character, _character);
+        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM, _character, _character);
         GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
         goapPlan.ConstructAllNodes();

@@ -6,7 +6,7 @@ public class DropItemHome : GoapAction {
     public override LocationStructure targetStructure { get { return _targetStructure; } }
 
     private LocationStructure _targetStructure;
-    public DropItemHome(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_ITEM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public DropItemHome(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_ITEM_HOME, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         isNotificationAnIntel = false;
@@ -59,7 +59,8 @@ public class DropItemHome : GoapAction {
 }
 
 public class DropItemHomeData : GoapActionData {
-    public DropItemHomeData() : base(INTERACTION_TYPE.DROP_ITEM) {
+    public DropItemHomeData() : base(INTERACTION_TYPE.DROP_ITEM_HOME) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

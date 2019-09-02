@@ -73,6 +73,7 @@ public class CarryCharacter : GoapAction {
 
 public class CarryCharacterData : GoapActionData {
     public CarryCharacterData() : base(INTERACTION_TYPE.CARRY_CHARACTER) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }
 

@@ -62,7 +62,7 @@ public class Puke : GoapAction {
                 if (!actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, "Plagued") && !actor.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                     GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Plagued", targetPOI = actor };
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
-                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
+                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
                     if (CanCharacterTakeRemoveIllnessesJob(recipient, actor, null)) {
                         //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
                         recipient.jobQueue.AddJobInQueue(job);
@@ -179,5 +179,6 @@ public class Puke : GoapAction {
 
 public class PukeData : GoapActionData {
     public PukeData() : base(INTERACTION_TYPE.PUKE) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
 }

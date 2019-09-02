@@ -85,6 +85,7 @@ public class EatMushroom : GoapAction {
 
 public class EatMushroomData : GoapActionData {
     public EatMushroomData() : base(INTERACTION_TYPE.EAT_MUSHROOM) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }
 

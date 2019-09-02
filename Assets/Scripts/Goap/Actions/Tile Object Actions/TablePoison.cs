@@ -91,7 +91,7 @@ public class TablePoison : GoapAction {
             }
             //- If Noble or Faction Leader, create an Ask for Help Remove Poison Job.
             else if (witness.role.roleType == CHARACTER_ROLE.NOBLE || witness.role.roleType == CHARACTER_ROLE.LEADER) {
-                witness.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.REMOVE_POISON_TABLE, poiTarget);
+                witness.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.TABLE_REMOVE_POISON, poiTarget);
             }
         }
         //- The witness should not eat at the table until the Poison has been removed
@@ -146,7 +146,7 @@ public class TablePoison : GoapAction {
     private void ScheduleFionaEat() {
         Character fiona = CharacterManager.Instance.GetCharacterByName("Fiona");
         fiona.CancelAllJobsAndPlans();
-        GoapAction eat = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT_DWELLING_TABLE, fiona, poiTarget);
+        GoapAction eat = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.EAT_AT_TABLE, fiona, poiTarget);
         GoapPlan plan = new GoapPlan(new GoapNode(null, eat.cost, eat), new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY }, GOAP_CATEGORY.FULLNESS);
         plan.ConstructAllNodes();
         fiona.AddPlan(plan, true);
@@ -574,13 +574,14 @@ public class TablePoison : GoapAction {
         }
         //If Civilian, Noble or Faction Leader, create an Ask for Help Remove Poison Job.
         else if (recipient.role.roleType == CHARACTER_ROLE.NOBLE || recipient.role.roleType == CHARACTER_ROLE.LEADER) {
-            recipient.CreateAskForHelpJob(troubledCharacter, INTERACTION_TYPE.REMOVE_POISON_TABLE, poiTarget);
+            recipient.CreateAskForHelpJob(troubledCharacter, INTERACTION_TYPE.TABLE_REMOVE_POISON, poiTarget);
         }
     }
 }
 
 public class TablePoisonData : GoapActionData {
     public TablePoisonData() : base(INTERACTION_TYPE.TABLE_POISON) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

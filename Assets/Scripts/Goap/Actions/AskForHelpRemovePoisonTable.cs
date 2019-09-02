@@ -120,6 +120,7 @@ public class AskForHelpRemovePoisonTable : GoapAction {
 
 public class AskForHelpRemovePoisonTableData : GoapActionData {
     public AskForHelpRemovePoisonTableData() : base(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

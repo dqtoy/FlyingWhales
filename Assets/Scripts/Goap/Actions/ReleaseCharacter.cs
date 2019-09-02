@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ReleaseCharacter : GoapAction {
 
-    public ReleaseCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
+    public ReleaseCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RELEASE_CHARACTER, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
     }
 
@@ -117,7 +117,8 @@ public class ReleaseCharacter : GoapAction {
 }
 
 public class ReleaseCharacterData : GoapActionData {
-    public ReleaseCharacterData() : base(INTERACTION_TYPE.RELEASE_ABDUCTED_ACTION) {
+    public ReleaseCharacterData() : base(INTERACTION_TYPE.RELEASE_CHARACTER) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }
 

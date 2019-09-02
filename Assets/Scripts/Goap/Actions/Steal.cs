@@ -139,6 +139,7 @@ public class Steal : GoapAction {
 
 public class StealData : GoapActionData {
     public StealData() : base(INTERACTION_TYPE.STEAL) {
+        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

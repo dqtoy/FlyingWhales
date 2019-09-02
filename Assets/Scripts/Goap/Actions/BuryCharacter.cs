@@ -278,6 +278,7 @@ public class BuryCharacter : GoapAction {
 
 public class BuryCharacterData : GoapActionData {
     public BuryCharacterData() : base(INTERACTION_TYPE.BURY_CHARACTER) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

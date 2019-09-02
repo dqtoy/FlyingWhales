@@ -1239,7 +1239,7 @@ public class Area {
                 if (!jobQueue.HasJob(JOB_TYPE.BREW_POTION)) {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
-                        { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
+                        { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
                     });
                     job.SetCanTakeThisJobChecker(CanBrewPotion);
                     job.SetOnTakeJobAction(OnTakeBrewPotion);
@@ -1255,7 +1255,7 @@ public class Area {
                 if (!jobQueue.HasJob(JOB_TYPE.CRAFT_TOOL)) {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.TOOL } },
-                        { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.TOOL } },
+                        { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[]{ SPECIAL_TOKEN.TOOL } },
                     });
                     job.SetCanTakeThisJobChecker(CanCraftTool);
                     job.SetOnTakeJobAction(OnTakeCraftTool);
@@ -1278,12 +1278,12 @@ public class Area {
     private void OnTakeBrewPotion(Character character, JobQueueItem job) {
         GoapPlanJob j = job as GoapPlanJob;
         j.ClearForcedActions();
-        j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM);
+        j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM_GOAP);
     }
     private void OnTakeCraftTool(Character character, JobQueueItem job) {
         GoapPlanJob j = job as GoapPlanJob;
         j.ClearForcedActions();
-        j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM);
+        j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM_GOAP);
     }
     private void CancelBrewPotion() {
         //warehouse has 2 or more healing potions

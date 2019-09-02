@@ -178,6 +178,7 @@ public class Watch : GoapAction {
 
 public class WatchData : GoapActionData {
     public WatchData() : base(INTERACTION_TYPE.WATCH) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

@@ -2693,7 +2693,7 @@ public class Character : ILeader, IPointOfInterest {
         //    return true;
         //}
         if (currentAction != null) {
-            return currentAction.goapType == INTERACTION_TYPE.ASSAULT_ACTION_NPC && currentAction.poiTarget == otherCharacter;
+            return currentAction.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER && currentAction.poiTarget == otherCharacter;
         }
         return false;
     }
@@ -3575,7 +3575,7 @@ public class Character : ILeader, IPointOfInterest {
                 if (chance < 35) {
                     CreateWatchEvent(action, null, action.actor);
                 }
-            } else if ((action.goapType == INTERACTION_TYPE.TRANSFORM_TO_WOLF || action.goapType == INTERACTION_TYPE.REVERT_TO_NORMAL) && state.name == "Transform Success") {
+            } else if ((action.goapType == INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM || action.goapType == INTERACTION_TYPE.REVERT_TO_NORMAL_FORM) && state.name == "Transform Success") {
                 if (faction == action.actor.faction) {
                     CreateWatchEvent(action, null, action.actor);
                 }
@@ -6474,13 +6474,13 @@ public class Character : ILeader, IPointOfInterest {
                         //- character slept
                         //- character mined or chopped wood
                         switch (ei.action.goapType) {
-                            case INTERACTION_TYPE.PICK_ITEM:
+                            case INTERACTION_TYPE.PICK_ITEM_GOAP:
                             case INTERACTION_TYPE.PRAY:
                             case INTERACTION_TYPE.DAYDREAM:
                             case INTERACTION_TYPE.PLAY:
                             case INTERACTION_TYPE.SLEEP:
                             case INTERACTION_TYPE.SLEEP_OUTSIDE:
-                            case INTERACTION_TYPE.MINE_ACTION:
+                            case INTERACTION_TYPE.MINE_GOAP:
                             case INTERACTION_TYPE.CHOP_WOOD:
                                 dialogReactions.Add("What will I do with this random tidbit?");
                                 break;
@@ -6804,9 +6804,9 @@ public class Character : ILeader, IPointOfInterest {
     public void ConstructInitialGoapAdvertisementActions() {
         //poiGoapActions = new List<INTERACTION_TYPE>();
         poiGoapActions.Add(INTERACTION_TYPE.CARRY_CHARACTER);
-        poiGoapActions.Add(INTERACTION_TYPE.ASSAULT_ACTION_NPC);
+        poiGoapActions.Add(INTERACTION_TYPE.ASSAULT_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.DROP_CHARACTER);
-        poiGoapActions.Add(INTERACTION_TYPE.ABDUCT_ACTION);
+        poiGoapActions.Add(INTERACTION_TYPE.ABDUCT_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.RESTRAIN_CHARACTER);
         //poiGoapActions.Add(INTERACTION_TYPE.STROLL);
         poiGoapActions.Add(INTERACTION_TYPE.DAYDREAM);
@@ -6820,7 +6820,7 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.PLAY);
         poiGoapActions.Add(INTERACTION_TYPE.REPORT_CRIME);
         poiGoapActions.Add(INTERACTION_TYPE.REPORT_HOSTILE);
-        poiGoapActions.Add(INTERACTION_TYPE.STEAL_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.STEAL_FROM_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.JUDGE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.CURSE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);

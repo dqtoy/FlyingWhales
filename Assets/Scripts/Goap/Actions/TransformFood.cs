@@ -223,6 +223,7 @@ public class TransformFood : GoapAction {
 
 public class TransformFoodData : GoapActionData {
     public TransformFoodData() : base(INTERACTION_TYPE.TRANSFORM_FOOD) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

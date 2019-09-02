@@ -156,6 +156,7 @@ public class Nap : GoapAction {
 
 public class NapData : GoapActionData {
     public NapData() : base(INTERACTION_TYPE.NAP) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

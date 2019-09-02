@@ -423,5 +423,6 @@ public class MakeLove : GoapAction {
 
 public class MakeLoveData : GoapActionData {
     public MakeLoveData() : base(INTERACTION_TYPE.MAKE_LOVE) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
 }

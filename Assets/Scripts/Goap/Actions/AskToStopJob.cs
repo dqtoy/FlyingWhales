@@ -97,6 +97,7 @@ public class AskToStopJob : GoapAction {
 
 public class AskToStopJobData : GoapActionData {
     public AskToStopJobData() : base(INTERACTION_TYPE.ASK_TO_STOP_JOB) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

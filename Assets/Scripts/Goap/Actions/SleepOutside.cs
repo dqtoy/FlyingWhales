@@ -85,6 +85,7 @@ public class SleepOutside : GoapAction {
 
 public class SleepOutsideData : GoapActionData {
     public SleepOutsideData() : base(INTERACTION_TYPE.SLEEP_OUTSIDE) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }
 

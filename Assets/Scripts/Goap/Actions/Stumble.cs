@@ -57,6 +57,7 @@ public class Stumble : GoapAction {
 
 public class StumbleData : GoapActionData {
     public StumbleData() : base(INTERACTION_TYPE.STUMBLE) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }
 

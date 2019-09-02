@@ -7,7 +7,7 @@ public class MineGoap : GoapAction {
     private const int MIN_SUPPLY = 20;
 
     private int _gainedSupply;
-    public MineGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.MINE_ACTION, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public MineGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.MINE_GOAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
     }
@@ -68,7 +68,8 @@ public class MineGoap : GoapAction {
 }
 
 public class MineGoapData : GoapActionData {
-    public MineGoapData() : base(INTERACTION_TYPE.MINE_ACTION) {
+    public MineGoapData() : base(INTERACTION_TYPE.MINE_GOAP) {
+        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

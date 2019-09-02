@@ -189,6 +189,7 @@ public class CurseCharacter : GoapAction {
 
 public class CurseCharacterData : GoapActionData {
     public CurseCharacterData() : base(INTERACTION_TYPE.CURSE_CHARACTER) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

@@ -78,6 +78,7 @@ public class MagicCirclePerformRitual : GoapAction {
 
 public class MagicCirclePerformRitualData : GoapActionData {
     public MagicCirclePerformRitualData() : base(INTERACTION_TYPE.MAGIC_CIRCLE_PERFORM_RITUAL) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

@@ -95,6 +95,7 @@ public class Drop : GoapAction {
 
 public class DropData : GoapActionData {
     public DropData() : base(INTERACTION_TYPE.DROP) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }
 

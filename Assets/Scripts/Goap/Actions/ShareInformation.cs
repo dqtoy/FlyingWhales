@@ -71,6 +71,7 @@ public class ShareInformation : GoapAction {
 
 public class ShareInformationData : GoapActionData {
     public ShareInformationData() : base(INTERACTION_TYPE.SHARE_INFORMATION) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

@@ -9,10 +9,10 @@ public class Civilian : CharacterRole {
 
     public Civilian() : base(CHARACTER_ROLE.CIVILIAN, "Civilian", new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.SUPPLY, INTERACTION_CATEGORY.INVENTORY }) {
         allowedInteractions = new INTERACTION_TYPE[] {
-            INTERACTION_TYPE.MINE_ACTION,
+            INTERACTION_TYPE.MINE_GOAP,
             INTERACTION_TYPE.CHOP_WOOD,
             INTERACTION_TYPE.SCRAP,
-            INTERACTION_TYPE.ASSAULT_ACTION_NPC,
+            INTERACTION_TYPE.ASSAULT_CHARACTER,
         };
         requiredItems = new SPECIAL_TOKEN[] {
             SPECIAL_TOKEN.TOOL,
