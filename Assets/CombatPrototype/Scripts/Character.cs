@@ -4218,6 +4218,9 @@ public class Character : ILeader, IPointOfInterest {
                 int index = UnityEngine.Random.Range(0, neutralTraits.Count);
                 chosenBuffOrNeutralTraitName = neutralTraits[index];
                 neutralTraits.RemoveAt(index);
+                if(chosenBuffOrNeutralTraitName == "Music Lover") {
+                    flawTraits.Remove("Music Hater");
+                }
             }
         } else {
             if(buffTraits.Count > 0) {
@@ -4228,6 +4231,9 @@ public class Character : ILeader, IPointOfInterest {
                 int index = UnityEngine.Random.Range(0, neutralTraits.Count);
                 chosenBuffOrNeutralTraitName = neutralTraits[index];
                 neutralTraits.RemoveAt(index);
+                if (chosenBuffOrNeutralTraitName == "Music Lover") {
+                    flawTraits.Remove("Music Hater");
+                }
             }
         }
 
