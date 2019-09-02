@@ -335,6 +335,9 @@ public class InteractionManager : MonoBehaviour {
             case INTERACTION_TYPE.STRANGLE:
                 goapAction = new Strangle(actor, target);
                 break;
+            case INTERACTION_TYPE.REPAIR_TILE_OBJECT:
+                goapAction = new RepairTileObject(actor, target);
+                break;
         }
         if(goapAction != null && willInitialize) {
             goapAction.Initialize();
@@ -431,6 +434,7 @@ public class InteractionManager : MonoBehaviour {
             { INTERACTION_TYPE.ASK_TO_STOP_JOB, new AskToStopJobData() },
             { INTERACTION_TYPE.WELL_JUMP, new WellJumpData() },
             { INTERACTION_TYPE.STRANGLE, new StrangleData() },
+            { INTERACTION_TYPE.REPAIR_TILE_OBJECT, new RepairTileObjectData() },
         };
     }
     public bool CanSatisfyGoapActionRequirements(INTERACTION_TYPE goapType, Character actor, IPointOfInterest poiTarget, object[] otherData) {
@@ -651,6 +655,7 @@ public class InteractionManager : MonoBehaviour {
                 priority = 110;
                 break;
             case JOB_TYPE.BURY:
+            case JOB_TYPE.REPAIR:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:

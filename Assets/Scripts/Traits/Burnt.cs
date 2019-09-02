@@ -20,6 +20,7 @@ public class Burnt : Trait {
         effects = new List<TraitEffect>();
     }
 
+    #region Overrides
     public override void OnAddTrait(ITraitable addedTo) {
         base.OnAddTrait(addedTo);
         if (addedTo is LocationGridTile) {
@@ -45,4 +46,25 @@ public class Burnt : Trait {
             token.gridTileLocation.parentAreaMap.objectsTilemap.SetColor(token.gridTileLocation.localPlace, burntColor);
         }
     }
+
+    public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+        if (traitOwner is TileObject) {
+            TileObject targetPOI = traitOwner as TileObject;
+            if (!targetPOI.HasJobTargettingThis(JOB_TYPE.REPAIR)) {
+                GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", targetPOI);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPAIR, effect);
+                job.SetCanBeDoneInLocation(true);
+                if (CanCharacterTakeRepairJob(characterThatWillDoJob, null)) {
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                    return true;
+                } else {
+                    job.SetCanTakeThisJobChecker(CanCharacterTakeRepairJob);
+                    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                    return false;
+                }
+            }
+        }
+        return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+    }
+    #endregion
 }

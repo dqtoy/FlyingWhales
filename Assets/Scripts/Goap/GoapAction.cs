@@ -1128,6 +1128,7 @@ public class GoapActionData {
             case INTERACTION_TYPE.ASK_TO_STOP_JOB: return new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
             case INTERACTION_TYPE.WELL_JUMP: return new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
             case INTERACTION_TYPE.STRANGLE: return new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+            case INTERACTION_TYPE.REPAIR_TILE_OBJECT: return new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         }
         return null;
     }

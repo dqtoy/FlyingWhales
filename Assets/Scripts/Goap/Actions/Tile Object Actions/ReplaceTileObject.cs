@@ -40,7 +40,11 @@ public class ReplaceTileObject : GoapAction {
     //}
     public override void PerformActualAction() {
         base.PerformActualAction();
-        SetState("Replace Success");
+        if (!isTargetMissing) {
+            SetState("Replace Success");
+        } else {
+            SetState("Target Missing");
+        }
     }
     public override LocationGridTile GetTargetLocationTile() {
         return whereToPlace;
