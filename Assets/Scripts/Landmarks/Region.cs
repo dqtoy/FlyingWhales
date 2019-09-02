@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class Region {
 
-    private const float Hovered_Border_Alpha = 255f / 255f;
-    private const float Unhovered_Border_Alpha = 255f / 255f;
+    private const float Hovered_Border_Alpha = 0f / 255f;
+    private const float Unhovered_Border_Alpha = 0f / 255f;
 
     public int id { get; private set; }
     public string name { get; private set; }
