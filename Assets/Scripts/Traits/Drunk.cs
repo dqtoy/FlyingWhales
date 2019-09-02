@@ -21,15 +21,17 @@ public class Drunk : Trait {
         if (targetPOI is Character) {
             Character targetCharacter = targetPOI as Character;
             if (!targetCharacter.isDead) {
-                int value = 2;
+                int value = 1;
                 RELATIONSHIP_EFFECT relEffect = characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter);
                 if (relEffect == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    value = 6;
+                    value = 3;
                 } else if (relEffect == RELATIONSHIP_EFFECT.NONE) {
-                    value = 4;
+                    value = 2;
                 }
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < value) {
+                    characterThatWillDoJob.PrintLogIfActive(GameManager.Instance.TodayLogString() + characterThatWillDoJob.name
+                        + "Drunk Assault Chance: " + value + ", Roll: " + chance);
                     if (characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, false, false)) {
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
                         log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

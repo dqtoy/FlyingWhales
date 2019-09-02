@@ -9,7 +9,7 @@ public class SupplyPile : TileObject {
 
     public SupplyPile(LocationStructure location) {
         this.location = location;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_SUPPLY };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_SUPPLY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(TILE_OBJECT_TYPE.SUPPLY_PILE);
         SetSuppliesInPile(50);
         RemoveTrait("Flammable");

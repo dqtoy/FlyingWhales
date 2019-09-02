@@ -39,7 +39,7 @@ public class Restrained : Trait {
             Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
             //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
             _sourceCharacter.RemoveTrait("Unconscious", removedBy: responsibleCharacter);
-            _sourceCharacter.CancelAllJobsAndPlans();
+            //_sourceCharacter.CancelAllJobsAndPlans();
             _sourceCharacter.AddTraitNeededToBeRemoved(this);
 
             //Once a faction leader is restrained set new faction leader

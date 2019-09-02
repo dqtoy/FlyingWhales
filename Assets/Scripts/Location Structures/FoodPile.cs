@@ -9,7 +9,7 @@ public class FoodPile : TileObject {
 
     public FoodPile(LocationStructure location) {
         this.location = location;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_FOOD, INTERACTION_TYPE.DROP_FOOD };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_FOOD, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(TILE_OBJECT_TYPE.FOOD_PILE);
         SetFoodInPile(2000);
         RemoveTrait("Flammable");

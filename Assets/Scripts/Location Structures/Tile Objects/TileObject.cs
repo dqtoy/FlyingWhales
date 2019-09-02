@@ -67,7 +67,6 @@ public class TileObject : IPointOfInterest {
         allJobsTargettingThis = new List<JobQueueItem>();
         targettedByAction = new List<GoapAction>();
         owners = new List<Character>();
-        //poiGoapActions = new List<INTERACTION_TYPE>();
         hasCreatedSlots = false;
         AddTrait("Flammable");
         InitializeCollisionTrigger();
@@ -80,7 +79,6 @@ public class TileObject : IPointOfInterest {
         awareCharacters = new List<Character>();
         allJobsTargettingThis = new List<JobQueueItem>();
         owners = new List<Character>();
-        //poiGoapActions = new List<INTERACTION_TYPE>();
         hasCreatedSlots = false;
         InitializeCollisionTrigger();
     }
@@ -92,7 +90,6 @@ public class TileObject : IPointOfInterest {
         awareCharacters = new List<Character>();
         allJobsTargettingThis = new List<JobQueueItem>();
         owners = new List<Character>();
-        //poiGoapActions = new List<INTERACTION_TYPE>();
         hasCreatedSlots = false;
         InitializeCollisionTrigger();
     }

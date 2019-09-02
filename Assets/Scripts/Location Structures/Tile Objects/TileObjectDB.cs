@@ -34,7 +34,6 @@ public static class TileObjectDB {
                 new ProvidedFacility() { type = FACILITY_TYPE.HAPPINESS_RECOVERY, value = 10 }
             }
         } },
-
         { TILE_OBJECT_TYPE.TABLE, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
@@ -43,6 +42,11 @@ public static class TileObjectDB {
                 new ProvidedFacility() { type = FACILITY_TYPE.FULLNESS_RECOVERY, value = 20 },
                 new ProvidedFacility() { type = FACILITY_TYPE.SIT_DOWN_SPOT, value = 5 }
             }
+        } },
+        { TILE_OBJECT_TYPE.TREE, new TileObjectData() {
+            constructionCost = 10,
+            constructionTime = 12,
+            neededTraitType = typeof(Craftsman),
         } },
     };
 

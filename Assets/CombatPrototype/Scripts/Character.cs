@@ -3693,23 +3693,14 @@ public class Character : ILeader, IPointOfInterest {
 
             int deathWeight = 70;
             int unconsciousWeight = 30;
-            //if (isAtHomeArea) {
-            //    if (characterThatAttacked.faction == this.faction) {
-            //        deathWeight = 25;
-            //        unconsciousWeight = 75;
-            //    } else {
-            //        deathWeight = 75;
-            //        unconsciousWeight = 25;
-            //    }
-            //} else {
-            //    deathWeight = 50;
-            //    unconsciousWeight = 50;
-            //}
             if (!characterThatAttacked.marker.IsLethalCombatForTarget(this)) {
                 deathWeight = 5;
                 unconsciousWeight = 95;
             }
-            
+            string rollLog = GameManager.Instance.TodayLogString() + characterThatAttacked.name + " attacked " + name
+                + ", death weight: " + deathWeight + ", unconscious weight: " + unconsciousWeight 
+                + ", isLethal: " + characterThatAttacked.marker.IsLethalCombatForTarget(this);
+            characterThatAttacked.PrintLogIfActive(rollLog);
 
             if (this.GetNormalTrait("Unconscious") == null) {
                 loserResults.AddElement("Unconscious", unconsciousWeight);
@@ -4616,6 +4607,7 @@ public class Character : ILeader, IPointOfInterest {
             AdjustDoNotDisturb(1);
             if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 AdjustIgnoreHostilities(1);
+                CancelAllJobsAndPlans();
             }
             if (trait.name != "Combat Recovery") {
                 _ownParty.RemoveAllOtherCharacters();

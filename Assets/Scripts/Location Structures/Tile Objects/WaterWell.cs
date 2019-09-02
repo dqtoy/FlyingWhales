@@ -7,7 +7,7 @@ public class WaterWell : TileObject {
     public WaterWell(LocationStructure location) {
         this.structureLocation = location;
         if (location.structureType != STRUCTURE_TYPE.POND) {
-            poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP };
+            poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         } else {
             poiGoapActions = new List<INTERACTION_TYPE>();
         }
