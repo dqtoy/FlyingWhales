@@ -88,6 +88,7 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.SetLoadingState(false);
         Messenger.Broadcast(Signals.GAME_LOADED);
         CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
+        AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(false);
@@ -151,6 +152,7 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.SetLoadingState(false);
         Messenger.Broadcast(Signals.GAME_LOADED);
         CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
+        AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
         data.LoadCurrentDate();
         GameManager.Instance.StartProgression();
