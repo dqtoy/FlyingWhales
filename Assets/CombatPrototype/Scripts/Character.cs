@@ -4227,39 +4227,96 @@ public class Character : ILeader, IPointOfInterest {
         //    AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
         //}
 
-        //Random Traits
-        string[] completelyRandomTraits = new string[] { "Curious", "Vigilant", "Doctor", "Diplomatic",
+        string[] traitPool = new string[] { "Curious", "Vigilant", "Doctor", "Diplomatic",
         "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal" };
         //"Kleptomaniac"
-        Trait randomTrait = AttributeManager.Instance.allTraits[completelyRandomTraits[UnityEngine.Random.Range(0, completelyRandomTraits.Length)]];
 
-        List<Trait> flawTraits = AttributeManager.Instance.GetAllTraitsOfType(TRAIT_TYPE.FLAW);
-        for (int i = 0; i < flawTraits.Count; i++) {
-            if(flawTraits[i].name == "Kleptomaniac") {
-                flawTraits.RemoveAt(i);
-                break;
+        List<string> buffTraits = new List<string>();
+        List<string> flawTraits = new List<string>();
+        List<string> neutralTraits = new List<string>();
+
+        //Categorize traits from trait pool
+        for (int i = 0; i < traitPool.Length; i++) {
+            string currTraitName = traitPool[i];
+            if (AttributeManager.Instance.allTraits.ContainsKey(currTraitName)) {
+                Trait trait = AttributeManager.Instance.allTraits[currTraitName];
+                if(trait.type == TRAIT_TYPE.BUFF) {
+                    buffTraits.Add(currTraitName);
+                } else if (trait.type == TRAIT_TYPE.FLAW) {
+                    flawTraits.Add(currTraitName);
+                } else {
+                    neutralTraits.Add(currTraitName);
+                }
+            } else {
+                throw new Exception("There is no trait named: " + currTraitName);
             }
         }
-        string chosenFlawTraitName = string.Empty;
-        if (flawTraits.Count > 0) {
-            if(randomTrait.type == TRAIT_TYPE.FLAW) {
-                flawTraits.Remove(randomTrait);
-            }
-            chosenFlawTraitName = flawTraits[UnityEngine.Random.Range(0, flawTraits.Count)].name;
-        }
 
-        List<Trait> buffTraits = AttributeManager.Instance.GetAllTraitsOfType(TRAIT_TYPE.BUFF);
+        //First trait is random buff trait
         string chosenBuffTraitName = string.Empty;
         if (buffTraits.Count > 0) {
-            if (randomTrait.type == TRAIT_TYPE.BUFF) {
-                buffTraits.Remove(randomTrait);
+            int index = UnityEngine.Random.Range(0, buffTraits.Count);
+            chosenBuffTraitName = buffTraits[index];
+            buffTraits.RemoveAt(index);
+        } else {
+            throw new Exception("There are no buff traits!");
+        }
+
+        //Second trait is a random buff or neutral trait
+        string chosenBuffOrNeutralTraitName = string.Empty;
+        if (buffTraits.Count > 0 && neutralTraits.Count > 0) {
+            if(UnityEngine.Random.Range(0, 2) == 0) {
+                //Buff trait
+                int index = UnityEngine.Random.Range(0, buffTraits.Count);
+                chosenBuffOrNeutralTraitName = buffTraits[index];
+                buffTraits.RemoveAt(index);
+            } else {
+                //Neutral trait
+                int index = UnityEngine.Random.Range(0, neutralTraits.Count);
+                chosenBuffOrNeutralTraitName = neutralTraits[index];
+                neutralTraits.RemoveAt(index);
             }
-            chosenBuffTraitName = buffTraits[UnityEngine.Random.Range(0, buffTraits.Count)].name;
+        } else {
+            if(buffTraits.Count > 0) {
+                int index = UnityEngine.Random.Range(0, buffTraits.Count);
+                chosenBuffOrNeutralTraitName = buffTraits[index];
+                buffTraits.RemoveAt(index);
+            } else {
+                int index = UnityEngine.Random.Range(0, neutralTraits.Count);
+                chosenBuffOrNeutralTraitName = neutralTraits[index];
+                neutralTraits.RemoveAt(index);
+            }
+        }
+
+        //Third trait is a random neutral or flaw traits
+        string chosenFlawOrNeutralTraitName = string.Empty;
+        if (flawTraits.Count > 0 && neutralTraits.Count > 0) {
+            if (UnityEngine.Random.Range(0, 2) == 0) {
+                //Buff trait
+                int index = UnityEngine.Random.Range(0, flawTraits.Count);
+                chosenFlawOrNeutralTraitName = flawTraits[index];
+                flawTraits.RemoveAt(index);
+            } else {
+                //Neutral trait
+                int index = UnityEngine.Random.Range(0, neutralTraits.Count);
+                chosenFlawOrNeutralTraitName = neutralTraits[index];
+                neutralTraits.RemoveAt(index);
+            }
+        } else {
+            if (flawTraits.Count > 0) {
+                int index = UnityEngine.Random.Range(0, flawTraits.Count);
+                chosenFlawOrNeutralTraitName = flawTraits[index];
+                flawTraits.RemoveAt(index);
+            } else {
+                int index = UnityEngine.Random.Range(0, neutralTraits.Count);
+                chosenFlawOrNeutralTraitName = neutralTraits[index];
+                neutralTraits.RemoveAt(index);
+            }
         }
 
         AddTrait(chosenBuffTraitName);
-        AddTrait(chosenFlawTraitName);
-        AddTrait(randomTrait.name);
+        AddTrait(chosenBuffOrNeutralTraitName);
+        AddTrait(chosenFlawOrNeutralTraitName);
 
         //int chance = UnityEngine.Random.Range(0, 100);
         //if (chance < 35 || role.roleType == CHARACTER_ROLE.CIVILIAN) { //ensured that all civilans are craftsmen
