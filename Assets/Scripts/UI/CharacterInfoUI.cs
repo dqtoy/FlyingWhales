@@ -96,7 +96,6 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, UpdateTraitsFromSignal);
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener<Character>(Signals.CHARACTER_TRACKED, OnCharacterTracked);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -589,11 +588,6 @@ public class CharacterInfoUI : UIMenu {
     //#endregion
 
     #region Listeners
-    private void OnCharacterTracked(Character character) {
-        if (isShowing && activeCharacter.id == character.id) {
-            UpdateBasicInfo();
-        }
-    }
     private void OnMenuOpened(UIMenu openedMenu) {
         //if (this.isShowing) {
         //    if (openedMenu is PartyInfoUI) {

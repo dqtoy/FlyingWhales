@@ -135,7 +135,6 @@ public class ConsoleMenu : UIMenu {
         text += "\n\t<b>Grid Location:</b> " + character.gridTileLocation?.localPlace.ToString() ?? "None";
 
         text += "\n<b>Faction:</b> " + character.faction?.name ?? "None";
-        text += "\n<b>Next Tick:</b> " + character.currentInteractionTick.ToString();
         text += "\n<b>Current Action:</b> " + character.currentAction?.goapName ?? "None";
         if (character.currentAction != null) {
             text += "\n<b>Current Plan:</b> " + character.currentAction.parentPlan.GetGoalSummary();

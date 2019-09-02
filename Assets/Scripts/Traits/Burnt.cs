@@ -46,7 +46,31 @@ public class Burnt : Trait {
             token.gridTileLocation.parentAreaMap.objectsTilemap.SetColor(token.gridTileLocation.localPlace, burntColor);
         }
     }
-
+    public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+        base.OnRemoveTrait(removedFrom, removedBy);
+        if (removedFrom is LocationGridTile) {
+            LocationGridTile tile = removedFrom as LocationGridTile;
+            tile.parentTileMap.SetColor(tile.localPlace, Color.white);
+            tile.SetDefaultTileColor(Color.white);
+            tile.parentAreaMap.detailsTilemap.SetColor(tile.localPlace, Color.white);
+            tile.parentAreaMap.northEdgeTilemap.SetColor(tile.localPlace, Color.white);
+            tile.parentAreaMap.southEdgeTilemap.SetColor(tile.localPlace, Color.white);
+            tile.parentAreaMap.eastEdgeTilemap.SetColor(tile.localPlace, Color.white);
+            tile.parentAreaMap.westEdgeTilemap.SetColor(tile.localPlace, Color.white);
+            if (tile.objHere == null) {
+                tile.parentAreaMap.objectsTilemap.SetColor(tile.localPlace, Color.white);
+            }
+        } else if (removedFrom is TileObject) {
+            TileObject obj = removedFrom as TileObject;
+            obj.SetPOIState(POI_STATE.ACTIVE);
+            obj.gridTileLocation.parentAreaMap.objectsTilemap.SetColor(obj.gridTileLocation.localPlace, Color.white);
+            obj.SetSlotColor(Color.white);
+        } else if (removedFrom is SpecialToken) {
+            SpecialToken token = removedFrom as SpecialToken;
+            token.SetPOIState(POI_STATE.ACTIVE);
+            token.gridTileLocation.parentAreaMap.objectsTilemap.SetColor(token.gridTileLocation.localPlace, Color.white);
+        }
+    }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (traitOwner is TileObject) {
             TileObject targetPOI = traitOwner as TileObject;

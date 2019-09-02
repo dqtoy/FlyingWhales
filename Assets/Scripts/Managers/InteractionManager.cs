@@ -241,7 +241,6 @@ public class InteractionManager : MonoBehaviour {
         int priority = 0;
         switch (jobType) {
             case JOB_TYPE.MISC:
-            case JOB_TYPE.REMOVE_FIRE:
             case JOB_TYPE.DEATH:
             case JOB_TYPE.BERSERK:
             case JOB_TYPE.TANTRUM:
@@ -263,6 +262,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.APPREHEND:
             case JOB_TYPE.REPORT_CRIME:
             case JOB_TYPE.ATTEMPT_TO_STOP_JOB:
+            case JOB_TYPE.REMOVE_FIRE:
                 priority = 40;
                 break;
             case JOB_TYPE.REMOVE_TRAIT:

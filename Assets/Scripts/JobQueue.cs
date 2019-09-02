@@ -29,7 +29,7 @@ public class JobQueue {
         }
         job.OnAddJobToQueue();
 
-        if(character != null) {
+        if(!isAreaJobQueue) {
             //bool hasProcessed = false;
 
             //If the current action's job of the character is overridable and the added job has higher priority than it,

@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class Watch : GoapAction {
     public GoapAction actionBeingWatched { get; private set; }
-    public CombatState combatBeingWatched { get; private set; }
+    public CharacterState stateBeingWatched { get; private set; }
 
     private Character _targetCharacter;
+
+    //for testing
+    private int ticksInWatch;
     public Watch(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.WATCH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
@@ -51,13 +54,22 @@ public class Watch : GoapAction {
                     thoughtBubbleMovingLog.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.STRING_1);
                 }
             } else if (otherData[0] is CombatState) {
-                combatBeingWatched = otherData[0] as CombatState;
+                stateBeingWatched = otherData[0] as CombatState;
                 actionIconString = GoapActionStateDB.Hostile_Icon;
                 if (thoughtBubbleLog != null) {
-                    thoughtBubbleLog.AddToFillers(combatBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
+                    thoughtBubbleLog.AddToFillers(stateBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
                 }
                 if (thoughtBubbleMovingLog != null) {
-                    thoughtBubbleMovingLog.AddToFillers(combatBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
+                    thoughtBubbleMovingLog.AddToFillers(stateBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
+                }
+            } else if (otherData[0] is DouseFireState) {
+                stateBeingWatched = otherData[0] as DouseFireState;
+                actionIconString = GoapActionStateDB.Hostile_Icon;
+                if (thoughtBubbleLog != null) {
+                    thoughtBubbleLog.AddToFillers(stateBeingWatched, "Douse Fire", LOG_IDENTIFIER.STRING_1);
+                }
+                if (thoughtBubbleMovingLog != null) {
+                    thoughtBubbleMovingLog.AddToFillers(stateBeingWatched, "Douse Fire", LOG_IDENTIFIER.STRING_1);
                 }
             }
             return true;
@@ -69,9 +81,9 @@ public class Watch : GoapAction {
     }
     public override void OnStopActionDuringCurrentState() {
         base.OnStopActionDuringCurrentState();
-        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
-        }
+        //if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+        //    Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+        //}
 
         if (shouldAddLogs && currentState.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
             currentState.descriptionLog.SetDate(GameManager.Instance.Today());
@@ -84,14 +96,19 @@ public class Watch : GoapAction {
     private void PreWatchSuccess() {
         if(actionBeingWatched != null) {
             currentState.AddLogFiller(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.STRING_1);
-        }else if (combatBeingWatched != null) {
-            currentState.AddLogFiller(combatBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
+        }else if (stateBeingWatched != null) {
+            if (stateBeingWatched is CombatState) {
+                currentState.AddLogFiller(stateBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
+            } else if (stateBeingWatched is DouseFireState) {
+                currentState.AddLogFiller(stateBeingWatched, "Douse Fire", LOG_IDENTIFIER.STRING_1);
+            }
         }
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+        //Messenger.AddListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+        ticksInWatch = 0;
     }
     private void PerTickWatchSuccess() {
         if (_targetCharacter.isDead) {
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+            //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
             if (actor.currentParty.icon.isTravelling) {
                 //Stop moving
                 actor.marker.StopMovement();
@@ -101,7 +118,7 @@ public class Watch : GoapAction {
         }
         if (actionBeingWatched != null) {
             if (actionBeingWatched.isDone || actionBeingWatched.actor.currentAction != actionBeingWatched) {
-                Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+                //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
                 if (actor.currentParty.icon.isTravelling) {
                     //Stop moving
                     actor.marker.StopMovement();
@@ -109,9 +126,9 @@ public class Watch : GoapAction {
                 currentState.EndPerTickEffect();
                 return;
             }
-        } else if (combatBeingWatched != null) {
-            if (combatBeingWatched.isDone || combatBeingWatched.stateComponent.currentState != combatBeingWatched) {
-                Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+        } else if (stateBeingWatched != null) {
+            if (stateBeingWatched.isDone || (stateBeingWatched.stateComponent.currentState != stateBeingWatched && !stateBeingWatched.isPaused)) { //only end watch state if the state is done or if the watched state is no longer active and not paused
+                //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
                 if (actor.currentParty.icon.isTravelling) {
                     //Stop moving
                     actor.marker.StopMovement();
@@ -124,7 +141,7 @@ public class Watch : GoapAction {
         if(!actor.currentParty.icon.isTravelling && !actor.marker.inVisionPOIs.Contains(poiTarget)) {
             //Go to target because target is not in vision
             if(actor.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-                Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+                //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
                 currentState.EndPerTickEffect();
                 return;
             } else {
@@ -139,11 +156,15 @@ public class Watch : GoapAction {
         if (!actor.currentParty.icon.isTravelling) {
             actor.FaceTarget(poiTarget);
         }
+        ticksInWatch++;
     }
     private void AfterWatchSuccess() {
-        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
+        if (actionBeingWatched != null) {
+            AddActionDebugLog(GameManager.Instance.TodayLogString() + actor.name + " has finished watching " + actionBeingWatched.goapName + " by " + actionBeingWatched.actor.name + ". Total ticks in watch is " + ticksInWatch.ToString() + "/" + currentState.duration.ToString());
+        } else if (stateBeingWatched != null) {
+            AddActionDebugLog(GameManager.Instance.TodayLogString() + actor.name + " has finished watching " + stateBeingWatched.ToString() + ". Total ticks in watch is " + ticksInWatch.ToString() + "/" + currentState.duration.ToString());
         }
+        //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
     }
     #endregion
 

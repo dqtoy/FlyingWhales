@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Explosion : PlayerJobAction {
+public class Explosion : PlayerJobAction, IBurningSource {
 
     private int radius;
+
+    public List<Character> dousers { get; private set; }
 
     public Explosion() : base(INTERVENTION_ABILITY.EXPLOSION) {
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
         radius = 1;
         tier = 1;
+        dousers = new List<Character>();
     }
 
     #region Overrides
@@ -59,6 +62,28 @@ public class Explosion : PlayerJobAction {
         base.HideRange(targetTile);
         List<LocationGridTile> tiles = targetTile.parentAreaMap.GetTilesInRadius(targetTile, radius, 0, true);
         InteriorMapManager.Instance.UnhighlightTiles(tiles);
+    }
+    #endregion
+
+    #region Burning Source
+    public void AddCharactersDousingFire(Character character) {
+        dousers.Add(character);
+    }
+    public void RemoveCharactersDousingFire(Character character) {
+        dousers.Remove(character);
+    }
+    public Character GetNearestDouserFrom(Character otherCharacter) {
+        Character nearest = null;
+        float nearestDist = 9999f;
+        for (int i = 0; i < dousers.Count; i++) {
+            Character currDouser = dousers[i];
+            float dist = Vector2.Distance(currDouser.gridTileLocation.localLocation, otherCharacter.gridTileLocation.localLocation);
+            if (dist < nearestDist) {
+                nearest = currDouser;
+                nearestDist = dist;
+            }
+        }
+        return nearest;
     }
     #endregion
 }
