@@ -79,7 +79,6 @@ public class GoapActionState {
     }
     #endregion
 
-
     public void Execute() {
         preEffect?.Invoke();
         parentAction.SetExecutionDate(GameManager.Instance.Today());
@@ -140,6 +139,10 @@ public class GoapActionState {
         this.animationName = animationName;
     }
     #endregion
+
+    public override string ToString() {
+        return name + " " + parentAction.ToString();
+    }
 }
 
 public struct ActionLog {

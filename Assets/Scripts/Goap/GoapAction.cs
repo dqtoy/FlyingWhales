@@ -720,6 +720,9 @@ public class GoapAction {
     public void SetIsStealth(bool state) {
         isStealth = state;
     }
+    public override string ToString() {
+        return goapName + " by " + actor.name;
+    }
     #endregion
 
     #region Trait Utilities
@@ -954,6 +957,8 @@ public class GoapAction {
         return false;
     }
     #endregion
+
+
 }
 
 public struct GoapEffect {
