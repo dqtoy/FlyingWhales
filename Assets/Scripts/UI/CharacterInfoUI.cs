@@ -639,6 +639,7 @@ public class CharacterInfoUI : UIMenu {
         summary += "\nDo Not Get Lonely: " + activeCharacter.doNotGetLonely.ToString();
         summary += "\nFullness Time: " + GameManager.ConvertTickToTime(activeCharacter.fullnessForcedTick);
         summary += "\nTiredness Time: " + GameManager.ConvertTickToTime(activeCharacter.tirednessForcedTick);
+        summary += "\nRemaining Sleep Ticks: " + activeCharacter.currentSleepTicks;
         summary += "\nRole: " + activeCharacter.role.roleType.ToString();
         summary += "\nSexuality: " + activeCharacter.sexuality.ToString();
         summary += "\nMood: " + activeCharacter.moodValue.ToString() + "(" + activeCharacter.currentMoodType.ToString() + ")";

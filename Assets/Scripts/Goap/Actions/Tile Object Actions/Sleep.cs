@@ -101,6 +101,7 @@ public class Sleep : GoapAction {
     }
     private void PerTickRestSuccess() {
         actor.AdjustTiredness(75);
+        actor.AdjustSleepTicks(-1);
 
         if (_restingTrait.lycanthropyTrait == null) {
             if (currentState.currentDuration == currentState.duration) {

@@ -71,6 +71,7 @@ public class SleepOutside : GoapAction {
     }
     private void PerTickRestSuccess() {
         actor.AdjustTiredness(70);
+        actor.AdjustSleepTicks(-1);
     }
     private void AfterRestSuccess() {
         //actor.AdjustDoNotGetTired(-1);

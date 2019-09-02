@@ -130,6 +130,7 @@ public class Character : ILeader, IPointOfInterest {
     public int happinessDecreaseRate { get; protected set; }
     public int fullnessForcedTick { get; protected set; }
     public int tirednessForcedTick { get; protected set; }
+    public int currentSleepTicks { get; protected set; }
     public bool hasForcedFullness { get; protected set; }
     public bool hasForcedTiredness { get; protected set; }
     public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords { get; protected set; }
@@ -645,6 +646,7 @@ public class Character : ILeader, IPointOfInterest {
         SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
         SetFullnessForcedTick();
         SetTirednessForcedTick();
+        ResetSleepTicks();
 
         //for testing
         locationHistory = new List<string>();
@@ -5203,7 +5205,7 @@ public class Character : ILeader, IPointOfInterest {
         return false;
     }
     private void PlanForcedFullnessRecovery() {
-        if (!hasForcedFullness && fullnessForcedTick != 0 && fullnessForcedTick >= GameManager.Instance.tick && _doNotDisturb <= 0) {
+        if (!hasForcedFullness && fullnessForcedTick != 0 && GameManager.Instance.tick >= fullnessForcedTick && _doNotDisturb <= 0) {
             if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
                 JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
                 if (isStarving) {
@@ -5225,7 +5227,7 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     private void PlanForcedTirednessRecovery() {
-        if (!hasForcedTiredness && tirednessForcedTick != 0 && tirednessForcedTick >= GameManager.Instance.tick && _doNotDisturb <= 0) {
+        if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.tick >= tirednessForcedTick && _doNotDisturb <= 0) {
             if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
                 if (isExhausted) {
@@ -5239,6 +5241,21 @@ public class Character : ILeader, IPointOfInterest {
             }
             hasForcedTiredness = true;
             SetTirednessForcedTick();
+        }
+        //If a character current sleep ticks is less than the default, this means that the character already started sleeping but was awaken midway that is why he/she did not finish the allotted sleeping time
+        //When this happens, make sure to queue tiredness recovery again so he can finish the sleeping time
+        else if(currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) {
+            if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
+                JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
+                if (isExhausted) {
+                    jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
+                }
+                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                job.SetCancelOnFail(true);
+                bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
+                    || stateComponent.currentState != null || stateComponent.stateToDo != null;
+                jobQueue.AddJobInQueue(job, !willNotProcess);
+            }
         }
     }
     private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
@@ -7698,6 +7715,15 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
+    public void ResetSleepTicks() {
+        currentSleepTicks = CharacterManager.Instance.defaultSleepTicks;
+    }
+    public void AdjustSleepTicks(int amount) {
+        currentSleepTicks += amount;
+        if(currentSleepTicks <= 0) {
+            ResetSleepTicks();
+        }
+    }
     #endregion
 
     #region Supply
@@ -8076,7 +8102,7 @@ public class Character : ILeader, IPointOfInterest {
 
             //tantrumLog += "\nRolled: " + chance.ToString();
 
-            if (chance < 20) {
+            if (chance < 10) {
                 CancelAllJobsAndPlans();
                 //Create Tantrum action
                 GoapPlanJob tantrum = new GoapPlanJob(JOB_TYPE.TANTRUM, INTERACTION_TYPE.TANTRUM, this, new Dictionary<INTERACTION_TYPE, object[]>() {

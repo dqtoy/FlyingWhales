@@ -57,6 +57,8 @@ public class CharacterManager : MonoBehaviour {
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     private List<string> deadlySinsRotation = new List<string>();
 
+    public int defaultSleepTicks { get; protected set; } //how many ticks does a character must sleep per day?
+
     #region getters/setters
     public List<Character> allCharacters {
         get { return _allCharacters; }
@@ -76,6 +78,7 @@ public class CharacterManager : MonoBehaviour {
     public void Initialize() {
         ConstructAllClasses();
         ConstructElementChanceDictionary();
+        defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
         //ConstructAwayFromHomeInteractionWeights();
         //ConstructAtHomeInteractionWeights();
         //ConstructRoleInteractions();
