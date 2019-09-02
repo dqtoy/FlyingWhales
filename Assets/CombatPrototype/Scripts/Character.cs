@@ -4408,14 +4408,6 @@ public class Character : ILeader, IPointOfInterest {
             if (triggerOnRemove) {
                 trait.OnRemoveTrait(this, removedBy);
             }
-            if (trait.name == "Forlorn") {
-                JobQueueItem suicideJob = jobQueue.GetJob(JOB_TYPE.SUICIDE);
-                if (suicideJob != null && !jobQueue.CancelJob(suicideJob, "no longer forlorn", false)) {
-                    suicideJob.UnassignJob(false);
-                    jobQueue.RemoveJobInQueue(suicideJob);
-                } 
-            }
-
             Messenger.Broadcast(Signals.TRAIT_REMOVED, this, trait);
             //if (trait is RelationshipTrait) {
             //    RelationshipTrait rel = trait as RelationshipTrait;
@@ -6377,30 +6369,28 @@ public class Character : ILeader, IPointOfInterest {
     #region Happiness
     public void ResetHappinessMeter() {
         happiness = HAPPINESS_DEFAULT;
-        RemoveLonelyOrForlorn();
+        OnHappinessAdjusted();
     }
     public void AdjustHappiness(int adjustment) {
         happiness += adjustment;
         happiness = Mathf.Clamp(happiness, happinessLowerBound, HAPPINESS_DEFAULT);
-        if (isForlorn) {
-            RemoveTrait("Lonely");
-            if (AddTrait("Forlorn")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "forlorn");
-            }
-            //PlanHappinessRecoveryActions();
-        } else if (isLonely) {
-            RemoveTrait("Forlorn");
-            if (AddTrait("Lonely")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "lonely");
-            }
-            //PlanHappinessRecoveryActions();
-        } else {
-            RemoveLonelyOrForlorn();
-        }
+        OnHappinessAdjusted();
     }
     public void SetHappiness(int amount) {
         happiness = amount;
         happiness = Mathf.Clamp(happiness, happinessLowerBound, HAPPINESS_DEFAULT);
+        OnHappinessAdjusted();
+    }
+    private void RemoveLonelyOrForlorn() {
+        if (!RemoveTrait("Lonely")) {
+            if (RemoveTrait("Forlorn")) {
+                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "depressed");
+            }
+        } else {
+            //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "lonely");
+        }
+    }
+    private void OnHappinessAdjusted() {
         if (isForlorn) {
             RemoveTrait("Lonely");
             if (AddTrait("Forlorn")) {
@@ -6416,14 +6406,17 @@ public class Character : ILeader, IPointOfInterest {
         } else {
             RemoveLonelyOrForlorn();
         }
-    }
-    private void RemoveLonelyOrForlorn() {
-        if (!RemoveTrait("Lonely")) {
-            if (RemoveTrait("Forlorn")) {
-                //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "depressed");
+        JobQueueItem suicideJob = jobQueue.GetJob(JOB_TYPE.SUICIDE);
+        if (happiness <= 0 && suicideJob == null) {
+            //When Happiness meter is reduced to 0, the character will create a Commit Suicide Job.
+            Debug.Log(GameManager.Instance.TodayLogString() + this.name + "'s happiness is " + happiness.ToString() + ", creating suicide job");
+            CreateSuicideJob();
+        } else if (happiness > HAPPINESS_THRESHOLD_2 && suicideJob != null) {
+            Debug.Log(GameManager.Instance.TodayLogString() + this.name + "'s happiness is " + happiness.ToString() + ", canceling suicide job");
+            if (!jobQueue.CancelJob(suicideJob, "no longer forlorn", false)) {
+                suicideJob.UnassignJob(false);
+                jobQueue.RemoveJobInQueue(suicideJob);
             }
-        } else {
-            //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, "lonely");
         }
     }
     #endregion
