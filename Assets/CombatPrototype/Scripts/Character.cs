@@ -13,7 +13,6 @@ public class Character : ILeader, IPointOfInterest {
     protected string _firstName;
     protected string _characterColorCode;
     protected int _id;
-    protected int _currentInteractionTick;
     protected int _doNotDisturb;
     protected int _doNotGetHungry;
     protected int _doNotGetTired;
@@ -21,7 +20,6 @@ public class Character : ILeader, IPointOfInterest {
     protected int _numOfWaitingForGoapThread;
     protected float _actRate;
     protected bool _isDead;
-    protected bool _isTracked;
     protected bool _hasAlreadyAskedForPlan;
     protected bool _isChatting;
     protected GENDER _gender;
@@ -110,27 +108,33 @@ public class Character : ILeader, IPointOfInterest {
     public Dictionary<int, Combat> combatHistory;
 
     //Needs
+    //Tiredness
     public int tiredness { get; protected set; }
-    private int tirednessLowerBound; //how low can this characters tiredness go
-    protected const int TIREDNESS_DEFAULT = 10000;
-    protected const int TIREDNESS_THRESHOLD_1 = 5000;
-    protected const int TIREDNESS_THRESHOLD_2 = 2500;
-    public int fullness { get; protected set; }
-    private int fullnessLowerBound; //how low can this characters fullness go
-    protected const int FULLNESS_DEFAULT = 10000;
-    protected const int FULLNESS_THRESHOLD_1 = 5000;
-    protected const int FULLNESS_THRESHOLD_2 = 2500;
-    public int happiness { get; protected set; }
-    private int happinessLowerBound; //how low can this characters happiness go
-    protected const int HAPPINESS_DEFAULT = 10000;
-    protected const int HAPPINESS_THRESHOLD_1 = 5000;
-    protected const int HAPPINESS_THRESHOLD_2 = 2500;
-    public int fullnessDecreaseRate { get; protected set; }
     public int tirednessDecreaseRate { get; protected set; }
-    public int happinessDecreaseRate { get; protected set; }
-    public int fullnessForcedTick { get; protected set; }
     public int tirednessForcedTick { get; protected set; }
     public int currentSleepTicks { get; protected set; }
+    private int tirednessLowerBound; //how low can this characters tiredness go
+    protected const int TIREDNESS_DEFAULT = 15000;
+    protected const int TIREDNESS_THRESHOLD_1 = 10000;
+    protected const int TIREDNESS_THRESHOLD_2 = 5000;
+
+    //Fullness
+    public int fullness { get; protected set; }
+    public int fullnessDecreaseRate { get; protected set; }
+    public int fullnessForcedTick { get; protected set; }
+    private int fullnessLowerBound; //how low can this characters fullness go
+    protected const int FULLNESS_DEFAULT = 15000;
+    protected const int FULLNESS_THRESHOLD_1 = 10000;
+    protected const int FULLNESS_THRESHOLD_2 = 5000;
+
+    //Happiness
+    public int happiness { get; protected set; }
+    public int happinessDecreaseRate { get; protected set; }
+    private int happinessLowerBound; //how low can this characters happiness go
+    protected const int HAPPINESS_DEFAULT = 15000;
+    protected const int HAPPINESS_THRESHOLD_1 = 10000;
+    protected const int HAPPINESS_THRESHOLD_2 = 5000;
+   
     public bool hasForcedFullness { get; protected set; }
     public bool hasForcedTiredness { get; protected set; }
     public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords { get; protected set; }
@@ -226,14 +230,6 @@ public class Character : ILeader, IPointOfInterest {
     public bool isPartOfHomeFaction { //is this character part of the faction that owns his home area
         get { return homeArea != null && homeArea.owner == faction; }
     }
-    public bool isTracked {
-        get {
-            if (GameManager.Instance.inspectAll) {
-                return true;
-            }
-            return _isTracked;
-        }
-    }
     public bool isChatting {
         get { return _isChatting; }
     }
@@ -252,9 +248,6 @@ public class Character : ILeader, IPointOfInterest {
     public CharacterRole role {
         get { return _role; }
     }
-    //public Job job {
-    //    get { return _job; }
-    //}
     public Faction faction {
         get { return _faction; }
     }
@@ -269,9 +262,6 @@ public class Character : ILeader, IPointOfInterest {
     }
     public virtual Party currentParty {
         get { return _currentParty; }
-    }
-    public HexTile currLocation {
-        get { return (_currentParty.specificLocation != null ? _currentParty.specificLocation.coreTile : null); }
     }
     public Area specificLocation {
         get { return _currentParty.specificLocation; }
@@ -366,9 +356,6 @@ public class Character : ILeader, IPointOfInterest {
     public float computedPower {
         get { return GetComputedPower(); }
     }
-    public ICHARACTER_TYPE icharacterType {
-        get { return ICHARACTER_TYPE.CHARACTER; }
-    }
     public Minion minion {
         get { return _minion; }
     }
@@ -403,9 +390,6 @@ public class Character : ILeader, IPointOfInterest {
     }
     public PlayerCharacterItem playerCharacterItem {
         get { return _playerCharacterItem; }
-    }
-    public int currentInteractionTick {
-        get { return _currentInteractionTick; }
     }
     public CombatCharacter currentCombatCharacter {
         get { return _currentCombatCharacter; }
@@ -494,7 +478,6 @@ public class Character : ILeader, IPointOfInterest {
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(GetClassForRole(role));
         originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
-        //AssignRandomJob();
         SetMorality(MORALITY.GOOD);
         GenerateSexuality();
         ResetToFullHP();
@@ -509,7 +492,6 @@ public class Character : ILeader, IPointOfInterest {
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
         originalClassName = _characterClass.className;
         SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
-        //AssignRandomJob();
         SetMorality(MORALITY.GOOD);
         GenerateSexuality();
         ResetToFullHP();
@@ -524,7 +506,6 @@ public class Character : ILeader, IPointOfInterest {
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
         originalClassName = _characterClass.className;
         SetName(data.name);
-        //AssignRandomJob();
         SetMorality(data.morality);
         GenerateSexuality();
         ResetToFullHP();
@@ -625,7 +606,6 @@ public class Character : ILeader, IPointOfInterest {
         _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
         combatHistory = new Dictionary<int, Combat>();
         currentInteractionTypes = new List<INTERACTION_TYPE>();
-        //characterToken = new CharacterToken(this);
         poiGoapActions = new List<INTERACTION_TYPE>();
         allGoapPlans = new List<GoapPlan>();
         targettedByAction = new List<GoapAction>();
@@ -636,7 +616,6 @@ public class Character : ILeader, IPointOfInterest {
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
         pendingActionsAfterMultiThread = new List<Action>();
-        //memories = new Memories();
         trapStructure = new TrapStructure();
         tirednessLowerBound = 0;
         fullnessLowerBound = 0;
@@ -651,8 +630,6 @@ public class Character : ILeader, IPointOfInterest {
         //for testing
         locationHistory = new List<string>();
         actionHistory = new List<string>();
-        //If this is a minion, this should not be initiated
-        //awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IAwareness>>();
         planner = new GoapPlanner(this);
        
         //hostiltiy
@@ -1384,50 +1361,6 @@ public class Character : ILeader, IPointOfInterest {
     #endregion
 
     #region Jobs
-    //private void AssignRandomJob() {
-    //    if (CharacterManager.Instance.IsClassADeadlySin(_characterClass.className)) {
-    //        AssignJob(_characterClass.jobType);
-    //    } else {
-    //        JOB[] jobs = new JOB[] { JOB.DIPLOMAT, JOB.DEBILITATOR, JOB.EXPLORER, JOB.INSTIGATOR, JOB.RAIDER, JOB.SEDUCER, JOB.SPY };
-    //        AssignJob(jobs[UnityEngine.Random.Range(0, jobs.Length)]);
-    //        //AssignJob(JOB.RAIDER);
-    //    }
-    //}
-    //public void AssignJob(JOB jobType) {
-    //    switch (jobType) {
-    //        case JOB.SPY:
-    //            _job = new Spy(this);
-    //            break;
-    //        case JOB.RAIDER:
-    //            _job = new Raider(this);
-    //            break;
-    //        case JOB.INSTIGATOR:
-    //            _job = new Instigator(this);
-    //            break;
-    //        case JOB.EXPLORER:
-    //            _job = new Explorer(this);
-    //            break;
-    //        case JOB.DEBILITATOR:
-    //            _job = new Dissuader(this);
-    //            break;
-    //        case JOB.DIPLOMAT:
-    //            _job = new Diplomat(this);
-    //            break;
-    //        case JOB.SEDUCER:
-    //            _job = new Recruiter(this);
-    //            break;
-    //        case JOB.LEADER:
-    //            _job = new LeaderJob(this);
-    //            break;
-    //        case JOB.WORKER:
-    //            _job = new Worker(this);
-    //            break;
-    //        default:
-    //            _job = new Job(this, JOB.NONE);
-    //            break;
-    //    }
-    //    _job.OnAssignJob();
-    //}
     public void SetCurrentJob(JobQueueItem job) {
         currentJob = job;
     }
@@ -2267,6 +2200,22 @@ public class Character : ILeader, IPointOfInterest {
     private bool IsSuicideJobStillValid(Character character, JobQueueItem item) {
         return character.GetNormalTrait("Forlorn") != null;
     }
+    /// <summary>
+    /// Gets the current priority of the character's current action or state.
+    /// If he/she has none, this will return a very high number.
+    /// </summary>
+    /// <returns></returns>
+    public int GetCurrentPriorityValue() {
+        if (stateComponent.currentState != null && stateComponent.currentState.job != null) {
+            return stateComponent.currentState.job.priority;
+        } else if (stateComponent.stateToDo != null && stateComponent.stateToDo.job != null) {
+            return stateComponent.stateToDo.job.priority;
+        } else if (currentAction != null && currentAction.parentPlan != null && currentAction.parentPlan.job != null) {
+            return currentAction.parentPlan.job.priority;
+        } else {
+            return 999999;
+        }
+    }
     #endregion
 
     #region Faction
@@ -2717,12 +2666,6 @@ public class Character : ILeader, IPointOfInterest {
     public override string ToString() {
         return name;
     }
-    public void SetTracked(bool state) {
-        _isTracked = state;
-        if (_isTracked) {
-            Messenger.Broadcast(Signals.CHARACTER_TRACKED, this);
-        }
-    }
     public void AdjustIsWaitingForInteraction(int amount) {
         isWaitingForInteraction += amount;
         if (isWaitingForInteraction < 0) {
@@ -2784,6 +2727,10 @@ public class Character : ILeader, IPointOfInterest {
         if (stateComponent.currentState != null && !stateComponent.currentState.isDone) {
             if (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                 //Character must not react if he/she is in flee or engage state
+                return false;
+            }
+            if (stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE) {
+                //Character must not react if he/she is in douse fire state
                 return false;
             }
         }
@@ -3472,9 +3419,9 @@ public class Character : ILeader, IPointOfInterest {
         //}
     }
     public void ThisCharacterWitnessedEvent(GoapAction witnessedEvent) {
-        //if (witnessedEvent.currentState == null) {
-        //    return; //TODO: Need to discuss (Witnessing assault that is in progress).
-        //}
+        if (witnessedEvent.currentState == null) {
+            throw new System.Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.goapName + " by " + witnessedEvent.actor.name + " but it does not have a current state!");
+        }
         Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);
         witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
         witnessLog.AddToFillers(null, Utilities.LogDontReplace(witnessedEvent.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
@@ -3635,21 +3582,26 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
-    //In watch event, it's either the character watch an action or combat state, it cannot be both
-    public void CreateWatchEvent(GoapAction actionToWatch, CombatState combatStateToWatch, Character targetCharacter) {
+    //In watch event, it's either the character watch an action or combat state, it cannot be both. (NOTE: Since 9/2/2019 Enabled watching of other states other than Combat)
+    public void CreateWatchEvent(GoapAction actionToWatch, CharacterState stateToWatch, Character targetCharacter) {
         string summary = "Creating watch event for " + name + " with target " + targetCharacter.name;
         if(actionToWatch != null) {
             summary += " involving " + actionToWatch.goapName;
-        }else if (combatStateToWatch != null) {
-            summary += " involving Combat";
+        }else if (stateToWatch != null) {
+            if (stateToWatch is CombatState) {
+                summary += " involving Combat";
+            } else if (stateToWatch is DouseFireState) {
+                summary += " involving Douse Fire";
+            }
+            
         }
         if (currentAction != null && !currentAction.isDone && currentAction.goapType == INTERACTION_TYPE.WATCH) {
             summary += "\n-Already watching an action, will not watch another one...";
             PrintLogIfActive(summary);
             return;
         }
-        if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT || stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)) {
-            summary += "\n-In combat state, must not watch...";
+        if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT || stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED || stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE)) {
+            summary += "\n-In combat state/berserked state/douse fire state, must not watch...";
             PrintLogIfActive(summary);
             return;
         }
@@ -3701,8 +3653,8 @@ public class Character : ILeader, IPointOfInterest {
         Watch watchAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.WATCH, this, targetCharacter) as Watch;
         if (actionToWatch != null) {
             watchAction.InitializeOtherData(new object[] { actionToWatch });
-        }else if (combatStateToWatch != null) {
-            watchAction.InitializeOtherData(new object[] { combatStateToWatch });
+        }else if (stateToWatch != null) {
+            watchAction.InitializeOtherData(new object[] { stateToWatch });
         }
         GoapNode goalNode = new GoapNode(null, watchAction.cost, watchAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
@@ -4429,10 +4381,6 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
 #endif
-        //if (trait is RelationshipTrait) {
-        //    RelationshipTrait rel = trait as RelationshipTrait;
-        //    AddRelationship(rel.targetCharacter, rel);
-        //} else 
         if (trait.type == TRAIT_TYPE.CRIMINAL 
             || (trait.effect == TRAIT_EFFECT.NEGATIVE && trait.type == TRAIT_TYPE.DISABLER)) {
             //when a character gains a criminal trait, drop all location jobs that this character is assigned to
@@ -5069,11 +5017,6 @@ public class Character : ILeader, IPointOfInterest {
         }
         PlanForcedFullnessRecovery();
         PlanForcedTirednessRecovery();
-
-        //suicide
-        if (GetNormalTrait("Forlorn") != null && !jobQueue.HasJob(JOB_TYPE.SUICIDE) && UnityEngine.Random.Range(0, 100) < 2 && _doNotDisturb <= 0) {
-            CreateSuicideJob();
-        }
 
         //This is to ensure that this character will not be idle forever
         //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
@@ -6161,9 +6104,6 @@ public class Character : ILeader, IPointOfInterest {
         if (!HasNeeds()) {
             return;
         }
-        //if (stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-        //    return; //Set needs to not decrease while in combat state, so as not to cancel plans (For Discussion)
-        //}
         if (_doNotGetHungry <= 0) {
             AdjustFullness(-(CharacterManager.FULLNESS_DECREASE_RATE + fullnessDecreaseRate));
         }

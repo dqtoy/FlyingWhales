@@ -8,7 +8,7 @@ public class SquadSaveData {
     public int squadID;
     public int leaderID;
     public string squadName;
-    public Dictionary<int, ICHARACTER_TYPE> memberIDs;
+    //public Dictionary<int, ICHARACTER_TYPE> memberIDs;
     public int emblemBGIndex;
     public int emblemIndex;
     public ColorSave squadColor;
@@ -22,11 +22,11 @@ public class SquadSaveData {
             leaderID  = squad.squadLeader.id;
         }
 
-        memberIDs = new Dictionary<int, ICHARACTER_TYPE>();
-        for (int i = 0; i < squad.squadMembers.Count; i++) {
-            Character currMember = squad.squadMembers[i];
-            memberIDs.Add(currMember.id, currMember.icharacterType);
-        }
+        //memberIDs = new Dictionary<int, ICHARACTER_TYPE>();
+        //for (int i = 0; i < squad.squadMembers.Count; i++) {
+        //    Character currMember = squad.squadMembers[i];
+        //    memberIDs.Add(currMember.id, currMember.icharacterType);
+        //}
 
         squadColor = new ColorSave(squad.squadColor);
     }

@@ -54,13 +54,16 @@ public class JobQueueItem {
     public virtual void OnCharacterAssignedToJob(Character character) {
         _onTakeJobAction?.Invoke(character, this);
     }
+    public virtual void OnCharacterUnassignedToJob(Character character) { }
     #endregion
 
     public void SetJobQueueParent(JobQueue parent) {
         jobQueueParent = parent;
     }
     public void SetAssignedCharacter(Character character) {
+        Character previousAssignedCharacter = null;
         if (assignedCharacter != null) {
+            previousAssignedCharacter = assignedCharacter;
             assignedCharacter.SetCurrentJob(null);
             assignedCharacter.PrintLogIfActive(GameManager.Instance.TodayLogString() + assignedCharacter.name + " quit job " + name);
         }
@@ -72,6 +75,8 @@ public class JobQueueItem {
         assignedCharacter = character;
         if (assignedCharacter != null) {
             OnCharacterAssignedToJob(assignedCharacter);
+        } else if (assignedCharacter == null && previousAssignedCharacter != null) {
+            OnCharacterUnassignedToJob(previousAssignedCharacter);
         }
     }
     public void SetCanTakeThisJobChecker(System.Func<Character, JobQueueItem, bool> function) {
@@ -121,6 +126,12 @@ public class JobQueueItem {
         } else {
             Debug.LogError("Cannot set initial priority for " + name + " job because priority is " + priority);
         }
+    }
+    #endregion
+
+    #region Utilities
+    public override string ToString() {
+        return jobType.ToString() + " assigned to " + assignedCharacter?.name ?? "None";
     }
     #endregion
 }

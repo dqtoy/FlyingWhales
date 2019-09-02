@@ -8,9 +8,12 @@ public class CharacterStateJob : JobQueueItem {
     public CharacterState assignedState { get; protected set; }
     public Area targetArea { get; protected set; }
 
+    public List<System.Action<Character>> onUnassignActions { get; private set; }
+
     public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, Area targetArea) : base(jobType) {
         this.targetState = state;
         this.targetArea = targetArea;
+        onUnassignActions = new List<System.Action<Character>>();
     }
 
     #region Overrides
@@ -47,6 +50,10 @@ public class CharacterStateJob : JobQueueItem {
         }
         return base.CanTakeJob(character);
     }
+    public override void OnCharacterUnassignedToJob(Character character) {
+        base.OnCharacterAssignedToJob(character);
+        ExecuteUnassignActions(character);
+    }
     #endregion
 
     public void SetAssignedState(CharacterState state) {
@@ -58,4 +65,21 @@ public class CharacterStateJob : JobQueueItem {
         }
         assignedState = state;
     }
+
+    #region Unassign Actions
+    public void AddOnUnassignAction(System.Action<Character> unassignAction) {
+        onUnassignActions.Add(unassignAction);
+    }
+    /// <summary>
+    /// Execute external actions that are triggered when this job becomes unassigned. 
+    /// NOTE: This also clears the list of said actions.
+    /// </summary>
+    private void ExecuteUnassignActions(Character unassignedCharacter) {
+        for (int i = 0; i < onUnassignActions.Count; i++) {
+            onUnassignActions[i].Invoke(unassignedCharacter);
+        }
+        onUnassignActions.Clear();
+    }
+    #endregion
+
 }

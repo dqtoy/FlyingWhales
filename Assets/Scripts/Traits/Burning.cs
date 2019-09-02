@@ -9,7 +9,7 @@ public class Burning : Trait {
     public override bool isPersistent { get { return true; } }
     private GameObject burningEffect;
 
-    public object sourceOfBurning { get; private set; }
+    public IBurningSource sourceOfBurning { get; private set; }
 
     public Burning() {
         name = "Burning";
@@ -67,35 +67,57 @@ public class Burning : Trait {
         
     }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-        if (characterThatWillDoJob.stateComponent.currentState == null || characterThatWillDoJob.stateComponent.currentState.characterState != CHARACTER_STATE.DOUSE_FIRE) {
-            return TryToCreateJob(traitOwner, characterThatWillDoJob);
+        if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_FIRE) && (characterThatWillDoJob.stateComponent.currentState == null || characterThatWillDoJob.stateComponent.currentState.characterState != CHARACTER_STATE.DOUSE_FIRE)) {
+            string summary = GameManager.Instance.TodayLogString() + characterThatWillDoJob.name + " saw a fire from source " + sourceOfBurning.ToString();
+            if(!TryToCreateDouseFireJob(traitOwner, characterThatWillDoJob)) {
+                summary += "\nDid not create douse fire job because maximum dousers has been reached!";
+                //if the character did not create a douse fire job. Check if he/she will watch instead. (Characters will just watch if their current actions are lower priority than Watch) NOTE: Lower priority value is considered higher priority
+                //also make sure that character is not already watching.
+                int currentPriorityValue = characterThatWillDoJob.GetCurrentPriorityValue();
+                if ((characterThatWillDoJob.currentAction == null || characterThatWillDoJob.currentAction.goapType != INTERACTION_TYPE.WATCH) 
+                    && currentPriorityValue > InteractionManager.Instance.GetInitialPriority(JOB_TYPE.WATCH)) {
+                    summary += "\nWill watch because current priority value is  " + currentPriorityValue.ToString();
+                    Character nearestDouser = sourceOfBurning.GetNearestDouserFrom(characterThatWillDoJob);
+                    if (nearestDouser != null && nearestDouser.stateComponent.currentState is DouseFireState) {
+                        characterThatWillDoJob.CreateWatchEvent(null, nearestDouser.stateComponent.currentState, nearestDouser);
+                        summary += "\nCreated watch event targetting " + nearestDouser.name;
+                    } else {
+                        summary += "\nDid not watch because nearest douser is null or nearest douser is not in douse fire state. Nearest douser is: " + (nearestDouser?.name??"None");
+                    }
+                } else {
+                    summary += "\nDid not watch because current priority value is " + currentPriorityValue.ToString() + " or is already doing watch.";
+                }
+                Debug.Log(summary);
+                return false;
+            }
+            summary += "\nCreated douse fire job!";
+            Debug.Log(summary);
+            return true;
         } 
-        //else if (characterThatWillDoJob.stateComponent.currentState.characterState == CHARACTER_STATE.DOUSE_FIRE) {
-        //    DouseFireState state = characterThatWillDoJob.stateComponent.currentState as DouseFireState;
-        //    if (state.sourceOfBurning != this.sourceOfBurning) {
-        //        return TryToCreateJob(traitOwner, characterThatWillDoJob);
-        //    }
-        //}
         return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
     }
-    private bool TryToCreateJob(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-        if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_FIRE)) {
+    private bool TryToCreateDouseFireJob(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+        //only create a remove fire job if the characters dousing the fire of a specific source is less than the required amount
+        if (sourceOfBurning.dousers.Count < 3) {  //3
+            bool willCreateDouseFireJob = false;
             if (traitOwner is Character) {
-            Character targetCharacter = traitOwner as Character;
-            //When a character sees someone burning, it must create a Remove Fire job targetting that character (if they are not enemies).
-            if (targetCharacter.isPartOfHomeFaction && characterThatWillDoJob.isPartOfHomeFaction
-                && (targetCharacter == characterThatWillDoJob || !characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY))) {
-                    CharacterStateJob job = new CharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE, characterThatWillDoJob.specificLocation);
-                    if (CanTakeRemoveFireJob(characterThatWillDoJob, targetCharacter)) {
-                        characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                        return true;
-                    }
+                Character targetCharacter = traitOwner as Character;
+                //When a character sees someone burning, it must create a Remove Fire job targetting that character (if they are not enemies).
+                if (targetCharacter.isPartOfHomeFaction && characterThatWillDoJob.isPartOfHomeFaction 
+                    && (targetCharacter == characterThatWillDoJob || !characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY))) {
+                    willCreateDouseFireJob = true;
                 }
             } else {
+                //if anything else other than a character always create douse fire job.
+                willCreateDouseFireJob = true;
+            }
+
+            if (willCreateDouseFireJob) {
                 CharacterStateJob job = new CharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE, characterThatWillDoJob.specificLocation);
                 if (CanTakeRemoveFireJob(characterThatWillDoJob, traitOwner)) {
-                    characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE);
+                    sourceOfBurning.AddCharactersDousingFire(characterThatWillDoJob); //adjust the number of characters dousing the fire source. NOTE: Make sure to reduce that number if a character decides to quit the job for any reason.
+                    job.AddOnUnassignAction(sourceOfBurning.RemoveCharactersDousingFire); //This is the action responsible for reducing the number of characters dousing the fire when a character decides to quit the job.
+                    characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE); //cancel all other plans except douse fire.
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;
                 }
@@ -106,9 +128,12 @@ public class Burning : Trait {
     public override bool IsTangible() {
         return true;
     }
+    public override string GetTestingData() {
+        return sourceOfBurning.ToString() + " - " + sourceOfBurning.dousers.Count.ToString();
+    }
     #endregion
 
-    public void SetSourceOfBurning(object obj) {
+    public void SetSourceOfBurning(IBurningSource obj) {
         sourceOfBurning = obj;
     }
 
@@ -176,4 +201,13 @@ public class Burning : Trait {
             }
         }
     }
+}
+
+
+public interface IBurningSource {
+    List<Character> dousers { get; }
+
+    void AddCharactersDousingFire(Character character);
+    void RemoveCharactersDousingFire(Character character);
+    Character GetNearestDouserFrom(Character otherCharacter);
 }

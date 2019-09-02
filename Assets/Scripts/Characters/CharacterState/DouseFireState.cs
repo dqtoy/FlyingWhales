@@ -85,6 +85,7 @@ public class DouseFireState : CharacterState {
         if (isFetchingWater) {
             isFetchingWater = false;
         }
+        currentTarget = null;
     }
     protected override void PerTickInState() {
         if (!StillHasFire() && stateComponent.character.currentAction == null && stateComponent.currentState == this) {

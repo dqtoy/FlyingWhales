@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Ignite : PlayerJobAction {
+public class Ignite : PlayerJobAction, IBurningSource {
 
     private List<LocationGridTile> highlightedTiles;
+
+    public List<Character> dousers { get; private set; }
 
     public Ignite() : base(INTERVENTION_ABILITY.IGNITE) {
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
         highlightedTiles = new List<LocationGridTile>();
+        dousers = new List<Character>();
     }
 
     #region Overrides
@@ -57,6 +60,28 @@ public class Ignite : PlayerJobAction {
         }
         return tiles.Where(x => x.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null && x.GetNormalTrait("Flammable") != null).ToList();
     }
+
+    #region Burning Source
+    public void AddCharactersDousingFire(Character character) {
+        dousers.Add(character);
+    }
+    public void RemoveCharactersDousingFire(Character character) {
+        dousers.Remove(character);
+    }
+    public Character GetNearestDouserFrom(Character otherCharacter) {
+        Character nearest = null;
+        float nearestDist = 9999f;
+        for (int i = 0; i < dousers.Count; i++) {
+            Character currDouser = dousers[i];
+            float dist = Vector2.Distance(currDouser.gridTileLocation.localLocation, otherCharacter.gridTileLocation.localLocation);
+            if (dist < nearestDist) {
+                nearest = currDouser;
+                nearestDist = dist;
+            }
+        }
+        return nearest;
+    }
+    #endregion
 }
 
 public class IgniteData : PlayerJobActionData {

@@ -380,43 +380,47 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "None";
         }
 
-        summary += "\nContent: " + tile.objHere?.ToString() ?? "None";
-        if (tile.objHere != null) {
-            summary += "\n\tObject State: " + tile.objHere.state.ToString();
-            if (tile.objHere is TreeObject) {
-                summary += "\n\tYield: " + (tile.objHere as TreeObject).yield.ToString();
-            } else if (tile.objHere is Ore) {
-                summary += "\n\tYield: " + (tile.objHere as Ore).yield.ToString();
-            } else if (tile.objHere is SupplyPile) {
-                summary += "\n\tSupplies in Pile: " + (tile.objHere as SupplyPile).suppliesInPile.ToString();
-            } else if (tile.objHere is FoodPile) {
-                summary += "\n\tFood in Pile: " + (tile.objHere as FoodPile).foodInPile.ToString();
-            } else if (tile.objHere is Table) {
-                summary += "\n\tFood in Table: " + (tile.objHere as Table).food.ToString();
-            } else if (tile.objHere is SpecialToken) {
-                summary += "\n\tCharacter Owner: " + (tile.objHere as SpecialToken).characterOwner?.name ?? "None";
-                summary += "\n\tFaction Owner: " + (tile.objHere as SpecialToken).factionOwner?.name ?? "None";
+        IPointOfInterest poi = tile.objHere;
+        if (poi == null) {
+            poi = tile.genericTileObject;
+        }
+        summary += "\nContent: " + poi?.ToString() ?? "None";
+        if (poi != null) {
+            summary += "\n\tObject State: " + poi.state.ToString();
+            if (poi is TreeObject) {
+                summary += "\n\tYield: " + (poi as TreeObject).yield.ToString();
+            } else if (poi is Ore) {
+                summary += "\n\tYield: " + (poi as Ore).yield.ToString();
+            } else if (poi is SupplyPile) {
+                summary += "\n\tSupplies in Pile: " + (poi as SupplyPile).suppliesInPile.ToString();
+            } else if (poi is FoodPile) {
+                summary += "\n\tFood in Pile: " + (poi as FoodPile).foodInPile.ToString();
+            } else if (poi is Table) {
+                summary += "\n\tFood in Table: " + (poi as Table).food.ToString();
+            } else if (poi is SpecialToken) {
+                summary += "\n\tCharacter Owner: " + (poi as SpecialToken).characterOwner?.name ?? "None";
+                summary += "\n\tFaction Owner: " + (poi as SpecialToken).factionOwner?.name ?? "None";
             }
             summary += "\n\tObject Traits: ";
-            if (tile.objHere.normalTraits.Count > 0) {
-                for (int i = 0; i < tile.objHere.normalTraits.Count; i++) {
-                    summary += "\n\t\t- " + tile.objHere.normalTraits[i].name + " - " + tile.objHere.normalTraits[i].GetTestingData();
+            if (poi.normalTraits.Count > 0) {
+                for (int i = 0; i < poi.normalTraits.Count; i++) {
+                    summary += "\n\t\t- " + poi.normalTraits[i].name + " - " + poi.normalTraits[i].GetTestingData();
                 }
-
+            } else {
+                summary += "None";
+            }
+            summary += "\n\tJobs Targetting this: ";
+            if (poi.allJobsTargettingThis.Count > 0) {
+                for (int i = 0; i < poi.allJobsTargettingThis.Count; i++) {
+                    summary += "\n\t\t- " + poi.allJobsTargettingThis[i].ToString();
+                }
             } else {
                 summary += "None";
             }
         }
         if (tile.structure != null) {
             summary += "\nStructure: " + tile.structure.ToString();
-            if (tile.structure is Dwelling) {
-                Dwelling dwelling = tile.structure as Dwelling;
-                summary += "\n\tFacilities: ";
-                foreach (KeyValuePair<FACILITY_TYPE, int> keyValuePair in dwelling.facilities) {
-                    summary += "\n\t\t- " + keyValuePair.Key.ToString() + " - " + keyValuePair.Value.ToString();
-                }
-            }
-            summary += "\nCharacters Here: ";
+            summary += "\nCharacters at " + tile.structure.ToString() + ": ";
             if (tile.structure.charactersHere.Count > 0) {
                 for (int i = 0; i < tile.structure.charactersHere.Count; i++) {
                     Character currCharacter = tile.structure.charactersHere[i];
@@ -450,7 +454,6 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\n\tMove Speed: " + character.marker.pathfindingAI.speed.ToString();
         summary += "\n\tAttack Range: " + character.characterClass.attackRange.ToString();
         summary += "\n\tAttack Speed: " + character.attackSpeed.ToString();
-        summary += "\n\tTangent: " + character.marker.pathfindingAI.GetTangent().ToString();
         summary += "\n\tTarget POI: " + character.marker.targetPOI?.ToString() ?? "None";
         summary += "\n\tBase Structure: " + (character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None");
         summary += "\n\tDestination Tile: ";

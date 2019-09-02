@@ -764,6 +764,7 @@ public class CharacterMarker : PooledObject {
     }
     public void AdjustIsStoppedByOtherCharacter(int amount) {
         isStoppedByOtherCharacter += amount;
+        isStoppedByOtherCharacter = Mathf.Max(0, isStoppedByOtherCharacter);
         UpdateAnimation();
     }
     public void SetActiveState(bool state) {
