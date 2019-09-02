@@ -7,7 +7,7 @@ public class AssaultCharacter : GoapAction {
     //private Character winner;
     private Character loser;
 
-    public AssaultCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASSAULT_ACTION_NPC, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public AssaultCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASSAULT_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
         doesNotStopTargetCharacter = true;
     }
@@ -491,7 +491,8 @@ public class AssaultCharacter : GoapAction {
 }
 
 public class AssaultCharacterData : GoapActionData {
-    public AssaultCharacterData() : base(INTERACTION_TYPE.ASSAULT_ACTION_NPC) {
+    public AssaultCharacterData() : base(INTERACTION_TYPE.ASSAULT_CHARACTER) {
+        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

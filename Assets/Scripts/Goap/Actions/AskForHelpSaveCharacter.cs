@@ -67,6 +67,7 @@ public class AskForHelpSaveCharacter : GoapAction {
 
 public class AskForHelpSaveCharacterData : GoapActionData {
     public AskForHelpSaveCharacterData() : base(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

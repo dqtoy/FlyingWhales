@@ -65,6 +65,7 @@ public class Strangle : GoapAction {
 
 public class StrangleData : GoapActionData {
     public StrangleData() : base(INTERACTION_TYPE.STRANGLE) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

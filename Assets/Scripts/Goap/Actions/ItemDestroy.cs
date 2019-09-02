@@ -101,6 +101,7 @@ public class ItemDestroy : GoapAction {
 
 public class ItemDestroyData : GoapActionData {
     public ItemDestroyData() : base(INTERACTION_TYPE.ITEM_DESTROY) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }
 

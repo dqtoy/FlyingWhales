@@ -88,6 +88,7 @@ public class HuntingToDrinkBlood : GoapAction {
 
 public class HuntingToDrinkBloodData : GoapActionData {
     public HuntingToDrinkBloodData() : base(INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

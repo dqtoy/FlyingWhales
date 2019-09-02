@@ -113,6 +113,7 @@ public class DropItemWarehouse : GoapAction {
 
 public class DropItemWarehouseData : GoapActionData {
     public DropItemWarehouseData() : base(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

@@ -8,7 +8,7 @@ public class EatAtTable : GoapAction {
     private string poisonedResult;
     public Table targetTable { get; private set; }
 
-    public EatAtTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_DWELLING_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public EatAtTable(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_AT_TABLE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Eat_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         //isNotificationAnIntel = false;
@@ -255,7 +255,8 @@ public class EatAtTable : GoapAction {
 }
 
 public class EatAtTableData : GoapActionData {
-    public EatAtTableData() : base(INTERACTION_TYPE.EAT_DWELLING_TABLE) {
+    public EatAtTableData() : base(INTERACTION_TYPE.EAT_AT_TABLE) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

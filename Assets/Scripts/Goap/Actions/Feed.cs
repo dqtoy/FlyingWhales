@@ -148,6 +148,7 @@ public class Feed : GoapAction {
 
 public class FeedData : GoapActionData {
     public FeedData() : base(INTERACTION_TYPE.FEED) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }
 

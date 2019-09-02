@@ -7,7 +7,7 @@ public class StealFromCharacter : GoapAction {
     private SpecialToken _targetItem;
     private Character _targetCharacter;
 
-    public StealFromCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STEAL_CHARACTER, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
+    public StealFromCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STEAL_FROM_CHARACTER, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
         //validTimeOfDays = new TIME_IN_WORDS[] {
         //    TIME_IN_WORDS.EARLY_NIGHT,
         //    TIME_IN_WORDS.LATE_NIGHT,
@@ -366,7 +366,8 @@ public class StealFromCharacter : GoapAction {
 }
 
 public class StealFromCharacterData : GoapActionData {
-    public StealFromCharacterData() : base(INTERACTION_TYPE.STEAL_CHARACTER) {
+    public StealFromCharacterData() : base(INTERACTION_TYPE.STEAL_FROM_CHARACTER) {
+        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

@@ -104,5 +104,6 @@ public class FirstAidCharacter : GoapAction {
 
 public class FirstAidCharacterData : GoapActionData {
     public FirstAidCharacterData() : base(INTERACTION_TYPE.FIRST_AID_CHARACTER) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
     }
 }

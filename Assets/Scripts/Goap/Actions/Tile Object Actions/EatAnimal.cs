@@ -5,7 +5,7 @@ using UnityEngine;
 public class EatAnimal : GoapAction {
     protected override string failActionState { get { return "Eat Fail"; } }
 
-    public EatAnimal(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_SMALL_ANIMAL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public EatAnimal(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.EAT_ANIMAL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Eat_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
@@ -96,7 +96,8 @@ public class EatAnimal : GoapAction {
 }
 
 public class EatAnimalData : GoapActionData {
-    public EatAnimalData() : base(INTERACTION_TYPE.EAT_SMALL_ANIMAL) {
+    public EatAnimalData() : base(INTERACTION_TYPE.EAT_ANIMAL) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }
 

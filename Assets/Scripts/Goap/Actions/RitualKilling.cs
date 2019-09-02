@@ -56,6 +56,7 @@ public class RitualKilling : GoapAction {
 
 public class RitualKillingData : GoapActionData {
     public RitualKillingData() : base(INTERACTION_TYPE.RITUAL_KILLING) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

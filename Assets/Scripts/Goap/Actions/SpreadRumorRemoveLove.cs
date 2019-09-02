@@ -110,6 +110,7 @@ public class SpreadRumorRemoveLove : GoapAction {
 
 public class SpreadRumorRemoveLoveData : GoapActionData {
     public SpreadRumorRemoveLoveData() : base(INTERACTION_TYPE.SPREAD_RUMOR_REMOVE_LOVE) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

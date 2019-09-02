@@ -27,13 +27,13 @@ public class Kleptomaniac : Trait {
         owner = sourceCharacter as Character;
         owner.AdjustHappinessDecreaseRate(_happinessDecreaseRate);
         base.OnAddTrait(sourceCharacter);
-        owner.AddInteractionType(INTERACTION_TYPE.STEAL_CHARACTER);
+        owner.AddInteractionType(INTERACTION_TYPE.STEAL_FROM_CHARACTER);
         owner.AddInteractionType(INTERACTION_TYPE.STEAL);
         Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
     }
     public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         base.OnRemoveTrait(sourceCharacter, removedBy);
-        owner.RemoveInteractionType(INTERACTION_TYPE.STEAL_CHARACTER);
+        owner.RemoveInteractionType(INTERACTION_TYPE.STEAL_FROM_CHARACTER);
         owner.RemoveInteractionType(INTERACTION_TYPE.STEAL);
         owner.AdjustHappinessDecreaseRate(-_happinessDecreaseRate);
         Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
@@ -77,7 +77,7 @@ public class Kleptomaniac : Trait {
             Character targetCharacter = targetPOI as Character;
             if (characterThatWillDoJob.currentAction != null && characterThatWillDoJob.currentAction.goapType == INTERACTION_TYPE.ROAMING_TO_STEAL && !characterThatWillDoJob.currentAction.isDone) {
                 if (characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter)) {
-                    GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentAction.parentPlan.job.jobType, INTERACTION_TYPE.STEAL_CHARACTER, targetCharacter);
+                    GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentAction.parentPlan.job.jobType, INTERACTION_TYPE.STEAL_FROM_CHARACTER, targetCharacter);
                     job.SetIsStealth(true);
                     characterThatWillDoJob.currentAction.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentAction.parentPlan.job);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);

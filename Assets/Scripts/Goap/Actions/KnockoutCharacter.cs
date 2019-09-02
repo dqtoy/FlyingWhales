@@ -265,6 +265,7 @@ public class KnockoutCharacter : GoapAction {
 
 public class KnockoutCharacterData : GoapActionData {
     public KnockoutCharacterData() : base(INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

@@ -97,6 +97,7 @@ public class Play : GoapAction {
 
 public class PlayData : GoapActionData {
     public PlayData() : base(INTERACTION_TYPE.PLAY) {
+        racesThatCanDoAction = new RACE[] { RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON, };
         requirementAction = Requirement;
     }
 

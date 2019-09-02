@@ -43,6 +43,7 @@ public class RepairTileObject : GoapAction {
 
 public class RepairTileObjectData : GoapActionData {
     public RepairTileObjectData() : base(INTERACTION_TYPE.REPAIR_TILE_OBJECT) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         //requirementAction = Requirement;
     }
 

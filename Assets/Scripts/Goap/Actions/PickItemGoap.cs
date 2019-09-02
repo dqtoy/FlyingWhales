@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PickItemGoap : GoapAction {
-    public PickItemGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PICK_ITEM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public PickItemGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PICK_ITEM_GOAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Explore_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         isNotificationAnIntel = false;
@@ -64,7 +64,8 @@ public class PickItemGoap : GoapAction {
 }
 
 public class PickItemGoapData : GoapActionData {
-    public PickItemGoapData() : base(INTERACTION_TYPE.PICK_ITEM) {
+    public PickItemGoapData() : base(INTERACTION_TYPE.PICK_ITEM_GOAP) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }
 

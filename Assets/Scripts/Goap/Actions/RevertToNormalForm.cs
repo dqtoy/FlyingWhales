@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RevertToNormalForm : GoapAction {
 
-    public RevertToNormalForm(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REVERT_TO_NORMAL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public RevertToNormalForm(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
     }
@@ -131,6 +131,7 @@ public class RevertToNormalForm : GoapAction {
 }
 
 public class RevertToNormalFormData : GoapActionData {
-    public RevertToNormalFormData() : base(INTERACTION_TYPE.REVERT_TO_NORMAL) {
+    public RevertToNormalFormData() : base(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
 }

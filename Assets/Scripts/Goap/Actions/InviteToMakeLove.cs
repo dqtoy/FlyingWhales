@@ -443,6 +443,7 @@ public class InviteToMakeLove : GoapAction {
 
 public class InviteToMakeLoveData : GoapActionData {
     public InviteToMakeLoveData() : base(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

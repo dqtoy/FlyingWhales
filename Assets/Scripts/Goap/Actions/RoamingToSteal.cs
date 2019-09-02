@@ -88,6 +88,7 @@ public class RoamingToSteal : GoapAction {
 
 public class RoamingToStealData : GoapActionData {
     public RoamingToStealData() : base(INTERACTION_TYPE.ROAMING_TO_STEAL) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

@@ -116,6 +116,7 @@ public class Spit : GoapAction {
 
 public class SpitData : GoapActionData {
     public SpitData() : base(INTERACTION_TYPE.SPIT) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

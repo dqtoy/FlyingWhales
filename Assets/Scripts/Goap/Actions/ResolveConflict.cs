@@ -72,6 +72,7 @@ public class ResolveConflict : GoapAction {
 
 public class ResolveConflictData : GoapActionData {
     public ResolveConflictData() : base(INTERACTION_TYPE.RESOLVE_CONFLICT) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

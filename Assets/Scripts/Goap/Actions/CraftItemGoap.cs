@@ -10,7 +10,7 @@ public class CraftItemGoap : GoapAction {
         get { return actor.currentStructure; }
     }
 
-    public CraftItemGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRAFT_ITEM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public CraftItemGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRAFT_ITEM_GOAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Work_Icon;
         hasSetCraftedItem = false;
@@ -105,7 +105,8 @@ public class CraftItemGoap : GoapAction {
 }
 
 public class CraftItemGoapData : GoapActionData {
-    public CraftItemGoapData() : base(INTERACTION_TYPE.CRAFT_ITEM) {
+    public CraftItemGoapData() : base(INTERACTION_TYPE.CRAFT_ITEM_GOAP) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

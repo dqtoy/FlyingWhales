@@ -84,6 +84,7 @@ public class RememberFallen : GoapAction {
 
 public class RememberFallenData : GoapActionData {
     public RememberFallenData() : base(INTERACTION_TYPE.REMEMBER_FALLEN) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

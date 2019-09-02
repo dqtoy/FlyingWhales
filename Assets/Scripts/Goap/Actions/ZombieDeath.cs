@@ -35,5 +35,6 @@ public class ZombieDeath : GoapAction {
 
 public class ZombieDeathData : GoapActionData {
     public ZombieDeathData() : base(INTERACTION_TYPE.ZOMBIE_DEATH) {
+        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
     }
 }

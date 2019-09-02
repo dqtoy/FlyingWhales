@@ -9,7 +9,7 @@ public class SmallAnimal : TileObject {
 
     public SmallAnimal(LocationStructure location) {
         this.structureLocation = location;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_SMALL_ANIMAL, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_ANIMAL, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.SMALL_ANIMAL);
     }
 

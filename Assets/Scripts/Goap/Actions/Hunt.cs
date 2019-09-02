@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Hunt : GoapAction {
-    public Hunt(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.HUNT_ACTION, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Hunt(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.HUNT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Eat_Icon;
     }
 

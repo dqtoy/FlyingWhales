@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AbductCharacter : GoapAction {
-    public AbductCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ABDUCT_ACTION, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
+    public AbductCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ABDUCT_CHARACTER, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
         //_isStealthAction = true;
     }
@@ -137,7 +137,8 @@ public class AbductCharacter : GoapAction {
 }
 
 public class AbductCharacterData: GoapActionData {
-    public AbductCharacterData() : base(INTERACTION_TYPE.ABDUCT_ACTION) {
+    public AbductCharacterData() : base(INTERACTION_TYPE.ABDUCT_CHARACTER) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

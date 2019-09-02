@@ -118,6 +118,7 @@ public class EatCharacter : GoapAction {
 
 public class EatCharacterData : GoapActionData {
     public EatCharacterData() : base(INTERACTION_TYPE.EAT_CHARACTER) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }
 

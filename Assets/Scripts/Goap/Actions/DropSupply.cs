@@ -78,6 +78,7 @@ public class DropSupply : GoapAction {
 
 public class DropSupplyData : GoapActionData {
     public DropSupplyData() : base(INTERACTION_TYPE.DROP_SUPPLY) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

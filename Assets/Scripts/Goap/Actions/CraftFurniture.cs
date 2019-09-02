@@ -110,6 +110,7 @@ public class CraftFurniture : GoapAction {
 
 public class CraftFurnitureData : GoapActionData {
     public CraftFurnitureData() : base(INTERACTION_TYPE.CRAFT_FURNITURE) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

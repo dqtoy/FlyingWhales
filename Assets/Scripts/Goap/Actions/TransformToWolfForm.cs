@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TransformToWolfForm : GoapAction {
 
-    public TransformToWolfForm(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public TransformToWolfForm(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
     }
@@ -120,6 +120,7 @@ public class TransformToWolfForm : GoapAction {
 }
 
 public class TransformToWolfFormData : GoapActionData {
-    public TransformToWolfFormData() : base(INTERACTION_TYPE.TRANSFORM_TO_WOLF) {
+    public TransformToWolfFormData() : base(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
 }

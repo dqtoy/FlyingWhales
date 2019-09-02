@@ -10,7 +10,7 @@ public class Ore : TileObject {
 
     public Ore(LocationStructure location) {
         this.structureLocation = location;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_ACTION, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_GOAP, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.ORE);
         yield = Random.Range(15, 36);
     }

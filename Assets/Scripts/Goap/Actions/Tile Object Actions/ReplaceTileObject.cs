@@ -99,6 +99,7 @@ public class ReplaceTileObject : GoapAction {
 
 public class ReplaceTileObjectData : GoapActionData {
     public ReplaceTileObjectData() : base(INTERACTION_TYPE.REPLACE_TILE_OBJECT) {
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 
