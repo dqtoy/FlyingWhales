@@ -12,6 +12,7 @@ public class Zombie_Virus : Trait {
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
+        mutuallyExclusive = new string[] { "Robust" };
     }
 
     #region Override

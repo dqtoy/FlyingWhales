@@ -19,6 +19,7 @@ public class Plagued : Trait {
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = GameManager.ticksPerDay * 3;
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
+        mutuallyExclusive = new string[] { "Robust" };
     }
 
     #region Overrides

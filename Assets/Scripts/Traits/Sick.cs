@@ -16,6 +16,7 @@ public class Sick : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 480;
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
+        mutuallyExclusive = new string[] { "Robust" };
         //effects = new List<TraitEffect>();
     }
 

@@ -78,9 +78,10 @@ public class EatAtTable : GoapAction {
             actor.AdjustDoNotGetHungry(-1);
         }else if(currentState.name == "Eat Poisoned") {
             actor.AdjustDoNotGetHungry(-1);
-            Sick sick = new Sick();
-            for (int i = 0; i < poisonedTrait.responsibleCharacters.Count; i++) {
-                AddTraitTo(actor, sick, poisonedTrait.responsibleCharacters[i]);
+            if (poisonedResult == "Sick") {
+                for (int i = 0; i < poisonedTrait.responsibleCharacters.Count; i++) {
+                    AddTraitTo(actor, "Sick", poisonedTrait.responsibleCharacters[i]);
+                }
             }
         }
     }
@@ -121,10 +122,15 @@ public class EatAtTable : GoapAction {
         WeightedDictionary<string> result = poisonedTrait.GetResultWeights();
         string res = result.PickRandomElementGivenWeights();
         if (res == "Sick") {
-            log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_sick", this);
+            string logKey = "eat poisoned_sick";
+            poisonedResult = "Sick";
+            if (actor.GetNormalTrait("Robust") != null) {
+                poisonedResult = "Robust";
+                logKey = "eat poisoned_robust";
+            }
+            log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", logKey, this);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-            poisonedResult = "Sick";
         } else if (res == "Death"){
             log = new Log(GameManager.Instance.Today(), "GoapAction", "EatAtTable", "eat poisoned_killed", this);
             log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -153,7 +159,7 @@ public class EatAtTable : GoapAction {
                 sick.AddCharacterResponsibleForTrait(poisonedTrait.responsibleCharacters[i]);
             }
             AddTraitTo(actor, sick);
-        } else {
+        } else if (poisonedResult == "Death") {
             if (parentPlan.job != null) {
                 parentPlan.job.SetCannotCancelJob(true);
             }

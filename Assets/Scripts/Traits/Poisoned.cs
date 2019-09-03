@@ -18,6 +18,7 @@ public class Poisoned : Trait {
         //effects = new List<TraitEffect>();
         _responsibleCharacters = new List<Character>();
         awareCharacters = new List<Character>();
+        mutuallyExclusive = new string[] { "Robust" };
         SetLevel(2);
     }
 

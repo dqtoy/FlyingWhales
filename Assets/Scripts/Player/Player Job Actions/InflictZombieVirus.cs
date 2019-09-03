@@ -59,7 +59,7 @@ public class InflictZombieVirus : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Zombie Virus") != null) {
+        if (targetCharacter.GetNormalTrait("Zombie Virus", "Robust") != null) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -90,7 +90,7 @@ public class InflictZombieVirus : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Zombie Virus") != null) {
+        if (targetCharacter.GetNormalTrait("Zombie Virus", "Robust") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);

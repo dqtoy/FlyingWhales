@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Drink : GoapAction {
     public Poisoned poisonedTrait { get; private set; }
+    private string poisonedResult;
 
     public Drink(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //shouldIntelNotificationOnlyIfActorIsActive = true;
@@ -80,20 +81,35 @@ public class Drink : GoapAction {
     public void PreDrinkPoisoned() {
         actor.AdjustDoNotGetLonely(1);
         RemoveTraitFrom(poiTarget, "Poisoned");
+        Log log = null;
+        WeightedDictionary<string> result = poisonedTrait.GetResultWeights();
+        string res = result.PickRandomElementGivenWeights();
+        if (res == "Sick") {
+            string logKey = "drink poisoned_sick";
+            poisonedResult = "Sick";
+            if (actor.GetNormalTrait("Robust") != null) {
+                poisonedResult = "Robust";
+                logKey = "drink poisoned_robust";
+            }
+            log = new Log(GameManager.Instance.Today(), "GoapAction", "Drink", logKey, this);
+            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        } else if (res == "Death") {
+            log = new Log(GameManager.Instance.Today(), "GoapAction", "Drink", "drink poisoned_killed", this);
+            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            poisonedResult = "Death";
+        }
+        currentState.OverrideDescriptionLog(log);
     }
     public void PerTickDrinkPoisoned() {
         actor.AdjustHappiness(200);
     }
     public void AfterDrinkPoisoned() {
         actor.AdjustDoNotGetLonely(-1);
-        WeightedDictionary<string> result = poisonedTrait.GetResultWeights();
-        string res = result.PickRandomElementGivenWeights();
-        if (res == "Sick") {
-            Sick sick = new Sick();
+        if (poisonedResult == "Sick") {
             for (int i = 0; i < poisonedTrait.responsibleCharacters.Count; i++) {
-                AddTraitTo(actor, sick, poisonedTrait.responsibleCharacters[i]);
+                AddTraitTo(actor, poisonedResult, poisonedTrait.responsibleCharacters[i]);
             }
-        } else {
+        } else if (poisonedResult == "Death") {
             if (parentPlan.job != null) {
                 parentPlan.job.SetCannotCancelJob(true);
             }

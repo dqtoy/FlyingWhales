@@ -1422,7 +1422,9 @@ public class CharacterMarker : PooledObject {
     }
     public bool WillCharacterTransferEngageToFleeList(bool isLethal) {
         bool willTransfer = false;
-        if (!isLethal && !HasLethalCombatTarget()) {
+        if(character.GetNormalTrait("Coward") != null && character.GetNormalTrait("Berserked") == null) {
+            willTransfer = true;
+        } else if (!isLethal && !HasLethalCombatTarget()) {
             willTransfer = false;
         }
         //- if character is berserked, must not flee

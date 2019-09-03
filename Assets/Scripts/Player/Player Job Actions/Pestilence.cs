@@ -59,7 +59,7 @@ public class Pestilence : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Plagued") != null) {
+        if (targetCharacter.GetNormalTrait("Plagued", "Robust") != null) {
             return false;
         }
         //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -93,7 +93,7 @@ public class Pestilence : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Plagued") != null) {
+        if (targetCharacter.GetNormalTrait("Plagued", "Robust") != null) {
 
             return false;
         }
