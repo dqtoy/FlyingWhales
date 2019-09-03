@@ -4171,7 +4171,9 @@ public class Character : ILeader, IPointOfInterest {
         //}
 
         string[] traitPool = new string[] { "Curious", "Vigilant", "Doctor", "Diplomatic",
-        "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal" };
+            "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
+            "Herbalist", "Optimist", "Pessimist", "Fast", "Prude", "Horny"
+        };
         //"Kleptomaniac"
 
         List<string> buffTraits = new List<string>();
@@ -4205,6 +4207,15 @@ public class Character : ILeader, IPointOfInterest {
             throw new Exception("There are no buff traits!");
         }
 
+        Trait buffTrait;
+        AddTrait(chosenBuffTraitName, out buffTrait);
+        if (buffTrait.mutuallyExclusive != null) {
+            buffTraits = Utilities.RemoveElements(buffTraits, buffTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
+            neutralTraits = Utilities.RemoveElements(neutralTraits, buffTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+            flawTraits = Utilities.RemoveElements(flawTraits, buffTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
+        }
+        
+
         //Second trait is a random buff or neutral trait
         string chosenBuffOrNeutralTraitName = string.Empty;
         if (buffTraits.Count > 0 && neutralTraits.Count > 0) {
@@ -4218,9 +4229,10 @@ public class Character : ILeader, IPointOfInterest {
                 int index = UnityEngine.Random.Range(0, neutralTraits.Count);
                 chosenBuffOrNeutralTraitName = neutralTraits[index];
                 neutralTraits.RemoveAt(index);
-                if(chosenBuffOrNeutralTraitName == "Music Lover") {
-                    flawTraits.Remove("Music Hater");
-                }
+                ///Changed this to use mutual exclusive list per trait <see cref= "Trait.mutuallyExclusive"/>
+                //if(chosenBuffOrNeutralTraitName == "Music Lover") {
+                //    flawTraits.Remove("Music Hater");
+                //}
             }
         } else {
             if(buffTraits.Count > 0) {
@@ -4231,11 +4243,20 @@ public class Character : ILeader, IPointOfInterest {
                 int index = UnityEngine.Random.Range(0, neutralTraits.Count);
                 chosenBuffOrNeutralTraitName = neutralTraits[index];
                 neutralTraits.RemoveAt(index);
-                if (chosenBuffOrNeutralTraitName == "Music Lover") {
-                    flawTraits.Remove("Music Hater");
-                }
+                ///Changed this to use mutual exclusive list per trait <see cref= "Trait.mutuallyExclusive"/>
+                //if (chosenBuffOrNeutralTraitName == "Music Lover") {
+                //    flawTraits.Remove("Music Hater");
+                //}
             }
         }
+        Trait buffOrNeutralTrait;
+        AddTrait(chosenBuffOrNeutralTraitName, out buffOrNeutralTrait);
+        if (buffOrNeutralTrait.mutuallyExclusive != null) {
+            buffTraits = Utilities.RemoveElements(buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
+            neutralTraits = Utilities.RemoveElements(neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+            flawTraits = Utilities.RemoveElements(flawTraits, buffOrNeutralTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
+        }
+
 
         //Third trait is a random neutral or flaw traits
         string chosenFlawOrNeutralTraitName = string.Empty;
@@ -4262,40 +4283,7 @@ public class Character : ILeader, IPointOfInterest {
                 neutralTraits.RemoveAt(index);
             }
         }
-
-        AddTrait(chosenBuffTraitName);
-        AddTrait(chosenBuffOrNeutralTraitName);
         AddTrait(chosenFlawOrNeutralTraitName);
-
-        //int chance = UnityEngine.Random.Range(0, 100);
-        //if (chance < 35 || role.roleType == CHARACTER_ROLE.CIVILIAN) { //ensured that all civilans are craftsmen
-        //    AddTrait("Craftsman");
-        //}
-        //if (UnityEngine.Random.Range(0, 100) < 50) {
-        //    AddTrait("Curious");
-        //}
-        //if (UnityEngine.Random.Range(0, 100) < 30) {
-        //    AddTrait("Vigilant");
-        //}
-        //if (UnityEngine.Random.Range(0, 100) < 30) {
-        //    AddTrait("Doctor");
-        //}
-        //if (UnityEngine.Random.Range(0, 100) < 30) {
-        //    AddTrait("Diplomatic");
-        //}
-        //if (UnityEngine.Random.Range(0, 100) < 30) {
-        //    AddTrait("Fireproof");
-        //} else {
-        //    AddTrait("Flammable");
-        //}
-        //if (UnityEngine.Random.Range(0, 2) == 0) {
-        //    AddTrait("MusicLover");
-        //} else {
-        //    AddTrait("MusicHater");
-        //}
-        //if (UnityEngine.Random.Range(0, 100) < 15) {
-        //    AddTrait("Accident Prone");
-        //}
 
         AddTrait("Character Trait");
     }
@@ -4318,6 +4306,15 @@ public class Character : ILeader, IPointOfInterest {
             AddTrait("Goblin Slayer");
         } else if (race == RACE.ABOMINATION) {
             AddTrait("Elf Slayer");
+        }
+    }
+    public bool AddTrait(string traitName, out Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
+        if (AttributeManager.Instance.IsInstancedTrait(traitName)) {
+            trait = AttributeManager.Instance.CreateNewInstancedTraitClass(traitName);
+            return AddTrait(trait, characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
+        } else {
+            trait = AttributeManager.Instance.allTraits[traitName];
+            return AddTrait(trait, characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
         }
     }
     public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
@@ -4675,6 +4672,12 @@ public class Character : ILeader, IPointOfInterest {
             AdjustDoNotGetTired(1);
             AdjustDoNotGetHungry(1);
             AdjustDoNotGetLonely(1);
+        } else if (trait.name == "Optimist") {
+            AdjustHappinessDecreaseRate(-320); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
+        } else if (trait.name == "Pessimist") {
+            AdjustHappinessDecreaseRate(320); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
+        } else if (trait.name == "Fast") {
+            AdjustSpeedModifier(0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
         }
         //else if (trait.name == "Hungry") {
         //    CreateFeedJob();
@@ -4774,6 +4777,12 @@ public class Character : ILeader, IPointOfInterest {
             AdjustDoNotGetTired(-1);
             AdjustDoNotGetHungry(-1);
             AdjustDoNotGetLonely(-1);
+        } else if (trait.name == "Optimist") {
+            AdjustHappinessDecreaseRate(320); //Reference: https://trello.com/c/Aw8kIbB1/2654-optimist
+        } else if (trait.name == "Pessimist") {
+            AdjustHappinessDecreaseRate(-320); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
+        } else if (trait.name == "Fast") {
+            AdjustSpeedModifier(-0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
         }
 
         if (trait.effects != null) {

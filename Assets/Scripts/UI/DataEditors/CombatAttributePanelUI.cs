@@ -43,6 +43,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
     public GameObject traitEffectBtnGO;
     public GameObject requirementBtnGO;
     public GameObject requirementsParentGO;
+    public InputField mutuallyExclusiveInput;
     [NonSerialized] public TraitEffectButton currentSelectedTraitEffectButton;
     [NonSerialized] public RequirementButton currentSelectedRequirementButton;
 
@@ -137,12 +138,14 @@ public class CombatAttributePanelUI : MonoBehaviour {
         descriptionInput.text = string.Empty;
         thoughtInput.text = string.Empty;
         traitEffectDescriptionInput.text = string.Empty;
+        mutuallyExclusiveInput.text = string.Empty;
         amountInput.text = "0";
         durationInput.text = "0";
 
         percentageToggle.isOn = false;
         hasRequirementToggle.isOn = false;
         isNotToggle.isOn = false;
+        _isHidden.isOn = false;
 
         _effects.Clear();
         _requirements.Clear();
@@ -177,14 +180,15 @@ public class CombatAttributePanelUI : MonoBehaviour {
             name = nameInput.text,
             description = descriptionInput.text,
             thoughtText = thoughtInput.text,
-            type = (TRAIT_TYPE) System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text),
-            effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
-            trigger = (TRAIT_TRIGGER) System.Enum.Parse(typeof(TRAIT_TRIGGER), traitTriggerOptions.options[traitTriggerOptions.value].text),
-            associatedInteraction = (INTERACTION_TYPE) System.Enum.Parse(typeof(INTERACTION_TYPE), associatedInteractionOptions.options[associatedInteractionOptions.value].text),
-            crimeSeverity = (CRIME_CATEGORY) System.Enum.Parse(typeof(CRIME_CATEGORY), crimeSeverityOptions.options[crimeSeverityOptions.value].text),
+            type = (TRAIT_TYPE)System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text),
+            effect = (TRAIT_EFFECT)System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
+            trigger = (TRAIT_TRIGGER)System.Enum.Parse(typeof(TRAIT_TRIGGER), traitTriggerOptions.options[traitTriggerOptions.value].text),
+            associatedInteraction = (INTERACTION_TYPE)System.Enum.Parse(typeof(INTERACTION_TYPE), associatedInteractionOptions.options[associatedInteractionOptions.value].text),
+            crimeSeverity = (CRIME_CATEGORY)System.Enum.Parse(typeof(CRIME_CATEGORY), crimeSeverityOptions.options[crimeSeverityOptions.value].text),
             daysDuration = int.Parse(durationInput.text),
             effects = _effects,
             isHidden = _isHidden.isOn,
+            mutuallyExclusive = GetMutuallyExclusiveTraits()
         };
         string jsonString = JsonUtility.ToJson(newTrait);
 
@@ -222,6 +226,7 @@ public class CombatAttributePanelUI : MonoBehaviour {
         associatedInteractionOptions.value = GetOptionIndex(trait.associatedInteraction.ToString(), associatedInteractionOptions);
         crimeSeverityOptions.value = GetOptionIndex(trait.crimeSeverity.ToString(), crimeSeverityOptions);
         durationInput.text = trait.daysDuration.ToString();
+        mutuallyExclusiveInput.text = ConvertMutuallyExclusiveTraitsToText(trait);
 
         for (int i = 0; i < trait.effects.Count; i++) {
             TraitEffect traitEffect = trait.effects[i];
@@ -328,6 +333,26 @@ public class CombatAttributePanelUI : MonoBehaviour {
                 currentSelectedTraitEffectButton = null;
             }
         }
+    }
+    #endregion
+
+    #region Mutually Exclusive
+    private string[] GetMutuallyExclusiveTraits() {
+        string text = mutuallyExclusiveInput.text;
+        string[] words = text.Split(',').Where(x => !string.IsNullOrEmpty(x)).ToArray();
+        return words;
+    }
+    private string ConvertMutuallyExclusiveTraitsToText(Trait trait) {
+        string text = string.Empty;
+        if (trait.mutuallyExclusive != null) {
+            for (int i = 0; i < trait.mutuallyExclusive.Length; i++) {
+                text += trait.mutuallyExclusive[i];
+                if (i + 1 < trait.mutuallyExclusive.Length) {
+                    text += ",";
+                }
+            }
+        }
+        return text;
     }
     #endregion
 }

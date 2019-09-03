@@ -102,6 +102,7 @@ public class AttributeManager : MonoBehaviour {
             new Wet(),
             new CharacterTrait(),
             new Nocturnal(),
+            new Herbalist(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

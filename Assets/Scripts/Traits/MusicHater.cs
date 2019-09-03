@@ -12,6 +12,7 @@ public class MusicHater : Trait {
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;
+        mutuallyExclusive = new string[] { "Music Lover" };
     }
 
     #region Overrides

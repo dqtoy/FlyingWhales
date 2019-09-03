@@ -23,6 +23,7 @@ public class Trait {
     public int level;
     public List<TraitEffect> effects;
     public bool isHidden;
+    public string[] mutuallyExclusive; //list of traits that this trait cannot be with.
 
     public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
     public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
@@ -80,6 +81,7 @@ public class Trait {
     public virtual bool OnStartPerformGoapAction(GoapAction action, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
     #endregion
 
+    #region Utilities
     public void SetOnRemoveAction(System.Action onRemoveAction) {
         this.onRemoveAction = onRemoveAction;
     }
@@ -96,7 +98,7 @@ public class Trait {
         responsibleCharacter = character;
     }
     public void AddCharacterResponsibleForTrait(Character character) {
-        if(responsibleCharacters == null) {
+        if (responsibleCharacters == null) {
             responsibleCharacters = new List<Character>();
         }
         if (character != null && !responsibleCharacters.Contains(character)) {
@@ -104,9 +106,9 @@ public class Trait {
         }
     }
     public bool IsResponsibleForTrait(Character character) {
-        if(responsibleCharacter == character) {
+        if (responsibleCharacter == character) {
             return true;
-        }else if(responsibleCharacters != null) {
+        } else if (responsibleCharacters != null) {
             return responsibleCharacters.Contains(character);
         }
         return false;
@@ -142,6 +144,20 @@ public class Trait {
     public void SetTraitEffects(List<TraitEffect> effects) {
         this.effects = effects;
     }
+    /// <summary>
+    /// Is this trait mutually exclusive with the given trait? (Can they both exist in one object)
+    /// </summary>
+    /// <param name="otherTrait">The trait to compare with</param>
+    /// <returns>True or false</returns>
+    public bool IsMutuallyExclusiveWith(string otherTrait) {
+        for (int i = 0; i < mutuallyExclusive.Length; i++) {
+            if (mutuallyExclusive[i].ToLower() == otherTrait.ToLower()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
 
     #region Jobs
     protected bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter, JobQueueItem job) {

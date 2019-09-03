@@ -18,6 +18,7 @@ public class Plagued : Trait {
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = GameManager.ticksPerDay * 3;
+        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CURE_CHARACTER, };
     }
 
     #region Overrides

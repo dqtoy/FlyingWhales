@@ -1518,10 +1518,15 @@ public static class Extensions {
     public static bool CanBeCraftedBy(this SPECIAL_TOKEN type, Character character) {
         if (ItemManager.Instance.itemData.ContainsKey(type)) {
             ItemData data = ItemManager.Instance.itemData[type];
-            if (data.neededTraitType == null) {
+            if (data.canBeCraftedBy == null) {
                 return true;
             }
-            return character.HasTraitOf(data.neededTraitType);
+            for (int i = 0; i < data.canBeCraftedBy.Length; i++) {
+                if (character.HasTraitOf(data.canBeCraftedBy[i])) {
+                    return true;
+                }
+            }
+            return false;
         }
         return true;
     }
