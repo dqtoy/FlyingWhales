@@ -1243,6 +1243,28 @@ public class Utilities : MonoBehaviour {
         }
         return copy;
     }
+    public static List<T> RemoveElements<T>(List<T> sourceList, List<T> elementsToRemove) {
+        List<T> newList = new List<T>();
+        for (int i = 0; i < sourceList.Count; i++) {
+            T currElement = sourceList[i];
+            if (elementsToRemove.Contains(currElement)) {
+                continue; //do not add that element to new list
+            }
+            newList.Add(currElement);
+        }
+        return newList;
+    }
+    public static List<T> RemoveElements<T>(List<T> sourceList, T[] elementsToRemove) {
+        List<T> newList = new List<T>();
+        for (int i = 0; i < sourceList.Count; i++) {
+            T currElement = sourceList[i];
+            if (elementsToRemove.Contains(currElement)) {
+                continue; //do not add that element to new list
+            }
+            newList.Add(currElement);
+        }
+        return newList;
+    }
     //public static bool ContainsElement<T>(this T[] array, T item) {
     //    for (int i = 0; i < array.Length; i++) {
     //        T currElement = array[i];

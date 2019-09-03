@@ -5,6 +5,16 @@ using UnityEngine;
 
 public class MoveOutState : CharacterState {
 
+    private int travelTimeInTicks {
+        get {
+            int travel = 3 * GameManager.ticksPerHour; //3 hours
+            if (stateComponent.character.GetNormalTrait("Fast") != null) { //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
+                travel -= (int)(travel * 0.25f); //NOTE: Did not create a new world travel time modifier in character because it seems unneccessary if this is the only thing it is used for. Will put variable if more things need it.
+            }
+            return travel;
+        }
+    }
+
     public MoveOutState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Move Out State";
         characterState = CHARACTER_STATE.MOVE_OUT;
@@ -59,7 +69,7 @@ public class MoveOutState : CharacterState {
         stateComponent.character.marker.StopMovement();
         Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, this.stateComponent.character.ownParty);
         GameDate dueDate = GameManager.Instance.Today();
-        dueDate = dueDate.AddTicks(3 * GameManager.ticksPerHour);
+        dueDate = dueDate.AddTicks(travelTimeInTicks);
         SchedulingManager.Instance.AddEntry(dueDate, ArriveAtRandomRegion, this);
         Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "left");
         log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -102,7 +112,7 @@ public class MoveOutState : CharacterState {
         stateComponent.character.ownParty.icon.SetIsTravellingOutside(true);
         chosenRegion.mainLandmark.RemoveCharacterHere(stateComponent.character); //remove character from landmark. He/She is now just floating.
         GameDate dueDate = GameManager.Instance.Today();
-        dueDate = dueDate.AddTicks(3 * GameManager.ticksPerHour);
+        dueDate = dueDate.AddTicks(travelTimeInTicks);
         SchedulingManager.Instance.AddEntry(dueDate, ArriveHome, this);
         Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "going_home");
         log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
