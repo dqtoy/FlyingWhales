@@ -57,7 +57,8 @@ public static class TileObjectDB {
         if (tileObjectData.ContainsKey(objType)) {
             return tileObjectData[objType];
         }
-        throw new System.Exception("No tile data for type " + objType.ToString());
+        Debug.LogWarning("No tile data for type " + objType.ToString() + " used default tileobject data");
+        return TileObjectData.Default;
     }
     public static bool TryGetTileObjectData(TILE_OBJECT_TYPE objType, out TileObjectData data) {
         if (tileObjectData.ContainsKey(objType)) {
@@ -84,6 +85,17 @@ public struct TileObjectData {
             }
         }
         return false;
+    }
+
+    public static TileObjectData Default {
+        get {
+            return new TileObjectData() {
+                constructionCost = 10,
+                constructionTime = 12,
+                neededTraitType = typeof(Craftsman),
+                providedFacilities = null
+            };
+        }
     }
 }
 public struct ProvidedFacility {
