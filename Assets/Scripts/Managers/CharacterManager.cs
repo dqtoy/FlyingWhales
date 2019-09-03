@@ -287,7 +287,9 @@ public class CharacterManager : MonoBehaviour {
             data.items[i].Load(newCharacter);
         }
         for (int i = 0; i < data.normalTraits.Count; i++) {
-            data.normalTraits[i].Load(newCharacter);
+            Character responsibleCharacter = null;
+            Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);
+            newCharacter.AddTrait(trait, responsibleCharacter);
         }
 
         _allCharacters.Add(newCharacter);
@@ -497,7 +499,9 @@ public class CharacterManager : MonoBehaviour {
             data.items[i].Load(newCharacter);
         }
         for (int i = 0; i < data.normalTraits.Count; i++) {
-            data.normalTraits[i].Load(newCharacter);
+            Character responsibleCharacter = null;
+            Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);
+            newCharacter.AddTrait(trait, responsibleCharacter);
         }
 
         _allCharacters.Add(newCharacter);

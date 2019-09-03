@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class JobQueueItem {
+    public int id { get; protected set; }
     public JobQueue jobQueueParent { get; protected set; }
     public Character assignedCharacter { get; protected set; }
     public string name { get; private set; }
@@ -21,6 +22,7 @@ public class JobQueueItem {
     protected int _priority; //The lower the amount the higher the priority
 
     public JobQueueItem(JOB_TYPE jobType) {
+        id = Utilities.SetID(this);
         this.jobType = jobType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.jobType.ToString());
         this.blacklistedCharacters = new List<Character>();

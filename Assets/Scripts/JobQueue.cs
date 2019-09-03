@@ -97,10 +97,7 @@ public class JobQueue {
         if (jobsInQueue.Count > 0) {
             for (int i = 0; i < jobsInQueue.Count; i++) {
                 JobQueueItem job = jobsInQueue[i];
-                if (job.assignedCharacter == null && job.CanCharacterTakeThisJob(characterToDoJob)) {
-                    if (job.blacklistedCharacters.Contains(characterToDoJob)) {
-                        continue;
-                    }
+                if (CanAssignCharacterToJob(job, characterToDoJob)) {
                     return job;
                 }
             }
@@ -149,10 +146,7 @@ public class JobQueue {
         }
     }
     public bool AssignCharacterToJob(JobQueueItem job, Character characterToDoJob) {
-        if (job.assignedCharacter == null && job.CanCharacterTakeThisJob(characterToDoJob)) {
-            if (job.blacklistedCharacters.Contains(characterToDoJob)) {
-                return false;
-            }
+        if (CanAssignCharacterToJob(job, characterToDoJob)) {
             job.SetAssignedCharacter(characterToDoJob);
             if (job is GoapPlanJob) {
                 GoapPlanJob goapPlanJob = job as GoapPlanJob;
@@ -179,15 +173,23 @@ public class JobQueue {
         }
         return false;
     }
+    public bool CanAssignCharacterToJob(JobQueueItem job, Character characterToDoJob) {
+        return job.assignedCharacter == null && job.CanCharacterTakeThisJob(characterToDoJob) && !job.blacklistedCharacters.Contains(characterToDoJob);
+    }
     public void ForceAssignCharacterToJob(JobQueueItem job, Character characterToDoJob) {
         if (job.assignedCharacter == null) {
             job.SetAssignedCharacter(characterToDoJob);
             if (job is GoapPlanJob) {
                 GoapPlanJob goapPlanJob = job as GoapPlanJob;
-                if (goapPlanJob.targetInteractionType != INTERACTION_TYPE.NONE) {
-                    characterToDoJob.StartGOAP(goapPlanJob.targetInteractionType, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData);
+                if (goapPlanJob.targetPlan != null) {
+                    characterToDoJob.AddPlan(goapPlanJob.targetPlan);
+                    goapPlanJob.SetAssignedPlan(goapPlanJob.targetPlan);
                 } else {
-                    characterToDoJob.StartGOAP(goapPlanJob.targetEffect, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob);
+                    if (goapPlanJob.targetInteractionType != INTERACTION_TYPE.NONE) {
+                        characterToDoJob.StartGOAP(goapPlanJob.targetInteractionType, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
+                    } else {
+                        characterToDoJob.StartGOAP(goapPlanJob.targetEffect, goapPlanJob.targetPOI, GOAP_CATEGORY.WORK, false, null, true, goapPlanJob, goapPlanJob.otherData, goapPlanJob.allowDeadTargets);
+                    }
                 }
             } else if (job is CharacterStateJob) {
                 CharacterStateJob stateJob = job as CharacterStateJob;
@@ -320,6 +322,14 @@ public class JobQueue {
                 if (jobsInQueue[i].jobType == jobTypes[j]) {
                     return jobsInQueue[i];
                 }
+            }
+        }
+        return null;
+    }
+    public JobQueueItem GetJobByID(int id) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i].id == id) {
+                return jobsInQueue[i];
             }
         }
         return null;

@@ -32,7 +32,9 @@ public class SaveDataItem {
         item.SetIsDisabledByPlayer(isDisabledByPlayer);
         item.SetPOIState(state);
         for (int i = 0; i < traits.Count; i++) {
-            traits[i].Load(item);
+            Character responsibleCharacter = null;
+            Trait trait = traits[i].Load(ref responsibleCharacter);
+            item.AddTrait(trait, responsibleCharacter);
         }
         areaOwner.AddSpecialTokenToLocation(item);
     }
@@ -41,7 +43,9 @@ public class SaveDataItem {
         item.SetIsDisabledByPlayer(isDisabledByPlayer);
         item.SetPOIState(state);
         for (int i = 0; i < traits.Count; i++) {
-            traits[i].Load(item);
+            Character responsibleCharacter = null;
+            Trait trait = traits[i].Load(ref responsibleCharacter);
+            item.AddTrait(trait, responsibleCharacter);
         }
         characterOwner.ObtainToken(item);
     }

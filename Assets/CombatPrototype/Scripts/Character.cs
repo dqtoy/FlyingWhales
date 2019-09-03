@@ -5156,6 +5156,19 @@ public class Character : ILeader, IPointOfInterest {
         }
         return false;
     }
+    public bool ForcePlanHappinessRecoveryActions() {
+        if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+            JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
+            if (isForlorn) {
+                jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
+            }
+            GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
+            job.SetCancelOnFail(true);
+            jobQueue.AddJobInQueue(job);
+            return true;
+        }
+        return false;
+    }
     public bool PlanHappinessRecoveryActions(bool processOverrideLogic) {
         if (doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return false;
@@ -5163,9 +5176,16 @@ public class Character : ILeader, IPointOfInterest {
         TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
         if (isLonely) {
             if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+                JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
+                Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
+                if(hardworking != null) {
+                    bool isPlanningRecoveryProcessed = false;
+                    if(hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
+                        return isPlanningRecoveryProcessed;
+                    }
+                }
                 int chance = UnityEngine.Random.Range(0, 100);
                 int value = 0;
-                JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
                 if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
                     value = 30;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
@@ -5194,6 +5214,13 @@ public class Character : ILeader, IPointOfInterest {
                 }
             }
             if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+                Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
+                if (hardworking != null) {
+                    bool isPlanningRecoveryProcessed = false;
+                    if (hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
+                        return isPlanningRecoveryProcessed;
+                    }
+                }
                 JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
                 GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
                 job.SetCancelOnFail(true);
@@ -5261,7 +5288,17 @@ public class Character : ILeader, IPointOfInterest {
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
                 if (isAtHomeArea && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
-                    return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                    if(GetNormalTrait("Lazy") != null) {
+                        if(UnityEngine.Random.Range(0, 100) < 20) {
+                            if (!ForcePlanHappinessRecoveryActions()) {
+                                PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
+                            }
+                        } else {
+                            return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                        }
+                    } else {
+                        return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                    }
                 } else {
                     return false;
                 }
@@ -7412,6 +7449,10 @@ public class Character : ILeader, IPointOfInterest {
             log += "\nThis action is the end of plan.";
             if (plan.job != null && plan.job.jobQueueParent != null) {
                 log += "\nRemoving job in queue...";
+                if (plan.job.jobQueueParent.isAreaJobQueue && GetNormalTrait("Hardworking") != null) {
+                    log += "\nFinished a settlement job and character is hardworking, increase happiness by 3000...";
+                    AdjustHappiness(3000);
+                }
                 plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
             }
             PrintLogIfActive(log);

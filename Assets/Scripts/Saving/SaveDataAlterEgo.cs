@@ -50,7 +50,8 @@ public class SaveDataAlterEgo {
         alterEgoData.SetCharacterClass(CharacterManager.Instance.CreateNewCharacterClass(characterClassName));
         alterEgoData.SetLevel(level);
         for (int i = 0; i < traits.Count; i++) {
-            traits[i].Load(alterEgoData);
+            Trait trait = traits[i].Load();
+            alterEgoData.AddTrait(trait);
         }
     }
     public void LoadRelationships(Character character) {

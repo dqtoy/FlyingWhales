@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//IMPORTANT NOTE: Class name format for all derived classes of SaveDataTrait must be: "SaveData" + [Trait Name], example: SaveDataKleptomaniac
 [System.Serializable]
 public class SaveDataTrait {
     public string name;
@@ -18,7 +19,7 @@ public class SaveDataTrait {
     public int year;
     public int tick;
 
-    public void Save(Trait trait) {
+    public virtual void Save(Trait trait) {
         name = trait.name;
         level = trait.level;
         daysDuration = trait.daysDuration;
@@ -45,8 +46,7 @@ public class SaveDataTrait {
         tick = trait.dateEstablished.tick;
     }
 
-    public void Load(IPointOfInterest poi) {
-        Character responsibleCharacter = null;
+    public virtual Trait Load(ref Character responsibleCharacter) {
         if(responsibleCharacterID != -1) {
             responsibleCharacter = CharacterManager.Instance.GetCharacterByID(responsibleCharacterID);
         }
@@ -65,9 +65,12 @@ public class SaveDataTrait {
             Character currChar = CharacterManager.Instance.GetCharacterByID(responsibleCharacterIDs[i]);
             trait.AddCharacterResponsibleForTrait(currChar);
         }
-        poi.AddTrait(trait, responsibleCharacter);
+        return trait;
+        //poi.AddTrait(trait, responsibleCharacter);
     }
-    public void Load(AlterEgoData alterEgo) {
+
+    //This is only for AlterEgoData
+    public virtual Trait Load() {
         Character responsibleCharacter = null;
         if (responsibleCharacterID != -1) {
             responsibleCharacter = CharacterManager.Instance.GetCharacterByID(responsibleCharacterID);
@@ -88,6 +91,7 @@ public class SaveDataTrait {
             trait.AddCharacterResponsibleForTrait(currChar);
         }
         trait.SetCharacterResponsibleForTrait(responsibleCharacter);
-        alterEgo.AddTrait(trait);
+        //alterEgo.AddTrait(trait);
+        return trait;
     }
 }

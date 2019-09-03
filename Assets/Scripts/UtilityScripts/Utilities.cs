@@ -30,6 +30,7 @@ public class Utilities : MonoBehaviour {
     public static int lastTileObjectID = 0;
     public static int lastStructureID = 0;
     public static int lastRegionID = 0;
+    public static int lastJobID = 0;
 
     public static float defenseBuff = 1.20f;
     public static int defaultCityHP = 300;
@@ -99,6 +100,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Region) {
             lastRegionID += 1;
             return lastRegionID;
+        } else if (obj is JobQueueItem) {
+            lastJobID += 1;
+            return lastJobID;
         }
         return 0;
     }
@@ -131,6 +135,10 @@ public class Utilities : MonoBehaviour {
             }
         } else if (obj is Region) {
             lastRegionID = idToUse;
+        } else if (obj is JobQueueItem) {
+            if (lastJobID <= idToUse) {
+                lastJobID = idToUse;
+            }
         }
         //else if (obj is Interaction) {
         //    lastInteractionID = idToUse;
