@@ -21,7 +21,7 @@ public class RepairTileObject : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetMissing) {
+        if (poiTarget.gridTileLocation != null) {
             SetState("Repair Success");
         } else {
             SetState("Target Missing");
@@ -33,9 +33,19 @@ public class RepairTileObject : GoapAction {
     #endregion
 
     #region State Effects
+    private void PreRepairSuccess() {
+        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    }
     private void AfterRepairSuccess() {
         poiTarget.RemoveTrait("Burnt");
         poiTarget.RemoveTrait("Damaged");
+
+        TileObject tileObj = poiTarget as TileObject;
+        TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);
+        actor.AdjustSupply((int) (data.constructionCost * 0.5f));
+    }
+    private void PreTargetMissing() {
+        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     #endregion
 

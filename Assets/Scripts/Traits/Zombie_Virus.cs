@@ -43,12 +43,12 @@ public class Zombie_Virus : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
                     new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
                 job.SetCanBeDoneInLocation(true);
-                if (CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, null)) {
+                if (CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, targetCharacter, null)) {
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;
                 } else {
                     if (!IsResponsibleForTrait(characterThatWillDoJob)) {
-                        job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveIllnessesJob);
+                        job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveSpecialIllnessesJob);
                         characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
                     }
                     return false;
