@@ -2083,8 +2083,14 @@ public class Character : ILeader, IPointOfInterest {
 
         StopCurrentAction(false);
         for (int i = 0; i < allGoapPlans.Count; i++) {
-            if (DropPlan(allGoapPlans[i])) {
-                i--;
+            if(allGoapPlans[i].job != null && allGoapPlans[i].job.jobType.IsNeedsTypeJob()) {
+                if (JustDropPlan(allGoapPlans[i])) {
+                    i--;
+                }
+            } else {
+                if (DropPlan(allGoapPlans[i])) {
+                    i--;
+                }
             }
         }
         AdjustIsWaitingForInteraction(-1);
@@ -4648,7 +4654,7 @@ public class Character : ILeader, IPointOfInterest {
             AdjustDoNotDisturb(1);
             if (trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 AdjustIgnoreHostilities(1);
-                CancelAllJobsAndPlans();
+                CancelAllJobsAndPlansExceptNeedsRecovery();
             }
             if (trait.name != "Combat Recovery") {
                 _ownParty.RemoveAllOtherCharacters();

@@ -21,7 +21,7 @@ public class Paralyzed : Trait {
         base.OnAddTrait(addedTo);
         if (addedTo is Character) {
             character = addedTo as Character;
-            //character.CancelAllJobsAndPlans();
+            character.CancelAllJobsAndPlans();
             Messenger.AddListener(Signals.TICK_STARTED, CheckParalyzedTrait);
             Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         }
