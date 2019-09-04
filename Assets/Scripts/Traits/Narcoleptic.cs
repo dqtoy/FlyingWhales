@@ -28,7 +28,7 @@ public class Narcoleptic : Trait {
     public override bool PerTickOwnerMovement() {
         int napChance = UnityEngine.Random.Range(0, 100);
         bool hasCreatedJob = false;
-        if (napChance < 1) {
+        if (napChance < 20) {
             if (owner.currentAction == null || (owner.currentAction.goapType != INTERACTION_TYPE.NARCOLEPTIC_NAP)) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.NARCOLEPTIC_NAP, owner, owner);
 

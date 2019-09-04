@@ -7,7 +7,7 @@ public class NarcolepticNap : GoapAction {
     public Resting restingTrait { get; private set; }
 
     public NarcolepticNap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.NARCOLEPTIC_NAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionIconString = GoapActionStateDB.No_Icon;
+        actionIconString = GoapActionStateDB.Sleep_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         isNotificationAnIntel = false;
     }
