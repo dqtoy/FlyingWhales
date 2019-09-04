@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Drunk : Trait {
+public class Hothead : Trait {
 
-    public Drunk() {
-        name = "Drunk";
-        description = "This character is drunk.";
-        type = TRAIT_TYPE.STATUS;
+    public Hothead() {
+        name = "Hothead";
+        description = "This character is hotheaded.";
+        type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
-        daysDuration = 24;
+        daysDuration = 0;
         //effects = new List<TraitEffect>();
     }
 
@@ -21,22 +21,12 @@ public class Drunk : Trait {
         if (targetPOI is Character) {
             Character targetCharacter = targetPOI as Character;
             if (!targetCharacter.isDead) {
-                int value = 1;
-                RELATIONSHIP_EFFECT relEffect = characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter);
-                if (relEffect == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    value = 3;
-                } else if (relEffect == RELATIONSHIP_EFFECT.NONE) {
-                    value = 2;
-                }
-                if(characterThatWillDoJob.GetNormalTrait("Hothead") != null) {
-                    value += 10;
-                }
                 int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < value) {
+                if (chance < 2) {
                     characterThatWillDoJob.PrintLogIfActive(GameManager.Instance.TodayLogString() + characterThatWillDoJob.name
-                        + "Drunk Assault Chance: " + value + ", Roll: " + chance);
+                        + "Drunk Assault Chance: 2, Roll: " + chance);
                     if (characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, false, false)) {
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
+                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "hothead_assault");
                         log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         //log.AddLogToInvolvedObjects();

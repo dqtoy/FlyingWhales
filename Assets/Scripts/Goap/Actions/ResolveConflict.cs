@@ -20,7 +20,14 @@ public class ResolveConflict : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         if (!isTargetMissing) {
-            SetState("Resolve Success");
+            if(poiTarget is Character) {
+                Character targetCharacter = poiTarget as Character;
+                if(targetCharacter.GetNormalTrait("Hothead") != null && UnityEngine.Random.Range(0, 2) == 0) {
+                    SetState("Resolve Fail");
+                } else {
+                    SetState("Resolve Success");
+                }
+            }
         } else {
             SetState("Target Missing");
         }

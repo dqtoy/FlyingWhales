@@ -2064,6 +2064,28 @@ public class Character : ILeader, IPointOfInterest {
             jobQueue.AddJobInQueue(job, false);
         }
     }
+    public void CancelAllJobsAndPlansExceptNeedsRecovery() {
+        AdjustIsWaitingForInteraction(1);
+        for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+            if (jobQueue.jobsInQueue[i].jobType.IsNeedsTypeJob()) {
+                continue;
+            }
+            if (jobQueue.CancelJob(jobQueue.jobsInQueue[i])) {
+                i--;
+            }
+        }
+        if (homeArea != null) {
+            homeArea.jobQueue.UnassignAllJobsTakenBy(this);
+        }
+
+        StopCurrentAction(false);
+        for (int i = 0; i < allGoapPlans.Count; i++) {
+            if (DropPlan(allGoapPlans[i])) {
+                i--;
+            }
+        }
+        AdjustIsWaitingForInteraction(-1);
+    }
     public void CancelAllJobsAndPlans() {
         AdjustIsWaitingForInteraction(1);
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
@@ -4172,7 +4194,8 @@ public class Character : ILeader, IPointOfInterest {
 
         string[] traitPool = new string[] { "Curious", "Vigilant", "Doctor", "Diplomatic",
             "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
-            "Herbalist", "Optimist", "Pessimist", "Fast", "Prude", "Horny", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious"
+            "Herbalist", "Optimist", "Pessimist", "Fast", "Prude", "Horny", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious",
+            "Narcoleptic", "Hothead",
         };
         //"Kleptomaniac"
 

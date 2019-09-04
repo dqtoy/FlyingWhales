@@ -409,6 +409,7 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.RESOLVE_CONFLICT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Resolve Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Resolve Fail", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
         {INTERACTION_TYPE.DOUSE_FIRE, new StateNameAndDuration[]{
@@ -445,6 +446,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.REPAIR_TILE_OBJECT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Repair Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+        } },
+        { INTERACTION_TYPE.NARCOLEPTIC_NAP, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Nap Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
     };
 }

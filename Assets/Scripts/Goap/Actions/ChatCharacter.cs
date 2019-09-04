@@ -84,6 +84,12 @@ public class ChatCharacter : GoapAction {
                 } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
                     weight += -30;
                 }
+                if(actor.GetNormalTrait("Hothead") != null) {
+                    weight += 100;
+                }
+                if (targetCharacter.GetNormalTrait("Hothead") != null) {
+                    weight += 100;
+                }
                 if (weight > 0) {
                     weights.AddElement("Become Enemies", weight);
                 }
@@ -117,6 +123,12 @@ public class ChatCharacter : GoapAction {
                     weight += 20;
                 } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
                     weight += 50;
+                }
+                if (actor.GetNormalTrait("Hothead") != null) {
+                    weight -= 50;
+                }
+                if (targetCharacter.GetNormalTrait("Hothead") != null) {
+                    weight -= 50;
                 }
                 if (weight > 0) {
                     weights.AddElement("Resolve Enmity", weight);
