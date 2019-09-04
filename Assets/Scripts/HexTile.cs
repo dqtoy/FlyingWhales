@@ -144,8 +144,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //spriteRenderer = this.GetComponent<SpriteRenderer>();
         //SetMagicAbundance();
         //StartCorruptionAnimation();
-        Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, AreaMapOpened);
-        Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, AreaMapClosed);
+        //Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, AreaMapOpened);
+        //Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, AreaMapClosed);
         tileTags = new List<TILE_TAG>();
     }
 

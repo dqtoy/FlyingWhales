@@ -48,9 +48,9 @@ public class CureCharacter : GoapAction {
             parentPlan.job.SetCannotCancelJob(true);
         }
         SetCannotCancelAction(true);
-        RemoveTraitFrom(poiTarget, "Sick");
-        RemoveTraitFrom(poiTarget, "Plagued");
-        RemoveTraitFrom(poiTarget, "Zombie Virus");
+        RemoveTraitFrom(poiTarget, "Sick", actor);
+        RemoveTraitFrom(poiTarget, "Plagued", actor);
+        RemoveTraitFrom(poiTarget, "Zombie Virus", actor);
         //**After Effect 2**: Remove Healing Potion from Actor's Inventory
         actor.ConsumeToken(actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
         //**After Effect 3**: Allow movement of Target

@@ -92,6 +92,14 @@ static internal class Messenger {
  
 		Debug.Log("\n");
 	}
+
+    //static private void OrderEvents(string eventType) {
+    //    if (eventTable.ContainsKey(eventType)) {
+    //        Delegate[] actions = eventTable[eventType].GetInvocationList();
+    //        Delegate ordered = null;
+
+    //    }
+    //}
 	#endregion
  
 	#region Message logging and exception throwing
@@ -236,7 +244,7 @@ static internal class Messenger {
         if (eventTable.TryGetValue(eventType, out d)) {
             Callback callback = d as Callback;
             //string summary = "Executing delegates for signal " + eventType;
-           
+
             if (callback != null) {
                 //Delegate[] list = callback.GetInvocationList();
                 //for (int i = 0; i < list.Length; i++) {
@@ -261,8 +269,14 @@ static internal class Messenger {
         Delegate d;
         if (eventTable.TryGetValue(eventType, out d)) {
             Callback<T> callback = d as Callback<T>;
- 
+            //string summary = "Executing delegates for signal " + eventType;
             if (callback != null) {
+                //Delegate[] list = callback.GetInvocationList();
+                //for (int i = 0; i < list.Length; i++) {
+                //    Delegate currD = list[i];
+                //    summary += "\n" + i + " - " + currD.Method.ToString() + ", " + currD.Target.ToString();
+                //}
+                //Debug.Log(summary);
                 callback(arg1);
             } else {
                 throw CreateBroadcastSignatureException(eventType);
@@ -280,8 +294,14 @@ static internal class Messenger {
         Delegate d;
         if (eventTable.TryGetValue(eventType, out d)) {
             Callback<T, U> callback = d as Callback<T, U>;
- 
+            //string summary = "Executing delegates for signal " + eventType;
             if (callback != null) {
+                //Delegate[] list = callback.GetInvocationList();
+                //for (int i = 0; i < list.Length; i++) {
+                //    Delegate currD = list[i];
+                //    summary += "\n" + i + " - " + currD.Method.ToString() + ", " + currD.Target.ToString();
+                //}
+                //Debug.Log(summary);
                 callback(arg1, arg2);
             } else {
                 throw CreateBroadcastSignatureException(eventType);
@@ -299,8 +319,14 @@ static internal class Messenger {
         Delegate d;
         if (eventTable.TryGetValue(eventType, out d)) {
             Callback<T, U, V> callback = d as Callback<T, U, V>;
- 
+            string summary = "Executing delegates for signal " + eventType;
             if (callback != null) {
+                Delegate[] list = callback.GetInvocationList();
+                for (int i = 0; i < list.Length; i++) {
+                    Delegate currD = list[i];
+                    summary += "\n" + i + " - " + currD.Method.ToString() + ", " + currD.Target.ToString();
+                }
+                Debug.Log(summary);
                 callback(arg1, arg2, arg3);
             } else {
                 throw CreateBroadcastSignatureException(eventType);

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 
 public static class Signals {
 
@@ -338,4 +340,8 @@ public static class Signals {
     /// </summary>
     public static string TRAITABLE_LOST_TRAIT = "OnTraitableLostTrait";
     #endregion
+
+    //public static Dictionary<string, MethodInfo> orderedSignalExecution = new Dictionary<string, MethodInfo[]>() {
+    //    { HOUR_STARTED,  }
+    //}
 }

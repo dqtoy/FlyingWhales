@@ -21,7 +21,7 @@ public class GoapPlan {
     public GoapPlanJob job { get; private set; }
     public bool isPriority { get; private set; }
 
-    public string dropPlanCallStack;
+    public string setPlanStateCallStack;
 
     public GoapPlan(GoapNode startingNode, GOAP_EFFECT_CONDITION[] goalEffects, GOAP_CATEGORY category, bool isPersonalPlan = true) {
         this.startingNode = startingNode;
@@ -33,7 +33,7 @@ public class GoapPlan {
         hasShownNotification = false;
         allNodes = new List<GoapNode>();
         //ConstructAllNodes();
-        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnActionInPlanFinished);
+
     }
 
     public void Reset(GoapNode startingNode) {
@@ -55,7 +55,7 @@ public class GoapPlan {
         allNodes.Clear();
         //if this plan was ended, and it's state has not been set to failed or success, this means that this plan was not completed.
         if (state == GOAP_PLAN_STATE.IN_PROGRESS) SetPlanState(GOAP_PLAN_STATE.CANCELLED);
-        Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnActionInPlanFinished);
+        //Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnActionInPlanFinished);
         //dropPlanCallStack = StackTraceUtility.ExtractStackTrace();
     }
     public void InsertAction(GoapAction action) {
@@ -110,6 +110,7 @@ public class GoapPlan {
     }
     public void SetPlanState(GOAP_PLAN_STATE state) {
         this.state = state;
+        setPlanStateCallStack = state.ToString() + " " + StackTraceUtility.ExtractStackTrace();
     }
     public void SetJob(GoapPlanJob job) {
         this.job = job;

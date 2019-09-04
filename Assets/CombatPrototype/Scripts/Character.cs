@@ -1398,6 +1398,18 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
+    public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, object conditionKey, Character otherCharacter) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            if (allJobsTargettingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+                if (job.jobType == jobType && job.targetEffect.conditionKey == conditionKey && job.assignedCharacter != otherCharacter) {
+                    if (job.jobQueueParent.CancelJob(job)) {
+                        i--;
+                    }
+                }
+            }
+        }
+    }
     public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, JobQueueItem except) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
