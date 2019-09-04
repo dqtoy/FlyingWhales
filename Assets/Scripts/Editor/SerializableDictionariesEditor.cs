@@ -17,10 +17,6 @@ public class InteractionWeightDictionaryPropertyDrawer : SerializableDictionaryP
 public class ActionCharacterTagDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(BiomeLandmarkSpriteListDictionary))]
 public class BiomeLandmarkSpriteListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(RoleInteractionsListDictionary))]
-public class RoleInteractionsListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(JobInteractionsListDictionary))]
-public class JobInteractionsListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileSpriteCorruptionListDictionary))]
 public class TileSpriteCorruptionListDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(RaceClassListDictionary))]
@@ -73,8 +69,6 @@ public class InterventionAbilityTierDictionaryPropertyDrawer : SerializableDicti
 public class CharacterTagListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]
 public class LandmarkSpriteListStorageStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
-[CustomPropertyDrawer(typeof(CharacterInteractionWeightListStorage))]
-public class CharacterInteractionWeightListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(CorruptionObjectsListStorage))]
 public class CorruptionObjectsListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(RaceDefenderListStorage))]

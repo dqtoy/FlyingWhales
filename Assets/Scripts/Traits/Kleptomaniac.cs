@@ -42,6 +42,10 @@ public class Kleptomaniac : Trait {
         base.OnDeath(character);
         Messenger.RemoveListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
     }
+    public override void OnReturnToLife(Character character) {
+        base.OnReturnToLife(character);
+        Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
+    }
     public override string GetTestingData() {
         string testingData = string.Empty;
         testingData += "Known character'S with no items: \n";

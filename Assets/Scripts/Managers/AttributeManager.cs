@@ -106,6 +106,9 @@ public class AttributeManager : MonoBehaviour {
             new Hardworking(),
             new Glutton(),
             new Suspicious(),
+            new Inspiring(),
+            new Pyrophobic(),
+
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

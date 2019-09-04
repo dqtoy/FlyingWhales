@@ -36,6 +36,14 @@ public class MusicLover : Trait {
         base.OnRemoveTrait(removedFrom, removedBy);
         Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
+    public override void OnDeath(Character character) {
+        base.OnDeath(character);
+        Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+    }
+    public override void OnReturnToLife(Character character) {
+        base.OnReturnToLife(character);
+        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+    }
     public override void OnOwnerInitiallyPlaced(Character owner) {
         base.OnOwnerInitiallyPlaced(owner);
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);

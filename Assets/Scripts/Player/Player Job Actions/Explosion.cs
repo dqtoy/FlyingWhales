@@ -8,6 +8,10 @@ public class Explosion : PlayerJobAction, IBurningSource {
     private int radius;
 
     public List<Character> dousers { get; private set; }
+    public List<IPointOfInterest> objectsOnFire { get; private set; }
+    public DelegateTypes.OnAllBurningExtinguished onAllBurningExtinguished { get; private set; }
+    public DelegateTypes.OnBurningObjectAdded onBurningObjectAdded { get; private set; }
+    public DelegateTypes.OnBurningObjectRemoved onBurningObjectRemoved { get; private set; }
 
     public Explosion() : base(INTERVENTION_ABILITY.EXPLOSION) {
         SetDefaultCooldownTime(24);
@@ -15,6 +19,7 @@ public class Explosion : PlayerJobAction, IBurningSource {
         radius = 1;
         tier = 1;
         dousers = new List<Character>();
+        objectsOnFire = new List<IPointOfInterest>();
     }
 
     #region Overrides
@@ -44,8 +49,8 @@ public class Explosion : PlayerJobAction, IBurningSource {
             }
             if (Random.Range(0, 100) < 25) {
                 Burning burning = new Burning();
-                burning.SetSourceOfBurning(this);
                 flammable.AddTrait(burning);
+                burning.SetSourceOfBurning(this, flammable);
             }
         }
     }
@@ -84,6 +89,36 @@ public class Explosion : PlayerJobAction, IBurningSource {
             }
         }
         return nearest;
+    }
+    public void AddObjectOnFire(IPointOfInterest poi) {
+        objectsOnFire.Add(poi);
+        onBurningObjectAdded?.Invoke(poi);
+    }
+    public void RemoveObjectOnFire(IPointOfInterest poi) {
+        if (objectsOnFire.Remove(poi)) {
+            onBurningObjectRemoved?.Invoke(poi);
+            if (objectsOnFire.Count == 0) {
+                onAllBurningExtinguished?.Invoke(this);
+            }
+        }
+    }
+    public void AddOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action) {
+        onAllBurningExtinguished += action;
+    }
+    public void RemoveOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action) {
+        onAllBurningExtinguished -= action;
+    }
+    public void AddOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action) {
+        onBurningObjectAdded += action;
+    }
+    public void RemoveOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action) {
+        onBurningObjectAdded -= action;
+    }
+    public void AddOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action) {
+        onBurningObjectRemoved += action;
+    }
+    public void RemoveOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action) {
+        onBurningObjectRemoved -= action;
     }
     #endregion
 }
