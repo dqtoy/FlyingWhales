@@ -64,28 +64,41 @@ public class Burning : Trait {
         } else if (removedFrom is LocationGridTile) {
             (removedFrom as LocationGridTile).genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
         }
-        
+        sourceOfBurning.RemoveObjectOnFire(owner);
+
     }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_FIRE) && (characterThatWillDoJob.stateComponent.currentState == null || characterThatWillDoJob.stateComponent.currentState.characterState != CHARACTER_STATE.DOUSE_FIRE)) {
             string summary = GameManager.Instance.TodayLogString() + characterThatWillDoJob.name + " saw a fire from source " + sourceOfBurning.ToString();
             if(!TryToCreateDouseFireJob(traitOwner, characterThatWillDoJob)) {
-                summary += "\nDid not create douse fire job because maximum dousers has been reached!";
-                //if the character did not create a douse fire job. Check if he/she will watch instead. (Characters will just watch if their current actions are lower priority than Watch) NOTE: Lower priority value is considered higher priority
-                //also make sure that character is not already watching.
-                int currentPriorityValue = characterThatWillDoJob.GetCurrentPriorityValue();
-                if ((characterThatWillDoJob.currentAction == null || characterThatWillDoJob.currentAction.goapType != INTERACTION_TYPE.WATCH) 
-                    && currentPriorityValue > InteractionManager.Instance.GetInitialPriority(JOB_TYPE.WATCH)) {
-                    summary += "\nWill watch because current priority value is  " + currentPriorityValue.ToString();
-                    Character nearestDouser = sourceOfBurning.GetNearestDouserFrom(characterThatWillDoJob);
-                    if (nearestDouser != null && nearestDouser.stateComponent.currentState is DouseFireState) {
-                        characterThatWillDoJob.CreateWatchEvent(null, nearestDouser.stateComponent.currentState, nearestDouser);
-                        summary += "\nCreated watch event targetting " + nearestDouser.name;
-                    } else {
-                        summary += "\nDid not watch because nearest douser is null or nearest douser is not in douse fire state. Nearest douser is: " + (nearestDouser?.name??"None");
+                Pyrophobic pyrophobic = characterThatWillDoJob.GetNormalTrait("Pyrophobic") as Pyrophobic;
+                if (pyrophobic != null) {
+                    //pyrophobic
+                    summary += "\nDid not create douse fire job because character is pyrophobic!";
+                    //When he sees a fire source for the first time, reduce Happiness by 2000. Do not create Douse Fire job. It should always Flee from fire. Add log showing reason for fleeing is Pyrophobia
+                    if (pyrophobic.AddKnownBurningSource(sourceOfBurning)) {
+                        characterThatWillDoJob.AdjustHappiness(-2000);
                     }
+                    pyrophobic.Flee(sourceOfBurning, characterThatWillDoJob);
+
                 } else {
-                    summary += "\nDid not watch because current priority value is " + currentPriorityValue.ToString() + " or is already doing watch.";
+                    summary += "\nDid not create douse fire job because maximum dousers has been reached!";
+                    //if the character did not create a douse fire job. Check if he/she will watch instead. (Characters will just watch if their current actions are lower priority than Watch) NOTE: Lower priority value is considered higher priority
+                    //also make sure that character is not already watching.
+                    int currentPriorityValue = characterThatWillDoJob.GetCurrentPriorityValue();
+                    if ((characterThatWillDoJob.currentAction == null || characterThatWillDoJob.currentAction.goapType != INTERACTION_TYPE.WATCH)
+                        && currentPriorityValue > InteractionManager.Instance.GetInitialPriority(JOB_TYPE.WATCH)) {
+                        summary += "\nWill watch because current priority value is  " + currentPriorityValue.ToString();
+                        Character nearestDouser = sourceOfBurning.GetNearestDouserFrom(characterThatWillDoJob);
+                        if (nearestDouser != null && nearestDouser.stateComponent.currentState is DouseFireState) {
+                            characterThatWillDoJob.CreateWatchEvent(null, nearestDouser.stateComponent.currentState, nearestDouser);
+                            summary += "\nCreated watch event targetting " + nearestDouser.name;
+                        } else {
+                            summary += "\nDid not watch because nearest douser is null or nearest douser is not in douse fire state. Nearest douser is: " + (nearestDouser?.name ?? "None");
+                        }
+                    } else {
+                        summary += "\nDid not watch because current priority value is " + currentPriorityValue.ToString() + " or is already doing watch.";
+                    }
                 }
                 Debug.Log(summary);
                 return false;
@@ -98,7 +111,7 @@ public class Burning : Trait {
     }
     private bool TryToCreateDouseFireJob(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         //only create a remove fire job if the characters dousing the fire of a specific source is less than the required amount
-        if (sourceOfBurning.dousers.Count < 3) {  //3
+        if (sourceOfBurning.dousers.Count < 3 && characterThatWillDoJob.GetNormalTrait("Pyrophobic") == null) {  //3
             bool willCreateDouseFireJob = false;
             if (traitOwner is Character) {
                 Character targetCharacter = traitOwner as Character;
@@ -133,8 +146,15 @@ public class Burning : Trait {
     }
     #endregion
 
-    public void SetSourceOfBurning(IBurningSource obj) {
-        sourceOfBurning = obj;
+    public void SetSourceOfBurning(IBurningSource source, ITraitable obj) {
+        sourceOfBurning = source;
+        IPointOfInterest poiOnFire;
+        if (obj is LocationGridTile) {
+            poiOnFire = (obj as LocationGridTile).genericTileObject;
+        } else {
+            poiOnFire = obj as IPointOfInterest; //assuming that everything else is POI other than LocationGridTile
+        }
+        source.AddObjectOnFire(poiOnFire);
     }
 
     private bool CanTakeRemoveFireJob(Character character, JobQueueItem item) {
@@ -196,18 +216,32 @@ public class Burning : Trait {
             if (choices.Count > 0) {
                 ITraitable chosen = choices[Random.Range(0, choices.Count)];
                 Burning burning = new Burning();
-                burning.SetSourceOfBurning(sourceOfBurning);
+                burning.SetSourceOfBurning(sourceOfBurning, chosen);
                 chosen.AddTrait(burning);
             }
         }
     }
+    
 }
 
 
 public interface IBurningSource {
     List<Character> dousers { get; }
+    List<IPointOfInterest> objectsOnFire { get; }
+    DelegateTypes.OnAllBurningExtinguished onAllBurningExtinguished { get; }
+    DelegateTypes.OnBurningObjectAdded onBurningObjectAdded { get; }
+    DelegateTypes.OnBurningObjectRemoved onBurningObjectRemoved { get; }
 
     void AddCharactersDousingFire(Character character);
     void RemoveCharactersDousingFire(Character character);
     Character GetNearestDouserFrom(Character otherCharacter);
+
+    void AddObjectOnFire(IPointOfInterest poi);
+    void RemoveObjectOnFire(IPointOfInterest poi);
+    void AddOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action);
+    void RemoveOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action);
+    void AddOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action);
+    void RemoveOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action);
+    void AddOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action);
+    void RemoveOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action);
 }

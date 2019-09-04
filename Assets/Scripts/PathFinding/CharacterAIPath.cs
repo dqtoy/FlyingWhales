@@ -202,6 +202,7 @@ public class CharacterAIPath : AILerp {
         marker.ClearArrivalAction();
         interpolator.SetPath(null);
         marker.StopMovement();
+        Debug.Log(GameManager.Instance.TodayLogString() + marker.name + " cleared all current path data.");
     }
     public void ResetThis() {
         ResetEndReachedDistance();

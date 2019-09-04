@@ -376,6 +376,9 @@ public class CharacterMarker : PooledObject {
                 } else {
                     actionIcon.gameObject.SetActive(false);
                 }
+            } else if (hasFleePath) {
+                actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Flee_Icon];
+                actionIcon.gameObject.SetActive(true);
             } else {
                 //no action or state
                 actionIcon.gameObject.SetActive(false);
@@ -1192,8 +1195,8 @@ public class CharacterMarker : PooledObject {
         seeker.StartPath(fleePath);
     }
     public void OnFleePathComputed(Path path) {
-        if (character == null || character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT 
-            || character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //|| character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT 
+        if (character == null || character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return; //this is for cases that the character is no longer in a combat state, but the pathfinding thread returns a flee path
         }
         //Debug.Log(character.name + " computed flee path");
@@ -1207,7 +1210,9 @@ public class CharacterMarker : PooledObject {
     public void OnFinishedTraversingFleePath() {
         //Debug.Log(name + " has finished traversing flee path.");
         SetHasFleePath(false);
-        (character.stateComponent.currentState as CombatState).FinishedTravellingFleePath();
+        if (character.stateComponent.currentState is CombatState) {
+            (character.stateComponent.currentState as CombatState).FinishedTravellingFleePath();
+        }
         UpdateAnimation();
         UpdateActionIcon();
         StopPerTickFlee();
@@ -1221,6 +1226,11 @@ public class CharacterMarker : PooledObject {
         if (!terrifyingObjects.Contains(obj)) {
             terrifyingObjects.Add(obj);
             //rvoController.avoidedAgents.Add(character.marker.fleeingRVOController.rvoAgent);
+        }
+    }
+    public void AddTerrifyingObject(List<IPointOfInterest> objs) {
+        for (int i = 0; i < objs.Count; i++) {
+            AddTerrifyingObject(objs[i]);
         }
     }
     public void RemoveTerrifyingObject(IPointOfInterest obj) {
@@ -1320,6 +1330,31 @@ public class CharacterMarker : PooledObject {
     public void StopPerTickFlee() {
         fleeSpeedModifier = 0f;
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickFlee);
+    }
+    /// <summary>
+    /// Utility function to make a character flee outside of combat state.
+    /// </summary>
+    /// <param name="objects">The objects the character will flee from.</param>
+    public bool FleeFrom(List<IPointOfInterest> objects) {
+        List<IPointOfInterest> validObjs = objects.Where(x => x != null && x.gridTileLocation != null).ToList();
+        if (validObjs.Count == 0 || hasFleePath) {
+            return false;
+        }
+        if (character.currentAction != null) {
+            character.StopCurrentAction(false);
+        } else if (character.stateComponent.currentState != null) {
+            character.stateComponent.currentState.OnExitThisState();
+        }
+        Debug.Log(GameManager.Instance.TodayLogString() + character.name + " will start fleeing");
+        pathfindingAI.ClearAllCurrentPathData();
+        SetHasFleePath(true);
+        pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
+        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, validObjs.Select(x => x.gridTileLocation.worldLocation).ToArray(), 5000);
+        fleePath.aimStrength = 1;
+        fleePath.spread = 4000;
+        seeker.StartPath(fleePath);
+        UpdateActionIcon();
+        return true;
     }
     #endregion
 

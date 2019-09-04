@@ -8,6 +8,10 @@ public class Ignite : PlayerJobAction, IBurningSource {
     private List<LocationGridTile> highlightedTiles;
 
     public List<Character> dousers { get; private set; }
+    public List<IPointOfInterest> objectsOnFire { get; private set; }
+    public DelegateTypes.OnAllBurningExtinguished onAllBurningExtinguished { get; private set; }
+    public DelegateTypes.OnBurningObjectAdded onBurningObjectAdded { get; private set; }
+    public DelegateTypes.OnBurningObjectRemoved onBurningObjectRemoved { get; private set; }
 
     public Ignite() : base(INTERVENTION_ABILITY.IGNITE) {
         tier = 1;
@@ -15,6 +19,7 @@ public class Ignite : PlayerJobAction, IBurningSource {
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.TILE };
         highlightedTiles = new List<LocationGridTile>();
         dousers = new List<Character>();
+        objectsOnFire = new List<IPointOfInterest>();
     }
 
     #region Overrides
@@ -25,8 +30,8 @@ public class Ignite : PlayerJobAction, IBurningSource {
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 Burning burning = new Burning();
-                burning.SetSourceOfBurning(this);
                 tile.AddTrait(burning);
+                burning.SetSourceOfBurning(this, tile);
             }
             Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", this.GetType().ToString(), "activated");
             PlayerManager.Instance.player.ShowNotification(log);
@@ -80,6 +85,36 @@ public class Ignite : PlayerJobAction, IBurningSource {
             }
         }
         return nearest;
+    }
+    public void AddObjectOnFire(IPointOfInterest poi) {
+        objectsOnFire.Add(poi);
+        onBurningObjectAdded?.Invoke(poi);
+    }
+    public void RemoveObjectOnFire(IPointOfInterest poi) {
+        if (objectsOnFire.Remove(poi)) {
+            onBurningObjectRemoved?.Invoke(poi);
+            if (objectsOnFire.Count == 0) {
+                onAllBurningExtinguished?.Invoke(this);
+            }
+        }
+    }
+    public void AddOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action) {
+        onAllBurningExtinguished += action;
+    }
+    public void RemoveOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action) {
+        onAllBurningExtinguished -= action;
+    }
+    public void AddOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action) {
+        onBurningObjectAdded += action;
+    }
+    public void RemoveOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action) {
+        onBurningObjectAdded -= action;
+    }
+    public void AddOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action) {
+        onBurningObjectRemoved += action;
+    }
+    public void RemoveOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action) {
+        onBurningObjectRemoved -= action;
     }
     #endregion
 }

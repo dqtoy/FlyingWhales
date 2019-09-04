@@ -39,6 +39,10 @@ public class MusicHater : Trait {
         base.OnOwnerInitiallyPlaced(owner);
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
+    public override void OnReturnToLife(Character character) {
+        base.OnReturnToLife(character);
+        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+    }
     #endregion
 
     private void OnHearGuitarPlaying(Character guitarPlayer) {

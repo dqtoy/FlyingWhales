@@ -31,7 +31,11 @@ public class InviteToMakeLove : GoapAction {
                     SetState("Invite Fail");
                 }
             } else {
-                if (!targetCharacter.isStarving && !targetCharacter.isExhausted
+                int acceptChance = 100;
+                if (targetCharacter.GetNormalTrait("Prude") != null) {
+                    acceptChance = 25;
+                }
+                if (UnityEngine.Random.Range(0, 100) < acceptChance && !targetCharacter.isStarving && !targetCharacter.isExhausted
                 && targetCharacter.GetNormalTrait("Annoyed") == null && !targetCharacter.HasOtherCharacterInParty()
                 && targetCharacter.stateComponent.currentState == null && targetCharacter.IsAvailable() && !targetCharacter.IsDoingEmergencyAction()) {
                     SetState("Invite Success");

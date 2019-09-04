@@ -9,14 +9,6 @@ using UnityEngine;
 public class InteractionManager : MonoBehaviour {
     public static InteractionManager Instance = null;
 
-    public delegate T ObjectActivator<T>(params object[] args);
-
-    public static readonly string Supply_Cache_Reward_1 = "SupplyCacheReward1";
-    public static readonly string Mana_Cache_Reward_1 = "ManaCacheReward1";
-    public static readonly string Mana_Cache_Reward_2 = "ManaCacheReward2";
-    public static readonly string Level_Reward_1 = "LevelReward1";
-    public static readonly string Level_Reward_2 = "LevelReward2";
-
     public const string Goap_State_Success = "Success";
     public const string Goap_State_Fail = "Fail";
 
@@ -24,14 +16,6 @@ public class InteractionManager : MonoBehaviour {
 
     private string dailyInteractionSummary;
     public Dictionary<INTERACTION_TYPE, GoapActionData> goapActionData { get; private set; }
-
-    public Dictionary<string, RewardConfig> rewardConfig = new Dictionary<string, RewardConfig>(){
-        { Supply_Cache_Reward_1, new RewardConfig(){ rewardType = REWARD.SUPPLY, lowerRange = 50, higherRange = 250 } },
-        { Mana_Cache_Reward_1, new RewardConfig(){ rewardType = REWARD.MANA, lowerRange = 5, higherRange = 30 } },
-        { Mana_Cache_Reward_2, new RewardConfig(){ rewardType = REWARD.MANA, lowerRange = 30, higherRange = 50 } },
-        { Level_Reward_1, new RewardConfig(){ rewardType = REWARD.LEVEL, lowerRange = 1, higherRange = 1 } },
-        { Level_Reward_2, new RewardConfig(){ rewardType = REWARD.LEVEL, lowerRange = 2, higherRange = 2 } },
-    };
 
     private void Awake() {
         Instance = this;
@@ -84,65 +68,6 @@ public class InteractionManager : MonoBehaviour {
         }
         throw new Exception("No Goap Action Data for " + goapType.ToString());
     }
-    public Reward GetReward(string rewardName) {
-        if (rewardConfig.ContainsKey(rewardName)) {
-            RewardConfig config = rewardConfig[rewardName];
-            return new Reward { rewardType = config.rewardType, amount = UnityEngine.Random.Range(config.lowerRange, config.higherRange + 1) };
-        }
-        throw new System.Exception("There is no reward configuration with name " + rewardName);
-    }
-    //public void UnlockAllTokens() {
-    //    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-    //        Character currCharacter = CharacterManager.Instance.allCharacters[i];
-    //        if (!currCharacter.isDefender) {
-    //            PlayerManager.Instance.player.AddToken(currCharacter.characterToken);
-    //        }
-    //    }
-    //    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-    //        Area currArea = LandmarkManager.Instance.allAreas[i];
-    //        PlayerManager.Instance.player.AddToken(currArea.locationToken);
-    //        PlayerManager.Instance.player.AddToken(currArea.defenderToken);
-    //    }
-    //    for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-    //        Faction currFaction = FactionManager.Instance.allFactions[i];
-    //        PlayerManager.Instance.player.AddToken(currFaction.factionToken);
-    //    }
-    //}
-
-    #region Move To Save
-    private bool CanCreateMoveToSave(Character character) {
-        /*
-         * Trigger Criteria 1: There is at least one other area that his faction does not own that has at least one Abducted character 
-         * that is not part of that area's faction that is either from this character's faction or from a Neutral, Friend or Ally factions
-         */
-        if (character.race == RACE.HUMANS || character.race == RACE.ELVES || character.race == RACE.SPIDER) {
-            List<Area> otherAreas = new List<Area>(LandmarkManager.Instance.allAreas.Where(x => x.owner != null && x.owner.id != character.faction.id));
-            for (int i = 0; i < otherAreas.Count; i++) {
-                Area currArea = otherAreas[i];
-                for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
-                    Character currCharacter = currArea.charactersAtLocation[j];
-                    Abducted abductedTrait = currCharacter.GetNormalTrait("Abducted") as Abducted;
-                    if (abductedTrait != null && currArea.owner.id != currCharacter.faction.id) { //check if character is abducted and that the area he/she is in is not owned by their faction
-                        if (currCharacter.faction.id == character.faction.id) {
-                            return true;
-                        } else {
-                            FactionRelationship rel = character.faction.GetRelationshipWith(currCharacter.faction);
-                            switch (rel.relationshipStatus) {
-                                case FACTION_RELATIONSHIP_STATUS.NEUTRAL:
-                                case FACTION_RELATIONSHIP_STATUS.FRIEND:
-                                case FACTION_RELATIONSHIP_STATUS.ALLY:
-                                    return true;
-                                default:
-                                    break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    #endregion
 
     #region Intel
     public Intel CreateNewIntel(IPointOfInterest poi) {
@@ -346,32 +271,4 @@ public class InteractionManager : MonoBehaviour {
         }
         return priority;
     }
-}
-
-public struct RewardConfig {
-    public REWARD rewardType;
-    public int lowerRange;
-    public int higherRange;
-}
-public struct Reward {
-    public REWARD rewardType;
-    public int amount;
-}
-[System.Serializable]
-public struct CharacterInteractionWeight {
-    public INTERACTION_TYPE interactionType;
-    public int weight;
-}
-
-public class InteractionAttributes {
-    public INTERACTION_CATEGORY[] categories;
-    public INTERACTION_ALIGNMENT alignment;
-    public Precondition[] preconditions;
-    public InteractionCharacterEffect[] actorEffect;
-    public InteractionCharacterEffect[] targetCharacterEffect;
-    public int cost;
-}
-public struct InteractionCharacterEffect {
-    public INTERACTION_CHARACTER_EFFECT effect;
-    public string effectString;
 }

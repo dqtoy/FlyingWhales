@@ -70,6 +70,12 @@ public class Trait {
     /// <see cref="Character.Death(string)"/>
     /// </summary>
     public virtual void OnDeath(Character character) { }
+    /// <summary>
+    /// Used to return necessary actions when a character with this trait
+    /// returns to life.
+    /// </summary>
+    /// <param name="character">The character that returned to life.</param>
+    public virtual void OnReturnToLife(Character character) { }
     public virtual string GetTestingData() { return string.Empty; }
     public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the target's traits?
     public virtual bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the his/her own traits, considering the target?

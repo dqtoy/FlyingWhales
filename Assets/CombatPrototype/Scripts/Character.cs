@@ -913,8 +913,11 @@ public class Character : ILeader, IPointOfInterest {
                 grave.gridTileLocation.structure.RemovePOI(grave);
                 SetGrave(null);
             }
-            //RemoveTrait("Dead");
-            RemoveAllNonPersistentTraits();
+            RemoveTrait("Dead");
+            for (int i = 0; i < normalTraits.Count; i++) {
+                normalTraits[i].OnReturnToLife(this);
+            }
+            //RemoveAllNonPersistentTraits();
             ClearAllAwareness();
             //Area gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
             MigrateHomeStructureTo(null);
@@ -1008,13 +1011,13 @@ public class Character : ILeader, IPointOfInterest {
             //ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
             //deathTile.RemoveCharacterHere(this);
 
-            RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
+            //RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
 
             for (int i = 0; i < normalTraits.Count; i++) {
                 normalTraits[i].OnDeath(this);
             }
 
-            RemoveAllNonPersistentTraits();
+            //RemoveAllNonPersistentTraits();
 
             SetHP(0);
 
@@ -2149,6 +2152,9 @@ public class Character : ILeader, IPointOfInterest {
             //Berserked state cannot be overriden
             return false;
         }
+        if (stateComponent.currentState == null && this.marker.hasFleePath) {
+            return false; //if the character is only fleeing, but is not in combat state, do not allow overriding.
+        }
         if (stateComponent.currentState != null) {
             if (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                 //Only override flee or engage state if the job is Berserked State, Berserk overrides all
@@ -2742,7 +2748,7 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     public bool CanCharacterReact() {
-        if(faction == PlayerManager.Instance.player.playerFaction) {
+        if(this is Summon || minion != null) {
             //Cannot react if summon or minion
             return false;
         }
@@ -4194,7 +4200,7 @@ public class Character : ILeader, IPointOfInterest {
 
         string[] traitPool = new string[] { "Curious", "Vigilant", "Doctor", "Diplomatic",
             "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
-            "Herbalist", "Optimist", "Pessimist", "Fast", "Prude", "Horny", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious",
+            "Herbalist", "Optimist", "Pessimist", "Fast", "Prude", "Horny", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
             "Narcoleptic", "Hothead",
         };
         //"Kleptomaniac"
@@ -5065,7 +5071,7 @@ public class Character : ILeader, IPointOfInterest {
         return currentAction == null && _numOfWaitingForGoapThread <= 0;
     }
     public void PlanGoapActions() {
-        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || isWaitingForInteraction > 0 || isDead) {
+        if (!IsInOwnParty() || isDefender || ownParty.icon.isTravelling || _doNotDisturb > 0 || isWaitingForInteraction > 0 || isDead || marker.hasFleePath) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
         if (stateComponent.currentState != null) {

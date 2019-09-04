@@ -105,9 +105,23 @@ public class MakeLove : GoapAction {
     }
     private void PerTickMakeLoveSuccess() {
         //**Per Tick Effect 1 * *: Actor's Happiness Meter +500
-        actor.AdjustHappiness(500);
+        int actorHappinessAmount = 500;
+        int targetHappinessAmount = 500;
+        if (actor.GetNormalTrait("Horny") != null) {
+            actorHappinessAmount += 100;
+        } else if (actor.GetNormalTrait("Prude") != null) {
+            actorHappinessAmount -= 100;
+        }
+
+        if (targetCharacter.GetNormalTrait("Horny") != null) {
+            targetHappinessAmount += 100;
+        } else if (targetCharacter.GetNormalTrait("Prude") != null) {
+            targetHappinessAmount -= 100;
+        }
+
+        actor.AdjustHappiness(actorHappinessAmount);
         //**Per Tick Effect 2**: Target's Happiness Meter +500
-        targetCharacter.AdjustHappiness(500);
+        targetCharacter.AdjustHappiness(targetHappinessAmount);
     }
     private void AfterMakeLoveSuccess() {
         actor.AdjustDoNotGetLonely(-1);

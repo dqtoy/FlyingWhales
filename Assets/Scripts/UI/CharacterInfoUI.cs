@@ -275,20 +275,11 @@ public class CharacterInfoUI : UIMenu {
             return;
         }
 
-
-
-        ////Travel Thought
-        //if (!_activeCharacter.isDead && _activeCharacter.currentParty.icon.isTravelling) {
-        //    //&& _activeCharacter.currentParty.icon.travelLine != null
-        //    if (_activeCharacter.currentAction != null) {
-        //        //use moving log of current action
-        //        plansLblLogItem.SetLog(_activeCharacter.currentAction.thoughtBubbleMovingLog);
-        //        plansLbl.text = Utilities.LogReplacer(_activeCharacter.currentAction.thoughtBubbleMovingLog);
-        //    } else {
-        //        plansLbl.text = _activeCharacter.name + " is travelling.";
-        //    }
-        //    return;
-        //} 
+        //fleeing
+        if (_activeCharacter.marker.hasFleePath) {
+            plansLbl.text = _activeCharacter.name + " is fleeing.";
+            return;
+        }
 
         //Travelling
         if (_activeCharacter.currentParty.icon.isTravelling) {
