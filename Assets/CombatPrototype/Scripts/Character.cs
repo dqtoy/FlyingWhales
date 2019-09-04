@@ -4204,12 +4204,12 @@ public class Character : ILeader, IPointOfInterest {
         //    AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
         //}
 
-        string[] traitPool = new string[] { "Curious", "Vigilant", "Doctor", "Diplomatic",
+        string[] traitPool = new string[] { "Vigilant", "Doctor", "Diplomatic",
             "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
             "Herbalist", "Optimist", "Pessimist", "Fast", "Prude", "Horny", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
             "Narcoleptic", "Hothead",
         };
-        //"Kleptomaniac"
+        //"Kleptomaniac","Curious", 
 
         List<string> buffTraits = new List<string>();
         List<string> flawTraits = new List<string>();
@@ -4319,7 +4319,7 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
         AddTrait(chosenFlawOrNeutralTraitName);
-        AddTrait("Narcoleptic");
+        //AddTrait("Narcoleptic");
 
         AddTrait("Character Trait");
     }
