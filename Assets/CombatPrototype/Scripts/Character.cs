@@ -4321,7 +4321,7 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
         AddTrait(chosenFlawOrNeutralTraitName);
-        AddTrait("Narcoleptic");
+        //AddTrait("Narcoleptic");
         //AddTrait("Glutton");
 
         AddTrait("Character Trait");
