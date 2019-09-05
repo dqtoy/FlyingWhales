@@ -30,7 +30,7 @@ public class FirstAidCharacter : GoapAction {
         }
     }
     protected override int GetCost() {
-        return 1;
+        return 12;
     }
     #endregion
 

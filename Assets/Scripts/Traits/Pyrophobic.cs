@@ -50,6 +50,7 @@ public class Pyrophobic : Trait {
         if (character.marker.FleeFrom(source.objectsOnFire)) {
             summary += "\nStarted fleeing";
             //owner.marker.AddTerrifyingObject(source.objectsOnFire);
+            character.CancelAllPlans();
             Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), "flee_pyrophobia");
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToInvolvedObjects();

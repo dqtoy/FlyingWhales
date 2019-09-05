@@ -33,7 +33,7 @@ public class Tantrum : GoapAction {
     }
     protected override int GetCost() {
         //**Cost**: randomize between 3-10
-        return Utilities.rng.Next(3, 10);
+        return Utilities.rng.Next(3, 11);
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);

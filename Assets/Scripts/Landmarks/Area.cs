@@ -1204,7 +1204,7 @@ public class Area {
     #region Jobs
     private void HourlyJobActions() {
         CreatePatrolAndExploreJobs();
-        if (UnityEngine.Random.Range(0, 25) < 100 && currentMoveOutJobs < maxMoveOutJobs) {
+        if (UnityEngine.Random.Range(0, 100) < 5 && currentMoveOutJobs < maxMoveOutJobs) {
             CreateMoveOutJobs();
         }
     }
@@ -1308,7 +1308,7 @@ public class Area {
         jobQueue.AddJobInQueue(job);
     }
     private int maxMoveOutJobs {
-        get { return areaResidents.Count / 4; } //There should be at most 1 Move Out Job per 4 residents
+        get { return areaResidents.Count / 6; } //There should be at most 1 Move Out Job per 6 residents
     }
     private int currentMoveOutJobs {
         get { return jobQueue.GetNumberOfJobsWith(JOB_TYPE.MOVE_OUT); }
@@ -1319,7 +1319,12 @@ public class Area {
         jobQueue.AddJobInQueue(job);
     }
     private bool CanMoveOut(Character character, JobQueueItem item) {
-        return character.role.roleType != CHARACTER_ROLE.LEADER && GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick) == TIME_IN_WORDS.MORNING; //Only non-leaders can take move out job, and it must also be in the morning time.
+        TIME_IN_WORDS time = TIME_IN_WORDS.MORNING;
+        if (character.GetNormalTrait("Nocturnal") != null) {
+            //if nocturnal get after midnight
+            time = TIME_IN_WORDS.AFTER_MIDNIGHT;
+        }
+        return character.role.roleType != CHARACTER_ROLE.LEADER && GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick) == time; //Only non-leaders can take move out job, and it must also be in the morning time.
     }
     #endregion
 

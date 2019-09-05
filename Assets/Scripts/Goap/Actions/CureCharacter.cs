@@ -32,7 +32,7 @@ public class CureCharacter : GoapAction {
         }
     }
     protected override int GetCost() {
-        return 1;
+        return 12;
     }
     #endregion
 

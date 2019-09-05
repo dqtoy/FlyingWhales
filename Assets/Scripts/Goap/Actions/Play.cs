@@ -46,8 +46,8 @@ public class Play : GoapAction {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     protected override int GetCost() {
-        //**Cost**: randomize between 3-10
-        return Utilities.rng.Next(6, 15);
+        //**Cost**: randomize between 6-15
+        return Utilities.rng.Next(6, 16);
     }
     //public override void FailAction() {
     //    base.FailAction();
