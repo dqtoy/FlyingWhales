@@ -19,7 +19,7 @@ public class Drink : GoapAction {
         } else {
             validTimeOfDays = new TIME_IN_WORDS[] {
                 TIME_IN_WORDS.EARLY_NIGHT,
-                TIME_IN_WORDS.LATE_NIGHT,
+                //TIME_IN_WORDS.LATE_NIGHT,
             };
         }
         

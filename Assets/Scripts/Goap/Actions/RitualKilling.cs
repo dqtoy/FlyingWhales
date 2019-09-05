@@ -6,6 +6,11 @@ public class RitualKilling : GoapAction {
 
     public RitualKilling(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RITUAL_KILLING, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
+        validTimeOfDays = new TIME_IN_WORDS[] {
+                TIME_IN_WORDS.AFTER_MIDNIGHT,
+                TIME_IN_WORDS.EARLY_NIGHT,
+                TIME_IN_WORDS.LATE_NIGHT,
+            };
     }
 
     #region Overrides

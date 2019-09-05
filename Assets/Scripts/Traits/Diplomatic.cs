@@ -20,7 +20,9 @@ public class Diplomatic : Trait {
             Character targetCharacter = targetPOI as Character;
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < 20) {
-                if(targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY, false) && targetCharacter.faction == characterThatWillDoJob.faction && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST && !targetCharacter.returnedToLife) {
+                if((targetCharacter.stateComponent.currentState == null || (targetCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT && targetCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))
+                    && targetCharacter.faction == characterThatWillDoJob.faction && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST 
+                    && !targetCharacter.returnedToLife && targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY, false)) {
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.RESOLVE_CONFLICT)) {
                         GoapPlanJob resolveConflictJob = new GoapPlanJob(JOB_TYPE.RESOLVE_CONFLICT, INTERACTION_TYPE.RESOLVE_CONFLICT, targetCharacter);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(resolveConflictJob);

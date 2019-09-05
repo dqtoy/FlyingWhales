@@ -85,10 +85,10 @@ public class ChatCharacter : GoapAction {
                     weight += -30;
                 }
                 if(actor.GetNormalTrait("Hothead") != null) {
-                    weight += 100;
+                    weight += 200;
                 }
                 if (targetCharacter.GetNormalTrait("Hothead") != null) {
-                    weight += 100;
+                    weight += 200;
                 }
                 if (weight > 0) {
                     weights.AddElement("Become Enemies", weight);
@@ -125,10 +125,10 @@ public class ChatCharacter : GoapAction {
                     weight += 50;
                 }
                 if (actor.GetNormalTrait("Hothead") != null) {
-                    weight -= 50;
+                    weight -= 40;
                 }
                 if (targetCharacter.GetNormalTrait("Hothead") != null) {
-                    weight -= 50;
+                    weight -= 40;
                 }
                 if (weight > 0) {
                     weights.AddElement("Resolve Enmity", weight);

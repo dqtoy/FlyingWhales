@@ -92,6 +92,8 @@ public class SaveDataCharacter {
     public TIME_IN_WORDS forcedFullnessRecoveryTimeInWords;
     public TIME_IN_WORDS forcedTirednessRecoveryTimeInWords;
 
+    public bool returnedToLife;
+
     //For Summons Only
     public SUMMON_TYPE summonType;
 
@@ -198,6 +200,8 @@ public class SaveDataCharacter {
         tirednessForcedTick = character.tirednessForcedTick;
         forcedFullnessRecoveryTimeInWords = character.forcedFullnessRecoveryTimeInWords;
         forcedTirednessRecoveryTimeInWords = character.forcedTirednessRecoveryTimeInWords;
+
+        returnedToLife = character.returnedToLife;
     }
 
     public void Load() {

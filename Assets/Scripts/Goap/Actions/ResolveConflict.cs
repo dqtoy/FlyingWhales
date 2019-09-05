@@ -22,7 +22,10 @@ public class ResolveConflict : GoapAction {
         if (!isTargetMissing) {
             if(poiTarget is Character) {
                 Character targetCharacter = poiTarget as Character;
-                if(targetCharacter.GetNormalTrait("Hothead") != null && UnityEngine.Random.Range(0, 2) == 0) {
+                if((targetCharacter.GetNormalTrait("Hothead") != null && UnityEngine.Random.Range(0, 2) == 0)
+                    || (targetCharacter.stateComponent.currentState != null &&
+                    (targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT 
+                    || targetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED))) {
                     SetState("Resolve Fail");
                 } else {
                     SetState("Resolve Success");
