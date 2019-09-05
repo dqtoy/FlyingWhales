@@ -171,7 +171,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         switch (groundType) {
             case Ground_Type.Grass:
             case Ground_Type.Wood:
-                AddTrait("Flammable");
+                if (structure != null) {
+                    AddTrait("Flammable");
+                }
                 break;
             default:
                 RemoveTrait("Flammable");
