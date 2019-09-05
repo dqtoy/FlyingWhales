@@ -36,17 +36,15 @@ public class PlayGuitar : GoapAction {
         }
     }
     protected override int GetCost() {
-        //Cost:
-        //- Actor is resident of the Guitar's Dwelling: 4-10
-        //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 7-12
         Trait musicLover = actor.GetNormalTrait("MusicLover");
         if (poiTarget.gridTileLocation != null) {
             LocationGridTile knownLoc = poiTarget.gridTileLocation;
             if (actor.homeStructure == knownLoc.structure) {
+                //- Actor is resident of the Guitar's Dwelling: 15 - 26 (If Music Lover 5 - 12)
                 if (musicLover != null) {
-                    return Utilities.rng.Next(3, 7);
+                    return Utilities.rng.Next(5, 13);
                 }
-                return Utilities.rng.Next(4, 10);
+                return Utilities.rng.Next(15, 27);
             } else {
                 if (knownLoc.structure is Dwelling) {
                     Dwelling dwelling = knownLoc.structure as Dwelling;
@@ -54,33 +52,24 @@ public class PlayGuitar : GoapAction {
                         for (int i = 0; i < dwelling.residents.Count; i++) {
                             Character currResident = dwelling.residents[i];
                             if (currResident.HasRelationshipOfEffectWith(actor, TRAIT_EFFECT.POSITIVE)) {
+                                //- Actor is not a resident but has a positive relationship with the Guitar's Dwelling resident: 20-36 (If music lover 10 - 26)
                                 if (musicLover != null) {
-                                    return Utilities.rng.Next(4, 10);
+                                    return Utilities.rng.Next(10, 27);
                                 }
-                                return Utilities.rng.Next(7, 12);
+                                return Utilities.rng.Next(20, 37);
                             }
                         }
                         //the actor does NOT have any positive relations with any resident
                         return 99999; //NOTE: Should never reach here since Requirement prevents this.
-                    } else {
-                        //in cases that the guitar is at a dwelling with no residents, always allow.\
-                        if (musicLover != null) {
-                            return Utilities.rng.Next(15, 25);
-                        }
-                        return Utilities.rng.Next(25, 41);
                     }
-                } else {
-                    if (musicLover != null) {
-                        return Utilities.rng.Next(15, 25);
-                    }
-                    return Utilities.rng.Next(25, 41);
                 }
             }
         }
+        //- Guitar Structure Has No Residents 40 - 56 (If Music Lover 25 - 46)
         if (musicLover != null) {
-            return Utilities.rng.Next(15, 25);
+            return Utilities.rng.Next(25, 47);
         }
-        return Utilities.rng.Next(25, 41);
+        return Utilities.rng.Next(40, 57);
     }
     public override void OnStopActionDuringCurrentState() {
         if (currentState.name == "Play Success") {
