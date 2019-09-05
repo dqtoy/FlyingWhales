@@ -5235,36 +5235,7 @@ public class Character : ILeader, IPointOfInterest {
         if (doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return false;
         }
-        TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        if (isLonely) {
-            if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
-                Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
-                if(hardworking != null) {
-                    bool isPlanningRecoveryProcessed = false;
-                    if(hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
-                        return isPlanningRecoveryProcessed;
-                    }
-                }
-                int chance = UnityEngine.Random.Range(0, 100);
-                int value = 0;
-                if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
-                    value = 30;
-                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
-                    value = 45;
-                } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-                    value = 45;
-                } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-                    value = 30;
-                }
-                if (chance < value) {
-                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
-                    job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job, processOverrideLogic);
-                    return true;
-                }
-            }
-        } else if (isForlorn) {
+        if (isForlorn) {
             //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
             JobQueueItem happinessRecoveryJob = jobQueue.GetJob(JOB_TYPE.HAPPINESS_RECOVERY);
             if (happinessRecoveryJob != null) {
@@ -5288,6 +5259,35 @@ public class Character : ILeader, IPointOfInterest {
                 job.SetCancelOnFail(true);
                 jobQueue.AddJobInQueue(job, processOverrideLogic);
                 return true;
+            }
+        } else if (isLonely) {
+            if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+                JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
+                Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
+                if(hardworking != null) {
+                    bool isPlanningRecoveryProcessed = false;
+                    if(hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
+                        return isPlanningRecoveryProcessed;
+                    }
+                }
+                int chance = UnityEngine.Random.Range(0, 100);
+                int value = 0;
+                TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+                if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    value = 30;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                    value = 45;
+                } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+                    value = 45;
+                } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+                    value = 30;
+                }
+                if (chance < value) {
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    job.SetCancelOnFail(true);
+                    jobQueue.AddJobInQueue(job, processOverrideLogic);
+                    return true;
+                }
             }
         }
         return false;
