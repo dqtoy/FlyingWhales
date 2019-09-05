@@ -100,9 +100,9 @@ public class PlayGuitar : GoapAction {
     public void PerTickPlaySuccess() {
         //**Per Tick Effect 1**: Actor's Happiness Meter +12 (+20 if https://trello.com/c/CvvzA9OJ/2497-music-lover)
         if (isMusicLover) {
-            actor.AdjustHappiness(200);
+            actor.AdjustHappiness(600);
         } else {
-            actor.AdjustHappiness(160);
+            actor.AdjustHappiness(500);
         }
     }
     public void AfterPlaySuccess() {
