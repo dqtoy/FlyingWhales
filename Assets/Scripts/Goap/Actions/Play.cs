@@ -17,7 +17,7 @@ public class Play : GoapAction {
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
             TIME_IN_WORDS.AFTERNOON,
-            TIME_IN_WORDS.EARLY_NIGHT,
+            //TIME_IN_WORDS.EARLY_NIGHT,
         };
         actionIconString = GoapActionStateDB.Entertain_Icon;
         isNotificationAnIntel = false;

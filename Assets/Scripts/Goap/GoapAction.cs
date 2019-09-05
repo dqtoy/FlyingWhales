@@ -1017,6 +1017,12 @@ public class GoapActionData {
         this.goapType = goapType;
     }
 
+    #region Virtuals
+    public bool CanSatisfyTimeOfDays() {
+        return true;
+    }
+    #endregion
+
     public bool CanSatisfyRequirements(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool requirementActionSatisfied = true;
         if (requirementAction != null) {
