@@ -124,6 +124,9 @@ public class EatCharacterData : GoapActionData {
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (actor != poiTarget) {
+            if (poiTarget.gridTileLocation == null) {
+                return false;
+            }
             if (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
                 return false;
             }
