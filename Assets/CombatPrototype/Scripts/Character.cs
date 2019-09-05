@@ -3736,20 +3736,23 @@ public class Character : ILeader, IPointOfInterest {
             string rollLog = GameManager.Instance.TodayLogString() + characterThatAttacked.name + " attacked " + name
                 + ", death weight: " + deathWeight + ", unconscious weight: " + unconsciousWeight 
                 + ", isLethal: " + characterThatAttacked.marker.IsLethalCombatForTarget(this);
-            characterThatAttacked.PrintLogIfActive(rollLog);
 
             if (this.GetNormalTrait("Unconscious") == null) {
                 loserResults.AddElement("Unconscious", unconsciousWeight);
+                rollLog += "\n- Unconscious weight will be added";
             }
             //if (currentClosestHostile.GetNormalTrait("Injured") == null) {
             //    loserResults.AddElement("Injured", 10);
             //}
             if (!isDead) {
                 loserResults.AddElement("Death", deathWeight);
+                rollLog += "\n- Death weight will be added";
             }
 
             if (loserResults.Count > 0) {
                 string result = loserResults.PickRandomElementGivenWeights();
+                rollLog += "\n- Pick result is: " + result;
+                characterThatAttacked.PrintLogIfActive(rollLog);
                 attackSummary += "\ncombat result is " + result; ;
                 switch (result) {
                     case "Unconscious":
@@ -3764,6 +3767,9 @@ public class Character : ILeader, IPointOfInterest {
                         this.Death("attacked", deathFromAction: state.actionThatTriggeredThisState, responsibleCharacter: characterThatAttacked);
                         break;
                 }
+            } else {
+                rollLog += "\n- Dictionary is empty, no result!";
+                characterThatAttacked.PrintLogIfActive(rollLog);
             }
         } else {
             Invisible invisible = characterThatAttacked.GetNormalTrait("Invisible") as Invisible;
