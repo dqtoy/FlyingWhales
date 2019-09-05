@@ -59,6 +59,7 @@ public class Inspect : GoapAction {
         
     }
     public void PreTargetMissing() {
+        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         currentState.AddLogFiller(actor.currentStructure.location, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterTargetMissing() {
