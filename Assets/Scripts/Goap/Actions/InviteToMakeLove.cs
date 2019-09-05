@@ -48,25 +48,40 @@ public class InviteToMakeLove : GoapAction {
         }
     }
     protected override int GetCost() {
-        if(poiTarget is Character) {
-            Character targetCharacter = poiTarget as Character;
-            Unfaithful unfaithful = actor.GetNormalTrait("Unfaithful") as Unfaithful;
-            if (unfaithful != null && actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                if(unfaithful.level == 1) {
-                    return Utilities.rng.Next(5, 11);
-                }else if (unfaithful.level == 2) {
-                    return Utilities.rng.Next(3, 8);
-                } else if (unfaithful.level == 3) {
-                    return Utilities.rng.Next(1, 3);
+        bool isPrude = actor.GetNormalTrait("Prude") != null;
+        if (isPrude) {
+            //Prude 40 - 66 all three time of day and also unfaithful values
+            return Utilities.rng.Next(40, 67);
+        }
+        bool isHorny = actor.GetNormalTrait("Horny") != null;
+        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+        if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
+            if (poiTarget is Character) {
+                //If unfaithful and target is Paramour (15 - 36)/(8 - 20)/(5-15) per level, affects Early Night and Late Night only).
+                Character targetCharacter = poiTarget as Character;
+                Unfaithful unfaithful = actor.GetNormalTrait("Unfaithful") as Unfaithful;
+                if (unfaithful != null && actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                    if (unfaithful.level == 1) {
+                        return Utilities.rng.Next(15, 37);
+                    } else if (unfaithful.level == 2) {
+                        return Utilities.rng.Next(8, 21);
+                    } else if (unfaithful.level == 3) {
+                        return Utilities.rng.Next(5, 16);
+                    }
                 }
             }
+            if (isHorny) {
+                //Horny(Early Night or Late Night 5 - 25)
+                return Utilities.rng.Next(5, 26);
+            }
+            return Utilities.rng.Next(15, 37);
         }
-        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
-        if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT)
-        {
-            return Utilities.rng.Next(15, 36);
+
+        if (isHorny) {
+            // - Horny 15 - 25
+            return Utilities.rng.Next(15, 26);
         }
-        return Utilities.rng.Next(30, 56);
+        return Utilities.rng.Next(30, 57);
     }
     #endregion
 

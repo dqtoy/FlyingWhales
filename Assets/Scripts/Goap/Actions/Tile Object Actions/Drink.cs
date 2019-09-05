@@ -49,12 +49,11 @@ public class Drink : GoapAction {
         }
     }
     protected override int GetCost() {
-        if (poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN) {
-            if (actor.GetNormalTrait("Alcoholic") != null) {
-                return Utilities.rng.Next(5, 15);
-            }
+        //**Cost**: 15 - 26 (If Actor is alcoholic 5 - 19)
+        if (actor.GetNormalTrait("Alcoholic") != null) {
+            return Utilities.rng.Next(5, 20);
         }
-        return Utilities.rng.Next(15, 26);
+        return Utilities.rng.Next(15, 27);
     }
     //public override void FailAction() {
     //    base.FailAction();
