@@ -593,6 +593,8 @@ public class Character : ILeader, IPointOfInterest {
         SetForcedTirednessRecoveryTimeInWords(data.forcedTirednessRecoveryTimeInWords);
         SetFullnessForcedTick(data.fullnessForcedTick);
         SetTirednessForcedTick(data.tirednessForcedTick);
+
+        returnedToLife = data.returnedToLife;
     }
     public Character() {
         SetIsDead(false);

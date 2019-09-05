@@ -200,6 +200,8 @@ public class SaveDataCharacter {
         tirednessForcedTick = character.tirednessForcedTick;
         forcedFullnessRecoveryTimeInWords = character.forcedFullnessRecoveryTimeInWords;
         forcedTirednessRecoveryTimeInWords = character.forcedTirednessRecoveryTimeInWords;
+
+        returnedToLife = character.returnedToLife;
     }
 
     public void Load() {
