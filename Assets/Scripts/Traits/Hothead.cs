@@ -24,7 +24,7 @@ public class Hothead : Trait {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 2 && characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     characterThatWillDoJob.PrintLogIfActive(GameManager.Instance.TodayLogString() + characterThatWillDoJob.name
-                        + "Hothead Assault Chance: 2, Roll: " + chance);
+                        + " Hothead Assault Chance: 2, Roll: " + chance);
                     if (characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, false, false)) {
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "hothead_assault");
                         log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
