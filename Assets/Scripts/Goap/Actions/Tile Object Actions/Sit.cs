@@ -28,10 +28,7 @@ public class Sit : GoapAction {
         }
     }
     protected override int GetCost() {
-        if((poiTarget as TileObject).tileObjectType == TILE_OBJECT_TYPE.TABLE) {
-            return 8;
-        }
-        return 4;
+        return 8;
     }
     #endregion
 
