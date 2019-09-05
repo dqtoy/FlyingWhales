@@ -20,7 +20,7 @@ public class Diplomatic : Trait {
             Character targetCharacter = targetPOI as Character;
             int chance = UnityEngine.Random.Range(0, 100);
             if (chance < 20) {
-                if(targetCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT && targetCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED
+                if((targetCharacter.stateComponent.currentState == null || (targetCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT && targetCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.BERSERKED))
                     && targetCharacter.faction == characterThatWillDoJob.faction && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST 
                     && !targetCharacter.returnedToLife && targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.ENEMY, false)) {
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.RESOLVE_CONFLICT)) {
