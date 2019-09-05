@@ -171,6 +171,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.TANTRUM:
             case JOB_TYPE.STEAL:
             case JOB_TYPE.RESOLVE_CONFLICT:
+            case JOB_TYPE.DESTROY:
                 priority = 10;
                 break;
             case JOB_TYPE.KNOCKOUT:
