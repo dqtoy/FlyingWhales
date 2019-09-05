@@ -45,6 +45,7 @@ public class NarcolepticNap : GoapAction {
 
     #region State Effects
     private void PreNapSuccess() {
+        currentState.SetAnimation("Sleep Ground");
         restingTrait = new Resting();
         actor.AddTrait(restingTrait);
     }

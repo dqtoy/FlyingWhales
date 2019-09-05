@@ -4319,7 +4319,8 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
         AddTrait(chosenFlawOrNeutralTraitName);
-        //AddTrait("Narcoleptic");
+        AddTrait("Narcoleptic");
+        //AddTrait("Glutton");
 
         AddTrait("Character Trait");
     }
@@ -5348,7 +5349,7 @@ public class Character : ILeader, IPointOfInterest {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
                 if (isAtHomeArea && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
                     if(GetNormalTrait("Lazy") != null) {
-                        if(UnityEngine.Random.Range(0, 100) < 20) {
+                        if(UnityEngine.Random.Range(0, 100) < 35) {
                             if (!ForcePlanHappinessRecoveryActions()) {
                                 PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
                             }
@@ -5371,7 +5372,17 @@ public class Character : ILeader, IPointOfInterest {
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null && !isStarving && !isExhausted && !isForlorn) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
                 if (isAtHomeArea && isPartOfHomeFaction) {
-                    return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                    if (GetNormalTrait("Lazy") != null) {
+                        if (UnityEngine.Random.Range(0, 100) < 35) {
+                            if (!ForcePlanHappinessRecoveryActions()) {
+                                PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
+                            }
+                        } else {
+                            return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                        }
+                    } else {
+                        return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                    }
                 } else {
                     return false;
                 }
