@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Glutton : Trait {
 
+    private int additionalFullnessDecreaseRate;
+
     public Glutton() {
         name = "Glutton";
         description = "This character has glutton trait.";
@@ -19,8 +21,10 @@ public class Glutton : Trait {
     public override void OnAddTrait(ITraitable addedTo) {
         base.OnAddTrait(addedTo);
         if(addedTo is Character) {
+            additionalFullnessDecreaseRate = Mathf.CeilToInt(CharacterManager.FULLNESS_DECREASE_RATE * 0.5f);
             Character character = addedTo as Character;
             character.SetFullnessForcedTick(0);
+            character.AdjustFullnessDecreaseRate(additionalFullnessDecreaseRate);
         }
     }
     public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
@@ -28,6 +32,7 @@ public class Glutton : Trait {
         if (removedFrom is Character) {
             Character character = removedFrom as Character;
             character.SetFullnessForcedTick();
+            character.AdjustFullnessDecreaseRate(-additionalFullnessDecreaseRate);
         }
     }
     #endregion
