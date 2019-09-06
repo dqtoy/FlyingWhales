@@ -1085,7 +1085,7 @@ MonoBehaviour:
   - landmarkTypeString: The Spire
     landmarkType: 48
     minimumTileCount: 1
-    buildDuration: 10
+    buildDuration: 288
     buildDescription: Assign a minion to learn new intervention spells depending on
       the minion type.
     connectedTileDirection: 6

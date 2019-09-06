@@ -88,8 +88,8 @@ public class BaseLandmark {
         connections = new List<BaseLandmark>();
         charactersHere = new List<Character>();
         otherAfterInvasionActions = new List<System.Action>();
-        //invasionTicks = GameManager.ticksPerDay;
-        invasionTicks = 5;
+        invasionTicks = GameManager.ticksPerDay;
+        //invasionTicks = 5;
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
