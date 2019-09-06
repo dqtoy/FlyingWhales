@@ -277,6 +277,7 @@ public class GoapAction {
         actor.SetCurrentAction(this);
         parentPlan.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
+        actor.marker.OnThisCharacterDoingAction(this);
 
         Character targetCharacter = null;
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
