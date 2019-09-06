@@ -5159,21 +5159,7 @@ public class Character : ILeader, IPointOfInterest {
         if(doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return false;
         }
-        if(isHungry) {
-            if(UnityEngine.Random.Range(0,2) == 0 && GetNormalTrait("Glutton") != null) {
-                JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                if (GetNormalTrait("Vampiric") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                } else if (GetNormalTrait("Cannibal") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                }
-                job.SetCancelOnFail(true);
-                jobQueue.AddJobInQueue(job, processOverrideLogic);
-                return true;
-            }
-        }
-        else if (isStarving) {
+        if (isStarving) {
             //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
             JobQueueItem hungerRecoveryJob = jobQueue.GetJob(JOB_TYPE.HUNGER_RECOVERY);
             if (hungerRecoveryJob != null) {
@@ -5195,7 +5181,21 @@ public class Character : ILeader, IPointOfInterest {
                 job.SetCancelOnFail(true);
                 jobQueue.AddJobInQueue(job, processOverrideLogic);
                 return true;
-            } 
+            }
+        }
+        else if (isHungry) {
+            if(UnityEngine.Random.Range(0,2) == 0 && GetNormalTrait("Glutton") != null) {
+                JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
+                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                if (GetNormalTrait("Vampiric") != null) {
+                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                } else if (GetNormalTrait("Cannibal") != null) {
+                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                }
+                job.SetCancelOnFail(true);
+                jobQueue.AddJobInQueue(job, processOverrideLogic);
+                return true;
+            }
         }
         return false;
     }
