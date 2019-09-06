@@ -56,6 +56,8 @@ MonoBehaviour:
   - landmarkTypeString: Demonic Portal
     landmarkType: 1
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
@@ -73,6 +75,8 @@ MonoBehaviour:
   - landmarkTypeString: Workshop
     landmarkType: 4
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
@@ -90,6 +94,8 @@ MonoBehaviour:
   - landmarkTypeString: Mines
     landmarkType: 8
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
@@ -110,6 +116,8 @@ MonoBehaviour:
   - landmarkTypeString: Inn
     landmarkType: 9
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
@@ -130,6 +138,8 @@ MonoBehaviour:
   - landmarkTypeString: Hunting Grounds
     landmarkType: 11
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300064, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -145,6 +155,8 @@ MonoBehaviour:
   - landmarkTypeString: Houses
     landmarkType: 12
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300064, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -187,6 +199,8 @@ MonoBehaviour:
   - landmarkTypeString: Monster Den
     landmarkType: 14
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300064, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -211,6 +225,8 @@ MonoBehaviour:
   - landmarkTypeString: Shop
     landmarkType: 16
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300040, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -229,6 +245,8 @@ MonoBehaviour:
   - landmarkTypeString: Farm
     landmarkType: 17
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300046, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -250,6 +268,8 @@ MonoBehaviour:
   - landmarkTypeString: Gold Mine
     landmarkType: 18
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300024, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -271,6 +291,8 @@ MonoBehaviour:
   - landmarkTypeString: Lumberyard
     landmarkType: 19
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300018, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -295,6 +317,8 @@ MonoBehaviour:
   - landmarkTypeString: Palace
     landmarkType: 20
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -316,6 +340,8 @@ MonoBehaviour:
   - landmarkTypeString: Lair
     landmarkType: 22
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -340,6 +366,8 @@ MonoBehaviour:
   - landmarkTypeString: Camp
     landmarkType: 21
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -364,6 +392,8 @@ MonoBehaviour:
   - landmarkTypeString: Abandoned Mine
     landmarkType: 23
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -388,6 +418,8 @@ MonoBehaviour:
   - landmarkTypeString: Bandit Camp
     landmarkType: 24
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -412,6 +444,8 @@ MonoBehaviour:
   - landmarkTypeString: Outpost
     landmarkType: 25
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -430,6 +464,8 @@ MonoBehaviour:
   - landmarkTypeString: Ancient Ruin
     landmarkType: 26
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -474,6 +510,8 @@ MonoBehaviour:
   - landmarkTypeString: Pyramid
     landmarkType: 27
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -514,6 +552,8 @@ MonoBehaviour:
   - landmarkTypeString: Exile Camp
     landmarkType: 28
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -538,6 +578,8 @@ MonoBehaviour:
   - landmarkTypeString: Giant Skeleton
     landmarkType: 29
     minimumTileCount: 2
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 2
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -571,6 +613,8 @@ MonoBehaviour:
   - landmarkTypeString: Temple
     landmarkType: 30
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -599,6 +643,8 @@ MonoBehaviour:
   - landmarkTypeString: Cave
     landmarkType: 31
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -655,6 +701,8 @@ MonoBehaviour:
   - landmarkTypeString: Ice Pit
     landmarkType: 32
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -687,6 +735,8 @@ MonoBehaviour:
   - landmarkTypeString: Mana Extractor
     landmarkType: 33
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -711,6 +761,8 @@ MonoBehaviour:
   - landmarkTypeString: Barracks
     landmarkType: 34
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -729,6 +781,8 @@ MonoBehaviour:
   - landmarkTypeString: Minion's Hold
     landmarkType: 35
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -747,6 +801,8 @@ MonoBehaviour:
   - landmarkTypeString: Dwellings
     landmarkType: 36
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -765,6 +821,8 @@ MonoBehaviour:
   - landmarkTypeString: Rampart
     landmarkType: 37
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -783,6 +841,8 @@ MonoBehaviour:
   - landmarkTypeString: Corruption Node
     landmarkType: 38
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -801,6 +861,8 @@ MonoBehaviour:
   - landmarkTypeString: Ritual Circle
     landmarkType: 39
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -816,6 +878,8 @@ MonoBehaviour:
   - landmarkTypeString: Dragon Cave
     landmarkType: 40
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -881,6 +945,8 @@ MonoBehaviour:
   - landmarkTypeString: Skeleton Cemetery
     landmarkType: 41
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -899,6 +965,8 @@ MonoBehaviour:
   - landmarkTypeString: Monster Lair
     landmarkType: 42
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -917,6 +985,8 @@ MonoBehaviour:
   - landmarkTypeString: Zombie Pyramid
     landmarkType: 43
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -935,6 +1005,8 @@ MonoBehaviour:
   - landmarkTypeString: Imp Kennel
     landmarkType: 44
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -953,6 +1025,8 @@ MonoBehaviour:
   - landmarkTypeString: Cemetery
     landmarkType: 45
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -971,6 +1045,8 @@ MonoBehaviour:
   - landmarkTypeString: Training Arena
     landmarkType: 46
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -989,6 +1065,8 @@ MonoBehaviour:
   - landmarkTypeString: Penance Temple
     landmarkType: 47
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
@@ -1004,9 +1082,153 @@ MonoBehaviour:
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+  - landmarkTypeString: The Spire
+    landmarkType: 48
+    minimumTileCount: 1
+    buildDuration: 10
+    buildDescription: Assign a minion to learn new intervention spells depending on
+      the minion type.
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 383ae1de09e8119428f08e6cb2fb1bc5, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+  - landmarkTypeString: The Crypt
+    landmarkType: 49
+    minimumTileCount: 1
+    buildDuration: 288
+    buildDescription: One where you store a new artifact.
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 8f57444b93359594096b1dd546244094, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+  - landmarkTypeString: The Kennel
+    landmarkType: 50
+    minimumTileCount: 1
+    buildDuration: 288
+    buildDescription: One where you store a new summon.
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+  - landmarkTypeString: The Anvil
+    landmarkType: 51
+    minimumTileCount: 1
+    buildDuration: 288
+    buildDescription: Assign a minion to upgrade an artifact slot, summon slot or
+      intervention spell slot.
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 3ea140c9cdcc60b46a257c943a010d0c, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+  - landmarkTypeString: The Fingers
+    landmarkType: 52
+    minimumTileCount: 1
+    buildDuration: 288
+    buildDescription: Allows you to start chaos events.
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 9cf9fb20030d8b6408dd1563a08e2045, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+  - landmarkTypeString: The Eye
+    landmarkType: 53
+    minimumTileCount: 1
+    buildDuration: 288
+    buildDescription: Allows you to interfere in heroic events.
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+  - landmarkTypeString: The Profane
+    landmarkType: 54
+    minimumTileCount: 1
+    buildDuration: 288
+    buildDescription: Delays Divine Intervention.
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 6f75ba663ebe87c429d4a71a991f723b, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
   - landmarkTypeString: None
     landmarkType: 0
     minimumTileCount: 1
+    buildDuration: 0
+    buildDescription: 
     connectedTileDirection: 6
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,

@@ -16,10 +16,10 @@ public class MinionCharacterItem : CharacterItem {
         UpdateCombatAbility();
         UpdateSubText();
         UpdateCover();
-        Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_CHANGED_INVADING_LANDMARK, OnMinionChangedInvadingLandmark);
+        Messenger.AddListener<Minion, Region>(Signals.MINION_CHANGED_ASSIGNED_REGION, OnMinionChangedAssignedRegion);
     }
 
-    private void OnMinionChangedInvadingLandmark(Minion minion, BaseLandmark landmark) {
+    private void OnMinionChangedAssignedRegion(Minion minion, Region region) {
         if (minion.character == this.character) {
             UpdateSubText();
             UpdateCover();
@@ -37,8 +37,8 @@ public class MinionCharacterItem : CharacterItem {
     }
 
     private void UpdateSubText() {
-        if (character.minion.invadingLandmark != null) {
-            subTextLbl.text = character.name + " is currently invading " + character.minion.invadingLandmark.tileLocation.region.name;
+        if (character.minion.assignedRegion != null) {
+            subTextLbl.text = character.name + " is currently invading " + character.minion.assignedRegion.name;
             subTextContainer.gameObject.SetActive(true);
         } else {
             subTextLbl.text = string.Empty;
@@ -46,7 +46,7 @@ public class MinionCharacterItem : CharacterItem {
         }
     }
     private void UpdateCover() {
-        if (character.minion.invadingLandmark != null) {
+        if (character.minion.assignedRegion != null) {
             SetCoverState(true);
         } else {
             SetCoverState(false);
@@ -91,6 +91,6 @@ public class MinionCharacterItem : CharacterItem {
 
     public override void Reset() {
         base.Reset();
-        Messenger.RemoveListener<Minion, BaseLandmark>(Signals.MINION_CHANGED_INVADING_LANDMARK, OnMinionChangedInvadingLandmark);
+        Messenger.RemoveListener<Minion, Region>(Signals.MINION_CHANGED_ASSIGNED_REGION, OnMinionChangedAssignedRegion);
     }
 }

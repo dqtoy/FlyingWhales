@@ -57,7 +57,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                     if (lf.obj is Character) {
                         UIManager.Instance.ShowCharacterInfo(lf.obj as Character);
                     } else if (lf.obj is Area) {
-                        UIManager.Instance.ShowAreaInfo(lf.obj as Area);
+                        UIManager.Instance.ShowHextileInfo((lf.obj as Area).coreTile);
                     } else if (lf.obj is Faction) {
                         UIManager.Instance.ShowFactionInfo((lf.obj as Faction));
                     } else if (lf.obj is Minion) {
@@ -76,7 +76,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                         }
                     } else if (lf.obj is Region) {
                         Region region = lf.obj as Region;
-                        UIManager.Instance.ShowRegionInfo(region);
+                        UIManager.Instance.ShowHextileInfo(region.mainLandmark.tileLocation);
                     }
                 }
             }

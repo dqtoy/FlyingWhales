@@ -27,8 +27,8 @@ public class SaveDataRegion {
         ticksInInvasion = region.ticksInInvasion;
         regionColor = region.regionColor;
 
-        if (region.invadingMinion != null) {
-            invadingMinionID = region.invadingMinion.character.id;
+        if (region.assignedMinion != null) {
+            invadingMinionID = region.assignedMinion.character.id;
         } else {
             invadingMinionID = -1;
         }

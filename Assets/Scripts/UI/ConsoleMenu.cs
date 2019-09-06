@@ -198,7 +198,7 @@ public class ConsoleMenu : UIMenu {
     }
 
     private string GetMainAreaInfo() {
-        Area area = UIManager.Instance.areaInfoUI.activeArea;
+        Area area = UIManager.Instance.areaInfoUI.activeTile.areaOfTile;
         string text = area.name + "'s info:";
         text += "\n<b>Owner:</b> " + area.owner?.name ?? "None";
         //text += "\n<b>Race:</b> " + area.raceType.ToString();
@@ -215,7 +215,7 @@ public class ConsoleMenu : UIMenu {
         return text;
     }
     private string GetSecondaryAreaInfo() {
-        Area area = UIManager.Instance.areaInfoUI.activeArea;
+        Area area = UIManager.Instance.areaInfoUI.activeTile.areaOfTile;
         string text = area.name + "'s Structures:";
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in area.structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {

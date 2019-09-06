@@ -180,7 +180,7 @@ public class PlayerUI : MonoBehaviour {
         LoadAttackSlot();
         LoadInterventionAbilitySlots();
         UpdateInterventionAbilitySlots();
-        LoadKillCountCharacterItems(LandmarkManager.Instance.mainSettlement);
+        LoadKillCountCharacterItems(LandmarkManager.Instance.enemyOfPlayerArea);
 
         UpdateIntel();
         InitializeMemoriesMenu();
@@ -1048,7 +1048,7 @@ public class PlayerUI : MonoBehaviour {
         //isSummoning = true;
     }
     public void TryPlaceSummon(Summon summon) {
-        LocationGridTile mainEntrance = LandmarkManager.Instance.enemyPlayerArea.GetRandomUnoccupiedEdgeTile();
+        LocationGridTile mainEntrance = LandmarkManager.Instance.enemyOfPlayerArea.GetRandomUnoccupiedEdgeTile();
         //LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
         Summon summonToPlace = summon;
         summonToPlace.CreateMarker();
@@ -1279,7 +1279,7 @@ public class PlayerUI : MonoBehaviour {
         Utilities.DestroyChildren(combatAbilityGO.transform);
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             Minion currMinion = PlayerManager.Instance.player.minions[i];
-            if (currMinion.invadingLandmark == null || currMinion.invadingLandmark == LandmarkManager.Instance.mainSettlement.coreTile.landmarkOnTile) {
+            if (currMinion.assignedRegion == null || currMinion.assignedRegion == LandmarkManager.Instance.enemyOfPlayerArea.coreTile.region) {
                 GameObject go = GameObject.Instantiate(combatAbilityButtonPrefab, combatAbilityGO.transform);
                 CombatAbilityButton abilityButton = go.GetComponent<CombatAbilityButton>();
                 abilityButton.SetCombatAbility(currMinion.combatAbility);
@@ -1325,7 +1325,7 @@ public class PlayerUI : MonoBehaviour {
         UpdateKillCount();
     }
     private void UpdateKillCount() {
-        killCountLbl.text = LandmarkManager.Instance.mainSettlement.areaResidents.Where(x => x.IsAble()).Count().ToString() + "/" + LandmarkManager.Instance.mainSettlement.citizenCount.ToString();
+        killCountLbl.text = LandmarkManager.Instance.enemyOfPlayerArea.areaResidents.Where(x => x.IsAble()).Count().ToString() + "/" + LandmarkManager.Instance.enemyOfPlayerArea.citizenCount.ToString();
     }
     private void OrderKillSummaryItems() {
         CharacterItem[] items = Utilities.GetComponentsInDirectChildren<CharacterItem>(killCountScrollView.content.gameObject);
@@ -1333,7 +1333,7 @@ public class PlayerUI : MonoBehaviour {
         List<CharacterItem> dead = new List<CharacterItem>();
         for (int i = 0; i < items.Length; i++) {
             CharacterItem currItem = items[i];
-            if (!currItem.character.IsAble() || currItem.character.faction != LandmarkManager.Instance.mainSettlement.owner) { //added checking for faction in cases that the character was raised from dead
+            if (!currItem.character.IsAble() || currItem.character.faction != LandmarkManager.Instance.enemyOfPlayerArea.owner) { //added checking for faction in cases that the character was raised from dead
                 dead.Add(currItem);
             } else {
                 alive.Add(currItem);

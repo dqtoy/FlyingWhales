@@ -335,6 +335,7 @@ public class UIManager : MonoBehaviour {
         UpdateCharacterInfo();
         UpdateTileObjectInfo();
         UpdateRegionInfo();
+        UpdateAreaInfo();
     }
 
     #region World Controls
@@ -745,8 +746,10 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Object Picker
-    public void ShowClickableObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "", Action<T> onHoverAction = null) {
-        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction);
+    public void ShowClickableObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null
+        , Func<T, bool> validityChecker = null, string title = ""
+        , Action<T> onHoverAction = null, Action<T> onHoverExitAction = null, string identifier = "") {
+        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction, onHoverExitAction, identifier);
         //Pause();
         //SetSpeedTogglesState(false);
     }
@@ -781,26 +784,34 @@ public class UIManager : MonoBehaviour {
     [Header("Area Info")]
     [SerializeField]
     internal AreaInfoUI areaInfoUI;
-    public void ShowAreaInfo(Area area) {
-        if (PlayerManager.Instance.player.homeArea == area) {
-            UIManager.Instance.portalPopup.SetActive(true);
-        } else {
-            if (factionInfoUI.isShowing) {
-                factionInfoUI.CloseMenu();
-            }
-            if (characterInfoUI.isShowing) {
-                characterInfoUI.CloseMenu();
-            }
-            if (tileObjectInfoUI.isShowing) {
-                tileObjectInfoUI.CloseMenu();
-            }
-            if (regionInfoUI.isShowing) {
-                regionInfoUI.CloseMenu();
-            }
-            areaInfoUI.SetData(area);
-            areaInfoUI.OpenMenu();
-            areaInfoUI.CenterOnCoreLandmark();
+
+    //Why change data parameter from Area to Hextile?
+    //It's because the tile data is needed now since we can construct demonic landmarks, etc
+    //If we only pass the area data, the only tile we can get is the coreTile
+    //We have no way of knowing now how to get the actual tile the player clicked
+    //Thus, the information that will be shown to the player will be wrong
+    //So in order for us to process exactly what the player clicked, the tile must be passed not the area
+    //IMPORTANT NOTE: MAKE SURE THAT THE TILE PASSED HAS AN AREA
+    public void ShowAreaInfo(HexTile tile) { //Area area
+        //if (PlayerManager.Instance.player.homeArea == area) {
+        //    portalPopup.SetActive(true);
+        //} else {
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.CloseMenu();
         }
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.CloseMenu();
+        }
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.CloseMenu();
+        }
+        if (regionInfoUI.isShowing) {
+            regionInfoUI.CloseMenu();
+        }
+        areaInfoUI.SetData(tile);
+        areaInfoUI.OpenMenu();
+        areaInfoUI.CenterOnTile();
+        //}
     }
     public void UpdateAreaInfo() {
         if (areaInfoUI.isShowing) {
@@ -892,6 +903,56 @@ public class UIManager : MonoBehaviour {
         if (characterInfoUI.isShowing) {
             characterInfoUI.OnClickCloseMenu();
         }
+    }
+    #endregion
+
+    #region Region Info
+    [Space(10)]
+    [Header("Region Info")]
+    public RegionInfoUI regionInfoUI;
+    public void ShowRegionInfo(Region region) {
+        //if (PlayerManager.Instance.player.homeArea == region.mainLandmark.tileLocation.areaOfTile) {
+        //    portalPopup.SetActive(true);
+        //} else {
+            if (factionInfoUI.isShowing) {
+                factionInfoUI.CloseMenu();
+            }
+            if (characterInfoUI.isShowing) {
+                characterInfoUI.CloseMenu();
+            }
+            if (tileObjectInfoUI.isShowing) {
+                tileObjectInfoUI.CloseMenu();
+            }
+            if (areaInfoUI.isShowing) {
+                areaInfoUI.CloseMenu();
+            }
+            regionInfoUI.SetData(region);
+            regionInfoUI.OpenMenu();
+        //}
+    }
+    public void UpdateRegionInfo() {
+        if (regionInfoUI.isShowing) {
+            regionInfoUI.UpdateInfo();
+        }
+    }
+    #endregion
+
+    #region Hextile Info
+    public bool ShowHextileInfo(HexTile hexTile) {
+        if(hexTile.region != null && hexTile == hexTile.region.mainLandmark.tileLocation) {
+            if (hexTile.areaOfTile != null) {
+                if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
+                    portalPopup.SetActive(true);
+                    return true;
+                }
+                ShowAreaInfo(hexTile);
+                return true;
+            } else {
+                ShowRegionInfo(hexTile.region);
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -1040,7 +1101,7 @@ public class UIManager : MonoBehaviour {
 
     #region Interaction
     public void ShowInteractableInfo(BaseLandmark interactable) {
-        ShowAreaInfo(interactable.tileLocation.areaOfTile);
+        ShowHextileInfo(interactable.tileLocation);
         //if (interactable is BaseLandmark) {
         //    ShowLandmarkInfo(interactable);
         //} else if (interactable is Character) {
@@ -1126,14 +1187,14 @@ public class UIManager : MonoBehaviour {
             InteriorMapManager.Instance.HideAreaMap();
             OnCameraOutOfFocus();
         } else {
-            InteriorMapManager.Instance.TryShowAreaMap(LandmarkManager.Instance.enemyPlayerArea);
+            InteriorMapManager.Instance.TryShowAreaMap(LandmarkManager.Instance.enemyOfPlayerArea);
         }
     }
     public void ToggleMapsHover() {
         if (InteriorMapManager.Instance.currentlyShowingArea != null) {
             ShowSmallInfo("Click to exit " + InteriorMapManager.Instance.currentlyShowingArea.name + ".");
         } else {
-            ShowSmallInfo("Click to enter " + LandmarkManager.Instance.enemyPlayerArea.name + ".");
+            ShowSmallInfo("Click to enter " + LandmarkManager.Instance.enemyOfPlayerArea.name + ".");
         }
     }
     #endregion
@@ -1277,37 +1338,6 @@ public class UIManager : MonoBehaviour {
         //    //interiorMapLoadingBGImage.CrossFadeAlpha(0, 0.5f, true);
         //    //StartCoroutine(LoadingCoroutine(0f / 255f));
         //}
-    }
-    #endregion
-
-    #region Area Info
-    [Space(10)]
-    [Header("Region Info")]
-    public RegionInfoUI regionInfoUI;
-    public void ShowRegionInfo(Region region) {
-        if (PlayerManager.Instance.player.homeArea == region.mainLandmark.tileLocation.areaOfTile) {
-            UIManager.Instance.portalPopup.SetActive(true);
-        } else {
-            if (factionInfoUI.isShowing) {
-                factionInfoUI.CloseMenu();
-            }
-            if (characterInfoUI.isShowing) {
-                characterInfoUI.CloseMenu();
-            }
-            if (tileObjectInfoUI.isShowing) {
-                tileObjectInfoUI.CloseMenu();
-            }
-            if (areaInfoUI.isShowing) {
-                areaInfoUI.CloseMenu();
-            }
-            regionInfoUI.SetData(region);
-            regionInfoUI.OpenMenu();
-        }
-    }
-    public void UpdateRegionInfo() {
-        if (regionInfoUI.isShowing) {
-            regionInfoUI.UpdateInfo();
-        }
     }
     #endregion
 

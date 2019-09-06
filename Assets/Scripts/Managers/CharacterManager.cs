@@ -1430,6 +1430,17 @@ public class CharacterManager : MonoBehaviour {
         return markerAssets[0].maleAssets;
     }
     #endregion
+
+    #region Deadly Sins
+    public DeadlySin CreateNewDeadlySin(string deadlySin) {
+        System.Type type = System.Type.GetType(deadlySin);
+        if(type != null) {
+            DeadlySin sin = System.Activator.CreateInstance(type) as DeadlySin;
+            return sin;
+        }
+        return null;
+    }
+    #endregion
 }
 
 [System.Serializable]

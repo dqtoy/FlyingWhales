@@ -23,10 +23,6 @@ public class LandmarkManager : MonoBehaviour {
     public List<Area> allNonPlayerAreas {
         get { return allAreas.Where(x => x != PlayerManager.Instance.player.playerArea).ToList(); }
     }
-    public Area mainSettlement {
-        //get { return allAreas.Where(x => x != PlayerManager.Instance.player.playerArea && x.areaType != AREA_TYPE.DEMONIC_INTRUSION).First(); }
-        get { return enemyPlayerArea; }
-    }
 
     [SerializeField] private GameObject landmarkGO;
 
@@ -41,7 +37,7 @@ public class LandmarkManager : MonoBehaviour {
     [Header("Connections")]
     [SerializeField] private GameObject landmarkConnectionPrefab;
 
-    public Area enemyPlayerArea { get; private set; }
+    public Area enemyOfPlayerArea { get; private set; }
 
     #region Monobehaviours
     private void Awake() {
@@ -168,6 +164,15 @@ public class LandmarkManager : MonoBehaviour {
             return landmarkDataDict[landmarkType];
         }
         throw new System.Exception("There is no landmark data for " + landmarkType.ToString());
+    }
+    public LandmarkData GetLandmarkData(string landmarkName) {
+        for (int i = 0; i < landmarkData.Count; i++) {
+            LandmarkData currData = landmarkData[i];
+            if (currData.landmarkTypeString == landmarkName) {
+                return currData;
+            }
+        }
+        throw new System.Exception("There is no landmark data for " + landmarkName);
     }
     public void InitializeLandmarks() {
         List<BaseLandmark> allLandmarks = GetAllLandmarks();
@@ -922,7 +927,7 @@ public class LandmarkManager : MonoBehaviour {
         return defaultPos;
     }
     public void SetEnemyPlayerArea(Area area) {
-        enemyPlayerArea = area;
+        enemyOfPlayerArea = area;
     }
     #endregion
 

@@ -844,15 +844,18 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             return;
         }
 
-        if (this.region != null) {
-            if (this.region.mainLandmark.tileLocation.areaOfTile != null) {
-                UIManager.Instance.ShowAreaInfo(this.region.mainLandmark.tileLocation.areaOfTile);
-            } else {
-                UIManager.Instance.ShowRegionInfo(this.region);
-            }
-        } else {
+        if (!UIManager.Instance.ShowHextileInfo(this)) {
             Messenger.Broadcast(Signals.HIDE_MENUS);
         }
+        //if (this.region != null && this.region.mainLandmark.tileLocation == this) {
+        //    if (this.region.mainLandmark.tileLocation.areaOfTile != null) {
+        //        UIManager.Instance.ShowAreaInfo(this.region.mainLandmark.tileLocation.areaOfTile);
+        //    } else {
+        //        UIManager.Instance.ShowRegionInfo(this.region);
+        //    }
+        //} else {
+        //    Messenger.Broadcast(Signals.HIDE_MENUS);
+        //}
 #endif
     }
     public void RightClick() {
@@ -937,6 +940,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public void OnPointerExit(BaseEventData bed) {
         MouseExit();
+    }
+    public void CenterCameraHere() {
+        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+            InteriorMapManager.Instance.HideAreaMap();
+            UIManager.Instance.OnCameraOutOfFocus();
+        }
+        CameraMove.Instance.CenterCameraOn(gameObject);
     }
     #endregion
 

@@ -18,9 +18,9 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
     public void OnPointerClick(PointerEventData eventData) {
         if (!disableInteraction) {
             if (area != null) {
-                UIManager.Instance.ShowAreaInfo(area);
+                UIManager.Instance.ShowHextileInfo(area.coreTile);
             } else if (landmark != null) {
-                UIManager.Instance.ShowRegionInfo(landmark.tileLocation.region);
+                UIManager.Instance.ShowHextileInfo(landmark.tileLocation);
             }
         }
     }

@@ -6,6 +6,7 @@ public class KnockoutCharacter : GoapAction {
 
     public KnockoutCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.KNOCKOUT_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
+        doesNotStopTargetCharacter = true;
     }
 
     #region Overrides

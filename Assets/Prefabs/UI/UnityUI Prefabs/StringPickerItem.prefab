@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 114443143588557166}
   - component: {fileID: 114613519049445426}
   m_Layer: 5
-  m_Name: TraitPickerItem
+  m_Name: StringPickerItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -185,7 +185,7 @@ MonoBehaviour:
   draggable: {fileID: 0}
   portraitCover: {fileID: 1341434482560134}
   iconImg: {fileID: 114184968040189962}
-  isTrait: 1
+  identifier: 
 --- !u!114 &114574901924631418
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -15,6 +15,8 @@ public class CharacterPickerItem : ObjectPickerItem<Character>, IPointerClickHan
     [SerializeField] private CharacterPortrait portrait;
     public GameObject portraitCover;
 
+    public override Character obj { get { return character; } }
+
     public void SetCharacter(Character character) {
         this.character = character;
         UpdateVisuals();

@@ -116,7 +116,7 @@ public class RegionInfoUI : UIMenu {
         if (activeRegion == PlayerManager.Instance.player.invadingRegion) {
             invadeProgress.gameObject.SetActive(true);
             invadeProgress.fillAmount = ((float)activeRegion.ticksInInvasion / (float)activeRegion.mainLandmark.invasionTicks);
-            invader.GeneratePortrait(activeRegion.invadingMinion.character);
+            invader.GeneratePortrait(activeRegion.assignedMinion.character);
             invader.gameObject.SetActive(true);
             invader.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
         } else {
@@ -136,7 +136,7 @@ public class RegionInfoUI : UIMenu {
         UpdateStartInvasionBtn();
     }
     private bool CanMinionInvade(Minion minion) {
-        return minion.invadingLandmark == null;
+        return !minion.isAssigned;
     }
     private void UpdateStartInvasionBtn() {
         startInvBtn.interactable = chosenMinionToInvade != null;

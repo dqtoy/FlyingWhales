@@ -144,7 +144,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadPlayer();
 
         yield return null;
-        LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyPlayerArea, false);
+        LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);
         yield return null;
 
         loadingWatch.Stop();

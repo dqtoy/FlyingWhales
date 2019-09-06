@@ -17,7 +17,10 @@ public class Region {
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> borderSprites;
 
-    public Minion invadingMinion { get; private set; }
+    public Minion assignedMinion { get; private set; }
+
+    //Player Building Demonic Landmark
+    public DemonicLandmarkBuildingData demonicBuildingData { get; private set; }
 
     #region getter/setter
     public BaseLandmark mainLandmark {
@@ -155,11 +158,7 @@ public class Region {
         }
     }
     public void CenterCameraOnRegion() {
-        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
-            InteriorMapManager.Instance.HideAreaMap();
-            UIManager.Instance.OnCameraOutOfFocus();
-        }
-        CameraMove.Instance.CenterCameraOn(this.coreTile.gameObject);
+        coreTile.CenterCameraHere();
     }
     #endregion
 
@@ -169,32 +168,37 @@ public class Region {
     }
     public void StartInvasion(Minion assignedMinion) {
         PlayerManager.Instance.player.SetInvadingRegion(this);
-        assignedMinion.SetInvadingLandmark(mainLandmark);
-        SetInvadingMinion(assignedMinion);
+        assignedMinion.SetAssignedRegion(this);
+        SetAssignedMinion(assignedMinion);
 
         ticksInInvasion = 0;
         Messenger.AddListener(Signals.TICK_STARTED, PerInvasionTick);
-        TimerHubUI.Instance.AddItem("Invasion of " + (mainLandmark.tileLocation.areaOfTile != null ? mainLandmark.tileLocation.areaOfTile.name : name), mainLandmark.invasionTicks, () => UIManager.Instance.ShowRegionInfo(this));
+        TimerHubUI.Instance.AddItem("Invasion of " + (mainLandmark.tileLocation.areaOfTile != null ? mainLandmark.tileLocation.areaOfTile.name : name), mainLandmark.invasionTicks, () => UIManager.Instance.ShowHextileInfo(this.mainLandmark.tileLocation));
     }
     public void LoadInvasion(Minion assignedMinion, int ticksInInvasion) {
         PlayerManager.Instance.player.SetInvadingRegion(this);
-        assignedMinion.SetInvadingLandmark(mainLandmark);
-        SetInvadingMinion(assignedMinion);
+        //assignedMinion.SetAssignedRegion(this);
+        //SetAssignedMinion(assignedMinion);
 
         this.ticksInInvasion = ticksInInvasion;
         Messenger.AddListener(Signals.TICK_STARTED, PerInvasionTick);
-        TimerHubUI.Instance.AddItem("Invasion of " + (mainLandmark.tileLocation.areaOfTile != null ? mainLandmark.tileLocation.areaOfTile.name : name), mainLandmark.invasionTicks - ticksInInvasion, () => UIManager.Instance.ShowRegionInfo(this));
+        TimerHubUI.Instance.AddItem("Invasion of " + (mainLandmark.tileLocation.areaOfTile != null ? mainLandmark.tileLocation.areaOfTile.name : name), mainLandmark.invasionTicks - ticksInInvasion, () => UIManager.Instance.ShowHextileInfo(this.mainLandmark.tileLocation));
     }
     private void Invade() {
         //corrupt region
         mainLandmark?.InvadeThisLandmark();
         PlayerManager.Instance.AddTileToPlayerArea(coreTile);
         PlayerManager.Instance.player.SetInvadingRegion(null);
-        invadingMinion.SetInvadingLandmark(null);
-        SetInvadingMinion(null);
+        assignedMinion.SetAssignedRegion(null);
+        SetAssignedMinion(null);
+
+        //This is done so that when a region is invaded by the player, the showing Info UI will update appropriately
+        if(UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion == this) {
+            UIManager.Instance.ShowHextileInfo(coreTile);
+        }
     }
-    public void SetInvadingMinion(Minion minion) {
-        invadingMinion = minion;
+    public void SetAssignedMinion(Minion minion) {
+        assignedMinion = minion;
     }
     private void PerInvasionTick() {
         if (ticksInInvasion >= mainLandmark.invasionTicks) {
@@ -207,4 +211,37 @@ public class Region {
     }
     #endregion
 
+    #region Player Build Structure
+    public void StartBuildingStructure(LANDMARK_TYPE landmarkType, Minion minion) {
+        SetAssignedMinion(minion);
+        minion.SetAssignedRegion(this);
+        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkType);
+        demonicBuildingData = new DemonicLandmarkBuildingData() {
+            landmarkType = landmarkType,
+            landmarkName = landmarkData.landmarkTypeString,
+            buildDuration = landmarkData.buildDuration,
+            currentDuration = 0,
+        };
+        TimerHubUI.Instance.AddItem("Building " + demonicBuildingData.landmarkName + " at " + name, demonicBuildingData.buildDuration, () => UIManager.Instance.ShowHextileInfo(coreTile));
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickBuilding);
+    }
+    private void PerTickBuilding() {
+        if(demonicBuildingData.currentDuration >= demonicBuildingData.buildDuration) {
+            FinishBuildingStructure();
+        } else {
+            DemonicLandmarkBuildingData tempData = demonicBuildingData;
+            tempData.currentDuration++;
+            demonicBuildingData = tempData;
+        }
+    }
+    private void FinishBuildingStructure() {
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickBuilding);
+        mainLandmark.ChangeLandmarkType(demonicBuildingData.landmarkType);
+
+        demonicBuildingData = new DemonicLandmarkBuildingData();
+        assignedMinion.SetAssignedRegion(null);
+        SetAssignedMinion(null);
+        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, this);
+    }
+    #endregion
 }

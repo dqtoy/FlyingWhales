@@ -1407,7 +1407,7 @@ public class Player : ILeader {
         List<Minion> currentMinions = new List<Minion>();
         for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
-            if (currMinion.invadingLandmark == null) { //only include minions that are not currently invading another landmark
+            if (currMinion.assignedRegion == null) { //only include minions that are not currently invading another landmark
                 currMinion.character.CreateMarker();
                 currMinion.character.marker.SetActiveState(false);
                 currentMinions.Add(currMinion);
@@ -1455,7 +1455,7 @@ public class Player : ILeader {
         bool stillHasMinions = false;
         for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
-            if (currMinion.invadingLandmark != LandmarkManager.Instance.mainSettlement.coreTile.landmarkOnTile) {
+            if (currMinion.assignedRegion != LandmarkManager.Instance.enemyOfPlayerArea.coreTile.region) {
                 continue; //do not include minions that are not invading the main settlement.
             }
             if(currMinion.character.currentHP > 0 && !currMinion.character.isDead) {
@@ -1727,4 +1727,11 @@ public class Player : ILeader {
         return 3;
     }
     #endregion
+}
+
+public struct DemonicLandmarkBuildingData {
+    public LANDMARK_TYPE landmarkType;
+    public string landmarkName;
+    public int buildDuration;
+    public int currentDuration;
 }

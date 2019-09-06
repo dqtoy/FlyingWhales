@@ -16,6 +16,7 @@ public class PlayerManager : MonoBehaviour {
     public INTERVENTION_ABILITY[] allInterventionAbilities;
     public Dictionary<INTERVENTION_ABILITY, PlayerJobActionData> allInterventionAbilitiesData;
     public COMBAT_ABILITY[] allCombatAbilities;
+    public LANDMARK_TYPE[] allLandmarksThatCanBeBuilt;
 
     [SerializeField] private Sprite[] _playerAreaFloorSprites;
     [SerializeField] private LandmarkStructureSprite[] _playerAreaDefaultStructureSprites;
@@ -57,6 +58,9 @@ public class PlayerManager : MonoBehaviour {
             var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allInterventionAbilities[i].ToString()) + "Data";
             allInterventionAbilitiesData.Add(allInterventionAbilities[i], System.Activator.CreateInstance(System.Type.GetType(typeName)) as PlayerJobActionData);
         }
+
+        allLandmarksThatCanBeBuilt = new LANDMARK_TYPE[] { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.THE_FINGERS
+            , LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE };
         //Unit Selection
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -81,7 +85,7 @@ public class PlayerManager : MonoBehaviour {
         //player.CreateInitialMinions();
         //player.PreAssignJobSlots();
         LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
-        player.SetPlayerTargetFaction(LandmarkManager.Instance.mainSettlement.owner);
+        player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(true);
         PlayerUI.Instance.UpdateUI();
@@ -103,7 +107,7 @@ public class PlayerManager : MonoBehaviour {
             regionTile.SetCorruption(true);
         }
         LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
-        player.SetPlayerTargetFaction(LandmarkManager.Instance.mainSettlement.owner);
+        player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
         PlayerUI.Instance.UpdateUI();
         //PlayerUI.Instance.InitializeThreatMeter();
     }
@@ -135,7 +139,7 @@ public class PlayerManager : MonoBehaviour {
                 player.SetMinionLeader(player.minions[i]);
             }
         }
-        player.SetPlayerTargetFaction(LandmarkManager.Instance.mainSettlement.owner);
+        player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
     }
     public void PurchaseTile(HexTile tile) {
         AddTileToPlayerArea(tile);

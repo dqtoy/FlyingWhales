@@ -38,7 +38,7 @@ public class WorldEvent  {
 
         //once spawned, schedule the after effect of this event to execute after a set amount of ticks (duration). NOTE: This schedule should be cancelled once the landmark it spawned at 
         afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => ExecuteAfterEffect(landmark), this);
-        TimerHubUI.Instance.AddItem(this.name + " event at " + landmark.tileLocation.region.name, duration, () => UIManager.Instance.ShowRegionInfo(landmark.tileLocation.region));
+        TimerHubUI.Instance.AddItem(this.name + " event at " + landmark.tileLocation.region.name, duration, () => UIManager.Instance.ShowHextileInfo(landmark.tileLocation));
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + landmark.tileLocation.region.name);
         //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
         //AddDefaultFillersToLog(log, landmark);
@@ -51,7 +51,7 @@ public class WorldEvent  {
         int ticksDiff = GameManager.Instance.GetTicksDifferenceOfTwoDates(endDate, startDate);
         //once spawned, schedule the after effect of this event to execute after a set amount of ticks (duration). NOTE: This schedule should be cancelled once the landmark it spawned at 
         afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => ExecuteAfterEffect(landmark), this);
-        TimerHubUI.Instance.AddItem(this.name + " event at " + landmark.tileLocation.region.name, ticksDiff, () => UIManager.Instance.ShowRegionInfo(landmark.tileLocation.region));
+        TimerHubUI.Instance.AddItem(this.name + " event at " + landmark.tileLocation.region.name, ticksDiff, () => UIManager.Instance.ShowHextileInfo(landmark.tileLocation));
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + landmark.tileLocation.region.name);
         //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
         //AddDefaultFillersToLog(log, landmark);

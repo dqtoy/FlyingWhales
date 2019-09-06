@@ -16,6 +16,7 @@ public class AttackPickerItem : ObjectPickerItem<Character>, IDragParentItem {
     public object associatedObj {
         get { return character; }
     }
+    public override Character obj { get { return character; } }
     #endregion
 
     public void SetCharacter(Character character) {

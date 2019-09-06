@@ -505,7 +505,7 @@ public class Area {
 
     #region Landmarks
     public void CenterOnCoreLandmark() {
-        CameraMove.Instance.CenterCameraOn(coreTile.gameObject);
+        coreTile.CenterCameraHere();
     }
     #endregion
 

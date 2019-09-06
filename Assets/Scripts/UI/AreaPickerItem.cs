@@ -15,6 +15,8 @@ public class AreaPickerItem : ObjectPickerItem<Area>, IPointerClickHandler {
     [SerializeField] private LocationPortrait portrait;
     public GameObject portraitCover;
 
+    public override Area obj { get { return area; } }
+
     public void SetArea(Area area) {
         this.area = area;
         UpdateVisuals();
@@ -41,7 +43,7 @@ public class AreaPickerItem : ObjectPickerItem<Area>, IPointerClickHandler {
         if (eventData.button == PointerEventData.InputButton.Right) {
             //Debug.Log("Right clicked character portrait!");
             //portrait.OnClick();
-            UIManager.Instance.ShowAreaInfo(area);
+            UIManager.Instance.ShowHextileInfo(area.coreTile);
         } else {
             OnClick();
         }

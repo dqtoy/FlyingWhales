@@ -11,7 +11,9 @@ public class Minion {
     public int indexDefaultSort { get; private set; }
     public CombatAbility combatAbility { get; private set; }
     public List<string> traitsToAdd { get; private set; }
-    public BaseLandmark invadingLandmark { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both settlement and non settlement landmarks
+    public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both settlement and non settlement landmarks
+    public DeadlySin deadlySin { get; private set; }
+    public bool isAssigned { get { return assignedRegion != null; } } //true if minion is already assigned somewhere else, maybe in construction or research spells
 
     public Minion(Character character, bool keepData) {
         this.character = character;
@@ -22,7 +24,7 @@ public class Minion {
         SetLevel(1);
         //character.characterToken.SetObtainedState(true);
         character.ownParty.icon.SetVisualState(true);
-
+        deadlySin = CharacterManager.Instance.CreateNewDeadlySin(character.characterClass.className);
         if (!keepData) {
             character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
         }
@@ -35,6 +37,7 @@ public class Minion {
         //SetUnlockedInterventionSlots(data.unlockedInterventionSlots);
         character.SetMinion(this);
         character.ownParty.icon.SetVisualState(true);
+        deadlySin = CharacterManager.Instance.CreateNewDeadlySin(character.characterClass.className);
     }
     //public void SetEnabledState(bool state) {
     //    if (character.IsInOwnParty()) {
@@ -252,14 +255,14 @@ public class Minion {
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
-        SetInvadingLandmark(area.coreTile.landmarkOnTile);
+        SetAssignedRegion(area.coreTile.region);
     }
     public void StopInvasionProtocol() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
-        SetInvadingLandmark(null);
+        SetAssignedRegion(null);
     }
     private void PerTickInvasion() {
         if (character.isDead) {
@@ -317,9 +320,9 @@ public class Minion {
         character.DestroyMarker();
         SchedulingManager.Instance.ClearAllSchedulesBy(this.character);
     }
-    public void SetInvadingLandmark(BaseLandmark landmark) {
-        invadingLandmark = landmark;
-        Messenger.Broadcast(Signals.MINION_CHANGED_INVADING_LANDMARK, this, invadingLandmark);
+    public void SetAssignedRegion(Region region) {
+        assignedRegion = region;
+        Messenger.Broadcast(Signals.MINION_CHANGED_ASSIGNED_REGION, this, assignedRegion);
     }
     #endregion
 
