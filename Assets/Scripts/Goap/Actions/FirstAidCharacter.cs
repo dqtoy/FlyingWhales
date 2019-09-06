@@ -46,8 +46,8 @@ public class FirstAidCharacter : GoapAction {
             parentPlan.job.SetCannotCancelJob(true);
         }
         SetCannotCancelAction(true);
-        RemoveTraitFrom(poiTarget, "Injured");
-        RemoveTraitFrom(poiTarget, "Unconscious");
+        RemoveTraitFrom(poiTarget, "Injured", actor);
+        RemoveTraitFrom(poiTarget, "Unconscious", actor);
         //**After Effect 2**: Reduce character's Supply by 10
         //actor.AdjustSupply(-10);
         if (actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION)) {

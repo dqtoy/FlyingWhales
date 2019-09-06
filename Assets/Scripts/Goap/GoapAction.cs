@@ -277,6 +277,7 @@ public class GoapAction {
         actor.SetCurrentAction(this);
         parentPlan.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
+        actor.marker.OnThisCharacterDoingAction(this);
 
         Character targetCharacter = null;
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -506,6 +507,7 @@ public class GoapAction {
             }
         }
         Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this, result);
+        parentPlan?.OnActionInPlanFinished(actor, this, result);
     }
     protected void AddActionDebugLog(string log) {
         actionSummary += "\n" + log;
@@ -753,8 +755,8 @@ public class GoapAction {
     /// </summary>
     /// <param name="target">POI that loses a trait</param>
     /// <param name="traitName">Trait to be lost</param>
-    protected void RemoveTraitFrom(IPointOfInterest target, string traitName, bool showNotif = true) {
-        if (target.RemoveTrait(traitName)) {
+    protected void RemoveTraitFrom(IPointOfInterest target, string traitName, Character removedBy = null, bool showNotif = true) {
+        if (target.RemoveTrait(traitName, removedBy: removedBy)) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = target });
         }
     }
