@@ -161,26 +161,28 @@ public class SerialKiller : Trait {
             return;
         }
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim);
-        GoapAction goapAction6 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.BURY_CHARACTER, character, targetVictim);
-        GoapAction goapAction5 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY_CORPSE, character, targetVictim);
-        GoapAction goapAction4 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RITUAL_KILLING, character, targetVictim);
-        GoapAction goapAction3 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DROP, character, targetVictim);
-        GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY, character, targetVictim);
+        GoapAction goapAction7 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.BURY_CHARACTER, character, targetVictim);
+        GoapAction goapAction6 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY_CORPSE, character, targetVictim);
+        GoapAction goapAction5 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RITUAL_KILLING, character, targetVictim);
+        GoapAction goapAction4 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DROP, character, targetVictim);
+        GoapAction goapAction3 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY, character, targetVictim);
+        GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RESTRAIN_CHARACTER, character, targetVictim);
         GoapAction goapAction1 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.KNOCKOUT_CHARACTER, character, targetVictim);
 
-        goapAction3.SetWillAvoidCharactersWhileMoving(true);
-        goapAction6.SetWillAvoidCharactersWhileMoving(true);
+        goapAction4.SetWillAvoidCharactersWhileMoving(true);
+        goapAction7.SetWillAvoidCharactersWhileMoving(true);
 
         LocationStructure wilderness = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         if (character.homeStructure.residents.Count > 1) {
-            goapAction3.InitializeOtherData(new object[] { wilderness });
+            goapAction4.InitializeOtherData(new object[] { wilderness });
         } else {
-            goapAction3.InitializeOtherData(new object[] { character.homeStructure });
+            goapAction4.InitializeOtherData(new object[] { character.homeStructure });
         }
-        goapAction6.InitializeOtherData(new object[] { wilderness });
+        goapAction7.InitializeOtherData(new object[] { wilderness });
 
-        GoapNode goalNode = new GoapNode(null, goapAction6.cost, goapAction6);
-        GoapNode fifthNode = new GoapNode(goalNode, goapAction5.cost, goapAction5);
+        GoapNode goalNode = new GoapNode(null, goapAction7.cost, goapAction7);
+        GoapNode sixthNode = new GoapNode(goalNode, goapAction6.cost, goapAction6);
+        GoapNode fifthNode = new GoapNode(sixthNode, goapAction5.cost, goapAction5);
         GoapNode fourthNode = new GoapNode(fifthNode, goapAction4.cost, goapAction4);
         GoapNode thirdNode = new GoapNode(fourthNode, goapAction3.cost, goapAction3);
         GoapNode secondNode = new GoapNode(thirdNode, goapAction2.cost, goapAction2);
