@@ -6548,7 +6548,7 @@ public class Character : ILeader, IPointOfInterest {
         List<string> dialogReactions = new List<string>();
         if (intel is TileObjectIntel) {
             TileObjectIntel toi = intel as TileObjectIntel;
-            if (HasAwareness(toi.obj) != null) {
+            if (HasAwareness(toi.obj)) {
                 dialogReactions.Add("I already know about that.");
             } else {
                 AddAwareness(toi.obj);

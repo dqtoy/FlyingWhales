@@ -85,6 +85,7 @@ public class PlayGuitar : GoapAction {
         actor.AdjustDoNotGetLonely(1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
         isMusicLover = actor.GetNormalTrait("Music Lover") != null;
+        currentState.SetIntelReaction(PlaySuccessIntelReaction);
     }
     public void PerTickPlaySuccess() {
         //**Per Tick Effect 1**: Actor's Happiness Meter +12 (+20 if https://trello.com/c/CvvzA9OJ/2497-music-lover)
@@ -142,6 +143,34 @@ public class PlayGuitar : GoapAction {
             //in cases that the guitar is not inside a dwelling, always allow.
             return true;
         }
+    }
+    #endregion
+
+    #region Intel Reactions
+    private List<string> PlaySuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+
+        if(status == SHARE_INTEL_STATUS.WITNESSED && recipient.GetNormalTrait("Music Hater") != null) {
+            recipient.AddTrait("Annoyed");
+            if (recipient.HasRelationshipOfTypeWith(actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                if (recipient.CreateBreakupJob(actor) != null) {
+                    Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "break_up");
+                    log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddLogToInvolvedObjects();
+                    PlayerManager.Instance.player.ShowNotification(log);
+                }
+            } else if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+                //Otherwise, if the Actor does not yet consider the Target an Enemy, relationship degradation will occur, log:
+                Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "degradation");
+                log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                log.AddLogToInvolvedObjects();
+                PlayerManager.Instance.player.ShowNotification(log);
+                CharacterManager.Instance.RelationshipDegradation(actor, recipient);
+            }
+        }
+        return reactions;
     }
     #endregion
 }
