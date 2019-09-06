@@ -514,10 +514,6 @@ public class Character : ILeader, IPointOfInterest {
     public Character(SaveDataCharacter data) {
         _id = Utilities.SetID(this, data.id);
         _characterColorCode = data.characterColorCode;
-        _doNotDisturb = data.doNotDisturb;
-        _doNotGetHungry = data.doNotGetHungry;
-        _doNotGetLonely = data.doNotGetLonely;
-        _doNotGetTired = data.doNotGetTired;
         _gender = data.gender;
         SetSexuality(data.sexuality);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
@@ -528,40 +524,10 @@ public class Character : ILeader, IPointOfInterest {
         _characterColor = data.characterColor;
         SetName(data.name);
 
-        _maxHP = data.maxHP;
-        _currentHP = data.currentHP;
-        _level = data.level;
-        _experience = data.experience;
-        _maxExperience = data.maxExperience;
-        attackPowerMod = data.attackPowerMod;
-        speedMod = data.speedMod;
-        maxHPMod = data.maxHPMod;
-        attackPowerPercentMod = data.attackPowerPercentMod;
-        speedPercentMod = data.speedPercentMod;
-        maxHPPercentMod = data.maxHPPercentMod;
-        morality = data.morality;
-
-        currentInteractionTypes = data.currentInteractionTypes;
-        supply = data.supply;
-        moodValue = data.moodValue;
-        isCombatant = data.isCombatant;
-        isDisabledByPlayer = data.isDisabledByPlayer;
-        speedModifier = data.speedModifier;
-        deathStr = data.deathStr;
-        _state = data.state;
-
-        tiredness = data.tiredness;
-        fullness = data.fullness;
-        happiness = data.happiness;
-        fullnessDecreaseRate = data.fullnessDecreaseRate;
-        tirednessDecreaseRate = data.tirednessDecreaseRate;
-        happinessDecreaseRate = data.happinessDecreaseRate;
-
         hSkinColor = data.hSkinColor;
         hHairColor = data.hHairColor;
         demonColor = data.demonColor;
 
-        ignoreHostility = data.ignoreHostility;
         currentAlterEgoName = data.currentAlterEgoName;
         originalClassName = data.originalClassName;
 
@@ -588,13 +554,6 @@ public class Character : ILeader, IPointOfInterest {
         _normalTraits = new List<Trait>();
         alterEgos = new Dictionary<string, AlterEgoData>();
         items = new List<SpecialToken>();
-
-        SetForcedFullnessRecoveryTimeInWords(data.forcedFullnessRecoveryTimeInWords);
-        SetForcedTirednessRecoveryTimeInWords(data.forcedTirednessRecoveryTimeInWords);
-        SetFullnessForcedTick(data.fullnessForcedTick);
-        SetTirednessForcedTick(data.tirednessForcedTick);
-
-        returnedToLife = data.returnedToLife;
     }
     public Character() {
         SetIsDead(false);
@@ -636,6 +595,58 @@ public class Character : ILeader, IPointOfInterest {
        
         //hostiltiy
         ignoreHostility = 0;
+    }
+
+    //This is done separately after all traits have been loaded so that the data will be accurate
+    //It is because all traits are added again, this would mean that OnAddedTrait will also be called
+    //Some values of character are modified by adding traits, so since adding trait will still be processed, it will get modified twice or more
+    //For example, the Glutton trait adds fullnessDecreaseRate by 50%
+    //Now when the fullnessDecreaseRate value is loaded the value of it already includes the Glutton trait modification
+    //But since the Glutton trait will process the add trait function, fullnessDecreaseRate will add by 50% again
+    //So for example if the saved value is 150, then the loaded value will be 300 (150+150)
+    public void LoadAllStatsOfCharacter(SaveDataCharacter data) {
+        _doNotDisturb = data.doNotDisturb;
+        _doNotGetHungry = data.doNotGetHungry;
+        _doNotGetLonely = data.doNotGetLonely;
+        _doNotGetTired = data.doNotGetTired;
+
+        _maxHP = data.maxHP;
+        _currentHP = data.currentHP;
+        _level = data.level;
+        _experience = data.experience;
+        _maxExperience = data.maxExperience;
+        attackPowerMod = data.attackPowerMod;
+        speedMod = data.speedMod;
+        maxHPMod = data.maxHPMod;
+        attackPowerPercentMod = data.attackPowerPercentMod;
+        speedPercentMod = data.speedPercentMod;
+        maxHPPercentMod = data.maxHPPercentMod;
+        morality = data.morality;
+
+        currentInteractionTypes = data.currentInteractionTypes;
+        supply = data.supply;
+        moodValue = data.moodValue;
+        isCombatant = data.isCombatant;
+        isDisabledByPlayer = data.isDisabledByPlayer;
+        speedModifier = data.speedModifier;
+        deathStr = data.deathStr;
+        _state = data.state;
+
+        tiredness = data.tiredness;
+        fullness = data.fullness;
+        happiness = data.happiness;
+        fullnessDecreaseRate = data.fullnessDecreaseRate;
+        tirednessDecreaseRate = data.tirednessDecreaseRate;
+        happinessDecreaseRate = data.happinessDecreaseRate;
+
+        ignoreHostility = data.ignoreHostility;
+
+        SetForcedFullnessRecoveryTimeInWords(data.forcedFullnessRecoveryTimeInWords);
+        SetForcedTirednessRecoveryTimeInWords(data.forcedTirednessRecoveryTimeInWords);
+        SetFullnessForcedTick(data.fullnessForcedTick);
+        SetTirednessForcedTick(data.tirednessForcedTick);
+
+        returnedToLife = data.returnedToLife;
     }
     /// <summary>
     /// Initialize data for this character that is not safe to put in the constructor.

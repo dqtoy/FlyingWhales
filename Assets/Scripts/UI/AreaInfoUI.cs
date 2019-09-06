@@ -147,7 +147,7 @@ public class AreaInfoUI : UIMenu {
     #region Basic Info
     private void UpdateBasicInfo() {
         //LandmarkData data = LandmarkManager.Instance.GetLandmarkData(activeArea.coreTile.landmarkOnTile.specificLandmarkType);
-        landmarkNameLbl.text = activeTile.name;
+        landmarkNameLbl.text = activeTile.areaOfTile.name;
         landmarkTypeLbl.text = activeTile.areaOfTile.GetAreaTypeString();
         UpdateSupplies();
         locationPortrait.SetLocation(activeTile.areaOfTile);

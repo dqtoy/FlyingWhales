@@ -1729,6 +1729,7 @@ public class Player : ILeader {
     #endregion
 }
 
+[System.Serializable]
 public struct DemonicLandmarkBuildingData {
     public LANDMARK_TYPE landmarkType;
     public string landmarkName;

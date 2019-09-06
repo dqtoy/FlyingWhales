@@ -89,7 +89,7 @@ public class SaveDataPlayer {
             }
 
             Region region = GridMap.Instance.GetRegionByID(invadingRegionSave.id);
-            region.LoadInvasion(invadingRegionSave.LoadInvadingMinion(), invadingRegionSave.ticksInInvasion);
+            region.LoadInvasion(invadingRegionSave.ticksInInvasion);
         }
     }
     private void SortAddSaveDataArtifact(SaveDataArtifactSlot newSaveData) {

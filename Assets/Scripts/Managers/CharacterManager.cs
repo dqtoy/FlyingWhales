@@ -291,6 +291,7 @@ public class CharacterManager : MonoBehaviour {
             Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);
             newCharacter.AddTrait(trait, responsibleCharacter);
         }
+        newCharacter.LoadAllStatsOfCharacter(data);
 
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
@@ -503,6 +504,7 @@ public class CharacterManager : MonoBehaviour {
             Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);
             newCharacter.AddTrait(trait, responsibleCharacter);
         }
+        newCharacter.LoadAllStatsOfCharacter(data);
 
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);

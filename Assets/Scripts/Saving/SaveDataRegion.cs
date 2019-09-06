@@ -12,7 +12,8 @@ public class SaveDataRegion {
     public int ticksInInvasion;
     public ColorSave regionColor;
 
-    public int invadingMinionID;
+    //public int invadingMinionID;
+    public DemonicLandmarkBuildingData demonicBuildingData;
 
     public void Save(Region region) {
         id = region.id;
@@ -27,11 +28,13 @@ public class SaveDataRegion {
         ticksInInvasion = region.ticksInInvasion;
         regionColor = region.regionColor;
 
-        if (region.assignedMinion != null) {
-            invadingMinionID = region.assignedMinion.character.id;
-        } else {
-            invadingMinionID = -1;
-        }
+        demonicBuildingData = region.demonicBuildingData;
+
+        //if (region.assignedMinion != null) {
+        //    invadingMinionID = region.assignedMinion.character.id;
+        //} else {
+        //    invadingMinionID = -1;
+        //}
     }
 
     public Region Load() {
@@ -39,18 +42,19 @@ public class SaveDataRegion {
         for (int i = 0; i < tileIDs.Count; i++) {
             region.AddTile(GridMap.Instance.hexTiles[tileIDs[i]]);
         }
-
-        if(ticksInInvasion > 0) {
-            //TODO: what to do if saved in the middle of invading a tile
-        }
         return region;
     }
 
-    public Minion LoadInvadingMinion() {
-        if(invadingMinionID != -1) {
-            Minion minion = CharacterManager.Instance.GetCharacterByID(invadingMinionID).minion;
-            return minion;
-        }
-        return null;
+    public void LoadBuildingStructure() {
+        Region region = GridMap.Instance.GetRegionByID(id);
+        region.LoadBuildingStructure(this);
     }
+
+    //public Minion LoadInvadingMinion() {
+    //    if(invadingMinionID != -1) {
+    //        Minion minion = CharacterManager.Instance.GetCharacterByID(invadingMinionID).minion;
+    //        return minion;
+    //    }
+    //    return null;
+    //}
 }

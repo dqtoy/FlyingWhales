@@ -175,7 +175,7 @@ public class Region {
         Messenger.AddListener(Signals.TICK_STARTED, PerInvasionTick);
         TimerHubUI.Instance.AddItem("Invasion of " + (mainLandmark.tileLocation.areaOfTile != null ? mainLandmark.tileLocation.areaOfTile.name : name), mainLandmark.invasionTicks, () => UIManager.Instance.ShowHextileInfo(this.mainLandmark.tileLocation));
     }
-    public void LoadInvasion(Minion assignedMinion, int ticksInInvasion) {
+    public void LoadInvasion(int ticksInInvasion) {
         PlayerManager.Instance.player.SetInvadingRegion(this);
         //assignedMinion.SetAssignedRegion(this);
         //SetAssignedMinion(assignedMinion);
@@ -223,6 +223,11 @@ public class Region {
             currentDuration = 0,
         };
         TimerHubUI.Instance.AddItem("Building " + demonicBuildingData.landmarkName + " at " + name, demonicBuildingData.buildDuration, () => UIManager.Instance.ShowHextileInfo(coreTile));
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickBuilding);
+    }
+    public void LoadBuildingStructure(SaveDataRegion data) {
+        demonicBuildingData = data.demonicBuildingData;
+        TimerHubUI.Instance.AddItem("Building " + demonicBuildingData.landmarkName + " at " + name, demonicBuildingData.buildDuration - demonicBuildingData.currentDuration, () => UIManager.Instance.ShowHextileInfo(coreTile));
         Messenger.AddListener(Signals.TICK_STARTED, PerTickBuilding);
     }
     private void PerTickBuilding() {
