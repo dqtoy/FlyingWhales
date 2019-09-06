@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System;
 
 public static class Signals {
 
@@ -341,7 +342,57 @@ public static class Signals {
     public static string TRAITABLE_LOST_TRAIT = "OnTraitableLostTrait";
     #endregion
 
-    //public static Dictionary<string, MethodInfo> orderedSignalExecution = new Dictionary<string, MethodInfo[]>() {
-    //    { HOUR_STARTED,  }
-    //}
+    public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
+        { HOUR_STARTED, new SignalMethod[] {
+            new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(Area) },
+            new SignalMethod() { methodName = "DecreaseNeeds", objectType = typeof(Character) },
+            new SignalMethod() { methodName = "PerHour", objectType = typeof(Zombie_Virus) },
+        }},
+        { TICK_STARTED, new SignalMethod[] {
+            new SignalMethod() { methodName = "CheckSupply", objectType = typeof(SupplyPile) },
+            new SignalMethod() { methodName = "CheckFood", objectType = typeof(FoodPile) },
+            new SignalMethod() { methodName = "PerTick", objectType = typeof(TimerHubUI) },
+            new SignalMethod() { methodName = string.Empty, objectType = typeof(Trait) },
+            new SignalMethod() { methodName = "PerTickEffect", objectType = typeof(GoapActionState) },
+            new SignalMethod() { methodName = "PerTickGoapPlanGeneration", objectType = typeof(Character) },
+            new SignalMethod() { methodName = "PerTickInterventionAbility", objectType = typeof(Player) },
+        }},
+        { TICK_ENDED, new SignalMethod[] {
+            new SignalMethod() { methodName = "CheckSchedule", objectType = typeof(SchedulingManager) },
+            new SignalMethod() { methodName = string.Empty, objectType = typeof(Trait) },
+            new SignalMethod() { methodName = string.Empty, objectType = typeof(Artifact) },
+            new SignalMethod() { methodName = "PerTickMovement", objectType = typeof(CharacterMarker) },
+            new SignalMethod() { methodName = "PerTickInState", objectType = typeof(CharacterState) },
+            new SignalMethod() { methodName = "PerTickInvasion", objectType = typeof(Player) },
+        }},
+    };
+
+    public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
+        for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
+            SignalMethod sm = orderedSignalExecution[eventType][i];
+            if (sm.Equals(method)) {
+                matching = sm;
+                return true;
+            }
+        }
+        matching = default(SignalMethod);
+        return false;
+    }
+}
+
+public struct SignalMethod {
+    public string methodName;
+    public System.Type objectType;
+
+    public bool Equals(Delegate d) {
+        if (d.Method.Name.Contains(methodName) && (d.Target.GetType() == objectType || d.Target.GetType().BaseType == objectType)) {
+            return true;
+        }
+        if (string.IsNullOrEmpty(methodName) && (d.Target.GetType() == objectType || d.Target.GetType().BaseType == objectType)) {
+            //if the required method name is null, and the provided object is of the same type, consider it a match
+            return true;
+        }
+
+        return false;
+    }
 }

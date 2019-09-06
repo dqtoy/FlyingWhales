@@ -83,6 +83,8 @@ public class CharacterManager : MonoBehaviour {
         //ConstructAtHomeInteractionWeights();
         //ConstructRoleInteractions();
         //ConstructPortraitDictionaries();
+        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
     #region Characters
@@ -1428,6 +1430,52 @@ public class CharacterManager : MonoBehaviour {
             return markerAssets[0].femaleAssets;
         }
         return markerAssets[0].maleAssets;
+    }
+    #endregion
+
+    #region Listeners
+    private void OnActionStateSet(GoapAction action, GoapActionState state) {
+        action.actor.marker.UpdateAnimation();
+
+        IPointOfInterest target = null;
+        if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+            target = (action as MakeLove).targetCharacter;
+        } else {
+            target = action.poiTarget;
+        }
+        for (int i = 0; i < action.actor.marker.inVisionCharacters.Count; i++) {
+            Character inVisionChar = action.actor.marker.inVisionCharacters[i];
+            if (target != inVisionChar) {
+                if (action.goapType == INTERACTION_TYPE.WATCH) {
+                    //Cannot witness/watch a watch action
+                    return;
+                }
+                if (inVisionChar.GetNormalTrait("Unconscious", "Resting") != null) {
+                    return;
+                }
+                inVisionChar.OnActionStateSet(action, state);
+            }
+        }
+    }
+    private void OnCharacterFinishedAction(Character actor, GoapAction action, string result) {
+        actor.marker.UpdateActionIcon();
+        actor.marker.UpdateAnimation();
+
+        for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
+            Character otherCharacter = actor.marker.inVisionCharacters[i];
+            //crime system:
+            //if the other character committed a crime,
+            //check if that character is in this characters vision 
+            //and that this character can react to a crime (not in flee or engage mode)
+            if (action.IsConsideredACrimeBy(otherCharacter)
+                && action.CanReactToThisCrime(otherCharacter)
+                && otherCharacter.CanReactToCrime()) {
+                bool hasRelationshipDegraded = false;
+                otherCharacter.ReactToCrime(action, ref hasRelationshipDegraded);
+            }
+        }
+
+            
     }
     #endregion
 }

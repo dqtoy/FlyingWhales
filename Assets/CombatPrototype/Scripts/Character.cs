@@ -704,12 +704,11 @@ public class Character : ILeader, IPointOfInterest {
         Messenger.AddListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.AddListener(Signals.HOUR_STARTED, DecreaseNeeds);
         //Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
-        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.AddListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
         Messenger.AddListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.AddListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
-        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        ///Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet); Moved listener for action state set to CharacterManager for optimization <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)">
         Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
         Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
@@ -723,12 +722,11 @@ public class Character : ILeader, IPointOfInterest {
         Messenger.RemoveListener(Signals.DAY_STARTED, DailyGoapProcesses);
         Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds);
         //Messenger.RemoveListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
-        Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnLeaveArea);
         Messenger.RemoveListener<Party>(Signals.PARTY_DONE_TRAVELLING, OnArrivedAtArea);
         Messenger.RemoveListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
         Messenger.RemoveListener<Character, string>(Signals.CANCEL_CURRENT_ACTION, CancelCurrentAction);
-        Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        //Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_PLACED_ON_TILE, OnItemPlacedOnTile);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
@@ -2611,7 +2609,7 @@ public class Character : ILeader, IPointOfInterest {
     //    return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.PASSABLE, _faction) != null;
     //}
     public void CenterOnCharacter(bool clickTravelLine = true) {
-        if (!isDead && marker != null) {
+        if (marker != null) {
             if (currentParty.icon.isTravelling) {
                 if (currentParty.icon.travelLine != null) {
                     if (specificLocation.areaMap.isShowing) {
@@ -3278,26 +3276,29 @@ public class Character : ILeader, IPointOfInterest {
         addLog.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, onlyClickedCharacter);
     }
-    protected virtual void OnActionStateSet(GoapAction action, GoapActionState state) {
-        IPointOfInterest target = null;
-        if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-            target = (action as MakeLove).targetCharacter;
-        } else {
-            target = action.poiTarget;
-        }
-        if (action.actor != this && target != this) {
-            if (action.goapType == INTERACTION_TYPE.WATCH) {
-                //Cannot witness/watch a watch action
-                return;
-            }
-            if (GetNormalTrait("Unconscious", "Resting") != null) {
-                return;
-            }
-            if (marker.inVisionCharacters.Contains(action.actor)) {
-                ThisCharacterWitnessedEvent(action);
-                ThisCharacterWatchEvent(null, action, state);
-            }
-        }
+    public virtual void OnActionStateSet(GoapAction action, GoapActionState state) {
+        //IPointOfInterest target = null;
+        //if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+        //    target = (action as MakeLove).targetCharacter;
+        //} else {
+        //    target = action.poiTarget;
+        //}
+        //if (action.actor != this && target != this) {
+        //    if (action.goapType == INTERACTION_TYPE.WATCH) {
+        //        //Cannot witness/watch a watch action
+        //        return;
+        //    }
+        //    if (GetNormalTrait("Unconscious", "Resting") != null) {
+        //        return;
+        //    }
+        //    if (marker.inVisionCharacters.Contains(action.actor)) {
+        //        ThisCharacterWitnessedEvent(action);
+        //        ThisCharacterWatchEvent(null, action, state);
+        //    }
+        //}
+        ///Moved all needed checking <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)"/>
+        ThisCharacterWitnessedEvent(action);
+        ThisCharacterWatchEvent(null, action, state);
     }
     public virtual void ThisCharacterSaw(IPointOfInterest target) {
         if (GetNormalTrait("Unconscious", "Resting") != null || isDead) {
@@ -7799,9 +7800,6 @@ public class Character : ILeader, IPointOfInterest {
                 i--;
             }
         }
-    }
-    private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
-        
     }
     private void CancelCurrentAction(Character target, string cause) {
         if (this != target && !isDead && currentAction != null && currentAction.poiTarget == target && !currentAction.cannotCancelAction && currentAction.goapType != INTERACTION_TYPE.WATCH) {
