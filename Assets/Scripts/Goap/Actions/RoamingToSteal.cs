@@ -9,6 +9,11 @@ public class RoamingToSteal : GoapAction {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         isNotificationAnIntel = false;
+        validTimeOfDays = new TIME_IN_WORDS[] {
+            TIME_IN_WORDS.EARLY_NIGHT,
+            TIME_IN_WORDS.LATE_NIGHT,
+            TIME_IN_WORDS.AFTER_MIDNIGHT,
+        };
     }
 
     #region Overrides

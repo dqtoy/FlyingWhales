@@ -593,6 +593,8 @@ public class Character : ILeader, IPointOfInterest {
         SetForcedTirednessRecoveryTimeInWords(data.forcedTirednessRecoveryTimeInWords);
         SetFullnessForcedTick(data.fullnessForcedTick);
         SetTirednessForcedTick(data.tirednessForcedTick);
+
+        returnedToLife = data.returnedToLife;
     }
     public Character() {
         SetIsDead(false);
@@ -3746,20 +3748,23 @@ public class Character : ILeader, IPointOfInterest {
             string rollLog = GameManager.Instance.TodayLogString() + characterThatAttacked.name + " attacked " + name
                 + ", death weight: " + deathWeight + ", unconscious weight: " + unconsciousWeight 
                 + ", isLethal: " + characterThatAttacked.marker.IsLethalCombatForTarget(this);
-            characterThatAttacked.PrintLogIfActive(rollLog);
 
             if (this.GetNormalTrait("Unconscious") == null) {
                 loserResults.AddElement("Unconscious", unconsciousWeight);
+                rollLog += "\n- Unconscious weight will be added";
             }
             //if (currentClosestHostile.GetNormalTrait("Injured") == null) {
             //    loserResults.AddElement("Injured", 10);
             //}
             if (!isDead) {
                 loserResults.AddElement("Death", deathWeight);
+                rollLog += "\n- Death weight will be added";
             }
 
             if (loserResults.Count > 0) {
                 string result = loserResults.PickRandomElementGivenWeights();
+                rollLog += "\n- Pick result is: " + result;
+                characterThatAttacked.PrintLogIfActive(rollLog);
                 attackSummary += "\ncombat result is " + result; ;
                 switch (result) {
                     case "Unconscious":
@@ -3774,6 +3779,9 @@ public class Character : ILeader, IPointOfInterest {
                         this.Death("attacked", deathFromAction: state.actionThatTriggeredThisState, responsibleCharacter: characterThatAttacked);
                         break;
                 }
+            } else {
+                rollLog += "\n- Dictionary is empty, no result!";
+                characterThatAttacked.PrintLogIfActive(rollLog);
             }
         } else {
             Invisible invisible = characterThatAttacked.GetNormalTrait("Invisible") as Invisible;
@@ -4332,6 +4340,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         AddTrait(chosenFlawOrNeutralTraitName);
         //AddTrait("Narcoleptic");
+        //AddTrait("Glutton");
 
         AddTrait("Character Trait");
     }
@@ -5244,36 +5253,7 @@ public class Character : ILeader, IPointOfInterest {
         if (doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return false;
         }
-        TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
-        if (isLonely) {
-            if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
-                Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
-                if(hardworking != null) {
-                    bool isPlanningRecoveryProcessed = false;
-                    if(hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
-                        return isPlanningRecoveryProcessed;
-                    }
-                }
-                int chance = UnityEngine.Random.Range(0, 100);
-                int value = 0;
-                if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
-                    value = 30;
-                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
-                    value = 45;
-                } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-                    value = 45;
-                } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-                    value = 30;
-                }
-                if (chance < value) {
-                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
-                    job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job, processOverrideLogic);
-                    return true;
-                }
-            }
-        } else if (isForlorn) {
+        if (isForlorn) {
             //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
             JobQueueItem happinessRecoveryJob = jobQueue.GetJob(JOB_TYPE.HAPPINESS_RECOVERY);
             if (happinessRecoveryJob != null) {
@@ -5297,6 +5277,35 @@ public class Character : ILeader, IPointOfInterest {
                 job.SetCancelOnFail(true);
                 jobQueue.AddJobInQueue(job, processOverrideLogic);
                 return true;
+            }
+        } else if (isLonely) {
+            if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+                JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
+                Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
+                if(hardworking != null) {
+                    bool isPlanningRecoveryProcessed = false;
+                    if(hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
+                        return isPlanningRecoveryProcessed;
+                    }
+                }
+                int chance = UnityEngine.Random.Range(0, 100);
+                int value = 0;
+                TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+                if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+                    value = 30;
+                } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+                    value = 45;
+                } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+                    value = 45;
+                } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+                    value = 30;
+                }
+                if (chance < value) {
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    job.SetCancelOnFail(true);
+                    jobQueue.AddJobInQueue(job, processOverrideLogic);
+                    return true;
+                }
             }
         }
         return false;
@@ -5360,7 +5369,7 @@ public class Character : ILeader, IPointOfInterest {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
                 if (isAtHomeArea && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
                     if(GetNormalTrait("Lazy") != null) {
-                        if(UnityEngine.Random.Range(0, 100) < 20) {
+                        if(UnityEngine.Random.Range(0, 100) < 35) {
                             if (!ForcePlanHappinessRecoveryActions()) {
                                 PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
                             }
@@ -5383,7 +5392,17 @@ public class Character : ILeader, IPointOfInterest {
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null && !isStarving && !isExhausted && !isForlorn) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
                 if (isAtHomeArea && isPartOfHomeFaction) {
-                    return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                    if (GetNormalTrait("Lazy") != null) {
+                        if (UnityEngine.Random.Range(0, 100) < 35) {
+                            if (!ForcePlanHappinessRecoveryActions()) {
+                                PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
+                            }
+                        } else {
+                            return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                        }
+                    } else {
+                        return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                    }
                 } else {
                     return false;
                 }

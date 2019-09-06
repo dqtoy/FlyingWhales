@@ -128,6 +128,7 @@ public class MoveOutState : CharacterState {
         stateComponent.character.marker.PlaceMarkerAt(stateComponent.character.specificLocation.GetRandomUnoccupiedEdgeTile());
         OnExitThisState();
         Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, stateComponent.character.currentParty);
+        CheckNeeds();
         Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "arrive_home");
         log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(stateComponent.character.homeArea, stateComponent.character.homeArea.name, LOG_IDENTIFIER.LANDMARK_1);
@@ -135,6 +136,23 @@ public class MoveOutState : CharacterState {
         PlayerManager.Instance.player.ShowNotification(log);
         thoughtBubbleLog = log;
 
+    }
+
+    private void CheckNeeds() {
+        string summary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " has arrived home and will check his/her needs.";
+        if (stateComponent.character.isStarving) {
+            summary += "\n" + stateComponent.character.name + " is starving. Planning fullness recovery actions...";
+            stateComponent.character.PlanFullnessRecoveryActions(true);
+        }
+        if (stateComponent.character.isExhausted) {
+            summary += "\n" + stateComponent.character.name + " is exhausted. Planning tiredness recovery actions...";
+            stateComponent.character.PlanTirednessRecoveryActions(true);
+        }
+        if (stateComponent.character.isForlorn) {
+            summary += "\n" + stateComponent.character.name + " is forlorn. Planning happiness recovery actions...";
+            stateComponent.character.PlanHappinessRecoveryActions(true);
+        }
+        Debug.Log(summary);
     }
 
     public override string ToString() {

@@ -44,7 +44,8 @@ public class Pray : GoapAction {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     protected override int GetCost() {
-        return Utilities.rng.Next(20, 65);
+        //**Cost**: randomize between 15 - 55
+        return Utilities.rng.Next(15, 56);
     }
     //public override void FailAction() {
     //    base.FailAction();

@@ -8,11 +8,11 @@ public class StealFromCharacter : GoapAction {
     private Character _targetCharacter;
 
     public StealFromCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STEAL_FROM_CHARACTER, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
-        //validTimeOfDays = new TIME_IN_WORDS[] {
-        //    TIME_IN_WORDS.EARLY_NIGHT,
-        //    TIME_IN_WORDS.LATE_NIGHT,
-        //    TIME_IN_WORDS.AFTER_MIDNIGHT,
-        //};
+        validTimeOfDays = new TIME_IN_WORDS[] {
+            TIME_IN_WORDS.EARLY_NIGHT,
+            TIME_IN_WORDS.LATE_NIGHT,
+            TIME_IN_WORDS.AFTER_MIDNIGHT,
+        };
         actionIconString = GoapActionStateDB.Hostile_Icon;
         _targetCharacter = poiTarget as Character;
         doesNotStopTargetCharacter = true;
