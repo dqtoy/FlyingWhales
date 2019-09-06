@@ -191,10 +191,10 @@ public class SerialKiller : Trait {
         GoapPlan plan = new GoapPlan(startingNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY }, GOAP_CATEGORY.WORK);
         plan.ConstructAllNodes();
         plan.SetDoNotRecalculate(true);
+        job.SetIsStealth(true);
         job.SetAssignedPlan(plan);
         job.SetAssignedCharacter(character);
         job.SetCancelOnFail(true);
-        job.SetIsStealth(true);
 
         character.jobQueue.AddJobInQueue(job, false);
 
