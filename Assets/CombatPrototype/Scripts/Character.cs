@@ -5487,9 +5487,13 @@ public class Character : ILeader, IPointOfInterest {
                     if (chance < 25) {
                         TileObject bed = currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                         if (bed != null) {
-                            log += "\n  -Afternoon: " + name + " will do action Nap on " + bed.ToString();
-                            PlanIdle(INTERACTION_TYPE.NAP, bed);
-                            return log;
+                            if(GetNormalTrait("Vampiric") != null) {
+                                log += "\n  -Character is vampiric, cannot do nap action";
+                            } else {
+                                log += "\n  -Afternoon: " + name + " will do action Nap on " + bed.ToString();
+                                PlanIdle(INTERACTION_TYPE.NAP, bed);
+                                return log;
+                            }
                         } else {
                             log += "\n  -No unoccupied bed in the current structure";
                         }
