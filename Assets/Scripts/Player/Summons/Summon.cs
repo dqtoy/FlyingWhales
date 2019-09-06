@@ -53,7 +53,7 @@ public class Summon : Character, IWorldObject {
         //gameDate.AddTicks(1);
         //SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions());
     }
-    protected override void OnActionStateSet(GoapAction action, GoapActionState state) { } //overriddn OnActionStateSet so that summons cannot witness other events.
+    public override void OnActionStateSet(GoapAction action, GoapActionState state) { } //overriddn OnActionStateSet so that summons cannot witness other events.
     protected override void OnSuccessInvadeArea(Area area) {
         base.OnSuccessInvadeArea(area);
         //clean up

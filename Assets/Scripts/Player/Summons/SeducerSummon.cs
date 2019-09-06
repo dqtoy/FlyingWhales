@@ -88,7 +88,7 @@ public class SeducerSummon : Summon {
         }
         
     }
-    protected override void OnActionStateSet(GoapAction action, GoapActionState state) {
+    public override void OnActionStateSet(GoapAction action, GoapActionState state) {
         if (action.actor == this && action.goapType == INTERACTION_TYPE.INVITE_TO_MAKE_LOVE) {
             doneCharacters.Add(action.poiTarget as Character);
         } else if (action.actor == this && action.goapType == INTERACTION_TYPE.MAKE_LOVE) {

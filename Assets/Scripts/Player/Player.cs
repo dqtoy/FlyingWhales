@@ -127,7 +127,6 @@ public class Player : ILeader {
     private void AddListeners() {
         AddWinListener();
         Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickPlayer);
 
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
 
@@ -678,18 +677,6 @@ public class Player : ILeader {
     //        return action.GetType().ToString();
     //    }
     //}
-    #endregion
-
-    #region Utilities
-    //private void OnCharacterDied(Character character) {
-    //    JOB job = GetCharactersCurrentJob(character);
-    //    if (job != JOB.NONE) {
-    //        UnassignCharacterFromJob(job);
-    //    }
-    //}
-    private void PerTickPlayer() {
-        //PerTickInterventionAbility();
-    }
     #endregion
 
     #region Intel

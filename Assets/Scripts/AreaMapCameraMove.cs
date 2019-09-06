@@ -14,7 +14,7 @@ public class AreaMapCameraMove : MonoBehaviour {
 
     private float dampTime = 0.2f;
 	private Vector3 velocity = Vector3.zero;
-	[SerializeField] private Transform target;
+	[SerializeField] private Transform _target;
 
 	private const float MIN_Z = -10f;
     private const float MAX_Z = -10f;
@@ -37,6 +37,17 @@ public class AreaMapCameraMove : MonoBehaviour {
     [SerializeField] private float xSeeLimit;
 
     #region getters/setters
+    private Transform target {
+        get { return _target; }
+        set {
+            _target = value;
+            if (_target == null) {
+                Messenger.RemoveListener<GameObject>(Signals.POOLED_OBJECT_DESTROYED, OnPooledObjectDestroyed);
+            } else {
+                Messenger.AddListener<GameObject>(Signals.POOLED_OBJECT_DESTROYED, OnPooledObjectDestroyed);
+            }
+        }
+    }
     public float currentFOV {
         get { return areaMapsCamera.orthographicSize; }
     }
@@ -64,7 +75,7 @@ public class AreaMapCameraMove : MonoBehaviour {
         gameObject.SetActive(false);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
-        Messenger.AddListener<GameObject>(Signals.POOLED_OBJECT_DESTROYED, OnPooledObjectDestroyed);
+        
     }
 
     #region Listeners

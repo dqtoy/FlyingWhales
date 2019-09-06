@@ -120,9 +120,7 @@ public class GoapActionState {
         parentAction.ReturnToActorTheActionResult(status);
     }
     public void StopPerTickEffect() {
-        if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
-        }
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
     }
     private void PerTickEffect() {
         currentDuration++;

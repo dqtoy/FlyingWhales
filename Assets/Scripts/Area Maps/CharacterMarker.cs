@@ -110,12 +110,12 @@ public class CharacterMarker : PooledObject {
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        //Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        ///Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction); Moved  listener for action state set to CharacterManager for optimization <see cref="CharacterManager.OnCharacterFinishedAction(Character, GoapAction, string)"/>
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        ///Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet); Moved listener for action state set to CharacterManager for optimization <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)">
         Messenger.AddListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
 
@@ -174,30 +174,33 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Listeners
-    private void OnActionStateSet(GoapAction goapAction, GoapActionState goapState) {
-        if (character == goapAction.actor) {
-            UpdateAnimation();
-        }
-    }
-    private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
-        if (this.character == character) {
-            //action icon
-            UpdateActionIcon();
-            UpdateAnimation();
-        } else {
-            //crime system:
-            //if the other character committed a crime,
-            //check if that character is in this characters vision 
-            //and that this character can react to a crime (not in flee or engage mode)
-            if (action.IsConsideredACrimeBy(this.character)
-                && action.CanReactToThisCrime(this.character)
-                && inVisionCharacters.Contains(character)
-                && this.character.CanReactToCrime()) {
-                bool hasRelationshipDegraded = false;
-                this.character.ReactToCrime(action, ref hasRelationshipDegraded);
-            }
-        }
-    }
+    ///Moved listener for action state set to CharacterManager for optimization <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)">
+    //private void OnActionStateSet(GoapAction goapAction, GoapActionState goapState) {
+    //    if (character == goapAction.actor) {
+    //        UpdateAnimation();
+    //    }
+    //}
+
+    ///Moved  listener for action state set to CharacterManager for optimization <see cref="CharacterManager.OnCharacterFinishedAction(Character, GoapAction, string)"/>
+    //private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
+    //    if (this.character == character) {
+    //        //action icon
+    //        UpdateActionIcon();
+    //        UpdateAnimation();
+    //    } else {
+    //        //crime system:
+    //        //if the other character committed a crime,
+    //        //check if that character is in this characters vision 
+    //        //and that this character can react to a crime (not in flee or engage mode)
+    //        if (inVisionCharacters.Contains(character)
+    //            && action.IsConsideredACrimeBy(this.character)
+    //            && action.CanReactToThisCrime(this.character)
+    //            && this.character.CanReactToCrime()) {
+    //            bool hasRelationshipDegraded = false;
+    //            this.character.ReactToCrime(action, ref hasRelationshipDegraded);
+    //        }
+    //    }
+    //}
     public void OnCharacterGainedTrait(Character characterThatGainedTrait, Trait trait) {
         //this will make this character flee when he/she gains an injured trait
         if (characterThatGainedTrait == this.character) {
@@ -385,10 +388,8 @@ public class CharacterMarker : PooledObject {
             }
         }
     }
-    private void OnCharacterDoingAction(Character character, GoapAction action) {
-        if (this.character == character) {
-            UpdateActionIcon();
-        }
+    public void OnThisCharacterDoingAction(GoapAction action) {
+         UpdateActionIcon();
     }
     public void OnCharacterTargettedByAction(GoapAction action) {
         UpdateActionIcon();
@@ -436,12 +437,12 @@ public class CharacterMarker : PooledObject {
         PathfindingManager.Instance.RemoveAgent(pathfindingAI);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.RemoveListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
-        Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        //Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        //Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
-        Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        //Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.RemoveListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         visionCollision.Reset();
@@ -665,7 +666,7 @@ public class CharacterMarker : PooledObject {
         animator.Play(animation, 0, 0.5f);
         //StartCoroutine(PlayAnimation(animation));
     }
-    private void UpdateAnimation() {
+    public void UpdateAnimation() {
         //if (isInCombatTick) {
         //    return;
         //}
