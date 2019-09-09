@@ -200,7 +200,7 @@ public class ChatCharacter : GoapAction {
         //    PlayerManager.Instance.player.ShowNotificationFrom(targetCharacter, chatLog);
         //}
 
-        //weights.LogDictionaryValues("Chat Weights of " + actor.name + " and " + targetCharacter.name);
+        weights.LogDictionaryValues("Chat Weights of " + actor.name + " and " + targetCharacter.name);
         //Debug.Log(actor.name + " and " + targetCharacter.name + "'s chat result is " + chatResult);
 
         GameDate dueDate = GameManager.Instance.Today();

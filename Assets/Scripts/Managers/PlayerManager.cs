@@ -109,7 +109,13 @@ public class PlayerManager : MonoBehaviour {
         LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
         player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
         PlayerUI.Instance.UpdateUI();
-        //PlayerUI.Instance.InitializeThreatMeter();
+
+        //Add an adjacent region to the player at the start of the game.
+        //Ref: https://trello.com/c/cQKzEx06/2699-one-additional-empty-region-owned-by-the-player-at-the-start-of-game
+        List<BaseLandmark> choices = portal.connections;
+        BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
+        AddTileToPlayerArea(chosenLandmark.tileLocation);
+        chosenLandmark.ChangeLandmarkType(LANDMARK_TYPE.NONE);
     }
     public void InitializePlayer(SaveDataPlayer data) {
         player = new Player(data);

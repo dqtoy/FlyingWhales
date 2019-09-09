@@ -24,7 +24,7 @@
 //#define LOG_ADD_LISTENER
 //#define LOG_BROADCAST_MESSAGE
 //#define REQUIRE_LISTENER
-#define LOG_BROADCAST_EXECUTION
+//#define LOG_BROADCAST_EXECUTION
 
 using System;
 using System.Collections;

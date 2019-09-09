@@ -6,9 +6,6 @@ using UnityEngine;
 
 public class Character : ILeader, IPointOfInterest {
 
-    public delegate void DailyAction();
-    public DailyAction onDailyAction;
-
     protected string _name;
     protected string _firstName;
     protected string _characterColorCode;
@@ -104,7 +101,6 @@ public class Character : ILeader, IPointOfInterest {
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
 
-    private Dictionary<STAT, float> _buffs;
     public Dictionary<int, Combat> combatHistory;
 
     //Needs
@@ -177,15 +173,6 @@ public class Character : ILeader, IPointOfInterest {
             return _firstName;
         }
     }
-    public string coloredName {
-        get { return "<color=#" + this._characterColorCode + ">" + name + "</color>"; }
-    }
-    public string urlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + name + "</link>"; }
-    }
-    public string coloredUrlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + name + "</color></link>"; }
-    }
     public string raceClassName {
         get {
             if (Utilities.IsRaceBeast(race)) {
@@ -220,9 +207,6 @@ public class Character : ILeader, IPointOfInterest {
     }
     public bool isHoldingItem {
         get { return items.Count > 0; }
-    }
-    public bool isAtHomeStructure {
-        get { return currentStructure == homeStructure; }
     }
     public bool isAtHomeArea {
         get { return currentLandmark == null && specificLocation.id == homeArea.id && !currentParty.icon.isTravellingOutside; }
@@ -384,9 +368,6 @@ public class Character : ILeader, IPointOfInterest {
         get {
             return GetAllRelationshipTraits();
         }
-    }
-    public Dictionary<STAT, float> buffs {
-        get { return _buffs; }
     }
     public PlayerCharacterItem playerCharacterItem {
         get { return _playerCharacterItem; }
@@ -4382,7 +4363,6 @@ public class Character : ILeader, IPointOfInterest {
         AddTrait(chosenFlawOrNeutralTraitName);
         //AddTrait("Narcoleptic");
         //AddTrait("Glutton");
-
         AddTrait("Character Trait");
     }
     public void CreateInitialTraitsByRace() {
@@ -5074,26 +5054,6 @@ public class Character : ILeader, IPointOfInterest {
         //if (!characterToken.isObtainedByPlayer) {
         //    PlayerManager.Instance.player.AddToken(characterToken);
         //}
-    }
-    #endregion
-
-    #region Buffs
-    public void ConstructBuffs() {
-        _buffs = new Dictionary<STAT, float>();
-        STAT[] stats = Utilities.GetEnumValues<STAT>();
-        for (int i = 0; i < stats.Length; i++) {
-            _buffs.Add(stats[i], 0f);
-        }
-    }
-    public void AddBuff(Buff buff) {
-        if (_buffs.ContainsKey(buff.buffedStat)) {
-            _buffs[buff.buffedStat] += buff.percentage;
-        }
-    }
-    public void RemoveBuff(Buff buff) {
-        if (_buffs.ContainsKey(buff.buffedStat)) {
-            _buffs[buff.buffedStat] -= buff.percentage;
-        }
     }
     #endregion
 
@@ -5875,6 +5835,11 @@ public class Character : ILeader, IPointOfInterest {
         if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
             positiveFlirtationWeight *= 0.1f;
         }
+        bool thisIsUgly = GetNormalTrait("Ugly") != null;
+        bool otherIsUgly = targetCharacter.GetNormalTrait("Ugly") != null;
+        if (thisIsUgly != otherIsUgly) { //if at least one of the characters are ugly
+            positiveFlirtationWeight *= 0.75f;
+        }
         return positiveFlirtationWeight + negativeFlirtationWeight;
     }
     public float GetBecomeLoversWeightWith(Character targetCharacter, CharacterRelationshipData relData, params CHARACTER_MOOD[] moods) {
@@ -5924,6 +5889,12 @@ public class Character : ILeader, IPointOfInterest {
             }
             //x0 if a character is a beast
             //added to initial checking instead.
+
+            bool thisIsUgly = GetNormalTrait("Ugly") != null;
+            bool otherIsUgly = targetCharacter.GetNormalTrait("Ugly") != null;
+            if (thisIsUgly != otherIsUgly) { //if at least one of the characters are ugly
+                positiveWeight *= 0.75f;
+            }
         }
         return positiveWeight + negativeWeight;
     }
@@ -5972,8 +5943,7 @@ public class Character : ILeader, IPointOfInterest {
                 positiveWeight *= 0.1f;
             }
             // x4 if initiator is Unfaithful and already has a lover
-            else if (unfaithful != null && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER)))
-            {
+            else if (unfaithful != null && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER))) {
                 positiveWeight *= 4f;
                 positiveWeight *= unfaithful.affairChanceMultiplier;
             }
@@ -5988,6 +5958,9 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.RELATIVE)) {
                 positiveWeight *= 0.01f;
+            }
+            if (lover != null && lover.GetNormalTrait("Ugly") != null) { //if lover is ugly
+                positiveWeight += positiveWeight * 0.75f;
             }
             //x0 if a character has a lover and does not have the Unfaithful trait
             if ((HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER, false) && GetNormalTrait("Unfaithful") == null) 

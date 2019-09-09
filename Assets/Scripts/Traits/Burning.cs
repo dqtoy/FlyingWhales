@@ -9,7 +9,7 @@ public class Burning : Trait {
     public override bool isPersistent { get { return true; } }
     private GameObject burningEffect;
 
-    public IBurningSource sourceOfBurning { get; private set; }
+    public BurningSource sourceOfBurning { get; private set; }
 
     public Burning() {
         name = "Burning";
@@ -146,7 +146,7 @@ public class Burning : Trait {
     }
     #endregion
 
-    public void SetSourceOfBurning(IBurningSource source, ITraitable obj) {
+    public void SetSourceOfBurning(BurningSource source, ITraitable obj) {
         sourceOfBurning = source;
         IPointOfInterest poiOnFire;
         if (obj is LocationGridTile) {
@@ -225,23 +225,23 @@ public class Burning : Trait {
 }
 
 
-public interface IBurningSource {
-    List<Character> dousers { get; }
-    List<IPointOfInterest> objectsOnFire { get; }
-    DelegateTypes.OnAllBurningExtinguished onAllBurningExtinguished { get; }
-    DelegateTypes.OnBurningObjectAdded onBurningObjectAdded { get; }
-    DelegateTypes.OnBurningObjectRemoved onBurningObjectRemoved { get; }
+//public interface IBurningSource {
+//    List<Character> dousers { get; }
+//    List<IPointOfInterest> objectsOnFire { get; }
+//    DelegateTypes.OnAllBurningExtinguished onAllBurningExtinguished { get; }
+//    DelegateTypes.OnBurningObjectAdded onBurningObjectAdded { get; }
+//    DelegateTypes.OnBurningObjectRemoved onBurningObjectRemoved { get; }
 
-    void AddCharactersDousingFire(Character character);
-    void RemoveCharactersDousingFire(Character character);
-    Character GetNearestDouserFrom(Character otherCharacter);
+//    void AddCharactersDousingFire(Character character);
+//    void RemoveCharactersDousingFire(Character character);
+//    Character GetNearestDouserFrom(Character otherCharacter);
 
-    void AddObjectOnFire(IPointOfInterest poi);
-    void RemoveObjectOnFire(IPointOfInterest poi);
-    void AddOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action);
-    void RemoveOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action);
-    void AddOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action);
-    void RemoveOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action);
-    void AddOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action);
-    void RemoveOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action);
-}
+//    void AddObjectOnFire(IPointOfInterest poi);
+//    void RemoveObjectOnFire(IPointOfInterest poi);
+//    void AddOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action);
+//    void RemoveOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action);
+//    void AddOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action);
+//    void RemoveOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action);
+//    void AddOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action);
+//    void RemoveOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action);
+//}
