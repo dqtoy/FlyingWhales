@@ -94,9 +94,9 @@ public class LandmarkManager : MonoBehaviour {
         }
         BaseLandmark newLandmark = location.CreateLandmarkOfType(saveData);
 #if !WORLD_CREATION_TOOL
-        if (newLandmark.tileLocation.areaOfTile != null && newLandmark.tileLocation.areaOfTile.owner != null) {
-            OccupyLandmark(newLandmark, newLandmark.tileLocation.areaOfTile.owner);
-        }
+        //if (newLandmark.tileLocation.areaOfTile != null && newLandmark.tileLocation.areaOfTile.owner != null) {
+        //    OccupyLandmark(newLandmark, newLandmark.tileLocation.areaOfTile.owner);
+        //}
 
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
 #endif
@@ -107,15 +107,13 @@ public class LandmarkManager : MonoBehaviour {
         if (landmarkOnTile == null) {
             return;
         }
+        landmarkOnTile.DestroyLandmark();
         tile.RemoveLandmarkVisuals();
         tile.RemoveLandmarkOnTile();
     }
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
         BaseLandmark newLandmark = location.LoadLandmark(landmark);
         return newLandmark;
-    }
-    public void OccupyLandmark(BaseLandmark landmark, Faction occupant) {
-        landmark.OccupyLandmark(occupant);
     }
     public GameObject GetLandmarkGO() {
         return this.landmarkGO;
@@ -128,6 +126,42 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
         return true;
+    }
+    public BaseLandmark CreateNewLandmarkInstance(HexTile location, LANDMARK_TYPE type) {
+        if (type.IsPlayerLandmark()) {
+            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
+            System.Type systemType = System.Type.GetType(typeName);
+            if (systemType != null) {
+                return System.Activator.CreateInstance(systemType, location, type) as BaseLandmark;
+            }
+            return null;
+        } else {
+            return new BaseLandmark(location, type);
+        }
+    }
+    public BaseLandmark CreateNewLandmarkInstance(HexTile location, LandmarkSaveData data) {
+        if (data.landmarkType.IsPlayerLandmark()) {
+            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.landmarkType.ToString());
+            System.Type systemType = System.Type.GetType(typeName);
+            if (systemType != null) {
+                return System.Activator.CreateInstance(systemType, location, data) as BaseLandmark;
+            }
+            return null;
+        } else {
+            return new BaseLandmark(location, data);
+        }
+    }
+    public BaseLandmark CreateNewLandmarkInstance(HexTile location, SaveDataLandmark data) {
+        if (data.landmarkType.IsPlayerLandmark()) {
+            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.landmarkType.ToString());
+            System.Type systemType = System.Type.GetType(typeName);
+            if (systemType != null) {
+                return System.Activator.CreateInstance(systemType, location, data) as BaseLandmark;
+            }
+            return null;
+        } else {
+            return new BaseLandmark(location, data);
+        }
     }
     #endregion
 
@@ -391,37 +425,37 @@ public class LandmarkManager : MonoBehaviour {
     /// <summary>
     /// Add a connection between 2 landmarks.
     /// </summary>
-    /// <param name="landmark1">The landmark that will connect to landmark 2.</param>
-    /// <param name="landmark2">The landmark accepting the connection from landmark 1.</param>
-    public void ConnectLandmarks(BaseLandmark landmark1, BaseLandmark landmark2) {
-        landmark1.AddConnection(landmark2);
+    /// <param name="region1">The landmark that will connect to landmark 2.</param>
+    /// <param name="region2">The landmark accepting the connection from landmark 1.</param>
+    public void ConnectRegions(Region region1, Region region2) {
+        region1.AddConnection(region2);
         //landmark1.AddOutGoingConnection(landmark2);
-        landmark2.AddConnection(landmark1);
-        GameObject lineGO = GameObject.Instantiate(landmarkConnectionPrefab, landmark1.tileLocation.transform);
+        region2.AddConnection(region1);
+        GameObject lineGO = GameObject.Instantiate(landmarkConnectionPrefab, region1.coreTile.transform);
         LineRenderer line = lineGO.GetComponent<LineRenderer>();
         line.positionCount = 2;
-        line.SetPosition(0, landmark1.tileLocation.transform.position);
-        line.SetPosition(1, landmark2.tileLocation.transform.position);
+        line.SetPosition(0, region1.coreTile.transform.position);
+        line.SetPosition(1, region2.coreTile.transform.position);
     }
-    public void ConnectLandmarks(BaseLandmark landmark1, BaseLandmark landmark2, ref List<Island> islands) {
-        Island landmark1Island = GetIslandOfLandmark(landmark1, islands);
-        Island landmark2Island = GetIslandOfLandmark(landmark2, islands);
-        ConnectLandmarks(landmark1, landmark2);
+    public void ConnectRegions(Region region1, Region region2, ref List<Island> islands) {
+        Island landmark1Island = GetIslandOfRegion(region1, islands);
+        Island landmark2Island = GetIslandOfRegion(region2, islands);
+        ConnectRegions(region1, region2);
         if (landmark1Island != landmark2Island) {
             MergeIslands(landmark1Island, landmark2Island, ref islands);
         }
     }
-    public Island GetIslandOfLandmark(BaseLandmark landmark, List<Island> islands) {
+    public Island GetIslandOfRegion(Region region, List<Island> islands) {
         for (int i = 0; i < islands.Count; i++) {
             Island currIsland = islands[i];
-            if (currIsland.landmarksInIsland.Contains(landmark)) {
+            if (currIsland.regionsInIsland.Contains(region)) {
                 return currIsland;
             }
         }
         return null;
     }
     private void MergeIslands(Island island1, Island island2, ref List<Island> islands) {
-        island1.landmarksInIsland.AddRange(island2.landmarksInIsland);
+        island1.regionsInIsland.AddRange(island2.regionsInIsland);
         islands.Remove(island2);
     }
     //private BaseLandmark CreateMinorLandmarkOnRow(TileRow row, WeightedDictionary<LANDMARK_YIELD_TYPE> yieldTypeChances) {
@@ -465,13 +499,13 @@ public class LandmarkManager : MonoBehaviour {
     //    return landmark;
     //}
     public void GenerateConnections(BaseLandmark portal, BaseLandmark settlement) {
-        List<BaseLandmark> pendingConnections = new List<BaseLandmark>();
+        List<Region> pendingConnections = new List<Region>();
 
         List<BaseLandmark> allLandmarks = GetAllLandmarks();
         List<Island> islands = new List<Island>();
         for (int i = 0; i < allLandmarks.Count; i++) {
             BaseLandmark landmark = allLandmarks[i];
-            Island island = new Island(landmark);
+            Island island = new Island(landmark.tileLocation.region);
             islands.Add(island);
         }
 
@@ -479,18 +513,18 @@ public class LandmarkManager : MonoBehaviour {
         List<Region> portalAdjacent = portal.tileLocation.region.AdjacentRegions();
         for (int i = 0; i < portalAdjacent.Count; i++) {
             Region currRegion = portalAdjacent[i];
-            ConnectLandmarks(portal, currRegion.mainLandmark, ref islands);
-            pendingConnections.Add(currRegion.mainLandmark);
-            if (portal.HasMaximumConnections()) { break; }
+            ConnectRegions(portal.tileLocation.region, currRegion, ref islands);
+            pendingConnections.Add(currRegion);
+            if (portal.tileLocation.region.HasMaximumConnections()) { break; }
         }
 
         //connect settlement to all adjacent regions
         List<Region> settlementAdjacent = settlement.tileLocation.region.AdjacentRegions();
         for (int i = 0; i < settlementAdjacent.Count; i++) {
             Region currRegion = settlementAdjacent[i];
-            ConnectLandmarks(settlement, currRegion.mainLandmark, ref islands);
-            pendingConnections.Add(currRegion.mainLandmark);
-            if (settlement.HasMaximumConnections()) { break; }
+            ConnectRegions(settlement.tileLocation.region, currRegion, ref islands);
+            pendingConnections.Add(currRegion);
+            if (settlement.tileLocation.region.HasMaximumConnections()) { break; }
         }
 
         WeightedDictionary<int> connectionWeights = new WeightedDictionary<int>();
@@ -498,37 +532,36 @@ public class LandmarkManager : MonoBehaviour {
         connectionWeights.AddElement(2, 25); //2 connections - 25%
 
         while (pendingConnections.Count > 0) {
-            BaseLandmark currLandmark = pendingConnections[0];
-            CameraMove.Instance.CenterCameraOn(currLandmark.tileLocation.gameObject);
-            if (!currLandmark.HasMaximumConnections()) {
+            Region currRegion = pendingConnections[0];
+            if (!currRegion.HasMaximumConnections()) {
                 //current landmark can still have connections
-                int connectionsToCreate = Mathf.Max(0, connectionWeights.PickRandomElementGivenWeights() - currLandmark.connections.Count);
-                List<Region> availableAdjacent = currLandmark.tileLocation.region.AdjacentRegions().Where(x => !x.mainLandmark.IsConnectedWith(currLandmark) && !x.mainLandmark.HasMaximumConnections()).ToList();
-                if (availableAdjacent.Count == 0 && currLandmark.connections.Count == 0) {
+                int connectionsToCreate = Mathf.Max(0, connectionWeights.PickRandomElementGivenWeights() - currRegion.connections.Count);
+                List<Region> availableAdjacent = currRegion.AdjacentRegions().Where(x => !x.IsConnectedWith(currRegion) && !x.HasMaximumConnections()).ToList();
+                if (availableAdjacent.Count == 0 && currRegion.connections.Count == 0) {
                     //there are no available adjacent connections and this landmark has no connections yet, allow it to connect to any of its adjacent regions.
-                    availableAdjacent = currLandmark.tileLocation.region.AdjacentRegions();
+                    availableAdjacent = currRegion.AdjacentRegions();
                 }
                 for (int i = 0; i < connectionsToCreate; i++) {
                     if (availableAdjacent.Count > 0) {
                         Region chosenRegion = availableAdjacent[Random.Range(0, availableAdjacent.Count)];
-                        ConnectLandmarks(currLandmark, chosenRegion.mainLandmark, ref islands);
-                        if (!chosenRegion.mainLandmark.HasMaximumConnections() && !pendingConnections.Contains(chosenRegion.mainLandmark)) {
-                            pendingConnections.Add(chosenRegion.mainLandmark);
+                        ConnectRegions(currRegion, chosenRegion, ref islands);
+                        if (!chosenRegion.HasMaximumConnections() && !pendingConnections.Contains(chosenRegion)) {
+                            pendingConnections.Add(chosenRegion);
                         }
                         availableAdjacent.Remove(chosenRegion);
                     } else {
                         break; //no more adjacent unconnected regions
                     }
                 }
-                pendingConnections.Remove(currLandmark);
+                pendingConnections.Remove(currRegion);
             } else {
                 //current landmark can have no more connections
-                pendingConnections.Remove(currLandmark);
+                pendingConnections.Remove(currRegion);
             }
             if (pendingConnections.Count == 0) {
-                List<Region> noConnectionRegions = GridMap.Instance.allRegions.Where(x => x.mainLandmark.connections.Count == 0).ToList();
+                List<Region> noConnectionRegions = GridMap.Instance.allRegions.Where(x => x.connections.Count == 0).ToList();
                 if (noConnectionRegions.Count > 0) {
-                    pendingConnections.Add(noConnectionRegions[Random.Range(0, noConnectionRegions.Count)].mainLandmark);
+                    pendingConnections.Add(noConnectionRegions[Random.Range(0, noConnectionRegions.Count)]);
                 }
             }
         }
@@ -541,10 +574,10 @@ public class LandmarkManager : MonoBehaviour {
                     for (int j = 0; j < islands.Count; j++) {
                         Island otherIsland = islands[j];
                         if (currIsland != otherIsland) {
-                            BaseLandmark landmarkToConnectTo;
-                            BaseLandmark landmarkThatWillConnect;
-                            if (currIsland.TryGetLandmarkThatCanConnectToOtherIsland(otherIsland, islands, out landmarkToConnectTo, out landmarkThatWillConnect)) {
-                                ConnectLandmarks(landmarkThatWillConnect, landmarkToConnectTo, ref islands);
+                            Region regionToConnectTo;
+                            Region regionThatWillConnect;
+                            if (currIsland.TryGetLandmarkThatCanConnectToOtherIsland(otherIsland, islands, out regionToConnectTo, out regionThatWillConnect)) {
+                                ConnectRegions(regionThatWillConnect, regionToConnectTo, ref islands);
                                 if (islands.Count == 1) {
                                     break;
                                 }
@@ -607,7 +640,7 @@ public class LandmarkManager : MonoBehaviour {
                     worldObj = PlayerManager.Instance.CreateNewSpecialObject(worldObjStr);
                 }
                 if (worldObj != null) {
-                    landmark.SetWorldObject(worldObj);
+                    landmark.tileLocation.region.SetWorldObject(worldObj);
                 }
             }
         }
@@ -952,26 +985,26 @@ public class LandmarkManager : MonoBehaviour {
 
 public class Island {
 
-    public List<BaseLandmark> landmarksInIsland;
+    public List<Region> regionsInIsland;
 
-    public Island(BaseLandmark mainLandmark) {
-        landmarksInIsland = new List<BaseLandmark>();
-        landmarksInIsland.Add(mainLandmark);
+    public Island(Region region) {
+        regionsInIsland = new List<Region>();
+        regionsInIsland.Add(region);
     }
 
-    public bool TryGetLandmarkThatCanConnectToOtherIsland(Island otherIsland, List<Island> allIslands, out BaseLandmark landmarkToConnectTo, out BaseLandmark landmarkThatWillConnect) {
-        for (int i = 0; i < landmarksInIsland.Count; i++) {
-            BaseLandmark currLandmark = landmarksInIsland[i];
-            List<Region> adjacent = currLandmark.tileLocation.region.AdjacentRegions().Where(x => LandmarkManager.Instance.GetIslandOfLandmark(x.mainLandmark, allIslands) != this).ToList(); //get all adjacent regions, that does not belong to this island.
+    public bool TryGetLandmarkThatCanConnectToOtherIsland(Island otherIsland, List<Island> allIslands, out Region regionToConnectTo, out Region regionThatWillConnect) {
+        for (int i = 0; i < regionsInIsland.Count; i++) {
+            Region currRegion = regionsInIsland[i];
+            List<Region> adjacent = currRegion.AdjacentRegions().Where(x => LandmarkManager.Instance.GetIslandOfRegion(x, allIslands) != this).ToList(); //get all adjacent regions, that does not belong to this island.
             if (adjacent.Count > 0) {
-                landmarkToConnectTo = adjacent[Random.Range(0, adjacent.Count)].mainLandmark;
-                landmarkThatWillConnect = currLandmark;
+                regionToConnectTo = adjacent[Random.Range(0, adjacent.Count)];
+                regionThatWillConnect = currRegion;
                 return true;
 
             }
         }
-        landmarkToConnectTo = null;
-        landmarkThatWillConnect = null;
+        regionToConnectTo = null;
+        regionThatWillConnect = null;
         return false;
     }
 }

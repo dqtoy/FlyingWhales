@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TheFingers : PlayerLandmark {
+public class TheFingers : BaseLandmark {
 
-    public TheFingers(BaseLandmark location) : base(location) { }
+    public TheFingers(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) { }
+
+    public TheFingers(HexTile location, SaveDataLandmark data) : base(location, data) { }
 }

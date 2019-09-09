@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TheKennel : PlayerLandmark {
+public class TheKennel : BaseLandmark {
 
-    public TheKennel(BaseLandmark location) : base(location) { }
+    public TheKennel(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) { }
+
+    public TheKennel(HexTile location, SaveDataLandmark data) : base(location, data) { }
 }

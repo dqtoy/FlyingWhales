@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DemonicPortal : PlayerLandmark {
+public class DemonicPortal : BaseLandmark {
 
-	public DemonicPortal(BaseLandmark location) : base(location) { }
+    public DemonicPortal(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) { }
+
+    public DemonicPortal(HexTile location, SaveDataLandmark data) : base(location, data) { }
 }

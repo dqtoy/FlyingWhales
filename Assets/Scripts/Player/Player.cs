@@ -9,21 +9,18 @@ public class Player : ILeader {
     private const int MAX_INTEL = 3;
     public const int MAX_MINIONS = 5;
     public const int MAX_THREAT = 100;
-    private const int MAX_SUMMONS = 3;
-    private const int MAX_ARTIFACT = 3;
     public readonly int MAX_INTERVENTION_ABILITIES = 4;
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
     public int threat { get; private set; }
 
-    //public Dictionary<JOB, PlayerJobData> roleSlots { get; private set; }
     public CombatGrid attackGrid { get; private set; }
     public CombatGrid defenseGrid { get; private set; }
     public List<Intel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
-    public SummonSlot[] summonSlots { get; private set; } //Summons that the player can still place. Does NOT include summons that have been placed. Individual summons are responsible for placeing themselves back after the player is done with a map.
-    public ArtifactSlot[] artifactSlots { get; private set; }
+    public List<SummonSlot> summonSlots { get; private set; }
+    public List<ArtifactSlot> artifactSlots { get; private set; }
     //Unique ability of player
     //public ShareIntel shareIntelAbility { get; private set; }
     public int currentCorruptionDuration { get; private set; }
@@ -77,17 +74,15 @@ public class Player : ILeader {
         defenseGrid.Initialize();
         allIntel = new List<Intel>();
         minions = new List<Minion>();
-        summonSlots = new SummonSlot[MAX_SUMMONS];
-        artifactSlots = new ArtifactSlot[MAX_ARTIFACT];
+        summonSlots = new List<SummonSlot>();
+        artifactSlots = new List<ArtifactSlot>();
         interventionAbilitySlots = new PlayerJobActionSlot[MAX_INTERVENTION_ABILITIES];
-        //shareIntelAbility = new ShareIntel();
         maxSummonSlots = 1;
         maxArtifactSlots = 1;
-        //ConstructRoleSlots();
         //InitializeNewInterventionAbilityCycle();
         ConstructAllInterventionAbilitySlots();
-        ConstructAllSummonSlots();
-        ConstructAllArtifactSlots();
+        //ConstructAllSummonSlots();
+        //ConstructAllArtifactSlots();
         AddListeners();
     }
     public Player(SaveDataPlayer data) {
@@ -104,14 +99,14 @@ public class Player : ILeader {
         //ConstructAllInterventionAbilitySlots();
         //ConstructAllSummonSlots();
         //ConstructAllArtifactSlots();
-        summonSlots = new SummonSlot[data.summonSlots.Count];
-        for (int i = 0; i < summonSlots.Length; i++) {
-            summonSlots[i] = data.summonSlots[i].Load();
+        summonSlots = new List<SummonSlot>();
+        for (int i = 0; i < summonSlots.Count; i++) {
+            summonSlots.Add(data.summonSlots[i].Load());
         }
 
-        artifactSlots = new ArtifactSlot[data.artifactSlots.Count];
-        for (int i = 0; i < artifactSlots.Length; i++) {
-            artifactSlots[i] = data.artifactSlots[i].Load();
+        artifactSlots = new List<ArtifactSlot>();
+        for (int i = 0; i < artifactSlots.Count; i++) {
+            artifactSlots.Add(data.artifactSlots[i].Load());
         }
 
         interventionAbilitySlots = new PlayerJobActionSlot[data.interventionAbilitySlots.Count];
@@ -924,9 +919,7 @@ public class Player : ILeader {
         //    UIManager.Instance.Unpause();
         //    isTileCurrentlyBeingCorrupted = true;
         //}
-        if(currentTileBeingCorrupted.landmarkOnTile != null) {
-            currentTileBeingCorrupted.landmarkOnTile.InvadeThisLandmark();
-        }
+        currentTileBeingCorrupted.region.InvadeActions();
         PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
     }
     private void CorruptTilePerTick() {
@@ -955,11 +948,17 @@ public class Player : ILeader {
     #endregion
 
     #region Summons
-    private void ConstructAllSummonSlots() {
-        for (int i = 0; i < summonSlots.Length; i++) {
-            if (summonSlots[i] == null) {
-                summonSlots[i] = new SummonSlot();
-            }
+    //private void ConstructAllSummonSlots() {
+    //    for (int i = 0; i < summonSlots.Length; i++) {
+    //        if (summonSlots[i] == null) {
+    //            summonSlots[i] = new SummonSlot();
+    //        }
+    //    }
+    //}
+    public void GainSummonSlot(bool showUI = true) {
+        summonSlots.Add(new SummonSlot());
+        if (showUI) {
+            PlayerUI.Instance.ShowGeneralConfirmation("New Summon Slot", "You gained a new summon slot!");
         }
     }
     public void GainSummon(SUMMON_TYPE type, int level = 1, bool showNewSummonUI = false) {
@@ -990,45 +989,15 @@ public class Player : ILeader {
     /// <returns></returns>
     public int GetTotalSummonsCount() {
         int count = 0;
-        for (int i = 0; i < summonSlots.Length; i++) {
+        for (int i = 0; i < summonSlots.Count; i++) {
             if (summonSlots[i].summon != null) {
                 count++;
             }
         }
         return count;
     }
-    /// <summary>
-    /// Get number of summons that have not been used yet.
-    /// </summary>
-    public int GetTotalAvailableSummonsCount() {
-        int count = 0;
-        for (int i = 0; i < summonSlots.Length; i++) {
-            if (summonSlots[i].summon != null && !summonSlots[i].summon.hasBeenUsed) {
-                count++;
-            }
-        }
-        return count;
-    }
-    /// <summary>
-    /// Get the number of summons of a specific type that the player has not yet used.
-    /// </summary>
-    /// <param name="type">The type of summon.</param>
-    /// <returns>Integer</returns>
-    //public int GetAvailableSummonsOfTypeCount(SUMMON_TYPE type) {
-    //    if (!summonSlots.ContainsKey(type)) {
-    //        return 0;
-    //    }
-    //    int count = 0;
-    //    for (int i = 0; i < summonSlots[type].Count; i++) {
-    //        Summon currSummon = summonSlots[type][i];
-    //        if (currSummon.summonType == type && !currSummon.hasBeenUsed) {
-    //            count++;
-    //        }
-    //    }
-    //    return count;
-    //}
     private void AddSummon(Summon newSummon, bool showNewSummonUI = false) {
-        for (int i = 0; i < summonSlots.Length; i++) {
+        for (int i = 0; i < summonSlots.Count; i++) {
             if (summonSlots[i].summon == null) {
                 summonSlots[i].SetSummon(newSummon);
                 Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
@@ -1045,7 +1014,7 @@ public class Player : ILeader {
     /// </summary>
     /// <param name="summon">The summon to be removed.</param>
     public void RemoveSummon(Summon summon) {
-        for (int i = 0; i < summonSlots.Length; i++) {
+        for (int i = 0; i < summonSlots.Count; i++) {
             if (summonSlots[i].summon == summon) {
                 summonSlots[i].summon = null;
                 Messenger.Broadcast(Signals.PLAYER_REMOVED_SUMMON, summon);
@@ -1088,7 +1057,7 @@ public class Player : ILeader {
         return choices[Random.Range(0, choices.Count)].summon;
     }
     public bool HasSummonOfType(SUMMON_TYPE summonType) {
-        for (int i = 0; i < summonSlots.Length; i++) {
+        for (int i = 0; i < summonSlots.Count; i++) {
             if (summonSlots[i].summon != null && summonSlots[i].summon.summonType == summonType) {
                 return true;
             }
@@ -1107,7 +1076,7 @@ public class Player : ILeader {
     }
     public List<Summon> GetAllSummons() {
         List<Summon> all = new List<Summon>();
-        for (int i = 0; i < summonSlots.Length; i++) {
+        for (int i = 0; i < summonSlots.Count; i++) {
             if (summonSlots[i].summon != null) {
                 all.Add(summonSlots[i].summon);
             }
@@ -1119,7 +1088,7 @@ public class Player : ILeader {
         return all[UnityEngine.Random.Range(0, all.Count)];
     }
     private void ResetSummons() {
-        for (int i = 0; i < summonSlots.Length; i++) {
+        for (int i = 0; i < summonSlots.Count; i++) {
             if (summonSlots[i].summon != null) {
                 summonSlots[i].summon.Reset();
             }
@@ -1127,11 +1096,17 @@ public class Player : ILeader {
     }
     public void AdjustSummonSlot(int adjustment) {
         maxSummonSlots += adjustment;
-        maxSummonSlots = Mathf.Clamp(maxSummonSlots, 0, MAX_SUMMONS);
+        maxSummonSlots = Mathf.Max(maxSummonSlots, 0);
         //TODO: validate if adjusted max summons can accomodate current summons
+        if (summonSlots.Count < maxSummonSlots) {
+            //add new summon slot
+            GainSummonSlot();
+        } else {
+            //TODO: remove summon slot
+        }
     }
     public SummonSlot GetSummonSlotBySummon(Summon summon) {
-        for (int i = 0; i < summonSlots.Length; i++) {
+        for (int i = 0; i < summonSlots.Count; i++) {
             if (summonSlots[i].summon == summon) {
                 return summonSlots[i];
             }
@@ -1139,7 +1114,7 @@ public class Player : ILeader {
         return null;
     }
     public int GetIndexForSummonSlot(SummonSlot slot) {
-        for (int i = 0; i < summonSlots.Length; i++) {
+        for (int i = 0; i < summonSlots.Count; i++) {
             if (summonSlots[i] == slot) {
                 return i;
             }
@@ -1155,7 +1130,12 @@ public class Player : ILeader {
         return true;
     }
     public void UnlockASummonSlotOrUpgradeExisting() {
-        PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "summon_slot");
+        if (summonSlots.Count == 0) {
+            GainSummonSlot();
+        } else {
+            PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "summon_slot");
+        }
+        
         //if (AreAllSummonSlotsMaxLevel()) {
         //    AdjustSummonSlot(1);
         //    PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Summon Slot.");
@@ -1174,11 +1154,17 @@ public class Player : ILeader {
     #endregion
 
     #region Artifacts
-    private void ConstructAllArtifactSlots() {
-        for (int i = 0; i < artifactSlots.Length; i++) {
-            if(artifactSlots[i] == null) {
-                artifactSlots[i] = new ArtifactSlot();
-            }
+    //private void ConstructAllArtifactSlots() {
+    //    for (int i = 0; i < artifactSlots.Length; i++) {
+    //        if(artifactSlots[i] == null) {
+    //            artifactSlots[i] = new ArtifactSlot();
+    //        }
+    //    }
+    //}
+    public void GainArtifactSlot(bool showUI = true) {
+        artifactSlots.Add(new ArtifactSlot());
+        if (showUI) {
+            PlayerUI.Instance.ShowGeneralConfirmation("New Artifact Slot", "You gained a new artifact slot!");
         }
     }
     public void GainArtifact(ARTIFACT_TYPE type, bool showNewArtifactUI = false) {
@@ -1199,7 +1185,6 @@ public class Player : ILeader {
         RemoveArtifact(replace);
         AddArtifact(add);
     }
-    
     private void RejectArtifact(object rejectedObj) { }
     public void LoseArtifact(ARTIFACT_TYPE type) {
         if (GetAvailableArtifactsOfTypeCount(type) > 0) {
@@ -1210,7 +1195,7 @@ public class Player : ILeader {
         }
     }
     private void AddArtifact(Artifact newArtifact, bool showNewArtifactUI = false) {
-        for (int i = 0; i < artifactSlots.Length; i++) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
             if (artifactSlots[i].artifact == null) {
                 artifactSlots[i].SetArtifact(newArtifact);
                 Messenger.Broadcast<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
@@ -1222,7 +1207,7 @@ public class Player : ILeader {
         }
     }
     public void RemoveArtifact(Artifact removedArtifact) {
-        for (int i = 0; i < artifactSlots.Length; i++) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
             if (artifactSlots[i].artifact == removedArtifact) {
                 artifactSlots[i].artifact = null;
                 Messenger.Broadcast<Artifact>(Signals.PLAYER_REMOVED_ARTIFACT, removedArtifact);
@@ -1232,7 +1217,7 @@ public class Player : ILeader {
     }
     public int GetTotalArtifactCount() {
         int count = 0;
-        for (int i = 0; i < artifactSlots.Length; i++) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
             if (artifactSlots[i].artifact != null) {
                 count++;
             }
@@ -1244,7 +1229,7 @@ public class Player : ILeader {
     /// </summary>
     public int GetTotalAvailableArtifactCount() {
         int count = 0;
-        for (int i = 0; i < artifactSlots.Length; i++) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
             Artifact currArtifact = artifactSlots[i].artifact;
             if (currArtifact != null && !currArtifact.hasBeenUsed) {
                 count++;
@@ -1254,7 +1239,7 @@ public class Player : ILeader {
     }
     public int GetAvailableArtifactsOfTypeCount(ARTIFACT_TYPE type) {
         int count = 0;
-        for (int i = 0; i < artifactSlots.Length; i++) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
             Artifact currArtifact = artifactSlots[i].artifact;
             if (currArtifact != null && currArtifact.type == type && !currArtifact.hasBeenUsed) {
                 count++;
@@ -1263,7 +1248,7 @@ public class Player : ILeader {
         return count;
     }
     public bool TryGetAvailableArtifactOfType(ARTIFACT_TYPE type, out Artifact artifact) {
-        for (int i = 0; i < artifactSlots.Length; i++) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
             Artifact currArtifact = artifactSlots[i].artifact;
             if (currArtifact != null && currArtifact.type == type && !currArtifact.hasBeenUsed) {
                 artifact = currArtifact;
@@ -1273,20 +1258,9 @@ public class Player : ILeader {
         artifact = null;
         return false;
     }
-    public bool TryGetAvailableArtifactSlotOfType(ARTIFACT_TYPE type, out ArtifactSlot artifactSlot) {
-        for (int i = 0; i < artifactSlots.Length; i++) {
-            ArtifactSlot currArtifactSlot = artifactSlots[i];
-            if (currArtifactSlot.artifact != null && currArtifactSlot.artifact.type == type && !currArtifactSlot.artifact.hasBeenUsed) {
-                artifactSlot = currArtifactSlot;
-                return true;
-            }
-        }
-        artifactSlot = null;
-        return false;
-    }
     public bool HasArtifact(string artifactName) {
         ARTIFACT_TYPE type = (ARTIFACT_TYPE)System.Enum.Parse(typeof(ARTIFACT_TYPE), artifactName);
-        for (int i = 0; i < artifactSlots.Length; i++) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
             Artifact currArtifact = artifactSlots[i].artifact;
             if (currArtifact != null && currArtifact.type.ToString() == artifactName) {
                 return true;
@@ -1295,7 +1269,7 @@ public class Player : ILeader {
         return false;
     }
     private Artifact GetArtifactOfType(ARTIFACT_TYPE type) {
-        for (int i = 0; i < artifactSlots.Length; i++) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
             Artifact currArtifact = artifactSlots[i].artifact;
             if (currArtifact.type == type) {
                 return currArtifact;
@@ -1305,7 +1279,7 @@ public class Player : ILeader {
     }
     private List<Artifact> GetAllArtifacts() {
         List<Artifact> all = new List<Artifact>();
-        for (int i = 0; i < artifactSlots.Length; i++) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
             Artifact currArtifact = artifactSlots[i].artifact;
             if (currArtifact != null) {
                 all.Add(currArtifact);
@@ -1334,7 +1308,7 @@ public class Player : ILeader {
         return choices[UnityEngine.Random.Range(0, choices.Count)];
     }
     private void ResetArtifacts() {
-        for (int i = 0; i < artifactSlots.Length; i++) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
             Artifact currArtifact = artifactSlots[i].artifact;
             if (currArtifact != null) {
                 currArtifact.Reset();
@@ -1343,12 +1317,18 @@ public class Player : ILeader {
     }
     public void AdjustArtifactSlot(int adjustment) {
         maxArtifactSlots += adjustment;
-        maxArtifactSlots = Mathf.Clamp(maxArtifactSlots, 0, MAX_ARTIFACT);
+        maxArtifactSlots = Mathf.Max(maxArtifactSlots, 0);
         //TODO: validate if adjusted max artifacts can accomodate current summons
+        if (artifactSlots.Count < maxArtifactSlots) {
+            //add new artifact slot
+            GainArtifactSlot();
+        } else {
+            //TODO: remove artifact slot
+        }
     }
 
     public ArtifactSlot GetArtifactSlotByArtifact(Artifact artifact) {
-        for (int i = 0; i < artifactSlots.Length; i++) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
             if(artifactSlots[i].artifact == artifact) {
                 return artifactSlots[i];
             }
@@ -1356,7 +1336,7 @@ public class Player : ILeader {
         return null;
     }
     public int GetIndexForArtifactSlot(ArtifactSlot slot) {
-        for (int i = 0; i < artifactSlots.Length; i++) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
             if (artifactSlots[i] == slot) {
                 return i;
             }
@@ -1372,7 +1352,11 @@ public class Player : ILeader {
         return true;
     }
     public void UnlockAnArtifactSlotOrUpgradeExisting() {
-        PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "artifact_slot");
+        if (artifactSlots.Count == 0) {
+            GainArtifactSlot();
+        } else {
+            PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "artifact_slot");
+        }
         //if (AreAllArtifactSlotsMaxLevel()) {
         //    AdjustArtifactSlot(1);
         //    PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Artifact Slot.");

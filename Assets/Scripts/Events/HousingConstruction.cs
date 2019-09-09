@@ -8,16 +8,16 @@ public class HousingConstruction : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(BaseLandmark landmark) {
-        base.ExecuteAfterEffect(landmark);
+    public override void ExecuteAfterEffect(Region region) {
+        base.ExecuteAfterEffect(region);
         //- after effect: adds a new house to owner settlement
     }
-    public override bool CanSpawnEventAt(BaseLandmark landmark) {
+    public override bool CanSpawnEventAt(Region region) {
         return false;
-        return landmark.HasAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN) && landmark.specificLandmarkType == LANDMARK_TYPE.FACTORY;
+        return region.HasAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN) && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.FACTORY;
     }
-    public override Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
-        return landmark.GetAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN);
+    public override Character GetCharacterThatCanSpawnEvent(Region region) {
+        return region.GetAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN);
     }
     #endregion
 }

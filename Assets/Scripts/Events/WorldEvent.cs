@@ -27,9 +27,9 @@ public class WorldEvent  {
     /// <summary>
     /// Spawn an event at a given landmark. Also execute any effects that the event has upon spawn.
     /// </summary>
-    /// <param name="landmark">The landmark this event is spawned at.</param>
+    /// <param name="region">The region this event is spawned at.</param>
     /// <param name="afterEffectScheduleID">The schedule id that this event has created for its after effect</param>
-    public virtual void Spawn(BaseLandmark landmark, IWorldEventData eventData, out string afterEffectScheduleID) {
+    public virtual void Spawn(Region region, IWorldEventData eventData, out string afterEffectScheduleID) {
         GameDate startDate = GameManager.Instance.Today();
         GameDate endDate = GameManager.Instance.Today().AddTicks(duration);
 
@@ -37,55 +37,55 @@ public class WorldEvent  {
         eventData.SetEndDate(endDate);
 
         //once spawned, schedule the after effect of this event to execute after a set amount of ticks (duration). NOTE: This schedule should be cancelled once the landmark it spawned at 
-        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => ExecuteAfterEffect(landmark), this);
-        TimerHubUI.Instance.AddItem(this.name + " event at " + landmark.tileLocation.region.name, duration, () => UIManager.Instance.ShowHextileInfo(landmark.tileLocation));
-        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + landmark.tileLocation.region.name);
+        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => ExecuteAfterEffect(region), this);
+        TimerHubUI.Instance.AddItem(this.name + " event at " + region.name, duration, () => UIManager.Instance.ShowHextileInfo(region.coreTile));
+        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + region.name);
         //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
         //AddDefaultFillersToLog(log, landmark);
         isCurrentlySpawned = true;
     }
-    public virtual void Load(BaseLandmark landmark, IWorldEventData eventData, out string afterEffectScheduleID) {
+    public virtual void Load(Region region, IWorldEventData eventData, out string afterEffectScheduleID) {
         GameDate startDate = GameManager.Instance.Today();
         GameDate endDate = eventData.endDate;
 
         int ticksDiff = GameManager.Instance.GetTicksDifferenceOfTwoDates(endDate, startDate);
         //once spawned, schedule the after effect of this event to execute after a set amount of ticks (duration). NOTE: This schedule should be cancelled once the landmark it spawned at 
-        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => ExecuteAfterEffect(landmark), this);
-        TimerHubUI.Instance.AddItem(this.name + " event at " + landmark.tileLocation.region.name, ticksDiff, () => UIManager.Instance.ShowHextileInfo(landmark.tileLocation));
-        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + landmark.tileLocation.region.name);
+        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => ExecuteAfterEffect(region), this);
+        TimerHubUI.Instance.AddItem(this.name + " event at " + region.name, ticksDiff, () => UIManager.Instance.ShowHextileInfo(region.coreTile));
+        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + region.name);
         //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
         //AddDefaultFillersToLog(log, landmark);
         isCurrentlySpawned = true;
     }
-    public virtual void ExecuteAfterEffect(BaseLandmark landmark) {
-        landmark.WorldEventFinished(this);
-        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " after effect executed at " + landmark.tileLocation.region.name);
+    public virtual void ExecuteAfterEffect(Region region) {
+        region.WorldEventFinished(this);
+        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " after effect executed at " + region.name);
         hasSuccessfullyExecutedOnce = true;
     }
-    public virtual void ExecuteAfterInvasionEffect(BaseLandmark landmark) {
-        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " after invasion effect executed at " + landmark.tileLocation.region.name);
+    public virtual void ExecuteAfterInvasionEffect(Region region) {
+        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " after invasion effect executed at " + region.name);
         if (LocalizationManager.Instance.HasLocalizedValue("WorldEvent", this.GetType().ToString(), "after_invasion_effect")) {
             Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_invasion_effect");
-            AddDefaultFillersToLog(log, landmark);
+            AddDefaultFillersToLog(log, region);
             log.AddLogToInvolvedObjects();
             PlayerManager.Instance.player.ShowNotification(log);
         }
     }
-    public virtual bool CanSpawnEventAt(BaseLandmark landmark) {
+    public virtual bool CanSpawnEventAt(Region region) {
         if (this.isUnique && (this.hasSuccessfullyExecutedOnce || this.isCurrentlySpawned)) {
             return false; //if this event is unique and has been spawned once or is currently spawned, do not allow it to spawn again
         }
         return true;
     }
-    public virtual Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
+    public virtual Character GetCharacterThatCanSpawnEvent(Region region) {
         return null;
     }
-    public virtual void OnDespawn(BaseLandmark landmark) {
+    public virtual void OnDespawn(Region region) {
         isCurrentlySpawned = false;
     }
-    public virtual IWorldEventData ConstructEventDataForLandmark(BaseLandmark landmark) {
+    public virtual IWorldEventData ConstructEventDataForLandmark(Region region) {
         IWorldEventData data = new DefaultWorldEventData() {
-            spawner = landmark.eventSpawnedBy
+            spawner = region.eventSpawnedBy
         };
         return data;
     }
@@ -94,9 +94,9 @@ public class WorldEvent  {
     }
     #endregion
 
-    protected void AddDefaultFillersToLog(Log log, BaseLandmark landmark) {
-        log.AddToFillers(landmark.eventSpawnedBy, landmark.eventSpawnedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(landmark.tileLocation.region, landmark.tileLocation.region.name, LOG_IDENTIFIER.LANDMARK_1);
+    protected void AddDefaultFillersToLog(Log log, Region region) {
+        log.AddToFillers(region.eventSpawnedBy, region.eventSpawnedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
 }
 

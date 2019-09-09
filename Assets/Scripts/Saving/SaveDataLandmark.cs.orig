@@ -10,8 +10,21 @@ public class SaveDataLandmark {
     public int locationID;
     public int connectedTileID;
     public List<LANDMARK_TAG> landmarkTags;
-   
+<<<<<<< Updated upstream
+    public List<int> connectionsTileIDs;
+    public List<int> charactersHereIDs;
+    public SaveDataWorldObject worldObj;
+    public bool hasWorldObject;
+    public WORLD_EVENT activeEvent;
+    public int eventSpawnedByCharacterID;
+    public bool hasEventIconGO;
+    public SaveDataWorldEventData eventData;
+
     public virtual void Save(BaseLandmark landmark) {
+=======
+   
+    public void Save(BaseLandmark landmark) {
+>>>>>>> Stashed changes
         id = landmark.id;
         landmarkName = landmark.landmarkName;
         landmarkType = landmark.specificLandmarkType;

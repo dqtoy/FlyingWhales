@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TheProfane : PlayerLandmark {
+public class TheProfane : BaseLandmark {
 
-    public TheProfane(BaseLandmark location) : base(location) { }
+    public TheProfane(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) { }
+
+    public TheProfane(HexTile location, SaveDataLandmark data) : base(location, data) { }
 }

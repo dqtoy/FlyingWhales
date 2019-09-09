@@ -8,9 +8,9 @@ public class CultistDiscovered : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(BaseLandmark landmark) {
-        base.ExecuteAfterEffect(landmark);
-        CultistDiscoveredData data = (CultistDiscoveredData)landmark.eventData;
+    public override void ExecuteAfterEffect(Region region) {
+        base.ExecuteAfterEffect(region);
+        CultistDiscoveredData data = (CultistDiscoveredData)region.eventData;
         //- after effect: cultist will be slain.
         data.cultist.Death("attacked", responsibleCharacter: data.nonCultist);
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
@@ -19,12 +19,12 @@ public class CultistDiscovered : WorldEvent {
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
     }
-    public override bool CanSpawnEventAt(BaseLandmark landmark) {
+    public override bool CanSpawnEventAt(Region region) {
         //- requirement: non-Cultist soldier or adventurer resident + Cultist resident + demon cult is active
         bool hasNonCultist = false;
         bool hasCultist = false;
-        for (int i = 0; i < landmark.charactersHere.Count; i++) {
-            Character currCharacter = landmark.charactersHere[i];
+        for (int i = 0; i < region.charactersHere.Count; i++) {
+            Character currCharacter = region.charactersHere[i];
             if (currCharacter.GetNormalTrait("Cultist") != null) {
                 //cultist
                 hasCultist = true;
@@ -40,9 +40,9 @@ public class CultistDiscovered : WorldEvent {
         }
         return hasCultist && hasNonCultist && StoryEventsManager.Instance.isCultActive;
     }
-    public override Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
-        for (int i = 0; i < landmark.charactersHere.Count; i++) {
-            Character currCharacter = landmark.charactersHere[i];
+    public override Character GetCharacterThatCanSpawnEvent(Region region) {
+        for (int i = 0; i < region.charactersHere.Count; i++) {
+            Character currCharacter = region.charactersHere[i];
             if (currCharacter.GetNormalTrait("Cultist") != null) {
                 //cultist
                 return currCharacter;
@@ -56,11 +56,11 @@ public class CultistDiscovered : WorldEvent {
         }
         return null;
     }
-    public override IWorldEventData ConstructEventDataForLandmark(BaseLandmark landmark) {
+    public override IWorldEventData ConstructEventDataForLandmark(Region region) {
         Character chosenCultist = null;
         Character chosenNonCultist = null;
-        for (int i = 0; i < landmark.charactersHere.Count; i++) {
-            Character currCharacter = landmark.charactersHere[i];
+        for (int i = 0; i < region.charactersHere.Count; i++) {
+            Character currCharacter = region.charactersHere[i];
             if (currCharacter.GetNormalTrait("Cultist") != null) {
                 //cultist
                 if (chosenCultist == null) {

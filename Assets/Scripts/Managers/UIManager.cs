@@ -219,8 +219,8 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
 
-        Messenger.AddListener<BaseLandmark, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
-        Messenger.AddListener<BaseLandmark, WorldEvent>(Signals.WORLD_EVENT_DESPAWNED, OnWorldEventDespawned);
+        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
+        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_DESPAWNED, OnWorldEventDespawned);
         UpdateUI();
     }
     private void OnGameLoaded() {
@@ -1342,15 +1342,15 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region World Events
-    private void OnWorldEventSpawned(BaseLandmark landmark, WorldEvent we) {
+    private void OnWorldEventSpawned(Region region, WorldEvent we) {
         //create world event popup
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(worldEventIconPrefab.name, Vector3.zero, Quaternion.identity, worldUIParent);
         WorldEventIcon icon = go.GetComponent<WorldEventIcon>();
-        icon.PlaceAt(landmark);
-        landmark.SetEventIcon(go);
+        icon.PlaceAt(region);
+        region.SetEventIcon(go);
     }
-    private void OnWorldEventDespawned(BaseLandmark landmark, WorldEvent we) {
-        ObjectPoolManager.Instance.DestroyObject(landmark.eventIconGO);
+    private void OnWorldEventDespawned(Region region, WorldEvent we) {
+        ObjectPoolManager.Instance.DestroyObject(region.eventIconGO);
     }
     #endregion
 }

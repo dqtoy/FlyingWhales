@@ -87,7 +87,7 @@ public class MoveOutState : CharacterState {
             chosenRegion = choices[Random.Range(0, choices.Count)];
             stateComponent.character.specificLocation.RemoveCharacterFromLocation(stateComponent.character);
             OnArriveAtRegion();
-            chosenRegion.mainLandmark.AddCharacterHere(stateComponent.character);
+            chosenRegion.AddCharacterHere(stateComponent.character);
         } else {
             throw new System.Exception("There are no more uncorrupted regions for " + stateComponent.character.name);
         }
@@ -110,7 +110,7 @@ public class MoveOutState : CharacterState {
     public void GoHome() {
         goHomeSchedID = string.Empty;
         stateComponent.character.ownParty.icon.SetIsTravellingOutside(true);
-        chosenRegion.mainLandmark.RemoveCharacterHere(stateComponent.character); //remove character from landmark. He/She is now just floating.
+        chosenRegion.RemoveCharacterHere(stateComponent.character); //remove character from landmark. He/She is now just floating.
         GameDate dueDate = GameManager.Instance.Today();
         dueDate = dueDate.AddTicks(travelTimeInTicks);
         SchedulingManager.Instance.AddEntry(dueDate, ArriveHome, this);

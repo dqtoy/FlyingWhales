@@ -9,28 +9,28 @@ public class CultFoundation : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(BaseLandmark landmark) {
+    public override void ExecuteAfterEffect(Region region) {
         //- after effect: the resident will gain Cultist trait and Cult Founder and will start spreading the demon cult
-        landmark.eventSpawnedBy.AddTrait("Cultist");
+        region.eventSpawnedBy.AddTrait("Cultist");
         StoryEventsManager.Instance.SetIsCultActive(true);
 
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
-        AddDefaultFillersToLog(log, landmark);
+        AddDefaultFillersToLog(log, region);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
 
-        base.ExecuteAfterEffect(landmark);
+        base.ExecuteAfterEffect(region);
     }
-    public override void ExecuteAfterInvasionEffect(BaseLandmark landmark) {
+    public override void ExecuteAfterInvasionEffect(Region region) {
         //- after invasion: resident becomes a minion
-        landmark.eventSpawnedBy.RecruitAsMinion();
-        base.ExecuteAfterInvasionEffect(landmark);
+        region.eventSpawnedBy.RecruitAsMinion();
+        base.ExecuteAfterInvasionEffect(region);
     }
-    public override bool CanSpawnEventAt(BaseLandmark landmark) {
+    public override bool CanSpawnEventAt(Region region) {
         //- requirement: dark mood resident + demon cult is inactive
         bool hasDarkMoodResident = false;
-        for (int i = 0; i < landmark.charactersHere.Count; i++) {
-            Character currResident = landmark.charactersHere[i];
+        for (int i = 0; i < region.charactersHere.Count; i++) {
+            Character currResident = region.charactersHere[i];
             if (currResident.currentMoodType == CHARACTER_MOOD.DARK) {
                 hasDarkMoodResident = true;
                 break;
@@ -38,9 +38,9 @@ public class CultFoundation : WorldEvent {
         }
         return hasDarkMoodResident && !StoryEventsManager.Instance.isCultActive;
     }
-    public override Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
-        for (int i = 0; i < landmark.charactersHere.Count; i++) {
-            Character currResident = landmark.charactersHere[i];
+    public override Character GetCharacterThatCanSpawnEvent(Region region) {
+        for (int i = 0; i < region.charactersHere.Count; i++) {
+            Character currResident = region.charactersHere[i];
             if (currResident.currentMoodType == CHARACTER_MOOD.DARK) {
                 return currResident;
             }

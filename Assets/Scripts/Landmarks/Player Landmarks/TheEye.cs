@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TheEye : PlayerLandmark {
+public class TheEye : BaseLandmark {
 
-    public TheEye(BaseLandmark location) : base(location) { }
+    public TheEye(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) { }
+
+    public TheEye(HexTile location, SaveDataLandmark data) : base(location, data) { }
 }

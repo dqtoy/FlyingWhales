@@ -39,10 +39,10 @@ public class RegionInfoUI : UIMenu {
 
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener<Character, BaseLandmark>(Signals.CHARACTER_ENTERED_LANDMARK, OnCharacterEnteredLandmark);
-        Messenger.AddListener<Character, BaseLandmark>(Signals.CHARACTER_EXITED_LANDMARK, OnCharacterExitedLandmark);
-        Messenger.AddListener<BaseLandmark, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
-        Messenger.AddListener<BaseLandmark, WorldEvent>(Signals.WORLD_EVENT_FINISHED_NORMAL, OnWorldEventFinishedNormally);
+        Messenger.AddListener<Character, Region>(Signals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
+        Messenger.AddListener<Character, Region>(Signals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
+        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
+        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FINISHED_NORMAL, OnWorldEventFinishedNormally);
     }
 
     public override void OpenMenu() {
@@ -84,25 +84,25 @@ public class RegionInfoUI : UIMenu {
 
     #region Main
     private void UpdateRegionInfo() {
-        worldObjLbl.text = "<b>World Object: </b>" + (activeRegion.mainLandmark.worldObj?.worldObjectName ?? "None");
+        worldObjLbl.text = "<b>World Object: </b>" + (activeRegion.worldObj?.worldObjectName ?? "None");
     }
     #endregion
 
     #region Characters
-    private void OnCharacterEnteredLandmark(Character character, BaseLandmark landmark) {
-        if (landmark.tileLocation.region == activeRegion) {
+    private void OnCharacterEnteredRegion(Character character, Region region) {
+        if (region == activeRegion) {
             UpdateCharacters();
         }
     }
-    private void OnCharacterExitedLandmark(Character character, BaseLandmark landmark) {
-        if (landmark.tileLocation.region == activeRegion) {
+    private void OnCharacterExitedRegion(Character character, Region region) {
+        if (region == activeRegion) {
             UpdateCharacters();
         }
     }
     private void UpdateCharacters() {
         Utilities.DestroyChildren(charactersScrollView.content);
-        for (int i = 0; i < activeRegion.mainLandmark.charactersHere.Count; i++) {
-            Character character = activeRegion.mainLandmark.charactersHere[i];
+        for (int i = 0; i < activeRegion.charactersHere.Count; i++) {
+            Character character = activeRegion.charactersHere[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(characterItemPrefab.name, Vector3.zero, Quaternion.identity, charactersScrollView.content);
             LandmarkCharacterItem item = go.GetComponent<LandmarkCharacterItem>();
             item.SetCharacter(character, this);
@@ -158,20 +158,20 @@ public class RegionInfoUI : UIMenu {
 
     #region Events
     private void UpdateEventInfo() {
-        if (activeRegion.mainLandmark.activeEvent != null) {
-            eventDesctiptionLbl.text = activeRegion.mainLandmark.activeEvent.name + "\n" + activeRegion.mainLandmark.activeEvent.description;
+        if (activeRegion.activeEvent != null) {
+            eventDesctiptionLbl.text = activeRegion.activeEvent.name + "\n" + activeRegion.activeEvent.description;
         } else {
             eventDesctiptionLbl.text = "No active event.";
         }
         UpdateSpawnEventButton();
     }
-    private void OnWorldEventSpawned(BaseLandmark landmark, WorldEvent we) {
-        if (isShowing && activeRegion.mainLandmark == landmark) {
+    private void OnWorldEventSpawned(Region region, WorldEvent we) {
+        if (isShowing && activeRegion == region) {
             UpdateEventInfo();
         }
     }
-    private void OnWorldEventFinishedNormally(BaseLandmark landmark, WorldEvent we) {
-        if (isShowing && activeRegion.mainLandmark == landmark) {
+    private void OnWorldEventFinishedNormally(Region region, WorldEvent we) {
+        if (isShowing && activeRegion == region) {
             UpdateEventInfo();
         }
     }
@@ -184,7 +184,7 @@ public class RegionInfoUI : UIMenu {
     }
     private void ShowEventsThatCanBeSpawned() {
         Utilities.DestroyChildren(eventsListScrollView.content);
-        List<WorldEvent> spawnableEvents = StoryEventsManager.Instance.GetEventsThatCanSpawnAt(activeRegion.mainLandmark);
+        List<WorldEvent> spawnableEvents = StoryEventsManager.Instance.GetEventsThatCanSpawnAt(activeRegion);
         for (int i = 0; i < spawnableEvents.Count; i++) {
             WorldEvent currEvent = spawnableEvents[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(eventListItemPrefab.name, Vector3.zero, Quaternion.identity, eventsListScrollView.content);
@@ -197,11 +197,11 @@ public class RegionInfoUI : UIMenu {
         eventsListGO.SetActive(true);
     }
     private void SpawnEvent(WorldEvent we) {
-        activeRegion.mainLandmark.SpawnEvent(we);
+        activeRegion.SpawnEvent(we);
         eventsListGO.SetActive(false);
     }
     private void UpdateSpawnEventButton() {
-        spawnEventBtn.interactable = activeRegion.mainLandmark.CanSpawnNewEvent();
+        spawnEventBtn.interactable = activeRegion.CanSpawnNewEvent();
         if (!spawnEventBtn.interactable) {
             eventsListGO.SetActive(false);
         }

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ThePit : PlayerLandmark {
+public class ThePit : BaseLandmark {
 
-    public ThePit(BaseLandmark location) : base(location) { }
+    public ThePit(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) { }
+
+    public ThePit(HexTile location, SaveDataLandmark data) : base(location, data) { }
 }

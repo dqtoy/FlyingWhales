@@ -184,8 +184,8 @@ public class PlayerUI : MonoBehaviour {
 
         UpdateIntel();
         InitializeMemoriesMenu();
-        SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots[0]);
-        SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots[0]);
+        SetCurrentlySelectedSummonSlot(null);
+        SetCurrentlySelectedArtifactSlot(null);
         //UpdateArtifactsInteraction();
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
@@ -978,7 +978,7 @@ public class PlayerUI : MonoBehaviour {
     private bool isSummoning = false; //if the player has clicked the summon button and is targetting a tile to place the summon on.
     private SummonSlot currentlySelectedSummonSlot; //the summon type that is currently shown in the UI
     private void UpdateSummonsInteraction() {
-        bool state = currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed;
+        bool state = currentlySelectedSummonSlot!= null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed;
         //summonCover.SetActive(!state);
         summonBtn.interactable = state && InteriorMapManager.Instance.isAnAreaMapShowing;
     }
@@ -1007,12 +1007,8 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     public void SetCurrentlySelectedSummonSlot(SummonSlot summonSlot) {
-        if (summonSlot == null) {
-            //If null, just set the first slot so that currentlySelectedArtifactSlot will not be null
-            summonSlot = PlayerManager.Instance.player.summonSlots[0];
-        }
         currentlySelectedSummonSlot = summonSlot;
-        if (currentlySelectedSummonSlot.summon == null) {
+        if (currentlySelectedSummonSlot == null || currentlySelectedSummonSlot.summon == null) {
             currentSummonImg.gameObject.SetActive(false);
             //currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(SUMMON_TYPE.None).summonPortrait;
             cycleSummonLeft.gameObject.SetActive(false);
@@ -1021,12 +1017,12 @@ public class PlayerUI : MonoBehaviour {
         } else {
             currentSummonImg.gameObject.SetActive(true);
             currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(currentlySelectedSummonSlot.summon.summonType).summonPortrait;
-            int index = Array.IndexOf(PlayerManager.Instance.player.summonSlots, currentlySelectedSummonSlot);
+            int index = PlayerManager.Instance.player.summonSlots.IndexOf(currentlySelectedSummonSlot);
             currentSummonLvlGO.SetActive(true);
             if (PlayerManager.Instance.player.GetTotalSummonsCount() == 1) {
                 cycleSummonLeft.gameObject.SetActive(false);
                 cycleSummonRight.gameObject.SetActive(false);
-            } else if (index == PlayerManager.Instance.player.summonSlots.Length - 1) {
+            } else if (index == PlayerManager.Instance.player.summonSlots.Count - 1) {
                 cycleSummonLeft.gameObject.SetActive(true);
                 cycleSummonRight.gameObject.SetActive(false);
             } else if (index == 0) {
@@ -1036,8 +1032,8 @@ public class PlayerUI : MonoBehaviour {
                 cycleSummonLeft.gameObject.SetActive(true);
                 cycleSummonRight.gameObject.SetActive(true);
             }
+            currentSummonLvlLbl.text = currentlySelectedSummonSlot.level.ToString();
         }
-        currentSummonLvlLbl.text = currentlySelectedSummonSlot.level.ToString();
         UpdateSummonsInteraction();
     }
     public void UpdateCurrentlySelectedSummonSlotLevel(SummonSlot summonSlot) {
@@ -1150,7 +1146,7 @@ public class PlayerUI : MonoBehaviour {
     private bool isSummoningArtifact = false; //if the player has clicked the summon artifact button and is targetting a tile to place the summon on.
     private ArtifactSlot currentlySelectedArtifactSlot; //the artifact that is currently shown in the UI
     private void UpdateArtifactsInteraction() {
-        bool state = currentlySelectedArtifactSlot.artifact != null && !currentlySelectedArtifactSlot.artifact.hasBeenUsed;
+        bool state = currentlySelectedArtifactSlot != null && currentlySelectedArtifactSlot.artifact != null && !currentlySelectedArtifactSlot.artifact.hasBeenUsed;
         //summonArtifactCover.SetActive(!state);
         summonArtifactBtn.interactable = state && InteriorMapManager.Instance.isAnAreaMapShowing;
     }
@@ -1183,12 +1179,8 @@ public class PlayerUI : MonoBehaviour {
         //}
     }
     public void SetCurrentlySelectedArtifactSlot(ArtifactSlot artifactSlot) {
-        if (artifactSlot == null) {
-            //If null, just set the first slot so that currentlySelectedArtifactSlot will not be null
-            artifactSlot = PlayerManager.Instance.player.artifactSlots[0];
-        }
         currentlySelectedArtifactSlot = artifactSlot;
-        if (currentlySelectedArtifactSlot.artifact == null) {
+        if (currentlySelectedArtifactSlot == null || currentlySelectedArtifactSlot.artifact == null) {
             currentArtifactImg.gameObject.SetActive(false);
             //currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(ARTIFACT_TYPE.None).artifactPortrait;
             cycleArtifactLeft.gameObject.SetActive(false);
@@ -1198,12 +1190,12 @@ public class PlayerUI : MonoBehaviour {
             currentArtifactImg.gameObject.SetActive(true);
             currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(currentlySelectedArtifactSlot.artifact.type).artifactPortrait;
             //currentArtifactCountLbl.text = PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(currentlySelectedArtifactSlot.artifact.type).ToString();
-            int index = Array.IndexOf(PlayerManager.Instance.player.artifactSlots, currentlySelectedArtifactSlot);
+            int index = PlayerManager.Instance.player.artifactSlots.IndexOf(currentlySelectedArtifactSlot);
             currentArtifactLvlGO.SetActive(true);
             if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) {
                 cycleArtifactLeft.gameObject.SetActive(false);
                 cycleArtifactRight.gameObject.SetActive(false);
-            } else if (index == PlayerManager.Instance.player.summonSlots.Length - 1) {
+            } else if (index == PlayerManager.Instance.player.summonSlots.Count - 1) {
                 cycleArtifactLeft.gameObject.SetActive(true);
                 cycleArtifactRight.gameObject.SetActive(false);
             } else if (index == 0) {
@@ -1213,8 +1205,8 @@ public class PlayerUI : MonoBehaviour {
                 cycleArtifactLeft.gameObject.SetActive(true);
                 cycleArtifactRight.gameObject.SetActive(true);
             }
+            currentArtifactLvlLbl.text = currentlySelectedArtifactSlot.level.ToString();
         }
-        currentArtifactLvlLbl.text = currentlySelectedArtifactSlot.level.ToString();
         UpdateArtifactsInteraction();
     }
     public void UpdateCurrentlySelectedArtifactSlotLevel(ArtifactSlot artifactSlot) {

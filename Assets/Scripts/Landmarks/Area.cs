@@ -461,7 +461,7 @@ public class Area {
         if (coreTile.tileTags.Contains(TILE_TAG.PROTECTIVE_BARRIER)) { //NOTE: For now only put this specific case, but might convert this to int value instead. Will see what other elements will prevent a settlement from being invaded and change accordingly.
             return false;
         }
-        return coreTile.landmarkOnTile.HasCorruptedConnection() && PlayerManager.Instance.player.minions.Count > 0;
+        return coreTile.region.HasCorruptedConnection() && PlayerManager.Instance.player.minions.Count > 0;
     }
     #endregion
 
