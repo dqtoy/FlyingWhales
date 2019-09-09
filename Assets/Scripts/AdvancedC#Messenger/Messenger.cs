@@ -127,7 +127,7 @@ static internal class Messenger {
             eventTable[eventType] = ordered;
             orderWatch.Stop();
             summary += "\nFinished ordering events. Time elapsed is " + orderWatch.ElapsedMilliseconds.ToString() + "ms";
-            Debug.Log(summary);
+            //Debug.Log(summary);
         }
     }
     //static private void OrderEvents(string eventType, Callback newEvent) {

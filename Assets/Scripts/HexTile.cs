@@ -72,10 +72,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private SpriteRenderer rightBeach;
     [SerializeField] private SpriteRenderer topRightBeach;
 
-    //[Space(10)]
-    //[Header("UI")]
-    //[SerializeField] private GraphicRaycaster uiRaycaster;
-
     public BaseLandmark landmarkOnTile { get; private set; }
     public Region region { get; private set; }
 
@@ -83,7 +79,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
-    public List<HexTile> NoWaterTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); } }
     public List<TILE_TAG> tileTags { get; private set; }
 
     private List<HexTile> _tilesConnectedInGoingToMarker = new List<HexTile>();
@@ -129,14 +124,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public LOCATION_IDENTIFIER locIdentifier {
         get { return LOCATION_IDENTIFIER.HEXTILE; }
     }
-    public bool hasLandmark {
-        get { return landmarkOnTile != null; }
-    }
     public bool isCorrupted {
         get { return _isCorrupted; }
-    }
-    public int uncorruptibleLandmarkNeighbors {
-        get { return _uncorruptibleLandmarkNeighbors; }
     }
     #endregion
 
@@ -149,75 +138,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         tileTags = new List<TILE_TAG>();
     }
 
-    private void AreaMapOpened(Area area) {
-        //uiRaycaster.enabled = false;
-    }
-    private void AreaMapClosed(Area area) {
-        //uiRaycaster.enabled = true;
-    }
-
     #region Elevation Functions
     internal void SetElevation(ELEVATION elevationType) {
         data.elevationType = elevationType;
     }
-    //public void UpdateLedgesAndOutlines() {
-    //    if (neighbourDirections == null) {
-    //        return;
-    //    }
-    //    if (elevationType != ELEVATION.WATER) {
-    //        //re enable all outlines and disable all ledges
-    //        //topLeftLedge.SetActive(false);
-    //        //topRightLedge.SetActive(false);
-    //        //SetOutlinesState(true);
-    //    } else { //tile is water
-    //        //check neighbours
-    //        //if north west tile is not water, activate top left ledge
-    //        //if (neighbourDirections.ContainsKey(HEXTILE_DIRECTION.NORTH_WEST) && neighbourDirections[HEXTILE_DIRECTION.NORTH_WEST].elevationType != ELEVATION.WATER) {
-    //        //    topLeftLedge.SetActive(true);
-    //        //    //topLeftOutline.SetActive(false);
-    //        //} else {
-    //        //    //tile doesn't have a north west neighbour
-    //        //}
-    //        ////if north east tile is not water, activate top right edge
-    //        //if (neighbourDirections.ContainsKey(HEXTILE_DIRECTION.NORTH_EAST) && neighbourDirections[HEXTILE_DIRECTION.NORTH_EAST].elevationType != ELEVATION.WATER) {
-    //        //    topRightLedge.SetActive(true);
-    //        //    //topRightOutline.SetActive(false);
-    //        //} else {
-    //        //    //tile doesn't have a north east neighbour
-    //        //}
-
-    //        ////check outlines
-    //        //foreach (KeyValuePair<HEXTILE_DIRECTION, HexTile> kvp in neighbourDirections) {
-    //        //    HexTile neighbour = kvp.Value;
-    //        //    HEXTILE_DIRECTION direction = kvp.Key;
-    //        //    if (neighbour.elevationType == ELEVATION.WATER) {
-    //        //        //deactivate the outline tile in that direction
-    //        //        switch (direction) {
-    //        //            case HEXTILE_DIRECTION.NORTH_WEST:
-    //        //                topLeftOutline.SetActive(false);
-    //        //                break;
-    //        //            case HEXTILE_DIRECTION.NORTH_EAST:
-    //        //                topRightOutline.SetActive(false);
-    //        //                break;
-    //        //            case HEXTILE_DIRECTION.EAST:
-    //        //                rightOutline.SetActive(false);
-    //        //                break;
-    //        //            case HEXTILE_DIRECTION.SOUTH_EAST:
-    //        //                botRightOutline.SetActive(false);
-    //        //                break;
-    //        //            case HEXTILE_DIRECTION.SOUTH_WEST:
-    //        //                botLeftOutline.SetActive(false);
-    //        //                break;
-    //        //            case HEXTILE_DIRECTION.WEST:
-    //        //                leftOutline.SetActive(false);
-    //        //                break;
-    //        //            default:
-    //        //                break;
-    //        //        }
-    //        //    }
-    //        //}
-    //    }
-    //}
     #endregion
 
     #region Biome Functions
@@ -458,15 +382,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool IsAtEdgeOfMap() {
         return AllNeighbours.Count < 6; //if this tile has less than 6 neighbours, it is at the edge of the map
-    }
-    public bool HasNeighbourAtEdgeOfMap() {
-        for (int i = 0; i < AllNeighbours.Count; i++) {
-            HexTile currNeighbour = AllNeighbours[i];
-            if (currNeighbour.IsAtEdgeOfMap()) {
-                return true;
-            }
-        }
-        return false;
     }
     public void GenerateInitialTileTags() {
         //Elevation
@@ -911,7 +826,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
 #endif
     }
-    private bool hasPendingJob = false;
     private void DoubleLeftClick() {
         //Debug.Log("double click");
         //PlayerUI.Instance.ShowCorruptTileConfirmation(this);
@@ -998,6 +912,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         string summary = "Landmark: " + landmarkOnTile?.specificLandmarkType.ToString();
         if (landmarkOnTile != null) {
             summary += "\n\t- World Object: " + landmarkOnTile.worldObj?.ToString();
+            summary += "\n\t- Player Landmark: " + landmarkOnTile.playerLandmark?.ToString();
             summary += "\n\t- Connections: " + landmarkOnTile.connections.Count.ToString();
             for (int i = 0; i < landmarkOnTile.connections.Count; i++) {
                 BaseLandmark connection = landmarkOnTile.connections[i];
@@ -1016,13 +931,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Corruption
-    public void SetCorruption(bool state, BaseLandmark landmark = null) {
+    public void SetCorruption(bool state) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
         }
-    }
-    public void SetUncorruptibleLandmarkNeighbors(int amount) {
-        _uncorruptibleLandmarkNeighbors = amount;
     }
     public void AdjustUncorruptibleLandmarkNeighbors(int amount) {
         _uncorruptibleLandmarkNeighbors += amount;
@@ -1373,16 +1285,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                     break;
             }
         }
-    }
-    #endregion
-
-    #region Story Events
-    public StoryEvent GetRandomStoryEvent() {
-        List<StoryEvent> pool = StoryEventsManager.Instance.GetPossibleEventsForTile(this);
-        if (pool.Count > 0) {
-            return pool[UnityEngine.Random.Range(0, pool.Count)];
-        }
-        return null;
     }
     #endregion
 

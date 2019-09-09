@@ -48,15 +48,6 @@ public class TileInfoUI : MonoBehaviour {
         info = "\n<b>Landmark Info</b>";
         info += "\nLandmark Name: [" + landmark.id + "] " + landmark.landmarkName;
         info += "\nLandmark Type: " + landmark.specificLandmarkType.ToString();
-        if (landmark is MonsterSpawnerLandmark) {
-            info += "\nMonster Set: ";
-            MonsterSpawnerLandmark msl = landmark as MonsterSpawnerLandmark;
-            if (msl.monsterChoices == null) {
-                info += "NONE";
-            } else {
-                info += msl.monsterChoices.name;
-            }
-        }
         return info;
     }
 

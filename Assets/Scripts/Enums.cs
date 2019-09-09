@@ -1691,4 +1691,21 @@ public static class Extensions {
     }
     #endregion
 
+    #region Landmarks
+    public static bool IsPlayerLandmark(this LANDMARK_TYPE type) {
+        switch (type) {
+            case LANDMARK_TYPE.DEMONIC_PORTAL:
+            case LANDMARK_TYPE.THE_SPIRE:
+            case LANDMARK_TYPE.THE_CRYPT:
+            case LANDMARK_TYPE.THE_KENNEL:
+            case LANDMARK_TYPE.THE_ANVIL:
+            case LANDMARK_TYPE.THE_FINGERS:
+            case LANDMARK_TYPE.THE_EYE:
+            case LANDMARK_TYPE.THE_PROFANE:
+                return true;
+            default:
+                return false;
+        }
+    }
+    #endregion
 }
