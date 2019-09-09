@@ -220,6 +220,8 @@ public class PlayerJobAction {
 public class PlayerJobActionData {
     public virtual string name { get { return string.Empty; } }
     public virtual string description { get { return string.Empty; } }
+    public virtual INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.NONE; } }
+    public virtual int durationInTicks { get { return 96; } }
 }
 
 public class PlayerJobActionSlot {

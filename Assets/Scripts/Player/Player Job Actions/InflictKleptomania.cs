@@ -105,4 +105,5 @@ public class InflictKleptomania : PlayerJobAction {
 public class InflictKleptomaniaData : PlayerJobActionData {
     public override string name { get { return "Inflict Kleptomania"; } }
     public override string description { get { return "Makes a character enjoy stealing other people's items."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
 }

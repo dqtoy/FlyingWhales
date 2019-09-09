@@ -114,7 +114,9 @@ public class Utilities : MonoBehaviour {
         if (obj is Log) {
             lastLogID = idToUse;
         } else if (obj is BaseLandmark) {
-            lastLandmarkID = idToUse;
+            if (lastTileObjectID <= idToUse) {
+                lastLandmarkID = idToUse;
+            }
         } else if (obj is Faction) {
             lastFactionID = idToUse;
         } else if (obj is Character) {

@@ -121,4 +121,5 @@ public class InflictLycanthropy : PlayerJobAction {
 public class InflictLycanthropyData : PlayerJobActionData {
     public override string name { get { return "Inflict Lycanthropy"; } }
     public override string description { get { return "Makes a character transform into a wild wolf whenever he/she sleeps."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
 }

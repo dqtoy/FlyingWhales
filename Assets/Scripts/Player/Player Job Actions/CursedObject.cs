@@ -49,4 +49,5 @@ public class CursedObject : PlayerJobAction {
 public class CursedObjectData : PlayerJobActionData {
     public override string name { get { return "Cursed Object"; } }
     public override string description { get { return "Put a curse on an object"; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
 }

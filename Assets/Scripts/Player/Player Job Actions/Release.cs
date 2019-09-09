@@ -57,4 +57,5 @@ public class Release : PlayerJobAction {
 public class ReleaseData : PlayerJobActionData {
     public override string name { get { return "Release"; } }
     public override string description { get { return "Release a prisoner from captivity."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
 }

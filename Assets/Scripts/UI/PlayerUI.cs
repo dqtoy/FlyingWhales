@@ -823,7 +823,7 @@ public class PlayerUI : MonoBehaviour {
         }
         startingAbilities = null;
         UIManager.Instance.SetTimeControlsState(true);
-        PlayerManager.Instance.player.StartResearchNewInterventionAbility();
+        //PlayerManager.Instance.player.StartResearchNewInterventionAbility();
     }
     private void ShowSelectMinionLeader() {
         Utilities.DestroyChildren(minionLeaderPickerParent.transform);

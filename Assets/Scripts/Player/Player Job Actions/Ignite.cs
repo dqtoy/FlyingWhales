@@ -63,4 +63,5 @@ public class Ignite : PlayerJobAction {
 public class IgniteData : PlayerJobActionData {
     public override string name { get { return "Ignite"; } }
     public override string description { get { return "Targets a spot. Target will ignite and start spreading fire."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.DEVASTATION; } }
 }

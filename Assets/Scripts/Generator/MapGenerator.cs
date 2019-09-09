@@ -160,7 +160,7 @@ public class MapGenerator : MonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(true);
         Messenger.Broadcast(Signals.UPDATE_UI);
         data.LoadInvasion();
-        PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
+        //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
         data.LoadLandmarkEventsAndWorldObject();
     }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {

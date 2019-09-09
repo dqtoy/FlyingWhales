@@ -172,4 +172,5 @@ public class Lure : PlayerJobAction {
 public class LureData : PlayerJobActionData {
     public override string name { get { return "Lure"; } }
     public override string description { get { return "Force a character to go to a specified nearby location."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
 }

@@ -13,6 +13,7 @@ public class SaveDataMinion {
     public int assignedRegionID;
 
     public List<string> traitsToAdd;
+    public List<INTERVENTION_ABILITY> interventionAbilitiesToResearch;
 
     public void Save(Minion minion) {
         characterID = minion.character.id;
@@ -23,6 +24,7 @@ public class SaveDataMinion {
         } else {
             assignedRegionID = -1;
         }
+        interventionAbilitiesToResearch = minion.interventionAbilitiesToResearch;
         //unlockedInterventionSlots = minion.unlockedInterventionSlots;
 
         //interventionAbilities = new List<SaveDataInterventionAbility>();

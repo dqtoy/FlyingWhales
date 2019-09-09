@@ -67,4 +67,5 @@ public class Explosion : PlayerJobAction {
 public class ExplosionData : PlayerJobActionData {
     public override string name { get { return "Explosion"; } }
     public override string description { get { return "Destroy objects and structures within a huge radius and significantly damage characters within."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.DEVASTATION; } }
 }

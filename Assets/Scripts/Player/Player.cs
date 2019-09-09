@@ -39,11 +39,11 @@ public class Player : ILeader {
     public Faction currentTargetFaction { get; private set; } //the current faction that the player is targeting.
     public PlayerJobActionSlot[] interventionAbilitySlots { get; private set; }
     public Region invadingRegion { get; private set; }
-    public int currentInterventionAbilityTimerTick { get; private set; }
-    public int newInterventionAbilityTimerTicks { get; private set; }
-    public int currentNewInterventionAbilityCycleIndex { get; private set; }
-    public INTERVENTION_ABILITY interventionAbilityToResearch { get; private set; }
-    public bool isNotFirstResearch { get; private set; }
+    //public int currentInterventionAbilityTimerTick { get; private set; }
+    //public int newInterventionAbilityTimerTicks { get; private set; }
+    //public int currentNewInterventionAbilityCycleIndex { get; private set; }
+    //public INTERVENTION_ABILITY interventionAbilityToResearch { get; private set; }
+    //public bool isNotFirstResearch { get; private set; }
 
     #region getters/setters
     public int id {
@@ -84,7 +84,7 @@ public class Player : ILeader {
         maxSummonSlots = 1;
         maxArtifactSlots = 1;
         //ConstructRoleSlots();
-        InitializeNewInterventionAbilityCycle();
+        //InitializeNewInterventionAbilityCycle();
         ConstructAllInterventionAbilitySlots();
         ConstructAllSummonSlots();
         ConstructAllArtifactSlots();
@@ -99,7 +99,7 @@ public class Player : ILeader {
         minions = new List<Minion>();
         maxSummonSlots = data.maxSummonSlots;
         maxArtifactSlots = data.maxArtifactSlots;
-        isNotFirstResearch = data.isNotFirstResearch;
+        //isNotFirstResearch = data.isNotFirstResearch;
         //threat = data.threat;
         //ConstructAllInterventionAbilitySlots();
         //ConstructAllSummonSlots();
@@ -119,7 +119,7 @@ public class Player : ILeader {
             interventionAbilitySlots[i] = data.interventionAbilitySlots[i].Load();
         }
 
-        InitializeNewInterventionAbilityCycle();
+        //InitializeNewInterventionAbilityCycle();
         AddListeners();
     }
 
@@ -1645,76 +1645,76 @@ public class Player : ILeader {
             }
         }
     }
-    public void LoadResearchNewInterventionAbility(SaveDataPlayer data) {
-        if(data.interventionAbilityToResearch != INTERVENTION_ABILITY.NONE) {
-            currentNewInterventionAbilityCycleIndex = data.currentNewInterventionAbilityCycleIndex;
-            currentInterventionAbilityTimerTick = data.currentInterventionAbilityTimerTick;
-            NewCycleForNewInterventionAbility(data.interventionAbilityToResearch);
-        } else {
-            StartResearchNewInterventionAbility();
-        }
-    }
-    private void InitializeNewInterventionAbilityCycle() {
-        currentNewInterventionAbilityCycleIndex = -1;
-        newInterventionAbilityTimerTicks = GameManager.Instance.GetTicksBasedOnHour(8);
-        interventionAbilityToResearch = INTERVENTION_ABILITY.NONE;
-    }
-    public void StartResearchNewInterventionAbility() {
-        currentInterventionAbilityTimerTick = 0;
-        currentNewInterventionAbilityCycleIndex++;
-        if (currentNewInterventionAbilityCycleIndex > 3) {
-            currentNewInterventionAbilityCycleIndex = 0;
-        }
+    //public void LoadResearchNewInterventionAbility(SaveDataPlayer data) {
+    //    if(data.interventionAbilityToResearch != INTERVENTION_ABILITY.NONE) {
+    //        currentNewInterventionAbilityCycleIndex = data.currentNewInterventionAbilityCycleIndex;
+    //        currentInterventionAbilityTimerTick = data.currentInterventionAbilityTimerTick;
+    //        NewCycleForNewInterventionAbility(data.interventionAbilityToResearch);
+    //    } else {
+    //        StartResearchNewInterventionAbility();
+    //    }
+    //}
+    //private void InitializeNewInterventionAbilityCycle() {
+    //    currentNewInterventionAbilityCycleIndex = -1;
+    //    newInterventionAbilityTimerTicks = GameManager.Instance.GetTicksBasedOnHour(8);
+    //    interventionAbilityToResearch = INTERVENTION_ABILITY.NONE;
+    //}
+    //public void StartResearchNewInterventionAbility() {
+    //    currentInterventionAbilityTimerTick = 0;
+    //    currentNewInterventionAbilityCycleIndex++;
+    //    if (currentNewInterventionAbilityCycleIndex > 3) {
+    //        currentNewInterventionAbilityCycleIndex = 0;
+    //    }
 
-        int tier = GetTierBasedOnCycle();
-        List<INTERVENTION_ABILITY> abilities = PlayerManager.Instance.GetAbilitiesByTier(tier);
+    //    int tier = GetTierBasedOnCycle();
+    //    List<INTERVENTION_ABILITY> abilities = PlayerManager.Instance.GetAbilitiesByTier(tier);
 
-        int index1 = UnityEngine.Random.Range(0, abilities.Count);
-        INTERVENTION_ABILITY ability1 = abilities[index1];
-        abilities.RemoveAt(index1);
+    //    int index1 = UnityEngine.Random.Range(0, abilities.Count);
+    //    INTERVENTION_ABILITY ability1 = abilities[index1];
+    //    abilities.RemoveAt(index1);
 
-        if (abilities.Count <= 0) {
-            abilities = PlayerManager.Instance.GetAbilitiesByTier(tier);
-        }
-        int index2 = UnityEngine.Random.Range(0, abilities.Count);
-        INTERVENTION_ABILITY ability2 = abilities[index2];
-        abilities.RemoveAt(index2);
+    //    if (abilities.Count <= 0) {
+    //        abilities = PlayerManager.Instance.GetAbilitiesByTier(tier);
+    //    }
+    //    int index2 = UnityEngine.Random.Range(0, abilities.Count);
+    //    INTERVENTION_ABILITY ability2 = abilities[index2];
+    //    abilities.RemoveAt(index2);
 
-        if (abilities.Count <= 0) {
-            abilities = PlayerManager.Instance.GetAbilitiesByTier(tier);
-        }
-        int index3 = UnityEngine.Random.Range(0, abilities.Count);
-        INTERVENTION_ABILITY ability3 = abilities[index3];
+    //    if (abilities.Count <= 0) {
+    //        abilities = PlayerManager.Instance.GetAbilitiesByTier(tier);
+    //    }
+    //    int index3 = UnityEngine.Random.Range(0, abilities.Count);
+    //    INTERVENTION_ABILITY ability3 = abilities[index3];
 
-        PlayerUI.Instance.researchInterventionAbilityUI.SetAbility1(ability1);
-        PlayerUI.Instance.researchInterventionAbilityUI.SetAbility2(ability2);
-        PlayerUI.Instance.researchInterventionAbilityUI.SetAbility3(ability3);
-        PlayerUI.Instance.researchInterventionAbilityUI.ShowResearchUI();
-    }
-    private void PerTickInterventionAbility() {
-        currentInterventionAbilityTimerTick++;
-        if (currentInterventionAbilityTimerTick >= newInterventionAbilityTimerTicks) {
-            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInterventionAbility);
-            GainNewInterventionAbility(interventionAbilityToResearch, true);
-            StartResearchNewInterventionAbility();
-        }
-    }
-    public void NewCycleForNewInterventionAbility(INTERVENTION_ABILITY interventionAbilityToResearch) {
-        if (!isNotFirstResearch) {
-            isNotFirstResearch = true;
-        }
-        this.interventionAbilityToResearch = interventionAbilityToResearch;
-        TimerHubUI.Instance.AddItem("Research for " + Utilities.NormalizeStringUpperCaseFirstLetters(interventionAbilityToResearch.ToString()), newInterventionAbilityTimerTicks - currentInterventionAbilityTimerTick, null);
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickInterventionAbility);
-    }
-    private int GetTierBasedOnCycle() {
-        //Tier Cycle - 3, 3, 2, 1
-        if (currentNewInterventionAbilityCycleIndex == 0) return 3;
-        else if (currentNewInterventionAbilityCycleIndex == 1) return 3;
-        else if (currentNewInterventionAbilityCycleIndex == 2) return 2;
-        else if (currentNewInterventionAbilityCycleIndex == 3) return 1;
-        return 3;
-    }
+    //    PlayerUI.Instance.researchInterventionAbilityUI.SetAbility1(ability1);
+    //    PlayerUI.Instance.researchInterventionAbilityUI.SetAbility2(ability2);
+    //    PlayerUI.Instance.researchInterventionAbilityUI.SetAbility3(ability3);
+    //    PlayerUI.Instance.researchInterventionAbilityUI.ShowResearchUI();
+    //}
+    //private void PerTickInterventionAbility() {
+    //    currentInterventionAbilityTimerTick++;
+    //    if (currentInterventionAbilityTimerTick >= newInterventionAbilityTimerTicks) {
+    //        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInterventionAbility);
+    //        GainNewInterventionAbility(interventionAbilityToResearch, true);
+    //        StartResearchNewInterventionAbility();
+    //    }
+    //}
+    //public void NewCycleForNewInterventionAbility(INTERVENTION_ABILITY interventionAbilityToResearch) {
+    //    if (!isNotFirstResearch) {
+    //        isNotFirstResearch = true;
+    //    }
+    //    this.interventionAbilityToResearch = interventionAbilityToResearch;
+    //    TimerHubUI.Instance.AddItem("Research for " + Utilities.NormalizeStringUpperCaseFirstLetters(interventionAbilityToResearch.ToString()), newInterventionAbilityTimerTicks - currentInterventionAbilityTimerTick, null);
+    //    Messenger.AddListener(Signals.TICK_STARTED, PerTickInterventionAbility);
+    //}
+    //private int GetTierBasedOnCycle() {
+    //    //Tier Cycle - 3, 3, 2, 1
+    //    if (currentNewInterventionAbilityCycleIndex == 0) return 3;
+    //    else if (currentNewInterventionAbilityCycleIndex == 1) return 3;
+    //    else if (currentNewInterventionAbilityCycleIndex == 2) return 2;
+    //    else if (currentNewInterventionAbilityCycleIndex == 3) return 1;
+    //    return 3;
+    //}
     #endregion
 }
 

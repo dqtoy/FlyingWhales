@@ -53,4 +53,5 @@ public class Provoke : PlayerJobAction {
 public class ProvokeData : PlayerJobActionData {
     public override string name { get { return "Provoke"; } }
     public override string description { get { return "Makes a character undermine his/her enemies."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
 }

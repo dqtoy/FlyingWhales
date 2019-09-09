@@ -14,6 +14,7 @@ public class Minion {
     public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both settlement and non settlement landmarks
     public DeadlySin deadlySin { get { return CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName); } }
     public bool isAssigned { get { return assignedRegion != null; } } //true if minion is already assigned somewhere else, maybe in construction or research spells
+    public List<INTERVENTION_ABILITY> interventionAbilitiesToResearch { get; private set; } //This is a list not array because the abilities here are consumable
 
     private string _assignedDeadlySinName;
 
@@ -30,11 +31,13 @@ public class Minion {
         if (!keepData) {
             character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
         }
+        SetRandomResearchInterventionAbilities();
     }
     public Minion(SaveDataMinion data) {
         this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);
         this.exp = data.exp;
         traitsToAdd = data.traitsToAdd;
+        interventionAbilitiesToResearch = data.interventionAbilitiesToResearch;
         SetIndexDefaultSort(data.indexDefaultSort);
         //SetUnlockedInterventionSlots(data.unlockedInterventionSlots);
         character.SetMinion(this);
@@ -63,6 +66,25 @@ public class Minion {
     //    _isEnabled = state;
     //    minionItem.SetEnabledState(state);
     //}
+    private void SetRandomResearchInterventionAbilities() {
+        INTERVENTION_ABILITY_CATEGORY category = deadlySin.GetInterventionAbilityCategory();
+        if(category != INTERVENTION_ABILITY_CATEGORY.NONE) {
+            List<INTERVENTION_ABILITY> possibleAbilities = PlayerManager.Instance.GetAllInterventionAbilityByCategory(category);
+            if(possibleAbilities.Count > 0) {
+                interventionAbilitiesToResearch = new List<INTERVENTION_ABILITY>();
+
+                int index1 = UnityEngine.Random.Range(0, possibleAbilities.Count);
+                interventionAbilitiesToResearch.Add(possibleAbilities[index1]);
+                possibleAbilities.RemoveAt(index1);
+
+                int index2 = UnityEngine.Random.Range(0, possibleAbilities.Count);
+                interventionAbilitiesToResearch.Add(possibleAbilities[index2]);
+                possibleAbilities.RemoveAt(index2);
+
+                interventionAbilitiesToResearch.Add(possibleAbilities[UnityEngine.Random.Range(0, possibleAbilities.Count)]);
+            }
+        }
+    }
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
         character.SetPlayerCharacterItem(item);
     }

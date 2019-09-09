@@ -100,4 +100,5 @@ public class InflictAgoraphobia : PlayerJobAction {
 public class InflictAgoraphobiaData : PlayerJobActionData {
     public override string name { get { return "Inflict Agoraphobia"; } }
     public override string description { get { return "Makes a character fear crowds."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
 }

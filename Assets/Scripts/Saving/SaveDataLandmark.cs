@@ -19,7 +19,7 @@ public class SaveDataLandmark {
     public bool hasEventIconGO;
     public SaveDataWorldEventData eventData;
 
-    public void Save(BaseLandmark landmark) {
+    public virtual void Save(BaseLandmark landmark) {
         id = landmark.id;
         landmarkName = landmark.landmarkName;
         landmarkType = landmark.specificLandmarkType;

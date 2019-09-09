@@ -83,4 +83,5 @@ public class RaiseDead : PlayerJobAction {
 public class RaiseDeadData : PlayerJobActionData {
     public override string name { get { return "Raise Dead"; } }
     public override string description { get { return "Returns a character to life."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
 }

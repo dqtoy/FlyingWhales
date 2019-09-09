@@ -74,4 +74,5 @@ public class Lullaby : PlayerJobAction {
 public class LullabyData : PlayerJobActionData {
     public override string name { get { return "Lullaby"; } }
     public override string description { get { return "Makes characters in an area exhausted."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
 }

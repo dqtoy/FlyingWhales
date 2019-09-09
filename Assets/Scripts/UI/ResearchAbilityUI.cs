@@ -87,11 +87,11 @@ public class ResearchAbilityUI : MonoBehaviour {
     public void OnClickOk() {
         gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            if (PlayerManager.Instance.player.isNotFirstResearch) {
+            //if (PlayerManager.Instance.player.isNotFirstResearch) {
                 UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
-            }
-            UIManager.Instance.SetSpeedTogglesState(true);
-        }
-        PlayerManager.Instance.player.NewCycleForNewInterventionAbility(chosenAbility);
+            //}
+        UIManager.Instance.SetSpeedTogglesState(true);
+    }
+        //PlayerManager.Instance.player.NewCycleForNewInterventionAbility(chosenAbility);
     }
 }

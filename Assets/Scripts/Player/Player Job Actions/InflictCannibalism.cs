@@ -107,4 +107,5 @@ public class InflictCannibalism : PlayerJobAction {
 public class InflictCannibalismData : PlayerJobActionData {
     public override string name { get { return "Inflict Cannibalism"; } }
     public override string description { get { return "Makes a character eat other characters with the same race for sustenance."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
 }

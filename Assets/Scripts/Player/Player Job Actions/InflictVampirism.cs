@@ -107,4 +107,5 @@ public class InflictVampirism : PlayerJobAction {
 public class InflictVampirismData : PlayerJobActionData {
     public override string name { get { return "Inflict Vampirism"; } }
     public override string description { get { return "Makes a character have uncontrollable urge to drink blood for sustenance."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
 }

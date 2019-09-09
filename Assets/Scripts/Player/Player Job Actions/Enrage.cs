@@ -122,4 +122,5 @@ public class Enrage : PlayerJobAction {
 public class EnrageData : PlayerJobActionData {
     public override string name { get { return "Enrage"; } }
     public override string description { get { return "Temporarily enrages a character to attack any character he/she sees."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
 }

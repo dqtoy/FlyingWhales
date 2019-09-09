@@ -21,11 +21,10 @@ public class SaveDataPlayer {
 
     public int invadingRegionID;
 
-    public int currentInterventionAbilityTimerTick;
-    public int currentNewInterventionAbilityCycleIndex;
-    public INTERVENTION_ABILITY interventionAbilityToResearch;
-
-    public bool isNotFirstResearch;
+    //public int currentInterventionAbilityTimerTick;
+    //public int currentNewInterventionAbilityCycleIndex;
+    //public INTERVENTION_ABILITY interventionAbilityToResearch;
+    //public bool isNotFirstResearch;
 
     public void Save(Player player) {
         playerFactionID = player.playerFaction.id;
@@ -33,7 +32,7 @@ public class SaveDataPlayer {
         threat = player.threat;
         maxSummonSlots = player.maxSummonSlots;
         maxArtifactSlots = player.maxArtifactSlots;
-        isNotFirstResearch = player.isNotFirstResearch;
+        //isNotFirstResearch = player.isNotFirstResearch;
 
         minions = new List<SaveDataMinion>();
         for (int i = 0; i < player.minions.Count; i++) {
@@ -71,9 +70,9 @@ public class SaveDataPlayer {
             invadingRegionID = -1;
         }
 
-        interventionAbilityToResearch = player.interventionAbilityToResearch;
-        currentInterventionAbilityTimerTick = player.currentInterventionAbilityTimerTick;
-        currentNewInterventionAbilityCycleIndex = player.currentNewInterventionAbilityCycleIndex;
+        //interventionAbilityToResearch = player.interventionAbilityToResearch;
+        //currentInterventionAbilityTimerTick = player.currentInterventionAbilityTimerTick;
+        //currentNewInterventionAbilityCycleIndex = player.currentNewInterventionAbilityCycleIndex;
     }
     public void Load() {
         PlayerManager.Instance.InitializePlayer(this);

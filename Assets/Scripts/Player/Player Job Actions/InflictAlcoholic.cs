@@ -90,4 +90,5 @@ public class InflictAlcoholic : PlayerJobAction {
 public class InflictAlcoholicData : PlayerJobActionData {
     public override string name { get { return "Inflict Alcoholic"; } }
     public override string description { get { return "Makes a character often want to drink."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
 }

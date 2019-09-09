@@ -60,4 +60,5 @@ public class InflictPsychopathy : PlayerJobAction {
 public class InflictPsychopathyData : PlayerJobActionData {
     public override string name { get { return "Inflict Psychopathy"; } }
     public override string description { get { return "Turns a character into a serial killer."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
 }

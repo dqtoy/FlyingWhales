@@ -100,4 +100,5 @@ public class InflictZombieVirus : PlayerJobAction {
 public class InflictZombieVirusData : PlayerJobActionData {
     public override string name { get { return "Inflict Zombie Virus"; } }
     public override string description { get { return "Afflict a character with the zombie virus. When this character dies, it will turn into a zombie. Other characters that gets attacked by a zombie may also contract the zombie virus."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
 }
