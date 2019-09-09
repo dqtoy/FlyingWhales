@@ -9,6 +9,7 @@ using System.Linq;
 
 
 public class BaseLandmark {
+
     protected int _id;
     protected string _landmarkName;
     protected LANDMARK_TYPE _specificLandmarkType;
@@ -19,10 +20,9 @@ public class BaseLandmark {
     protected Faction _owner;
     protected LandmarkVisual _landmarkVisual;
     protected LandmarkNameplate nameplate;
-    //protected List<Item> _itemsInLandmark;
+
     public List<LANDMARK_TAG> landmarkTags { get; private set; }
     public List<BaseLandmark> connections { get; private set; }
-    //public Character skirmishEnemy { get; private set; }
     public IWorldObject worldObj { get; private set; }
     public int invasionTicks { get; private set; } //how many ticks until this landmark is invaded. NOTE: This is in raw ticks so if the landmark should be invaded in 1 hour, this should be set to the number of ticks in an hour.
     public List<Character> charactersHere { get; private set; }
@@ -32,22 +32,15 @@ public class BaseLandmark {
     public IWorldEventData eventData { get; private set; }
     public Vector2 nameplatePos { get; private set; }
 
-    private List<System.Action> otherAfterInvasionActions; //list of other things to do when this landmark is invaded.
+    //Player Landmark
+    public PlayerLandmark playerLandmark { get; private set; } //If this is not, null then the player has constructed a landmark at this location.
 
+    private List<System.Action> otherAfterInvasionActions; //list of other things to do when this landmark is invaded.
     private string activeEventAfterEffectScheduleID;
 
     #region getters/setters
     public int id {
         get { return _id; }
-    }
-    public string name {
-        get { return landmarkName; }
-    }
-    public string thisName {
-        get { return landmarkName; }
-    }
-    public string locationName {
-        get { return landmarkName + " " + tileLocation.locationName; }
     }
     public string landmarkName {
         get { return _landmarkName; }
@@ -64,14 +57,8 @@ public class BaseLandmark {
     public Faction owner {
         get { return _owner; }
     }
-    public Faction faction {
-        get { return _owner; }
-    }
     public LandmarkVisual landmarkVisual {
         get { return _landmarkVisual; }
-    }
-    public LOCATION_IDENTIFIER locIdentifier {
-        get { return LOCATION_IDENTIFIER.LANDMARK; }
     }
     public HexTile tileLocation {
         get { return _location; }
@@ -84,12 +71,10 @@ public class BaseLandmark {
     public BaseLandmark() {
         _owner = null; //landmark has no owner yet
         _hasBeenCorrupted = false;
-        //_itemsInLandmark = new List<Item>();
         connections = new List<BaseLandmark>();
         charactersHere = new List<Character>();
         otherAfterInvasionActions = new List<System.Action>();
         invasionTicks = GameManager.ticksPerDay;
-        //invasionTicks = 5;
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
@@ -100,6 +85,9 @@ public class BaseLandmark {
         ConstructTags(landmarkData);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
         //nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
+        if (_specificLandmarkType.IsPlayerLandmark()) {
+            SetPlayerLandmark(CreateNewPlayerLandmark(specificLandmarkType));
+        }
     }
     public BaseLandmark(HexTile location, LandmarkSaveData data) : this() {
         _id = Utilities.SetID(this, data.landmarkID);
@@ -111,6 +99,9 @@ public class BaseLandmark {
         ConstructTags(landmarkData);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
         //nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
+        if (_specificLandmarkType.IsPlayerLandmark()) {
+            SetPlayerLandmark(CreateNewPlayerLandmark(specificLandmarkType)); //TODO: Change this to save/load system
+        }
     }
     public BaseLandmark(HexTile location, SaveDataLandmark data) : this() {
         _id = Utilities.SetID(this, data.id);
@@ -127,6 +118,9 @@ public class BaseLandmark {
         ConstructTags(landmarkData);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
         //nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
+        if (_specificLandmarkType.IsPlayerLandmark()) {
+            SetPlayerLandmark(CreateNewPlayerLandmark(specificLandmarkType)); //TODO: Change this to save/load system
+        }
     }
 
     public void SetName(string name) {
@@ -141,6 +135,12 @@ public class BaseLandmark {
     public void ChangeLandmarkType(LANDMARK_TYPE type) {
         _specificLandmarkType = type;
         tileLocation.UpdateLandmarkVisuals();
+        if (type.IsPlayerLandmark()) {
+            SetPlayerLandmark(CreateNewPlayerLandmark(specificLandmarkType));
+        } else {
+            //if the type of this landmark changed to a non player landmark, and this was previously a player landmark, destroy the player landmark.
+            SetPlayerLandmark(null);
+        }
         //if (type == LANDMARK_TYPE.NONE) {
         //    ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
         //}
@@ -148,18 +148,6 @@ public class BaseLandmark {
 
     #region Virtuals
     public virtual void Initialize() { }
-    public virtual void DestroyLandmark() {
-        //if (!_landmarkObj.isRuined) {
-            //ObjectState ruined = landmarkObj.GetState("Ruined");
-            //landmarkObj.ChangeState(ruined);
-            //tileLocation.areaOfTile.CheckDeath();
-        //}
-        //RemoveListeners();
-    }
-    /*
-     What should happen when a character searches this landmark
-         */
-    public virtual void SearchLandmark(Character character) { }
     #endregion
 
     #region Ownership
@@ -243,91 +231,6 @@ public class BaseLandmark {
     #endregion
 
     #region Corruption/Invasion
-    public void ToggleCorruption(bool state) {
-        if (state) {
-            LandmarkManager.Instance.corruptedLandmarksCount++;
-            if (!_hasBeenCorrupted) {
-                _hasBeenCorrupted = true;
-            }
-            //_diagonalLeftBlocked = 0;
-            //_diagonalRightBlocked = 0;
-            //_horizontalBlocked = 0;
-            //tileLocation.region.LandmarkStartedCorruption(this);
-            Messenger.AddListener(Signals.TICK_ENDED, DoCorruption);
-            //if (Messenger.eventTable.ContainsKey("StartCorruption")) {
-            //    Messenger.RemoveListener<BaseLandmark>("StartCorruption", ALandmarkHasStartedCorruption);
-            //    Messenger.Broadcast<BaseLandmark>("StartCorruption", this);
-            //}
-        } else {
-            LandmarkManager.Instance.corruptedLandmarksCount--;
-            StopSpreadCorruption();
-        }
-    }
-    private void StopSpreadCorruption() {
-        if (LandmarkManager.Instance.corruptedLandmarksCount > 1) {
-            HexTile chosenTile = null;
-            int range = 3;
-            while (chosenTile == null) {
-                List<HexTile> tilesToCheck = tileLocation.GetTilesInRange(range, true);
-                for (int i = 0; i < tilesToCheck.Count; i++) {
-                    if (tilesToCheck[i].corruptedLandmark != null && tilesToCheck[i].corruptedLandmark.id != this.id) {
-                        chosenTile = tilesToCheck[i];
-                        break;
-                    }
-                }
-                range++;
-            }
-            PathGenerator.Instance.CreatePath(this, this.tileLocation, chosenTile, PATHFINDING_MODE.UNRESTRICTED);
-        }
-        //tileLocation.region.LandmarkStoppedCorruption(this);
-        Messenger.RemoveListener(Signals.TICK_ENDED, DoCorruption);
-        //Messenger.Broadcast<BaseLandmark>("StopCorruption", this);
-    }
-    private void DoCorruption() {
-        //if (_nextCorruptedTilesToCheck.Count > 0) {
-        //    int index = UnityEngine.Random.Range(0, _nextCorruptedTilesToCheck.Count);
-        //    HexTile currentCorruptedTileToCheck = _nextCorruptedTilesToCheck[index];
-        //    _nextCorruptedTilesToCheck.RemoveAt(index);
-        //    SpreadCorruption(currentCorruptedTileToCheck);
-        //} else {
-        //    StopSpreadCorruption();
-        //}
-    }
-    private void SpreadCorruption(HexTile originTile) {
-        //if (!originTile.CanThisTileBeCorrupted()) {
-        //    return;
-        //}
-        for (int i = 0; i < originTile.AllNeighbours.Count; i++) {
-            HexTile neighbor = originTile.AllNeighbours[i];
-            if (neighbor.uncorruptibleLandmarkNeighbors <= 0) {
-                if (!neighbor.isCorrupted) { //neighbor.region.id == originTile.region.id && neighbor.CanThisTileBeCorrupted()
-                    neighbor.SetCorruption(true, this);
-                    //_nextCorruptedTilesToCheck.Add(neighbor);
-                }
-                //if(neighbor.landmarkNeighbor != null && !neighbor.landmarkNeighbor.tileLocation.isCorrupted) {
-                //    neighbor.landmarkNeighbor.CreateWall();
-                //}
-                if (originTile.corruptedLandmark.id != neighbor.corruptedLandmark.id) {
-                    //originTile.corruptedLandmark.hasAdjacentCorruptedLandmark = true;
-                }
-            }
-            //else {
-            //if cannot be corrupted it means that it has a landmark still owned by a kingdom
-            //neighbor.landmarkOnTile.CreateWall();
-            //}
-        }
-    }
-    public void ReceivePath(List<HexTile> pathTiles) {
-        if (pathTiles != null) {
-            ConnectCorruption(pathTiles);
-        }
-    }
-    private void ConnectCorruption(List<HexTile> pathTiles) {
-        for (int i = 0; i < pathTiles.Count; i++) {
-            pathTiles[i].SetUncorruptibleLandmarkNeighbors(0);
-            pathTiles[i].SetCorruption(true, this);
-        }
-    }
     public void InvadeThisLandmark() {
         switch (specificLandmarkType) {
             case LANDMARK_TYPE.NONE:
@@ -495,33 +398,6 @@ public class BaseLandmark {
     }
     #endregion
 
-    #region Skirmish
-    //public void GenerateSkirmishEnemy() {
-    //    if(skirmishEnemy != null) {
-    //        return;
-    //    }
-    //    Area area = GetUpcomingSettlement();
-    //    if (area != null) {
-    //        if (area.owner.leader is Character) {
-    //            Character areaLeader = area.owner.leader as Character;
-
-    //            WeightedDictionary<CharacterRole> roleChoices = new WeightedDictionary<CharacterRole>();
-    //            roleChoices.AddElement(CharacterRole.CIVILIAN, 30);
-    //            roleChoices.AddElement(CharacterRole.ADVENTURER, 35);
-    //            roleChoices.AddElement(CharacterRole.SOLDIER, 35);
-
-    //            Character enemy = new Character(roleChoices.PickRandomElementGivenWeights(), areaLeader.race, Utilities.GetRandomGender());
-    //            enemy.OnUpdateRace();
-    //            enemy.SetLevel(areaLeader.level - 1);
-
-    //            skirmishEnemy = enemy;
-    //        }
-    //    } else {
-    //        throw new System.Exception(tileLocation.name + " has no upcoming settlement!");
-    //    }
-    //}
-    #endregion
-
     #region World Objects
     public void SetWorldObject(IWorldObject obj) {
         worldObj = obj;
@@ -548,6 +424,27 @@ public class BaseLandmark {
         charactersHere.Remove(character);
         character.SetLandmarkLocation(null);
         Messenger.Broadcast(Signals.CHARACTER_EXITED_LANDMARK, character, this);
+    }
+    #endregion
+
+    #region Player Landmark
+    public void SetPlayerLandmark(PlayerLandmark landmark) {
+        playerLandmark?.OnLandmarkDestroyed();  //Destroy the previous landmark
+        playerLandmark = landmark;
+        playerLandmark?.OnLandmarkPlaced(); //Place new landmark
+    }
+    /// <summary>
+    /// Create a new instance of a player landmark. NOTE: This should only be supplied with landmark types that are sure to be player landmarks. Did not add checking here to save on performance.
+    /// </summary>
+    /// <param name="type">The type of player landmark</param>
+    /// <returns>A new player landmark instance</returns>
+    private PlayerLandmark CreateNewPlayerLandmark(LANDMARK_TYPE type) {
+        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
+        System.Type systemType = System.Type.GetType(typeName);
+        if (systemType != null) {
+           return System.Activator.CreateInstance(systemType, this) as PlayerLandmark;
+        }
+        return null;
     }
     #endregion
 }
