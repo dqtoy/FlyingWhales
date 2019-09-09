@@ -31,6 +31,7 @@ public class Utilities : MonoBehaviour {
     public static int lastStructureID = 0;
     public static int lastRegionID = 0;
     public static int lastJobID = 0;
+    public static int lastBurningSourceID = 0;
 
     public static float defenseBuff = 1.20f;
     public static int defaultCityHP = 300;
@@ -103,6 +104,9 @@ public class Utilities : MonoBehaviour {
         } else if (obj is JobQueueItem) {
             lastJobID += 1;
             return lastJobID;
+        } else if (obj is BurningSource) {
+            lastBurningSourceID += 1;
+            return lastBurningSourceID;
         }
         return 0;
     }
@@ -139,6 +143,8 @@ public class Utilities : MonoBehaviour {
             if (lastJobID <= idToUse) {
                 lastJobID = idToUse;
             }
+        } else if (obj is BurningSource) {
+            lastBurningSourceID = idToUse;
         }
         //else if (obj is Interaction) {
         //    lastInteractionID = idToUse;

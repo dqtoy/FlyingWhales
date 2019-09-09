@@ -24,7 +24,6 @@ public class MonsterParty : Party {
     public MonsterParty() : base(null) {
 #if !WORLD_CREATION_TOOL
         MonsterManager.Instance.allMonsterParties.Add(this);
-        Messenger.AddListener(Signals.TICK_ENDED, EverydayAction);
         //ConstructResourceInventory();
 #endif
     }
@@ -54,7 +53,6 @@ public class MonsterParty : Party {
     }
     public override void RemoveListeners() {
         base.RemoveListeners();
-        Messenger.RemoveListener(Signals.TICK_ENDED, EverydayAction);
     }
     #endregion
 
@@ -64,11 +62,6 @@ public class MonsterParty : Party {
     }
     public void SetSetupName(string setupName) {
         //_setupName = setupName;
-    }
-    private void EverydayAction() {
-        if (onDailyAction != null) {
-            onDailyAction();
-        }
     }
     #endregion
 

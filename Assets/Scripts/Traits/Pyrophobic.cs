@@ -5,7 +5,7 @@ using UnityEngine;
 public class Pyrophobic : Trait {
 
     private Character owner;
-    private List<IBurningSource> seenBurningSources;
+    private List<BurningSource> seenBurningSources;
 
     public Pyrophobic() {
         name = "Pyrophobic";
@@ -16,7 +16,7 @@ public class Pyrophobic : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
-        seenBurningSources = new List<IBurningSource>();
+        seenBurningSources = new List<BurningSource>();
     }
 
     public override void OnAddTrait(ITraitable addedTo) {
@@ -27,7 +27,7 @@ public class Pyrophobic : Trait {
     }
 
 
-    public bool AddKnownBurningSource(IBurningSource burningSource) {
+    public bool AddKnownBurningSource(BurningSource burningSource) {
         if (!seenBurningSources.Contains(burningSource)) {
             seenBurningSources.Add(burningSource);
             burningSource.AddOnBurningExtinguishedAction(RemoveKnownBurningSource);
@@ -37,7 +37,7 @@ public class Pyrophobic : Trait {
         }
         return false;
     }
-    public void RemoveKnownBurningSource(IBurningSource burningSource) {
+    public void RemoveKnownBurningSource(BurningSource burningSource) {
         if (seenBurningSources.Remove(burningSource)) {
             burningSource.RemoveOnBurningExtinguishedAction(RemoveKnownBurningSource);
             burningSource.RemoveOnBurningObjectAddedAction(OnObjectStartedBurning);
@@ -45,7 +45,7 @@ public class Pyrophobic : Trait {
         }
     }
 
-    public void Flee(IBurningSource source, Character character) {
+    public void Flee(BurningSource source, Character character) {
         string summary = GameManager.Instance.TodayLogString() + character.name + " saw burning source " + source.ToString();
         if (character.marker.FleeFrom(source.objectsOnFire)) {
             summary += "\nStarted fleeing";
