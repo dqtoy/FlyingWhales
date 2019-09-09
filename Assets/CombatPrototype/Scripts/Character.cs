@@ -41,8 +41,8 @@ public class Character : ILeader, IPointOfInterest {
     protected List<Skill> _skills;
     protected List<Log> _history;
     protected List<Trait> _normalTraits; //List of traits that are just normal Traits (Not including relationships)
-    protected Dictionary<ELEMENT, float> _elementalWeaknesses;
-    protected Dictionary<ELEMENT, float> _elementalResistances;
+    //protected Dictionary<ELEMENT, float> _elementalWeaknesses;
+    //protected Dictionary<ELEMENT, float> _elementalResistances;
     protected PlayerCharacterItem _playerCharacterItem;
     private LocationStructure _currentStructure; //what structure is this character currently in.
 
@@ -331,12 +331,12 @@ public class Character : ILeader, IPointOfInterest {
     public int attackSpeed {
         get { return _characterClass.baseAttackSpeed; } //in milliseconds, The lower the amount the faster the attack rate
     }
-    public Dictionary<ELEMENT, float> elementalWeaknesses {
-        get { return _elementalWeaknesses; }
-    }
-    public Dictionary<ELEMENT, float> elementalResistances {
-        get { return _elementalResistances; }
-    }
+    //public Dictionary<ELEMENT, float> elementalWeaknesses {
+    //    get { return _elementalWeaknesses; }
+    //}
+    //public Dictionary<ELEMENT, float> elementalResistances {
+    //    get { return _elementalResistances; }
+    //}
     public float actRate {
         get { return _actRate; }
         set { _actRate = value; }
@@ -532,8 +532,8 @@ public class Character : ILeader, IPointOfInterest {
         originalClassName = data.originalClassName;
 
         _history = new List<Log>();
-        _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
-        _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+        //_elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+        //_elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
         combatHistory = new Dictionary<int, Combat>();
         poiGoapActions = new List<INTERACTION_TYPE>();
         allGoapPlans = new List<GoapPlan>();
@@ -563,8 +563,8 @@ public class Character : ILeader, IPointOfInterest {
         //RPG
         _level = 1;
         SetExperience(0);
-        _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
-        _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+        //_elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+        //_elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
         combatHistory = new Dictionary<int, Combat>();
         currentInteractionTypes = new List<INTERACTION_TYPE>();
         poiGoapActions = new List<INTERACTION_TYPE>();
@@ -4052,12 +4052,12 @@ public class Character : ILeader, IPointOfInterest {
     public void SetMaxExperience(int amount) {
         _maxExperience = amount;
     }
-    public void AdjustElementalWeakness(ELEMENT element, float amount) {
-        _elementalWeaknesses[element] += amount;
-    }
-    public void AdjustElementalResistance(ELEMENT element, float amount) {
-        _elementalResistances[element] += amount;
-    }
+    //public void AdjustElementalWeakness(ELEMENT element, float amount) {
+    //    _elementalWeaknesses[element] += amount;
+    //}
+    //public void AdjustElementalResistance(ELEMENT element, float amount) {
+    //    _elementalResistances[element] += amount;
+    //}
     public void AdjustSP(int amount) {
         _sp += amount;
         _sp = Mathf.Clamp(_sp, 0, _maxSP);

@@ -17,7 +17,7 @@ public class CharacterManager : MonoBehaviour {
     public Transform characterIconsParent;
 
     public int maxLevel;
-    private Dictionary<ELEMENT, float> _elementsChanceDictionary;
+    //private Dictionary<ELEMENT, float> _elementsChanceDictionary;
     private List<Character> _allCharacters;
     private List<CharacterAvatar> _allCharacterAvatars;
 
@@ -53,6 +53,7 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<string, CharacterClass> beastClasses { get; private set; }
     public Dictionary<string, CharacterClass> demonClasses { get; private set; }
     public Dictionary<string, Dictionary<string, CharacterClass>> identifierClasses { get; private set; }
+    public Dictionary<string, DeadlySin> deadlySins { get; private set; }
 
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     private List<string> deadlySinsRotation = new List<string>();
@@ -63,9 +64,9 @@ public class CharacterManager : MonoBehaviour {
     public List<Character> allCharacters {
         get { return _allCharacters; }
     }
-    public Dictionary<ELEMENT, float> elementsChanceDictionary {
-        get { return _elementsChanceDictionary; }
-    }
+    //public Dictionary<ELEMENT, float> elementsChanceDictionary {
+    //    get { return _elementsChanceDictionary; }
+    //}
     #endregion
 
     private void Awake() {
@@ -77,7 +78,8 @@ public class CharacterManager : MonoBehaviour {
 
     public void Initialize() {
         ConstructAllClasses();
-        ConstructElementChanceDictionary();
+        //ConstructElementChanceDictionary();
+        CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
         //ConstructAwayFromHomeInteractionWeights();
         //ConstructAtHomeInteractionWeights();
@@ -1406,15 +1408,15 @@ public class CharacterManager : MonoBehaviour {
     }
     #endregion
 
-    #region Elements
-    private void ConstructElementChanceDictionary() {
-        _elementsChanceDictionary = new Dictionary<ELEMENT, float>();
-        ELEMENT[] elements = (ELEMENT[]) System.Enum.GetValues(typeof(ELEMENT));
-        for (int i = 0; i < elements.Length; i++) {
-            _elementsChanceDictionary.Add(elements[i], 0f);
-        }
-    }
-    #endregion
+    //#region Elements
+    //private void ConstructElementChanceDictionary() {
+    //    _elementsChanceDictionary = new Dictionary<ELEMENT, float>();
+    //    ELEMENT[] elements = (ELEMENT[]) System.Enum.GetValues(typeof(ELEMENT));
+    //    for (int i = 0; i < elements.Length; i++) {
+    //        _elementsChanceDictionary.Add(elements[i], 0f);
+    //    }
+    //}
+    //#endregion
 
     #region Marker Assets
     public MarkerAsset GetMarkerAsset(RACE race, GENDER gender) {
@@ -1482,13 +1484,28 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Deadly Sins
-    public DeadlySin CreateNewDeadlySin(string deadlySin) {
+    private void CreateDeadlySinsData() {
+        deadlySins = new Dictionary<string, DeadlySin>();
+        for (int i = 0; i < sevenDeadlySinsClassNames.Length; i++) {
+            deadlySins.Add(sevenDeadlySinsClassNames[i], CreateNewDeadlySin(sevenDeadlySinsClassNames[i]));
+        }
+    }
+    private DeadlySin CreateNewDeadlySin(string deadlySin) {
         System.Type type = System.Type.GetType(deadlySin);
         if(type != null) {
             DeadlySin sin = System.Activator.CreateInstance(type) as DeadlySin;
             return sin;
         }
         return null;
+    }
+    public DeadlySin GetDeadlySin(string sinName) {
+        if (deadlySins.ContainsKey(sinName)) {
+            return deadlySins[sinName];
+        }
+        return null;
+    }
+    public bool CanDoDeadlySinAction(string deadlySinName, DEADLY_SIN_ACTION action) {
+        return deadlySins[deadlySinName].CanDoDeadlySinAction(action);
     }
     #endregion
 }

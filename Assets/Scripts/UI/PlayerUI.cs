@@ -67,7 +67,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject startingMinionPickerGO;
     [SerializeField] private MinionCard startingMinionCard1;
     [SerializeField] private MinionCard startingMinionCard2;
-    [SerializeField] private MinionCard startingMinionCard3;
+    //[SerializeField] private MinionCard startingMinionCard3;
     [SerializeField] private GameObject minionLeaderPickerParent;
     [SerializeField] private GameObject minionLeaderPickerPrefab;
     [SerializeField] private TextMeshProUGUI selectMinionLeaderText;
@@ -760,9 +760,20 @@ public class PlayerUI : MonoBehaviour {
     #region Start Picker
     private INTERVENTION_ABILITY[] startingAbilities;
     public void ShowStartingMinionPicker() {
-        startingMinionCard1.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-        startingMinionCard2.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-        startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+        string minionName1 = string.Empty;
+        string minionClassName1 = string.Empty;
+        COMBAT_ABILITY minionCombatAbilityType1 = COMBAT_ABILITY.FEAR_SPELL;
+
+        string minionName2 = string.Empty;
+        string minionClassName2 = string.Empty;
+        COMBAT_ABILITY minionCombatAbilityType2 = COMBAT_ABILITY.FEAR_SPELL;
+
+        RandomizeTwoStartingMinions(ref minionName1, ref minionClassName1, ref minionCombatAbilityType1
+            , ref minionName2, ref minionClassName2, ref minionCombatAbilityType2);
+
+        startingMinionCard1.SetMinion(minionClassName1, minionCombatAbilityType1, minionName1);
+        startingMinionCard2.SetMinion(minionClassName2, minionCombatAbilityType2, minionName2);
+        //startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
         startingAbilities = new INTERVENTION_ABILITY[PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES];
         RandomizeStartingAbilities();
         startingMinionPickerGO.SetActive(true);
@@ -770,21 +781,43 @@ public class PlayerUI : MonoBehaviour {
     public void HideStartingMinionPicker() {
         startingMinionPickerGO.SetActive(false);
     }
-    public void Reroll1() {
-        startingMinionCard1.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+    public void Reroll() {
+        string minionName1 = string.Empty;
+        string minionClassName1 = string.Empty;
+        COMBAT_ABILITY minionCombatAbilityType1 = COMBAT_ABILITY.FEAR_SPELL;
+
+        string minionName2 = string.Empty;
+        string minionClassName2 = string.Empty;
+        COMBAT_ABILITY minionCombatAbilityType2 = COMBAT_ABILITY.FEAR_SPELL;
+
+        RandomizeTwoStartingMinions(ref minionName1, ref minionClassName1, ref minionCombatAbilityType1
+            , ref minionName2, ref minionClassName2, ref minionCombatAbilityType2);
+
+        startingMinionCard1.SetMinion(minionClassName1, minionCombatAbilityType1, minionName1);
+        startingMinionCard2.SetMinion(minionClassName2, minionCombatAbilityType2, minionName2);
     }
-    public void Reroll2() {
-        startingMinionCard2.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-    }
-    public void Reroll3() {
-        startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-    }
+    //public void Reroll2() {
+    //    startingMinionCard2.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+    //}
+    //public void Reroll3() {
+    //    startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+    //}
     public void OnClickStartGame() {
         HideStartingMinionPicker();
-        PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
-        PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
-        PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
-        PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
+
+        Minion minion1 = PlayerManager.Instance.player.CreateNewMinion(startingMinionCard1.className, RACE.DEMON, false);
+        Minion minion2 = PlayerManager.Instance.player.CreateNewMinion(startingMinionCard2.className, RACE.DEMON, false);
+
+        minion1.character.SetName(startingMinionCard1.minionName);
+        minion2.character.SetName(startingMinionCard2.minionName);
+
+        minion1.SetCombatAbility(startingMinionCard1.combatAbilityType);
+        minion2.SetCombatAbility(startingMinionCard2.combatAbilityType);
+
+        PlayerManager.Instance.player.AddMinion(minion1);
+        PlayerManager.Instance.player.AddMinion(minion2);
+        //PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
+        PlayerManager.Instance.player.SetMinionLeader(minion1);
         for (int i = 0; i < startingAbilities.Length; i++) {
             PlayerManager.Instance.player.GainNewInterventionAbility(startingAbilities[i]);
         }
@@ -833,6 +866,33 @@ public class PlayerUI : MonoBehaviour {
     }
     public void RerollAbilities() {
         RandomizeStartingAbilities();
+    }
+    public void RandomizeTwoStartingMinions(ref string minionName1, ref string minionClassName1, ref COMBAT_ABILITY minionCombatAbilityType1
+        , ref string minionName2, ref string minionClassName2, ref COMBAT_ABILITY minionCombatAbilityType2) {
+
+        minionName1 = RandomNameGenerator.Instance.GenerateMinionName();
+        minionName2 = RandomNameGenerator.Instance.GenerateMinionName();
+
+        minionCombatAbilityType1 = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)];
+        minionCombatAbilityType2 = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)];
+
+        List<string> filteredDeadlySinClasses = new List<string>();
+        foreach (KeyValuePair<string, DeadlySin> kvp in CharacterManager.Instance.deadlySins) {
+            if(kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.CONSTRUCT) || kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADE)) {
+                filteredDeadlySinClasses.Add(kvp.Key);
+            }
+        }
+
+        int class1Index = UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count);
+        minionClassName1 = filteredDeadlySinClasses[class1Index];
+        filteredDeadlySinClasses.RemoveAt(class1Index);
+
+        if(CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADE)
+            && CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.CONSTRUCT)) {
+            minionClassName2 = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
+        } else {
+            minionClassName2 = filteredDeadlySinClasses[UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count)];
+        }
     }
     #endregion
 

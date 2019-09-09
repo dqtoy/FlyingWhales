@@ -12,8 +12,10 @@ public class Minion {
     public CombatAbility combatAbility { get; private set; }
     public List<string> traitsToAdd { get; private set; }
     public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both settlement and non settlement landmarks
-    public DeadlySin deadlySin { get; private set; }
+    public DeadlySin deadlySin { get { return CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName); } }
     public bool isAssigned { get { return assignedRegion != null; } } //true if minion is already assigned somewhere else, maybe in construction or research spells
+
+    private string _assignedDeadlySinName;
 
     public Minion(Character character, bool keepData) {
         this.character = character;
@@ -23,8 +25,8 @@ public class Minion {
         character.SetMinion(this);
         SetLevel(1);
         //character.characterToken.SetObtainedState(true);
+        _assignedDeadlySinName = character.characterClass.className;
         character.ownParty.icon.SetVisualState(true);
-        deadlySin = CharacterManager.Instance.CreateNewDeadlySin(character.characterClass.className);
         if (!keepData) {
             character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
         }
@@ -37,7 +39,7 @@ public class Minion {
         //SetUnlockedInterventionSlots(data.unlockedInterventionSlots);
         character.SetMinion(this);
         character.ownParty.icon.SetVisualState(true);
-        deadlySin = CharacterManager.Instance.CreateNewDeadlySin(character.characterClass.className);
+        _assignedDeadlySinName = character.characterClass.className;
     }
     //public void SetEnabledState(bool state) {
     //    if (character.IsInOwnParty()) {

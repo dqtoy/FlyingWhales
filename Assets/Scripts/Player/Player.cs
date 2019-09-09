@@ -232,9 +232,11 @@ public class Player : ILeader {
         InitializeMinion(minion);
         return minion;
     }
-    public Minion CreateNewMinion(string className, RACE race) {
+    public Minion CreateNewMinion(string className, RACE race, bool initialize = true) {
         Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea), false);
-        InitializeMinion(minion);
+        if (initialize) {
+            InitializeMinion(minion);
+        }
         return minion;
     }
     public Minion CreateNewMinionRandomClass(RACE race) {

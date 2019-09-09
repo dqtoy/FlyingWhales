@@ -7,7 +7,7 @@ using TMPro;
 public class MinionCard : MonoBehaviour {
     public Minion minion { get; private set; }
 
-    public CharacterPortrait portrait;
+    public Image portraitImg;
     public TextMeshProUGUI txtName;
     public TextMeshProUGUI txtClass;
     public Image imgAbility1;
@@ -20,20 +20,39 @@ public class MinionCard : MonoBehaviour {
     public TextMeshProUGUI txtTrait1;
     public TextMeshProUGUI txtTrait2;
 
+    //Minion Data
+    public string minionName { get; private set; }
+    public string className { get; private set; }
+    public COMBAT_ABILITY combatAbilityType { get; private set; }
+    //TODO: trait 1 and 2
+
+    public void SetMinion(string className, COMBAT_ABILITY combatAbility, string minionName = "") {
+        if(minionName == string.Empty) {
+            this.minionName = RandomNameGenerator.Instance.GenerateMinionName();
+        } else {
+            this.minionName = minionName;
+        }
+        combatAbilityType = combatAbility;
+        this.className = className;
+
+        Sprite classPortrait = CharacterManager.Instance.GetClassPortraitSprite(className);
+        if(classPortrait != null) {
+            portraitImg.sprite = classPortrait;
+            portraitImg.gameObject.SetActive(true);
+        } else {
+            portraitImg.gameObject.SetActive(false);
+        }
+        txtName.text = minionName;
+        txtClass.text = "Demon " + className;
+        txtCombatAbility.text = Utilities.NormalizeStringUpperCaseFirstLetters(combatAbilityType.ToString());
+    }
+
     public void SetMinion(Minion minion) {
         this.minion = minion;
         if(minion != null) {
-            portrait.GeneratePortrait(minion.character);
+            //portrait.GeneratePortrait(minion.character);
             txtName.text = minion.character.name;
             txtClass.text = minion.character.raceClassName;
-
-            //PlayerJobAction ability1 = minion.interventionAbilities[0];
-            //imgAbility1.sprite = PlayerManager.Instance.GetJobActionSprite(ability1.name);
-            //txtAbility1.text = ability1.name;
-
-            //PlayerJobAction ability2 = minion.interventionAbilities[1];
-            //imgAbility2.sprite = PlayerManager.Instance.GetJobActionSprite(ability2.name);
-            //txtAbility2.text = ability2.name;
 
             txtCombatAbility.text = minion.combatAbility.name;
 
@@ -53,10 +72,10 @@ public class MinionCard : MonoBehaviour {
     public void OnExitHoverInterventionAbility2() {
         UIManager.Instance.HideSmallInfo();
     }
-    public void OnHoverCombatAbility() {
-        UIManager.Instance.ShowSmallInfo(minion.combatAbility.dynamicDescription);
-    }
-    public void OnExitHoverCombatAbility() {
-        UIManager.Instance.HideSmallInfo();
-    }
+    //public void OnHoverCombatAbility() {
+    //    UIManager.Instance.ShowSmallInfo(minion.combatAbility.dynamicDescription);
+    //}
+    //public void OnExitHoverCombatAbility() {
+    //    UIManager.Instance.HideSmallInfo();
+    //}
 }
