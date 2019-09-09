@@ -47,6 +47,7 @@ public class AreaInfoUI : UIMenu {
     [Header("Content Management")]
     public GameObject normalContentGO;
     public PlayerBuildLandmarkUI playerBuildLandmarkUI;
+    public PlayerResearchUI playerResearchUI;
 
     private CombatGrid combatGrid;
 
@@ -549,12 +550,18 @@ public class AreaInfoUI : UIMenu {
     private void ShowAppropriateContent() {
         HideNormalContent();
         HidePlayerBuildLandmarkUI();
+        HidePlayerResearchUI();
 
         if (activeTile.isCorrupted) {
             //The things you can do to corrupted landmarks
-            if (activeTile.landmarkOnTile != null && activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.NONE) {
-                ShowPlayerBuildLandmarkUI();
-                return;
+            if (activeTile.landmarkOnTile != null) {
+                if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.NONE) {
+                    ShowPlayerBuildLandmarkUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_SPIRE) {
+                    ShowPlayerResearchUI();
+                    return;
+                }
             }
         }
         ShowNormalContent();
@@ -569,6 +576,8 @@ public class AreaInfoUI : UIMenu {
     private void UpdateAppropriateContentPerUpdateUI() {
         if (playerBuildLandmarkUI.gameObject.activeSelf) {
             UpdatePlayerBuildLandmarkUI();
+        } else if (playerResearchUI.gameObject.activeSelf) {
+            UpdatePlayerResearchUI();
         } else if(normalContentGO.activeSelf) {
             //UpdateItems();
         }
@@ -598,6 +607,18 @@ public class AreaInfoUI : UIMenu {
     }
     private void UpdatePlayerBuildLandmarkUI() {
         playerBuildLandmarkUI.UpdatePlayerBuildLandmarkUI();
+    }
+    #endregion
+
+    #region Player Research Content
+    private void ShowPlayerResearchUI() {
+        playerResearchUI.ShowPlayerResearchUI(activeTile.landmarkOnTile as TheSpire);
+    }
+    private void HidePlayerResearchUI() {
+        playerResearchUI.HidePlayerResearchUI();
+    }
+    private void UpdatePlayerResearchUI() {
+        playerResearchUI.UpdatePlayerResearchUI();
     }
     #endregion
 }
