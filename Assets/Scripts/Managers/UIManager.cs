@@ -748,8 +748,8 @@ public class UIManager : MonoBehaviour {
     #region Object Picker
     public void ShowClickableObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null
         , Func<T, bool> validityChecker = null, string title = ""
-        , Action<T> onHoverAction = null, Action<T> onHoverExitAction = null, string identifier = "") {
-        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction, onHoverExitAction, identifier);
+        , Action<T> onHoverAction = null, Action<T> onHoverExitAction = null, string identifier = "", bool showCover = false, int layer = 9, bool closable = true) {
+        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction, onHoverExitAction, identifier, showCover, layer, closable);
         //Pause();
         //SetSpeedTogglesState(false);
     }
@@ -1351,6 +1351,37 @@ public class UIManager : MonoBehaviour {
     }
     private void OnWorldEventDespawned(Region region, WorldEvent we) {
         ObjectPoolManager.Instance.DestroyObject(region.eventIconGO);
+    }
+    #endregion
+
+    #region Yes/No
+    [Header("Yes or No Confirmation")]
+    [SerializeField] private GameObject yesNoGO;
+    [SerializeField] private GameObject yesNoCover;
+    [SerializeField] private TextMeshProUGUI yesNoHeaderLbl;
+    [SerializeField] private TextMeshProUGUI yesNoDescriptionLbl;
+    [SerializeField] private Button yesBtn;
+    [SerializeField] private Button noBtn;
+    public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null, bool showCover = false, int layer = 21) {
+        yesNoHeaderLbl.text = header;
+        yesNoDescriptionLbl.text = question;
+
+        yesBtn.onClick.RemoveAllListeners();
+        noBtn.onClick.RemoveAllListeners();
+        yesBtn.onClick.AddListener(HideYesNoConfirmation);
+        noBtn.onClick.AddListener(HideYesNoConfirmation);
+        if (onClickYesAction != null) {
+            yesBtn.onClick.AddListener(onClickYesAction.Invoke);
+        }
+        if (onClickNoAction != null) {
+            noBtn.onClick.AddListener(onClickNoAction.Invoke);
+        }
+        yesNoGO.SetActive(true);
+        yesNoGO.transform.SetSiblingIndex(layer);
+        yesNoCover.SetActive(showCover);
+    }
+    private void HideYesNoConfirmation() {
+        yesNoGO.SetActive(false);
     }
     #endregion
 }

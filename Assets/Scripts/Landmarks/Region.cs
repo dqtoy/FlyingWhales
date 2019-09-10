@@ -217,7 +217,13 @@ public class Region {
         }
     }
     public void SetAssignedMinion(Minion minion) {
+        Minion previouslyAssignedMinion = assignedMinion;
         assignedMinion = minion;
+        if (assignedMinion != null) {
+            mainLandmark.OnMinionAssigned(assignedMinion); //a new minion was assigned 
+        } else if (previouslyAssignedMinion != null) {
+            mainLandmark.OnMinionUnassigned(previouslyAssignedMinion); //a minion was unassigned
+        }
     }
     private void PerInvasionTick() {
         if (ticksInInvasion >= mainLandmark.invasionTicks) {
@@ -268,6 +274,8 @@ public class Region {
         demonicBuildingData = new DemonicLandmarkBuildingData();
         assignedMinion.SetAssignedRegion(null);
         SetAssignedMinion(null);
+
+        newLandmark.OnFinishedBuilding();
         Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, this);
     }
     #endregion
@@ -327,14 +335,14 @@ public class Region {
                     PlayerManager.Instance.player.LevelUpAllMinions();
                     PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "All your minions gained 1 level.");
                     break;
-                case LANDMARK_TYPE.FARM:
-                    PlayerManager.Instance.player.UnlockASummonSlotOrUpgradeExisting();
-                    break;
-                case LANDMARK_TYPE.MINES:
-                case LANDMARK_TYPE.FACTORY: //This is FACTORY
-                case LANDMARK_TYPE.WORKSHOP:
-                    PlayerManager.Instance.player.UnlockAnArtifactSlotOrUpgradeExisting();
-                    break;
+                //case LANDMARK_TYPE.FARM:
+                //    PlayerManager.Instance.player.UnlockASummonSlotOrUpgradeExisting();
+                //    break;
+                //case LANDMARK_TYPE.MINES:
+                //case LANDMARK_TYPE.FACTORY: //This is FACTORY
+                //case LANDMARK_TYPE.WORKSHOP:
+                //    PlayerManager.Instance.player.UnlockAnArtifactSlotOrUpgradeExisting();
+                //    break;
             }
             mainLandmark.ChangeLandmarkType(LANDMARK_TYPE.NONE);
         }

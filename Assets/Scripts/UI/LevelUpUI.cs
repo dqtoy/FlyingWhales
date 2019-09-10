@@ -119,14 +119,14 @@ public class LevelUpUI : MonoBehaviour {
             } else if (selectedObj is SummonSlot) {
                 SummonSlot summonSlot = selectedObj as SummonSlot;
                 if (summonSlot.isLocked) {
-                    PlayerManager.Instance.player.AdjustSummonSlot(1);
+                    PlayerManager.Instance.player.IncreaseSummonSlot();
                 } else {
                     summonSlot.LevelUp();
                 }
             } else if (selectedObj is ArtifactSlot) {
                 ArtifactSlot artifactSlot = selectedObj as ArtifactSlot;
                 if (artifactSlot.isLocked) {
-                    PlayerManager.Instance.player.AdjustArtifactSlot(1);
+                    PlayerManager.Instance.player.IncreaseArtifactSlot();
                 } else {
                     artifactSlot.LevelUp();
                 }

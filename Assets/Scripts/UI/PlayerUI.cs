@@ -206,12 +206,14 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Summon>(Signals.PLAYER_REMOVED_SUMMON, OnRemoveSummon);
         Messenger.AddListener<Summon>(Signals.PLAYER_PLACED_SUMMON, OnSummonUsed);
         Messenger.AddListener<SummonSlot>(Signals.PLAYER_GAINED_SUMMON_LEVEL, UpdateCurrentlySelectedSummonSlotLevel);
+        Messenger.AddListener<SummonSlot>(Signals.PLAYER_LOST_SUMMON_SLOT, OnPlayerLostSummonSlot);
 
         //Artifacts
         Messenger.AddListener<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, OnGainNewArtifact);
         Messenger.AddListener<Artifact>(Signals.PLAYER_REMOVED_ARTIFACT, OnRemoveArtifact);
         Messenger.AddListener<Artifact>(Signals.PLAYER_USED_ARTIFACT, OnUsedArtifact);
         Messenger.AddListener<ArtifactSlot>(Signals.PLAYER_GAINED_ARTIFACT_LEVEL, UpdateCurrentlySelectedArtifactSlotLevel);
+        Messenger.AddListener<ArtifactSlot>(Signals.PLAYER_LOST_ARTIFACT_SLOT, OnPlayerLostArtifactSlot);
 
         //Kill Count UI
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -483,7 +485,7 @@ public class PlayerUI : MonoBehaviour {
         SetDefenseGridCharactersFromPlayer();
     }
     public void OnClickConfirmCombatGrid() {
-        if(combatGridAssignerIcon.sprite == attackGridIconSprite) {
+        if (combatGridAssignerIcon.sprite == attackGridIconSprite) {
             attackSlot.OnClickConfirm();
         } else {
             defenseSlot.OnClickConfirm();
@@ -493,7 +495,7 @@ public class PlayerUI : MonoBehaviour {
         attackGridGO.SetActive(false);
     }
     private void OnDropOnAttackGrid(object obj, int index) {
-        if(obj is Character) {
+        if (obj is Character) {
             Character character = obj as Character;
             if (attackGridReference.IsCharacterInGrid(character)) {
                 attackGridSlots[index].PlaceObject(attackGridReference.slots[index].character);
@@ -618,7 +620,7 @@ public class PlayerUI : MonoBehaviour {
             } else if (previousMenu.Equals("faction")) {
                 UIManager.Instance.ShowFactionTokenMenu();
             }
-        } 
+        }
         //else if (menu is CharacterInfoUI || menu is TileObjectInfoUI) {
         //    HideActionButtons();
         //}
@@ -708,7 +710,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public IntelItem GetIntelItemWithIntel(Intel intel) {
         for (int i = 0; i < intelItems.Length; i++) {
-            if(intelItems[i].intel != null && intelItems[i].intel == intel) {
+            if (intelItems[i].intel != null && intelItems[i].intel == intel) {
                 return intelItems[i];
             }
         }
@@ -832,7 +834,7 @@ public class PlayerUI : MonoBehaviour {
         tempCurrentMinionLeaderPicker = null;
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             Minion minion = PlayerManager.Instance.player.minions[i];
-            if(minion != null) {
+            if (minion != null) {
                 GameObject go = GameObject.Instantiate(minionLeaderPickerPrefab, minionLeaderPickerParent.transform);
                 MinionLeaderPicker minionLeaderPicker = go.GetComponent<MinionLeaderPicker>();
                 minionLeaderPicker.SetMinion(minion);
@@ -842,7 +844,7 @@ public class PlayerUI : MonoBehaviour {
                         minionLeaderPicker.imgHighlight.gameObject.SetActive(true);
                         tempCurrentMinionLeaderPicker = minionLeaderPicker;
                     }
-                } else if(minion == PlayerManager.Instance.player.currentMinionLeader) {
+                } else if (minion == PlayerManager.Instance.player.currentMinionLeader) {
                     minionLeaderPicker.imgHighlight.gameObject.SetActive(true);
                     tempCurrentMinionLeaderPicker = minionLeaderPicker;
                 }
@@ -878,7 +880,7 @@ public class PlayerUI : MonoBehaviour {
 
         List<string> filteredDeadlySinClasses = new List<string>();
         foreach (KeyValuePair<string, DeadlySin> kvp in CharacterManager.Instance.deadlySins) {
-            if(kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.CONSTRUCT) || kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADE)) {
+            if (kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.CONSTRUCT) || kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADE)) {
                 filteredDeadlySinClasses.Add(kvp.Key);
             }
         }
@@ -887,7 +889,7 @@ public class PlayerUI : MonoBehaviour {
         minionClassName1 = filteredDeadlySinClasses[class1Index];
         filteredDeadlySinClasses.RemoveAt(class1Index);
 
-        if(CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADE)
+        if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADE)
             && CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.CONSTRUCT)) {
             minionClassName2 = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
         } else {
@@ -909,8 +911,8 @@ public class PlayerUI : MonoBehaviour {
             //    skirmishConfirmationGO.SetActive(true);
             //    ShowSelectMinionLeader();
             //} else {
-                tempCurrentMinionLeaderPicker = null;
-                OnClickYesCorruption();
+            tempCurrentMinionLeaderPicker = null;
+            OnClickYesCorruption();
             //}
         }
     }
@@ -919,7 +921,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnClickYesCorruption() {
         HideCorruptTileConfirmation();
-        if(tempCurrentMinionLeaderPicker != null) {
+        if (tempCurrentMinionLeaderPicker != null) {
             PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
         } else {
             //If story event, randomize minion leader, if not, keep current minion leader
@@ -978,13 +980,19 @@ public class PlayerUI : MonoBehaviour {
     private bool isSummoning = false; //if the player has clicked the summon button and is targetting a tile to place the summon on.
     private SummonSlot currentlySelectedSummonSlot; //the summon type that is currently shown in the UI
     private void UpdateSummonsInteraction() {
-        bool state = currentlySelectedSummonSlot!= null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed;
+        bool state = currentlySelectedSummonSlot != null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed;
         //summonCover.SetActive(!state);
         summonBtn.interactable = state && InteriorMapManager.Instance.isAnAreaMapShowing;
     }
+    private void OnPlayerLostSummonSlot(SummonSlot slot) {
+        UpdateSummonsInteraction();
+        if (currentlySelectedSummonSlot == slot) {
+            SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots.FirstOrDefault());
+        }
+    }
     public void OnGainNewSummon(Summon newSummon) {
         UpdateSummonsInteraction();
-        if (currentlySelectedSummonSlot.summon == null || currentlySelectedSummonSlot.summon == newSummon) {
+        if (currentlySelectedSummonSlot == null || currentlySelectedSummonSlot.summon == null || currentlySelectedSummonSlot.summon == newSummon) {
             SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.GetSummonSlotBySummon(newSummon));
         }
         //ShowNewObjectInfo(newSummon);
@@ -1037,7 +1045,7 @@ public class PlayerUI : MonoBehaviour {
         UpdateSummonsInteraction();
     }
     public void UpdateCurrentlySelectedSummonSlotLevel(SummonSlot summonSlot) {
-        if(currentlySelectedSummonSlot == summonSlot) {
+        if (currentlySelectedSummonSlot == summonSlot) {
             currentSummonLvlLbl.text = currentlySelectedSummonSlot.level.ToString();
         }
     }
@@ -1052,7 +1060,7 @@ public class PlayerUI : MonoBehaviour {
             } else if (next <= 0) {
                 next = currentSummonCount - 1;
             }
-            if(next < 0) {
+            if (next < 0) {
                 next = 0;
             }
             index = next;
@@ -1066,7 +1074,7 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     public void ShowSummonTooltip() {
-        if(currentlySelectedSummonSlot.summon != null) {
+        if (currentlySelectedSummonSlot.summon != null) {
             string header = currentlySelectedSummonSlot.summon.summonType.SummonName() + " <i>(Click to summon.)</i>";
             string message;
             switch (currentlySelectedSummonSlot.summon.summonType) {
@@ -1131,6 +1139,9 @@ public class PlayerUI : MonoBehaviour {
         isSummoning = false;
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
     }
+    public void SetSummonCoverState(bool state) {
+        summonCover.SetActive(state);
+    }
     #endregion
 
     #region Artifacts
@@ -1150,9 +1161,15 @@ public class PlayerUI : MonoBehaviour {
         //summonArtifactCover.SetActive(!state);
         summonArtifactBtn.interactable = state && InteriorMapManager.Instance.isAnAreaMapShowing;
     }
+    private void OnPlayerLostArtifactSlot(ArtifactSlot slot) {
+        UpdateArtifactsInteraction();
+        if (currentlySelectedArtifactSlot == slot) {
+            SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots.FirstOrDefault());
+        }
+    }
     private void OnGainNewArtifact(Artifact newArtifact) {
         UpdateArtifactsInteraction();
-        if (currentlySelectedArtifactSlot.artifact == null || currentlySelectedArtifactSlot.artifact == newArtifact) {
+        if (currentlySelectedArtifactSlot == null || currentlySelectedArtifactSlot.artifact == null || currentlySelectedArtifactSlot.artifact == newArtifact) {
             SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.GetArtifactSlotByArtifact(newArtifact));
         }
         //ShowNewObjectInfo(newArtifact);
@@ -1278,6 +1295,9 @@ public class PlayerUI : MonoBehaviour {
     private void CancelSummonArtifact() {
         isSummoningArtifact = false;
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+    }
+    public void SetArtifactCoverState(bool state) {
+        summonArtifactCover.SetActive(state);
     }
     #endregion
 
@@ -1545,4 +1565,3 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 }
-

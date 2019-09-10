@@ -227,9 +227,9 @@ public class StoryEventsManager : MonoBehaviour {
         } else if (string.Equals(effect.effectType, "Slot", System.StringComparison.OrdinalIgnoreCase)) {
             //Gain Slot
             if (string.Equals(effect.effectValue, "Summon", System.StringComparison.OrdinalIgnoreCase)) {
-                PlayerManager.Instance.player.AdjustSummonSlot(1);
+                PlayerManager.Instance.player.IncreaseSummonSlot();
             } else if(string.Equals(effect.effectValue, "Artifact", System.StringComparison.OrdinalIgnoreCase)) {
-                PlayerManager.Instance.player.AdjustArtifactSlot(1);
+                PlayerManager.Instance.player.IncreaseArtifactSlot();
             }
         }
     }

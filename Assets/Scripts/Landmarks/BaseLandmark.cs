@@ -46,7 +46,7 @@ public class BaseLandmark {
     #endregion
 
     public BaseLandmark() {
-        invasionTicks = 2;//GameManager.ticksPerDay
+        invasionTicks = GameManager.ticksPerDay;
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
@@ -116,6 +116,17 @@ public class BaseLandmark {
     public virtual void DestroyLandmark() {
         _location = null;
     }
+    public virtual void OnFinishedBuilding() { }
+    /// <summary>
+    /// What should happen when a minion is assigned to the region that this landmark is at?
+    /// </summary>
+    /// <param name="minion">The minion that was assigned.</param>
+    public virtual void OnMinionAssigned(Minion minion) { }
+    /// <summary>
+    /// What should happen when a minion has been unassigned from the region that this landmark is at?
+    /// </summary>
+    /// <param name="minion">The minion that was unassigned.</param>
+    public virtual void OnMinionUnassigned(Minion minion) { }
     #endregion
 
     #region Utilities

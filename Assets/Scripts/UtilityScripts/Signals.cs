@@ -252,6 +252,10 @@ public static class Signals {
     /// </summary>
     public static string PLAYER_REMOVED_SUMMON = "OnPlayerRemovedSummon";
     /// <summary>
+    /// Parameters (SummonSlot lostSummonSlot)
+    /// </summary>
+    public static string PLAYER_LOST_SUMMON_SLOT = "OnPlayerLostSummonSlot";
+    /// <summary>
     /// Parameters (Summon placedSummon)
     /// </summary>
     public static string PLAYER_PLACED_SUMMON = "OnPlayerPlacedSummon";
@@ -264,6 +268,10 @@ public static class Signals {
     /// Parameters (Artifact removedArtifact)
     /// </summary>
     public static string PLAYER_REMOVED_ARTIFACT = "OnPlayerRemovedArtifact";
+    /// <summary>
+    /// Parameters (ArtifactSlot lostArtifactSlot)
+    /// </summary>
+    public static string PLAYER_LOST_ARTIFACT_SLOT = "OnPlayerLostArtifactSlot";
     public static string PLAYER_USED_ARTIFACT = "OnPlayerUsedArtifact";
     /// <summary>
     /// Parameters (Area invadedArea)

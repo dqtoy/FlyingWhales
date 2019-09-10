@@ -77,8 +77,8 @@ public class Player : ILeader {
         summonSlots = new List<SummonSlot>();
         artifactSlots = new List<ArtifactSlot>();
         interventionAbilitySlots = new PlayerJobActionSlot[MAX_INTERVENTION_ABILITIES];
-        maxSummonSlots = 1;
-        maxArtifactSlots = 1;
+        maxSummonSlots = 0;
+        maxArtifactSlots = 0;
         //InitializeNewInterventionAbilityCycle();
         ConstructAllInterventionAbilitySlots();
         //ConstructAllSummonSlots();
@@ -389,165 +389,7 @@ public class Player : ILeader {
     }
     #endregion
 
-    //#region Role Slots
-    //public void ConstructRoleSlots() {
-    //    roleSlots = new Dictionary<JOB, PlayerJobData>();
-    //    roleSlots.Add(JOB.SPY, new PlayerJobData(JOB.SPY));
-    //    roleSlots.Add(JOB.SEDUCER, new PlayerJobData(JOB.SEDUCER));
-    //    roleSlots.Add(JOB.DIPLOMAT, new PlayerJobData(JOB.DIPLOMAT));
-    //    roleSlots.Add(JOB.INSTIGATOR, new PlayerJobData(JOB.INSTIGATOR));
-    //    roleSlots.Add(JOB.DEBILITATOR, new PlayerJobData(JOB.DEBILITATOR));
-    //}
-    //public List<JOB> GetValidJobForCharacter(Character character) {
-    //    List<JOB> validJobs = new List<JOB>();
-    //    if (character.minion != null) {
-    //        switch (character.characterClass.className) {
-    //            case "Envy":
-    //                validJobs.Add(JOB.SPY);
-    //                validJobs.Add(JOB.SEDUCER);
-    //                break;
-    //            case "Lust":
-    //                validJobs.Add(JOB.DIPLOMAT);
-    //                validJobs.Add(JOB.SEDUCER);
-    //                break;
-    //            case "Pride":
-    //                validJobs.Add(JOB.DIPLOMAT);
-    //                validJobs.Add(JOB.INSTIGATOR);
-    //                break;
-    //            case "Greed":
-    //                validJobs.Add(JOB.SPY);
-    //                validJobs.Add(JOB.INSTIGATOR);
-    //                break;
-    //            case "Guttony":
-    //                validJobs.Add(JOB.SPY);
-    //                validJobs.Add(JOB.SEDUCER);
-    //                break;
-    //            case "Wrath":
-    //                validJobs.Add(JOB.INSTIGATOR);
-    //                validJobs.Add(JOB.DEBILITATOR);
-    //                break;
-    //            case "Sloth":
-    //                validJobs.Add(JOB.DEBILITATOR);
-    //                validJobs.Add(JOB.DIPLOMAT);
-    //                break;
-    //        }
-    //    } else {
-    //        switch (character.race) {
-    //            case RACE.HUMANS:
-    //                validJobs.Add(JOB.DIPLOMAT);
-    //                validJobs.Add(JOB.SEDUCER);
-    //                break;
-    //            case RACE.ELVES:
-    //                validJobs.Add(JOB.SPY);
-    //                validJobs.Add(JOB.DIPLOMAT);
-    //                break;
-    //            case RACE.GOBLIN:
-    //                validJobs.Add(JOB.INSTIGATOR);
-    //                validJobs.Add(JOB.SEDUCER);
-    //                break;
-    //            case RACE.FAERY:
-    //                validJobs.Add(JOB.SPY);
-    //                validJobs.Add(JOB.DEBILITATOR);
-    //                break;
-    //            case RACE.SKELETON:
-    //                validJobs.Add(JOB.DEBILITATOR);
-    //                validJobs.Add(JOB.INSTIGATOR);
-    //                break;
-    //        }
-    //    }
-    //    return validJobs;
-    //}
-    //public bool CanAssignCharacterToJob(JOB job, Character character) {
-    //    List<JOB> jobs = GetValidJobForCharacter(character);
-    //    return jobs.Contains(job);
-    //}
-    //public bool CanAssignCharacterToAttack(Character character) {
-    //    return GetCharactersCurrentJob(character) == JOB.NONE && !defenseGrid.IsCharacterInGrid(character);
-    //}
-    //public bool CanAssignCharacterToDefend(Character character) {
-    //    return GetCharactersCurrentJob(character) == JOB.NONE && !attackGrid.IsCharacterInGrid(character);
-    //}
-    //public void AssignCharacterToJob(JOB job, Character character) {
-    //    if (!roleSlots.ContainsKey(job)) {
-    //        Debug.LogWarning("There is something trying to assign a character to " + job.ToString() + " but the player doesn't have a slot for it.");
-    //        return;
-    //    }
-    //    if (roleSlots[job].assignedCharacter != null) {
-    //        UnassignCharacterFromJob(job);
-    //    }
-    //    JOB charactersCurrentJob = GetCharactersCurrentJob(character);
-    //    if (charactersCurrentJob != JOB.NONE) {
-    //        UnassignCharacterFromJob(charactersCurrentJob);
-    //    }
-
-    //    roleSlots[job].AssignCharacter(character);
-    //    //Messenger.Broadcast(Signals.MINION_ASSIGNED_TO_JOB, job, character);
-    //}
-    //public void UnassignCharacterFromJob(JOB job) {
-    //    if (!roleSlots.ContainsKey(job)) {
-    //        Debug.LogWarning("There is something trying to unassign a character from " + job.ToString() + " but the player doesn't have a slot for it.");
-    //        return;
-    //    }
-    //    if (roleSlots[job] == null) {
-    //        return; //ignore command
-    //    }
-    //    Character character = roleSlots[job].assignedCharacter;
-    //    roleSlots[job].AssignCharacter(null);
-    //    //Messenger.Broadcast(Signals.MINION_UNASSIGNED_FROM_JOB, job, character);
-    //}
-    //public void AssignAttackGrid(CombatGrid grid) {
-    //    attackGrid = grid;
-    //}
-    //public void AssignDefenseGrid(CombatGrid grid) {
-    //    defenseGrid = grid;
-    //}
-    //public JOB GetCharactersCurrentJob(Character character) {
-    //    foreach (KeyValuePair<JOB, PlayerJobData> keyValuePair in roleSlots) {
-    //        if (keyValuePair.Value.assignedCharacter != null && keyValuePair.Value.assignedCharacter.id == character.id) {
-    //            return keyValuePair.Key;
-    //        }
-    //    }
-    //    return JOB.NONE;
-    //}
-    //public bool HasCharacterAssignedToJob(JOB job) {
-    //    return roleSlots[job].assignedCharacter != null;
-    //}
-    ////private List<Character> GetValidCharactersForJob(JOB job) {
-    ////    List<Character> valid = new List<Character>();
-    ////    for (int i = 0; i < minions.Count; i++) {
-    ////        Character currMinion = minions[i].character;
-    ////        if (CanAssignCharacterToJob(job, currMinion) && GetCharactersCurrentJob(currMinion) == JOB.NONE) {
-    ////            valid.Add(currMinion);
-    ////        }
-    ////    }
-    ////    return valid;
-    ////}
-    ////public void PreAssignJobSlots() {
-    ////    foreach (KeyValuePair<JOB, PlayerJobData> kvp in roleSlots) {
-    ////        List<Character> validCharacters = GetValidCharactersForJob(kvp.Key);
-    ////        if (validCharacters.Count > 0) {
-    ////            Character chosenCharacter = validCharacters[UnityEngine.Random.Range(0, validCharacters.Count)];
-    ////            AssignCharacterToJob(kvp.Key, chosenCharacter);
-    ////        } else {
-    ////            Debug.LogWarning("Could not pre assign any character to job: " + kvp.Key.ToString());
-    ////        }
-    ////    }
-    ////}
-    //#endregion
-
     #region Role Actions
-    //public List<PlayerJobAction> GetJobActionsThatCanTarget(JOB job, IPointOfInterest target) {
-    //    List<PlayerJobAction> actions = new List<PlayerJobAction>();
-    //    if (HasCharacterAssignedToJob(job)) {
-    //        for (int i = 0; i < roleSlots[job].jobActions.Count; i++) {
-    //            PlayerJobAction currAction = roleSlots[job].jobActions[i];
-    //            if (currAction.CanTarget(target)) {
-    //                actions.Add(currAction);
-    //            }
-    //        }
-    //    }
-    //    return actions;
-    //}
     public PlayerJobAction currentActivePlayerJobAction { get; private set; }
     public void SetCurrentlyActivePlayerJobAction(PlayerJobAction action) {
         PlayerJobAction previousActiveAction = currentActivePlayerJobAction;
@@ -637,43 +479,6 @@ public class Player : ILeader {
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
         //Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
-    //public string GetInterventionAbilityDescription(PlayerJobAction action) {
-    //    if (action is ShareIntel) {
-    //        return "The Diplomat will reach out to a character and share a piece of information with them.";
-    //    } else if (action is RileUp) {
-    //        return "The Instigator will rile up a character and goad him into attacking people in a specified location. This action only works for beasts.";
-    //    } else if (action is Provoke) {
-    //        return "The Instigator will provoke a character into attacking one of his/her enemies. This is more likely to succeed if he/she is in a bad mood.";
-    //    } else if (action is Destroy) {
-    //        return "Remove this object from the world.";
-    //    } else if (action is Disable) {
-    //        return "Prevent characters from using this object for 4 hours.";
-    //    } else if (action is AccessMemories) {
-    //        return "Access the memories of a character.";
-    //    } else if (action is Abduct) {
-    //        return "The Instigator will goad a character into abducting a specified character. This action only works on goblins and skeletons.";
-    //    } else if (action is Zap) {
-    //        return "Temporarily prevents a character from moving for 30 minutes.";
-    //    } else if (action is Jolt) {
-    //        return "Temporarily speeds up the movement of a character.";
-    //    } else if (action is Spook) {
-    //        return "Temporarily forces a character to flee from all other nearby characters.";
-    //    } else if (action is Enrage) {
-    //        return "Temporarily enrages a character.";
-    //    } else if (action is CorruptLycanthropy) {
-    //        return "Inflict a character with Lycanthropy, which gives a character a chance to transform into a wild wolf whenever he/she sleeps.";
-    //    } else if (action is CorruptKleptomaniac) {
-    //        return "Inflict a character with Kleptomania, which will make that character enjoy stealing other people's items.";
-    //    } else if (action is CorruptVampiric) {
-    //        return "Inflict a character with Vampirism, which will make that character need blood for sustenance.";
-    //    } else if (action is CorruptUnfaithful) {
-    //        return "Make a character prone to have affairs.";
-    //    } else if (action is RaiseDead) {
-    //        return "Return a character to life.";
-    //    } else {
-    //        return action.GetType().ToString();
-    //    }
-    //}
     #endregion
 
     #region Intel
@@ -955,11 +760,37 @@ public class Player : ILeader {
     //        }
     //    }
     //}
-    public void GainSummonSlot(bool showUI = true) {
+    private void GainSummonSlot(bool showUI = true) {
         summonSlots.Add(new SummonSlot());
         if (showUI) {
             PlayerUI.Instance.ShowGeneralConfirmation("New Summon Slot", "You gained a new summon slot!");
         }
+    }
+    private void LoseSummonSlot() {
+        SummonSlot unusedSlot;
+        if (TryGetUnusedSummonSlot(out unusedSlot)) {
+            //lose the unused slot.
+            LoseSummonSlot(unusedSlot, true);
+        } else {
+            //no unused slot, show UI to pick slot to be discarded.
+            UIManager.Instance.ShowClickableObjectPicker(summonSlots, ShowDiscardSummonConfirmation, title: "Discard a summon slot.", showCover: true, layer: 25, closable: false);
+        }
+    }
+    private void LoseSummonSlot(SummonSlot slot, bool showUI = false) {
+        if (summonSlots.Remove(slot)) {
+            PlayerUI.Instance.ShowGeneralConfirmation("Lost Summon Slot", "You lost a summon slot!");
+            if (slot.summon != null) {
+                ClearSummonData(slot.summon);
+            }
+            Messenger.Broadcast(Signals.PLAYER_LOST_SUMMON_SLOT, slot);
+        }
+    }
+    private void ShowDiscardSummonConfirmation(SummonSlot slot) {
+        UIManager.Instance.ShowYesNoConfirmation("Discard summon slot", "Are you sure you want to discard your " + slot.summon.summonType.SummonName() + " summon?", () => OnClickYesDiscardSummon(slot), layer: 26);
+    }
+    private void OnClickYesDiscardSummon(SummonSlot slot) {
+        LoseSummonSlot(slot);
+        UIManager.Instance.HideObjectPicker();
     }
     public void GainSummon(SUMMON_TYPE type, int level = 1, bool showNewSummonUI = false) {
         Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, playerFaction, playerArea);
@@ -967,7 +798,11 @@ public class Player : ILeader {
         GainSummon(newSummon, showNewSummonUI);
     }
     public void GainSummon(Summon summon, bool showNewSummonUI = false) {
-        if (GetTotalSummonsCount() < maxSummonSlots) {
+        if (maxSummonSlots == 0) {
+            //no summon slots yet
+            PlayerUI.Instance.ShowGeneralConfirmation("New Summon", "You gained a new summon but do not yet have a summon slot! " + summon.summonType.SummonName() + " will be discarded.");
+            RejectSummon(summon);
+        } else if (GetTotalSummonsCount() < maxSummonSlots) {
             AddSummon(summon, showNewSummonUI);
         } else {
             Debug.LogWarning("Max summons has been reached!");
@@ -1094,15 +929,22 @@ public class Player : ILeader {
             }
         }
     }
-    public void AdjustSummonSlot(int adjustment) {
-        maxSummonSlots += adjustment;
+    public void IncreaseSummonSlot() {
+        maxSummonSlots += 1;
         maxSummonSlots = Mathf.Max(maxSummonSlots, 0);
-        //TODO: validate if adjusted max summons can accomodate current summons
+        //validate if adjusted max summons can accomodate current summons
         if (summonSlots.Count < maxSummonSlots) {
             //add new summon slot
             GainSummonSlot();
-        } else {
-            //TODO: remove summon slot
+        }
+    }
+    public void DecreaseSummonSlot() {
+        maxSummonSlots -= 1;
+        maxSummonSlots = Mathf.Max(maxSummonSlots, 0);
+        //validate if adjusted max summons can accomodate current summons
+        if (summonSlots.Count > maxSummonSlots) {
+            //remove summon slot
+            LoseSummonSlot();
         }
     }
     public SummonSlot GetSummonSlotBySummon(Summon summon) {
@@ -1151,6 +993,17 @@ public class Player : ILeader {
         //    }
         //}
     }
+    private bool TryGetUnusedSummonSlot(out SummonSlot unusedSlot) {
+        for (int i = 0; i < summonSlots.Count; i++) {
+            SummonSlot currSlot = summonSlots[i];
+            if (currSlot.summon == null) {
+                unusedSlot = currSlot;
+                return true;
+            }
+        }
+        unusedSlot = null; //no unused slot
+        return false;
+    }
     #endregion
 
     #region Artifacts
@@ -1161,18 +1014,44 @@ public class Player : ILeader {
     //        }
     //    }
     //}
-    public void GainArtifactSlot(bool showUI = true) {
+    private void GainArtifactSlot(bool showUI = true) {
         artifactSlots.Add(new ArtifactSlot());
         if (showUI) {
             PlayerUI.Instance.ShowGeneralConfirmation("New Artifact Slot", "You gained a new artifact slot!");
         }
+    }
+    private void LoseArtifactSlot() {
+        ArtifactSlot unusedSlot;
+        if (TryGetUnusedArtifactSlot(out unusedSlot)) {
+            //lose the unused slot.
+            LoseArtifactSlot(unusedSlot, true);
+        } else {
+            //no unused slot, show UI to pick slot to be discarded.
+            UIManager.Instance.ShowClickableObjectPicker(artifactSlots, ShowDiscardArtifactConfirmation, title: "Discard an artifact slot.", showCover: true, layer: 25, closable: false);
+        }
+    }
+    private void LoseArtifactSlot(ArtifactSlot slot, bool showUI = false) {
+        if (artifactSlots.Remove(slot)) {
+            PlayerUI.Instance.ShowGeneralConfirmation("Lost Artifact Slot", "You lost an artifact slot!");
+            Messenger.Broadcast(Signals.PLAYER_LOST_ARTIFACT_SLOT, slot);
+        }
+    }
+    private void ShowDiscardArtifactConfirmation(ArtifactSlot slot) {
+        UIManager.Instance.ShowYesNoConfirmation("Discard artifact slot", "Are you sure you want to discard your " + slot.artifact.name + "?", () => OnClickYesDiscardArtifact(slot), layer: 26);
+    }
+    private void OnClickYesDiscardArtifact(ArtifactSlot slot) {
+        LoseArtifactSlot(slot);
+        UIManager.Instance.HideObjectPicker();
     }
     public void GainArtifact(ARTIFACT_TYPE type, bool showNewArtifactUI = false) {
         Artifact newArtifact = PlayerManager.Instance.CreateNewArtifact(type);
         GainArtifact(newArtifact, showNewArtifactUI);
     }
     public void GainArtifact(Artifact artifact, bool showNewArtifactUI = false) {
-        if (GetTotalArtifactCount() < maxArtifactSlots) {
+        if (maxArtifactSlots == 0) {
+            //no artifact slots yet.
+            PlayerUI.Instance.ShowGeneralConfirmation("New Artifact", "You gained a new artifact but do not yet have an artifact slot! " + artifact.name + " will be discarded.");
+        } else if (GetTotalArtifactCount() < maxArtifactSlots) {
             AddArtifact(artifact, showNewArtifactUI);
         } else {
             Debug.LogWarning("Max artifacts has been reached!");
@@ -1315,18 +1194,24 @@ public class Player : ILeader {
             }
         }
     }
-    public void AdjustArtifactSlot(int adjustment) {
-        maxArtifactSlots += adjustment;
+    public void IncreaseArtifactSlot() {
+        maxArtifactSlots += 1;
         maxArtifactSlots = Mathf.Max(maxArtifactSlots, 0);
-        //TODO: validate if adjusted max artifacts can accomodate current summons
+        //validate if adjusted max artifacts can accomodate current summons
         if (artifactSlots.Count < maxArtifactSlots) {
             //add new artifact slot
             GainArtifactSlot();
-        } else {
-            //TODO: remove artifact slot
         }
     }
-
+    public void DecreaseArtifactSlot() {
+        maxArtifactSlots -= 1;
+        maxArtifactSlots = Mathf.Max(maxArtifactSlots, 0);
+        //validate if adjusted max artifacts can accomodate current summons
+        if (artifactSlots.Count > maxArtifactSlots) {
+            //remove artifact slot
+            LoseArtifactSlot();
+        }
+    }
     public ArtifactSlot GetArtifactSlotByArtifact(Artifact artifact) {
         for (int i = 0; i < artifactSlots.Count; i++) {
             if(artifactSlots[i].artifact == artifact) {
@@ -1371,6 +1256,17 @@ public class Player : ILeader {
         //        PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "artifact_slot");
         //    }
         //}
+    }
+    private bool TryGetUnusedArtifactSlot(out ArtifactSlot unusedSlot) {
+        for (int i = 0; i < artifactSlots.Count; i++) {
+            ArtifactSlot currSlot = artifactSlots[i];
+            if (currSlot.artifact == null) {
+                unusedSlot = currSlot;
+                return true;
+            }
+        }
+        unusedSlot = null; //no unused slot
+        return false;
     }
     #endregion
 

@@ -48,6 +48,9 @@ public class AreaInfoUI : UIMenu {
     public GameObject normalContentGO;
     public PlayerBuildLandmarkUI playerBuildLandmarkUI;
     public PlayerResearchUI playerResearchUI;
+    [SerializeField] private GameObject cryptGO;
+    [SerializeField] private GameObject kennelGO;
+
 
     private CombatGrid combatGrid;
 
@@ -551,6 +554,8 @@ public class AreaInfoUI : UIMenu {
         HideNormalContent();
         HidePlayerBuildLandmarkUI();
         HidePlayerResearchUI();
+        HideCryptUI();
+        HideKennelUI();
 
         if (activeTile.isCorrupted) {
             //The things you can do to corrupted landmarks
@@ -560,6 +565,12 @@ public class AreaInfoUI : UIMenu {
                     return;
                 } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_SPIRE) {
                     ShowPlayerResearchUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_CRYPT) {
+                    ShowCryptUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_KENNEL) {
+                    ShowKennelUI();
                     return;
                 }
             }
@@ -619,6 +630,24 @@ public class AreaInfoUI : UIMenu {
     }
     private void UpdatePlayerResearchUI() {
         playerResearchUI.UpdatePlayerResearchUI();
+    }
+    #endregion
+
+    #region Crypt UI
+    private void ShowCryptUI() {
+        cryptGO.SetActive(true);
+    }
+    private void HideCryptUI() {
+        cryptGO.SetActive(false);
+    }
+    #endregion
+
+    #region Kennel UI
+    private void ShowKennelUI() {
+        cryptGO.SetActive(true);
+    }
+    private void HideKennelUI() {
+        cryptGO.SetActive(false);
     }
     #endregion
 }
