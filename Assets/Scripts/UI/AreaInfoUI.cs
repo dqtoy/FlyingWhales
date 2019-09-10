@@ -48,6 +48,7 @@ public class AreaInfoUI : UIMenu {
     public GameObject normalContentGO;
     public PlayerBuildLandmarkUI playerBuildLandmarkUI;
     public PlayerResearchUI playerResearchUI;
+    public PlayerDelayDivineInterventionUI playerDelayDivineInterventionUI;
     [SerializeField] private GameObject cryptGO;
     [SerializeField] private GameObject kennelGO;
 
@@ -556,6 +557,7 @@ public class AreaInfoUI : UIMenu {
         HidePlayerResearchUI();
         HideCryptUI();
         HideKennelUI();
+        HidePlayerDelayDivineInterventionUI();
 
         if (activeTile.isCorrupted) {
             //The things you can do to corrupted landmarks
@@ -571,6 +573,9 @@ public class AreaInfoUI : UIMenu {
                     return;
                 } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_KENNEL) {
                     ShowKennelUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
+                    ShowPlayerDelayDivineInterventionUI();
                     return;
                 }
             }
@@ -591,6 +596,8 @@ public class AreaInfoUI : UIMenu {
             UpdatePlayerResearchUI();
         } else if(normalContentGO.activeSelf) {
             //UpdateItems();
+        } else if (playerDelayDivineInterventionUI.gameObject.activeSelf) {
+            UpdatePlayerDelayDivineInterventionUI();
         }
     }
     #endregion
@@ -630,6 +637,18 @@ public class AreaInfoUI : UIMenu {
     }
     private void UpdatePlayerResearchUI() {
         playerResearchUI.UpdatePlayerResearchUI();
+    }
+    #endregion
+
+    #region Player Delay Divine Intervention Content
+    private void ShowPlayerDelayDivineInterventionUI() {
+        playerDelayDivineInterventionUI.ShowPlayerDelayDivineInterventionUI(activeTile.landmarkOnTile as TheProfane);
+    }
+    private void HidePlayerDelayDivineInterventionUI() {
+        playerDelayDivineInterventionUI.HidePlayerDelayDivineInterventionUI();
+    }
+    private void UpdatePlayerDelayDivineInterventionUI() {
+        playerDelayDivineInterventionUI.UpdatePlayerDelayDivineInterventionUI();
     }
     #endregion
 

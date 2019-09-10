@@ -39,6 +39,9 @@ public class LandmarkManager : MonoBehaviour {
 
     public Area enemyOfPlayerArea { get; private set; }
 
+    //The Profane
+    public const int DELAY_DIVINE_INTERVENTION_DURATION = 144;
+
     #region Monobehaviours
     private void Awake() {
         Instance = this;

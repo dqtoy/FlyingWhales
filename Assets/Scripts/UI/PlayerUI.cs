@@ -825,6 +825,7 @@ public class PlayerUI : MonoBehaviour {
         }
         startingAbilities = null;
         UIManager.Instance.SetTimeControlsState(true);
+        PlayerManager.Instance.player.StartDivineIntervention();
         //PlayerManager.Instance.player.StartResearchNewInterventionAbility();
     }
     private void ShowSelectMinionLeader() {

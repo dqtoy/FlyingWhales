@@ -36,6 +36,7 @@ public class Player : ILeader {
     public Faction currentTargetFaction { get; private set; } //the current faction that the player is targeting.
     public PlayerJobActionSlot[] interventionAbilitySlots { get; private set; }
     public Region invadingRegion { get; private set; }
+    public int currentDivineInterventionTick { get; private set; }
     //public int currentInterventionAbilityTimerTick { get; private set; }
     //public int newInterventionAbilityTimerTicks { get; private set; }
     //public int currentNewInterventionAbilityCycleIndex { get; private set; }
@@ -1595,6 +1596,43 @@ public class Player : ILeader {
     //    else if (currentNewInterventionAbilityCycleIndex == 3) return 1;
     //    return 3;
     //}
+    #endregion
+
+    #region Divine Intervention
+    public void StartDivineIntervention() {
+        currentDivineInterventionTick = PlayerManager.DIVINE_INTERVENTION_DURATION;
+        TimerHubUI.Instance.AddItem("Until Divine Intervention", currentDivineInterventionTick, null);
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickDivineIntervention);
+    }
+    public void LoadDivineIntervention(SaveDataPlayer data) {
+        currentDivineInterventionTick = data.currentDivineInterventionTick;
+        if(currentDivineInterventionTick > 0) {
+            TimerHubUI.Instance.AddItem("Until Divine Intervention", currentDivineInterventionTick, null);
+            Messenger.AddListener(Signals.TICK_STARTED, PerTickDivineIntervention);
+        }
+    }
+    public void AdjustDivineInterventionDuration(int amount) {
+        if (currentDivineInterventionTick > 0) {
+            currentDivineInterventionTick += amount;
+            TimerHubUI.Instance.RemoveItem("Until Divine Intervention");
+            if (currentDivineInterventionTick > 0) {
+                TimerHubUI.Instance.AddItem("Until Divine Intervention", currentDivineInterventionTick, null);
+            } else {
+                currentDivineInterventionTick = 0;
+                //TODO: What happens if divine intervention happens
+            }
+        } else {
+            Debug.LogError("Cannot adjust divine intervention duration becuuase it is already done!");
+        }
+    }
+    private void PerTickDivineIntervention() {
+        currentDivineInterventionTick--;
+        if(currentDivineInterventionTick <= 0) {
+            currentDivineInterventionTick = 0;
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickDivineIntervention);
+            //TODO: What happens if divine intervention happens
+        }
+    }
     #endregion
 }
 
