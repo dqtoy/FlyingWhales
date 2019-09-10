@@ -50429,11 +50429,11 @@ MonoBehaviour:
     lineCount: 0
     pageCount: 0
     materialCount: 1
-  m_havePropertiesChanged: 1
+  m_havePropertiesChanged: 0
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 1
+  m_isInputParsingRequired: 0
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
@@ -81910,12 +81910,12 @@ MonoBehaviour:
   interiorMapLoadingGO: {fileID: 1005575185}
   interiorMapLoadingBGImage: {fileID: 1005575187}
   interiorMapLoadingDetailsGO: {fileID: 1163511682}
-  yesNoGO: {fileID: 1888469451}
-  yesNoCover: {fileID: 890882650}
-  yesNoHeaderLbl: {fileID: 1440462253}
-  yesNoDescriptionLbl: {fileID: 424905852}
-  yesBtn: {fileID: 1898515030}
-  noBtn: {fileID: 1861502487}
+  yesNoGO: {fileID: 0}
+  yesNoCover: {fileID: 0}
+  yesNoHeaderLbl: {fileID: 0}
+  yesNoDescriptionLbl: {fileID: 0}
+  yesBtn: {fileID: 0}
+  noBtn: {fileID: 0}
 --- !u!114 &1538653386
 MonoBehaviour:
   m_ObjectHideFlags: 0

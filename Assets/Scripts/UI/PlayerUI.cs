@@ -893,6 +893,11 @@ public class PlayerUI : MonoBehaviour {
             && CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.CONSTRUCT)) {
             minionClassName2 = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
         } else {
+            if(CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADE)) {
+                filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.CONSTRUCT)).ToList();
+            }else if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.CONSTRUCT)) {
+                filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.INVADE)).ToList();
+            }
             minionClassName2 = filteredDeadlySinClasses[UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count)];
         }
     }

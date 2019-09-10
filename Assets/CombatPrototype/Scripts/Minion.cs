@@ -67,11 +67,11 @@ public class Minion {
     //    minionItem.SetEnabledState(state);
     //}
     private void SetRandomResearchInterventionAbilities() {
+        interventionAbilitiesToResearch = new List<INTERVENTION_ABILITY>();
         INTERVENTION_ABILITY_CATEGORY category = deadlySin.GetInterventionAbilityCategory();
         if(category != INTERVENTION_ABILITY_CATEGORY.NONE) {
             List<INTERVENTION_ABILITY> possibleAbilities = PlayerManager.Instance.GetAllInterventionAbilityByCategory(category);
             if(possibleAbilities.Count > 0) {
-                interventionAbilitiesToResearch = new List<INTERVENTION_ABILITY>();
 
                 int index1 = UnityEngine.Random.Range(0, possibleAbilities.Count);
                 interventionAbilitiesToResearch.Add(possibleAbilities[index1]);

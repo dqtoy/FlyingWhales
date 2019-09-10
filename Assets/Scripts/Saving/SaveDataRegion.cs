@@ -24,6 +24,9 @@ public class SaveDataRegion {
     //public int invadingMinionID;
     public DemonicLandmarkBuildingData demonicBuildingData;
 
+    //public Minion assignedMinion - NOTE: Minion assigned for the region is already saved and loaded in SaveDataMinion. It is not saved and loaded here because there will be redundancy
+    //SEE SaveDataMinion
+
     public void Save(Region region) {
         id = region.id;
         name = region.name;
