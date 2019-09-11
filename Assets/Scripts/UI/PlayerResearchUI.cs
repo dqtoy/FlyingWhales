@@ -28,6 +28,8 @@ public class PlayerResearchUI : MonoBehaviour {
         this.spire = spire;
 
         if (spire.interventionAbilityToResearch == INTERVENTION_ABILITY.NONE) {
+            chosenMinion = null;
+            chosenAbility = INTERVENTION_ABILITY.NONE;
             researchBtn.interactable = false;
             researchProgress.fillAmount = 0;
             minionName.gameObject.SetActive(false);
@@ -50,6 +52,9 @@ public class PlayerResearchUI : MonoBehaviour {
         gameObject.SetActive(false);
     }
     public void OnClickResearch() {
+        spire.tileLocation.region.SetAssignedMinion(chosenMinion);
+        chosenMinion.SetAssignedRegion(spire.tileLocation.region);
+        spire.StartResearchNewInterventionAbility(chosenAbility, 0);
         //currentTile.region.StartBuildingStructure(chosenLandmark, chosenMinion);
         UpdateResearchButton();
         UpdateSelectMinionBtn();

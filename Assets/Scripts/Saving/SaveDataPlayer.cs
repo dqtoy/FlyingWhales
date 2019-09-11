@@ -21,6 +21,7 @@ public class SaveDataPlayer {
 
     public int invadingRegionID;
 
+    public int currentDivineInterventionTick;
     //public int currentInterventionAbilityTimerTick;
     //public int currentNewInterventionAbilityCycleIndex;
     //public INTERVENTION_ABILITY interventionAbilityToResearch;
@@ -32,6 +33,7 @@ public class SaveDataPlayer {
         threat = player.threat;
         maxSummonSlots = player.maxSummonSlots;
         maxArtifactSlots = player.maxArtifactSlots;
+        currentDivineInterventionTick = player.currentDivineInterventionTick;
         //isNotFirstResearch = player.isNotFirstResearch;
 
         minions = new List<SaveDataMinion>();
@@ -76,6 +78,7 @@ public class SaveDataPlayer {
     }
     public void Load() {
         PlayerManager.Instance.InitializePlayer(this);
+        PlayerManager.Instance.player.LoadDivineIntervention(this);
     }
     public void LoadInvasion(Save save) {
         if (invadingRegionID != -1) {

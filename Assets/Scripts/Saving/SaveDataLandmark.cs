@@ -25,7 +25,10 @@ public class SaveDataLandmark {
 
         
     }
+    public virtual void LoadSpecificLandmarkData(BaseLandmark landmark) { }
+
     public void Load(HexTile tile) {
         BaseLandmark landmark = tile.CreateLandmarkOfType(this);
+        LoadSpecificLandmarkData(landmark);
     }
 }

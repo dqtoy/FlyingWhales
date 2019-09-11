@@ -10,6 +10,8 @@ public class LandmarkManager : MonoBehaviour {
 
     public static LandmarkManager Instance = null;
     public static readonly int Max_Connections = 3;
+    public const int DELAY_DIVINE_INTERVENTION_DURATION = 144;
+    public const int SUMMON_MINION_DURATION = 576;
 
     public int initialLandmarkCount;
 
@@ -38,6 +40,11 @@ public class LandmarkManager : MonoBehaviour {
     [SerializeField] private GameObject landmarkConnectionPrefab;
 
     public Area enemyOfPlayerArea { get; private set; }
+
+    //The Profane
+
+
+    //The Portal
 
     #region Monobehaviours
     private void Awake() {

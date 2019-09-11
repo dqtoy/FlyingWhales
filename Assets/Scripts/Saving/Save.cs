@@ -55,7 +55,14 @@ public class Save {
         if(landmarkSaves == null) {
             landmarkSaves = new List<SaveDataLandmark>();
         }
-        SaveDataLandmark newSaveData = new SaveDataLandmark();
+        var typeName = "SaveData" + landmark.GetType().ToString();
+        System.Type type = System.Type.GetType(typeName);
+        SaveDataLandmark newSaveData = null;
+        if (type != null) {
+            newSaveData = System.Activator.CreateInstance(type) as SaveDataLandmark;
+        } else {
+            newSaveData = new SaveDataLandmark();
+        }
         newSaveData.Save(landmark);
         SortAddSaveDataLandmark(newSaveData);
     }

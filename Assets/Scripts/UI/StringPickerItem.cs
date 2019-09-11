@@ -48,6 +48,9 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
             } else if (identifier == "intervention ability") {
                 iconImg.sprite = PlayerManager.Instance.GetJobActionSprite(str);
                 iconImg.gameObject.SetActive(true);
+            } else if (identifier == "minion") {
+                iconImg.sprite = CharacterManager.Instance.GetClassPortraitSprite(str);
+                iconImg.gameObject.SetActive(true);
             }
         }
     }
