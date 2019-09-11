@@ -7,7 +7,7 @@ using System.Linq;
 public class Player : ILeader {
 
     private const int MAX_INTEL = 3;
-    public const int MAX_MINIONS = 5;
+    public const int MAX_MINIONS = 6;
     public const int MAX_THREAT = 100;
     public readonly int MAX_INTERVENTION_ABILITIES = 4;
 
@@ -37,6 +37,7 @@ public class Player : ILeader {
     public PlayerJobActionSlot[] interventionAbilitySlots { get; private set; }
     public Region invadingRegion { get; private set; }
     public int currentDivineInterventionTick { get; private set; }
+    public string[] minionClassesToSummon { get; private set; }
     //public int currentInterventionAbilityTimerTick { get; private set; }
     //public int newInterventionAbilityTimerTicks { get; private set; }
     //public int currentNewInterventionAbilityCycleIndex { get; private set; }
@@ -78,10 +79,12 @@ public class Player : ILeader {
         summonSlots = new List<SummonSlot>();
         artifactSlots = new List<ArtifactSlot>();
         interventionAbilitySlots = new PlayerJobActionSlot[MAX_INTERVENTION_ABILITIES];
+        minionClassesToSummon = new string[3];
         maxSummonSlots = 0;
         maxArtifactSlots = 0;
         //InitializeNewInterventionAbilityCycle();
         ConstructAllInterventionAbilitySlots();
+        GenerateMinionClassesToSummon();
         //ConstructAllSummonSlots();
         //ConstructAllArtifactSlots();
         AddListeners();
@@ -274,15 +277,18 @@ public class Player : ILeader {
         //    }
         //    PlayerUI.Instance.UpdateRoleSlots();
         //}
-        if (!minions.Contains(minion)) {
-            minions.Add(minion);
-            if (showNewMinionUI) {
-                PlayerUI.Instance.ShowNewMinionUI(minion);
+        if(minions.Count < MAX_MINIONS) {
+            if (!minions.Contains(minion)) {
+                minions.Add(minion);
+                if (showNewMinionUI) {
+                    PlayerUI.Instance.ShowNewMinionUI(minion);
+                }
+                //PlayerUI.Instance.UpdateRoleSlots();
+                Messenger.Broadcast(Signals.PLAYER_GAINED_MINION, minion);
             }
-            //PlayerUI.Instance.UpdateRoleSlots();
-            Messenger.Broadcast(Signals.PLAYER_GAINED_MINION, minion);
+        } else {
+            PlayerUI.Instance.replaceUI.ShowReplaceUI(minions, minion, ReplaceMinion, RejectMinion);
         }
-        
     }
     public void RemoveMinion(Minion minion) {
         if (minions.Remove(minion)) {
@@ -333,6 +339,7 @@ public class Player : ILeader {
                 if(currentMinionLeader == minionToBeReplaced) {
                     SetMinionLeader(minionToBeAdded);
                 }
+                break;
                 //PlayerUI.Instance.UpdateRoleSlots();
             }
         }
@@ -371,6 +378,14 @@ public class Player : ILeader {
             if (currMinion != null) {
                 currMinion.LevelUp();
             }
+        }
+    }
+    public void GenerateMinionClassesToSummon() {
+        List<string> choices = CharacterManager.sevenDeadlySinsClassNames.ToList();
+        for (int i = 0; i < minionClassesToSummon.Length; i++) {
+            int index = UnityEngine.Random.Range(0, choices.Count);
+            minionClassesToSummon[i] = choices[index];
+            choices.RemoveAt(index);
         }
     }
     #endregion

@@ -49,6 +49,7 @@ public class AreaInfoUI : UIMenu {
     public PlayerBuildLandmarkUI playerBuildLandmarkUI;
     public PlayerResearchUI playerResearchUI;
     public PlayerDelayDivineInterventionUI playerDelayDivineInterventionUI;
+    public PlayerSummonMinionUI playerSummonMinionUI;
     [SerializeField] private GameObject cryptGO;
     [SerializeField] private GameObject kennelGO;
 
@@ -558,6 +559,7 @@ public class AreaInfoUI : UIMenu {
         HideCryptUI();
         HideKennelUI();
         HidePlayerDelayDivineInterventionUI();
+        HidePlayerSummonMinionUI();
 
         if (activeTile.isCorrupted) {
             //The things you can do to corrupted landmarks
@@ -576,6 +578,9 @@ public class AreaInfoUI : UIMenu {
                     return;
                 } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
                     ShowPlayerDelayDivineInterventionUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.DEMONIC_PORTAL) {
+                    ShowPlayerSummonMinionUI();
                     return;
                 }
             }
@@ -598,6 +603,8 @@ public class AreaInfoUI : UIMenu {
             //UpdateItems();
         } else if (playerDelayDivineInterventionUI.gameObject.activeSelf) {
             UpdatePlayerDelayDivineInterventionUI();
+        } else if (playerSummonMinionUI.gameObject.activeSelf) {
+            UpdatePlayerSummonMinionUI();
         }
     }
     #endregion
@@ -649,6 +656,18 @@ public class AreaInfoUI : UIMenu {
     }
     private void UpdatePlayerDelayDivineInterventionUI() {
         playerDelayDivineInterventionUI.UpdatePlayerDelayDivineInterventionUI();
+    }
+    #endregion
+
+    #region Player Summon Minion Content
+    private void ShowPlayerSummonMinionUI() {
+        playerSummonMinionUI.ShowPlayerSummonMinionUI(activeTile.landmarkOnTile as DemonicPortal);
+    }
+    private void HidePlayerSummonMinionUI() {
+        playerSummonMinionUI.HidePlayerSummonMinionUI();
+    }
+    private void UpdatePlayerSummonMinionUI() {
+        playerSummonMinionUI.UpdatePlayerSummonMinionUI();
     }
     #endregion
 

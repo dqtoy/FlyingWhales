@@ -29,6 +29,8 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         currentTile = tile;
 
         if(currentTile.region.demonicBuildingData.landmarkType == LANDMARK_TYPE.NONE) {
+            chosenMinion = null;
+            chosenLandmark = LANDMARK_TYPE.NONE;
             buildBtn.interactable = false;
             buildProgress.fillAmount = 0;
             minionName.gameObject.SetActive(false);

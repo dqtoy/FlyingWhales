@@ -28,6 +28,8 @@ public class PlayerResearchUI : MonoBehaviour {
         this.spire = spire;
 
         if (spire.interventionAbilityToResearch == INTERVENTION_ABILITY.NONE) {
+            chosenMinion = null;
+            chosenAbility = INTERVENTION_ABILITY.NONE;
             researchBtn.interactable = false;
             researchProgress.fillAmount = 0;
             minionName.gameObject.SetActive(false);

@@ -941,10 +941,10 @@ public class UIManager : MonoBehaviour {
     public bool ShowHextileInfo(HexTile hexTile) {
         if(hexTile.region != null && hexTile == hexTile.region.mainLandmark.tileLocation) {
             if (hexTile.areaOfTile != null) {
-                if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
-                    portalPopup.SetActive(true);
-                    return true;
-                }
+                //if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
+                //    portalPopup.SetActive(true);
+                //    return true;
+                //}
                 ShowAreaInfo(hexTile);
                 return true;
             } else {

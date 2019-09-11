@@ -22,6 +22,7 @@ public class PlayerDelayDivineInterventionUI : MonoBehaviour {
         this.profane = profane;
 
         if (!profane.hasActivatedDelayDivineIntervention) {
+            chosenMinion = null;
             delayBtn.interactable = false;
             delayProgress.fillAmount = 0;
             minionName.gameObject.SetActive(false);
