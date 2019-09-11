@@ -50,6 +50,7 @@ public class AreaInfoUI : UIMenu {
     public PlayerResearchUI playerResearchUI;
     [SerializeField] private GameObject cryptGO;
     [SerializeField] private GameObject kennelGO;
+    [SerializeField] private PlayerUpgradeUI playerUpgradeUI;
 
 
     private CombatGrid combatGrid;
@@ -556,6 +557,7 @@ public class AreaInfoUI : UIMenu {
         HidePlayerResearchUI();
         HideCryptUI();
         HideKennelUI();
+        HidePlayerUpgradeUI();
 
         if (activeTile.isCorrupted) {
             //The things you can do to corrupted landmarks
@@ -571,6 +573,9 @@ public class AreaInfoUI : UIMenu {
                     return;
                 } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_KENNEL) {
                     ShowKennelUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_ANVIL) {
+                    ShowPlayerUpgradeUI();
                     return;
                 }
             }
@@ -591,6 +596,8 @@ public class AreaInfoUI : UIMenu {
             UpdatePlayerResearchUI();
         } else if(normalContentGO.activeSelf) {
             //UpdateItems();
+        } else if (playerUpgradeUI.gameObject.activeSelf) {
+            UpdatePlayerUpgradeUI();
         }
     }
     #endregion
@@ -648,6 +655,18 @@ public class AreaInfoUI : UIMenu {
     }
     private void HideKennelUI() {
         cryptGO.SetActive(false);
+    }
+    #endregion
+
+    #region Player Research Content
+    private void ShowPlayerUpgradeUI() {
+        playerUpgradeUI.ShowPlayerUpgradeUI(activeTile.landmarkOnTile as TheAnvil);
+    }
+    private void HidePlayerUpgradeUI() {
+        playerUpgradeUI.HidePlayerResearchUI();
+    }
+    private void UpdatePlayerUpgradeUI() {
+        playerUpgradeUI.UpdatePlayerUpgradeUI();
     }
     #endregion
 }
