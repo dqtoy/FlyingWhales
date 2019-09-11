@@ -85,6 +85,9 @@ public class Minion {
             }
         }
     }
+    public void RemoveInterventionAbilityToResearch(INTERVENTION_ABILITY abilityType) {
+        interventionAbilitiesToResearch.Remove(abilityType);
+    }
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
         character.SetPlayerCharacterItem(item);
     }

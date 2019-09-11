@@ -32,6 +32,7 @@ public class TheSpire : BaseLandmark {
         if (currentResearchTick >= researchDuration) {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInterventionAbility);
             PlayerManager.Instance.player.GainNewInterventionAbility(interventionAbilityToResearch, true);
+            tileLocation.region.assignedMinion.RemoveInterventionAbilityToResearch(interventionAbilityToResearch);
             StopResearch();
         }
     }
