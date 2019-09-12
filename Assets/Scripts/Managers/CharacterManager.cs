@@ -1447,9 +1447,15 @@ public class CharacterManager : MonoBehaviour {
         } else {
             target = action.poiTarget;
         }
-        for (int i = 0; i < action.actor.marker.inVisionCharacters.Count; i++) {
-            Character inVisionChar = action.actor.marker.inVisionCharacters[i];
-            if (target != inVisionChar) {
+        List<Character> allInVisionCharacters = action.actor.marker.inVisionCharacters;
+        if(target is Character) {
+            Character targetCharacter = target as Character;
+            //TODO: FOR PERFORMANCE TESTING!
+            allInVisionCharacters = action.actor.marker.inVisionCharacters.Union(targetCharacter.marker.inVisionCharacters).ToList();
+        }
+        for (int i = 0; i < allInVisionCharacters.Count; i++) {
+            Character inVisionChar = allInVisionCharacters[i];
+            if (target != inVisionChar && action.actor != inVisionChar) {
                 if (action.goapType == INTERACTION_TYPE.WATCH) {
                     //Cannot witness/watch a watch action
                     return;

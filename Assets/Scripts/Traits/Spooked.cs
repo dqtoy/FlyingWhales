@@ -70,6 +70,15 @@ public class Spooked : Trait {
         }
         base.OnRemoveTrait(sourcePOI, removedBy);
     }
+    public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
+        base.OnSeePOI(targetPOI, character);
+        if (targetPOI is Character) {
+            Character targetCharacter = targetPOI as Character;
+            if (character.marker.AddAvoidInRange(targetCharacter)) {
+                AddTerrifyingCharacter(targetCharacter);
+            }
+        }
+    }
     #endregion
 
     public void AddTerrifyingCharacter(Character character) {
