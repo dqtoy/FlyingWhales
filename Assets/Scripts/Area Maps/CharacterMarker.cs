@@ -362,7 +362,11 @@ public class CharacterMarker : PooledObject {
             return;
         }
         if (character.isChatting && (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
-            actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Social_Icon];
+            if (character.isFlirting) {
+                actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Flirt_Icon];
+            } else {
+                actionIcon.sprite = actionIconDictionary[GoapActionStateDB.Social_Icon];
+            }
             actionIcon.gameObject.SetActive(true);
         } else {
             if (character.currentAction != null) {
@@ -564,7 +568,6 @@ public class CharacterMarker : PooledObject {
         }
         character.PerTickDuringMovement();
     }
-
     /// <summary>
     /// Make this marker look at a specific point (In World Space).
     /// </summary>

@@ -19,6 +19,7 @@ public class Character : ILeader, IPointOfInterest {
     protected bool _isDead;
     protected bool _hasAlreadyAskedForPlan;
     protected bool _isChatting;
+    protected bool _isFlirting;
     protected GENDER _gender;
     public SEXUALITY sexuality { get; private set; }
     protected CharacterClass _characterClass;
@@ -216,6 +217,9 @@ public class Character : ILeader, IPointOfInterest {
     }
     public bool isChatting {
         get { return _isChatting; }
+    }
+    public bool isFlirting {
+        get { return _isFlirting; }
     }
     public GENDER gender {
         get { return _gender; }
@@ -5980,11 +5984,16 @@ public class Character : ILeader, IPointOfInterest {
     public void EndChatCharacter(Character targetCharacter) {
         SetIsChatting(false);
         targetCharacter.SetIsChatting(false);
+        SetIsFlirting(false);
+        targetCharacter.SetIsFlirting(false);
         marker.UpdateActionIcon();
         targetCharacter.marker.UpdateActionIcon();
     }
     public void SetIsChatting(bool state) {
         _isChatting = state;
+    }
+    public void SetIsFlirting(bool state) {
+        _isFlirting = state;
     }
     public void AddAdvertisedAction(INTERACTION_TYPE type) {
         poiGoapActions.Add(type);

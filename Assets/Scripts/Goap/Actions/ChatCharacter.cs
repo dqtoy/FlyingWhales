@@ -164,7 +164,6 @@ public class ChatCharacter : GoapAction {
             chatResult = "Argument"; //For Trailer Only
         }
 #endif
-
         if (chatResult == "Become Friends") {
             //may become friends
             CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.FRIEND);
@@ -270,8 +269,11 @@ public class ChatCharacter : GoapAction {
     }
     private void PreFlirt() {
         currentState.SetIntelReaction(FlirtIntelReaction);
+        Character targetCharacter = poiTarget as Character;
+        actor.SetIsFlirting(true);
+        targetCharacter.SetIsFlirting(true);
         actor.marker.UpdateActionIcon();
-        (poiTarget as Character).marker.UpdateActionIcon();
+        targetCharacter.marker.UpdateActionIcon();
     }
     private void PreBecomeLovers() {
         currentState.SetIntelReaction(BecomeLoversIntelReaction);

@@ -1204,7 +1204,7 @@ public class Area {
     #region Jobs
     private void HourlyJobActions() {
         CreatePatrolAndExploreJobs();
-        if (currentMoveOutJobs < maxMoveOutJobs) {//UnityEngine.Random.Range(0, 100) < 5 &&
+        if (UnityEngine.Random.Range(0, 100) < 5 && currentMoveOutJobs < maxMoveOutJobs) {
             CreateMoveOutJobs();
         }
     }
