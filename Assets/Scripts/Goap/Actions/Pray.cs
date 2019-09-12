@@ -16,7 +16,7 @@ public class Pray : GoapAction {
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
         };
-        actionIconString = GoapActionStateDB.Entertain_Icon;
+        actionIconString = GoapActionStateDB.Pray_Icon;
         shouldIntelNotificationOnlyIfActorIsActive = true;
         isNotificationAnIntel = false;
     }

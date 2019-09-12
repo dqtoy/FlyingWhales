@@ -270,6 +270,8 @@ public class ChatCharacter : GoapAction {
     }
     private void PreFlirt() {
         currentState.SetIntelReaction(FlirtIntelReaction);
+        actor.marker.UpdateActionIcon();
+        (poiTarget as Character).marker.UpdateActionIcon();
     }
     private void PreBecomeLovers() {
         currentState.SetIntelReaction(BecomeLoversIntelReaction);

@@ -68,6 +68,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: b9bea78178a427a40b4859ee41db4741, type: 3}
   - {fileID: 21300000, guid: 5ed8bc912ecc8ee4693747cca8a05aa4, type: 3}
   - {fileID: 21300000, guid: f4bcf6a10fdbcda42b3479cfe5a1e8b4, type: 3}
+  - {fileID: 21300000, guid: f73219a174dca49489ec11e6d5c62e46, type: 3}
   - {fileID: 21300000, guid: bbd2caa155c907e4ebba65e4ceb31281, type: 3}
   - {fileID: 21300000, guid: 8b32efa1ed721234f944359204f7d73e, type: 3}
   - {fileID: 21300000, guid: c46fa5b1eb9140743979afe7c0bccdf4, type: 3}
@@ -179,6 +180,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: f9a9dd16ad60c6d49b3f8a7c2d15c526, type: 3}
   - {fileID: 21300000, guid: 0263732627e1f9c439725489e9834973, type: 3}
   - {fileID: 21300000, guid: a787b34637f87b44ebdcd386312db025, type: 3}
+  - {fileID: 21300000, guid: e46f0a460945f654384cefc0e6c410a6, type: 3}
   - {fileID: 21300000, guid: 30873f46243de6f48a08b3fcbd5f4512, type: 3}
   - {fileID: 21300000, guid: 4437bb56608a2d64e8ad9a014ae1035d, type: 3}
   - {fileID: 21300000, guid: b26a4e561b3de264e9eb3322b929a315, type: 3}
@@ -296,6 +298,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ea0b4b5bfaf2c8f4b89506b70bf9fe1e, type: 3}
   - {fileID: 21300000, guid: f0e7c16b71c4eeb4fa5163beb8b373e8, type: 3}
   - {fileID: 21300000, guid: 8f376b7b2ce182042be10ffc0f1a307b, type: 3}
+  - {fileID: 21300000, guid: b6fc588bdc1dda14a9e12c28752c9654, type: 3}
   - {fileID: 21300000, guid: d4e8d0ab75a2e494c94c58e440cc1a45, type: 3}
   - {fileID: 21300000, guid: ea97fcbb829004e4fa9386e65c1c831a, type: 3}
   - {fileID: 21300000, guid: 149b3ebbf6b61a84e8c5a4817fb586c0, type: 3}
@@ -305,6 +308,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: a18803fbf89eb674bb8265af2c238d77, type: 3}
   - {fileID: 21300000, guid: 42daa5fbd6b57de49b58d0528b2aaaf9, type: 3}
   - {fileID: 21300000, guid: 8250fb0cff5212146beea5a7a24ad25c, type: 3}
+  - {fileID: 21300000, guid: 4155cf0c332b7864d9c20452435e1894, type: 3}
   - {fileID: 21300000, guid: b59dc03c69b57be47944f33eaa4fc6d1, type: 3}
   - {fileID: 21300000, guid: f86b9b3c2539fd34390238561fc7d197, type: 3}
   - {fileID: 21300000, guid: c3429d4ca763c0c41a09b64da943d4b6, type: 3}
@@ -351,7 +355,9 @@ SpriteAtlas:
   - {fileID: 21300000, guid: dca5320e8b31fc04ca6849ff01ea2a65, type: 3}
   - {fileID: 21300000, guid: 9ee1931ec8ad05e428d853a2d5bdf89a, type: 3}
   - {fileID: 21300000, guid: dff69e1e92c56e14fa420333630a42ba, type: 3}
+  - {fileID: 21300000, guid: 5395d83e70672be4484df767e840dd66, type: 3}
   - {fileID: 21300000, guid: c4d7104e1102ac44b971c8b8f79159c3, type: 3}
+  - {fileID: 21300000, guid: 7d8bb54ee481ae448bd0c3866adc496f, type: 3}
   - {fileID: 21300000, guid: a325b65e7b8fe704fa60ea6da18857a3, type: 3}
   - {fileID: 21300000, guid: 3700785e019040048b86b0f08a0b4329, type: 3}
   - {fileID: 21300000, guid: 4a350f5e5db0b524b8f529b0332d1359, type: 3}
@@ -420,6 +426,7 @@ SpriteAtlas:
   - Bite0004
   - elf_m_walk02
   - Slash0018
+  - stealth
   - Slash0009
   - Attack_00011
   - skeleton_idle03
@@ -531,6 +538,7 @@ SpriteAtlas:
   - Slash0014
   - Raise up_00001
   - Bow and arrow0007
+  - pray
   - Slash0008
   - elf_m_idle03
   - Slash0020
@@ -648,6 +656,7 @@ SpriteAtlas:
   - Magic0013
   - Magic0013
   - drink
+  - flirt
   - Slash0019
   - Magic attack0019
   - Slash0006
@@ -657,6 +666,7 @@ SpriteAtlas:
   - Slash0017
   - Slash0011
   - Slash0008
+  - steal
   - Arrow0010
   - Slash0008
   - Slash0013
@@ -703,7 +713,9 @@ SpriteAtlas:
   - Slash0016
   - Slash0016
   - elf_m_walk03
+  - drink_blood
   - skeleton_idle01
+  - restrain
   - Magic0017
   - Magic attack0017
   - action_icon_joy
