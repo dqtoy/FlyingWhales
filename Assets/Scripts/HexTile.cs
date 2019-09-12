@@ -156,7 +156,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-        SetLandmarkOnTile(new BaseLandmark(this, landmarkType));
+        //SetLandmarkOnTile(new BaseLandmark(this, landmarkType));
+        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, landmarkType));
         if (data.minimumTileCount > 1) {
             if (neighbourDirections.ContainsKey(data.connectedTileDirection) && neighbourDirections[data.connectedTileDirection] != null) {
                 HexTile tileToConnect = neighbourDirections[data.connectedTileDirection];
@@ -183,7 +184,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public BaseLandmark CreateLandmarkOfType(LandmarkSaveData saveData) {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
-        SetLandmarkOnTile(new BaseLandmark(this, saveData));
+        //SetLandmarkOnTile(new BaseLandmark(this, saveData));
+        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData));
         if (landmarkData.minimumTileCount > 1) {
             if (neighbourDirections.ContainsKey(landmarkData.connectedTileDirection) && neighbourDirections[landmarkData.connectedTileDirection] != null) {
                 HexTile tileToConnect = neighbourDirections[landmarkData.connectedTileDirection];
@@ -204,7 +206,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public BaseLandmark CreateLandmarkOfType(SaveDataLandmark saveData) {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
-        SetLandmarkOnTile(new BaseLandmark(this, saveData));
+        //SetLandmarkOnTile(new BaseLandmark(this, saveData));
+        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData));
         //if (landmarkData.minimumTileCount > 1) {
         //    if (neighbourDirections.ContainsKey(landmarkData.connectedTileDirection) && neighbourDirections[landmarkData.connectedTileDirection] != null) {
         //        HexTile tileToConnect = neighbourDirections[landmarkData.connectedTileDirection];
@@ -910,16 +913,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public void ShowTileInfo() {
         string summary = "Landmark: " + landmarkOnTile?.specificLandmarkType.ToString();
-        if (landmarkOnTile != null) {
-            summary += "\n\t- World Object: " + landmarkOnTile.worldObj?.ToString();
-            summary += "\n\t- Player Landmark: " + landmarkOnTile.playerLandmark?.ToString();
-            summary += "\n\t- Connections: " + landmarkOnTile.connections.Count.ToString();
-            for (int i = 0; i < landmarkOnTile.connections.Count; i++) {
-                BaseLandmark connection = landmarkOnTile.connections[i];
-                summary += "\n\t\t- " + connection.specificLandmarkType.ToString() + " " + connection.tileLocation.locationName;
-            }
-        }
         summary += "\nRegion: " + region.id + " (Tiles: " + region.tiles.Count.ToString() + ")";
+        summary += "\nWorld Object: " + region.worldObj?.ToString();
+        summary += "\nConnections: " + region.connections.Count.ToString();
+        for (int i = 0; i < region.connections.Count; i++) {
+            Region connection = region.connections[i];
+            summary += "\n\t- " + connection.mainLandmark.specificLandmarkType.ToString() + " " + connection.coreTile.locationName;
+        }
         summary += "\nArea: " + areaOfTile?.name;
         //summary += "\nNeighbours: " + AllNeighbours.Count.ToString();
         //for (int i = 0; i < AllNeighbours.Count; i++) {

@@ -8,23 +8,23 @@ public class DestroyArtifact : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(BaseLandmark landmark) {
+    public override void ExecuteAfterEffect(Region region) {
         //- after effect: removes an artifact from the region
-        Artifact artifact = landmark.worldObj as Artifact;
-        landmark.SetWorldObject(null);
+        Artifact artifact = region.worldObj as Artifact;
+        region.SetWorldObject(null);
 
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
-        AddDefaultFillersToLog(log, landmark);
+        AddDefaultFillersToLog(log, region);
         log.AddToFillers(null, artifact.name, LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
-        base.ExecuteAfterEffect(landmark);
+        base.ExecuteAfterEffect(region);
     }
-    public override bool CanSpawnEventAt(BaseLandmark landmark) {
-        return landmark.HasAnyCharacterOfType(CHARACTER_ROLE.ADVENTURER, CHARACTER_ROLE.SOLDIER) && landmark.worldObj is Artifact;
+    public override bool CanSpawnEventAt(Region region) {
+        return region.HasAnyCharacterOfType(CHARACTER_ROLE.ADVENTURER, CHARACTER_ROLE.SOLDIER) && region.worldObj is Artifact;
     }
-    public override Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
-        return landmark.GetAnyCharacterOfType(CHARACTER_ROLE.ADVENTURER, CHARACTER_ROLE.SOLDIER);
+    public override Character GetCharacterThatCanSpawnEvent(Region region) {
+        return region.GetAnyCharacterOfType(CHARACTER_ROLE.ADVENTURER, CHARACTER_ROLE.SOLDIER);
     }
     public override bool IsBasicEvent() {
         return true;

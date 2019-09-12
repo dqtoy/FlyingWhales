@@ -8,20 +8,20 @@ public class MilitaryTraining : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(BaseLandmark landmark) {
+    public override void ExecuteAfterEffect(Region region) {
         //- after effect: character will level up
-        landmark.eventSpawnedBy.LevelUp();
+        region.eventSpawnedBy.LevelUp();
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
-        AddDefaultFillersToLog(log, landmark);
+        AddDefaultFillersToLog(log, region);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
-        base.ExecuteAfterEffect(landmark);
+        base.ExecuteAfterEffect(region);
     }
-    public override bool CanSpawnEventAt(BaseLandmark landmark) {
-        return landmark.HasAnyCharacterOfType(CHARACTER_ROLE.SOLDIER) && landmark.specificLandmarkType == LANDMARK_TYPE.BARRACKS;
+    public override bool CanSpawnEventAt(Region region) {
+        return region.HasAnyCharacterOfType(CHARACTER_ROLE.SOLDIER) && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.BARRACKS;
     }
-    public override Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
-        return landmark.GetAnyCharacterOfType(CHARACTER_ROLE.SOLDIER);
+    public override Character GetCharacterThatCanSpawnEvent(Region region) {
+        return region.GetAnyCharacterOfType(CHARACTER_ROLE.SOLDIER);
     }
     public override bool IsBasicEvent() {
         return true;

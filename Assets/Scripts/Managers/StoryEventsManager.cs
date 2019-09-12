@@ -207,7 +207,7 @@ public class StoryEventsManager : MonoBehaviour {
                         summons[i].LevelUp();
                     }
                 } else if (effect.effectValue.ToLower() == "artifact") {
-                    for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Length; i++) {
+                    for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Count; i++) {
                         if (PlayerManager.Instance.player.artifactSlots[i] != null) {
                             PlayerManager.Instance.player.artifactSlots[i].LevelUp();
                         }
@@ -227,9 +227,9 @@ public class StoryEventsManager : MonoBehaviour {
         } else if (string.Equals(effect.effectType, "Slot", System.StringComparison.OrdinalIgnoreCase)) {
             //Gain Slot
             if (string.Equals(effect.effectValue, "Summon", System.StringComparison.OrdinalIgnoreCase)) {
-                PlayerManager.Instance.player.AdjustSummonSlot(1);
+                PlayerManager.Instance.player.IncreaseSummonSlot();
             } else if(string.Equals(effect.effectValue, "Artifact", System.StringComparison.OrdinalIgnoreCase)) {
-                PlayerManager.Instance.player.AdjustArtifactSlot(1);
+                PlayerManager.Instance.player.IncreaseArtifactSlot();
             }
         }
     }
@@ -401,21 +401,14 @@ public class StoryEventsManager : MonoBehaviour {
         }
         return null;
     }
-    private bool CanSpawnEventAt(WORLD_EVENT eventType, BaseLandmark landmark) {
-        WorldEvent worldEvent = GetWorldEvent(eventType);
-        if (worldEvent != null) {
-            return worldEvent.CanSpawnEventAt(landmark);
-        }
-        return false;
-    }
-    public List<WorldEvent> GetEventsThatCanSpawnAt(BaseLandmark landmark, bool basicOnly = false) {
+    public List<WorldEvent> GetEventsThatCanSpawnAt(Region region, bool basicOnly = false) {
         List<WorldEvent> events = new List<WorldEvent>();
         for (int i = 0; i < worldEvents.Length; i++) {
             WorldEvent currEvent = worldEvents[i];
             if (basicOnly && !currEvent.IsBasicEvent()) {
                 continue; //skip
             }
-            if (currEvent.CanSpawnEventAt(landmark)) {
+            if (currEvent.CanSpawnEventAt(region)) {
                 events.Add(currEvent);
             }
         }

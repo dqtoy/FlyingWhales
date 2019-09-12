@@ -219,8 +219,8 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
 
-        Messenger.AddListener<BaseLandmark, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
-        Messenger.AddListener<BaseLandmark, WorldEvent>(Signals.WORLD_EVENT_DESPAWNED, OnWorldEventDespawned);
+        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
+        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_DESPAWNED, OnWorldEventDespawned);
         UpdateUI();
     }
     private void OnGameLoaded() {
@@ -748,8 +748,8 @@ public class UIManager : MonoBehaviour {
     #region Object Picker
     public void ShowClickableObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null
         , Func<T, bool> validityChecker = null, string title = ""
-        , Action<T> onHoverAction = null, Action<T> onHoverExitAction = null, string identifier = "") {
-        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction, onHoverExitAction, identifier);
+        , Action<T> onHoverAction = null, Action<T> onHoverExitAction = null, string identifier = "", bool showCover = false, int layer = 9, bool closable = true) {
+        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction, onHoverExitAction, identifier, showCover, layer, closable);
         //Pause();
         //SetSpeedTogglesState(false);
     }
@@ -941,10 +941,10 @@ public class UIManager : MonoBehaviour {
     public bool ShowHextileInfo(HexTile hexTile) {
         if(hexTile.region != null && hexTile == hexTile.region.mainLandmark.tileLocation) {
             if (hexTile.areaOfTile != null) {
-                if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
-                    portalPopup.SetActive(true);
-                    return true;
-                }
+                //if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
+                //    portalPopup.SetActive(true);
+                //    return true;
+                //}
                 ShowAreaInfo(hexTile);
                 return true;
             } else {
@@ -1342,15 +1342,46 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region World Events
-    private void OnWorldEventSpawned(BaseLandmark landmark, WorldEvent we) {
+    private void OnWorldEventSpawned(Region region, WorldEvent we) {
         //create world event popup
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(worldEventIconPrefab.name, Vector3.zero, Quaternion.identity, worldUIParent);
         WorldEventIcon icon = go.GetComponent<WorldEventIcon>();
-        icon.PlaceAt(landmark);
-        landmark.SetEventIcon(go);
+        icon.PlaceAt(region);
+        region.SetEventIcon(go);
     }
-    private void OnWorldEventDespawned(BaseLandmark landmark, WorldEvent we) {
-        ObjectPoolManager.Instance.DestroyObject(landmark.eventIconGO);
+    private void OnWorldEventDespawned(Region region, WorldEvent we) {
+        ObjectPoolManager.Instance.DestroyObject(region.eventIconGO);
+    }
+    #endregion
+
+    #region Yes/No
+    [Header("Yes or No Confirmation")]
+    [SerializeField] private GameObject yesNoGO;
+    [SerializeField] private GameObject yesNoCover;
+    [SerializeField] private TextMeshProUGUI yesNoHeaderLbl;
+    [SerializeField] private TextMeshProUGUI yesNoDescriptionLbl;
+    [SerializeField] private Button yesBtn;
+    [SerializeField] private Button noBtn;
+    public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null, bool showCover = false, int layer = 21) {
+        yesNoHeaderLbl.text = header;
+        yesNoDescriptionLbl.text = question;
+
+        yesBtn.onClick.RemoveAllListeners();
+        noBtn.onClick.RemoveAllListeners();
+        yesBtn.onClick.AddListener(HideYesNoConfirmation);
+        noBtn.onClick.AddListener(HideYesNoConfirmation);
+        if (onClickYesAction != null) {
+            yesBtn.onClick.AddListener(onClickYesAction.Invoke);
+        }
+        if (onClickNoAction != null) {
+            noBtn.onClick.AddListener(onClickNoAction.Invoke);
+        }
+        yesNoGO.SetActive(true);
+        yesNoGO.transform.SetSiblingIndex(layer);
+        yesNoCover.SetActive(showCover);
+    }
+    private void HideYesNoConfirmation() {
+        yesNoGO.SetActive(false);
     }
     #endregion
 }

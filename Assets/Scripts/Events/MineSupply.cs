@@ -8,20 +8,20 @@ public class MineSupply : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(BaseLandmark landmark) {
+    public override void ExecuteAfterEffect(Region region) {
         //- after effect: provides an initial +50 Supply to owner settlement after completion
         LandmarkManager.Instance.enemyOfPlayerArea.AdjustSuppliesInBank(50);
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
-        AddDefaultFillersToLog(log, landmark);
+        AddDefaultFillersToLog(log, region);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
-        base.ExecuteAfterEffect(landmark);
+        base.ExecuteAfterEffect(region);
     }
-    public override bool CanSpawnEventAt(BaseLandmark landmark) {
-        return landmark.HasAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN) && landmark.specificLandmarkType == LANDMARK_TYPE.MINES;
+    public override bool CanSpawnEventAt(Region region) {
+        return region.HasAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN) && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.MINES;
     }
-    public override Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
-        return landmark.GetAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN);
+    public override Character GetCharacterThatCanSpawnEvent(Region region) {
+        return region.GetAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN);
     }
     public override bool IsBasicEvent() {
         return true;

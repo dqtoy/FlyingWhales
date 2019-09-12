@@ -1700,6 +1700,19 @@ public class Utilities : MonoBehaviour {
         }
         return null; // Could not find a parent with given tag.
     }
+    public static int GetTicksInBetweenDates(GameDate date1, GameDate date2) {
+        int yearDiff = Mathf.Abs(date1.year - date2.year);
+        int monthDiff = Mathf.Abs(date1.month - date2.month);
+        int daysDiff = Mathf.Abs(date1.day - date2.day);
+        int ticksDiff = Mathf.Abs(date1.tick - date2.tick);
+
+        int totalTickDiff = yearDiff * ((GameManager.ticksPerDay * GameManager.daysPerMonth) * 12);
+        totalTickDiff += monthDiff * (GameManager.ticksPerDay * GameManager.daysPerMonth);
+        totalTickDiff += daysDiff * GameManager.ticksPerDay;
+        totalTickDiff += ticksDiff;
+
+        return totalTickDiff;
+    }
     #endregion
 
     #region Resources

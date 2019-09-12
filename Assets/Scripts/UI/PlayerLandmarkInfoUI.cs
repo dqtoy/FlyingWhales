@@ -161,12 +161,12 @@ public class PlayerLandmarkInfoUI : UIMenu {
             suppliesNameLbl.text = "0";
         }
 
-        if (_activeLandmark.owner == null) {
-            factionEmblem.gameObject.SetActive(false);
-        } else {
-            factionEmblem.gameObject.SetActive(true);
-            factionEmblem.SetFaction(_activeLandmark.owner);
-        }
+        //if (_activeLandmark.owner == null) {
+        //    factionEmblem.gameObject.SetActive(false);
+        //} else {
+        //    factionEmblem.gameObject.SetActive(true);
+        //    factionEmblem.SetFaction(_activeLandmark.owner);
+        //}
 
         //portrait
         if (_activeLandmark.tileLocation.areaOfTile.locationPortrait != null) {

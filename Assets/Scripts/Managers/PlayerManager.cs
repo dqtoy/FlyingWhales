@@ -10,6 +10,7 @@ public class PlayerManager : MonoBehaviour {
     public const int MAX_LEVEL_ARTIFACT = 3;
     public const int MAX_LEVEL_COMBAT_ABILITY = 3;
     public const int MAX_LEVEL_INTERVENTION_ABILITY = 3;
+    public const int DIVINE_INTERVENTION_DURATION = 4320;
 
     public bool isChoosingStartingTile = false;
     public Player player = null;
@@ -112,10 +113,10 @@ public class PlayerManager : MonoBehaviour {
 
         //Add an adjacent region to the player at the start of the game.
         //Ref: https://trello.com/c/cQKzEx06/2699-one-additional-empty-region-owned-by-the-player-at-the-start-of-game
-        List<BaseLandmark> choices = portal.connections;
-        BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];
-        AddTileToPlayerArea(chosenLandmark.tileLocation);
-        chosenLandmark.ChangeLandmarkType(LANDMARK_TYPE.NONE);
+        List<Region> choices = portal.tileLocation.region.connections;
+        Region chosenRegion = choices[Random.Range(0, choices.Count)];
+        AddTileToPlayerArea(chosenRegion.coreTile);
+        chosenRegion.mainLandmark.ChangeLandmarkType(LANDMARK_TYPE.NONE);
     }
     public void InitializePlayer(SaveDataPlayer data) {
         player = new Player(data);

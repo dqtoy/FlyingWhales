@@ -50,11 +50,11 @@ public class LevelUpUI : MonoBehaviour {
          //    }
          //} 
          else if (identifierToLevelUp.ToLower() == "summon_slot") {
-            for (int i = 0; i < PlayerManager.Instance.player.summonSlots.Length; i++) {
+            for (int i = 0; i < PlayerManager.Instance.player.summonSlots.Count; i++) {
                 choices.Add(PlayerManager.Instance.player.summonSlots[i]);
             }
         } else if (identifierToLevelUp.ToLower() == "artifact_slot") {
-            for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Length; i++) {
+            for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Count; i++) {
                 choices.Add(PlayerManager.Instance.player.artifactSlots[i]);
             }
         }
@@ -119,14 +119,14 @@ public class LevelUpUI : MonoBehaviour {
             } else if (selectedObj is SummonSlot) {
                 SummonSlot summonSlot = selectedObj as SummonSlot;
                 if (summonSlot.isLocked) {
-                    PlayerManager.Instance.player.AdjustSummonSlot(1);
+                    PlayerManager.Instance.player.IncreaseSummonSlot();
                 } else {
                     summonSlot.LevelUp();
                 }
             } else if (selectedObj is ArtifactSlot) {
                 ArtifactSlot artifactSlot = selectedObj as ArtifactSlot;
                 if (artifactSlot.isLocked) {
-                    PlayerManager.Instance.player.AdjustArtifactSlot(1);
+                    PlayerManager.Instance.player.IncreaseArtifactSlot();
                 } else {
                     artifactSlot.LevelUp();
                 }

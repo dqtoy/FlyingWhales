@@ -61,8 +61,8 @@ public static class Signals {
     public static string ITEM_REMOVED_FROM_LANDMARK = "OnItemRemovedFromLandmark"; //Parameters (Item item, BaseLandmark landmark)
     public static string STRUCTURE_STATE_CHANGED = "OnStructureStateChanged"; //Parameters (StructureObj obj, ObjectState newState)
     public static string LANDMARK_ATTACK_TARGET_SELECTED = "OnLandmarkAttackTargetSelected"; //Parameters (BaseLandmark target)
-    public static string CHARACTER_ENTERED_LANDMARK = "OnCharacterEnteredLandmark"; //Parameters (Character, BaseLandmark)
-    public static string CHARACTER_EXITED_LANDMARK = "OnCharacterExitedLandmark"; //Parameters (Characte, BaseLandmark)
+    public static string CHARACTER_ENTERED_REGION = "OnCharacterEnteredRegion"; //Parameters (Character, Region)
+    public static string CHARACTER_EXITED_REGION = "OnCharacterExitedRegion"; //Parameters (Characte, Region)
     public static string DESTROY_LANDMARK = "OnDestroyLandmark"; //Parameteres (BaseLandmark destroyedLandmark)
     public static string LANDMARK_UNDER_ATTACK = "OnLandmarkUnderAttack"; //Parameters (BaseLandmark underAttackedLandmark, GameEvent associatedEvent = null)
     public static string LANDMARK_INSPECTED = "OnLandmarkInspected"; //Parameters (BaseLandmark inspectedLandmark)
@@ -252,6 +252,10 @@ public static class Signals {
     /// </summary>
     public static string PLAYER_REMOVED_SUMMON = "OnPlayerRemovedSummon";
     /// <summary>
+    /// Parameters (SummonSlot lostSummonSlot)
+    /// </summary>
+    public static string PLAYER_LOST_SUMMON_SLOT = "OnPlayerLostSummonSlot";
+    /// <summary>
     /// Parameters (Summon placedSummon)
     /// </summary>
     public static string PLAYER_PLACED_SUMMON = "OnPlayerPlacedSummon";
@@ -264,6 +268,10 @@ public static class Signals {
     /// Parameters (Artifact removedArtifact)
     /// </summary>
     public static string PLAYER_REMOVED_ARTIFACT = "OnPlayerRemovedArtifact";
+    /// <summary>
+    /// Parameters (ArtifactSlot lostArtifactSlot)
+    /// </summary>
+    public static string PLAYER_LOST_ARTIFACT_SLOT = "OnPlayerLostArtifactSlot";
     public static string PLAYER_USED_ARTIFACT = "OnPlayerUsedArtifact";
     /// <summary>
     /// Parameters (Area invadedArea)

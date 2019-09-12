@@ -126,7 +126,8 @@ public class MapGenerator : MonoBehaviour {
         data.LoadCharacterRelationships();
         yield return null;
         data.LoadLandmarks();
-        data.LoadLandmarkConnections();
+        data.LoadRegionConnections();
+        data.LoadRegionCharacters();
         yield return null;
         GridMap.Instance.GenerateInitialTileTags();
         yield return null;
@@ -161,7 +162,7 @@ public class MapGenerator : MonoBehaviour {
         Messenger.Broadcast(Signals.UPDATE_UI);
         data.LoadInvasion();
         //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
-        data.LoadLandmarkEventsAndWorldObject();
+        data.LoadWorldEventsAndWorldObject();
     }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();

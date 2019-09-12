@@ -57,7 +57,7 @@ public static class TileObjectDB {
         if (tileObjectData.ContainsKey(objType)) {
             return tileObjectData[objType];
         }
-        Debug.LogWarning("No tile data for type " + objType.ToString() + " used default tileobject data");
+        //Debug.LogWarning("No tile data for type " + objType.ToString() + " used default tileobject data");
         return TileObjectData.Default;
     }
     public static bool TryGetTileObjectData(TILE_OBJECT_TYPE objType, out TileObjectData data) {

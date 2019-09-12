@@ -8,36 +8,36 @@ public class SabotageFarm : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(BaseLandmark landmark) {
+    public override void ExecuteAfterEffect(Region region) {
         //- after effect: farm landmark will be destroyed
-        landmark.ChangeLandmarkType(LANDMARK_TYPE.NONE);
+        region.mainLandmark.ChangeLandmarkType(LANDMARK_TYPE.NONE);
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
-        AddDefaultFillersToLog(log, landmark);
+        AddDefaultFillersToLog(log, region);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
 
-        base.ExecuteAfterEffect(landmark);
+        base.ExecuteAfterEffect(region);
     }
-    public override void ExecuteAfterInvasionEffect(BaseLandmark landmark) {
+    public override void ExecuteAfterInvasionEffect(Region region) {
         //- after invasion: resident becomes a minion
-        landmark.eventSpawnedBy.RecruitAsMinion();
-        base.ExecuteAfterInvasionEffect(landmark);
+        region.eventSpawnedBy.RecruitAsMinion();
+        base.ExecuteAfterInvasionEffect(region);
     }
-    public override bool CanSpawnEventAt(BaseLandmark landmark) {
+    public override bool CanSpawnEventAt(Region region) {
         //- requirement: Cultist resident + Farm landmark + demon cult is active
         bool hasCultistResident = false;
-        for (int i = 0; i < landmark.charactersHere.Count; i++) {
-            Character currResident = landmark.charactersHere[i];
+        for (int i = 0; i < region.charactersHere.Count; i++) {
+            Character currResident = region.charactersHere[i];
             if (currResident.GetNormalTrait("Cultist") != null) {
                 hasCultistResident = true;
                 break;
             }
         }
-        return hasCultistResident && landmark.specificLandmarkType == LANDMARK_TYPE.FARM && StoryEventsManager.Instance.isCultActive;
+        return hasCultistResident && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.FARM && StoryEventsManager.Instance.isCultActive;
     }
-    public override Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
-        for (int i = 0; i < landmark.charactersHere.Count; i++) {
-            Character currResident = landmark.charactersHere[i];
+    public override Character GetCharacterThatCanSpawnEvent(Region region) {
+        for (int i = 0; i < region.charactersHere.Count; i++) {
+            Character currResident = region.charactersHere[i];
             if (currResident.GetNormalTrait("Cultist") != null) {
                 return currResident;
             }

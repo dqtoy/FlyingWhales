@@ -14,13 +14,27 @@ public class Region {
     public HexTile coreTile { get; private set; }
     public int ticksInInvasion { get; private set; }
     public Color regionColor { get; private set; }
+    public List<Region> connections { get; private set; }
+    public Minion assignedMinion { get; private set; }
+    public IWorldObject worldObj { get; private set; }
+
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> borderSprites;
 
-    public Minion assignedMinion { get; private set; }
-
     //Player Building Demonic Landmark
     public DemonicLandmarkBuildingData demonicBuildingData { get; private set; }
+
+    //World Events
+    public WorldEvent activeEvent { get; private set; }
+    public Character eventSpawnedBy { get; private set; }
+    public IWorldEventData eventData { get; private set; }
+    public GameObject eventIconGO { get; private set; }
+
+    //Characters
+    public List<Character> charactersHere { get; private set; }
+
+    private List<System.Action> otherAfterInvasionActions; //list of other things to do when this landmark is invaded.
+    private string activeEventAfterEffectScheduleID;
 
     #region getter/setter
     public BaseLandmark mainLandmark {
@@ -28,7 +42,12 @@ public class Region {
     }
     #endregion
 
-    public Region(HexTile coreTile) {
+    public Region() {
+        connections = new List<Region>();
+        charactersHere = new List<Character>();
+        otherAfterInvasionActions = new List<System.Action>();
+    }
+    public Region(HexTile coreTile) : this() {
         id = Utilities.SetID(this);
         name = RandomNameGenerator.Instance.GetRegionName();
         this.coreTile = coreTile;
@@ -36,7 +55,7 @@ public class Region {
         AddTile(coreTile);
         regionColor = Random.ColorHSV();
     }
-    public Region(SaveDataRegion data) {
+    public Region(SaveDataRegion data) : this() {
         id = Utilities.SetID(this, data.id);
         name = data.name;
         coreTile = GridMap.Instance.hexTiles[data.coreTileID];
@@ -164,7 +183,7 @@ public class Region {
 
     #region Invasion
     public bool CanBeInvaded() {
-        return mainLandmark.HasCorruptedConnection() && !coreTile.isCorrupted && !PlayerManager.Instance.player.isInvadingRegion;
+        return HasCorruptedConnection() && !coreTile.isCorrupted && !PlayerManager.Instance.player.isInvadingRegion;
     }
     public void StartInvasion(Minion assignedMinion) {
         PlayerManager.Instance.player.SetInvadingRegion(this);
@@ -186,7 +205,7 @@ public class Region {
     }
     private void Invade() {
         //corrupt region
-        mainLandmark?.InvadeThisLandmark();
+        InvadeActions();
         PlayerManager.Instance.AddTileToPlayerArea(coreTile);
         PlayerManager.Instance.player.SetInvadingRegion(null);
         assignedMinion.SetAssignedRegion(null);
@@ -198,7 +217,13 @@ public class Region {
         }
     }
     public void SetAssignedMinion(Minion minion) {
+        Minion previouslyAssignedMinion = assignedMinion;
         assignedMinion = minion;
+        if (assignedMinion != null) {
+            mainLandmark.OnMinionAssigned(assignedMinion); //a new minion was assigned 
+        } else if (previouslyAssignedMinion != null) {
+            mainLandmark.OnMinionUnassigned(previouslyAssignedMinion); //a minion was unassigned
+        }
     }
     private void PerInvasionTick() {
         if (ticksInInvasion >= mainLandmark.invasionTicks) {
@@ -241,12 +266,258 @@ public class Region {
     }
     private void FinishBuildingStructure() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickBuilding);
-        mainLandmark.ChangeLandmarkType(demonicBuildingData.landmarkType);
+        //mainLandmark.ChangeLandmarkType(demonicBuildingData.landmarkType);
+        int previousID = mainLandmark.id;
+        BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(coreTile, demonicBuildingData.landmarkType);
+        newLandmark.OverrideID(previousID);
 
         demonicBuildingData = new DemonicLandmarkBuildingData();
         assignedMinion.SetAssignedRegion(null);
         SetAssignedMinion(null);
+
+        newLandmark.OnFinishedBuilding();
         Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, this);
+    }
+    #endregion
+
+    #region Connections
+    /// <summary>
+    /// Is this landmark connected to another landmark that has been corrupted?
+    /// </summary>
+    /// <returns>True or false</returns>
+    public bool HasCorruptedConnection() {
+        for (int i = 0; i < connections.Count; i++) {
+            Region connection = connections[i];
+            if (connection.coreTile.isCorrupted) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
+
+    #region Connections
+    public void AddConnection(Region newConnection) {
+        connections.Add(newConnection);
+    }
+    public bool IsConnectedWith(Region otherLandmark) {
+        return connections.Contains(otherLandmark);
+    }
+    public bool HasMaximumConnections() {
+        return connections.Count >= LandmarkManager.Max_Connections;
+    }
+    #endregion
+
+    #region World Objects
+    public void SetWorldObject(IWorldObject obj) {
+        worldObj = obj;
+    }
+    private void ObtainWorldObject() {
+        worldObj?.Obtain();
+        SetWorldObject(null);
+    }
+    #endregion
+
+    #region Corruption/Invasion
+    public void InvadeActions() {
+        if (mainLandmark != null) {
+            switch (mainLandmark.specificLandmarkType) {
+                case LANDMARK_TYPE.NONE:
+                case LANDMARK_TYPE.CAVE:
+                case LANDMARK_TYPE.MONSTER_LAIR:
+                case LANDMARK_TYPE.ANCIENT_RUIN:
+                case LANDMARK_TYPE.TEMPLE:
+                case LANDMARK_TYPE.BANDIT_CAMP:
+                    //No base effect upon invading
+                    break;
+                case LANDMARK_TYPE.BARRACKS:
+                case LANDMARK_TYPE.OUTPOST:
+                    PlayerManager.Instance.player.LevelUpAllMinions();
+                    PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "All your minions gained 1 level.");
+                    break;
+                //case LANDMARK_TYPE.FARM:
+                //    PlayerManager.Instance.player.UnlockASummonSlotOrUpgradeExisting();
+                //    break;
+                //case LANDMARK_TYPE.MINES:
+                //case LANDMARK_TYPE.FACTORY: //This is FACTORY
+                //case LANDMARK_TYPE.WORKSHOP:
+                //    PlayerManager.Instance.player.UnlockAnArtifactSlotOrUpgradeExisting();
+                //    break;
+            }
+            mainLandmark.ChangeLandmarkType(LANDMARK_TYPE.NONE);
+        }
+        ObtainWorldObject();
+        ExecuteEventAfterInvasion();
+        ExecuteOtherAfterInvasionActions();
+    }
+    private void ExecuteOtherAfterInvasionActions() {
+        for (int i = 0; i < otherAfterInvasionActions.Count; i++) {
+            otherAfterInvasionActions[i].Invoke();
+        }
+        otherAfterInvasionActions.Clear();
+    }
+    public void AddAfterInvasionAction(System.Action action) {
+        otherAfterInvasionActions.Add(action);
+    }
+    #endregion
+
+    #region Events
+    public void SpawnEvent(WorldEvent we, Character spawner = null) {
+        activeEvent = we;
+        //set character that spawned event
+        if (spawner == null) {
+            SetCharacterEventSpawner(activeEvent.GetCharacterThatCanSpawnEvent(this));
+        } else {
+            SetCharacterEventSpawner(spawner);
+        }
+        eventData = activeEvent.ConstructEventDataForLandmark(this);
+        for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
+            Character currCharacter = eventData.involvedCharacters[i];
+            //do not let the character that spawned the event go home
+            if (currCharacter.stateComponent.currentState is MoveOutState) {
+                MoveOutState state = currCharacter.stateComponent.currentState as MoveOutState;
+                Debug.Log(GameManager.Instance.TodayLogString() + "Removing go home schedule of " + currCharacter.name);
+                SchedulingManager.Instance.RemoveSpecificEntry(state.goHomeSchedID);
+            } else {
+                throw new System.Exception(currCharacter.name + " is at " + name + " but is not in move out state!");
+
+            }
+        }
+        //spawn the event
+        activeEvent.Spawn(this, eventData, out activeEventAfterEffectScheduleID);
+        Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, we);
+    }
+    public void LoadEventAndWorldObject(SaveDataRegion data) {
+        if (data.activeEvent != WORLD_EVENT.NONE) {
+            activeEvent = StoryEventsManager.Instance.GetWorldEvent(data.activeEvent);
+            SetCharacterEventSpawner(CharacterManager.Instance.GetCharacterByID(data.eventSpawnedByCharacterID));
+            eventData = data.eventData.Load();
+            activeEvent.Load(this, eventData, out activeEventAfterEffectScheduleID);
+            Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, activeEvent);
+        }
+        if (data.hasWorldObject) {
+            SetWorldObject(data.worldObj.Load());
+        }
+    }
+    public void SetCharacterEventSpawner(Character character) {
+        eventSpawnedBy = character;
+    }
+    private void SpawnBasicEvent(Character spawner) {
+        string summary = GameManager.Instance.TodayLogString() + spawner.name + " arrived at " + name + " will try to spawn random event.";
+        List<WorldEvent> events = StoryEventsManager.Instance.GetEventsThatCanSpawnAt(this, true);
+        if (events.Count > 0) {
+            summary += "\nPossible events are: ";
+            for (int i = 0; i < events.Count; i++) {
+                summary += "|" + events[i].name + "|";
+            }
+            WorldEvent chosenEvent = events[Random.Range(0, events.Count)];
+            summary += "\nChosen Event is: " + chosenEvent.name;
+            SpawnEvent(chosenEvent, spawner);
+        } else {
+            summary += "\nNo possible events to spawn.";
+        }
+        Debug.Log(summary);
+    }
+    public void WorldEventFinished(WorldEvent we) {
+        if (activeEvent != we) {
+            throw new System.Exception("World event " + we.name + " finished, but it is not the active event at " + this.name);
+        }
+        for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
+            Character currCharacter = eventData.involvedCharacters[i];
+            //make characters involved in the event, go home
+            if (currCharacter.minion == null) {
+                (currCharacter.stateComponent.currentState as MoveOutState).GoHome();
+            }
+        }
+        DespawnEvent();
+        Messenger.Broadcast(Signals.WORLD_EVENT_FINISHED_NORMAL, this, we);
+    }
+    private void DespawnEvent() {
+        WorldEvent despawned = activeEvent;
+        activeEvent = null;
+        despawned.OnDespawn(this);
+        Messenger.Broadcast(Signals.WORLD_EVENT_DESPAWNED, this, despawned);
+    }
+    private void ExecuteEventAfterInvasion() {
+        if (activeEvent != null) {
+            SchedulingManager.Instance.RemoveSpecificEntry(activeEventAfterEffectScheduleID); //unschedule the active event after effect schedule
+            activeEvent.ExecuteAfterInvasionEffect(this);
+            DespawnEvent();
+        }
+        //kill all remaining characters
+        while (charactersHere.Count > 0) {
+            Character character = charactersHere[0];
+            character.Death("Invasion");
+        }
+    }
+    public bool CanSpawnNewEvent() {
+        return !coreTile.isCorrupted && activeEvent == null;
+    }
+    public void SetEventIcon(GameObject go) {
+        eventIconGO = go;
+    }
+    private void AutomaticEventGeneration(Character characterThatArrived) {
+        if (activeEvent == null) {
+            SpawnBasicEvent(characterThatArrived);
+        }
+    }
+    #endregion
+
+    #region Characters
+    public void LoadCharacterHere(Character character) {
+        charactersHere.Add(character);
+        character.SetLandmarkLocation(this.mainLandmark);
+        Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+    }
+    public void AddCharacterHere(Character character) {
+        charactersHere.Add(character);
+        character.SetLandmarkLocation(this.mainLandmark);
+        AutomaticEventGeneration(character);
+        Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+    }
+    public void RemoveCharacterHere(Character character) {
+        charactersHere.Remove(character);
+        character.SetLandmarkLocation(null);
+        Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
+    }
+    #endregion
+
+    #region Utilities
+    public bool HasAnyCharacterOfType(params CHARACTER_ROLE[] roleTypes) {
+        for (int i = 0; i < charactersHere.Count; i++) {
+            Character character = charactersHere[i];
+            if (roleTypes.Contains(character.role.roleType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasAnyCharacterOfType(params ATTACK_TYPE[] attackTypes) {
+        for (int i = 0; i < charactersHere.Count; i++) {
+            Character character = charactersHere[i];
+            if (attackTypes.Contains(character.characterClass.attackType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public Character GetAnyCharacterOfType(params CHARACTER_ROLE[] roleTypes) {
+        for (int i = 0; i < charactersHere.Count; i++) {
+            Character character = charactersHere[i];
+            if (roleTypes.Contains(character.role.roleType)) {
+                return character;
+            }
+        }
+        return null;
+    }
+    public Character GetAnyCharacterOfType(params ATTACK_TYPE[] attackTypes) {
+        for (int i = 0; i < charactersHere.Count; i++) {
+            Character character = charactersHere[i];
+            if (attackTypes.Contains(character.characterClass.attackType)) {
+                return character;
+            }
+        }
+        return null;
     }
     #endregion
 }

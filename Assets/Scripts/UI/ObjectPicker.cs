@@ -14,12 +14,16 @@ public class ObjectPicker : MonoBehaviour {
     [SerializeField] private GameObject objectPickerAreaItemPrefab;
     [SerializeField] private GameObject objectPickerStringItemPrefab;
     [SerializeField] private GameObject objectPickerAttackItemPrefab;
+    [SerializeField] private GameObject objectPickerSummonSlotItemPrefab;
+    [SerializeField] private GameObject objectPickerArtifactSlotItemPrefab;
     [SerializeField] private TextMeshProUGUI titleLbl;
+    [SerializeField] private GameObject cover;
+    [SerializeField] private Button closeBtn;
 
     private bool _isGamePausedBeforeOpeningPicker;
 
     public void ShowClickable<T>(List<T> items, Action<T> onClickItemAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null
-        , string title = "", Action<T> onHoverItemAction = null, Action<T> onHoverExitItemAction = null, string identifier = "") {
+        , string title = "", Action<T> onHoverItemAction = null, Action<T> onHoverExitItemAction = null, string identifier = "", bool showCover = false, int layer = 9, bool closable = true) {
         Utilities.DestroyChildren(objectPickerScrollView.content);
         List<T> validItems;
         List<T> invalidItems;
@@ -31,13 +35,21 @@ public class ObjectPicker : MonoBehaviour {
             ShowAreaItems(validItems.Cast<Area>().ToList(), invalidItems.Cast<Area>().ToList(), onClickItemAction, onHoverItemAction, onHoverExitItemAction);
         } else if (type == typeof(string)) {
             ShowStringItems(validItems.Cast<string>().ToList(), invalidItems.Cast<string>().ToList(), onClickItemAction, onHoverItemAction, onHoverExitItemAction, identifier);
+        } else if (type == typeof(SummonSlot)) {
+            ShowSummonItems(validItems.Cast<SummonSlot>().ToList(), invalidItems.Cast<SummonSlot>().ToList(), onClickItemAction, onHoverItemAction, onHoverExitItemAction, identifier);
+        } else if (type == typeof(ArtifactSlot)) {
+            ShowArtifactSlotItems(validItems.Cast<ArtifactSlot>().ToList(), invalidItems.Cast<ArtifactSlot>().ToList(), onClickItemAction, onHoverItemAction, onHoverExitItemAction, identifier);
         }
         titleLbl.text = title;
         if (!gameObject.activeSelf) {
             this.gameObject.SetActive(true);
             _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
             GameManager.Instance.SetPausedState(true);
+            UIManager.Instance.SetSpeedTogglesState(false);
         }
+        cover.SetActive(showCover);
+        this.gameObject.transform.SetSiblingIndex(layer);
+        closeBtn.interactable = closable;
     }
     public void ShowDraggable<T>(List<T> items, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
         Utilities.DestroyChildren(objectPickerScrollView.content);
@@ -53,12 +65,14 @@ public class ObjectPicker : MonoBehaviour {
             this.gameObject.SetActive(true);
             _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
             GameManager.Instance.SetPausedState(true);
+            UIManager.Instance.SetSpeedTogglesState(false);
         }
     }
     public void Hide() {
         if (gameObject.activeSelf) {
             this.gameObject.SetActive(false);
             GameManager.Instance.SetPausedState(_isGamePausedBeforeOpeningPicker);
+            UIManager.Instance.SetSpeedTogglesState(true);
         }
     }
 
@@ -202,9 +216,85 @@ public class ObjectPicker : MonoBehaviour {
             stringItem.SetButtonState(false);
         }
     }
+    private void ShowSummonItems<T>(List<SummonSlot> validItems, List<SummonSlot> invalidItems, Action<T> onClickItemAction, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier) {
+        Action<SummonSlot> convertedAction = null;
+        if (onClickItemAction != null) {
+            convertedAction = ConvertToSummonSlot(onClickItemAction);
+        }
+        Action<SummonSlot> convertedHoverAction = null;
+        if (onHoverItemAction != null) {
+            convertedHoverAction = ConvertToSummonSlot(onHoverItemAction);
+        }
+        Action<SummonSlot> convertedHoverExitAction = null;
+        if (onHoverExitItemAction != null) {
+            convertedHoverExitAction = ConvertToSummonSlot(onHoverExitItemAction);
+        }
+        for (int i = 0; i < validItems.Count; i++) {
+            SummonSlot currSummonSlot = validItems[i];
+            GameObject summonSlotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerSummonSlotItemPrefab.name, objectPickerScrollView.content);
+            SummonSlotPickerItem characterItem = summonSlotItemGO.GetComponent<SummonSlotPickerItem>();
+            characterItem.SetSummonSlot(currSummonSlot);
+            characterItem.onClickAction = convertedAction;
+            characterItem.onHoverEnterAction = convertedHoverAction;
+            characterItem.onHoverExitAction = convertedHoverExitAction;
+            characterItem.SetButtonState(true);
+        }
+        for (int i = 0; i < invalidItems.Count; i++) {
+            SummonSlot currSummonSlot = invalidItems[i];
+            GameObject summonSlotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerSummonSlotItemPrefab.name, objectPickerScrollView.content);
+            SummonSlotPickerItem summonSlotItem = summonSlotItemGO.GetComponent<SummonSlotPickerItem>();
+            summonSlotItem.SetSummonSlot(currSummonSlot);
+            summonSlotItem.onClickAction = null;
+            summonSlotItem.onHoverEnterAction = convertedHoverAction;
+            summonSlotItem.onHoverExitAction = convertedHoverExitAction;
+            summonSlotItem.SetButtonState(false);
+        }
+    }
+    private void ShowArtifactSlotItems<T>(List<ArtifactSlot> validItems, List<ArtifactSlot> invalidItems, Action<T> onClickItemAction, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier) {
+        Action<ArtifactSlot> convertedAction = null;
+        if (onClickItemAction != null) {
+            convertedAction = ConvertToArtifactSlot(onClickItemAction);
+        }
+        Action<ArtifactSlot> convertedHoverAction = null;
+        if (onHoverItemAction != null) {
+            convertedHoverAction = ConvertToArtifactSlot(onHoverItemAction);
+        }
+        Action<ArtifactSlot> convertedHoverExitAction = null;
+        if (onHoverExitItemAction != null) {
+            convertedHoverExitAction = ConvertToArtifactSlot(onHoverExitItemAction);
+        }
+        for (int i = 0; i < validItems.Count; i++) {
+            ArtifactSlot currSlot = validItems[i];
+            GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactSlotItemPrefab.name, objectPickerScrollView.content);
+            ArtifactSlotPickerItem item = slotItemGO.GetComponent<ArtifactSlotPickerItem>();
+            item.SetArtifactSlot(currSlot);
+            item.onClickAction = convertedAction;
+            item.onHoverEnterAction = convertedHoverAction;
+            item.onHoverExitAction = convertedHoverExitAction;
+            item.SetButtonState(true);
+        }
+        for (int i = 0; i < invalidItems.Count; i++) {
+            ArtifactSlot currSlot = invalidItems[i];
+            GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactSlotItemPrefab.name, objectPickerScrollView.content);
+            ArtifactSlotPickerItem slotItem = slotItemGO.GetComponent<ArtifactSlotPickerItem>();
+            slotItem.SetArtifactSlot(currSlot);
+            slotItem.onClickAction = null;
+            slotItem.onHoverEnterAction = convertedHoverAction;
+            slotItem.onHoverExitAction = convertedHoverExitAction;
+            slotItem.SetButtonState(false);
+        }
+    }
     public Action<Character> Convert<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<Character>(o => myActionT((T)(object)o));
+    }
+    public Action<SummonSlot> ConvertToSummonSlot<T>(Action<T> myActionT) {
+        if (myActionT == null) return null;
+        else return new Action<SummonSlot>(o => myActionT((T)(object)o));
+    }
+    public Action<ArtifactSlot> ConvertToArtifactSlot<T>(Action<T> myActionT) {
+        if (myActionT == null) return null;
+        else return new Action<ArtifactSlot>(o => myActionT((T)(object)o));
     }
     public Action<Minion> ConvertToMinion<T>(Action<T> myActionT) {
         if (myActionT == null) return null;

@@ -963,7 +963,7 @@ public class Character : ILeader, IPointOfInterest {
             traitsNeededToBeRemoved.Clear();
 
             if (currentLandmark != null) {
-                currentLandmark.RemoveCharacterHere(this);
+                currentLandmark.tileLocation.region.RemoveCharacterHere(this);
             }
 
             if (!IsInOwnParty()) {
@@ -2162,7 +2162,7 @@ public class Character : ILeader, IPointOfInterest {
             //Berserked state cannot be overriden
             return false;
         }
-        if (stateComponent.currentState == null && this.marker.hasFleePath) {
+        if (stateComponent.currentState == null && this.marker != null && this.marker.hasFleePath) {
             return false; //if the character is only fleeing, but is not in combat state, do not allow overriding.
         }
         if (stateComponent.currentState != null) {
@@ -5037,7 +5037,7 @@ public class Character : ILeader, IPointOfInterest {
 
         specificLocation.RemoveCharacterFromLocation(this.currentParty);
         if (currentLandmark != null) {
-            currentLandmark.RemoveCharacterHere(this);
+            currentLandmark.tileLocation.region.RemoveCharacterHere(this);
         }
         ResetFullnessMeter();
         ResetHappinessMeter();

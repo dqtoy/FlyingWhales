@@ -48,6 +48,13 @@ public class AreaInfoUI : UIMenu {
     public GameObject normalContentGO;
     public PlayerBuildLandmarkUI playerBuildLandmarkUI;
     public PlayerResearchUI playerResearchUI;
+    public PlayerDelayDivineInterventionUI playerDelayDivineInterventionUI;
+    public PlayerSummonMinionUI playerSummonMinionUI;
+    [SerializeField] private GameObject cryptGO;
+    [SerializeField] private GameObject kennelGO;
+    [SerializeField] private PlayerUpgradeUI playerUpgradeUI;
+    [SerializeField] private TheEyeUI theEyeUI;
+
 
     private CombatGrid combatGrid;
 
@@ -551,6 +558,12 @@ public class AreaInfoUI : UIMenu {
         HideNormalContent();
         HidePlayerBuildLandmarkUI();
         HidePlayerResearchUI();
+        HideCryptUI();
+        HideKennelUI();
+        HidePlayerDelayDivineInterventionUI();
+        HidePlayerUpgradeUI();
+        HidePlayerSummonMinionUI();
+        HideTheEyeUI();
 
         if (activeTile.isCorrupted) {
             //The things you can do to corrupted landmarks
@@ -560,6 +573,24 @@ public class AreaInfoUI : UIMenu {
                     return;
                 } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_SPIRE) {
                     ShowPlayerResearchUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_CRYPT) {
+                    ShowCryptUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_KENNEL) {
+                    ShowKennelUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
+                    ShowPlayerDelayDivineInterventionUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_ANVIL) {
+                    ShowPlayerUpgradeUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.DEMONIC_PORTAL) {
+                    ShowPlayerSummonMinionUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_EYE) {
+                    ShowTheEyeUI();
                     return;
                 }
             }
@@ -580,6 +611,12 @@ public class AreaInfoUI : UIMenu {
             UpdatePlayerResearchUI();
         } else if(normalContentGO.activeSelf) {
             //UpdateItems();
+        } else if (playerDelayDivineInterventionUI.gameObject.activeSelf) {
+            UpdatePlayerDelayDivineInterventionUI();
+        } else if (playerUpgradeUI.gameObject.activeSelf) {
+            UpdatePlayerUpgradeUI();
+        } else if (playerSummonMinionUI.gameObject.activeSelf) {
+            UpdatePlayerSummonMinionUI();
         }
     }
     #endregion
@@ -619,6 +656,74 @@ public class AreaInfoUI : UIMenu {
     }
     private void UpdatePlayerResearchUI() {
         playerResearchUI.UpdatePlayerResearchUI();
+    }
+    #endregion
+
+    #region Player Delay Divine Intervention Content
+    private void ShowPlayerDelayDivineInterventionUI() {
+        playerDelayDivineInterventionUI.ShowPlayerDelayDivineInterventionUI(activeTile.landmarkOnTile as TheProfane);
+    }
+    private void HidePlayerDelayDivineInterventionUI() {
+        playerDelayDivineInterventionUI.HidePlayerDelayDivineInterventionUI();
+    }
+    private void UpdatePlayerDelayDivineInterventionUI() {
+        playerDelayDivineInterventionUI.UpdatePlayerDelayDivineInterventionUI();
+    }
+    #endregion
+
+    #region Player Summon Minion Content
+    private void ShowPlayerSummonMinionUI() {
+        playerSummonMinionUI.ShowPlayerSummonMinionUI(activeTile.landmarkOnTile as DemonicPortal);
+    }
+    private void HidePlayerSummonMinionUI() {
+        playerSummonMinionUI.HidePlayerSummonMinionUI();
+    }
+    private void UpdatePlayerSummonMinionUI() {
+        playerSummonMinionUI.UpdatePlayerSummonMinionUI();
+    }
+    #endregion
+
+    #region Crypt UI
+    private void ShowCryptUI() {
+        cryptGO.SetActive(true);
+    }
+    private void HideCryptUI() {
+        cryptGO.SetActive(false);
+    }
+    #endregion
+
+    #region Kennel UI
+    private void ShowKennelUI() {
+        cryptGO.SetActive(true);
+    }
+    private void HideKennelUI() {
+        cryptGO.SetActive(false);
+    }
+    #endregion
+
+    #region Player Upgrade Content
+    private void ShowPlayerUpgradeUI() {
+        playerUpgradeUI.ShowPlayerUpgradeUI(activeTile.landmarkOnTile as TheAnvil);
+    }
+    private void HidePlayerUpgradeUI() {
+        playerUpgradeUI.HidePlayerResearchUI();
+    }
+    private void UpdatePlayerUpgradeUI() {
+        playerUpgradeUI.UpdatePlayerUpgradeUI();
+    }
+    public void OnPlayerUpgradeDone() {
+        if (playerUpgradeUI.gameObject.activeSelf) {
+            playerUpgradeUI.OnUpgradeDone();
+        }
+    }
+    #endregion
+
+    #region The Eye
+    private void ShowTheEyeUI() {
+        theEyeUI.ShowTheEyeUI(activeTile.landmarkOnTile as TheEye);
+    }
+    private void HideTheEyeUI() {
+        theEyeUI.HideTheEyeUI();
     }
     #endregion
 }

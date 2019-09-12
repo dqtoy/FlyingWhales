@@ -140,15 +140,19 @@ public class Biomes : MonoBehaviour {
 #endif
 
         LoadBeachVisuals(currentHexTile);
-        if (currentHexTile.elevationType == ELEVATION.PLAIN) {
-            LoadPlainTileVisuals(currentHexTile, sortingOrder);
-        } else if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
-            LoadMountainTileVisuals(currentHexTile, sortingOrder);
-        } else if (currentHexTile.elevationType == ELEVATION.TREES) {
-            LoadTreeTileVisuals(currentHexTile, sortingOrder);
+        if (currentHexTile.isCorrupted) {
+            CorruptTileVisuals(currentHexTile);
         } else {
-            //For Water
-            LoadWaterTileVisuals(currentHexTile, sortingOrder);
+            if (currentHexTile.elevationType == ELEVATION.PLAIN) {
+                LoadPlainTileVisuals(currentHexTile, sortingOrder);
+            } else if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+                LoadMountainTileVisuals(currentHexTile, sortingOrder);
+            } else if (currentHexTile.elevationType == ELEVATION.TREES) {
+                LoadTreeTileVisuals(currentHexTile, sortingOrder);
+            } else {
+                //For Water
+                LoadWaterTileVisuals(currentHexTile, sortingOrder);
+            }
         }
     }
     public void CorruptTileVisuals(HexTile tile) {

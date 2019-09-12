@@ -8,20 +8,20 @@ public class RaidMine : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(BaseLandmark landmark) {
+    public override void ExecuteAfterEffect(Region region) {
         //- after effect: reduces initial Supply to onwer settlement by 200
-        landmark.eventSpawnedBy.homeArea.AdjustSuppliesInBank(-200);
+        region.eventSpawnedBy.homeArea.AdjustSuppliesInBank(-200);
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
-        AddDefaultFillersToLog(log, landmark);
+        AddDefaultFillersToLog(log, region);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
-        base.ExecuteAfterEffect(landmark);
+        base.ExecuteAfterEffect(region);
     }
-    public override bool CanSpawnEventAt(BaseLandmark landmark) {
-        return landmark.HasAnyCharacterOfType(CHARACTER_ROLE.BANDIT) && landmark.specificLandmarkType == LANDMARK_TYPE.MINES;
+    public override bool CanSpawnEventAt(Region region) {
+        return region.HasAnyCharacterOfType(CHARACTER_ROLE.BANDIT) && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.MINES;
     }
-    public override Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
-        return landmark.GetAnyCharacterOfType(CHARACTER_ROLE.BANDIT);
+    public override Character GetCharacterThatCanSpawnEvent(Region region) {
+        return region.GetAnyCharacterOfType(CHARACTER_ROLE.BANDIT);
     }
     #endregion
 }

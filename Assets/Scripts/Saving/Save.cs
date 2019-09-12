@@ -55,7 +55,14 @@ public class Save {
         if(landmarkSaves == null) {
             landmarkSaves = new List<SaveDataLandmark>();
         }
-        SaveDataLandmark newSaveData = new SaveDataLandmark();
+        var typeName = "SaveData" + landmark.GetType().ToString();
+        System.Type type = System.Type.GetType(typeName);
+        SaveDataLandmark newSaveData = null;
+        if (type != null) {
+            newSaveData = System.Activator.CreateInstance(type) as SaveDataLandmark;
+        } else {
+            newSaveData = new SaveDataLandmark();
+        }
         newSaveData.Save(landmark);
         SortAddSaveDataLandmark(newSaveData);
     }
@@ -96,16 +103,16 @@ public class Save {
             }
         }
     }
-    public void LoadLandmarkConnections() {
-        for (int i = 0; i < landmarkSaves.Count; i++) {
-            SaveDataLandmark data = landmarkSaves[i];
-            data.LoadLandmarkConnections(GridMap.Instance.hexTiles[data.locationID].landmarkOnTile);
+    public void LoadRegionConnections() {
+        for (int i = 0; i < regionSaves.Count; i++) {
+            SaveDataRegion data = regionSaves[i];
+            data.LoadRegionConnections(GridMap.Instance.hexTiles[data.coreTileID].region);
         }
     }
-    public void LoadLandmarkEventsAndWorldObject() {
-        for (int i = 0; i < landmarkSaves.Count; i++) {
-            SaveDataLandmark data = landmarkSaves[i];
-            data.LoadActiveEventAndWorldObject(GridMap.Instance.hexTiles[data.locationID].landmarkOnTile);
+    public void LoadWorldEventsAndWorldObject() {
+        for (int i = 0; i < regionSaves.Count; i++) {
+            SaveDataRegion data = regionSaves[i];
+            data.LoadActiveEventAndWorldObject(GridMap.Instance.hexTiles[data.coreTileID].region);
         }
     }
 
@@ -123,6 +130,12 @@ public class Save {
             regions[i] = regionSaves[i].Load();
         }
         GridMap.Instance.LoadRegions(regions);
+    }
+    public void LoadRegionCharacters() {
+        for (int i = 0; i < regionSaves.Count; i++) {
+            SaveDataRegion data = regionSaves[i];
+            data.LoadRegionCharacters(GridMap.Instance.hexTiles[data.coreTileID].region);
+        }
     }
     public void SavePlayerArea(Area area) {
         playerAreaSave = new SaveDataArea();
