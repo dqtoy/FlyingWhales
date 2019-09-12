@@ -51,10 +51,11 @@ public class InteriorMapManager : MonoBehaviour {
     private const float nodeSize = 0.2f;
     public const int Default_Character_Sorting_Order = 82;
 
-    [Header("Tile Object Slots")]
+    [Header("Tile Object")]
     [SerializeField] private TileObjectSlotDictionary tileObjectSlotSettings;
     public GameObject tileObjectSlotsParentPrefab;
     public GameObject tileObjectSlotPrefab;
+    public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
 
     //structure templates
     private string templatePath;
@@ -65,19 +66,15 @@ public class InteriorMapManager : MonoBehaviour {
 
     private Dictionary<STRUCTURE_TYPE, List<StructureSlot>> placedStructures;
 
+    public void Initialize() {
+        allTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
+        areaMaps = new List<AreaInnerTileMap>();
+        AreaMapCameraMove.Instance.Initialize();
+        //sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
+    }
     private void Awake() {
         Instance = this;
         templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
-    }
-    public LocationGridTile GetTileFromMousePosition() {
-        Vector3 mouseWorldPos = (currentlyShowingMap.worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
-        Vector3 localPos = currentlyShowingMap.grid.WorldToLocal(mouseWorldPos);
-        Vector3Int coordinate = currentlyShowingMap.grid.LocalToCell(localPos);
-        if (coordinate.x >= 0 && coordinate.x < currentlyShowingMap.width
-            && coordinate.y >= 0 && coordinate.y < currentlyShowingMap.height) {
-           return currentlyShowingMap.map[coordinate.x, coordinate.y];
-        }
-        return null;
     }
     public void LateUpdate() {
         if (UIManager.Instance.IsMouseOnUI() || currentlyShowingMap == null) {
@@ -119,7 +116,7 @@ public class InteriorMapManager : MonoBehaviour {
                         hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
                     }
                     UIManager.Instance.HideSmallInfo();
-                   
+
                 }
             }
 
@@ -128,10 +125,15 @@ public class InteriorMapManager : MonoBehaviour {
         }
     }
 
-    public void Initialize() {
-        areaMaps = new List<AreaInnerTileMap>();
-        AreaMapCameraMove.Instance.Initialize();
-        //sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
+    public LocationGridTile GetTileFromMousePosition() {
+        Vector3 mouseWorldPos = (currentlyShowingMap.worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
+        Vector3 localPos = currentlyShowingMap.grid.WorldToLocal(mouseWorldPos);
+        Vector3Int coordinate = currentlyShowingMap.grid.LocalToCell(localPos);
+        if (coordinate.x >= 0 && coordinate.x < currentlyShowingMap.width
+            && coordinate.y >= 0 && coordinate.y < currentlyShowingMap.height) {
+           return currentlyShowingMap.map[coordinate.x, coordinate.y];
+        }
+        return null;
     }
     /// <summary>
     /// Try and show the area map of an area. If it does not have one, this will generate one instead.
@@ -941,7 +943,7 @@ public class InteriorMapManager : MonoBehaviour {
     }
     #endregion
 
-    #region Tile Object Settings
+    #region Tile Object
     public bool HasSettingForTileObjectAsset(TileBase asset) {
         return tileObjectSlotSettings.ContainsKey(asset);
     }
@@ -953,6 +955,30 @@ public class InteriorMapManager : MonoBehaviour {
     /// <returns>The list of slot settings</returns>
     public List<TileObjectSlotSetting> GetTileObjectSlotSettings(TileBase asset) {
         return tileObjectSlotSettings[asset];
+    }
+    public void AddTileObject(TileObject to) {
+        if (!allTileObjects.ContainsKey(to.tileObjectType)) {
+            allTileObjects.Add(to.tileObjectType, new List<TileObject>());
+        }
+        if (!allTileObjects[to.tileObjectType].Contains(to)) {
+            allTileObjects[to.tileObjectType].Add(to);
+        }
+    }
+    public void RemoveTileObject(TileObject to) {
+        if (allTileObjects.ContainsKey(to.tileObjectType)) {
+            allTileObjects[to.tileObjectType].Remove(to);
+        }
+    }
+    public TileObject GetTileObject(TILE_OBJECT_TYPE type, int id) {
+        if (allTileObjects.ContainsKey(type)) {
+            for (int i = 0; i < allTileObjects[type].Count; i++) {
+                TileObject to = allTileObjects[type][i];
+                if(to.id == id) {
+                    return to;
+                }
+            }
+        }
+        return null;
     }
     #endregion
 }
