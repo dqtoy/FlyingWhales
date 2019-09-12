@@ -12,7 +12,7 @@ public class Lycanthropy : Trait {
     private int _level;
     public Lycanthropy() {
         name = "Lycanthropy";
-        description = "This character can transform into a wolf.";
+        description = "Lycanthropes transform into wolves when they sleep.";
         thoughtText = "[Character] can transform into a wolf.";
         type = TRAIT_TYPE.SPECIAL;
         effect = TRAIT_EFFECT.NEUTRAL;

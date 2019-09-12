@@ -9,7 +9,7 @@ public class Pyrophobic : Trait {
 
     public Pyrophobic() {
         name = "Pyrophobic";
-        description = "This character is afraid of fire.";
+        description = "Pyrophobics are afraid of fires.";
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

@@ -8,7 +8,7 @@ public class Narcoleptic : Trait {
 
     public Narcoleptic() {
         name = "Narcoleptic";
-        description = "This character is narcoleptic.";
+        description = "Narcoleptics may sometimes suddenly fall asleep.";
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

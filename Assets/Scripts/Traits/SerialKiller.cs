@@ -14,7 +14,7 @@ public class SerialKiller : Trait {
 
     public SerialKiller() {
         name = "Serial Killer";
-        description = "This character is a serial killer.";
+        description = "Serial killers have a specific subset of target victims that they may kidnap and then kill.";
         thoughtText = "[Character] is a serial killer.";
         type = TRAIT_TYPE.SPECIAL;
         effect = TRAIT_EFFECT.NEUTRAL;

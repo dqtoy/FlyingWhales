@@ -8,7 +8,7 @@ public class MusicLover : Trait {
 
     public MusicLover() {
         name = "Music Lover";
-        description = "This character loves music.";
+        description = "Music Lovers enjoy playing instruments and listening to music.";
         type = TRAIT_TYPE.SPECIAL;
         effect = TRAIT_EFFECT.POSITIVE;
         daysDuration = 0;

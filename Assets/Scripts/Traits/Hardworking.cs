@@ -8,7 +8,7 @@ public class Hardworking : Trait {
 
     public Hardworking() {
         name = "Hardworking";
-        description = "This character is hardworking.";
+        description = "Hardworking characters enjoy taking on settlement tasks.";
         type = TRAIT_TYPE.BUFF;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

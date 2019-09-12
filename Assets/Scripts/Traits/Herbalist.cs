@@ -5,7 +5,7 @@ using UnityEngine;
 public class Herbalist : Trait {
     public Herbalist() {
         name = "Herbalist";
-        description = "This character can craft potions.";
+        description = "Herbalists can create Healing Potions.";
         type = TRAIT_TYPE.BUFF;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

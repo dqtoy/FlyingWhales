@@ -5,7 +5,7 @@ using UnityEngine;
 public class Doctor : Trait {
     public Doctor() {
         name = "Doctor";
-        description = "This character can cure illnesses.";
+        description = "Doctors can craft Healing Potions and help injured and sick characters.";
         type = TRAIT_TYPE.BUFF;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

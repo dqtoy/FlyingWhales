@@ -6,7 +6,7 @@ public class Nocturnal : Trait {
 
     public Nocturnal() {
         name = "Nocturnal";
-        description = "This character is nocturnal.";
+        description = "Nocturnals are awake at night and asleep during the day.";
         type = TRAIT_TYPE.PERSONALITY;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

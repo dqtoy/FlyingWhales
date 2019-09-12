@@ -8,7 +8,7 @@ public class MusicHater : Trait {
 
     public MusicHater() {
         name = "Music Hater";
-        description = "This character hates music.";
+        description = "Music Haters dislike playing instruments and hearing any music.";
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;

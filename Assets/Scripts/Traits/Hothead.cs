@@ -6,7 +6,7 @@ public class Hothead : Trait {
 
     public Hothead() {
         name = "Hothead";
-        description = "This character is hotheaded.";
+        description = "Hotheads are easy to anger and may have bouts of rage fits.";
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
