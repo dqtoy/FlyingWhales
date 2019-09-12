@@ -8,7 +8,7 @@ public class SabotageFarm : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region) {
         //- after effect: farm landmark will be destroyed
         region.mainLandmark.ChangeLandmarkType(LANDMARK_TYPE.NONE);
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");

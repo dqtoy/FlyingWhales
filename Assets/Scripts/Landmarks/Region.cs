@@ -432,9 +432,25 @@ public class Region {
         DespawnEvent();
         Messenger.Broadcast(Signals.WORLD_EVENT_FINISHED_NORMAL, this, we);
     }
+    public void WorldEventFailed(WorldEvent we) {
+        if (activeEvent != we) {
+            throw new System.Exception("World event " + we.name + " finished, but it is not the active event at " + this.name);
+        }
+        for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
+            Character currCharacter = eventData.involvedCharacters[i];
+            //make characters involved in the event, go home
+            if (currCharacter.minion == null) {
+                (currCharacter.stateComponent.currentState as MoveOutState).GoHome();
+            }
+        }
+        DespawnEvent();
+        Messenger.Broadcast(Signals.WORLD_EVENT_FAILED, this, we);
+    }
     private void DespawnEvent() {
         WorldEvent despawned = activeEvent;
+        eventData.interferingCharacter?.minion.SetAssignedRegion(null); //return interfering character
         activeEvent = null;
+        eventData = null;
         despawned.OnDespawn(this);
         Messenger.Broadcast(Signals.WORLD_EVENT_DESPAWNED, this, despawned);
     }

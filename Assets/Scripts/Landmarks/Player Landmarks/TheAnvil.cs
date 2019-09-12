@@ -59,6 +59,7 @@ public class TheAnvil : BaseLandmark {
             PlayerUI.Instance.ShowGeneralConfirmation("Upgrade Done", "All Artifact Slots upgraded!");
         }
         upgradeIdentifier = string.Empty;
+        tileLocation.region.assignedMinion.SetAssignedRegion(null);
         tileLocation.region.SetAssignedMinion(null); //reset assigned minion
         UIManager.Instance.areaInfoUI.OnPlayerUpgradeDone();
     }

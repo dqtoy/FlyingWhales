@@ -12,16 +12,17 @@ public class TheEye : BaseLandmark {
     public override void OnMinionAssigned(Minion minion) {
         base.OnMinionAssigned(minion);
         //start listening for events
-        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnEventSpawned);
+        ///Did not add listener, instead added checking if notification should be showed to player at WorldEvent script <see cref="WorldEvent.Spawn(Region, IWorldEventData, out string)"/>. Reason for this is if there are multiple Eye structures, they will each create a notification, which is not ideal.
+        //Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnEventSpawned);
     }
     public override void OnMinionUnassigned(Minion minion) {
         base.OnMinionUnassigned(minion);
         //stop listening to events
-        Messenger.RemoveListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnEventSpawned);
+        //Messenger.RemoveListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnEventSpawned);
     }
     #endregion
 
-    private void OnEventSpawned(Region region, WorldEvent we){
-        //check if the assigned minion can interfere with the type of world event.
-    }
+    //private void OnEventSpawned(Region region, WorldEvent we){
+        
+    //}
 }

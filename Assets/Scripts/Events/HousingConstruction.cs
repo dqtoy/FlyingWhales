@@ -8,7 +8,7 @@ public class HousingConstruction : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region) {
         base.ExecuteAfterEffect(region);
         //- after effect: adds a new house to owner settlement
     }

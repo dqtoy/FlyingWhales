@@ -8,7 +8,7 @@ public class ItemProduction : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region) {
         //- after effect: adds a new item in settlement warehouse
         SpecialToken token = TokenManager.Instance.CreateRandomDroppableSpecialToken();
         region.eventSpawnedBy.homeArea.AddSpecialTokenToLocation(token, region.eventSpawnedBy.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE));

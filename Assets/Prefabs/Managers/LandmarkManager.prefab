@@ -1187,7 +1187,7 @@ MonoBehaviour:
   - landmarkTypeString: The Eye
     landmarkType: 53
     minimumTileCount: 1
-    buildDuration: 288
+    buildDuration: 1
     buildDescription: Allows you to interfere in heroic events.
     connectedTileDirection: 6
     uniqueTags: 

@@ -8,7 +8,7 @@ public class DestroyArtifact : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region) {
         //- after effect: removes an artifact from the region
         Artifact artifact = region.worldObj as Artifact;
         region.SetWorldObject(null);

@@ -300,8 +300,6 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    
-
     #region Stats
     private void UpdateStatInfo() {
         hpLbl.text = _activeCharacter.currentHP.ToString();

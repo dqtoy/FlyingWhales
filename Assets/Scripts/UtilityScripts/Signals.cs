@@ -71,17 +71,21 @@ public static class Signals {
     public static string LANDMARK_INVESTIGATION_ACTIVATED = "OnLandmarkInvestigationActivated"; //Parameters (BaseLandmark investigatedLandmark)
     public static string UPDATE_RITUAL_CIRCLE_TRAIT = "OnUpdateRitualCircleTrait";
     /// <summary>
-    /// Parameters: BaseLandmark, WorldEvent
+    /// Parameters: Region, WorldEvent
     /// </summary>
     public static string WORLD_EVENT_SPAWNED = "OnWorldEventSpawnedAtLandmark";
     /// <summary>
-    /// Parameters: BaseLandmark, WorldEvent
+    /// Parameters: Region, WorldEvent
     /// </summary>
     public static string WORLD_EVENT_FINISHED_NORMAL = "OnWorldEventFinishedNormallyAtLandmark";
     /// <summary>
-    /// Parameters: BaseLandmark, WorldEvent
+    /// Parameters: Region, WorldEvent
     /// </summary>
     public static string WORLD_EVENT_DESPAWNED = "OnWorldEventDespawnedAtLandmark";
+    /// <summary>
+    /// Parameters: Region, WorldEvent
+    /// </summary>
+    public static string WORLD_EVENT_FAILED = "OnWorldEventFailed";
     #endregion
 
     #region Character
