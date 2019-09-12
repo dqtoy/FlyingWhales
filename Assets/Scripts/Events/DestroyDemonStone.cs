@@ -8,7 +8,7 @@ public class DestroyDemonStone : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region) {
         //- after effect: Demon Stone object will be removed
         region.SetWorldObject(null);
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");

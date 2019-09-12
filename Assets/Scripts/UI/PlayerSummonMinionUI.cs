@@ -20,13 +20,13 @@ public class PlayerSummonMinionUI : MonoBehaviour {
     public Image minionToSummonImg;
     public Button selectMinionToSummonBtn;
 
-    public DemonicPortal portal { get; private set; }
+    public ThePortal portal { get; private set; }
     public Minion chosenMinion { get; private set; }
     public string chosenMinionClassToSummon { get; private set; }
     public int summonDuration { get; private set; }
 
     #region General
-    public void ShowPlayerSummonMinionUI(DemonicPortal portal) {
+    public void ShowPlayerSummonMinionUI(ThePortal portal) {
         this.portal = portal;
 
         if (portal.currentMinionClassToSummon == string.Empty) {

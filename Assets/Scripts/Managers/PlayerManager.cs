@@ -61,7 +61,7 @@ public class PlayerManager : MonoBehaviour {
         }
 
         allLandmarksThatCanBeBuilt = new LANDMARK_TYPE[] { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.THE_FINGERS
-            , LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE };
+            , LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PIT };
         //Unit Selection
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -69,7 +69,7 @@ public class PlayerManager : MonoBehaviour {
     }
 
     public void LoadStartingTile() {
-        BaseLandmark portal = LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.DEMONIC_PORTAL);
+        BaseLandmark portal = LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.THE_PORTAL);
         OnLoadStartingTile(portal);
     }
     private void OnLoadStartingTile(BaseLandmark portal) {

@@ -9,7 +9,7 @@ public class ProtectionRitual : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region) {
         //- after effect: puts a Protective Barrier to the settlement that can only be removed when the Temple's region has been corrupted or the Temple landmark has been destroyed
         LandmarkManager.Instance.enemyOfPlayerArea.coreTile.AddTileTag(TILE_TAG.PROTECTIVE_BARRIER);
         region.AddAfterInvasionAction(() => LandmarkManager.Instance.enemyOfPlayerArea.coreTile.RemoveTileTag(TILE_TAG.PROTECTIVE_BARRIER));

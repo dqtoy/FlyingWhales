@@ -8,7 +8,7 @@ public class RaidMine : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region) {
         //- after effect: reduces initial Supply to onwer settlement by 200
         region.eventSpawnedBy.homeArea.AdjustSuppliesInBank(-200);
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");

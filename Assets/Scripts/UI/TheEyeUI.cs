@@ -41,9 +41,11 @@ public class TheEyeUI : MonoBehaviour {
     public void OnClickAssign() {
         if (theEye.tileLocation.region.assignedMinion == null) {
             theEye.tileLocation.region.SetAssignedMinion(chosenMinion);
+            chosenMinion.SetAssignedRegion(theEye.tileLocation.region);
             UpdateAssignButton();
             UpdateSelectMinionBtn();
         } else {
+            theEye.tileLocation.region.assignedMinion.SetAssignedRegion(null);
             theEye.tileLocation.region.SetAssignedMinion(null);
             minionPortrait.gameObject.SetActive(false);
             minionName.gameObject.SetActive(false);

@@ -7,7 +7,7 @@ public class MakeLove : GoapAction {
     public Character targetCharacter { get; private set; }
 
     public MakeLove(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.MAKE_LOVE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionIconString = GoapActionStateDB.Entertain_Icon;
+        actionIconString = GoapActionStateDB.Flirt_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.AFTERNOON,
             TIME_IN_WORDS.EARLY_NIGHT,

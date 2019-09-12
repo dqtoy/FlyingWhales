@@ -6,7 +6,7 @@ using UnityEngine;
 public class InviteToMakeLove : GoapAction {
 
     public InviteToMakeLove(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionIconString = GoapActionStateDB.Entertain_Icon;
+        actionIconString = GoapActionStateDB.Flirt_Icon;
     }
 
     #region Overrides

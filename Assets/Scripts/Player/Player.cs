@@ -149,7 +149,7 @@ public class Player : ILeader {
         chosenCoreTile.SetCorruption(true);
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION, 0);
         playerArea.LoadAdditionalData();
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
+        LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.THE_PORTAL);
         Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
         SetPlayerArea(playerArea);
         //ActivateMagicTransferToPlayer();
@@ -309,22 +309,6 @@ public class Player : ILeader {
         //}
         return minions.Count;
     }
-    //public void RearrangeMinions() {
-    //    List<int> minionIndexesThatAreNotNull = new List<int>();
-    //    for (int i = 0; i < minions.Count; i++) {
-    //        if(minions[i] != null) {
-    //            minionIndexesThatAreNotNull.Add(i);
-    //        }
-    //    }
-    //    for (int i = 0; i < minions.Count; i++) {
-    //        if(i < minionIndexesThatAreNotNull.Count) {
-    //            minions[i] = minions[minionIndexesThatAreNotNull[i]];
-    //        } else {
-    //            minions[i] = null;
-    //        }
-    //    }
-    //    //Update UI
-    //}
     public void SetMinionLeader(Minion minion) {
         currentMinionLeader = minion;
     }
@@ -387,6 +371,25 @@ public class Player : ILeader {
             minionClassesToSummon[i] = choices[index];
             choices.RemoveAt(index);
         }
+    }
+    public bool HasMinionAssignedTo(LANDMARK_TYPE type) {
+        for (int i = 0; i < minions.Count; i++) {
+            Minion currMinion = minions[i];
+            if (currMinion.isAssigned && currMinion.assignedRegion.mainLandmark.specificLandmarkType == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public List<Character> GetMinionsAssignedTo(LANDMARK_TYPE type) {
+        List<Character> validMinions = new List<Character>();
+        for (int i = 0; i < minions.Count; i++) {
+            Minion currMinion = minions[i];
+            if (currMinion.isAssigned && currMinion.assignedRegion.mainLandmark.specificLandmarkType == type) {
+                validMinions.Add(currMinion.character);
+            }
+        }
+        return validMinions;
     }
     #endregion
 

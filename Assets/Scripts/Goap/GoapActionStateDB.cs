@@ -17,6 +17,14 @@ public static class GoapActionStateDB {
     public static string Flee_Icon = "Flee";
     public static string Patrol_Icon = "Patrol";
 
+    public static string Drink_Blood_Icon = "Drink Blood";
+    public static string Flirt_Icon = "Flirt";
+    public static string Pray_Icon = "Pray";
+    public static string Restrain_Icon = "Restrain";
+    public static string Steal_Icon = "Steal";
+    public static string Stealth_Icon = "Stealth";
+   
+
     public static string GetStateResult(INTERACTION_TYPE goapType, string stateName) {
         if (goapActionStates.ContainsKey(goapType)) {
             StateNameAndDuration[] snd = goapActionStates[goapType];

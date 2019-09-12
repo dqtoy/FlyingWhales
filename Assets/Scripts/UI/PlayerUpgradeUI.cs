@@ -50,6 +50,7 @@ public class PlayerUpgradeUI : MonoBehaviour {
         gameObject.SetActive(false);
     }
     public void OnClickUpgrade() {
+        chosenMinion.SetAssignedRegion(theAnvil.tileLocation.region);
         theAnvil.tileLocation.region.SetAssignedMinion(chosenMinion);
         theAnvil.SetUpgradeIdentifier(chosenUpgrade);
         theAnvil.StartUpgradeProcess();

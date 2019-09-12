@@ -9,7 +9,7 @@ public class SlayMonster : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region) {
         //- after effect: removes a beast from the region
         Summon summon = region.worldObj as Summon;
         summon.Death();

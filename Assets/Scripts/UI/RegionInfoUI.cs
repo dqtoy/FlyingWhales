@@ -34,6 +34,9 @@ public class RegionInfoUI : UIMenu {
     [SerializeField] private MinionPicker invMinionPicker;
     [SerializeField] private Button startInvBtn;
 
+    [Header("Intervention")]
+    [SerializeField] private Button interveneBtn;
+    [SerializeField] private CharacterPortrait interferingCharacterPortrait;
 
     public Region activeRegion { get; private set; }
 
@@ -43,6 +46,7 @@ public class RegionInfoUI : UIMenu {
         Messenger.AddListener<Character, Region>(Signals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
         Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
         Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FINISHED_NORMAL, OnWorldEventFinishedNormally);
+        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FAILED, OnWorldEventFailed);
     }
 
     public override void OpenMenu() {
@@ -164,6 +168,7 @@ public class RegionInfoUI : UIMenu {
             eventDesctiptionLbl.text = "No active event.";
         }
         UpdateSpawnEventButton();
+        UpdateInterveneButton();
     }
     private void OnWorldEventSpawned(Region region, WorldEvent we) {
         if (isShowing && activeRegion == region) {
@@ -171,6 +176,11 @@ public class RegionInfoUI : UIMenu {
         }
     }
     private void OnWorldEventFinishedNormally(Region region, WorldEvent we) {
+        if (isShowing && activeRegion == region) {
+            UpdateEventInfo();
+        }
+    }
+    private void OnWorldEventFailed(Region region, WorldEvent we) {
         if (isShowing && activeRegion == region) {
             UpdateEventInfo();
         }
@@ -205,6 +215,32 @@ public class RegionInfoUI : UIMenu {
         if (!spawnEventBtn.interactable) {
             eventsListGO.SetActive(false);
         }
+    }
+    private void UpdateInterveneButton() {
+        interveneBtn.gameObject.SetActive(activeRegion.activeEvent != null);
+        interferingCharacterPortrait.gameObject.SetActive(false);
+        if (interveneBtn.gameObject.activeSelf) {
+            interveneBtn.interactable = activeRegion.eventData.interferingCharacter == null && PlayerManager.Instance.player.HasMinionAssignedTo(LANDMARK_TYPE.THE_EYE);
+            if (activeRegion.eventData.interferingCharacter != null) {
+                interferingCharacterPortrait.gameObject.SetActive(true);
+                interferingCharacterPortrait.GeneratePortrait(activeRegion.eventData.interferingCharacter);
+            }
+        }
+    }
+    public void OnClickInterfere() {
+        List<Character> minions = PlayerManager.Instance.player.GetMinionsAssignedTo(LANDMARK_TYPE.THE_EYE);
+        UIManager.Instance.ShowClickableObjectPicker(minions, OnClickMinion, title: "Choose minion to send out.", showCover: true, layer: 25);
+    }
+    private void OnClickMinion(Character character) {
+        //show confirmation message
+        UIManager.Instance.ShowYesNoConfirmation("Send minion to interfere.", "Are you sure you want to send " + character.name + " to interfere with the event happening at " + activeRegion.name + "?", () => SendOutMinionToInterfere(character), showCover: false, layer: 26);
+    }
+    private void SendOutMinionToInterfere(Character character) {
+        character.minion.assignedRegion.SetAssignedMinion(null); //remove minion from assignment at previous region.
+        character.minion.SetAssignedRegion(activeRegion); //only set assigned region to minion.
+        activeRegion.eventData.SetInterferingCharacter(character);
+        UIManager.Instance.HideObjectPicker();
+        UpdateInterveneButton();
     }
     #endregion
 }

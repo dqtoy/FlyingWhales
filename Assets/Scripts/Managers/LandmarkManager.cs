@@ -259,7 +259,7 @@ public class LandmarkManager : MonoBehaviour {
         int portalCorner = Random.Range(0, 4);
         Region portalRegion = corners[portalCorner];
         Area portalArea = CreateNewArea(portalRegion.coreTile, AREA_TYPE.DEMONIC_INTRUSION, 0);
-        BaseLandmark portalLandmark = CreateNewLandmarkOnTile(portalRegion.coreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
+        BaseLandmark portalLandmark = CreateNewLandmarkOnTile(portalRegion.coreTile, LANDMARK_TYPE.THE_PORTAL);
         portalArea.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
         portal = portalLandmark;
 

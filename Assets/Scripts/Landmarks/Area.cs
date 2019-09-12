@@ -429,7 +429,7 @@ public class Area {
     }
     public string GetAreaTypeString() {
         if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-            return "Demonic Portal";
+            return "Demonic Intrusion";
         }
         //if (_raceType != RACE.NONE) {
         //    if (tiles.Count > 1) {

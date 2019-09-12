@@ -19,6 +19,7 @@ public class Character : ILeader, IPointOfInterest {
     protected bool _isDead;
     protected bool _hasAlreadyAskedForPlan;
     protected bool _isChatting;
+    protected bool _isFlirting;
     protected GENDER _gender;
     public SEXUALITY sexuality { get; private set; }
     protected CharacterClass _characterClass;
@@ -216,6 +217,9 @@ public class Character : ILeader, IPointOfInterest {
     }
     public bool isChatting {
         get { return _isChatting; }
+    }
+    public bool isFlirting {
+        get { return _isFlirting; }
     }
     public GENDER gender {
         get { return _gender; }
@@ -924,6 +928,10 @@ public class Character : ILeader, IPointOfInterest {
             return;
         }
         if (!_isDead) {
+            if (currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+                SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
+            }
+            
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
@@ -5983,11 +5991,16 @@ public class Character : ILeader, IPointOfInterest {
     public void EndChatCharacter(Character targetCharacter) {
         SetIsChatting(false);
         targetCharacter.SetIsChatting(false);
+        SetIsFlirting(false);
+        targetCharacter.SetIsFlirting(false);
         marker.UpdateActionIcon();
         targetCharacter.marker.UpdateActionIcon();
     }
     public void SetIsChatting(bool state) {
         _isChatting = state;
+    }
+    public void SetIsFlirting(bool state) {
+        _isFlirting = state;
     }
     public void AddAdvertisedAction(INTERACTION_TYPE type) {
         poiGoapActions.Add(type);
@@ -8443,7 +8456,11 @@ public class Character : ILeader, IPointOfInterest {
 
             //Drop all plans except for the current action
             AdjustIsWaitingForInteraction(1);
-            DropAllPlans(currentAction.parentPlan);
+            if (currentAction != null && currentAction.parentPlan != null) {
+                DropAllPlans(currentAction.parentPlan);
+            } else {
+                DropAllPlans();
+            }
             AdjustIsWaitingForInteraction(-1);
 
             ResetFullnessMeter();

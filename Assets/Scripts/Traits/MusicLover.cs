@@ -59,7 +59,7 @@ public class MusicLover : Trait {
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(guitarPlayer, guitarPlayer.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
+        PlayerManager.Instance.player.ShowNotificationFrom(log, owner, guitarPlayer);
     }
     private void OnActionStateSet(GoapAction action, GoapActionState state) {
         if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && owner.marker.inVisionCharacters.Contains(action.actor)) {

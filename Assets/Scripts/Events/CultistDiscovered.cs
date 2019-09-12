@@ -8,7 +8,7 @@ public class CultistDiscovered : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region) {
         base.ExecuteAfterEffect(region);
         CultistDiscoveredData data = (CultistDiscoveredData)region.eventData;
         //- after effect: cultist will be slain.
@@ -93,6 +93,8 @@ public class CultistDiscoveredData : IWorldEventData {
 
     public Character[] involvedCharacters { get { return new Character[] { cultist, nonCultist }; } }
 
+    public Character interferingCharacter { get; private set; }
+
     public GameDate endDate { get; private set; }
     public GameDate startDate { get; private set; }
 
@@ -101,6 +103,10 @@ public class CultistDiscoveredData : IWorldEventData {
     }
     public void SetStartDate(GameDate date) {
         startDate = date;
+    }
+
+    public void SetInterferingCharacter(Character character) {
+        interferingCharacter = character;
     }
 }
 

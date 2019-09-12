@@ -155,10 +155,17 @@ public class AreaInfoUI : UIMenu {
     #region Basic Info
     private void UpdateBasicInfo() {
         //LandmarkData data = LandmarkManager.Instance.GetLandmarkData(activeArea.coreTile.landmarkOnTile.specificLandmarkType);
-        landmarkNameLbl.text = activeTile.areaOfTile.name;
+
+        if (activeTile.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
+            landmarkNameLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(activeTile.landmarkOnTile.specificLandmarkType.ToString());
+            locationPortrait.SetLocation(activeTile.landmarkOnTile);
+        } else {
+            landmarkNameLbl.text = activeTile.areaOfTile.name;
+            locationPortrait.SetLocation(activeTile.areaOfTile);
+        }
         landmarkTypeLbl.text = activeTile.areaOfTile.GetAreaTypeString();
         UpdateSupplies();
-        locationPortrait.SetLocation(activeTile.areaOfTile);
+        
         ////portrait
         //if (activeArea.locationPortrait != null) {
         //    areaPortrait.gameObject.SetActive(false);
@@ -586,7 +593,7 @@ public class AreaInfoUI : UIMenu {
                 } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_ANVIL) {
                     ShowPlayerUpgradeUI();
                     return;
-                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.DEMONIC_PORTAL) {
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL) {
                     ShowPlayerSummonMinionUI();
                     return;
                 } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_EYE) {
@@ -673,7 +680,7 @@ public class AreaInfoUI : UIMenu {
 
     #region Player Summon Minion Content
     private void ShowPlayerSummonMinionUI() {
-        playerSummonMinionUI.ShowPlayerSummonMinionUI(activeTile.landmarkOnTile as DemonicPortal);
+        playerSummonMinionUI.ShowPlayerSummonMinionUI(activeTile.landmarkOnTile as ThePortal);
     }
     private void HidePlayerSummonMinionUI() {
         playerSummonMinionUI.HidePlayerSummonMinionUI();

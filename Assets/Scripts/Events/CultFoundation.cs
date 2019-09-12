@@ -9,7 +9,7 @@ public class CultFoundation : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region) {
         //- after effect: the resident will gain Cultist trait and Cult Founder and will start spreading the demon cult
         region.eventSpawnedBy.AddTrait("Cultist");
         StoryEventsManager.Instance.SetIsCultActive(true);

@@ -7,7 +7,7 @@ public class DrinkBlood : GoapAction {
 
     public DrinkBlood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK_BLOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
-        actionIconString = GoapActionStateDB.Eat_Icon;
+        actionIconString = GoapActionStateDB.Drink_Blood_Icon;
         doesNotStopTargetCharacter = true;
     }
 

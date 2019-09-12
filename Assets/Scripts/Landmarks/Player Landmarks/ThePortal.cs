@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DemonicPortal : BaseLandmark {
+public class ThePortal : BaseLandmark {
     public string currentMinionClassToSummon { get; private set; }
     public int currentSummonTick { get; private set; }
     public int currentSummonDuration { get; private set; }
 
-    public DemonicPortal(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
+    public ThePortal(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         currentMinionClassToSummon = string.Empty;
     }
 
-    public DemonicPortal(HexTile location, SaveDataLandmark data) : base(location, data) {
+    public ThePortal(HexTile location, SaveDataLandmark data) : base(location, data) {
         currentMinionClassToSummon = string.Empty;
     }
 
@@ -68,14 +68,14 @@ public class SaveDataDemonicPortal : SaveDataLandmark {
 
     public override void Save(BaseLandmark landmark) {
         base.Save(landmark);
-        DemonicPortal portal = landmark as DemonicPortal;
+        ThePortal portal = landmark as ThePortal;
         currentMinionClassToSummon = portal.currentMinionClassToSummon;
         currentSummonTick = portal.currentSummonTick;
         currentSummonDuration = portal.currentSummonDuration;
     }
     public override void LoadSpecificLandmarkData(BaseLandmark landmark) {
         base.LoadSpecificLandmarkData(landmark);
-        DemonicPortal portal = landmark as DemonicPortal;
+        ThePortal portal = landmark as ThePortal;
         portal.LoadSummonMinion(this);
     }
 }

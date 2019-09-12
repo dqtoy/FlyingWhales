@@ -8,7 +8,7 @@ public class MineSupply : WorldEvent {
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region) {
         //- after effect: provides an initial +50 Supply to owner settlement after completion
         LandmarkManager.Instance.enemyOfPlayerArea.AdjustSuppliesInBank(50);
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
