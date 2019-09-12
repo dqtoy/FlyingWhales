@@ -20,8 +20,15 @@ public class SaveDataItem {
         if(item.normalTraits != null) {
             traits = new List<SaveDataTrait>();
             for (int i = 0; i < item.normalTraits.Count; i++) {
-                SaveDataTrait saveDataTrait = new SaveDataTrait();
-                saveDataTrait.Save(item.normalTraits[i]);
+                Trait trait = item.normalTraits[i];
+                SaveDataTrait saveDataTrait = null;
+                System.Type type = System.Type.GetType("SaveData" + trait.name);
+                if (type != null) {
+                    saveDataTrait = System.Activator.CreateInstance(type) as SaveDataTrait;
+                } else {
+                    saveDataTrait = new SaveDataTrait();
+                }
+                saveDataTrait.Save(trait);
                 traits.Add(saveDataTrait);
             }
         }

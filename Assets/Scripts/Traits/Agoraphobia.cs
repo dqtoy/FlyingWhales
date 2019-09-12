@@ -6,7 +6,7 @@ public class Agoraphobia : Trait {
 
     public Agoraphobia() {
         name = "Agoraphobia";
-        description = "This is afraid of crowds.";
+        description = "Agoraphobics avoid crowds.";
         type = TRAIT_TYPE.SPECIAL;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

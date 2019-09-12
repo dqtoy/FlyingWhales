@@ -9,7 +9,7 @@ public class Kleptomaniac : Trait {
     private int _happinessDecreaseRate;
     public Kleptomaniac() {
         name = "Kleptomaniac";
-        description = "This character has irresistible urge to steal.";
+        description = "Kleptomaniacs enjoy stealing.";
         thoughtText = "[Character] has irresistible urge to steal.";
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEGATIVE;

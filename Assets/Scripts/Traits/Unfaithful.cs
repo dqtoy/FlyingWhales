@@ -9,7 +9,7 @@ public class Unfaithful : Trait {
 
     public Unfaithful() {
         name = "Unfaithful";
-        description = "This character has a tendency to be unfaithful.";
+        description = "Unfaithful characters are prone to having illicit love affairs.";
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEGATIVE;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

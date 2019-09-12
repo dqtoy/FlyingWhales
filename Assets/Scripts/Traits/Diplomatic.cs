@@ -5,7 +5,7 @@ using UnityEngine;
 public class Diplomatic : Trait {
     public Diplomatic() {
         name = "Diplomatic";
-        description = "This character is peaceful.";
+        description = "Diplomatic characters do not have enemies and may improve relationship of other characters.";
         type = TRAIT_TYPE.BUFF;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

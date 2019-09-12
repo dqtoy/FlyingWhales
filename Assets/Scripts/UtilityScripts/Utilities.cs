@@ -110,43 +110,40 @@ public class Utilities : MonoBehaviour {
         }
         return 0;
     }
+
+    //A checker is added before setting the last id of any object so that we can be sure that the last id value is always the highest number
+    //This is mostly needed when loading data from save file because we don't know the order it will be loaded so we must be sure that last id is the highest number not the id of the last object to load
     public static int SetID<T>(T obj, int idToUse) {
         if (obj is Log) {
-            lastLogID = idToUse;
+            if (lastLogID <= idToUse) { lastLogID = idToUse; }
         } else if (obj is BaseLandmark) {
-            if (lastTileObjectID <= idToUse) {
-                lastLandmarkID = idToUse;
-            }
+            if (lastLandmarkID <= idToUse) { lastLandmarkID = idToUse; }
         } else if (obj is Faction) {
-            lastFactionID = idToUse;
+            if (lastFactionID <= idToUse) { lastFactionID = idToUse; }
         } else if (obj is Character) {
-            lastCharacterID = idToUse;
+            if (lastCharacterID <= idToUse) { lastCharacterID = idToUse; }
         } else if (obj is Item) {
-            lastItemID = idToUse;
+            if (lastItemID <= idToUse) { lastItemID = idToUse; }
         } else if (obj is Monster) {
-            lastMonsterID = idToUse;
+            if (lastMonsterID <= idToUse) { lastMonsterID = idToUse; }
         } else if (obj is Area) {
-            lastAreaID = idToUse;
+            if (lastAreaID <= idToUse) { lastAreaID = idToUse; }
         } else if (obj is Party) {
-            lastPartyID = idToUse;
+            if (lastPartyID <= idToUse) { lastPartyID = idToUse; }
         } else if (obj is Squad) {
-            lastSquadID = idToUse;
+            if (lastSquadID <= idToUse) { lastSquadID = idToUse; }
         } else if (obj is CharacterSim) {
-            lastCharacterSimID = idToUse;
+            if (lastCharacterSimID <= idToUse) { lastCharacterSimID = idToUse; }
         } else if (obj is LocationStructure) {
-            lastStructureID = idToUse;
+            if (lastStructureID <= idToUse) { lastStructureID = idToUse; }
         } else if (obj is TileObject) {
-            if(lastTileObjectID <= idToUse) {
-                lastTileObjectID = idToUse;
-            }
+            if (lastTileObjectID <= idToUse) { lastTileObjectID = idToUse; }
         } else if (obj is Region) {
-            lastRegionID = idToUse;
+            if (lastRegionID <= idToUse) { lastRegionID = idToUse; }
         } else if (obj is JobQueueItem) {
-            if (lastJobID <= idToUse) {
-                lastJobID = idToUse;
-            }
+            if (lastJobID <= idToUse) { lastJobID = idToUse; }
         } else if (obj is BurningSource) {
-            lastBurningSourceID = idToUse;
+            if (lastBurningSourceID <= idToUse) { lastBurningSourceID = idToUse; }
         }
         //else if (obj is Interaction) {
         //    lastInteractionID = idToUse;

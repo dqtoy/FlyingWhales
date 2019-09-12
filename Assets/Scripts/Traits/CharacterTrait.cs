@@ -54,3 +54,31 @@ public class CharacterTrait : Trait {
     }
     #endregion
 }
+
+public class SaveDataCharacterTrait : SaveDataTrait {
+    public List<TileObjectSerializableData> alreadyInspectedTileObjects;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        alreadyInspectedTileObjects = new List<TileObjectSerializableData>();
+        CharacterTrait derivedTrait = trait as CharacterTrait;
+        for (int i = 0; i < derivedTrait.alreadyInspectedTileObjects.Count; i++) {
+            TileObject to = derivedTrait.alreadyInspectedTileObjects[i];
+            TileObjectSerializableData toData = new TileObjectSerializableData {
+                id = to.id,
+                type = to.tileObjectType,
+            };
+            alreadyInspectedTileObjects.Add(toData);
+        }
+    }
+
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        CharacterTrait derivedTrait = trait as CharacterTrait;
+        for (int i = 0; i < alreadyInspectedTileObjects.Count; i++) {
+            TileObjectSerializableData toData = alreadyInspectedTileObjects[i];
+            derivedTrait.AddAlreadyInspectedObject(InteriorMapManager.Instance.GetTileObject(toData.type, toData.id));
+        }
+        return trait;
+    }
+}

@@ -8,7 +8,7 @@ public class Glutton : Trait {
 
     public Glutton() {
         name = "Glutton";
-        description = "This character has glutton trait.";
+        description = "Gluttons consume more food than normal.";
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

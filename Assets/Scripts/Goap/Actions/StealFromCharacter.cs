@@ -61,6 +61,9 @@ public class StealFromCharacter : GoapAction {
         if (currentState.name == "Steal Vigilant") {
             if (poiTarget is Character) {
                 Character targetCharacter = poiTarget as Character;
+                if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
+                    CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
+                }
                 targetCharacter.marker.AddHostileInRange(actor, false);
             }
         }
@@ -101,16 +104,12 @@ public class StealFromCharacter : GoapAction {
     private void PreStealVigilant() {
         SetCommittedCrime(CRIME.THEFT, new Character[] { actor });
     }
-    private void AfterStealVigilant() {
-        if (poiTarget is Character) {
-            Character targetCharacter = poiTarget as Character;
-            if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
-                CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
-
-                //NOTE: Adding hostile in range is done after the action is done processing fully, See OnResultReturnedToActor
-            }
-        }
-    }
+    //private void AfterStealVigilant() {
+    //    if (poiTarget is Character) {
+    //        Character targetCharacter = poiTarget as Character;
+            
+    //    }
+    //}
     #endregion
 
     #region Intel Reactions

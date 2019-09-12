@@ -10,7 +10,7 @@ public class AccidentProne : Trait {
 
     public AccidentProne() {
         name = "Accident Prone";
-        description = "This character is prone to accidents.";
+        description = "Accident Prone characters often gets injured.";
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

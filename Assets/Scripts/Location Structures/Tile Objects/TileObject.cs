@@ -70,6 +70,7 @@ public class TileObject : IPointOfInterest {
         hasCreatedSlots = false;
         AddTrait("Flammable");
         InitializeCollisionTrigger();
+        InteriorMapManager.Instance.AddTileObject(this);
     }
     protected void Initialize(SaveDataArtifactSlot data, TILE_OBJECT_TYPE tileObjectType) {
         id = Utilities.SetID(this, data.id);
@@ -81,6 +82,7 @@ public class TileObject : IPointOfInterest {
         owners = new List<Character>();
         hasCreatedSlots = false;
         InitializeCollisionTrigger();
+        InteriorMapManager.Instance.AddTileObject(this);
     }
     protected void Initialize(SaveDataArtifact data, TILE_OBJECT_TYPE tileObjectType) {
         id = Utilities.SetID(this, data.id);
@@ -92,6 +94,7 @@ public class TileObject : IPointOfInterest {
         owners = new List<Character>();
         hasCreatedSlots = false;
         InitializeCollisionTrigger();
+        InteriorMapManager.Instance.AddTileObject(this);
     }
 
     #region Virtuals
@@ -658,4 +661,10 @@ public struct TileObjectSlotSetting {
     public Vector3 unusedPosition;
     public Vector3 assetRotation;
     public Sprite slotAsset;
+}
+
+[System.Serializable]
+public struct TileObjectSerializableData {
+    public int id;
+    public TILE_OBJECT_TYPE type;
 }

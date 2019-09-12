@@ -5,7 +5,7 @@ using UnityEngine;
 public class Inspiring : Trait {
     public Inspiring() {
         name = "Inspiring";
-        description = "This character inspires other characters.";
+        description = "Inspring characters make people around them feel happier.";
         type = TRAIT_TYPE.BUFF;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

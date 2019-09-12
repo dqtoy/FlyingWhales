@@ -6,7 +6,7 @@ public class Vigilant : Trait {
 
     public Vigilant() {
         name = "Vigilant";
-        description = "This character is vigilant.";
+        description = "Vigilant characters cannot be stealthily knocked out or pickpocketed.";
         type = TRAIT_TYPE.BUFF;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

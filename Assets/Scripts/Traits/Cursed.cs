@@ -98,12 +98,12 @@ public class Cursed : Trait {
                 result = "losebuff";
             }
         }
-        cursedInteractions.Add(new CursedInteraction() { characterThatInteracted = characterThatInteracted, actionDone = actionDone, result = result });
+        cursedInteractions.Add(new CursedInteraction() { characterThatInteracted = characterThatInteracted, actionDone = actionDone.goapType, result = result });
     }
     private void OnCharacterFinishedInteraction(Character character, GoapAction action, string result) {
         for (int i = 0; i < cursedInteractions.Count; i++) {
             CursedInteraction interaction = cursedInteractions[i];
-            if(interaction.characterThatInteracted == character && interaction.actionDone == action) {
+            if(interaction.characterThatInteracted == character && interaction.actionDone == action.goapType) {
                 InteractionEffectApplication(character, interaction.result);
                 cursedInteractions.RemoveAt(i);
                 break;
@@ -173,8 +173,9 @@ public class Cursed : Trait {
     }
 }
 
+[System.Serializable]
 public struct CursedInteraction {
     public Character characterThatInteracted;
-    public GoapAction actionDone;
+    public INTERACTION_TYPE actionDone;
     public string result;
 }

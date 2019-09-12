@@ -11,7 +11,7 @@ public class Vampiric : Trait {
 
     public Vampiric() {
         name = "Vampiric";
-        description = "This character sucks blood.";
+        description = "Vampires drink other character's blood for sustenance.";
         thoughtText = "[Character] sucks blood.";
         type = TRAIT_TYPE.SPECIAL;
         effect = TRAIT_EFFECT.NEUTRAL;
