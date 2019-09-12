@@ -53,7 +53,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initialLandmarkCount: 60
   landmarkData:
-  - landmarkTypeString: Demonic Portal
+  - landmarkTypeString: The Portal
     landmarkType: 1
     minimumTileCount: 1
     buildDuration: 0
@@ -62,7 +62,7 @@ MonoBehaviour:
     uniqueTags: 
     landmarkObjectSprite: {fileID: 0}
     landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
-    landmarkPortrait: {fileID: 0}
+    landmarkPortrait: {fileID: 21300000, guid: 4f117727fece67040a6c3082f72b0111, type: 3}
     biomeTileSprites:
       m_keys: 
       m_values: []
@@ -1240,6 +1240,46 @@ MonoBehaviour:
       m_values: []
     neutralTileSprites:
     - mainSprite: {fileID: 0}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 0}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+  - landmarkTypeString: The Needles
+    landmarkType: 55
+    minimumTileCount: 1
+    buildDuration: 288
+    buildDescription: Converts a minion into mana
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: de2218b3503e67748a7bb0a94e722a5b, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: e25182124429402469751b740445d966, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 9100000, guid: 5e52831c99093c9429a7012fe80475b7, type: 2}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
+  - landmarkTypeString: The Pit
+    landmarkType: 56
+    minimumTileCount: 1
+    buildDuration: 288
+    buildDescription: Provides a constant stream of supply.
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: e41ec74344b1b3b44899f7ed500eeeff, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
     humansLandmarkTileSprites: []

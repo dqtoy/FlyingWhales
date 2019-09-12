@@ -163,7 +163,7 @@ public class Biomes : MonoBehaviour {
         }else if (tile.elevationType == ELEVATION.TREES) {
             LoadCorruptedTreeTileVisuals(tile);
         }
-        if (tile.landmarkOnTile != null && tile.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
+        if (tile.landmarkOnTile != null && tile.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL) {
             LoadCorruptedStructureVisuals(tile);
         }
     }

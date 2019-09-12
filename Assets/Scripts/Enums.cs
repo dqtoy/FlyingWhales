@@ -252,7 +252,7 @@ public enum LANDMARK_TAG {
 }
 public enum LANDMARK_TYPE {
     NONE = 0,
-    DEMONIC_PORTAL = 1,
+    THE_PORTAL = 1,
     WORKSHOP = 4,
     MINES = 8,
     INN = 9,
@@ -298,6 +298,8 @@ public enum LANDMARK_TYPE {
     THE_FINGERS = 52,
     THE_EYE = 53,
     THE_PROFANE = 54,
+    THE_NEEDLES = 55,
+    THE_PIT = 56,
 }
 public enum TECHNOLOGY {
     //Weapon Production
@@ -1695,7 +1697,7 @@ public static class Extensions {
     #region Landmarks
     public static bool IsPlayerLandmark(this LANDMARK_TYPE type) {
         switch (type) {
-            case LANDMARK_TYPE.DEMONIC_PORTAL:
+            case LANDMARK_TYPE.THE_PORTAL:
             case LANDMARK_TYPE.THE_SPIRE:
             case LANDMARK_TYPE.THE_CRYPT:
             case LANDMARK_TYPE.THE_KENNEL:

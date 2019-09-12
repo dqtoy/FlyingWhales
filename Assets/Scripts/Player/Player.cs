@@ -149,7 +149,7 @@ public class Player : ILeader {
         chosenCoreTile.SetCorruption(true);
         Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION, 0);
         playerArea.LoadAdditionalData();
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.DEMONIC_PORTAL);
+        LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.THE_PORTAL);
         Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
         SetPlayerArea(playerArea);
         //ActivateMagicTransferToPlayer();
