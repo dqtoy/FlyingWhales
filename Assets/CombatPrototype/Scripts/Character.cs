@@ -924,6 +924,10 @@ public class Character : ILeader, IPointOfInterest {
             return;
         }
         if (!_isDead) {
+            if (currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+                SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
+            }
+            
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
@@ -8436,7 +8440,11 @@ public class Character : ILeader, IPointOfInterest {
 
             //Drop all plans except for the current action
             AdjustIsWaitingForInteraction(1);
-            DropAllPlans(currentAction.parentPlan);
+            if (currentAction != null && currentAction.parentPlan != null) {
+                DropAllPlans(currentAction.parentPlan);
+            } else {
+                DropAllPlans();
+            }
             AdjustIsWaitingForInteraction(-1);
 
             ResetFullnessMeter();

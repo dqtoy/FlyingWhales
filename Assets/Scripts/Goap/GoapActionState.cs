@@ -95,10 +95,10 @@ public class GoapActionState {
     }
     public void EndPerTickEffect(bool shouldDoAfterEffect = true) {
         //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
-        //if (isDone) {
-        //    return;
-        //}
-        //isDone = true;
+        if (isDone) {
+            return;
+        }
+        isDone = true;
         if (shouldDoAfterEffect) {
             if (afterEffect != null) {
                 afterEffect();
