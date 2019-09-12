@@ -91,7 +91,7 @@ public class PlayerUpgradeUI : MonoBehaviour {
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             characters.Add(PlayerManager.Instance.player.minions[i].character);
         }
-        string title = "Select Minion to Research";
+        string title = "Select minion to do upgrade";
         UIManager.Instance.ShowClickableObjectPicker(characters, SetChosenMinion, null, CanChooseMinion, title);
     }
     private bool CanChooseMinion(Character character) {

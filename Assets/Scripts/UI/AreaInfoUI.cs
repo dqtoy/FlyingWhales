@@ -53,6 +53,7 @@ public class AreaInfoUI : UIMenu {
     [SerializeField] private GameObject cryptGO;
     [SerializeField] private GameObject kennelGO;
     [SerializeField] private PlayerUpgradeUI playerUpgradeUI;
+    [SerializeField] private TheEyeUI theEyeUI;
 
 
     private CombatGrid combatGrid;
@@ -562,6 +563,7 @@ public class AreaInfoUI : UIMenu {
         HidePlayerDelayDivineInterventionUI();
         HidePlayerUpgradeUI();
         HidePlayerSummonMinionUI();
+        HideTheEyeUI();
 
         if (activeTile.isCorrupted) {
             //The things you can do to corrupted landmarks
@@ -586,6 +588,9 @@ public class AreaInfoUI : UIMenu {
                     return;
                 } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.DEMONIC_PORTAL) {
                     ShowPlayerSummonMinionUI();
+                    return;
+                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_EYE) {
+                    ShowTheEyeUI();
                     return;
                 }
             }
@@ -710,6 +715,15 @@ public class AreaInfoUI : UIMenu {
         if (playerUpgradeUI.gameObject.activeSelf) {
             playerUpgradeUI.OnUpgradeDone();
         }
+    }
+    #endregion
+
+    #region The Eye
+    private void ShowTheEyeUI() {
+        theEyeUI.ShowTheEyeUI(activeTile.landmarkOnTile as TheEye);
+    }
+    private void HideTheEyeUI() {
+        theEyeUI.HideTheEyeUI();
     }
     #endregion
 }
