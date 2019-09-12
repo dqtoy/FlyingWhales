@@ -696,7 +696,7 @@ public class AreaInfoUI : UIMenu {
     }
     #endregion
 
-    #region Player Research Content
+    #region Player Upgrade Content
     private void ShowPlayerUpgradeUI() {
         playerUpgradeUI.ShowPlayerUpgradeUI(activeTile.landmarkOnTile as TheAnvil);
     }
@@ -705,6 +705,11 @@ public class AreaInfoUI : UIMenu {
     }
     private void UpdatePlayerUpgradeUI() {
         playerUpgradeUI.UpdatePlayerUpgradeUI();
+    }
+    public void OnPlayerUpgradeDone() {
+        if (playerUpgradeUI.gameObject.activeSelf) {
+            playerUpgradeUI.OnUpgradeDone();
+        }
     }
     #endregion
 }

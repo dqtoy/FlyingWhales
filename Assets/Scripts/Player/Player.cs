@@ -1541,6 +1541,14 @@ public class Player : ILeader {
             }
         }
     }
+    public bool AreAllInterventionSlotsMaxLevel() {
+        for (int i = 0; i < interventionAbilitySlots.Length; i++) {
+            if (interventionAbilitySlots[i].level < PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY) {
+                return false;
+            }
+        }
+        return true;
+    }
     //public void LoadResearchNewInterventionAbility(SaveDataPlayer data) {
     //    if(data.interventionAbilityToResearch != INTERVENTION_ABILITY.NONE) {
     //        currentNewInterventionAbilityCycleIndex = data.currentNewInterventionAbilityCycleIndex;

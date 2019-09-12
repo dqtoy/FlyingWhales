@@ -1146,7 +1146,7 @@ MonoBehaviour:
   - landmarkTypeString: The Anvil
     landmarkType: 51
     minimumTileCount: 1
-    buildDuration: 1
+    buildDuration: 288
     buildDescription: Assign a minion to upgrade an artifact slot, summon slot or
       intervention spell slot.
     connectedTileDirection: 6

@@ -38,9 +38,7 @@ public class TheAnvil : BaseLandmark {
         if (upgradeIdentifier == All_Intervention) {
             for (int i = 0; i < PlayerManager.Instance.player.interventionAbilitySlots.Length; i++) {
                 PlayerJobActionSlot slot = PlayerManager.Instance.player.interventionAbilitySlots[i];
-                if (slot.ability != null) {
-                    slot.ability.LevelUp();
-                }
+                slot.LevelUp();
             }
             PlayerUI.Instance.ShowGeneralConfirmation("Upgrade Done", "All Intervention Abilities upgraded!");
         } else if (upgradeIdentifier == All_Summon) {
@@ -61,6 +59,8 @@ public class TheAnvil : BaseLandmark {
             PlayerUI.Instance.ShowGeneralConfirmation("Upgrade Done", "All Artifact Slots upgraded!");
         }
         upgradeIdentifier = string.Empty;
+        tileLocation.region.SetAssignedMinion(null); //reset assigned minion
+        UIManager.Instance.areaInfoUI.OnPlayerUpgradeDone();
     }
 
     #region Static

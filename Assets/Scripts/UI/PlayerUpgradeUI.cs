@@ -73,6 +73,16 @@ public class PlayerUpgradeUI : MonoBehaviour {
             upgradeProgress.fillAmount = theAnvil.currentUpgradeTick / (float)theAnvil.upgradeDuration;
         }
     }
+    public void OnUpgradeDone() {
+        //reset
+        upgradeBtn.interactable = false;
+        upgradeProgress.fillAmount = 0;
+        minionName.gameObject.SetActive(false);
+        minionPortrait.gameObject.SetActive(false);
+        upgradeText.gameObject.SetActive(false);
+        selectMinionBtn.interactable = true;
+        selectUpgradeBtn.interactable = false;
+    }
     #endregion
 
     #region Minion
@@ -85,7 +95,7 @@ public class PlayerUpgradeUI : MonoBehaviour {
         UIManager.Instance.ShowClickableObjectPicker(characters, SetChosenMinion, null, CanChooseMinion, title);
     }
     private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned;// && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.UPGRADE)
+        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.UPGRADE);
     }
     private void SetChosenMinion(Character character) {
         chosenMinion = character.minion;
@@ -102,7 +112,7 @@ public class PlayerUpgradeUI : MonoBehaviour {
     }
     #endregion
 
-    #region Research
+    #region Upgrade
     public void OnClickSelectAbility() {
         List<string> choices = new List<string>() {
            TheAnvil.All_Intervention,
@@ -114,6 +124,13 @@ public class PlayerUpgradeUI : MonoBehaviour {
     }
     private bool CanChooseUpgrade(string upgrade) {
         //check if any of the categories are already at max level.
+        if (upgrade == TheAnvil.All_Intervention) {
+            return !PlayerManager.Instance.player.AreAllInterventionSlotsMaxLevel();
+        } else if (upgrade == TheAnvil.All_Summon) {
+            return !PlayerManager.Instance.player.AreAllSummonSlotsMaxLevel();
+        } else if (upgrade == TheAnvil.All_Artifact) {
+            return !PlayerManager.Instance.player.AreAllArtifactSlotsMaxLevel();
+        }
         return true;
     }
     private void OnHoverAbilityChoice(string abilityName) {
