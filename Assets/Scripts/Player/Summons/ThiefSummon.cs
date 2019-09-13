@@ -34,8 +34,8 @@ public class ThiefSummon : Summon {
         //    }
         //}
     }
-    public override void ThisCharacterSaw(IPointOfInterest target) {
-        base.ThisCharacterSaw(target);
+    public override List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
+        List<GoapAction> actions = base.ThisCharacterSaw(target);
         if (target is Character) {
             Character targetCharacter = target as Character;
             //if the target is not from the player faction, add them to the terrifying characters list
@@ -43,6 +43,7 @@ public class ThiefSummon : Summon {
                 marker.AddTerrifyingObject(target);
             }
         }
+        return actions;
     }
     protected override void IdlePlans() {
         if (_hasAlreadyAskedForPlan) {

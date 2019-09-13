@@ -186,31 +186,34 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             }
         }
         parentMarker.AddPOIAsInVisionRange(poi);
-        if (GameManager.Instance.gameHasStarted) {
-            if (parentMarker.character.stateComponent.currentState != null) {
-                if (!parentMarker.character.stateComponent.currentState.OnEnterVisionWith(poi)) {
-                    if (targetCharacter != null) {
-                        if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                            if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
-                                ChatHandling(targetCharacter);
-                            }
-                        }
-                    } else {
-                        parentMarker.character.CreateJobsOnEnterVisionWith(poi, true);
-                    }
-                }
-            } else {
-                if (targetCharacter != null) {
-                    if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                        if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
-                            ChatHandling(targetCharacter);
-                        }
-                    }
-                } else {
-                    parentMarker.character.CreateJobsOnEnterVisionWith(poi, true);
-                }
-            }
+        if(targetCharacter != null) {
+            parentMarker.AddHostileInRange(targetCharacter);
         }
+        //if (GameManager.Instance.gameHasStarted) {
+        //    if (parentMarker.character.stateComponent.currentState != null) {
+        //        if (!parentMarker.character.stateComponent.currentState.OnEnterVisionWith(poi)) {
+        //            if (targetCharacter != null) {
+        //                if (!parentMarker.AddHostileInRange(targetCharacter)) {
+        //                    if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
+        //                        ChatHandling(targetCharacter);
+        //                    }
+        //                }
+        //            } else {
+        //                parentMarker.character.CreateJobsOnEnterVisionWith(poi, true);
+        //            }
+        //        }
+        //    } else {
+        //        if (targetCharacter != null) {
+        //            if (!parentMarker.AddHostileInRange(targetCharacter)) {
+        //                if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
+        //                    ChatHandling(targetCharacter);
+        //                }
+        //            }
+        //        } else {
+        //            parentMarker.character.CreateJobsOnEnterVisionWith(poi, true);
+        //        }
+        //    }
+        //}
     }
 
     #region Different Structure Handling

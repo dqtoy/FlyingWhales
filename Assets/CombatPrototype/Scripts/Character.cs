@@ -1548,7 +1548,7 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
-    public bool CreateJobsOnEnterVisionWith(Character targetCharacter, bool bypassInvisibilityCheck = false) {
+    private bool CreateJobsOnEnterVisionWith(Character targetCharacter, bool bypassInvisibilityCheck = false) {
         string log = name + " saw " + targetCharacter.name + ", will try to create jobs on enter vision...";
         if (!CanCharacterReact()) {
             log += "\nCharacter cannot react!";
@@ -1601,6 +1601,9 @@ public class Character : ILeader, IPointOfInterest {
         return hasCreatedJob;
     }
     public bool CreateJobsOnEnterVisionWith(IPointOfInterest targetPOI, bool bypassInvisibilityCheck = false) {
+        if(targetPOI is Character) {
+            return CreateJobsOnEnterVisionWith(targetPOI as Character, bypassInvisibilityCheck);
+        }
         string log = name + " saw " + targetPOI.name + ", will try to create jobs on enter vision...";
         if (!CanCharacterReact()) {
             log += "\nCharacter cannot react!";
@@ -3298,11 +3301,13 @@ public class Character : ILeader, IPointOfInterest {
         //}
         ///Moved all needed checking <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)"/>
         ThisCharacterWitnessedEvent(action);
-        ThisCharacterWatchEvent(null, action, state);
+        //ThisCharacterWatchEvent(null, action, state);
     }
-    public virtual void ThisCharacterSaw(IPointOfInterest target) {
+
+    //Returns the list of goap actions to be witnessed by this character
+    public virtual List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
         if (GetNormalTrait("Unconscious", "Resting") != null || isDead) {
-            return;
+            return null;
         }
         
         if (currentAction != null && currentAction.poiTarget == target && currentAction.isStealth) {
@@ -3328,17 +3333,15 @@ public class Character : ILeader, IPointOfInterest {
             Character targetCharacter = target as Character;
             targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
             
-            Spooked spooked = GetNormalTrait("Spooked") as Spooked;
-            if (spooked != null) {
-                if (marker.AddAvoidInRange(targetCharacter)) {
-                    spooked.AddTerrifyingCharacter(targetCharacter);
-                }
-                return;
-            }
             for (int i = 0; i < normalTraits.Count; i++) {
                 normalTraits[i].OnSeePOI(target, this);
             }
 
+            List<GoapAction> actionsToWitness = new List<GoapAction>();
+            if (target.targettedByAction.Count > 0) {
+                //Collect all actions first to avoid duplicates 
+                actionsToWitness.AddRange(target.targettedByAction);
+            }
             //Must not witness/watch if spooked
             if (targetCharacter.currentAction != null && targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone && targetCharacter.currentAction.goapType != INTERACTION_TYPE.WATCH) {
                 //Cannot witness/watch a watch action
@@ -3349,17 +3352,20 @@ public class Character : ILeader, IPointOfInterest {
                     poiTarget = targetCharacter.currentAction.poiTarget;
                 }
                 if (targetCharacter.currentAction.actor != this && poiTarget != this) {
-                    ThisCharacterWitnessedEvent(targetCharacter.currentAction);
-                    ThisCharacterWatchEvent(targetCharacter, targetCharacter.currentAction, targetCharacter.currentAction.currentState);
+                    actionsToWitness.Add(targetCharacter.currentAction);
+                    //ThisCharacterWitnessedEvent(targetCharacter.currentAction);
+                    //ThisCharacterWatchEvent(targetCharacter, targetCharacter.currentAction, targetCharacter.currentAction.currentState);
                 }
             }
             //This will only happen if target is in combat
             ThisCharacterWatchEvent(targetCharacter, null, null);
+            return actionsToWitness;
         } else {
             for (int i = 0; i < normalTraits.Count; i++) {
                 normalTraits[i].OnSeePOI(target, this);
             }
         }
+        return null;
     }
     /// <summary>
     /// What should happen if another character sees this character?
@@ -3624,41 +3630,42 @@ public class Character : ILeader, IPointOfInterest {
                     }
                 }
             }
-        } else if (!action.isDone) {
-            if (action.goapType == INTERACTION_TYPE.MAKE_LOVE && state.name == "Make Love Success") {
-                MakeLove makeLove = action as MakeLove;
-                Character target = makeLove.targetCharacter;
-                if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                    CreateWatchEvent(action, null, action.actor);
-                } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                    CreateWatchEvent(action, null, target);
-                } else {
-                    marker.AddAvoidInRange(action.actor, false);
-                    marker.AddAvoidInRange(target);
-                }
-            } else if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success" && GetNormalTrait("MusicHater") == null) {
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 25) { //25
-                    if (!HasRelationshipOfTypeWith(action.actor, RELATIONSHIP_TRAIT.ENEMY)) {
-                        CreateWatchEvent(action, null, action.actor);
-                    }
-                }
-            } else if (action.goapType == INTERACTION_TYPE.TABLE_POISON) {
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 35) {
-                    CreateWatchEvent(action, null, action.actor);
-                }
-            } else if (action.goapType == INTERACTION_TYPE.CURSE_CHARACTER && state.name == "Curse Success") {
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 35) {
-                    CreateWatchEvent(action, null, action.actor);
-                }
-            } else if ((action.goapType == INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM || action.goapType == INTERACTION_TYPE.REVERT_TO_NORMAL_FORM) && state.name == "Transform Success") {
-                if (faction == action.actor.faction) {
-                    CreateWatchEvent(action, null, action.actor);
-                }
-            }
-        }
+        } 
+        //else if (!action.isDone) {
+        //    if (action.goapType == INTERACTION_TYPE.MAKE_LOVE && state.name == "Make Love Success") {
+        //        MakeLove makeLove = action as MakeLove;
+        //        Character target = makeLove.targetCharacter;
+        //        if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        //            CreateWatchEvent(action, null, action.actor);
+        //        } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        //            CreateWatchEvent(action, null, target);
+        //        } else {
+        //            marker.AddAvoidInRange(action.actor, false);
+        //            marker.AddAvoidInRange(target);
+        //        }
+        //    } else if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success" && GetNormalTrait("MusicHater") == null) {
+        //        int chance = UnityEngine.Random.Range(0, 100);
+        //        if (chance < 25) { //25
+        //            if (!HasRelationshipOfTypeWith(action.actor, RELATIONSHIP_TRAIT.ENEMY)) {
+        //                CreateWatchEvent(action, null, action.actor);
+        //            }
+        //        }
+        //    } else if (action.goapType == INTERACTION_TYPE.TABLE_POISON) {
+        //        int chance = UnityEngine.Random.Range(0, 100);
+        //        if (chance < 35) {
+        //            CreateWatchEvent(action, null, action.actor);
+        //        }
+        //    } else if (action.goapType == INTERACTION_TYPE.CURSE_CHARACTER && state.name == "Curse Success") {
+        //        int chance = UnityEngine.Random.Range(0, 100);
+        //        if (chance < 35) {
+        //            CreateWatchEvent(action, null, action.actor);
+        //        }
+        //    } else if ((action.goapType == INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM || action.goapType == INTERACTION_TYPE.REVERT_TO_NORMAL_FORM) && state.name == "Transform Success") {
+        //        if (faction == action.actor.faction) {
+        //            CreateWatchEvent(action, null, action.actor);
+        //        }
+        //    }
+        //}
     }
     //In watch event, it's either the character watch an action or combat state, it cannot be both. (NOTE: Since 9/2/2019 Enabled watching of other states other than Combat)
     public void CreateWatchEvent(GoapAction actionToWatch, CharacterState stateToWatch, Character targetCharacter) {
@@ -7804,7 +7811,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void PrintLogIfActive(string log) {
         if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
-            Debug.Log(log);
+            //Debug.Log(log);
         }
     }
     public void AddTargettedByAction(GoapAction action) {

@@ -49,16 +49,19 @@ public class CharacterMarker : PooledObject {
 
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
+    public List<IPointOfInterest> unprocessedVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
     public Dictionary<Character, bool> lethalCharacters { get; private set; }
+    public bool willProcessCombat { get; private set; }
     public Action arrivalAction {
         get { return _arrivalAction; }
         private set {
             _arrivalAction = value;
         }
     }
+
     //movement
     private Action _arrivalAction;
     public IPointOfInterest targetPOI { get; private set; }
@@ -98,6 +101,7 @@ public class CharacterMarker : PooledObject {
         UpdateMarkerVisuals();
         UpdateActionIcon();
 
+        unprocessedVisionPOIs = new List<IPointOfInterest>();
         inVisionPOIs = new List<IPointOfInterest>();
         inVisionCharacters = new List<Character>();
         hostilesInRange = new List<Character>();
@@ -118,6 +122,7 @@ public class CharacterMarker : PooledObject {
         ///Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet); Moved listener for action state set to CharacterManager for optimization <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)">
         Messenger.AddListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+        Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
 
         PathfindingManager.Instance.AddAgent(pathfindingAI);
         //visionCollision.Initialize();
@@ -449,6 +454,8 @@ public class CharacterMarker : PooledObject {
         //Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.RemoveListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
+        Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
+
         visionCollision.Reset();
         GameObject.Destroy(collisionTrigger.gameObject);
         collisionTrigger = null;
@@ -970,6 +977,7 @@ public class CharacterMarker : PooledObject {
     public void AddPOIAsInVisionRange(IPointOfInterest poi) {
         if (!inVisionPOIs.Contains(poi)) {
             inVisionPOIs.Add(poi);
+            unprocessedVisionPOIs.Add(poi);
             if (poi is Character) {
                 inVisionCharacters.Add(poi as Character);
             }
@@ -981,16 +989,22 @@ public class CharacterMarker : PooledObject {
             //    }
             //}
             character.AddAwareness(poi);
-            OnAddPOIAsInVisionRange(poi);
+            //OnAddPOIAsInVisionRange(poi);
         }
     }
     public void RemovePOIFromInVisionRange(IPointOfInterest poi) {
         if (inVisionPOIs.Remove(poi)) {
+            unprocessedVisionPOIs.Remove(poi);
             if (poi is Character) {
                 inVisionCharacters.Remove(poi as Character);
                 Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_VISION, character, poi as Character);
             }
         }
+    }
+    public void ClearPOIsInVisionRange() {
+        inVisionPOIs.Clear();
+        unprocessedVisionPOIs.Clear();
+        inVisionCharacters.Clear();
     }
     public void LogPOIsInVisionRange() {
         string summary = character.name + "'s POIs in range: ";
@@ -999,12 +1013,72 @@ public class CharacterMarker : PooledObject {
         }
         Debug.Log(summary);
     }
-    public void ClearPOIsInVisionRange() {
-        inVisionPOIs.Clear();
-        inVisionCharacters.Clear();
-    }
     private void OnAddPOIAsInVisionRange(IPointOfInterest poi) {
         character.ThisCharacterSaw(poi);
+    }
+    private void ProcessAllUnprocessedVisionPOIs() {
+        if(unprocessedVisionPOIs.Count > 0 && (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
+            string log = GameManager.Instance.TodayLogString() + character.name + " tick ended! Processing all unprocessed in visions...";
+            if (!character.isDead) {
+                List<GoapAction> actionsToWitness = new List<GoapAction>();
+                for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
+                    IPointOfInterest poi = unprocessedVisionPOIs[i];
+                    log += "\n - Reacting to " + poi.name;
+                    //Collect all actions to witness and avoid duplicates
+                    List<GoapAction> actions = character.ThisCharacterSaw(poi);
+                    if (actions != null && actions.Count > 0) {
+                        for (int j = 0; j < actions.Count; j++) {
+                            GoapAction action = actions[j];
+                            if (action.isPerformingActualAction && !action.isDone && action.goapType != INTERACTION_TYPE.WATCH) {
+                                //Cannot witness a watch action
+                                IPointOfInterest poiTarget = null;
+                                if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                                    poiTarget = (action as MakeLove).targetCharacter;
+                                } else {
+                                    poiTarget = action.poiTarget;
+                                }
+                                if (action.actor != character && poiTarget != character) {
+                                    if (!actionsToWitness.Contains(action)) {
+                                        actionsToWitness.Add(action);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    log += "\n - Reacting to character traits...";
+                    //Character reacts to traits
+                    if (!character.CreateJobsOnEnterVisionWith(poi, true)) {
+                        if (poi is Character) {
+                            visionCollision.ChatHandling(poi as Character);
+                        }
+                    }
+                }
+
+                //Witness all actions
+                log += "\n - Witnessing collected actions:";
+                if(actionsToWitness.Count > 0) {
+                    for (int i = 0; i < actionsToWitness.Count; i++) {
+                        GoapAction action = actionsToWitness[i];
+                        log += "\n   - Witnessed: " + action.goapName + " of " + action.actor.name + " with target " + action.poiTarget.name;
+                        character.ThisCharacterWitnessedEvent(action);
+                    }
+                } else {
+                    log += "\n   - No collected actions";
+                }
+
+            } else {
+                log += "\n - Character is dead, not processing...";
+            }
+            unprocessedVisionPOIs.Clear();
+            character.PrintLogIfActive(log);
+        }
+        if (willProcessCombat && (hostilesInRange.Count > 0 || avoidInRange.Count > 0)) {
+            string log = GameManager.Instance.TodayLogString() + character.name + " process combat switch is turned on and there are hostiles or avoid in list, processing combat...";
+            ProcessCombatBehavior();
+            willProcessCombat = false;
+            character.PrintLogIfActive(log);
+        }
     }
     #endregion
 
@@ -1018,9 +1092,10 @@ public class CharacterMarker : PooledObject {
                     lethalCharacters.Add(character, isLethal);
                     this.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + character.name + " was added to " + this.character.name + "'s hostile range!");
                     //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
-                    if (processCombatBehavior) {
-                        ProcessCombatBehavior();
-                    }
+                    //if (processCombatBehavior) {
+                    //    ProcessCombatBehavior();
+                    //}
+                    willProcessCombat = true;
                 } else {
                     //Transfer to flee list
                     return AddAvoidInRange(character, processCombatBehavior);
@@ -1165,9 +1240,10 @@ public class CharacterMarker : PooledObject {
                 avoidInRange.Add(poi);
                 //NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
                 //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
-                if (processCombatBehavior) {
-                    ProcessCombatBehavior();
-                }
+                //if (processCombatBehavior) {
+                //    ProcessCombatBehavior();
+                //}
+                willProcessCombat = true;
                 return true;
             }
         }
@@ -1516,7 +1592,7 @@ public class CharacterMarker : PooledObject {
             //-character's hp is critically low (chance based dependent on the character)
             willTransfer = true;
         } else if (character.GetNormalTrait("Spooked") != null) {
-                                                                  //- fear-type status effect
+            //- fear-type status effect
             willTransfer = true;
         } else if (character.isStarving && character.GetNormalTrait("Vampiric") == null) {
             //-character is starving and is not a vampire
