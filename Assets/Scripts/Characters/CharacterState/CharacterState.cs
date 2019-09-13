@@ -44,7 +44,7 @@ public class CharacterState {
         CreateThoughtBubbleLog();
         DoMovementBehavior();
         Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.character, this);
-        InVisionPOIsOnStartState();
+        ProcessInVisionPOIsOnStartState();
         if(startStateAction != null) {
             startStateAction();
         }
@@ -98,7 +98,7 @@ public class CharacterState {
     public virtual bool OnEnterVisionWith(IPointOfInterest targetPOI) { return false; }
 
     //What happens if there are already point of interest in your vision upon entering the state
-    public virtual bool InVisionPOIsOnStartState() {
+    public virtual bool ProcessInVisionPOIsOnStartState() {
         if(stateComponent.character.marker.inVisionPOIs.Count > 0) {
             return true;
         }

@@ -130,12 +130,12 @@ public class CombatState : CharacterState {
             } else if (stateComponent.character.marker.avoidInRange.Count > 0) {
                 summary += "\nStill has characters to avoid, checking if those characters are still in range...";
                 for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
-                    Character currCharacter = stateComponent.character.marker.avoidInRange[i];
-                    if (!stateComponent.character.marker.inVisionCharacters.Contains(currCharacter) 
-                        && !stateComponent.character.marker.visionCollision.poisInRangeButDiffStructure.Contains(currCharacter)) {
+                    IPointOfInterest currAvoid = stateComponent.character.marker.avoidInRange[i];
+                    if (!stateComponent.character.marker.inVisionPOIs.Contains(currAvoid) 
+                        && !stateComponent.character.marker.visionCollision.poisInRangeButDiffStructure.Contains(currAvoid)) {
                         //I added checking for poisInRangeButDiffStructure beacuse characters are being removed from the character's avoid range when they exit a structure. (Myk)
-                        OnFinishedFleeingFrom(currCharacter);
-                        stateComponent.character.marker.RemoveAvoidInRange(currCharacter, false);
+                        OnFinishedFleeingFrom(currAvoid);
+                        stateComponent.character.marker.RemoveAvoidInRange(currAvoid, false);
                         i--;
                     }
                 }
@@ -405,33 +405,37 @@ public class CombatState : CharacterState {
         stateComponent.character.PrintLogIfActive(log);
         DetermineReaction(stateComponent.character);
     }
-    private void OnFinishedFleeingFrom(Character targetCharacter) {
-        if (stateComponent.character.IsHostileWith(targetCharacter)) {
-            //if (!targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
-                stateComponent.character.marker.AddTerrifyingObject(targetCharacter);
-            //}
-        }
-        if (stateComponent.character.IsHostileOutsider(targetCharacter)) {
-            if (stateComponent.character.role.roleType == CHARACTER_ROLE.LEADER || stateComponent.character.role.roleType == CHARACTER_ROLE.NOBLE || stateComponent.character.role.roleType == CHARACTER_ROLE.SOLDIER) {
-                int numOfJobs = 3 - targetCharacter.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
-                if (numOfJobs > 0) {
-                    stateComponent.character.CreateLocationKnockoutJobs(targetCharacter, numOfJobs);
-                }
-            } else {
-                if (!(targetCharacter.isDead || (targetCharacter.isAtHomeArea && targetCharacter.isPartOfHomeFaction))) { //|| targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
-                    if (stateComponent.character.isAtHomeArea && stateComponent.character.isPartOfHomeFaction) {
-                        if (!stateComponent.character.jobQueue.HasJobWithOtherData(JOB_TYPE.REPORT_HOSTILE, targetCharacter)) {
-                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
-                                { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { targetCharacter }}
+    private void OnFinishedFleeingFrom(IPointOfInterest fledFrom) {
+        if (fledFrom is Character) {
+            Character character = fledFrom as Character;
+            if (stateComponent.character.IsHostileWith(character)) {
+                //if (!targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")) {
+                stateComponent.character.marker.AddTerrifyingObject(fledFrom);
+                //}
+            }
+            if (stateComponent.character.IsHostileOutsider(character)) {
+                if (stateComponent.character.role.roleType == CHARACTER_ROLE.LEADER || stateComponent.character.role.roleType == CHARACTER_ROLE.NOBLE || stateComponent.character.role.roleType == CHARACTER_ROLE.SOLDIER) {
+                    int numOfJobs = 3 - character.GetNumOfJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
+                    if (numOfJobs > 0) {
+                        stateComponent.character.CreateLocationKnockoutJobs(character, numOfJobs);
+                    }
+                } else {
+                    if (!(character.isDead || (character.isAtHomeArea && character.isPartOfHomeFaction))) { //|| targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
+                        if (stateComponent.character.isAtHomeArea && stateComponent.character.isPartOfHomeFaction) {
+                            if (!stateComponent.character.jobQueue.HasJobWithOtherData(JOB_TYPE.REPORT_HOSTILE, fledFrom)) {
+                                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
+                                { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { fledFrom }}
                             });
-                            //job.SetCannotOverrideJob(true);
-                            job.SetCancelOnFail(true);
-                            stateComponent.character.jobQueue.AddJobInQueue(job, false);
+                                //job.SetCannotOverrideJob(true);
+                                job.SetCancelOnFail(true);
+                                stateComponent.character.jobQueue.AddJobInQueue(job, false);
+                            }
                         }
                     }
                 }
             }
         }
+        
     }
     #endregion
 

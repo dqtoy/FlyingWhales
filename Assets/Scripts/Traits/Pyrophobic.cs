@@ -47,7 +47,7 @@ public class Pyrophobic : Trait {
 
     public void Flee(BurningSource source, Character character) {
         string summary = GameManager.Instance.TodayLogString() + character.name + " saw burning source " + source.ToString();
-        if (character.marker.FleeFrom(source.objectsOnFire)) {
+        if (character.marker.AddAvoidsInRange(source.objectsOnFire)) {
             summary += "\nStarted fleeing";
             //owner.marker.AddTerrifyingObject(source.objectsOnFire);
             character.CancelAllPlans();

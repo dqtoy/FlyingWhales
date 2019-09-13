@@ -504,7 +504,7 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\n\tAvoid in Range: ";
         if (character.marker.avoidInRange.Count > 0) {
             for (int i = 0; i < character.marker.avoidInRange.Count; i++) {
-                Character poi = character.marker.avoidInRange[i];
+                IPointOfInterest poi = character.marker.avoidInRange[i];
                 summary += poi.name + ", ";
             }
         } else {
