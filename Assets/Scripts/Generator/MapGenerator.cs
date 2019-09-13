@@ -124,6 +124,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadCharacters();
         yield return null;
         data.LoadCharacterRelationships();
+        data.LoadCharacterTraits();
         yield return null;
         data.LoadLandmarks();
         data.LoadRegionConnections();

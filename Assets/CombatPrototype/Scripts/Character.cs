@@ -931,7 +931,8 @@ public class Character : ILeader, IPointOfInterest {
             if (currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
                 SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
             }
-            
+            SetIsChatting(false);
+            SetIsFlirting(false);
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
@@ -5988,13 +5989,13 @@ public class Character : ILeader, IPointOfInterest {
         }
         return positiveWeight + negativeWeight;
     }
-    public void EndChatCharacter(Character targetCharacter) {
+    public void EndChatCharacter() {
         SetIsChatting(false);
-        targetCharacter.SetIsChatting(false);
+        //targetCharacter.SetIsChatting(false);
         SetIsFlirting(false);
-        targetCharacter.SetIsFlirting(false);
+        //targetCharacter.SetIsFlirting(false);
         marker.UpdateActionIcon();
-        targetCharacter.marker.UpdateActionIcon();
+        //targetCharacter.marker.UpdateActionIcon();
     }
     public void SetIsChatting(bool state) {
         _isChatting = state;
@@ -7015,6 +7016,9 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.RESOLVE_CONFLICT);
         poiGoapActions.Add(INTERACTION_TYPE.ASK_TO_STOP_JOB);
         poiGoapActions.Add(INTERACTION_TYPE.STRANGLE);
+        poiGoapActions.Add(INTERACTION_TYPE.PRIORITIZED_SHOCK);
+        poiGoapActions.Add(INTERACTION_TYPE.PRIORITIZED_CRY);
+        poiGoapActions.Add(INTERACTION_TYPE.CRY);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
@@ -7811,7 +7815,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void PrintLogIfActive(string log) {
         if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
-            //Debug.Log(log);
+            Debug.Log(log);
         }
     }
     public void AddTargettedByAction(GoapAction action) {

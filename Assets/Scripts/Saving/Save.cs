@@ -200,6 +200,11 @@ public class Save {
             characterSaves[i].LoadRelationships(CharacterManager.Instance.allCharacters[i]);
         }
     }
+    public void LoadCharacterTraits() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadTraits(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
 
     public void SavePlayer(Player player) {
         playerSave = new SaveDataPlayer();

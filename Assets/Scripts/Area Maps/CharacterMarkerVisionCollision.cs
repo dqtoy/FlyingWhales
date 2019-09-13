@@ -134,7 +134,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
         if(!parentMarker.character.IsHostileWith(targetCharacter)) {
             int roll = UnityEngine.Random.Range(0, 100);
-            int chance = 12;
+            int chance = 8;
 
             if (roll < chance) {
                 if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {

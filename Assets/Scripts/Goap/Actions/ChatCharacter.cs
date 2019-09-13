@@ -204,7 +204,8 @@ public class ChatCharacter : GoapAction {
 
         GameDate dueDate = GameManager.Instance.Today();
         dueDate.AddTicks(2);
-        SchedulingManager.Instance.AddEntry(dueDate, () => actor.EndChatCharacter(targetCharacter), actor);
+        SchedulingManager.Instance.AddEntry(dueDate, () => actor.EndChatCharacter(), actor);
+        SchedulingManager.Instance.AddEntry(dueDate, () => targetCharacter.EndChatCharacter(), targetCharacter);
 
         SetState(chatResult);
 
