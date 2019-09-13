@@ -48,7 +48,7 @@ public class Greed : DeadlySin {
 
 public class Pride : DeadlySin {
     public Pride() : base() {
-        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.SPAWN_EVENT, DEADLY_SIN_ACTION.INVADE, DEADLY_SIN_ACTION.FIGHT };
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.SPAWN_EVENT, DEADLY_SIN_ACTION.UPGRADE, DEADLY_SIN_ACTION.FIGHT };
     }
     //#region Overrides
     //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
