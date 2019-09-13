@@ -931,7 +931,8 @@ public class Character : ILeader, IPointOfInterest {
             if (currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
                 SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
             }
-            
+            SetIsChatting(false);
+            SetIsFlirting(false);
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
@@ -5988,13 +5989,13 @@ public class Character : ILeader, IPointOfInterest {
         }
         return positiveWeight + negativeWeight;
     }
-    public void EndChatCharacter(Character targetCharacter) {
+    public void EndChatCharacter() {
         SetIsChatting(false);
-        targetCharacter.SetIsChatting(false);
+        //targetCharacter.SetIsChatting(false);
         SetIsFlirting(false);
-        targetCharacter.SetIsFlirting(false);
+        //targetCharacter.SetIsFlirting(false);
         marker.UpdateActionIcon();
-        targetCharacter.marker.UpdateActionIcon();
+        //targetCharacter.marker.UpdateActionIcon();
     }
     public void SetIsChatting(bool state) {
         _isChatting = state;
