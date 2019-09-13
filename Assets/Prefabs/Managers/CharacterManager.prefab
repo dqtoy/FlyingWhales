@@ -338,6 +338,10 @@ MonoBehaviour:
       magicClip: {fileID: 7400000, guid: 064c528a6e1311542839ce27b5cd6a01, type: 2}
       arrowClip: {fileID: 7400000, guid: 8e5e076f01148a949a6185c83d94bf82, type: 2}
       biteClip: {fileID: 0}
+      slashTiming: 0.07
+      magicTiming: 0.19
+      arrowTiming: 0.4
+      biteTiming: 0
     femaleAssets:
       gender: 1
       defaultSprite: {fileID: 21300000, guid: fbdf443ba2b2b6b48984cb614f9d6297, type: 3}
@@ -353,6 +357,10 @@ MonoBehaviour:
       magicClip: {fileID: 7400000, guid: c4bb0719d97ffe747a7a41831871beb6, type: 2}
       arrowClip: {fileID: 7400000, guid: 8ff0e129a632f1249abc8d1095989d13, type: 2}
       biteClip: {fileID: 0}
+      slashTiming: 0.07
+      magicTiming: 0.19
+      arrowTiming: 0.4
+      biteTiming: 0
   - raceName: Skeleton
     race: 13
     maleAssets:
@@ -370,6 +378,10 @@ MonoBehaviour:
       magicClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
       arrowClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
       biteClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
+      slashTiming: 0.4
+      magicTiming: 0.4
+      arrowTiming: 0.4
+      biteTiming: 0.4
     femaleAssets:
       gender: 1
       defaultSprite: {fileID: 21300000, guid: 117a7958b7b80384fa8e7a1b09a4caeb, type: 3}
@@ -385,6 +397,10 @@ MonoBehaviour:
       magicClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
       arrowClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
       biteClip: {fileID: 7400000, guid: 7682397befa5fcc44a396ba0d8c14053, type: 2}
+      slashTiming: 0.4
+      magicTiming: 0.4
+      arrowTiming: 0.4
+      biteTiming: 0.4
   - raceName: Wolf
     race: 10
     maleAssets:
@@ -402,6 +418,10 @@ MonoBehaviour:
       magicClip: {fileID: 0}
       arrowClip: {fileID: 0}
       biteClip: {fileID: 7400000, guid: b61ab7905b820624da705a91cca5d04d, type: 2}
+      slashTiming: 0
+      magicTiming: 0
+      arrowTiming: 0
+      biteTiming: 0.14
     femaleAssets:
       gender: 1
       defaultSprite: {fileID: 21300000, guid: 3a756fb8b4dda48438d4bfb084c208ce, type: 3}
@@ -417,6 +437,10 @@ MonoBehaviour:
       magicClip: {fileID: 0}
       arrowClip: {fileID: 0}
       biteClip: {fileID: 7400000, guid: b61ab7905b820624da705a91cca5d04d, type: 2}
+      slashTiming: 0
+      magicTiming: 0
+      arrowTiming: 0
+      biteTiming: 0.14
   - raceName: Elves
     race: 2
     maleAssets:
@@ -434,6 +458,10 @@ MonoBehaviour:
       magicClip: {fileID: 7400000, guid: 9ae6415e888c697408dba7720702c529, type: 2}
       arrowClip: {fileID: 7400000, guid: e85ab549b3f771348b8f5f857aadc461, type: 2}
       biteClip: {fileID: 0}
+      slashTiming: 0.17
+      magicTiming: 0.14
+      arrowTiming: 0.4
+      biteTiming: 0
     femaleAssets:
       gender: 1
       defaultSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
@@ -449,6 +477,10 @@ MonoBehaviour:
       magicClip: {fileID: 7400000, guid: d914e01b0baa953469c6763ccd2631e5, type: 2}
       arrowClip: {fileID: 7400000, guid: 87eccc24e26675c4b9a4a95b53d61027, type: 2}
       biteClip: {fileID: 0}
+      slashTiming: 0.17
+      magicTiming: 0.14
+      arrowTiming: 0.4
+      biteTiming: 0
   - raceName: Abomination
     race: 18
     maleAssets:
@@ -466,6 +498,10 @@ MonoBehaviour:
       magicClip: {fileID: 7400000, guid: 9ae6415e888c697408dba7720702c529, type: 2}
       arrowClip: {fileID: 7400000, guid: e85ab549b3f771348b8f5f857aadc461, type: 2}
       biteClip: {fileID: 0}
+      slashTiming: 0.17
+      magicTiming: 0.14
+      arrowTiming: 0.13
+      biteTiming: 0
     femaleAssets:
       gender: 1
       defaultSprite: {fileID: 21300000, guid: f45afa27e7c2e63428433d14677844b3, type: 3}
@@ -481,6 +517,10 @@ MonoBehaviour:
       magicClip: {fileID: 7400000, guid: d914e01b0baa953469c6763ccd2631e5, type: 2}
       arrowClip: {fileID: 7400000, guid: 87eccc24e26675c4b9a4a95b53d61027, type: 2}
       biteClip: {fileID: 0}
+      slashTiming: 0.17
+      magicTiming: 0.14
+      arrowTiming: 0.13
+      biteTiming: 0
   summonSettings:
     m_keys: 00000000010000000200000003000000040000000500000006000000
     m_values:

@@ -86,6 +86,9 @@ public class Miasma_Emitter : Artifact {
     #endregion
 
     private void CheckPerTick() {
+        if (gridTileLocation == null) { //this is needed because this can still be executed when the object was destroyed on the same frame that this ticks
+            return;
+        }
         if (currentDuration == duration) {
             gridTileLocation.structure.RemovePOI(this);
         } else {

@@ -806,6 +806,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 4155cf0c332b7864d9c20452435e1894, type: 3}
     - {fileID: 21300000, guid: f73219a174dca49489ec11e6d5c62e46, type: 3}
   animator: {fileID: 95186138413260264}
+  animationListener: {fileID: 114755964225770220}
   pathfindingAI: {fileID: 114720397635659402}
   destinationSetter: {fileID: 114167030245026914}
   seeker: {fileID: 114578536136533292}

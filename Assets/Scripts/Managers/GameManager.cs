@@ -263,9 +263,9 @@ public class GameManager : MonoBehaviour {
      * Set day progression speed to 1x, 2x of 4x
      * */
 	public void SetProgressionSpeed(PROGRESSION_SPEED progSpeed){
-        if (!isPaused && currProgressionSpeed == progSpeed) {
-            return; //ignore change
-        }
+        //if (!isPaused && currProgressionSpeed == progSpeed) {
+        //    return; //ignore change
+        //}
         currProgressionSpeed = progSpeed;
         //Debug.Log("Set progression speed to " + progSpeed.ToString());
         float speed = X1_SPEED;
