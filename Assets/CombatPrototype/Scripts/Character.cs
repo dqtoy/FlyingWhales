@@ -110,6 +110,8 @@ public class Character : ILeader, IPointOfInterest {
     public int tirednessDecreaseRate { get; protected set; }
     public int tirednessForcedTick { get; protected set; }
     public int currentSleepTicks { get; protected set; }
+    public int sleepScheduleJobID { get; protected set; }
+    public bool hasCancelledSleepSchedule { get; protected set; }
     private int tirednessLowerBound; //how low can this characters tiredness go
     protected const int TIREDNESS_DEFAULT = 15000;
     protected const int TIREDNESS_THRESHOLD_1 = 10000;
@@ -5375,7 +5377,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         //If a character current sleep ticks is less than the default, this means that the character already started sleeping but was awaken midway that is why he/she did not finish the allotted sleeping time
         //When this happens, make sure to queue tiredness recovery again so he can finish the sleeping time
-        else if(currentSleepTicks < CharacterManager.Instance.defaultSleepTicks && _doNotDisturb <= 0) {
+        else if((hasCancelledSleepSchedule || currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && _doNotDisturb <= 0) {
             if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
                 if (isExhausted) {
@@ -5383,11 +5385,16 @@ public class Character : ILeader, IPointOfInterest {
                 }
                 GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
                 job.SetCancelOnFail(true);
+                sleepScheduleJobID = job.id;
                 //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
                 //    || stateComponent.currentState != null || stateComponent.stateToDo != null;
                 jobQueue.AddJobInQueue(job); //!willNotProcess
             }
+            SetHasCancelledSleepSchedule(false);
         }
+    }
+    public void SetHasCancelledSleepSchedule(bool state) {
+        hasCancelledSleepSchedule = state;
     }
     private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {

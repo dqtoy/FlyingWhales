@@ -15,7 +15,7 @@ public class ThePortal : BaseLandmark {
         currentMinionClassToSummon = string.Empty;
     }
 
-    public void LoadSummonMinion(SaveDataDemonicPortal data) {
+    public void LoadSummonMinion(SaveDataThePortal data) {
         if (data.currentMinionClassToSummon != string.Empty) {
             StartSummon(data.currentMinionClassToSummon, data.currentSummonTick, data.currentSummonDuration);
         } else {
@@ -60,10 +60,11 @@ public class ThePortal : BaseLandmark {
             tileLocation.region.assignedMinion.SetAssignedRegion(null);
             tileLocation.region.SetAssignedMinion(null);
         }
+        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
 }
 
-public class SaveDataDemonicPortal : SaveDataLandmark {
+public class SaveDataThePortal : SaveDataLandmark {
     public string currentMinionClassToSummon;
     public int currentSummonTick;
     public int currentSummonDuration;

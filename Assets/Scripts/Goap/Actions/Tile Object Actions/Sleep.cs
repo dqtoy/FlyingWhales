@@ -148,6 +148,9 @@ public class Sleep : GoapAction {
         RemoveTraitFrom(actor, "Resting");
     }
     private void PreRestFail() {
+        if (parentPlan != null && parentPlan.job != null && parentPlan.job.id == actor.sleepScheduleJobID) {
+            actor.SetHasCancelledSleepSchedule(true);
+        }
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
     }
     private void PreTargetMissing() {

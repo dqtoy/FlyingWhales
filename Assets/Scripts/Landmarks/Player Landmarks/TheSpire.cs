@@ -42,6 +42,7 @@ public class TheSpire : BaseLandmark {
         researchDuration = 0;
         tileLocation.region.assignedMinion.SetAssignedRegion(null);
         tileLocation.region.SetAssignedMinion(null);
+        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
 }
 
