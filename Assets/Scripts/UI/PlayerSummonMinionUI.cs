@@ -42,7 +42,9 @@ public class PlayerSummonMinionUI : MonoBehaviour {
             selectMinionToSummonBtn.interactable = true;
             UpdateSummonDuration();
         } else {
-            SetChosenMinion(portal.tileLocation.region.assignedMinion.character);
+            if(portal.tileLocation.region.assignedMinion != null) {
+                SetChosenMinion(portal.tileLocation.region.assignedMinion.character);
+            }
             SetChosenMinionToSummon(portal.currentMinionClassToSummon);
             UpdateSelectMinionToAssignBtn();
             UpdateSelectMinionToSummonBtn();
