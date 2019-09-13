@@ -94,6 +94,11 @@ public class AccidentProne : Trait {
 
                 owner.jobQueue.AddJobInQueue(job, false);
 
+                if(owner.currentAction != null && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null
+                    && owner.currentAction.parentPlan.job.id == owner.sleepScheduleJobID) {
+                    owner.SetHasCancelledSleepSchedule(true);
+                }
+
                 owner.AdjustIsWaitingForInteraction(1);
                 owner.currentParty.RemoveAllOtherCharacters();
                 if (owner.currentParty.icon.isTravelling) {

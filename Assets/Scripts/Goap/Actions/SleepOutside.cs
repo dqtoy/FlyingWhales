@@ -118,9 +118,11 @@ public class SleepOutside : GoapAction {
         //actor.AdjustDoNotGetTired(-1);
         RemoveTraitFrom(actor, "Resting");
     }
-    //private void PreRestFail() {
-    //    currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    //}
+    private void PreRestFail() {
+        if (parentPlan != null && parentPlan.job != null && parentPlan.job.id == actor.sleepScheduleJobID) {
+            actor.SetHasCancelledSleepSchedule(true);
+        }
+    }
     #endregion
 }
 
