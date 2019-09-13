@@ -174,18 +174,25 @@ public class CharacterStateComponent {
                     //    SetCurrentState(null);
                     //}
                 } else {
-                    if (previousMajorState.hasStarted) {
-                        //Resumes previous major state
-                        if (previousMajorState.CanResumeState()) {
-                            SetCurrentState(previousMajorState);
-                            currentState.ResumeState();
-                        } else {
-                            previousMajorState = null;
-                            SetCurrentState(null);
+                    if(currentState.characterState == CHARACTER_STATE.COMBAT && previousMajorState.characterState == CHARACTER_STATE.BERSERKED) {
+                        if (previousMajorState.hasStarted) {
+                            previousMajorState.ExitState();
                         }
-                    } else {
                         SetCurrentState(null);
-                        previousMajorState.EnterState(previousMajorState.targetArea);
+                    } else {
+                        if (previousMajorState.hasStarted) {
+                            //Resumes previous major state
+                            if (previousMajorState.CanResumeState()) {
+                                SetCurrentState(previousMajorState);
+                                currentState.ResumeState();
+                            } else {
+                                previousMajorState = null;
+                                SetCurrentState(null);
+                            }
+                        } else {
+                            SetCurrentState(null);
+                            previousMajorState.EnterState(previousMajorState.targetArea);
+                        }
                     }
                 }
             }
