@@ -7811,7 +7811,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void PrintLogIfActive(string log) {
         if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
-            //Debug.Log(log);
+            Debug.Log(log);
         }
     }
     public void AddTargettedByAction(GoapAction action) {

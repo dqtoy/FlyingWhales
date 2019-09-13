@@ -98,6 +98,7 @@ public class Sleep : GoapAction {
         //actor.AdjustDoNotGetTired(1);
         _restingTrait = new Resting();
         actor.AddTrait(_restingTrait);
+        currentState.OverrideDuration(actor.currentSleepTicks);
     }
     private void PerTickRestSuccess() {
         actor.AdjustTiredness(75);
