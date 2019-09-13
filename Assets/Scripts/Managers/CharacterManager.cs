@@ -1450,8 +1450,10 @@ public class CharacterManager : MonoBehaviour {
         List<Character> allInVisionCharacters = action.actor.marker.inVisionCharacters;
         if(target is Character) {
             Character targetCharacter = target as Character;
-            //TODO: FOR PERFORMANCE TESTING!
-            allInVisionCharacters = action.actor.marker.inVisionCharacters.Union(targetCharacter.marker.inVisionCharacters).ToList();
+            if (!targetCharacter.isDead) {
+                //TODO: FOR PERFORMANCE TESTING!
+                allInVisionCharacters = action.actor.marker.inVisionCharacters.Union(targetCharacter.marker.inVisionCharacters).ToList();
+            }
         }
         for (int i = 0; i < allInVisionCharacters.Count; i++) {
             Character inVisionChar = allInVisionCharacters[i];

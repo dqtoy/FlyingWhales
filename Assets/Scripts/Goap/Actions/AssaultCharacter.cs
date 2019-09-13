@@ -34,53 +34,52 @@ public class AssaultCharacter : GoapAction {
         Character targetCharacter = poiTarget as Character;
         if (targetCharacter.specificLocation == actor.specificLocation && !targetCharacter.currentParty.icon.isTravellingOutside) {
             if (actor.IsCombatReady()) {
-                CharacterState combatState;
+                CharacterState characterState;
                 if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {
                     bool isLethal = true;
                     if(parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.UNDERMINE_ENEMY || parentPlan.job.jobType == JOB_TYPE.APPREHEND)) {
                         //Assaulting characters for imprisonment of criminals and undermining enemies must be non lethal
                         isLethal = false;
                     }
-                    actor.marker.AddHostileInRange(targetCharacter, out combatState, false, isLethal: isLethal);
+                    if(actor.marker.AddHostileInRange(targetCharacter, out characterState, false, isLethal: isLethal)) {
+                        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState); //set this to signal because adding a character as hostile, is no longer sure to return a new CharacterState
+                        SetState("In Progress");
+                    } else {
+                        Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did was unable to add target as hostile when reacting to " + poiTarget.name + " in assault action!");
+                        SetState("Target Missing");
+                    }
                 } else {
-                    combatState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
-                }
-                if (combatState is CombatState) {
-                    CombatState realCombatState = combatState as CombatState;
-                    realCombatState.SetActionThatTriggeredThisState(this);
-                    realCombatState.SetOnEndStateAction(OnFinishCombatState);
+                    characterState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
+                    CombatState combatState = characterState as CombatState;
+                    combatState.SetActionThatTriggeredThisState(this);
+                    combatState.SetOnEndStateAction(OnFinishCombatState);
                     SetState("In Progress");
-                } else {
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
-                    SetState("Target Missing");
                 }
+                //if (characterState is CombatState) {
+                //    CombatState realCombatState = characterState as CombatState;
+                //    realCombatState.SetActionThatTriggeredThisState(this);
+                //    realCombatState.SetOnEndStateAction(OnFinishCombatState);
+                //    SetState("In Progress");
+                //} else {
+                //    Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
+                //    SetState("Target Missing");
+                //}
             } else {
                 SetState("Assault Failed");
             }
         } else {
             SetState("Target Missing");
         }
-                
-        //Character targetCharacter = poiTarget as Character;
-        //if (!isTargetMissing && targetCharacter.IsInOwnParty() && !targetCharacter.isDead) {
-
-        //    float attackersChance = 0f;
-        //    float defendersChance = 0f;
-
-        //    CombatManager.Instance.GetCombatChanceOfTwoLists(new List<Character>() { actor }, new List<Character>() { targetCharacter }, out attackersChance, out defendersChance);
-
-        //    string nextState = CombatEncounterEvents(actor, targetCharacter, UnityEngine.Random.Range(0, 100) < attackersChance);
-        //    if (nextState == "Target Killed") {
-        //        parentPlan.SetDoNotRecalculate(true);
-        //    }
-        //    SetState(nextState);
-        //} else {
-        //    SetState("Target Missing");
-        //}
-
+    }
+    private void OnCharacterStartedState(Character character, CharacterState state) {
+        CombatState combatState = state as CombatState;
+        combatState.SetActionThatTriggeredThisState(this);
+        combatState.SetOnEndStateAction(OnFinishCombatState);
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
     }
     protected override void OnCancelActionTowardsTarget() {
         actor.marker.pathfindingAI.ResetEndReachedDistance();
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         base.OnCancelActionTowardsTarget();
     }
     private void OnFinishCombatState() {
