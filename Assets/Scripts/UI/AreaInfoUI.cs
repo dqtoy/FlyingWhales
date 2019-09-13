@@ -105,7 +105,9 @@ public class AreaInfoUI : UIMenu {
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
         }
-
+        if (UIManager.Instance.IsObjectPickerOpen()) {
+            UIManager.Instance.HideObjectPicker();
+        }
         UpdateAreaInfo();
         ShowAppropriateContent();
         ResetScrollPositions();
@@ -134,6 +136,9 @@ public class AreaInfoUI : UIMenu {
         base.CloseMenu();
         if (activeTile != null) {
             activeTile.areaOfTile.SetOutlineState(false);
+        }
+        if (UIManager.Instance.IsObjectPickerOpen()) {
+            UIManager.Instance.HideObjectPicker();
         }
         activeTile = null;
         //UIManager.Instance.SetCoverState(false);
