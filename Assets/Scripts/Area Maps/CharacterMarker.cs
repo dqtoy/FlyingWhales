@@ -1061,9 +1061,11 @@ public class CharacterMarker : PooledObject {
 
                     log += "\n - Reacting to character traits...";
                     //Character reacts to traits
-                    if (!character.CreateJobsOnEnterVisionWith(poi, true)) {
-                        if (poi is Character) {
-                            visionCollision.ChatHandling(poi as Character);
+                    if(character.stateComponent.currentState == null || !character.stateComponent.currentState.OnEnterVisionWith(poi)) {
+                        if (!character.CreateJobsOnEnterVisionWith(poi, true)) {
+                            if (poi is Character) {
+                                visionCollision.ChatHandling(poi as Character);
+                            }
                         }
                     }
                 }

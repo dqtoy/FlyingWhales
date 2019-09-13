@@ -256,6 +256,17 @@ public class JobQueue {
         }
         return false;
     }
+    public bool HasJob(JOB_TYPE jobType, INTERACTION_TYPE targetGoapActionType) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i].jobType == jobType && jobsInQueue[i] is GoapPlanJob) {
+                GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
+                if (job.targetInteractionType == targetGoapActionType) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public bool HasJobWithOtherData(JOB_TYPE jobType, object otherData) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if (jobsInQueue[i].jobType == jobType && jobsInQueue[i] is GoapPlanJob) {

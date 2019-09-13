@@ -49,6 +49,22 @@ public class CharacterTrait : Trait {
                     characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
                 }
             }
+        } else if (targetPOI is SpecialToken) {
+            if(characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST) {
+                SpecialToken token = targetPOI as SpecialToken;
+                if (token.characterOwner == null) {
+                    //Patrollers should not pick up items from their warehouse
+                    if (token.structureLocation != null && token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE
+                        && token.specificLocation == characterThatWillDoJob.homeArea) {
+                        return false;
+                    }
+                    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_ITEM_GOAP)) {
+                        GoapPlanJob pickUpJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_ITEM_GOAP, token);
+                        characterThatWillDoJob.jobQueue.AddJobInQueue(pickUpJob);
+                    }
+                    return true;
+                }
+            }
         }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
     }

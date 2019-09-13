@@ -56,8 +56,10 @@ public class ThePortal : BaseLandmark {
         currentSummonTick = 0;
         currentSummonDuration = 0;
         currentMinionClassToSummon = string.Empty;
-        tileLocation.region.assignedMinion.SetAssignedRegion(null);
-        tileLocation.region.SetAssignedMinion(null);
+        if (tileLocation.region.assignedMinion != null) {
+            tileLocation.region.assignedMinion.SetAssignedRegion(null);
+            tileLocation.region.SetAssignedMinion(null);
+        }
     }
 }
 
