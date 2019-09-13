@@ -19,32 +19,32 @@ public class PatrolState : CharacterState {
         base.DoMovementBehavior();
         StartPatrolMovement();
     }
-    public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
-        if(targetPOI is Character) {
-            return stateComponent.character.marker.AddHostileInRange(targetPOI as Character);
-        } else if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
-            SpecialToken token = targetPOI as SpecialToken;
-            if(token.characterOwner == null) {
-                //Patrollers should not pick up items from their warehouse
-                if (token.structureLocation != null && token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE 
-                    && token.specificLocation == stateComponent.character.homeArea) {
-                    return false;
-                }
-                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM_GOAP, stateComponent.character, targetPOI);
-                if (goapAction.targetTile != null) {
-                    SetCurrentlyDoingAction(goapAction);
-                    goapAction.CreateStates();
-                    stateComponent.character.SetCurrentAction(goapAction);
-                    stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
-                    PauseState();
-                } else {
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't pick up item " + targetPOI.name + " because there is no tile to go to!");
-                }
-                return true;
-            }
-        }
-        return base.OnEnterVisionWith(targetPOI);
-    }
+    //public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
+    //    if(targetPOI is Character) {
+    //        return stateComponent.character.marker.AddHostileInRange(targetPOI as Character);
+    //    } else if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
+    //        SpecialToken token = targetPOI as SpecialToken;
+    //        if(token.characterOwner == null) {
+    //            //Patrollers should not pick up items from their warehouse
+    //            if (token.structureLocation != null && token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE 
+    //                && token.specificLocation == stateComponent.character.homeArea) {
+    //                return false;
+    //            }
+    //            GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM_GOAP, stateComponent.character, targetPOI);
+    //            if (goapAction.targetTile != null) {
+    //                SetCurrentlyDoingAction(goapAction);
+    //                goapAction.CreateStates();
+    //                stateComponent.character.SetCurrentAction(goapAction);
+    //                stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
+    //                PauseState();
+    //            } else {
+    //                Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't pick up item " + targetPOI.name + " because there is no tile to go to!");
+    //            }
+    //            return true;
+    //        }
+    //    }
+    //    return base.OnEnterVisionWith(targetPOI);
+    //}
     protected override void PerTickInState() {
         base.PerTickInState();
         if (!isDone && !isPaused) {
