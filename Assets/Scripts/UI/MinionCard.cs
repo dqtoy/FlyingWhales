@@ -85,7 +85,7 @@ public class MinionCard : MonoBehaviour {
 
             txtCombatAbility.text = minion.combatAbility.name;
 
-            Sprite classPortrait = CharacterManager.Instance.GetClassPortraitSprite(className);
+            Sprite classPortrait = CharacterManager.Instance.GetClassPortraitSprite(minion.character.characterClass.className);
             if (classPortrait != null) {
                 portraitImg.sprite = classPortrait;
                 portraitImg.gameObject.SetActive(true);

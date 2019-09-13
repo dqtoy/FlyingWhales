@@ -36,12 +36,14 @@ public class Drunk : Trait {
                     characterThatWillDoJob.PrintLogIfActive(GameManager.Instance.TodayLogString() + characterThatWillDoJob.name
                         + " Drunk Assault Chance: " + value + ", Roll: " + chance);
                     if (characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, false, false)) {
-                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
-                        log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        //log.AddLogToInvolvedObjects();
-                        characterThatWillDoJob.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-                        characterThatWillDoJob.marker.ProcessCombatBehavior();
+                        if (!characterThatWillDoJob.marker.avoidInRange.Contains(targetCharacter)) {
+                            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "drunk_assault");
+                            log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                            //log.AddLogToInvolvedObjects();
+                            characterThatWillDoJob.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                        }
+                        //characterThatWillDoJob.marker.ProcessCombatBehavior();
                     }
                     return true;
                 }
