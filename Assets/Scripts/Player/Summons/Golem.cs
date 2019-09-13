@@ -15,9 +15,16 @@ public class Golem : Summon {
     }
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
-        CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, tile.parentAreaMap.area);
-        state.SetIsUnending(true);
+        //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, tile.parentAreaMap.area);
+        //state.SetIsUnending(true);
+        GoToWorkArea();
     }
+    //protected override void IdlePlans() {
+    //    base.IdlePlans();
+    //    //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, specificLocation);
+    //    //state.SetIsUnending(true);
+    //    GoToWorkArea();
+    //}
     protected override void OnSeenBy(Character character) {
         base.OnSeenBy(character);
         if (HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {

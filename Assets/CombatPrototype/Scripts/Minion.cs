@@ -149,6 +149,7 @@ public class Minion {
             Dead dead = new Dead();
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             character.AddTrait(dead, gainedFromDoing: deathFromAction);
+            PlayerManager.Instance.player.RemoveMinion(this);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
 
             character.CancelAllJobsAndPlans();

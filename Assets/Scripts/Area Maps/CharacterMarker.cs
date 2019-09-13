@@ -910,7 +910,7 @@ public class CharacterMarker : PooledObject {
         Rotate(lookAt, true);
     }
     public void OnDeath(LocationGridTile deathTileLocation) {
-        if (character.race == RACE.SKELETON || character is Summon) {
+        if (character.race == RACE.SKELETON || character is Summon || character.minion != null) {
             character.DestroyMarker();
         } else {
             for (int i = 0; i < colliders.Length; i++) {

@@ -124,6 +124,28 @@ public class Summon : Character, IWorldObject {
             AddHistory(log);
         }
     }
+    protected override void PerTickGoapPlanGeneration() {
+        if (isDead || minion != null) {
+            return;
+        }
+
+        //Out of combat hp recovery
+        if (!isDead && (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
+            HPRecovery(0.0025f);
+        }
+
+        //This is to ensure that this character will not be idle forever
+        //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
+        //so start doing actions again
+        SetHasAlreadyAskedForPlan(false);
+        if (CanPlanGoap()) {
+            PlanGoapActions();
+        }
+    }
+    protected override void IdlePlans() {
+        //base.IdlePlans();
+        GoToWorkArea();
+    }
     #endregion
 
     #region Virtuals
@@ -135,7 +157,7 @@ public class Summon : Character, IWorldObject {
         hasBeenUsed = true;
         SubscribeToSignals();
         Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds); //do not make summons decrease needs
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration); //do not make summons plan goap actions by default
+        //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration); //do not make summons plan goap actions by default
         if (GameManager.Instance.isPaused) {
             marker.pathfindingAI.AdjustDoNotMove(1);
             marker.PauseAnimation();
@@ -161,6 +183,14 @@ public class Summon : Character, IWorldObject {
     public void Obtain() {
         //invading a region with a summon will recruit that summon for the player
         PlayerManager.Instance.player.GainSummon(this, true);
+    }
+    #endregion
+
+    #region Utilities
+    protected void GoToWorkArea() {
+        LocationStructure structure = this.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        LocationGridTile tile = structure.GetRandomTile();
+        this.marker.GoTo(tile);
     }
     #endregion
 

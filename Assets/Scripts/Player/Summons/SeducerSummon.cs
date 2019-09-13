@@ -40,7 +40,7 @@ public class SeducerSummon : Summon {
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
         hasSucceeded = false;
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
+        //Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
         AdjustIgnoreHostilities(1);
     }
     public override List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {

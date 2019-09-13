@@ -1310,21 +1310,21 @@ public class Player : ILeader {
         if(currentMinions.Count > 0) {
             LocationGridTile mainEntrance = area.GetRandomUnoccupiedEdgeTile();
             entrances.Add(mainEntrance);
-            int neededEntrances = currentMinions.Count - 1;
+            //int neededEntrances = currentMinions.Count - 1;
 
             for (int i = 0; i < entrances.Count; i++) {
+                if (entrances.Count == currentMinions.Count) {
+                    break;
+                }
                 for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
                     LocationGridTile newEntrance = entrances[i].neighbourList[j];
                     //if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
                     if (newEntrance.IsAtEdgeOfWalkableMap() && !entrances.Contains(newEntrance)) {
                         entrances.Add(newEntrance);
-                        if (entrances.Count >= currentMinions.Count) {
+                        if (entrances.Count == currentMinions.Count) {
                             break;
                         }
                     }
-                }
-                if (entrances.Count >= currentMinions.Count) {
-                    break;
                 }
             }
             for (int i = 0; i < entrances.Count; i++) {
@@ -1339,6 +1339,7 @@ public class Player : ILeader {
             }
             PlayerUI.Instance.startInvasionButton.interactable = false;
             currentAreaBeingInvaded = area;
+            currentMinions[0].character.CenterOnCharacter();
             Messenger.AddListener(Signals.TICK_ENDED, PerTickInvasion);
         } else {
             Debug.LogError("Can't invade! No more minions!");
@@ -1395,17 +1396,17 @@ public class Player : ILeader {
                 corruptedArea.charactersAtLocation[i].marker.ClearTerrifyingObjects();
             }
             Messenger.Broadcast(Signals.SUCCESS_INVASION_AREA, corruptedArea);
-            ResetSummons();
-            ResetArtifacts();
-            LevelUpAllMinions();
+            //ResetSummons();
+            //ResetArtifacts();
+            //LevelUpAllMinions();
         } else {
-            string gameOverText = "Your minions were wiped out. This settlement is not as weak as you think. You should reconsider your strategy next time.";
-            PlayerUI.Instance.GameOver(gameOverText);
+            PlayerUI.Instance.ShowGeneralConfirmation("Failure", "You failed to invade " + currentAreaBeingInvaded.name + ".");
         }
         for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
             currMinion.StopInvasionProtocol();
         }
+        currentAreaBeingInvaded = null;
     }
     public void SetInvadingRegion(Region region) {
         invadingRegion = region;

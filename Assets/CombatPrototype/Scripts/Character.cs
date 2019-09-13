@@ -5094,7 +5094,7 @@ public class Character : ILeader, IPointOfInterest {
     public void RemoveInteractionType(INTERACTION_TYPE type) {
         currentInteractionTypes.Remove(type);
     }
-    protected void PerTickGoapPlanGeneration() {
+    protected virtual void PerTickGoapPlanGeneration() {
         if(isDead || minion != null) {
             return;
         }

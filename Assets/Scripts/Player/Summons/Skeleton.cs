@@ -13,9 +13,16 @@ public class Skeleton : Summon {
     #region Overrides
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
-        CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, tile.parentAreaMap.area);
-        state.SetIsUnending(true);
+        //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, tile.parentAreaMap.area);
+        //state.SetIsUnending(true);
+        GoToWorkArea();
     }
+    //protected override void IdlePlans() {
+    //    base.IdlePlans();
+    //    //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, specificLocation);
+    //    //state.SetIsUnending(true);
+    //    GoToWorkArea();
+    //}
     public override List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
         if (GetNormalTrait("Unconscious", "Resting") != null) {
             return null;

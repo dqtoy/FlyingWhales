@@ -242,6 +242,10 @@ public class PlayerUI : MonoBehaviour {
         startInvasionButton.gameObject.SetActive(true);
         //saveGameButton.gameObject.SetActive(false);
 
+        if (PlayerManager.Instance.player.currentAreaBeingInvaded == area) {
+            ShowCombatAbilityUI();
+        }
+
         //Kill count UI
         //UpdateKillCountActiveState();
         //LoadKillCountCharacterItems(area);
@@ -251,6 +255,7 @@ public class PlayerUI : MonoBehaviour {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(false);
+        HideCombatAbilityUI();
         //saveGameButton.gameObject.SetActive(true);
 
         //UpdateKillCountActiveState();
