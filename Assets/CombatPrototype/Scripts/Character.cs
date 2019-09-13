@@ -4772,7 +4772,9 @@ public class Character : ILeader, IPointOfInterest {
         } else if (trait.name == "Lethargic") {
             AdjustMoodValue(-20, trait, trait.gainedFromDoing);
         } else if (trait.name == "Heartbroken") {
-            AdjustMoodValue(-35, trait, trait.gainedFromDoing);
+            AdjustMoodValue(-25, trait, trait.gainedFromDoing);
+        } else if (trait.name == "Griefstricken") {
+            AdjustMoodValue(-20, trait, trait.gainedFromDoing);
         } else if (trait.name == "Encumbered") {
             AdjustSpeedModifier(-0.5f);
         } else if (trait.name == "Vampiric") {

@@ -91,17 +91,17 @@ public class CharacterTrait : Trait {
                     if (characterThatWillDoJob.HasRelationshipOfTypeWith(deadTarget, RELATIONSHIP_TRAIT.LOVER)) {
                         characterThatWillDoJob.AddTrait("Heartbroken");
                         bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
-                        characterThatWillDoJob.AdjustHappiness(-8000);
+                        characterThatWillDoJob.AdjustHappiness(-6000);
                         return hasCreatedJob;
                     } else if (characterThatWillDoJob.HasRelationshipOfTypeWith(deadTarget, RELATIONSHIP_TRAIT.RELATIVE)) {
                         characterThatWillDoJob.AddTrait("Heartbroken");
                         bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
-                        characterThatWillDoJob.AdjustHappiness(-6000);
+                        characterThatWillDoJob.AdjustHappiness(-4000);
                         return hasCreatedJob;
                     } else if (characterThatWillDoJob.HasRelationshipOfTypeWith(deadTarget, RELATIONSHIP_TRAIT.FRIEND)) {
                         characterThatWillDoJob.AddTrait("Heartbroken");
                         bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
-                        characterThatWillDoJob.AdjustHappiness(-4000);
+                        characterThatWillDoJob.AdjustHappiness(-2000);
                         return hasCreatedJob;
                     }
                 }
