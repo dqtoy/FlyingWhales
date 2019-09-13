@@ -1,23 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class DeadlySin {
-    //public DEADLY_SIN_ACTION[] assignments { get; protected set; }
+    public DEADLY_SIN_ACTION[] assignments { get; protected set; }
+
+    public DeadlySin() { }
+
+    public bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
+        return assignments.Contains(sinAction);
+    }
 
     #region Virtuals
     public virtual INTERVENTION_ABILITY_CATEGORY GetInterventionAbilityCategory() { return INTERVENTION_ABILITY_CATEGORY.NONE; }
-    public virtual bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) { return false; }
     #endregion
 }
 
 public class Envy : DeadlySin {
-    #region Overrides
-    public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
-        return sinAction == DEADLY_SIN_ACTION.RESEARCH_SPELL 
-            || sinAction == DEADLY_SIN_ACTION.SPAWN_EVENT 
-            || sinAction == DEADLY_SIN_ACTION.CONSTRUCT;
+    public Envy() : base() {
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.RESEARCH_SPELL, DEADLY_SIN_ACTION.SPAWN_EVENT, DEADLY_SIN_ACTION.CONSTRUCT };
     }
+    #region Overrides
+    //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
+    //    return sinAction == DEADLY_SIN_ACTION.RESEARCH_SPELL 
+    //        || sinAction == DEADLY_SIN_ACTION.SPAWN_EVENT 
+    //        || sinAction == DEADLY_SIN_ACTION.CONSTRUCT;
+    //}
     public override INTERVENTION_ABILITY_CATEGORY GetInterventionAbilityCategory() {
         return INTERVENTION_ABILITY_CATEGORY.SABOTAGE;
     }
@@ -25,32 +34,41 @@ public class Envy : DeadlySin {
 }
 
 public class Greed : DeadlySin {
-    #region Overrides
-    public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
-        return sinAction == DEADLY_SIN_ACTION.INTERFERE
-            || sinAction == DEADLY_SIN_ACTION.INVADE
-            || sinAction == DEADLY_SIN_ACTION.FIGHT;
+    public Greed() : base() {
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.INTERFERE, DEADLY_SIN_ACTION.INVADE, DEADLY_SIN_ACTION.FIGHT };
     }
-    #endregion
+    //#region Overrides
+    //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
+    //    return sinAction == DEADLY_SIN_ACTION.INTERFERE
+    //        || sinAction == DEADLY_SIN_ACTION.INVADE
+    //        || sinAction == DEADLY_SIN_ACTION.FIGHT;
+    //}
+    //#endregion
 }
 
 public class Pride : DeadlySin {
-    #region Overrides
-    public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
-        return sinAction == DEADLY_SIN_ACTION.SPAWN_EVENT
-            || sinAction == DEADLY_SIN_ACTION.INVADE
-            || sinAction == DEADLY_SIN_ACTION.FIGHT;
+    public Pride() : base() {
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.SPAWN_EVENT, DEADLY_SIN_ACTION.INVADE, DEADLY_SIN_ACTION.FIGHT };
     }
-    #endregion
+    //#region Overrides
+    //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
+    //    return sinAction == DEADLY_SIN_ACTION.SPAWN_EVENT
+    //        || sinAction == DEADLY_SIN_ACTION.INVADE
+    //        || sinAction == DEADLY_SIN_ACTION.FIGHT;
+    //}
+    //#endregion
 }
 
 public class Lust : DeadlySin {
-    #region Overrides
-    public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
-        return sinAction == DEADLY_SIN_ACTION.RESEARCH_SPELL
-            || sinAction == DEADLY_SIN_ACTION.INTERFERE
-            || sinAction == DEADLY_SIN_ACTION.UPGRADE;
+    public Lust() : base() {
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.RESEARCH_SPELL, DEADLY_SIN_ACTION.INTERFERE, DEADLY_SIN_ACTION.UPGRADE };
     }
+    #region Overrides
+    //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
+    //    return sinAction == DEADLY_SIN_ACTION.RESEARCH_SPELL
+    //        || sinAction == DEADLY_SIN_ACTION.INTERFERE
+    //        || sinAction == DEADLY_SIN_ACTION.UPGRADE;
+    //}
     public override INTERVENTION_ABILITY_CATEGORY GetInterventionAbilityCategory() {
         return INTERVENTION_ABILITY_CATEGORY.HEX;
     }
@@ -58,22 +76,28 @@ public class Lust : DeadlySin {
 }
 
 public class Gluttony : DeadlySin {
-    #region Overrides
-    public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
-        return sinAction == DEADLY_SIN_ACTION.INVADE
-            || sinAction == DEADLY_SIN_ACTION.INTERFERE
-            || sinAction == DEADLY_SIN_ACTION.CONSTRUCT;
+    public Gluttony() : base() {
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.INVADE, DEADLY_SIN_ACTION.INTERFERE, DEADLY_SIN_ACTION.CONSTRUCT };
     }
-    #endregion
+    //#region Overrides
+    //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
+    //    return sinAction == DEADLY_SIN_ACTION.INVADE
+    //        || sinAction == DEADLY_SIN_ACTION.INTERFERE
+    //        || sinAction == DEADLY_SIN_ACTION.CONSTRUCT;
+    //}
+    //#endregion
 }
 
 public class Wrath : DeadlySin {
-    #region Overrides
-    public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
-        return sinAction == DEADLY_SIN_ACTION.RESEARCH_SPELL
-            || sinAction == DEADLY_SIN_ACTION.INVADE
-            || sinAction == DEADLY_SIN_ACTION.FIGHT;
+    public Wrath() : base() {
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.RESEARCH_SPELL, DEADLY_SIN_ACTION.INVADE, DEADLY_SIN_ACTION.FIGHT };
     }
+    #region Overrides
+    //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
+    //    return sinAction == DEADLY_SIN_ACTION.RESEARCH_SPELL
+    //        || sinAction == DEADLY_SIN_ACTION.INVADE
+    //        || sinAction == DEADLY_SIN_ACTION.FIGHT;
+    //}
     public override INTERVENTION_ABILITY_CATEGORY GetInterventionAbilityCategory() {
         return INTERVENTION_ABILITY_CATEGORY.DEVASTATION;
     }
@@ -81,12 +105,15 @@ public class Wrath : DeadlySin {
 }
 
 public class Sloth : DeadlySin {
-    #region Overrides
-    public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
-        return sinAction == DEADLY_SIN_ACTION.RESEARCH_SPELL
-            || sinAction == DEADLY_SIN_ACTION.UPGRADE
-            || sinAction == DEADLY_SIN_ACTION.CONSTRUCT;
+    public Sloth() : base() {
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.RESEARCH_SPELL, DEADLY_SIN_ACTION.UPGRADE, DEADLY_SIN_ACTION.CONSTRUCT };
     }
+    #region Overrides
+    //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
+    //    return sinAction == DEADLY_SIN_ACTION.RESEARCH_SPELL
+    //        || sinAction == DEADLY_SIN_ACTION.UPGRADE
+    //        || sinAction == DEADLY_SIN_ACTION.CONSTRUCT;
+    //}
     public override INTERVENTION_ABILITY_CATEGORY GetInterventionAbilityCategory() {
         return INTERVENTION_ABILITY_CATEGORY.MONSTER;
     }

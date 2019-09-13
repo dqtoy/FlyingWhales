@@ -31,7 +31,7 @@ public class Minion {
         if (!keepData) {
             character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
         }
-        SetRandomResearchInterventionAbilities();
+        //SetRandomResearchInterventionAbilities(CharacterManager.Instance.Get3RandomResearchInterventionAbilities(deadlySin));
     }
     public Minion(SaveDataMinion data) {
         this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);
@@ -66,24 +66,8 @@ public class Minion {
     //    _isEnabled = state;
     //    minionItem.SetEnabledState(state);
     //}
-    private void SetRandomResearchInterventionAbilities() {
-        interventionAbilitiesToResearch = new List<INTERVENTION_ABILITY>();
-        INTERVENTION_ABILITY_CATEGORY category = deadlySin.GetInterventionAbilityCategory();
-        if(category != INTERVENTION_ABILITY_CATEGORY.NONE) {
-            List<INTERVENTION_ABILITY> possibleAbilities = PlayerManager.Instance.GetAllInterventionAbilityByCategory(category);
-            if(possibleAbilities.Count > 0) {
-
-                int index1 = UnityEngine.Random.Range(0, possibleAbilities.Count);
-                interventionAbilitiesToResearch.Add(possibleAbilities[index1]);
-                possibleAbilities.RemoveAt(index1);
-
-                int index2 = UnityEngine.Random.Range(0, possibleAbilities.Count);
-                interventionAbilitiesToResearch.Add(possibleAbilities[index2]);
-                possibleAbilities.RemoveAt(index2);
-
-                interventionAbilitiesToResearch.Add(possibleAbilities[UnityEngine.Random.Range(0, possibleAbilities.Count)]);
-            }
-        }
+    public void SetRandomResearchInterventionAbilities(List<INTERVENTION_ABILITY> abilities) {
+        interventionAbilitiesToResearch = abilities;
     }
     public void RemoveInterventionAbilityToResearch(INTERVENTION_ABILITY abilityType) {
         interventionAbilitiesToResearch.Remove(abilityType);

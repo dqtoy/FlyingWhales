@@ -816,6 +816,9 @@ public class PlayerUI : MonoBehaviour {
         minion1.SetCombatAbility(startingMinionCard1.combatAbilityType);
         minion2.SetCombatAbility(startingMinionCard2.combatAbilityType);
 
+        minion1.SetRandomResearchInterventionAbilities(startingMinionCard1.abilitiesToResearch);
+        minion2.SetRandomResearchInterventionAbilities(startingMinionCard2.abilitiesToResearch);
+
         PlayerManager.Instance.player.AddMinion(minion1);
         PlayerManager.Instance.player.AddMinion(minion2);
         //PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);

@@ -37,7 +37,7 @@ public class AssaultCharacter : GoapAction {
                 CharacterState characterState;
                 if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {
                     bool isLethal = true;
-                    if(parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.UNDERMINE_ENEMY || parentPlan.job.jobType == JOB_TYPE.APPREHEND)) {
+                    if(parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.UNDERMINE_ENEMY || parentPlan.job.jobType == JOB_TYPE.APPREHEND || parentPlan.job.targetInteractionType == INTERACTION_TYPE.DRINK_BLOOD)) {
                         //Assaulting characters for imprisonment of criminals and undermining enemies must be non lethal
                         isLethal = false;
                     }

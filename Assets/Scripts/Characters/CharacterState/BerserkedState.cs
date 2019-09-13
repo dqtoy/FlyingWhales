@@ -12,7 +12,7 @@ public class BerserkedState : CharacterState {
         characterState = CHARACTER_STATE.BERSERKED;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 100;
-        SetAreaCombatsLethal(true);
+        SetAreCombatsLethal(true);
     }
 
     #region Overrides
@@ -173,7 +173,7 @@ public class BerserkedState : CharacterState {
     public void SetHostileChecker(System.Func<Character, bool> hostileChecker) {
         this.hostileChecker = hostileChecker;
     }
-    public void SetAreaCombatsLethal(bool state) {
+    public void SetAreCombatsLethal(bool state) {
         areCombatsLethal = state;
     }
 }

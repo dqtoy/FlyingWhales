@@ -1509,6 +1509,26 @@ public class CharacterManager : MonoBehaviour {
     public bool CanDoDeadlySinAction(string deadlySinName, DEADLY_SIN_ACTION action) {
         return deadlySins[deadlySinName].CanDoDeadlySinAction(action);
     }
+    public List<INTERVENTION_ABILITY> Get3RandomResearchInterventionAbilities(DeadlySin deadlySin) {
+        List<INTERVENTION_ABILITY> interventionAbilitiesToResearch = new List<INTERVENTION_ABILITY>();
+        INTERVENTION_ABILITY_CATEGORY category = deadlySin.GetInterventionAbilityCategory();
+        if (category != INTERVENTION_ABILITY_CATEGORY.NONE) {
+            List<INTERVENTION_ABILITY> possibleAbilities = PlayerManager.Instance.GetAllInterventionAbilityByCategory(category);
+            if (possibleAbilities.Count > 0) {
+
+                int index1 = UnityEngine.Random.Range(0, possibleAbilities.Count);
+                interventionAbilitiesToResearch.Add(possibleAbilities[index1]);
+                possibleAbilities.RemoveAt(index1);
+
+                int index2 = UnityEngine.Random.Range(0, possibleAbilities.Count);
+                interventionAbilitiesToResearch.Add(possibleAbilities[index2]);
+                possibleAbilities.RemoveAt(index2);
+
+                interventionAbilitiesToResearch.Add(possibleAbilities[UnityEngine.Random.Range(0, possibleAbilities.Count)]);
+            }
+        }
+        return interventionAbilitiesToResearch;
+    }
     #endregion
 }
 

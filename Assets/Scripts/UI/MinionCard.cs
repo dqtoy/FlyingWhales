@@ -19,11 +19,15 @@ public class MinionCard : MonoBehaviour {
     public Image imgTrait2;
     public TextMeshProUGUI txtTrait1;
     public TextMeshProUGUI txtTrait2;
+    public TextMeshProUGUI txtActions;
+    public TextMeshProUGUI txtResearch;
+    public GameObject researchGO;
 
     //Minion Data
     public string minionName { get; private set; }
     public string className { get; private set; }
     public COMBAT_ABILITY combatAbilityType { get; private set; }
+    public List<INTERVENTION_ABILITY> abilitiesToResearch { get; private set; }
     //TODO: trait 1 and 2
 
     public void SetMinion(string className, COMBAT_ABILITY combatAbility, string minionName = "") {
@@ -45,6 +49,31 @@ public class MinionCard : MonoBehaviour {
         txtName.text = minionName;
         txtClass.text = "Demon " + className;
         txtCombatAbility.text = Utilities.NormalizeStringUpperCaseFirstLetters(combatAbilityType.ToString());
+
+        DeadlySin deadlySin = CharacterManager.Instance.GetDeadlySin(className);
+        string actions = string.Empty;
+        for (int i = 0; i < deadlySin.assignments.Length; i++) {
+            if(i > 0) {
+                actions += ", ";
+            }
+            actions += Utilities.NormalizeStringUpperCaseFirstLetters(deadlySin.assignments[i].ToString());
+        }
+        txtActions.text = actions;
+
+        abilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(deadlySin);
+        if (abilitiesToResearch.Count > 0) {
+            string research = string.Empty;
+            for (int i = 0; i < abilitiesToResearch.Count; i++) {
+                if (i > 0) {
+                    research += ", ";
+                }
+                research += Utilities.NormalizeStringUpperCaseFirstLetters(abilitiesToResearch[i].ToString());
+            }
+            txtResearch.text = research;
+            researchGO.SetActive(true);
+        } else {
+            researchGO.SetActive(false);
+        }
     }
 
     public void SetMinion(Minion minion) {
@@ -56,7 +85,37 @@ public class MinionCard : MonoBehaviour {
 
             txtCombatAbility.text = minion.combatAbility.name;
 
+            Sprite classPortrait = CharacterManager.Instance.GetClassPortraitSprite(className);
+            if (classPortrait != null) {
+                portraitImg.sprite = classPortrait;
+                portraitImg.gameObject.SetActive(true);
+            } else {
+                portraitImg.gameObject.SetActive(false);
+            }
             //TODO: trait1 and trait2
+
+            string actions = string.Empty;
+            for (int i = 0; i < minion.deadlySin.assignments.Length; i++) {
+                if (i > 0) {
+                    actions += ", ";
+                }
+                actions += Utilities.NormalizeStringUpperCaseFirstLetters(minion.deadlySin.assignments[i].ToString());
+            }
+            txtActions.text = actions;
+
+            if(minion.interventionAbilitiesToResearch.Count > 0) {
+                string research = string.Empty;
+                for (int i = 0; i < minion.interventionAbilitiesToResearch.Count; i++) {
+                    if (i > 0) {
+                        research += ", ";
+                    }
+                    research += Utilities.NormalizeStringUpperCaseFirstLetters(minion.interventionAbilitiesToResearch[i].ToString());
+                }
+                txtResearch.text = research;
+                researchGO.SetActive(true);
+            } else {
+                researchGO.SetActive(false);
+            }
         }
     }
 
