@@ -227,6 +227,15 @@ public class SaveDataCharacter {
         }
     }
 
+    public void LoadTraits(Character character) {
+        for (int i = 0; i < normalTraits.Count; i++) {
+            Character responsibleCharacter = null;
+            Trait trait = normalTraits[i].Load(ref responsibleCharacter);
+            character.AddTrait(trait, responsibleCharacter);
+        }
+        character.LoadAllStatsOfCharacter(this);
+    }
+
     public void LoadRelationships(Character character) {
         for (int i = 0; i < alterEgos.Count; i++) {
             alterEgos[i].LoadRelationships(character);

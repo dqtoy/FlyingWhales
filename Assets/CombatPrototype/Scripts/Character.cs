@@ -7015,6 +7015,9 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.RESOLVE_CONFLICT);
         poiGoapActions.Add(INTERACTION_TYPE.ASK_TO_STOP_JOB);
         poiGoapActions.Add(INTERACTION_TYPE.STRANGLE);
+        poiGoapActions.Add(INTERACTION_TYPE.PRIORITIZED_SHOCK);
+        poiGoapActions.Add(INTERACTION_TYPE.PRIORITIZED_CRY);
+        poiGoapActions.Add(INTERACTION_TYPE.CRY);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

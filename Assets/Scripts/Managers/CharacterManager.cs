@@ -290,12 +290,6 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < data.items.Count; i++) {
             data.items[i].Load(newCharacter);
         }
-        for (int i = 0; i < data.normalTraits.Count; i++) {
-            Character responsibleCharacter = null;
-            Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);
-            newCharacter.AddTrait(trait, responsibleCharacter);
-        }
-        newCharacter.LoadAllStatsOfCharacter(data);
 
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
@@ -503,12 +497,12 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < data.items.Count; i++) {
             data.items[i].Load(newCharacter);
         }
-        for (int i = 0; i < data.normalTraits.Count; i++) {
-            Character responsibleCharacter = null;
-            Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);
-            newCharacter.AddTrait(trait, responsibleCharacter);
-        }
-        newCharacter.LoadAllStatsOfCharacter(data);
+        //for (int i = 0; i < data.normalTraits.Count; i++) {
+        //    Character responsibleCharacter = null;
+        //    Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);
+        //    newCharacter.AddTrait(trait, responsibleCharacter);
+        //}
+        //newCharacter.LoadAllStatsOfCharacter(data);
 
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);

@@ -41,15 +41,18 @@ public class CharacterTrait : Trait {
                     }
                 }
             }
-        }else if (targetPOI is TileObject) {
+        }
+        if (targetPOI is TileObject) {
             TileObject objectToBeInspected = targetPOI as TileObject;
-            if (objectToBeInspected.isSummonedByPlayer && !alreadyInspectedTileObjects.Contains(objectToBeInspected)) {
+            if (objectToBeInspected.isSummonedByPlayer && characterThatWillDoJob.GetNormalTrait("Suspicious") == null && !alreadyInspectedTileObjects.Contains(objectToBeInspected)) {
                 if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, objectToBeInspected)) {
                     GoapPlanJob inspectJob = new GoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, objectToBeInspected);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
+                    return true;
                 }
             }
-        } else if (targetPOI is SpecialToken) {
+        }
+        if (targetPOI is SpecialToken) {
             if(characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST) {
                 SpecialToken token = targetPOI as SpecialToken;
                 if (token.characterOwner == null) {
@@ -66,9 +69,71 @@ public class CharacterTrait : Trait {
                 }
             }
         }
+        if (targetPOI is Character || targetPOI is Tombstone) {
+            Character deadTarget = null;
+            if(targetPOI is Character) {
+                deadTarget = targetPOI as Character;
+            }else if(targetPOI is Tombstone) {
+                deadTarget = (targetPOI as Tombstone).character;
+            }
+            if (deadTarget.isDead) {
+                Dead deadTrait = deadTarget.GetNormalTrait("Dead") as Dead;
+                if (!deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
+                    deadTrait.AddCharacterThatSawThisDead(characterThatWillDoJob);
+
+                    Log sawDeadLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_dead");
+                    sawDeadLog.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    sawDeadLog.AddToFillers(deadTarget, deadTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    characterThatWillDoJob.AddHistory(sawDeadLog);
+                    PlayerManager.Instance.player.ShowNotificationFrom(sawDeadLog, characterThatWillDoJob, false);
+
+
+                    if (characterThatWillDoJob.HasRelationshipOfTypeWith(deadTarget, RELATIONSHIP_TRAIT.LOVER)) {
+                        characterThatWillDoJob.AddTrait("Heartbroken");
+                        bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
+                        characterThatWillDoJob.AdjustHappiness(-8000);
+                        return hasCreatedJob;
+                    } else if (characterThatWillDoJob.HasRelationshipOfTypeWith(deadTarget, RELATIONSHIP_TRAIT.RELATIVE)) {
+                        characterThatWillDoJob.AddTrait("Heartbroken");
+                        bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
+                        characterThatWillDoJob.AdjustHappiness(-6000);
+                        return hasCreatedJob;
+                    } else if (characterThatWillDoJob.HasRelationshipOfTypeWith(deadTarget, RELATIONSHIP_TRAIT.FRIEND)) {
+                        characterThatWillDoJob.AddTrait("Heartbroken");
+                        bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
+                        characterThatWillDoJob.AdjustHappiness(-4000);
+                        return hasCreatedJob;
+                    }
+                }
+            }
+        }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
     }
     #endregion
+
+    private bool RandomizeBetweenShockAndCryJob(Character characterThatWillDoJob) {
+        if(UnityEngine.Random.Range(0, 2) == 0) {
+            return CreatePrioritizedShockJob(characterThatWillDoJob);
+        } else {
+            return CreatePrioritizedCryJob(characterThatWillDoJob);
+        }
+    }
+    private bool CreatePrioritizedShockJob(Character characterThatWillDoJob) {
+        if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PRIORITIZED_SHOCK)) {
+            GoapPlanJob shockJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PRIORITIZED_SHOCK, characterThatWillDoJob);
+            characterThatWillDoJob.jobQueue.AddJobInQueue(shockJob);
+            return true;
+        }
+        return false;
+    }
+    private bool CreatePrioritizedCryJob(Character characterThatWillDoJob) {
+        if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PRIORITIZED_CRY)) {
+            GoapPlanJob cryJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PRIORITIZED_CRY, characterThatWillDoJob);
+            characterThatWillDoJob.jobQueue.AddJobInQueue(cryJob);
+            return true;
+        }
+        return false;
+    }
 }
 
 public class SaveDataCharacterTrait : SaveDataTrait {
