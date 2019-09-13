@@ -780,10 +780,12 @@ public class Player : ILeader {
     //    }
     //}
     private void GainSummonSlot(bool showUI = true) {
-        summonSlots.Add(new SummonSlot());
+        SummonSlot newSlot = new SummonSlot();
+        summonSlots.Add(newSlot);
         if (showUI) {
             PlayerUI.Instance.ShowGeneralConfirmation("New Summon Slot", "You gained a new summon slot!");
         }
+        Messenger.Broadcast<SummonSlot>(Signals.PLAYER_GAINED_SUMMON_SLOT, newSlot);
     }
     private void LoseSummonSlot() {
         SummonSlot unusedSlot;
@@ -1034,10 +1036,12 @@ public class Player : ILeader {
     //    }
     //}
     private void GainArtifactSlot(bool showUI = true) {
-        artifactSlots.Add(new ArtifactSlot());
+        ArtifactSlot newSlot = new ArtifactSlot();
+        artifactSlots.Add(newSlot);
         if (showUI) {
             PlayerUI.Instance.ShowGeneralConfirmation("New Artifact Slot", "You gained a new artifact slot!");
         }
+        Messenger.Broadcast<ArtifactSlot>(Signals.PLAYER_GAINED_ARTIFACT_SLOT, newSlot);
     }
     private void LoseArtifactSlot() {
         ArtifactSlot unusedSlot;
