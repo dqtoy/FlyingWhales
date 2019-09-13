@@ -29,6 +29,7 @@ public class CharacterMarker : PooledObject {
 
     [Header("Animation")]
     public Animator animator;
+    [SerializeField] private CharacterMarkerAnimationListener animationListener;
 
     [Header("Pathfinding")]
     public CharacterAIPath pathfindingAI;    
@@ -83,6 +84,7 @@ public class CharacterMarker : PooledObject {
 
     public float attackSpeedMeter { get; private set; }
     private AnimatorOverrideController animatorOverrideController; //this is the controller that is made per character
+    public float attackExecutedTime { get; private set; } //how long into the attack animation is this character's attack actually executed.
 
     public void SetCharacter(Character character) {
         this.name = character.name + "'s Marker";
@@ -109,6 +111,7 @@ public class CharacterMarker : PooledObject {
         avoidInRange = new List<IPointOfInterest>();
         lethalCharacters = new Dictionary<Character, bool>();
         attackSpeedMeter = 0f;
+        OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
         //flee
         SetHasFleePath(false);
 
@@ -710,11 +713,14 @@ public class CharacterMarker : PooledObject {
         animator.speed = 1;
     }
     public void SetAnimationTrigger(string triggerName) {
-        //Debug.Log("Set animation trigger " + triggerName + " of " + this.name);
         if (triggerName == "Attack" && character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
-            return; //because sometime trigger is set even though character is no longer in combat state. TODO: Find out why that is.
+            return; //because sometime trigger is set even though character is no longer in combat state.
         }
         animator.SetTrigger(triggerName);
+        if (triggerName == "Attack") {
+            //start coroutine to call 
+            animationListener.OnAttackAnimationTriggered();
+        }
     }
     public void SetAnimationBool(string name, bool value) {
         animator.SetBool(name, value);
@@ -767,6 +773,7 @@ public class CharacterMarker : PooledObject {
     }
     public void UpdateSpeed() {
         pathfindingAI.speed = GetSpeed();
+        //Debug.Log("Updated speed of " + character.name + ". New speed is: " + pathfindingAI.speed.ToString());
     }
     public void AdjustUseWalkSpeed(int amount) {
         useWalkSpeed += amount;
@@ -813,20 +820,25 @@ public class CharacterMarker : PooledObject {
         AnimationClip attackClip = null;
         if (character.role.roleType == CHARACTER_ROLE.BEAST) {
             attackClip = assets.biteClip;
+            attackExecutedTime = assets.biteTiming;
         } else {
             switch (character.characterClass.rangeType) {
                 case RANGE_TYPE.MELEE:
                     attackClip = assets.slashClip;
+                    attackExecutedTime = assets.slashTiming;
                     break;
                 case RANGE_TYPE.RANGED:
                     if (character.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
                         attackClip = assets.arrowClip;
+                        attackExecutedTime = assets.arrowTiming;
                     } else {
                         attackClip = assets.magicClip;
+                        attackExecutedTime = assets.magicTiming;
                     }
                     break;
                 default:
                     attackClip = assets.slashClip;
+                    attackExecutedTime = assets.slashTiming;
                     break;
             }
         }
@@ -855,6 +867,7 @@ public class CharacterMarker : PooledObject {
         }
         visionCollision.Initialize();
         CreateCollisionTrigger();
+        UpdateSpeed();
     }
     public void PlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
         this.gameObject.transform.SetParent(tile.parentAreaMap.objectsParent);

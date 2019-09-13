@@ -24,6 +24,12 @@ public class MarkerAsset {
     public AnimationClip arrowClip;
     public AnimationClip biteClip;
 
+    [Header("Attack Timing")]
+    public float slashTiming;
+    public float magicTiming;
+    public float arrowTiming;
+    public float biteTiming;
+
     public MarkerAsset(GENDER gender) {
         this.gender = gender;
     }

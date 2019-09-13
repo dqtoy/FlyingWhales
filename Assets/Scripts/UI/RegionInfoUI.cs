@@ -140,7 +140,7 @@ public class RegionInfoUI : UIMenu {
         UpdateStartInvasionBtn();
     }
     private bool CanMinionInvade(Minion minion) {
-        return !minion.isAssigned;
+        return !minion.isAssigned && minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADE);
     }
     private void UpdateStartInvasionBtn() {
         startInvBtn.interactable = chosenMinionToInvade != null;

@@ -17,15 +17,24 @@ public class MinionPicker : MonoBehaviour {
         this.onClickMinionItemAction = onClickMinionItemAction;
         this.shouldItemBeActiveChecker = shouldItemBeActiveChecker;
         Utilities.DestroyChildren(minonsScrollView.content);
+        List<CharacterItem> inactiveItems = new List<CharacterItem>();
         for (int i = 0; i < minionsToShow.Count; i++) {
             Minion currMinion = minionsToShow[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(minionItemPrefab.name, Vector3.zero, Quaternion.identity, minonsScrollView.content);
             CharacterItem item = go.GetComponent<CharacterItem>();
             item.SetCharacter(currMinion.character);
-            item.SetCoverState(!shouldItemBeActiveChecker.Invoke(currMinion), true);
+            bool shouldItemBeClickable = shouldItemBeActiveChecker.Invoke(currMinion);
+            if (!shouldItemBeClickable) {
+                inactiveItems.Add(item);
+            }
+            item.SetCoverState(!shouldItemBeClickable, true);
             item.ResetToggle();
             item.SetAsToggle(toggleGroup);
             item.AddOnToggleAction(() => onClickMinionItemAction.Invoke(currMinion), true);
+        }
+
+        for (int i = 0; i < inactiveItems.Count; i++) {
+            inactiveItems[i].transform.SetAsLastSibling();
         }
     }
 }

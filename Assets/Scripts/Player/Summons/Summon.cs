@@ -140,6 +140,7 @@ public class Summon : Character, IWorldObject {
             marker.pathfindingAI.AdjustDoNotMove(1);
             marker.PauseAnimation();
         }
+        marker.UpdateSpeed();
     }
     #endregion
 

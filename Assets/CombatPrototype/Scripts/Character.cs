@@ -7543,7 +7543,7 @@ public class Character : ILeader, IPointOfInterest {
             }
             return;
         }
-        if (plan.state == GOAP_PLAN_STATE.CANCELLED) {
+        if (plan.state == GOAP_PLAN_STATE.CANCELLED || plan.currentNode == null) {
             log += "\nPlan was cancelled.";
             if (plan.job != null) {
                 log += "\nRemoving job in queue...";

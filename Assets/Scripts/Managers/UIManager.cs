@@ -151,7 +151,7 @@ public class UIManager : MonoBehaviour {
         //} else if (Input.GetKeyDown(KeyCode.Alpha5)) {
         //    PlayerUI.Instance.ScrollRoleSlotTo(4);
         //}
-        UpdateSpeedToggles(GameManager.Instance.isPaused);
+        //UpdateSpeedToggles(GameManager.Instance.isPaused);
         if (isHoveringTile) {
             if (currentTileHovered.areaOfTile != null && currentTileHovered.areaOfTile.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
                 ShowSmallInfo("Double click to view.", currentTileHovered.areaOfTile.name);
@@ -366,22 +366,22 @@ public class UIManager : MonoBehaviour {
         if (!x1Btn.IsInteractable()) {
             return;
         }
-        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
         Unpause();
+        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
     }
     public void SetProgressionSpeed2X() {
         if (!x2Btn.IsInteractable()) {
             return;
         }
-        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
         Unpause();
+        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
     }
     public void SetProgressionSpeed4X() {
         if (!x4Btn.IsInteractable()) {
             return;
         }
-        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
         Unpause();
+        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
     }
     public void Pause() {
         GameManager.Instance.SetPausedState(true);

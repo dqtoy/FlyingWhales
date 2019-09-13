@@ -27,6 +27,14 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         }
     }
 
+    public void OnAttackAnimationTriggered() {
+        StartCoroutine(CheckAttackExecuted());
+    }
+    private IEnumerator CheckAttackExecuted() {
+        yield return new WaitForSeconds(parentMarker.attackExecutedTime);
+        OnAttackExecuted();
+    }
+
     private void CreateProjectile(Character target, CombatState state) {
         if (currentProjectile != null) {
             return; //only 1 projectile at a time!

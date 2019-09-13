@@ -19,12 +19,12 @@ public class Ankh_Of_Anubis : Artifact {
         duration = 50;
     }
     public Ankh_Of_Anubis(SaveDataArtifactSlot data) : base(data) {
-        range = 3;
+        range = 1;
         deathChance = 60;
         duration = 20;
     }
     public Ankh_Of_Anubis(SaveDataArtifact data) : base(data) {
-        range = 3;
+        range = 1;
         deathChance = 60;
         duration = 20;
     }
@@ -59,6 +59,9 @@ public class Ankh_Of_Anubis : Artifact {
     }
 
     private void CheckPerTick() {
+        if (gridTileLocation == null) { //this is needed because this can still be executed when the object was destroyed on the same frame that this ticks
+            return;
+        }
         if (currentDuration == duration) {
             gridTileLocation.structure.RemovePOI(this);
         } else {
