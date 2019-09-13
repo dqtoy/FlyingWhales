@@ -70,7 +70,7 @@ public class ConsoleMenu : UIMenu {
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        Messenger.AddListener(Signals.TICK_ENDED, CheckForWrongCharacterData);
+        //Messenger.AddListener(Signals.TICK_ENDED, CheckForWrongCharacterData);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
 #endif
         InitializeMinion();

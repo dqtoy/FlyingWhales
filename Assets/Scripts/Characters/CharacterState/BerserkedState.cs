@@ -85,20 +85,27 @@ public class BerserkedState : CharacterState {
         }
         return base.OnEnterVisionWith(targetPOI);
     }
-    public override bool InVisionPOIsOnStartState() {
+    public override bool ProcessInVisionPOIsOnStartState() {
         for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
-            Character hostile = stateComponent.character.marker.avoidInRange[i];
-            if (stateComponent.character.marker.inVisionCharacters.Contains(hostile)) {
-                stateComponent.character.marker.AddHostileInRange(hostile, checkHostility: false, processCombatBehavior: false, isLethal: areCombatsLethal);
+            IPointOfInterest hostile = stateComponent.character.marker.avoidInRange[i];
+            if (hostile is Character) {
+                Character hostileChar = hostile as Character;
+                if (stateComponent.character.marker.inVisionCharacters.Contains(hostileChar)) {
+                    stateComponent.character.marker.AddHostileInRange(hostileChar, checkHostility: false, processCombatBehavior: false, isLethal: areCombatsLethal);
+                } else {
+                    stateComponent.character.marker.RemoveAvoidInRange(hostile, false);
+                    i--;
+                }
             } else {
                 stateComponent.character.marker.RemoveAvoidInRange(hostile, false);
                 i--;
             }
+            
         }
         stateComponent.character.marker.ClearAvoidInRange(false);
 
         bool hasProcessedCombatBehavior = false;
-        if (base.InVisionPOIsOnStartState()) {
+        if (base.ProcessInVisionPOIsOnStartState()) {
             for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {
                 IPointOfInterest poi = stateComponent.character.marker.inVisionPOIs[i];
                 if (OnEnterVisionWith(poi)) {

@@ -51,7 +51,7 @@ public class CharacterMarker : PooledObject {
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
-    public List<Character> avoidInRange { get; private set; } //POI's in this characters hostility collider
+    public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
     public Dictionary<Character, bool> lethalCharacters { get; private set; }
     public Action arrivalAction {
         get { return _arrivalAction; }
@@ -102,7 +102,7 @@ public class CharacterMarker : PooledObject {
         inVisionCharacters = new List<Character>();
         hostilesInRange = new List<Character>();
         terrifyingObjects = new List<IPointOfInterest>();
-        avoidInRange = new List<Character>();
+        avoidInRange = new List<IPointOfInterest>();
         lethalCharacters = new Dictionary<Character, bool>();
         attackSpeedMeter = 0f;
         //flee
@@ -1112,7 +1112,54 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Avoid In Range
-    public bool AddAvoidInRange(Character poi, bool processCombatBehavior = true) {
+    public bool AddAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
+        if (poi is Character) {
+            return AddAvoidInRange(poi as Character, processCombatBehavior);
+        } else {
+            if (character.GetNormalTrait("Berserked") == null) {
+                if (!avoidInRange.Contains(poi)) {
+                    avoidInRange.Add(poi);
+                    //NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
+                    //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
+                    if (processCombatBehavior) {
+                        ProcessCombatBehavior();
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public bool AddAvoidsInRange(List<IPointOfInterest> pois, bool processCombatBehavior = true) {
+        //Only react to the first hostile that is added
+        IPointOfInterest otherPOI = null;
+        for (int i = 0; i < pois.Count; i++) {
+            IPointOfInterest poi = pois[i];
+            if (poi is Character) {
+                Character characterToAvoid = poi as Character;
+                if (characterToAvoid.isDead || characterToAvoid.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) || characterToAvoid.GetNormalTrait("Berserked") != null) {
+                    continue; //skip
+                }
+            }
+            if (!avoidInRange.Contains(poi)) {
+                avoidInRange.Add(poi);
+                if (otherPOI == null) {
+                    otherPOI = poi;
+                }
+            }
+
+        }
+        if (otherPOI != null) {
+            //NormalReactToHostileCharacter(otherPOI, CHARACTER_STATE.FLEE);
+            //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
+            if (processCombatBehavior) {
+                ProcessCombatBehavior();
+            }
+            return true;
+        }
+        return false;
+    }
+    private bool AddAvoidInRange(Character poi, bool processCombatBehavior = true) {
         if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && character.GetNormalTrait("Berserked") == null) {
             if (!avoidInRange.Contains(poi)) {
                 avoidInRange.Add(poi);
@@ -1151,17 +1198,28 @@ public class CharacterMarker : PooledObject {
         }
         return false;
     }
-    public void RemoveAvoidInRange(Character poi, bool processCombatBehavior = true) {
+    public void RemoveAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (avoidInRange.Remove(poi)) {
             //Debug.Log("Removed avoid in range " + poi.name + " from " + this.character.name);
             //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
             if (processCombatBehavior) {
                 if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                     Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
-                } 
+                }
             }
         }
     }
+    //public void RemoveAvoidInRange(Character poi, bool processCombatBehavior = true) {
+    //    if (avoidInRange.Remove(poi)) {
+    //        //Debug.Log("Removed avoid in range " + poi.name + " from " + this.character.name);
+    //        //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
+    //        if (processCombatBehavior) {
+    //            if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+    //                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, this.character);
+    //            } 
+    //        }
+    //    }
+    //}
     public void ClearAvoidInRange(bool processCombatBehavior = true) {
         if(avoidInRange.Count > 0) {
             avoidInRange.Clear();
@@ -1193,7 +1251,7 @@ public class CharacterMarker : PooledObject {
         pathfindingAI.ClearAllCurrentPathData();
         SetHasFleePath(true);
         pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidInRange.Select(x => x.marker.transform.position).ToArray(), 20000);
+        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, avoidInRange.Select(x => x.gridTileLocation.worldLocation).ToArray(), 20000);
         fleePath.aimStrength = 1;
         fleePath.spread = 4000;
         seeker.StartPath(fleePath);
@@ -1323,9 +1381,10 @@ public class CharacterMarker : PooledObject {
     /// <returns>True or false</returns>
     private bool StillHasAvoidInActualRange() {
         for (int i = 0; i < avoidInRange.Count; i++) {
-            Character currCharacter = avoidInRange[i];
-            if (inVisionCharacters.Contains(currCharacter)
-                || visionCollision.poisInRangeButDiffStructure.Contains(currCharacter)) {
+            IPointOfInterest currAvoid = avoidInRange[i];
+            if (inVisionCharacters.Contains(currAvoid)
+                || inVisionPOIs.Contains(currAvoid)
+                || visionCollision.poisInRangeButDiffStructure.Contains(currAvoid)) {
                 return true;
             }
         }
@@ -1334,31 +1393,6 @@ public class CharacterMarker : PooledObject {
     public void StopPerTickFlee() {
         fleeSpeedModifier = 0f;
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickFlee);
-    }
-    /// <summary>
-    /// Utility function to make a character flee outside of combat state.
-    /// </summary>
-    /// <param name="objects">The objects the character will flee from.</param>
-    public bool FleeFrom(List<IPointOfInterest> objects) {
-        List<IPointOfInterest> validObjs = objects.Where(x => x != null && x.gridTileLocation != null).ToList();
-        if (validObjs.Count == 0 || hasFleePath) {
-            return false;
-        }
-        if (character.currentAction != null) {
-            character.StopCurrentAction(false);
-        } else if (character.stateComponent.currentState != null) {
-            character.stateComponent.currentState.OnExitThisState();
-        }
-        Debug.Log(GameManager.Instance.TodayLogString() + character.name + " will start fleeing");
-        pathfindingAI.ClearAllCurrentPathData();
-        SetHasFleePath(true);
-        pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
-        FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, validObjs.Select(x => x.gridTileLocation.worldLocation).ToArray(), 5000);
-        fleePath.aimStrength = 1;
-        fleePath.spread = 4000;
-        seeker.StartPath(fleePath);
-        UpdateActionIcon();
-        return true;
     }
     #endregion
 
@@ -1412,8 +1446,9 @@ public class CharacterMarker : PooledObject {
         Character nearest = null;
         float nearestDist = 9999f;
         //first check only the hostiles that are in the same area as this character
-        for (int i = 0; i < avoidInRange.Count; i++) {
-            Character currHostile = avoidInRange.ElementAt(i);
+        List<Character> charactersToAvoid = avoidInRange.Where(x => x is Character).Select(x => x as Character).ToList();
+        for (int i = 0; i < charactersToAvoid.Count; i++) {
+            Character currHostile = charactersToAvoid[i];
             if (IsValidCombatTarget(currHostile)) {
                 float dist = Vector2.Distance(this.transform.position, currHostile.marker.transform.position);
                 if (nearest == null || dist < nearestDist) {
@@ -1423,8 +1458,8 @@ public class CharacterMarker : PooledObject {
             }
         }
         //if no character was returned, choose at random from the list, since we are sure that all characters in the list are not in the same area as this character
-        if (nearest == null && avoidInRange.Count > 0) {
-            nearest = avoidInRange[UnityEngine.Random.Range(0, avoidInRange.Count)];
+        if (nearest == null && charactersToAvoid.Count > 0) {
+            nearest = charactersToAvoid[UnityEngine.Random.Range(0, charactersToAvoid.Count)];
         }
         return nearest;
     }
