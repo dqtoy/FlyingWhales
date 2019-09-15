@@ -217,6 +217,7 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case JOB_TYPE.BURY:
             case JOB_TYPE.REPAIR:
+            case JOB_TYPE.WATCH:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:
@@ -261,9 +262,9 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.INSPECT:
                 priority = 240;
                 break;
-            case JOB_TYPE.WATCH:
-                priority = 250;
-                break;
+            //case JOB_TYPE.WATCH:
+            //    priority = 250;
+            //    break;
             case JOB_TYPE.BUILD_FURNITURE:
             case JOB_TYPE.OBTAIN_ITEM:
             case JOB_TYPE.MOVE_OUT:

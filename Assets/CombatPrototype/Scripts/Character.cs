@@ -3718,43 +3718,48 @@ public class Character : ILeader, IPointOfInterest {
             PrintLogIfActive(summary);
             return;
         }
-        if (stateComponent.currentState != null) {
-            summary += "\nEnding current state " + stateComponent.currentState.stateName + " before watching...";
-            stateComponent.currentState.OnExitThisState();
-            //This call is doubled so that it will also exit the previous major state if there's any
-            if (stateComponent.currentState != null) {
-                stateComponent.currentState.OnExitThisState();
-            }
-        } else if (stateComponent.stateToDo != null) {
-            summary += "\nEnding state to do " + stateComponent.stateToDo.stateName + " before watching...";
-            stateComponent.SetStateToDo(null);
-        } else {
-            if (currentParty.icon.isTravelling) {
-                summary += "\nStopping movement before watching...";
-                if (currentParty.icon.travelLine == null) {
-                    marker.StopMovement();
-                } else {
-                    currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
-                }
-            }
-            summary += "\nEnding current action (if there's any) before watching...";
-            AdjustIsWaitingForInteraction(1);
-            StopCurrentAction(false);
-            AdjustIsWaitingForInteraction(-1);
-        }
+        //if (stateComponent.currentState != null) {
+        //    summary += "\nEnding current state " + stateComponent.currentState.stateName + " before watching...";
+        //    stateComponent.currentState.OnExitThisState();
+        //    //This call is doubled so that it will also exit the previous major state if there's any
+        //    if (stateComponent.currentState != null) {
+        //        stateComponent.currentState.OnExitThisState();
+        //    }
+        //} else if (stateComponent.stateToDo != null) {
+        //    summary += "\nEnding state to do " + stateComponent.stateToDo.stateName + " before watching...";
+        //    stateComponent.SetStateToDo(null);
+        //} else {
+        //    if (currentParty.icon.isTravelling) {
+        //        summary += "\nStopping movement before watching...";
+        //        if (currentParty.icon.travelLine == null) {
+        //            marker.StopMovement();
+        //        } else {
+        //            currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
+        //        }
+        //    }
+        //    summary += "\nEnding current action (if there's any) before watching...";
+        //    AdjustIsWaitingForInteraction(1);
+        //    StopCurrentAction(false);
+        //    AdjustIsWaitingForInteraction(-1);
+        //}
         summary += "\nWatch event created.";
         PrintLogIfActive(summary);
         Watch watchAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.WATCH, this, targetCharacter) as Watch;
         if (actionToWatch != null) {
             watchAction.InitializeOtherData(new object[] { actionToWatch });
-        }else if (stateToWatch != null) {
+        } else if (stateToWatch != null) {
             watchAction.InitializeOtherData(new object[] { stateToWatch });
         }
         GoapNode goalNode = new GoapNode(null, watchAction.cost, watchAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.WATCH, goapPlan, this);
         goapPlan.ConstructAllNodes();
         goapPlan.SetDoNotRecalculate(true);
-        AddPlan(goapPlan, true);
+        job.SetCancelOnFail(true);
+
+        jobQueue.AddJobInQueue(job, false);
+        jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, this);
+        //AddPlan(goapPlan, true);
     }
     #endregion
 

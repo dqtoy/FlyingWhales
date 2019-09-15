@@ -101,12 +101,12 @@ public class GoapPlanJob : JobQueueItem {
             }
         }
     }
-    //public GoapPlanJob(string name, GoapPlan targetPlan) : base(name) {
-    //    //this.targetEffect = targetEffect;
-    //    this.targetPlan = targetPlan;
-    //    this.targetPOI = targetPlan.target;
-    //    forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-    //}
+    public GoapPlanJob(JOB_TYPE jobType, GoapPlan targetPlan, IPointOfInterest targetPOI) : base(jobType) {
+        this.targetPOI = targetPOI;
+        this.targetPlan = targetPlan;
+        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        allowDeadTargets = false;
+    }
 
     #region Overrides 
     public override void UnassignJob(bool shouldDoAfterEffect = true) {
