@@ -20,6 +20,10 @@ public class Cursed : Trait {
         //effects = new List<TraitEffect>();
     }
 
+    public void SetCursedInteractions(List<CursedInteraction> cursedInteractions) {
+        this.cursedInteractions = cursedInteractions;
+    }
+
     #region Overrides
     public override void OnAddTrait(ITraitable sourceCharacter) {
         base.OnAddTrait(sourceCharacter);
@@ -169,7 +173,23 @@ public class Cursed : Trait {
             //If there is no buff trait to lose, injure character instead
             InjureCharacter(character);
         }
+    }
+}
 
+public class SaveDataCursed : SaveDataTrait {
+    public List<CursedInteraction> cursedInteractions;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Cursed derivedTrait = trait as Cursed;
+        cursedInteractions = derivedTrait.cursedInteractions;
+    }
+
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        Cursed derivedTrait = trait as Cursed;
+        derivedTrait.SetCursedInteractions(cursedInteractions);
+        return trait;
     }
 }
 
