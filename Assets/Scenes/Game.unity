@@ -19548,7 +19548,7 @@ Prefab:
     - target: {fileID: 224215460217252974, guid: cdfed07929227104599994075478446b,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 184.7
+      value: 106.85
       objectReference: {fileID: 0}
     - target: {fileID: 224215460217252974, guid: cdfed07929227104599994075478446b,
         type: 2}
@@ -19920,7 +19920,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &420917216
 RectTransform:
   m_ObjectHideFlags: 0
@@ -63395,7 +63395,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1219617519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63498,7 +63498,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 82.345, y: 41}
+  m_AnchoredPosition: {x: 0, y: 40.994995}
   m_SizeDelta: {x: 164.69, y: 39.38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1224549804
@@ -81995,9 +81995,6 @@ MonoBehaviour:
   tileObjectSlotPrefab: {fileID: 1847832602141464, guid: cf9a8aa5ff568694e81300ab062564ff,
     type: 2}
   areaMapLight: {fileID: 450682173}
-  dimmestLight: 0.8
-  brightestLight: 1.8
-  timeLightIsDimmestInTicks: 108
   allTileAssets:
   - {fileID: 11400000, guid: a1205921b190c734cbb25a72ddaed05d, type: 2}
   - {fileID: 11400000, guid: 532f3176b2da0ab478e63a555e198b50, type: 2}
@@ -112915,11 +112912,11 @@ MonoBehaviour:
     lineCount: 1
     pageCount: 1
     materialCount: 1
-  m_havePropertiesChanged: 0
+  m_havePropertiesChanged: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
-  m_isInputParsingRequired: 0
+  m_isInputParsingRequired: 1
   m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:

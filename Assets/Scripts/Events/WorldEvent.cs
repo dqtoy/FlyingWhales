@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -13,6 +14,7 @@ public class WorldEvent  {
     public string name { get; private set; }
     public string description { get; private set; }
     public bool isUnique { get; protected set; } //should this event only spawn once?
+    public WORLD_EVENT_EFFECT[] eventEffects { get; protected set; }
     private bool hasSuccessfullyExecutedOnce;
     private bool isCurrentlySpawned;
 
@@ -110,9 +112,6 @@ public class WorldEvent  {
         }
         return true;
     }
-    public virtual Character GetCharacterThatCanSpawnEvent(Region region) {
-        return null;
-    }
     public virtual void OnDespawn(Region region) {
         isCurrentlySpawned = false;
     }
@@ -127,10 +126,23 @@ public class WorldEvent  {
     }
     #endregion
 
+    #region Utilities
     protected void AddDefaultFillersToLog(Log log, Region region) {
         log.AddToFillers(region.eventSpawnedBy, region.eventSpawnedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
+    public bool CanProvideNeededEffects(WORLD_EVENT_EFFECT[] neededEffects) {
+        if (neededEffects != null && eventEffects != null) {
+            for (int i = 0; i < neededEffects.Length; i++) {
+                if (!eventEffects.Contains(neededEffects[i])) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    #endregion
+
 }
 
 //This is base class where data for each individual landmark is stored.

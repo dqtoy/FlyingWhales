@@ -72,7 +72,7 @@ public class InteriorMapManager : MonoBehaviour {
 
 
     private Dictionary<int, float> lightSettings = new Dictionary<int, float>() { //this specifies what light intensity is to be used while inside the specific range in ticks
-        { 228, 0.8f },
+        { 228, 1f },
         { 61, 1.8f }
     };
 
@@ -992,10 +992,13 @@ public class InteriorMapManager : MonoBehaviour {
     }
     private IEnumerator TransitionLightTo(float intensity) {
         while (true) {
+            if (GameManager.Instance.isPaused) {
+                yield return null;
+            }
             if (intensity > areaMapLight.intensity) {
-                areaMapLight.intensity += 0.1f;
+                areaMapLight.intensity += 0.05f;
             } else if (intensity < areaMapLight.intensity) {
-                areaMapLight.intensity -= 0.1f;
+                areaMapLight.intensity -= 0.05f;
             }
             if (Mathf.Approximately(areaMapLight.intensity, intensity)) {
                 break;
