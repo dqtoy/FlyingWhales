@@ -66,6 +66,14 @@ public class AreaInfoUI : UIMenu {
     //}
 
     public HexTile activeTile { get; private set; }
+    public Area activeArea {
+        get {
+            if(activeTile.region.owner == PlayerManager.Instance.player.playerFaction) {
+                return PlayerManager.Instance.player.playerArea;
+            }
+            return activeTile.region.area;
+        }
+    }
     private float _currentWinChance;
 
     private bool hideOnShowAreaMap = true;
@@ -77,7 +85,7 @@ public class AreaInfoUI : UIMenu {
         combatGrid.Initialize();
         LoadLogItems();
         itemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(itemsParent.gameObject);
-        Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
+        //Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.AddListener<Area, Character>(Signals.CHARACTER_ENTERED_AREA, OnCharacterEnteredArea);
         Messenger.AddListener<Area, Character>(Signals.CHARACTER_EXITED_AREA, OnCharacterExitedArea);
@@ -113,10 +121,10 @@ public class AreaInfoUI : UIMenu {
         ResetScrollPositions();
         
         if (previousTile != null) {
-            previousTile.areaOfTile.SetOutlineState(false);
+            previousTile.SetOutlineState(false);
         }
         if (activeTile != null) {
-            activeTile.areaOfTile.SetOutlineState(true);
+            activeTile.SetOutlineState(true);
         }
         //UIManager.Instance.SetCoverState(true);
         //if(activeArea.owner != PlayerManager.Instance.player.playerFaction) {
@@ -135,7 +143,7 @@ public class AreaInfoUI : UIMenu {
         //Utilities.DestroyChildren(charactersScrollView.content);
         base.CloseMenu();
         if (activeTile != null) {
-            activeTile.areaOfTile.SetOutlineState(false);
+            activeTile.SetOutlineState(false);
         }
         if (UIManager.Instance.IsObjectPickerOpen()) {
             UIManager.Instance.HideObjectPicker();
@@ -153,7 +161,7 @@ public class AreaInfoUI : UIMenu {
             return;
         }
         UpdateBasicInfo();
-        UpdateAllHistoryInfo();
+        //UpdateAllHistoryInfo();
         UpdateAppropriateContentPerUpdateUI();
     }
 
@@ -163,12 +171,13 @@ public class AreaInfoUI : UIMenu {
 
         if (activeTile.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
             landmarkNameLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(activeTile.landmarkOnTile.specificLandmarkType.ToString());
-            locationPortrait.SetLocation(activeTile.landmarkOnTile);
+            //locationPortrait.SetLocation(activeTile.landmarkOnTile);
         } else {
-            landmarkNameLbl.text = activeTile.areaOfTile.name;
-            locationPortrait.SetLocation(activeTile.areaOfTile);
+            landmarkNameLbl.text = activeArea.name;
+            //locationPortrait.SetLocation(activeTile.areaOfTile);
         }
-        landmarkTypeLbl.text = activeTile.areaOfTile.GetAreaTypeString();
+        locationPortrait.SetLocation(activeTile.region);
+        landmarkTypeLbl.text = activeArea.GetAreaTypeString();
         UpdateSupplies();
         
         ////portrait
@@ -185,7 +194,7 @@ public class AreaInfoUI : UIMenu {
         }
     }
     private void UpdateSupplies() {
-        suppliesNameLbl.text = activeTile.areaOfTile.suppliesInBank.ToString();
+        suppliesNameLbl.text = activeArea.suppliesInBank.ToString();
     }
     private void OnAreaOwnerChanged(Area area) {
         if (this.isShowing && activeTile.id == area.id) {
@@ -208,33 +217,33 @@ public class AreaInfoUI : UIMenu {
             logHistoryItems[i].gameObject.SetActive(false);
         }
     }
-    private void UpdateHistory(object obj) {
-        if (obj is Area && activeTile != null && (obj as Area).id == activeTile.id) {
-            UpdateAllHistoryInfo();
-        }
-    }
-    private void UpdateAllHistoryInfo() {
-        List<Log> landmarkHistory = new List<Log>(activeTile.areaOfTile.history.OrderByDescending(x => x.id));
-        for (int i = 0; i < logHistoryItems.Length; i++) {
-            LogHistoryItem currItem = logHistoryItems[i];
-            Log currLog = landmarkHistory.ElementAtOrDefault(i);
-            if (currLog != null) {
-                currItem.gameObject.SetActive(true);
-                currItem.SetLog(currLog);
-                if (Utilities.IsEven(i)) {
-                    currItem.SetLogColor(evenLogColor);
-                } else {
-                    currItem.SetLogColor(oddLogColor);
-                }
-            } else {
-                currItem.gameObject.SetActive(false);
-            }
-        }
-        //if (this.gameObject.activeInHierarchy) {
-        //    StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
-        //    StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
-        //}
-    }
+    //private void UpdateHistory(object obj) {
+    //    if (obj is Area && activeTile != null && (obj as Area).id == activeTile.id) {
+    //        UpdateAllHistoryInfo();
+    //    }
+    //}
+    //private void UpdateAllHistoryInfo() {
+    //    List<Log> landmarkHistory = new List<Log>(activeTile.areaOfTile.history.OrderByDescending(x => x.id));
+    //    for (int i = 0; i < logHistoryItems.Length; i++) {
+    //        LogHistoryItem currItem = logHistoryItems[i];
+    //        Log currLog = landmarkHistory.ElementAtOrDefault(i);
+    //        if (currLog != null) {
+    //            currItem.gameObject.SetActive(true);
+    //            currItem.SetLog(currLog);
+    //            if (Utilities.IsEven(i)) {
+    //                currItem.SetLogColor(evenLogColor);
+    //            } else {
+    //                currItem.SetLogColor(oddLogColor);
+    //            }
+    //        } else {
+    //            currItem.gameObject.SetActive(false);
+    //        }
+    //    }
+    //    //if (this.gameObject.activeInHierarchy) {
+    //    //    StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
+    //    //    StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
+    //    //}
+    //}
     private bool IsLogAlreadyShown(Log log) {
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
@@ -265,16 +274,16 @@ public class AreaInfoUI : UIMenu {
         characterItems.Clear();
 
         List<Character> charactersToShow = new List<Character>();
-        for (int i = 0; i < activeTile.areaOfTile.charactersAtLocation.Count; i++) {
-            Character character = activeTile.areaOfTile.charactersAtLocation[i];
+        for (int i = 0; i < activeTile.region.charactersAtLocation.Count; i++) {
+            Character character = activeTile.region.charactersAtLocation[i];
             for (int j = 0; j < character.ownParty.characters.Count; j++) {
                 Character currCharacter = character.ownParty.characters[j];
                 charactersToShow.Add(currCharacter);
             }
         }
 
-        for (int i = 0; i < activeTile.areaOfTile.areaResidents.Count; i++) {
-            Character resident = activeTile.areaOfTile.areaResidents[i];
+        for (int i = 0; i < activeArea.areaResidents.Count; i++) {
+            Character resident = activeArea.areaResidents[i];
             if (!charactersToShow.Contains(resident)) {
                 charactersToShow.Add(resident);
             }
@@ -319,7 +328,7 @@ public class AreaInfoUI : UIMenu {
     }
     private void OnCharacterEnteredArea(Area area, Character character) {
         if (!normalContentGO.activeSelf) { return; }
-        if (isShowing && activeTile != null && activeTile.id == area.id) {
+        if (isShowing && activeTile != null && activeArea == area) {
             //for (int i = 0; i < character.characters.Count; i++) {
             //    Character currCharacter = character.characters[i];
                 CreateNewCharacterItem(character);
@@ -328,10 +337,10 @@ public class AreaInfoUI : UIMenu {
     }
     private void OnCharacterExitedArea(Area area, Character character) {
         if (!normalContentGO.activeSelf) { return; }
-        if (isShowing && activeTile != null && activeTile.id == area.id) {
+        if (isShowing && activeTile != null && activeArea == area) {
             //for (int i = 0; i < character.characters.Count; i++) {
             //    Character currCharacter = character.characters[i];
-                if (!activeTile.areaOfTile.areaResidents.Contains(character)) {
+                if (!activeArea.areaResidents.Contains(character)) {
                     DestroyItemOfCharacter(character);
                 }
             //}
@@ -435,7 +444,7 @@ public class AreaInfoUI : UIMenu {
         if (!normalContentGO.activeSelf) { return; }
         for (int i = 0; i < itemContainers.Length; i++) {
             ItemContainer currContainer = itemContainers[i];
-            SpecialToken currToken = activeTile.areaOfTile.itemsInArea.ElementAtOrDefault(i);
+            SpecialToken currToken = activeArea.itemsInArea.ElementAtOrDefault(i);
             currContainer.SetItem(currToken);
         }
     }
@@ -446,7 +455,7 @@ public class AreaInfoUI : UIMenu {
         CloseMenu();
     }
     public void CenterOnCoreTile() {
-        activeTile.areaOfTile.CenterOnCoreLandmark();
+        activeTile.region.CenterOnCoreTile();
     }
     public void CenterOnTile() {
         activeTile.CenterCameraHere();
@@ -466,9 +475,9 @@ public class AreaInfoUI : UIMenu {
     #region For Testing
     public void ShowLocationInfo() {
         string summary = "Location Job Queue: ";
-        if (activeTile.areaOfTile.jobQueue.jobsInQueue.Count > 0) {
-            for (int i = 0; i < activeTile.areaOfTile.jobQueue.jobsInQueue.Count; i++) {
-                JobQueueItem jqi = activeTile.areaOfTile.jobQueue.jobsInQueue[i];
+        if (activeArea.jobQueue.jobsInQueue.Count > 0) {
+            for (int i = 0; i < activeArea.jobQueue.jobsInQueue.Count; i++) {
+                JobQueueItem jqi = activeArea.jobQueue.jobsInQueue[i];
                 if (jqi is GoapPlanJob) {
                     GoapPlanJob gpj = jqi as GoapPlanJob;
                     summary += "\n" + gpj.name + " Targetting " + gpj.targetPOI?.name ?? "None";
@@ -494,46 +503,6 @@ public class AreaInfoUI : UIMenu {
     }
     public void HideLocationInfo() {
         UIManager.Instance.HideSmallInfo();
-    }
-    public void ClearOutFaction() {
-        if (activeTile.areaOfTile.owner != null) {
-            if (activeTile.areaOfTile.owner.ownedAreas.Count <= 1) {
-                //Debug.Log(activeArea.owner.name + " only has 1 area left! Not allowing clear out this areas faction...");
-                return;
-            }
-
-            List<Character> charactersToMove = new List<Character>();
-            for (int i = 0; i < activeTile.areaOfTile.areaResidents.Count; i++) {
-                Character currResident = activeTile.areaOfTile.areaResidents[i];
-                if (currResident.faction.id == activeTile.areaOfTile.owner.id) {
-                    charactersToMove.Add(currResident);
-                }
-            }
-            //DefenderGroup defender = activeArea.GetFirstDefenderGroup();
-            //if (defender != null && defender.party != null) {
-            //    List<Character> defenders = new List<Character>(defender.party.characters);
-            //    for (int i = 0; i < defenders.Count; i++) {
-            //        Character currDefender = defenders[i];
-            //        if (currDefender.faction.id == activeArea.owner.id) {
-            //            defender.RemoveCharacterFromGroup(currDefender);
-            //            charactersToMove.Add(currDefender);
-            //        }
-            //    }
-            //}
-            List<Area> choices = new List<Area>(activeTile.areaOfTile.owner.ownedAreas);
-            choices.Remove(activeTile.areaOfTile);
-            Area moveLocation = choices[Random.Range(0, choices.Count)];
-            for (int i = 0; i < charactersToMove.Count; i++) {
-                Character currCharacter = charactersToMove[i];
-                currCharacter.MigrateHomeTo(moveLocation);
-                //currCharacter.homeArea.RemoveResident(currCharacter);
-                //moveLocation.AddResident(currCharacter, true);
-            }
-
-            LandmarkManager.Instance.UnownArea(activeTile.areaOfTile);
-            FactionManager.Instance.neutralFaction.AddToOwnedAreas(activeTile.areaOfTile);
-            OpenMenu();
-        }
     }
     #endregion
 

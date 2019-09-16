@@ -133,8 +133,7 @@ public class Biomes : MonoBehaviour {
             sortingOrder = (mapHeight -  yCoordinate) * 10; //10 is the number of sorting order between rows
         }
 
-        if (PlayerManager.Instance.player != null &&  PlayerManager.Instance.player.playerArea != null 
-            && PlayerManager.Instance.player.playerArea.tiles.Contains(currentHexTile)) {
+        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerFaction == currentHexTile.region.owner) {
             return;
         }
 #endif

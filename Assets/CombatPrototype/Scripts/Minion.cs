@@ -158,7 +158,7 @@ public class Minion {
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             character.AddHistory(log);
-            character.specificLocation.AddHistory(log);
+            //character.specificLocation.AddHistory(log);
         }
     }
 

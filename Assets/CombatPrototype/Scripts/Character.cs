@@ -974,7 +974,7 @@ public class Character : ILeader, IPointOfInterest {
             traitsNeededToBeRemoved.Clear();
 
             if (currentLandmark != null) {
-                currentLandmark.tileLocation.region.RemoveCharacterHere(this);
+                currentLandmark.tileLocation.region.RemoveCharacterFromLocation(this);
             }
 
             if (!IsInOwnParty()) {
@@ -1043,7 +1043,7 @@ public class Character : ILeader, IPointOfInterest {
                 }
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
                 AddHistory(deathLog);
-                specificLocation.AddHistory(deathLog);
+                //specificLocation.AddHistory(deathLog);
                 PlayerManager.Instance.player.ShowNotification(deathLog);
             } else {
                 deathLog = _deathLog;
@@ -2302,15 +2302,15 @@ public class Character : ILeader, IPointOfInterest {
             RemoveTrait(criminal, false);
         }
     }
-    public void FoundFaction(string factionName, Area location) {
-        MigrateHomeTo(location);
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName(factionName);
-        newFaction.SetLeader(this);
-        ChangeFactionTo(newFaction);
-        FactionManager.Instance.neutralFaction.RemoveFromOwnedAreas(location);
-        LandmarkManager.Instance.OwnArea(newFaction, race, location);
-        newFaction.SetFactionActiveState(true);
-    }
+    //public void FoundFaction(string factionName, Area location) {
+    //    MigrateHomeTo(location);
+    //    Faction newFaction = FactionManager.Instance.GetFactionBasedOnName(factionName);
+    //    newFaction.SetLeader(this);
+    //    ChangeFactionTo(newFaction);
+    //    FactionManager.Instance.neutralFaction.RemoveFromOwnedRegions(location);
+    //    LandmarkManager.Instance.OwnRegion(newFaction, race, location);
+    //    newFaction.SetFactionActiveState(true);
+    //}
     #endregion
 
     #region Party
@@ -2682,7 +2682,7 @@ public class Character : ILeader, IPointOfInterest {
                     MigrateHomeTo(ogHome);
                 } else { //if it does not meet those requirements
                     //check if the neutral faction still has any available areas that have not reached capacity yet
-                    List<Area> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedAreas.Where(x => !x.IsResidentsFull()).ToList();
+                    List<Area> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedRegions.Where(x => x.area != null && !x.area.IsResidentsFull()).Select(x => x.area).ToList();
                     if (validNeutralAreas.Count > 0) {
                         //if it does, pick randomly from those
                         Area chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
@@ -2695,7 +2695,7 @@ public class Character : ILeader, IPointOfInterest {
                     //if it meets those requirements, return the character's home to that location
                     MigrateHomeTo(ogHome);
                 } else { //if not, get another area owned by his faction that has not yet reached capacity
-                    List<Area> validAreas = ogFaction.ownedAreas.Where(x => !x.IsResidentsFull()).ToList();
+                    List<Area> validAreas = ogFaction.ownedRegions.Where(x => x.area != null && !x.area.IsResidentsFull()).Select(x => x.area).ToList();
                     if (validAreas.Count > 0) {
                         Area chosenArea = validAreas[UnityEngine.Random.Range(0, validAreas.Count)];
                         MigrateHomeTo(chosenArea);
@@ -2706,7 +2706,7 @@ public class Character : ILeader, IPointOfInterest {
         } else { //if not
             //transfer the character to the neutral faction instead
             this.ChangeFactionTo(FactionManager.Instance.neutralFaction);
-            List<Area> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedAreas.Where(x => !x.IsResidentsFull()).ToList();
+            List<Area> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedRegions.Where(x => x.area != null && !x.area.IsResidentsFull()).Select(x => x.area).ToList();
             if (validNeutralAreas.Count > 0) {  //then check if the neutral faction has any owned areas that have not yet reached area capacity
                 //if it does, pick from any of those, then set it as the characters new home
                 Area chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
@@ -5068,7 +5068,7 @@ public class Character : ILeader, IPointOfInterest {
 
         specificLocation.RemoveCharacterFromLocation(this.currentParty);
         if (currentLandmark != null) {
-            currentLandmark.tileLocation.region.RemoveCharacterHere(this);
+            currentLandmark.tileLocation.region.RemoveCharacterFromLocation(this);
         }
         ResetFullnessMeter();
         ResetHappinessMeter();

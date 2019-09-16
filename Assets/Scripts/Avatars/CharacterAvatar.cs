@@ -61,8 +61,7 @@ public class CharacterAvatar : MonoBehaviour {
                 return _isVisualShowing;
             } else {
                 //check if this characters current location area is being tracked
-                if (party.specificLocation != null 
-                    && party.specificLocation.isBeingTracked) {
+                if (party.specificLocation != null ) { //&& party.specificLocation.isBeingTracked
                     return true;
                 }
             }

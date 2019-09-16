@@ -29,8 +29,8 @@ public class CultFoundation : WorldEvent {
     public override bool CanSpawnEventAt(Region region) {
         //- requirement: dark mood resident + demon cult is inactive
         bool hasDarkMoodResident = false;
-        for (int i = 0; i < region.charactersHere.Count; i++) {
-            Character currResident = region.charactersHere[i];
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character currResident = region.charactersAtLocation[i];
             if (currResident.currentMoodType == CHARACTER_MOOD.DARK) {
                 hasDarkMoodResident = true;
                 break;
@@ -39,8 +39,8 @@ public class CultFoundation : WorldEvent {
         return hasDarkMoodResident && !StoryEventsManager.Instance.isCultActive;
     }
     public override Character GetCharacterThatCanSpawnEvent(Region region) {
-        for (int i = 0; i < region.charactersHere.Count; i++) {
-            Character currResident = region.charactersHere[i];
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character currResident = region.charactersAtLocation[i];
             if (currResident.currentMoodType == CHARACTER_MOOD.DARK) {
                 return currResident;
             }

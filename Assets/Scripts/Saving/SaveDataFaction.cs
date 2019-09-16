@@ -19,7 +19,7 @@ public class SaveDataFaction {
     public ColorSave factionColor;
     public List<int> ownedLandmarkIDs;
     //public List<int> characterIDs;
-    public List<int> ownedAreaIDs;
+    public List<int> ownedRegionIDs;
     //public List<RACE> recruitableRaces { get; protected set; }
     //public List<RACE> startingFollowers { get; protected set; }
     //public Dictionary<Faction, FactionRelationship> relationships { get; protected set; }
@@ -59,9 +59,9 @@ public class SaveDataFaction {
         //    characterIDs.Add(faction.characters[i].id);
         //}
 
-        ownedAreaIDs = new List<int>();
-        for (int i = 0; i < faction.ownedAreas.Count; i++) {
-            ownedAreaIDs.Add(faction.ownedAreas[i].id);
+        ownedRegionIDs = new List<int>();
+        for (int i = 0; i < faction.ownedRegions.Count; i++) {
+            ownedRegionIDs.Add(faction.ownedRegions[i].id);
         }
     }
 
@@ -78,9 +78,9 @@ public class SaveDataFaction {
             }
         }
 
-        for (int i = 0; i < ownedAreaIDs.Count; i++) {
-            Area area = LandmarkManager.Instance.GetAreaByID(ownedAreaIDs[i]);
-            LandmarkManager.Instance.OwnArea(faction, faction.race, area);
+        for (int i = 0; i < ownedRegionIDs.Count; i++) {
+            Region region = GridMap.Instance.GetRegionByID(ownedRegionIDs[i]);
+            LandmarkManager.Instance.OwnRegion(faction, faction.race, region);
         }
     }
 }

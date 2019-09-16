@@ -85,7 +85,7 @@ public class PlayerManager : MonoBehaviour {
         //player.SetMaxMinions(9);
         //player.CreateInitialMinions();
         //player.PreAssignJobSlots();
-        LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
+        LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, portal.tileLocation.region);
         player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(true);
@@ -104,10 +104,10 @@ public class PlayerManager : MonoBehaviour {
         }
         for (int i = 0; i < portal.tileLocation.region.tiles.Count; i++) {
             HexTile regionTile = portal.tileLocation.region.tiles[i];
-            player.playerArea.AddTile(regionTile);
+            //player.playerArea.AddTile(regionTile);
             regionTile.SetCorruption(true);
         }
-        LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
+        LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, portal.tileLocation.region);
         player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
         PlayerUI.Instance.UpdateUI();
 
@@ -115,7 +115,8 @@ public class PlayerManager : MonoBehaviour {
         //Ref: https://trello.com/c/cQKzEx06/2699-one-additional-empty-region-owned-by-the-player-at-the-start-of-game
         List<Region> choices = portal.tileLocation.region.connections;
         Region chosenRegion = choices[Random.Range(0, choices.Count)];
-        AddTileToPlayerArea(chosenRegion.coreTile);
+        LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, chosenRegion);
+        //AddTileToPlayerArea(chosenRegion.coreTile);
         chosenRegion.mainLandmark.ChangeLandmarkType(LANDMARK_TYPE.NONE);
     }
     public void InitializePlayer(SaveDataPlayer data) {
@@ -148,19 +149,16 @@ public class PlayerManager : MonoBehaviour {
         }
         player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
     }
-    public void PurchaseTile(HexTile tile) {
-        AddTileToPlayerArea(tile);
-    }
-    public void AddTileToPlayerArea(HexTile tile) {
-        player.playerArea.AddTile(tile);
-        tile.SetCorruption(true);
-        for (int i = 0; i < tile.region.tiles.Count; i++) {
-            HexTile regionTile = tile.region.tiles[i];
-            player.playerArea.AddTile(regionTile);
-            regionTile.SetCorruption(true);
-        }
-        //tile.StopCorruptionAnimation();
-    }
+    //public void AddTileToPlayerArea(HexTile tile) {
+    //    player.playerArea.AddTile(tile);
+    //    tile.SetCorruption(true);
+    //    for (int i = 0; i < tile.region.tiles.Count; i++) {
+    //        HexTile regionTile = tile.region.tiles[i];
+    //        player.playerArea.AddTile(regionTile);
+    //        regionTile.SetCorruption(true);
+    //    }
+    //    //tile.StopCorruptionAnimation();
+    //}
 
     #region Utilities
     public Sprite GetJobActionSprite(string actionName) {

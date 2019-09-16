@@ -26,8 +26,8 @@ public class SabotageFarm : WorldEvent {
     public override bool CanSpawnEventAt(Region region) {
         //- requirement: Cultist resident + Farm landmark + demon cult is active
         bool hasCultistResident = false;
-        for (int i = 0; i < region.charactersHere.Count; i++) {
-            Character currResident = region.charactersHere[i];
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character currResident = region.charactersAtLocation[i];
             if (currResident.GetNormalTrait("Cultist") != null) {
                 hasCultistResident = true;
                 break;
@@ -36,8 +36,8 @@ public class SabotageFarm : WorldEvent {
         return hasCultistResident && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.FARM && StoryEventsManager.Instance.isCultActive;
     }
     public override Character GetCharacterThatCanSpawnEvent(Region region) {
-        for (int i = 0; i < region.charactersHere.Count; i++) {
-            Character currResident = region.charactersHere[i];
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character currResident = region.charactersAtLocation[i];
             if (currResident.GetNormalTrait("Cultist") != null) {
                 return currResident;
             }

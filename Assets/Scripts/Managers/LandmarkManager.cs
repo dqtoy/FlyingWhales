@@ -258,7 +258,7 @@ public class LandmarkManager : MonoBehaviour {
         Region[] corners = GetCornerRegions();
         int portalCorner = Random.Range(0, 4);
         Region portalRegion = corners[portalCorner];
-        Area portalArea = CreateNewArea(portalRegion.coreTile, AREA_TYPE.DEMONIC_INTRUSION, 0);
+        Area portalArea = CreateNewArea(portalRegion, AREA_TYPE.DEMONIC_INTRUSION, 0);
         BaseLandmark portalLandmark = CreateNewLandmarkOnTile(portalRegion.coreTile, LANDMARK_TYPE.THE_PORTAL);
         portalArea.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
         portal = portalLandmark;
@@ -268,7 +268,7 @@ public class LandmarkManager : MonoBehaviour {
         Region settlementRegion = corners[oppositeCorner];
         AREA_TYPE settlementType = Utilities.RandomSettlementType();
         int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount + 1);
-        Area settlementArea = CreateNewArea(settlementRegion.coreTile, settlementType, citizenCount);
+        Area settlementArea = CreateNewArea(settlementRegion, settlementType, citizenCount);
         SetEnemyPlayerArea(settlementArea);
         BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE);
         settlement = settlementLandmark;
@@ -282,7 +282,7 @@ public class LandmarkManager : MonoBehaviour {
             faction.SetInitialFactionLeaderGender(GENDER.MALE);
             faction.SetRace(RACE.HUMANS);
         }
-        OwnArea(faction, faction.race, settlementArea);
+        OwnRegion(faction, faction.race, settlementRegion);
         settlementArea.GenerateStructures(citizenCount);
         faction.GenerateStartingCitizens(2, 1, citizenCount); //9,7
 
@@ -777,12 +777,12 @@ public class LandmarkManager : MonoBehaviour {
 #endif
 #if !WORLD_CREATION_TOOL
                         if (owner.isActive) {
-                            OwnArea(owner, owner.race, newArea);
+                            //OwnRegion(owner, owner.race, newArea);
                         }
                         else {
                             Faction neutralFaction = FactionManager.Instance.neutralFaction;
                             if (neutralFaction != null) {
-                                neutralFaction.AddToOwnedAreas(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
+                                //neutralFaction.AddToOwnedRegions(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
                             }
                         }
 #endif
@@ -792,7 +792,7 @@ public class LandmarkManager : MonoBehaviour {
                 else {
                     Faction neutralFaction = FactionManager.Instance.neutralFaction;
                     if (neutralFaction != null) {
-                        neutralFaction.AddToOwnedAreas(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
+                        //neutralFaction.AddToOwnedRegions(newArea); //this will add area to the neutral factions owned area list, but the area's owner will still be null
                     }
                 }
 #endif
@@ -808,13 +808,14 @@ public class LandmarkManager : MonoBehaviour {
         }
         throw new System.Exception("No area data for type " + areaType.ToString());
     }
-    public Area CreateNewArea(HexTile coreTile, AREA_TYPE areaType, int citizenCount, List<HexTile> tiles = null) {
-        Area newArea = new Area(coreTile, areaType, citizenCount);
-        if (tiles == null) {
-            newArea.AddTile(coreTile);
-        } else {
-            newArea.AddTile(tiles);
-        }
+    public Area CreateNewArea(Region region, AREA_TYPE areaType, int citizenCount, List<HexTile> tiles = null) {
+        Area newArea = new Area(region, areaType, citizenCount);
+        region.SetArea(newArea);
+        //if (tiles == null) {
+        //    newArea.AddTile(coreTile);
+        //} else {
+        //    newArea.AddTile(tiles);
+        //}
         if (locationPortraits.ContainsKey(newArea.areaType)) {
             newArea.SetLocationPortrait(locationPortraits[newArea.areaType]);
         }
@@ -841,17 +842,17 @@ public class LandmarkManager : MonoBehaviour {
     public Area CreateNewArea(SaveDataArea saveDataArea) {
         Area newArea = new Area(saveDataArea);
 
-        if(newArea.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-            for (int i = 0; i < saveDataArea.tileIDs.Count; i++) {
-                HexTile tile = GridMap.Instance.hexTiles[saveDataArea.tileIDs[i]];
-                newArea.AddTile(tile);
-                tile.SetCorruption(true);
-            }
-        } else {
-            for (int i = 0; i < saveDataArea.tileIDs.Count; i++) {
-                newArea.AddTile(GridMap.Instance.hexTiles[saveDataArea.tileIDs[i]]);
-            }
-        }
+        //if(newArea.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
+        //    for (int i = 0; i < saveDataArea.tileIDs.Count; i++) {
+        //        HexTile tile = GridMap.Instance.hexTiles[saveDataArea.tileIDs[i]];
+        //        newArea.AddTile(tile);
+        //        tile.SetCorruption(true);
+        //    }
+        //} else {
+        //    for (int i = 0; i < saveDataArea.tileIDs.Count; i++) {
+        //        newArea.AddTile(GridMap.Instance.hexTiles[saveDataArea.tileIDs[i]]);
+        //    }
+        //}
 
         if (locationPortraits.ContainsKey(newArea.areaType)) {
             newArea.SetLocationPortrait(locationPortraits[newArea.areaType]);
@@ -929,23 +930,26 @@ public class LandmarkManager : MonoBehaviour {
         }
         return null;
     }
-    public void OwnArea(Faction newOwner, RACE newRace, Area area) {
-        if (area.owner != null) {
-            UnownArea(area);
+    public void OwnRegion(Faction newOwner, RACE newRace, Region region) {
+        if (region.owner != null) {
+            UnownRegion(region);
         }
-        newOwner.AddToOwnedAreas(area);
-        area.SetOwner(newOwner);
+        newOwner.AddToOwnedRegions(region);
+        region.SetOwner(newOwner);
         //area.SetRaceType(newRace);
-        area.TintStructuresInArea(newOwner.factionColor);
-    }
-    public void UnownArea(Area area) {
-        if (area.owner != null) {
-            area.owner.RemoveFromOwnedAreas(area);
+        if(region.area != null) {
+            region.area.TintStructuresInArea(newOwner.factionColor);
         }
-        area.SetOwner(null);
+    }
+    public void UnownRegion(Region region) {
+        if (region.owner != null) {
+            region.owner.RemoveFromOwnedRegions(region);
+        }
+        region.SetOwner(null);
         //area.SetRaceType(area.defaultRace.race); //Return area to its default race
-        area.TintStructuresInArea(Color.white);
-        Messenger.Broadcast(Signals.AREA_OCCUPANY_CHANGED, area);
+        if (region.area != null) {
+            region.area.TintStructuresInArea(Color.white);
+        }
     }
     public void LoadAdditionalAreaData() {
         for (int i = 0; i < allAreas.Count; i++) {

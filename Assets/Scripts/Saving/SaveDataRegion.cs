@@ -48,8 +48,8 @@ public class SaveDataRegion {
         }
 
         charactersHereIDs = new List<int>();
-        for (int i = 0; i < region.charactersHere.Count; i++) {
-            charactersHereIDs.Add(region.charactersHere[i].id);
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            charactersHereIDs.Add(region.charactersAtLocation[i].id);
         }
 
         if (region.activeEvent != null) {

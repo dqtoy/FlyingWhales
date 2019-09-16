@@ -23,7 +23,7 @@ public class Criminal : Trait {
             Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "add_criminal");
             addLog.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             sourceCharacter.AddHistory(addLog);
-            sourceCharacter.specificLocation.AddHistory(addLog);
+            ////sourceCharacter.specificLocation.AddHistory(addLog);
         }
         
     }
@@ -34,7 +34,7 @@ public class Criminal : Trait {
             Log addLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "remove_criminal");
             addLog.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             sourceCharacter.AddHistory(addLog);
-            sourceCharacter.specificLocation.AddHistory(addLog);
+            //sourceCharacter.specificLocation.AddHistory(addLog);
         }
         base.OnRemoveTrait(sourcePOI, removedBy);
     }

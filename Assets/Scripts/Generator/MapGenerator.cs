@@ -213,7 +213,7 @@ public class MapGenerator : MonoBehaviour {
 
         TokenManager.Instance.Initialize();
 
-        FactionManager.Instance.RandomizeStartingFactions(data);
+        //FactionManager.Instance.RandomizeStartingFactions(data);
         CharacterManager.Instance.LoadCharacters(data);
         FactionManager.Instance.GenerateStartingFactionData();
 

@@ -994,11 +994,11 @@ public class ConsoleMenu : UIMenu {
             area = LandmarkManager.Instance.GetAreaByName(areaParameterString);
         }
 
-        string text = area.name + "'s Characters History: ";
-        for (int i = 0; i < area.charactersAtLocationHistory.Count; i++) {
-            text += "\n" + area.charactersAtLocationHistory[i];
-        }
-        AddSuccessMessage(text);
+        //string text = area.name + "'s Characters History: ";
+        //for (int i = 0; i < area.charactersAtLocationHistory.Count; i++) {
+        //    text += "\n" + area.charactersAtLocationHistory[i];
+        //}
+        //AddSuccessMessage(text);
     }
     #endregion
 

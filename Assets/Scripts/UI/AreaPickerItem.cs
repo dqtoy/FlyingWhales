@@ -28,7 +28,7 @@ public class AreaPickerItem : ObjectPickerItem<Area>, IPointerClickHandler {
     }
 
     private void UpdateVisuals() {
-        portrait.SetLocation(area);
+        portrait.SetLocation(area.region);
         mainLbl.text = area.name;
         //subLbl.text = Utilities.GetNormalizedSingularRace(area.race) + " " + area.characterClass.className;
     }

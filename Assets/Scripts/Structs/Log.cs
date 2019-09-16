@@ -100,9 +100,11 @@ public class Log {
             if (obj != null) {
                 if (obj is Character) {
                     (obj as Character).AddHistory(this);
-                } else if (obj is Area) {
-                    (obj as Area).AddHistory(this);
-                } else if (obj is Minion) {
+                } 
+                //else if (obj is Area) {
+                //    (obj as Area).AddHistory(this);
+                //} 
+                else if (obj is Minion) {
                     (obj as Minion).character.AddHistory(this);
                 } else if (obj is Faction) {
                     (obj as Faction).AddHistory(this);
@@ -118,9 +120,11 @@ public class Log {
             if (obj != null && identifiersList.Contains(currFiller.identifier)) {
                 if (obj is Character) {
                     (obj as Character).AddHistory(this);
-                } else if (obj is Area) {
-                    (obj as Area).AddHistory(this);
-                } else if (obj is Minion) {
+                } 
+                //else if (obj is Area) {
+                //    (obj as Area).AddHistory(this);
+                //} 
+                else if (obj is Minion) {
                     (obj as Minion).character.AddHistory(this);
                 } else if (obj is Faction) {
                     (obj as Faction).AddHistory(this);

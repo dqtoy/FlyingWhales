@@ -8,22 +8,22 @@ public class Area {
 
     public int id { get; private set; }
     public string name { get; private set; }
-    public bool isDead { get; private set; }
+    //public bool isDead { get; private set; }
     public AREA_TYPE areaType { get; private set; }
-    public HexTile coreTile { get; private set; }
-    public Color areaColor { get; private set; }
-    public Faction owner { get; private set; }
-    public Faction previousOwner { get; private set; }
-    public List<HexTile> tiles { get; private set; }
-    public List<BaseLandmark> landmarks { get { return tiles.Where(x => x.landmarkOnTile != null).Select(x => x.landmarkOnTile).ToList(); } }
     public List<Character> areaResidents { get; private set; }
-    public List<Character> charactersAtLocation { get; private set; }
-    public List<Log> history { get; private set; }
+    public Region region { get; private set; }
     public JobQueue jobQueue { get; private set; }
     public LocationStructure prison { get; private set; }
-    public List<RACE> possibleOccupants { get; private set; }
-    public List<InitialRaceSetup> initialSpawnSetup { get; private set; } //only to be used when unoccupied
     public int citizenCount { get; private set; }
+
+    //Data that are only referenced from this area's region
+    //These are only getter data, meaning it cannot be stored
+    public HexTile coreTile { get { return region.coreTile; } }
+    public Faction owner { get { return region.owner; } }
+    public Faction previousOwner { get { return region.previousOwner; } }
+    public List<HexTile> tiles { get { return region.tiles; } }
+    public List<Character> charactersAtLocation { get { return region.charactersAtLocation; } }
+
 
     //special tokens
     public List<SpecialToken> itemsInArea { get; private set; }
@@ -36,18 +36,11 @@ public class Area {
     //misc
     public Sprite locationPortrait { get; private set; }
     public Vector2 nameplatePos { get; private set; }
-    public bool isBeingTracked { get; private set; }
-
-    //for testing
-    public List<string> charactersAtLocationHistory { get; private set; }
 
     //public Race defaultRace { get; private set; }
     //private RACE _raceType;
 
     #region getters
-    //public RACE raceType {
-    //    get { return _raceType; }
-    //}
     public List<Character> visitors {
         get { return charactersAtLocation.Where(x => !areaResidents.Contains(x)).ToList(); }
     }
@@ -101,57 +94,39 @@ public class Area {
     }
     #endregion
 
-    public Area(HexTile coreTile, AREA_TYPE areaType, int citizenCount) {
+    public Area(Region region, AREA_TYPE areaType, int citizenCount) {
         id = Utilities.SetID(this);
         this.citizenCount = citizenCount;
+        this.region = region;
         SetName(RandomNameGenerator.Instance.GetRegionName());
-        tiles = new List<HexTile>();
         areaResidents = new List<Character>();
-        charactersAtLocation = new List<Character>();
-        history = new List<Log>();
-        areaColor = UnityEngine.Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
-        initialSpawnSetup = new List<InitialRaceSetup>();
+        //charactersAtLocation = new List<Character>();
         //defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         itemsInArea = new List<SpecialToken>();
-        charactersAtLocationHistory = new List<string>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         jobQueue = new JobQueue(null);
         SetAreaType(areaType);
-        SetCoreTile(coreTile);
-        AddTile(coreTile);
+        //AddTile(coreTile);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
-        possibleOccupants = new List<RACE>();
     }
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
         SetName(data.areaName);
-        tiles = new List<HexTile>();
         areaResidents = new List<Character>();
-        charactersAtLocation = new List<Character>();
-        history = new List<Log>();
-        areaColor = data.areaColor;
+        //charactersAtLocation = new List<Character>();
         SetAreaType(data.areaType);
-        charactersAtLocationHistory = new List<string>();
         itemsInArea = new List<SpecialToken>();
         jobQueue = new JobQueue(null);
-        if (data.raceSetup != null) {
-            initialSpawnSetup = new List<InitialRaceSetup>(data.raceSetup);
-        } else {
-            initialSpawnSetup = new List<InitialRaceSetup>();
-        }
         LoadStructures(data);
         AssignPrison();
-#if WORLD_CREATION_TOOL
-        SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
-#else
-        SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
-#endif
-        possibleOccupants = new List<RACE>();
-        if (data.possibleOccupants != null) {
-            possibleOccupants.AddRange(data.possibleOccupants);
-        }
 
-        AddTile(Utilities.GetTilesFromIDs(data.tileData));
+//#if WORLD_CREATION_TOOL
+//        SetCoreTile(worldcreator.WorldCreatorManager.Instance.GetHexTile(data.coreTileID));
+//#else
+//        SetCoreTile(GridMap.Instance.GetHexTile(data.coreTileID));
+//#endif
+
+        //AddTile(Utilities.GetTilesFromIDs(data.tileData));
         //UpdateBorderColors();
         //GenerateDefaultRace();
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
@@ -160,22 +135,16 @@ public class Area {
     public Area(SaveDataArea saveDataArea) {
         id = Utilities.SetID(this, saveDataArea.id);
         citizenCount = saveDataArea.citizenCount;
+        region = GridMap.Instance.GetRegionByID(saveDataArea.regionID);
         SetName(saveDataArea.name);
-        areaColor = saveDataArea.areaColor;
 
-        tiles = new List<HexTile>();
         areaResidents = new List<Character>();
-        charactersAtLocation = new List<Character>();
-        history = new List<Log>();
-        initialSpawnSetup = new List<InitialRaceSetup>();
+        //charactersAtLocation = new List<Character>();
         itemsInArea = new List<SpecialToken>();
-        charactersAtLocationHistory = new List<string>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
-        possibleOccupants = new List<RACE>();
         jobQueue = new JobQueue(null);
 
         SetAreaType(saveDataArea.areaType);
-        SetCoreTile(GridMap.Instance.hexTiles[saveDataArea.coreTileID]);
 
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
 
@@ -206,103 +175,68 @@ public class Area {
     public void SetName(string name) {
         this.name = name;
     }
-    public void AddPossibleOccupant(RACE race) {
-        possibleOccupants.Add(race);
-    }
-    public void RemovePossibleOccupant(RACE race) {
-        possibleOccupants.Remove(race);
-    }
-    public bool HasRaceSetup(RACE race, RACE_SUB_TYPE subType) {
-        for (int i = 0; i < initialSpawnSetup.Count; i++) {
-            InitialRaceSetup raceSetup = initialSpawnSetup[i];
-            if (raceSetup.race.race == race && raceSetup.race.subType == subType) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public void AddRaceSetup(RACE race, RACE_SUB_TYPE subType) {
-        Race newRace = new Race(race, subType);
-        initialSpawnSetup.Add(new InitialRaceSetup(newRace));
-    }
-    public void RemoveRaceSetup(RACE race, RACE_SUB_TYPE subType) {
-        for (int i = 0; i < initialSpawnSetup.Count; i++) {
-            InitialRaceSetup raceSetup = initialSpawnSetup[i];
-            if (raceSetup.race.race == race && raceSetup.race.subType == subType) {
-                initialSpawnSetup.RemoveAt(i);
-                break;
-            }
-        }
-    }
     #endregion
 
     #region Tile Management
-    public void SetCoreTile(HexTile tile) {
-        coreTile = tile;
-    }
-    public void AddTile(List<HexTile> tiles) {
-        for (int i = 0; i < tiles.Count; i++) {
-            AddTile(tiles[i]);
-        }
-    }
-    public void AddTile(HexTile tile) {
-        if (!tiles.Contains(tile)) {
-            tiles.Add(tile);
-            tile.SetArea(this);
-            if (this.coreTile == null) {
-                SetCoreTile(tile);
-            }
-            OnTileAddedToArea(tile);
-            Messenger.Broadcast(Signals.AREA_TILE_ADDED, this, tile);
-        }
-    }
-    public void RemoveTile(List<HexTile> tiles) {
-        for (int i = 0; i < tiles.Count; i++) {
-            RemoveTile(tiles[i]);
-        }
-    }
-    public void RemoveTile(HexTile tile) {
-        if (tiles.Remove(tile)) {
-            tile.SetArea(null);
-            if (coreTile == tile) {
-                SetCoreTile(null);
-            }
-            OnTileRemovedFromArea(tile);
-            Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
-        }
-    }
-    private void OnTileAddedToArea(HexTile addedTile) {
-        if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
-            addedTile.SetBiome(BIOMES.ANCIENT_RUIN);
-            Biomes.Instance.UpdateTileVisuals(addedTile);
-        }
-        //update tile visuals if necessary
-        if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-            Biomes.Instance.CorruptTileVisuals(addedTile);
-        }
-    }
-    private void OnTileRemovedFromArea(HexTile removedTile) {
-        if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
-            removedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[UnityEngine.Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
-            removedTile.HideLandmarkTileSprites();
-        }
-        ////update tile visuals if necessary
-        //if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
-        //    removedTile.SetBaseSprite(PlayerManager.Instance.playerAreaFloorSprites[Random.Range(0, PlayerManager.Instance.playerAreaFloorSprites.Length)]);
-        //    if (coreTile.id != removedTile.id) {
-        //        removedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(PlayerManager.Instance.playerAreaDefaultStructureSprites[Random.Range(0, PlayerManager.Instance.playerAreaDefaultStructureSprites.Length)], null));
-        //    }
-        //} else if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
-        //    removedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
-        //    if (coreTile.id == removedTile.id) {
-        //        removedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ancientRuinTowerSprite, null));
-        //    } else {
-        //        if (Utilities.IsEven(tiles.Count)) {
-        //            removedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ancientRuinBlockerSprite, null));
-        //        }
-        //    }
-        //}
-    }
+    //public void AddTile(List<HexTile> tiles) {
+    //    for (int i = 0; i < tiles.Count; i++) {
+    //        AddTile(tiles[i]);
+    //    }
+    //}
+    //public void AddTile(HexTile tile) {
+    //    region.AddTile(tile);
+    //    //if (!tiles.Contains(tile)) {
+    //    //    tiles.Add(tile);
+    //    //    tile.SetArea(this);
+    //    //    OnTileAddedToArea(tile);
+    //    //    Messenger.Broadcast(Signals.AREA_TILE_ADDED, this, tile);
+    //    //}
+    //}
+    //public void RemoveTile(List<HexTile> tiles) {
+    //    for (int i = 0; i < tiles.Count; i++) {
+    //        RemoveTile(tiles[i]);
+    //    }
+    //}
+    //public void RemoveTile(HexTile tile) {
+    //    region.RemoveTile(tile);
+    //    //if (tiles.Remove(tile)) {
+    //    //    tile.SetArea(null);
+    //    //    OnTileRemovedFromArea(tile);
+    //    //    Messenger.Broadcast(Signals.AREA_TILE_REMOVED, this, tile);
+    //    //}
+    //}
+    //public void OnTileAddedToArea(HexTile addedTile) {
+    //    if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
+    //        addedTile.SetBiome(BIOMES.ANCIENT_RUIN);
+    //        Biomes.Instance.UpdateTileVisuals(addedTile);
+    //    }
+    //    //update tile visuals if necessary
+    //    if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
+    //        Biomes.Instance.CorruptTileVisuals(addedTile);
+    //    }
+    //}
+    //public void OnTileRemovedFromArea(HexTile removedTile) {
+    //    if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
+    //        removedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[UnityEngine.Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
+    //        removedTile.HideLandmarkTileSprites();
+    //    }
+    //    ////update tile visuals if necessary
+    //    //if (this.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
+    //    //    removedTile.SetBaseSprite(PlayerManager.Instance.playerAreaFloorSprites[Random.Range(0, PlayerManager.Instance.playerAreaFloorSprites.Length)]);
+    //    //    if (coreTile.id != removedTile.id) {
+    //    //        removedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(PlayerManager.Instance.playerAreaDefaultStructureSprites[Random.Range(0, PlayerManager.Instance.playerAreaDefaultStructureSprites.Length)], null));
+    //    //    }
+    //    //} else if (this.areaType == AREA_TYPE.ANCIENT_RUINS) {
+    //    //    removedTile.SetBaseSprite(Biomes.Instance.ancienctRuinTiles[Random.Range(0, Biomes.Instance.ancienctRuinTiles.Length)]);
+    //    //    if (coreTile.id == removedTile.id) {
+    //    //        removedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ancientRuinTowerSprite, null));
+    //    //    } else {
+    //    //        if (Utilities.IsEven(tiles.Count)) {
+    //    //            removedTile.SetLandmarkTileSprite(new LandmarkStructureSprite(LandmarkManager.Instance.ancientRuinBlockerSprite, null));
+    //    //        }
+    //    //    }
+    //    //}
+    //}
     #endregion
 
     #region Area Type
@@ -316,10 +250,10 @@ public class Area {
     }
     private void OnAreaTypeSet() {
         //update tile visuals
-        for (int i = 0; i < tiles.Count; i++) {
-            HexTile currTile = tiles[i];
-            OnTileAddedToArea(currTile);
-        }
+        //for (int i = 0; i < tiles.Count; i++) {
+        //    HexTile currTile = tiles[i];
+        //    OnTileAddedToArea(currTile);
+        //}
     }
     #endregion
 
@@ -360,28 +294,6 @@ public class Area {
     }
     #endregion
 
-    #region Owner
-    public void SetOwner(Faction owner) {
-        previousOwner = this.owner;
-        this.owner = owner;
-        //if(areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-        //    if (this.owner != null &&  this.owner != FactionManager.Instance.neutralFaction) {
-        //        SubscribeToSignals();
-        //    } else {
-        //        UnsubscribeToSignals();
-        //    }
-        //}
-        //UpdateBorderColors();
-        /*Whenever a location is occupied, 
-         all items in structures Inside Settlement will be owned by the occupying faction.*/
-        List<LocationStructure> insideStructures = GetStructuresAtLocation(true);
-        for (int i = 0; i < insideStructures.Count; i++) {
-            insideStructures[i].OwnItemsInLocation(owner);
-        }
-        Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, this);
-    }
-    #endregion
-
     #region Utilities
     public void LoadAdditionalData() {
         CreateNameplate();
@@ -397,31 +309,31 @@ public class Area {
             }
         }
     }
-    public void Death() {
-        if (!isDead) {
-            isDead = true;
-            if (owner != null) {
-                for (int i = 0; i < areaResidents.Count; i++) {
-                    Character resident = areaResidents[i];
-                    if (!resident.isFactionless && !resident.currentParty.icon.isTravelling && resident.faction.id == owner.id && resident.id != resident.faction.leader.id && resident.specificLocation.id == id) {
-                        resident.Death();
-                    }
-                }
-            }
-            LandmarkManager.Instance.UnownArea(this);
-            FactionManager.Instance.neutralFaction.AddToOwnedAreas(this);
+    //public void Death() {
+    //    if (!isDead) {
+    //        isDead = true;
+    //        if (owner != null) {
+    //            for (int i = 0; i < areaResidents.Count; i++) {
+    //                Character resident = areaResidents[i];
+    //                if (!resident.isFactionless && !resident.currentParty.icon.isTravelling && resident.faction.id == owner.id && resident.id != resident.faction.leader.id && resident.specificLocation.id == id) {
+    //                    resident.Death();
+    //                }
+    //            }
+    //        }
+    //        LandmarkManager.Instance.UnownArea(this);
+    //        FactionManager.Instance.neutralFaction.AddToOwnedAreas(this);
 
-            if (previousOwner != null && previousOwner.leader != null && previousOwner.leader is Character) {
-                Character leader = previousOwner.leader as Character;
-                if (!leader.currentParty.icon.isTravelling && leader.specificLocation.id == id && leader.homeArea.id == id) {
-                    leader.Death();
-                }
-            }
+    //        if (previousOwner != null && previousOwner.leader != null && previousOwner.leader is Character) {
+    //            Character leader = previousOwner.leader as Character;
+    //            if (!leader.currentParty.icon.isTravelling && leader.specificLocation.id == id && leader.homeArea.id == id) {
+    //                leader.Death();
+    //            }
+    //        }
 
-            ReleaseAllAbductedCharacters();
-            UnsubscribeToSignals();
-        }
-    }
+    //        ReleaseAllAbductedCharacters();
+    //        UnsubscribeToSignals();
+    //    }
+    //}
     private void ReleaseAllAbductedCharacters() {
         for (int i = 0; i < charactersAtLocation.Count; i++) {
             charactersAtLocation[i].ReleaseFromAbduction();
@@ -450,13 +362,13 @@ public class Area {
         LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         CheckAreaInventoryJobs(warehouse);
     }
-    public void SetOutlineState(bool state) {
-        SpriteRenderer[] borders = coreTile.GetAllBorders();
-        for (int i = 0; i < borders.Length; i++) {
-            SpriteRenderer renderer = borders[i];
-            renderer.gameObject.SetActive(state);
-        }
-    }
+    //public void SetOutlineState(bool state) {
+    //    SpriteRenderer[] borders = coreTile.GetAllBorders();
+    //    for (int i = 0; i < borders.Length; i++) {
+    //        SpriteRenderer renderer = borders[i];
+    //        renderer.gameObject.SetActive(state);
+    //    }
+    //}
     public bool CanInvadeSettlement() {
         if (coreTile.tileTags.Contains(TILE_TAG.PROTECTIVE_BARRIER)) { //NOTE: For now only put this specific case, but might convert this to int value instead. Will see what other elements will prevent a settlement from being invaded and change accordingly.
             return false;
@@ -500,12 +412,6 @@ public class Area {
         }
         currFoodPile.AdjustFoodInPile(amount);
         Messenger.Broadcast(Signals.AREA_FOOD_CHANGED, this);
-    }
-    #endregion
-
-    #region Landmarks
-    public void CenterOnCoreLandmark() {
-        coreTile.CenterCameraHere();
     }
     #endregion
 
@@ -590,57 +496,50 @@ public class Area {
                 }
             }
             if (unoccupy) {
-                LandmarkManager.Instance.UnownArea(this);
-                FactionManager.Instance.neutralFaction.AddToOwnedAreas(this);
+                LandmarkManager.Instance.UnownRegion(region);
+                FactionManager.Instance.neutralFaction.AddToOwnedRegions(region);
             }
         }
     }
     public void AddCharacterToLocation(Character character, LocationGridTile tileOverride = null, bool isInitial = false) {
-        if (!charactersAtLocation.Contains(character)) {
-            charactersAtLocation.Add(character);
-            character.ownParty.SetSpecificLocation(this);
-            //AddCharacterAtLocationHistory("Added " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
-            //if (tileOverride != null) {
-            //    tileOverride.structure.AddCharacterAtLocation(character, tileOverride);
-            //} else {
-            //    if (isInitial) {
-            //        AddCharacterToAppropriateStructure(character);
-            //    } else {
-            //        LocationGridTile exit = GetRandomUnoccupiedEdgeTile();
-            //        exit.structure.AddCharacterAtLocation(character, exit);
-            //    }
-            //}
-            //Debug.Log(GameManager.Instance.TodayLogString() + "Added " + character.name + " to location " + name);
-            Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, this, character);
-        }
+        region.AddCharacterToLocation(character);
+        //if (!charactersAtLocation.Contains(character)) {
+        //    charactersAtLocation.Add(character);
+        //    character.ownParty.SetSpecificLocation(this);
+        //    //AddCharacterAtLocationHistory("Added " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
+        //    //if (tileOverride != null) {
+        //    //    tileOverride.structure.AddCharacterAtLocation(character, tileOverride);
+        //    //} else {
+        //    //    if (isInitial) {
+        //    //        AddCharacterToAppropriateStructure(character);
+        //    //    } else {
+        //    //        LocationGridTile exit = GetRandomUnoccupiedEdgeTile();
+        //    //        exit.structure.AddCharacterAtLocation(character, exit);
+        //    //    }
+        //    //}
+        //    //Debug.Log(GameManager.Instance.TodayLogString() + "Added " + character.name + " to location " + name);
+        //    Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, this, character);
+        //}
     }
     public void RemoveCharacterFromLocation(Character character) {
-        if (charactersAtLocation.Remove(character)) {
-            //character.ownParty.SetSpecificLocation(null);
-            if (character.currentStructure == null && this != PlayerManager.Instance.player.playerArea) {
-                throw new Exception(character.name + " doesn't have a current structure at " + this.name);
-            }
-            if (character.currentStructure != null) {
-                character.currentStructure.RemoveCharacterAtLocation(character);
-            }
-            //AddCharacterAtLocationHistory("Removed " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
-            Messenger.Broadcast(Signals.CHARACTER_EXITED_AREA, this, character);
-        }
-
+        region.RemoveCharacterFromLocation(character);
+        //if (charactersAtLocation.Remove(character)) {
+        //    //character.ownParty.SetSpecificLocation(null);
+        //    if (character.currentStructure == null && this != PlayerManager.Instance.player.playerArea) {
+        //        throw new Exception(character.name + " doesn't have a current structure at " + this.name);
+        //    }
+        //    if (character.currentStructure != null) {
+        //        character.currentStructure.RemoveCharacterAtLocation(character);
+        //    }
+        //    //AddCharacterAtLocationHistory("Removed " + character.name + "ST: " + StackTraceUtility.ExtractStackTrace());
+        //    Messenger.Broadcast(Signals.CHARACTER_EXITED_AREA, this, character);
+        //}
     }
     public void RemoveCharacterFromLocation(Party party) {
         RemoveCharacterFromLocation(party.owner);
         //for (int i = 0; i < party.characters.Count; i++) {
         //    RemoveCharacterFromLocation(party.characters[i]);
         //}
-    }
-    private void AddCharacterAtLocationHistory(string str) {
-#if !WORLD_CREATION_TOOL
-        charactersAtLocationHistory.Add(GameManager.Instance.TodayLogString() + str);
-        if (charactersAtLocationHistory.Count > 100) {
-            charactersAtLocationHistory.RemoveAt(0);
-        }
-#endif
     }
     public bool IsResidentsFull() {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerArea.id == this.id) {
@@ -684,24 +583,6 @@ public class Area {
     } 
     public void SetInitialResidentCount(int count) {
         citizenCount = count;
-    }
-    #endregion
-
-    #region Logs
-    public void AddHistory(Log log) {
-        if (!history.Contains(log)) {
-            history.Add(log);
-            if (this.history.Count > 60) {
-                if (this.history[0].goapAction != null) {
-                    this.history[0].goapAction.AdjustReferenceCount(-1);
-                }
-                this.history.RemoveAt(0);
-            }
-            if (log.goapAction != null) {
-                log.goapAction.AdjustReferenceCount(1);
-            }
-            Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
-        }
     }
     #endregion
 

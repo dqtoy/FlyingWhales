@@ -53,11 +53,11 @@ public class FactionSaveData {
         isActive = faction.isActive;
     }
     private void ConstructOwnedAreas(Faction faction) {
-        ownedAreas = new List<int>();
-        for (int i = 0; i < faction.ownedAreas.Count; i++) {
-            Area area = faction.ownedAreas[i];
-            ownedAreas.Add(area.id);
-        }
+        //ownedAreas = new List<int>();
+        //for (int i = 0; i < faction.ownedRegions.Count; i++) {
+        //    Area area = faction.ownedRegions[i];
+        //    ownedAreas.Add(area.id);
+        //}
     }
     private void ConstructRelationships(Faction faction) {
         relationships = new Dictionary<int, FACTION_RELATIONSHIP_STATUS>();

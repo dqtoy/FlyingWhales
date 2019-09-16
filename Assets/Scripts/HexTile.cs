@@ -676,6 +676,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         };
         return border;
     }
+    public void SetOutlineState(bool state) {
+        SpriteRenderer[] borders = GetAllBorders();
+        for (int i = 0; i < borders.Length; i++) {
+            SpriteRenderer renderer = borders[i];
+            renderer.gameObject.SetActive(state);
+        }
+    }
     internal void DeactivateCenterPiece() {
         centerPiece.SetActive(false);
     }
@@ -1043,15 +1050,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             SetInternalState(false);
         }
     }
-    private bool IsAdjacentToPlayerArea() {
-        for (int i = 0; i < AllNeighbours.Count; i++) {
-            HexTile currNeighbour = AllNeighbours[i];
-            if (currNeighbour.areaOfTile != null && currNeighbour.areaOfTile.id == PlayerManager.Instance.player.playerArea.id) {
-                return true;
-            }
-        }
-        return false;
-    }
     public void SetExternalState(bool state) {
         _isExternal = state;
     }
@@ -1183,11 +1181,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
     public ContextMenuSettings GetContextMenuSettings() {
         ContextMenuSettings settings = new ContextMenuSettings();
-        if ((this.areaOfTile == null || this.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) && this.landmarkOnTile == null && IsAdjacentToPlayerArea()) {
-            ContextMenuItemSettings purchaseTileItem = new ContextMenuItemSettings("Purchase Tile");
-            purchaseTileItem.onClickAction += () => PlayerManager.Instance.PurchaseTile(this);
-            settings.AddMenuItem(purchaseTileItem);
-        }
+        //if ((this.areaOfTile == null || this.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) && this.landmarkOnTile == null && IsAdjacentToPlayerArea()) {
+        //    ContextMenuItemSettings purchaseTileItem = new ContextMenuItemSettings("Purchase Tile");
+        //    purchaseTileItem.onClickAction += () => PlayerManager.Instance.PurchaseTile(this);
+        //    settings.AddMenuItem(purchaseTileItem);
+        //}
 #if UNITY_EDITOR
         //if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.isShowing) {
         //    if (this.landmarkOnTile != null) {

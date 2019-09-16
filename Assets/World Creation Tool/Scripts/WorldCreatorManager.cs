@@ -384,7 +384,7 @@ namespace worldcreator {
                         WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Elevation error", "Cannot change elevation of " + tile.tileName + " because it is a core tile of an area!");
                         return;
                     }
-                    tile.areaOfTile.RemoveTile(tile);
+                    //tile.areaOfTile.RemoveTile(tile);
                 }
                 if (tile.landmarkOnTile != null) {
                     LandmarkManager.Instance.DestroyLandmarkOnTile(tile);

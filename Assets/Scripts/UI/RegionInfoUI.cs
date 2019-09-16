@@ -80,7 +80,7 @@ public class RegionInfoUI : UIMenu {
 
     #region Basic Info
     private void UpdateBasicInfo() {
-        locationPortrait.SetLocation(activeRegion.mainLandmark);
+        locationPortrait.SetLocation(activeRegion);
         regionNameLbl.text = activeRegion.name;
         regionTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(activeRegion.mainLandmark.specificLandmarkType.ToString());
     }
@@ -105,8 +105,8 @@ public class RegionInfoUI : UIMenu {
     }
     private void UpdateCharacters() {
         Utilities.DestroyChildren(charactersScrollView.content);
-        for (int i = 0; i < activeRegion.charactersHere.Count; i++) {
-            Character character = activeRegion.charactersHere[i];
+        for (int i = 0; i < activeRegion.charactersAtLocation.Count; i++) {
+            Character character = activeRegion.charactersAtLocation[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(characterItemPrefab.name, Vector3.zero, Quaternion.identity, charactersScrollView.content);
             LandmarkCharacterItem item = go.GetComponent<LandmarkCharacterItem>();
             item.SetCharacter(character, this);

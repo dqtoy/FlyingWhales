@@ -98,13 +98,13 @@ public class LandmarkInfoUI : UIMenu {
         ResetScrollPositions();
         if(previousLandmark != null) {
             if (previousLandmark.tileLocation.areaOfTile != null) {
-                previousLandmark.tileLocation.areaOfTile.SetOutlineState(false);
+                //previousLandmark.tileLocation.areaOfTile.SetOutlineState(false);
             } else {
                 SetLandmarkBorderState(false);
             }
         }
         if(_activeLandmark.tileLocation.areaOfTile != null) {
-            _activeLandmark.tileLocation.areaOfTile.SetOutlineState(true);
+            //_activeLandmark.tileLocation.areaOfTile.SetOutlineState(true);
         } else {
             SetLandmarkBorderState(true);
         }
@@ -113,7 +113,7 @@ public class LandmarkInfoUI : UIMenu {
         base.CloseMenu();
         SetLandmarkBorderState(false);
         if (_activeLandmark.tileLocation.areaOfTile != null) {
-            _activeLandmark.tileLocation.areaOfTile.SetOutlineState(false);
+            //_activeLandmark.tileLocation.areaOfTile.SetOutlineState(false);
         } else {
             SetLandmarkBorderState(false);
         }

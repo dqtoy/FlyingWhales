@@ -55,10 +55,10 @@ public class Player : ILeader {
         get { return RACE.HUMANS; }
     }
     public Area specificLocation {
-        get { return playerArea; }
+        get { return playerFaction.mainRegion.area; }
     }
     public Area homeArea {
-        get { return playerArea; }
+        get { return playerFaction.mainRegion.area; }
     }
     public List<Character> allOwnedCharacters {
         get { return minions.Select(x => x.character).ToList(); }
@@ -69,7 +69,7 @@ public class Player : ILeader {
     #endregion
 
     public Player() {
-        playerArea = null;
+        //playerArea = null;
         attackGrid = new CombatGrid();
         defenseGrid = new CombatGrid();
         attackGrid.Initialize();
@@ -125,7 +125,7 @@ public class Player : ILeader {
     #region Listeners
     private void AddListeners() {
         AddWinListener();
-        Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
+        //Messenger.AddListener<Area, HexTile>(Signals.AREA_TILE_REMOVED, OnTileRemovedFromPlayerArea);
 
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
 
@@ -145,19 +145,19 @@ public class Player : ILeader {
     #endregion
 
     #region Area
-    public void CreatePlayerArea(HexTile chosenCoreTile) {
-        chosenCoreTile.SetCorruption(true);
-        Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION, 0);
-        playerArea.LoadAdditionalData();
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.THE_PORTAL);
-        Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
-        SetPlayerArea(playerArea);
-        //ActivateMagicTransferToPlayer();
-        //_demonicPortal.tileLocation.ScheduleCorruption();
-        //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
-    }
+    //public void CreatePlayerArea(HexTile chosenCoreTile) {
+    //    chosenCoreTile.SetCorruption(true);
+    //    Area playerArea = LandmarkManager.Instance.CreateNewArea(chosenCoreTile, AREA_TYPE.DEMONIC_INTRUSION, 0);
+    //    playerArea.LoadAdditionalData();
+    //    LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenCoreTile, LANDMARK_TYPE.THE_PORTAL);
+    //    Biomes.Instance.CorruptTileVisuals(chosenCoreTile);
+    //    SetPlayerArea(playerArea);
+    //    //ActivateMagicTransferToPlayer();
+    //    //_demonicPortal.tileLocation.ScheduleCorruption();
+    //    //OnTileAddedToPlayerArea(playerArea, chosenCoreTile);
+    //}
     public void CreatePlayerArea(BaseLandmark portal) {
-        Area playerArea = LandmarkManager.Instance.CreateNewArea(portal.tileLocation, AREA_TYPE.DEMONIC_INTRUSION, 0);
+        Area playerArea = LandmarkManager.Instance.CreateNewArea(portal.tileLocation.region, AREA_TYPE.DEMONIC_INTRUSION, 0);
         playerArea.LoadAdditionalData();
         Biomes.Instance.CorruptTileVisuals(portal.tileLocation);
         portal.tileLocation.SetCorruption(true);
@@ -177,11 +177,11 @@ public class Player : ILeader {
         //area.SetSuppliesInBank(_currencies[CURRENCY.SUPPLY]);
         //area.StopSupplyLine();
     }
-    private void OnTileRemovedFromPlayerArea(Area affectedArea, HexTile removedTile) {
-        if (playerArea != null && affectedArea.id == playerArea.id) {
-            Biomes.Instance.UpdateTileVisuals(removedTile);
-        }
-    }
+    //private void OnTileRemovedFromPlayerArea(Area affectedArea, HexTile removedTile) {
+    //    if (playerArea != null && affectedArea.id == playerArea.id) {
+    //        Biomes.Instance.UpdateTileVisuals(removedTile);
+    //    }
+    //}
     private void OnAreaMapOpened(Area area) {
         for (int i = 0; i < minions.Count; i++) {
             minions[i].ResetCombatAbilityCD();
@@ -745,7 +745,8 @@ public class Player : ILeader {
         //    isTileCurrentlyBeingCorrupted = true;
         //}
         currentTileBeingCorrupted.region.InvadeActions();
-        PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
+        LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, currentTileBeingCorrupted.region);
+        //PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
     }
     private void CorruptTilePerTick() {
         currentCorruptionTick ++;
@@ -758,7 +759,8 @@ public class Player : ILeader {
         isTileCurrentlyBeingCorrupted = false;
         Messenger.RemoveListener(Signals.DAY_STARTED, CorruptTilePerTick);
         UIManager.Instance.Pause();
-        PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
+        LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, currentTileBeingCorrupted.region);
+        //PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
     }
     #endregion
 
@@ -767,7 +769,8 @@ public class Player : ILeader {
         isTileCurrentlyBeingCorrupted = false;
         GameManager.Instance.SetPausedState(true);
         Area corruptedArea = currentTileBeingCorrupted.areaOfTile;
-        PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
+        LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, currentTileBeingCorrupted.region);
+        //PlayerManager.Instance.AddTileToPlayerArea(currentTileBeingCorrupted);
         return corruptedArea;
     }
     #endregion

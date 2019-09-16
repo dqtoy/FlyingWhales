@@ -58,10 +58,10 @@ public class AreaInfoEditor : MonoBehaviour {
     public void LoadData() {
         areaNameField.text = currentArea.name;
         occupantsSummary.text = string.Empty;
-        for (int i = 0; i < currentArea.possibleOccupants.Count; i++) {
-            RACE race = currentArea.possibleOccupants[i];
-            occupantsSummary.text += "(" + race.ToString() + ")";
-        }
+        //for (int i = 0; i < currentArea.possibleOccupants.Count; i++) {
+        //    RACE race = currentArea.possibleOccupants[i];
+        //    occupantsSummary.text += "(" + race.ToString() + ")";
+        //}
         UpdateRaceSpawnData();
         UpdateStructures();
     }
@@ -77,34 +77,34 @@ public class AreaInfoEditor : MonoBehaviour {
         //}
     }
     public void AddRemovePossibleOccupants() {
-        RACE race = (RACE)Enum.Parse(typeof(RACE), possibleOccupantsRaceDropdown.options[possibleOccupantsRaceDropdown.value].text);
-        if (currentArea.possibleOccupants.Contains(race)) {
-            currentArea.RemovePossibleOccupant(race);
-        } else {
-            currentArea.AddPossibleOccupant(race);
-        }
-        LoadData();
+        //RACE race = (RACE)Enum.Parse(typeof(RACE), possibleOccupantsRaceDropdown.options[possibleOccupantsRaceDropdown.value].text);
+        //if (currentArea.possibleOccupants.Contains(race)) {
+        //    currentArea.RemovePossibleOccupant(race);
+        //} else {
+        //    currentArea.AddPossibleOccupant(race);
+        //}
+        //LoadData();
     }
     #endregion
 
     #region Race Spawns
     public void AddRemoveRaceSpawns() {
-        RACE chosenRace = (RACE) Enum.Parse(typeof(RACE), initialRaceDropdown.options[initialRaceDropdown.value].text);
-        RACE_SUB_TYPE chosenRaceSubType = (RACE_SUB_TYPE)Enum.Parse(typeof(RACE_SUB_TYPE), initialRaceSubTypeDropdown.options[initialRaceSubTypeDropdown.value].text);
-        if (currentArea.HasRaceSetup(chosenRace, chosenRaceSubType)) {
-            currentArea.RemoveRaceSetup(chosenRace, chosenRaceSubType);
-        } else {
-            currentArea.AddRaceSetup(chosenRace, chosenRaceSubType);
-        }
-        UpdateRaceSpawnData();
+        //RACE chosenRace = (RACE) Enum.Parse(typeof(RACE), initialRaceDropdown.options[initialRaceDropdown.value].text);
+        //RACE_SUB_TYPE chosenRaceSubType = (RACE_SUB_TYPE)Enum.Parse(typeof(RACE_SUB_TYPE), initialRaceSubTypeDropdown.options[initialRaceSubTypeDropdown.value].text);
+        //if (currentArea.HasRaceSetup(chosenRace, chosenRaceSubType)) {
+        //    currentArea.RemoveRaceSetup(chosenRace, chosenRaceSubType);
+        //} else {
+        //    currentArea.AddRaceSetup(chosenRace, chosenRaceSubType);
+        //}
+        //UpdateRaceSpawnData();
     }
     private void UpdateRaceSpawnData() {
-        Utilities.DestroyChildren(raceSpawnScrollView.content);
-        for (int i = 0; i < currentArea.initialSpawnSetup.Count; i++) {
-            InitialRaceSetup setup = currentArea.initialSpawnSetup[i];
-            GameObject go = GameObject.Instantiate(raceSpawnPrefab, raceSpawnScrollView.content);
-            go.GetComponent<RaceSpawnItem>().SetSetup(setup);
-        }
+        //Utilities.DestroyChildren(raceSpawnScrollView.content);
+        //for (int i = 0; i < currentArea.initialSpawnSetup.Count; i++) {
+        //    InitialRaceSetup setup = currentArea.initialSpawnSetup[i];
+        //    GameObject go = GameObject.Instantiate(raceSpawnPrefab, raceSpawnScrollView.content);
+        //    go.GetComponent<RaceSpawnItem>().SetSetup(setup);
+        //}
     }
     #endregion
 

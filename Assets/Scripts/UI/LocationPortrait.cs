@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 public class LocationPortrait : PooledObject, IPointerClickHandler {
 
-    public Area area { get; private set; }
-    public BaseLandmark landmark { get; private set; }
+    public Region region { get; private set; }
+    //public BaseLandmark landmark { get; private set; }
 
     [SerializeField] private Image portrait;
     [SerializeField] private GameObject hoverObj;
@@ -17,24 +17,29 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
 
     public void OnPointerClick(PointerEventData eventData) {
         if (!disableInteraction) {
-            if (area != null) {
-                UIManager.Instance.ShowHextileInfo(area.coreTile);
-            } else if (landmark != null) {
-                UIManager.Instance.ShowHextileInfo(landmark.tileLocation);
-            }
+            if (region != null) {
+                UIManager.Instance.ShowHextileInfo(region.coreTile);
+            } 
+            //else if (landmark != null) {
+            //    UIManager.Instance.ShowHextileInfo(landmark.tileLocation);
+            //}
         }
     }
 
-    public void SetLocation(Area area) {
-        this.area = area;
-        this.landmark = null;
-        portrait.sprite = area.locationPortrait;
+    public void SetLocation(Region region) {
+        this.region = region;
+        //this.landmark = null;
+        if(region.area != null) {
+            portrait.sprite = region.area.locationPortrait;
+        } else {
+            portrait.sprite = LandmarkManager.Instance.GetLandmarkData(region.mainLandmark.specificLandmarkType).landmarkPortrait;
+        }
     }
-    public void SetLocation(BaseLandmark landmark) {
-        this.landmark = landmark;
-        this.area = null;
-        portrait.sprite = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType).landmarkPortrait;
-    }
+    //public void SetLocation(BaseLandmark landmark) {
+    //    this.landmark = landmark;
+    //    this.region = null;
+    //    portrait.sprite = LandmarkManager.Instance.GetLandmarkData(landmark.specificLandmarkType).landmarkPortrait;
+    //}
 
     public void SetHoverHighlightState(bool state) {
         if (!disableInteraction) {
@@ -43,11 +48,16 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
     }
 
     public void ShowLocationInfo() {
-        if (this.area != null) {
-            UIManager.Instance.ShowSmallInfo(this.area.name);
-        } else if (this.landmark != null) {
-            UIManager.Instance.ShowSmallInfo(this.landmark.tileLocation.region.name);
-        }
+        if (region != null) {
+            if(region.area != null) {
+                UIManager.Instance.ShowSmallInfo(region.area.name);
+            } else {
+                UIManager.Instance.ShowSmallInfo(region.name);
+            }
+        } 
+        //else if (this.landmark != null) {
+        //    UIManager.Instance.ShowSmallInfo(this.landmark.tileLocation.region.name);
+        //}
         
     }
     public void HideLocationInfo() {
@@ -56,7 +66,7 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
 
     public override void Reset() {
         base.Reset();
-        area = null;
-        landmark = null;
+        region = null;
+        //landmark = null;
     }
 }

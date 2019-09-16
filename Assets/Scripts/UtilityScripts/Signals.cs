@@ -199,8 +199,8 @@ public static class Signals {
     public static string FACTION_SET = "OnFactionSet"; //Parameters (Character characterThatSetFaction)
     public static string FACTION_LEADER_DIED = "OnFactionLeaderDied"; //Parameters (Faction affectedFaction)
     public static string FACTION_DIED = "OnFactionDied"; //Parameters (Faction affectedFaction)
-    public static string FACTION_OWNED_AREA_ADDED = "OnFactionOwnedAreaAdded"; //Parameters (Faction affectedFaction, Area addedArea)
-    public static string FACTION_OWNED_AREA_REMOVED = "OnFactionOwnedAreaRemoved"; //Parameters (Faction affectedFaction, Area removedArea)
+    public static string FACTION_OWNED_REGION_ADDED = "OnFactionOwnedAreaAdded"; //Parameters (Faction affectedFaction, Area addedArea)
+    public static string FACTION_OWNED_REGION_REMOVED = "OnFactionOwnedAreaRemoved"; //Parameters (Faction affectedFaction, Area removedArea)
     public static string FACTION_RELATIONSHIP_CHANGED = "OnFactionRelationshipChanged"; //Parameters (FactionRelationship rel)
     public static string FACTION_ACTIVE_CHANGED = "OnFactionActiveChanged"; //Parameters (Faction affectedFaction)
     #endregion

@@ -100,7 +100,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         UpdateInvestigation();
         ResetScrollPositions();
         if (_activeLandmark.tileLocation.areaOfTile != null) {
-            _activeLandmark.tileLocation.areaOfTile.SetOutlineState(true);
+            //_activeLandmark.tileLocation.areaOfTile.SetOutlineState(true);
             //if (!_activeLandmark.tileLocation.areaOfTile.isHighlighted) {
             //}
         } else {
@@ -111,7 +111,7 @@ public class PlayerLandmarkInfoUI : UIMenu {
         base.CloseMenu();
         SetLandmarkBorderState(false);
         if (_activeLandmark.tileLocation.areaOfTile != null) {
-            _activeLandmark.tileLocation.areaOfTile.SetOutlineState(false);
+            //_activeLandmark.tileLocation.areaOfTile.SetOutlineState(false);
         } else {
             SetLandmarkBorderState(false);
         }

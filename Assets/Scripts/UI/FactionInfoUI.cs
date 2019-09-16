@@ -28,8 +28,8 @@ public class FactionInfoUI : UIMenu {
     private List<LandmarkCharacterItem> characterItems;
 
     [Space(10)]
-    [Header("Areas")]
-    [SerializeField] private ScrollRect areasScrollView;
+    [Header("Regions")]
+    [SerializeField] private ScrollRect regionsScrollView;
     [SerializeField] private GameObject locationPortraitPrefab;
     private List<LocationPortrait> locationItems;
 
@@ -63,8 +63,8 @@ public class FactionInfoUI : UIMenu {
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
-        Messenger.AddListener<Faction, Area>(Signals.FACTION_OWNED_AREA_ADDED, OnFactionAreaAdded);
-        Messenger.AddListener<Faction, Area>(Signals.FACTION_OWNED_AREA_REMOVED, OnFactionAreaRemoved);
+        Messenger.AddListener<Faction, Region>(Signals.FACTION_OWNED_REGION_ADDED, OnFactionRegionAdded);
+        Messenger.AddListener<Faction, Region>(Signals.FACTION_OWNED_REGION_REMOVED, OnFactionRegionRemoved);
         Messenger.AddListener<FactionRelationship>(Signals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
         Messenger.AddListener<Faction>(Signals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
@@ -80,7 +80,7 @@ public class FactionInfoUI : UIMenu {
         }
         UpdateFactionInfo();
         UpdateAllCharacters();
-        UpdateAreas();
+        UpdateRegionss();
         UpdateAllRelationships();
         ResetScrollPositions();
     }
@@ -247,46 +247,46 @@ public class FactionInfoUI : UIMenu {
     }
     #endregion
 
-    #region Areas
-    private void UpdateAreas() {
-        Utilities.DestroyChildren(areasScrollView.content);
+    #region Regions
+    private void UpdateRegionss() {
+        Utilities.DestroyChildren(regionsScrollView.content);
         locationItems.Clear();
 
-        for (int i = 0; i < activeFaction.ownedAreas.Count; i++) {
-            Area currArea = activeFaction.ownedAreas[i];
-            CreateNewAreaItem(currArea);
+        for (int i = 0; i < activeFaction.ownedRegions.Count; i++) {
+            Region currRegion = activeFaction.ownedRegions[i];
+            CreateNewRegionItem(currRegion);
         }
     }
-    private void CreateNewAreaItem(Area area) {
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(locationPortraitPrefab.name, areasScrollView.content);
+    private void CreateNewRegionItem(Region region) {
+        GameObject characterGO = UIManager.Instance.InstantiateUIObject(locationPortraitPrefab.name, regionsScrollView.content);
         LocationPortrait item = characterGO.GetComponent<LocationPortrait>();
-        item.SetLocation(area);
+        item.SetLocation(region);
         locationItems.Add(item);
     }
-    private LocationPortrait GetLocationItem(Area area) {
+    private LocationPortrait GetLocationItem(Region region) {
         for (int i = 0; i < locationItems.Count; i++) {
             LocationPortrait locationPortrait = locationItems[i];
-            if (locationPortrait.area.id == area.id) {
+            if (locationPortrait.region.id == region.id) {
                 return locationPortrait;
             }
         }
         return null;
     }
-    private void DestroyLocationItem(Area area) {
-        LocationPortrait item = GetLocationItem(area);
+    private void DestroyLocationItem(Region region) {
+        LocationPortrait item = GetLocationItem(region);
         if (item != null) {
             locationItems.Remove(item);
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
         }
     }
-    private void OnFactionAreaAdded(Faction faction, Area area) {
+    private void OnFactionRegionAdded(Faction faction, Region region) {
         if (isShowing && activeFaction.id == faction.id) {
-            CreateNewAreaItem(area);
+            CreateNewRegionItem(region);
         }
     }
-    private void OnFactionAreaRemoved(Faction faction, Area area) {
+    private void OnFactionRegionRemoved(Faction faction, Region region) {
         if (isShowing && activeFaction.id == faction.id) {
-            DestroyLocationItem(area);
+            DestroyLocationItem(region);
         }
     }
     #endregion
@@ -322,7 +322,7 @@ public class FactionInfoUI : UIMenu {
     private void ResetScrollPositions() {
         charactersScrollView.verticalNormalizedPosition = 1;
         historyScrollView.verticalNormalizedPosition = 1;
-        areasScrollView.verticalNormalizedPosition = 1;
+        regionsScrollView.verticalNormalizedPosition = 1;
     }
     private void OnInspectAll() {
         if (isShowing && activeFaction != null) {

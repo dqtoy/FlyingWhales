@@ -7,14 +7,15 @@ using BayatGames.SaveGameFree.Types;
 public class SaveDataArea {
     public int id;
     public string name;
-    public bool isDead;
+    //public bool isDead;
     public AREA_TYPE areaType;
     public int citizenCount;
-    public int coreTileID;
-    public ColorSave areaColor;
-    public int ownerID;
+    public int regionID;
+    //public int coreTileID;
+    //public ColorSave areaColor;
+    //public int ownerID;
     //public int previousOwnerID;
-    public List<int> tileIDs;
+    //public List<int> tileIDs;
     //public List<int> residentIDs;
     //public List<int> charactersAtLocationIDs;
     public List<SaveDataItem> itemsInArea;
@@ -28,22 +29,23 @@ public class SaveDataArea {
     public void Save(Area area) {
         id = area.id;
         name = area.name;
-        isDead = area.isDead;
+        //isDead = area.isDead;
         areaType = area.areaType;
         citizenCount = area.citizenCount;
-        coreTileID = area.coreTile.id;
-        areaColor = area.areaColor;
-        ownerID = area.owner.id;
+        regionID = area.region.id;
+        //coreTileID = area.coreTile.id;
+        //areaColor = area.areaColor;
+        //ownerID = area.owner.id;
         //if(area.previousOwner != null) {
         //    previousOwnerID = area.previousOwner.id;
         //} else {
         //    previousOwnerID = -1;
         //}
 
-        tileIDs = new List<int>();
-        for (int i = 0; i < area.tiles.Count; i++) {
-            tileIDs.Add(area.tiles[i].id);
-        }
+        //tileIDs = new List<int>();
+        //for (int i = 0; i < area.tiles.Count; i++) {
+        //    tileIDs.Add(area.tiles[i].id);
+        //}
 
         //residentIDs = new List<int>();
         //for (int i = 0; i < area.areaResidents.Count; i++) {

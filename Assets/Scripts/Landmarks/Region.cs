@@ -12,11 +12,14 @@ public class Region {
     public string name { get; private set; }
     public List<HexTile> tiles { get; private set; }
     public HexTile coreTile { get; private set; }
+    public Area area { get; private set; }
     public int ticksInInvasion { get; private set; }
     public Color regionColor { get; private set; }
     public List<Region> connections { get; private set; }
     public Minion assignedMinion { get; private set; }
     public IWorldObject worldObj { get; private set; }
+    public Faction owner { get; private set; }
+    public Faction previousOwner { get; private set; }
 
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> borderSprites;
@@ -31,7 +34,7 @@ public class Region {
     public GameObject eventIconGO { get; private set; }
 
     //Characters
-    public List<Character> charactersHere { get; private set; }
+    public List<Character> charactersAtLocation { get; private set; }
 
     private List<System.Action> otherAfterInvasionActions; //list of other things to do when this landmark is invaded.
     private string activeEventAfterEffectScheduleID;
@@ -44,7 +47,7 @@ public class Region {
 
     public Region() {
         connections = new List<Region>();
-        charactersHere = new List<Character>();
+        charactersAtLocation = new List<Character>();
         otherAfterInvasionActions = new List<System.Action>();
     }
     public Region(HexTile coreTile) : this() {
@@ -67,10 +70,33 @@ public class Region {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
             tile.SetRegion(this);
-            //if (tile != coreTile) {
-            //    tile.spriteRenderer.color = regionColor;
+            //if (area != null) {
+            //    area.OnTileAddedToArea(tile);
+            //    Messenger.Broadcast(Signals.AREA_TILE_ADDED, area, tile);
             //}
         }
+    }
+    public void AddTile(List<HexTile> tiles) {
+        for (int i = 0; i < tiles.Count; i++) {
+            AddTile(tiles[i]);
+        }
+    }
+    //public void RemoveTile(List<HexTile> tiles) {
+    //    for (int i = 0; i < tiles.Count; i++) {
+    //        RemoveTile(tiles[i]);
+    //    }
+    //}
+    //public void RemoveTile(HexTile tile) {
+    //    if (tiles.Remove(tile)) {
+    //        tile.SetRegion(null);
+    //        if (area != null) {
+    //            area.OnTileRemovedFromArea(tile);
+    //            Messenger.Broadcast(Signals.AREA_TILE_REMOVED, area, tile);
+    //        }
+    //    }
+    //}
+    public void CenterOnCoreTile() {
+        coreTile.CenterCameraHere();
     }
 
     #region Utilities
@@ -156,7 +182,7 @@ public class Region {
         } else {
             ShowTransparentBorder();
         }
-        
+
     }
     public void ShowSolidBorder() {
         for (int i = 0; i < borderSprites.Count; i++) {
@@ -206,13 +232,14 @@ public class Region {
     private void Invade() {
         //corrupt region
         InvadeActions();
-        PlayerManager.Instance.AddTileToPlayerArea(coreTile);
+        LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, this);
+        //PlayerManager.Instance.AddTileToPlayerArea(coreTile);
         PlayerManager.Instance.player.SetInvadingRegion(null);
         assignedMinion.SetAssignedRegion(null);
         SetAssignedMinion(null);
 
         //This is done so that when a region is invaded by the player, the showing Info UI will update appropriately
-        if(UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion == this) {
+        if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion == this) {
             UIManager.Instance.ShowHextileInfo(coreTile);
         }
     }
@@ -256,7 +283,7 @@ public class Region {
         Messenger.AddListener(Signals.TICK_STARTED, PerTickBuilding);
     }
     private void PerTickBuilding() {
-        if(demonicBuildingData.currentDuration >= demonicBuildingData.buildDuration) {
+        if (demonicBuildingData.currentDuration >= demonicBuildingData.buildDuration) {
             FinishBuildingStructure();
         } else {
             DemonicLandmarkBuildingData tempData = demonicBuildingData;
@@ -335,14 +362,14 @@ public class Region {
                     PlayerManager.Instance.player.LevelUpAllMinions();
                     PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "All your minions gained 1 level.");
                     break;
-                //case LANDMARK_TYPE.FARM:
-                //    PlayerManager.Instance.player.UnlockASummonSlotOrUpgradeExisting();
-                //    break;
-                //case LANDMARK_TYPE.MINES:
-                //case LANDMARK_TYPE.FACTORY: //This is FACTORY
-                //case LANDMARK_TYPE.WORKSHOP:
-                //    PlayerManager.Instance.player.UnlockAnArtifactSlotOrUpgradeExisting();
-                //    break;
+                    //case LANDMARK_TYPE.FARM:
+                    //    PlayerManager.Instance.player.UnlockASummonSlotOrUpgradeExisting();
+                    //    break;
+                    //case LANDMARK_TYPE.MINES:
+                    //case LANDMARK_TYPE.FACTORY: //This is FACTORY
+                    //case LANDMARK_TYPE.WORKSHOP:
+                    //    PlayerManager.Instance.player.UnlockAnArtifactSlotOrUpgradeExisting();
+                    //    break;
             }
             mainLandmark.ChangeLandmarkType(LANDMARK_TYPE.NONE);
         }
@@ -461,8 +488,8 @@ public class Region {
             DespawnEvent();
         }
         //kill all remaining characters
-        while (charactersHere.Count > 0) {
-            Character character = charactersHere[0];
+        while (charactersAtLocation.Count > 0) {
+            Character character = charactersAtLocation[0];
             character.Death("Invasion");
         }
     }
@@ -481,27 +508,43 @@ public class Region {
 
     #region Characters
     public void LoadCharacterHere(Character character) {
-        charactersHere.Add(character);
+        charactersAtLocation.Add(character);
         character.SetLandmarkLocation(this.mainLandmark);
         Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
     }
-    public void AddCharacterHere(Character character) {
-        charactersHere.Add(character);
-        character.SetLandmarkLocation(this.mainLandmark);
-        AutomaticEventGeneration(character);
-        Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
-    }
-    public void RemoveCharacterHere(Character character) {
-        charactersHere.Remove(character);
-        character.SetLandmarkLocation(null);
-        Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
-    }
-    #endregion
+    public void AddCharacterToLocation(Character character) {
+        if (!charactersAtLocation.Contains(character)) {
+            charactersAtLocation.Add(character);
+            if(area == null) {
+                character.SetLandmarkLocation(this.mainLandmark);
+                AutomaticEventGeneration(character);
+                Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+            } else {
+                character.ownParty.SetSpecificLocation(area);
+                Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, area, character);
+            }
+        }
 
-    #region Utilities
+    }
+    public void RemoveCharacterFromLocation(Character character) {
+        if (charactersAtLocation.Remove(character)) {
+            if (area == null) {
+                character.SetLandmarkLocation(null);
+                Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
+            } else {
+                if (character.currentStructure == null && owner != PlayerManager.Instance.player.playerFaction) {
+                    throw new System.Exception(character.name + " doesn't have a current structure at " + area.name);
+                }
+                if (character.currentStructure != null) {
+                    character.currentStructure.RemoveCharacterAtLocation(character);
+                }
+                Messenger.Broadcast(Signals.CHARACTER_EXITED_AREA, area, character);
+            }
+        }
+    }
     public bool HasAnyCharacterOfType(params CHARACTER_ROLE[] roleTypes) {
-        for (int i = 0; i < charactersHere.Count; i++) {
-            Character character = charactersHere[i];
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character character = charactersAtLocation[i];
             if (roleTypes.Contains(character.role.roleType)) {
                 return true;
             }
@@ -509,8 +552,8 @@ public class Region {
         return false;
     }
     public bool HasAnyCharacterOfType(params ATTACK_TYPE[] attackTypes) {
-        for (int i = 0; i < charactersHere.Count; i++) {
-            Character character = charactersHere[i];
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character character = charactersAtLocation[i];
             if (attackTypes.Contains(character.characterClass.attackType)) {
                 return true;
             }
@@ -518,8 +561,8 @@ public class Region {
         return false;
     }
     public Character GetAnyCharacterOfType(params CHARACTER_ROLE[] roleTypes) {
-        for (int i = 0; i < charactersHere.Count; i++) {
-            Character character = charactersHere[i];
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character character = charactersAtLocation[i];
             if (roleTypes.Contains(character.role.roleType)) {
                 return character;
             }
@@ -527,13 +570,74 @@ public class Region {
         return null;
     }
     public Character GetAnyCharacterOfType(params ATTACK_TYPE[] attackTypes) {
-        for (int i = 0; i < charactersHere.Count; i++) {
-            Character character = charactersHere[i];
+        for (int i = 0; i < charactersAtLocation.Count; i++) {
+            Character character = charactersAtLocation[i];
             if (attackTypes.Contains(character.characterClass.attackType)) {
                 return character;
             }
         }
         return null;
     }
+    #endregion
+
+    #region Faction
+    public void SetOwner(Faction owner) {
+        previousOwner = this.owner;
+        this.owner = owner;
+        if (area != null) {
+            /*Whenever a location is occupied, 
+                all items in structures Inside Settlement will be owned by the occupying faction.*/
+            List<LocationStructure> insideStructures = area.GetStructuresAtLocation(true);
+            for (int i = 0; i < insideStructures.Count; i++) {
+                insideStructures[i].OwnItemsInLocation(owner);
+            }
+            Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, this);
+        }
+        if(this.owner != null) {
+            if(this.owner == PlayerManager.Instance.player.playerFaction) {
+                for (int i = 0; i < tiles.Count; i++) {
+                    HexTile tile = tiles[i];
+                    Biomes.Instance.CorruptTileVisuals(tile);
+                }
+            } else {
+                for (int i = 0; i < tiles.Count; i++) {
+                    HexTile tile = tiles[i];
+                    Biomes.Instance.UpdateTileVisuals(tile);
+                }
+            }
+        } else {
+            for (int i = 0; i < tiles.Count; i++) {
+                HexTile tile = tiles[i];
+                Biomes.Instance.UpdateTileVisuals(tile);
+            }
+        }
+    }
+    #endregion
+
+    #region Area
+    public void SetArea(Area area) {
+        //Area previousArea = this.area;
+        this.area = area;
+        //if(area != null) {
+        //    OnSetAreaInRegion();
+        //} else {
+        //    if(previousArea != null) {
+        //        OnRemoveAreaInRegion(previousArea);
+        //    }
+        //}
+    }
+    //private void OnSetAreaInRegion() {
+    //    for (int i = 0; i < tiles.Count; i++) {
+    //        HexTile tile = tiles[i];
+    //        area.OnTileAddedToArea(tile);
+    //    }
+    //}
+    //private void OnRemoveAreaInRegion(Area previousArea) {
+    //    for (int i = 0; i < tiles.Count; i++) {
+    //        HexTile tile = tiles[i];
+    //        previousArea.OnTileRemovedFromArea(tile);
+    //        Biomes.Instance.UpdateTileVisuals(tile);
+    //    }
+    //}
     #endregion
 }

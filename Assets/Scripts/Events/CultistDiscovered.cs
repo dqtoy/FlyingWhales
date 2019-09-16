@@ -23,8 +23,8 @@ public class CultistDiscovered : WorldEvent {
         //- requirement: non-Cultist soldier or adventurer resident + Cultist resident + demon cult is active
         bool hasNonCultist = false;
         bool hasCultist = false;
-        for (int i = 0; i < region.charactersHere.Count; i++) {
-            Character currCharacter = region.charactersHere[i];
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character currCharacter = region.charactersAtLocation[i];
             if (currCharacter.GetNormalTrait("Cultist") != null) {
                 //cultist
                 hasCultist = true;
@@ -41,8 +41,8 @@ public class CultistDiscovered : WorldEvent {
         return hasCultist && hasNonCultist && StoryEventsManager.Instance.isCultActive;
     }
     public override Character GetCharacterThatCanSpawnEvent(Region region) {
-        for (int i = 0; i < region.charactersHere.Count; i++) {
-            Character currCharacter = region.charactersHere[i];
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character currCharacter = region.charactersAtLocation[i];
             if (currCharacter.GetNormalTrait("Cultist") != null) {
                 //cultist
                 return currCharacter;
@@ -59,8 +59,8 @@ public class CultistDiscovered : WorldEvent {
     public override IWorldEventData ConstructEventDataForLandmark(Region region) {
         Character chosenCultist = null;
         Character chosenNonCultist = null;
-        for (int i = 0; i < region.charactersHere.Count; i++) {
-            Character currCharacter = region.charactersHere[i];
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character currCharacter = region.charactersAtLocation[i];
             if (currCharacter.GetNormalTrait("Cultist") != null) {
                 //cultist
                 if (chosenCultist == null) {
