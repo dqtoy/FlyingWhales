@@ -6,8 +6,6 @@ public class Poisoned : Trait {
 
     public List<Character> awareCharacters { get; private set; } //characters that know about this trait
 
-    private List<Character> _responsibleCharacters;
-
     public ITraitable poi { get; private set; } //poi that has the poison
     public Poisoned() {
         name = "Poisoned";
@@ -16,7 +14,6 @@ public class Poisoned : Trait {
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;
         //effects = new List<TraitEffect>();
-        _responsibleCharacters = new List<Character>();
         awareCharacters = new List<Character>();
         mutuallyExclusive = new string[] { "Robust" };
         SetLevel(2);
@@ -67,5 +64,26 @@ public class Poisoned : Trait {
             weights.AddElement("Death", 80);
         }
         return weights;
+    }
+}
+
+public class SaveDataPoisoned : SaveDataTrait {
+    public List<int> awareCharacterIDs;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Poisoned derivedTrait = trait as Poisoned;
+        for (int i = 0; i < derivedTrait.awareCharacters.Count; i++) {
+            awareCharacterIDs.Add(derivedTrait.awareCharacters[i].id);
+        }
+    }
+
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        Poisoned derivedTrait = trait as Poisoned;
+        for (int i = 0; i < awareCharacterIDs.Count; i++) {
+            derivedTrait.AddAwareCharacter(CharacterManager.Instance.GetCharacterByID(awareCharacterIDs[i]));
+        }
+        return trait;
     }
 }

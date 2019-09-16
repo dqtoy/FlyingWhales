@@ -114,3 +114,24 @@ public class Kleptomaniac : Trait {
         }
     }
 }
+
+public class SaveDataKleptomaniac : SaveDataTrait {
+    public List<int> noItemCharacterIDs;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Kleptomaniac derivedTrait = trait as Kleptomaniac;
+        for (int i = 0; i < derivedTrait.noItemCharacters.Count; i++) {
+            noItemCharacterIDs.Add(derivedTrait.noItemCharacters[i].id);
+        }
+    }
+
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        Kleptomaniac derivedTrait = trait as Kleptomaniac;
+        for (int i = 0; i < noItemCharacterIDs.Count; i++) {
+            derivedTrait.AddNoItemCharacter(CharacterManager.Instance.GetCharacterByID(noItemCharacterIDs[i]));
+        }
+        return trait;
+    }
+}

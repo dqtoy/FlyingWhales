@@ -88,3 +88,24 @@ public class Spooked : Trait {
         terrifyingCharacters.Clear();
     }
 }
+
+public class SaveDataSpooked : SaveDataTrait {
+    public List<int> terrifyingCharacterIDs;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Spooked derivedTrait = trait as Spooked;
+        for (int i = 0; i < derivedTrait.terrifyingCharacters.Count; i++) {
+            terrifyingCharacterIDs.Add(derivedTrait.terrifyingCharacters[i].id);
+        }
+    }
+
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        Spooked derivedTrait = trait as Spooked;
+        for (int i = 0; i < terrifyingCharacterIDs.Count; i++) {
+            derivedTrait.AddTerrifyingCharacter(CharacterManager.Instance.GetCharacterByID(terrifyingCharacterIDs[i]));
+        }
+        return trait;
+    }
+}

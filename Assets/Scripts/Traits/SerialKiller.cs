@@ -29,7 +29,9 @@ public class SerialKiller : Trait {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             character = sourceCharacter as Character;
-            GenerateSerialVictims();
+            if(victim1Requirement == null || victim2Requirement == null) {
+                GenerateSerialVictims();
+            }
             Messenger.AddListener(Signals.TICK_STARTED, CheckSerialKiller);
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
@@ -48,7 +50,7 @@ public class SerialKiller : Trait {
             CheckTargetVictimIfStillAvailable();
             if (targetVictim == null) {
                 if (DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
-                    targetVictim = potentialVictim;
+                    SetTargetVictim(potentialVictim);
 
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
                     log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -59,6 +61,29 @@ public class SerialKiller : Trait {
         }
     }
     #endregion
+
+    public void SetVictim1Requirement(SerialVictim serialVictim) {
+        victim1Requirement = serialVictim;
+    }
+    public void SetVictim2Requirement(SerialVictim serialVictim) {
+        victim2Requirement = serialVictim;
+    }
+    public void SetTargetVictim(Character victim) {
+        targetVictim = victim;
+    }
+    public void SetIsFollowing(bool state) {
+        isFollowing = state;
+    }
+    public void SetHasStartedFollowing(bool state) {
+        if (hasStartedFollowing != state) {
+            hasStartedFollowing = state;
+            if (hasStartedFollowing) {
+                character.AdjustIsWaitingForInteraction(1);
+            } else {
+                character.AdjustIsWaitingForInteraction(-1);
+            }
+        }
+    }
 
     private void OnCharacterDied(Character deadCharacter) {
         if(deadCharacter == targetVictim) {
@@ -101,7 +126,7 @@ public class SerialKiller : Trait {
     private void CheckerWhileFollowingTargetVictim() {
         if (isFollowing) {
             if(!character.currentParty.icon.isTravelling || character.marker.targetPOI != targetVictim) {
-                isFollowing = false;
+                SetIsFollowing(false);
                 SetHasStartedFollowing(false);
                 return;
             }
@@ -125,30 +150,20 @@ public class SerialKiller : Trait {
     }
     private void StopFollowing() {
         if (isFollowing) {
-            isFollowing = false;
+            SetIsFollowing(false);
             character.marker.StopMovement();
         }
     }
     private void FollowTargetVictim() {
         if (!isFollowing) {
-            isFollowing = true;
+            SetIsFollowing(true);
             character.marker.GoTo(targetVictim);
-        }
-    }
-    public void SetHasStartedFollowing(bool state) {
-        if(hasStartedFollowing != state) {
-            hasStartedFollowing = state;
-            if (hasStartedFollowing) {
-                character.AdjustIsWaitingForInteraction(1);
-            } else {
-                character.AdjustIsWaitingForInteraction(-1);
-            }
         }
     }
     private void CheckTargetVictimIfStillAvailable() {
         if (targetVictim != null) {
             if (targetVictim.specificLocation != this.character.specificLocation || targetVictim.isDead) {
-                targetVictim = null;
+                SetTargetVictim(null);
                 if (hasStartedFollowing) {
                     StopFollowing();
                     SetHasStartedFollowing(false);
@@ -227,7 +242,7 @@ public class SerialKiller : Trait {
         }
     }
     private void GenerateSerialVictims() {
-        victim1Requirement = new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false));
+        SetVictim1Requirement(new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false)));
 
         bool hasCreatedRequirement = false;
         while (!hasCreatedRequirement) {
@@ -241,7 +256,7 @@ public class SerialKiller : Trait {
                 && victim1Requirement.victimFirstDescription == victim2FirstDesc && victim1Requirement.victimSecondDescription == victim2SecondDesc) {
                 continue;
             } else {
-                victim2Requirement = new SerialVictim(victim2FirstType, victim2FirstDesc, victim2SecondType, victim2SecondDesc);
+                SetVictim2Requirement(new SerialVictim(victim2FirstType, victim2FirstDesc, victim2SecondType, victim2SecondDesc));
                 hasCreatedRequirement = true;
                 break;
             }
@@ -276,11 +291,12 @@ public class SerialKiller : Trait {
     }
 }
 
+[System.Serializable]
 public class SerialVictim {
-    public SERIAL_VICTIM_TYPE victimFirstType { get; private set; }
-    public SERIAL_VICTIM_TYPE victimSecondType { get; private set; }
-    public string victimFirstDescription { get; private set; }
-    public string victimSecondDescription { get; private set; }
+    public SERIAL_VICTIM_TYPE victimFirstType;
+    public SERIAL_VICTIM_TYPE victimSecondType;
+    public string victimFirstDescription;
+    public string victimSecondDescription;
 
     public string text { get; private set; }
 
@@ -354,5 +370,45 @@ public class SerialVictim {
             return character.GetNormalTrait(victimDesc) != null;
         }
         return false;
+    }
+}
+
+public class SaveDataSerialKiller : SaveDataTrait {
+    public SerialVictim victim1Requirement;
+    public SerialVictim victim2Requirement;
+
+    public int targetVictimID;
+    public bool isFollowing;
+    public bool hasStartedFollowing;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        SerialKiller derivedTrait = trait as SerialKiller;
+        victim1Requirement = derivedTrait.victim1Requirement;
+        victim2Requirement = derivedTrait.victim2Requirement;
+
+        isFollowing = derivedTrait.isFollowing;
+        hasStartedFollowing = derivedTrait.hasStartedFollowing;
+
+        if (derivedTrait.targetVictim != null) {
+            targetVictimID = derivedTrait.targetVictim.id;
+        } else {
+            targetVictimID = -1;
+        }
+    }
+
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        SerialKiller derivedTrait = trait as SerialKiller;
+        derivedTrait.SetVictim1Requirement(victim1Requirement);
+        derivedTrait.SetVictim2Requirement(victim2Requirement);
+
+        derivedTrait.SetIsFollowing(isFollowing);
+        derivedTrait.SetHasStartedFollowing(hasStartedFollowing);
+
+        if(targetVictimID != -1) {
+            derivedTrait.SetTargetVictim(CharacterManager.Instance.GetCharacterByID(targetVictimID));
+        }
+        return trait;
     }
 }

@@ -22,14 +22,18 @@ public class Invisible : Trait {
     }
 
     public void AddCharacterThatCanSee(Character character) {
-        charactersThatCanSee.Add(character);
-        if (RemoveInRangeOfVisionCharacter(character)) {
-            //If a character can see this character and it is in vision range, transfer this character to inVisionPOIs list of the character that can see
-            character.marker.AddPOIAsInVisionRange(owner);
+        if (!charactersThatCanSee.Contains(character)) {
+            charactersThatCanSee.Add(character);
+            if (RemoveInRangeOfVisionCharacter(character)) {
+                //If a character can see this character and it is in vision range, transfer this character to inVisionPOIs list of the character that can see
+                character.marker.AddPOIAsInVisionRange(owner);
+            }
         }
     }
     public void AddInRangeOfVisionCharacter(Character character) {
-        inRangeOfVisionCharacters.Add(character);
+        if (!inRangeOfVisionCharacters.Contains(character)) {
+            inRangeOfVisionCharacters.Add(character);
+        }
     }
     public bool RemoveInRangeOfVisionCharacter(Character character) {
         return inRangeOfVisionCharacters.Remove(character);
@@ -60,5 +64,30 @@ public class Invisible : Trait {
         for (int i = 0; i < character.marker.colliders.Length; i++) {
             character.marker.colliders[i].enabled = true;
         }
+    }
+}
+
+public class SaveDataInvisible : SaveDataTrait {
+    public List<int> charactersThatCanSeeID;
+    //public List<int> inRangeOfVisionCharactersID; //This is no longer saved because this is already triggered on entering collision which happens when game is loaded
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Invisible derivedTrait = trait as Invisible;
+        for (int i = 0; i < derivedTrait.charactersThatCanSee.Count; i++) {
+            charactersThatCanSeeID.Add(derivedTrait.charactersThatCanSee[i].id);
+        }
+        //for (int i = 0; i < derivedTrait.inRangeOfVisionCharacters.Count; i++) {
+        //    inRangeOfVisionCharactersID.Add(derivedTrait.inRangeOfVisionCharacters[i].id);
+        //}
+    }
+
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        Invisible derivedTrait = trait as Invisible;
+        for (int i = 0; i < charactersThatCanSeeID.Count; i++) {
+            derivedTrait.AddCharacterThatCanSee(CharacterManager.Instance.GetCharacterByID(charactersThatCanSeeID[i]));
+        }
+        return trait;
     }
 }

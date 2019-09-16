@@ -5,7 +5,6 @@ using UnityEngine;
 public class Lycanthropy : Trait {
 
     private Character _character;
-    public LycanthropyData data { get; private set; }
 
     public override bool isPersistent { get { return true; } }
 
@@ -28,7 +27,6 @@ public class Lycanthropy : Trait {
     public override void OnAddTrait(ITraitable sourceCharacter) {
         if (sourceCharacter is Character) {
             _character = sourceCharacter as Character;
-            data = new LycanthropyData();
             //_character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "afflicted", null, name);
             AlterEgoData lycanthropeAlterEgo = _character.CreateNewAlterEgo("Lycanthrope");
 
