@@ -226,9 +226,9 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.REPLACE_TILE_OBJECT:
                 priority = 140;
                 break;
-            case JOB_TYPE.EXPLORE:
-                priority = 150;
-                break;
+            //case JOB_TYPE.EXPLORE:
+            //    priority = 150;
+            //    break;
             case JOB_TYPE.DELIVER_TREASURE:
                 priority = 160;
                 break;
@@ -268,6 +268,11 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.BUILD_FURNITURE:
             case JOB_TYPE.OBTAIN_ITEM:
             case JOB_TYPE.MOVE_OUT:
+            case JOB_TYPE.OBTAIN_FOOD_OUTSIDE:
+            case JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE:
+            case JOB_TYPE.IMPROVE:
+            case JOB_TYPE.EXPLORE:
+            case JOB_TYPE.COMBAT:
                 priority = 300;
                 break;
         }

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.Tilemaps;
 
 public class InteriorMapManager : MonoBehaviour {
@@ -57,6 +58,9 @@ public class InteriorMapManager : MonoBehaviour {
     public GameObject tileObjectSlotPrefab;
     public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
 
+    [Header("Lighting")]
+    [SerializeField] private Light areaMapLight;
+
     //structure templates
     private string templatePath;
 
@@ -66,12 +70,13 @@ public class InteriorMapManager : MonoBehaviour {
 
     private Dictionary<STRUCTURE_TYPE, List<StructureSlot>> placedStructures;
 
-    public void Initialize() {
-        allTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
-        areaMaps = new List<AreaInnerTileMap>();
-        AreaMapCameraMove.Instance.Initialize();
-        //sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
-    }
+
+    private Dictionary<int, float> lightSettings = new Dictionary<int, float>() { //this specifies what light intensity is to be used while inside the specific range in ticks
+        { 228, 1f },
+        { 61, 1.8f }
+    };
+
+    #region Monobehaviours
     private void Awake() {
         Instance = this;
         templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
@@ -124,16 +129,14 @@ public class InteriorMapManager : MonoBehaviour {
             UIManager.Instance.HideSmallInfo();
         }
     }
+    #endregion
 
-    public LocationGridTile GetTileFromMousePosition() {
-        Vector3 mouseWorldPos = (currentlyShowingMap.worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
-        Vector3 localPos = currentlyShowingMap.grid.WorldToLocal(mouseWorldPos);
-        Vector3Int coordinate = currentlyShowingMap.grid.LocalToCell(localPos);
-        if (coordinate.x >= 0 && coordinate.x < currentlyShowingMap.width
-            && coordinate.y >= 0 && coordinate.y < currentlyShowingMap.height) {
-           return currentlyShowingMap.map[coordinate.x, coordinate.y];
-        }
-        return null;
+    #region Main
+    public void Initialize() {
+        allTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
+        areaMaps = new List<AreaInnerTileMap>();
+        AreaMapCameraMove.Instance.Initialize();
+        Messenger.AddListener(Signals.TICK_ENDED, CheckForChangeLight);
     }
     /// <summary>
     /// Try and show the area map of an area. If it does not have one, this will generate one instead.
@@ -149,7 +152,6 @@ public class InteriorMapManager : MonoBehaviour {
             LandmarkManager.Instance.GenerateAreaMap(area);
         }
     }
-
     public void ShowAreaMap(Area area, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
         if (area.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
             UIManager.Instance.portalPopup.SetActive(true);
@@ -202,6 +204,20 @@ public class InteriorMapManager : MonoBehaviour {
         GameObject.Destroy(area.areaMap.gameObject);
         area.SetAreaMap(null);
     }
+    #endregion
+
+    #region Utilities
+    public LocationGridTile GetTileFromMousePosition() {
+        Vector3 mouseWorldPos = (currentlyShowingMap.worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
+        Vector3 localPos = currentlyShowingMap.grid.WorldToLocal(mouseWorldPos);
+        Vector3Int coordinate = currentlyShowingMap.grid.LocalToCell(localPos);
+        if (coordinate.x >= 0 && coordinate.x < currentlyShowingMap.width
+            && coordinate.y >= 0 && coordinate.y < currentlyShowingMap.height) {
+            return currentlyShowingMap.map[coordinate.x, coordinate.y];
+        }
+        return null;
+    }
+    #endregion
 
     #region Pathfinding
     private void CreatePathfindingGraphForArea(AreaInnerTileMap newMap) {
@@ -538,27 +554,6 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "None";
         }
         return summary;
-    }
-
-    private IPointOfInterest heldPOI;
-    public void HoldPOI(IPointOfInterest poi) {
-        heldPOI = poi;
-        if (heldPOI is SpecialToken) {
-            heldPOI.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(heldPOI as SpecialToken);
-        } else if (heldPOI is TileObject) {
-            heldPOI.gridTileLocation.structure.RemovePOI(heldPOI);
-        }
-    }
-    public void PlaceHeldPOI(LocationGridTile tile) {
-        if (heldPOI is SpecialToken) {
-            tile.structure.location.AddSpecialTokenToLocation(heldPOI as SpecialToken, tile.structure, tile);
-        } else if (heldPOI is TileObject) {
-            tile.structure.AddPOI(heldPOI, tile);
-        }
-        heldPOI = null;
-    }
-    public bool IsHoldingPOI() {
-        return heldPOI != null;
     }
     #endregion
 
@@ -979,6 +974,37 @@ public class InteriorMapManager : MonoBehaviour {
             }
         }
         return null;
+    }
+    #endregion
+
+    #region Lighting
+    public void UpdateLightBasedOnTime(GameDate date) {
+        foreach (KeyValuePair<int, float> keyValuePair in lightSettings) {
+            if (date.tick > keyValuePair.Key) {
+                areaMapLight.intensity = keyValuePair.Value;
+            }
+        }
+    }
+    private void CheckForChangeLight() {
+        if (lightSettings.ContainsKey(GameManager.Instance.tick)) {
+            StartCoroutine(TransitionLightTo(lightSettings[GameManager.Instance.tick]));
+        }
+    }
+    private IEnumerator TransitionLightTo(float intensity) {
+        while (true) {
+            if (GameManager.Instance.isPaused) {
+                yield return null;
+            }
+            if (intensity > areaMapLight.intensity) {
+                areaMapLight.intensity += 0.05f;
+            } else if (intensity < areaMapLight.intensity) {
+                areaMapLight.intensity -= 0.05f;
+            }
+            if (Mathf.Approximately(areaMapLight.intensity, intensity)) {
+                break;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
     }
     #endregion
 }

@@ -54,6 +54,14 @@ public static class Signals {
     public static string ITEM_ADDED_TO_AREA = "OnItemAddedToArea"; //Parameters (Area affectedArea, SpecialToken token)
     public static string AREA_MAP_OPENED = "OnAreaMapOpened"; //parameters (Area area)
     public static string AREA_MAP_CLOSED = "OnAreaMapClosed"; //parameters (Area area)
+    /// <summary>
+    /// Parameters: Food Pile (affected food pile)
+    /// </summary>
+    public static string FOOD_IN_PILE_REDUCED = "OnFoodInPileReduced";
+    /// <summary>
+    /// Parameters: Supply Pile (affected supply pile)
+    /// </summary>
+    public static string SUPPLY_IN_PILE_REDUCED = "OnSupplyInPileReduced";
     #endregion
 
     #region Landmarks

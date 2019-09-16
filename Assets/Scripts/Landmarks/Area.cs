@@ -157,16 +157,30 @@ public class Area {
     private void SubscribeToSignals() {
         Messenger.AddListener(Signals.HOUR_STARTED, HourlyJobActions);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        Messenger.AddListener<FoodPile>(Signals.FOOD_IN_PILE_REDUCED, OnFoodInPileReduced);
+        Messenger.AddListener<SupplyPile>(Signals.SUPPLY_IN_PILE_REDUCED, OnSupplyInPileReduced);
     }
     private void UnsubscribeToSignals() {
         Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        Messenger.RemoveListener<FoodPile>(Signals.FOOD_IN_PILE_REDUCED, OnFoodInPileReduced);
+        Messenger.RemoveListener<SupplyPile>(Signals.SUPPLY_IN_PILE_REDUCED, OnSupplyInPileReduced);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
         if (removedFrom.parentAreaMap.area.id == this.id) {
             if (removedObj.CanBeReplaced()) {
                 CreateReplaceTileObjectJob(removedObj, removedFrom);
             }
+        }
+    }
+    private void OnFoodInPileReduced(FoodPile pile) {
+        if (foodPile == pile) {
+            TryCreateObtainFoodOutsideJob();
+        }
+    }
+    private void OnSupplyInPileReduced(SupplyPile pile) {
+        if (supplyPile == pile) {
+            TryCreateObtainSupplyOutsideJob();
         }
     }
     #endregion
@@ -466,7 +480,7 @@ public class Area {
                 }
             }
         }
-        
+
         if (chosenDwelling == null) {
             //if the code reaches here, it means that the area could not find a dwelling for the character
             Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find a dwelling for " + character.name + " at " + this.name);
@@ -580,7 +594,7 @@ public class Area {
             characters.Add(tombstones[i].users[0]);
         }
         return characters;
-    } 
+    }
     public void SetInitialResidentCount(int count) {
         citizenCount = count;
     }
@@ -665,7 +679,7 @@ public class Area {
                     //}
                 }
                 OnItemAddedToLocation(token, token.structureLocation);
-            }            
+            }
             Messenger.Broadcast(Signals.ITEM_ADDED_TO_AREA, this, token);
             return true;
         }
@@ -843,7 +857,7 @@ public class Area {
             List<LocationStructure> currentStructures = structures[structureType];
             List<LocationStructure> newStructures = new List<LocationStructure>();
             for (int i = 0; i < currentStructures.Count; i++) {
-                if(currentStructures[i] != except) {
+                if (currentStructures[i] != except) {
                     newStructures.Add(currentStructures[i]);
                 }
             }
@@ -1024,7 +1038,7 @@ public class Area {
                 unoccupiedEdgeTiles.Add(areaMap.allEdgeTiles[i]);
             }
         }
-        if(unoccupiedEdgeTiles.Count > 0) {
+        if (unoccupiedEdgeTiles.Count > 0) {
             return unoccupiedEdgeTiles[UnityEngine.Random.Range(0, unoccupiedEdgeTiles.Count)];
         }
         return null;
@@ -1034,7 +1048,7 @@ public class Area {
             return;
         }
         LocationStructure chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.PRISON);
-        if(chosenPrison != null) {
+        if (chosenPrison != null) {
             prison = chosenPrison;
         } else {
             chosenPrison = GetRandomStructureOfType(STRUCTURE_TYPE.EXPLORE_AREA);
@@ -1084,27 +1098,18 @@ public class Area {
 
     #region Jobs
     private void HourlyJobActions() {
-        CreatePatrolAndExploreJobs();
-        if (UnityEngine.Random.Range(0, 100) < 5 && currentMoveOutJobs < maxMoveOutJobs) {
-            CreateMoveOutJobs();
-        }
+        CreatePatrolJobs();
+        //if (UnityEngine.Random.Range(0, 100) < 5 && currentMoveOutJobs < maxMoveOutJobs) {
+        //    CreateMoveOutJobs();
+        //}
     }
-    private void CreatePatrolAndExploreJobs() {
+    private void CreatePatrolJobs() {
         int patrolChance = UnityEngine.Random.Range(0, 100);
-        if(patrolChance < 25 && jobQueue.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
+        if (patrolChance < 25 && jobQueue.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
             CharacterStateJob stateJob = new CharacterStateJob(JOB_TYPE.PATROL, CHARACTER_STATE.PATROL, null);
             stateJob.SetCanTakeThisJobChecker(CanDoPatrolAndExplore);
             jobQueue.AddJobInQueue(stateJob);
         }
-
-        //int exploreChance = UnityEngine.Random.Range(0, 100);
-        //if (exploreChance < 15 && !jobQueue.HasJobRelatedTo(CHARACTER_STATE.EXPLORE)) {
-        //    Area dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
-        //    CharacterStateJob stateJob = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.EXPLORE, dungeon);
-        //    //stateJob.SetOnTakeJobAction(OnTakeExploreJob);
-        //    stateJob.SetCanTakeThisJobChecker(CanDoPatrolAndExplore);
-        //    jobQueue.AddJobInQueue(stateJob);
-        //}
     }
     private bool CanDoPatrolAndExplore(Character character, JobQueueItem job) {
         return character.GetNormalTrait("Injured") == null;
@@ -1146,7 +1151,7 @@ public class Area {
             } else {
                 CancelCraftTool();
             }
-        }        
+        }
     }
     private bool CanCraftTool(Character character, JobQueueItem job) {
         //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.TOOL);
@@ -1188,11 +1193,29 @@ public class Area {
         //job.SetCannotOverrideJob(false);
         jobQueue.AddJobInQueue(job);
     }
-    private int maxMoveOutJobs {
-        get { return areaResidents.Count / 6; } //There should be at most 1 Move Out Job per 6 residents
+    #endregion
+
+    #region Hero Event Jobs
+    private int maxHeroEventJobs {
+        get { return areaResidents.Count / 5; } //There should be at most 1 Move Out Job per 5 residents
     }
-    private int currentMoveOutJobs {
-        get { return jobQueue.GetNumberOfJobsWith(JOB_TYPE.MOVE_OUT); }
+    private int currentHeroEventJobs {
+        get { return jobQueue.GetNumberOfJobsWith(IsJobTypeAHeroEventJob); }
+    }
+    private bool IsJobTypeAHeroEventJob(JobQueueItem item) {
+        switch (item.jobType) {
+            case JOB_TYPE.OBTAIN_FOOD_OUTSIDE:
+            case JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE:
+            case JOB_TYPE.IMPROVE:
+            case JOB_TYPE.EXPLORE:
+            case JOB_TYPE.COMBAT:
+                return true;
+            default:
+                return false;
+        }
+    }
+    private bool CanStillCreateHeroEventJob() {
+        return currentHeroEventJobs < maxHeroEventJobs;
     }
     private void CreateMoveOutJobs() {
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.MOVE_OUT, CHARACTER_STATE.MOVE_OUT, this);
@@ -1206,6 +1229,54 @@ public class Area {
             time = TIME_IN_WORDS.AFTER_MIDNIGHT;
         }
         return character.role.roleType != CHARACTER_ROLE.LEADER && GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick) == time; //Only non-leaders can take move out job, and it must also be in the morning time.
+    }
+    /// <summary>
+    /// Check if this area should create an obtain food outside job.
+    /// Criteria can be found at: https://trello.com/c/cICMVSch/2706-hero-events
+    /// </summary>
+    private void TryCreateObtainFoodOutsideJob() {
+        if (!CanStillCreateHeroEventJob()) {
+            return; //hero events are maxed.
+        }
+        int obtainFoodOutsideJobs = jobQueue.GetNumberOfJobsWith(JOB_TYPE.OBTAIN_FOOD_OUTSIDE);
+        if (obtainFoodOutsideJobs == 0 && foodPile.foodInPile < 1000) {
+            CreateObtainFoodOutsideJob();
+        } else  if (obtainFoodOutsideJobs == 1 && foodPile.foodInPile < 500) { //there is at least 1 existing obtain food outside job.
+            //allow the creation of a second obtain food outside job
+            CreateObtainFoodOutsideJob();
+        }
+    }
+    private void CreateObtainFoodOutsideJob() {
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_FOOD_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
+        job.SetCanTakeThisJobChecker(CanObtainFoodOutside);
+        jobQueue.AddJobInQueue(job);
+    }
+    private bool CanObtainFoodOutside(Character character, JobQueueItem item) {
+        return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+    }
+    /// <summary>
+    /// Check if this area should create an obtain supply outside job.
+    /// Criteria can be found at: https://trello.com/c/cICMVSch/2706-hero-events
+    /// </summary>
+    private void TryCreateObtainSupplyOutsideJob() {
+        if (!CanStillCreateHeroEventJob()) {
+            return; //hero events are maxed.
+        }
+        int obtainSupplyOutsideJobs = jobQueue.GetNumberOfJobsWith(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE);
+        if (obtainSupplyOutsideJobs == 0 && supplyPile.suppliesInPile < 1000) {
+            CreateObtainSupplyOutsideJob();
+        } else if (obtainSupplyOutsideJobs == 1 && supplyPile.suppliesInPile < 500) { //there is at least 1 existing obtain supply outside job.
+            //allow the creation of a second obtain supply outside job
+            CreateObtainSupplyOutsideJob();
+        }
+    }
+    private void CreateObtainSupplyOutsideJob() {
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
+        job.SetCanTakeThisJobChecker(CanObtainSupplyOutside);
+        jobQueue.AddJobInQueue(job);
+    }
+    private bool CanObtainSupplyOutside(Character character, JobQueueItem item) {
+        return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     #endregion
 

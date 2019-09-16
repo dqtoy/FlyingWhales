@@ -5,6 +5,7 @@ using UnityEngine;
 public class MineSupply : WorldEvent {
 
     public MineSupply() : base(WORLD_EVENT.MINE_SUPPLY) {
+        eventEffects = new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GET_SUPPLY };
     }
 
     #region Overrides
@@ -18,10 +19,7 @@ public class MineSupply : WorldEvent {
         base.ExecuteAfterEffect(region);
     }
     public override bool CanSpawnEventAt(Region region) {
-        return region.HasAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN) && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.MINES;
-    }
-    public override Character GetCharacterThatCanSpawnEvent(Region region) {
-        return region.GetAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN);
+        return region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.MINES;
     }
     public override bool IsBasicEvent() {
         return true;

@@ -75,7 +75,7 @@ public class RegionInfoUI : UIMenu {
         UpdateBasicInfo();
         UpdateRegionInfo();
         UpdateInvadeBtnState();
-        UpdateSpawnEventButton();
+        //UpdateSpawnEventButton();
     }
 
     #region Basic Info
@@ -167,7 +167,7 @@ public class RegionInfoUI : UIMenu {
         } else {
             eventDesctiptionLbl.text = "No active event.";
         }
-        UpdateSpawnEventButton();
+        //UpdateSpawnEventButton();
         UpdateInterveneButton();
     }
     private void OnWorldEventSpawned(Region region, WorldEvent we) {
@@ -207,8 +207,8 @@ public class RegionInfoUI : UIMenu {
         eventsListGO.SetActive(true);
     }
     private void SpawnEvent(WorldEvent we) {
-        activeRegion.SpawnEvent(we);
-        eventsListGO.SetActive(false);
+        //activeRegion.SpawnEvent(we);
+        //eventsListGO.SetActive(false);
     }
     private void UpdateSpawnEventButton() {
         spawnEventBtn.interactable = activeRegion.CanSpawnNewEvent();

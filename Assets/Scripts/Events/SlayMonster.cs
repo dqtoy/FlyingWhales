@@ -22,10 +22,7 @@ public class SlayMonster : WorldEvent {
         base.ExecuteAfterEffect(region);
     }
     public override bool CanSpawnEventAt(Region region) {
-        return region.HasAnyCharacterOfType(CHARACTER_ROLE.ADVENTURER) && region.worldObj is Summon && base.CanSpawnEventAt(region);
-    }
-    public override Character GetCharacterThatCanSpawnEvent(Region region) {
-        return region.GetAnyCharacterOfType(CHARACTER_ROLE.ADVENTURER);
+        return region.worldObj is Summon && base.CanSpawnEventAt(region);
     }
     public override bool IsBasicEvent() {
         return true;

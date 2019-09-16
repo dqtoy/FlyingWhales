@@ -389,14 +389,10 @@ public class Region {
     #endregion
 
     #region Events
-    public void SpawnEvent(WorldEvent we, Character spawner = null) {
+    public void SpawnEvent(WorldEvent we, Character spawner) {
         activeEvent = we;
         //set character that spawned event
-        if (spawner == null) {
-            SetCharacterEventSpawner(activeEvent.GetCharacterThatCanSpawnEvent(this));
-        } else {
-            SetCharacterEventSpawner(spawner);
-        }
+        SetCharacterEventSpawner(spawner);
         eventData = activeEvent.ConstructEventDataForLandmark(this);
         for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
             Character currCharacter = eventData.involvedCharacters[i];
@@ -429,21 +425,28 @@ public class Region {
     public void SetCharacterEventSpawner(Character character) {
         eventSpawnedBy = character;
     }
-    private void SpawnBasicEvent(Character spawner) {
-        string summary = GameManager.Instance.TodayLogString() + spawner.name + " arrived at " + name + " will try to spawn random event.";
-        List<WorldEvent> events = StoryEventsManager.Instance.GetEventsThatCanSpawnAt(this, true);
+    //private void SpawnBasicEvent(Character spawner) {
+    //    string summary = GameManager.Instance.TodayLogString() + spawner.name + " arrived at " + name + " will try to spawn random event.";
+    //    List<WorldEvent> events = StoryEventsManager.Instance.GetEventsThatCanSpawnAt(this, true);
+    //    if (events.Count > 0) {
+    //        summary += "\nPossible events are: ";
+    //        for (int i = 0; i < events.Count; i++) {
+    //            summary += "|" + events[i].name + "|";
+    //        }
+    //        WorldEvent chosenEvent = events[Random.Range(0, events.Count)];
+    //        summary += "\nChosen Event is: " + chosenEvent.name;
+    //        SpawnEvent(chosenEvent, spawner);
+    //    } else {
+    //        summary += "\nNo possible events to spawn.";
+    //    }
+    //    Debug.Log(summary);
+    //}
+    private void SpawnEventThatCanProvideEffectFor(WORLD_EVENT_EFFECT[] effects, Character spawner) {
+        List<WorldEvent> events = StoryEventsManager.Instance.GetEventsThatCanProvideEffects(this, effects);
         if (events.Count > 0) {
-            summary += "\nPossible events are: ";
-            for (int i = 0; i < events.Count; i++) {
-                summary += "|" + events[i].name + "|";
-            }
             WorldEvent chosenEvent = events[Random.Range(0, events.Count)];
-            summary += "\nChosen Event is: " + chosenEvent.name;
             SpawnEvent(chosenEvent, spawner);
-        } else {
-            summary += "\nNo possible events to spawn.";
         }
-        Debug.Log(summary);
     }
     public void WorldEventFinished(WorldEvent we) {
         if (activeEvent != we) {
@@ -499,9 +502,17 @@ public class Region {
     public void SetEventIcon(GameObject go) {
         eventIconGO = go;
     }
-    private void AutomaticEventGeneration(Character characterThatArrived) {
+    //private void AutomaticEventGeneration(Character characterThatArrived) {
+    //    if (activeEvent == null) {
+    //        SpawnBasicEvent(characterThatArrived);
+    //    }
+    //}
+    private void JobBasedEventGeneration(Character character) {
         if (activeEvent == null) {
-            SpawnBasicEvent(characterThatArrived);
+            WORLD_EVENT_EFFECT[] effects = character.currentJob.jobType.GetNeededEventEffects();
+            if (effects != null) {
+                SpawnEventThatCanProvideEffectFor(effects, character);
+            }
         }
     }
     #endregion
@@ -517,14 +528,13 @@ public class Region {
             charactersAtLocation.Add(character);
             if(area == null) {
                 character.SetLandmarkLocation(this.mainLandmark);
-                AutomaticEventGeneration(character);
+                JobBasedEventGeneration(character);
                 Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
             } else {
                 character.ownParty.SetSpecificLocation(area);
                 Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, area, character);
             }
         }
-
     }
     public void RemoveCharacterFromLocation(Character character) {
         if (charactersAtLocation.Remove(character)) {

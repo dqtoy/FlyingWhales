@@ -11,7 +11,7 @@ public class SupplyPile : TileObject {
         this.location = location;
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_SUPPLY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(TILE_OBJECT_TYPE.SUPPLY_PILE);
-        SetSuppliesInPile(50);
+        SetSuppliesInPile(2000);
         RemoveTrait("Flammable");
         Messenger.AddListener(Signals.TICK_STARTED, CheckSupply);
     }
@@ -48,6 +48,9 @@ public class SupplyPile : TileObject {
     public void AdjustSuppliesInPile(int adjustment) {
         suppliesInPile += adjustment;
         suppliesInPile = Mathf.Max(0, suppliesInPile);
+        if (adjustment < 0) {
+            Messenger.Broadcast(Signals.SUPPLY_IN_PILE_REDUCED, this);
+        }
     }
 
     private bool CanCharacterTakeThisJob(Character character, JobQueueItem job) {

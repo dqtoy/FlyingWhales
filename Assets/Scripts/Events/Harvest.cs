@@ -5,6 +5,7 @@ using UnityEngine;
 public class Harvest : WorldEvent {
 
     public Harvest() : base(WORLD_EVENT.HARVEST) {
+        eventEffects = new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GET_FOOD };
     }
 
     #region Overrides
@@ -18,10 +19,7 @@ public class Harvest : WorldEvent {
         base.ExecuteAfterEffect(region);
     }
     public override bool CanSpawnEventAt(Region region) {
-        return region.HasAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN) && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.FARM;
-    }
-    public override Character GetCharacterThatCanSpawnEvent(Region region) {
-        return region.GetAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN);
+        return region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.FARM;
     }
     public override bool IsBasicEvent() {
         return true;

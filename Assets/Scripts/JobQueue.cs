@@ -345,6 +345,15 @@ public class JobQueue {
         }
         return null;
     }
+    public List<JobQueueItem> GetJobs(JOB_TYPE jobType) {
+        List<JobQueueItem> jobs = new List<JobQueueItem>();
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i].jobType == jobType) {
+                jobs.Add(jobsInQueue[i]);
+            }
+        }
+        return jobs;
+    }
     public int GetNumberOfJobsWith(CHARACTER_STATE state) {
         int count = 0;
         for (int i = 0; i < jobsInQueue.Count; i++) {
@@ -361,6 +370,20 @@ public class JobQueue {
         int count = 0;
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if (jobsInQueue[i].jobType == type) {
+                count++;
+            }
+        }
+        return count;
+    }
+    /// <summary>
+    /// Get the number of jobs that return true from the provided checker.
+    /// </summary>
+    /// <param name="checker">The function that checks if the item is valid</param>
+    /// <returns></returns>
+    public int GetNumberOfJobsWith(System.Func<JobQueueItem, bool> checker) {
+        int count = 0;
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (checker.Invoke(jobsInQueue[i])) {
                 count++;
             }
         }

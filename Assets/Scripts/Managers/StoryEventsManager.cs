@@ -414,6 +414,16 @@ public class StoryEventsManager : MonoBehaviour {
         }
         return events;
     }
+    public List<WorldEvent> GetEventsThatCanProvideEffects(Region region, WORLD_EVENT_EFFECT[] effects) {
+        List<WorldEvent> events = new List<WorldEvent>();
+        for (int i = 0; i < worldEvents.Length; i++) {
+            WorldEvent currEvent = worldEvents[i];
+            if (currEvent.CanSpawnEventAt(region) && currEvent.CanProvideNeededEffects(effects)) {
+                events.Add(currEvent);
+            }
+        }
+        return events;
+    }
     #endregion
 
     #region World State
