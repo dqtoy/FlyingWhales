@@ -102,7 +102,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public float temperature { get { return data.temperature; } }
     public BIOMES biomeType { get { return data.biomeType; } }
     public ELEVATION elevationType { get { return data.elevationType; } }
-    public Area areaOfTile { get { return _areaOfTile; } }
+    public Area areaOfTile { get { return region.area; } }
     public string locationName {
         get { return "(" + xCoordinate + ", " + yCoordinate + ")"; }
     }

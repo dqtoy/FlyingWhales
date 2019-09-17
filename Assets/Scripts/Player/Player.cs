@@ -159,15 +159,15 @@ public class Player : ILeader {
     public void CreatePlayerArea(BaseLandmark portal) {
         Area playerArea = LandmarkManager.Instance.CreateNewArea(portal.tileLocation.region, AREA_TYPE.DEMONIC_INTRUSION, 0);
         playerArea.LoadAdditionalData();
-        Biomes.Instance.CorruptTileVisuals(portal.tileLocation);
-        portal.tileLocation.SetCorruption(true);
+        //Biomes.Instance.CorruptTileVisuals(portal.tileLocation);
+        //portal.tileLocation.SetCorruption(true);
         SetPlayerArea(playerArea);
         //ActivateMagicTransferToPlayer();
         //_demonicPortal.tileLocation.ScheduleCorruption();
     }
     public void LoadPlayerArea(Area area) {
-        Biomes.Instance.CorruptTileVisuals(area.coreTile);
-        area.coreTile.tileLocation.SetCorruption(true);
+        //Biomes.Instance.CorruptTileVisuals(area.coreTile);
+        //area.coreTile.tileLocation.SetCorruption(true);
         SetPlayerArea(area);
         //_demonicPortal.tileLocation.ScheduleCorruption();
 

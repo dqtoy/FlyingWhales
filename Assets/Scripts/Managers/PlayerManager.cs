@@ -102,11 +102,11 @@ public class PlayerManager : MonoBehaviour {
         } else {
             player.LoadPlayerArea(existingPlayerArea);
         }
-        for (int i = 0; i < portal.tileLocation.region.tiles.Count; i++) {
-            HexTile regionTile = portal.tileLocation.region.tiles[i];
-            //player.playerArea.AddTile(regionTile);
-            regionTile.SetCorruption(true);
-        }
+        //for (int i = 0; i < portal.tileLocation.region.tiles.Count; i++) {
+        //    HexTile regionTile = portal.tileLocation.region.tiles[i];
+        //    //player.playerArea.AddTile(regionTile);
+        //    regionTile.SetCorruption(true);
+        //}
         LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, portal.tileLocation.region);
         player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
         PlayerUI.Instance.UpdateUI();

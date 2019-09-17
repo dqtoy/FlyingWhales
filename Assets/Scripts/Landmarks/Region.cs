@@ -601,24 +601,27 @@ public class Region {
             for (int i = 0; i < insideStructures.Count; i++) {
                 insideStructures[i].OwnItemsInLocation(owner);
             }
-            Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, this);
+            Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, area);
         }
         if(this.owner != null) {
-            if(this.owner == PlayerManager.Instance.player.playerFaction) {
+            if(this.owner.isPlayerFaction) {
                 for (int i = 0; i < tiles.Count; i++) {
                     HexTile tile = tiles[i];
                     Biomes.Instance.CorruptTileVisuals(tile);
+                    tile.SetCorruption(true);
                 }
             } else {
                 for (int i = 0; i < tiles.Count; i++) {
                     HexTile tile = tiles[i];
                     Biomes.Instance.UpdateTileVisuals(tile);
+                    tile.SetCorruption(false);
                 }
             }
         } else {
             for (int i = 0; i < tiles.Count; i++) {
                 HexTile tile = tiles[i];
                 Biomes.Instance.UpdateTileVisuals(tile);
+                tile.SetCorruption(false);
             }
         }
     }
