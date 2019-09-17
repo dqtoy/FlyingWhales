@@ -117,9 +117,9 @@ public class RegionInfoUI : UIMenu {
     #region Invade
     private void UpdateInvadeBtnState() {
         invadeBtn.interactable = activeRegion.CanBeInvaded();
-        if (activeRegion == PlayerManager.Instance.player.invadingRegion) {
+        if (activeRegion.demonicInvasionData.beingInvaded) {
             invadeProgress.gameObject.SetActive(true);
-            invadeProgress.fillAmount = ((float)activeRegion.ticksInInvasion / (float)activeRegion.mainLandmark.invasionTicks);
+            invadeProgress.fillAmount = ((float) activeRegion.demonicInvasionData.currentDuration / (float)activeRegion.mainLandmark.invasionTicks);
             invader.GeneratePortrait(activeRegion.assignedMinion.character);
             invader.gameObject.SetActive(true);
             invader.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);

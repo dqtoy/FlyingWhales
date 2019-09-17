@@ -35,7 +35,7 @@ public class Player : ILeader {
     public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
     public Faction currentTargetFaction { get; private set; } //the current faction that the player is targeting.
     public PlayerJobActionSlot[] interventionAbilitySlots { get; private set; }
-    public Region invadingRegion { get; private set; }
+    //public Region invadingRegion { get; private set; }
     public int currentDivineInterventionTick { get; private set; }
     public string[] minionClassesToSummon { get; private set; }
     //public int currentInterventionAbilityTimerTick { get; private set; }
@@ -63,9 +63,9 @@ public class Player : ILeader {
     public List<Character> allOwnedCharacters {
         get { return minions.Select(x => x.character).ToList(); }
     }
-    public bool isInvadingRegion {
-        get { return invadingRegion != null; }
-    }
+    //public bool isInvadingRegion {
+    //    get { return invadingRegion != null; }
+    //}
     #endregion
 
     public Player() {
@@ -1411,9 +1411,9 @@ public class Player : ILeader {
         }
         currentAreaBeingInvaded = null;
     }
-    public void SetInvadingRegion(Region region) {
-        invadingRegion = region;
-    }
+    //public void SetInvadingRegion(Region region) {
+    //    invadingRegion = region;
+    //}
     #endregion
 
     #region Combat Ability
@@ -1676,5 +1676,11 @@ public struct DemonicLandmarkBuildingData {
     public LANDMARK_TYPE landmarkType;
     public string landmarkName;
     public int buildDuration;
+    public int currentDuration;
+}
+
+[System.Serializable]
+public struct DemonicLandmarkInvasionData {
+    public bool beingInvaded;
     public int currentDuration;
 }

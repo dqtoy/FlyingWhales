@@ -103,12 +103,6 @@ public class Save {
             }
         }
     }
-    public void LoadRegionConnections() {
-        for (int i = 0; i < regionSaves.Count; i++) {
-            SaveDataRegion data = regionSaves[i];
-            data.LoadRegionConnections(GridMap.Instance.hexTiles[data.coreTileID].region);
-        }
-    }
     public void LoadWorldEventsAndWorldObject() {
         for (int i = 0; i < regionSaves.Count; i++) {
             SaveDataRegion data = regionSaves[i];
@@ -131,10 +125,22 @@ public class Save {
         }
         GridMap.Instance.LoadRegions(regions);
     }
+    public void LoadRegionConnections() {
+        for (int i = 0; i < regionSaves.Count; i++) {
+            SaveDataRegion data = regionSaves[i];
+            data.LoadRegionConnections(GridMap.Instance.hexTiles[data.coreTileID].region);
+        }
+    }
     public void LoadRegionCharacters() {
         for (int i = 0; i < regionSaves.Count; i++) {
             SaveDataRegion data = regionSaves[i];
             data.LoadRegionCharacters(GridMap.Instance.hexTiles[data.coreTileID].region);
+        }
+    }
+    public void LoadRegionAdditionalData() {
+        for (int i = 0; i < regionSaves.Count; i++) {
+            SaveDataRegion data = regionSaves[i];
+            data.LoadRegionAdditionalData(GridMap.Instance.hexTiles[data.coreTileID].region);
         }
     }
     public void SavePlayerArea(Area area) {
@@ -213,9 +219,9 @@ public class Save {
     public void LoadPlayer() {
         playerSave.Load();
     }
-    public void LoadInvasion() {
-        playerSave.LoadInvasion(this);
-    }
+    //public void LoadInvasion() {
+    //    playerSave.LoadInvasion(this);
+    //}
 
     public void SaveCurrentDate() {
         month = GameManager.Instance.month;

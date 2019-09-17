@@ -19,7 +19,7 @@ public class SaveDataPlayer {
     public int maxSummonSlots;
     public int maxArtifactSlots;
 
-    public int invadingRegionID;
+    //public int invadingRegionID;
 
     public int currentDivineInterventionTick;
     //public int currentInterventionAbilityTimerTick;
@@ -66,11 +66,11 @@ public class SaveDataPlayer {
             interventionAbilitySlots.Add(saveDataInterventionAbility);
         }
 
-        if(player.isInvadingRegion) {
-            invadingRegionID = player.invadingRegion.id;
-        } else {
-            invadingRegionID = -1;
-        }
+        //if(player.isInvadingRegion) {
+        //    invadingRegionID = player.invadingRegion.id;
+        //} else {
+        //    invadingRegionID = -1;
+        //}
 
         //interventionAbilityToResearch = player.interventionAbilityToResearch;
         //currentInterventionAbilityTimerTick = player.currentInterventionAbilityTimerTick;
@@ -80,20 +80,20 @@ public class SaveDataPlayer {
         PlayerManager.Instance.InitializePlayer(this);
         PlayerManager.Instance.player.LoadDivineIntervention(this);
     }
-    public void LoadInvasion(Save save) {
-        if (invadingRegionID != -1) {
-            SaveDataRegion invadingRegionSave = null;
-            for (int i = 0; i < save.regionSaves.Count; i++) {
-                if (save.regionSaves[i].id == invadingRegionID) {
-                    invadingRegionSave = save.regionSaves[i];
-                    break;
-                }
-            }
+    //public void LoadInvasion(Save save) {
+    //    if (invadingRegionID != -1) {
+    //        SaveDataRegion invadingRegionSave = null;
+    //        for (int i = 0; i < save.regionSaves.Count; i++) {
+    //            if (save.regionSaves[i].id == invadingRegionID) {
+    //                invadingRegionSave = save.regionSaves[i];
+    //                break;
+    //            }
+    //        }
 
-            Region region = GridMap.Instance.GetRegionByID(invadingRegionSave.id);
-            region.LoadInvasion(invadingRegionSave.ticksInInvasion);
-        }
-    }
+    //        Region region = GridMap.Instance.GetRegionByID(invadingRegionSave.id);
+    //        region.LoadInvasion(invadingRegionSave.ticksInInvasion);
+    //    }
+    //}
     private void SortAddSaveDataArtifact(SaveDataArtifactSlot newSaveData) {
         bool hasBeenInserted = false;
         for (int i = 0; i < artifactSlots.Count; i++) {

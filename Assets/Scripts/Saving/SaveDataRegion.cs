@@ -23,6 +23,8 @@ public class SaveDataRegion {
 
     //public int invadingMinionID;
     public DemonicLandmarkBuildingData demonicBuildingData;
+    public DemonicLandmarkInvasionData demonicInvasionData;
+
 
     //public Minion assignedMinion - NOTE: Minion assigned for the region is already saved and loaded in SaveDataMinion. It is not saved and loaded here because there will be redundancy
     //SEE SaveDataMinion
@@ -37,10 +39,11 @@ public class SaveDataRegion {
         }
 
         coreTileID = region.coreTile.id;
-        ticksInInvasion = region.ticksInInvasion;
+        //ticksInInvasion = region.ticksInInvasion;
         regionColor = region.regionColor;
 
         demonicBuildingData = region.demonicBuildingData;
+        demonicInvasionData = region.demonicInvasionData;
 
         connectionsTileIDs = new List<int>();
         for (int i = 0; i < region.connections.Count; i++) {
@@ -95,9 +98,10 @@ public class SaveDataRegion {
         return region;
     }
 
-    public void LoadBuildingStructure() {
-        Region region = GridMap.Instance.GetRegionByID(id);
+    public void LoadRegionAdditionalData(Region region) {
+        //Region region = GridMap.Instance.GetRegionByID(id);
         region.LoadBuildingStructure(this);
+        region.LoadInvasion(this);
     }
     public void LoadRegionConnections(Region region) {
         for (int i = 0; i < connectionsTileIDs.Count; i++) {

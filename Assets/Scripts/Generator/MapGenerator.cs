@@ -129,6 +129,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadLandmarks();
         data.LoadRegionConnections();
         data.LoadRegionCharacters();
+        data.LoadRegionAdditionalData();
         yield return null;
         GridMap.Instance.GenerateInitialTileTags();
         yield return null;
@@ -161,7 +162,7 @@ public class MapGenerator : MonoBehaviour {
         UIManager.Instance.SetTimeControlsState(false);
         UIManager.Instance.SetSpeedTogglesState(true);
         Messenger.Broadcast(Signals.UPDATE_UI);
-        data.LoadInvasion();
+        //data.LoadInvasion();
         //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
         data.LoadWorldEventsAndWorldObject();
     }
