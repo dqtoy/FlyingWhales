@@ -62,6 +62,6 @@ public class WorldEventIcon : MonoBehaviour {
     }
 
     public void OnClick(BaseEventData data) {
-        UIManager.Instance.ShowHextileInfo(region.coreTile);
+        UIManager.Instance.ShowRegionInfo(region);
     }
 }

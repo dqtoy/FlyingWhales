@@ -82,6 +82,11 @@ public class AssaultCharacter : GoapAction {
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         base.OnCancelActionTowardsTarget();
     }
+    public override void OnStopActionWhileTravelling() {
+        actor.marker.pathfindingAI.ResetEndReachedDistance();
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        base.OnStopActionWhileTravelling();
+    }
     private void OnFinishCombatState() {
         //Debug.Log(actor.name + " finished combat state!");
         Character target = poiTarget as Character;
@@ -114,9 +119,11 @@ public class AssaultCharacter : GoapAction {
     }
     public override void OnStopActionDuringCurrentState() {
         actor.marker.pathfindingAI.ResetEndReachedDistance();
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
     }
     public override void OnResultReturnedToActor() {
         actor.marker.pathfindingAI.ResetEndReachedDistance();
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
     }
     public override int GetArrangedLogPriorityIndex(string priorityID) {
         if(priorityID == "description") {

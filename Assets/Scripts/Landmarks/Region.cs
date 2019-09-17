@@ -318,8 +318,8 @@ public class Region {
         newLandmark.OverrideID(previousID);
 
         demonicBuildingData = new DemonicLandmarkBuildingData();
-        assignedMinion.SetAssignedRegion(null);
-        SetAssignedMinion(null);
+        //assignedMinion.SetAssignedRegion(null);
+        //SetAssignedMinion(null);
 
         newLandmark.OnFinishedBuilding();
         Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, this);
@@ -426,15 +426,16 @@ public class Region {
             }
         }
         //spawn the event
-        activeEvent.Spawn(this, eventData, out activeEventAfterEffectScheduleID);
+        activeEvent.Spawn(this, spawner, eventData, out activeEventAfterEffectScheduleID);
         Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, we);
     }
     public void LoadEventAndWorldObject(SaveDataRegion data) {
         if (data.activeEvent != WORLD_EVENT.NONE) {
             activeEvent = StoryEventsManager.Instance.GetWorldEvent(data.activeEvent);
-            SetCharacterEventSpawner(CharacterManager.Instance.GetCharacterByID(data.eventSpawnedByCharacterID));
+            Character spawner = CharacterManager.Instance.GetCharacterByID(data.eventSpawnedByCharacterID);
+            SetCharacterEventSpawner(spawner);
             eventData = data.eventData.Load();
-            activeEvent.Load(this, eventData, out activeEventAfterEffectScheduleID);
+            activeEvent.Load(this, spawner, eventData, out activeEventAfterEffectScheduleID);
             Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, activeEvent);
         }
         if (data.hasWorldObject) {
@@ -461,7 +462,7 @@ public class Region {
     //    Debug.Log(summary);
     //}
     private void SpawnEventThatCanProvideEffectFor(WORLD_EVENT_EFFECT[] effects, Character spawner) {
-        List<WorldEvent> events = StoryEventsManager.Instance.GetEventsThatCanProvideEffects(this, effects);
+        List<WorldEvent> events = StoryEventsManager.Instance.GetEventsThatCanProvideEffects(this, spawner, effects);
         if (events.Count > 0) {
             WorldEvent chosenEvent = events[Random.Range(0, events.Count)];
             SpawnEvent(chosenEvent, spawner);
@@ -528,7 +529,7 @@ public class Region {
     //}
     private void JobBasedEventGeneration(Character character) {
         if (activeEvent == null) {
-            WORLD_EVENT_EFFECT[] effects = character.currentJob.jobType.GetNeededEventEffects();
+            WORLD_EVENT_EFFECT[] effects = character.currentJob.jobType.GetAllowedEventEffects();
             if (effects != null) {
                 SpawnEventThatCanProvideEffectFor(effects, character);
             }

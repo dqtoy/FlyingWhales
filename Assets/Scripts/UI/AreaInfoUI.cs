@@ -45,6 +45,7 @@ public class AreaInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Content Management")]
+    [SerializeField] private Button switchUIBtn;
     public GameObject normalContentGO;
     public PlayerBuildLandmarkUI playerBuildLandmarkUI;
     public PlayerResearchUI playerResearchUI;
@@ -119,7 +120,8 @@ public class AreaInfoUI : UIMenu {
         UpdateAreaInfo();
         ShowAppropriateContent();
         ResetScrollPositions();
-        
+
+
         if (previousTile != null) {
             previousTile.SetOutlineState(false);
         }
@@ -154,6 +156,14 @@ public class AreaInfoUI : UIMenu {
     }
     public override void SetData(object data) {
         base.SetData(data);
+    }
+
+    private void UpdateSwitchUIBtn() {
+        //for now can only switch UI between region and area ui if the tile in question has a player landamrk on it. Since the player landmarks have their own ui but other events can happen on it that require the region ui.
+        switchUIBtn.gameObject.SetActive(activeTile.landmarkOnTile.specificLandmarkType.IsPlayerLandmark());
+    }
+    public void SwitchUI() {
+        UIManager.Instance.ShowRegionInfo(activeTile.region);
     }
 
     public void UpdateAreaInfo() {
@@ -545,6 +555,7 @@ public class AreaInfoUI : UIMenu {
         HidePlayerUpgradeUI();
         HidePlayerSummonMinionUI();
         HideTheEyeUI();
+        UpdateSwitchUIBtn();
 
         if (activeTile.isCorrupted) {
             //The things you can do to corrupted landmarks

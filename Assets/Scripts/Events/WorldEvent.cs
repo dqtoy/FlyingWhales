@@ -31,7 +31,7 @@ public class WorldEvent  {
     /// </summary>
     /// <param name="region">The region this event is spawned at.</param>
     /// <param name="afterEffectScheduleID">The schedule id that this event has created for its after effect</param>
-    public virtual void Spawn(Region region, IWorldEventData eventData, out string afterEffectScheduleID) {
+    public virtual void Spawn(Region region, Character spawner, IWorldEventData eventData, out string afterEffectScheduleID) {
         GameDate startDate = GameManager.Instance.Today();
         GameDate endDate = GameManager.Instance.Today().AddTicks(duration);
 
@@ -39,7 +39,7 @@ public class WorldEvent  {
         eventData.SetEndDate(endDate);
 
         //once spawned, schedule the after effect of this event to execute after a set amount of ticks (duration). NOTE: This schedule should be cancelled once the landmark it spawned at 
-        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => TryExecuteAfterEffect(region), this);
+        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => TryExecuteAfterEffect(region, spawner), this);
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + region.name);
         //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
         //AddDefaultFillersToLog(log, landmark);
@@ -53,13 +53,13 @@ public class WorldEvent  {
             TimerHubUI.Instance.AddItem(this.name + " event at " + region.name, duration, () => UIManager.Instance.ShowHextileInfo(region.coreTile));
         }
     }
-    public virtual void Load(Region region, IWorldEventData eventData, out string afterEffectScheduleID) {
+    public virtual void Load(Region region, Character spawner, IWorldEventData eventData, out string afterEffectScheduleID) {
         GameDate startDate = GameManager.Instance.Today();
         GameDate endDate = eventData.endDate;
 
         int ticksDiff = GameManager.Instance.GetTicksDifferenceOfTwoDates(endDate, startDate);
         //once spawned, schedule the after effect of this event to execute after a set amount of ticks (duration). NOTE: This schedule should be cancelled once the landmark it spawned at 
-        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => TryExecuteAfterEffect(region), this);
+        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => TryExecuteAfterEffect(region, spawner), this);
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + region.name);
         //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
         //AddDefaultFillersToLog(log, landmark);
@@ -73,16 +73,16 @@ public class WorldEvent  {
             TimerHubUI.Instance.AddItem(this.name + " event at " + region.name, ticksDiff, () => UIManager.Instance.ShowHextileInfo(region.coreTile));
         }
     }
-    private void TryExecuteAfterEffect(Region region) {
+    private void TryExecuteAfterEffect(Region region, Character spawner) {
         if (region.eventData.interferingCharacter != null) {
             //there is an interfering character.
-            ExecuteFailEffect(region);
+            ExecuteFailEffect(region, spawner);
         } else {
             //there are no interfering characters.
-            ExecuteAfterEffect(region);
+            ExecuteAfterEffect(region, spawner);
         }
     }
-    protected virtual void ExecuteFailEffect(Region region) {
+    protected virtual void ExecuteFailEffect(Region region, Character spawner) {
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " fail effect executed at " + region.name);
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", "Generic", "failed");
         log.AddToFillers(null, this.name, LOG_IDENTIFIER.STRING_1);
@@ -92,7 +92,7 @@ public class WorldEvent  {
         PlayerManager.Instance.player.ShowNotification(log);
         region.WorldEventFailed(this);
     }
-    protected virtual void ExecuteAfterEffect(Region region) {
+    protected virtual void ExecuteAfterEffect(Region region, Character spawner) {
         region.WorldEventFinished(this);
         Debug.Log(GameManager.Instance.TodayLogString() + this.name + " after effect executed at " + region.name);
         hasSuccessfullyExecutedOnce = true;
@@ -106,7 +106,7 @@ public class WorldEvent  {
             PlayerManager.Instance.player.ShowNotification(log);
         }
     }
-    public virtual bool CanSpawnEventAt(Region region) {
+    public virtual bool CanSpawnEventAt(Region region, Character spawner) {
         if (this.isUnique && (this.hasSuccessfullyExecutedOnce || this.isCurrentlySpawned)) {
             return false; //if this event is unique and has been spawned once or is currently spawned, do not allow it to spawn again
         }
@@ -121,9 +121,6 @@ public class WorldEvent  {
         };
         return data;
     }
-    public virtual bool IsBasicEvent() {
-        return false;
-    }
     #endregion
 
     #region Utilities
@@ -134,10 +131,11 @@ public class WorldEvent  {
     public bool CanProvideNeededEffects(WORLD_EVENT_EFFECT[] neededEffects) {
         if (neededEffects != null && eventEffects != null) {
             for (int i = 0; i < neededEffects.Length; i++) {
-                if (!eventEffects.Contains(neededEffects[i])) {
-                    return false;
+                if (eventEffects.Contains(neededEffects[i])) {
+                    return true;
                 }
             }
+            return false;
         }
         return true;
     }

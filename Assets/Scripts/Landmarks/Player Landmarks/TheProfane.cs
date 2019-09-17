@@ -35,6 +35,11 @@
         tileLocation.region.SetAssignedMinion(null);
         Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
+
+    public override void DestroyLandmark() {
+        base.DestroyLandmark();
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickDelay);
+    }
 }
 
 

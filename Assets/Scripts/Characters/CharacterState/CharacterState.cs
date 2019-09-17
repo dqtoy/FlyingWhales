@@ -214,7 +214,7 @@ public class CharacterState {
     public void SetJob(CharacterStateJob job) {
         this.job = job;
     }
-    private void CreateThoughtBubbleLog() {
+    protected virtual void CreateThoughtBubbleLog() {
         if(LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "thought_bubble")) {
             thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "thought_bubble");
             thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

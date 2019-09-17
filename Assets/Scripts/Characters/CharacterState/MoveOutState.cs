@@ -56,6 +56,12 @@ public class MoveOutState : CharacterState {
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
     }
     protected override void PerTickInState() { }
+    protected override void CreateThoughtBubbleLog() {
+        base.CreateThoughtBubbleLog();
+        if (thoughtBubbleLog != null) {
+            thoughtBubbleLog.AddToFillers(stateComponent.character.specificLocation, stateComponent.character.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        }
+    }
     #endregion
 
     bool hasSceduledArriveAtRandomRegion;
@@ -179,7 +185,7 @@ public class MoveOutState : CharacterState {
         List<Region> choices = GridMap.Instance.allRegions.Where(x => 
             x.activeEvent == null && 
             x.coreTile.areaOfTile != stateComponent.character.homeArea && 
-            StoryEventsManager.Instance.GetEventsThatCanProvideEffects(x, job.jobType.GetNeededEventEffects()).Count > 0
+            StoryEventsManager.Instance.GetEventsThatCanProvideEffects(x, character, job.jobType.GetAllowedEventEffects()).Count > 0
         ).ToList();
 
         return choices;

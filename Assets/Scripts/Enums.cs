@@ -1363,9 +1363,9 @@ public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
 public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
 public enum SERIAL_VICTIM_TYPE { GENDER, ROLE, TRAIT, STATUS }
 public enum SPECIAL_OBJECT_TYPE { DEMON_STONE, SPELL_SCROLL, SKILL_SCROLL }
-public enum WORLD_EVENT { NONE, HARVEST, SLAY_MONSTER, MINE_SUPPLY, STUDY, }
+public enum WORLD_EVENT { NONE, HARVEST, SLAY_MINION, MINE_SUPPLY, STUDY, PRAY_AT_TEMPLE, DESTROY_DEMONIC_LANDMARK }
 public enum DEADLY_SIN_ACTION { RESEARCH_SPELL, SPAWN_EVENT, CONSTRUCT, INTERFERE, INVADE, FIGHT, UPGRADE, }
-public enum WORLD_EVENT_EFFECT { GET_FOOD, GET_SUPPLY, GAIN_POSITIVE_TRAIT, EXPLORE, }
+public enum WORLD_EVENT_EFFECT { GET_FOOD, GET_SUPPLY, GAIN_POSITIVE_TRAIT, REMOVE_NEGATIVE_TRAIT, EXPLORE, COMBAT }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
@@ -1714,12 +1714,24 @@ public static class Extensions {
     #endregion
 
     #region Hero Events
-    public static WORLD_EVENT_EFFECT[] GetNeededEventEffects(this JOB_TYPE type) {
+    /// <summary>
+    /// Get an array of effects that a job type expects. 
+    /// NOTE: For a world event to be valid, it just needs to meet at least 1 of the allowed effects
+    /// </summary>
+    /// <param name="type">The type of job.</param>
+    /// <returns>Array of world effects.</returns>
+    public static WORLD_EVENT_EFFECT[] GetAllowedEventEffects(this JOB_TYPE type) {
         switch (type) {
             case JOB_TYPE.OBTAIN_FOOD_OUTSIDE:
                 return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GET_FOOD };
             case JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE:
                 return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GET_SUPPLY };
+            case JOB_TYPE.IMPROVE:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GAIN_POSITIVE_TRAIT, WORLD_EVENT_EFFECT.REMOVE_NEGATIVE_TRAIT };
+            case JOB_TYPE.EXPLORE:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.EXPLORE };
+            case JOB_TYPE.COMBAT:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.COMBAT };
             default:
                 return null;
         }

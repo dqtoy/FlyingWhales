@@ -17,7 +17,6 @@ public class CharacterManager : MonoBehaviour {
     public Transform characterIconsParent;
 
     public int maxLevel;
-    //private Dictionary<ELEMENT, float> _elementsChanceDictionary;
     private List<Character> _allCharacters;
     private List<CharacterAvatar> _allCharacterAvatars;
 
@@ -44,8 +43,6 @@ public class CharacterManager : MonoBehaviour {
     public const string Original_Alter_Ego = "Original";
 
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
-    //public Dictionary<INTERACTION_TYPE, int> awayFromHomeInteractionWeights { get; private set; }
-    //public Dictionary<INTERACTION_TYPE, int> atHomeInteractionWeights { get; private set; }
     public Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]> characterRoleInteractions { get; private set; }
     public Dictionary<string, CharacterClass> classesDictionary { get; private set; }
     public Dictionary<string, CharacterClass> uniqueClasses { get; private set; }

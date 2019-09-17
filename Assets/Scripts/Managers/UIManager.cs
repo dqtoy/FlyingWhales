@@ -196,6 +196,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
         Messenger.AddListener(Signals.HIDE_MENUS, HideMenus);
         Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
+        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
@@ -350,17 +351,20 @@ public class UIManager : MonoBehaviour {
             if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
                 x1Btn.isOn = true;
                 speedToggleGroup.NotifyToggleOn(x1Btn);
-                SetProgressionSpeed1X();
+                //SetProgressionSpeed1X();
             } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
                 x2Btn.isOn = true;
                 speedToggleGroup.NotifyToggleOn(x2Btn);
-                SetProgressionSpeed2X();
+                //SetProgressionSpeed2X();
             } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
                 x4Btn.isOn = true;
                 speedToggleGroup.NotifyToggleOn(x4Btn);
-                SetProgressionSpeed4X();
+                //SetProgressionSpeed4X();
             }
         }
+    }
+    private void OnProgressionSpeedChanged(PROGRESSION_SPEED speed) {
+        UpdateSpeedToggles(GameManager.Instance.isPaused);
     }
     public void SetProgressionSpeed1X() {
         if (!x1Btn.IsInteractable()) {

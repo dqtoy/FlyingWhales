@@ -159,12 +159,14 @@ public class Area {
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         Messenger.AddListener<FoodPile>(Signals.FOOD_IN_PILE_REDUCED, OnFoodInPileReduced);
         Messenger.AddListener<SupplyPile>(Signals.SUPPLY_IN_PILE_REDUCED, OnSupplyInPileReduced);
+        Messenger.AddListener(Signals.DAY_STARTED, PerDayHeroEventCreation);
     }
     private void UnsubscribeToSignals() {
         Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
         Messenger.RemoveListener<FoodPile>(Signals.FOOD_IN_PILE_REDUCED, OnFoodInPileReduced);
         Messenger.RemoveListener<SupplyPile>(Signals.SUPPLY_IN_PILE_REDUCED, OnSupplyInPileReduced);
+        Messenger.RemoveListener(Signals.DAY_STARTED, PerDayHeroEventCreation);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
         if (removedFrom.parentAreaMap.area.id == this.id) {
@@ -1248,11 +1250,8 @@ public class Area {
     }
     private void CreateObtainFoodOutsideJob() {
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_FOOD_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
-        job.SetCanTakeThisJobChecker(CanObtainFoodOutside);
+        job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.CIVILIAN);
         jobQueue.AddJobInQueue(job);
-    }
-    private bool CanObtainFoodOutside(Character character, JobQueueItem item) {
-        return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     /// <summary>
     /// Check if this area should create an obtain supply outside job.
@@ -1272,11 +1271,87 @@ public class Area {
     }
     private void CreateObtainSupplyOutsideJob() {
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
-        job.SetCanTakeThisJobChecker(CanObtainSupplyOutside);
+        job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.CIVILIAN);
         jobQueue.AddJobInQueue(job);
     }
-    private bool CanObtainSupplyOutside(Character character, JobQueueItem item) {
-        return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+    private void PerDayHeroEventCreation() {
+        //improve job at 8 am
+        GameDate improveJobDate = GameManager.Instance.Today();
+        improveJobDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(8));
+        SchedulingManager.Instance.AddEntry(improveJobDate, TryCreateImproveJob, this);
+
+        //explore job at 8 am
+        GameDate exploreJobDate = GameManager.Instance.Today();
+        exploreJobDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(8));
+        SchedulingManager.Instance.AddEntry(exploreJobDate, TryCreateExploreJob, this);
+
+        //combat job at 8 am
+        GameDate combatJobDate = GameManager.Instance.Today();
+        combatJobDate.SetTicks(GameManager.Instance.GetTicksBasedOnHour(8));
+        SchedulingManager.Instance.AddEntry(combatJobDate, TryCreateCombatJob, this);
+    }
+    /// <summary>
+    /// Try and create an improve job. This checks chances and max hero event jobs.
+    /// Criteria can be found at: https://trello.com/c/cICMVSch/2706-hero-events
+    /// NOTE: Since this will be checked each day at a specific time, I just added a scheduled event that calls this at the start of each day, rather than checking it every tick.
+    /// </summary>
+    private void TryCreateImproveJob() {
+        if (!CanStillCreateHeroEventJob()) {
+            return; //hero events are maxed.
+        }
+        if (UnityEngine.Random.Range(0, 100) < 15) {
+            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.IMPROVE, CHARACTER_STATE.MOVE_OUT, this);
+            jobQueue.AddJobInQueue(job);
+            //expires at midnight
+            GameDate expiry = GameManager.Instance.Today();
+            expiry.SetTicks(GameManager.Instance.GetTicksBasedOnHour(24));
+            SchedulingManager.Instance.AddEntry(expiry, () => CheckIfJobWillExpire(job), this);
+        }
+    }
+    /// <summary>
+    /// Try and create an explore job. This checks chances and max hero event jobs.
+    /// Criteria can be found at: https://trello.com/c/cICMVSch/2706-hero-events
+    /// NOTE: Since this will be checked each day at a specific time, I just added a scheduled event that calls this at the start of each day, rather than checking it every tick.
+    /// </summary>
+    private void TryCreateExploreJob() {
+        if (!CanStillCreateHeroEventJob()) {
+            return; //hero events are maxed.
+        }
+        if (UnityEngine.Random.Range(0, 100) < 15) {
+            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.MOVE_OUT, this);
+            //Used lambda expression instead of new function. Reference: https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/lambda-expressions
+            job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.ADVENTURER); 
+            jobQueue.AddJobInQueue(job);
+            //expires at midnight
+            GameDate expiry = GameManager.Instance.Today();
+            expiry.SetTicks(GameManager.Instance.GetTicksBasedOnHour(24));
+            SchedulingManager.Instance.AddEntry(expiry, () => CheckIfJobWillExpire(job), this);
+        }
+    }
+    /// <summary>
+    /// Try and create a combat job. This checks chances and max hero event jobs.
+    /// Criteria can be found at: https://trello.com/c/cICMVSch/2706-hero-events
+    /// NOTE: Since this will be checked each day at a specific time, I just added a scheduled event that calls this at the start of each day, rather than checking it every tick.
+    /// </summary>
+    private void TryCreateCombatJob() {
+        if (!CanStillCreateHeroEventJob()) {
+            return; //hero events are maxed.
+        }
+        if (UnityEngine.Random.Range(0, 100) < 15) {
+            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.MOVE_OUT, this);
+            job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.SOLDIER);
+            jobQueue.AddJobInQueue(job);
+            //expires at midnight
+            GameDate expiry = GameManager.Instance.Today();
+            expiry.SetTicks(GameManager.Instance.GetTicksBasedOnHour(24));
+            SchedulingManager.Instance.AddEntry(expiry, () => CheckIfJobWillExpire(job), this);
+        }
+    }
+    private void CheckIfJobWillExpire(JobQueueItem item) {
+        if (item.assignedCharacter == null) {
+            Debug.Log(GameManager.Instance.TodayLogString() + item.jobType.ToString() + " expired.");
+            item.jobQueueParent.RemoveJobInQueue(item);
+        }
     }
     #endregion
 

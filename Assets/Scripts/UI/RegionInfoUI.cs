@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class RegionInfoUI : UIMenu {
 
     [Header("Basic Info")]
+    [SerializeField] private Button switchUIBtn;
     [SerializeField] private TextMeshProUGUI regionNameLbl;
     [SerializeField] private TextMeshProUGUI regionTypeLbl;
     [SerializeField] private LocationPortrait locationPortrait;
@@ -61,6 +62,7 @@ public class RegionInfoUI : UIMenu {
         UpdateCharacters();
         UpdateInvadeBtnState();
         UpdateEventInfo();
+        UpdateSwitchUIBtn();
         eventsListGO.SetActive(false);
         activeRegion.CenterCameraOnRegion();
         activeRegion.ShowSolidBorder();
@@ -75,7 +77,16 @@ public class RegionInfoUI : UIMenu {
         UpdateBasicInfo();
         UpdateRegionInfo();
         UpdateInvadeBtnState();
+        UpdateSwitchUIBtn();
         //UpdateSpawnEventButton();
+    }
+
+    private void UpdateSwitchUIBtn() {
+        //for now can only switch UI between region and area ui if the tile in question has a player landamrk on it. Since the player landmarks have their own ui but other events can happen on it that require the region ui.
+        switchUIBtn.gameObject.SetActive(activeRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark());
+    }
+    public void SwitchUI() {
+        UIManager.Instance.ShowAreaInfo(activeRegion.coreTile);
     }
 
     #region Basic Info
@@ -193,18 +204,18 @@ public class RegionInfoUI : UIMenu {
         }
     }
     private void ShowEventsThatCanBeSpawned() {
-        Utilities.DestroyChildren(eventsListScrollView.content);
-        List<WorldEvent> spawnableEvents = StoryEventsManager.Instance.GetEventsThatCanSpawnAt(activeRegion);
-        for (int i = 0; i < spawnableEvents.Count; i++) {
-            WorldEvent currEvent = spawnableEvents[i];
-            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(eventListItemPrefab.name, Vector3.zero, Quaternion.identity, eventsListScrollView.content);
-            TextMeshProUGUI text = go.GetComponentInChildren<TextMeshProUGUI>();
-            Button button = go.GetComponent<Button>();
-            text.text = currEvent.eventType.ToString();
-            button.onClick.RemoveAllListeners();
-            button.onClick.AddListener(() => SpawnEvent(currEvent));
-        }
-        eventsListGO.SetActive(true);
+        //Utilities.DestroyChildren(eventsListScrollView.content);
+        //List<WorldEvent> spawnableEvents = StoryEventsManager.Instance.GetEventsThatCanSpawnAt(activeRegion);
+        //for (int i = 0; i < spawnableEvents.Count; i++) {
+        //    WorldEvent currEvent = spawnableEvents[i];
+        //    GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(eventListItemPrefab.name, Vector3.zero, Quaternion.identity, eventsListScrollView.content);
+        //    TextMeshProUGUI text = go.GetComponentInChildren<TextMeshProUGUI>();
+        //    Button button = go.GetComponent<Button>();
+        //    text.text = currEvent.eventType.ToString();
+        //    button.onClick.RemoveAllListeners();
+        //    button.onClick.AddListener(() => SpawnEvent(currEvent));
+        //}
+        //eventsListGO.SetActive(true);
     }
     private void SpawnEvent(WorldEvent we) {
         //activeRegion.SpawnEvent(we);

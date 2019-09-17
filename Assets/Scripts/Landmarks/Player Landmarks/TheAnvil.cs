@@ -64,6 +64,11 @@ public class TheAnvil : BaseLandmark {
         UIManager.Instance.areaInfoUI.OnPlayerUpgradeDone();
     }
 
+    public override void DestroyLandmark() {
+        base.DestroyLandmark();
+        SchedulingManager.Instance.ClearAllSchedulesBy(this);
+    }
+
     #region Static
     public static int GetUpgradeDuration(string upgrade) {
         if (upgrade == All_Intervention) {

@@ -7349,6 +7349,9 @@ public class Character : ILeader, IPointOfInterest {
         bool willGoIdleState = true;
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
+            if (plan.currentNode == null) {
+                throw new Exception(this.name + "'s current node in plan is null! Call stack is " + plan.setPlanStateCallStack);
+            }
             log += "\n" + plan.currentNode.action.goapName;
             if (plan.isBeingRecalculated) {
                 log += "\n - Plan is currently being recalculated, skipping...";

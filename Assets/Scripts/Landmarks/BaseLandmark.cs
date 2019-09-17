@@ -114,6 +114,10 @@ public class BaseLandmark {
     #region Virtuals
     public virtual void Initialize() { }
     public virtual void DestroyLandmark() {
+        if (tileLocation.region.assignedMinion != null) {
+            tileLocation.region.assignedMinion.SetAssignedRegion(null);
+            tileLocation.region.SetAssignedMinion(null);
+        }
         _location = null;
     }
     public virtual void OnFinishedBuilding() { }

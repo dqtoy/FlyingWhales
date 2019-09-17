@@ -165,6 +165,7 @@ public class GameManager : MonoBehaviour {
         UIManager.Instance.SetProgressionSpeed1X();
         UIManager.Instance.Pause();
 		SchedulingManager.Instance.StartScheduleCalls ();
+        Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
         Messenger.Broadcast(Signals.MONTH_START); //for the first day
         InteriorMapManager.Instance.UpdateLightBasedOnTime(Today());
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);

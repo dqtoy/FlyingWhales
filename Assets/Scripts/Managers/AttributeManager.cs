@@ -155,5 +155,43 @@ public class AttributeManager : MonoBehaviour {
         }
         return traits;
     }
+    public List<string> GetAllBuffTraits() {
+        List<string> buffTraits = new List<string>();
+        foreach (KeyValuePair<string, Trait> kvp in allTraits) {
+            if (kvp.Value.type == TRAIT_TYPE.BUFF) {
+                buffTraits.Add(kvp.Key);
+            }
+        }
+        return buffTraits;
+    }
+    public List<string> GetAllFlawTraits() {
+        List<string> flawTraits = new List<string>();
+        foreach (KeyValuePair<string, Trait> kvp in allTraits) {
+            if (kvp.Value.type == TRAIT_TYPE.FLAW) {
+                flawTraits.Add(kvp.Key);
+            }
+        }
+        return flawTraits;
+    }
+    public List<string> GetAllBuffTraitsThatCharacterCanHave(Character character) {
+        List<string> allBuffs = GetAllBuffTraits();
+        for (int i = 0; i < character.normalTraits.Count; i++) {
+            Trait trait = character.normalTraits[i];
+            if (trait.mutuallyExclusive != null) {
+                allBuffs = Utilities.RemoveElements(allBuffs, trait.mutuallyExclusive);
+            }
+        }
+        return allBuffs;
+    }
+    public List<string> GetAllFlawTraitsThatCharacterCanHave(Character character) {
+        List<string> allFlaws = GetAllFlawTraits();
+        for (int i = 0; i < character.normalTraits.Count; i++) {
+            Trait trait = character.normalTraits[i];
+            if (trait.mutuallyExclusive != null) {
+                allFlaws = Utilities.RemoveElements(allFlaws, trait.mutuallyExclusive);
+            }
+        }
+        return allFlaws;
+    }
     #endregion
 }

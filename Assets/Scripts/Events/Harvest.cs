@@ -9,20 +9,17 @@ public class Harvest : WorldEvent {
     }
 
     #region Overrides
-    protected override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region, Character spawner) {
         //- after effect: provides an initial +100 Food to owner settlement after completion
         LandmarkManager.Instance.enemyOfPlayerArea.AdjustFoodInBank(100);
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
         AddDefaultFillersToLog(log, region);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
-        base.ExecuteAfterEffect(region);
+        base.ExecuteAfterEffect(region, spawner);
     }
-    public override bool CanSpawnEventAt(Region region) {
+    public override bool CanSpawnEventAt(Region region, Character spawner) {
         return region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.FARM;
-    }
-    public override bool IsBasicEvent() {
-        return true;
     }
     #endregion
 }

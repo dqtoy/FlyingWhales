@@ -9,14 +9,22 @@ public class Study : WorldEvent {
     }
 
     #region Overrides
-    protected override void ExecuteAfterEffect(Region region) {
+    protected override void ExecuteAfterEffect(Region region, Character spawner) {
         //(gain a positive trait) 
-        //LandmarkManager.Instance.enemyOfPlayerArea.AdjustSuppliesInBank(50);
-        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
+        List<string> buffs = AttributeManager.Instance.GetAllBuffTraitsThatCharacterCanHave(region.eventSpawnedBy);
+        Log log;
+        if (buffs.Count > 0) {
+            string chosenBuff = buffs[Random.Range(0, buffs.Count)];
+            region.eventSpawnedBy.AddTrait(chosenBuff);
+            log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect_gain_trait");
+            log.AddToFillers(null, chosenBuff, LOG_IDENTIFIER.STRING_1);
+        } else {
+            log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect_no_trait");
+        }
         AddDefaultFillersToLog(log, region);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
-        base.ExecuteAfterEffect(region);
+        base.ExecuteAfterEffect(region, spawner);
     }
     #endregion
 

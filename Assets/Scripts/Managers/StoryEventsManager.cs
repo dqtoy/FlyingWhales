@@ -401,24 +401,11 @@ public class StoryEventsManager : MonoBehaviour {
         }
         return null;
     }
-    public List<WorldEvent> GetEventsThatCanSpawnAt(Region region, bool basicOnly = false) {
+    public List<WorldEvent> GetEventsThatCanProvideEffects(Region region, Character spawner, WORLD_EVENT_EFFECT[] effects) {
         List<WorldEvent> events = new List<WorldEvent>();
         for (int i = 0; i < worldEvents.Length; i++) {
             WorldEvent currEvent = worldEvents[i];
-            if (basicOnly && !currEvent.IsBasicEvent()) {
-                continue; //skip
-            }
-            if (currEvent.CanSpawnEventAt(region)) {
-                events.Add(currEvent);
-            }
-        }
-        return events;
-    }
-    public List<WorldEvent> GetEventsThatCanProvideEffects(Region region, WORLD_EVENT_EFFECT[] effects) {
-        List<WorldEvent> events = new List<WorldEvent>();
-        for (int i = 0; i < worldEvents.Length; i++) {
-            WorldEvent currEvent = worldEvents[i];
-            if (currEvent.CanSpawnEventAt(region) && currEvent.CanProvideNeededEffects(effects)) {
+            if (currEvent.CanSpawnEventAt(region, spawner) && currEvent.CanProvideNeededEffects(effects)) {
                 events.Add(currEvent);
             }
         }
