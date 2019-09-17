@@ -199,21 +199,13 @@ public class CharacterInfoUI : UIMenu {
             plansLbl.text = _activeCharacter.name + " has died.";
             return;
         }
-        if (_activeCharacter.minion != null && _activeCharacter.minion.assignedRegion != null) {
-            if (_activeCharacter.minion.assignedRegion != null) {
-                Log log = new Log(GameManager.Instance.Today(), "%00@ is currently invading %04@");
-                log.AddToFillers(_activeCharacter, _activeCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                if (_activeCharacter.minion.assignedRegion.coreTile.areaOfTile != null) {
-                    log.AddToFillers(_activeCharacter.minion.assignedRegion.coreTile.areaOfTile, _activeCharacter.minion.assignedRegion.coreTile.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-                } else {
-                    log.AddToFillers(_activeCharacter.minion.assignedRegion, _activeCharacter.minion.assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-                }
-                plansLblLogItem.SetLog(log);
-                plansLbl.text = Utilities.LogReplacer(log);
+        if (_activeCharacter.minion != null) {
+            if (_activeCharacter.minion.busyReasonLog != null) {
+                plansLblLogItem.SetLog(_activeCharacter.minion.busyReasonLog);
+                plansLbl.text = Utilities.LogReplacer(_activeCharacter.minion.busyReasonLog);
             } else {
                 plansLbl.text = _activeCharacter.name + " is ready to do your bidding.";
             }
-            
             return;
         }
         if (_activeCharacter.specificLocation.areaMap == null) {

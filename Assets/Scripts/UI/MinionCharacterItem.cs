@@ -37,8 +37,8 @@ public class MinionCharacterItem : CharacterItem {
     }
 
     private void UpdateSubText() {
-        if (character.minion.assignedRegion != null) {
-            subTextLbl.text = character.name + " is currently invading " + character.minion.assignedRegion.name;
+        if (character.minion.busyReasonLog != null) {
+            subTextLbl.text = Utilities.LogReplacer(character.minion.busyReasonLog);
             subTextContainer.gameObject.SetActive(true);
         } else {
             subTextLbl.text = "Actions: ";
