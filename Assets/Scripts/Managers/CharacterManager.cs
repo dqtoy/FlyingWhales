@@ -98,7 +98,7 @@ public class CharacterManager : MonoBehaviour {
                 Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
                 if (characterFaction != null) {
                     //currCharacter.SetFaction(characterFaction);
-                    characterFaction.AddNewCharacter(currCharacter);
+                    characterFaction.JoinFaction(currCharacter);
                     //FactionSaveData factionData = data.GetFactionData(characterFaction.id);
                     //if (factionData.leaderID != -1 && factionData.leaderID == currCharacter.id) {
                     //    characterFaction.SetLeader(currCharacter);
@@ -108,7 +108,7 @@ public class CharacterManager : MonoBehaviour {
                 else {
                     characterFaction = FactionManager.Instance.neutralFaction;
                     //currCharacter.SetFaction(characterFaction);
-                    characterFaction.AddNewCharacter(currCharacter);
+                    characterFaction.JoinFaction(currCharacter);
                 }
 #endif
             }
@@ -173,11 +173,11 @@ public class CharacterManager : MonoBehaviour {
         //Party party = newCharacter.CreateOwnParty();
         newCharacter.Initialize();
         if (faction != null) {
-            faction.AddNewCharacter(newCharacter);
+            faction.JoinFaction(newCharacter);
         }
 #if !WORLD_CREATION_TOOL
         else {
-            FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
         newCharacter.ownParty.CreateIcon();
         if(homeLocation != null) {
@@ -198,9 +198,9 @@ public class CharacterManager : MonoBehaviour {
         Character newCharacter = new Character(role, className, race, gender);
         newCharacter.Initialize();
         if (faction != null) {
-            faction.AddNewCharacter(newCharacter);
+            faction.JoinFaction(newCharacter);
         } else {
-            FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
 #if !WORLD_CREATION_TOOL
         newCharacter.ownParty.CreateIcon();
@@ -251,7 +251,7 @@ public class CharacterManager : MonoBehaviour {
 
         Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
         if(faction != null) {
-            faction.AddNewCharacter(newCharacter);
+            faction.JoinFaction(newCharacter);
             if (data.isFactionLeader) {
                 faction.OnlySetLeader(newCharacter);
             }
@@ -433,9 +433,9 @@ public class CharacterManager : MonoBehaviour {
         Summon newCharacter = CreateNewSummonClassFromType(summonType) as Summon;
         newCharacter.Initialize();
         if (faction != null) {
-            faction.AddNewCharacter(newCharacter);
+            faction.JoinFaction(newCharacter);
         } else {
-            FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
@@ -459,7 +459,7 @@ public class CharacterManager : MonoBehaviour {
 
         Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
         if (faction != null) {
-            faction.AddNewCharacter(newCharacter);
+            faction.JoinFaction(newCharacter);
             if (data.isFactionLeader) {
                 faction.OnlySetLeader(newCharacter);
             }

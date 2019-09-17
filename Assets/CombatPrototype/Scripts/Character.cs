@@ -215,7 +215,7 @@ public class Character : ILeader, IPointOfInterest {
         get { return currentLandmark == null && specificLocation.id == homeArea.id && !currentParty.icon.isTravellingOutside; }
     }
     public bool isPartOfHomeFaction { //is this character part of the faction that owns his home area
-        get { return homeArea != null && homeArea.owner == faction; }
+        get { return homeArea != null && faction != null && homeArea.region.IsFactionHere(faction); }
     }
     public bool isChatting {
         get { return _isChatting; }
@@ -988,7 +988,7 @@ public class Character : ILeader, IPointOfInterest {
 
 
             if (faction != null) {
-                faction.RemoveCharacter(this); //remove this character from it's factions list of characters
+                faction.LeaveFaction(this); //remove this character from it's factions list of characters
             }
 
             if (_role != null) {
@@ -2291,9 +2291,9 @@ public class Character : ILeader, IPointOfInterest {
             return; //if the new faction is the same, ignore change
         }
         if (faction != null) {
-            faction.RemoveCharacter(this);
+            faction.LeaveFaction(this);
         }
-        newFaction.AddNewCharacter(this);
+        newFaction.JoinFaction(this);
     }
     private void OnChangeFaction() {
         //check if this character has a Criminal Trait, if so, remove it
@@ -2691,7 +2691,7 @@ public class Character : ILeader, IPointOfInterest {
                     //if not, keep the characters current home
                 }
             } else { //if it is not, check if his original home is still owned by that faction and it has not yet reached it's resident capacity
-                if (ogHome.owner == ogFaction && !ogHome.IsResidentsFull()) {
+                if (ogHome.region.IsFactionHere(ogFaction) && !ogHome.IsResidentsFull()) {
                     //if it meets those requirements, return the character's home to that location
                     MigrateHomeTo(ogHome);
                 } else { //if not, get another area owned by his faction that has not yet reached capacity
@@ -4180,7 +4180,31 @@ public class Character : ILeader, IPointOfInterest {
     /// </summary>
     /// <param name="newHome">The character's new home</param>
     public void SetHome(Area newHome) {
-        this.homeArea = newHome;
+        Area previousHome = homeArea;
+        homeArea = newHome;
+
+        //If a character sets his home, add his faction to the factions in the region
+        //Subsequently, if character loses his home, remove his faction from the region only if there are no co faction resident in the region anymore
+        if(faction != null) {
+            if(newHome == null) {
+                //If character loses home and he has previous home, remove him faction
+                if(previousHome != null) {
+                    bool removeFaction = true;
+                    for (int i = 0; i < previousHome.areaResidents.Count; i++) {
+                        Character resident = previousHome.areaResidents[i];
+                        if(resident != this && resident.faction == faction) {
+                            removeFaction = false;
+                            break;
+                        }
+                    }
+                    if (removeFaction) {
+                        previousHome.region.RemoveFactionHere(faction);
+                    }
+                }
+            } else {
+                newHome.region.AddFactionHere(faction);
+            }
+        }
     }
     public void SetHomeStructure(Dwelling homeStructure) {
         this.homeStructure = homeStructure;

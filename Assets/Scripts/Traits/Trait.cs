@@ -216,7 +216,7 @@ public class Trait {
         return false;
     }
     protected bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter, JobQueueItem job) {
-        return targetCharacter.faction != character.faction && character.isAtHomeArea && character.faction == character.homeArea.owner 
+        return targetCharacter.faction != character.faction && character.isAtHomeArea && character.isPartOfHomeFaction
             && (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER)
             && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL);
     }

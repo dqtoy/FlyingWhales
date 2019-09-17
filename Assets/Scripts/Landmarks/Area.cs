@@ -493,28 +493,28 @@ public class Area {
             if (character.homeArea != null) {
                 character.homeStructure.RemoveResident(character);
             }
-            CheckForUnoccupancy();
+            //CheckForUnoccupancy();
             //Messenger.Broadcast(Signals.AREA_RESIDENT_REMOVED, this, character);
         }
     }
-    private void CheckForUnoccupancy() {
-        //whenever an owned area loses a resident, check if the area still has any residents that are part of the owner faction
-        //if there aren't any, unoccupy this area
-        if (this.owner != null) {
-            bool unoccupy = true;
-            for (int i = 0; i < areaResidents.Count; i++) {
-                Character currResident = areaResidents[i];
-                if (currResident.faction.id == this.owner.id) {
-                    unoccupy = false;
-                    break;
-                }
-            }
-            if (unoccupy) {
-                LandmarkManager.Instance.UnownRegion(region);
-                FactionManager.Instance.neutralFaction.AddToOwnedRegions(region);
-            }
-        }
-    }
+    //private void CheckForUnoccupancy() {
+    //    //whenever an owned area loses a resident, check if the area still has any residents that are part of the owner faction
+    //    //if there aren't any, unoccupy this area
+    //    if (this.owner != null) {
+    //        bool unoccupy = true;
+    //        for (int i = 0; i < areaResidents.Count; i++) {
+    //            Character currResident = areaResidents[i];
+    //            if (currResident.faction.id == this.owner.id) {
+    //                unoccupy = false;
+    //                break;
+    //            }
+    //        }
+    //        if (unoccupy) {
+    //            LandmarkManager.Instance.UnownRegion(region);
+    //            FactionManager.Instance.neutralFaction.AddToOwnedRegions(region);
+    //        }
+    //    }
+    //}
     public void AddCharacterToLocation(Character character, LocationGridTile tileOverride = null, bool isInitial = false) {
         region.AddCharacterToLocation(character);
         //if (!charactersAtLocation.Contains(character)) {

@@ -1459,7 +1459,7 @@ public class PlayerUI : MonoBehaviour {
         List<CharacterItem> dead = new List<CharacterItem>();
         for (int i = 0; i < items.Length; i++) {
             CharacterItem currItem = items[i];
-            if (!currItem.character.IsAble() || currItem.character.faction != LandmarkManager.Instance.enemyOfPlayerArea.owner) { //added checking for faction in cases that the character was raised from dead
+            if (!currItem.character.IsAble() || currItem.character.returnedToLife) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
                 dead.Add(currItem);
             } else {
                 alive.Add(currItem);

@@ -207,11 +207,11 @@ namespace worldcreator {
             string factionName = factionField.options[choice].text;
             Faction faction = FactionManager.Instance.GetFactionBasedOnName(factionName);
             if (_character.faction != null) {
-                _character.faction.RemoveCharacter(_character);
+                _character.faction.LeaveFaction(_character);
             }
             //_character.SetFaction(faction);
             if (faction != null) {
-                faction.AddNewCharacter(_character);
+                faction.JoinFaction(_character);
             }
             WorldCreatorUI.Instance.editFactionsMenu.UpdateItems();
         }

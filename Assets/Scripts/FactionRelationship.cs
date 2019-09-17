@@ -28,7 +28,7 @@ public class FactionRelationship {
     public FactionRelationship(Faction faction1, Faction faction2) {
         _faction1 = faction1;
         _faction2 = faction2;
-        relationshipStatInt = 3; //Neutral
+        relationshipStatInt = 0; //Friendly
     }
 
     #region Relationship Status

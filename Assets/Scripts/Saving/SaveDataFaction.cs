@@ -9,6 +9,7 @@ public class SaveDataFaction {
     public string name;
     public string description;
     public string initialLeaderClass;
+    public string requirementForJoining;
     public int level;
     public int inventoryTaskWeight;
     public bool isPlayerFaction;
@@ -48,6 +49,7 @@ public class SaveDataFaction {
         size = faction.size;
         factionType = faction.factionType;
         isActive = faction.isActive;
+        requirementForJoining = faction.requirementForJoining;
 
         ownedLandmarkIDs = new List<int>();
         for (int i = 0; i < faction.ownedLandmarks.Count; i++) {

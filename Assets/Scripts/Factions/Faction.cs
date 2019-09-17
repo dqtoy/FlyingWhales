@@ -37,6 +37,8 @@ public class Faction {
     public List<Log> history { get; private set; }
     public Region mainRegion { get { return ownedRegions[0]; } }
 
+    public string requirementForJoining { get; private set; }
+
     #region getters/setters
     public string urlName {
         get { return "<link=" + '"' + this.id.ToString() + "_faction" + '"' + ">" + this.name + "</link>"; }
@@ -69,6 +71,7 @@ public class Faction {
         //favor = new Dictionary<Faction, int>();
         //defenderWeights = new WeightedDictionary<AreaCharacterClass>();
         additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
+        GenerateFactionRequirementForJoining();
         //InitializeInteractions();
 #if !WORLD_CREATION_TOOL
         //SetDailyInteractionGenerationTick();
@@ -113,6 +116,7 @@ public class Faction {
         //    defenderWeights = new WeightedDictionary<AreaCharacterClass>();
         //}
         additionalClassWeights = new WeightedDictionary<AreaCharacterClass>();
+        GenerateFactionRequirementForJoining();
         //InitializeInteractions();
 #if !WORLD_CREATION_TOOL
         //SetDailyInteractionGenerationTick();
@@ -136,6 +140,8 @@ public class Faction {
         level = data.level;
         inventoryTaskWeight = data.inventoryTaskWeight;
         factionType = data.factionType;
+        requirementForJoining = data.requirementForJoining;
+
         characters = new List<Character>();
         ownedLandmarks = new List<BaseLandmark>();
         relationships = new Dictionary<Faction, FactionRelationship>();
@@ -194,21 +200,23 @@ public class Faction {
     #endregion
 
     #region Characters
-    public void AddNewCharacter(Character character) {
-        if (!characters.Contains(character)) {
-            characters.Add(character);
-            character.SetFaction(this);
-            if(this != FactionManager.Instance.neutralFaction && character.role == CharacterRole.BANDIT) {
-                if(UnityEngine.Random.Range(0, 2) == 0) {
-                    character.AssignRole(CharacterRole.SOLDIER);
-                } else {
-                    character.AssignRole(CharacterRole.ADVENTURER);
+    public void JoinFaction(Character character, bool processRequirement = true) {
+        if(!processRequirement || DoesCharacterFitFactionRequirement(character)) {
+            if (!characters.Contains(character)) {
+                characters.Add(character);
+                character.SetFaction(this);
+                if (this != FactionManager.Instance.neutralFaction && character.role == CharacterRole.BANDIT) {
+                    if (UnityEngine.Random.Range(0, 2) == 0) {
+                        character.AssignRole(CharacterRole.SOLDIER);
+                    } else {
+                        character.AssignRole(CharacterRole.ADVENTURER);
+                    }
                 }
+                Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
             }
-            Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
         }
     }
-    public void RemoveCharacter(Character character) {
+    public void LeaveFaction(Character character) {
         if (characters.Remove(character)) {
             if (leader == character) {
                 SetNewLeader(); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
@@ -220,6 +228,18 @@ public class Faction {
         //    SetLeader(null);
         //}
     }
+    public bool DoesCharacterFitFactionRequirement(Character character) {
+        if(requirementForJoining == string.Empty) {
+            return true;
+        }
+        //TODO: must meet requirement
+        return true;
+    }
+    private void GenerateFactionRequirementForJoining() {
+        //TODO
+        requirementForJoining = string.Empty;
+    }
+
     public List<Character> GetCharactersOfType(CHARACTER_ROLE role) {
         List<Character> chars = new List<Character>();
         for (int i = 0; i < characters.Count; i++) {
@@ -331,14 +351,14 @@ public class Faction {
 
     #region Utilities
     private void AddListeners() {
-        Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
+        Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, LeaveFaction);
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //if (!_isPlayerFaction) {
         //    Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
         //}
     }
     private void RemoveListeners() {
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, RemoveCharacter);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, LeaveFaction);
         //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         //if (!_isPlayerFaction) {
         //    Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
@@ -381,7 +401,7 @@ public class Faction {
             return false;
         }
         FactionRelationship rel = GetRelationshipWith(faction);
-        return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.ENEMY;
+        return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE;
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
         for (int i = 0; i < ownedLandmarks.Count; i++) {
@@ -707,7 +727,7 @@ public class Faction {
     }
     public bool IsAtWar() {
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
-            if (kvp.Key.isActive && kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+            if (kvp.Key.isActive && kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
                 return true;
             }
         }

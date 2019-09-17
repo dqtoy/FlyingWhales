@@ -21,6 +21,8 @@ public class Region {
     public Faction owner { get; private set; }
     public Faction previousOwner { get; private set; }
 
+    public List<Faction> factionsHere { get; private set; }
+
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> borderSprites;
 
@@ -49,6 +51,7 @@ public class Region {
         connections = new List<Region>();
         charactersAtLocation = new List<Character>();
         otherAfterInvasionActions = new List<System.Action>();
+        factionsHere = new List<Faction>();
     }
     public Region(HexTile coreTile) : this() {
         id = Utilities.SetID(this);
@@ -624,6 +627,27 @@ public class Region {
                 tile.SetCorruption(false);
             }
         }
+    }
+    public void AddFactionHere(Faction faction) {
+        if (!IsFactionHere(faction)) {
+            factionsHere.Add(faction);
+        }
+    }
+    public void RemoveFactionHere(Faction faction) {
+        if (factionsHere.Remove(faction)) {
+            //If a faction is removed and it is the ruling faction, transfer ruling faction to the next faction on the list if there's any, if not make the region part of neutral faction
+            if(owner == faction) {
+                LandmarkManager.Instance.UnownRegion(this);
+                if(factionsHere.Count > 0) {
+                    LandmarkManager.Instance.OwnRegion(factionsHere[0], factionsHere[0].race, this);
+                } else {
+                    FactionManager.Instance.neutralFaction.AddToOwnedRegions(this);
+                }
+            }
+        }
+    }
+    public bool IsFactionHere(Faction faction) {
+        return factionsHere.Contains(faction);
     }
     #endregion
 
