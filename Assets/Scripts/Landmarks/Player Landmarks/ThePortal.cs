@@ -3,29 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ThePortal : BaseLandmark {
-    public string currentMinionClassToSummon { get; private set; }
+    public int currentMinionToSummonIndex { get; private set; }
     public int currentSummonTick { get; private set; }
     public int currentSummonDuration { get; private set; }
 
     public ThePortal(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
-        currentMinionClassToSummon = string.Empty;
+        currentMinionToSummonIndex = -1;
     }
 
     public ThePortal(HexTile location, SaveDataLandmark data) : base(location, data) {
-        currentMinionClassToSummon = string.Empty;
+        currentMinionToSummonIndex = -1;
     }
 
     public void LoadSummonMinion(SaveDataThePortal data) {
-        if (data.currentMinionClassToSummon != string.Empty) {
-            StartSummon(data.currentMinionClassToSummon, data.currentSummonTick, data.currentSummonDuration);
+        if (data.currentMinionToSummonIndex != -1) {
+            StartSummon(data.currentMinionToSummonIndex, data.currentSummonTick, data.currentSummonDuration);
         } else {
-            currentMinionClassToSummon = data.currentMinionClassToSummon;
+            currentMinionToSummonIndex = data.currentMinionToSummonIndex;
             currentSummonTick = data.currentSummonTick;
             currentSummonDuration = data.currentSummonDuration;
         }
     }
-    public void StartSummon(string minionClassToSummon, int currentSummonTick, int summonDuration = 0) {
-        currentMinionClassToSummon = minionClassToSummon;
+    public void StartSummon(int minionToSummonIndex, int currentSummonTick, int summonDuration = 0) {
+        currentMinionToSummonIndex = minionToSummonIndex;
         this.currentSummonTick = currentSummonTick;
         if(summonDuration != 0) {
             currentSummonDuration = summonDuration;
@@ -36,7 +36,7 @@ public class ThePortal : BaseLandmark {
                 currentSummonDuration -= speedUpDuration;
             }
         }
-        TimerHubUI.Instance.AddItem("Summmoning " + currentMinionClassToSummon + " Minion", currentSummonDuration - currentSummonTick, null);
+        TimerHubUI.Instance.AddItem("Summmoning " + PlayerManager.Instance.player.minionsToSummon[currentMinionToSummonIndex].className + " Minion", currentSummonDuration - currentSummonTick, null);
         Messenger.AddListener(Signals.TICK_STARTED, PerTickSummon);
     }
     private void PerTickSummon() {
@@ -48,14 +48,19 @@ public class ThePortal : BaseLandmark {
         }
     }
     private void SummonMinion() {
-        Minion minion = PlayerManager.Instance.player.CreateNewMinion(currentMinionClassToSummon, RACE.DEMON);
-        UIManager.Instance.ShowImportantNotification("Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(minion, true));
-        PlayerManager.Instance.player.GenerateMinionClassesToSummon();
+        UnsummonedMinionData minionData = PlayerManager.Instance.player.minionsToSummon[currentMinionToSummonIndex];
+        Minion minion = PlayerManager.Instance.player.CreateNewMinion(minionData.className, RACE.DEMON, false);
+        minion.character.SetName(minionData.minionName);
+        minion.SetCombatAbility(minionData.combatAbility);
+        minion.SetRandomResearchInterventionAbilities(minionData.interventionAbilitiesToResearch);
+
+	UIManager.Instance.ShowImportantNotification("Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(minion, true));
+        PlayerManager.Instance.player.GenerateMinionsToSummon();
     }
     private void StopSummon() {
         currentSummonTick = 0;
         currentSummonDuration = 0;
-        currentMinionClassToSummon = string.Empty;
+        currentMinionToSummonIndex = -1;
         if (tileLocation.region.assignedMinion != null) {
             tileLocation.region.assignedMinion.SetAssignedRegion(null);
             tileLocation.region.SetAssignedMinion(null);
@@ -65,14 +70,14 @@ public class ThePortal : BaseLandmark {
 }
 
 public class SaveDataThePortal : SaveDataLandmark {
-    public string currentMinionClassToSummon;
+    public int currentMinionToSummonIndex;
     public int currentSummonTick;
     public int currentSummonDuration;
 
     public override void Save(BaseLandmark landmark) {
         base.Save(landmark);
         ThePortal portal = landmark as ThePortal;
-        currentMinionClassToSummon = portal.currentMinionClassToSummon;
+        currentMinionToSummonIndex = portal.currentMinionToSummonIndex;
         currentSummonTick = portal.currentSummonTick;
         currentSummonDuration = portal.currentSummonDuration;
     }

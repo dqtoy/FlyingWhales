@@ -24,22 +24,20 @@ public class MinionCard : MonoBehaviour {
     public GameObject researchGO;
 
     //Minion Data
-    public string minionName { get; private set; }
-    public string className { get; private set; }
-    public COMBAT_ABILITY combatAbilityType { get; private set; }
-    public List<INTERVENTION_ABILITY> abilitiesToResearch { get; private set; }
+    public UnsummonedMinionData minionData { get; private set; }
+    //public List<INTERVENTION_ABILITY> abilitiesToResearch { get; private set; }
     //TODO: trait 1 and 2
 
-    public void SetMinion(string className, COMBAT_ABILITY combatAbility, string minionName = "") {
-        if(minionName == string.Empty) {
-            this.minionName = RandomNameGenerator.Instance.GenerateMinionName();
-        } else {
-            this.minionName = minionName;
+    public void SetMinion(UnsummonedMinionData minionData) {
+        this.minionData = minionData;
+        string minionName = this.minionData.minionName;
+        if (minionName == string.Empty) {
+            UnsummonedMinionData temp = this.minionData;
+            temp.minionName = RandomNameGenerator.Instance.GenerateMinionName();
+            this.minionData = temp;
         }
-        combatAbilityType = combatAbility;
-        this.className = className;
 
-        Sprite classPortrait = CharacterManager.Instance.GetClassPortraitSprite(className);
+        Sprite classPortrait = CharacterManager.Instance.GetClassPortraitSprite(this.minionData.className);
         if(classPortrait != null) {
             portraitImg.sprite = classPortrait;
             portraitImg.gameObject.SetActive(true);
@@ -47,10 +45,10 @@ public class MinionCard : MonoBehaviour {
             portraitImg.gameObject.SetActive(false);
         }
         txtName.text = minionName;
-        txtClass.text = "Demon " + className;
-        txtCombatAbility.text = Utilities.NormalizeStringUpperCaseFirstLetters(combatAbilityType.ToString());
+        txtClass.text = "Demon " + this.minionData.className;
+        txtCombatAbility.text = Utilities.NormalizeStringUpperCaseFirstLetters(this.minionData.combatAbility.ToString());
 
-        DeadlySin deadlySin = CharacterManager.Instance.GetDeadlySin(className);
+        DeadlySin deadlySin = CharacterManager.Instance.GetDeadlySin(this.minionData.className);
         string actions = string.Empty;
         for (int i = 0; i < deadlySin.assignments.Length; i++) {
             if(i > 0) {
@@ -60,14 +58,13 @@ public class MinionCard : MonoBehaviour {
         }
         txtActions.text = actions;
 
-        abilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(deadlySin);
-        if (abilitiesToResearch.Count > 0) {
+        if (this.minionData.interventionAbilitiesToResearch.Count > 0) {
             string research = string.Empty;
-            for (int i = 0; i < abilitiesToResearch.Count; i++) {
+            for (int i = 0; i < this.minionData.interventionAbilitiesToResearch.Count; i++) {
                 if (i > 0) {
                     research += ", ";
                 }
-                research += Utilities.NormalizeStringUpperCaseFirstLetters(abilitiesToResearch[i].ToString());
+                research += Utilities.NormalizeStringUpperCaseFirstLetters(this.minionData.interventionAbilitiesToResearch[i].ToString());
             }
             txtResearch.text = research;
             researchGO.SetActive(true);

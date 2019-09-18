@@ -19,19 +19,21 @@ public class PlayerSummonMinionUI : MonoBehaviour {
     public TextMeshProUGUI minionToSummonText;
     public Image minionToSummonImg;
     public Button selectMinionToSummonBtn;
+    public GameObject minionsToSummonGO;
+    public MinionCard[] minionCards;
 
     public ThePortal portal { get; private set; }
     public Minion chosenMinion { get; private set; }
-    public string chosenMinionClassToSummon { get; private set; }
+    public int chosenMinionToSummonIndex { get; private set; }
     public int summonDuration { get; private set; }
 
     #region General
     public void ShowPlayerSummonMinionUI(ThePortal portal) {
         this.portal = portal;
 
-        if (portal.currentMinionClassToSummon == string.Empty) {
+        if (portal.currentMinionToSummonIndex == -1) {
             chosenMinion = null;
-            chosenMinionClassToSummon = string.Empty;
+            chosenMinionToSummonIndex = -1;
             summonBtn.interactable = false;
             summonProgress.fillAmount = 0;
             minionName.gameObject.SetActive(false);
@@ -45,7 +47,7 @@ public class PlayerSummonMinionUI : MonoBehaviour {
             if(portal.tileLocation.region.assignedMinion != null) {
                 SetChosenMinion(portal.tileLocation.region.assignedMinion.character);
             }
-            SetChosenMinionToSummon(portal.currentMinionClassToSummon);
+            SetChosenMinionToSummon(portal.currentMinionToSummonIndex);
             UpdateSelectMinionToAssignBtn();
             UpdateSelectMinionToSummonBtn();
             UpdatePlayerSummonMinionUI();
@@ -61,7 +63,7 @@ public class PlayerSummonMinionUI : MonoBehaviour {
             portal.tileLocation.region.SetAssignedMinion(chosenMinion);
             chosenMinion.SetAssignedRegion(portal.tileLocation.region);
         }
-        portal.StartSummon(chosenMinionClassToSummon, 0, summonDuration);
+        portal.StartSummon(chosenMinionToSummonIndex, 0, summonDuration);
         //currentTile.region.StartBuildingStructure(chosenLandmark, chosenMinion);
         UpdateSummonButton();
         UpdateSelectMinionToAssignBtn();
@@ -69,16 +71,16 @@ public class PlayerSummonMinionUI : MonoBehaviour {
     }
     private void UpdateSummonButton() {
         summonProgress.gameObject.SetActive(false);
-        summonBtn.interactable = chosenMinionClassToSummon != string.Empty && portal.currentMinionClassToSummon == string.Empty;
+        summonBtn.interactable = chosenMinionToSummonIndex != -1 && portal.currentMinionToSummonIndex == -1;
         if (!summonBtn.interactable) {
-            if (portal.currentMinionClassToSummon != string.Empty) {
+            if (portal.currentMinionToSummonIndex != -1) {
                 summonProgress.gameObject.SetActive(true);
                 summonProgress.fillAmount = 0;
             }
         }
     }
     public void UpdatePlayerSummonMinionUI() {
-        if (portal.currentMinionClassToSummon != string.Empty && summonProgress.gameObject.activeSelf) {
+        if (portal.currentMinionToSummonIndex != -1 && summonProgress.gameObject.activeSelf) {
             summonProgress.fillAmount = portal.currentSummonTick / (float) portal.currentSummonDuration;
         }
     }
@@ -99,6 +101,7 @@ public class PlayerSummonMinionUI : MonoBehaviour {
         }
         string title = "Select Minion to Speed Up Summoning";
         UIManager.Instance.ShowClickableObjectPicker(characters, SetChosenMinion, null, CanChooseMinion, title);
+        HideMinionsToSummon();
     }
     private bool CanChooseMinion(Character character) {
         return !character.minion.isAssigned;
@@ -115,36 +118,46 @@ public class PlayerSummonMinionUI : MonoBehaviour {
         UIManager.Instance.HideObjectPicker();
     }
     private void UpdateSelectMinionToAssignBtn() {
-        selectMinionToAssignBtn.interactable = portal.currentMinionClassToSummon == string.Empty;
+        selectMinionToAssignBtn.interactable = portal.currentMinionToSummonIndex == -1;
     }
     #endregion
 
     #region Minion To Summon
     public void OnClickSelectMinionToSummon() {
-        string title = "Select Minion to Summon";
-        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minionClassesToSummon.ToList(), SetChosenMinionToSummon, null, CanChooseMinionToSummon, title, OnHoverMinionToSummonChoice, OnHoverExitMinionToSummonChoice, "minion");
+        ShowMinionsToSummon();
+    }
+    private void ShowMinionsToSummon() {
+        for (int i = 0; i < PlayerManager.Instance.player.minionsToSummon.Length; i++) {
+            minionCards[i].SetMinion(PlayerManager.Instance.player.minionsToSummon[i]);
+        }
+        minionsToSummonGO.SetActive(true);
+    }
+    public void HideMinionsToSummon() {
+        minionsToSummonGO.SetActive(false);
     }
     private bool CanChooseMinionToSummon(string minionClassName) {
         return true;
     }
-    private void OnHoverMinionToSummonChoice(string minionClassName) {
+    public void OnHoverMinionToSummonChoice(string minionClassName) {
         string info = "Duration: " + GameManager.Instance.GetCeilingHoursBasedOnTicks(summonDuration) + " hours";
         UIManager.Instance.ShowSmallInfo(info);
     }
-    private void OnHoverExitMinionToSummonChoice(string minionClassName) {
+    public void OnHoverExitMinionToSummonChoice(string minionClassName) {
         UIManager.Instance.HideSmallInfo();
     }
-    private void SetChosenMinionToSummon(string minionClassName) {
-        chosenMinionClassToSummon = minionClassName;
-        minionToSummonImg.sprite = CharacterManager.Instance.GetClassPortraitSprite(minionClassName);
-        minionToSummonText.text = minionClassName;
+    public void SetChosenMinionToSummon(int index) {
+        chosenMinionToSummonIndex = index;
+        UnsummonedMinionData minionData = PlayerManager.Instance.player.minionsToSummon[index];
+        minionToSummonImg.sprite = CharacterManager.Instance.GetClassPortraitSprite(minionData.className);
+        minionToSummonText.text = minionData.className;
         minionToSummonImg.gameObject.SetActive(true);
         minionToSummonText.gameObject.SetActive(true);
         UpdateSummonButton();
-        UIManager.Instance.HideObjectPicker();
+        HideMinionsToSummon();
+        //UIManager.Instance.HideObjectPicker();
     }
     private void UpdateSelectMinionToSummonBtn() {
-        selectMinionToSummonBtn.interactable = portal.currentMinionClassToSummon == string.Empty;
+        selectMinionToSummonBtn.interactable = portal.currentMinionToSummonIndex == -1;
     }
     #endregion
 }

@@ -396,3 +396,11 @@ public class Minion {
     }
     #endregion
 }
+
+[System.Serializable]
+public struct UnsummonedMinionData {
+    public string minionName;
+    public string className;
+    public COMBAT_ABILITY combatAbility;
+    public List<INTERVENTION_ABILITY> interventionAbilitiesToResearch;
+}
