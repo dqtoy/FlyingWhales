@@ -26,6 +26,9 @@ public class Study : WorldEvent {
         PlayerManager.Instance.player.ShowNotification(log);
         base.ExecuteAfterEffect(region, spawner);
     }
+    public override bool CanSpawnEventAt(Region region, Character spawner) {
+        return !region.mainLandmark.specificLandmarkType.IsPlayerLandmark() && region.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE;
+    }
     #endregion
 
 }

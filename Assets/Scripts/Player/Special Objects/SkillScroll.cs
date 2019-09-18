@@ -11,7 +11,7 @@ public class SkillScroll : SpecialObject {
         base.Obtain();
         COMBAT_ABILITY[] skills = Utilities.GetEnumValues<COMBAT_ABILITY>();
         CombatAbility newAbility = PlayerManager.Instance.CreateNewCombatAbility(skills[Random.Range(1, skills.Length)]);
-        PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(newAbility);    
+        UIManager.Instance.ShowImportantNotification("Gained Combat Ability: " + newAbility.name, () => PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(newAbility));
     }
     #endregion
 }

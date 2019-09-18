@@ -1253,7 +1253,6 @@ public class UIManager : MonoBehaviour {
     public ScrollRect playerNotifScrollRect;
     public Image[] playerNotifTransparentImages;
     public int maxPlayerNotif;
-
     private List<PlayerNotificationItem> activeNotifications = new List<PlayerNotificationItem>(); //notifications that are currently being shown.
     private void ShowPlayerNotification(Intel intel) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
@@ -1396,6 +1395,17 @@ public class UIManager : MonoBehaviour {
     }
     private void HideYesNoConfirmation() {
         yesNoGO.SetActive(false);
+    }
+    #endregion
+
+    #region Important Notifications
+    [Header("Important Notification")]
+    [SerializeField] private ScrollRect importantNotifScrollView;
+    [SerializeField] private GameObject importantNotifPrefab;
+    public void ShowImportantNotification(string message, System.Action onClickAction) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(importantNotifPrefab.name, Vector3.zero, Quaternion.identity, importantNotifScrollView.content);
+        ImportantNotificationItem item = go.GetComponent<ImportantNotificationItem>();
+        item.Initialize(message, onClickAction);
     }
     #endregion
 }

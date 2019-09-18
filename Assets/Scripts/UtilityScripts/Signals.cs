@@ -315,6 +315,14 @@ public static class Signals {
     /// parameters (Minion, BaseLandmark)
     /// </summary>
     public static string MINION_CHANGED_ASSIGNED_REGION = "OnMinionChangedInvadingLandmark";
+    /// <summary>
+    /// parameters (Minion, BaseLandmark)
+    /// </summary>
+    public static string MINION_ASSIGNED_PLAYER_LANDMARK = "OnMinionAssignedToPlayerLandmark";
+    /// <summary>
+    /// parameters (Minion, BaseLandmark)
+    /// </summary>
+    public static string MINION_UNASSIGNED_PLAYER_LANDMARK = "OnMinionUnassignedFromPlayerLandmark";
     #endregion
 
     #region Interaction

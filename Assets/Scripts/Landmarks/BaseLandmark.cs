@@ -125,12 +125,20 @@ public class BaseLandmark {
     /// What should happen when a minion is assigned to the region that this landmark is at?
     /// </summary>
     /// <param name="minion">The minion that was assigned.</param>
-    public virtual void OnMinionAssigned(Minion minion) { }
+    public virtual void OnMinionAssigned(Minion minion) {
+        if (this.specificLandmarkType.IsPlayerLandmark()) {
+            Messenger.Broadcast(Signals.MINION_ASSIGNED_PLAYER_LANDMARK, minion, this);
+        }
+    }
     /// <summary>
     /// What should happen when a minion has been unassigned from the region that this landmark is at?
     /// </summary>
     /// <param name="minion">The minion that was unassigned.</param>
-    public virtual void OnMinionUnassigned(Minion minion) { }
+    public virtual void OnMinionUnassigned(Minion minion) {
+        if (this.specificLandmarkType.IsPlayerLandmark()) {
+            Messenger.Broadcast(Signals.MINION_UNASSIGNED_PLAYER_LANDMARK, minion, this);
+        }
+    }
     #endregion
 
     #region Utilities

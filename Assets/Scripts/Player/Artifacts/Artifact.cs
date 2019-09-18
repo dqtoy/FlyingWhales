@@ -87,7 +87,7 @@ public class Artifact : TileObject, IWorldObject {
     #region World Object
     public void Obtain() {
         //- invading a region with an artifact will obtain that artifact for the player
-        PlayerManager.Instance.player.GainArtifact(this, true);
+        UIManager.Instance.ShowImportantNotification("Gained new artifact: " + this.name + "!", () => PlayerManager.Instance.player.GainArtifact(this, true));
     }
     #endregion
 

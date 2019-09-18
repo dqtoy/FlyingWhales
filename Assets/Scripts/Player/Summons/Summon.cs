@@ -182,7 +182,7 @@ public class Summon : Character, IWorldObject {
     #region World Object
     public void Obtain() {
         //invading a region with a summon will recruit that summon for the player
-        PlayerManager.Instance.player.GainSummon(this, true);
+        UIManager.Instance.ShowImportantNotification("Gained new Summon: " + this.summonType.SummonName(), () => PlayerManager.Instance.player.GainSummon(this, true));
     }
     #endregion
 
