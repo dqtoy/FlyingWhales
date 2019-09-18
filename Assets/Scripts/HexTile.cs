@@ -424,12 +424,19 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                     break;
             }
         }
+
+        if(UnityEngine.Random.Range(0,100) < 20) {
+            AddTileTag(TILE_TAG.HALLOWED_GROUNDS);
+        }
     }
     public void AddTileTag(TILE_TAG tag) {
         tileTags.Add(tag);
     }
     public void RemoveTileTag(TILE_TAG tag) {
         tileTags.Remove(tag);
+    }
+    public bool HasTileTag(TILE_TAG tag) {
+        return tileTags.Contains(tag);
     }
     public bool HasNeighbourFromOtherRegion() {
         for (int i = 0; i < AllNeighbours.Count; i++) {
