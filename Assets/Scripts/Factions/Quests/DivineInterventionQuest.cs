@@ -77,9 +77,6 @@ public class DivineInterventionQuest : Quest {
             }
         }
     }
-    private bool CanCharacterTakeDestroyProfaneLandmarkJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER;
-    }
     private bool AreThereProfaneLandmarks() {
         for (int i = 0; i < PlayerManager.Instance.player.playerFaction.ownedRegions.Count; i++) {
             BaseLandmark landmark = PlayerManager.Instance.player.playerFaction.ownedRegions[i].mainLandmark;
@@ -89,19 +86,21 @@ public class DivineInterventionQuest : Quest {
         }
         return false;
     }
-
     private void TryCreatePerformHolyIncantationJob() {
         if (GameManager.Instance.tick == 72 && UnityEngine.Random.Range(0, 100) < 20) { //72 = 6:00AM
             if (!jobQueue.HasJob(JOB_TYPE.PERFORM_HOLY_INCANTATION) && AreThereHallowedGrounds()) {
                 //Create Job Here
+                CreateHolyIncantationJob();
             }
         }
     }
-    private bool CanCharacterTakePerformHolyIncantationJob(Character character) {
-        return character.role.roleType == CHARACTER_ROLE.ADVENTURER;
-    }
     private bool AreThereHallowedGrounds() {
-        //TODO
+        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            Region currRegion = GridMap.Instance.allRegions[i];
+            if (currRegion.coreTile.tileTags.Contains(TILE_TAG.HALLOWED_GROUNDS)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -124,6 +123,19 @@ public class DivineInterventionQuest : Quest {
     private void CreateDestroyProfaneJob() {
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK, CHARACTER_STATE.MOVE_OUT, null);
         job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.SOLDIER);
+        jobQueue.AddJobInQueue(job);
+
+        //expires at end of day
+        GameDate expiryDate = GameManager.Instance.Today();
+        expiryDate.SetTicks(GameManager.ticksPerDay);
+        SchedulingManager.Instance.AddEntry(expiryDate, () => CheckIfJobWillExpire(job), this);
+    }
+    #endregion
+
+    #region Holy Incantation
+    private void CreateHolyIncantationJob() {
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.PERFORM_HOLY_INCANTATION, CHARACTER_STATE.MOVE_OUT, null);
+        job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.ADVENTURER);
         jobQueue.AddJobInQueue(job);
 
         //expires at end of day
