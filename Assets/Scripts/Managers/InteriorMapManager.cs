@@ -419,6 +419,14 @@ public class InteriorMapManager : MonoBehaviour {
                 summary += "\n\tCharacter Owner: " + (poi as SpecialToken).characterOwner?.name ?? "None";
                 summary += "\n\tFaction Owner: " + (poi as SpecialToken).factionOwner?.name ?? "None";
             }
+            summary += "\n\tAdvertised Actions: ";
+            if (poi.poiGoapActions.Count > 0) {
+                for (int i = 0; i < poi.poiGoapActions.Count; i++) {
+                    summary += "|" + poi.poiGoapActions[i].ToString() + "|";
+                }
+            } else {
+                summary += "None";
+            }
             summary += "\n\tObject Traits: ";
             if (poi.normalTraits.Count > 0) {
                 for (int i = 0; i < poi.normalTraits.Count; i++) {

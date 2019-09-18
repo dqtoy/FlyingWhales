@@ -105,23 +105,22 @@ public class GameManager : MonoBehaviour {
                     UIManager.Instance.Pause();
                 }
             }
-        } else if (Input.GetKeyDown(KeyCode.F1)) {
+        } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
             if (UIManager.Instance.x1Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed1X();
             }
-        } else if (Input.GetKeyDown(KeyCode.F2)) {
+        } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
             if (UIManager.Instance.x2Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed2X();
             }
-        } else if (Input.GetKeyDown(KeyCode.F3)) {
+        } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
             if (UIManager.Instance.x4Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed4X();
             }
         } else if (Input.GetKeyDown(KeyCode.Escape)) {
             Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Escape);
         }
-    }
-    private void FixedUpdate() {
+
         if (_gameHasStarted && !isPaused) {
             if (this.timeElapsed == 0f) {
                 this.TickStarted();
@@ -133,6 +132,18 @@ public class GameManager : MonoBehaviour {
             }
         }
     }
+    //private void FixedUpdate() {
+    //    if (_gameHasStarted && !isPaused) {
+    //        if (this.timeElapsed == 0f) {
+    //            this.TickStarted();
+    //        }
+    //        this.timeElapsed += Time.deltaTime;
+    //        if (this.timeElapsed >= this.progressionSpeed) {
+    //            this.timeElapsed = 0f;
+    //            TickEnded();
+    //        }
+    //    }
+    //}
     //private void Update() {
     //    //Application.targetFrameRate = 60;
     //    //    if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput() && !PlayerManager.Instance.isChoosingStartingTile) {

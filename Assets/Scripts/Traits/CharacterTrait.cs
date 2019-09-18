@@ -43,11 +43,17 @@ public class CharacterTrait : Trait {
             }
         }
         if (targetPOI is TileObject) {
-            TileObject objectToBeInspected = targetPOI as TileObject;
-            if (objectToBeInspected.isSummonedByPlayer && characterThatWillDoJob.GetNormalTrait("Suspicious") == null && !alreadyInspectedTileObjects.Contains(objectToBeInspected)) {
-                if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, objectToBeInspected)) {
-                    GoapPlanJob inspectJob = new GoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, objectToBeInspected);
+            TileObject tileObj = targetPOI as TileObject;
+            if (tileObj.isSummonedByPlayer && characterThatWillDoJob.GetNormalTrait("Suspicious") == null && !alreadyInspectedTileObjects.Contains(tileObj)) {
+                if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, tileObj)) {
+                    GoapPlanJob inspectJob = new GoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, tileObj);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
+                    return true;
+                }
+            } else if (tileObj is GoddessStatue) {
+                if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.PRAY_GODDESS_STATUE, tileObj) && tileObj.state == POI_STATE.ACTIVE) {
+                    GoapPlanJob prayJob = new GoapPlanJob(JOB_TYPE.PRAY_GODDESS_STATUE, INTERACTION_TYPE.PRAY_TILE_OBJECT, tileObj);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(prayJob);
                     return true;
                 }
             }

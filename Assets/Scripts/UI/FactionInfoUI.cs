@@ -330,6 +330,19 @@ public class FactionInfoUI : UIMenu {
             //UpdateHiddenUI();
         }
     }
+    public void ShowFactionTestingInfo() {
+        if (activeFaction.activeQuest != null) {
+            string questSummary = activeFaction.activeQuest.name;
+            for (int i = 0; i < activeFaction.activeQuest.jobQueue.jobsInQueue.Count; i++) {
+                JobQueueItem item = activeFaction.activeQuest.jobQueue.jobsInQueue[i];
+                questSummary += "\n\t- " + item.jobType.ToString() + ": " + item.assignedCharacter?.name;
+            }
+            UIManager.Instance.ShowSmallInfo(questSummary);
+        }
+    }
+    public void HideFactionTestingInfo() {
+        UIManager.Instance.HideSmallInfo();
+    }
     #endregion
 
     private void OnOpenShareIntelMenu() {

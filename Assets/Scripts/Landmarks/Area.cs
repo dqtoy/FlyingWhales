@@ -955,6 +955,13 @@ public class Area {
                 structure.AddPOI(new WaterWell(structure));
             }
         }
+        //Goddess Statue
+        if (structures.ContainsKey(STRUCTURE_TYPE.WORK_AREA)) {
+            for (int i = 0; i < 4; i++) {
+                LocationStructure structure = structures[STRUCTURE_TYPE.WORK_AREA][0];
+                structure.AddPOI(new GoddessStatue(structure));
+            }
+        }
     }
     private void PlaceOres() {
         if (structures.ContainsKey(STRUCTURE_TYPE.WILDERNESS)) {

@@ -221,6 +221,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.BUILD_GODDESS_STATUE:
             case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
             case JOB_TYPE.PERFORM_HOLY_INCANTATION:
+            case JOB_TYPE.PRAY_GODDESS_STATUE:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:

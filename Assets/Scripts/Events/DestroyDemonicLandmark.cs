@@ -5,7 +5,7 @@ using UnityEngine;
 public class DestroyDemonicLandmark : WorldEvent {
 
     public DestroyDemonicLandmark() : base(WORLD_EVENT.DESTROY_DEMONIC_LANDMARK) {
-        eventEffects = new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.COMBAT };
+        eventEffects = new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.COMBAT, WORLD_EVENT_EFFECT.DESTROY_LANDMARK };
     }
 
     #region Overrides

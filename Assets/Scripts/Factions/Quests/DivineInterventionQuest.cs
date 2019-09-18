@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DivineInterventionQuest : Quest {
@@ -57,21 +58,22 @@ public class DivineInterventionQuest : Quest {
         if (GameManager.Instance.tick == 72 && UnityEngine.Random.Range(0, 100) < 20) { //72 = 6:00AM
             if (!jobQueue.HasJob(JOB_TYPE.BUILD_GODDESS_STATUE) && IsThereStillEmptyGoddessStatueSpot()) {
                 //Create Job Here
+                CreateBuildGoddessStatueJob();
             }
         }
     }
-    private bool CanCharacterTakeBuildGoddessStatueJob(Character character) {
+    private bool CanCharacterTakeBuildGoddessStatueJob(Character character, JobQueueItem item) {
         return character.GetNormalTrait("Craftsman") != null;
     }
     private bool IsThereStillEmptyGoddessStatueSpot() {
-        //TODO
-        return false;
+        return region.area.GetTileObjectsOfType(TILE_OBJECT_TYPE.GODDESS_STATUE).Where(x => x.state == POI_STATE.INACTIVE).ToList().Count > 0;
     }
 
     private void TryCreateDestroyProfaneLandmarkJob() {
         if (GameManager.Instance.tick == 72 && UnityEngine.Random.Range(0, 100) < 20) { //72 = 6:00AM
             if (!jobQueue.HasJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK) && AreThereProfaneLandmarks()) {
                 //Create Job Here
+                CreateDestroyProfaneJob();
             }
         }
     }
@@ -102,4 +104,41 @@ public class DivineInterventionQuest : Quest {
         //TODO
         return false;
     }
+
+    #region Build Goddess Statue
+    private void CreateBuildGoddessStatueJob() {
+        List<TileObject> goddessStatues = region.area.GetTileObjectsOfType(TILE_OBJECT_TYPE.GODDESS_STATUE).Where(x => x.state == POI_STATE.INACTIVE).ToList();
+        TileObject target = goddessStatues[Random.Range(0, goddessStatues.Count)];
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_GODDESS_STATUE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, target);
+        job.SetCanTakeThisJobChecker(CanCharacterTakeBuildGoddessStatueJob);
+        jobQueue.AddJobInQueue(job);
+
+        //expires at end of day
+        GameDate expiryDate = GameManager.Instance.Today();
+        expiryDate.SetTicks(GameManager.ticksPerDay);
+        SchedulingManager.Instance.AddEntry(expiryDate, () => CheckIfJobWillExpire(job), this);
+    }
+    #endregion
+
+    #region Destroy Profane
+    private void CreateDestroyProfaneJob() {
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK, CHARACTER_STATE.MOVE_OUT, null);
+        job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.SOLDIER);
+        jobQueue.AddJobInQueue(job);
+
+        //expires at end of day
+        GameDate expiryDate = GameManager.Instance.Today();
+        expiryDate.SetTicks(GameManager.ticksPerDay);
+        SchedulingManager.Instance.AddEntry(expiryDate, () => CheckIfJobWillExpire(job), this);
+    }
+    #endregion
+
+    #region Utilities
+    private void CheckIfJobWillExpire(JobQueueItem item) {
+        if (item.assignedCharacter == null && item.jobQueueParent != null && item.jobQueueParent.jobsInQueue.Contains(item)) {
+            Debug.Log(GameManager.Instance.TodayLogString() + item.jobType.ToString() + " expired.");
+            item.jobQueueParent.RemoveJobInQueue(item);
+        }
+    }
+    #endregion
 }

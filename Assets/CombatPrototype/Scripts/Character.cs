@@ -2658,7 +2658,7 @@ public class Character : ILeader, IPointOfInterest {
     public void AdjustDoNotDisturb(int amount) {
         _doNotDisturb += amount;
         _doNotDisturb = Math.Max(_doNotDisturb, 0);
-        Debug.Log(GameManager.Instance.TodayLogString() + " adjusted do not disturb of " + this.name + " by " + amount + " new value is " + _doNotDisturb.ToString());
+        //Debug.Log(GameManager.Instance.TodayLogString() + " adjusted do not disturb of " + this.name + " by " + amount + " new value is " + _doNotDisturb.ToString());
     }
     public void AdjustDoNotGetHungry(int amount) {
         _doNotGetHungry += amount;

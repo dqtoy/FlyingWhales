@@ -176,15 +176,16 @@ public class MoveOutState : CharacterState {
     }
 
     private List<Region> GetValidRegionsToDoJob(Character character) {
-        //List<LANDMARK_TYPE> validLandmarkTypes = new List<LANDMARK_TYPE>();
-        //if (job.jobType == JOB_TYPE.OBTAIN_FOOD_OUTSIDE) {
-        //    validLandmarkTypes.Add(LANDMARK_TYPE.FARM);
-        //} else if (job.jobType == JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE) {
-        //    validLandmarkTypes.Add(LANDMARK_TYPE.MINES);
-        //}
+        List<LANDMARK_TYPE> validLandmarkTypes = new List<LANDMARK_TYPE>();
+        if (job.jobType == JOB_TYPE.DESTROY_PROFANE_LANDMARK) {
+            validLandmarkTypes.Add(LANDMARK_TYPE.THE_PROFANE);
+        } else {
+            validLandmarkTypes.AddRange(Utilities.GetEnumValues<LANDMARK_TYPE>());
+        }
         List<Region> choices = GridMap.Instance.allRegions.Where(x => 
             x.activeEvent == null && 
             x.coreTile.areaOfTile != stateComponent.character.homeArea && 
+            validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType) &&
             StoryEventsManager.Instance.GetEventsThatCanProvideEffects(x, character, job.jobType.GetAllowedEventEffects()).Count > 0
         ).ToList();
 
