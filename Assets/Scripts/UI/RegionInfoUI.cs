@@ -247,9 +247,9 @@ public class RegionInfoUI : UIMenu {
         UIManager.Instance.ShowYesNoConfirmation("Send minion to interfere.", "Are you sure you want to send " + character.name + " to interfere with the event happening at " + activeRegion.name + "?", () => SendOutMinionToInterfere(character), showCover: false, layer: 26);
     }
     private void SendOutMinionToInterfere(Character character) {
+        activeRegion.eventData.SetInterferingCharacter(character);
         character.minion.assignedRegion.SetAssignedMinion(null); //remove minion from assignment at previous region.
         character.minion.SetAssignedRegion(activeRegion); //only set assigned region to minion.
-        activeRegion.eventData.SetInterferingCharacter(character);
         UIManager.Instance.HideObjectPicker();
         UpdateInterveneButton();
     }
