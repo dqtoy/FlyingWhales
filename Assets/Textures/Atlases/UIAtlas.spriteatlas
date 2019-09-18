@@ -78,6 +78,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: cf260292fa0a30c45bd8d85b683d5f2c, type: 3}
   - {fileID: 21300000, guid: 8c51d49239a169c4dbb6c48e21d9596a, type: 3}
   - {fileID: 21300000, guid: b5da86a2551e2e743ad07951e8718429, type: 3}
+  - {fileID: 21300000, guid: 769923b2ee1316148af1bd4b7672ba8f, type: 3}
   - {fileID: 21300000, guid: c7bd8cb2261331b47a23a27212994296, type: 3}
   - {fileID: 21300000, guid: 5767b2c2db928c446b1558b601f40b9f, type: 3}
   - {fileID: 21300000, guid: febd7bc28a21ea044a06f7266d76b729, type: 3}
@@ -403,6 +404,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 75da5defc5340a6438ce876a8abfc2ee, type: 3}
   - {fileID: 21300000, guid: 044a10ffb7cf1ea4fa87052f5c9563f8, type: 3}
   - {fileID: 21300000, guid: 7a9533ffeedeb3443924db0e8be0bf6f, type: 3}
+  - {fileID: 21300000, guid: b1f635ffb61a0dd42819f237385eaadb, type: 3}
   m_PackedSpriteNamesToIndex:
   - disable_object
   - ge_cont-05B
@@ -450,6 +452,7 @@ SpriteAtlas:
   - faction_ui_resident_disabled
   - bottom_inventory0
   - event_timer_button_disabled
+  - button_switch_clicked
   - status_button_clicked
   - event_active_button_clicked
   - White_square
@@ -775,5 +778,6 @@ SpriteAtlas:
   - portrait_container_slot_invalid
   - button_pause_on
   - world_button_default
+  - button_switch_default
   m_Tag: UIAtlas
   m_IsVariant: 0

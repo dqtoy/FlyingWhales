@@ -37,7 +37,7 @@ public class Player : ILeader {
     public PlayerJobActionSlot[] interventionAbilitySlots { get; private set; }
     //public Region invadingRegion { get; private set; }
     public int currentDivineInterventionTick { get; private set; }
-    public string[] minionClassesToSummon { get; private set; }
+    public UnsummonedMinionData[] minionsToSummon { get; private set; }
     //public int currentInterventionAbilityTimerTick { get; private set; }
     //public int newInterventionAbilityTimerTicks { get; private set; }
     //public int currentNewInterventionAbilityCycleIndex { get; private set; }
@@ -79,12 +79,12 @@ public class Player : ILeader {
         summonSlots = new List<SummonSlot>();
         artifactSlots = new List<ArtifactSlot>();
         interventionAbilitySlots = new PlayerJobActionSlot[MAX_INTERVENTION_ABILITIES];
-        minionClassesToSummon = new string[3];
+        minionsToSummon = new UnsummonedMinionData[3];
         maxSummonSlots = 0;
         maxArtifactSlots = 0;
         //InitializeNewInterventionAbilityCycle();
         ConstructAllInterventionAbilitySlots();
-        GenerateMinionClassesToSummon();
+        GenerateMinionsToSummon();
         //ConstructAllSummonSlots();
         //ConstructAllArtifactSlots();
         AddListeners();
@@ -365,12 +365,18 @@ public class Player : ILeader {
             }
         }
     }
-    public void GenerateMinionClassesToSummon() {
+    public void GenerateMinionsToSummon() {
         List<string> choices = CharacterManager.sevenDeadlySinsClassNames.ToList();
-        for (int i = 0; i < minionClassesToSummon.Length; i++) {
+        for (int i = 0; i < minionsToSummon.Length; i++) {
             int index = UnityEngine.Random.Range(0, choices.Count);
-            minionClassesToSummon[i] = choices[index];
+            UnsummonedMinionData minionData = new UnsummonedMinionData() {
+                minionName = RandomNameGenerator.Instance.GenerateMinionName(),
+                className = choices[index],
+                combatAbility = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)],
+                interventionAbilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(CharacterManager.Instance.GetDeadlySin(choices[index])),
+            };
             choices.RemoveAt(index);
+            minionsToSummon[i] = minionData;
         }
     }
     public bool HasMinionAssignedTo(LANDMARK_TYPE type) {
