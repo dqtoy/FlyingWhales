@@ -218,6 +218,9 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.BURY:
             case JOB_TYPE.REPAIR:
             case JOB_TYPE.WATCH:
+            case JOB_TYPE.BUILD_GODDESS_STATUE:
+            case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
+            case JOB_TYPE.PERFORM_HOLY_INCANTATION:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:

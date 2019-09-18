@@ -32,7 +32,7 @@ public class JobQueueItem {
     #region Virtuals
     public virtual void UnassignJob(bool shouldDoAfterEffect = true) { }
     protected virtual bool CanTakeJob(Character character) {
-        if (jobQueueParent.isAreaJobQueue) {
+        if (jobQueueParent.isAreaOrQuestJobQueue) {
             //Criminals and Characters with Negative Disabler Traits should no longer create and take Location Jobs
             return !character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
         }

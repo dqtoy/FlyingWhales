@@ -6,7 +6,7 @@ public class JobQueue {
     public Character character { get; private set; } //If there is character it means that this job queue is a personal job queue
 	public List<JobQueueItem> jobsInQueue { get; private set; }
 
-    public bool isAreaJobQueue {
+    public bool isAreaOrQuestJobQueue {
         get { return character == null; }
     }
     public JobQueue(Character character) {
@@ -29,7 +29,7 @@ public class JobQueue {
         }
         job.OnAddJobToQueue();
 
-        if(!isAreaJobQueue) {
+        if(!isAreaOrQuestJobQueue) {
             //bool hasProcessed = false;
 
             //If the current action's job of the character is overridable and the added job has higher priority than it,
@@ -50,7 +50,7 @@ public class JobQueue {
                                 if(plan.job == null) {
                                     character.JustDropPlan(plan);
                                 } else {
-                                    if (plan.job.jobQueueParent.isAreaJobQueue) {
+                                    if (plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
                                         plan.job.UnassignJob(false);
                                     } else {
                                         character.JustDropPlan(plan);

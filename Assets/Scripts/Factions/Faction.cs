@@ -36,6 +36,7 @@ public class Faction {
     public bool isActive { get; private set; }
     public List<Log> history { get; private set; }
     public Region mainRegion { get { return ownedRegions[0]; } }
+    public Quest activeQuest { get; protected set; }
 
     public string requirementForJoining { get; private set; }
 
@@ -806,6 +807,29 @@ public class Faction {
                 log.goapAction.AdjustReferenceCount(1);
             }
             Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
+        }
+    }
+    #endregion
+
+    #region Quests
+    public void CreateAndSetActiveQuest(string name, Region region) {
+        var typeName = Utilities.RemoveAllWhiteSpace(name) + "Quest";
+        System.Type type = System.Type.GetType(typeName);
+        Quest quest = null;
+        if(type != null) {
+            quest = System.Activator.CreateInstance(type, this, region) as Quest;
+        } else {
+            quest = new Quest(this, region);
+        }
+        SetActiveQuest(quest);
+    }
+    public void SetActiveQuest(Quest quest) {
+        if(activeQuest != null) {
+            activeQuest.FinishQuest();
+        }
+        activeQuest = quest;
+        if(activeQuest != null) {
+            activeQuest.ActivateQuest();
         }
     }
     #endregion

@@ -508,6 +508,12 @@ public class AreaInfoUI : UIMenu {
         } else {
             summary += "None";
         }
+        summary += "\nActive Quest: ";
+        if(activeTile.region.owner != null && activeTile.region.owner.activeQuest != null) {
+            summary += activeTile.region.owner.activeQuest.name;
+        } else {
+            summary += "None";
+        }
 
         UIManager.Instance.ShowSmallInfo(summary);
     }

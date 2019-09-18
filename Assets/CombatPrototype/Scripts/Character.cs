@@ -5439,10 +5439,24 @@ public class Character : ILeader, IPointOfInterest {
                                 PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
                             }
                         } else {
-                            return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                            if (!homeArea.jobQueue.ProcessFirstJobInQueue(this)) {
+                                if(faction != null && faction.activeQuest != null) {
+                                    return faction.activeQuest.jobQueue.ProcessFirstJobInQueue(this);
+                                }
+                                return false;
+                            } else {
+                                return true;
+                            }
                         }
                     } else {
-                        return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                        if (!homeArea.jobQueue.ProcessFirstJobInQueue(this)) {
+                            if (faction != null && faction.activeQuest != null) {
+                                return faction.activeQuest.jobQueue.ProcessFirstJobInQueue(this);
+                            }
+                            return false;
+                        } else {
+                            return true;
+                        }
                     }
                 } else {
                     return false;
@@ -5463,10 +5477,24 @@ public class Character : ILeader, IPointOfInterest {
                                 PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
                             }
                         } else {
-                            return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                            if (!homeArea.jobQueue.ProcessFirstJobInQueue(this)) {
+                                if (faction != null && faction.activeQuest != null) {
+                                    return faction.activeQuest.jobQueue.ProcessFirstJobInQueue(this);
+                                }
+                                return false;
+                            } else {
+                                return true;
+                            }
                         }
                     } else {
-                        return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                        if (!homeArea.jobQueue.ProcessFirstJobInQueue(this)) {
+                            if (faction != null && faction.activeQuest != null) {
+                                return faction.activeQuest.jobQueue.ProcessFirstJobInQueue(this);
+                            }
+                            return false;
+                        } else {
+                            return true;
+                        }
                     }
                 } else {
                     return false;
@@ -7632,7 +7660,7 @@ public class Character : ILeader, IPointOfInterest {
             log += "\nThis action is the end of plan.";
             if (plan.job != null && plan.job.jobQueueParent != null) {
                 log += "\nRemoving job in queue...";
-                if (plan.job.jobQueueParent.isAreaJobQueue && GetNormalTrait("Hardworking") != null) {
+                if (plan.job.jobQueueParent.isAreaOrQuestJobQueue && GetNormalTrait("Hardworking") != null) {
                     log += "\nFinished a settlement job and character is hardworking, increase happiness by 3000...";
                     AdjustHappiness(3000);
                 }
