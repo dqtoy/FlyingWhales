@@ -135,6 +135,10 @@ public class Player : ILeader {
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
+
+        //minions
+        Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_ASSIGNED_PLAYER_LANDMARK, OnMinionAssignedToPlayerLandmark);
+        Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_UNASSIGNED_PLAYER_LANDMARK, OnMinionUnassignedFromPlayerLandmark);
     }
     #endregion
 
@@ -786,9 +790,10 @@ public class Player : ILeader {
     private void GainSummonSlot(bool showUI = true) {
         SummonSlot newSlot = new SummonSlot();
         summonSlots.Add(newSlot);
-        if (showUI) {
-            PlayerUI.Instance.ShowGeneralConfirmation("New Summon Slot", "You gained a new summon slot!");
-        }
+        //if (showUI) {
+        //    PlayerUI.Instance.ShowGeneralConfirmation("New Summon Slot", "You gained a new summon slot!");
+        //}
+        UIManager.Instance.ShowImportantNotification("You gained a summon slot!", null);
         Messenger.Broadcast<SummonSlot>(Signals.PLAYER_GAINED_SUMMON_SLOT, newSlot);
     }
     private void LoseSummonSlot() {
@@ -803,7 +808,8 @@ public class Player : ILeader {
     }
     private void LoseSummonSlot(SummonSlot slot, bool showUI = false) {
         if (summonSlots.Remove(slot)) {
-            PlayerUI.Instance.ShowGeneralConfirmation("Lost Summon Slot", "You lost a summon slot!");
+            //PlayerUI.Instance.ShowGeneralConfirmation("Lost Summon Slot", "You lost a summon slot!");
+            UIManager.Instance.ShowImportantNotification("You lost a summon slot!", null);
             if (slot.summon != null) {
                 ClearSummonData(slot.summon);
             }
@@ -996,28 +1002,6 @@ public class Player : ILeader {
         }
         return true;
     }
-    public void UnlockASummonSlotOrUpgradeExisting() {
-        if (summonSlots.Count == 0) {
-            GainSummonSlot();
-        } else {
-            PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "summon_slot");
-        }
-        
-        //if (AreAllSummonSlotsMaxLevel()) {
-        //    AdjustSummonSlot(1);
-        //    PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Summon Slot.");
-        //} else {
-        //    int chance = UnityEngine.Random.Range(0, 2);
-        //    if (chance == 0) {
-        //        //Unlock slot
-        //        AdjustSummonSlot(1);
-        //        PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Summon Slot.");
-        //    } else {
-        //        //Upgrade slot
-        //        PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "summon_slot");
-        //    }
-        //}
-    }
     private bool TryGetUnusedSummonSlot(out SummonSlot unusedSlot) {
         for (int i = 0; i < summonSlots.Count; i++) {
             SummonSlot currSlot = summonSlots[i];
@@ -1042,9 +1026,10 @@ public class Player : ILeader {
     private void GainArtifactSlot(bool showUI = true) {
         ArtifactSlot newSlot = new ArtifactSlot();
         artifactSlots.Add(newSlot);
-        if (showUI) {
-            PlayerUI.Instance.ShowGeneralConfirmation("New Artifact Slot", "You gained a new artifact slot!");
-        }
+        //if (showUI) {
+        //    PlayerUI.Instance.ShowGeneralConfirmation("New Artifact Slot", "You gained a new artifact slot!");
+        //}
+        UIManager.Instance.ShowImportantNotification("You gained a new artifact slot!", null);
         Messenger.Broadcast<ArtifactSlot>(Signals.PLAYER_GAINED_ARTIFACT_SLOT, newSlot);
     }
     private void LoseArtifactSlot() {
@@ -1263,27 +1248,6 @@ public class Player : ILeader {
         }
         return true;
     }
-    public void UnlockAnArtifactSlotOrUpgradeExisting() {
-        if (artifactSlots.Count == 0) {
-            GainArtifactSlot();
-        } else {
-            PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "artifact_slot");
-        }
-        //if (AreAllArtifactSlotsMaxLevel()) {
-        //    AdjustArtifactSlot(1);
-        //    PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Artifact Slot.");
-        //} else {
-        //    int chance = UnityEngine.Random.Range(0, 2);
-        //    if (chance == 0) {
-        //        //Unlock slot
-        //        AdjustArtifactSlot(1);
-        //        PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "You gained 1 Artifact Slot.");
-        //    } else {
-        //        //Upgrade slot
-        //        PlayerUI.Instance.levelUpUI.ShowLevelUpUI(null, "artifact_slot");
-        //    }
-        //}
-    }
     private bool TryGetUnusedArtifactSlot(out ArtifactSlot unusedSlot) {
         for (int i = 0; i < artifactSlots.Count; i++) {
             ArtifactSlot currSlot = artifactSlots[i];
@@ -1403,7 +1367,7 @@ public class Player : ILeader {
             //ResetArtifacts();
             //LevelUpAllMinions();
         } else {
-            PlayerUI.Instance.ShowGeneralConfirmation("Failure", "You failed to invade " + currentAreaBeingInvaded.name + ".");
+            UIManager.Instance.ShowImportantNotification("You failed to invade " + currentAreaBeingInvaded.name + ".", () => UIManager.Instance.ShowHextileInfo(currentAreaBeingInvaded.coreTile));
         }
         for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
@@ -1667,6 +1631,47 @@ public class Player : ILeader {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickDivineIntervention);
             //TODO: What happens if divine intervention happens
         }
+    }
+    #endregion
+
+    #region The Eye
+    private int listenToWorldEvents; //This is incremented everytime a minion is assigned/unassigned to The Eye. This makes the player listen for events.
+    private bool isAlreadyListeningToEvents { get { return listenToWorldEvents > 1; } } //This is used to check if the player is already listening to events. Which in this case means that the listenToWorldEvents is greater than 1 meaning it has already started listening for events atleast once
+    private void OnMinionAssignedToPlayerLandmark(Minion minion, BaseLandmark landmark) {
+        if (landmark.specificLandmarkType == LANDMARK_TYPE.THE_EYE) {
+            AdjustListenToEvents(1);
+        }
+    }
+    private void OnMinionUnassignedFromPlayerLandmark(Minion minion, BaseLandmark landmark) {
+        if (landmark.specificLandmarkType == LANDMARK_TYPE.THE_EYE) {
+            AdjustListenToEvents(-1);
+        }
+    }
+    private void AdjustListenToEvents(int adjustment) {
+        listenToWorldEvents += adjustment;
+        if (listenToWorldEvents > 0) {
+            StartListeningToEvents();
+        } else if (listenToWorldEvents <= 0) {
+            StopListeningToEvents();
+        }
+    }
+    private void StartListeningToEvents() {
+        if (isAlreadyListeningToEvents) {
+            return;
+        }
+        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnEventSpawned);
+
+    }
+    private void StopListeningToEvents() {
+        Messenger.RemoveListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnEventSpawned);
+    }
+    private void OnEventSpawned(Region region, WorldEvent we) {
+        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", "Generic", "spawned");
+        log.AddToFillers(null, we.name, LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
+        //PlayerManager.Instance.player.ShowNotification(log);
+        UIManager.Instance.ShowImportantNotification(Utilities.LogReplacer(log), () => UIManager.Instance.ShowRegionInfo(region));
+        TimerHubUI.Instance.AddItem(we.name + " event at " + region.name, we.duration, () => UIManager.Instance.ShowRegionInfo(region));
     }
     #endregion
 }

@@ -44,14 +44,6 @@ public class WorldEvent  {
         //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
         //AddDefaultFillersToLog(log, landmark);
         isCurrentlySpawned = true;
-        if (PlayerManager.Instance.player.HasMinionAssignedTo(LANDMARK_TYPE.THE_EYE)) {
-            //notify player
-            Log log = new Log(GameManager.Instance.Today(), "WorldEvent", "Generic", "spawned");
-            log.AddToFillers(null, name, LOG_IDENTIFIER.STRING_1);
-            log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
-            PlayerManager.Instance.player.ShowNotification(log);
-            TimerHubUI.Instance.AddItem(this.name + " event at " + region.name, duration, () => UIManager.Instance.ShowHextileInfo(region.coreTile));
-        }
     }
     public virtual void Load(Region region, Character spawner, IWorldEventData eventData, out string afterEffectScheduleID) {
         GameDate startDate = GameManager.Instance.Today();
@@ -64,14 +56,6 @@ public class WorldEvent  {
         //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
         //AddDefaultFillersToLog(log, landmark);
         isCurrentlySpawned = true;
-        if (PlayerManager.Instance.player.HasMinionAssignedTo(LANDMARK_TYPE.THE_EYE)) {
-            //notify player
-            Log log = new Log(GameManager.Instance.Today(), "WorldEvent", "Generic", "spawned");
-            log.AddToFillers(null, name, LOG_IDENTIFIER.STRING_1);
-            log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
-            PlayerManager.Instance.player.ShowNotification(log);
-            TimerHubUI.Instance.AddItem(this.name + " event at " + region.name, ticksDiff, () => UIManager.Instance.ShowHextileInfo(region.coreTile));
-        }
     }
     private void TryExecuteAfterEffect(Region region, Character spawner) {
         if (region.eventData.interferingCharacter != null) {

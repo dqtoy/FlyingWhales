@@ -14,7 +14,7 @@ public class DemonStone : SpecialObject {
     public override void Obtain() {
         base.Obtain();
         //show begin summon UI
-        PlayerUI.Instance.ShowGeneralConfirmation("Demon Stone", "You've obtained a Demon Stone, you can expect a new minion after 24 hours", "Begin Invocation", ScheduleInvocation);
+        UIManager.Instance.ShowImportantNotification("You found a demon stone!", () => PlayerUI.Instance.ShowGeneralConfirmation("Demon Stone", "You've obtained a Demon Stone, you can expect a new minion after 24 hours", "Begin Invocation", ScheduleInvocation));
     }
     #endregion
 
@@ -28,7 +28,8 @@ public class DemonStone : SpecialObject {
 
     private void OnInvocationDone() {
         Minion minion = PlayerManager.Instance.player.CreateNewMinionRandomClass();
-        PlayerManager.Instance.player.AddMinion(minion, true);
+        //PlayerManager.Instance.player.AddMinion(minion, true);
+        UIManager.Instance.ShowImportantNotification("Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(minion, true));
     }
 
     public void LoadInvocation(SaveDataDemonStone data) {

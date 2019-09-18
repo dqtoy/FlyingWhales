@@ -49,7 +49,7 @@ public class ThePortal : BaseLandmark {
     }
     private void SummonMinion() {
         Minion minion = PlayerManager.Instance.player.CreateNewMinion(currentMinionClassToSummon, RACE.DEMON);
-        PlayerManager.Instance.player.AddMinion(minion, true);
+        UIManager.Instance.ShowImportantNotification("Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(minion, true));
         PlayerManager.Instance.player.GenerateMinionClassesToSummon();
     }
     private void StopSummon() {

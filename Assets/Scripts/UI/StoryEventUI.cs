@@ -30,9 +30,9 @@ public class StoryEventUI : MonoBehaviour {
         //5. If the player made a choice in (3) that had an event attached: go to (1) for that event
         string additionalText = string.Empty;
         collectedEffects.Clear();
-        if (storyEvent.effects != null) {
-            StoryEventsManager.Instance.CollectEffects(storyEvent, out additionalText, out collectedEffects);
-        }
+        //if (storyEvent.effects != null) {
+        //    StoryEventsManager.Instance.CollectEffects(storyEvent, out additionalText, out collectedEffects);
+        //}
         currentEvent = storyEvent;
         if (isRootEvent) { rootEvent = storyEvent; }
         eventTitleLbl.text = storyEvent.name;
@@ -43,13 +43,13 @@ public class StoryEventUI : MonoBehaviour {
             for (int i = 0; i < choices.Length; i++) {
                 EventChoiceItem item = choices[i];
                 StoryEventChoice currChoice = storyEvent.choices.ElementAtOrDefault(i);
-                if (currChoice != null && StoryEventsManager.Instance.DoesPlayerMeetChoiceRequirement(currChoice)) {
-                    hasChoice = true;
-                    item.SetChoice(currChoice, OnChooseChoice);
-                    item.gameObject.SetActive(true);
-                } else {
-                    item.gameObject.SetActive(false);
-                }
+                //if (currChoice != null && StoryEventsManager.Instance.DoesPlayerMeetChoiceRequirement(currChoice)) {
+                //    hasChoice = true;
+                //    item.SetChoice(currChoice, OnChooseChoice);
+                //    item.gameObject.SetActive(true);
+                //} else {
+                //    item.gameObject.SetActive(false);
+                //}
             }
         } else {
             for (int i = 0; i < choices.Length; i++) {
@@ -89,7 +89,7 @@ public class StoryEventUI : MonoBehaviour {
     private void ExecuteCollectedEffects() {
         for (int i = 0; i < collectedEffects.Count; i++) {
             StoryEventEffect currEffect = collectedEffects[i];
-            StoryEventsManager.Instance.ExecuteEffect(currEffect);
+            //StoryEventsManager.Instance.ExecuteEffect(currEffect);
         }
     }
 

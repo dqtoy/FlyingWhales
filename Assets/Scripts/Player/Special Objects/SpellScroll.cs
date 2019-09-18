@@ -10,7 +10,9 @@ public class SpellScroll : SpecialObject {
     public override void Obtain() {
         base.Obtain();
         INTERVENTION_ABILITY[] spells = PlayerManager.Instance.allInterventionAbilities;
-        PlayerManager.Instance.player.GainNewInterventionAbility(spells[Random.Range(0, spells.Length)], true);
+        INTERVENTION_ABILITY chosenSpell = spells[Random.Range(0, spells.Length)];
+        
+        UIManager.Instance.ShowImportantNotification("Gained Intervention Ability: " + Utilities.NormalizeStringUpperCaseFirstLetters(chosenSpell.ToString()), () => PlayerManager.Instance.player.GainNewInterventionAbility(chosenSpell, true));
     }
     #endregion
 }
