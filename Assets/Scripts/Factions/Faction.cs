@@ -695,6 +695,12 @@ public class Faction {
         }
         return false;
     }
+    public bool HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS stat, Faction faction) {
+        if (relationships.ContainsKey(faction)) {
+            return relationships[faction].relationshipStatus == stat;
+        }
+        return false;
+    }
     public Faction GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
             if (excludePlayer && kvp.Key.id == PlayerManager.Instance.player.playerFaction.id) {

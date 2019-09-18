@@ -648,6 +648,10 @@ public class Region {
     public void AddFactionHere(Faction faction) {
         if (!IsFactionHere(faction)) {
             factionsHere.Add(faction);
+            //Once a faction is added and there is no ruling faction yet, automatically let the added faction own the region
+            if(owner == null) {
+                LandmarkManager.Instance.OwnRegion(faction, faction.race, this);
+            }
         }
     }
     public void RemoveFactionHere(Faction faction) {

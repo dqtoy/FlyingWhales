@@ -435,23 +435,36 @@ public class Area {
     public bool IsResident(Character character) {
         return areaResidents.Contains(character);
     }
-    public void AddResident(Character character, Dwelling chosenHome = null, bool ignoreCapacity = true) {
+    public bool AddResident(Character character, Dwelling chosenHome = null, bool ignoreCapacity = true) {
         if (!areaResidents.Contains(character)) {
             if (!ignoreCapacity) {
                 if (IsResidentsFull()) {
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + "Cannot add " + character.name + " as resident of " + this.name + " because residency is already full!");
-                    return; //area is at capacity
+                    return false; //area is at capacity
                 }
+            }
+            if (!CanCharacterBeAddedAsResidentBasedOnFaction(character)) {
+                character.PrintLogIfActive(GameManager.Instance.TodayLogString() + character.name + " tried to become a resident of " + name + " but their factions conflicted");
+                return false;
             }
             character.SetHome(this);
             areaResidents.Add(character);
-            //if (PlayerManager.Instance.player == null || PlayerManager.Instance.player.playerArea.id != this.id) {
 #if !WORLD_CREATION_TOOL
             AssignCharacterToDwellingInArea(character, chosenHome);
 #endif
-            //}
-            //Messenger.Broadcast(Signals.AREA_RESIDENT_ADDED, this, character);
+            return true;
         }
+        return false;
+    }
+    private bool CanCharacterBeAddedAsResidentBasedOnFaction(Character character) {
+        if (region.owner != null && character.faction != null) {
+            //If character's faction is hostile with region's ruling faction, character cannot be a resident
+            return !region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, character.faction);
+        }else if (region.owner != null && character.faction == null) {
+            //If character has no faction and region has faction, character cannot be a resident
+            return false;
+        }
+        return true;
     }
     public void AssignCharacterToDwellingInArea(Character character, Dwelling dwellingOverride = null) {
         if (character.faction != FactionManager.Instance.neutralFaction && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {

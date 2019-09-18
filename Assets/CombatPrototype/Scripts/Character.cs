@@ -4219,16 +4219,19 @@ public class Character : ILeader, IPointOfInterest {
         }
         return false;
     }
-    public void MigrateHomeTo(Area newHomeArea, Dwelling homeStructure = null, bool broadcast = true) {
+    public bool MigrateHomeTo(Area newHomeArea, Dwelling homeStructure = null, bool broadcast = true) {
         Area previousHome = null;
         if (homeArea != null) {
             previousHome = homeArea;
             homeArea.RemoveResident(this);
         }
-        newHomeArea.AddResident(this, homeStructure);
-        if (broadcast) {
-            Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeArea);
+        if(newHomeArea.AddResident(this, homeStructure)) {
+            if (broadcast) {
+                Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeArea);
+            }
+            return true;
         }
+        return false;
     }
     public void MigrateHomeStructureTo(Dwelling dwelling) {
         if (this.homeStructure != null) {
