@@ -118,6 +118,7 @@ public class PlayerManager : MonoBehaviour {
         LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, chosenRegion);
         //AddTileToPlayerArea(chosenRegion.coreTile);
         chosenRegion.mainLandmark.ChangeLandmarkType(LANDMARK_TYPE.NONE);
+        chosenRegion.SetWorldObject(null);
     }
     public void InitializePlayer(SaveDataPlayer data) {
         player = new Player(data);

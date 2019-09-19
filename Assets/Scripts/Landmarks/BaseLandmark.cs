@@ -46,7 +46,7 @@ public class BaseLandmark {
     #endregion
 
     public BaseLandmark() {
-        invasionTicks = 10;//GameManager.ticksPerDay;
+        invasionTicks = 12;//;
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);

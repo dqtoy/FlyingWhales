@@ -8,6 +8,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
     [Header("General")]
     public Button buildBtn;
     public Image buildProgress;
+    public TextMeshProUGUI descriptionLbl;
 
     [Header("Minion")]
     public TextMeshProUGUI minionName;
@@ -46,7 +47,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
             UpdateSelectLandmarkBtn();
             UpdatePlayerBuildLandmarkUI();
         }
-
+        UpdateDescriptionText();
         gameObject.SetActive(true);
     }
     public void HidePlayerBuildLandmarkUI() {
@@ -73,6 +74,18 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         if(currentTile.region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE && buildProgress.gameObject.activeSelf) {
             buildProgress.fillAmount = currentTile.region.demonicBuildingData.currentDuration / (float)currentTile.region.demonicBuildingData.buildDuration;
         }
+    }
+    private void UpdateDescriptionText() {
+        List<string> cannotBuildReasons;
+        if (!currentTile.CanBuildDemonicLandmarksOnTile(out cannotBuildReasons)) {
+            descriptionLbl.text = "You cannot build on this because of the following reasons: ";
+            for (int i = 0; i < cannotBuildReasons.Count; i++) {
+                descriptionLbl.text += "\n- " + cannotBuildReasons[i];
+            }
+        } else {
+            descriptionLbl.text = "Assign a minion here to build a Demonic Structure of your choosing.";
+        }
+        descriptionLbl.gameObject.SetActive(true);
     }
     #endregion
 

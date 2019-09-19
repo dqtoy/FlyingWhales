@@ -1302,4 +1302,21 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         this.region = region;
     }
     #endregion
+
+    #region Utilities
+    /// <summary>
+    /// Can demonic landmarks be built on this tile.
+    /// </summary>
+    /// <param name="reasons">A list of reasons why this tile cannot be built on.</param>
+    /// <returns>True or false</returns>
+    public bool CanBuildDemonicLandmarksOnTile(out List<string> reasons) {
+        reasons = new List<string>();
+        bool canBeBuiltOn = true;
+        if (tileTags.Contains(TILE_TAG.HALLOWED_GROUNDS)) {
+            canBeBuiltOn = false;
+            reasons.Add("This location is Hallowed Ground, Demonic Structures cannot be built on it until it is defiled.");
+        }
+        return canBeBuiltOn;
+    }
+    #endregion
 }

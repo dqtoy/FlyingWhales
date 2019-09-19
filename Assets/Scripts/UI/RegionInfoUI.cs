@@ -83,7 +83,7 @@ public class RegionInfoUI : UIMenu {
 
     private void UpdateSwitchUIBtn() {
         //for now can only switch UI between region and area ui if the tile in question has a player landamrk on it. Since the player landmarks have their own ui but other events can happen on it that require the region ui.
-        switchUIBtn.gameObject.SetActive(activeRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark());
+        switchUIBtn.gameObject.SetActive(activeRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark() || activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE);
     }
     public void SwitchUI() {
         UIManager.Instance.ShowAreaInfo(activeRegion.coreTile);
@@ -93,7 +93,7 @@ public class RegionInfoUI : UIMenu {
     private void UpdateBasicInfo() {
         locationPortrait.SetLocation(activeRegion);
         regionNameLbl.text = activeRegion.name;
-        regionTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(activeRegion.mainLandmark.specificLandmarkType.ToString());
+        regionTypeLbl.text = activeRegion.mainLandmark.specificLandmarkType.LandmarkToString();
     }
     #endregion
 
