@@ -319,7 +319,7 @@ public class TileObject : IPointOfInterest {
         OnTileObjectGainedTrait(trait);
         return true;
     }
-    public virtual bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
+    public virtual bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
         if (_traits.Remove(trait)) {
             trait.RemoveExpiryTicket(this);
             if (triggerOnRemove) {

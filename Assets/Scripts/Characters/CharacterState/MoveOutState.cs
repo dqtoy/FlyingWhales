@@ -176,6 +176,10 @@ public class MoveOutState : CharacterState {
     }
 
     private List<Region> GetValidRegionsToDoJob(Character character) {
+        if (job == null) {
+            throw new System.Exception(GameManager.Instance.TodayLogString() + character.name + " is checking for valid regions to do job but his/her job is null.");
+        }
+
         List<LANDMARK_TYPE> validLandmarkTypes = new List<LANDMARK_TYPE>();
         if (job.jobType == JOB_TYPE.DESTROY_PROFANE_LANDMARK) {
             validLandmarkTypes.Add(LANDMARK_TYPE.THE_PROFANE);

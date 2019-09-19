@@ -30,7 +30,7 @@ public class SaveDataRegion {
 
     public void Save(Region region) {
         id = region.id;
-        name = region.name;
+        name = region.regionName;
 
         tileIDs = new List<int>();
         for (int i = 0; i < region.tiles.Count; i++) {

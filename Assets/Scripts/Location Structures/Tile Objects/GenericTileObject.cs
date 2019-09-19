@@ -17,7 +17,7 @@ public class GenericTileObject : TileObject {
     public override List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
         return gridTileLocation.RemoveAllTraitsByType(traitType);
     }
-    public override bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
+    public override bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
         return gridTileLocation.RemoveTrait(trait, triggerOnRemove, removedBy);
     }
     public override bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {

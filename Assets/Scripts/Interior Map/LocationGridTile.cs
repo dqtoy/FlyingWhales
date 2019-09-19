@@ -641,7 +641,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         }
         return true;
     }
-    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
+    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
         if (_traits.Remove(trait)) {
             trait.RemoveExpiryTicket(this);
             if (triggerOnRemove) {
