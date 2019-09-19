@@ -54,7 +54,7 @@ public class ThePortal : BaseLandmark {
         minion.SetCombatAbility(minionData.combatAbility);
         minion.SetRandomResearchInterventionAbilities(minionData.interventionAbilitiesToResearch);
 
-	UIManager.Instance.ShowImportantNotification("Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(minion, true));
+	UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(minion, true));
         PlayerManager.Instance.player.GenerateMinionsToSummon();
     }
     private void StopSummon() {

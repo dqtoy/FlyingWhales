@@ -247,7 +247,7 @@ public class Region {
         if (demonicInvasionData.currentDuration >= mainLandmark.invasionTicks) {
             //invaded.
             Invade();
-            UIManager.Instance.ShowImportantNotification("You have successfully invaded " + this.name, () => UIManager.Instance.ShowHextileInfo(coreTile));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You have successfully invaded " + this.name, () => UIManager.Instance.ShowHextileInfo(coreTile));
             Messenger.RemoveListener(Signals.TICK_STARTED, PerInvasionTick);
         } else {
             DemonicLandmarkInvasionData tempData = demonicInvasionData;
@@ -318,7 +318,7 @@ public class Region {
         BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(coreTile, demonicBuildingData.landmarkType);
         newLandmark.OverrideID(previousID);
 
-        UIManager.Instance.ShowImportantNotification("Finished building " + Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString()) + " at " + this.name, () => UIManager.Instance.ShowHextileInfo(coreTile));
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Finished building " + Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString()) + " at " + this.name, () => UIManager.Instance.ShowHextileInfo(coreTile));
         demonicBuildingData = new DemonicLandmarkBuildingData();
         //assignedMinion.SetAssignedRegion(null);
         //SetAssignedMinion(null);
@@ -381,7 +381,7 @@ public class Region {
                 case LANDMARK_TYPE.BARRACKS:
                 case LANDMARK_TYPE.OUTPOST:
                     PlayerManager.Instance.player.LevelUpAllMinions();
-                    UIManager.Instance.ShowImportantNotification("All your minions have levelled up!", () => PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "All your minions gained 1 level."));
+                    UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All your minions have levelled up!", () => PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "All your minions gained 1 level."));
                     break;
                     //case LANDMARK_TYPE.FARM:
                     //    PlayerManager.Instance.player.UnlockASummonSlotOrUpgradeExisting();

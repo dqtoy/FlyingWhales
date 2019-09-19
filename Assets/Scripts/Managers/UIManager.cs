@@ -1402,10 +1402,10 @@ public class UIManager : MonoBehaviour {
     [Header("Important Notification")]
     [SerializeField] private ScrollRect importantNotifScrollView;
     [SerializeField] private GameObject importantNotifPrefab;
-    public void ShowImportantNotification(string message, System.Action onClickAction) {
+    public void ShowImportantNotification(GameDate date, string message, System.Action onClickAction) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(importantNotifPrefab.name, Vector3.zero, Quaternion.identity, importantNotifScrollView.content);
         ImportantNotificationItem item = go.GetComponent<ImportantNotificationItem>();
-        item.Initialize(message, onClickAction);
+        item.Initialize(date, message, onClickAction);
     }
     #endregion
 }

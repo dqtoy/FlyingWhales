@@ -108,9 +108,11 @@ public class CombatState : CharacterState {
     }
     public override void AfterExitingState() {
         base.AfterExitingState();
-        for (int i = 0; i < stateComponent.character.marker.inVisionCharacters.Count; i++) {
-            Character currCharacter = stateComponent.character.marker.inVisionCharacters[i];
-            stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
+        if (!stateComponent.character.isDead) { //Made it so that dead characters no longer check invision characters after exiting a state.
+            for (int i = 0; i < stateComponent.character.marker.inVisionCharacters.Count; i++) {
+                Character currCharacter = stateComponent.character.marker.inVisionCharacters[i];
+                stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
+            }
         }
     }
     #endregion

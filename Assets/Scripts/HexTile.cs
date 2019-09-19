@@ -425,7 +425,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
 
-        if(UnityEngine.Random.Range(0,100) < 20) {
+        if (UnityEngine.Random.Range(0, 100) < 20) {
             AddTileTag(TILE_TAG.HALLOWED_GROUNDS);
         }
     }
@@ -935,6 +935,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             summary += "\n\t- " + connection.mainLandmark.specificLandmarkType.ToString() + " " + connection.coreTile.locationName;
         }
         summary += "\nArea: " + areaOfTile?.name;
+        summary += "\nTags: ";
+        for (int i = 0; i < region.coreTile.tileTags.Count; i++) {
+            summary += "|" + region.coreTile.tileTags[i].ToString() + "|";
+        }
         //summary += "\nNeighbours: " + AllNeighbours.Count.ToString();
         //for (int i = 0; i < AllNeighbours.Count; i++) {
         //    HexTile currNeighbour = AllNeighbours[i];

@@ -55,11 +55,20 @@ public class DivineInterventionQuest : Quest {
     }
 
     private void TryCreateBuildGoddessStatueJob() {
-        if (GameManager.Instance.tick == 72 && UnityEngine.Random.Range(0, 100) < 20) { //72 = 6:00AM
-            if (!jobQueue.HasJob(JOB_TYPE.BUILD_GODDESS_STATUE) && IsThereStillEmptyGoddessStatueSpot()) {
+        if (GameManager.Instance.tick == 72) { //72 = 6:00AM
+            string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
+            int roll = UnityEngine.Random.Range(0, 100);
+            bool hasExistingJob = jobQueue.HasJob(JOB_TYPE.BUILD_GODDESS_STATUE);
+            bool hasEmptyGoddessStatue = IsThereStillEmptyGoddessStatueSpot();
+            summary += "\nRoll is: " + roll.ToString();
+            summary += "\nHas Existing Job?: " + hasExistingJob.ToString();
+            summary += "\nHas empty goddess statue?: " + hasEmptyGoddessStatue.ToString();
+            if (roll < 20 && !hasExistingJob && hasEmptyGoddessStatue) {
+                summary += "\nMet all requirements, creating build goddess statue job.";
                 //Create Job Here
                 CreateBuildGoddessStatueJob();
             }
+            Debug.Log(summary);
         }
     }
     private bool CanCharacterTakeBuildGoddessStatueJob(Character character, JobQueueItem item) {
@@ -70,11 +79,20 @@ public class DivineInterventionQuest : Quest {
     }
 
     private void TryCreateDestroyProfaneLandmarkJob() {
-        if (GameManager.Instance.tick == 72 && UnityEngine.Random.Range(0, 100) < 20) { //72 = 6:00AM
-            if (!jobQueue.HasJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK) && AreThereProfaneLandmarks()) {
+        if (GameManager.Instance.tick == 72) { //72 = 6:00AM
+            string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
+            int roll = UnityEngine.Random.Range(0, 100);
+            bool hasExistingJob = jobQueue.HasJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK);
+            bool hasProfaneLandmarks = AreThereProfaneLandmarks();
+            summary += "\nRoll is: " + roll.ToString();
+            summary += "\nHas Existing Job?: " + hasExistingJob.ToString();
+            summary += "\nHas profane landmarks?: " + hasProfaneLandmarks.ToString();
+            if (roll < 20 && !hasExistingJob && hasProfaneLandmarks) {
+                summary += "\nMet all requirements, creating destroy profane job.";
                 //Create Job Here
                 CreateDestroyProfaneJob();
             }
+            Debug.Log(summary);
         }
     }
     private bool AreThereProfaneLandmarks() {
@@ -87,11 +105,20 @@ public class DivineInterventionQuest : Quest {
         return false;
     }
     private void TryCreatePerformHolyIncantationJob() {
-        if (GameManager.Instance.tick == 72 && UnityEngine.Random.Range(0, 100) < 20) { //72 = 6:00AM
-            if (!jobQueue.HasJob(JOB_TYPE.PERFORM_HOLY_INCANTATION) && AreThereHallowedGrounds()) {
+        if (GameManager.Instance.tick == 72) { //72 = 6:00AM
+            string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
+            int roll = UnityEngine.Random.Range(0, 100);
+            bool hasExistingJob = jobQueue.HasJob(JOB_TYPE.PERFORM_HOLY_INCANTATION);
+            bool hasHallowedGrounds = AreThereHallowedGrounds();
+            summary += "\nRoll is: " + roll.ToString();
+            summary += "\nHas Existing Job?: " + hasExistingJob.ToString();
+            summary += "\nHas hallowed grounds?: " + hasHallowedGrounds.ToString();
+            if (roll < 20 && !hasExistingJob && hasHallowedGrounds) {
+                summary += "\nMet all requirements, creating holy incantation job.";
                 //Create Job Here
                 CreateHolyIncantationJob();
             }
+            Debug.Log(summary);
         }
     }
     private bool AreThereHallowedGrounds() {
