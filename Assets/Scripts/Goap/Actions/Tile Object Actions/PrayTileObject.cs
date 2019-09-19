@@ -46,7 +46,7 @@ public class PrayTileObject : GoapAction {
     public void AfterPraySuccess() {
         if (poiTarget is GoddessStatue) {
             //Speed up divine intervention by 4 hours
-            PlayerManager.Instance.player.AdjustDivineInterventionDuration(GameManager.Instance.GetTicksBasedOnHour(4));
+            PlayerManager.Instance.player.AdjustDivineInterventionDuration(-GameManager.Instance.GetTicksBasedOnHour(4));
         }
     }
     #endregion
