@@ -9,7 +9,6 @@ public class SaveDataRegion {
     public string name;
     public List<int> tileIDs;
     public int coreTileID;
-    public int ticksInInvasion;
     public ColorSave regionColor;
     public List<int> connectionsTileIDs;
 
