@@ -1125,6 +1125,9 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     public bool RelationshipImprovement(Character actor, Character target, GoapAction cause = null) {
+        if (actor.race == RACE.DEMON || target.race == RACE.DEMON || actor is Summon || target is Summon) {
+            return false; //do not let demons and summons have relationships
+        }
         if (actor.returnedToLife || target.returnedToLife) {
             return false; //do not let zombies or skeletons develop other relationships
         }
@@ -1173,6 +1176,9 @@ public class CharacterManager : MonoBehaviour {
         return RelationshipDegradation(actor.currentAlterEgo, target, cause);
     }
     public bool RelationshipDegradation(AlterEgoData actorAlterEgo, Character target, GoapAction cause = null) {
+        if (actorAlterEgo.owner.race == RACE.DEMON || target.race == RACE.DEMON || actorAlterEgo.owner is Summon || target is Summon) {
+            return false; //do not let demons and summons have relationships
+        }
         if (actorAlterEgo.owner.returnedToLife || target.returnedToLife) {
             return false; //do not let zombies or skeletons develop other relationships
         }
