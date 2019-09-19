@@ -894,16 +894,16 @@ public class UIManager : MonoBehaviour {
             characterInfoUI.UpdateCharacterInfo();
         }
     }
-    private void OnPartyStartedTravelling(Party party) {
-        if(characterInfoUI.isShowing && party.characters.Contains(characterInfoUI.activeCharacter)) {
-            characterInfoUI.activeCharacter.CenterOnCharacter();
-        }
-    }
-    private void OnPartyDoneTravelling(Party party) {
-        if (characterInfoUI.isShowing && party.characters.Contains(characterInfoUI.activeCharacter)) {
-            characterInfoUI.activeCharacter.CenterOnCharacter();
-        }
-    }
+    //private void OnPartyStartedTravelling(Party party) {
+    //    if(characterInfoUI.isShowing && party.characters.Contains(characterInfoUI.activeCharacter)) {
+    //        characterInfoUI.activeCharacter.CenterOnCharacter();
+    //    }
+    //}
+    //private void OnPartyDoneTravelling(Party party) {
+    //    if (characterInfoUI.isShowing && party.characters.Contains(characterInfoUI.activeCharacter)) {
+    //        characterInfoUI.activeCharacter.CenterOnCharacter();
+    //    }
+    //}
     public void OnCameraOutOfFocus() {
         if (characterInfoUI.isShowing) {
             characterInfoUI.OnClickCloseMenu();

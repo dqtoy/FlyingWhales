@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿//#define TESTING_VALUES
+
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -58,7 +60,11 @@ public class DivineInterventionQuest : Quest {
     private void TryCreateBuildGoddessStatueJob() {
         if (GameManager.Instance.tick == 72 || GameManager.Instance.tick == 132) { //72 = 6:00AM, 132 = 11:00AM
             string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
+#if TESTING_VALUES
+            int roll = 0;
+#else
             int roll = UnityEngine.Random.Range(0, 100);
+#endif
             bool hasExistingJob = jobQueue.HasJob(JOB_TYPE.BUILD_GODDESS_STATUE);
             bool hasEmptyGoddessStatue = IsThereStillEmptyGoddessStatueSpot();
             summary += "\nRoll is: " + roll.ToString();
@@ -82,7 +88,11 @@ public class DivineInterventionQuest : Quest {
     private void TryCreateDestroyProfaneLandmarkJob() {
         if (GameManager.Instance.tick == 72 || GameManager.Instance.tick == 132) { //72 = 6:00AM, 132 = 11:00AM
             string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
+#if TESTING_VALUES
+            int roll = 0;
+#else
             int roll = UnityEngine.Random.Range(0, 100);
+#endif
             bool hasExistingJob = jobQueue.HasJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK);
             bool hasProfaneLandmarks = AreThereProfaneLandmarks();
             summary += "\nRoll is: " + roll.ToString();
@@ -108,7 +118,11 @@ public class DivineInterventionQuest : Quest {
     private void TryCreatePerformHolyIncantationJob() {
         if (GameManager.Instance.tick == 72 || GameManager.Instance.tick == 132) { //72 = 6:00AM, 132 = 11:00AM
             string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
+#if TESTING_VALUES
+            int roll = 0;
+#else
             int roll = UnityEngine.Random.Range(0, 100);
+#endif
             bool hasExistingJob = jobQueue.HasJob(JOB_TYPE.PERFORM_HOLY_INCANTATION);
             bool hasHallowedGrounds = AreThereHallowedGrounds();
             summary += "\nRoll is: " + roll.ToString();

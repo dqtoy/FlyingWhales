@@ -155,6 +155,7 @@ public class Minion {
             Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
 
             character.CancelAllJobsAndPlans();
+            StopInvasionProtocol();
 
             //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " died of " + cause);
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);

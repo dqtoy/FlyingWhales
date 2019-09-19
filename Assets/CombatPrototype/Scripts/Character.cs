@@ -2616,25 +2616,21 @@ public class Character : ILeader, IPointOfInterest {
     //public bool HasPathToParty(Party partyToJoin) {
     //    return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.PASSABLE, _faction) != null;
     //}
-    public void CenterOnCharacter(bool clickTravelLine = true) {
+    public void CenterOnCharacter() {
         if (marker != null) {
-            if (currentParty.icon.isTravelling) {
-                if (currentParty.icon.travelLine != null) {
-                    if (specificLocation.areaMap.isShowing) {
-                        InteriorMapManager.Instance.HideAreaMap();
-                        if (clickTravelLine) {
-                            currentParty.icon.travelLine.OnClickTravelLine();
-                        }
+            if (currentParty.icon.isTravellingOutside) {
+                if (specificLocation.areaMap.isShowing) {
+                    InteriorMapManager.Instance.HideAreaMap();
+                }
+                //CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
+                CameraMove.Instance.CenterCameraOn(homeArea.coreTile.gameObject);
+            }else if (currentParty.icon.isTravelling) {
+                if (marker.gameObject.activeInHierarchy) {
+                    bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
+                    if (!specificLocation.areaMap.isShowing) {
+                        InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
                     }
-                    CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
-                } else {
-                    if (marker.gameObject.activeInHierarchy) {
-                        bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
-                        if (!specificLocation.areaMap.isShowing) {
-                            InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
-                        }
-                        AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
-                    }
+                    AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 }
             } else if (currentLandmark != null) {
                 CameraMove.Instance.CenterCameraOn(currentLandmark.tileLocation.gameObject);
