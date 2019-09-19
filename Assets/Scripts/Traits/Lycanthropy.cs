@@ -36,6 +36,7 @@ public class Lycanthropy : Trait {
             lycanthropeAlterEgo.SetRole(CharacterRole.BEAST);
             lycanthropeAlterEgo.SetCharacterClass(CharacterManager.Instance.CreateNewCharacterClass(Utilities.GetRespectiveBeastClassNameFromByRace(RACE.WOLF)));
             lycanthropeAlterEgo.SetLevel(level);
+            lycanthropeAlterEgo.AddTrait(new Nocturnal());
             foreach (List<LocationStructure> structures in _character.specificLocation.structures.Values) {
                 for (int i = 0; i < structures.Count; i++) {
                     for (int j = 0; j < structures[i].pointsOfInterest.Count; j++) {

@@ -10,6 +10,10 @@ public class Restrained : Trait {
     public bool isCriminal { get; private set; }
     public bool isLeader { get; private set; }
 
+    public override bool isRemovedOnSwitchAlterEgo {
+        get { return true; }
+    }
+
     public Restrained() {
         name = "Restrained";
         description = "This character is restrained!";

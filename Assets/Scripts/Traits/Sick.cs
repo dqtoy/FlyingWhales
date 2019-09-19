@@ -5,7 +5,9 @@ using UnityEngine;
 public class Sick : Trait {
     private Character _sourceCharacter;
     //private GoapPlanJob _removeTraitJob;
-
+    public override bool isRemovedOnSwitchAlterEgo {
+        get { return true; }
+    }
     public Sick() {
         name = "Sick";
         description = "This character is sick.";
