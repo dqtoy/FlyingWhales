@@ -211,7 +211,7 @@ public class AlterEgoData {
         for (int i = 0; i < owner.normalTraits.Count; i++) {
             Trait currTrait = owner.normalTraits[i];
             if (!currTrait.isPersistent && currTrait.type == TRAIT_TYPE.SPECIAL) {
-                this.traits.Add(currTrait);
+                traits.Add(currTrait);
             }
         }
     }

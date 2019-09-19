@@ -37,15 +37,17 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
             minionPortrait.gameObject.SetActive(false);
             landmarkText.gameObject.SetActive(false);
             landmarkImg.gameObject.SetActive(false);
-            selectMinionBtn.interactable = true;
-            selectLandmarkBtn.interactable = true;
+            //selectMinionBtn.interactable = true;
+            //selectLandmarkBtn.interactable = true;
         } else {
             SetChosenMinion(currentTile.region.assignedMinion.character);
             SetChosenLandmark(currentTile.region.demonicBuildingData.landmarkName);
-            UpdateSelectMinionBtn();
-            UpdateSelectLandmarkBtn();
+            //UpdateSelectMinionBtn();
+            //UpdateSelectLandmarkBtn();
             UpdatePlayerBuildLandmarkUI();
         }
+        UpdateSelectMinionBtn();
+        UpdateSelectLandmarkBtn();
 
         gameObject.SetActive(true);
     }

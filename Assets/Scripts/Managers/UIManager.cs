@@ -337,6 +337,7 @@ public class UIManager : MonoBehaviour {
         UpdateTileObjectInfo();
         UpdateRegionInfo();
         UpdateAreaInfo();
+        UpdateQuestInfo();
     }
 
     #region World Controls
@@ -1017,6 +1018,21 @@ public class UIManager : MonoBehaviour {
     //        combatLogUI.UpdateCombatLogs();
     //    }
     //}
+    #endregion
+
+    #region Quest Info
+    [Space(10)]
+    [Header("Quest UI")]
+    public QuestInfoUI questInfoUI;
+    public void ShowQuestInfo(Quest quest) {
+        questInfoUI.ShowQuestInfoUI(quest);
+    }
+    public void UpdateQuestInfo() {
+        if (questInfoUI.gameObject.activeSelf) {
+            questInfoUI.UpdateQuestInfo();
+        }
+    }
+
     #endregion
 
     #region Console
