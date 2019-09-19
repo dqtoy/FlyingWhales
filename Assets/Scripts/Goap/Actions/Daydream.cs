@@ -16,6 +16,7 @@ public class Daydream : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
+            TIME_IN_WORDS.LUNCH_TIME,
             TIME_IN_WORDS.AFTERNOON,
         };
         actionIconString = GoapActionStateDB.Entertain_Icon;
