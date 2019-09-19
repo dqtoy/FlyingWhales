@@ -53,7 +53,7 @@ public class Vampiric : Trait {
             Character character = sourceCharacter as Character;
             character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
             character.SetTirednessForcedTick();
-            character.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.AFTERNOON);
+            character.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
             character.SetFullnessForcedTick();
             character.AdjustDoNotGetTired(-1);
             character.AdjustAttackMod(-_flatAttackMod);

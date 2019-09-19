@@ -11,6 +11,7 @@ public class Drink : GoapAction {
         if (actor.GetNormalTrait("Alcoholic") != null) {
             validTimeOfDays = new TIME_IN_WORDS[] {
                 TIME_IN_WORDS.MORNING,
+                TIME_IN_WORDS.LUNCH_TIME,
                 TIME_IN_WORDS.AFTERNOON,
                 TIME_IN_WORDS.AFTER_MIDNIGHT,
                 TIME_IN_WORDS.EARLY_NIGHT,

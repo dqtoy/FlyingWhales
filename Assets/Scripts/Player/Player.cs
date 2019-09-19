@@ -1627,10 +1627,12 @@ public class Player : ILeader {
             } else {
                 currentDivineInterventionTick = 0;
                 //TODO: What happens if divine intervention happens
+                PlayerUI.Instance.GameOver("The gods have arrived and wiped you off from the face of this planet!");
             }
-        } else {
-            Debug.LogError("Cannot adjust divine intervention duration becuuase it is already done!");
-        }
+        } 
+        //else {
+        //    Debug.LogError("Cannot adjust divine intervention duration becuuase it is already done!");
+        //}
     }
     private void PerTickDivineIntervention() {
         currentDivineInterventionTick--;
@@ -1638,6 +1640,7 @@ public class Player : ILeader {
             currentDivineInterventionTick = 0;
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickDivineIntervention);
             //TODO: What happens if divine intervention happens
+            PlayerUI.Instance.GameOver("The gods have arrived and wiped you off from the face of this planet!");
         }
     }
     #endregion

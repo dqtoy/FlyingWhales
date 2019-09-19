@@ -31,7 +31,7 @@ public class Nocturnal : Trait {
         base.OnRemoveTrait(sourcePOI, removedBy);
         if (sourcePOI is Character) {
             Character character = sourcePOI as Character;
-            character.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.AFTERNOON);
+            character.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
             character.SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
             character.SetFullnessForcedTick();
             character.SetTirednessForcedTick();

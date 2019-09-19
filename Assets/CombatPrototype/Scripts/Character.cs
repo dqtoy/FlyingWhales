@@ -571,7 +571,7 @@ public class Character : ILeader, IPointOfInterest {
         fullnessLowerBound = 0;
         happinessLowerBound = 0;
         SetPOIState(POI_STATE.ACTIVE);
-        SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.AFTERNOON);
+        SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
         SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
         SetFullnessForcedTick();
         SetTirednessForcedTick();
@@ -3761,6 +3761,7 @@ public class Character : ILeader, IPointOfInterest {
         goapPlan.ConstructAllNodes();
         goapPlan.SetDoNotRecalculate(true);
         job.SetCancelOnFail(true);
+        job.SetCancelJobOnDropPlan(true);
 
         jobQueue.AddJobInQueue(job, false);
         jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, this);
@@ -5362,6 +5363,8 @@ public class Character : ILeader, IPointOfInterest {
                 TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
                 if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
                     value = 30;
+                } else if (currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME) {
+                    value = 45;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                     value = 45;
                 } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
@@ -5410,6 +5413,7 @@ public class Character : ILeader, IPointOfInterest {
                 }
                 GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
                 job.SetCancelOnFail(true);
+                sleepScheduleJobID = job.id;
                 bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
                     || stateComponent.currentState != null || stateComponent.stateToDo != null;
                 jobQueue.AddJobInQueue(job, !willNotProcess);
@@ -5594,7 +5598,7 @@ public class Character : ILeader, IPointOfInterest {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
                 log += "\n-Otherwise, if it is Afternoon, 25% chance to nap if there is still an unoccupied Bed in the house";
-                if (currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                if (currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
@@ -5616,7 +5620,7 @@ public class Character : ILeader, IPointOfInterest {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
                 log += "\n-Otherwise, if it is Morning or Afternoon or Early Night, 25% chance to enter Stroll Outside Mode for 1 hour";
-                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
@@ -5629,7 +5633,7 @@ public class Character : ILeader, IPointOfInterest {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
                 log += "\n-Otherwise, if it is Morning or Afternoon, 25% chance to someone with a positive relationship in current location and then set it as the Base Structure for 2.5 hours";
-                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
@@ -5690,7 +5694,7 @@ public class Character : ILeader, IPointOfInterest {
 
                 log += "\n-If it is Morning or Afternoon, 25% chance to enter Stroll Outside Mode";
                 TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
-                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
@@ -5785,7 +5789,7 @@ public class Character : ILeader, IPointOfInterest {
                 log += "\n-" + name + " is in home area";
                 log += "\n-If it is Morning or Afternoon, 25% chance to play";
                 TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
-                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
@@ -7739,7 +7743,7 @@ public class Character : ILeader, IPointOfInterest {
             Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
             plan.EndPlan();
             if (plan.job != null) {
-                if (plan.job.cancelJobOnFail || forceCancelJob) {
+                if (plan.job.cancelJobOnFail || plan.job.cancelJobOnDropPlan || forceCancelJob) {
                     plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
                 }
                 plan.job.SetAssignedCharacter(null);
@@ -7759,6 +7763,9 @@ public class Character : ILeader, IPointOfInterest {
             Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
             plan.EndPlan();
             if (plan.job != null) {
+                if (plan.job.cancelJobOnDropPlan) {
+                    plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+                }
                 plan.job.SetAssignedCharacter(null);
                 plan.job.SetAssignedPlan(null);
             }

@@ -58,7 +58,7 @@ public class DivineInterventionQuest : Quest {
     }
 
     private void TryCreateBuildGoddessStatueJob() {
-        if (GameManager.Instance.tick == 72) { //72 = 6:00AM
+        if (GameManager.Instance.tick == 72 || GameManager.Instance.tick == 132) { //72 = 6:00AM, 132 = 11:00AM
             string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
 #if TESTING_VALUES
             int roll = 0;
@@ -86,7 +86,7 @@ public class DivineInterventionQuest : Quest {
     }
 
     private void TryCreateDestroyProfaneLandmarkJob() {
-        if (GameManager.Instance.tick == 72) { //72 = 6:00AM
+        if (GameManager.Instance.tick == 72 || GameManager.Instance.tick == 132) { //72 = 6:00AM, 132 = 11:00AM
             string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
 #if TESTING_VALUES
             int roll = 0;
@@ -116,7 +116,7 @@ public class DivineInterventionQuest : Quest {
         return false;
     }
     private void TryCreatePerformHolyIncantationJob() {
-        if (GameManager.Instance.tick == 72) { //72 = 6:00AM
+        if (GameManager.Instance.tick == 72 || GameManager.Instance.tick == 132) { //72 = 6:00AM, 132 = 11:00AM
             string summary = GameManager.Instance.TodayLogString() + " Will try to create build goddess statue job";
 #if TESTING_VALUES
             int roll = 0;
