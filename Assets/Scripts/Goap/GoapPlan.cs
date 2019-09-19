@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GoapPlan {
+
+    public string name { get; private set; }
     public IPointOfInterest target { get { return endNode.action.poiTarget; } }
     public GoapNode startingNode { get; private set; }
     public GoapNode endNode { get; private set; }
@@ -82,6 +84,7 @@ public class GoapPlan {
             allNodes.Add(node);
         }
         endNode = node;
+        name = "Plan of " +  endNode.action.actor.name + " to do " + endNode.action.goapName + " targetting " + target.name;
     }
     public int GetNumOfNodes() {
         if(allNodes.Count > 0) {
