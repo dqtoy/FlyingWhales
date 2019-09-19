@@ -4512,6 +4512,7 @@ public class Character : ILeader, IPointOfInterest {
         if (triggerOnAdd) {
             trait.OnAddTrait(this);
         }
+        currentAlterEgo.traits.Add(trait);
         Messenger.Broadcast(Signals.TRAIT_ADDED, this, trait);
 
 #if !WORLD_CREATION_TOOL
@@ -4541,7 +4542,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         return RemoveTrait(trait, triggerOnRemove);
     }
-    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
+    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
         bool removed = false;
         if (trait is RelationshipTrait) {
             removed = true;
@@ -4554,6 +4555,9 @@ public class Character : ILeader, IPointOfInterest {
             trait.RemoveExpiryTicket(this);
             if (triggerOnRemove) {
                 trait.OnRemoveTrait(this, removedBy);
+            }
+            if (includeAlterEgo) {
+                currentAlterEgo.traits.Remove(trait);
             }
             Messenger.Broadcast(Signals.TRAIT_REMOVED, this, trait);
             //if (trait is RelationshipTrait) {
@@ -4629,7 +4633,7 @@ public class Character : ILeader, IPointOfInterest {
     /// Remove all traits that are not persistent.
     /// NOTE: This does NOT remove relationships!
     /// </summary>
-    public void RemoveAllNonPersistentTraits() {
+    public void RemoveAllNonPersistentTraits(bool includeAlterEgo = true) {
         List<Trait> allTraits = new List<Trait>(this.normalTraits);
         for (int i = 0; i < allTraits.Count; i++) {
             Trait currTrait = allTraits[i];
@@ -4637,7 +4641,7 @@ public class Character : ILeader, IPointOfInterest {
             //    continue; //skip
             //}
             if (!currTrait.isPersistent) {
-                RemoveTrait(currTrait);
+                RemoveTrait(currTrait, includeAlterEgo: includeAlterEgo);
             }
         }
     }    
@@ -8558,9 +8562,17 @@ public class Character : ILeader, IPointOfInterest {
         }
         if (alterEgos.ContainsKey(alterEgoName)) {
             isSwitchingAlterEgo = true;
+            for (int i = 0; i < normalTraits.Count; i++) {
+                Trait currTrait = normalTraits[i];
+                if (currTrait.isRemovedOnSwitchAlterEgo) {
+                    if (RemoveTrait(currTrait)) {
+                        i--;
+                    }
+                }
+            }
             //apply all alter ego changes here
             AlterEgoData alterEgoData = alterEgos[alterEgoName];
-            currentAlterEgo.CopySpecialTraits();
+            //currentAlterEgo.CopySpecialTraits();
 
             //Drop all plans except for the current action
             AdjustIsWaitingForInteraction(1);
@@ -8571,10 +8583,12 @@ public class Character : ILeader, IPointOfInterest {
             }
             AdjustIsWaitingForInteraction(-1);
 
+            SetHasCancelledSleepSchedule(false);
+            ResetSleepTicks();
             ResetFullnessMeter();
             ResetHappinessMeter();
             ResetTirednessMeter();
-            RemoveAllNonPersistentTraits();
+            RemoveAllNonPersistentTraits(false);
 
             SetHomeStructure(alterEgoData.homeStructure);
             ChangeFactionTo(alterEgoData.faction);

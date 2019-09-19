@@ -6,6 +6,9 @@ public class Unconscious : Trait {
     private Character _sourceCharacter;
     //private GoapPlanJob _restrainJob;
     //private GoapPlanJob _removeTraitJob;
+    public override bool isRemovedOnSwitchAlterEgo {
+        get { return true; }
+    }
 
     public Unconscious() {
         name = "Unconscious";

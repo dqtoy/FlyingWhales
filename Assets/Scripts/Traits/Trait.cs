@@ -28,10 +28,12 @@ public class Trait {
     public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
     public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
     public bool isDisabled { get; private set; }
+    public GameDate dateEstablished { get; protected set; }
+
     public virtual bool broadcastDuplicates { get { return false; } }
     public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
-    public GameDate dateEstablished { get; protected set; }
-    
+    public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
+
     //private Character _responsibleCharacter;
 
     private System.Action onRemoveAction;

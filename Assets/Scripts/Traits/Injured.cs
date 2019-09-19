@@ -10,6 +10,9 @@ public class Injured : Trait {
     public override bool broadcastDuplicates {
         get { return true; }
     }
+    public override bool isRemovedOnSwitchAlterEgo {
+        get { return true; }
+    }
     #endregion
 
     public Injured() {
