@@ -799,7 +799,7 @@ public class Player : ILeader {
         //if (showUI) {
         //    PlayerUI.Instance.ShowGeneralConfirmation("New Summon Slot", "You gained a new summon slot!");
         //}
-        UIManager.Instance.ShowImportantNotification("You gained a summon slot!", null);
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You gained a summon slot!", null);
         Messenger.Broadcast<SummonSlot>(Signals.PLAYER_GAINED_SUMMON_SLOT, newSlot);
     }
     private void LoseSummonSlot() {
@@ -815,7 +815,7 @@ public class Player : ILeader {
     private void LoseSummonSlot(SummonSlot slot, bool showUI = false) {
         if (summonSlots.Remove(slot)) {
             //PlayerUI.Instance.ShowGeneralConfirmation("Lost Summon Slot", "You lost a summon slot!");
-            UIManager.Instance.ShowImportantNotification("You lost a summon slot!", null);
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You lost a summon slot!", null);
             if (slot.summon != null) {
                 ClearSummonData(slot.summon);
             }
@@ -1035,7 +1035,7 @@ public class Player : ILeader {
         //if (showUI) {
         //    PlayerUI.Instance.ShowGeneralConfirmation("New Artifact Slot", "You gained a new artifact slot!");
         //}
-        UIManager.Instance.ShowImportantNotification("You gained a new artifact slot!", null);
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You gained a new artifact slot!", null);
         Messenger.Broadcast<ArtifactSlot>(Signals.PLAYER_GAINED_ARTIFACT_SLOT, newSlot);
     }
     private void LoseArtifactSlot() {
@@ -1373,7 +1373,7 @@ public class Player : ILeader {
             //ResetArtifacts();
             //LevelUpAllMinions();
         } else {
-            UIManager.Instance.ShowImportantNotification("You failed to invade " + currentAreaBeingInvaded.name + ".", () => UIManager.Instance.ShowHextileInfo(currentAreaBeingInvaded.coreTile));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You failed to invade " + currentAreaBeingInvaded.name + ".", () => UIManager.Instance.ShowHextileInfo(currentAreaBeingInvaded.coreTile));
         }
         for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
@@ -1677,7 +1677,7 @@ public class Player : ILeader {
         log.AddToFillers(null, we.name, LOG_IDENTIFIER.STRING_1);
         log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
         //PlayerManager.Instance.player.ShowNotification(log);
-        UIManager.Instance.ShowImportantNotification(Utilities.LogReplacer(log), () => UIManager.Instance.ShowRegionInfo(region));
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), Utilities.LogReplacer(log), () => UIManager.Instance.ShowRegionInfo(region));
         TimerHubUI.Instance.AddItem(we.name + " event at " + region.name, we.duration, () => UIManager.Instance.ShowRegionInfo(region));
     }
     #endregion

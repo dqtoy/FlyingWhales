@@ -1714,6 +1714,14 @@ public static class Extensions {
                 return false;
         }
     }
+    public static string LandmarkToString(this LANDMARK_TYPE type) {
+        switch (type) {
+            case LANDMARK_TYPE.NONE:
+                return "Empty";
+            default:
+                return Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+        }
+    }
     #endregion
 
     #region Hero Events

@@ -46,7 +46,7 @@ public class BaseLandmark {
     #endregion
 
     public BaseLandmark() {
-        invasionTicks = 10;//GameManager.ticksPerDay;
+        invasionTicks = 12;//;
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
@@ -119,7 +119,7 @@ public class BaseLandmark {
             tileLocation.region.SetAssignedMinion(null);
         }
         if (specificLandmarkType.IsPlayerLandmark()) {
-            UIManager.Instance.ShowImportantNotification(Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()) + " was destroyed!", () => UIManager.Instance.ShowHextileInfo(_location));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()) + " was destroyed!", () => UIManager.Instance.ShowHextileInfo(_location));
         }
         _location = null;
     }

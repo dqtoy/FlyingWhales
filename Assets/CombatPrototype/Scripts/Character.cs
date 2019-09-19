@@ -5105,7 +5105,7 @@ public class Character : ILeader, IPointOfInterest {
         ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
 
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this);
-        UIManager.Instance.ShowImportantNotification("Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(newMinion, true));
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(newMinion, true));
         //PlayerManager.Instance.player.AddMinion(newMinion);
 
 

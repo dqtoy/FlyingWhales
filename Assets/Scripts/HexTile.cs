@@ -425,7 +425,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
 
-        if(UnityEngine.Random.Range(0,100) < 20) {
+        if (UnityEngine.Random.Range(0, 100) < 20) {
             AddTileTag(TILE_TAG.HALLOWED_GROUNDS);
         }
     }
@@ -935,6 +935,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             summary += "\n\t- " + connection.mainLandmark.specificLandmarkType.ToString() + " " + connection.coreTile.locationName;
         }
         summary += "\nArea: " + areaOfTile?.name;
+        summary += "\nTags: ";
+        for (int i = 0; i < region.coreTile.tileTags.Count; i++) {
+            summary += "|" + region.coreTile.tileTags[i].ToString() + "|";
+        }
         //summary += "\nNeighbours: " + AllNeighbours.Count.ToString();
         //for (int i = 0; i < AllNeighbours.Count; i++) {
         //    HexTile currNeighbour = AllNeighbours[i];
@@ -1296,6 +1300,23 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Region
     public void SetRegion(Region region) {
         this.region = region;
+    }
+    #endregion
+
+    #region Utilities
+    /// <summary>
+    /// Can demonic landmarks be built on this tile.
+    /// </summary>
+    /// <param name="reasons">A list of reasons why this tile cannot be built on.</param>
+    /// <returns>True or false</returns>
+    public bool CanBuildDemonicLandmarksOnTile(out List<string> reasons) {
+        reasons = new List<string>();
+        bool canBeBuiltOn = true;
+        if (tileTags.Contains(TILE_TAG.HALLOWED_GROUNDS)) {
+            canBeBuiltOn = false;
+            reasons.Add("This location is Hallowed Ground, Demonic Structures cannot be built on it until it is defiled.");
+        }
+        return canBeBuiltOn;
     }
     #endregion
 }

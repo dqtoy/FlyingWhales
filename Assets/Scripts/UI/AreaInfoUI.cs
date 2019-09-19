@@ -160,7 +160,7 @@ public class AreaInfoUI : UIMenu {
 
     private void UpdateSwitchUIBtn() {
         //for now can only switch UI between region and area ui if the tile in question has a player landamrk on it. Since the player landmarks have their own ui but other events can happen on it that require the region ui.
-        switchUIBtn.gameObject.SetActive(activeTile.landmarkOnTile.specificLandmarkType.IsPlayerLandmark());
+        switchUIBtn.gameObject.SetActive(activeTile.landmarkOnTile.specificLandmarkType.IsPlayerLandmark() || activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.NONE);
     }
     public void SwitchUI() {
         UIManager.Instance.ShowRegionInfo(activeTile.region);
@@ -177,26 +177,17 @@ public class AreaInfoUI : UIMenu {
 
     #region Basic Info
     private void UpdateBasicInfo() {
-        //LandmarkData data = LandmarkManager.Instance.GetLandmarkData(activeArea.coreTile.landmarkOnTile.specificLandmarkType);
-
-        if (activeTile.landmarkOnTile.specificLandmarkType.IsPlayerLandmark()) {
-            landmarkNameLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(activeTile.landmarkOnTile.specificLandmarkType.ToString());
+        if (activeTile.landmarkOnTile.specificLandmarkType.IsPlayerLandmark() || activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.NONE) { //TODO: Unify names!
+            landmarkNameLbl.text = activeTile.region.name;
             //locationPortrait.SetLocation(activeTile.landmarkOnTile);
         } else {
             landmarkNameLbl.text = activeArea.name;
             //locationPortrait.SetLocation(activeTile.areaOfTile);
         }
         locationPortrait.SetLocation(activeTile.region);
-        landmarkTypeLbl.text = activeArea.GetAreaTypeString();
+        //landmarkTypeLbl.text = activeArea.GetAreaTypeString();
+        landmarkTypeLbl.text = activeTile.landmarkOnTile.specificLandmarkType.LandmarkToString();
         UpdateSupplies();
-        
-        ////portrait
-        //if (activeArea.locationPortrait != null) {
-        //    areaPortrait.gameObject.SetActive(false);
-        //    areaPortrait.sprite = activeArea.locationPortrait;
-        //} else {
-        //    areaPortrait.gameObject.SetActive(false);
-        //}
     }
     private void OnAreaSuppliesSet(Area area) {
         if (this.isShowing && activeTile.id == area.id) {
