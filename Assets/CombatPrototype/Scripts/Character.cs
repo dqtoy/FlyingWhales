@@ -7201,6 +7201,7 @@ public class Character : ILeader, IPointOfInterest {
                 if (plan.job != null && (plan.job.jobType.IsNeedsTypeJob() || plan.job.jobType.IsEmergencyTypeJob())) {
                     //Unassign Location Job if character decides to rest, eat or have fun.
                     homeArea.jobQueue.UnassignAllJobsTakenBy(this);
+                    faction.activeQuest?.jobQueue.UnassignAllJobsTakenBy(this);
                 }
             }
         }

@@ -118,6 +118,9 @@ public class BaseLandmark {
             tileLocation.region.assignedMinion.SetAssignedRegion(null);
             tileLocation.region.SetAssignedMinion(null);
         }
+        if (specificLandmarkType.IsPlayerLandmark()) {
+            UIManager.Instance.ShowImportantNotification(Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()) + " was destroyed!", () => UIManager.Instance.ShowHextileInfo(_location));
+        }
         _location = null;
     }
     public virtual void OnFinishedBuilding() { }

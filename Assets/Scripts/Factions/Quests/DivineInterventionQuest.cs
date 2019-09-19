@@ -22,15 +22,15 @@ public class DivineInterventionQuest : Quest {
 
     private void PerTickOnQuest() {
         //Remove jobs at the end of the day if it hasn't been taken
-        if (GameManager.Instance.tick == GameManager.ticksPerDay) {
-            for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
-                JobQueueItem job = jobQueue.jobsInQueue[i];
-                if(job.assignedCharacter == null) {
-                    jobQueue.CancelJob(job);
-                    i--;
-                }
-            }
-        }
+        //if (GameManager.Instance.tick == GameManager.ticksPerDay) {
+        //    for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
+        //        JobQueueItem job = jobQueue.jobsInQueue[i];
+        //        if(job.assignedCharacter == null) {
+        //            jobQueue.CancelJob(job);
+        //            i--;
+        //        }
+        //    }
+        //}
 
         //Cancel jobs that are no longer applicable
         //Might have performance issue, but for now this will do
