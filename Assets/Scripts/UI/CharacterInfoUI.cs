@@ -129,7 +129,7 @@ public class CharacterInfoUI : UIMenu {
         _activeCharacter = _data as Character;
         SetLogMenuState(false);
         if (_activeCharacter.marker != null) {
-            _activeCharacter.CenterOnCharacter(false);
+            _activeCharacter.CenterOnCharacter();
         }
         base.OpenMenu();
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
