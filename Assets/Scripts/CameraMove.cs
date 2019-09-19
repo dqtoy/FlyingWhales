@@ -33,6 +33,9 @@ public class CameraMove : MonoBehaviour {
     private Vector3 dragOrigin;
     private bool isDragging = false;
 
+    [Header("Edging")]
+    [SerializeField] private float edgingSpeed = 30f;
+
     private float previousCameraFOV;
 
     private bool cameraControlEnabled = true;
@@ -67,6 +70,7 @@ public class CameraMove : MonoBehaviour {
 #else
         ArrowKeysMovement();
         Dragging();
+        Edging();
         Zooming();
         Targetting();
         ConstrainCameraBounds();
@@ -279,6 +283,34 @@ public class CameraMove : MonoBehaviour {
         isDragging = false;
         startedOnUI = false;
         hasReachedThreshold = false;
+    }
+    private void Edging() {
+        if (isDragging) {
+            return;
+        }
+        bool isEdging = false;
+        Vector3 newPos = transform.position;
+        if (Input.mousePosition.x > Screen.width) {
+            newPos.x += edgingSpeed * Time.deltaTime;
+            isEdging = true;
+        }
+        if (Input.mousePosition.x < 0 ) {
+            newPos.x -= edgingSpeed * Time.deltaTime;
+            isEdging = true;
+        }
+
+        if (Input.mousePosition.y > Screen.height) {
+            newPos.y += edgingSpeed * Time.deltaTime;
+            isEdging = true;
+        }
+        if (Input.mousePosition.y < 0) {
+            newPos.y -= edgingSpeed * Time.deltaTime;
+            isEdging = true;
+        }
+        if (isEdging) {
+            target = null; //reset target
+        }
+        transform.position = newPos;
     }
     #endregion
 
