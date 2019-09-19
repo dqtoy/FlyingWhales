@@ -3765,6 +3765,7 @@ public class Character : ILeader, IPointOfInterest {
         goapPlan.ConstructAllNodes();
         goapPlan.SetDoNotRecalculate(true);
         job.SetCancelOnFail(true);
+        job.SetCancelJobOnDropPlan(true);
 
         jobQueue.AddJobInQueue(job, false);
         jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, this);
@@ -5416,6 +5417,7 @@ public class Character : ILeader, IPointOfInterest {
                 }
                 GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
                 job.SetCancelOnFail(true);
+                sleepScheduleJobID = job.id;
                 bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
                     || stateComponent.currentState != null || stateComponent.stateToDo != null;
                 jobQueue.AddJobInQueue(job, !willNotProcess);
@@ -7745,7 +7747,7 @@ public class Character : ILeader, IPointOfInterest {
             Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
             plan.EndPlan();
             if (plan.job != null) {
-                if (plan.job.cancelJobOnFail || forceCancelJob) {
+                if (plan.job.cancelJobOnFail || plan.job.cancelJobOnDropPlan || forceCancelJob) {
                     plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
                 }
                 plan.job.SetAssignedCharacter(null);
@@ -7765,6 +7767,9 @@ public class Character : ILeader, IPointOfInterest {
             Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
             plan.EndPlan();
             if (plan.job != null) {
+                if (plan.job.cancelJobOnDropPlan) {
+                    plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+                }
                 plan.job.SetAssignedCharacter(null);
                 plan.job.SetAssignedPlan(null);
             }

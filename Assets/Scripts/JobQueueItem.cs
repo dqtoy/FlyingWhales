@@ -12,6 +12,7 @@ public class JobQueueItem {
     public bool cancelJobOnFail { get; private set; }
     public bool cannotOverrideJob { get; private set; }
     public bool canBeDoneInLocation { get; private set; } //If a character is unable to create a plan for this job and the value of this is true, push the job to the location job queue
+    public bool cancelJobOnDropPlan { get; private set; }
     public bool isStealth { get; private set; }
     public List<Character> blacklistedCharacters { get; private set; }
     public int priority { get { return GetPriority(); } }
@@ -101,6 +102,9 @@ public class JobQueueItem {
     }
     public void SetCanBeDoneInLocation(bool state) {
         canBeDoneInLocation = state;
+    }
+    public void SetCancelJobOnDropPlan(bool state) {
+        cancelJobOnDropPlan = state;
     }
     public void AddBlacklistedCharacter(Character character) {
         if (!blacklistedCharacters.Contains(character)) {
