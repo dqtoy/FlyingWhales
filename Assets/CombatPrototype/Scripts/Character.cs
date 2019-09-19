@@ -7383,7 +7383,7 @@ public class Character : ILeader, IPointOfInterest {
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
             if (plan.currentNode == null) {
-                throw new Exception(this.name + "'s current node in plan is null! Call stack is " + plan.setPlanStateCallStack);
+                throw new Exception(this.name + "'s current node in plan is null! Plan is: " + plan.name + "\nCall stack: " + plan.setPlanStateCallStack + "\n");
             }
             log += "\n" + plan.currentNode.action.goapName;
             if (plan.isBeingRecalculated) {
@@ -7727,6 +7727,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public bool DropPlan(GoapPlan plan, bool forceCancelJob = false) {
         if (allGoapPlans.Remove(plan)) {
+            Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
             plan.EndPlan();
             if (plan.job != null) {
                 if (plan.job.cancelJobOnFail || forceCancelJob) {
@@ -7746,6 +7747,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public bool JustDropPlan(GoapPlan plan) {
         if (allGoapPlans.Remove(plan)) {
+            Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
             plan.EndPlan();
             if (plan.job != null) {
                 plan.job.SetAssignedCharacter(null);

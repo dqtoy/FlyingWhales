@@ -71,9 +71,9 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
     }
-    private void OnDisable() {
-        RemoveListeners();
-    }
+    //private void OnDisable() {
+    //    RemoveListeners();
+    //}
 
     public void GeneratePortrait(Character character, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
         _character = character;
