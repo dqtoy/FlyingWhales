@@ -51,7 +51,7 @@ public class CharacterTrait : Trait {
                     return true;
                 }
             } else if (tileObj is GoddessStatue) {
-                if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.PRAY_GODDESS_STATUE, tileObj) && tileObj.state == POI_STATE.ACTIVE) {
+                if (Random.Range(0, 100) < 15 && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.PRAY_GODDESS_STATUE, tileObj) && tileObj.state == POI_STATE.ACTIVE) {
                     GoapPlanJob prayJob = new GoapPlanJob(JOB_TYPE.PRAY_GODDESS_STATUE, INTERACTION_TYPE.PRAY_TILE_OBJECT, tileObj);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(prayJob);
                     return true;

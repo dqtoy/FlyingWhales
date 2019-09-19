@@ -1,4 +1,6 @@
-﻿/*
+﻿//#define TESTING_VALUES
+
+/*
  This is the base class for all landmarks.
  eg. Settlements(Cities), Resources, Dungeons, Lairs, etc.
  */
@@ -6,7 +8,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
 
 public class BaseLandmark {
 
@@ -46,7 +47,12 @@ public class BaseLandmark {
     #endregion
 
     public BaseLandmark() {
-        invasionTicks = 12;//;
+#if TESTING_VALUES
+        invasionTicks = 12;
+#else
+        invasionTicks = GameManager.ticksPerDay;
+#endif
+
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
@@ -119,7 +125,8 @@ public class BaseLandmark {
             tileLocation.region.SetAssignedMinion(null);
         }
         if (specificLandmarkType.IsPlayerLandmark()) {
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()) + " was destroyed!", () => UIManager.Instance.ShowHextileInfo(_location));
+            HexTile tile = _location;
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()) + " was destroyed!", () => UIManager.Instance.ShowHextileInfo(tile));
         }
         _location = null;
     }

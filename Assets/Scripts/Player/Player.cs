@@ -1373,7 +1373,8 @@ public class Player : ILeader {
             //ResetArtifacts();
             //LevelUpAllMinions();
         } else {
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You failed to invade " + currentAreaBeingInvaded.name + ".", () => UIManager.Instance.ShowHextileInfo(currentAreaBeingInvaded.coreTile));
+            HexTile tile = currentAreaBeingInvaded.coreTile;
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You failed to invade " + currentAreaBeingInvaded.name + ".", () => UIManager.Instance.ShowHextileInfo(tile));
         }
         for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
