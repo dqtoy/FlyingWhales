@@ -98,6 +98,7 @@ public class Character : ILeader, IPointOfInterest {
     public TileObject tileObjectLocation { get; private set; }
     public BaseLandmark currentLandmark { get; private set; } //current Landmark Location. NOTE: Only has value if character is NOT at an area
     public CharacterTrait defaultCharacterTrait { get; private set; }
+    public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
@@ -517,6 +518,7 @@ public class Character : ILeader, IPointOfInterest {
 
         currentAlterEgoName = data.currentAlterEgoName;
         originalClassName = data.originalClassName;
+        isStoppedByOtherCharacter = data.isStoppedByOtherCharacter;
 
         _history = new List<Log>();
         //_elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
@@ -2828,6 +2830,13 @@ public class Character : ILeader, IPointOfInterest {
     public bool IsDoingEmergencyAction() {
         return currentAction != null && currentAction.goapType.IsEmergencyAction();
     }
+    public void AdjustIsStoppedByOtherCharacter(int amount) {
+        isStoppedByOtherCharacter += amount;
+        isStoppedByOtherCharacter = Mathf.Max(0, isStoppedByOtherCharacter);
+        if (marker != null) {
+            marker.UpdateAnimation();
+        }
+    }
     #endregion
 
     #region Relationships
@@ -3481,7 +3490,7 @@ public class Character : ILeader, IPointOfInterest {
             throw new System.Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.goapName + " by " + witnessedEvent.actor.name + " but it does not have a current state!");
         }
         Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);
-        witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
+        witnessLog.AddToFillers(this, name, LOG_IDENTIFIER.OTHER);
         witnessLog.AddToFillers(null, Utilities.LogDontReplace(witnessedEvent.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
         witnessLog.AddToFillers(witnessedEvent.currentState.descriptionLog.fillers);
         AddHistory(witnessLog);
@@ -5133,13 +5142,17 @@ public class Character : ILeader, IPointOfInterest {
         if(isDead || minion != null) {
             return;
         }
+        //Out of combat hp recovery
+        if(stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
+            HPRecovery(0.0025f);
+        }
+
+        if(isStoppedByOtherCharacter > 0) {
+            return;
+        }
         //Check Trap Structure
         trapStructure.IncrementCurrentDuration(1);
 
-        //Out of combat hp recovery
-        if(!isDead && (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
-            HPRecovery(0.0025f);
-        }
         PlanForcedFullnessRecovery();
         PlanForcedTirednessRecovery();
 

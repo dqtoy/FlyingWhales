@@ -1,65 +1,59 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-public class QuestInfoUI : UIMenu {
+public class QuestInfoUI : MonoBehaviour {
+    [Header("General")]
+    public TextMeshProUGUI titleText;
+    public TextMeshProUGUI descriptionText;
+    public TextMeshProUGUI infoText;
+    public TextMeshProUGUI jobText;
 
-    [SerializeField] private UILabel questInfoLbl;
-    [SerializeField] private UIButton showQuestLogsBtn;
 
-	//public OldQuest.Quest currentlyShowingQuest{
-	//	get { return _data as OldQuest.Quest; }
-	//}
-    public override void OpenMenu() {
-        base.OpenMenu();
-        //UpdateQuestInfo();
+    public Quest quest { get; private set; }
+
+    public void ShowQuestInfoUI(Quest quest) {
+        this.quest = quest;
+        PopulateQuestInfo();
+        gameObject.SetActive(true);
     }
 
-    //public override void SetData(object data) {
-    //    if (currentlyShowingQuest != null) {
-    //        currentlyShowingQuest.onTaskInfoChanged = null;
-    //    }
-    //    base.SetData(data);
-    //    //(data as OldQuest.Quest).onTaskInfoChanged = UpdateQuestInfo;
-    //    if (isShowing) {
-    //        UpdateQuestInfo();
-    //    }
-    //}
+    public void HideQuestInfoUI() {
+        gameObject.SetActive(false);
+    }
 
-  //  public void UpdateQuestInfo() {
-		//if (currentlyShowingQuest == null) {
-  //          return;
-  //      }
-  //      string text = string.Empty;
-		//text += "[b]OldQuest.Quest ID:[/b] " + currentlyShowingQuest.id.ToString();
-		//text += "\n[b]OldQuest.Quest Type:[/b] " + currentlyShowingQuest.questName;
-		//text += "\n[b]Done:[/b] " + currentlyShowingQuest.isDone.ToString();
-		//text += "\n[b]Is Waiting:[/b] " + currentlyShowingQuest.isWaiting.ToString();
-		//text += "\n[b]Is Expired:[/b] " + currentlyShowingQuest.isExpired.ToString();
-		//if (currentlyShowingQuest.assignedParty == null) {
-  //          text += "\n[b]Assigned Party:[/b] NONE";
-  //      } else {
-		//	text += "\n[b]Assigned Party:[/b] " + currentlyShowingQuest.assignedParty.urlName;
-		//	if(currentlyShowingQuest.currentAction == null) {
-  //              text += "\n[b]Current Action:[/b] Forming Party";
-  //          } else {
-		//		text += "\n[b]Current Action:[/b] " + currentlyShowingQuest.currentAction.ToString();
-  //          }
-  //      }
-  //      questInfoLbl.text = text;
+    public void UpdateQuestInfo() {
+        UpdateJobText();
+    }
 
-		//if(currentlyShowingQuest.taskLogs.Count > 0) {
-  //          //enable button
-  //          showQuestLogsBtn.GetComponent<BoxCollider>().enabled = true;
-  //          showQuestLogsBtn.SetState(UIButtonColor.State.Normal, true);
-  //      } else {
-  //          //disable button
-  //          showQuestLogsBtn.GetComponent<BoxCollider>().enabled = false;
-  //          showQuestLogsBtn.SetState(UIButtonColor.State.Disabled, true);
+    private void PopulateQuestInfo() {
+        titleText.text = quest.name;
+        descriptionText.text = quest.description;
 
-  //      }
+        string factionText = "<link=" + '"' + quest.factionOwner.id.ToString() + "_faction" + '"' + ">Faction Owner: <b>" + quest.factionOwner.name + "</b></link>";
+        string regionText = "<link=" + '"' + quest.region.coreTile.id.ToString() + "_hextile" + '"' + ">Region: <b>" + (quest.region.area != null ? quest.region.area.name : quest.region.name) + "</b></link>";
 
-  //  }
-    public void ShowQuestLogs() {
-		//UIManager.Instance.ShowQuestLog(currentlyShowingQuest);
+        infoText.text = "\n" + factionText + "\n" + regionText;
+        UpdateJobText();
+    }
+
+    private void UpdateJobText() {
+        string jobInfo = "Active Jobs: ";
+        if (quest.jobQueue.jobsInQueue.Count > 0) {
+            for (int i = 0; i < quest.jobQueue.jobsInQueue.Count; i++) {
+                JobQueueItem job = quest.jobQueue.jobsInQueue[i];
+                jobInfo += "\n\t- " + job.name;
+                if (job.assignedCharacter != null) {
+                    jobInfo += "\n\t\t" + "<link=" + '"' + job.assignedCharacter.id.ToString() + "_character" + '"' + ">Assigned Character: <b>" + job.assignedCharacter.name + "</b></link>";
+                } else {
+                    jobInfo += "\n\t\tAssigned Character: <b>None</b>";
+                }
+            }
+        } else {
+            jobInfo += "None";
+        }
+        jobText.text = jobInfo;
     }
 }

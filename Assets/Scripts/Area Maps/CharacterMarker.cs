@@ -73,7 +73,6 @@ public class CharacterMarker : PooledObject {
     public bool cannotCombat { get; private set; }
     public int useWalkSpeed { get; private set; }
     public int targettedByRemoveNegativeTraitActionsCounter { get; private set; }
-    public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
     public List<IPointOfInterest> terrifyingObjects { get; private set; } //list of objects that this character is terrified of and must avoid
     public bool isMoving { get; private set; }
 
@@ -693,7 +692,7 @@ public class CharacterMarker : PooledObject {
             PlayAnimation("Dead");
         } else if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             PlaySleepGround();
-        } else if (isStoppedByOtherCharacter > 0) {
+        } else if (character.isStoppedByOtherCharacter > 0) {
             PlayIdle();
         } else if (character.currentParty.icon != null && character.currentParty.icon.isTravelling) {
             //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
@@ -782,11 +781,6 @@ public class CharacterMarker : PooledObject {
     public void AdjustTargettedByRemoveNegativeTraitActions(int amount) {
         targettedByRemoveNegativeTraitActionsCounter += amount;
         targettedByRemoveNegativeTraitActionsCounter = Mathf.Max(0, targettedByRemoveNegativeTraitActionsCounter);
-    }
-    public void AdjustIsStoppedByOtherCharacter(int amount) {
-        isStoppedByOtherCharacter += amount;
-        isStoppedByOtherCharacter = Mathf.Max(0, isStoppedByOtherCharacter);
-        UpdateAnimation();
     }
     public void SetActiveState(bool state) {
         this.gameObject.SetActive(state);

@@ -34,7 +34,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                 string id = linkText.Substring(0, linkText.IndexOf('_'));
                 int idToUse = int.Parse(id);
                 if (linkText.Contains("_faction")) {
-                    Faction faction = UIManager.Instance.characterInfoUI.activeCharacter.faction;
+                    Faction faction = FactionManager.Instance.GetFactionBasedOnID(idToUse);
                     if (faction != null) {
                         UIManager.Instance.ShowFactionInfo(faction);
                     }
@@ -42,6 +42,11 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                     Character character = CharacterManager.Instance.GetCharacterByID(idToUse);
                     if (character != null) {
                         UIManager.Instance.ShowCharacterInfo(character);
+                    }
+                } else if (linkText.Contains("_hextile")) {
+                    HexTile tile = GridMap.Instance.allTiles[idToUse];
+                    if (tile != null) {
+                        UIManager.Instance.ShowHextileInfo(tile);
                     }
                 } else if (linkText.Contains("_combat")) {
                     if (UIManager.Instance.characterInfoUI.activeCharacter != null) {

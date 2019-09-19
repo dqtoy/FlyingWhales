@@ -833,7 +833,6 @@ public class PlayerUI : MonoBehaviour {
         startingAbilities = null;
         UIManager.Instance.SetTimeControlsState(true);
         PlayerManager.Instance.player.StartDivineIntervention();
-        LandmarkManager.Instance.enemyOfPlayerArea.region.owner.CreateAndSetActiveQuest("Divine Intervention", LandmarkManager.Instance.enemyOfPlayerArea.region);
         //PlayerManager.Instance.player.StartResearchNewInterventionAbility();
     }
     private void ShowSelectMinionLeader() {

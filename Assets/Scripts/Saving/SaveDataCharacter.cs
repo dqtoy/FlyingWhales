@@ -59,6 +59,7 @@ public class SaveDataCharacter {
     public bool isDisabledByPlayer;
     public float speedModifier;
     public string deathStr;
+    public int isStoppedByOtherCharacter;
 
     public POI_STATE state;
 
@@ -128,6 +129,7 @@ public class SaveDataCharacter {
         roleType = character.role.roleType;
         portraitSettings = character.portraitSettings;
         characterColor = character.characterColor;
+        isStoppedByOtherCharacter = character.isStoppedByOtherCharacter;
 
         normalTraits = new List<SaveDataTrait>();
         for (int i = 0; i < character.normalTraits.Count; i++) {

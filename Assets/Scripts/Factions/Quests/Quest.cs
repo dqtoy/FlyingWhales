@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Quest {
     public string name { get; protected set; }
+    public string description { get; protected set; }
     public Faction factionOwner { get; protected set; }
     public Region region { get; protected set; }
     public JobQueue jobQueue { get; protected set; }

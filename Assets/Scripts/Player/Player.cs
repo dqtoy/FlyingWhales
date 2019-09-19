@@ -1605,14 +1605,15 @@ public class Player : ILeader {
 
     #region Divine Intervention
     public void StartDivineIntervention() {
+        LandmarkManager.Instance.enemyOfPlayerArea.region.owner.CreateAndSetActiveQuest("Divine Intervention", LandmarkManager.Instance.enemyOfPlayerArea.region);
         currentDivineInterventionTick = PlayerManager.DIVINE_INTERVENTION_DURATION;
-        TimerHubUI.Instance.AddItem("Until Divine Intervention", currentDivineInterventionTick, null);
+        TimerHubUI.Instance.AddItem("Until Divine Intervention", currentDivineInterventionTick, () => UIManager.Instance.ShowQuestInfo(LandmarkManager.Instance.enemyOfPlayerArea.region.owner.activeQuest));
         Messenger.AddListener(Signals.TICK_STARTED, PerTickDivineIntervention);
     }
     public void LoadDivineIntervention(SaveDataPlayer data) {
         currentDivineInterventionTick = data.currentDivineInterventionTick;
         if(currentDivineInterventionTick > 0) {
-            TimerHubUI.Instance.AddItem("Until Divine Intervention", currentDivineInterventionTick, null);
+            TimerHubUI.Instance.AddItem("Until Divine Intervention", currentDivineInterventionTick, () => UIManager.Instance.ShowQuestInfo(LandmarkManager.Instance.enemyOfPlayerArea.region.owner.activeQuest));
             Messenger.AddListener(Signals.TICK_STARTED, PerTickDivineIntervention);
         }
     }
@@ -1621,7 +1622,7 @@ public class Player : ILeader {
             currentDivineInterventionTick += amount;
             TimerHubUI.Instance.RemoveItem("Until Divine Intervention");
             if (currentDivineInterventionTick > 0) {
-                TimerHubUI.Instance.AddItem("Until Divine Intervention", currentDivineInterventionTick, null);
+                TimerHubUI.Instance.AddItem("Until Divine Intervention", currentDivineInterventionTick, () => UIManager.Instance.ShowQuestInfo(LandmarkManager.Instance.enemyOfPlayerArea.region.owner.activeQuest));
             } else {
                 currentDivineInterventionTick = 0;
                 //TODO: What happens if divine intervention happens

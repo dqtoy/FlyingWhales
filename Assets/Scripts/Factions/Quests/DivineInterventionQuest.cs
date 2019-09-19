@@ -7,6 +7,7 @@ public class DivineInterventionQuest : Quest {
 
     public DivineInterventionQuest(Faction factionOwner, Region region) : base(factionOwner, region) {
         name = "Divine Intervention Quest";
+        description = "A quest taken by the characters in the world which speeds up Divine Intervention.";
     }
 
     #region Overrides
