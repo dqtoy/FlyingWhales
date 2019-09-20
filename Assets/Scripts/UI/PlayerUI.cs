@@ -10,6 +10,9 @@ using System;
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
 
+    [Header("General")]
+    [SerializeField] private GameObject optionsGO;
+
     [Header("Role Slots")]
     [SerializeField] private RectTransform roleSlotsParent;
     //[SerializeField] private RoleSlotItem[] roleSlots;
@@ -265,11 +268,13 @@ public class PlayerUI : MonoBehaviour {
             if (PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
                 PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
                 CursorManager.Instance.ClearLeftClickActions();
-            }
-            if (isSummoning) {
+            }else if (isSummoning) {
                 CancelSummon();
             } else if (isSummoningArtifact) {
                 CancelSummonArtifact();
+            } else {
+                //only toggle options menu if doing nothing else
+                ToggleOptionsMenu();
             }
         } else if (pressedKey == KeyCode.Mouse0) {
             //left click
@@ -323,6 +328,12 @@ public class PlayerUI : MonoBehaviour {
             Messenger.Broadcast(Signals.HIDE_MENUS);
             SuccessfulAreaCorruption();
         }
+    }
+    #endregion
+
+    #region Options
+    public void ToggleOptionsMenu() {
+        optionsGO.SetActive(!optionsGO.activeSelf);
     }
     #endregion
 

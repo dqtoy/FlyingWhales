@@ -40,13 +40,12 @@ public class WorldConfigManager : MonoBehaviour {
             { LANDMARK_TYPE.FARM, 3 },  //-3 farm regions
             { LANDMARK_TYPE.MINES, 2 }, //-2 mine regions
             { LANDMARK_TYPE.BARRACKS, 1 },//-1 barracks region
-            { LANDMARK_TYPE.FACTORY, 1 }, //-1 factory region
             { LANDMARK_TYPE.WORKSHOP, 1 }, //-1 workshop region
             { LANDMARK_TYPE.TEMPLE, 1 }, //-1 temple region
         };
 
         //-4 monster lair, cave or ancient ruin region
-        LANDMARK_TYPE[] choices = new LANDMARK_TYPE[] { LANDMARK_TYPE.MONSTER_LAIR, LANDMARK_TYPE.CAVE, LANDMARK_TYPE.ANCIENT_RUIN };
+        LANDMARK_TYPE[] choices = new LANDMARK_TYPE[] { LANDMARK_TYPE.MONSTER_LAIR, LANDMARK_TYPE.MAGE_TOWER };
         for (int i = 0; i < 4; i++) {
             LANDMARK_TYPE chosenType = choices[Random.Range(0, choices.Length)];
             if (!landmarks.ContainsKey(chosenType)) {
@@ -59,7 +58,7 @@ public class WorldConfigManager : MonoBehaviour {
         int remaining = regionCount - totalLandmarks;
         if (remaining > 0) {
             //-the rest should be randomly determined: farm / mine / barracks / lair / outpost / temple / bandit camp
-            choices = new LANDMARK_TYPE[] { LANDMARK_TYPE.FARM, LANDMARK_TYPE.MINES, LANDMARK_TYPE.BARRACKS, LANDMARK_TYPE.MONSTER_LAIR, LANDMARK_TYPE.OUTPOST, LANDMARK_TYPE.TEMPLE, LANDMARK_TYPE.BANDIT_CAMP };
+            choices = new LANDMARK_TYPE[] { LANDMARK_TYPE.FARM, LANDMARK_TYPE.MINES, LANDMARK_TYPE.BARRACKS, LANDMARK_TYPE.MONSTER_LAIR, LANDMARK_TYPE.MAGE_TOWER, LANDMARK_TYPE.TEMPLE, LANDMARK_TYPE.BANDIT_CAMP };
             for (int i = 0; i < remaining; i++) {
                 LANDMARK_TYPE chosenType = choices[Random.Range(0, choices.Length)];
                 if (!landmarks.ContainsKey(chosenType)) {

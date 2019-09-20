@@ -614,15 +614,8 @@ public class LandmarkManager : MonoBehaviour {
                     worldObjWeights.AddElement("SkillScroll", 15);
                     worldObjWeights.AddElement("DemonStone", 15);
                     break;
-                case LANDMARK_TYPE.ANCIENT_RUIN:
-                    worldObjWeights.AddElement("summon", 10);
-                    worldObjWeights.AddElement("artifact", 15);
-                    worldObjWeights.AddElement("SpellScroll", 35);
-                    worldObjWeights.AddElement("SkillScroll", 25);
-                    worldObjWeights.AddElement("DemonStone", 15);
-                    break;
                 case LANDMARK_TYPE.BARRACKS:
-                case LANDMARK_TYPE.OUTPOST:
+                case LANDMARK_TYPE.MAGE_TOWER:
                     worldObjWeights.AddElement("SkillScroll", 35);
                     worldObjWeights.AddElement("nothing", 65);
                     break;

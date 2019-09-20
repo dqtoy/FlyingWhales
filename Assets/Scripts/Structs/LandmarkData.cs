@@ -9,7 +9,7 @@ public struct LandmarkData {
     public LANDMARK_TYPE landmarkType;
     public int minimumTileCount; //how many tiles does this landmark need
     public int buildDuration; //how many ticks to build this landmark
-    public string buildDescription; //how many ticks to build this landmark
+    public string description;
     public HEXTILE_DIRECTION connectedTileDirection;
     public List<LANDMARK_TAG> uniqueTags;
     public Sprite landmarkObjectSprite;

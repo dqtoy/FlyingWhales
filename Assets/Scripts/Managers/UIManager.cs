@@ -945,7 +945,7 @@ public class UIManager : MonoBehaviour {
     #region Hextile Info
     public bool ShowHextileInfo(HexTile hexTile) {
         if (hexTile.region != null && hexTile == hexTile.region.coreTile) {
-            if (hexTile.areaOfTile != null) {
+            if (hexTile.areaOfTile != null && hexTile.areaOfTile.areaType.IsSettlementType()) {
                 //if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
                 //    portalPopup.SetActive(true);
                 //    return true;
@@ -958,13 +958,13 @@ public class UIManager : MonoBehaviour {
                 //But for demonic landmarks, even if the region has no area, area info ui will still be shown
                 //The area that will become active is the playerArea
                 //This is done so that the player can build, research, etc.
-                if (hexTile.region.owner == PlayerManager.Instance.player.playerFaction) {
-                    ShowAreaInfo(hexTile);
-                    return true;
-                } else {
+                //if (hexTile.region.owner == PlayerManager.Instance.player.playerFaction) {
+                //    ShowAreaInfo(hexTile);
+                //    return true;
+                //} else {
                     ShowRegionInfo(hexTile.region);
                     return true;
-                }
+                //}
             }
         }
         return false;

@@ -92,6 +92,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 49b5bd03e6cefb84cae8ad022541cb3d, type: 3}
   - {fileID: 21300000, guid: 99ab5c131e234fc438188fefac347596, type: 3}
   - {fileID: 21300000, guid: 36b78933e4c50a541acc2d388dcfc210, type: 3}
+  - {fileID: 21300000, guid: 86897a3345403f240a98a45707546524, type: 3}
   - {fileID: 21300000, guid: 9024fe33dca5c634ba66b1574ac69feb, type: 3}
   - {fileID: 21300000, guid: 8aeae44373a78434bac8f9df85ccad8e, type: 3}
   - {fileID: 21300000, guid: c8df085379e0e8343b00098c1f91e703, type: 3}
@@ -466,6 +467,7 @@ SpriteAtlas:
   - portrait_border_highlight
   - button_back_default
   - agent_action_button_hover
+  - Tabs Container
   - ge_icon-07
   - minion_icon_diplomat
   - location_ui_bottom_cover_container

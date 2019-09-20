@@ -7,16 +7,16 @@ using UnityEngine.UI;
 public class RegionInfoUI : UIMenu {
 
     [Header("Basic Info")]
-    [SerializeField] private Button switchUIBtn;
     [SerializeField] private TextMeshProUGUI regionNameLbl;
     [SerializeField] private TextMeshProUGUI regionTypeLbl;
     [SerializeField] private LocationPortrait locationPortrait;
 
     [Header("Main")]
+    [SerializeField] private TextMeshProUGUI descriptionLbl;
     [SerializeField] private TextMeshProUGUI worldObjLbl;
-    [SerializeField] private Button invadeBtn;
-    [SerializeField] private Image invadeProgress;
-    [SerializeField] private CharacterPortrait invader;
+    [SerializeField] private ToggleGroup tabsToggleGroup;
+    [SerializeField] private Toggle demonicTabToggle;
+    [SerializeField] private Toggle eventsTabToggle;
 
     [Header("Characters")]
     [SerializeField] private ScrollRect charactersScrollView;
@@ -33,11 +33,22 @@ public class RegionInfoUI : UIMenu {
     [SerializeField] private GameObject invConfrimationGO;
     [SerializeField] private TextMeshProUGUI invDescriptionLbl;
     [SerializeField] private MinionPicker invMinionPicker;
-    [SerializeField] private Button startInvBtn;
+    [SerializeField] private Button confirmInvasionBtn;
+    [SerializeField] private Button invadeBtn;
+    [SerializeField] private Image invadeProgress;
+    [SerializeField] private CharacterPortrait invader;
 
     [Header("Intervention")]
     [SerializeField] private Button interveneBtn;
     [SerializeField] private CharacterPortrait interferingCharacterPortrait;
+
+    [Header("Demonic Landmark")]
+    [SerializeField] private PlayerBuildLandmarkUI playerBuildLandmarkUI;
+    [SerializeField] private PlayerResearchUI playerResearchUI;
+    [SerializeField] private PlayerDelayDivineInterventionUI playerDelayDivineInterventionUI;
+    [SerializeField] private PlayerSummonMinionUI playerSummonMinionUI;
+    [SerializeField] private PlayerUpgradeUI playerUpgradeUI;
+    [SerializeField] private TheEyeUI theEyeUI;
 
     public Region activeRegion { get; private set; }
 
@@ -48,6 +59,7 @@ public class RegionInfoUI : UIMenu {
         Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
         Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FINISHED_NORMAL, OnWorldEventFinishedNormally);
         Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FAILED, OnWorldEventFailed);
+        Messenger.AddListener<Region>(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, ShowAppropriateContentOnSignal);
     }
 
     public override void OpenMenu() {
@@ -62,7 +74,8 @@ public class RegionInfoUI : UIMenu {
         UpdateCharacters();
         UpdateInvadeBtnState();
         UpdateEventInfo();
-        UpdateSwitchUIBtn();
+        UpdateDemonicLandmarkToggleState();
+        ShowAppropriateContentOnOpen();
         eventsListGO.SetActive(false);
         activeRegion.CenterCameraOnRegion();
         activeRegion.ShowSolidBorder();
@@ -77,16 +90,8 @@ public class RegionInfoUI : UIMenu {
         UpdateBasicInfo();
         UpdateRegionInfo();
         UpdateInvadeBtnState();
-        UpdateSwitchUIBtn();
+        UpdateAppropriateContentPerUpdateUI();
         //UpdateSpawnEventButton();
-    }
-
-    private void UpdateSwitchUIBtn() {
-        //for now can only switch UI between region and area ui if the tile in question has a player landamrk on it. Since the player landmarks have their own ui but other events can happen on it that require the region ui.
-        switchUIBtn.gameObject.SetActive(activeRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark() || activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE);
-    }
-    public void SwitchUI() {
-        UIManager.Instance.ShowAreaInfo(activeRegion.coreTile);
     }
 
     #region Basic Info
@@ -99,6 +104,7 @@ public class RegionInfoUI : UIMenu {
 
     #region Main
     private void UpdateRegionInfo() {
+        descriptionLbl.text = activeRegion.description;
         worldObjLbl.text = "<b>World Object: </b>" + (activeRegion.worldObj?.worldObjectName ?? "None");
     }
     #endregion
@@ -127,16 +133,23 @@ public class RegionInfoUI : UIMenu {
 
     #region Invade
     private void UpdateInvadeBtnState() {
-        invadeBtn.interactable = activeRegion.CanBeInvaded();
-        if (activeRegion.demonicInvasionData.beingInvaded) {
-            invadeProgress.gameObject.SetActive(true);
-            invadeProgress.fillAmount = ((float) activeRegion.demonicInvasionData.currentDuration / (float)activeRegion.mainLandmark.invasionTicks);
-            invader.GeneratePortrait(activeRegion.assignedMinion.character);
-            invader.gameObject.SetActive(true);
-            invader.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
-        } else {
+        if (activeRegion.coreTile.isCorrupted) {
+            invadeBtn.gameObject.SetActive(false);
             invadeProgress.gameObject.SetActive(false);
             invader.gameObject.SetActive(false);
+        } else {
+            invadeBtn.gameObject.SetActive(true);
+            invadeBtn.interactable = activeRegion.CanBeInvaded();
+            if (activeRegion.demonicInvasionData.beingInvaded) {
+                invadeProgress.gameObject.SetActive(true);
+                invadeProgress.fillAmount = ((float)activeRegion.demonicInvasionData.currentDuration / (float)activeRegion.mainLandmark.invasionTicks);
+                invader.GeneratePortrait(activeRegion.assignedMinion.character);
+                invader.gameObject.SetActive(true);
+                invader.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
+            } else {
+                invadeProgress.gameObject.SetActive(false);
+                invader.gameObject.SetActive(false);
+            }
         }
     }
     public void OnClickInvade() {
@@ -154,7 +167,7 @@ public class RegionInfoUI : UIMenu {
         return !minion.isAssigned && minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADE);
     }
     private void UpdateStartInvasionBtn() {
-        startInvBtn.interactable = chosenMinionToInvade != null;
+        confirmInvasionBtn.interactable = chosenMinionToInvade != null;
     }
     private void ChooseMinionForInvasion(Minion minion) {
         chosenMinionToInvade = minion;
@@ -252,6 +265,156 @@ public class RegionInfoUI : UIMenu {
         character.minion.SetAssignedRegion(activeRegion); //only set assigned region to minion.
         UIManager.Instance.HideObjectPicker();
         UpdateInterveneButton();
+    }
+    #endregion
+
+    #region Demonic Landmarks
+    private void ShowAppropriateContentOnSignal(Region region) {
+        if (region == activeRegion && demonicTabToggle.isOn) {
+            UpdateDemonicLandmarkToggleState();
+            OnDemonicToggleStateChanged(demonicTabToggle.isOn);
+        }
+    }
+    private void ShowAppropriateContentOnOpen() {
+        if (demonicTabToggle.isOn) {
+            UpdateDemonicLandmarkToggleState();
+            OnDemonicToggleStateChanged(demonicTabToggle.isOn);
+        }
+    }
+    private void UpdateDemonicLandmarkToggleState() {
+        //only activate demonic tab if the main landmark of this region is a player landmark and is not the kennel or crypt (Since both of those do not have their own special UI)
+        demonicTabToggle.gameObject.SetActive((activeRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark() && 
+            activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_CRYPT && activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_KENNEL) || activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE);
+
+        if (demonicTabToggle.gameObject.activeSelf) {
+            demonicTabToggle.group = tabsToggleGroup;
+        } else {
+            if (demonicTabToggle.isOn) {
+                demonicTabToggle.isOn = false;
+                eventsTabToggle.isOn = true;
+            }
+            demonicTabToggle.group = null;
+        }
+    }
+    private void UpdateAppropriateContentPerUpdateUI() {
+        if (playerBuildLandmarkUI.gameObject.activeSelf) {
+            UpdatePlayerBuildLandmarkUI();
+        } else if (playerResearchUI.gameObject.activeSelf) {
+            UpdatePlayerResearchUI();
+        } else if (playerDelayDivineInterventionUI.gameObject.activeSelf) {
+            UpdatePlayerDelayDivineInterventionUI();
+        } else if (playerUpgradeUI.gameObject.activeSelf) {
+            UpdatePlayerUpgradeUI();
+        } else if (playerSummonMinionUI.gameObject.activeSelf) {
+            UpdatePlayerSummonMinionUI();
+        }
+    }
+    public void OnDemonicToggleStateChanged(bool isOn) {
+        if (isOn) {
+            HidePlayerBuildLandmarkUI();
+            HidePlayerResearchUI();
+            HidePlayerDelayDivineInterventionUI();
+            HidePlayerUpgradeUI();
+            HidePlayerSummonMinionUI();
+            HideTheEyeUI();
+            //activate the neeeded UI for the tab
+            if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
+                ShowPlayerBuildLandmarkUI();
+            } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_SPIRE) {
+                ShowPlayerResearchUI();
+            } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
+                ShowPlayerDelayDivineInterventionUI();
+            } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_ANVIL) {
+                ShowPlayerUpgradeUI();
+            } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL) {
+                ShowPlayerSummonMinionUI();
+            } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_EYE) {
+                ShowTheEyeUI();
+            }
+        } else {
+            //deactivate the UI for the tab
+            HidePlayerBuildLandmarkUI();
+            HidePlayerResearchUI();
+            HidePlayerDelayDivineInterventionUI();
+            HidePlayerUpgradeUI();
+            HidePlayerSummonMinionUI();
+            HideTheEyeUI();
+        }
+    }
+
+    #endregion
+
+    #region Player Build Landmark Content
+    private void ShowPlayerBuildLandmarkUI() {
+        playerBuildLandmarkUI.ShowPlayerBuildLandmarkUI(activeRegion.coreTile);
+    }
+    private void HidePlayerBuildLandmarkUI() {
+        playerBuildLandmarkUI.HidePlayerBuildLandmarkUI();
+    }
+    private void UpdatePlayerBuildLandmarkUI() {
+        playerBuildLandmarkUI.UpdatePlayerBuildLandmarkUI();
+    }
+    #endregion
+
+    #region Player Research Content
+    private void ShowPlayerResearchUI() {
+        playerResearchUI.ShowPlayerResearchUI(activeRegion.mainLandmark as TheSpire);
+    }
+    private void HidePlayerResearchUI() {
+        playerResearchUI.HidePlayerResearchUI();
+    }
+    private void UpdatePlayerResearchUI() {
+        playerResearchUI.UpdatePlayerResearchUI();
+    }
+    #endregion
+
+    #region Player Delay Divine Intervention Content
+    private void ShowPlayerDelayDivineInterventionUI() {
+        playerDelayDivineInterventionUI.ShowPlayerDelayDivineInterventionUI(activeRegion.mainLandmark as TheProfane);
+    }
+    private void HidePlayerDelayDivineInterventionUI() {
+        playerDelayDivineInterventionUI.HidePlayerDelayDivineInterventionUI();
+    }
+    private void UpdatePlayerDelayDivineInterventionUI() {
+        playerDelayDivineInterventionUI.UpdatePlayerDelayDivineInterventionUI();
+    }
+    #endregion
+
+    #region Player Summon Minion Content
+    private void ShowPlayerSummonMinionUI() {
+        playerSummonMinionUI.ShowPlayerSummonMinionUI(activeRegion.mainLandmark as ThePortal);
+    }
+    private void HidePlayerSummonMinionUI() {
+        playerSummonMinionUI.HidePlayerSummonMinionUI();
+    }
+    private void UpdatePlayerSummonMinionUI() {
+        playerSummonMinionUI.UpdatePlayerSummonMinionUI();
+    }
+    #endregion
+
+    #region Player Upgrade Content
+    private void ShowPlayerUpgradeUI() {
+        playerUpgradeUI.ShowPlayerUpgradeUI(activeRegion.mainLandmark as TheAnvil);
+    }
+    private void HidePlayerUpgradeUI() {
+        playerUpgradeUI.HidePlayerResearchUI();
+    }
+    private void UpdatePlayerUpgradeUI() {
+        playerUpgradeUI.UpdatePlayerUpgradeUI();
+    }
+    public void OnPlayerUpgradeDone() {
+        if (playerUpgradeUI.gameObject.activeSelf) {
+            playerUpgradeUI.OnUpgradeDone();
+        }
+    }
+    #endregion
+
+    #region The Eye
+    private void ShowTheEyeUI() {
+        theEyeUI.ShowTheEyeUI(activeRegion.mainLandmark as TheEye);
+    }
+    private void HideTheEyeUI() {
+        theEyeUI.HideTheEyeUI();
     }
     #endregion
 }

@@ -61,7 +61,7 @@ public class TheAnvil : BaseLandmark {
         upgradeIdentifier = string.Empty;
         tileLocation.region.assignedMinion.SetAssignedRegion(null);
         tileLocation.region.SetAssignedMinion(null); //reset assigned minion
-        UIManager.Instance.areaInfoUI.OnPlayerUpgradeDone();
+        UIManager.Instance.regionInfoUI.OnPlayerUpgradeDone();
     }
 
     public override void DestroyLandmark() {

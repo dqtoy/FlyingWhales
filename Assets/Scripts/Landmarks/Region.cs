@@ -20,6 +20,9 @@ public class Region {
             return _name;
         }
     }
+    public string description {
+        get { return GetDescription(); }
+    }
     public List<HexTile> tiles { get; private set; }
     public HexTile coreTile { get; private set; }
     public Area area { get; private set; }
@@ -30,7 +33,6 @@ public class Region {
     public IWorldObject worldObj { get; private set; }
     public Faction owner { get; private set; }
     public Faction previousOwner { get; private set; }
-
     public List<Faction> factionsHere { get; private set; }
 
     private List<HexTile> outerTiles;
@@ -117,6 +119,16 @@ public class Region {
     }
 
     #region Utilities
+    private string GetDescription() {
+        if (coreTile.isCorrupted) {
+            if (coreTile.tileTags.Contains(TILE_TAG.HALLOWED_GROUNDS)) {
+                return "This region has a Hallowed Ground. You cannot build a demonic landmark here until you have defiled it.";
+            } else if (mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
+                return "This region is empty. You may assign a minion to build a demonic landmark here.";
+            }
+        }
+        return LandmarkManager.Instance.GetLandmarkData(mainLandmark.specificLandmarkType).description;
+    }
     public void FinalizeData() {
         outerTiles = GetOuterTiles();
         borderSprites = GetOuterBorders();
@@ -383,13 +395,12 @@ public class Region {
                 case LANDMARK_TYPE.NONE:
                 case LANDMARK_TYPE.CAVE:
                 case LANDMARK_TYPE.MONSTER_LAIR:
-                case LANDMARK_TYPE.ANCIENT_RUIN:
                 case LANDMARK_TYPE.TEMPLE:
                 case LANDMARK_TYPE.BANDIT_CAMP:
                     //No base effect upon invading
                     break;
                 case LANDMARK_TYPE.BARRACKS:
-                case LANDMARK_TYPE.OUTPOST:
+                case LANDMARK_TYPE.MAGE_TOWER:
                     PlayerManager.Instance.player.LevelUpAllMinions();
                     UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All your minions have levelled up!", () => PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "All your minions gained 1 level."));
                     break;

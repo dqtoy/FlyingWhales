@@ -255,42 +255,14 @@ public enum LANDMARK_TYPE {
     THE_PORTAL = 1,
     WORKSHOP = 4,
     MINES = 8,
-    INN = 9,
-    HUNTING_GROUNDS = 11,
-    HOUSES = 12,
-    MONSTER_DEN = 14,
-    SHOP = 16,
     FARM = 17,
-    GOLD_MINE = 18,
-    LUMBERYARD = 19,
     PALACE = 20,
-    CAMP = 21,
-    LAIR = 22,
-    ABANDONED_MINE = 23,
     BANDIT_CAMP = 24,
-    OUTPOST = 25,
-    ANCIENT_RUIN = 26,
-    FACTORY = 27,
-    EXILE_CAMP = 28,
-    GIANT_SKELETON = 29,
+    MAGE_TOWER = 25,
     TEMPLE = 30,
     CAVE = 31,
-    ICE_PIT = 32,
-    MANA_EXTRACTOR = 33,
     BARRACKS = 34,
-    MINIONS_HOLD = 35,
-    DWELLINGS = 36,
-    RAMPART = 37,
-    CORRUPTION_NODE = 38,
-    RITUAL_CIRCLE = 39,
-    DRAGON_CAVE = 40,
-    SKELETON_CEMETERY = 41,
     MONSTER_LAIR = 42,
-    ZOMBIE_PYRAMID = 43,
-    IMP_KENNEL = 44,
-    CEMETERY = 45,
-    TRAINING_ARENA = 46,
-    PENANCE_TEMPLE = 47,
     THE_SPIRE = 48,
     THE_CRYPT = 49,
     THE_KENNEL = 50,
@@ -1749,6 +1721,18 @@ public static class Extensions {
                 return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.DIVINE_INTERVENTION_SPEED_UP };
             default:
                 return null;
+        }
+    }
+    #endregion
+
+    #region Areas
+    public static bool IsSettlementType(this AREA_TYPE type) {
+        switch (type) {
+            case AREA_TYPE.ELVEN_SETTLEMENT:
+            case AREA_TYPE.HUMAN_SETTLEMENT:
+                return true;
+            default:
+                return false;
         }
     }
     #endregion

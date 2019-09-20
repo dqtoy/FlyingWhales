@@ -45,7 +45,6 @@ public class AreaInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Content Management")]
-    [SerializeField] private Button switchUIBtn;
     public GameObject normalContentGO;
     public PlayerBuildLandmarkUI playerBuildLandmarkUI;
     public PlayerResearchUI playerResearchUI;
@@ -103,7 +102,7 @@ public class AreaInfoUI : UIMenu {
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
-        Messenger.AddListener<Region>(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, ShowAppropriateContentOnSignal);
+        //Messenger.AddListener<Region>(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, ShowAppropriateContentOnSignal);
     }
 
     public override void OpenMenu() {
@@ -118,7 +117,8 @@ public class AreaInfoUI : UIMenu {
             UIManager.Instance.HideObjectPicker();
         }
         UpdateAreaInfo();
-        ShowAppropriateContent();
+        //ShowAppropriateContent();
+        ShowNormalContent();
         ResetScrollPositions();
 
 
@@ -158,21 +158,13 @@ public class AreaInfoUI : UIMenu {
         base.SetData(data);
     }
 
-    private void UpdateSwitchUIBtn() {
-        //for now can only switch UI between region and area ui if the tile in question has a player landamrk on it. Since the player landmarks have their own ui but other events can happen on it that require the region ui.
-        switchUIBtn.gameObject.SetActive(activeTile.landmarkOnTile.specificLandmarkType.IsPlayerLandmark() || activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.NONE);
-    }
-    public void SwitchUI() {
-        UIManager.Instance.ShowRegionInfo(activeTile.region);
-    }
-
     public void UpdateAreaInfo() {
         if (activeTile == null) {
             return;
         }
         UpdateBasicInfo();
         //UpdateAllHistoryInfo();
-        UpdateAppropriateContentPerUpdateUI();
+        //UpdateAppropriateContentPerUpdateUI();
     }
 
     #region Basic Info
@@ -536,79 +528,78 @@ public class AreaInfoUI : UIMenu {
     }
     #endregion
 
-    #region Content Manager
-    private void ShowAppropriateContentOnSignal(Region region) {
-        if(region.coreTile == activeTile) {
-            ShowAppropriateContent();
-        }
-    }
-    private void ShowAppropriateContent() {
-        HideNormalContent();
-        HidePlayerBuildLandmarkUI();
-        HidePlayerResearchUI();
-        HideCryptUI();
-        HideKennelUI();
-        HidePlayerDelayDivineInterventionUI();
-        HidePlayerUpgradeUI();
-        HidePlayerSummonMinionUI();
-        HideTheEyeUI();
-        UpdateSwitchUIBtn();
+    //#region Content Manager
+    //private void ShowAppropriateContentOnSignal(Region region) {
+    //    if(region.coreTile == activeTile) {
+    //        ShowAppropriateContent();
+    //    }
+    //}
+    //private void ShowAppropriateContent() {
+    //    HideNormalContent();
+    //    HidePlayerBuildLandmarkUI();
+    //    HidePlayerResearchUI();
+    //    HideCryptUI();
+    //    HideKennelUI();
+    //    HidePlayerDelayDivineInterventionUI();
+    //    HidePlayerUpgradeUI();
+    //    HidePlayerSummonMinionUI();
+    //    HideTheEyeUI();
 
-        if (activeTile.isCorrupted) {
-            //The things you can do to corrupted landmarks
-            if (activeTile.landmarkOnTile != null) {
-                if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.NONE) {
-                    ShowPlayerBuildLandmarkUI();
-                    return;
-                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_SPIRE) {
-                    ShowPlayerResearchUI();
-                    return;
-                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_CRYPT) {
-                    ShowCryptUI();
-                    return;
-                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_KENNEL) {
-                    ShowKennelUI();
-                    return;
-                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
-                    ShowPlayerDelayDivineInterventionUI();
-                    return;
-                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_ANVIL) {
-                    ShowPlayerUpgradeUI();
-                    return;
-                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL) {
-                    ShowPlayerSummonMinionUI();
-                    return;
-                } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_EYE) {
-                    ShowTheEyeUI();
-                    return;
-                }
-            }
-        }
-        ShowNormalContent();
-    }
-    private void UpdateAppropritateContent() {
-        if (normalContentGO.activeSelf) {
-            UpdateNormalContent();
-        }
-    }
-    //This update is only called on UpdateAreaInfo which happens per broadcast of UPDATE_UI which happens per tick
-    //So only put calls here if you want them to be called per tick
-    private void UpdateAppropriateContentPerUpdateUI() {
-        if (playerBuildLandmarkUI.gameObject.activeSelf) {
-            UpdatePlayerBuildLandmarkUI();
-        } else if (playerResearchUI.gameObject.activeSelf) {
-            UpdatePlayerResearchUI();
-        } else if(normalContentGO.activeSelf) {
-            //UpdateItems();
-        } else if (playerDelayDivineInterventionUI.gameObject.activeSelf) {
-            UpdatePlayerDelayDivineInterventionUI();
-        } else if (playerUpgradeUI.gameObject.activeSelf) {
-            UpdatePlayerUpgradeUI();
-        } else if (playerSummonMinionUI.gameObject.activeSelf) {
-            UpdatePlayerSummonMinionUI();
-        }
-    }
-    #endregion
+    //    if (activeTile.isCorrupted) {
+    //        //The things you can do to corrupted landmarks
+    //        if (activeTile.landmarkOnTile != null) {
+    //            if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.NONE) {
+    //                ShowPlayerBuildLandmarkUI();
+    //                return;
+    //            } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_SPIRE) {
+    //                ShowPlayerResearchUI();
+    //                return;
+    //            } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_CRYPT) {
+    //                ShowCryptUI();
+    //                return;
+    //            } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_KENNEL) {
+    //                ShowKennelUI();
+    //                return;
+    //            } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
+    //                ShowPlayerDelayDivineInterventionUI();
+    //                return;
+    //            } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_ANVIL) {
+    //                ShowPlayerUpgradeUI();
+    //                return;
+    //            } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL) {
+    //                ShowPlayerSummonMinionUI();
+    //                return;
+    //            } else if (activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.THE_EYE) {
+    //                ShowTheEyeUI();
+    //                return;
+    //            }
+    //        }
+    //    }
+    //    ShowNormalContent();
+    //}
+    //private void UpdateAppropritateContent() {
+    //    if (normalContentGO.activeSelf) {
+    //        UpdateNormalContent();
+    //    }
+    //}
+    ////This update is only called on UpdateAreaInfo which happens per broadcast of UPDATE_UI which happens per tick
+    ////So only put calls here if you want them to be called per tick
+    //private void UpdateAppropriateContentPerUpdateUI() {
+    //    if (playerBuildLandmarkUI.gameObject.activeSelf) {
+    //        UpdatePlayerBuildLandmarkUI();
+    //    } else if (playerResearchUI.gameObject.activeSelf) {
+    //        UpdatePlayerResearchUI();
+    //    } else if(normalContentGO.activeSelf) {
+    //        //UpdateItems();
+    //    } else if (playerDelayDivineInterventionUI.gameObject.activeSelf) {
+    //        UpdatePlayerDelayDivineInterventionUI();
+    //    } else if (playerUpgradeUI.gameObject.activeSelf) {
+    //        UpdatePlayerUpgradeUI();
+    //    } else if (playerSummonMinionUI.gameObject.activeSelf) {
+    //        UpdatePlayerSummonMinionUI();
+    //    }
+    //}
+    //#endregion
 
     #region Normal Content
     private void ShowNormalContent() {
@@ -624,95 +615,95 @@ public class AreaInfoUI : UIMenu {
     }
     #endregion
 
-    #region Player Build Landmark Content
-    private void ShowPlayerBuildLandmarkUI() {
-        playerBuildLandmarkUI.ShowPlayerBuildLandmarkUI(activeTile);
-    }
-    private void HidePlayerBuildLandmarkUI() {
-        playerBuildLandmarkUI.HidePlayerBuildLandmarkUI();
-    }
-    private void UpdatePlayerBuildLandmarkUI() {
-        playerBuildLandmarkUI.UpdatePlayerBuildLandmarkUI();
-    }
-    #endregion
+    //#region Player Build Landmark Content
+    //private void ShowPlayerBuildLandmarkUI() {
+    //    playerBuildLandmarkUI.ShowPlayerBuildLandmarkUI(activeTile);
+    //}
+    //private void HidePlayerBuildLandmarkUI() {
+    //    playerBuildLandmarkUI.HidePlayerBuildLandmarkUI();
+    //}
+    //private void UpdatePlayerBuildLandmarkUI() {
+    //    playerBuildLandmarkUI.UpdatePlayerBuildLandmarkUI();
+    //}
+    //#endregion
 
-    #region Player Research Content
-    private void ShowPlayerResearchUI() {
-        playerResearchUI.ShowPlayerResearchUI(activeTile.landmarkOnTile as TheSpire);
-    }
-    private void HidePlayerResearchUI() {
-        playerResearchUI.HidePlayerResearchUI();
-    }
-    private void UpdatePlayerResearchUI() {
-        playerResearchUI.UpdatePlayerResearchUI();
-    }
-    #endregion
+    //#region Player Research Content
+    //private void ShowPlayerResearchUI() {
+    //    playerResearchUI.ShowPlayerResearchUI(activeTile.landmarkOnTile as TheSpire);
+    //}
+    //private void HidePlayerResearchUI() {
+    //    playerResearchUI.HidePlayerResearchUI();
+    //}
+    //private void UpdatePlayerResearchUI() {
+    //    playerResearchUI.UpdatePlayerResearchUI();
+    //}
+    //#endregion
 
-    #region Player Delay Divine Intervention Content
-    private void ShowPlayerDelayDivineInterventionUI() {
-        playerDelayDivineInterventionUI.ShowPlayerDelayDivineInterventionUI(activeTile.landmarkOnTile as TheProfane);
-    }
-    private void HidePlayerDelayDivineInterventionUI() {
-        playerDelayDivineInterventionUI.HidePlayerDelayDivineInterventionUI();
-    }
-    private void UpdatePlayerDelayDivineInterventionUI() {
-        playerDelayDivineInterventionUI.UpdatePlayerDelayDivineInterventionUI();
-    }
-    #endregion
+    //#region Player Delay Divine Intervention Content
+    //private void ShowPlayerDelayDivineInterventionUI() {
+    //    playerDelayDivineInterventionUI.ShowPlayerDelayDivineInterventionUI(activeTile.landmarkOnTile as TheProfane);
+    //}
+    //private void HidePlayerDelayDivineInterventionUI() {
+    //    playerDelayDivineInterventionUI.HidePlayerDelayDivineInterventionUI();
+    //}
+    //private void UpdatePlayerDelayDivineInterventionUI() {
+    //    playerDelayDivineInterventionUI.UpdatePlayerDelayDivineInterventionUI();
+    //}
+    //#endregion
 
-    #region Player Summon Minion Content
-    private void ShowPlayerSummonMinionUI() {
-        playerSummonMinionUI.ShowPlayerSummonMinionUI(activeTile.landmarkOnTile as ThePortal);
-    }
-    private void HidePlayerSummonMinionUI() {
-        playerSummonMinionUI.HidePlayerSummonMinionUI();
-    }
-    private void UpdatePlayerSummonMinionUI() {
-        playerSummonMinionUI.UpdatePlayerSummonMinionUI();
-    }
-    #endregion
+    //#region Player Summon Minion Content
+    //private void ShowPlayerSummonMinionUI() {
+    //    playerSummonMinionUI.ShowPlayerSummonMinionUI(activeTile.landmarkOnTile as ThePortal);
+    //}
+    //private void HidePlayerSummonMinionUI() {
+    //    playerSummonMinionUI.HidePlayerSummonMinionUI();
+    //}
+    //private void UpdatePlayerSummonMinionUI() {
+    //    playerSummonMinionUI.UpdatePlayerSummonMinionUI();
+    //}
+    //#endregion
 
-    #region Crypt UI
-    private void ShowCryptUI() {
-        cryptGO.SetActive(true);
-    }
-    private void HideCryptUI() {
-        cryptGO.SetActive(false);
-    }
-    #endregion
+    //#region Crypt UI
+    //private void ShowCryptUI() {
+    //    cryptGO.SetActive(true);
+    //}
+    //private void HideCryptUI() {
+    //    cryptGO.SetActive(false);
+    //}
+    //#endregion
 
-    #region Kennel UI
-    private void ShowKennelUI() {
-        cryptGO.SetActive(true);
-    }
-    private void HideKennelUI() {
-        cryptGO.SetActive(false);
-    }
-    #endregion
+    //#region Kennel UI
+    //private void ShowKennelUI() {
+    //    cryptGO.SetActive(true);
+    //}
+    //private void HideKennelUI() {
+    //    cryptGO.SetActive(false);
+    //}
+    //#endregion
 
-    #region Player Upgrade Content
-    private void ShowPlayerUpgradeUI() {
-        playerUpgradeUI.ShowPlayerUpgradeUI(activeTile.landmarkOnTile as TheAnvil);
-    }
-    private void HidePlayerUpgradeUI() {
-        playerUpgradeUI.HidePlayerResearchUI();
-    }
-    private void UpdatePlayerUpgradeUI() {
-        playerUpgradeUI.UpdatePlayerUpgradeUI();
-    }
-    public void OnPlayerUpgradeDone() {
-        if (playerUpgradeUI.gameObject.activeSelf) {
-            playerUpgradeUI.OnUpgradeDone();
-        }
-    }
-    #endregion
+    //#region Player Upgrade Content
+    //private void ShowPlayerUpgradeUI() {
+    //    playerUpgradeUI.ShowPlayerUpgradeUI(activeTile.landmarkOnTile as TheAnvil);
+    //}
+    //private void HidePlayerUpgradeUI() {
+    //    playerUpgradeUI.HidePlayerResearchUI();
+    //}
+    //private void UpdatePlayerUpgradeUI() {
+    //    playerUpgradeUI.UpdatePlayerUpgradeUI();
+    //}
+    //public void OnPlayerUpgradeDone() {
+    //    if (playerUpgradeUI.gameObject.activeSelf) {
+    //        playerUpgradeUI.OnUpgradeDone();
+    //    }
+    //}
+    //#endregion
 
-    #region The Eye
-    private void ShowTheEyeUI() {
-        theEyeUI.ShowTheEyeUI(activeTile.landmarkOnTile as TheEye);
-    }
-    private void HideTheEyeUI() {
-        theEyeUI.HideTheEyeUI();
-    }
-    #endregion
+    //#region The Eye
+    //private void ShowTheEyeUI() {
+    //    theEyeUI.ShowTheEyeUI(activeTile.landmarkOnTile as TheEye);
+    //}
+    //private void HideTheEyeUI() {
+    //    theEyeUI.HideTheEyeUI();
+    //}
+    //#endregion
 }
