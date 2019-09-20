@@ -6,8 +6,6 @@ using UnityEngine;
 public class Dwelling : LocationStructure {
 
     public List<Character> residents { get; private set; }
-    public Dictionary<FACILITY_TYPE, int> facilities { get; private set; }
-
     public Character owner {
         get { return residents.ElementAtOrDefault(0); }
     }
@@ -124,29 +122,8 @@ public class Dwelling : LocationStructure {
     }
     #endregion
 
-    #region Overrides
-    public override bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeAsset = true) {
-        if(base.AddPOI(poi, tileLocation, placeAsset)) {
-            if (poi is TileObject) {
-                UpdateFacilityValues();
-            }
-            return true;
-        }
-        return false;
-    }
-    public override bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
-        if (base.RemovePOI(poi, removedBy)) {
-            if (poi is TileObject) {
-                UpdateFacilityValues();
-            }
-            return true;
-        }
-        return false;
-    }
-    #endregion
-
     #region Facilities
-    private void InitializeFacilities() {
+    protected override void InitializeFacilities() {
         facilities = new Dictionary<FACILITY_TYPE, int>();
         FACILITY_TYPE[] facilityTypes = Utilities.GetEnumValues<FACILITY_TYPE>();
         for (int i = 0; i < facilityTypes.Length; i++) {
@@ -154,94 +131,6 @@ public class Dwelling : LocationStructure {
                 facilities.Add(facilityTypes[i], 0);
             }
         }
-    }
-    private void UpdateFacilityValues() {
-        FACILITY_TYPE[] facilityTypes = Utilities.GetEnumValues<FACILITY_TYPE>();
-        for (int i = 0; i < facilityTypes.Length; i++) {
-            if (facilityTypes[i] != FACILITY_TYPE.NONE) {
-                facilities[facilityTypes[i]] = 0;
-            }
-        }
-        List<TileObject> objects = GetTileObjects();
-        for (int i = 0; i < objects.Count; i++) {
-            TileObject currObj = objects[i];
-            TileObjectData data;
-            if (TileObjectDB.TryGetTileObjectData(currObj.tileObjectType, out data)) {
-                if (data.providedFacilities != null) {
-                    for (int j = 0; j < data.providedFacilities.Length; j++) {
-                        ProvidedFacility facility = data.providedFacilities[j];
-                        facilities[facility.type] += facility.value;
-                    }
-                }
-            }
-        }
-
-    }
-    public bool HasUnoccupiedFurnitureSpot() {
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            if (currTile.objHere == null && currTile.hasFurnitureSpot) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public FACILITY_TYPE GetMostNeededValidFacility() {
-        //get the facility with the lowest value, that can be provided given the unoccupied furnitureSpots
-        int lowestValue = 99999;
-        FACILITY_TYPE lowestFacility = FACILITY_TYPE.NONE;
-        foreach (KeyValuePair<FACILITY_TYPE, int> keyValuePair in facilities) {
-            if (keyValuePair.Value < lowestValue && HasUnoccupiedFurnitureSpotsThatCanProvide(keyValuePair.Key)) {
-                lowestValue = keyValuePair.Value;
-                lowestFacility = keyValuePair.Key;
-            }
-        }
-        return lowestFacility;
-    }
-    public List<LocationGridTile> GetUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type) {
-        List<LocationGridTile> validTiles = new List<LocationGridTile>();
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            if (currTile.objHere == null && currTile.hasFurnitureSpot) {
-                for (int j = 0; j < currTile.furnitureSpot.allowedFurnitureTypes.Length; j++) {
-                    FURNITURE_TYPE furnitureType = currTile.furnitureSpot.allowedFurnitureTypes[j];
-                    TILE_OBJECT_TYPE tileObject = furnitureType.ConvertFurnitureToTileObject();
-                    if (tileObject.CanProvideFacility(type)) {
-                        validTiles.Add(currTile);
-                        break;
-                    }
-                }
-            }
-        }
-        return validTiles;
-    }
-    private bool HasUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type) {
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            if (currTile.objHere == null && currTile.hasFurnitureSpot) {
-                for (int j = 0; j < currTile.furnitureSpot.allowedFurnitureTypes.Length; j++) {
-                    FURNITURE_TYPE furnitureType = currTile.furnitureSpot.allowedFurnitureTypes[j];
-                    TILE_OBJECT_TYPE tileObject = furnitureType.ConvertFurnitureToTileObject();
-                    if (tileObject.CanProvideFacility(type)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    private List<FACILITY_TYPE> GetFacilitiesProvidedBy(TILE_OBJECT_TYPE objType) {
-        List<FACILITY_TYPE> facility = new List<FACILITY_TYPE>();
-        TileObjectData data;
-        if (TileObjectDB.TryGetTileObjectData(objType, out data)) {
-            if (data.providedFacilities != null) {
-                for (int j = 0; j < data.providedFacilities.Length; j++) {
-                    ProvidedFacility provided = data.providedFacilities[j];
-                    facility.Add(provided.type);
-                }
-            }
-        }
-        return facility;
     }
     #endregion
 

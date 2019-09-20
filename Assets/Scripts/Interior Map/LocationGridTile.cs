@@ -558,6 +558,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
             } else if (inputButton == PointerEventData.InputButton.Right) {
                 if (objHere is TileObject) {
                     UIManager.Instance.poiTestingUI.ShowUI(objHere);
+                    structure.RemovePOI(objHere);
                     //objHere.AddTrait("Burning");
                 }
             } else {

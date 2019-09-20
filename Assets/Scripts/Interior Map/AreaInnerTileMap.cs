@@ -1442,6 +1442,7 @@ public class AreaInnerTileMap : MonoBehaviour {
                     detailsTilemap.SetTile(tile.localPlace, null);
                     if (to.tileObjectType == TILE_OBJECT_TYPE.SMALL_ANIMAL || to.tileObjectType == TILE_OBJECT_TYPE.ORE 
                         || to.tileObjectType == TILE_OBJECT_TYPE.EDIBLE_PLANT) {
+                        //randomize rotation.
                         Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f,  (float)(90 * Random.Range(0, 5))), Vector3.one);
                         objectsTilemap.RemoveTileFlags(tile.localPlace, TileFlags.LockTransform);
                         objectsTilemap.SetTransformMatrix(tile.localPlace, m);

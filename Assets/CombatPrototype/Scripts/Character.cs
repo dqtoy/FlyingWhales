@@ -1942,15 +1942,14 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
 
-        if (!hasCreatedJob && currentStructure is Dwelling) {
-            Dwelling dwelling = currentStructure as Dwelling;
-            if (dwelling.HasPositiveRelationshipWithAnyResident(this) && dwelling.HasUnoccupiedFurnitureSpot() && poiGoapActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
+        if (!hasCreatedJob) {
+            if (currentStructure.HasUnoccupiedFurnitureSpot() && poiGoapActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
                 //- if the character is in a Dwelling structure and he or someone he has a positive relationship with owns it, 
                 //and the Dwelling still has an unoccupied Furniture Spot, 5% chance to add a Build Furniture Job.
-                if (UnityEngine.Random.Range(0, 100) < 5) {
-                    FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
+                //if (UnityEngine.Random.Range(0, 100) < 5) {
+                    FACILITY_TYPE mostNeededFacility = currentStructure.GetMostNeededValidFacility();
                     if (mostNeededFacility != FACILITY_TYPE.NONE) {
-                        List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
+                        List<LocationGridTile> validSpots = currentStructure.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
                         LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
                         FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
                         //check first if the character can build that specific type of furniture
@@ -1964,7 +1963,7 @@ public class Character : ILeader, IPointOfInterest {
                             //Debug.Log(this.name + " created a new build furniture job targetting tile " + chosenTile.ToString() + " with furniture type " + furnitureToCreate.ToString());
                         }
                     }
-                }
+                //}
             }
         }
     }
@@ -4344,6 +4343,7 @@ public class Character : ILeader, IPointOfInterest {
         //AddTrait("Glutton");
 
         AddTrait("Character Trait");
+        AddTrait("Craftsman");
     }
     public void CreateInitialTraitsByRace() {
         if (race == RACE.HUMANS) {

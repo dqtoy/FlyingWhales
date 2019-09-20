@@ -76,23 +76,6 @@ public class Table : TileObject {
 
         }
     }
-    //private bool IsSlotAvailable() {
-    //    for (int i = 0; i < users.Length; i++) {
-    //        if (users[i] == null) {
-    //            return true; //there is an available slot
-    //        }
-    //    }
-    //    return false;
-    //}
-    //protected override void OnDestroyTileObject() {
-    //    base.OnDestroyTileObject();
-    //    for (int i = 0; i < users.Length; i++) {
-    //        Character character = users[i];
-    //        if (character != null) {
-    //            character.currentAction.StopAction();
-    //        }
-    //    }
-    //}
     #endregion
 
     #region Users

@@ -47,6 +47,12 @@ public class CharacterTrait : Trait {
                 if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, objectToBeInspected)) {
                     GoapPlanJob inspectJob = new GoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, objectToBeInspected);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
+            } else {
+                if (tileObj.state == POI_STATE.INACTIVE && tileObj.poiGoapActions.Contains(INTERACTION_TYPE.CRAFT_TILE_OBJECT)) {
+                    GoapPlanJob buildJob = new GoapPlanJob(JOB_TYPE.BUILD_TILE_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, tileObj);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(buildJob);
+                    return true;
+                }
                 }
             }
         }

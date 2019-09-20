@@ -217,6 +217,7 @@ public class InteractionManager : MonoBehaviour {
                 break;
             case JOB_TYPE.BURY:
             case JOB_TYPE.REPAIR:
+            case JOB_TYPE.BUILD_TILE_OBJECT:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:
