@@ -106,6 +106,6 @@ public class InflictUnfaithfulness : PlayerJobAction {
 
 public class InflictUnfaithfulnessData : PlayerJobActionData {
     public override string name { get { return "Inflict Unfaithfulness"; } }
-    public override string description { get { return "Makes a character mory horny and prone to have affairs."; } }
+    public override string description { get { return "Makes a character more lustful and prone to have affairs."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
 }

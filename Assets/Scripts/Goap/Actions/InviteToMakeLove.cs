@@ -32,7 +32,7 @@ public class InviteToMakeLove : GoapAction {
                 }
             } else {
                 int acceptChance = 100;
-                if (targetCharacter.GetNormalTrait("Prude") != null) {
+                if (targetCharacter.GetNormalTrait("Chaste") != null) {
                     acceptChance = 25;
                 }
                 if (UnityEngine.Random.Range(0, 100) < acceptChance && !targetCharacter.isStarving && !targetCharacter.isExhausted
@@ -48,12 +48,12 @@ public class InviteToMakeLove : GoapAction {
         }
     }
     protected override int GetCost() {
-        bool isPrude = actor.GetNormalTrait("Prude") != null;
-        if (isPrude) {
-            //Prude 40 - 66 all three time of day and also unfaithful values
+        bool isChaste = actor.GetNormalTrait("Chaste") != null;
+        if (isChaste) {
+            //Chaste 40 - 66 all three time of day and also unfaithful values
             return Utilities.rng.Next(40, 67);
         }
-        bool isHorny = actor.GetNormalTrait("Horny") != null;
+        bool isLustful = actor.GetNormalTrait("Lustful") != null;
         TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             if (poiTarget is Character) {
@@ -70,15 +70,15 @@ public class InviteToMakeLove : GoapAction {
                     }
                 }
             }
-            if (isHorny) {
-                //Horny(Early Night or Late Night 5 - 25)
+            if (isLustful) {
+                //Lustful(Early Night or Late Night 5 - 25)
                 return Utilities.rng.Next(5, 26);
             }
             return Utilities.rng.Next(15, 37);
         }
 
-        if (isHorny) {
-            // - Horny 15 - 25
+        if (isLustful) {
+            // - Lustful 15 - 25
             return Utilities.rng.Next(15, 26);
         }
         return Utilities.rng.Next(30, 57);
