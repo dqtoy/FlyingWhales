@@ -11,8 +11,10 @@ public class SaveDataRegion {
     public int coreTileID;
     public ColorSave regionColor;
     public List<int> connectionsTileIDs;
+    public int previousOwnerID;
+    public List<int> factionsHereIDs;
 
-    public List<int> charactersHereIDs;
+    public List<int> charactersAtLocationIDs;
     public SaveDataWorldObject worldObj;
     public bool hasWorldObject;
     public WORLD_EVENT activeEvent;
@@ -30,7 +32,7 @@ public class SaveDataRegion {
 
     public void Save(Region region) {
         id = region.id;
-        name = region.regionName;
+        name = region.name;
 
         tileIDs = new List<int>();
         for (int i = 0; i < region.tiles.Count; i++) {
@@ -49,9 +51,20 @@ public class SaveDataRegion {
             connectionsTileIDs.Add(region.connections[i].coreTile.id);
         }
 
-        charactersHereIDs = new List<int>();
+        charactersAtLocationIDs = new List<int>();
         for (int i = 0; i < region.charactersAtLocation.Count; i++) {
-            charactersHereIDs.Add(region.charactersAtLocation[i].id);
+            charactersAtLocationIDs.Add(region.charactersAtLocation[i].id);
+        }
+
+        if(region.previousOwner != null) {
+            previousOwnerID = region.previousOwner.id;
+        } else {
+            previousOwnerID = -1;
+        }
+
+        factionsHereIDs = new List<int>();
+        for (int i = 0; i < region.factionsHere.Count; i++) {
+            factionsHereIDs.Add(region.factionsHere[i].id);
         }
 
         if (region.activeEvent != null) {
@@ -99,6 +112,14 @@ public class SaveDataRegion {
 
     public void LoadRegionAdditionalData(Region region) {
         //Region region = GridMap.Instance.GetRegionByID(id);
+        if(previousOwnerID != -1) {
+            region.SetPreviousOwner(FactionManager.Instance.GetFactionBasedOnID(previousOwnerID));
+        }
+
+        for (int i = 0; i < factionsHereIDs.Count; i++) {
+            region.AddFactionHere(FactionManager.Instance.GetFactionBasedOnID(factionsHereIDs[i]));
+        }
+
         region.LoadBuildingStructure(this);
         region.LoadInvasion(this);
     }
@@ -111,8 +132,8 @@ public class SaveDataRegion {
         }
     }
     public void LoadRegionCharacters(Region region) {
-        for (int i = 0; i < charactersHereIDs.Count; i++) {
-            region.LoadCharacterHere(CharacterManager.Instance.GetCharacterByID(charactersHereIDs[i]));
+        for (int i = 0; i < charactersAtLocationIDs.Count; i++) {
+            region.LoadCharacterHere(CharacterManager.Instance.GetCharacterByID(charactersAtLocationIDs[i]));
         }
     }
     public void LoadActiveEventAndWorldObject(Region region) {

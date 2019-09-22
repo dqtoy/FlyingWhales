@@ -7,7 +7,6 @@ using UnityEngine;
 public class Area {
 
     public int id { get; private set; }
-    public string name { get; private set; }
     //public bool isDead { get; private set; }
     public AREA_TYPE areaType { get; private set; }
     public List<Character> areaResidents { get; private set; }
@@ -18,6 +17,7 @@ public class Area {
 
     //Data that are only referenced from this area's region
     //These are only getter data, meaning it cannot be stored
+    public string name { get { return region.name; } }
     public HexTile coreTile { get { return region.coreTile; } }
     public Faction owner { get { return region.owner; } }
     public Faction previousOwner { get { return region.previousOwner; } }
@@ -95,10 +95,9 @@ public class Area {
     #endregion
 
     public Area(Region region, AREA_TYPE areaType, int citizenCount) {
+        this.region = region;
         id = Utilities.SetID(this);
         this.citizenCount = citizenCount;
-        this.region = region;
-        SetName(RandomNameGenerator.Instance.GetRegionName());
         areaResidents = new List<Character>();
         //charactersAtLocation = new List<Character>();
         //defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
@@ -111,7 +110,6 @@ public class Area {
     }
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
-        SetName(data.areaName);
         areaResidents = new List<Character>();
         //charactersAtLocation = new List<Character>();
         SetAreaType(data.areaType);
@@ -133,10 +131,9 @@ public class Area {
     }
 
     public Area(SaveDataArea saveDataArea) {
+        region = GridMap.Instance.GetRegionByID(saveDataArea.regionID);
         id = Utilities.SetID(this, saveDataArea.id);
         citizenCount = saveDataArea.citizenCount;
-        region = GridMap.Instance.GetRegionByID(saveDataArea.regionID);
-        SetName(saveDataArea.name);
 
         areaResidents = new List<Character>();
         //charactersAtLocation = new List<Character>();
@@ -184,12 +181,6 @@ public class Area {
         if (supplyPile == pile) {
             TryCreateObtainSupplyOutsideJob();
         }
-    }
-    #endregion
-
-    #region Area Details
-    public void SetName(string name) {
-        this.name = name;
     }
     #endregion
 
