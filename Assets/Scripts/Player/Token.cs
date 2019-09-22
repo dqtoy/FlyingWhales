@@ -5,6 +5,7 @@ using UnityEngine;
 
 
 public class SpecialToken : IPointOfInterest {
+    public int id { get; private set; }
     public string name { get; private set; }
     public SPECIAL_TOKEN specialTokenType;
     public int weight;
@@ -60,6 +61,7 @@ public class SpecialToken : IPointOfInterest {
     #endregion
 
     public SpecialToken(SPECIAL_TOKEN specialTokenType, int appearanceRate) : base() {
+        id = Utilities.SetID(this);
         this.specialTokenType = specialTokenType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;

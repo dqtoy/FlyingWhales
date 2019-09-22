@@ -123,6 +123,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     [SerializeField] private SeamlessEdgeAssetsDictionary edgeAssets; //0-north, 1-south, 2-west, 3-east
 
     public Character hoveredCharacter { get; private set; }
+
     public Area area { get; private set; }
     public LocationGridTile[,] map { get; private set; }
     public List<LocationGridTile> allTiles { get; private set; }
@@ -1945,4 +1946,9 @@ public struct LocationStructureSetting {
         hasTemplate = false;
         template = default(StructureTemplate);
     }
+}
+
+[System.Serializable]
+public class SaveDataAreaInnerTileMap {
+
 }

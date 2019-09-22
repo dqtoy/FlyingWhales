@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using BayatGames.SaveGameFree.Types;
 
 public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
 
@@ -753,5 +754,72 @@ public struct TwoTileDirections {
     public TwoTileDirections(TileNeighbourDirection from, TileNeighbourDirection to) {
         this.from = from;
         this.to = to;
+    }
+}
+
+
+[System.Serializable]
+public class SaveDataLocationGridTile {
+    public Vector3Save localPlace; //this is the id
+    public Vector3Save worldLocation;
+    public Vector3Save centeredWorldLocation;
+    public Vector3Save localLocation;
+    public Vector3Save centeredLocalLocation;
+    public LocationGridTile.Tile_Type tileType;
+    public LocationGridTile.Tile_State tileState;
+    public LocationGridTile.Tile_Access tileAccess;
+    public LocationGridTile.Ground_Type groundType;
+    //public LocationStructure structure { get; private set; }
+    //public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
+    public List<Vector3Save> neighbours;
+    public List<TileNeighbourDirection> neighbourDirections;
+    public List<SaveDataTrait> traits;
+    //public List<int> charactersHere;
+    public int objHereID;
+    public POINT_OF_INTEREST_TYPE objHereType;
+    public TILE_OBJECT_TYPE reservedObjectType;
+    public FurnitureSpot furnitureSpot;
+    public bool hasFurnitureSpot;
+    public bool hasDetail;
+    public bool isInside;
+    public bool isLocked;
+
+    public void Save(LocationGridTile gridTile) {
+        localPlace = new Vector3Save(gridTile.localPlace.x);
+        worldLocation = gridTile.worldLocation;
+        centeredWorldLocation = gridTile.centeredWorldLocation;
+        localLocation = gridTile.localLocation;
+        centeredLocalLocation = gridTile.centeredLocalLocation;
+        tileType = gridTile.tileType;
+        tileState = gridTile.tileState;
+        tileAccess = gridTile.tileAccess;
+        groundType = gridTile.groundType;
+        reservedObjectType = gridTile.reservedObjectType;
+        furnitureSpot = gridTile.furnitureSpot;
+        hasFurnitureSpot = gridTile.hasFurnitureSpot;
+        hasDetail = gridTile.hasDetail;
+        isInside = gridTile.isInside;
+        isLocked = gridTile.isLocked;
+
+        neighbourDirections = new List<TileNeighbourDirection>();
+        neighbours = new List<Vector3Save>();
+        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in gridTile.neighbours) {
+            neighbourDirections.Add(kvp.Key);
+            neighbours.Add(new Vector3Save(kvp.Value.localPlace));
+        }
+
+        traits = new List<SaveDataTrait>();
+        for (int i = 0; i < gridTile.normalTraits.Count; i++) {
+            SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(gridTile.normalTraits[i]);
+            saveDataTrait.Save(gridTile.normalTraits[i]);
+            traits.Add(saveDataTrait);
+        }
+
+        if(gridTile.objHere != null) {
+            objHereID = gridTile.objHere.id;
+            objHereType = gridTile.objHere.poiType;
+        } else {
+            objHereID = -1;
+        }
     }
 }

@@ -668,3 +668,8 @@ public struct TileObjectSerializableData {
     public int id;
     public TILE_OBJECT_TYPE type;
 }
+
+[System.Serializable]
+public class SaveDataTileObject {
+
+}
