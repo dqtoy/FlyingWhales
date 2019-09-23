@@ -67,6 +67,7 @@ public class ConsoleMenu : UIMenu {
             {"/set_tiredness", SetTiredness },
             {"/set_happiness", SetHappiness },
             {"/gain_i_ability", GainInterventionAbility },
+            {"/destroy_tile_obj", DestroyTileObj },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -105,7 +106,7 @@ public class ConsoleMenu : UIMenu {
         //        }
         //    }
         //}
-        
+
     }
 
     #region Full Debug
@@ -227,7 +228,7 @@ public class ConsoleMenu : UIMenu {
                 }
             }
         }
-       
+
         return text;
     }
     #endregion
@@ -465,7 +466,7 @@ public class ConsoleMenu : UIMenu {
         //character.CenterOnCharacter();
     }
     #endregion
-    
+
     #region Characters
     private void KillCharacter(string[] parameters) {
         if (parameters.Length < 1) {
@@ -653,7 +654,7 @@ public class ConsoleMenu : UIMenu {
         }
 
         //if (AttributeManager.Instance.allTraits.ContainsKey(traitParameterString)) {
-            character.AddTrait(traitParameterString);
+        character.AddTrait(traitParameterString);
         //} else {
         //    switch (traitParameterString) {
         //        case "Criminal":
@@ -685,10 +686,10 @@ public class ConsoleMenu : UIMenu {
         if (character.RemoveTrait(traitParameterString)) {
             AddSuccessMessage("Removed " + traitParameterString + " to " + character.name);
         } else {
-            AddErrorMessage(character.name +  " has no trait named " + traitParameterString);
+            AddErrorMessage(character.name + " has no trait named " + traitParameterString);
         }
-       
-        
+
+
     }
     private void TransferCharacterToFaction(string[] parameters) {
         if (parameters.Length != 2) { //parameters command, item
@@ -776,7 +777,7 @@ public class ConsoleMenu : UIMenu {
         string moodParameterString = parameters[1];
 
         int moodValue = character.moodValue;
-        if(!int.TryParse(moodParameterString, out moodValue)) {
+        if (!int.TryParse(moodParameterString, out moodValue)) {
             AddErrorMessage("Mood value parameter is not an integer: " + moodParameterString);
             return;
         }
@@ -965,13 +966,13 @@ public class ConsoleMenu : UIMenu {
     //        }
     //    }
 
-   //     string text = faction.name + "'s Landmark Info: ";
-   //     for (int i = 0; i < faction.landmarkInfo.Count; i++) {
-   //         BaseLandmark currLandmark = faction.landmarkInfo[i];
-			//text += "\n" + currLandmark.landmarkName + " (" + currLandmark.tileLocation.name + ") ";
-   //     }
-        
-        //AddSuccessMessage(text);
+    //     string text = faction.name + "'s Landmark Info: ";
+    //     for (int i = 0; i < faction.landmarkInfo.Count; i++) {
+    //         BaseLandmark currLandmark = faction.landmarkInfo[i];
+    //text += "\n" + currLandmark.landmarkName + " (" + currLandmark.tileLocation.name + ") ";
+    //     }
+
+    //AddSuccessMessage(text);
     //}
     #endregion
 
@@ -1056,12 +1057,12 @@ public class ConsoleMenu : UIMenu {
         classDropdown.AddOptions(allClasses);
     }
     public void AddMinion() {
-        RACE race = (RACE) System.Enum.Parse(typeof(RACE), raceDropdown.options[raceDropdown.value].text);
+        RACE race = (RACE)System.Enum.Parse(typeof(RACE), raceDropdown.options[raceDropdown.value].text);
         string className = classDropdown.options[classDropdown.value].text;
         int level = int.Parse(levelInput.text);
-        if(race != RACE.NONE && level > 0) {
+        if (race != RACE.NONE && level > 0) {
             Minion minion = PlayerManager.Instance.player.CreateNewMinion(className, race);
-            if(level > 1) {
+            if (level > 1) {
                 minion.character.LevelUp(level - 1);
             }
             PlayerManager.Instance.player.AddMinion(minion);
@@ -1135,6 +1136,39 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage("There is no intervention ability of type " + typeParameterString);
         }
 
+    }
+    #endregion
+
+    #region Tile Objects
+    /// <summary>
+    /// Parameters: TILE_OBJECT_TYPE, int id
+    /// </summary>
+    private void DestroyTileObj(string[] parameters) {
+        if (parameters.Length != 2) { 
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of DestroyTileObj");
+            return;
+        }
+        string typeParameterString = parameters[0];
+        string idParameterString = parameters[1];
+        int id = System.Int32.Parse(idParameterString);
+        TILE_OBJECT_TYPE type;
+        if (Enum.TryParse(typeParameterString, out type)) {
+            for (int i = 0; i < LandmarkManager.Instance.allNonPlayerAreas.Count; i++) {
+                Area currArea = LandmarkManager.Instance.allNonPlayerAreas[i];
+                List<TileObject> objs = currArea.GetTileObjectsOfType(type);
+                for (int j = 0; j < objs.Count; j++) {
+                    TileObject currObj = objs[j];
+                    if (currObj.id == id) {
+                        AddSuccessMessage("Removed " + currObj.ToString() + " from " + currObj.gridTileLocation.ToString() + " at " + currObj.gridTileLocation.structure.ToString());
+                        currObj.gridTileLocation.structure.RemovePOI(currObj);
+                        break;
+                    }
+                }
+            }
+        } else {
+            AddErrorMessage("There is no tile object of type " + typeParameterString);
+        }
     }
     #endregion
 }

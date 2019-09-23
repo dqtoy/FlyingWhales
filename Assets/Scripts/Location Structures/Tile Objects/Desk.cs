@@ -49,6 +49,9 @@ public class Desk : TileObject {
 
         }
     }
+    public override bool CanBeReplaced() {
+        return true;
+    }
     //private bool IsSlotAvailable() {
     //    for (int i = 0; i < users.Length; i++) {
     //        if (users[i] == null) {

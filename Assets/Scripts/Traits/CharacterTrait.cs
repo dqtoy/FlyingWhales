@@ -56,6 +56,12 @@ public class CharacterTrait : Trait {
                     characterThatWillDoJob.jobQueue.AddJobInQueue(prayJob);
                     return true;
                 }
+            } else {
+                if (tileObj.state == POI_STATE.INACTIVE && tileObj.poiGoapActions.Contains(INTERACTION_TYPE.CRAFT_TILE_OBJECT)) {
+                    GoapPlanJob buildJob = new GoapPlanJob(JOB_TYPE.BUILD_TILE_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, tileObj);
+                    characterThatWillDoJob.jobQueue.AddJobInQueue(buildJob);
+                    return true;
+                }
             }
         }
         if (targetPOI is SpecialToken) {

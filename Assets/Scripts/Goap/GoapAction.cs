@@ -154,6 +154,22 @@ public class GoapAction {
         currentState.Execute();
         Messenger.Broadcast(Signals.ACTION_STATE_SET, this, currentState);
     }
+    /// <summary>
+    /// Change the state that this action is in. This is used when the current action already has a state,
+    /// but some change in external conditions needs the action to change effects midway.
+    /// </summary>
+    /// <param name="newState">The state that this action will switch to.</param>
+    public void ChangeState(string newState) {
+        GoapActionState nextState = states[newState];
+        nextState.OverrideDuration(currentState.duration - currentState.currentDuration); //set the duration of the next state to be the remaining duration of the current state.
+        CleanupBeforeChangingStates();
+        currentState.StopPerTickEffect();
+        SetState(newState);
+    }
+    /// <summary>
+    /// Utility function to cleanup any unneeded mechanics before this action changes states.
+    /// </summary>
+    protected virtual void CleanupBeforeChangingStates() { }
     #endregion
 
     #region Virtuals
@@ -620,10 +636,6 @@ public class GoapAction {
     protected bool HasSupply(int neededSupply) {
         return actor.supply >= neededSupply;
     }
-    /// <summary>
-    /// This is used by the character marker so that when it recalculates a path, his/her current action is updated.
-    /// </summary>
-    /// <param name="targetTile">The new target tile.</param>
     public void SetExecutionDate(GameDate date) {
         executionDate = date;
     }
@@ -833,15 +845,6 @@ public class GoapAction {
     }
     public void AddActualEffect(GoapEffect effect) {
         actualEffects.Add(effect);
-    }
-    public bool HasActualEffect(GOAP_EFFECT_CONDITION conditionType, object conditionKey = null, IPointOfInterest targetPOI = null) {
-        for (int i = 0; i < actualEffects.Count; i++) {
-            GoapEffect effect = actualEffects[i];
-            if (effect.conditionType == conditionType && effect.conditionKey == conditionKey && effect.targetPOI == targetPOI) {
-                return true;
-            }
-        }
-        return false;
     }
     #endregion
 

@@ -818,10 +818,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //}
         //ShowHexTileInfo();
 #else
-        //if (this.areaOfTile != null) {
+        if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
-        //SetBordersState(true);
-        //}
+        }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
 #endif
     }
@@ -834,8 +833,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //    SetNeighbourHighlightState(false);
         //}
 #else
-        _hoverHighlightGO.SetActive(false);
-        //SetBordersState(false);
+        if (this.landmarkOnTile != null) {
+            _hoverHighlightGO.SetActive(false);
+        }
         UIManager.Instance.HideSmallInfo();
         //if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
         //    return;

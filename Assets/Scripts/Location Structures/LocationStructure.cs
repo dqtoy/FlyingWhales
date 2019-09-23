@@ -136,7 +136,6 @@ public class LocationStructure {
                 }
                 //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
             }
-
 #endif
             return true;
         }
@@ -541,22 +540,4 @@ public class LocationStructure {
     public override string ToString() {
         return structureType.ToString() + " " + location.structures[structureType].IndexOf(this).ToString() + " at " + location.name;
     }
-
-    //#region Point Of Interest
-    //public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-    //    if (poiGoapActions != null && poiGoapActions.Count > 0) {
-    //        List<GoapAction> usableActions = new List<GoapAction>();
-    //        for (int i = 0; i < poiGoapActions.Count; i++) {
-    //            if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
-    //                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
-    //                if (goapAction.CanSatisfyRequirements()) {
-    //                    usableActions.Add(goapAction);
-    //                }
-    //            }
-    //        }
-    //        return usableActions;
-    //    }
-    //    return null;
-    //}
-    //#endregion
 }

@@ -13,4 +13,8 @@ public class Guitar : TileObject {
     public override string ToString() {
         return "Guitar " + id.ToString();
     }
+
+    public override bool CanBeReplaced() {
+        return true;
+    }
 }

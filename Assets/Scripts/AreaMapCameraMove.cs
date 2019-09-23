@@ -33,6 +33,7 @@ public class AreaMapCameraMove : MonoBehaviour {
 
     [Header("Edging")]
     [SerializeField] private float edgingSpeed = 30f;
+    private bool allowEdgePanning = false;
 
     private float previousCameraFOV;
 
@@ -278,7 +279,7 @@ public class AreaMapCameraMove : MonoBehaviour {
 
     }
     private void Edging() {
-        if (isDragging) {
+        if (!allowEdgePanning || isDragging) {
             return;
         }
         bool isEdging = false;
@@ -304,6 +305,9 @@ public class AreaMapCameraMove : MonoBehaviour {
             target = null; //reset target
         }
         transform.position = newPos;
+    }
+    public void AllowEdgePanning(bool state) {
+        allowEdgePanning = state;
     }
     #endregion
 
