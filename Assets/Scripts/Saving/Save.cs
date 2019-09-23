@@ -14,6 +14,8 @@ public class Save {
     public List<SaveDataArea> nonPlayerAreaSaves;
     public List<SaveDataFaction> factionSaves;
     public List<SaveDataCharacter> characterSaves;
+    public List<SaveDataTileObject> tileObjectSaves;
+    public List<SaveDataSpecialObject> specialObjectSaves;
 
     public SaveDataArea playerAreaSave;
     public SaveDataPlayer playerSave;
@@ -218,6 +220,46 @@ public class Save {
     }
     public void LoadPlayer() {
         playerSave.Load();
+    }
+
+    public void SaveTileObjects(Dictionary<TILE_OBJECT_TYPE, List<TileObject>> tileObjects) {
+        tileObjectSaves = new List<SaveDataTileObject>();
+        foreach (KeyValuePair<TILE_OBJECT_TYPE, List<TileObject>> kvp in tileObjects) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                TileObject currTileObject = kvp.Value[i];
+                SaveDataTileObject data = null;
+                System.Type type = System.Type.GetType("SaveData" + currTileObject.GetType().ToString());
+                if (type != null) {
+                    data = System.Activator.CreateInstance(type) as SaveDataTileObject;
+                } else {
+                    data = new SaveDataTileObject();
+                }
+                data.Save(currTileObject);
+                tileObjectSaves.Add(data);
+            }
+        }
+    }
+    public void LoadTileObjects() {
+        //TODO
+    }
+
+    public void SaveSpecialObjects(List<SpecialObject> specialObjects) {
+        specialObjectSaves = new List<SaveDataSpecialObject>();
+        for (int i = 0; i < specialObjects.Count; i++) {
+            SpecialObject currSpecialObject = specialObjects[i];
+            SaveDataSpecialObject data = null;
+            System.Type type = System.Type.GetType("SaveData" + currSpecialObject.GetType().ToString());
+            if (type != null) {
+                data = System.Activator.CreateInstance(type) as SaveDataSpecialObject;
+            } else {
+                data = new SaveDataSpecialObject();
+            }
+            data.Save(currSpecialObject);
+            specialObjectSaves.Add(data);
+        }
+    }
+    public void LoadSpecialObjects() {
+        //TODO
     }
     //public void LoadInvasion() {
     //    playerSave.LoadInvasion(this);

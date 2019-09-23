@@ -10,6 +10,7 @@ public class TokenManager : MonoBehaviour {
     public List<SpecialTokenSettings> specialTokenSettings;
 
     [SerializeField] private ItemSpriteDictionary itemSpritesDictionary;
+    public List<SpecialObject> specialObjects { get; private set; }
 
     void Awake() {
         Instance = this;
@@ -17,6 +18,7 @@ public class TokenManager : MonoBehaviour {
 
     public void Initialize() {
         LoadSpecialTokens();
+        specialObjects = new List<SpecialObject>();
     }
 
     private void LoadSpecialTokens() {
@@ -119,6 +121,17 @@ public class TokenManager : MonoBehaviour {
     public Sprite GetItemSprite(SPECIAL_TOKEN tokenType) {
         if (itemSpritesDictionary.ContainsKey(tokenType)) {
             return itemSpritesDictionary[tokenType];
+        }
+        return null;
+    }
+    public void AddSpecialObject(SpecialObject obj) {
+        specialObjects.Add(obj);
+    }
+    public SpecialObject GetSpecialObjectByID(int id) {
+        for (int i = 0; i < specialObjects.Count; i++) {
+            if(specialObjects[i].id == id) {
+                return specialObjects[i];
+            }
         }
         return null;
     }

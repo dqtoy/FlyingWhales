@@ -57,10 +57,10 @@ public class SaveDataDemonStone : SaveDataSpecialObject {
     public int startTick;
     public bool hasScheduledInvocation;
 
-    public override void Save(IWorldObject worldObject) {
-        base.Save(worldObject);
-        if (worldObject is DemonStone) {
-            DemonStone demonStone = worldObject as DemonStone;
+    public override void Save(SpecialObject specialObject) {
+        base.Save(specialObject);
+        if (specialObject is DemonStone) {
+            DemonStone demonStone = specialObject as DemonStone;
             dueMonth = demonStone.dueDate.month;
             dueDay = demonStone.dueDate.day;
             dueYear = demonStone.dueDate.year;
@@ -75,7 +75,7 @@ public class SaveDataDemonStone : SaveDataSpecialObject {
         }
     }
 
-    public override IWorldObject Load() {
+    public override SpecialObject Load() {
         DemonStone demonStone = new DemonStone();
         demonStone.LoadInvocation(this);
         return demonStone;
