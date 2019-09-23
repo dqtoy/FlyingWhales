@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using BayatGames.SaveGameFree.Types;
 
 public class TileObject : IPointOfInterest {
 
@@ -42,7 +43,8 @@ public class TileObject : IPointOfInterest {
     protected LocationGridTile tile;
     private POI_STATE _state;
     protected POICollisionTrigger _collisionTrigger;
-    protected LocationGridTile previousTile;
+    public LocationGridTile previousTile { get; protected set; }
+
     #region getters/setters
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.TILE_OBJECT; }
@@ -671,5 +673,49 @@ public struct TileObjectSerializableData {
 
 [System.Serializable]
 public class SaveDataTileObject {
+    public int id;
+    public TILE_OBJECT_TYPE tileObjectType;
+    public List<SaveDataTrait> traits;
+    public List<int> awareCharactersIDs;
+    //public LocationStructure structureLocation { get; protected set; }
+    public bool isDisabledByPlayer;
+    public bool isSummonedByPlayer;
+    //public List<JobQueueItem> allJobsTargettingThis { get; protected set; }
+    //public List<Character> owners;
 
+    //public Vector3Save tileID;
+    public POI_STATE state;
+    public Vector3Save previousTileID;
+    public int previousTileAreaID;
+    public bool hasCurrentTile;
+
+    public virtual void Save(TileObject tileObject) {
+        id = tileObject.id;
+        tileObjectType = tileObject.tileObjectType;
+        isDisabledByPlayer = tileObject.isDisabledByPlayer;
+        isSummonedByPlayer = tileObject.isSummonedByPlayer;
+        state = tileObject.state;
+
+        hasCurrentTile = tileObject.gridTileLocation != null;
+
+        if (tileObject.previousTile != null) {
+            previousTileID = new Vector3Save(tileObject.previousTile.localPlace);
+            previousTileAreaID = tileObject.previousTile.structure.location.id;
+        } else {
+            previousTileID = new Vector3Save(0, 0, -1);
+            previousTileAreaID = -1;
+        }
+
+        traits = new List<SaveDataTrait>();
+        for (int i = 0; i < tileObject.normalTraits.Count; i++) {
+            SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(tileObject.normalTraits[i]);
+            saveDataTrait.Save(tileObject.normalTraits[i]);
+            traits.Add(saveDataTrait);
+        }
+
+        awareCharactersIDs = new List<int>();
+        for (int i = 0; i < tileObject.awareCharacters.Count; i++) {
+            awareCharactersIDs.Add(tileObject.awareCharacters[i].id);
+        }
+    }
 }
