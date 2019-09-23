@@ -323,6 +323,7 @@ public static class Signals {
     /// parameters (Minion, BaseLandmark)
     /// </summary>
     public static string MINION_UNASSIGNED_PLAYER_LANDMARK = "OnMinionUnassignedFromPlayerLandmark";
+    public static string PLAYER_ADJUSTED_MANA = "OnPlayerAdjustedMana";
     #endregion
 
     #region Interaction

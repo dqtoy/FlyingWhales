@@ -10,6 +10,9 @@ using System;
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
 
+    [Header("Currencies")]
+    [SerializeField] private TextMeshProUGUI manaLbl;
+
     [Header("Role Slots")]
     [SerializeField] private RectTransform roleSlotsParent;
     //[SerializeField] private RoleSlotItem[] roleSlots;
@@ -155,7 +158,7 @@ public class PlayerUI : MonoBehaviour {
         if (InteriorMapManager.Instance.isAnAreaMapShowing) {
             UpdateStartInvasionButton();
         }
-        //manaText.text = PlayerManager.Instance.player.currencies[CURRENCY.MANA].ToString();
+        UpdateMana();
         //redMagicText.text = "" + PlayerManager.Instance.player.redMagic;
         //greenMagicText.text = "" + PlayerManager.Instance.player.greenMagic;
         //suppliesText.text = PlayerManager.Instance.player.currencies[CURRENCY.SUPPLY].ToString();
@@ -232,6 +235,9 @@ public class PlayerUI : MonoBehaviour {
 
         //key presses
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+
+        //currencies
+        Messenger.AddListener(Signals.PLAYER_ADJUSTED_MANA, UpdateMana);
     }
 
     #region Listeners
@@ -326,7 +332,13 @@ public class PlayerUI : MonoBehaviour {
             SuccessfulAreaCorruption();
         }
     }
-    #endregion    
+    #endregion
+
+    #region Currencies
+    private void UpdateMana() {
+        manaLbl.text = PlayerManager.Instance.player.mana.ToString();
+    }
+    #endregion
 
     #region Role Slots
     //int currentlyShowingSlotIndex = 0;

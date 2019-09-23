@@ -10,11 +10,12 @@ public class Player : ILeader {
     public const int MAX_MINIONS = 6;
     public const int MAX_THREAT = 100;
     public readonly int MAX_INTERVENTION_ABILITIES = 4;
+    public const int MAX_MANA = 500;
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
     public int threat { get; private set; }
-
+    public int mana { get; private set; }
     public CombatGrid attackGrid { get; private set; }
     public CombatGrid defenseGrid { get; private set; }
     public List<Intel> allIntel { get; private set; }
@@ -82,11 +83,9 @@ public class Player : ILeader {
         minionsToSummon = new UnsummonedMinionData[3];
         maxSummonSlots = 0;
         maxArtifactSlots = 0;
-        //InitializeNewInterventionAbilityCycle();
+        mana = MAX_MANA;
         ConstructAllInterventionAbilitySlots();
         GenerateMinionsToSummon();
-        //ConstructAllSummonSlots();
-        //ConstructAllArtifactSlots();
         AddListeners();
     }
     public Player(SaveDataPlayer data) {
@@ -98,6 +97,7 @@ public class Player : ILeader {
         minions = new List<Minion>();
         maxSummonSlots = data.maxSummonSlots;
         maxArtifactSlots = data.maxArtifactSlots;
+        mana = data.mana;
         //isNotFirstResearch = data.isNotFirstResearch;
         //threat = data.threat;
         //ConstructAllInterventionAbilitySlots();
@@ -139,6 +139,9 @@ public class Player : ILeader {
         //minions
         Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_ASSIGNED_PLAYER_LANDMARK, OnMinionAssignedToPlayerLandmark);
         Messenger.AddListener<Minion, BaseLandmark>(Signals.MINION_UNASSIGNED_PLAYER_LANDMARK, OnMinionUnassignedFromPlayerLandmark);
+
+        //mana
+        Messenger.AddListener(Signals.HOUR_STARTED, HourlyManaRegen);
     }
     #endregion
 
@@ -1683,6 +1686,30 @@ public class Player : ILeader {
         //PlayerManager.Instance.player.ShowNotification(log);
         UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), Utilities.LogReplacer(log), () => UIManager.Instance.ShowRegionInfo(region));
         TimerHubUI.Instance.AddItem(we.name + " event at " + region.name, we.duration, () => UIManager.Instance.ShowRegionInfo(region));
+    }
+    #endregion
+
+    #region Mana
+    private void HourlyManaRegen() {
+        AdjustMana(20);
+    }
+    public void AdjustMana(int amount) {
+        mana += amount;
+        mana = Mathf.Clamp(mana, 0, MAX_MANA);
+        Messenger.Broadcast(Signals.PLAYER_ADJUSTED_MANA);
+    }
+    public int GetManaCostForInterventionAbility(INTERVENTION_ABILITY ability) {
+        int tier = PlayerManager.Instance.GetInterventionAbilityTier(ability);
+        if (tier == 1) {
+            return 200;
+        } else if (tier == 2) {
+            return 150;
+        } else {
+            return 100;
+        }
+    }
+    public bool CanAffordInterventionAbility(INTERVENTION_ABILITY ability) {
+        return mana >= GetManaCostForInterventionAbility(ability);
     }
     #endregion
 }
