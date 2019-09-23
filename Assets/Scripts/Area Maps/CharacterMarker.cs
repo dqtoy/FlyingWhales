@@ -1156,9 +1156,12 @@ public class CharacterMarker : PooledObject {
         }
     }
     public void OnOtherCharacterDied(Character otherCharacter) {
-        if (inVisionCharacters.Contains(otherCharacter)) {
-            character.CreateJobsOnEnterVisionWith(otherCharacter); //this is used to create jobs that involve characters that died within the character's range of vision
-        }
+        //NOTE: This is no longer needed since this will only cause duplicates because CreateJobsOnEnterVisionWith will also be called upon adding the Dead trait
+        //if (inVisionCharacters.Contains(otherCharacter)) {
+        //    character.CreateJobsOnEnterVisionWith(otherCharacter); //this is used to create jobs that involve characters that died within the character's range of vision
+        //}
+
+
         //RemovePOIFromInVisionRange(otherCharacter);
         //visionCollision.RemovePOIAsInRangeButDifferentStructure(otherCharacter);
 

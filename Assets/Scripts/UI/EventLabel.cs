@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using TMPro;
-
 using UnityEngine.Events;
 
-public class EventLabel : MonoBehaviour, IPointerClickHandler{
+public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler{
 
     [SerializeField] private LogItem logItem;
 	[SerializeField] private TextMeshProUGUI text;
@@ -15,10 +15,19 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
 
     private Log log;
 
+    protected bool isHovering;
+
+    protected Dictionary<string, object> objectDictionary;
 
     private void Awake() {
+        objectDictionary = new Dictionary<string, object>();
         if (text == null) {
             text = gameObject.GetComponent<TextMeshProUGUI>();
+        }
+    }
+    void Update() {
+        if (isHovering) {
+            HoveringAction();
         }
     }
 
@@ -31,8 +40,11 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
             TMP_LinkInfo linkInfo = text.textInfo.linkInfo[linkIndex];
             if (logItem == null) {
                 string linkText = linkInfo.GetLinkID();
-                string id = linkText.Substring(0, linkText.IndexOf('_'));
-                int idToUse = int.Parse(id);
+                int idToUse;
+                if (!int.TryParse(linkText, out idToUse)) {
+                    string id = linkText.Substring(0, linkText.IndexOf('_'));
+                    idToUse = int.Parse(id);
+                }
                 if (linkText.Contains("_faction")) {
                     Faction faction = FactionManager.Instance.GetFactionBasedOnID(idToUse);
                     if (faction != null) {
@@ -56,8 +68,14 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                     }
                 }
             } else if (logItem.log != null) {
-                int indexToUse = int.Parse(linkInfo.GetLinkID());
-                LogFiller lf = logItem.log.fillers[indexToUse];
+                string linkText = linkInfo.GetLinkID();
+                int idToUse;
+                if (!int.TryParse(linkText, out idToUse)) {
+                    string id = linkText.Substring(0, linkText.IndexOf('_'));
+                    idToUse = int.Parse(id);
+                }
+                //int indexToUse = int.Parse(linkInfo.GetLinkID());
+                LogFiller lf = logItem.log.fillers[idToUse];
                 if (lf.obj != null) {
                     if (lf.obj is Character) {
                         UIManager.Instance.ShowCharacterInfo(lf.obj as Character);
@@ -88,6 +106,20 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
             
         }
     }
+    public void OnPointerEnter(PointerEventData eventData) {
+        if (!allowClickAction) {
+            return;
+        }
+        isHovering = true;
+    }
+    public void OnPointerExit(PointerEventData eventData) {
+        if (!allowClickAction) {
+            return;
+        }
+        objectDictionary.Clear();
+        isHovering = false;
+        HoverOutAction();
+    }
 
     public void SetLog(Log log) {
         this.log = log;
@@ -108,18 +140,32 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler{
                     string id = linkText.Substring(0, linkText.IndexOf('_'));
                     idToUse = int.Parse(id);
                 }
-                if (linkText.Contains("_faction")) {
-                    obj = UIManager.Instance.characterInfoUI.activeCharacter.faction;
-                } else if (linkText.Contains("_landmark")) {
-                    obj = LandmarkManager.Instance.GetLandmarkByID(idToUse);
-                } else if (linkText.Contains("_character")) {
-                    obj = CharacterManager.Instance.GetCharacterByID(idToUse);
+                if (objectDictionary.ContainsKey(linkText)) {
+                    obj = objectDictionary[linkText];
                 } else {
-                    obj = idToUse;
+                    if (linkText.Contains("_faction")) {
+                        obj = FactionManager.Instance.GetFactionBasedOnID(idToUse);
+                    } else if (linkText.Contains("_character")) {
+                        obj = CharacterManager.Instance.GetCharacterByID(idToUse);
+                    } else if (linkText.Contains("_hextile")) {
+                        obj = GridMap.Instance.allTiles[idToUse];
+                    } else {
+                        obj = linkText;
+                    }
+                    objectDictionary.Add(linkText, obj);
                 }
             } else {
-                int idToUse = int.Parse(linkText);
-                obj = log.fillers[idToUse].obj;
+                int idToUse;
+                if (!int.TryParse(linkText, out idToUse)) {
+                    string id = linkText.Substring(0, linkText.IndexOf('_'));
+                    idToUse = int.Parse(id);
+                }
+                if (objectDictionary.ContainsKey(linkText)) {
+                    obj = objectDictionary[linkText];
+                } else {
+                    obj = log.fillers[idToUse].obj;
+                    objectDictionary.Add(linkText, obj);
+                }
             }
             if (obj != null) {
                 hoverAction.Invoke(obj);

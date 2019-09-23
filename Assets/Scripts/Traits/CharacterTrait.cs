@@ -84,7 +84,7 @@ public class CharacterTrait : Trait {
             }
             if (deadTarget.isDead) {
                 Dead deadTrait = deadTarget.GetNormalTrait("Dead") as Dead;
-                if (!deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
+                if (deadTrait.responsibleCharacter != characterThatWillDoJob && !deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
                     deadTrait.AddCharacterThatSawThisDead(characterThatWillDoJob);
 
                     Log sawDeadLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_dead");
