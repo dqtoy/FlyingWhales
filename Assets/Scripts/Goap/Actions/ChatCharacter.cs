@@ -138,9 +138,9 @@ public class ChatCharacter : GoapAction {
         }
 
         //Flirtation
-        float FlirtationWeight = actor.GetFlirtationWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
-        if (FlirtationWeight > 0f) {
-            weights.AddElement("Flirt", FlirtationWeight);
+        float flirtationWeight = actor.GetFlirtationWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
+        if (flirtationWeight > 0f) {
+            weights.AddElement("Flirt", flirtationWeight);
         }
 
         //Become Lovers weight
@@ -153,6 +153,18 @@ public class ChatCharacter : GoapAction {
         float becomeParamoursWeight = actor.GetBecomeParamoursWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
         if (becomeParamoursWeight > 0f) {
             weights.AddElement("Become Paramours", becomeParamoursWeight);
+        }
+
+        if(actor.GetNormalTrait("Angry") != null || targetCharacter.GetNormalTrait("Angry") != null) {
+            weights.RemoveElement("Quick Chat");
+            weights.RemoveElement("Become Friends");
+            weights.RemoveElement("Share Information");
+            weights.RemoveElement("Resolve Enmity");
+            weights.RemoveElement("Flirt");
+            weights.RemoveElement("Become Lovers");
+            weights.RemoveElement("Become Paramours");
+            weights.AddWeightToElement("Become Enemies", 100);
+            weights.AddWeightToElement("Argument", 100);
         }
 
         chatResult = weights.PickRandomElementGivenWeights();
