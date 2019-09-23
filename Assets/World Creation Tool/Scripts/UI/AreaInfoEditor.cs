@@ -67,9 +67,9 @@ public class AreaInfoEditor : MonoBehaviour {
     }
 
     #region Basic Info
-    public void SetAreaName(string name) {
-        currentArea.SetName(name);
-    }
+    //public void SetAreaName(string name) {
+    //    currentArea.SetName(name);
+    //}
     public void SetDefaultRace(int choice) {
         //RACE result;
         //if (Enum.TryParse(defaultRaceDropdown.options[defaultRaceDropdown.value].text, out result)) {

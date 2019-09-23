@@ -8,18 +8,9 @@ public class Region {
     private const float Hovered_Border_Alpha = 0f / 255f;
     private const float Unhovered_Border_Alpha = 0f / 255f;
 
-    private string _name;
-
-    public string regionName { get { return _name; } }
     public int id { get; private set; }
-    public string name {
-        get {
-            if (area != null) {
-                return area.name; //if the region has an area, use that areas name instead.
-            }
-            return _name;
-        }
-    }
+    public string name { get; private set; }
+
     public string description {
         get { return GetDescription(); }
     }
@@ -71,7 +62,7 @@ public class Region {
     }
     public Region(HexTile coreTile) : this() {
         id = Utilities.SetID(this);
-        _name = RandomNameGenerator.Instance.GetRegionName();
+        name = RandomNameGenerator.Instance.GetRegionName();
         this.coreTile = coreTile;
         tiles = new List<HexTile>();
         AddTile(coreTile);
@@ -79,11 +70,15 @@ public class Region {
     }
     public Region(SaveDataRegion data) : this() {
         id = Utilities.SetID(this, data.id);
-        _name = data.name;
+        name = data.name;
         coreTile = GridMap.Instance.hexTiles[data.coreTileID];
         tiles = new List<HexTile>();
         regionColor = data.regionColor;
         //ticksInInvasion = data.ticksInInvasion;
+    }
+
+    public void SetName(string name) {
+        name = name;
     }
     public void AddTile(HexTile tile) {
         if (!tiles.Contains(tile)) {
@@ -635,7 +630,7 @@ public class Region {
 
     #region Faction
     public void SetOwner(Faction owner) {
-        previousOwner = this.owner;
+        SetPreviousOwner(this.owner);
         this.owner = owner;
         if (area != null) {
             /*Whenever a location is occupied, 
@@ -667,6 +662,9 @@ public class Region {
                 tile.SetCorruption(false);
             }
         }
+    }
+    public void SetPreviousOwner(Faction faction) {
+        previousOwner = faction;
     }
     public void AddFactionHere(Faction faction) {
         if (!IsFactionHere(faction)) {

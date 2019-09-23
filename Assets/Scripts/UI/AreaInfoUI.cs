@@ -169,13 +169,13 @@ public class AreaInfoUI : UIMenu {
 
     #region Basic Info
     private void UpdateBasicInfo() {
-        if (activeTile.landmarkOnTile.specificLandmarkType.IsPlayerLandmark() || activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.NONE) { //TODO: Unify names!
-            landmarkNameLbl.text = activeTile.region.name;
-            //locationPortrait.SetLocation(activeTile.landmarkOnTile);
-        } else {
-            landmarkNameLbl.text = activeArea.name;
-            //locationPortrait.SetLocation(activeTile.areaOfTile);
-        }
+        landmarkNameLbl.text = activeTile.region.name;
+        //if (activeTile.landmarkOnTile.specificLandmarkType.IsPlayerLandmark() || activeTile.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.NONE) { //TODO: Unify names!
+        //    //locationPortrait.SetLocation(activeTile.landmarkOnTile);
+        //} else {
+        //    landmarkNameLbl.text = activeArea.name;
+        //    //locationPortrait.SetLocation(activeTile.areaOfTile);
+        //}
         locationPortrait.SetLocation(activeTile.region);
         //landmarkTypeLbl.text = activeArea.GetAreaTypeString();
         landmarkTypeLbl.text = activeTile.landmarkOnTile.specificLandmarkType.LandmarkToString();

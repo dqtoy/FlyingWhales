@@ -260,7 +260,7 @@ public class LandmarkManager : MonoBehaviour {
         Region portalRegion = corners[portalCorner];
         Area portalArea = CreateNewArea(portalRegion, AREA_TYPE.DEMONIC_INTRUSION, 0);
         BaseLandmark portalLandmark = CreateNewLandmarkOnTile(portalRegion.coreTile, LANDMARK_TYPE.THE_PORTAL);
-        portalArea.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
+        portalArea.region.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
         portal = portalLandmark;
 
         //place settlement at opposite corner

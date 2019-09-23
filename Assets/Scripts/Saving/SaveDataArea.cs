@@ -6,7 +6,6 @@ using BayatGames.SaveGameFree.Types;
 [System.Serializable]
 public class SaveDataArea {
     public int id;
-    public string name;
     //public bool isDead;
     public AREA_TYPE areaType;
     public int citizenCount;
@@ -28,7 +27,6 @@ public class SaveDataArea {
 
     public void Save(Area area) {
         id = area.id;
-        name = area.name;
         //isDead = area.isDead;
         areaType = area.areaType;
         citizenCount = area.citizenCount;
@@ -67,6 +65,7 @@ public class SaveDataArea {
 
     public void Load() {
         Area newArea = LandmarkManager.Instance.CreateNewArea(this);
+        newArea.region.SetArea(newArea); //Set area of region here not on SaveDataRegion because SaveDataRegion will be the first to load, there will be no areas there yet
         LandmarkManager.Instance.SetEnemyPlayerArea(newArea);
     }
     //Loading area items is called separately because of sequencing issues

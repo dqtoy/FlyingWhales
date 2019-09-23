@@ -40,4 +40,15 @@ public class SaveManager : MonoBehaviour {
             SetCurrentSave(SaveGame.Load<Save>(Utilities.gameSavePath + saveFileName));
         }
     }
+
+    public static SaveDataTrait ConvertTraitToSaveDataTrait(Trait trait) {
+        SaveDataTrait saveDataTrait = null;
+        System.Type type = System.Type.GetType("SaveData" + trait.name);
+        if (type != null) {
+            saveDataTrait = System.Activator.CreateInstance(type) as SaveDataTrait;
+        } else {
+            saveDataTrait = new SaveDataTrait();
+        }
+        return saveDataTrait;
+    }
 }

@@ -69,7 +69,7 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Character) {
             lastCharacterID += 1;
             return lastCharacterID;
-        } else if (obj is Item) {
+        } else if (obj is SpecialToken) {
             lastItemID += 1;
             return lastItemID;
         } else if (obj is Monster) {
@@ -122,7 +122,7 @@ public class Utilities : MonoBehaviour {
             if (lastFactionID <= idToUse) { lastFactionID = idToUse; }
         } else if (obj is Character) {
             if (lastCharacterID <= idToUse) { lastCharacterID = idToUse; }
-        } else if (obj is Item) {
+        } else if (obj is SpecialToken) {
             if (lastItemID <= idToUse) { lastItemID = idToUse; }
         } else if (obj is Monster) {
             if (lastMonsterID <= idToUse) { lastMonsterID = idToUse; }
