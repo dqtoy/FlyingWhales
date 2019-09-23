@@ -18,7 +18,7 @@ public class SpellScroll : SpecialObject {
 }
 
 public class SaveDataSpellScroll : SaveDataSpecialObject {
-    public override IWorldObject Load() {
+    public override SpecialObject Load() {
         return new SpellScroll();
     }
 }

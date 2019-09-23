@@ -12,6 +12,9 @@ public class Summon : Character, IWorldObject {
     public virtual string worldObjectName {
         get { return name + " (" + Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString()) + ")"; }
     }
+    public WORLD_OBJECT_TYPE worldObjectType {
+        get { return WORLD_OBJECT_TYPE.SUMMON; }
+    }
     #endregion
 
     public Summon(SUMMON_TYPE summonType, CharacterRole role, RACE race, GENDER gender) : base(role, race, gender) {

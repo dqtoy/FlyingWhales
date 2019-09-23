@@ -82,15 +82,17 @@ public class SaveDataRegion {
         if (region.worldObj != null) {
             hasWorldObject = true;
 
-            if (region.worldObj is Artifact) {
-                worldObj = new SaveDataArtifact();
-            } else if (region.worldObj is Summon) {
-                worldObj = new SaveDataSummon();
-            } else {
-                var typeName = "SaveData" + region.worldObj.GetType().ToString();
-                worldObj = System.Activator.CreateInstance(System.Type.GetType(typeName)) as SaveDataWorldObject;
-            }
-            worldObj.Save(region.worldObj);
+            SaveDataWorldObject saveDataWorldObject = new SaveDataWorldObject();
+            saveDataWorldObject.Save(region.worldObj);
+            //if (region.worldObj is Artifact) {
+            //    worldObj = new SaveDataArtifact();
+            //} else if (region.worldObj is Summon) {
+            //    worldObj = new SaveDataSummon();
+            //} else {
+            //    var typeName = "SaveData" + region.worldObj.GetType().ToString();
+            //    worldObj = System.Activator.CreateInstance(System.Type.GetType(typeName)) as SaveDataWorldObject;
+            //}
+            //worldObj.Save(region.worldObj);
         } else {
             hasWorldObject = false;
         }

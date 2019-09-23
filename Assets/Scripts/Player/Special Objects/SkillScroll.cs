@@ -17,7 +17,7 @@ public class SkillScroll : SpecialObject {
 }
 
 public class SaveDataSkillScroll : SaveDataSpecialObject {
-    public override IWorldObject Load() {
+    public override SpecialObject Load() {
         return new SkillScroll();
     }
 }

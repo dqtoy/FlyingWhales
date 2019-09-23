@@ -18,11 +18,11 @@ public class Ankh_Of_Anubis : Artifact {
         deathChance = 60;
         duration = 50;
     }
-    public Ankh_Of_Anubis(SaveDataArtifactSlot data) : base(data) {
-        range = 1;
-        deathChance = 60;
-        duration = 20;
-    }
+    //public Ankh_Of_Anubis(SaveDataArtifactSlot data) : base(data) {
+    //    range = 1;
+    //    deathChance = 60;
+    //    duration = 20;
+    //}
     public Ankh_Of_Anubis(SaveDataArtifact data) : base(data) {
         range = 1;
         deathChance = 60;

@@ -13,10 +13,10 @@ public class Hermes_Statue : Artifact {
         //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
         uses = 1;
     }
-    public Hermes_Statue(SaveDataArtifactSlot data) : base(data) {
-        //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
-        uses = 1;
-    }
+    //public Hermes_Statue(SaveDataArtifactSlot data) : base(data) {
+    //    //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
+    //    uses = 1;
+    //}
     public Hermes_Statue(SaveDataArtifact data) : base(data) {
         //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
         uses = 1;

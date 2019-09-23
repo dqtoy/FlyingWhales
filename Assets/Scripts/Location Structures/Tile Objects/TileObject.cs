@@ -74,19 +74,19 @@ public class TileObject : IPointOfInterest {
         InitializeCollisionTrigger();
         InteriorMapManager.Instance.AddTileObject(this);
     }
-    protected void Initialize(SaveDataArtifactSlot data, TILE_OBJECT_TYPE tileObjectType) {
-        id = Utilities.SetID(this, data.id);
-        this.tileObjectType = tileObjectType;
-        _traits = new List<Trait>();
-        actionHistory = new List<string>();
-        awareCharacters = new List<Character>();
-        allJobsTargettingThis = new List<JobQueueItem>();
-        owners = new List<Character>();
-        hasCreatedSlots = false;
-        InitializeCollisionTrigger();
-        InteriorMapManager.Instance.AddTileObject(this);
-    }
-    protected void Initialize(SaveDataArtifact data, TILE_OBJECT_TYPE tileObjectType) {
+    //protected void Initialize(SaveDataArtifactSlot data, TILE_OBJECT_TYPE tileObjectType) {
+    //    id = Utilities.SetID(this, data.id);
+    //    this.tileObjectType = tileObjectType;
+    //    _traits = new List<Trait>();
+    //    actionHistory = new List<string>();
+    //    awareCharacters = new List<Character>();
+    //    allJobsTargettingThis = new List<JobQueueItem>();
+    //    owners = new List<Character>();
+    //    hasCreatedSlots = false;
+    //    InitializeCollisionTrigger();
+    //    InteriorMapManager.Instance.AddTileObject(this);
+    //}
+    protected void Initialize(SaveDataTileObject data, TILE_OBJECT_TYPE tileObjectType) {
         id = Utilities.SetID(this, data.id);
         this.tileObjectType = tileObjectType;
         _traits = new List<Trait>();
