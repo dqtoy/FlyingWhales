@@ -14,6 +14,12 @@ public class AlterEgoData {
     public CharacterClass characterClass { get; private set; }
     public Dwelling homeStructure { get; private set; }
     public int level { get; private set; }
+    public int attackPowerMod { get; protected set; }
+    public int speedMod { get; protected set; }
+    public int maxHPMod { get; protected set; }
+    public int attackPowerPercentMod { get; protected set; }
+    public int speedPercentMod { get; protected set; }
+    public int maxHPPercentMod { get; protected set; }
 
     //Awareness
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; private set; }
@@ -73,6 +79,42 @@ public class AlterEgoData {
             return; //ignore any changes while the owner is switching alter egos
         }
         this.level = level;
+    }
+    public void SetAttackPowerMod(int amount) {
+        if (owner.isSwitchingAlterEgo) {
+            return; //ignore any changes while the owner is switching alter egos
+        }
+        attackPowerMod = amount;
+    }
+    public void SetSpeedMod(int amount) {
+        if (owner.isSwitchingAlterEgo) {
+            return; //ignore any changes while the owner is switching alter egos
+        }
+        speedMod = amount;
+    }
+    public void SetMaxHPMod(int amount) {
+        if (owner.isSwitchingAlterEgo) {
+            return; //ignore any changes while the owner is switching alter egos
+        }
+        maxHPMod = amount;
+    }
+    public void SetAttackPowerPercentMod(int amount) {
+        if (owner.isSwitchingAlterEgo) {
+            return; //ignore any changes while the owner is switching alter egos
+        }
+        attackPowerPercentMod = amount;
+    }
+    public void SetSpeedPercentMod(int amount) {
+        if (owner.isSwitchingAlterEgo) {
+            return; //ignore any changes while the owner is switching alter egos
+        }
+        speedPercentMod = amount;
+    }
+    public void SetMaxHPPercentMod(int amount) {
+        if (owner.isSwitchingAlterEgo) {
+            return; //ignore any changes while the owner is switching alter egos
+        }
+        maxHPPercentMod = amount;
     }
 
     #region Awareness
@@ -216,7 +258,12 @@ public class AlterEgoData {
         }
     }
     public void AddTrait(Trait trait) {
-        traits.Add(trait);
+        if (owner.isSwitchingAlterEgo) {
+            return; //ignore any changes while the owner is switching alter egos
+        }
+        if (!traits.Contains(trait)) {
+            traits.Add(trait);
+        }
     }
     #endregion
 

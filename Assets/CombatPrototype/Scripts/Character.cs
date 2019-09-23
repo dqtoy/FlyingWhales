@@ -3951,27 +3951,31 @@ public class Character : ILeader, IPointOfInterest {
         } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
             int multiplier = (amount < 0 ? -1 : 1);
             int range = amount * multiplier;
-            for (int i = 0; i < range; i++) {
-                if (i % 2 == 0) {
-                    //even
-                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-                } else {
-                    //odd
-                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+            if (range > 0) {
+                for (int i = 0; i < range; i++) {
+                    if (i % 2 == 0) {
+                        //even
+                        AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+                    } else {
+                        //odd
+                        AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+                    }
                 }
             }
             AdjustSpeedMod(_characterClass.speedPerLevel * amount);
         } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
             int multiplier = (amount < 0 ? -1 : 1);
             int range = amount * multiplier;
-            for (int i = _level; i <= _level + range; i++) {
-                if (!hpMagicRangedStatMod) {
-                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
-                } else {
-                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-                }
-                if (i != 1 && (i - 1) % 2 == 0) {
-                    hpMagicRangedStatMod = !hpMagicRangedStatMod;
+            if (range > 0) {
+                for (int i = _level; i <= _level + range; i++) {
+                    if (!hpMagicRangedStatMod) {
+                        AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+                    } else {
+                        AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+                    }
+                    if (i != 1 && (i - 1) % 2 == 0) {
+                        hpMagicRangedStatMod = !hpMagicRangedStatMod;
+                    }
                 }
             }
             AdjustSpeedMod(_characterClass.speedPerLevel * amount);
@@ -4005,27 +4009,31 @@ public class Character : ILeader, IPointOfInterest {
         } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
             int multiplier = (difference < 0 ? -1 : 1);
             int range = difference * multiplier;
-            for (int i = 0; i < range; i++) {
-                if (i % 2 == 0) {
-                    //even
-                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-                } else {
-                    //odd
-                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+            if (range > 0) {
+                for (int i = 0; i < range; i++) {
+                    if (i % 2 == 0) {
+                        //even
+                        AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+                    } else {
+                        //odd
+                        AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+                    }
                 }
             }
             AdjustSpeedMod(_characterClass.speedPerLevel * difference);
         } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
             int multiplier = (difference < 0 ? -1 : 1);
             int range = difference * multiplier;
-            for (int i = _level; i <= _level + range; i++) {
-                if (!hpMagicRangedStatMod) {
-                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
-                } else {
-                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-                }
-                if (i != 1 && (i - 1) % 2 == 0) {
-                    hpMagicRangedStatMod = !hpMagicRangedStatMod;
+            if(range > 0) {
+                for (int i = _level; i <= _level + range; i++) {
+                    if (!hpMagicRangedStatMod) {
+                        AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+                    } else {
+                        AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+                    }
+                    if (i != 1 && (i - 1) % 2 == 0) {
+                        hpMagicRangedStatMod = !hpMagicRangedStatMod;
+                    }
                 }
             }
             AdjustSpeedMod(_characterClass.speedPerLevel * difference);
@@ -4121,24 +4129,30 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
-    public void SetMaxHPMod(int amount) {
-        int previousMaxHP = maxHP;
-        maxHPMod = amount;
-        UpdateMaxHP();
-        int currentMaxHP = maxHP;
-        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
-            _currentHP = currentMaxHP;
-        }
-    }
     public void AdjustAttackMod(int amount) {
         attackPowerMod += amount;
+        currentAlterEgo.SetAttackPowerMod(attackPowerMod);
     }
     public void AdjustAttackPercentMod(int amount) {
         attackPowerPercentMod += amount;
+        currentAlterEgo.SetAttackPowerPercentMod(attackPowerPercentMod);
+    }
+    public void SetAttackMod(int amount) {//, bool includeAlterEgo = true
+        attackPowerMod = amount;
+        //if (includeAlterEgo) {
+            currentAlterEgo.SetAttackPowerMod(attackPowerMod);
+        //}
+    }
+    public void SetAttackPercentMod(int amount) {//, bool includeAlterEgo = true
+        attackPowerPercentMod = amount;
+        //if (includeAlterEgo) {
+            currentAlterEgo.SetAttackPowerPercentMod(attackPowerPercentMod);
+        //}
     }
     public void AdjustMaxHPMod(int amount) {
         int previousMaxHP = maxHP;
         maxHPMod += amount;
+        currentAlterEgo.SetMaxHPMod(maxHPMod);
         UpdateMaxHP();
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
@@ -4148,6 +4162,31 @@ public class Character : ILeader, IPointOfInterest {
     public void AdjustMaxHPPercentMod(int amount) {
         int previousMaxHP = maxHP;
         maxHPPercentMod += amount;
+        currentAlterEgo.SetMaxHPPercentMod(maxHPPercentMod);
+        UpdateMaxHP();
+        int currentMaxHP = maxHP;
+        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+            _currentHP = currentMaxHP;
+        }
+    }
+    public void SetMaxHPMod(int amount) {//, bool includeAlterEgo = true
+        int previousMaxHP = maxHP;
+        maxHPMod = amount;
+        //if (includeAlterEgo) {
+            currentAlterEgo.SetMaxHPMod(maxHPMod);
+        //}
+        UpdateMaxHP();
+        int currentMaxHP = maxHP;
+        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+            _currentHP = currentMaxHP;
+        }
+    }
+    public void SetMaxHPPercentMod(int amount) {//, bool includeAlterEgo = true
+        int previousMaxHP = maxHP;
+        maxHPPercentMod = amount;
+        //if (includeAlterEgo) {
+            currentAlterEgo.SetMaxHPPercentMod(maxHPPercentMod);
+        //}
         UpdateMaxHP();
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
@@ -4167,9 +4206,23 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void AdjustSpeedMod(int amount) {
         speedMod += amount;
+        currentAlterEgo.SetSpeedMod(speedMod);
     }
     public void AdjustSpeedPercentMod(int amount) {
         speedPercentMod += amount;
+        currentAlterEgo.SetSpeedPercentMod(speedPercentMod);
+    }
+    public void SetSpeedMod(int amount) { //, bool includeAlterEgo = true
+        speedMod = amount;
+        //if (includeAlterEgo) {
+            currentAlterEgo.SetSpeedMod(speedMod);
+        //}
+    }
+    public void SetSpeedPercentMod(int amount) { //, bool includeAlterEgo = true
+        speedPercentMod = amount;
+        //if (includeAlterEgo) {
+            currentAlterEgo.SetSpeedPercentMod(speedPercentMod);
+        //}
     }
     public bool IsHealthFull() {
         return _currentHP >= maxHP;
@@ -4508,7 +4561,7 @@ public class Character : ILeader, IPointOfInterest {
         if (triggerOnAdd) {
             trait.OnAddTrait(this);
         }
-        currentAlterEgo.traits.Add(trait);
+        currentAlterEgo.AddTrait(trait);
         Messenger.Broadcast(Signals.TRAIT_ADDED, this, trait);
 
 #if !WORLD_CREATION_TOOL
@@ -8592,6 +8645,12 @@ public class Character : ILeader, IPointOfInterest {
             AssignClass(alterEgoData.characterClass);
             ChangeRace(alterEgoData.race);
             SetLevel(alterEgoData.level);
+            SetMaxHPMod(alterEgoData.maxHPMod);
+            SetMaxHPPercentMod(alterEgoData.maxHPPercentMod);
+            SetAttackMod(alterEgoData.attackPowerMod);
+            SetAttackPercentMod(alterEgoData.attackPowerPercentMod);
+            SetSpeedMod(alterEgoData.speedMod);
+            SetSpeedPercentMod(alterEgoData.speedPercentMod);
 
             CancelAllJobsTargettingThisCharacter("target is not found", false);
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is not found");

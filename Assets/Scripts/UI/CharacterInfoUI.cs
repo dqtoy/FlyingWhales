@@ -408,10 +408,14 @@ public class CharacterInfoUI : UIMenu {
     //    CombatAttributeItem combatAttributeItem = go.GetComponent<CombatAttributeItem>();
     //    combatAttributeItem.SetCombatAttribute(combatAttribute);
     //}
-    public void OnHoverTrait(object i) {
-        int index = (int)i;
-        Trait trait = activeCharacter.normalTraits[index];
-        UIManager.Instance.ShowSmallInfo(trait.description, trait.name);
+    public void OnHoverTrait(object obj) {
+        if (obj is string) {
+            string text = (string) obj;
+            int index = int.Parse(text);
+            Trait trait = activeCharacter.normalTraits[index];
+            UIManager.Instance.ShowSmallInfo(trait.description, trait.name);
+        }
+
     }
     public void OnHoverOutTrait() {
         UIManager.Instance.HideSmallInfo();

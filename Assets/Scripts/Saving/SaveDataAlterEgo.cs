@@ -10,6 +10,12 @@ public class SaveDataAlterEgo {
     public CHARACTER_ROLE roleType;
     public string characterClassName;
     public int level;
+    public int attackPowerMod;
+    public int speedMod;
+    public int maxHPMod;
+    public int attackPowerPercentMod;
+    public int speedPercentMod;
+    public int maxHPPercentMod;
 
     //Relationships
     public List<SaveDataRelationship> relationships;
@@ -24,6 +30,13 @@ public class SaveDataAlterEgo {
         roleType = alterEgo.role.roleType;
         characterClassName = alterEgo.characterClass.className;
         level = alterEgo.level;
+        attackPowerMod = alterEgo.attackPowerMod;
+        speedMod = alterEgo.speedMod;
+        maxHPMod = alterEgo.maxHPMod;
+        attackPowerPercentMod = alterEgo.attackPowerPercentMod;
+        speedPercentMod = alterEgo.speedPercentMod;
+        maxHPPercentMod = alterEgo.maxHPPercentMod;
+
 
         traits = new List<SaveDataTrait>();
         if (alterEgo.traits != null) {
@@ -50,6 +63,13 @@ public class SaveDataAlterEgo {
         alterEgoData.SetRole(CharacterManager.Instance.GetRoleByRoleType(roleType));
         alterEgoData.SetCharacterClass(CharacterManager.Instance.CreateNewCharacterClass(characterClassName));
         alterEgoData.SetLevel(level);
+        alterEgoData.SetAttackPowerMod(attackPowerMod);
+        alterEgoData.SetAttackPowerPercentMod(attackPowerPercentMod);
+        alterEgoData.SetMaxHPMod(maxHPMod);
+        alterEgoData.SetMaxHPPercentMod(maxHPPercentMod);
+        alterEgoData.SetSpeedMod(speedMod);
+        alterEgoData.SetSpeedPercentMod(speedPercentMod);
+
         for (int i = 0; i < traits.Count; i++) {
             Trait trait = traits[i].Load();
             alterEgoData.AddTrait(trait);
