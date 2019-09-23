@@ -10,9 +10,6 @@ using System;
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
 
-    [Header("General")]
-    [SerializeField] private GameObject optionsGO;
-
     [Header("Role Slots")]
     [SerializeField] private RectTransform roleSlotsParent;
     //[SerializeField] private RoleSlotItem[] roleSlots;
@@ -274,7 +271,7 @@ public class PlayerUI : MonoBehaviour {
                 CancelSummonArtifact();
             } else {
                 //only toggle options menu if doing nothing else
-                ToggleOptionsMenu();
+                UIManager.Instance.ToggleOptionsMenu();
             }
         } else if (pressedKey == KeyCode.Mouse0) {
             //left click
@@ -329,13 +326,7 @@ public class PlayerUI : MonoBehaviour {
             SuccessfulAreaCorruption();
         }
     }
-    #endregion
-
-    #region Options
-    public void ToggleOptionsMenu() {
-        optionsGO.SetActive(!optionsGO.activeSelf);
-    }
-    #endregion
+    #endregion    
 
     #region Role Slots
     //int currentlyShowingSlotIndex = 0;
@@ -1539,8 +1530,10 @@ public class PlayerUI : MonoBehaviour {
             AddPendingUI(() => ShowGeneralConfirmation(header, body, buttonText, onClickOK));
             return;
         }
-        UIManager.Instance.Pause();
-        UIManager.Instance.SetSpeedTogglesState(false);
+        if (!GameManager.Instance.isPaused) {
+            UIManager.Instance.Pause();
+            UIManager.Instance.SetSpeedTogglesState(false);
+        }
         generalConfirmationTitleText.text = header.ToUpper();
         generalConfirmationBodyText.text = body;
         generalConfirmationButtonText.text = buttonText;
@@ -1554,8 +1547,8 @@ public class PlayerUI : MonoBehaviour {
     public void OnClickOKGeneralConfirmation() {
         generalConfirmationGO.SetActive(false);
         if (!TryShowPendingUI()) {
-            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
             UIManager.Instance.SetSpeedTogglesState(true);
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
     }
     #endregion
@@ -1577,8 +1570,8 @@ public class PlayerUI : MonoBehaviour {
     public void HideNewMinionUI() {
         newMinionUIGO.SetActive(false);
         if (!TryShowPendingUI()) {
-            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
             UIManager.Instance.SetSpeedTogglesState(true);
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
     }
     #endregion

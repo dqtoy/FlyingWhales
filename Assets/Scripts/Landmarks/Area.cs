@@ -167,7 +167,7 @@ public class Area {
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
         if (removedFrom.parentAreaMap.area.id == this.id) {
-            if (removedObj.CanBeReplaced()) {
+            if (removedObj.CanBeReplaced() && removedFrom.structure.structureType != STRUCTURE_TYPE.DWELLING) { //if the removed object can be replaced and it is not part of a dwelling, create a replace job
                 CreateReplaceTileObjectJob(removedObj, removedFrom);
             }
         }
@@ -916,7 +916,6 @@ public class Area {
             }
         }
 
-        //PlaceBedsAndTables();
         PlaceOres();
         PlaceSupplyPiles();
         PlaceFoodPiles();
@@ -995,7 +994,9 @@ public class Area {
         if (structures.ContainsKey(STRUCTURE_TYPE.WAREHOUSE)) {
             for (int i = 0; i < structures[STRUCTURE_TYPE.WAREHOUSE].Count; i++) {
                 LocationStructure structure = structures[STRUCTURE_TYPE.WAREHOUSE][i];
-                structure.AddPOI(new FoodPile(structure));
+                FoodPile foodPile = new FoodPile(structure);
+                structure.AddPOI(foodPile);
+                foodPile.gridTileLocation.SetReservedType(TILE_OBJECT_TYPE.FOOD_PILE);
             }
         }
     }

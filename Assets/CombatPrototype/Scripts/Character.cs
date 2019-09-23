@@ -1850,8 +1850,41 @@ public class Character : ILeader, IPointOfInterest {
         return null;
     }
     public void CreatePersonalJobs() {
-        //Claim Item Job
         bool hasCreatedJob = false;
+
+        //build furniture job
+        if (!hasCreatedJob && currentStructure is Dwelling) {
+            Dwelling dwelling = currentStructure as Dwelling;
+            if (dwelling.HasUnoccupiedFurnitureSpot() && poiGoapActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
+                if (UnityEngine.Random.Range(0, 100) < 10 || dwelling.HasFacilityDeficit()) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
+                    FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
+                    if (mostNeededFacility != FACILITY_TYPE.NONE) {
+                        List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
+                        LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
+                        FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
+
+                        object[] otherData = new object[] { chosenTile, furnitureToCreate };
+
+                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE, this, new Dictionary<INTERACTION_TYPE, object[]>() {
+                                { INTERACTION_TYPE.CRAFT_FURNITURE, otherData }
+                        });
+                        job.SetCanTakeThisJobChecker((character, item) => furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(character));
+                        if (furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
+                            if (!jobQueue.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
+                                jobQueue.AddJobInQueue(job);
+                            }
+                        } else {
+                            //furniture cannot be crafted by this character, post a job on the area
+                            if (!homeArea.jobQueue.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
+                                homeArea.jobQueue.AddJobInQueue(job);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //Claim Item Job
         //if (faction.id != FactionManager.Instance.neutralFaction.id && !jobQueue.HasJob("Claim Item")) {
         //    int numOfItemsOwned = GetNumOfItemsOwned();
         //    if (numOfItemsOwned < 3) {
@@ -1946,32 +1979,6 @@ public class Character : ILeader, IPointOfInterest {
                     //Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
                     //jobQueue.AddJobInQueue(job);
                     //hasCreatedJob = true;
-                }
-            }
-        }
-
-        if (!hasCreatedJob && currentStructure is Dwelling) {
-            Dwelling dwelling = currentStructure as Dwelling;
-            if (dwelling.HasPositiveRelationshipWithAnyResident(this) && dwelling.HasUnoccupiedFurnitureSpot() && poiGoapActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
-                //- if the character is in a Dwelling structure and he or someone he has a positive relationship with owns it, 
-                //and the Dwelling still has an unoccupied Furniture Spot, 5% chance to add a Build Furniture Job.
-                if (UnityEngine.Random.Range(0, 100) < 5) {
-                    FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
-                    if (mostNeededFacility != FACILITY_TYPE.NONE) {
-                        List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
-                        LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
-                        FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
-                        //check first if the character can build that specific type of furniture
-                        if (furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(this)) {
-                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE, this, new Dictionary<INTERACTION_TYPE, object[]>() {
-                                { INTERACTION_TYPE.CRAFT_FURNITURE, new object[] { chosenTile, furnitureToCreate } }
-                            });
-                            job.SetCancelOnFail(true);
-                            //job.SetCannotOverrideJob(true);
-                            jobQueue.AddJobInQueue(job);
-                            //Debug.Log(this.name + " created a new build furniture job targetting tile " + chosenTile.ToString() + " with furniture type " + furnitureToCreate.ToString());
-                        }
-                    }
                 }
             }
         }
@@ -2269,6 +2276,14 @@ public class Character : ILeader, IPointOfInterest {
         } else {
             return 999999;
         }
+    }
+    public GoapPlanJob CreateReportCrimeJob(CRIME committedCrime, GoapAction crimeToReport, AlterEgoData criminal) {
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
+                        { INTERACTION_TYPE.REPORT_CRIME,  new object[] { committedCrime, criminal, crimeToReport }}
+                    });
+        //job.SetCannotOverrideJob(true);
+        jobQueue.AddJobInQueue(job);
+        return job;
     }
     #endregion
 
@@ -8262,11 +8277,7 @@ public class Character : ILeader, IPointOfInterest {
                             this.marker.AddHostileInRange(criminal.owner, false);
                         }
                     }
-                    job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
-                        { INTERACTION_TYPE.REPORT_CRIME,  new object[] { committedCrime, criminal, crimeToReport }}
-                    });
-                    //job.SetCannotOverrideJob(true);
-                    jobQueue.AddJobInQueue(job);
+                    job = CreateReportCrimeJob(committedCrime, crimeToReport, criminal);
                 }
                 break;
             case CHARACTER_ROLE.LEADER:

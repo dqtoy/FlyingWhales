@@ -105,6 +105,9 @@ public class Bed : TileObject {
             }
         }
     }
+    public override bool CanBeReplaced() {
+        return true;
+    }
     #endregion
 
     #region Users

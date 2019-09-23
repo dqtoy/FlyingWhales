@@ -377,12 +377,9 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\nWorld Location: " + tile.worldLocation.ToString();
         summary += "\nCentered World Location: " + tile.centeredWorldLocation.ToString();
         summary += "\nGround Type: " + tile.groundType.ToString();
-        summary += "\nIs Locked: " + tile.isLocked.ToString();
         summary += "\nIs Occupied: " + tile.isOccupied.ToString();
-        summary += "\nIs Edge: " + tile.IsAtEdgeOfWalkableMap();
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();
-        summary += "\nTile Access: " + tile.tileAccess.ToString();
         summary += "\nReserved Tile Object Type: " + tile.reservedObjectType.ToString();
         if (tile.hasFurnitureSpot) {
             summary += "\nFurniture Spot: " + tile.furnitureSpot.ToString();
@@ -446,6 +443,13 @@ public class InteriorMapManager : MonoBehaviour {
         }
         if (tile.structure != null) {
             summary += "\nStructure: " + tile.structure.ToString();
+            if (tile.structure is Dwelling) {
+                Dwelling d = tile.structure as Dwelling;
+                summary += "\nFacilities: ";
+                foreach (KeyValuePair<FACILITY_TYPE, int> kvp in d.facilities) {
+                    summary += "|" + kvp.Key.ToString() + " - " + kvp.Value + "|";
+                }
+            }
             summary += "\nCharacters at " + tile.structure.ToString() + ": ";
             if (tile.structure.charactersHere.Count > 0) {
                 for (int i = 0; i < tile.structure.charactersHere.Count; i++) {

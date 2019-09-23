@@ -84,6 +84,7 @@ public class EatAtTable : GoapAction {
                 }
             }
         }
+        Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
     }
     public override int GetArrangedLogPriorityIndex(string priorityID) {
         if (priorityID == "description") {
@@ -93,6 +94,16 @@ public class EatAtTable : GoapAction {
         }
         return base.GetArrangedLogPriorityIndex(priorityID);
     }
+    public override void OnResultReturnedToActor() {
+        base.OnResultReturnedToActor();
+        Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+    }
+    protected override void CleanupBeforeChangingStates() {
+        base.CleanupBeforeChangingStates();
+        if (currentState.name == "Eat Success") {
+            actor.AdjustDoNotGetHungry(-1);
+        }
+    }
     #endregion
 
     #region Effects
@@ -100,6 +111,7 @@ public class EatAtTable : GoapAction {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         actor.AdjustDoNotGetHungry(1);
         currentState.SetIntelReaction(EatSuccessReactions);
+        Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait); //start listening if the table gains a poisoned trait
         //actor.AddTrait("Eating");
     }
     private void PerTickEatSuccess() {
@@ -184,6 +196,16 @@ public class EatAtTable : GoapAction {
     }
     private void AfterTargetMissing() {
         actor.RemoveAwareness(poiTarget);
+    }
+    #endregion
+
+    #region Listeners
+    private void OnTraitableGainedTrait(ITraitable traitable, Trait newTrait) {
+        if (traitable == poiTarget && newTrait is Poisoned) {
+            poisonedTrait = newTrait as Poisoned; //if the table gains a poisoned trait, switch states to "Eat Poisoned".
+            ChangeState("Eat Poisoned");
+            Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+        }
     }
     #endregion
 

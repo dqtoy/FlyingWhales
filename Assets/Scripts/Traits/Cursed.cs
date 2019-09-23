@@ -14,7 +14,7 @@ public class Cursed : Trait {
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
-        daysDuration = 0;
+        daysDuration = GameManager.ticksPerDay;
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL_MAGIC, };
         cursedInteractions = new List<CursedInteraction>();
         //effects = new List<TraitEffect>();

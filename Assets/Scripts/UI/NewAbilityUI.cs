@@ -27,8 +27,10 @@ public class NewAbilityUI : MonoBehaviour {
             PlayerUI.Instance.AddPendingUI(() => ShowNewAbilityUI(minionToLevelUp, ability));
             return;
         }
-        UIManager.Instance.Pause();
-        UIManager.Instance.SetSpeedTogglesState(false);
+        if (!GameManager.Instance.isPaused) {
+            UIManager.Instance.Pause();
+            UIManager.Instance.SetSpeedTogglesState(false);
+        }
         UpdateMinionToLevelUp(minionToLevelUp);
         UpdateNewAbility(ability);
         this.gameObject.SetActive(true);
@@ -93,8 +95,8 @@ public class NewAbilityUI : MonoBehaviour {
     private void Close() {
         this.gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
             UIManager.Instance.SetSpeedTogglesState(true);
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
     }
 

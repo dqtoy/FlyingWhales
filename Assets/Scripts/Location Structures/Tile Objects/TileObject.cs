@@ -612,6 +612,9 @@ public class TileObject : IPointOfInterest {
 
     #region Users
     public virtual void AddUser(Character newUser) {
+        if (users.Contains(newUser)) {
+            return;
+        }
         TileObjectSlotItem availableSlot = GetNearestUnoccupiedSlot(newUser);
         if (availableSlot != null) {
             newUser.SetTileObjectLocation(this);

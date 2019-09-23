@@ -8,6 +8,24 @@ public class ReportCrime : GoapAction {
     private AlterEgoData criminal;
     private GoapAction crimeAction;
 
+    protected override bool isTargetMissing {
+        get {
+            bool targetMissing = base.isTargetMissing && !((poiTarget as Character).stateComponent.currentState is CombatState); //added checking if target character is in combat state.
+
+            if (targetMissing) {
+                return targetMissing;
+            } else {
+                if (actor != poiTarget) {
+                    Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
+                    if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
+                        return true;
+                    }
+                }
+                return targetMissing;
+            }
+        }
+    }
+
     public ReportCrime(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REPORT_CRIME, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
@@ -79,6 +97,8 @@ public class ReportCrime : GoapAction {
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(criminal, criminal.owner.name, LOG_IDENTIFIER.CHARACTER_3);
+        //re-create report crime job.
+        actor.CreateReportCrimeJob(crime, crimeAction, criminal);
     }
     #endregion
 

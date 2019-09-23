@@ -6,11 +6,12 @@ using UnityEngine;
 public class Dwelling : LocationStructure {
 
     public List<Character> residents { get; private set; }
-    public Dictionary<FACILITY_TYPE, int> facilities { get; private set; }
-
     public Character owner {
         get { return residents.ElementAtOrDefault(0); }
     }
+
+    //facilities
+    public Dictionary<FACILITY_TYPE, int> facilities { get; protected set; }
 
     public Dwelling(Area location, bool isInside) 
         : base(STRUCTURE_TYPE.DWELLING, location, isInside) {
@@ -95,6 +96,24 @@ public class Dwelling : LocationStructure {
         }
         return false;
     }
+    public override bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeAsset = true) {
+        if (base.AddPOI(poi, tileLocation, placeAsset)) {
+            if (poi is TileObject) {
+                UpdateFacilityValues();
+            }
+            return true;
+        }
+        return false;
+    }
+    public override bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
+        if (base.RemovePOI(poi, removedBy)) {
+            if (poi is TileObject) {
+                UpdateFacilityValues();
+            }
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Misc
@@ -124,27 +143,6 @@ public class Dwelling : LocationStructure {
     }
     #endregion
 
-    #region Overrides
-    public override bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeAsset = true) {
-        if(base.AddPOI(poi, tileLocation, placeAsset)) {
-            if (poi is TileObject) {
-                UpdateFacilityValues();
-            }
-            return true;
-        }
-        return false;
-    }
-    public override bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
-        if (base.RemovePOI(poi, removedBy)) {
-            if (poi is TileObject) {
-                UpdateFacilityValues();
-            }
-            return true;
-        }
-        return false;
-    }
-    #endregion
-
     #region Facilities
     private void InitializeFacilities() {
         facilities = new Dictionary<FACILITY_TYPE, int>();
@@ -156,6 +154,9 @@ public class Dwelling : LocationStructure {
         }
     }
     private void UpdateFacilityValues() {
+        if (facilities == null) {
+            return;
+        }
         FACILITY_TYPE[] facilityTypes = Utilities.GetEnumValues<FACILITY_TYPE>();
         for (int i = 0; i < facilityTypes.Length; i++) {
             if (facilityTypes[i] != FACILITY_TYPE.NONE) {
@@ -230,19 +231,17 @@ public class Dwelling : LocationStructure {
         }
         return false;
     }
-    private List<FACILITY_TYPE> GetFacilitiesProvidedBy(TILE_OBJECT_TYPE objType) {
-        List<FACILITY_TYPE> facility = new List<FACILITY_TYPE>();
-        TileObjectData data;
-        if (TileObjectDB.TryGetTileObjectData(objType, out data)) {
-            if (data.providedFacilities != null) {
-                for (int j = 0; j < data.providedFacilities.Length; j++) {
-                    ProvidedFacility provided = data.providedFacilities[j];
-                    facility.Add(provided.type);
-                }
+    /// <summary>
+    /// Does this dwelling have any facilities that are at 0?
+    /// </summary>
+    /// <returns></returns>
+    public bool HasFacilityDeficit() {
+        foreach (KeyValuePair<FACILITY_TYPE, int> kvp in facilities) {
+            if (kvp.Value <= 0) {
+                return true;
             }
         }
-        return facility;
+        return false;
     }
     #endregion
-
 }

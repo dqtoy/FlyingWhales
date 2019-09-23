@@ -34,7 +34,6 @@ public class GameManager : MonoBehaviour {
 
 	public float progressionSpeed;
 	public bool isPaused = true;
-    //public bool hideLandmarks = true;
     public bool initiallyHideRoads = false;
     public bool allowConsole = true;
     public bool displayFPS = true;
@@ -64,17 +63,9 @@ public class GameManager : MonoBehaviour {
     private float timeElapsed;
     private bool _gameHasStarted;
 
-    //[SerializeField] private Texture2D defaultCursorTexture;
-    //[SerializeField] private Texture2D targetCursorTexture;
-    //[SerializeField] private Texture2D dragWorldCursorTexture;
-    //[SerializeField] private Texture2D dragItemHoverCursorTexture;
-    //[SerializeField] private Texture2D dragItemClickedCursorTexture;
-    //[SerializeField] private CursorMode cursorMode = CursorMode.Auto;
-    //[SerializeField] private Vector2 hotSpot = Vector2.zero;
-
     public bool pauseTickEnded2 = false;
-    //public int ticksToAddPerTick { get; private set; } //how many ticks to add per tick of progression? Set this to another value to advance ticks by more than 1. 
-    //public bool isDraggingItem = false;
+
+    public string lastProgressionBeforePausing; //what was the last progression speed before the player paused the game. NOTE: This includes paused state
 
     #region getters/setters
     public bool gameHasStarted {
@@ -87,11 +78,7 @@ public class GameManager : MonoBehaviour {
         Instance = this;
         this.timeElapsed = 0f;
         _gameHasStarted = false;
-        //SetTicksToAddPerTick(1); //ticksPerHour //so that at start of the game time will advance by one hour per tick.
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
-#if !WORLD_CREATION_TOOL
-        //Application.logMessageReceived += LogCallback;
-#endif
     }
     private void Update() {
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
@@ -173,38 +160,14 @@ public class GameManager : MonoBehaviour {
 	public void StartProgression(){
         _gameHasStarted = true;
         days = 1;
-        //SetPausedState(false);
-        UIManager.Instance.SetProgressionSpeed1X();
+        //UIManager.Instance.SetProgressionSpeed1X();
         UIManager.Instance.Pause();
-		SchedulingManager.Instance.StartScheduleCalls ();
+        lastProgressionBeforePausing = "paused";
+        SchedulingManager.Instance.StartScheduleCalls ();
         Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
-        Messenger.Broadcast(Signals.MONTH_START); //for the first day
+        Messenger.Broadcast(Signals.MONTH_START); //for the first month
         InteriorMapManager.Instance.UpdateLightBasedOnTime(Today());
         //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
-    }
-
-    [ContextMenu("Create Travel Line")]
-    public void CreateTravelLine() {
-        GameObject go = GameObject.Instantiate(travelLinePrefab);
-        go.transform.position = tile1.transform.position;
-        float angle = Mathf.Atan2(tile2.transform.position.y - tile1.transform.position.y, tile2.transform.position.x - tile1.transform.position.x) * Mathf.Rad2Deg;
-        go.transform.eulerAngles = new Vector3(go.transform.rotation.x, go.transform.rotation.y, angle);
-        float distance = Vector3.Distance(tile1.transform.position, tile2.transform.position);
-        //float scale = (distance * 0.143f) * 6f;
-        go.GetComponent<RectTransform>().sizeDelta = new Vector2(distance, 0.2f);
-        //go.transform.SetParent(tile1.UIParent);
-        //go.transform.localScale = new Vector3(scale, go.transform.localScale.y, go.transform.localScale.z);
-
-        /*To get num of ticks to travel from one tile to another, get distance and divide it by 2.31588, round up the result then multiply by 6, such that,
-         * numOfTicks = (Math.Ceil(distance / 2.315188)) * 6
-         */
-    }
-
-    [ContextMenu("Get Distance")]
-    public void GetDistance() {
-        float distance = Vector3.Distance(tile1.transform.position, tile2.transform.position);
-        int distanceAsTiles = Mathf.CeilToInt(distance / 2.315188f);
-        Debug.LogWarning("Distance: " + distanceAsTiles);
     }
 
     private float AngleBetweenVector2(Vector2 vec1, Vector2 vec2) {
@@ -260,12 +223,32 @@ public class GameManager : MonoBehaviour {
 		return new GameDate(this.month, 1, this.year, 1);
 	}
     public void SetPausedState(bool isPaused){
-        //Debug.Log("Set paused state to " + isPaused);
-        if(this.isPaused != isPaused) {
+        if (isPaused) {
+            StoreLastProgressionBeforePausing();
+        }
+        if (this.isPaused != isPaused) {
             this.isPaused = isPaused;
             Messenger.Broadcast(Signals.PAUSED, isPaused);
         }
 	}
+    private void StoreLastProgressionBeforePausing() {
+        //the player paused the game
+        if (this.isPaused) {
+            lastProgressionBeforePausing = "paused";
+        } else {
+            switch (currProgressionSpeed) {
+                case PROGRESSION_SPEED.X1:
+                    lastProgressionBeforePausing = "1";
+                    break;
+                case PROGRESSION_SPEED.X2:
+                    lastProgressionBeforePausing = "2";
+                    break;
+                case PROGRESSION_SPEED.X4:
+                    lastProgressionBeforePausing = "4";
+                    break;
+            }
+        }
+    }
     public void SetDelayedPausedState(bool state) {
         StartCoroutine(DelayedPausedState(state));
     }
@@ -561,14 +544,6 @@ public class GameManager : MonoBehaviour {
     #endregion
 
     #region Utilities
-    private void LogCallback(string condition, string stackTrace, LogType type) {
-        //CharacterManager.Instance.CategorizeLog(condition, stackTrace, type);
-        if (type == LogType.Error || type == LogType.Exception) {
-            string notification = "<color=\"red\">" + TodayLogString() + "Error occurred! Check console for log message</color>";
-            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, notification, 100, null);
-            UIManager.Instance.Pause();
-        }
-    }
     public void ToggleCharactersVisibility(bool state) {
         allCharactersAreVisible = state;
         Messenger.Broadcast(Signals.TOGGLE_CHARACTERS_VISIBILITY);

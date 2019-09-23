@@ -13,9 +13,6 @@ public class UIManager : MonoBehaviour {
 
     public static UIManager Instance = null;
 
-    public delegate void OnAddNewBattleLog();
-    public OnAddNewBattleLog onAddNewBattleLog;
-
     public RectTransform mainRT;
     [SerializeField] private EventSystem eventSystem;
 
@@ -37,7 +34,6 @@ public class UIManager : MonoBehaviour {
     public RectTransform smallInfoRT;
     public HorizontalLayoutGroup smallInfoBGParentLG;
     public RectTransform smallInfoBGRT;
-
     public TextMeshProUGUI smallInfoLbl;
     public EnvelopContentUnityUI smallInfoEnvelopContent;
     public LocationSmallInfo locationSmallInfo;
@@ -84,24 +80,19 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private RectTransform worldUIParent;
     [SerializeField] private GameObject worldEventIconPrefab;
 
+    [Space(10)]
     [Header("Object Picker")]
     [SerializeField] private ObjectPicker objectPicker;
+
+    [Space(10)]
+    [Header("Options")]
+    [SerializeField] private GameObject optionsGO;
 
     [Space(10)] //FOR TESTING
     [Header("For Testing")]
     public ButtonToggle toggleBordersBtn;
     public ButtonToggle corruptionBtn;
     public POITestingUI poiTestingUI;
-
-    public delegate void OnPauseEventExpiration(bool state);
-    public OnPauseEventExpiration onPauseEventExpiration;
-
-    [Space(10)]
-    [Header("Font Sizes")]
-    [SerializeField] private int HEADER_FONT_SIZE = 25;
-    [SerializeField] private int BODY_FONT_SIZE = 20;
-    [SerializeField] private int TOOLTIP_FONT_SIZE = 18;
-    [SerializeField] private int SMALLEST_FONT_SIZE = 12;
 
     [Space(10)]
     [Header("Combat")]
@@ -284,41 +275,6 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    #region Font Utilities
-    private void NormalizeFontSizes() {
-        TextMeshProUGUI[] allLabels = this.GetComponentsInChildren<TextMeshProUGUI>(true);
-        //Debug.Log ("ALL LABELS COUNT: " + allLabels.Length.ToString());
-        for (int i = 0; i < allLabels.Length; i++) {
-            NormalizeFontSizeOfLabel(allLabels[i]);
-        }
-    }
-    private void NormalizeFontSizeOfLabel(TextMeshProUGUI lbl) {
-        string lblName = lbl.name;
-        if (lblName.Contains("NOTOUCH")) {
-            return;
-        }
-        TextOverflowModes overflowMethod = TextOverflowModes.Truncate;
-        if (lblName.Contains("HEADER")) {
-            lbl.fontSize = HEADER_FONT_SIZE;
-            overflowMethod = TextOverflowModes.Truncate;
-        } else if (lblName.Contains("BODY")) {
-            lbl.fontSize = BODY_FONT_SIZE;
-            overflowMethod = TextOverflowModes.Truncate;
-        } else if (lblName.Contains("TOOLTIP")) {
-            lbl.fontSize = TOOLTIP_FONT_SIZE;
-            overflowMethod = TextOverflowModes.Overflow;
-        } else if (lblName.Contains("SMALLEST")) {
-            lbl.fontSize = SMALLEST_FONT_SIZE;
-            overflowMethod = TextOverflowModes.Truncate;
-        }
-
-        if (!lblName.Contains("NO")) {
-            lbl.overflowMode = overflowMethod;
-        }
-
-    }
-    #endregion
-
     private void UpdateUI() {
         //dateLbl.SetText(GameManager.Instance.continuousDays + "/" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
         dateLbl.SetText("Day " + GameManager.Instance.continuousDays + "\n" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
@@ -390,16 +346,9 @@ public class UIManager : MonoBehaviour {
     }
     public void Pause() {
         GameManager.Instance.SetPausedState(true);
-        if (onPauseEventExpiration != null) {
-            onPauseEventExpiration(true);
-        }
     }
     public void Unpause() {
-        //Debug.Log("Unpaused from:\n " + StackTraceUtility.ExtractStackTrace());
         GameManager.Instance.SetPausedState(false);
-        if (onPauseEventExpiration != null) {
-            onPauseEventExpiration(false);
-        }
     }
     public void ShowDateSummary() {
         ShowSmallInfo(GameManager.Instance.Today().ToStringDate());
@@ -409,6 +358,34 @@ public class UIManager : MonoBehaviour {
         x1Btn.interactable = state;
         x2Btn.interactable = state;
         x4Btn.interactable = state;
+    }
+    /// <summary>
+    /// Resume the last speed that the player was in before pausing the game.
+    /// </summary>
+    public void ResumeLastProgressionSpeed() {
+        if (GameManager.Instance.lastProgressionBeforePausing == "paused") {
+            //pause the game
+            Pause();
+        } else if (GameManager.Instance.lastProgressionBeforePausing == "1") {
+            SetProgressionSpeed1X();
+        } else if (GameManager.Instance.lastProgressionBeforePausing == "2") {
+            SetProgressionSpeed2X();
+        } else if (GameManager.Instance.lastProgressionBeforePausing == "4") {
+            SetProgressionSpeed4X();
+        }
+    }
+    #endregion
+
+    #region Options
+    public void ToggleOptionsMenu() {
+        optionsGO.SetActive(!optionsGO.activeSelf);
+        if (optionsGO.activeSelf) {
+            Pause();
+            SetSpeedTogglesState(false);
+        } else {
+            SetSpeedTogglesState(true);
+            ResumeLastProgressionSpeed();
+        }
     }
     #endregion
 
@@ -725,12 +702,7 @@ public class UIManager : MonoBehaviour {
      * font sizes.
      * */
     internal GameObject InstantiateUIObject(string prefabObjName, Transform parent) {
-        //GameObject go = GameObject.Instantiate (prefabObj, parent) as GameObject;
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabObjName, Vector3.zero, Quaternion.identity, parent);
-        TextMeshProUGUI[] goLbls = go.GetComponentsInChildren<TextMeshProUGUI>(true);
-        for (int i = 0; i < goLbls.Length; i++) {
-            NormalizeFontSizeOfLabel(goLbls[i]);
-        }
         return go;
     }
     #endregion
@@ -1348,6 +1320,13 @@ public class UIManager : MonoBehaviour {
     #region Audio
     public void ToggleMute(bool state) {
         AudioManager.Instance.SetMute(state);
+    }
+    #endregion
+
+    #region Controls
+    public void ToggleEdgePanning(bool state) {
+        CameraMove.Instance.AllowEdgePanning(state);
+        AreaMapCameraMove.Instance.AllowEdgePanning(state);
     }
     #endregion
 
