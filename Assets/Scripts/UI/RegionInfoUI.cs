@@ -241,15 +241,16 @@ public class RegionInfoUI : UIMenu {
         }
     }
     private void UpdateInterveneButton() {
-        interveneBtn.gameObject.SetActive(activeRegion.activeEvent != null);
-        interferingCharacterPortrait.gameObject.SetActive(false);
-        if (interveneBtn.gameObject.activeSelf) {
-            interveneBtn.interactable = activeRegion.eventData.interferingCharacter == null && PlayerManager.Instance.player.HasMinionAssignedTo(LANDMARK_TYPE.THE_EYE);
-            if (activeRegion.eventData.interferingCharacter != null) {
-                interferingCharacterPortrait.gameObject.SetActive(true);
-                interferingCharacterPortrait.GeneratePortrait(activeRegion.eventData.interferingCharacter);
-            }
-        }
+        interveneBtn.gameObject.SetActive(false);
+        //interveneBtn.gameObject.SetActive(activeRegion.activeEvent != null);
+        //interferingCharacterPortrait.gameObject.SetActive(false);
+        //if (interveneBtn.gameObject.activeSelf) {
+        //    interveneBtn.interactable = activeRegion.eventData.interferingCharacter == null && PlayerManager.Instance.player.HasMinionAssignedTo(LANDMARK_TYPE.THE_EYE);
+        //    if (activeRegion.eventData.interferingCharacter != null) {
+        //        interferingCharacterPortrait.gameObject.SetActive(true);
+        //        interferingCharacterPortrait.GeneratePortrait(activeRegion.eventData.interferingCharacter);
+        //    }
+        //}
     }
     public void OnClickInterfere() {
         List<Character> minions = PlayerManager.Instance.player.GetMinionsAssignedTo(LANDMARK_TYPE.THE_EYE);
