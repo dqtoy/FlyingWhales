@@ -41,14 +41,15 @@ public class MinionCharacterItem : CharacterItem {
             subTextLbl.text = Utilities.LogReplacer(character.minion.busyReasonLog);
             subTextContainer.gameObject.SetActive(true);
         } else {
-            subTextLbl.text = "Actions: ";
-            for (int i = 0; i < character.minion.deadlySin.assignments.Length; i++) {
-                subTextLbl.text += Utilities.NormalizeStringUpperCaseFirstLetters(character.minion.deadlySin.assignments[i].ToString());
-                if (i + 1 != character.minion.deadlySin.assignments.Length) {
-                    subTextLbl.text += ", ";
-                }
-            }
-            subTextContainer.gameObject.SetActive(true);
+            //subTextLbl.text = "Actions: ";
+            //for (int i = 0; i < character.minion.deadlySin.assignments.Length; i++) {
+            //    subTextLbl.text += Utilities.NormalizeStringUpperCaseFirstLetters(character.minion.deadlySin.assignments[i].ToString());
+            //    if (i + 1 != character.minion.deadlySin.assignments.Length) {
+            //        subTextLbl.text += ", ";
+            //    }
+            //}
+            //subTextContainer.gameObject.SetActive(true);
+            subTextContainer.gameObject.SetActive(false);
         }
     }
     private void UpdateCover() {

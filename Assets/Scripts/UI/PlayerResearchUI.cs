@@ -27,7 +27,7 @@ public class PlayerResearchUI : MonoBehaviour {
     public void ShowPlayerResearchUI(TheSpire spire) {
         this.spire = spire;
 
-        if (spire.interventionAbilityToResearch == INTERVENTION_ABILITY.NONE) {
+        if (!spire.isInCooldown) {
             chosenMinion = null;
             chosenAbility = INTERVENTION_ABILITY.NONE;
             researchBtn.interactable = false;
@@ -39,8 +39,6 @@ public class PlayerResearchUI : MonoBehaviour {
             selectMinionBtn.interactable = true;
             selectAbilityBtn.interactable = false;
         } else {
-            SetChosenMinion(spire.tileLocation.region.assignedMinion.character);
-            SetChosenAbility(spire.interventionAbilityToResearch);
             UpdateSelectMinionBtn();
             UpdateSelectAbilityBtn();
             UpdatePlayerResearchUI();
@@ -54,26 +52,22 @@ public class PlayerResearchUI : MonoBehaviour {
     public void OnClickResearch() {
         spire.tileLocation.region.SetAssignedMinion(chosenMinion);
         chosenMinion.SetAssignedRegion(spire.tileLocation.region);
-        spire.StartResearchNewInterventionAbility(chosenAbility, 0);
-        //currentTile.region.StartBuildingStructure(chosenLandmark, chosenMinion);
+        spire.ExtractInterventionAbility(chosenAbility);
         UpdateResearchButton();
         UpdateSelectMinionBtn();
         UpdateSelectAbilityBtn();
     }
     private void UpdateResearchButton() {
         researchProgress.gameObject.SetActive(false);
-        researchBtn.interactable = chosenMinion != null && chosenAbility != INTERVENTION_ABILITY.NONE
-            && spire.interventionAbilityToResearch == INTERVENTION_ABILITY.NONE;
+        researchBtn.interactable = chosenMinion != null && chosenAbility != INTERVENTION_ABILITY.NONE && PlayerManager.Instance.player.CanAffordInterventionAbility(chosenAbility) && !spire.isInCooldown;
         if (!researchBtn.interactable) {
-            if (spire.interventionAbilityToResearch != INTERVENTION_ABILITY.NONE) {
-                researchProgress.gameObject.SetActive(true);
-                researchProgress.fillAmount = 0;
-            }
+            researchProgress.gameObject.SetActive(true);
+            researchProgress.fillAmount = 0;
         }
     }
     public void UpdatePlayerResearchUI() {
-        if (spire.interventionAbilityToResearch != INTERVENTION_ABILITY.NONE && researchProgress.gameObject.activeSelf) {
-            researchProgress.fillAmount = spire.currentResearchTick / (float) spire.researchDuration;
+        if (researchProgress.gameObject.activeSelf && spire.isInCooldown) {
+            researchProgress.fillAmount = spire.currentCooldownTick / (float) spire.cooldownDuration;
         }
     }
     #endregion
@@ -101,7 +95,7 @@ public class PlayerResearchUI : MonoBehaviour {
         UIManager.Instance.HideObjectPicker();
     }
     private void UpdateSelectMinionBtn() {
-        selectMinionBtn.interactable = spire.interventionAbilityToResearch == INTERVENTION_ABILITY.NONE;
+        selectMinionBtn.interactable = !spire.isInCooldown;
     }
     #endregion
 
@@ -170,8 +164,7 @@ public class PlayerResearchUI : MonoBehaviour {
         UIManager.Instance.HideObjectPicker();
     }
     private void UpdateSelectAbilityBtn() {
-        selectAbilityBtn.interactable = spire.interventionAbilityToResearch == INTERVENTION_ABILITY.NONE
-            && chosenMinion != null;
+        selectAbilityBtn.interactable = chosenMinion != null;
     }
     #endregion
 }

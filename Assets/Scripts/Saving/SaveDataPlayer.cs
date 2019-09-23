@@ -8,6 +8,7 @@ public class SaveDataPlayer {
     public int playerFactionID;
     public int playerAreaID;
     public int threat;
+    public int mana;
 
     public List<SaveDataMinion> minions;
     public List<SaveDataSummonSlot> summonSlots;
@@ -31,6 +32,7 @@ public class SaveDataPlayer {
         playerFactionID = player.playerFaction.id;
         playerAreaID = player.playerArea.id;
         threat = player.threat;
+        mana = player.mana;
         maxSummonSlots = player.maxSummonSlots;
         maxArtifactSlots = player.maxArtifactSlots;
         currentDivineInterventionTick = player.currentDivineInterventionTick;
