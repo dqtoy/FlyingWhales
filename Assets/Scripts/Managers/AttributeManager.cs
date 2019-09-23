@@ -110,6 +110,7 @@ public class AttributeManager : MonoBehaviour {
             new Hothead(),
             new Inspiring(),
             new Pyrophobic(),
+            new Angry(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

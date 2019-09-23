@@ -9,7 +9,7 @@ public class DivineInterventionQuest : Quest {
 
     public DivineInterventionQuest(Faction factionOwner, Region region) : base(factionOwner, region) {
         name = "Divine Intervention Quest";
-        description = "A quest taken by the characters in the world which speeds up Divine Intervention.";
+        description = factionOwner.name + " has begun the ritual that will call for the Goddess's Return. If the ritual finishes, this Divine Intervention will cleanse the world of all the Ruinarch's corruption and banish the demons back to the Nether Realm.";
     }
 
     #region Overrides

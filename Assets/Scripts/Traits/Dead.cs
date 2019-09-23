@@ -26,7 +26,7 @@ public class Dead : Trait {
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (traitOwner is Character) {
             Character targetCharacter = traitOwner as Character;
-            if (targetCharacter.race != RACE.SKELETON && !(targetCharacter is Summon) && !targetCharacter.HasJobTargettingThis(JOB_TYPE.BURY)) {
+            if (responsibleCharacter != characterThatWillDoJob && targetCharacter.race != RACE.SKELETON && !(targetCharacter is Summon) && !targetCharacter.HasJobTargettingThis(JOB_TYPE.BURY)) {
                 GoapPlanJob buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
                 buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
                 buryJob.AllowDeadTargets();

@@ -5,7 +5,7 @@ using UnityEngine;
 public class SerialKiller : Trait {
 
     public SerialVictim victim1Requirement { get; private set; }
-    public SerialVictim victim2Requirement { get; private set; }
+    //public SerialVictim victim2Requirement { get; private set; }
     public Character character { get; private set; }
 
     public Character targetVictim { get; private set; }
@@ -29,7 +29,7 @@ public class SerialKiller : Trait {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             character = sourceCharacter as Character;
-            if(victim1Requirement == null || victim2Requirement == null) {
+            if(victim1Requirement == null) { // || victim2Requirement == null
                 GenerateSerialVictims();
             }
             Messenger.AddListener(Signals.TICK_STARTED, CheckSerialKiller);
@@ -65,9 +65,9 @@ public class SerialKiller : Trait {
     public void SetVictim1Requirement(SerialVictim serialVictim) {
         victim1Requirement = serialVictim;
     }
-    public void SetVictim2Requirement(SerialVictim serialVictim) {
-        victim2Requirement = serialVictim;
-    }
+    //public void SetVictim2Requirement(SerialVictim serialVictim) {
+    //    victim2Requirement = serialVictim;
+    //}
     public void SetTargetVictim(Character victim) {
         targetVictim = victim;
     }
@@ -244,28 +244,28 @@ public class SerialKiller : Trait {
     private void GenerateSerialVictims() {
         SetVictim1Requirement(new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false)));
 
-        bool hasCreatedRequirement = false;
-        while (!hasCreatedRequirement) {
-            SERIAL_VICTIM_TYPE victim2FirstType = RandomizeVictimType(true);
-            SERIAL_VICTIM_TYPE victim2SecondType = RandomizeVictimType(false);
+        //bool hasCreatedRequirement = false;
+        //while (!hasCreatedRequirement) {
+        //    SERIAL_VICTIM_TYPE victim2FirstType = RandomizeVictimType(true);
+        //    SERIAL_VICTIM_TYPE victim2SecondType = RandomizeVictimType(false);
 
-            string victim2FirstDesc = victim1Requirement.GenerateVictimDescription(victim2FirstType);
-            string victim2SecondDesc = victim1Requirement.GenerateVictimDescription(victim2SecondType);
+        //    string victim2FirstDesc = victim1Requirement.GenerateVictimDescription(victim2FirstType);
+        //    string victim2SecondDesc = victim1Requirement.GenerateVictimDescription(victim2SecondType);
 
-            if(victim1Requirement.victimFirstType == victim2FirstType && victim1Requirement.victimSecondType == victim2SecondType
-                && victim1Requirement.victimFirstDescription == victim2FirstDesc && victim1Requirement.victimSecondDescription == victim2SecondDesc) {
-                continue;
-            } else {
-                SetVictim2Requirement(new SerialVictim(victim2FirstType, victim2FirstDesc, victim2SecondType, victim2SecondDesc));
-                hasCreatedRequirement = true;
-                break;
-            }
-        }
+        //    if(victim1Requirement.victimFirstType == victim2FirstType && victim1Requirement.victimSecondType == victim2SecondType
+        //        && victim1Requirement.victimFirstDescription == victim2FirstDesc && victim1Requirement.victimSecondDescription == victim2SecondDesc) {
+        //        continue;
+        //    } else {
+        //        SetVictim2Requirement(new SerialVictim(victim2FirstType, victim2FirstDesc, victim2SecondType, victim2SecondDesc));
+        //        hasCreatedRequirement = true;
+        //        break;
+        //    }
+        //}
        
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer");
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
-        log.AddToFillers(null, victim2Requirement.text, LOG_IDENTIFIER.STRING_2);
+        //log.AddToFillers(null, victim2Requirement.text, LOG_IDENTIFIER.STRING_2);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
     }
@@ -286,8 +286,7 @@ public class SerialKiller : Trait {
     }
 
     private bool DoesCharacterFitAnyVictimRequirements(Character target) {
-        return victim1Requirement.DoesCharacterFitVictimRequirements(target)
-            || victim2Requirement.DoesCharacterFitVictimRequirements(target);
+        return victim1Requirement.DoesCharacterFitVictimRequirements(target); //|| victim2Requirement.DoesCharacterFitVictimRequirements(target)
     }
 }
 
@@ -375,7 +374,7 @@ public class SerialVictim {
 
 public class SaveDataSerialKiller : SaveDataTrait {
     public SerialVictim victim1Requirement;
-    public SerialVictim victim2Requirement;
+    //public SerialVictim victim2Requirement;
 
     public int targetVictimID;
     public bool isFollowing;
@@ -385,7 +384,7 @@ public class SaveDataSerialKiller : SaveDataTrait {
         base.Save(trait);
         SerialKiller derivedTrait = trait as SerialKiller;
         victim1Requirement = derivedTrait.victim1Requirement;
-        victim2Requirement = derivedTrait.victim2Requirement;
+        //victim2Requirement = derivedTrait.victim2Requirement;
 
         isFollowing = derivedTrait.isFollowing;
         hasStartedFollowing = derivedTrait.hasStartedFollowing;
@@ -401,7 +400,7 @@ public class SaveDataSerialKiller : SaveDataTrait {
         Trait trait = base.Load(ref responsibleCharacter);
         SerialKiller derivedTrait = trait as SerialKiller;
         derivedTrait.SetVictim1Requirement(victim1Requirement);
-        derivedTrait.SetVictim2Requirement(victim2Requirement);
+        //derivedTrait.SetVictim2Requirement(victim2Requirement);
 
         derivedTrait.SetIsFollowing(isFollowing);
         derivedTrait.SetHasStartedFollowing(hasStartedFollowing);

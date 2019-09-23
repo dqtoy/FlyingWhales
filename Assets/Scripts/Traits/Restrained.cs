@@ -42,7 +42,7 @@ public class Restrained : Trait {
             isLeader = _sourceCharacter.role.roleType == CHARACTER_ROLE.LEADER;
             Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
             //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
-            _sourceCharacter.RemoveTrait("Unconscious", removedBy: responsibleCharacter);
+            //_sourceCharacter.RemoveTrait("Unconscious", removedBy: responsibleCharacter);
             //_sourceCharacter.CancelAllJobsAndPlans();
             _sourceCharacter.AddTraitNeededToBeRemoved(this);
 
