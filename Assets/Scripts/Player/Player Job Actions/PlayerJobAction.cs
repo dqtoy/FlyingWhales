@@ -221,7 +221,7 @@ public class PlayerJobActionData {
     public virtual string name { get { return string.Empty; } }
     public virtual string description { get { return string.Empty; } }
     public virtual INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.NONE; } }
-    public virtual int durationInTicks { get { return 96; } }
+    public virtual int manaCost { get { return PlayerManager.Instance.player.GetManaCostForInterventionAbility(name.ToUpper().Replace(' ', '_')); } }
 }
 
 public class PlayerJobActionSlot {

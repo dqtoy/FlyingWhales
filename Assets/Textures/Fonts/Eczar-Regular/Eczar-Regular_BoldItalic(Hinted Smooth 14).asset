@@ -8,7 +8,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -667331979, guid: 89f0137620f6af44b9ba852b4190e64e, type: 3}
+  m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
   m_Name: Eczar-Regular_BoldItalic(Hinted Smooth 14)
   m_EditorClassIdentifier: 
   hashCode: -958618844
@@ -18,12 +18,12 @@ MonoBehaviour:
   m_fontInfo:
     Name: Eczar
     PointSize: 14
-    Scale: 0
+    Scale: 1
     CharacterCount: 97
     LineHeight: 25
     Baseline: 0
     Ascender: 16
-    CapHeight: 0
+    CapHeight: 9
     Descender: -9
     CenterLine: 0
     SuperscriptOffset: 16
@@ -33,7 +33,7 @@ MonoBehaviour:
     UnderlineThickness: 0.98
     strikethrough: 2.5454545
     strikethroughThickness: 0.98
-    TabWidth: 0
+    TabWidth: 40
     Padding: 5
     AtlasWidth: 512
     AtlasHeight: 512
@@ -42,10 +42,10 @@ MonoBehaviour:
   - id: 32
     x: 5
     y: 507
-    width: 0
-    height: 0
+    width: 4
+    height: 25
     xOffset: 0
-    yOffset: 0
+    yOffset: 16
     xAdvance: 4
     scale: 1
   - id: 33
@@ -929,19 +929,23 @@ MonoBehaviour:
       yAdvance: 0
     xOffset: 0
   fallbackFontAssets: []
-  fontCreationSettings:
-    fontSourcePath: 
-    fontSizingMode: 0
-    fontSize: 0
-    fontPadding: 0
-    fontPackingMode: 0
-    fontAtlasWidth: 0
-    fontAtlasHeight: 0
-    fontCharacterSet: 0
+  m_CreationSettings:
+    sourceFontFileName: 
+    sourceFontFileGUID: 
+    pointSizeSamplingMode: 0
+    pointSize: 0
+    padding: 0
+    packingMode: 0
+    atlasWidth: 0
+    atlasHeight: 0
+    characterSetSelectionMode: 0
+    characterSequence: 
+    referencedFontAssetGUID: 
+    referencedTextAssetGUID: 
     fontStyle: 0
-    fontStlyeModifier: 0
-    fontRenderMode: 0
-    fontKerning: 0
+    fontStyleModifier: 0
+    renderMode: 0
+    includeFontFeatures: 0
   fontWeights:
   - regularTypeface: {fileID: 0}
     italicTypeface: {fileID: 0}
@@ -976,7 +980,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Eczar-Regular_BoldItalic(Hinted Smooth 14) Material
-  m_Shader: {fileID: 4800000, guid: d1cf17907700cb647aa3ea423ba38f2e, type: 3}
+  m_Shader: {fileID: 4800000, guid: 128e987d567d4e2c824d754223b3f3b0, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0

@@ -419,7 +419,7 @@ public class Utilities : MonoBehaviour {
                         wordToReplace += ", ";
                     }
                     if(objectLog[i].obj != null) {
-                        wordToReplace += "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
+                        wordToReplace += "<b><link=" + '"' + i.ToString() + '"' + ">" + objectLog[i].value + "</link></b>";
                     } else {
                         wordToReplace += "<b>" + objectLog[i].value + "</b>";
                     }
@@ -442,7 +442,7 @@ public class Utilities : MonoBehaviour {
             for (int i = 0; i < objectLog.Count; i++) {
                 if (objectLog[i].identifier == identifier) {
                     if (objectLog[i].obj != null) {
-                        wordToReplace = "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
+                        wordToReplace = "<b><link=" + '"' + i.ToString() + '"' + ">" + objectLog[i].value + "</link></b>";
                     } else {
                         wordToReplace = "<b>" + objectLog[i].value + "</b>";
                     }

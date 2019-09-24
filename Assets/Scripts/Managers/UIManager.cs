@@ -1370,14 +1370,29 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI yesNoDescriptionLbl;
     [SerializeField] private Button yesBtn;
     [SerializeField] private Button noBtn;
-    public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null, bool showCover = false, int layer = 21) {
+    [SerializeField] private TextMeshProUGUI yesBtnLbl;
+    [SerializeField] private TextMeshProUGUI noBtnLbl;
+    public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null
+        , bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool pauseAndResume = false) {
+        if (pauseAndResume) {
+            Pause();
+        }
         yesNoHeaderLbl.text = header;
         yesNoDescriptionLbl.text = question;
+
+        yesBtnLbl.text = yesBtnText;
+        noBtnLbl.text = noBtnText;
+
+        yesBtn.interactable = yesBtnInteractable;
 
         yesBtn.onClick.RemoveAllListeners();
         noBtn.onClick.RemoveAllListeners();
         yesBtn.onClick.AddListener(HideYesNoConfirmation);
         noBtn.onClick.AddListener(HideYesNoConfirmation);
+        if (pauseAndResume) {
+            yesBtn.onClick.AddListener(ResumeLastProgressionSpeed);
+            noBtn.onClick.AddListener(ResumeLastProgressionSpeed);
+        }
         if (onClickYesAction != null) {
             yesBtn.onClick.AddListener(onClickYesAction.Invoke);
         }

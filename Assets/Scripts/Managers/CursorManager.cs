@@ -25,7 +25,8 @@ public class CursorManager : MonoBehaviour {
     public enum Cursor_Type {
         None, Default, Target, Drag_Hover, Drag_Clicked, Check, Cross
     }
-    public Cursor_Type currentCursorType { get; private set; }
+    public Cursor_Type currentCursorType;
+    public Cursor_Type previousCursorType;
 
     public PointerEventData cursorPointerEventData { get; private set; }
     private LocationGridTile previousHoveredTile;
@@ -36,6 +37,7 @@ public class CursorManager : MonoBehaviour {
             Instance = this;
             DontDestroyOnLoad(this.gameObject);
             SetCursorTo(Cursor_Type.Default);
+            previousCursorType = Cursor_Type.Default;
             Cursor.lockState = CursorLockMode.Confined;
         } else {
             Destroy(this.gameObject);
@@ -182,6 +184,7 @@ public class CursorManager : MonoBehaviour {
         if (currentCursorType == type) {
             return; //ignore 
         }
+        previousCursorType = currentCursorType;
         Vector2 hotSpot = Vector2.zero;
         switch (type) {
             case Cursor_Type.Drag_Clicked:
@@ -197,7 +200,11 @@ public class CursorManager : MonoBehaviour {
                 break;
         }
         currentCursorType = type;
+        Debug.Log("Set cursor type to " + currentCursorType.ToString());
         Cursor.SetCursor(cursors[type], hotSpot, cursorMode);
+    }
+    public void RevertToPreviousCursor() {
+        SetCursorTo(previousCursorType);
     }
 
     #region Click Actions
