@@ -11,18 +11,32 @@ public class MinionCharacterItem : CharacterItem {
     [SerializeField] private RectTransform subTextRT;
     [SerializeField] private RectTransform subTextContainer;
 
+    void OnEnable() {
+        if (this.character != null) {
+            UpdateCombatAbility();
+            UpdateSubText();
+            UpdateCover();
+        }
+    }
+
     public override void SetCharacter(Character character) {
         base.SetCharacter(character);
         UpdateCombatAbility();
         UpdateSubText();
         UpdateCover();
         Messenger.AddListener<Minion, Region>(Signals.MINION_CHANGED_ASSIGNED_REGION, OnMinionChangedAssignedRegion);
+        Messenger.AddListener<Minion>(Signals.MINION_CHANGED_COMBAT_ABILITY, OnMinionChangedCombatAbility);
     }
 
     private void OnMinionChangedAssignedRegion(Minion minion, Region region) {
         if (minion.character == this.character) {
             UpdateSubText();
             UpdateCover();
+        }
+    }
+    private void OnMinionChangedCombatAbility(Minion minion) {
+        if (minion.character == this.character) {
+            UpdateCombatAbility();
         }
     }
 
@@ -99,5 +113,6 @@ public class MinionCharacterItem : CharacterItem {
     public override void Reset() {
         base.Reset();
         Messenger.RemoveListener<Minion, Region>(Signals.MINION_CHANGED_ASSIGNED_REGION, OnMinionChangedAssignedRegion);
+        Messenger.RemoveListener<Minion>(Signals.MINION_CHANGED_COMBAT_ABILITY, OnMinionChangedCombatAbility);
     }
 }

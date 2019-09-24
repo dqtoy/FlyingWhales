@@ -8,6 +8,7 @@ public class PlayerResearchUI : MonoBehaviour {
     [Header("General")]
     public Button researchBtn;
     public Image researchProgress;
+    public TextMeshProUGUI researchBtnLbl;
 
     [Header("Minion")]
     public TextMeshProUGUI minionName;
@@ -60,6 +61,12 @@ public class PlayerResearchUI : MonoBehaviour {
     private void UpdateResearchButton() {
         researchProgress.gameObject.SetActive(false);
         researchBtn.interactable = chosenMinion != null && chosenAbility != INTERVENTION_ABILITY.NONE && PlayerManager.Instance.player.CanAffordInterventionAbility(chosenAbility) && !spire.isInCooldown;
+        if (chosenAbility != INTERVENTION_ABILITY.NONE) {
+            researchBtnLbl.text = "Extract (" + PlayerManager.Instance.allInterventionAbilitiesData[chosenAbility].manaCost.ToString() + " Mana)";
+        } else {
+            researchBtnLbl.text = "Extract";
+        }
+        
         if (!researchBtn.interactable) {
             researchProgress.gameObject.SetActive(true);
             researchProgress.fillAmount = 0;
@@ -125,7 +132,7 @@ public class PlayerResearchUI : MonoBehaviour {
             if (info != string.Empty) {
                 info += "\n";
             }
-            info += "Duration: " + GameManager.Instance.GetCeilingHoursBasedOnTicks(data.durationInTicks) + " hours";
+            info += "Cost: " + data.manaCost.ToString() + " Mana";
             UIManager.Instance.ShowSmallInfo(info);
         }
     }

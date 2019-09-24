@@ -59,6 +59,8 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private ScrollRect relationshipTraitsScrollView;
     [SerializeField] private ScrollRect itemsScrollView;
     [SerializeField] private GameObject combatAttributePrefab;
+    [SerializeField] private EventLabel statusTraitsEventLbl;
+    [SerializeField] private EventLabel normalTraitsEventLbl;
 
     [Space(10)]
     [Header("Memories")]
@@ -108,6 +110,11 @@ public class CharacterInfoUI : UIMenu {
         relationshipTraitContainers = Utilities.GetComponentsInDirectChildren<TraitItem>(relationshipTraitsScrollView.content.gameObject);
         inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(itemsScrollView.content.gameObject);
 
+        statusTraitsEventLbl.SetHighlightChecker(ShouldTraitBeHighlighted);
+
+        normalTraitsEventLbl.SetHighlightChecker(ShouldTraitBeHighlighted);
+        normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
+
         //InitializeMemoryUI();
 
         InitializeLogsMenu();
@@ -141,6 +148,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateCharacterInfo();
         UpdateTraits();
         UpdateInventoryInfo();
+        UpdateAllHistoryInfo();
         ResetAllScrollPositions();
     }
     public override void SetData(object data) {
@@ -180,7 +188,7 @@ public class CharacterInfoUI : UIMenu {
         UpdateBasicInfo();
         UpdateStatInfo();
         UpdateLocationInfo();
-        UpdateAllHistoryInfo();
+        //UpdateAllHistoryInfo();
         //UpdateMemories();
     }
     private void UpdatePortrait() {
@@ -314,7 +322,7 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    #region Combat Attributes
+    #region Traits
     private void UpdateTraitsFromSignal(Character character, Trait trait) {
         if(_activeCharacter == null || _activeCharacter != character) {
             return;
@@ -417,8 +425,48 @@ public class CharacterInfoUI : UIMenu {
         }
 
     }
+    private bool ShouldTraitBeHighlighted(object obj) {
+        if (obj is string) {
+            string text = (string)obj;
+            int index = int.Parse(text);
+            Trait trait = activeCharacter.normalTraits[index];
+            return trait.canBeTriggered;
+        }
+        return false;
+    }
     public void OnHoverOutTrait() {
         UIManager.Instance.HideSmallInfo();
+    }
+    private void OnClickTrait(object obj) {
+        if (activeCharacter.CanStillTriggerFlaws()) {
+            if (obj is string) {
+                string text = (string)obj;
+                int index = int.Parse(text);
+                Trait trait = activeCharacter.normalTraits[index];
+                if (trait.canBeTriggered) {
+                    StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
+                    UIManager.Instance.ShowYesNoConfirmation("Trigger Flaw", trait.description + "\n<b>Requirement</b>: You may trigger this flaw's negative effect if the character is in a Bad or Dark Mood.\n<b>Effect</b>: " + trait.GetTriggerFlawEffectDescription(activeCharacter),
+                        onClickYesAction: () => OnClickTriggerFlaw(trait),
+                        showCover: true, layer: 25, yesBtnText: "Trigger Flaw", noBtnText: "Cancel",
+                        yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
+                        pauseAndResume: true
+                    );
+                    normalTraitsEventLbl.ResetHighlightValues();
+                }
+            }
+        } else {
+            StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
+            PlayerUI.Instance.ShowGeneralConfirmation("Invalid", "This character's flaws can no longer be triggered.");
+            normalTraitsEventLbl.ResetHighlightValues();
+        }
+    }
+    private IEnumerator HoverOutTraitAfterClick() {
+        yield return new WaitForEndOfFrame();
+        OnHoverOutTrait();
+    }
+    private void OnClickTriggerFlaw(Trait trait) {
+        trait.TriggerFlaw(activeCharacter);
+        normalTraitsLbl.raycastTarget = true;
     }
     #endregion
 

@@ -51,7 +51,9 @@ public class MoveOutState : CharacterState {
         }
         stateComponent.character.SetPOIState(POI_STATE.ACTIVE);
         stateComponent.character.ownParty.icon.SetIsTravellingOutside(false);
-        stateComponent.character.marker.PlaceMarkerAt(stateComponent.character.homeArea.GetRandomUnoccupiedEdgeTile());
+        if (!stateComponent.character.marker.gameObject.activeSelf) {
+            stateComponent.character.marker.PlaceMarkerAt(stateComponent.character.homeArea.GetRandomUnoccupiedEdgeTile());
+        }
         stateComponent.character.AdjustDoNotDisturb(-1);
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
     }

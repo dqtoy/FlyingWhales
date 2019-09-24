@@ -1698,6 +1698,10 @@ public class Player : ILeader {
         mana = Mathf.Clamp(mana, 0, MAX_MANA);
         Messenger.Broadcast(Signals.PLAYER_ADJUSTED_MANA);
     }
+    public int GetManaCostForInterventionAbility(string ability) {
+        INTERVENTION_ABILITY converted = (INTERVENTION_ABILITY)System.Enum.Parse(typeof(INTERVENTION_ABILITY), ability);
+        return GetManaCostForInterventionAbility(converted);
+    }
     public int GetManaCostForInterventionAbility(INTERVENTION_ABILITY ability) {
         int tier = PlayerManager.Instance.GetInterventionAbilityTier(ability);
         if (tier == 1) {

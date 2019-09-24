@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TheSpire : BaseLandmark {
-    //public INTERVENTION_ABILITY interventionAbilityToResearch { get; private set; }
     public int currentCooldownTick { get; private set; }
     public int cooldownDuration { get; private set; }
 
@@ -27,7 +26,8 @@ public class TheSpire : BaseLandmark {
     }
 
     public void ExtractInterventionAbility(INTERVENTION_ABILITY ability) {
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Intervention Ability: " + Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString()), () => PlayerManager.Instance.player.GainNewInterventionAbility(ability, true));
+        //UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Intervention Ability: " + Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString()), () => PlayerManager.Instance.player.GainNewInterventionAbility(ability, true));
+        PlayerManager.Instance.player.GainNewInterventionAbility(ability, true);
         PlayerManager.Instance.player.AdjustMana(-PlayerManager.Instance.player.GetManaCostForInterventionAbility(ability));
         tileLocation.region.assignedMinion.SetAssignedRegion(null);
         tileLocation.region.SetAssignedMinion(null);

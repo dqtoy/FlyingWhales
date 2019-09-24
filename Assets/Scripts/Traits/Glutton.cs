@@ -15,6 +15,7 @@ public class Glutton : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
+        canBeTriggered = true;
     }
 
     #region Overrides
@@ -33,6 +34,13 @@ public class Glutton : Trait {
             Character character = removedFrom as Character;
             character.SetFullnessForcedTick();
             character.AdjustFullnessDecreaseRate(-additionalFullnessDecreaseRate);
+        }
+    }
+    public override void TriggerFlaw(Character character) {
+        base.TriggerFlaw(character);
+        if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
+            //Will perform Fullness Recovery.
+            character.PlanForcedStarvingFullnessRecovery(JOB_TYPE.TRIGGER_FLAW);
         }
     }
     #endregion

@@ -15,78 +15,49 @@ public class TheEyeUI : MonoBehaviour {
     public CharacterPortrait minionPortrait;
     public Button selectMinionBtn;
 
+    [Header("World Events")]
+    [SerializeField] private ScrollRect worldEventScrollView;
+    [SerializeField] private GameObject worldEventPrefab;
+
     public Minion chosenMinion { get; private set; }
 
     private TheEye theEye;
 
     #region General
+    public void Initialize() {
+        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnEventSpawned);
+        Messenger.AddListener(Signals.PLAYER_ADJUSTED_MANA, UpdateWorldEventButtonStates);
+    }
     public void ShowTheEyeUI(TheEye theEye) {
         this.theEye = theEye;
-        if (theEye.tileLocation.region.assignedMinion == null) {
-            minionName.gameObject.SetActive(false);
-            minionPortrait.gameObject.SetActive(false);
-            selectMinionBtn.interactable = true;
-            UpdateAssignButton();
-        } else {
-            SetChosenMinion(theEye.tileLocation.region.assignedMinion.character);
-            UpdateSelectMinionBtn();
-            UpdateAssignButton();
-        }
-
         gameObject.SetActive(true);
+        UpdateWorldEventButtonStates();
     }
     public void HideTheEyeUI() {
         gameObject.SetActive(false);
     }
-    public void OnClickAssign() {
-        if (theEye.tileLocation.region.assignedMinion == null) {
-            theEye.tileLocation.region.SetAssignedMinion(chosenMinion);
-            chosenMinion.SetAssignedRegion(theEye.tileLocation.region);
-            UpdateAssignButton();
-            UpdateSelectMinionBtn();
-        } else {
-            theEye.tileLocation.region.assignedMinion.SetAssignedRegion(null);
-            theEye.tileLocation.region.SetAssignedMinion(null);
-            minionPortrait.gameObject.SetActive(false);
-            minionName.gameObject.SetActive(false);
-            UpdateAssignButton();
-            UpdateSelectMinionBtn();
+    private void UpdateWorldEventButtonStates() {
+        if (!this.gameObject.activeSelf) {
+            return;
         }
-    }
-    private void UpdateAssignButton() {
-        if (theEye.tileLocation.region.assignedMinion == null) {
-            assignBtnLbl.text = "Assign";
-            assignBtn.interactable = chosenMinion != null;
-        } else {
-            assignBtnLbl.text = "Unassign";
-            assignBtn.interactable = true;
+        bool state = PlayerManager.Instance.player.mana >= TheEye.interfereManaCost && !theEye.isInCooldown;
+        for (int i = 0; i < activeItems.Count; i++) {
+            activeItems[i].SetMainButtonState(state);
         }
     }
     #endregion
 
-    #region Minion
-    public void OnClickSelectMinion() {
-        List<Character> characters = new List<Character>();
-        for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
-            characters.Add(PlayerManager.Instance.player.minions[i].character);
-        }
-        string title = "Select minion that will scout";
-        UIManager.Instance.ShowClickableObjectPicker(characters, SetChosenMinion, null, CanChooseMinion, title);
+    #region Listeners
+    List<WorldEventItem> activeItems = new List<WorldEventItem>();
+    private void OnEventSpawned(Region region, WorldEvent e) {
+        //create world event item
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(worldEventPrefab.name, Vector3.zero, Quaternion.identity, worldEventScrollView.content);
+        WorldEventItem item = go.GetComponent<WorldEventItem>();
+        item.Initialize(region, e, OnDestroyWorldEventItem);
+        activeItems.Add(item);
     }
-    private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INTERFERE);
-    }
-    private void SetChosenMinion(Character character) {
-        chosenMinion = character.minion;
-        minionPortrait.GeneratePortrait(chosenMinion.character);
-        minionName.text = chosenMinion.character.name;
-        minionPortrait.gameObject.SetActive(true);
-        minionName.gameObject.SetActive(true);
-        UpdateAssignButton();
-        UIManager.Instance.HideObjectPicker();
-    }
-    private void UpdateSelectMinionBtn() {
-        selectMinionBtn.interactable = theEye.tileLocation.region.assignedMinion == null;
+    private void OnDestroyWorldEventItem(WorldEventItem item) {
+        activeItems.Remove(item);
     }
     #endregion
 }

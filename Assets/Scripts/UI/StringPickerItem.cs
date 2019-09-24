@@ -52,6 +52,7 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
                 iconImg.sprite = CharacterManager.Instance.GetClassPortraitSprite(str);
                 iconImg.gameObject.SetActive(true);
             }
+            iconImg.SetNativeSize();
         }
     }
 

@@ -78,7 +78,7 @@ public class Region {
     }
 
     public void SetName(string name) {
-        name = name;
+        this.name = name;
     }
     public void AddTile(HexTile tile) {
         if (!tiles.Contains(tile)) {
@@ -536,6 +536,13 @@ public class Region {
     }
     public bool CanSpawnNewEvent() {
         return !coreTile.isCorrupted && activeEvent == null;
+    }
+    /// <summary>
+    /// Force the event to end regardless of its remaining duration.
+    /// </summary>
+    public void ForceResolveWorldEvent() {
+        SchedulingManager.Instance.RemoveSpecificEntry(activeEventAfterEffectScheduleID); //unschedule the active event after effect schedule
+        activeEvent.TryExecuteAfterEffect(this, eventSpawnedBy);
     }
     public void SetEventIcon(GameObject go) {
         eventIconGO = go;

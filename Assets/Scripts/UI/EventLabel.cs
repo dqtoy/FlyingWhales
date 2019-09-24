@@ -12,8 +12,13 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     [SerializeField] private bool allowClickAction = true;
     [SerializeField] private EventLabelHoverAction hoverAction;
     [SerializeField] private UnityEvent hoverOutAction;
-
     private Log log;
+
+    private int lastHoveredLinkIndex = -1;
+    private bool isHighlighting;
+
+    public System.Func<object, bool> shouldBeHighlightedChecker;
+    public System.Action<object> onClickAction;
 
     protected bool isHovering;
 
@@ -31,6 +36,16 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         }
     }
 
+    public void ResetHighlightValues() {
+        if (lastHoveredLinkIndex != -1 && isHighlighting) {
+            UnhighlightLink(text.textInfo.linkInfo[lastHoveredLinkIndex]);
+        }
+        //else {
+        //    CursorManager.Instance.RevertToPreviousCursor();
+        //}
+        lastHoveredLinkIndex = -1;
+        isHighlighting = false;
+    }
     public void OnPointerClick(PointerEventData eventData) {
         if (!allowClickAction) {
             return;
@@ -38,6 +53,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         int linkIndex = TMP_TextUtilities.FindIntersectingLink(text, Input.mousePosition, null);
         if (linkIndex != -1) {
             TMP_LinkInfo linkInfo = text.textInfo.linkInfo[linkIndex];
+            object obj = null;
             if (logItem == null) {
                 string linkText = linkInfo.GetLinkID();
                 int idToUse;
@@ -47,25 +63,21 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 }
                 if (linkText.Contains("_faction")) {
                     Faction faction = FactionManager.Instance.GetFactionBasedOnID(idToUse);
-                    if (faction != null) {
-                        UIManager.Instance.ShowFactionInfo(faction);
-                    }
+                    obj = faction;
                 } else if (linkText.Contains("_character")) {
                     Character character = CharacterManager.Instance.GetCharacterByID(idToUse);
-                    if (character != null) {
-                        UIManager.Instance.ShowCharacterInfo(character);
-                    }
+                    obj = character;
                 } else if (linkText.Contains("_hextile")) {
                     HexTile tile = GridMap.Instance.allTiles[idToUse];
-                    if (tile != null) {
-                        UIManager.Instance.ShowHextileInfo(tile);
-                    }
+                    obj = tile;
                 } else if (linkText.Contains("_combat")) {
                     if (UIManager.Instance.characterInfoUI.activeCharacter != null) {
                         if (UIManager.Instance.characterInfoUI.activeCharacter.combatHistory.ContainsKey(idToUse)) {
                             UIManager.Instance.ShowCombatLog(UIManager.Instance.characterInfoUI.activeCharacter.combatHistory[idToUse]);
                         }
                     }
+                } else {
+                    obj = linkInfo.GetLinkID();
                 }
             } else if (logItem.log != null) {
                 string linkText = linkInfo.GetLinkID();
@@ -76,34 +88,39 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 }
                 //int indexToUse = int.Parse(linkInfo.GetLinkID());
                 LogFiller lf = logItem.log.fillers[idToUse];
-                if (lf.obj != null) {
-                    if (lf.obj is Character) {
-                        UIManager.Instance.ShowCharacterInfo(lf.obj as Character);
-                    } else if (lf.obj is Area) {
-                        UIManager.Instance.ShowHextileInfo((lf.obj as Area).coreTile);
-                    } else if (lf.obj is Faction) {
-                        UIManager.Instance.ShowFactionInfo((lf.obj as Faction));
-                    } else if (lf.obj is Minion) {
-                        UIManager.Instance.ShowCharacterInfo((lf.obj as Minion).character);
-                    } else if (lf.obj is Combat) {
-                        UIManager.Instance.ShowCombatLog(lf.obj as Combat);
-                    } else if (lf.obj is Party) {
-                        Party party = lf.obj as Party;
-                        UIManager.Instance.ShowCharacterInfo(party.mainCharacter);
-                    } else if (lf.obj is IPointOfInterest) {
-                        IPointOfInterest poi = lf.obj as IPointOfInterest;
-                        if(poi is Character) {
-                            UIManager.Instance.ShowCharacterInfo(poi as Character);
-                        }else if (poi is TileObject) {
-                            UIManager.Instance.ShowTileObjectInfo(poi as TileObject);
-                        }
-                    } else if (lf.obj is Region) {
-                        Region region = lf.obj as Region;
-                        UIManager.Instance.ShowHextileInfo(region.mainLandmark.tileLocation);
+                obj = lf.obj;
+            }
+            if (onClickAction != null) {
+                if (obj != null) {
+                    onClickAction.Invoke(obj);
+                }
+            } else {
+                if (obj is Character) {
+                    UIManager.Instance.ShowCharacterInfo(obj as Character);
+                } else if (obj is Area) {
+                    UIManager.Instance.ShowHextileInfo((obj as Area).coreTile);
+                } else if (obj is Faction) {
+                    UIManager.Instance.ShowFactionInfo((obj as Faction));
+                } else if (obj is Minion) {
+                    UIManager.Instance.ShowCharacterInfo((obj as Minion).character);
+                } else if (obj is Combat) {
+                    UIManager.Instance.ShowCombatLog(obj as Combat);
+                } else if (obj is Party) {
+                    Party party = obj as Party;
+                    UIManager.Instance.ShowCharacterInfo(party.mainCharacter);
+                } else if (obj is IPointOfInterest) {
+                    IPointOfInterest poi = obj as IPointOfInterest;
+                    if (poi is Character) {
+                        UIManager.Instance.ShowCharacterInfo(poi as Character);
+                    } else if (poi is TileObject) {
+                        UIManager.Instance.ShowTileObjectInfo(poi as TileObject);
                     }
+                } else if (obj is Region) {
+                    Region region = obj as Region;
+                    UIManager.Instance.ShowHextileInfo(region.mainLandmark.tileLocation);
                 }
             }
-            
+            ResetHighlightValues();
         }
     }
     public void OnPointerEnter(PointerEventData eventData) {
@@ -120,18 +137,31 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         isHovering = false;
         HoverOutAction();
     }
-
     public void SetLog(Log log) {
         this.log = log;
     }
-
-    public void HoveringAction() {
-        if (hoverAction == null) {
-            return;
+    public void SetHighlightChecker(System.Func<object, bool> shouldBeHighlightedChecker) {
+        this.shouldBeHighlightedChecker = shouldBeHighlightedChecker;
+    }
+    private bool ShouldBeHighlighted(object obj) {
+        if (shouldBeHighlightedChecker != null) {
+            return shouldBeHighlightedChecker.Invoke(obj);
         }
+        return true; //default is highlighted
+    }
+    public void HoveringAction() {
+        //if (hoverAction == null) {
+        //    return;
+        //}
+        bool executeHoverOutAction = true;
         int linkIndex = TMP_TextUtilities.FindIntersectingLink(text, Input.mousePosition, null);
+        if (lastHoveredLinkIndex != -1 && lastHoveredLinkIndex != linkIndex && isHighlighting) {
+            UnhighlightLink(text.textInfo.linkInfo[lastHoveredLinkIndex]);
+        }
+        
         if (linkIndex != -1) {
             TMP_LinkInfo linkInfo = text.textInfo.linkInfo[linkIndex];
+
             string linkText = linkInfo.GetLinkID();
             object obj = null;
             if (log == null) {
@@ -168,55 +198,49 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 }
             }
             if (obj != null) {
-                hoverAction.Invoke(obj);
-                return;
+                if (ShouldBeHighlighted(obj)) {
+                    if (lastHoveredLinkIndex != linkIndex) {
+                        //only highlight if last index is different
+                        HighlightLink(linkInfo);
+                        isHighlighting = true;
+                    }
+                } else {
+                    isHighlighting = false;
+                }
+                hoverAction?.Invoke(obj);
+                executeHoverOutAction = false;
             }
-        }
-        if (hoverOutAction != null) {
-            hoverOutAction.Invoke();
+        } 
+        lastHoveredLinkIndex = linkIndex;
+        if (hoverOutAction != null && executeHoverOutAction) {
+            hoverOutAction?.Invoke();
         }
     }
-
+    private void HighlightLink(TMP_LinkInfo linkInfo) {
+        string oldText = "<link=" + '"' + linkInfo.GetLinkID().ToString() + '"' + ">" + linkInfo.GetLinkText().ToString() + "</link>";
+        string newText = "<u>" + oldText + "</u>";
+        text.text = text.text.Replace(oldText, newText);
+        CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Check);
+    }
+    private void UnhighlightLink(TMP_LinkInfo linkInfo) {
+        string oldText = "<link=" + '"' + linkInfo.GetLinkID().ToString() + '"' + ">" + linkInfo.GetLinkText().ToString() + "</link>";
+        string newText = "<u>" + oldText + "</u>";
+        text.text = text.text.Replace(newText, oldText);
+        CursorManager.Instance.RevertToPreviousCursor();
+    }
     public void HoverOutAction() {
-        if (hoverOutAction == null) {
-            return;
-        }
+        //if (hoverOutAction == null) {
+        //    return;
+        //}
         int linkIndex = TMP_TextUtilities.FindIntersectingLink(text, Input.mousePosition, null);
         if (linkIndex == -1) {
-            hoverOutAction.Invoke();
+            hoverOutAction?.Invoke();
         }
+        ResetHighlightValues();
     }
-
-    //public void OnPointerClick(PointerEventData data) {
-
-    //}
-
-    //void OnClick(){
-    //	UILabel lbl = GetComponent<UILabel>();
-    //	string url = lbl.GetUrlAtPosition(UICamera.lastWorldPosition);
-
-    //	if (!string.IsNullOrEmpty (url)) {
-    //		int indexToUse = int.Parse (url);
-    //           LogFiller lf = new LogFiller();
-    //           if(logItem.GetComponent<NotificationItem>() != null) {
-    //               lf = logItem.GetComponent<NotificationItem>().thisLog.fillers[indexToUse];
-    //           } else if (logItem.GetComponent<LogHistoryItem>() != null) {
-    //               lf = logItem.GetComponent<LogHistoryItem>().thisLog.fillers[indexToUse];
-    //           }
-
-    //           if (lf.obj != null) {
-    //               if (lf.obj is Character) {
-    //                   UIManager.Instance.ShowCharacterInfo(lf.obj as Character);
-    //               } else if (lf.obj is Party) {
-    //                   UIManager.Instance.ShowCharacterInfo((lf.obj as Party).partyLeader);
-    //               } else if (lf.obj is BaseLandmark) {
-    //                   UIManager.Instance.ShowLandmarkInfo(lf.obj as BaseLandmark);
-    //               } else if (lf.obj is Combat) {
-    //                   UIManager.Instance.ShowCombatLog(lf.obj as Combat);
-    //               }
-    //           }
-    //	}
-    //}
+    public void SetOnClickAction(System.Action<object> onClickAction) {
+        this.onClickAction = onClickAction;
+    }
 }
 
 [System.Serializable]
