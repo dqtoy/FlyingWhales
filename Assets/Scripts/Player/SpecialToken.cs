@@ -71,6 +71,9 @@ public class SpecialToken : IPointOfInterest {
         uses = 1;
         InitializeCollisionTrigger();
     }
+    public void SetID(int id) {
+        id = Utilities.SetID(this, id);
+    }
 
     #region Virtuals
     public virtual void OnObtainToken(Character character) { }

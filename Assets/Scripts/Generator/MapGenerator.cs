@@ -118,10 +118,10 @@ public class MapGenerator : MonoBehaviour {
         data.LoadPlayerArea();
         data.LoadNonPlayerAreas();
         data.LoadFactions();
-        data.LoadPlayerAreaItems();
-        data.LoadNonPlayerAreaItems();
         LandmarkManager.Instance.LoadAdditionalAreaData();
         data.LoadCharacters();
+        data.LoadSpecialObjects();
+        data.LoadTileObjects();
         yield return null;
         data.LoadCharacterRelationships();
         data.LoadCharacterTraits();
@@ -147,7 +147,20 @@ public class MapGenerator : MonoBehaviour {
         data.LoadPlayer();
 
         yield return null;
-        LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);
+        //LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);
+        data.LoadAreaMaps();
+        data.LoadAreaStructureEntranceTiles();
+        data.LoadTileObjectsPreviousTileAndCurrentTile();
+        data.LoadAreaMapsObjectHereOfTiles();
+        data.LoadAreaMapsTileTraits();
+        data.LoadTileObjectTraits();
+        data.LoadCharacterHomeStructures();
+        data.LoadCharacterInitialPlacements();
+        data.LoadTileObjectsDataAfterLoadingAreaMap();
+
+        //Note: Loading area items is after loading the inner map because LocationStructure and LocationGridTile is required
+        data.LoadPlayerAreaItems();
+        data.LoadNonPlayerAreaItems();
         yield return null;
 
         loadingWatch.Stop();

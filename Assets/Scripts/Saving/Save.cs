@@ -16,6 +16,7 @@ public class Save {
     public List<SaveDataCharacter> characterSaves;
     public List<SaveDataTileObject> tileObjectSaves;
     public List<SaveDataSpecialObject> specialObjectSaves;
+    public List<SaveDataAreaInnerTileMap> areaMapSaves;
 
     public SaveDataArea playerAreaSave;
     public SaveDataPlayer playerSave;
@@ -174,6 +175,12 @@ public class Save {
             nonPlayerAreaSaves[i].LoadAreaItems();
         }
     }
+    public void LoadAreaStructureEntranceTiles() {
+        for (int i = 0; i < nonPlayerAreaSaves.Count; i++) {
+            nonPlayerAreaSaves[i].LoadStructureEntranceTiles();
+        }
+        playerAreaSave.LoadStructureEntranceTiles();
+    }
 
     public void SaveFactions(List<Faction> factions) {
         factionSaves = new List<SaveDataFaction>();
@@ -213,6 +220,16 @@ public class Save {
             characterSaves[i].LoadTraits(CharacterManager.Instance.allCharacters[i]);
         }
     }
+    public void LoadCharacterHomeStructures() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadHomeStructure(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
+    public void LoadCharacterInitialPlacements() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadCharacterGridTileLocation(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
 
     public void SavePlayer(Player player) {
         playerSave = new SaveDataPlayer();
@@ -225,6 +242,9 @@ public class Save {
     public void SaveTileObjects(Dictionary<TILE_OBJECT_TYPE, List<TileObject>> tileObjects) {
         tileObjectSaves = new List<SaveDataTileObject>();
         foreach (KeyValuePair<TILE_OBJECT_TYPE, List<TileObject>> kvp in tileObjects) {
+            if(kvp.Key == TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
+                continue; //Do not save generic tile object because it will be created again upon loading
+            }
             for (int i = 0; i < kvp.Value.Count; i++) {
                 TileObject currTileObject = kvp.Value[i];
                 SaveDataTileObject data = null;
@@ -232,7 +252,11 @@ public class Save {
                 if (type != null) {
                     data = System.Activator.CreateInstance(type) as SaveDataTileObject;
                 } else {
-                    data = new SaveDataTileObject();
+                    if(currTileObject is Artifact) {
+                        data = new SaveDataArtifact();
+                    } else {
+                        data = new SaveDataTileObject();
+                    }
                 }
                 data.Save(currTileObject);
                 tileObjectSaves.Add(data);
@@ -240,7 +264,24 @@ public class Save {
         }
     }
     public void LoadTileObjects() {
-        //TODO
+        for (int i = 0; i < tileObjectSaves.Count; i++) {
+            tileObjectSaves[i].Load();
+        }
+    }
+    public void LoadTileObjectsPreviousTileAndCurrentTile() {
+        for (int i = 0; i < tileObjectSaves.Count; i++) {
+            tileObjectSaves[i].LoadPreviousTileAndCurrentTile();
+        }
+    }
+    public void LoadTileObjectTraits() {
+        for (int i = 0; i < tileObjectSaves.Count; i++) {
+            tileObjectSaves[i].LoadTraits();
+        }
+    }
+    public void LoadTileObjectsDataAfterLoadingAreaMap() {
+        for (int i = 0; i < tileObjectSaves.Count; i++) {
+            tileObjectSaves[i].LoadAfterLoadingAreaMap();
+        }
     }
 
     public void SaveSpecialObjects(List<SpecialObject> specialObjects) {
@@ -259,11 +300,34 @@ public class Save {
         }
     }
     public void LoadSpecialObjects() {
-        //TODO
+        for (int i = 0; i < specialObjectSaves.Count; i++) {
+            specialObjectSaves[i].Load();
+        }
     }
-    //public void LoadInvasion() {
-    //    playerSave.LoadInvasion(this);
-    //}
+
+    public void SaveAreaMaps(List<AreaInnerTileMap> areaMaps) {
+        areaMapSaves = new List<SaveDataAreaInnerTileMap>();
+        for (int i = 0; i < areaMaps.Count; i++) {
+            SaveDataAreaInnerTileMap data = new SaveDataAreaInnerTileMap();
+            data.Save(areaMaps[i]);
+            areaMapSaves.Add(data);
+        }
+    }
+    public void LoadAreaMaps() {
+        for (int i = 0; i < areaMapSaves.Count; i++) {
+            LandmarkManager.Instance.LoadAreaMap(areaMapSaves[i]);
+        }
+    }
+    public void LoadAreaMapsTileTraits() {
+        for (int i = 0; i < areaMapSaves.Count; i++) {
+            areaMapSaves[i].LoadTileTraits();
+        }
+    }
+    public void LoadAreaMapsObjectHereOfTiles() {
+        for (int i = 0; i < areaMapSaves.Count; i++) {
+            areaMapSaves[i].LoadObjectHereOfTiles();
+        }
+    }
 
     public void SaveCurrentDate() {
         month = GameManager.Instance.month;

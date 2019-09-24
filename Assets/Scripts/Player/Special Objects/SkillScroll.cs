@@ -5,6 +5,7 @@ using UnityEngine;
 public class SkillScroll : SpecialObject {
 
     public SkillScroll() : base(SPECIAL_OBJECT_TYPE.SKILL_SCROLL) { }
+    public SkillScroll(SaveDataSpecialObject data) : base(data) { }
 
     #region Overrides
     public override void Obtain() {
@@ -18,6 +19,6 @@ public class SkillScroll : SpecialObject {
 
 public class SaveDataSkillScroll : SaveDataSpecialObject {
     public override SpecialObject Load() {
-        return new SkillScroll();
+        return new SkillScroll(this);
     }
 }

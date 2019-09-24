@@ -31,6 +31,9 @@ public class SaveManager : MonoBehaviour {
         save.SaveFactions(FactionManager.Instance.allFactions);
         save.SaveCharacters(CharacterManager.Instance.allCharacters);
         save.SavePlayer(PlayerManager.Instance.player);
+        save.SaveTileObjects(InteriorMapManager.Instance.allTileObjects);
+        save.SaveSpecialObjects(TokenManager.Instance.specialObjects);
+        save.SaveAreaMaps(InteriorMapManager.Instance.areaMaps);
         save.SaveCurrentDate();
 
         SaveGame.Save<Save>(Utilities.gameSavePath + saveFileName, save);
@@ -42,6 +45,9 @@ public class SaveManager : MonoBehaviour {
     }
 
     public static SaveDataTrait ConvertTraitToSaveDataTrait(Trait trait) {
+        if (trait.isNotSavable) {
+            return null;
+        }
         SaveDataTrait saveDataTrait = null;
         System.Type type = System.Type.GetType("SaveData" + trait.name);
         if (type != null) {

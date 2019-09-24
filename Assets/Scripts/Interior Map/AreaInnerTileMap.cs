@@ -130,6 +130,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     public List<LocationGridTile> allEdgeTiles { get; private set; }
     public List<LocationGridTile> outsideTiles { get; private set; }
     public List<LocationGridTile> insideTiles { get; private set; }
+    public TownMapSettings generatedTownMapSettings { get; private set; }
     public Vector3 worldPos { get; private set; }
     public string usedTownCenterTemplateName { get; private set; }
     public GameObject centerGO { get; private set; }
@@ -142,6 +143,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         this.area = area;
     }
     public void DrawMap(TownMapSettings generatedSettings) {
+        generatedTownMapSettings = generatedSettings;
         GenerateGrid(generatedSettings);
         SplitMap();
         Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
@@ -160,6 +162,18 @@ public class AreaInnerTileMap : MonoBehaviour {
         } else {
             PlaceStructures(generatedSettings, startPoint);
         }
+        AssignOuterAreas(insideTiles, outsideTiles);
+    }
+    public void LoadMap(SaveDataAreaInnerTileMap data) {
+        outsideTiles = new List<LocationGridTile>();
+        insideTiles = new List<LocationGridTile>();
+
+        LoadGrid(data);
+        SplitMap();
+        Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
+        DrawTownMap(data.generatedTownMapSettings, startPoint);
+        //TODO: DrawTownMap
+        //No need to Place Structures since structure of tile is loaded upon loading grid tile
         AssignOuterAreas(insideTiles, outsideTiles);
     }
     public void OnMapGenerationFinished() {
@@ -186,6 +200,24 @@ public class AreaInnerTileMap : MonoBehaviour {
             for (int y = 0; y < height; y++) {
                 groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTileForArea(area));
                 LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this);
+                allTiles.Add(tile);
+                if (tile.IsAtEdgeOfWalkableMap()) {
+                    allEdgeTiles.Add(tile);
+                }
+                map[x, y] = tile;
+            }
+        }
+        allTiles.ForEach(x => x.FindNeighbours(map));
+    }
+    private void LoadGrid(SaveDataAreaInnerTileMap data) {
+        map = new LocationGridTile[width, height];
+        allTiles = new List<LocationGridTile>();
+        allEdgeTiles = new List<LocationGridTile>();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTileForArea(area));
+                LocationGridTile tile = data.map[x, y].Load(groundTilemap, this);
                 allTiles.Add(tile);
                 if (tile.IsAtEdgeOfWalkableMap()) {
                     allEdgeTiles.Add(tile);
@@ -1951,5 +1983,49 @@ public struct LocationStructureSetting {
 
 [System.Serializable]
 public class SaveDataAreaInnerTileMap {
+    public int width;
+    public int height;
+    public int areaID;
+    public SaveDataLocationGridTile[,] map;
+    public string usedTownCenterTemplateName;
+    public TownMapSettings generatedTownMapSettings;
 
+    public void Save(AreaInnerTileMap innerMap) {
+        width = innerMap.width;
+        height = innerMap.height;
+        areaID = innerMap.area.id;
+        usedTownCenterTemplateName = innerMap.usedTownCenterTemplateName;
+        generatedTownMapSettings = innerMap.generatedTownMapSettings;
+
+        map = new SaveDataLocationGridTile[innerMap.width, innerMap.height];
+        for (int x = 0; x < innerMap.map.GetUpperBound(0) + 1; x++) {
+            for (int y = 0; y < innerMap.map.GetUpperBound(1) + 1; y++) {
+                SaveDataLocationGridTile data = new SaveDataLocationGridTile();
+                data.Save(innerMap.map[x, y]);
+                map[x, y] = data;
+            }
+        }
+    }
+
+    public void Load(AreaInnerTileMap innerMap) {
+        innerMap.width = width;
+        innerMap.height = height;
+        innerMap.Initialize(LandmarkManager.Instance.GetAreaByID(areaID));
+        innerMap.LoadMap(this);
+    }
+
+    public void LoadTileTraits() {
+        for (int x = 0; x < map.GetUpperBound(0) + 1; x++) {
+            for (int y = 0; y < map.GetUpperBound(1) + 1; y++) {
+                map[x, y].LoadTraits();
+            }
+        }
+    }
+    public void LoadObjectHereOfTiles() {
+        for (int x = 0; x < map.GetUpperBound(0) + 1; x++) {
+            for (int y = 0; y < map.GetUpperBound(1) + 1; y++) {
+                map[x, y].LoadObjectHere();
+            }
+        }
+    }
 }

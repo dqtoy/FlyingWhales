@@ -9,6 +9,7 @@ public class DemonStone : SpecialObject {
     public bool hasScheduledInvocation { get; private set; }
 
     public DemonStone() : base (SPECIAL_OBJECT_TYPE.DEMON_STONE){ }
+    public DemonStone(SaveDataSpecialObject data) : base(data) { }
 
     #region Overrides
     public override void Obtain() {
@@ -76,7 +77,7 @@ public class SaveDataDemonStone : SaveDataSpecialObject {
     }
 
     public override SpecialObject Load() {
-        DemonStone demonStone = new DemonStone();
+        DemonStone demonStone = new DemonStone(this);
         demonStone.LoadInvocation(this);
         return demonStone;
     }

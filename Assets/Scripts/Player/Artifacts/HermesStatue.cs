@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Hermes_Statue : Artifact {
+public class HermesStatue : Artifact {
 
     private Area chosenArea;
     private int uses;
-    private int currentUses;
+    public int currentUses { get; private set; }
 
-    public Hermes_Statue() : base(ARTIFACT_TYPE.Hermes_Statue) {
+    public HermesStatue() : base(ARTIFACT_TYPE.Hermes_Statue) {
         //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
         uses = 1;
     }
@@ -17,9 +17,13 @@ public class Hermes_Statue : Artifact {
     //    //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
     //    uses = 1;
     //}
-    public Hermes_Statue(SaveDataArtifact data) : base(data) {
+    public HermesStatue(SaveDataArtifact data) : base(data) {
         //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
         uses = 1;
+    }
+
+    public void SetCurrentUses(int amount) {
+        currentUses = amount;
     }
 
     #region Overrides
@@ -70,4 +74,20 @@ public class Hermes_Statue : Artifact {
         return "Hermes Statue";
     }
 
+}
+
+public class SaveDataHermesStatue : SaveDataArtifact {
+    public int currentUses;
+
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        HermesStatue obj = tileObject as HermesStatue;
+        currentUses = obj.currentUses;
+    }
+
+    public override TileObject Load() {
+        HermesStatue obj = base.Load() as HermesStatue;
+        obj.SetCurrentUses(currentUses);
+        return obj;
+    }
 }

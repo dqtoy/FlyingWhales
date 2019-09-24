@@ -23,6 +23,12 @@ public class SpecialObject : IWorldObject {
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(specialObjType.ToString());
         TokenManager.Instance.AddSpecialObject(this);
     }
+    public SpecialObject(SaveDataSpecialObject data) {
+        id = Utilities.SetID(this, data.id);
+        this.specialObjType = data.specialObjType;
+        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(specialObjType.ToString());
+        TokenManager.Instance.AddSpecialObject(this);
+    }
 
     #region Virtuals
     public virtual void Obtain() { }
@@ -30,13 +36,15 @@ public class SpecialObject : IWorldObject {
 }
 
 public class SaveDataSpecialObject {
+    public int id;
     public SPECIAL_OBJECT_TYPE specialObjType;
 
     public virtual void Save(SpecialObject specialObject) {
         specialObjType = specialObject.specialObjType;
+        id = specialObject.id;
     }
 
     public virtual SpecialObject Load() {
-        return new SpecialObject(specialObjType);
+        return new SpecialObject(this);
     }
 }

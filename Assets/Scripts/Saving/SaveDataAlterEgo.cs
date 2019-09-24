@@ -43,8 +43,10 @@ public class SaveDataAlterEgo {
             for (int i = 0; i < alterEgo.traits.Count; i++) {
                 Trait trait = alterEgo.traits[i];
                 SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(trait);
-                saveDataTrait.Save(trait);
-                traits.Add(saveDataTrait);
+                if (saveDataTrait != null) {
+                    saveDataTrait.Save(trait);
+                    traits.Add(saveDataTrait);
+                }
             }
         }
 

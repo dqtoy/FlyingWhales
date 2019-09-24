@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Resting : Trait {
+    public override bool isNotSavable {
+        get { return true; }
+    }
 
     private Character _character;
     public Lycanthropy lycanthropyTrait { get; private set; }

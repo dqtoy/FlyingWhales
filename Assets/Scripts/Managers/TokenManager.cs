@@ -11,14 +11,18 @@ public class TokenManager : MonoBehaviour {
 
     [SerializeField] private ItemSpriteDictionary itemSpritesDictionary;
     public List<SpecialObject> specialObjects { get; private set; }
+    public List<SpecialToken> specialTokens { get; private set; }
 
     void Awake() {
         Instance = this;
+
+        //TODO: move this somewhere safer
+        specialObjects = new List<SpecialObject>();
+        specialTokens = new List<SpecialToken>();
     }
 
     public void Initialize() {
         LoadSpecialTokens();
-        specialObjects = new List<SpecialObject>();
     }
 
     private void LoadSpecialTokens() {
@@ -131,6 +135,18 @@ public class TokenManager : MonoBehaviour {
         for (int i = 0; i < specialObjects.Count; i++) {
             if(specialObjects[i].id == id) {
                 return specialObjects[i];
+            }
+        }
+        return null;
+    }
+
+    public void AddSpecialToken(SpecialToken token) {
+        specialTokens.Add(token);
+    }
+    public SpecialToken GetSpecialTokenByID(int id) {
+        for (int i = 0; i < specialTokens.Count; i++) {
+            if (specialTokens[i].id == id) {
+                return specialTokens[i];
             }
         }
         return null;

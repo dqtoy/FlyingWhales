@@ -86,9 +86,9 @@ public class TileObject : IPointOfInterest {
     //    InitializeCollisionTrigger();
     //    InteriorMapManager.Instance.AddTileObject(this);
     //}
-    protected void Initialize(SaveDataTileObject data, TILE_OBJECT_TYPE tileObjectType) {
+    protected void Initialize(SaveDataTileObject data) {
         id = Utilities.SetID(this, data.id);
-        this.tileObjectType = tileObjectType;
+        tileObjectType = data.tileObjectType;
         _traits = new List<Trait>();
         actionHistory = new List<string>();
         awareCharacters = new List<Character>();
@@ -220,6 +220,10 @@ public class TileObject : IPointOfInterest {
         return false;
     }
     protected virtual void OnTileObjectGainedTrait(Trait trait) { }
+
+    public virtual void SetStructureLocation(LocationStructure structure) {
+        structureLocation = structure;
+    }
     #endregion
 
     #region IPointOfInterest
@@ -535,7 +539,7 @@ public class TileObject : IPointOfInterest {
     }
     private void CreateTileObjectSlots() {
         UnityEngine.Tilemaps.TileBase usedAsset = tile.parentAreaMap.objectsTilemap.GetTile(tile.localPlace);
-        if (tileObjectType != TILE_OBJECT_TYPE.GENERIC && usedAsset != null && InteriorMapManager.Instance.HasSettingForTileObjectAsset(usedAsset)) {
+        if (tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT && usedAsset != null && InteriorMapManager.Instance.HasSettingForTileObjectAsset(usedAsset)) {
             List<TileObjectSlotSetting> slotSettings = InteriorMapManager.Instance.GetTileObjectSlotSettings(usedAsset);
             slotsParent = GameObject.Instantiate(InteriorMapManager.Instance.tileObjectSlotsParentPrefab, tile.parentAreaMap.objectsTilemap.transform);
             slotsParent.transform.localPosition = tile.centeredLocalLocation;
@@ -692,6 +696,12 @@ public class SaveDataTileObject {
     public int previousTileAreaID;
     public bool hasCurrentTile;
 
+    public int structureLocationAreaID;
+    public int structureLocationID;
+    public STRUCTURE_TYPE structureLocationType;
+
+    protected TileObject loadedTileObject;
+
     public virtual void Save(TileObject tileObject) {
         id = tileObject.id;
         tileObjectType = tileObject.tileObjectType;
@@ -700,6 +710,15 @@ public class SaveDataTileObject {
         state = tileObject.state;
 
         hasCurrentTile = tileObject.gridTileLocation != null;
+
+        if(tileObject.structureLocation != null) {
+            structureLocationID = tileObject.structureLocation.id;
+            structureLocationAreaID = tileObject.structureLocation.location.id;
+            structureLocationType = tileObject.structureLocation.structureType;
+        } else {
+            structureLocationID = -1;
+            structureLocationAreaID = -1;
+        }
 
         if (tileObject.previousTile != null) {
             previousTileID = new Vector3Save(tileObject.previousTile.localPlace);
@@ -712,13 +731,60 @@ public class SaveDataTileObject {
         traits = new List<SaveDataTrait>();
         for (int i = 0; i < tileObject.normalTraits.Count; i++) {
             SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(tileObject.normalTraits[i]);
-            saveDataTrait.Save(tileObject.normalTraits[i]);
-            traits.Add(saveDataTrait);
+            if (saveDataTrait != null) {
+                saveDataTrait.Save(tileObject.normalTraits[i]);
+                traits.Add(saveDataTrait);
+            }
         }
 
         awareCharactersIDs = new List<int>();
         for (int i = 0; i < tileObject.awareCharacters.Count; i++) {
             awareCharactersIDs.Add(tileObject.awareCharacters[i].id);
+        }
+    }
+
+    public virtual TileObject Load() {
+        string tileObjectName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
+        TileObject tileObject = System.Activator.CreateInstance(System.Type.GetType(tileObjectName), this) as TileObject;
+
+        if(structureLocationID != -1 && structureLocationAreaID != -1) {
+            Area area = LandmarkManager.Instance.GetAreaByID(structureLocationAreaID);
+            tileObject.SetStructureLocation(area.GetStructureByID(structureLocationType, structureLocationID));
+        }
+        for (int i = 0; i < awareCharactersIDs.Count; i++) {
+            tileObject.AddAwareCharacter(CharacterManager.Instance.GetCharacterByID(awareCharactersIDs[i]));
+        }
+
+        tileObject.SetIsDisabledByPlayer(isDisabledByPlayer);
+        tileObject.SetIsSummonedByPlayer(isSummonedByPlayer);
+        tileObject.SetPOIState(state);
+
+        loadedTileObject = tileObject;
+        return loadedTileObject;
+    }
+
+    //This is the last to be loaded in SaveDataTileObject, so release loadedTileObject reference
+    public virtual void LoadAfterLoadingAreaMap() {
+        loadedTileObject = null;
+    }
+
+    public void LoadPreviousTileAndCurrentTile() {
+        if (previousTileAreaID != -1 && previousTileID.z != -1) {
+            Area area = LandmarkManager.Instance.GetAreaByID(previousTileAreaID);
+            LocationGridTile tile = area.areaMap.map[(int)previousTileID.x, (int)previousTileID.y];
+            loadedTileObject.SetGridTileLocation(tile);
+        }
+
+        if (!hasCurrentTile) {
+            loadedTileObject.SetGridTileLocation(null);
+        }
+    }
+
+    public void LoadTraits() {
+        for (int i = 0; i < traits.Count; i++) {
+            Character responsibleCharacter = null;
+            Trait trait = traits[i].Load(ref responsibleCharacter);
+            loadedTileObject.AddTrait(trait, responsibleCharacter);
         }
     }
 }

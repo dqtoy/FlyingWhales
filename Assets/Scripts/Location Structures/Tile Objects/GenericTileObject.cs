@@ -9,9 +9,13 @@ public class GenericTileObject : TileObject {
     }
 
     public GenericTileObject(LocationStructure location) {
-        structureLocation = location;
+        SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>();
-        Initialize(TILE_OBJECT_TYPE.GENERIC);
+        Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT);
+    }
+    public GenericTileObject(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>();
+        Initialize(data);
     }
 
     public override List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {

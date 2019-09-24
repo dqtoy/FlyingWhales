@@ -4,16 +4,20 @@ using System.Linq;
 using UnityEngine;
 
 public class FoodPile : TileObject {
-    public LocationStructure location { get; private set; }
     public int foodInPile { get; private set; }
 
     public FoodPile(LocationStructure location) {
-        this.location = location;
+        SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_FOOD, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(TILE_OBJECT_TYPE.FOOD_PILE);
         SetFoodInPile(2000);
         RemoveTrait("Flammable");
     }
+    public FoodPile(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_FOOD, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        Initialize(data);
+    }
+
     #region Overrides
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
@@ -33,7 +37,7 @@ public class FoodPile : TileObject {
         }
     }
     public bool HasSupply() {
-        if (location.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+        if (structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE) {
             return foodInPile > 0;
         }
         return true;
@@ -44,5 +48,21 @@ public class FoodPile : TileObject {
     }
     public override bool CanBeReplaced() {
         return true;
+    }
+}
+
+public class SaveDataFoodPile : SaveDataTileObject {
+    public int foodInPile;
+
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        FoodPile obj = tileObject as FoodPile;
+        foodInPile = obj.foodInPile;
+    }
+
+    public override TileObject Load() {
+        FoodPile obj = base.Load() as FoodPile;
+        obj.SetFoodInPile(foodInPile);
+        return obj;
     }
 }

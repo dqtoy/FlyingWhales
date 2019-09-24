@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using BayatGames.SaveGameFree.Types;
 
 [System.Serializable]
 public class LocationStructure {
-
     public int id { get; private set; }
     public string name { get; private set; }
     public STRUCTURE_TYPE structureType { get; private set; }
@@ -15,7 +15,7 @@ public class LocationStructure {
     private Area _location;
     private List<SpecialToken> _itemsHere;
     public List<IPointOfInterest> pointsOfInterest { get; private set; }   
-    public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
+    //public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
     public POI_STATE state { get; private set; }
 
     //Inner Map
@@ -44,6 +44,21 @@ public class LocationStructure {
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         this.isInside = isInside;
         _location = location;
+        charactersHere = new List<Character>();
+        _itemsHere = new List<SpecialToken>();
+        pointsOfInterest = new List<IPointOfInterest>();
+        tiles = new List<LocationGridTile>();
+        AddListeners();
+        //if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
+        //    AddPOI(new SupplyPile(this));
+        //}
+    }
+    public LocationStructure(Area location, SaveDataLocationStructure data) {
+        _location = location;
+        id = Utilities.SetID(this, data.id);
+        this.structureType = data.structureType;
+        this.name = data.name;
+        this.isInside = data.isInside;
         charactersHere = new List<Character>();
         _itemsHere = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
@@ -469,7 +484,7 @@ public class LocationStructure {
             case TILE_OBJECT_TYPE.ORE:
                 AddPOI(new Ore(this), tile, placeAsset);
                 break;
-            case TILE_OBJECT_TYPE.TREE:
+            case TILE_OBJECT_TYPE.TREE_OBJECT:
                 AddPOI(new TreeObject(this), tile, placeAsset);
                 break;
             case TILE_OBJECT_TYPE.DESK:
@@ -539,5 +554,62 @@ public class LocationStructure {
     #endregion
     public override string ToString() {
         return structureType.ToString() + " " + location.structures[structureType].IndexOf(this).ToString() + " at " + location.name;
+    }
+}
+
+[System.Serializable]
+public class SaveDataLocationStructure {
+    public int id;
+    public string name;
+    public STRUCTURE_TYPE structureType;
+    public bool isInside;
+    public POI_STATE state;
+
+    public Vector3Save entranceTile;
+    public bool isFromTemplate;
+
+    private LocationStructure loadedStructure;
+    public void Save(LocationStructure structure) {
+        id = structure.id;
+        name = structure.name;
+        structureType = structure.structureType;
+        isInside = structure.isInside;
+        state = structure.state;
+        isFromTemplate = structure.isFromTemplate;
+
+        if(structure.entranceTile != null) {
+            entranceTile = new Vector3Save(structure.entranceTile.localPlace.x, structure.entranceTile.localPlace.y, 0);
+        } else {
+            entranceTile = new Vector3Save(0f,0f,-1f);
+        }
+    }
+
+    public LocationStructure Load(Area area) {
+        LocationStructure createdStructure = null;
+        switch (structureType) {
+            case STRUCTURE_TYPE.DWELLING:
+                createdStructure = new Dwelling(area, this);
+                break;
+            default:
+                createdStructure = new LocationStructure(area, this);
+                break;
+        }
+        createdStructure.SetIfFromTemplate(isFromTemplate);
+        loadedStructure = createdStructure;
+        return createdStructure;
+    }
+
+    //This is loaded last so release loadedStructure
+    public void LoadEntranceTile() {
+        if(entranceTile.z != -1f) {
+            for (int i = 0; i < loadedStructure.tiles.Count; i++) {
+                LocationGridTile tile = loadedStructure.tiles[i];
+                if(tile.localPlace.x == (int)entranceTile.x && tile.localPlace.y == (int) entranceTile.y) {
+                    loadedStructure.SetEntranceTile(tile);
+                    break;
+                }
+            }
+        }
+        loadedStructure = null;
     }
 }

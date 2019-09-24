@@ -270,7 +270,7 @@ public class CharacterManager : MonoBehaviour {
         if (data.isDead) {
             if (home != null) {
                 newCharacter.SetHome(home); //keep this data with character to prevent errors
-                home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
+                //home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
             }
             if(specificLocation != null) {
                 newCharacter.ownParty.SetSpecificLocation(specificLocation);

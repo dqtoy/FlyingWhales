@@ -326,12 +326,16 @@ public class PlayerManager : MonoBehaviour {
     //    return newArtifact;
     //}
     public Artifact CreateNewArtifact(SaveDataArtifact data) {
-        Artifact newArtifact = CreateNewArtifactClassFromType(data);
+        Artifact newArtifact = CreateNewArtifactClassFromType(data) as Artifact;
         return newArtifact;
     }
     private object CreateNewArtifactClassFromType(ARTIFACT_TYPE artifactType) {
-        var typeName = artifactType.ToString();
+        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifactType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName));
+    }
+    private object CreateNewArtifactClassFromType(SaveDataArtifact data) {
+        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.artifactType.ToString());
+        return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
     }
     //private Artifact CreateNewArtifactClassFromType(SaveDataArtifactSlot data) {
     //    switch (data.type) {
@@ -348,21 +352,6 @@ public class PlayerManager : MonoBehaviour {
     //    }
     //    return null;
     //}
-    private Artifact CreateNewArtifactClassFromType(SaveDataArtifact data) {
-        switch (data.artifactType) {
-            case ARTIFACT_TYPE.Ankh_Of_Anubis:
-                return new Ankh_Of_Anubis(data);
-            case ARTIFACT_TYPE.Chaos_Orb:
-                return new Chaos_Orb(data);
-            case ARTIFACT_TYPE.Hermes_Statue:
-                return new Hermes_Statue(data);
-            case ARTIFACT_TYPE.Miasma_Emitter:
-                return new Miasma_Emitter(data);
-            case ARTIFACT_TYPE.Necronomicon:
-                return new Necronomicon(data);
-        }
-        return null;
-    }
     #endregion
 
     #region Unit Selection

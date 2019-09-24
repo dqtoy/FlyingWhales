@@ -24,6 +24,7 @@ public class SaveDataArea {
     //public LocationStructure prison;
     //public List<RACE> possibleOccupants;
     //public List<InitialRaceSetup> initialSpawnSetup;
+    public List<SaveDataLocationStructure> structures;
 
     public void Save(Area area) {
         id = area.id;
@@ -61,12 +62,23 @@ public class SaveDataArea {
             newSaveDataItem.Save(area.itemsInArea[i]);
             itemsInArea.Add(newSaveDataItem);
         }
+
+        structures = new List<SaveDataLocationStructure>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> kvp in area.structures) {
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                SaveDataLocationStructure data = new SaveDataLocationStructure();
+                data.Save(kvp.Value[i]);
+                structures.Add(data);
+            }
+        }
     }
 
     public void Load() {
         Area newArea = LandmarkManager.Instance.CreateNewArea(this);
         newArea.region.SetArea(newArea); //Set area of region here not on SaveDataRegion because SaveDataRegion will be the first to load, there will be no areas there yet
-        LandmarkManager.Instance.SetEnemyPlayerArea(newArea);
+        if(newArea.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+            LandmarkManager.Instance.SetEnemyPlayerArea(newArea);
+        }
     }
     //Loading area items is called separately because of sequencing issues
     //Since loading an item requires faction owner, if this is called in Load(), there is still no faction owner yet, so it will be an issue
@@ -75,6 +87,12 @@ public class SaveDataArea {
         Area area = LandmarkManager.Instance.GetAreaByID(id);
         for (int i = 0; i < itemsInArea.Count; i++) {
             itemsInArea[i].Load(area);
+        }
+    }
+
+    public void LoadStructureEntranceTiles() {
+        for (int i = 0; i < structures.Count; i++) {
+            structures[i].LoadEntranceTile();
         }
     }
 }

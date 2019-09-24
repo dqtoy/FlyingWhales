@@ -9,10 +9,14 @@ public class TreeObject : TileObject {
     private const int Supply_Per_Mine = 25;
 
     public TreeObject(LocationStructure location) {
-        this.structureLocation = location;
+        SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
-        Initialize(TILE_OBJECT_TYPE.TREE);
-        yield = Random.Range(15, 36);
+        Initialize(TILE_OBJECT_TYPE.TREE_OBJECT);
+        SetYield(Random.Range(15, 36));
+    }
+    public TreeObject(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        Initialize(data);
     }
 
     public override string ToString() {
@@ -33,5 +37,24 @@ public class TreeObject : TileObject {
             structureLocation.RemovePOI(this);
             SetGridTileLocation(loc); //so that it can still be targetted by aware characters.
         }
+    }
+    public void SetYield(int amount) {
+        yield = amount;
+    }
+}
+
+public class SaveDataTreeObject: SaveDataTileObject {
+    public int yield;
+
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        TreeObject obj = tileObject as TreeObject;
+        yield = obj.yield;
+    }
+
+    public override TileObject Load() {
+        TreeObject obj = base.Load() as TreeObject;
+        obj.SetYield(yield);
+        return obj;
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class GoddessStatue : TileObject {
 
     public GoddessStatue(LocationStructure location) {
-        this.structureLocation = location;
+        SetStructureLocation(location);
         //if (location.structureType != STRUCTURE_TYPE.POND) {
         //    poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.WELL_JUMP, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         //} else {
@@ -16,6 +16,11 @@ public class GoddessStatue : TileObject {
         Initialize(TILE_OBJECT_TYPE.GODDESS_STATUE);
         RemoveTrait("Flammable");
     }
+    public GoddessStatue(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>();
+        Initialize(data);
+    }
+
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);
         if (state == POI_STATE.INACTIVE) {

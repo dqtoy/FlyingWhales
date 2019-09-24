@@ -43,7 +43,7 @@ public static class TileObjectDB {
                 new ProvidedFacility() { type = FACILITY_TYPE.SIT_DOWN_SPOT, value = 5 }
             }
         } },
-        { TILE_OBJECT_TYPE.TREE, new TileObjectData() {
+        { TILE_OBJECT_TYPE.TREE_OBJECT, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
             neededTraitType = typeof(Craftsman),

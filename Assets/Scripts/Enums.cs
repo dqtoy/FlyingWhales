@@ -1224,7 +1224,7 @@ public enum TILE_OBJECT_TYPE {
     TABLE,
     BED,
     ORE,
-    TREE,
+    TREE_OBJECT,
     FOOD,
     DESK,
     TOMBSTONE,
@@ -1236,7 +1236,7 @@ public enum TILE_OBJECT_TYPE {
     ANKH_OF_ANUBIS,
     MIASMA_EMITTER,
     WATER_WELL,
-    GENERIC,
+    GENERIC_TILE_OBJECT,
     FOOD_PILE,
     GODDESS_STATUE,
 }

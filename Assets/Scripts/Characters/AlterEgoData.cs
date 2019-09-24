@@ -132,7 +132,7 @@ public class AlterEgoData {
             awareness[pointOfInterest.poiType].Add(pointOfInterest);
 
             if (pointOfInterest is TreeObject) {
-                List<IPointOfInterest> treeAwareness = GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE.TREE);
+                List<IPointOfInterest> treeAwareness = GetTileObjectAwarenessOfType(TILE_OBJECT_TYPE.TREE_OBJECT);
                 if (treeAwareness.Count >= Character.TREE_AWARENESS_LIMIT) {
                     RemoveAwareness(treeAwareness[0]);
                 }

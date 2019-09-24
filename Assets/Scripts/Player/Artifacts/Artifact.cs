@@ -35,9 +35,8 @@ public class Artifact : TileObject, IWorldObject {
     public Artifact(SaveDataArtifact data) {
         this.type = data.artifactType;
         level = 1;
-        TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY };
-        Initialize(data, parsed);
+        Initialize(data);
     }
 
     #region Overrides

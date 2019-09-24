@@ -177,13 +177,13 @@ public class GoapPlanJob : JobQueueItem {
         if(character == jobQueueParent.character) {
             return CanTakeJob(character);
         }
-        if (_canTakeThisJob != null) {
-            if (_canTakeThisJob(character, this)) {
+        if (canTakeThisJob != null) {
+            if (canTakeThisJob(character, this)) {
                 return CanTakeJob(character);
             }
             return false;
-        } else if (_canTakeThisJobWithTarget != null && targetPOI != null && targetPOI is Character) {
-            if (_canTakeThisJobWithTarget(character, targetPOI as Character, this)) {
+        } else if (canTakeThisJobWithTarget != null && targetPOI != null && targetPOI is Character) {
+            if (canTakeThisJobWithTarget(character, targetPOI as Character, this)) {
                 return CanTakeJob(character);
             }
             return false;

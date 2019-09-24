@@ -9,10 +9,14 @@ public class Ore : TileObject {
     private const int Supply_Per_Mine = 50;
 
     public Ore(LocationStructure location) {
-        this.structureLocation = location;
+        SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_GOAP, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.ORE);
         yield = Random.Range(15, 36);
+    }
+    public Ore(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.MINE_GOAP, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        Initialize(data);
     }
 
     #region Overrides
@@ -41,5 +45,24 @@ public class Ore : TileObject {
             structureLocation.RemovePOI(this);
             SetGridTileLocation(loc); //so that it can still be targetted by aware characters.
         }
+    }
+    public void SetYield(int amount) {
+        yield = amount;
+    }
+}
+
+public class SaveDataOre : SaveDataTileObject {
+    public int yield;
+
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        Ore obj = tileObject as Ore;
+        yield = obj.yield;
+    }
+
+    public override TileObject Load() {
+        Ore obj = base.Load() as Ore;
+        obj.SetYield(yield);
+        return obj;
     }
 }

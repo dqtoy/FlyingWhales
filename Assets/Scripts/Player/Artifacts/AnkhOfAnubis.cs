@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ankh_Of_Anubis : Artifact {
+public class AnkhOfAnubis : Artifact {
 
-    private bool isActivated;
+    public bool isActivated { get; private set; }
 
     private int range;
     private int deathChance; //out of 100%
     private int duration; //in ticks
-    private int currentDuration; //how many ticks has this object been alive
+    public int currentDuration { get; private set; } //how many ticks has this object been alive
 
     private AOEParticle particle;
 
-    public Ankh_Of_Anubis() : base(ARTIFACT_TYPE.Ankh_Of_Anubis) {
+    public AnkhOfAnubis() : base(ARTIFACT_TYPE.Ankh_Of_Anubis) {
         range = 1;
         deathChance = 60;
         duration = 50;
@@ -23,7 +23,7 @@ public class Ankh_Of_Anubis : Artifact {
     //    deathChance = 60;
     //    duration = 20;
     //}
-    public Ankh_Of_Anubis(SaveDataArtifact data) : base(data) {
+    public AnkhOfAnubis(SaveDataArtifact data) : base(data) {
         range = 1;
         deathChance = 60;
         duration = 20;
@@ -51,11 +51,14 @@ public class Ankh_Of_Anubis : Artifact {
     }
     #endregion
 
-    private void Activate() {
+    public void Activate() {
         isActivated = true;
         currentDuration = 0;
         Messenger.AddListener(Signals.TICK_ENDED, CheckPerTick);
         particle = GameManager.Instance.CreateAOEEffectAt(tile, range);
+    }
+    public void SetCurrentDuration(int amount) {
+        currentDuration = amount;
     }
 
     private void CheckPerTick() {
@@ -88,5 +91,30 @@ public class Ankh_Of_Anubis : Artifact {
             }
         }
     }
+}
 
+public class SaveDataAnkhOfAnubis : SaveDataArtifact {
+    public bool isActivated;
+    public int currentDuration; //how many ticks has this object been alive
+
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        AnkhOfAnubis obj = tileObject as AnkhOfAnubis;
+        isActivated = obj.isActivated;
+        currentDuration = obj.currentDuration;
+    }
+
+    public override TileObject Load() {
+        AnkhOfAnubis obj = base.Load() as AnkhOfAnubis;
+        return obj;
+    }
+
+    public override void LoadAfterLoadingAreaMap() {
+        AnkhOfAnubis obj = loadedTileObject as AnkhOfAnubis;
+        if (isActivated) {
+            obj.Activate();
+        }
+        obj.SetCurrentDuration(currentDuration);
+        base.LoadAfterLoadingAreaMap();
+    }
 }

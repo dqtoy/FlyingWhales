@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //Characters will avoid the area. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.
-public class Miasma_Emitter : Artifact {
+public class MiasmaEmitter : Artifact {
 
     private int range;
     private int duration; //in ticks
-    private int currentDuration; //how many ticks has this object been alive
+    public int currentDuration { get; private set; } //how many ticks has this object been alive
 
     private List<LocationGridTile> tilesInRange;
 
     private AOEParticle particle;
 
-    public Miasma_Emitter() : base(ARTIFACT_TYPE.Miasma_Emitter) {
+    public MiasmaEmitter() : base(ARTIFACT_TYPE.Miasma_Emitter) {
         range = 1;
         duration = 50;
     }   
@@ -21,7 +21,7 @@ public class Miasma_Emitter : Artifact {
     //    range = 1;
     //    duration = 50;
     //}
-    public Miasma_Emitter(SaveDataArtifact data) : base(data) {
+    public MiasmaEmitter(SaveDataArtifact data) : base(data) {
         range = 1;
         duration = 50;
     }
@@ -120,4 +120,27 @@ public class Miasma_Emitter : Artifact {
         }
     }
 
+    public void SetCurrentDuration(int amount) {
+        currentDuration = amount;
+    }
+}
+
+public class SaveDataMiasmaEmitter : SaveDataArtifact {
+    public int currentDuration;
+
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        MiasmaEmitter obj = tileObject as MiasmaEmitter;
+        currentDuration = obj.currentDuration;
+    }
+
+    public override TileObject Load() {
+        MiasmaEmitter obj = base.Load() as MiasmaEmitter;
+        return obj;
+    }
+    public override void LoadAfterLoadingAreaMap() {
+        MiasmaEmitter obj = loadedTileObject as MiasmaEmitter;
+        obj.SetCurrentDuration(currentDuration);
+        base.LoadAfterLoadingAreaMap();
+    }
 }

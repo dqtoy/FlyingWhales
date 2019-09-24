@@ -52,7 +52,7 @@ public class BerserkedState : CharacterState {
             //return true;
         }else if (targetPOI is TileObject) {
             TileObject target = targetPOI as TileObject;
-            if(target.tileObjectType != TILE_OBJECT_TYPE.TREE && target.poiGoapActions.Contains(INTERACTION_TYPE.TILE_OBJECT_DESTROY)) {
+            if(target.tileObjectType != TILE_OBJECT_TYPE.TREE_OBJECT && target.poiGoapActions.Contains(INTERACTION_TYPE.TILE_OBJECT_DESTROY)) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 20) {
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.TILE_OBJECT_DESTROY, stateComponent.character, targetPOI);

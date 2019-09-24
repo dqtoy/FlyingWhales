@@ -145,9 +145,7 @@ public class Area {
 
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.coreTile);
 
-        if (citizenCount > 0) {
-            GenerateStructures(citizenCount);
-        }
+        LoadStructures(saveDataArea);
     }
 
     #region Listeners
@@ -775,6 +773,14 @@ public class Area {
         }
         AssignPrison();
     }
+    public void LoadStructures(SaveDataArea data) {
+        structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
+
+        for (int i = 0; i < data.structures.Count; i++) {
+            LandmarkManager.Instance.LoadStructureAt(this, data.structures[i]);
+        }
+        AssignPrison();
+    }
     private void LoadStructures(AreaSaveData data) {
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
         if (data.structures == null) {
@@ -849,6 +855,17 @@ public class Area {
                 return kvp.Value[UnityEngine.Random.Range(0, kvp.Value.Count)];
             }
             count++;
+        }
+        return null;
+    }
+    public LocationStructure GetStructureByID(STRUCTURE_TYPE type, int id) {
+        if (structures.ContainsKey(type)) {
+            List<LocationStructure> locStructures = structures[type];
+            for (int i = 0; i < locStructures.Count; i++) {
+                if(locStructures[i].id == id) {
+                    return locStructures[i];
+                }
+            }
         }
         return null;
     }

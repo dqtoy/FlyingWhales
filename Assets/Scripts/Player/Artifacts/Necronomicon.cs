@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Necronomicon : Artifact {
 
-    private bool isActivated;
+    public bool isActivated { get; private set; }
 
     private int raiseDeadLevel; //what level will the dead that was risen will be?
 
@@ -44,7 +44,7 @@ public class Necronomicon : Artifact {
         CharacterState state = character.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, gridTileLocation.parentAreaMap.area);
         state.SetIsUnending(true);
     }
-    private void Activate() {
+    public void Activate() {
         isActivated = true;
         List<Character> characters = gridTileLocation.parentAreaMap.area.GetAllDeadCharactersInArea();
         for (int i = 0; i < characters.Count; i++) {
@@ -60,5 +60,28 @@ public class Necronomicon : Artifact {
 
     public override string ToString() {
         return "Necronomicon";
+    }
+}
+
+
+public class SaveDataNecronomicon : SaveDataArtifact {
+    public bool isActivated;
+
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        Necronomicon obj = tileObject as Necronomicon;
+        isActivated = obj.isActivated;
+    }
+
+    public override TileObject Load() {
+        Necronomicon obj = base.Load() as Necronomicon;
+        return obj;
+    }
+    public override void LoadAfterLoadingAreaMap() {
+        if (isActivated) {
+            Necronomicon obj = loadedTileObject as Necronomicon;
+            obj.Activate();
+        }
+        base.LoadAfterLoadingAreaMap();
     }
 }

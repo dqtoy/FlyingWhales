@@ -19,6 +19,13 @@ public class Dwelling : LocationStructure {
         InitializeFacilities();
     }
 
+    public Dwelling(Area location, SaveDataLocationStructure data)
+    : base(location, data) {
+        residents = new List<Character>();
+        InitializeFacilities();
+    }
+
+
     #region Residents
     public void AddResident(Character character) {
         if (!residents.Contains(character)) {

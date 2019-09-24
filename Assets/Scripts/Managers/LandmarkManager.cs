@@ -868,6 +868,26 @@ public class LandmarkManager : MonoBehaviour {
             OnFinishedGeneratingAreaMap(area, areaMap);
         }
     }
+    public void LoadAreaMap(SaveDataAreaInnerTileMap data) {
+        GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
+        AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
+        areaMap.ClearAllTilemaps();
+        InteriorMapManager.Instance.CleanupForTownGeneration();
+
+        data.Load(areaMap);
+
+        //Load other data
+        Area area = areaMap.area;
+        area.SetAreaMap(areaMap);
+        areaMap.GenerateDetails();
+
+        areaMap.OnMapGenerationFinished();
+        area.OnMapGenerationFinished();
+        InteriorMapManager.Instance.OnCreateAreaMap(areaMap);
+
+        area.OnAreaSetAsActive();
+        UIManager.Instance.SetInteriorMapLoadingState(false);
+    }
     private void OnFinishedGeneratingAreaMap(Area area, AreaInnerTileMap areaMap) {
         //Debug.Log("Finished generating map for " + area.name);
         string log = string.Empty;
@@ -979,6 +999,13 @@ public class LandmarkManager : MonoBehaviour {
                 createdStructure = new LocationStructure(type, location, isInside);
                 break;
         }
+        if (createdStructure != null) {
+            location.AddStructure(createdStructure);
+        }
+        return createdStructure;
+    }
+    public LocationStructure LoadStructureAt(Area location, SaveDataLocationStructure data) {
+        LocationStructure createdStructure = data.Load(location);
         if (createdStructure != null) {
             location.AddStructure(createdStructure);
         }

@@ -13,7 +13,7 @@ public class Table : TileObject {
     //}
 
     public Table(LocationStructure location) {
-        this.structureLocation = location;
+        SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_AT_TABLE, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.TABLE_REMOVE_POISON, INTERACTION_TYPE.TABLE_POISON, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         SetFood(UnityEngine.Random.Range(20, 81));
         Initialize(TILE_OBJECT_TYPE.TABLE);
@@ -24,6 +24,11 @@ public class Table : TileObject {
         //    slots = 1;
         //}
         //users = new Character[slots];
+    }
+
+    public Table(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_AT_TABLE, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.TABLE_REMOVE_POISON, INTERACTION_TYPE.TABLE_POISON, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        Initialize(data);
     }
     public void SetUsedAsset(TileBase usedAsset) {
         this.usedAsset = usedAsset;
@@ -321,4 +326,20 @@ public class Table : TileObject {
     //    }
     //    //the asset will revert to no one using once the table is set to active again
     //}
+}
+
+public class SaveDataTable : SaveDataTileObject {
+    public int food;
+
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        Table obj = tileObject as Table;
+        food = obj.food;
+    }
+
+    public override TileObject Load() {
+        Table obj = base.Load() as Table;
+        obj.SetFood(food);
+        return obj;
+    }
 }

@@ -8,6 +8,9 @@ public class Trait {
     public virtual string nameInUI {
         get { return name; }
     }
+    public virtual bool isNotSavable {
+        get { return false; }
+    }
     public Character responsibleCharacter { get; protected set; }
     public List<Character> responsibleCharacters { get; protected set; }
     public string name;

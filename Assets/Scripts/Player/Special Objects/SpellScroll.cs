@@ -5,6 +5,7 @@ using UnityEngine;
 public class SpellScroll : SpecialObject {
 
     public SpellScroll() : base(SPECIAL_OBJECT_TYPE.SPELL_SCROLL) { }
+    public SpellScroll(SaveDataSpecialObject data) : base(data) { }
 
     #region Overrides
     public override void Obtain() {
@@ -19,6 +20,6 @@ public class SpellScroll : SpecialObject {
 
 public class SaveDataSpellScroll : SaveDataSpecialObject {
     public override SpecialObject Load() {
-        return new SpellScroll();
+        return new SpellScroll(this);
     }
 }

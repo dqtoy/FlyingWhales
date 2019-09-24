@@ -17,9 +17,9 @@ public class JobQueueItem {
     public List<Character> blacklistedCharacters { get; private set; }
     public int priority { get { return GetPriority(); } }
 
-    protected System.Func<Character, JobQueueItem, bool> _canTakeThisJob;
-    protected System.Func<Character, Character, JobQueueItem, bool> _canTakeThisJobWithTarget;
-    protected System.Action<Character, JobQueueItem> _onTakeJobAction;
+    public System.Func<Character, JobQueueItem, bool> canTakeThisJob { get; protected set; }
+    public System.Func<Character, Character, JobQueueItem, bool> canTakeThisJobWithTarget { get; protected set; }
+    public System.Action<Character, JobQueueItem> onTakeJobAction { get; protected set; }
     protected int _priority; //The lower the amount the higher the priority
 
     public JobQueueItem(JOB_TYPE jobType) {
@@ -46,8 +46,8 @@ public class JobQueueItem {
         if (character == jobQueueParent.character) {
             return CanTakeJob(character);
         }
-        if (_canTakeThisJob != null) {
-            if (_canTakeThisJob(character, this)) {
+        if (canTakeThisJob != null) {
+            if (canTakeThisJob(character, this)) {
                 return CanTakeJob(character);
             }
             return false;
@@ -55,7 +55,7 @@ public class JobQueueItem {
         return CanTakeJob(character);
     }
     public virtual void OnCharacterAssignedToJob(Character character) {
-        _onTakeJobAction?.Invoke(character, this);
+        onTakeJobAction?.Invoke(character, this);
     }
     public virtual void OnCharacterUnassignedToJob(Character character) { }
     #endregion
@@ -83,13 +83,13 @@ public class JobQueueItem {
         }
     }
     public void SetCanTakeThisJobChecker(System.Func<Character, JobQueueItem, bool> function) {
-        _canTakeThisJob = function;
+        canTakeThisJob = function;
     }
     public void SetCanTakeThisJobChecker(System.Func<Character, Character, JobQueueItem, bool> function) {
-        _canTakeThisJobWithTarget = function;
+        canTakeThisJobWithTarget = function;
     }
     public void SetOnTakeJobAction(System.Action<Character, JobQueueItem> action) {
-        _onTakeJobAction = action;
+        onTakeJobAction = action;
     }
     public void SetCannotCancelJob(bool state) {
         cannotCancelJob = state;

@@ -74,6 +74,24 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         SetReservedType(TILE_OBJECT_TYPE.NONE);
         defaultTileColor = Color.white;
     }
+    public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, AreaInnerTileMap parentAreaMap) {
+        this.parentAreaMap = parentAreaMap;
+        parentTileMap = tilemap;
+        localPlace = new Vector3Int((int)data.localPlace.x, (int)data.localPlace.y, 0);
+        worldLocation = data.worldLocation;
+        localLocation = data.localLocation;
+        centeredLocalLocation = data.centeredLocalLocation;
+        centeredWorldLocation = data.centeredWorldLocation;
+        tileType = data.tileType;
+        tileState = data.tileState;
+        tileAccess = data.tileAccess;
+        SetLockedState(data.isLocked);
+        SetReservedType(data.reservedObjectType);
+        charactersHere = new List<Character>();
+        _traits = new List<Trait>();
+        defaultTileColor = Color.white;
+    }
+
     private void CreateGenericTileObject() {
         genericTileObject = new GenericTileObject(this.structure);
         genericTileObject.SetGridTileLocation(this);
@@ -771,18 +789,26 @@ public class SaveDataLocationGridTile {
     public LocationGridTile.Ground_Type groundType;
     //public LocationStructure structure { get; private set; }
     //public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
-    public List<Vector3Save> neighbours;
-    public List<TileNeighbourDirection> neighbourDirections;
+    //public List<Vector3Save> neighbours;
+    //public List<TileNeighbourDirection> neighbourDirections;
     public List<SaveDataTrait> traits;
     //public List<int> charactersHere;
     public int objHereID;
     public POINT_OF_INTEREST_TYPE objHereType;
+    public TILE_OBJECT_TYPE objHereTileObjectType;
+
+
     public TILE_OBJECT_TYPE reservedObjectType;
     public FurnitureSpot furnitureSpot;
     public bool hasFurnitureSpot;
     public bool hasDetail;
     public bool isInside;
     public bool isLocked;
+
+    public int structureID;
+    public STRUCTURE_TYPE structureType;
+
+    private LocationGridTile loadedGridTile;
 
     public void Save(LocationGridTile gridTile) {
         localPlace = new Vector3Save(gridTile.localPlace.x);
@@ -801,25 +827,78 @@ public class SaveDataLocationGridTile {
         isInside = gridTile.isInside;
         isLocked = gridTile.isLocked;
 
-        neighbourDirections = new List<TileNeighbourDirection>();
-        neighbours = new List<Vector3Save>();
-        foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in gridTile.neighbours) {
-            neighbourDirections.Add(kvp.Key);
-            neighbours.Add(new Vector3Save(kvp.Value.localPlace));
+        if(gridTile.structure != null) {
+            structureID = gridTile.structure.id;
+            structureType = gridTile.structure.structureType;
+        } else {
+            structureID = -1;
         }
+
+        //neighbourDirections = new List<TileNeighbourDirection>();
+        //neighbours = new List<Vector3Save>();
+        //foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in gridTile.neighbours) {
+        //    neighbourDirections.Add(kvp.Key);
+        //    neighbours.Add(new Vector3Save(kvp.Value.localPlace));
+        //}
 
         traits = new List<SaveDataTrait>();
         for (int i = 0; i < gridTile.normalTraits.Count; i++) {
             SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(gridTile.normalTraits[i]);
-            saveDataTrait.Save(gridTile.normalTraits[i]);
-            traits.Add(saveDataTrait);
+            if (saveDataTrait != null) {
+                saveDataTrait.Save(gridTile.normalTraits[i]);
+                traits.Add(saveDataTrait);
+            }
         }
 
         if(gridTile.objHere != null) {
             objHereID = gridTile.objHere.id;
             objHereType = gridTile.objHere.poiType;
+            if(gridTile.objHere is TileObject) {
+                objHereTileObjectType = (gridTile.objHere as TileObject).tileObjectType;
+            }
         } else {
             objHereID = -1;
         }
+    }
+
+    public LocationGridTile Load(Tilemap tilemap, AreaInnerTileMap parentAreaMap) {
+        LocationGridTile tile = new LocationGridTile(this, tilemap, parentAreaMap);
+
+        if(structureID != -1) {
+            LocationStructure structure = parentAreaMap.area.GetStructureByID(structureType, structureID);
+            tile.SetStructure(structure);
+        }
+
+        tile.SetGroundType(groundType);
+        tile.SetFurnitureSpot(furnitureSpot);
+        loadedGridTile = tile;
+        //TODO: hasDetail
+        return tile;
+    }
+
+    public void LoadTraits() {
+        for (int i = 0; i < traits.Count; i++) {
+            Character responsibleCharacter = null;
+            Trait trait = traits[i].Load(ref responsibleCharacter);
+            loadedGridTile.AddTrait(trait, responsibleCharacter);
+        }
+    }
+
+    //This is loaded last so release loadedGridTile here
+    public void LoadObjectHere() {
+        if(objHereID != -1) {
+            if(objHereType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                loadedGridTile.structure.AddPOI(CharacterManager.Instance.GetCharacterByID(objHereID), loadedGridTile);
+            }
+
+            //NOTE: Do not load item in grid tile because it is already loaded in LoadAreaItems
+            //else if (objHereType == POINT_OF_INTEREST_TYPE.ITEM) {
+            //    loadedGridTile.structure.AddPOI(TokenManager.Instance.GetSpecialTokenByID(objHereID), loadedGridTile);
+            //}
+            else if (objHereType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                loadedGridTile.structure.AddPOI(InteriorMapManager.Instance.GetTileObject(objHereTileObjectType, objHereID), loadedGridTile);
+            }
+        }
+        loadedGridTile = null;
     }
 }

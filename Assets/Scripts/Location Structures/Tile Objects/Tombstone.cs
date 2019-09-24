@@ -10,11 +10,14 @@ public class Tombstone : TileObject {
     }
 
     public Character character { get; private set; }
-    public Tombstone(Character character, LocationStructure structure) {
-        this.character = character;
-        structureLocation = structure;
+    public Tombstone(LocationStructure structure) {
+        SetStructureLocation(structure);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.TRANSFORM_FOOD };
         Initialize(TILE_OBJECT_TYPE.TOMBSTONE);
+    }
+    public Tombstone(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.REMEMBER_FALLEN, INTERACTION_TYPE.SPIT, INTERACTION_TYPE.TRANSFORM_FOOD };
+        Initialize(data);
     }
 
     public override void SetGridTileLocation(LocationGridTile tile) {
@@ -33,5 +36,25 @@ public class Tombstone : TileObject {
 
     public override string ToString() {
         return "Tombstone of " + character.name;
+    }
+
+    public void SetCharacter(Character character) {
+        this.character = character;
+    }
+}
+
+public class SaveDataTombstone : SaveDataTileObject {
+    public int characterID;
+
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        Tombstone obj = tileObject as Tombstone;
+        characterID = obj.character.id;
+    }
+
+    public override TileObject Load() {
+        Tombstone obj = base.Load() as Tombstone;
+        obj.SetCharacter(CharacterManager.Instance.GetCharacterByID(characterID));
+        return obj;
     }
 }

@@ -17,7 +17,7 @@ public class InteriorMapManager : MonoBehaviour {
     public GameObject ghostCollisionTriggerPrefab;
     public GameObject characterCollisionTriggerPrefab;
 
-    private List<AreaInnerTileMap> areaMaps;
+    public List<AreaInnerTileMap> areaMaps { get; private set; }
     private Vector3 nextMapPos = Vector3.zero;
     public bool isAnAreaMapShowing {
         get {
@@ -1022,6 +1022,7 @@ public class InteriorMapManager : MonoBehaviour {
 }
 
 #region Templates
+[System.Serializable]
 public struct TownMapSettings {
 
     public Point size;
@@ -1030,6 +1031,8 @@ public struct TownMapSettings {
     public TileTemplateData[] structureTiles;
     public TileTemplateData[] objectTiles;
     public TileTemplateData[] detailTiles;
+
+    [System.NonSerialized]
     public Dictionary<STRUCTURE_TYPE, List<StructureSlot>> structureSlots;
 
     public void LogInfo() {

@@ -33,14 +33,12 @@ public class SaveDataArtifact : SaveDataTileObject {
 
     public override void Save(TileObject tileObject) {
         base.Save(tileObject);
-        if (tileObject is Artifact) {
-            Artifact artifact = tileObject as Artifact;
-            artifactType = artifact.type;
-        }
+        Artifact artifact = tileObject as Artifact;
+        artifactType = artifact.type;
     }
 
-    public IWorldObject Load() {
-        Artifact artifact = PlayerManager.Instance.CreateNewArtifact(artifactType);
+    public override TileObject Load() {
+        Artifact artifact = base.Load() as Artifact;
         return artifact;
     }
 }
