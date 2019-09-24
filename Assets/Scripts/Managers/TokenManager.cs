@@ -14,11 +14,11 @@ public class TokenManager : MonoBehaviour {
 
     void Awake() {
         Instance = this;
+        specialObjects = new List<SpecialObject>();
     }
 
     public void Initialize() {
         LoadSpecialTokens();
-        specialObjects = new List<SpecialObject>();
     }
 
     private void LoadSpecialTokens() {

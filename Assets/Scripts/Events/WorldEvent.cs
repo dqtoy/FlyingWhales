@@ -57,7 +57,7 @@ public class WorldEvent  {
         //AddDefaultFillersToLog(log, landmark);
         isCurrentlySpawned = true;
     }
-    private void TryExecuteAfterEffect(Region region, Character spawner) {
+    public void TryExecuteAfterEffect(Region region, Character spawner) {
         if (region.eventData.interferingCharacter != null) {
             //there is an interfering character.
             ExecuteFailEffect(region, spawner);

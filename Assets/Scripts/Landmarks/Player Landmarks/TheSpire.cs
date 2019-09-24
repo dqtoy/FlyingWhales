@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TheSpire : BaseLandmark {
-    //public INTERVENTION_ABILITY interventionAbilityToResearch { get; private set; }
     public int currentCooldownTick { get; private set; }
     public int cooldownDuration { get; private set; }
 

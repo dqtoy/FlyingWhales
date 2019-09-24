@@ -4,25 +4,72 @@ using UnityEngine;
 
 public class TheEye : BaseLandmark {
 
-    public TheEye(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) { }
+    public int currentCooldownTick { get; private set; }
+    public int cooldownDuration { get; private set; }
 
-    public TheEye(HexTile location, SaveDataLandmark data) : base(location, data) { }
+    public static readonly int interfereManaCost = 100;
 
-    #region Override
-    public override void OnMinionAssigned(Minion minion) {
-        base.OnMinionAssigned(minion);
-        //start listening for events
-        ///Did not add listener, instead added checking if notification should be showed to player at WorldEvent script <see cref="WorldEvent.Spawn(Region, IWorldEventData, out string)"/>. Reason for this is if there are multiple Eye structures, they will each create a notification, which is not ideal.
-        //Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnEventSpawned);
+    public bool isInCooldown {
+        get { return currentCooldownTick < cooldownDuration; }
     }
-    public override void OnMinionUnassigned(Minion minion) {
-        base.OnMinionUnassigned(minion);
-        //stop listening to events
-        //Messenger.RemoveListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnEventSpawned);
+
+    public TheEye(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
+        cooldownDuration = GameManager.Instance.GetTicksBasedOnHour(4);
+        currentCooldownTick = cooldownDuration;
+    }
+
+    public TheEye(HexTile location, SaveDataLandmark data) : base(location, data) {
+        cooldownDuration = GameManager.Instance.GetTicksBasedOnHour(4);
+    }
+
+    public void LoadSavedData(SaveDataTheEye data) {
+        if (data.currentCooldownTick < cooldownDuration) {
+            StartCooldown();
+        }
+        currentCooldownTick = data.currentCooldownTick;
+    }
+
+    public void StartInterference(Region targetRegion, Character interferingCharacter) {
+        targetRegion.eventData.SetInterferingCharacter(interferingCharacter);
+        interferingCharacter.minion.SetAssignedRegion(targetRegion);  //only set assigned region to minion.
+        targetRegion.ForceResolveWorldEvent();
+        PlayerManager.Instance.player.AdjustMana(-interfereManaCost);
+        //Start cooldown.
+        StartCooldown();
+    }
+
+    #region Cooldown
+    private void StartCooldown() {
+        currentCooldownTick = 0;
+        Messenger.AddListener(Signals.TICK_ENDED, PerTickCooldown);
+        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
+    }
+    private void PerTickCooldown() {
+        currentCooldownTick++;
+        if (currentCooldownTick == cooldownDuration) {
+            //coodlown done
+            StopCooldown();
+        }
+    }
+    private void StopCooldown() {
+        Messenger.RemoveListener(Signals.TICK_ENDED, PerTickCooldown);
+        Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
     #endregion
-
-    //private void OnEventSpawned(Region region, WorldEvent we){
-        
-    //}
 }
+
+public class SaveDataTheEye : SaveDataLandmark {
+    public int currentCooldownTick;
+
+    public override void Save(BaseLandmark landmark) {
+        base.Save(landmark);
+        TheSpire spire = landmark as TheSpire;
+        currentCooldownTick = spire.currentCooldownTick;
+    }
+    public override void LoadSpecificLandmarkData(BaseLandmark landmark) {
+        base.LoadSpecificLandmarkData(landmark);
+        TheEye eye = landmark as TheEye;
+        eye.LoadSavedData(this);
+    }
+}
+
