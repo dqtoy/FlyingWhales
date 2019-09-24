@@ -166,6 +166,8 @@ public class InteractionManager : MonoBehaviour {
         int priority = 0;
         switch (jobType) {
             case JOB_TYPE.CHEAT:
+            case JOB_TYPE.HAVE_AFFAIR:
+            case JOB_TYPE.TRIGGER_FLAW:
                 priority = 5;
                 break;
             case JOB_TYPE.MISC:

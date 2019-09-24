@@ -244,6 +244,7 @@ public class Minion {
             if (combatAbility != null && showNewAbilityUI) {
                 PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(this, combatAbility);
             }
+            Messenger.Broadcast(Signals.MINION_CHANGED_COMBAT_ABILITY, this);
         } else {
             PlayerUI.Instance.replaceUI.ShowReplaceUI(new List<CombatAbility>() { this.combatAbility }, combatAbility, ReplaceCombatAbility, RejectCombatAbility);
         }

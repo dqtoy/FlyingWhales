@@ -33,14 +33,16 @@ public class Unfaithful : Trait {
     }
     public override void TriggerFlaw(Character character) {
         base.TriggerFlaw(character);
-        //Character paramour = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
-        //if (paramour == null) {
-        //    //If no paramour yet, the character will create a Have Affair Job which will attempt to have an affair with a viable target.
-        //} else {
-        //    //If already has a paramour, the character will attempt to make love with one.
-        //    GoapPlanJob cheatJob = new GoapPlanJob(JOB_TYPE.CHEAT, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, paramour);
-        //    character.jobQueue.AddJobInQueue(cheatJob);
-        //}
+        Character paramour = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
+        if (paramour == null) {
+            //If no paramour yet, the character will create a Have Affair Job which will attempt to have an affair with a viable target.
+            GoapPlanJob cheatJob = new GoapPlanJob(JOB_TYPE.HAVE_AFFAIR, INTERACTION_TYPE.HAVE_AFFAIR);
+            character.jobQueue.AddJobInQueue(cheatJob);
+        } else {
+            //If already has a paramour, the character will attempt to make love with one.
+            GoapPlanJob cheatJob = new GoapPlanJob(JOB_TYPE.CHEAT, INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, paramour);
+            character.jobQueue.AddJobInQueue(cheatJob);
+        }
 
     }
     #endregion

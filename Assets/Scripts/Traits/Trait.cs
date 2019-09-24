@@ -88,7 +88,16 @@ public class Trait {
     public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait
     public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
     public virtual bool OnStartPerformGoapAction(GoapAction action, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
-    public virtual void TriggerFlaw(Character character) { }
+    public virtual void TriggerFlaw(Character character) {
+        int manaCost = 0;
+        if (character.currentMoodType == CHARACTER_MOOD.BAD) {
+            manaCost = 100;
+        } else if (character.currentMoodType == CHARACTER_MOOD.DARK) {
+            manaCost = 50;
+        }
+
+        PlayerManager.Instance.player.AdjustMana(-manaCost);
+    }
     /// <summary>
     /// This checks if this flaw can be triggered. This checks both the requirements of the individual traits,
     /// and the mana cost.
@@ -96,6 +105,7 @@ public class Trait {
     /// <param name="character">The character whose flaw will be triggered</param>
     /// <returns>true or false</returns>
     public virtual bool CanFlawBeTriggered(Character character) {
+        //return true;
         //Triggering while in a bad mood costs more Mana (100) than triggering while in a dark mood (50).
         int manaCost = 0;
         if (character.currentMoodType == CHARACTER_MOOD.BAD) {
@@ -105,7 +115,7 @@ public class Trait {
         } else {
             return false;
         }
-        return PlayerManager.Instance.player.mana >= manaCost;
+        return PlayerManager.Instance.player.mana >= manaCost && character.GetTraitOf(TRAIT_TYPE.DISABLER) == null; //disabled characters cannot be triggered
     }
     public virtual string GetTriggerFlawEffectDescription(Character character) {
         if (LocalizationManager.Instance.HasLocalizedValue("Trait", this.GetType().ToString(), "flaw_effect")) {

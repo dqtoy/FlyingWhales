@@ -200,7 +200,7 @@ public class CursorManager : MonoBehaviour {
                 break;
         }
         currentCursorType = type;
-        Debug.Log("Set cursor type to " + currentCursorType.ToString());
+        //Debug.Log("Set cursor type to " + currentCursorType.ToString());
         Cursor.SetCursor(cursors[type], hotSpot, cursorMode);
     }
     public void RevertToPreviousCursor() {

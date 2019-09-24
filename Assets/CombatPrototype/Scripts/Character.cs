@@ -114,26 +114,26 @@ public class Character : ILeader, IPointOfInterest {
     public int sleepScheduleJobID { get; protected set; }
     public bool hasCancelledSleepSchedule { get; protected set; }
     private int tirednessLowerBound; //how low can this characters tiredness go
-    protected const int TIREDNESS_DEFAULT = 15000;
-    protected const int TIREDNESS_THRESHOLD_1 = 10000;
-    protected const int TIREDNESS_THRESHOLD_2 = 5000;
+    public const int TIREDNESS_DEFAULT = 15000;
+    public const int TIREDNESS_THRESHOLD_1 = 10000;
+    public const int TIREDNESS_THRESHOLD_2 = 5000;
 
     //Fullness
     public int fullness { get; protected set; }
     public int fullnessDecreaseRate { get; protected set; }
     public int fullnessForcedTick { get; protected set; }
     private int fullnessLowerBound; //how low can this characters fullness go
-    protected const int FULLNESS_DEFAULT = 15000;
-    protected const int FULLNESS_THRESHOLD_1 = 10000;
-    protected const int FULLNESS_THRESHOLD_2 = 5000;
+    public const int FULLNESS_DEFAULT = 15000;
+    public const int FULLNESS_THRESHOLD_1 = 10000;
+    public const int FULLNESS_THRESHOLD_2 = 5000;
 
     //Happiness
     public int happiness { get; protected set; }
     public int happinessDecreaseRate { get; protected set; }
     private int happinessLowerBound; //how low can this characters happiness go
-    protected const int HAPPINESS_DEFAULT = 15000;
-    protected const int HAPPINESS_THRESHOLD_1 = 10000;
-    protected const int HAPPINESS_THRESHOLD_2 = 5000;
+    public const int HAPPINESS_DEFAULT = 15000;
+    public const int HAPPINESS_THRESHOLD_1 = 10000;
+    public const int HAPPINESS_THRESHOLD_2 = 5000;
    
     public bool hasForcedFullness { get; protected set; }
     public bool hasForcedTiredness { get; protected set; }
@@ -5476,6 +5476,23 @@ public class Character : ILeader, IPointOfInterest {
             SetFullnessForcedTick();
         }
     }
+    /// <summary>
+    /// Make this character plan a starving fullness recovery job, regardless of actual
+    /// fullness level. NOTE: This will also cancel any existing fullness recovery jobs
+    /// <param name="jobType">The type of job to create. Default is HUNGER_RECOVERY_STARVING but can set other job type to prevent overriding.</param>
+    /// </summary>
+    public void PlanForcedStarvingFullnessRecovery(JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING) {
+        if (jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
+            jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
+        }
+        GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
+        if (GetNormalTrait("Vampiric") != null) {
+            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+        } else if (GetNormalTrait("Cannibal") != null) {
+            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+        }
+        jobQueue.AddJobInQueue(job);
+    }
     private void PlanForcedTirednessRecovery() {
         if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.tick >= tirednessForcedTick && _doNotDisturb <= 0) {
             if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
@@ -7180,6 +7197,7 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.PRIORITIZED_SHOCK);
         poiGoapActions.Add(INTERACTION_TYPE.PRIORITIZED_CRY);
         poiGoapActions.Add(INTERACTION_TYPE.CRY);
+        poiGoapActions.Add(INTERACTION_TYPE.HAVE_AFFAIR);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

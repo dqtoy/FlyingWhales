@@ -64,4 +64,10 @@ public class WorldEventIcon : MonoBehaviour {
     public void OnClick(BaseEventData data) {
         UIManager.Instance.ShowRegionInfo(region);
     }
+    public void OnHoverEnter(BaseEventData data) {
+        region.coreTile.OnPointerEnter(data);
+    }
+    public void OnHoverExit(BaseEventData data) {
+        region.coreTile.OnPointerExit(data);
+    }
 }

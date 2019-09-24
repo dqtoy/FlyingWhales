@@ -13,6 +13,7 @@ public class Hothead : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
+        canBeTriggered = true;
         //effects = new List<TraitEffect>();
     }
 
@@ -40,6 +41,10 @@ public class Hothead : Trait {
             }
         }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+    }
+    public override void TriggerFlaw(Character character) {
+        base.TriggerFlaw(character);
+        character.AddTrait("Angry");
     }
     #endregion
 }
