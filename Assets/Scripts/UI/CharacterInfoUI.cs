@@ -438,20 +438,26 @@ public class CharacterInfoUI : UIMenu {
         UIManager.Instance.HideSmallInfo();
     }
     private void OnClickTrait(object obj) {
-        if (obj is string) {
-            string text = (string)obj;
-            int index = int.Parse(text);
-            Trait trait = activeCharacter.normalTraits[index];
-            if (trait.canBeTriggered) {
-                StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
-                UIManager.Instance.ShowYesNoConfirmation("Trigger Flaw", trait.description + "\n<b>Requirement</b>: You may trigger this flaw's negative effect if the character is in a Bad or Dark Mood.\n<b>Effect</b>: " + trait.GetTriggerFlawEffectDescription(activeCharacter), 
-                    onClickYesAction: () => OnClickTriggerFlaw(trait),
-                    showCover: true, layer: 25, yesBtnText: "Trigger Flaw", noBtnText: "Cancel",
-                    yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
-                    pauseAndResume: true
-                );
-                normalTraitsEventLbl.ResetHighlightValues();
+        if (activeCharacter.CanStillTriggerFlaws()) {
+            if (obj is string) {
+                string text = (string)obj;
+                int index = int.Parse(text);
+                Trait trait = activeCharacter.normalTraits[index];
+                if (trait.canBeTriggered) {
+                    StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
+                    UIManager.Instance.ShowYesNoConfirmation("Trigger Flaw", trait.description + "\n<b>Requirement</b>: You may trigger this flaw's negative effect if the character is in a Bad or Dark Mood.\n<b>Effect</b>: " + trait.GetTriggerFlawEffectDescription(activeCharacter),
+                        onClickYesAction: () => OnClickTriggerFlaw(trait),
+                        showCover: true, layer: 25, yesBtnText: "Trigger Flaw", noBtnText: "Cancel",
+                        yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
+                        pauseAndResume: true
+                    );
+                    normalTraitsEventLbl.ResetHighlightValues();
+                }
             }
+        } else {
+            StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
+            PlayerUI.Instance.ShowGeneralConfirmation("Invalid", "This character's flaws can no longer be triggered.");
+            normalTraitsEventLbl.ResetHighlightValues();
         }
     }
     private IEnumerator HoverOutTraitAfterClick() {

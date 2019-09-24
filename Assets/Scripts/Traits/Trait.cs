@@ -100,7 +100,7 @@ public class Trait {
     }
     /// <summary>
     /// This checks if this flaw can be triggered. This checks both the requirements of the individual traits,
-    /// and the mana cost.
+    /// and the mana cost. This is responsible for enabling/disabling the trigger flaw buttton.
     /// </summary>
     /// <param name="character">The character whose flaw will be triggered</param>
     /// <returns>true or false</returns>
@@ -115,7 +115,9 @@ public class Trait {
         } else {
             return false;
         }
-        return PlayerManager.Instance.player.mana >= manaCost && character.GetTraitOf(TRAIT_TYPE.DISABLER) == null; //disabled characters cannot be triggered
+        return PlayerManager.Instance.player.mana >= manaCost 
+            && character.GetTraitOf(TRAIT_TYPE.DISABLER) == null //disabled characters cannot be triggered
+            && !character.currentParty.icon.isTravellingOutside; //characters travelling outside cannot be triggered
     }
     public virtual string GetTriggerFlawEffectDescription(Character character) {
         if (LocalizationManager.Instance.HasLocalizedValue("Trait", this.GetType().ToString(), "flaw_effect")) {

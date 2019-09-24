@@ -31,6 +31,14 @@ public class Unfaithful : Trait {
             affairChanceMultiplier = 5f;
         }
     }
+    public override bool CanFlawBeTriggered(Character character) {
+        bool canBeTriggered = base.CanFlawBeTriggered(character);
+        if (canBeTriggered) {
+            //the character must have a lover.
+            canBeTriggered = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER) != null;
+        }
+        return canBeTriggered;
+    }
     public override void TriggerFlaw(Character character) {
         base.TriggerFlaw(character);
         Character paramour = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);

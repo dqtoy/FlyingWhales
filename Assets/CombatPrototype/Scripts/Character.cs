@@ -5140,6 +5140,28 @@ public class Character : ILeader, IPointOfInterest {
         }
         return allRels;
     }
+    /// <summary>
+    /// Utility function to determine if this character's flaws can still be activated
+    /// </summary>
+    /// <returns></returns>
+    public bool CanStillTriggerFlaws() {
+        if (isDead) {
+            return false;
+        }
+        if (faction == PlayerManager.Instance.player.playerFaction) {
+            return false;
+        }
+        if (role.roleType == CHARACTER_ROLE.BEAST) {
+            return false;
+        }
+        if (this is Summon) {
+            return false;
+        }
+        if (returnedToLife) {
+            return false;
+        }
+        return true;
+    }
     #endregion
 
     #region Morality
