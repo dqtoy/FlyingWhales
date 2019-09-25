@@ -84,6 +84,7 @@ public class SaveDataRegion {
 
             SaveDataWorldObject saveDataWorldObject = new SaveDataWorldObject();
             saveDataWorldObject.Save(region.worldObj);
+            worldObj = saveDataWorldObject;
             //if (region.worldObj is Artifact) {
             //    worldObj = new SaveDataArtifact();
             //} else if (region.worldObj is Summon) {

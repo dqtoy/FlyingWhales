@@ -818,6 +818,13 @@ public class SaveDataLocationGridTile {
     public string structureTileMapAssetName;
     public string objectTileMapAssetName;
 
+    public Matrix4x4 groundTileMapMatrix;
+    public Matrix4x4 roadTileMapMatrix;
+    public Matrix4x4 wallTileMapMatrix;
+    public Matrix4x4 detailTileMapMatrix;
+    public Matrix4x4 structureTileMapMatrix;
+    public Matrix4x4 objectTileMapMatrix;
+
     public void Save(LocationGridTile gridTile) {
         localPlace = new Vector3Save(gridTile.localPlace);
         worldLocation = gridTile.worldLocation;
@@ -875,6 +882,13 @@ public class SaveDataLocationGridTile {
         detailTileMapAssetName = gridTile.parentAreaMap.detailsTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
         structureTileMapAssetName = gridTile.parentAreaMap.structureTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
         objectTileMapAssetName = gridTile.parentAreaMap.objectsTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
+
+        groundTileMapMatrix = gridTile.parentAreaMap.groundTilemap.GetTransformMatrix(gridTile.localPlace);
+        roadTileMapMatrix = gridTile.parentAreaMap.roadTilemap.GetTransformMatrix(gridTile.localPlace);
+        wallTileMapMatrix = gridTile.parentAreaMap.wallTilemap.GetTransformMatrix(gridTile.localPlace);
+        detailTileMapMatrix = gridTile.parentAreaMap.detailsTilemap.GetTransformMatrix(gridTile.localPlace);
+        structureTileMapMatrix = gridTile.parentAreaMap.structureTilemap.GetTransformMatrix(gridTile.localPlace);
+        objectTileMapMatrix = gridTile.parentAreaMap.objectsTilemap.GetTransformMatrix(gridTile.localPlace);
     }
 
     public LocationGridTile Load(Tilemap tilemap, AreaInnerTileMap parentAreaMap, Dictionary<string, TileBase> tileAssetDB) {
@@ -896,6 +910,13 @@ public class SaveDataLocationGridTile {
         tile.parentAreaMap.detailsTilemap.SetTile(tile.localPlace, InteriorMapManager.Instance.TryGetTileAsset(detailTileMapAssetName, tileAssetDB));
         tile.parentAreaMap.structureTilemap.SetTile(tile.localPlace, InteriorMapManager.Instance.TryGetTileAsset(structureTileMapAssetName, tileAssetDB));
         tile.parentAreaMap.objectsTilemap.SetTile(tile.localPlace, InteriorMapManager.Instance.TryGetTileAsset(objectTileMapAssetName, tileAssetDB));
+
+        tile.parentAreaMap.groundTilemap.SetTransformMatrix(tile.localPlace, groundTileMapMatrix);
+        tile.parentAreaMap.roadTilemap.SetTransformMatrix(tile.localPlace, roadTileMapMatrix);
+        tile.parentAreaMap.wallTilemap.SetTransformMatrix(tile.localPlace, wallTileMapMatrix);
+        tile.parentAreaMap.detailsTilemap.SetTransformMatrix(tile.localPlace, detailTileMapMatrix);
+        tile.parentAreaMap.structureTilemap.SetTransformMatrix(tile.localPlace, structureTileMapMatrix);
+        tile.parentAreaMap.objectsTilemap.SetTransformMatrix(tile.localPlace, objectTileMapMatrix);
 
         //TODO: hasDetail
         return tile;
