@@ -993,6 +993,38 @@ public struct GoapEffect {
         }
         return string.Empty;
     }
+    public string conditionKeyToString() {
+        if (conditionKey is string) {
+            return (string)conditionKey;
+        } else if (conditionKey is int) {
+            return ((int)conditionKey).ToString();
+        } else if (conditionKey is Character) {
+            return (conditionKey as Character).id.ToString();
+        } else if (conditionKey is Area) {
+            return (conditionKey as Area).id.ToString();
+        } else if (conditionKey is SpecialToken) {
+            return (conditionKey as SpecialToken).id.ToString();
+        } else if (conditionKey is IPointOfInterest) {
+            return (conditionKey as IPointOfInterest).id.ToString();
+        }
+        return string.Empty;
+    }
+    public string conditionKeyTypeString() {
+        if (conditionKey is string) {
+            return "string";
+        } else if (conditionKey is int) {
+            return "int";
+        } else if (conditionKey is Character) {
+            return "character";
+        } else if (conditionKey is Area) {
+            return "area";
+        } else if (conditionKey is SpecialToken) {
+            return "item";
+        } else if (conditionKey is IPointOfInterest) {
+            return "poi";
+        }
+        return string.Empty;
+    }
 
     public override bool Equals(object obj) {
         if (obj is GoapEffect) {
@@ -1009,6 +1041,89 @@ public struct GoapEffect {
     }
     public override int GetHashCode() {
         return base.GetHashCode();
+    }
+}
+
+[System.Serializable]
+public struct SaveDataGoapEffect {
+    public GOAP_EFFECT_CONDITION conditionType;
+
+    public string conditionKey;
+    public string conditionKeyIdentifier;
+    public POINT_OF_INTEREST_TYPE conditionKeyPOIType;
+    public TILE_OBJECT_TYPE conditionKeyTileObjectType;
+
+
+    public int targetPOIID;
+    public POINT_OF_INTEREST_TYPE targetPOIType;
+    public TILE_OBJECT_TYPE targetPOITileObjectType;
+
+    public void Save(GoapEffect goapEffect) {
+        conditionType = goapEffect.conditionType;
+
+        if(goapEffect.conditionKey != null) {
+            conditionKeyIdentifier = goapEffect.conditionKeyTypeString();
+            conditionKey = goapEffect.conditionKeyToString();
+            if(goapEffect.conditionKey is IPointOfInterest) {
+                conditionKeyPOIType = (goapEffect.conditionKey as IPointOfInterest).poiType;
+            }
+            if (goapEffect.conditionKey is TileObject) {
+                conditionKeyTileObjectType = (goapEffect.conditionKey as TileObject).tileObjectType;
+            }
+        } else {
+            conditionKeyIdentifier = string.Empty;
+        }
+
+        if(goapEffect.targetPOI != null) {
+            targetPOIID = goapEffect.targetPOI.id;
+            targetPOIType = goapEffect.targetPOI.poiType;
+            if(goapEffect.targetPOI is TileObject) {
+                targetPOITileObjectType = (goapEffect.targetPOI as TileObject).tileObjectType;
+            }
+        } else {
+            targetPOIID = -1;
+        }
+    }
+
+    public GoapEffect Load() {
+        GoapEffect effect = new GoapEffect() {
+            conditionType = conditionType,
+        };
+        if(targetPOIID != -1) {
+            GoapEffect tempEffect = effect;
+            if (targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                tempEffect.targetPOI = CharacterManager.Instance.GetCharacterByID(targetPOIID);
+            } else if (targetPOIType == POINT_OF_INTEREST_TYPE.ITEM) {
+                tempEffect.targetPOI = TokenManager.Instance.GetSpecialTokenByID(targetPOIID);
+            } else if (targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                tempEffect.targetPOI = InteriorMapManager.Instance.GetTileObject(targetPOITileObjectType, targetPOIID);
+            }
+            effect = tempEffect;
+        }
+        if(conditionKeyIdentifier != string.Empty) {
+            GoapEffect tempEffect = effect;
+            if (conditionKeyIdentifier == "string") {
+                tempEffect.conditionKey = conditionKey;
+            } else if (conditionKey == "int") {
+                tempEffect.conditionKey = int.Parse(conditionKey);
+            } else if (conditionKey == "character") {
+                tempEffect.conditionKey = CharacterManager.Instance.GetCharacterByID(int.Parse(conditionKey));
+            } else if (conditionKey == "area") {
+                tempEffect.conditionKey = LandmarkManager.Instance.GetAreaByID(int.Parse(conditionKey));
+            } else if (conditionKey == "item") {
+                tempEffect.conditionKey = TokenManager.Instance.GetSpecialTokenByID(int.Parse(conditionKey));
+            } else if (conditionKey == "poi") {
+                if (conditionKeyPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    tempEffect.conditionKey = CharacterManager.Instance.GetCharacterByID(int.Parse(conditionKey));
+                } else if (conditionKeyPOIType == POINT_OF_INTEREST_TYPE.ITEM) {
+                    tempEffect.conditionKey = TokenManager.Instance.GetSpecialTokenByID(int.Parse(conditionKey));
+                } else if (conditionKeyPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    tempEffect.conditionKey = InteriorMapManager.Instance.GetTileObject(conditionKeyTileObjectType, int.Parse(conditionKey));
+                }
+            }
+            effect = tempEffect;
+        }
+        return effect;
     }
 }
 

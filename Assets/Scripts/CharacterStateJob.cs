@@ -15,6 +15,15 @@ public class CharacterStateJob : JobQueueItem {
         this.targetArea = targetArea;
         onUnassignActions = new List<System.Action<Character>>();
     }
+    public CharacterStateJob(SaveDataCharacterStateJob data) : base(data) {
+        targetState = data.targetState;
+        if(data.targetAreaID != -1) {
+            targetArea = LandmarkManager.Instance.GetAreaByID(data.targetAreaID);
+        } else {
+            targetArea = null;
+        }
+        onUnassignActions = new List<System.Action<Character>>();
+    }
 
     #region Overrides
     public override void UnassignJob(bool shouldDoAfterEffect = true) {
@@ -82,4 +91,24 @@ public class CharacterStateJob : JobQueueItem {
     }
     #endregion
 
+}
+
+public class SaveDataCharacterStateJob : SaveDataJobQueueItem {
+    public CHARACTER_STATE targetState;
+    public int targetAreaID;
+
+    public override void Save(JobQueueItem job) {
+        base.Save(job);
+        CharacterStateJob stateJob = job as CharacterStateJob;
+        targetState = stateJob.targetState;
+        if(stateJob.targetArea != null) {
+            targetAreaID = stateJob.targetArea.id;
+        } else {
+            targetAreaID = -1;
+        }
+    }
+
+    //public override JobQueueItem Load() {
+    //    return base.Load();
+    //}
 }

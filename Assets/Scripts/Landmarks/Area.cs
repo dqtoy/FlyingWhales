@@ -1156,7 +1156,7 @@ public class Area {
                         { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
                     });
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
-                    job.SetOnTakeJobAction(OnTakeBrewPotion);
+                    job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeBrewPotion);
                     //job.SetCannotOverrideJob(false);
                     jobQueue.AddJobInQueue(job);
                 }
@@ -1172,7 +1172,7 @@ public class Area {
                         { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[]{ SPECIAL_TOKEN.TOOL } },
                     });
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
-                    job.SetOnTakeJobAction(OnTakeCraftTool);
+                    job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeCraftTool);
                     //job.SetCannotOverrideJob(false);
                     jobQueue.AddJobInQueue(job);
                 }
@@ -1180,16 +1180,6 @@ public class Area {
                 CancelCraftTool();
             }
         }
-    }
-    private void OnTakeBrewPotion(Character character, JobQueueItem job) {
-        GoapPlanJob j = job as GoapPlanJob;
-        j.ClearForcedActions();
-        j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM_GOAP);
-    }
-    private void OnTakeCraftTool(Character character, JobQueueItem job) {
-        GoapPlanJob j = job as GoapPlanJob;
-        j.ClearForcedActions();
-        j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM_GOAP);
     }
     private void CancelBrewPotion() {
         //warehouse has 2 or more healing potions

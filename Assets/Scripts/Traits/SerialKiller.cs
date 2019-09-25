@@ -22,6 +22,7 @@ public class SerialKiller : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
+        canBeTriggered = true;
     }
 
     #region Overrides
@@ -59,6 +60,10 @@ public class SerialKiller : Trait {
                 }
             }
         }
+    }
+    public override void TriggerFlaw(Character character) {
+        base.TriggerFlaw(character);
+        ForceHuntVictim();
     }
     #endregion
 
@@ -123,11 +128,41 @@ public class SerialKiller : Trait {
             }
         }
     }
+    private void ForceHuntVictim() {
+        CheckTargetVictimIfStillAvailable();
+        if (hasStartedFollowing && targetVictim != null) {
+            return;
+        }
+        if (targetVictim == null) {
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character potentialVictim = CharacterManager.Instance.allCharacters[i];
+                if (potentialVictim.specificLocation != this.character.specificLocation || potentialVictim.isDead || potentialVictim is Summon) {
+                    continue;
+                }
+                if (DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
+                    SetTargetVictim(potentialVictim);
+
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
+                    log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    this.character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                    break;
+                }
+            }
+        }
+        if (targetVictim != null) {
+            character.CancelAllJobsAndPlans();
+            FollowTargetVictim();
+            SetHasStartedFollowing(true);
+        }
+    }
     private void CheckerWhileFollowingTargetVictim() {
         if (isFollowing) {
-            if(!character.currentParty.icon.isTravelling || character.marker.targetPOI != targetVictim) {
+            if (!character.currentParty.icon.isTravelling || character.marker.targetPOI != targetVictim) {
                 SetIsFollowing(false);
-                SetHasStartedFollowing(false);
+                if (character.marker.targetPOI != targetVictim) {
+                    SetHasStartedFollowing(false);
+                }
                 return;
             }
 
@@ -141,10 +176,13 @@ public class SerialKiller : Trait {
                 }
             }
         } else {
+            CheckTargetVictimIfStillAvailable();
             if (targetVictim != null) {
                 if (!character.marker.inVisionCharacters.Contains(targetVictim)) {
                     FollowTargetVictim();
                 }
+            } else {
+                SetHasStartedFollowing(false);
             }
         }
     }
@@ -162,7 +200,7 @@ public class SerialKiller : Trait {
     }
     private void CheckTargetVictimIfStillAvailable() {
         if (targetVictim != null) {
-            if (targetVictim.specificLocation != this.character.specificLocation || targetVictim.isDead) {
+            if (targetVictim.specificLocation != this.character.specificLocation || targetVictim.isDead || targetVictim is Summon) {
                 SetTargetVictim(null);
                 if (hasStartedFollowing) {
                     StopFollowing();
@@ -171,7 +209,7 @@ public class SerialKiller : Trait {
             }
         }
     }
-    private void CreateHuntVictimJob() {
+    public void CreateHuntVictimJob() {
         if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
             return;
         }
@@ -325,7 +363,7 @@ public class SerialVictim {
             CHARACTER_ROLE[] roles = new CHARACTER_ROLE[] { CHARACTER_ROLE.CIVILIAN, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER };
             return roles[UnityEngine.Random.Range(0, roles.Length)].ToString();
         } else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
-            string[] traits = new string[] { "Craftsman", "Criminal", "Drunk", "Sick", "Lazy", "Hardworking", "Curious" };
+            string[] traits = new string[] { "Craftsman", "Criminal", "Drunk", "Sick", "Lazy", "Hardworking" }; //, "Curious"
             return traits[UnityEngine.Random.Range(0, traits.Length)];
         } else if (victimType == SERIAL_VICTIM_TYPE.STATUS) {
             string[] statuses = new string[] { "Hungry", "Tired", "Lonely" };

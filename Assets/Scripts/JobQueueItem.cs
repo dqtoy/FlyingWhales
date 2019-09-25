@@ -16,6 +16,7 @@ public class JobQueueItem {
     public bool canBeDoneInLocation { get; private set; } //If a character is unable to create a plan for this job and the value of this is true, push the job to the location job queue
     public bool cancelJobOnDropPlan { get; private set; }
     public bool isStealth { get; private set; }
+    public bool isNotSavable { get; protected set; }
     public List<Character> blacklistedCharacters { get; private set; }
     public int priority { get { return GetPriority(); } }
 
@@ -35,6 +36,7 @@ public class JobQueueItem {
         id = Utilities.SetID(this, data.id);
         name = data.name;
         jobType = data.jobType;
+        isNotSavable = data.isNotSavable;
         blacklistedCharacters = new List<Character>();
         for (int i = 0; i < data.blacklistedCharacterIDs.Count; i++) {
             blacklistedCharacters.Add(CharacterManager.Instance.GetCharacterByID(data.blacklistedCharacterIDs[i]));
@@ -173,6 +175,7 @@ public class SaveDataJobQueueItem {
     public bool canBeDoneInLocation; //If a character is unable to create a plan for this job and the value of this is true, push the job to the location job queue
     public bool cancelJobOnDropPlan;
     public bool isStealth;
+    public bool isNotSavable;
     public List<int> blacklistedCharacterIDs;
 
     public string canTakeThisJobMethodName;
@@ -190,6 +193,7 @@ public class SaveDataJobQueueItem {
         canBeDoneInLocation = job.canBeDoneInLocation;
         cancelJobOnDropPlan = job.cancelJobOnDropPlan;
         isStealth = job.isStealth;
+        isNotSavable = job.isNotSavable;
 
         blacklistedCharacterIDs = new List<int>();
         for (int i = 0; i < job.blacklistedCharacters.Count; i++) {

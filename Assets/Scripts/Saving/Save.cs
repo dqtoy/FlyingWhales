@@ -181,6 +181,12 @@ public class Save {
         }
         playerAreaSave.LoadStructureEntranceTiles();
     }
+    private void LoadAreaJobs() {
+        for (int i = 0; i < nonPlayerAreaSaves.Count; i++) {
+            nonPlayerAreaSaves[i].LoadAreaJobs();
+        }
+        playerAreaSave.LoadAreaJobs();
+    }
 
     public void SaveFactions(List<Faction> factions) {
         factionSaves = new List<SaveDataFaction>();
@@ -233,6 +239,11 @@ public class Save {
     public void LoadCharacterCurrentStates() {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             characterSaves[i].LoadCharacterCurrentState(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
+    private void LoadCharacterJobs() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadCharacterJobs(CharacterManager.Instance.allCharacters[i]);
         }
     }
 
@@ -332,6 +343,11 @@ public class Save {
         for (int i = 0; i < areaMapSaves.Count; i++) {
             areaMapSaves[i].LoadObjectHereOfTiles();
         }
+    }
+
+    public void LoadAllJobs() {
+        LoadAreaJobs();
+        LoadCharacterJobs();
     }
 
     public void SaveCurrentDate() {

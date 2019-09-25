@@ -155,6 +155,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadAreaMapsTileTraits();
         data.LoadTileObjectTraits();
         data.LoadCharacterHomeStructures();
+        data.LoadAllJobs();
         data.LoadCharacterInitialPlacements();
         data.LoadTileObjectsDataAfterLoadingAreaMap();
 

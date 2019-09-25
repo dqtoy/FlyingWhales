@@ -111,6 +111,8 @@ public class SaveDataCharacter {
     public SaveDataCharacterState currentState;
     public bool hasCurrentState;
 
+    public List<SaveDataJobQueueItem> jobs;
+
     public void Save(Character character) {
         id = character.id;
         name = character.name;
@@ -260,6 +262,23 @@ public class SaveDataCharacter {
             currentState = new SaveDataCharacterState();
             currentState.Save(character.stateComponent.currentState);
         }
+
+        jobs = new List<SaveDataJobQueueItem>();
+        for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {
+            JobQueueItem job = character.jobQueue.jobsInQueue[i];
+            if (job.isNotSavable) {
+                continue;
+            }
+            //SaveDataJobQueueItem data = System.Activator.CreateInstance(System.Type.GetType("SaveData" + job.GetType().ToString())) as SaveDataJobQueueItem;
+            SaveDataJobQueueItem data = null;
+            if(job is GoapPlanJob) {
+                data = new SaveDataGoapPlanJob();
+            }else if(job is CharacterStateJob) {
+                data = new SaveDataCharacterStateJob();
+            }
+            data.Save(job);
+            jobs.Add(data);
+        }
     }
 
     public void Load() {
@@ -345,6 +364,12 @@ public class SaveDataCharacter {
                 loadedState.PauseState();
             }
         }
-        
+    }
+
+    public void LoadCharacterJobs(Character character) {
+        for (int i = 0; i < jobs.Count; i++) {
+            JobQueueItem job = jobs[i].Load();
+            character.jobQueue.AddJobInQueue(job, false);
+        }
     }
 }

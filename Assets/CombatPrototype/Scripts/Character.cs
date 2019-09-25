@@ -3785,7 +3785,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         GoapNode goalNode = new GoapNode(null, watchAction.cost, watchAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
-        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.WATCH, goapPlan, this);
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.WATCH, INTERACTION_TYPE.WATCH, this);
         goapPlan.ConstructAllNodes();
         goapPlan.SetDoNotRecalculate(true);
         job.SetCancelOnFail(true);
@@ -4589,9 +4589,7 @@ public class Character : ILeader, IPointOfInterest {
         if (triggerOnAdd) {
             trait.OnAddTrait(this);
         }
-        if (!(trait is RelationshipTrait)) {
-            currentAlterEgo.AddTrait(trait);
-        }
+        currentAlterEgo.AddTrait(trait);
         Messenger.Broadcast(Signals.TRAIT_ADDED, this, trait);
 
 #if !WORLD_CREATION_TOOL
@@ -5175,6 +5173,9 @@ public class Character : ILeader, IPointOfInterest {
         if (returnedToLife) {
             return false;
         }
+        //if(doNotDisturb > 0) {
+        //    return false;
+        //}
         return true;
     }
     #endregion

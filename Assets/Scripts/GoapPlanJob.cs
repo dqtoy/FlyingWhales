@@ -39,6 +39,7 @@ public class GoapPlanJob : JobQueueItem {
         allowDeadTargets = false;
         this.otherData = otherData;
         if (otherData != null) {
+            isNotSavable = true;
             allOtherData = new List<object>();
             foreach (object[] data in otherData.Values) {
                 if (data != null) {
@@ -65,6 +66,7 @@ public class GoapPlanJob : JobQueueItem {
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
         if(otherData != null) {
+            isNotSavable = true;
             allOtherData = new List<object>();
             foreach (object[] data in otherData.Values) {
                 if(data != null) {
@@ -91,6 +93,7 @@ public class GoapPlanJob : JobQueueItem {
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
         if (otherData != null) {
+            isNotSavable = true;
             allOtherData = new List<object>();
             foreach (object[] data in otherData.Values) {
                 if (data != null) {
@@ -106,6 +109,28 @@ public class GoapPlanJob : JobQueueItem {
         this.targetPlan = targetPlan;
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
+        isNotSavable = true;
+    }
+    public GoapPlanJob(SaveDataGoapPlanJob data) : base(data) {
+        targetEffect = data.targetEffect.Load();
+        targetInteractionType = data.targetInteractionType;
+        allowDeadTargets = data.allowDeadTargets;
+        if(data.targetPOIID != -1) {
+            if (data.targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                targetPOI = CharacterManager.Instance.GetCharacterByID(data.targetPOIID);
+            } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.ITEM) {
+                targetPOI = TokenManager.Instance.GetSpecialTokenByID(data.targetPOIID);
+            } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                targetPOI = InteriorMapManager.Instance.GetTileObject(data.targetPOITileObjectType, data.targetPOIID);
+            }
+        } else {
+            targetPOI = null;
+        }
+        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        for (int i = 0; i < data.forcedActionsGoapEffect.Count; i++) {
+            GoapEffect effect = data.forcedActionsGoapEffect[i].Load();
+            forcedActions.Add(effect, data.forcedActionsType[i]);
+        }
     }
 
     #region Overrides 
@@ -297,4 +322,48 @@ public class ForcedActionsComparer : IEqualityComparer<GoapEffect> {
     public int GetHashCode(GoapEffect obj) {
         return obj.GetHashCode();
     }
+}
+
+public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
+    public SaveDataGoapEffect targetEffect;
+    public int targetPOIID;
+    public POINT_OF_INTEREST_TYPE targetPOIType;
+    public TILE_OBJECT_TYPE targetPOITileObjectType;
+    public INTERACTION_TYPE targetInteractionType;
+    public bool allowDeadTargets;
+
+    public List<SaveDataGoapEffect> forcedActionsGoapEffect;
+    public List<INTERACTION_TYPE> forcedActionsType;
+
+    public override void Save(JobQueueItem job) {
+        base.Save(job);
+        GoapPlanJob goapJob = job as GoapPlanJob;
+        allowDeadTargets = goapJob.allowDeadTargets;
+        targetInteractionType = goapJob.targetInteractionType;
+        if (goapJob.targetPOI != null) {
+            targetPOIID = goapJob.targetPOI.id;
+            targetPOIType = goapJob.targetPOI.poiType;
+            if(goapJob.targetPOI is TileObject) {
+                targetPOITileObjectType = (goapJob.targetPOI as TileObject).tileObjectType;
+            }
+        } else {
+            targetPOIID = -1;
+        }
+        targetEffect = new SaveDataGoapEffect();
+        targetEffect.Save(goapJob.targetEffect);
+
+        forcedActionsGoapEffect = new List<SaveDataGoapEffect>();
+        forcedActionsType = new List<INTERACTION_TYPE>();
+        foreach (KeyValuePair<GoapEffect, INTERACTION_TYPE> kvp in goapJob.forcedActions) {
+            SaveDataGoapEffect goapEffect = new SaveDataGoapEffect();
+            goapEffect.Save(kvp.Key);
+            forcedActionsGoapEffect.Add(goapEffect);
+
+            forcedActionsType.Add(kvp.Value);
+        }
+    }
+
+    //public override JobQueueItem Load() {
+    //    return base.Load();
+    //}
 }

@@ -25,6 +25,7 @@ public class SaveDataArea {
     //public List<RACE> possibleOccupants;
     //public List<InitialRaceSetup> initialSpawnSetup;
     public List<SaveDataLocationStructure> structures;
+    public List<SaveDataJobQueueItem> jobs;
 
     public void Save(Area area) {
         id = area.id;
@@ -71,6 +72,23 @@ public class SaveDataArea {
                 structures.Add(data);
             }
         }
+
+        jobs = new List<SaveDataJobQueueItem>();
+        for (int i = 0; i < area.jobQueue.jobsInQueue.Count; i++) {
+            JobQueueItem job = area.jobQueue.jobsInQueue[i];
+            if (job.isNotSavable) {
+                continue;
+            }
+            //SaveDataJobQueueItem data = System.Activator.CreateInstance(System.Type.GetType("SaveData" + job.GetType().ToString())) as SaveDataJobQueueItem;
+            SaveDataJobQueueItem data = null;
+            if (job is GoapPlanJob) {
+                data = new SaveDataGoapPlanJob();
+            } else if (job is CharacterStateJob) {
+                data = new SaveDataCharacterStateJob();
+            }
+            data.Save(job);
+            jobs.Add(data);
+        }
     }
 
     public void Load() {
@@ -93,6 +111,14 @@ public class SaveDataArea {
     public void LoadStructureEntranceTiles() {
         for (int i = 0; i < structures.Count; i++) {
             structures[i].LoadEntranceTile();
+        }
+    }
+
+    public void LoadAreaJobs() {
+        Area area = LandmarkManager.Instance.GetAreaByID(id);
+        for (int i = 0; i < jobs.Count; i++) {
+            JobQueueItem job = jobs[i].Load();
+            area.jobQueue.AddJobInQueue(job, false);
         }
     }
 }

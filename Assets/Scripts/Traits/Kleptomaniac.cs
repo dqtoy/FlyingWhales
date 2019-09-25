@@ -19,6 +19,7 @@ public class Kleptomaniac : Trait {
         daysDuration = 0;
         //effects = new List<TraitEffect>();
         noItemCharacters = new List<Character>();
+        canBeTriggered = true;
     }
 
     #region Overrides
@@ -91,6 +92,19 @@ public class Kleptomaniac : Trait {
             }
         }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+    }
+    public override void TriggerFlaw(Character character) {
+        base.TriggerFlaw(character);
+        //The character will begin Hunt for Blood.
+        if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
+            if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+                character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+            }
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = character });
+            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = character }, INTERACTION_TYPE.ROAMING_TO_STEAL);
+            job.SetCancelOnFail(true);
+            character.jobQueue.AddJobInQueue(job);
+        }
     }
     #endregion
 

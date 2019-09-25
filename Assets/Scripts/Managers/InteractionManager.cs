@@ -353,7 +353,7 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
             if(job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (character.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
+                if (targetCharacter.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
                     return false;
                 }
             }
@@ -368,7 +368,7 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
             if (job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (character.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
+                if (targetCharacter.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
                     return false;
                 }
             }
@@ -383,7 +383,7 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
             if (job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (character.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
+                if (targetCharacter.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
                     return false;
                 }
             }
@@ -423,6 +423,16 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanCharacterTakeDropJob(Character sourceCharacter, Character character, JobQueueItem job) {
         return sourceCharacter != character && sourceCharacter.faction == character.faction && character.GetRelationshipEffectWith(sourceCharacter) != RELATIONSHIP_EFFECT.NEGATIVE;
+    }
+    public void OnTakeBrewPotion(Character character, JobQueueItem job) {
+        GoapPlanJob j = job as GoapPlanJob;
+        j.ClearForcedActions();
+        j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM_GOAP);
+    }
+    public void OnTakeCraftTool(Character character, JobQueueItem job) {
+        GoapPlanJob j = job as GoapPlanJob;
+        j.ClearForcedActions();
+        j.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), targetPOI = character }, INTERACTION_TYPE.CRAFT_ITEM_GOAP);
     }
     #endregion
 }
