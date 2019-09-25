@@ -13,12 +13,13 @@ public class Lycanthropy : Trait {
         name = "Lycanthropy";
         description = "Lycanthropes transform into wolves when they sleep.";
         thoughtText = "[Character] can transform into a wolf.";
-        type = TRAIT_TYPE.SPECIAL;
+        type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
+        canBeTriggered = true;
         //effects = new List<TraitEffect>();
         //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
     }
@@ -172,6 +173,37 @@ public class Lycanthropy : Trait {
         //}
 
         _character.SwitchAlterEgo(CharacterManager.Original_Alter_Ego);
+    }
+
+    public override void TriggerFlaw(Character character) {
+        base.TriggerFlaw(character);
+        //go to a random tile in the wilderness
+        //then check if the character is alone, if not pick another random tile,
+        //repeat the process until alone, then transform to wolf
+        LocationStructure wilderness = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+        LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
+        character.marker.GoTo(randomWildernessTile, CheckIfAlone);
+    }
+
+    private void CheckIfAlone() {
+        if (_character.marker.inVisionCharacters.Count == 0) {
+            //alone
+            if (_character.currentAction != null) {
+                _character.StopCurrentAction(false);
+            }
+            if (_character.stateComponent.currentState != null) {
+                _character.stateComponent.currentState.OnExitThisState();
+            } else if (_character.stateComponent.stateToDo != null) {
+                _character.stateComponent.SetStateToDo(null, false, false);
+            }
+
+            PlanTransformToWolf();
+        } else {
+            //go to a different tile
+            LocationStructure wilderness = _character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+            LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
+            _character.marker.GoTo(randomWildernessTile, CheckIfAlone);
+        }
     }
 }
 

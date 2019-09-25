@@ -1328,7 +1328,7 @@ public class Area {
         if (!CanStillCreateHeroEventJob()) {
             return; //hero events are maxed.
         }
-        if (UnityEngine.Random.Range(0, 100) < 100) {//15
+        if (UnityEngine.Random.Range(0, 100) < 15) {//15
             CharacterStateJob job = new CharacterStateJob(JOB_TYPE.IMPROVE, CHARACTER_STATE.MOVE_OUT, this);
             jobQueue.AddJobInQueue(job);
             //expires at midnight
@@ -1346,7 +1346,7 @@ public class Area {
         if (!CanStillCreateHeroEventJob()) {
             return; //hero events are maxed.
         }
-        if (UnityEngine.Random.Range(0, 100) < 100) {//15
+        if (UnityEngine.Random.Range(0, 100) < 15) {//15
             CharacterStateJob job = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.MOVE_OUT, this);
             //Used lambda expression instead of new function. Reference: https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/lambda-expressions
             job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.ADVENTURER); 
@@ -1366,7 +1366,7 @@ public class Area {
         if (!CanStillCreateHeroEventJob()) {
             return; //hero events are maxed.
         }
-        if (UnityEngine.Random.Range(0, 100) < 100) {//15
+        if (UnityEngine.Random.Range(0, 100) < 15) {//15
             CharacterStateJob job = new CharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.MOVE_OUT, this);
             job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.SOLDIER);
             jobQueue.AddJobInQueue(job);

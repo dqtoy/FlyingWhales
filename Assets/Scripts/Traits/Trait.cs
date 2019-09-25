@@ -122,7 +122,13 @@ public class Trait {
             && character.GetTraitOf(TRAIT_TYPE.DISABLER) == null //disabled characters cannot be triggered
             && !character.currentParty.icon.isTravellingOutside; //characters travelling outside cannot be triggered
     }
-    public virtual string GetTriggerFlawEffectDescription(Character character) {
+    public virtual string GetRequirementDescription(Character character) {
+        return "You may trigger this flaw's negative effect if the character is in a Bad or Dark Mood.";
+    }
+    #endregion
+
+    #region Utilities
+    public string GetTriggerFlawEffectDescription(Character character) {
         if (LocalizationManager.Instance.HasLocalizedValue("Trait", this.GetType().ToString(), "flaw_effect")) {
             Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), "flaw_effect");
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -130,9 +136,6 @@ public class Trait {
         }
         return string.Empty;
     }
-    #endregion
-
-    #region Utilities
     public void SetOnRemoveAction(System.Action onRemoveAction) {
         this.onRemoveAction = onRemoveAction;
     }
