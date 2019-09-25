@@ -82,9 +82,8 @@ public class SaveDataRegion {
         if (region.worldObj != null) {
             hasWorldObject = true;
 
-            SaveDataWorldObject saveDataWorldObject = new SaveDataWorldObject();
-            saveDataWorldObject.Save(region.worldObj);
-            worldObj = saveDataWorldObject;
+            worldObj = new SaveDataWorldObject();
+            worldObj.Save(region.worldObj);
             //if (region.worldObj is Artifact) {
             //    worldObj = new SaveDataArtifact();
             //} else if (region.worldObj is Summon) {

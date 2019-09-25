@@ -105,7 +105,8 @@ public class CharacterStateComponent {
         //newState.SetEndStateAction(endStateAction);
         //newState.SetOtherDataOnStartState(otherData);
         newState.SetTargetCharacter(targetCharacter);
-        newState.EnterState(targetArea);
+        newState.SetTargetArea(targetArea);
+        newState.EnterState();
         return newState;
     }
 
@@ -190,7 +191,7 @@ public class CharacterStateComponent {
                             }
                         } else {
                             SetCurrentState(null);
-                            previousMajorState.EnterState(previousMajorState.targetArea);
+                            previousMajorState.EnterState();
                         }
                     }
                 }
@@ -204,7 +205,7 @@ public class CharacterStateComponent {
         previousState.AfterExitingState();
     }
 
-    private CharacterState CreateNewState(CHARACTER_STATE state) {
+    public CharacterState CreateNewState(CHARACTER_STATE state) {
         CharacterState newState = null;
         switch (state) {
             case CHARACTER_STATE.EXPLORE:

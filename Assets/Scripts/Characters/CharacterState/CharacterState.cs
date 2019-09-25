@@ -145,6 +145,10 @@ public class CharacterState {
     public void SetTargetCharacter(Character target) {
         targetCharacter = target;
     }
+    //Sets the target area of this state, if there's any
+    public void SetTargetArea(Area target) {
+        targetArea = target;
+    }
     //This is the action that is currently being done while in this state, ex. pick up item
     public void SetCurrentlyDoingAction(GoapAction action) {
         currentlyDoingAction = action;
@@ -153,12 +157,12 @@ public class CharacterState {
     //    parentMajorState = majorState;
     //}
     //This is the one must be called to enter and start this state, if it is already done, it cannot start again
-    public void EnterState(Area area) {
+    public void EnterState() {
         if (isDone) {
             return;
         }
         stateComponent.SetStateToDo(this, stopMovement: false);
-        targetArea = area;
+        //targetArea = area;
         if(targetArea == null || targetArea == stateComponent.character.specificLocation) {
             stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
             StartState();
@@ -273,6 +277,9 @@ public class CharacterState {
     internal void ChangeDuration(int newDuration) {
         duration = newDuration;
     }
+    public void SetCurrentDuration(int amount) {
+        currentDuration = amount;
+    }
     /// <summary>
     /// Set if this state only has a specific duration, or will it run indefinitely until stopped.
     /// </summary>
@@ -283,8 +290,53 @@ public class CharacterState {
     #endregion
 }
 
-
+//Combat and Character State with Jobs must not be saved since they have separate process for that
+//Combat is entered when there is hostile or avoid in range
+//Character States with Job are processed in their respective Jobs
 [System.Serializable]
 public class SaveDataCharacterState {
+    public CHARACTER_STATE characterState;
+    public int duration;
+    public int currentDuration;
+    public bool isPaused;
+    public int targetCharacterID;
+    public int targetAreaID;
+    public bool isUnending;
+    public bool hasStarted;
+    public int level;
 
+    public virtual void Save(CharacterState state) {
+        characterState = state.characterState;
+        duration = state.duration;
+        currentDuration = state.currentDuration;
+        isPaused = state.isPaused;
+        isUnending = state.isUnending;
+        hasStarted = state.hasStarted;
+        level = state.level;
+
+        if(state.targetCharacter != null) {
+            targetCharacterID = state.targetCharacter.id;
+        } else {
+            targetCharacterID = -1;
+        }
+        if (state.targetArea != null) {
+            targetAreaID = state.targetArea.id;
+        } else {
+            targetAreaID = -1;
+        }
+    }
+
+    //public virtual CharacterState Load(Character character) {
+    //    CharacterState state = character.stateComponent.CreateNewState(characterState);
+    //    if(targetCharacterID != -1) {
+    //        state.SetTargetCharacter(CharacterManager.Instance.GetCharacterByID(targetCharacterID));
+    //    }
+    //    if (targetAreaID != -1) {
+    //        state.SetTargetArea(LandmarkManager.Instance.GetAreaByID(targetAreaID));
+    //    }
+    //    state.ChangeDuration(duration);
+    //    state.SetCurrentDuration(currentDuration);
+    //    state.SetIsUnending(isUnending);
+    //    state.EnterState();
+    //}
 }
