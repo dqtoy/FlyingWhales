@@ -169,12 +169,12 @@ public class AreaInnerTileMap : MonoBehaviour {
         insideTiles = new List<LocationGridTile>();
 
         LoadGrid(data);
-        SplitMap();
-        Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
-        DrawTownMap(data.generatedTownMapSettings, startPoint);
+        SplitMap(false);
+        //Vector3Int startPoint = new Vector3Int(eastOutsideTiles, southOutsideTiles, 0);
+        //DrawTownMap(data.generatedTownMapSettings, startPoint);
         //TODO: DrawTownMap
         //No need to Place Structures since structure of tile is loaded upon loading grid tile
-        AssignOuterAreas(insideTiles, outsideTiles);
+        //AssignOuterAreas(insideTiles, outsideTiles); //no need for this because structure reference is already saved per location grid tile, and this only assigns the tile to either the wilderness or work area structure
     }
     public void OnMapGenerationFinished() {
         this.name = area.name + "'s Inner Map";
@@ -214,10 +214,12 @@ public class AreaInnerTileMap : MonoBehaviour {
         allTiles = new List<LocationGridTile>();
         allEdgeTiles = new List<LocationGridTile>();
 
+        Dictionary<string, TileBase> tileDB = InteriorMapManager.Instance.GetTileAssetDatabase();
+
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTileForArea(area));
-                LocationGridTile tile = data.map[x][y].Load(groundTilemap, this);
+                //groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTileForArea(area));
+                LocationGridTile tile = data.map[x][y].Load(groundTilemap, this, tileDB);
                 allTiles.Add(tile);
                 if (tile.IsAtEdgeOfWalkableMap()) {
                     allEdgeTiles.Add(tile);
@@ -239,7 +241,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         height = determinedSize.Y;
         GenerateGrid();
     }
-    private void SplitMap() {
+    private void SplitMap(bool changeFloorAssets = true) {
         //assign outer and inner areas
         //outer areas should always be 7 tiles from the edge (except for the east side that is 14 tiles from the edge)
         //values are all +1 to accomodate walls that take 1 tile
@@ -251,13 +253,17 @@ public class AreaInnerTileMap : MonoBehaviour {
                     //outside
                     currTile.SetIsInside(false);
                     //GetOutsideFloorTileForArea(area)
-                    groundTilemap.SetTile(currTile.localPlace, GetOutsideFloorTileForArea(area));
+                    if (changeFloorAssets) {
+                        groundTilemap.SetTile(currTile.localPlace, GetOutsideFloorTileForArea(area));
+                    }
                     outsideTiles.Add(currTile);
                 } else {
                     //inside
                     currTile.SetIsInside(true);
                     //GetOutsideFloorTileForArea(area)
-                    groundTilemap.SetTile(currTile.localPlace, GetOutsideFloorTileForArea(area));
+                    if (changeFloorAssets) {
+                        groundTilemap.SetTile(currTile.localPlace, GetOutsideFloorTileForArea(area));
+                    }
                     insideTiles.Add(currTile);
                 }
             }
@@ -408,12 +414,10 @@ public class AreaInnerTileMap : MonoBehaviour {
     private void AssignOuterAreas(List<LocationGridTile> inTiles, List<LocationGridTile> outTiles) {
         if (area.areaType != AREA_TYPE.DUNGEON) {
             if (area.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
-                List<LocationGridTile> workAreaTiles = new List<LocationGridTile>();
                 for (int i = 0; i < inTiles.Count; i++) {
                     LocationGridTile currTile = inTiles[i];
                     if (currTile.structure == null) {
                         currTile.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
-                        workAreaTiles.Add(currTile);
                     }
                 }
                 //gate.SetStructure(area.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA));
@@ -2016,8 +2020,8 @@ public class SaveDataAreaInnerTileMap {
     }
 
     public void LoadTileTraits() {
-        for (int x = 0; x < map.GetLength(0); x++) {
-            for (int y = 0; y < map.GetLength(1); y++) {
+        for (int x = 0; x < map.Length; x++) {
+            for (int y = 0; y < map[x].Length; y++) {
                 map[x][y].LoadTraits();
             }
         }
@@ -2026,8 +2030,8 @@ public class SaveDataAreaInnerTileMap {
         //}
     }
     public void LoadObjectHereOfTiles() {
-        for (int x = 0; x < map.GetLength(0); x++) {
-            for (int y = 0; y < map.GetLength(1); y++) {
+        for (int x = 0; x < map.Length; x++) {
+            for (int y = 0; y < map[x].Length; y++) {
                 map[x][y].LoadObjectHere();
             }
         }

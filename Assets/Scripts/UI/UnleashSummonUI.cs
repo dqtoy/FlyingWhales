@@ -47,7 +47,6 @@ public class UnleashSummonUI : MonoBehaviour {
     private void Close() {
         gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            UIManager.Instance.SetSpeedTogglesState(true);
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
     }

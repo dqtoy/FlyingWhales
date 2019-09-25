@@ -357,12 +357,32 @@ public class InteriorMapManager : MonoBehaviour {
         }
         return null;
     }
+    /// <summary>
+    /// Convert all tile list to a dictionary for easier accessing of data. Meant to be used when a function is expected to 
+    /// heavily use the tile database, to prevent constant looping of tile database list.
+    /// </summary>
+    /// <returns></returns>
+    public Dictionary<string, TileBase> GetTileAssetDatabase() {
+        Dictionary<string, TileBase> tileDB = new Dictionary<string, TileBase>();
+        for (int i = 0; i < allTileAssets.Count; i++) {
+            TileBase currTile = allTileAssets[i];
+            tileDB.Add(currTile.name, currTile);
+        }
+        return tileDB;
+    }
+    public TileBase TryGetTileAsset(string name, Dictionary<string, TileBase> assets) {
+        if (assets.ContainsKey(name)) {
+            return assets[name];
+        }
+        return null;
+    }
     private List<TileBase> LoadAllTilesAssets() {
         return Resources.LoadAll("Tile Map Assets", typeof(TileBase)).Cast<TileBase>().ToList();
     }
     [ContextMenu("Load Assets")]
     public void LoadTileAssets() {
-        allTileAssets = LoadAllTilesAssets();
+        allTileAssets = LoadAllTilesAssets().Distinct().ToList();
+        allTileAssets.Sort((x, y) => string.Compare(x.name, y.name));
     }
     #endregion
 

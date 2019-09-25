@@ -553,7 +553,7 @@ public class LocationStructure {
     }
     #endregion
     public override string ToString() {
-        return structureType.ToString() + " " + location.structures[structureType].IndexOf(this).ToString() + " at " + location.name;
+        return structureType.ToString() + " " + id.ToString() + " at " + location.name;
     }
 }
 

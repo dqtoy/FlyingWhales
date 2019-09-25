@@ -110,10 +110,11 @@ public class CharacterInfoUI : UIMenu {
         relationshipTraitContainers = Utilities.GetComponentsInDirectChildren<TraitItem>(relationshipTraitsScrollView.content.gameObject);
         inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(itemsScrollView.content.gameObject);
 
-        statusTraitsEventLbl.SetHighlightChecker(ShouldTraitBeHighlighted);
+        //statusTraitsEventLbl.SetHighlightChecker(ShouldTraitBeHighlighted);
 
-        normalTraitsEventLbl.SetHighlightChecker(ShouldTraitBeHighlighted);
+        //normalTraitsEventLbl.SetHighlightChecker(ShouldTraitBeHighlighted);
         normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
+        statusTraitsEventLbl.SetOnClickAction(OnClickTrait);
 
         //InitializeMemoryUI();
 
@@ -425,15 +426,15 @@ public class CharacterInfoUI : UIMenu {
         }
 
     }
-    private bool ShouldTraitBeHighlighted(object obj) {
-        if (obj is string) {
-            string text = (string)obj;
-            int index = int.Parse(text);
-            Trait trait = activeCharacter.normalTraits[index];
-            return trait.canBeTriggered;
-        }
-        return false;
-    }
+    //private bool ShouldTraitBeHighlighted(object obj) {
+    //    if (obj is string) {
+    //        string text = (string)obj;
+    //        int index = int.Parse(text);
+    //        Trait trait = activeCharacter.normalTraits[index];
+    //        return trait.canBeTriggered;
+    //    }
+    //    return false;
+    //}
     public void OnHoverOutTrait() {
         UIManager.Instance.HideSmallInfo();
     }
@@ -443,18 +444,22 @@ public class CharacterInfoUI : UIMenu {
                 string text = (string)obj;
                 int index = int.Parse(text);
                 Trait trait = activeCharacter.normalTraits[index];
+                string traitDescription = trait.description;
                 if (trait.canBeTriggered) {
-                    StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
-                    UIManager.Instance.ShowYesNoConfirmation("Trigger Flaw", trait.description + 
-                        "\n<b>Requirement</b>: " + trait.GetRequirementDescription(activeCharacter) +
-                        "\n<b>Effect</b>: " + trait.GetTriggerFlawEffectDescription(activeCharacter),
-                        onClickYesAction: () => OnClickTriggerFlaw(trait),
-                        showCover: true, layer: 25, yesBtnText: "Trigger Flaw", noBtnText: "Cancel",
-                        yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
-                        pauseAndResume: true
-                    );
-                    normalTraitsEventLbl.ResetHighlightValues();
+                    traitDescription += "\n" + trait.GetRequirementDescription(activeCharacter) +
+                    "\n\n<b>Effect</b>: " + trait.GetTriggerFlawEffectDescription(activeCharacter);
                 }
+
+                StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
+                UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
+                    onClickYesAction: () => OnClickTriggerFlaw(trait),
+                    showCover: true, layer: 25, yesBtnText: "Trigger (" + trait.GetTriggerFlawManaCost(activeCharacter).ToString() + " Mana)",
+                    yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
+                    pauseAndResume: true,
+                    noBtnActive: false,
+                    yesBtnActive: trait.canBeTriggered
+                );
+                normalTraitsEventLbl.ResetHighlightValues();
             }
         } else {
             StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.

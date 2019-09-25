@@ -248,15 +248,15 @@ public class AlterEgoData {
     #endregion
 
     #region Traits
-    public void CopySpecialTraits() {
-        //this.traits = new List<Trait>();
-        for (int i = 0; i < owner.normalTraits.Count; i++) {
-            Trait currTrait = owner.normalTraits[i];
-            if (!currTrait.isPersistent && currTrait.type == TRAIT_TYPE.SPECIAL) {
-                traits.Add(currTrait);
-            }
-        }
-    }
+    //public void CopySpecialTraits() {
+    //    //this.traits = new List<Trait>();
+    //    for (int i = 0; i < owner.normalTraits.Count; i++) {
+    //        Trait currTrait = owner.normalTraits[i];
+    //        if (!currTrait.isPersistent && currTrait.type == TRAIT_TYPE.SPECIAL) {
+    //            traits.Add(currTrait);
+    //        }
+    //    }
+    //}
     public void AddTrait(Trait trait) {
         if (owner.isSwitchingAlterEgo) {
             return; //ignore any changes while the owner is switching alter egos

@@ -4589,7 +4589,9 @@ public class Character : ILeader, IPointOfInterest {
         if (triggerOnAdd) {
             trait.OnAddTrait(this);
         }
-        currentAlterEgo.AddTrait(trait);
+        if (!(trait is RelationshipTrait)) {
+            currentAlterEgo.AddTrait(trait);
+        }
         Messenger.Broadcast(Signals.TRAIT_ADDED, this, trait);
 
 #if !WORLD_CREATION_TOOL
