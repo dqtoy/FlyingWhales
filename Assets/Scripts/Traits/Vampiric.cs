@@ -13,7 +13,7 @@ public class Vampiric : Trait {
         name = "Vampiric";
         description = "Vampires drink other character's blood for sustenance.";
         thoughtText = "[Character] sucks blood.";
-        type = TRAIT_TYPE.SPECIAL;
+        type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         associatedInteraction = INTERACTION_TYPE.NONE;
@@ -23,6 +23,7 @@ public class Vampiric : Trait {
         _flatAttackMod = 100;
         _flatHPMod = 500;
         _flatSpeedMod = 100;
+        canBeTriggered = true;
         //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
     }
 
@@ -82,6 +83,18 @@ public class Vampiric : Trait {
             }
         }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+    }
+    public override void TriggerFlaw(Character character) {
+        base.TriggerFlaw(character);
+        //The character will begin Hunt for Blood.
+        if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
+            if (character.jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
+                character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
+            }
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = character });
+            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = character }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+            character.jobQueue.AddJobInQueue(job);
+        }
     }
     #endregion
 }
