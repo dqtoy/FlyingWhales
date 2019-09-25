@@ -217,7 +217,7 @@ public class AreaInnerTileMap : MonoBehaviour {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTileForArea(area));
-                LocationGridTile tile = data.map[x, y].Load(groundTilemap, this);
+                LocationGridTile tile = data.map[x][y].Load(groundTilemap, this);
                 allTiles.Add(tile);
                 if (tile.IsAtEdgeOfWalkableMap()) {
                     allEdgeTiles.Add(tile);
@@ -1986,7 +1986,7 @@ public class SaveDataAreaInnerTileMap {
     public int width;
     public int height;
     public int areaID;
-    public SaveDataLocationGridTile[,] map;
+    public SaveDataLocationGridTile[][] map;
     public string usedTownCenterTemplateName;
     public TownMapSettings generatedTownMapSettings;
 
@@ -1997,12 +1997,13 @@ public class SaveDataAreaInnerTileMap {
         usedTownCenterTemplateName = innerMap.usedTownCenterTemplateName;
         generatedTownMapSettings = innerMap.generatedTownMapSettings;
 
-        map = new SaveDataLocationGridTile[innerMap.width, innerMap.height];
-        for (int x = 0; x < innerMap.map.GetUpperBound(0) + 1; x++) {
-            for (int y = 0; y < innerMap.map.GetUpperBound(1) + 1; y++) {
+        map = new SaveDataLocationGridTile[width][];
+        for (int x = 0; x < innerMap.map.GetLength(0); x++) {
+            map[x] = new SaveDataLocationGridTile[innerMap.map.GetLength(1)];
+            for (int y = 0; y < innerMap.map.GetLength(1); y++) {
                 SaveDataLocationGridTile data = new SaveDataLocationGridTile();
                 data.Save(innerMap.map[x, y]);
-                map[x, y] = data;
+                map[x][y] = data;
             }
         }
     }
@@ -2015,16 +2016,19 @@ public class SaveDataAreaInnerTileMap {
     }
 
     public void LoadTileTraits() {
-        for (int x = 0; x < map.GetUpperBound(0) + 1; x++) {
-            for (int y = 0; y < map.GetUpperBound(1) + 1; y++) {
-                map[x, y].LoadTraits();
+        for (int x = 0; x < map.GetLength(0); x++) {
+            for (int y = 0; y < map.GetLength(1); y++) {
+                map[x][y].LoadTraits();
             }
         }
+        //for (int i = 0; i < map.Count; i++) {
+        //    map[i]LoadTraits();
+        //}
     }
     public void LoadObjectHereOfTiles() {
-        for (int x = 0; x < map.GetUpperBound(0) + 1; x++) {
-            for (int y = 0; y < map.GetUpperBound(1) + 1; y++) {
-                map[x, y].LoadObjectHere();
+        for (int x = 0; x < map.GetLength(0); x++) {
+            for (int y = 0; y < map.GetLength(1); y++) {
+                map[x][y].LoadObjectHere();
             }
         }
     }
