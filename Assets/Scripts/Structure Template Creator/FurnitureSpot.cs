@@ -18,11 +18,13 @@ public struct FurnitureSpot {
     }
 
     public bool TryGetFurnitureSettings(FURNITURE_TYPE type, out FurnitureSetting setting) {
-        for (int i = 0; i < furnitureSettings.Count; i++) {
-            FurnitureSetting currSetting = furnitureSettings[i];
-            if (currSetting.type == type) {
-                setting = currSetting;
-                return true;
+        if (furnitureSettings != null) {
+            for (int i = 0; i < furnitureSettings.Count; i++) {
+                FurnitureSetting currSetting = furnitureSettings[i];
+                if (currSetting.type == type) {
+                    setting = currSetting;
+                    return true;
+                }
             }
         }
         setting = default(FurnitureSetting);

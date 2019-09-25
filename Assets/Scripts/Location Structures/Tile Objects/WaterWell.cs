@@ -13,7 +13,7 @@ public class WaterWell : TileObject {
         AddTrait(wet);
     }
     public WaterWell(SaveDataTileObject data) {
-        Initialize(TILE_OBJECT_TYPE.WATER_WELL);
+        Initialize(data);
     }
     public override string ToString() {
         return "Well " + id.ToString();
