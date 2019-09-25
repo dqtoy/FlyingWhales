@@ -11,8 +11,10 @@ public struct FurnitureSpot {
 
     public override string ToString() {
         string summary = string.Empty;
-        for (int i = 0; i < allowedFurnitureTypes.Length; i++) {
-            summary += "|" + allowedFurnitureTypes[i].ToString() + "|";
+        if (allowedFurnitureTypes != null) {
+            for (int i = 0; i < allowedFurnitureTypes.Length; i++) {
+                summary += "|" + allowedFurnitureTypes[i].ToString() + "|";
+            }
         }
         return summary;
     }

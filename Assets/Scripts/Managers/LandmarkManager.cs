@@ -879,7 +879,7 @@ public class LandmarkManager : MonoBehaviour {
         //Load other data
         Area area = areaMap.area;
         area.SetAreaMap(areaMap);
-        areaMap.GenerateDetails();
+        //areaMap.GenerateDetails();
 
         areaMap.OnMapGenerationFinished();
         area.OnMapGenerationFinished();

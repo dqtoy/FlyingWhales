@@ -228,6 +228,8 @@ public class AreaInnerTileMap : MonoBehaviour {
             }
         }
         allTiles.ForEach(x => x.FindNeighbours(map));
+
+        groundTilemap.RefreshAllTiles();
     }
     private void GenerateGrid(Dictionary<LocationStructure, LocationStructureSetting> settings) {
         Point determinedSize = GetWidthAndHeightForSettings(settings);
