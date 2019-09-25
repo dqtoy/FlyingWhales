@@ -114,6 +114,9 @@ public class DouseFireState : CharacterState {
                     if (currentTargetSource == burning.sourceOfBurning) {
                         currentTargetSource = null;
                     }
+                    if (fires.Count == 0) {//no more fires left
+                        DetermineAction();
+                    }
                 }
 
             }
