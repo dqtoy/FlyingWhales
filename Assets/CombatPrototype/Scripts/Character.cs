@@ -638,6 +638,9 @@ public class Character : ILeader, IPointOfInterest {
         SetTirednessForcedTick(data.tirednessForcedTick);
 
         returnedToLife = data.returnedToLife;
+        currentSleepTicks = data.currentSleepTicks;
+        sleepScheduleJobID = data.sleepScheduleJobID;
+        hasCancelledSleepSchedule = data.hasCancelledSleepSchedule;
     }
     /// <summary>
     /// Initialize data for this character that is not safe to put in the constructor.

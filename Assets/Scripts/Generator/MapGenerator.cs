@@ -172,14 +172,15 @@ public class MapGenerator : MonoBehaviour {
         AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
         data.LoadCurrentDate();
+        data.LoadWorldEventsAndWorldObject();
+        data.LoadCharacterCurrentStates();
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(false);
         UIManager.Instance.SetSpeedTogglesState(true);
         Messenger.Broadcast(Signals.UPDATE_UI);
         //data.LoadInvasion();
         //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
-        data.LoadWorldEventsAndWorldObject();
-        data.LoadCharacterCurrentStates();
+
     }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();

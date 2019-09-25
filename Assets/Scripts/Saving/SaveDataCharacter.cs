@@ -113,6 +113,10 @@ public class SaveDataCharacter {
 
     public List<SaveDataJobQueueItem> jobs;
 
+    public int currentSleepTicks;
+    public int sleepScheduleJobID;
+    public bool hasCancelledSleepSchedule;
+
     public void Save(Character character) {
         id = character.id;
         name = character.name;
@@ -279,6 +283,10 @@ public class SaveDataCharacter {
             data.Save(job);
             jobs.Add(data);
         }
+
+        currentSleepTicks = character.currentSleepTicks;
+        sleepScheduleJobID = character.sleepScheduleJobID;
+        hasCancelledSleepSchedule = character.hasCancelledSleepSchedule;
     }
 
     public void Load() {

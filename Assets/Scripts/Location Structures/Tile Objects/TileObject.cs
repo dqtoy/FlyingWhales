@@ -94,6 +94,7 @@ public class TileObject : IPointOfInterest {
         awareCharacters = new List<Character>();
         allJobsTargettingThis = new List<JobQueueItem>();
         owners = new List<Character>();
+        targettedByAction = new List<GoapAction>();
         hasCreatedSlots = false;
         InitializeCollisionTrigger();
         InteriorMapManager.Instance.AddTileObject(this);

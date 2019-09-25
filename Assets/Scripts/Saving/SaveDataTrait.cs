@@ -79,6 +79,9 @@ public class SaveDataTrait {
         if (AttributeManager.Instance.IsInstancedTrait(name)) {
             trait = AttributeManager.Instance.CreateNewInstancedTraitClass(name);
         } else {
+            if (!AttributeManager.Instance.allTraits.ContainsKey(name)) {
+                Debug.Log("noooo!");
+            }
             trait = AttributeManager.Instance.allTraits[name];
         }
         trait.SetLevel(level);
