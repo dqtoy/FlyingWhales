@@ -1138,12 +1138,9 @@ public class Area {
         int patrolChance = UnityEngine.Random.Range(0, 100);
         if (patrolChance < 25 && jobQueue.GetNumberOfJobsWith(CHARACTER_STATE.PATROL) < 2) {
             CharacterStateJob stateJob = new CharacterStateJob(JOB_TYPE.PATROL, CHARACTER_STATE.PATROL, null);
-            stateJob.SetCanTakeThisJobChecker(CanDoPatrolAndExplore);
+            stateJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoPatrolAndExplore);
             jobQueue.AddJobInQueue(stateJob);
         }
-    }
-    private bool CanDoPatrolAndExplore(Character character, JobQueueItem job) {
-        return character.GetNormalTrait("Injured") == null;
     }
     public void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
         if (affectedStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
@@ -1158,7 +1155,7 @@ public class Area {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
                         { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
                     });
-                    job.SetCanTakeThisJobChecker(CanBrewPotion);
+                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
                     job.SetOnTakeJobAction(OnTakeBrewPotion);
                     //job.SetCannotOverrideJob(false);
                     jobQueue.AddJobInQueue(job);
@@ -1174,7 +1171,7 @@ public class Area {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.TOOL } },
                         { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[]{ SPECIAL_TOKEN.TOOL } },
                     });
-                    job.SetCanTakeThisJobChecker(CanCraftTool);
+                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
                     job.SetOnTakeJobAction(OnTakeCraftTool);
                     //job.SetCannotOverrideJob(false);
                     jobQueue.AddJobInQueue(job);
@@ -1183,14 +1180,6 @@ public class Area {
                 CancelCraftTool();
             }
         }
-    }
-    private bool CanCraftTool(Character character, JobQueueItem job) {
-        //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.TOOL);
-        return SPECIAL_TOKEN.TOOL.CanBeCraftedBy(character);
-    }
-    private bool CanBrewPotion(Character character, JobQueueItem job) {
-        //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.HEALING_POTION);
-        return SPECIAL_TOKEN.HEALING_POTION.CanBeCraftedBy(character);
     }
     private void OnTakeBrewPotion(Character character, JobQueueItem job) {
         GoapPlanJob j = job as GoapPlanJob;
@@ -1250,16 +1239,8 @@ public class Area {
     }
     private void CreateMoveOutJobs() {
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.MOVE_OUT, CHARACTER_STATE.MOVE_OUT, this);
-        job.SetCanTakeThisJobChecker(CanMoveOut);
+        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanMoveOut);
         jobQueue.AddJobInQueue(job);
-    }
-    private bool CanMoveOut(Character character, JobQueueItem item) {
-        TIME_IN_WORDS time = TIME_IN_WORDS.MORNING;
-        if (character.GetNormalTrait("Nocturnal") != null) {
-            //if nocturnal get after midnight
-            time = TIME_IN_WORDS.AFTER_MIDNIGHT;
-        }
-        return character.role.roleType != CHARACTER_ROLE.LEADER && GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick) == time; //Only non-leaders can take move out job, and it must also be in the morning time.
     }
     /// <summary>
     /// Check if this area should create an obtain food outside job.
@@ -1279,7 +1260,7 @@ public class Area {
     }
     private void CreateObtainFoodOutsideJob() {
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_FOOD_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
-        job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.CIVILIAN);
+        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainFoodOutsideJob);
         jobQueue.AddJobInQueue(job);
     }
     /// <summary>
@@ -1300,7 +1281,7 @@ public class Area {
     }
     private void CreateObtainSupplyOutsideJob() {
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
-        job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.CIVILIAN);
+        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyOutsideJob);
         jobQueue.AddJobInQueue(job);
     }
     private void PerDayHeroEventCreation() {
@@ -1349,7 +1330,7 @@ public class Area {
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
             CharacterStateJob job = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.MOVE_OUT, this);
             //Used lambda expression instead of new function. Reference: https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/lambda-expressions
-            job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.ADVENTURER); 
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoExploreJob); 
             jobQueue.AddJobInQueue(job);
             //expires at midnight
             GameDate expiry = GameManager.Instance.Today();
@@ -1368,7 +1349,7 @@ public class Area {
         }
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
             CharacterStateJob job = new CharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.MOVE_OUT, this);
-            job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.SOLDIER);
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCombatJob);
             jobQueue.AddJobInQueue(job);
             //expires at midnight
             GameDate expiry = GameManager.Instance.Today();

@@ -115,6 +115,7 @@ public class AttributeManager : MonoBehaviour {
             new Pessimist(),
             new Lazy(),
             new Coward(),
+            new Berserked(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);

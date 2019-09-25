@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using System.Reflection;
 
 public class JobQueueItem {
     public int id { get; protected set; }
@@ -27,6 +29,22 @@ public class JobQueueItem {
         this.jobType = jobType;
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.jobType.ToString());
         this.blacklistedCharacters = new List<Character>();
+        SetInitialPriority();
+    }
+    public JobQueueItem(SaveDataJobQueueItem data) {
+        id = Utilities.SetID(this, data.id);
+        name = data.name;
+        jobType = data.jobType;
+        blacklistedCharacters = new List<Character>();
+        for (int i = 0; i < data.blacklistedCharacterIDs.Count; i++) {
+            blacklistedCharacters.Add(CharacterManager.Instance.GetCharacterByID(data.blacklistedCharacterIDs[i]));
+        }
+        SetCannotCancelJob(data.cannotCancelJob);
+        SetCancelOnFail(data.cancelJobOnFail);
+        SetCannotOverrideJob(data.cannotOverrideJob);
+        SetCanBeDoneInLocation(data.canBeDoneInLocation);
+        SetCancelJobOnDropPlan(data.cancelJobOnDropPlan);
+        SetIsStealth(data.isStealth);
         SetInitialPriority();
     }
 
@@ -140,4 +158,86 @@ public class JobQueueItem {
         return jobType.ToString() + " assigned to " + assignedCharacter?.name ?? "None";
     }
     #endregion
+}
+
+[System.Serializable]
+public class SaveDataJobQueueItem {
+    public int id;
+    public string jobTypeIdentifier;
+    //public Character assignedCharacter { get; protected set; }
+    public string name;
+    public JOB_TYPE jobType;
+    public bool cannotCancelJob;
+    public bool cancelJobOnFail;
+    public bool cannotOverrideJob;
+    public bool canBeDoneInLocation; //If a character is unable to create a plan for this job and the value of this is true, push the job to the location job queue
+    public bool cancelJobOnDropPlan;
+    public bool isStealth;
+    public List<int> blacklistedCharacterIDs;
+
+    public string canTakeThisJobMethodName;
+    public string canTakeThisJobWithTargetMethodName;
+    public string onTakeJobActionMethodName;
+
+    public virtual void Save(JobQueueItem job) {
+        id = job.id;
+        jobTypeIdentifier = job.GetType().ToString();
+        name = job.name;
+        jobType = job.jobType;
+        cannotCancelJob = job.cannotCancelJob;
+        cancelJobOnFail = job.cancelJobOnFail;
+        cannotOverrideJob = job.cannotOverrideJob;
+        canBeDoneInLocation = job.canBeDoneInLocation;
+        cancelJobOnDropPlan = job.cancelJobOnDropPlan;
+        isStealth = job.isStealth;
+
+        blacklistedCharacterIDs = new List<int>();
+        for (int i = 0; i < job.blacklistedCharacters.Count; i++) {
+            blacklistedCharacterIDs.Add(job.blacklistedCharacters[i].id);
+        }
+
+        if(job.canTakeThisJob != null) {
+            canTakeThisJobMethodName = job.canTakeThisJob.Method.Name;
+        } else {
+            canTakeThisJobMethodName = string.Empty;
+        }
+        if (job.canTakeThisJobWithTarget != null) {
+            canTakeThisJobWithTargetMethodName = job.canTakeThisJobWithTarget.Method.Name;
+        } else {
+            canTakeThisJobWithTargetMethodName = string.Empty;
+        }
+        if (job.onTakeJobAction != null) {
+            onTakeJobActionMethodName = job.onTakeJobAction.Method.Name;
+        } else {
+            onTakeJobActionMethodName = string.Empty;
+        }
+    }
+
+    public virtual JobQueueItem Load() {
+        JobQueueItem job = System.Activator.CreateInstance(System.Type.GetType(jobTypeIdentifier), this) as JobQueueItem;
+
+        Type thisType = typeof(InteractionManager);
+        if(canTakeThisJobMethodName != string.Empty) {
+            MethodInfo canTakeThisJobMethod = thisType.GetMethod(canTakeThisJobMethodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            if(canTakeThisJobMethod != null) {
+                Func<Character, JobQueueItem, bool> function = (Func<Character, JobQueueItem, bool>) Delegate.CreateDelegate(typeof(Func<Character, JobQueueItem, bool>), canTakeThisJobMethod, false);
+                job.SetCanTakeThisJobChecker(function);
+            }
+        }
+        if (canTakeThisJobWithTargetMethodName != string.Empty) {
+            MethodInfo canTakeThisJobWithTargetMethod = thisType.GetMethod(canTakeThisJobWithTargetMethodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            if (canTakeThisJobWithTargetMethod != null) {
+                Func<Character, Character, JobQueueItem, bool> function = (Func<Character, Character, JobQueueItem, bool>) Delegate.CreateDelegate(typeof(Func<Character, Character, JobQueueItem, bool>), canTakeThisJobWithTargetMethod, false);
+                job.SetCanTakeThisJobChecker(function);
+            }
+        }
+        if (onTakeJobActionMethodName != string.Empty) {
+            MethodInfo onTakeJobActionMethod = thisType.GetMethod(onTakeJobActionMethodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
+            if (onTakeJobActionMethod != null) {
+                Action<Character, JobQueueItem> function = (Action<Character, JobQueueItem>) Delegate.CreateDelegate(typeof(Action<Character, JobQueueItem>), onTakeJobActionMethod, false);
+                job.SetOnTakeJobAction(function);
+            }
+        }
+        return job;
+    }
 }

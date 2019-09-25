@@ -9,6 +9,7 @@ public class CharacterState {
     public CHARACTER_STATE_CATEGORY stateCategory { get; protected set; }
     public int duration { get; protected set; } // 0 means no duration - end state immediately
     public int currentDuration { get; protected set; }
+    public int level { get; protected set; } //Right now, only used in berserk to know what level BerserkBuff will be
     public bool isDone { get; protected set; }
     public bool hasStarted { get; protected set; }
     public bool isPaused { get; protected set; }
@@ -280,5 +281,10 @@ public class CharacterState {
         isUnending = state;
     }
     #endregion
+}
+
+
+[System.Serializable]
+public class SaveDataCharacterState {
 
 }

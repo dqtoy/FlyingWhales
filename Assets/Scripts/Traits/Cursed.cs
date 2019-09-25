@@ -56,13 +56,13 @@ public class Cursed : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
                     new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
                 job.SetCanBeDoneInLocation(true);
-                if (CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
+                if (InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, job)) {
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;
                 } else {
                     if (!IsResponsibleForTrait(characterThatWillDoJob)) {
-                        job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveTraitJob);
                         characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
                     }
                     return false;

@@ -210,66 +210,6 @@ public class Trait {
         return false;
     }
     #endregion
-
-    #region Jobs
-    protected bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
-            if (IsResponsibleForTrait(character)) {
-                return false;
-            }
-            if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
-            }
-            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
-        }
-        return false;
-    }
-    protected bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
-            if (IsResponsibleForTrait(character)) {
-                return false;
-            }
-            if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
-            }
-            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY); //&& character.GetNormalTrait("Doctor") != null;
-        }
-        return false;
-    }
-    protected bool CanCharacterTakeRemoveSpecialIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
-            if (IsResponsibleForTrait(character)) {
-                return false;
-            }
-            if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
-            }
-            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.GetNormalTrait("Doctor") != null;
-        }
-        return false;
-    }
-    protected bool CanTakeBuryJob(Character character, JobQueueItem job) {
-        if(!character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.isAtHomeArea && character.isPartOfHomeFaction
-                && character.role.roleType != CHARACTER_ROLE.BEAST) {
-            return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
-        }
-        return false;
-    }
-    protected bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if(character.isAtHomeArea && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-            return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
-        }
-        return false;
-    }
-    protected bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter, JobQueueItem job) {
-        return targetCharacter.faction != character.faction && character.isAtHomeArea && character.isPartOfHomeFaction
-            && (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER)
-            && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL);
-    }
-    protected bool CanCharacterTakeRepairJob(Character character, JobQueueItem job) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER;
-    }
-    #endregion
 }
 
 [System.Serializable]
