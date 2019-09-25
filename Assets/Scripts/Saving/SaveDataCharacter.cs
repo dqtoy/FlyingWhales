@@ -108,6 +108,9 @@ public class SaveDataCharacter {
     public List<int> nonLethalHostilesInRangeIDs;
     public List<int> avoidInRangeIDs;
 
+    public SaveDataCharacterState currentState;
+    public bool hasCurrentState;
+
     public void Save(Character character) {
         id = character.id;
         name = character.name;
@@ -251,6 +254,12 @@ public class SaveDataCharacter {
                 avoidInRangeIDs.Add(character.marker.avoidInRange[i].id);
             }
         }
+
+        hasCurrentState = character.stateComponent.currentState != null && character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT && character.stateComponent.currentState.job == null;
+        if (hasCurrentState) {
+            currentState = new SaveDataCharacterState();
+            currentState.Save(character.stateComponent.currentState);
+        }
     }
 
     public void Load() {
@@ -285,7 +294,7 @@ public class SaveDataCharacter {
     }
 
     public void LoadHomeStructure(Character character) {
-        if(homeStructureID != -1) {
+        if (homeStructureID != -1) {
             Area area = LandmarkManager.Instance.GetAreaByID(homeStructureAreaID);
             LocationStructure structure = area.GetStructureByID(homeStructureType, homeStructureID);
             character.MigrateHomeStructureTo(structure as Dwelling);
@@ -293,7 +302,7 @@ public class SaveDataCharacter {
     }
 
     public void LoadCharacterGridTileLocation(Character character) {
-        if(gridTileLocation.z != -1f) {
+        if (gridTileLocation.z != -1f) {
             Area area = LandmarkManager.Instance.GetAreaByID(gridTileLocationAreaID);
             LocationGridTile gridTile = area.areaMap.map[(int) gridTileLocation.x, (int) gridTileLocation.y];
 
@@ -315,5 +324,27 @@ public class SaveDataCharacter {
                 character.marker.AddAvoidInRange(target);
             }
         }
+    }
+
+    public void LoadCharacterCurrentState(Character character) {
+        if (hasCurrentState) {
+            Character targetCharacter = null;
+            Area targetArea = null;
+            if (currentState.targetCharacterID != -1) {
+                targetCharacter = CharacterManager.Instance.GetCharacterByID(currentState.targetCharacterID);
+            }
+            if (currentState.targetAreaID != -1) {
+                targetArea = LandmarkManager.Instance.GetAreaByID(currentState.targetAreaID);
+            }
+
+            CharacterState loadedState = character.stateComponent.SwitchToState(currentState.characterState, targetCharacter, targetArea, currentState.duration, currentState.level);
+            loadedState.SetCurrentDuration(currentState.currentDuration);
+            loadedState.SetIsUnending(currentState.isUnending);
+
+            if (currentState.isPaused) {
+                loadedState.PauseState();
+            }
+        }
+        
     }
 }

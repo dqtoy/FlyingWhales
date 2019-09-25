@@ -230,6 +230,11 @@ public class Save {
             characterSaves[i].LoadCharacterGridTileLocation(CharacterManager.Instance.allCharacters[i]);
         }
     }
+    public void LoadCharacterCurrentStates() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadCharacterCurrentState(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
 
     public void SavePlayer(Player player) {
         playerSave = new SaveDataPlayer();

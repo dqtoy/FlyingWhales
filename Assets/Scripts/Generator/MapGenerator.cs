@@ -178,6 +178,7 @@ public class MapGenerator : MonoBehaviour {
         //data.LoadInvasion();
         //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
         data.LoadWorldEventsAndWorldObject();
+        data.LoadCharacterCurrentStates();
     }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
