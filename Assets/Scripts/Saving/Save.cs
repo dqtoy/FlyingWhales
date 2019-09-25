@@ -202,6 +202,11 @@ public class Save {
             factionSaves[i].Load(allLandmarks);
         }
     }
+    public void LoadFactionsActiveQuests() {
+        for (int i = 0; i < factionSaves.Count; i++) {
+            factionSaves[i].LoadFactionActiveQuest();
+        }
+    }
 
     public void SaveCharacters(List<Character> characters) {
         characterSaves = new List<SaveDataCharacter>();
@@ -346,6 +351,7 @@ public class Save {
     }
 
     public void LoadAllJobs() {
+        //Loads all jobs except for quest jobs because it will be loaded when the quest is loaded
         LoadAreaJobs();
         LoadCharacterJobs();
     }

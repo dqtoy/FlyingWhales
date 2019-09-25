@@ -32,6 +32,9 @@ public class SaveDataFaction {
     public bool isActive;
     //public List<Log> history { get; private set; }
 
+    public SaveDataQuest activeQuest;
+    public bool hasActiveQuest;
+
     public void Save(Faction faction) {
         id = faction.id;
         name = faction.name;
@@ -65,6 +68,12 @@ public class SaveDataFaction {
         for (int i = 0; i < faction.ownedRegions.Count; i++) {
             ownedRegionIDs.Add(faction.ownedRegions[i].id);
         }
+
+        hasActiveQuest = faction.activeQuest != null;
+        if (hasActiveQuest) {
+            activeQuest = new SaveDataQuest();
+            activeQuest.Save(faction.activeQuest);
+        }
     }
 
     public void Load(List<BaseLandmark> allLandmarks) {
@@ -83,6 +92,15 @@ public class SaveDataFaction {
         for (int i = 0; i < ownedRegionIDs.Count; i++) {
             Region region = GridMap.Instance.GetRegionByID(ownedRegionIDs[i]);
             LandmarkManager.Instance.OwnRegion(faction, faction.race, region);
+        }
+    }
+
+    public void LoadFactionActiveQuest() {
+        if (hasActiveQuest) {
+            Quest quest = activeQuest.Load();
+            if (activeQuest.isActivated) {
+                quest.factionOwner.SetActiveQuest(quest);
+            }
         }
     }
 }

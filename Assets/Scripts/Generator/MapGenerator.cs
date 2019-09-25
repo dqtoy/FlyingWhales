@@ -174,6 +174,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadCurrentDate();
         data.LoadWorldEventsAndWorldObject();
         data.LoadCharacterCurrentStates();
+        data.LoadFactionsActiveQuests();
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(false);
         UIManager.Instance.SetSpeedTogglesState(true);
