@@ -78,6 +78,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("World UI")]
     [SerializeField] private RectTransform worldUIParent;
+    [SerializeField] private GraphicRaycaster worldUIRaycaster;
     [SerializeField] private GameObject worldEventIconPrefab;
 
     [Space(10)]
@@ -366,6 +367,7 @@ public class UIManager : MonoBehaviour {
     /// Resume the last speed that the player was in before pausing the game.
     /// </summary>
     public void ResumeLastProgressionSpeed() {
+        SetSpeedTogglesState(true);
         if (GameManager.Instance.lastProgressionBeforePausing == "paused") {
             //pause the game
             Pause();
@@ -386,7 +388,6 @@ public class UIManager : MonoBehaviour {
             Pause();
             SetSpeedTogglesState(false);
         } else {
-            SetSpeedTogglesState(true);
             ResumeLastProgressionSpeed();
         }
     }
@@ -1186,10 +1187,12 @@ public class UIManager : MonoBehaviour {
     private void OnAreaMapOpened(Area area) {
         //returnToWorldBtn.interactable = true;
         //ShowPlayerNotificationArea();
+        worldUIRaycaster.enabled = false;
     }
     private void OnAreaMapClosed(Area area) {
         //returnToWorldBtn.interactable = false;
         //HidePlayerNotificationArea();
+        worldUIRaycaster.enabled = true;
     }
     //public void PointerClickWorldMap(BaseEventData bed) {
     //    //PointerEventData ped = bed as PointerEventData;
@@ -1389,11 +1392,14 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI yesNoDescriptionLbl;
     [SerializeField] private Button yesBtn;
     [SerializeField] private Button noBtn;
+    [SerializeField] private Button closeBtn;
     [SerializeField] private TextMeshProUGUI yesBtnLbl;
     [SerializeField] private TextMeshProUGUI noBtnLbl;
-    public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null
-        , bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool pauseAndResume = false) {
+    public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null,
+        bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool noBtnInteractable = true, bool pauseAndResume = false, 
+        bool yesBtnActive = true, bool noBtnActive = true) {
         if (pauseAndResume) {
+            SetSpeedTogglesState(false);
             Pause();
         }
         yesNoHeaderLbl.text = header;
@@ -1402,22 +1408,38 @@ public class UIManager : MonoBehaviour {
         yesBtnLbl.text = yesBtnText;
         noBtnLbl.text = noBtnText;
 
-        yesBtn.interactable = yesBtnInteractable;
+        yesBtn.gameObject.SetActive(yesBtnActive);
+        noBtn.gameObject.SetActive(noBtnActive);
 
+        yesBtn.interactable = yesBtnInteractable;
+        noBtn.interactable = noBtnInteractable;
+
+        //clear all listeners
         yesBtn.onClick.RemoveAllListeners();
         noBtn.onClick.RemoveAllListeners();
+        closeBtn.onClick.RemoveAllListeners();
+
+        //hide confirmation menu on click
         yesBtn.onClick.AddListener(HideYesNoConfirmation);
         noBtn.onClick.AddListener(HideYesNoConfirmation);
+        closeBtn.onClick.AddListener(HideYesNoConfirmation);
+
+        //resume last prog speed on click any btn
         if (pauseAndResume) {
             yesBtn.onClick.AddListener(ResumeLastProgressionSpeed);
             noBtn.onClick.AddListener(ResumeLastProgressionSpeed);
+            closeBtn.onClick.AddListener(ResumeLastProgressionSpeed);
         }
+
+        //specific actions
         if (onClickYesAction != null) {
             yesBtn.onClick.AddListener(onClickYesAction.Invoke);
         }
         if (onClickNoAction != null) {
             noBtn.onClick.AddListener(onClickNoAction.Invoke);
+            closeBtn.onClick.AddListener(onClickNoAction.Invoke);
         }
+
         yesNoGO.SetActive(true);
         yesNoGO.transform.SetSiblingIndex(layer);
         yesNoCover.SetActive(showCover);

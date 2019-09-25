@@ -1559,7 +1559,6 @@ public class PlayerUI : MonoBehaviour {
     public void OnClickOKGeneralConfirmation() {
         generalConfirmationGO.SetActive(false);
         if (!TryShowPendingUI()) {
-            UIManager.Instance.SetSpeedTogglesState(true);
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
     }
@@ -1582,7 +1581,6 @@ public class PlayerUI : MonoBehaviour {
     public void HideNewMinionUI() {
         newMinionUIGO.SetActive(false);
         if (!TryShowPendingUI()) {
-            UIManager.Instance.SetSpeedTogglesState(true);
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
     }

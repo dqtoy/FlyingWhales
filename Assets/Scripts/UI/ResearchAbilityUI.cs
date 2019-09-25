@@ -91,7 +91,6 @@ public class ResearchAbilityUI : MonoBehaviour {
     public void OnClickOk() {
         gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            UIManager.Instance.SetSpeedTogglesState(true);
             //if (PlayerManager.Instance.player.isNotFirstResearch) {
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
             //}

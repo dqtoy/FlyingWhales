@@ -101,7 +101,6 @@ public class LevelUpUI : MonoBehaviour {
     private void Close() {
         this.gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            UIManager.Instance.SetSpeedTogglesState(true);
             UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
         

@@ -92,12 +92,7 @@ public class Trait {
     public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
     public virtual bool OnStartPerformGoapAction(GoapAction action, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
     public virtual void TriggerFlaw(Character character) {
-        int manaCost = 0;
-        if (character.currentMoodType == CHARACTER_MOOD.BAD) {
-            manaCost = 100;
-        } else if (character.currentMoodType == CHARACTER_MOOD.DARK) {
-            manaCost = 50;
-        }
+        int manaCost = GetTriggerFlawManaCost(character); ;
 
         PlayerManager.Instance.player.AdjustMana(-manaCost);
     }
@@ -109,25 +104,28 @@ public class Trait {
     /// <returns>true or false</returns>
     public virtual bool CanFlawBeTriggered(Character character) {
         //return true;
-        //Triggering while in a bad mood costs more Mana (100) than triggering while in a dark mood (50).
-        int manaCost = 0;
-        if (character.currentMoodType == CHARACTER_MOOD.BAD) {
-            manaCost = 100;
-        } else if (character.currentMoodType == CHARACTER_MOOD.DARK) {
-            manaCost = 50;
-        } else {
-            return false;
-        }
+        int manaCost = GetTriggerFlawManaCost(character); ;
+       
         return PlayerManager.Instance.player.mana >= manaCost 
             && character.GetTraitOf(TRAIT_TYPE.DISABLER) == null //disabled characters cannot be triggered
             && !character.currentParty.icon.isTravellingOutside; //characters travelling outside cannot be triggered
     }
     public virtual string GetRequirementDescription(Character character) {
-        return "You may trigger this flaw's negative effect if the character is in a Bad or Dark Mood.";
+        return "Mana cost of triggering this flaw's negative effect depends on the character's mood. The darker the mood, the cheaper the cost.";
     }
     #endregion
 
     #region Utilities
+    public int GetTriggerFlawManaCost(Character character) {
+        //Triggering while in a bad mood costs more Mana (100) than triggering while in a dark mood (50). Great and good mood costs 200 mana.
+        if (character.currentMoodType == CHARACTER_MOOD.BAD) {
+            return 100;
+        } else if (character.currentMoodType == CHARACTER_MOOD.DARK) {
+            return 50;
+        } else {
+            return 200; //great or good
+        }
+    }
     public string GetTriggerFlawEffectDescription(Character character) {
         if (LocalizationManager.Instance.HasLocalizedValue("Trait", this.GetType().ToString(), "flaw_effect")) {
             Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), "flaw_effect");
