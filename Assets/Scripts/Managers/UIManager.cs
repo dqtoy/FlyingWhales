@@ -213,6 +213,10 @@ public class UIManager : MonoBehaviour {
 
         Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
         Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_DESPAWNED, OnWorldEventDespawned);
+
+        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnUIMenuOpened);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnUIMenuClosed);
+
         UpdateUI();
     }
     private void OnGameLoaded() {
@@ -274,7 +278,6 @@ public class UIManager : MonoBehaviour {
             }
         }
     }
-
     private void UpdateUI() {
         //dateLbl.SetText(GameManager.Instance.continuousDays + "/" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
         dateLbl.SetText("Day " + GameManager.Instance.continuousDays + "\n" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
@@ -610,6 +613,16 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region UI Utilities
+    private void OnUIMenuOpened(UIMenu menu) {
+        if (menu is AreaInfoUI || menu is RegionInfoUI) {
+            MoveNotificationMenuToModifiedPos();
+        }
+    }
+    private void OnUIMenuClosed(UIMenu menu) {
+        if (menu is AreaInfoUI || menu is RegionInfoUI) {
+            MoveNotificationMenuToDefaultPos();
+        }
+    }
     public void RepositionGridCallback(UIGrid thisGrid) {
         StartCoroutine(RepositionGrid(thisGrid));
     }
@@ -1314,6 +1327,12 @@ public class UIManager : MonoBehaviour {
     }
     public void HidePlayerNotificationArea() {
         playerNotifGO.SetActive(false);
+    }
+    private void MoveNotificationMenuToDefaultPos() {
+        playerNotificationParent.anchoredPosition = new Vector2(506f, 14f);
+    }
+    private void MoveNotificationMenuToModifiedPos() {
+        playerNotificationParent.anchoredPosition = new Vector2(930f, 14f);
     }
     #endregion
 
