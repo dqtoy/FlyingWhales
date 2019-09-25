@@ -37,7 +37,7 @@ public class SupplyPile : TileObject {
         if (suppliesInPile < 100) {
             if (!structureLocation.location.jobQueue.HasJob(JOB_TYPE.OBTAIN_SUPPLY, this)) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_SUPPLY, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = this });
-                job.SetCanTakeThisJobChecker(CanCharacterTakeThisJob);
+                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
                 structureLocation.location.jobQueue.AddJobInQueue(job);
             }
         } else {
@@ -55,10 +55,6 @@ public class SupplyPile : TileObject {
         if (adjustment < 0) {
             Messenger.Broadcast(Signals.SUPPLY_IN_PILE_REDUCED, this);
         }
-    }
-
-    private bool CanCharacterTakeThisJob(Character character, JobQueueItem job) {
-        return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     public bool HasSupply() {
         if (structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE) {

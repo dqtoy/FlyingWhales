@@ -31,11 +31,11 @@ public class Dead : Trait {
                 buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
                 buryJob.AllowDeadTargets();
                 buryJob.SetCanBeDoneInLocation(true);
-                if (CanTakeBuryJob(characterThatWillDoJob, null)) {
+                if (InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, buryJob)) {
                     characterThatWillDoJob.jobQueue.AddJobInQueue(buryJob, false);
                     return true;
                 } else {
-                    buryJob.SetCanTakeThisJobChecker(CanTakeBuryJob);
+                    buryJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanTakeBuryJob);
                     characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(buryJob, false);
                     return false;
                 }

@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class StrollState : CharacterState {
-    private int _currentDuration;
 
     public StrollState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Stroll State";
         characterState = CHARACTER_STATE.STROLL;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = GameManager.ticksPerHour;
-        _currentDuration = 0;
     }
 
     #region Overrides
@@ -21,15 +19,15 @@ public class StrollState : CharacterState {
     protected override void PerTickInState() {
         base.PerTickInState();
         if (!isDone && !isPaused && !isUnending) {
-            if (_currentDuration >= 4) {
-                _currentDuration = 0;
+            if (currentDuration >= 4) {
+                currentDuration = 0;
                 if (!stateComponent.character.PlanFullnessRecoveryActions(true)) {
                     if (!stateComponent.character.PlanTirednessRecoveryActions(true)) {
                         stateComponent.character.PlanHappinessRecoveryActions(true);
                     }
                 }
             } else {
-                _currentDuration++;
+                currentDuration++;
             }
         }
     }

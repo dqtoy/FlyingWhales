@@ -49,12 +49,12 @@ public class Plagued : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
                     new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
                 job.SetCanBeDoneInLocation(true);
-                if (CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, targetCharacter, null)) {
+                if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, targetCharacter, job)) {
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;
                 } else {
                     if (!IsResponsibleForTrait(characterThatWillDoJob)) {
-                        job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveSpecialIllnessesJob);
+                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
                         characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
                     }
                     return false;

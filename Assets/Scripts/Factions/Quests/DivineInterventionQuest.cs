@@ -78,9 +78,6 @@ public class DivineInterventionQuest : Quest {
             Debug.Log(summary);
         }
     }
-    private bool CanCharacterTakeBuildGoddessStatueJob(Character character, JobQueueItem item) {
-        return character.GetNormalTrait("Craftsman") != null;
-    }
     private bool IsThereStillEmptyGoddessStatueSpot() {
         return region.area.GetTileObjectsOfType(TILE_OBJECT_TYPE.GODDESS_STATUE).Where(x => x.state == POI_STATE.INACTIVE).ToList().Count > 0;
     }
@@ -151,7 +148,7 @@ public class DivineInterventionQuest : Quest {
         List<TileObject> goddessStatues = region.area.GetTileObjectsOfType(TILE_OBJECT_TYPE.GODDESS_STATUE).Where(x => x.state == POI_STATE.INACTIVE).ToList();
         TileObject target = goddessStatues[Random.Range(0, goddessStatues.Count)];
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_GODDESS_STATUE, INTERACTION_TYPE.CRAFT_TILE_OBJECT, target);
-        job.SetCanTakeThisJobChecker(CanCharacterTakeBuildGoddessStatueJob);
+        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeBuildGoddessStatueJob);
         jobQueue.AddJobInQueue(job);
 
         //expires at end of day
@@ -164,7 +161,7 @@ public class DivineInterventionQuest : Quest {
     #region Destroy Profane
     private void CreateDestroyProfaneJob() {
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK, CHARACTER_STATE.MOVE_OUT, null);
-        job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.SOLDIER);
+        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoDestroyProfaneJob);
         jobQueue.AddJobInQueue(job);
 
         //expires at end of day
@@ -177,7 +174,7 @@ public class DivineInterventionQuest : Quest {
     #region Holy Incantation
     private void CreateHolyIncantationJob() {
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.PERFORM_HOLY_INCANTATION, CHARACTER_STATE.MOVE_OUT, null);
-        job.SetCanTakeThisJobChecker((character, item) => character.role.roleType == CHARACTER_ROLE.ADVENTURER);
+        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoHolyIncantationJob);
         jobQueue.AddJobInQueue(job);
 
         //expires at end of day

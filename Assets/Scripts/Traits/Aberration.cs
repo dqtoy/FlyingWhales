@@ -30,13 +30,13 @@ public class Aberration : Trait {
                 job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                 //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = characterThatWillDoJob.homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
                 job.SetCanBeDoneInLocation(true);
-                if (CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, null)) {
+                if (InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, job)) {
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;
                 } else {
-                    job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
+                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
                     characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
                     return false;
                 }

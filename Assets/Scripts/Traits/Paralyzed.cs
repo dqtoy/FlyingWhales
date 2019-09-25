@@ -40,11 +40,11 @@ public class Paralyzed : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
                 job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                 job.SetCanBeDoneInLocation(true);
-                if (CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, null)) {
+                if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, job)) {
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;
                 } else {
-                    job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
+                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
                     characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
                     return false;
                 }
@@ -82,7 +82,7 @@ public class Paralyzed : Trait {
                 new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.DROP, new object[] { dropLocationStructure }
                 } });
-            job.SetCanTakeThisJobChecker(CanCharacterTakeDropJob);
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeDropJob);
             character.specificLocation.jobQueue.AddJobInQueue(job);
             return true;
         }
@@ -94,14 +94,11 @@ public class Paralyzed : Trait {
                 new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.DROP, new object[] { dropLocationStructure, dropGridTile }
                 } });
-            job.SetCanTakeThisJobChecker(CanCharacterTakeDropJob);
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeDropJob);
             character.specificLocation.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
-    }
-    private bool CanCharacterTakeDropJob(Character character, JobQueueItem job) {
-        return this.character != character && this.character.faction == character.faction && character.GetRelationshipEffectWith(this.character) != RELATIONSHIP_EFFECT.NEGATIVE;
     }
     private void OnCharacterFinishedAction(Character character, GoapAction action, string result) {
         if(action.goapType == INTERACTION_TYPE.DROP && action.poiTarget == this.character) {
@@ -127,14 +124,11 @@ public class Paralyzed : Trait {
         if (!character.HasJobTargettingThis(JOB_TYPE.FEED) && !character.HasJobTargettingThis(JOB_TYPE.DROP) && character.specificLocation.IsResident(character)) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = character };
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect);
-            job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);
             character.specificLocation.jobQueue.AddJobInQueue(job);
             return true;
         }
         return false;
-    }
-    private bool CanCharacterTakeFeedJob(Character character, JobQueueItem job) {
-        return this.character != character && this.character.faction == character.faction && character.GetRelationshipEffectWith(this.character) != RELATIONSHIP_EFFECT.NEGATIVE;
     }
     #endregion
 

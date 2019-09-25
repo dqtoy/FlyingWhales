@@ -21,6 +21,9 @@ public class BerserkedState : CharacterState {
         stateComponent.character.AdjustDoNotGetLonely(1);
         stateComponent.character.AdjustDoNotGetTired(1);
         stateComponent.character.AddTrait("Berserked");
+        BerserkBuff berserkBuff = new BerserkBuff();
+        berserkBuff.SetLevel(level);
+        stateComponent.character.AddTrait(berserkBuff);
         base.StartState();
     }
     protected override void EndState() {
@@ -31,6 +34,7 @@ public class BerserkedState : CharacterState {
         stateComponent.character.AdjustHappiness(50);
         stateComponent.character.AdjustTiredness(50);
         stateComponent.character.RemoveTrait("Berserked");
+        stateComponent.character.RemoveTrait("Berserk Buff");
     }
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();

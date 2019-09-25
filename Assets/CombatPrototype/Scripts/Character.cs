@@ -165,6 +165,8 @@ public class Character : ILeader, IPointOfInterest {
     public List<string> locationHistory { get; private set; }
     public List<string> actionHistory { get; private set; }
 
+    public FURNITURE_TYPE furnitureToCreate { get; private set; }
+
     #region getters / setters
     public string firstName {
         get { return _firstName; }
@@ -1875,14 +1877,14 @@ public class Character : ILeader, IPointOfInterest {
                     if (mostNeededFacility != FACILITY_TYPE.NONE) {
                         List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
                         LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
-                        FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
+                        furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
 
                         object[] otherData = new object[] { chosenTile, furnitureToCreate };
 
                         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE, this, new Dictionary<INTERACTION_TYPE, object[]>() {
                                 { INTERACTION_TYPE.CRAFT_FURNITURE, otherData }
                         });
-                        job.SetCanTakeThisJobChecker((character, item) => furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(character));
+                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
                         if (furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
                             if (!jobQueue.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
                                 jobQueue.AddJobInQueue(job);
@@ -2268,12 +2270,9 @@ public class Character : ILeader, IPointOfInterest {
     }
     private GoapPlanJob CreateSuicideJob() {
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SUICIDE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = this });
-        job.SetCanTakeThisJobChecker(IsSuicideJobStillValid);
+        job.SetCanTakeThisJobChecker(InteractionManager.Instance.IsSuicideJobStillValid);
         jobQueue.AddJobInQueue(job);
         return job;
-    }
-    private bool IsSuicideJobStillValid(Character character, JobQueueItem item) {
-        return character.GetNormalTrait("Forlorn") != null;
     }
     /// <summary>
     /// Gets the current priority of the character's current action or state.

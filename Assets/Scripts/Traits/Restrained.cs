@@ -83,9 +83,11 @@ public class Restrained : Trait {
                 return false;
             }
             if (!targetCharacter.isAtHomeArea && !targetCharacter.isPartOfHomeFaction) {
-                if(CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    characterThatWillDoJob.CreateSaveCharacterJob(targetCharacter, false);
-                    return true;
+                if(InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                    if (!IsResponsibleForTrait(characterThatWillDoJob)) {
+                        characterThatWillDoJob.CreateSaveCharacterJob(targetCharacter, false);
+                        return true;
+                    }
                 }
             } else {
                 if (!targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
@@ -93,13 +95,13 @@ public class Restrained : Trait {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
                         new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.TOOL } }, });
                     job.SetCanBeDoneInLocation(true);
-                    if (CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
+                    if (InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, job)) {
                         //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
                     } else {
                         if (!IsResponsibleForTrait(characterThatWillDoJob)) {
-                            job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveTraitJob);
                             characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
                         }
                         return false;
@@ -125,7 +127,7 @@ public class Restrained : Trait {
         if (!_sourceCharacter.HasJobTargettingThis(JOB_TYPE.FEED)) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = _sourceCharacter };
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect);
-            job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainedFeedJob);
             _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(job);
         }
     }
@@ -138,29 +140,16 @@ public class Restrained : Trait {
         } else {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = _sourceCharacter };
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect);
-            job.SetCanTakeThisJobChecker(CanCharacterTakeFeedJob);
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainedFeedJob);
             _sourceCharacter.specificLocation.jobQueue.AddJobInQueue(job);
         }
-    }
-    private bool CanCharacterTakeFeedJob(Character character, JobQueueItem job) {
-        if (_sourceCharacter.specificLocation.IsResident(character)) {
-            if(character.faction.id != FactionManager.Instance.neutralFaction.id) {
-                return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
-            } else {
-                return character.role.roleType != CHARACTER_ROLE.BEAST && _sourceCharacter.currentStructure.structureType.IsOpenSpace();
-            }
-        }
-        return false;
     }
     private void CreateJudgementJob() {
         if (!_sourceCharacter.HasJobTargettingThis(JOB_TYPE.JUDGEMENT)) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.JUDGEMENT, INTERACTION_TYPE.JUDGE_CHARACTER, _sourceCharacter);
-            job.SetCanTakeThisJobChecker(CanDoJudgementJob);
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoJudgementJob);
             _sourceCharacter.gridTileLocation.structure.location.jobQueue.AddJobInQueue(job);
         }
-    }
-    private bool CanDoJudgementJob(Character character, JobQueueItem job) {
-        return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
     }
     public void SetIsPrisoner(bool state) {
         isPrisoner = state;
