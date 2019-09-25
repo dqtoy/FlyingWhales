@@ -23,7 +23,28 @@ public class HaveAffair : GoapAction {
         }
     }
     protected override int GetCost() {
-        return 1;
+        Character otherCharacter = poiTarget as Character;
+        Character currCharacter = actor;
+        List<RELATIONSHIP_TRAIT> existingRelsOfCurrentCharacter = currCharacter.GetAllRelationshipTraitTypesWith(otherCharacter);
+        List<RELATIONSHIP_TRAIT> existingRelsOfOtherCharacter = otherCharacter.GetAllRelationshipTraitTypesWith(currCharacter);
+        int cost = 1;
+        if (existingRelsOfCurrentCharacter != null) {
+            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.RELATIVE)) {
+                //- character is a relative: Weight +50
+                cost += 50;
+            }
+            if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.LOVER)
+                || existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TRAIT.ENEMY)) {
+                //- character is a lover: Weight x0
+                //- character is an enemy: Weight x0
+                cost *= 0;
+            }
+        }
+        if (otherCharacter.role.roleType == CHARACTER_ROLE.BEAST) {
+            //- character is beast 0 out weight
+            cost *= 0;
+        }
+        return cost;
     }
     #endregion
 

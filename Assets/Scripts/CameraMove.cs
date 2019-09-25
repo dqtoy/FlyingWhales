@@ -266,7 +266,7 @@ public class CameraMove : MonoBehaviour {
             
         }
 
-        if (!Input.GetMouseButton(0)) {
+        if (isDragging && !Input.GetMouseButton(0)) {
             ResetDragValues();
         }
 

@@ -445,7 +445,9 @@ public class CharacterInfoUI : UIMenu {
                 Trait trait = activeCharacter.normalTraits[index];
                 if (trait.canBeTriggered) {
                     StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
-                    UIManager.Instance.ShowYesNoConfirmation("Trigger Flaw", trait.description + "\n<b>Requirement</b>: You may trigger this flaw's negative effect if the character is in a Bad or Dark Mood.\n<b>Effect</b>: " + trait.GetTriggerFlawEffectDescription(activeCharacter),
+                    UIManager.Instance.ShowYesNoConfirmation("Trigger Flaw", trait.description + 
+                        "\n<b>Requirement</b>: " + trait.GetRequirementDescription(activeCharacter) +
+                        "\n<b>Effect</b>: " + trait.GetTriggerFlawEffectDescription(activeCharacter),
                         onClickYesAction: () => OnClickTriggerFlaw(trait),
                         showCover: true, layer: 25, yesBtnText: "Trigger Flaw", noBtnText: "Cancel",
                         yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
@@ -658,39 +660,39 @@ public class CharacterInfoUI : UIMenu {
     public void ShowCharacterTestingInfo() {
         string summary = "Home structure: " + activeCharacter.homeStructure?.ToString() ?? "None";
         summary += "\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None";
-        //summary += "\nPOI State: " + activeCharacter.state.ToString();
-        //summary += "\nDo Not Disturb: " + activeCharacter.doNotDisturb.ToString();
-        //summary += "\nDo Not Get Hungry: " + activeCharacter.doNotGetHungry.ToString();
-        //summary += "\nDo Not Get Tired: " + activeCharacter.doNotGetTired.ToString();
-        //summary += "\nDo Not Get Lonely: " + activeCharacter.doNotGetLonely.ToString();
-        //summary += "\nFullness Time: " + (activeCharacter.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.fullnessForcedTick));
-        //summary += "\nTiredness Time: " + (activeCharacter.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.tirednessForcedTick));
-        //summary += "\nRemaining Sleep Ticks: " + activeCharacter.currentSleepTicks;
-        //summary += "\nRole: " + activeCharacter.role.roleType.ToString();
-        //summary += "\nSexuality: " + activeCharacter.sexuality.ToString();
-        //summary += "\nMood: " + activeCharacter.moodValue.ToString() + "(" + activeCharacter.currentMoodType.ToString() + ")";
-        //summary += "\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString();
-        //summary += "\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString();
-        //summary += "\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString();
-        //summary += "\nAttack Speed: " + activeCharacter.attackSpeed.ToString();
-        //summary += "\nCurrent State: " + activeCharacter.stateComponent.currentState?.ToString() ?? "None";
-        //summary += "\nState To Do: " + activeCharacter.stateComponent.stateToDo?.ToString() ?? "None";
-        //summary += "\nActions targetting this character: ";
-        //if (activeCharacter.targettedByAction.Count > 0) {
-        //    for (int i = 0; i < activeCharacter.targettedByAction.Count; i++) {
-        //        summary += "\n" + activeCharacter.targettedByAction[i].goapName + " done by " + activeCharacter.targettedByAction[i].actor.name;
-        //    }
-        //} else {
-        //    summary += "None";
-        //}
-        summary += "\nActions advertised by this character: ";
-        if (activeCharacter.poiGoapActions.Count > 0) {
-            for (int i = 0; i < activeCharacter.poiGoapActions.Count; i++) {
-                summary += "|" + activeCharacter.poiGoapActions[i].ToString() + "|";
+        summary += "\nPOI State: " + activeCharacter.state.ToString();
+        summary += "\nDo Not Disturb: " + activeCharacter.doNotDisturb.ToString();
+        summary += "\nDo Not Get Hungry: " + activeCharacter.doNotGetHungry.ToString();
+        summary += "\nDo Not Get Tired: " + activeCharacter.doNotGetTired.ToString();
+        summary += "\nDo Not Get Lonely: " + activeCharacter.doNotGetLonely.ToString();
+        summary += "\nFullness Time: " + (activeCharacter.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.fullnessForcedTick));
+        summary += "\nTiredness Time: " + (activeCharacter.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.tirednessForcedTick));
+        summary += "\nRemaining Sleep Ticks: " + activeCharacter.currentSleepTicks;
+        summary += "\nRole: " + activeCharacter.role.roleType.ToString();
+        summary += "\nSexuality: " + activeCharacter.sexuality.ToString();
+        summary += "\nMood: " + activeCharacter.moodValue.ToString() + "(" + activeCharacter.currentMoodType.ToString() + ")";
+        summary += "\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString();
+        summary += "\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString();
+        summary += "\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString();
+        summary += "\nAttack Speed: " + activeCharacter.attackSpeed.ToString();
+        summary += "\nCurrent State: " + activeCharacter.stateComponent.currentState?.ToString() ?? "None";
+        summary += "\nState To Do: " + activeCharacter.stateComponent.stateToDo?.ToString() ?? "None";
+        summary += "\nActions targetting this character: ";
+        if (activeCharacter.targettedByAction.Count > 0) {
+            for (int i = 0; i < activeCharacter.targettedByAction.Count; i++) {
+                summary += "\n" + activeCharacter.targettedByAction[i].goapName + " done by " + activeCharacter.targettedByAction[i].actor.name;
             }
         } else {
             summary += "None";
         }
+        //summary += "\nActions advertised by this character: ";
+        //if (activeCharacter.poiGoapActions.Count > 0) {
+        //    for (int i = 0; i < activeCharacter.poiGoapActions.Count; i++) {
+        //        summary += "|" + activeCharacter.poiGoapActions[i].ToString() + "|";
+        //    }
+        //} else {
+        //    summary += "None";
+        //}
         summary += "\n" + activeCharacter.GetNeedsSummary();
         summary += "\n\nAlter Egos: ";
         for (int i = 0; i < activeCharacter.alterEgos.Values.Count; i++) {
