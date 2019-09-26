@@ -73,14 +73,18 @@ public class JobQueue {
     }
     public bool RemoveJobInQueue(JobQueueItem job) {
         if (jobsInQueue.Remove(job)) {
-            //string removeLog = job.name + " has been removed from its job queue.";
+            string ownerName = "area";
+            if (character != null) {
+                ownerName = character.name;
+            }
+            string removeLog = job.name + " has been removed from " + ownerName + " job queue.";
             //removeLog += "\nIs Personal: " + (character != null ? character.name : "False");
             //removeLog += "\nAssigned Character: " + (job.assignedCharacter != null ? job.assignedCharacter.name : "None");
             //if(job is GoapPlanJob) {
             //    GoapPlanJob planJob = job as GoapPlanJob;
-                //removeLog += "\nAssigned Plan: " + (planJob.assignedPlan != null);
+            //removeLog += "\nAssigned Plan: " + (planJob.assignedPlan != null);
             //}
-            //Debug.Log(GameManager.Instance.TodayLogString() + removeLog);
+            Debug.Log(GameManager.Instance.TodayLogString() + removeLog);
             return job.OnRemoveJobFromQueue();
         }
         return false;

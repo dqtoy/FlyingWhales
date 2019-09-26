@@ -164,9 +164,34 @@ public class Area {
         Messenger.RemoveListener(Signals.DAY_STARTED, PerDayHeroEventCreation);
     }
     private void OnTileObjectRemoved(TileObject removedObj, Character character, LocationGridTile removedFrom) {
+        //craft replacement tile object job
         if (removedFrom.parentAreaMap.area.id == this.id) {
-            if (removedObj.CanBeReplaced() && removedFrom.structure.structureType != STRUCTURE_TYPE.DWELLING) { //if the removed object can be replaced and it is not part of a dwelling, create a replace job
-                CreateReplaceTileObjectJob(removedObj, removedFrom);
+            //&& removedFrom.structure.structureType != STRUCTURE_TYPE.DWELLING
+            if (removedObj.CanBeReplaced()) { //if the removed object can be replaced and it is not part of a dwelling, create a replace job
+                if (removedFrom.structure.structureType == STRUCTURE_TYPE.DWELLING) {
+                    Dwelling dwelling = removedFrom.structure as Dwelling;
+                    if (dwelling.residents.Count > 0) {
+                        //check if any of the residents can craft the tile object
+                        bool canBeCrafted = false;
+                        for (int i = 0; i < dwelling.residents.Count; i++) {
+                            Character currResident = dwelling.residents[i];
+                            if (removedObj.tileObjectType.CanBeCraftedBy(currResident)) {
+                                //add job to resident
+                                currResident.CreateReplaceTileObjectJob(removedObj, removedFrom);
+                                canBeCrafted = true;
+                                break;
+                            }
+                        }
+                        if (!canBeCrafted) {
+                            //no resident can craft object, post in settlement
+                            CreateReplaceTileObjectJob(removedObj, removedFrom);
+                        }
+                    } else {
+                        CreateReplaceTileObjectJob(removedObj, removedFrom);
+                    }
+                } else {
+                    CreateReplaceTileObjectJob(removedObj, removedFrom);
+                }
             }
         }
     }
@@ -1198,9 +1223,10 @@ public class Area {
     private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPLACE_TILE_OBJECT, INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
-                    });
-        //job.SetCanTakeThisJobChecker(job.CanCraftItemChecker);
-        //job.SetCannotOverrideJob(false);
+        });
+        job.SetCanTakeThisJobChecker((character, item) => removedObj.tileObjectType.CanBeCraftedBy(character));
+        job.SetCancelOnFail(false);
+        job.SetCancelJobOnDropPlan(false);
         jobQueue.AddJobInQueue(job);
     }
     #endregion
