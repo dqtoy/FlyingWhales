@@ -17,6 +17,7 @@ public class Save {
     public List<SaveDataTileObject> tileObjectSaves;
     public List<SaveDataSpecialObject> specialObjectSaves;
     public List<SaveDataAreaInnerTileMap> areaMapSaves;
+    public List<SaveDataNotification> notificationSaves;
 
     public SaveDataArea playerAreaSave;
     public SaveDataPlayer playerSave;
@@ -251,6 +252,11 @@ public class Save {
             characterSaves[i].LoadCharacterJobs(CharacterManager.Instance.allCharacters[i]);
         }
     }
+    public void LoadCharacterHistories() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadCharacterHistory(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
 
     public void SavePlayer(Player player) {
         playerSave = new SaveDataPlayer();
@@ -369,5 +375,36 @@ public class Save {
         GameManager.Instance.year = year;
         GameManager.Instance.tick = tick;
         GameManager.Instance.continuousDays = continuousDays;
+    }
+
+    public void SaveNotifications() {
+        notificationSaves = new List<SaveDataNotification>();
+        for (int i = 0; i < UIManager.Instance.activeNotifications.Count; i++) {
+            SaveDataNotification data = new SaveDataNotification();
+            data.Save(UIManager.Instance.activeNotifications[i]);
+            notificationSaves.Add(data);
+        }
+    }
+    public void LoadNotifications() {
+        for (int i = 0; i < notificationSaves.Count; i++) {
+            notificationSaves[i].Load();
+        }
+    }
+}
+
+[System.Serializable]
+public class SaveDataNotification {
+    public SaveDataLog log;
+    public int tickShown;
+
+    public void Save(PlayerNotificationItem notif) {
+        log = new SaveDataLog();
+        log.Save(notif.shownLog);
+
+        tickShown = notif.tickShown;
+    }
+
+    public void Load() {
+        UIManager.Instance.ShowPlayerNotification(log.Load(), tickShown);
     }
 }

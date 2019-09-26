@@ -14,6 +14,7 @@ public class SaveDataPlayer {
     public List<SaveDataSummonSlot> summonSlots;
     public List<SaveDataArtifactSlot> artifactSlots;
     public List<SaveDataInterventionAbility> interventionAbilitySlots;
+    public List<SaveDataIntel> allIntel;
 
     public int currentMinionLeaderID;
 
@@ -68,6 +69,13 @@ public class SaveDataPlayer {
             interventionAbilitySlots.Add(saveDataInterventionAbility);
         }
 
+        allIntel = new List<SaveDataIntel>();
+        for (int i = 0; i < player.allIntel.Count; i++) {
+            Intel intel = player.allIntel[i];
+            SaveDataIntel data = System.Activator.CreateInstance(System.Type.GetType("SaveData" + intel.GetType().ToString())) as SaveDataIntel;
+            data.Save(intel);
+            allIntel.Add(data);
+        }
         //if(player.isInvadingRegion) {
         //    invadingRegionID = player.invadingRegion.id;
         //} else {
@@ -81,6 +89,7 @@ public class SaveDataPlayer {
     public void Load() {
         PlayerManager.Instance.InitializePlayer(this);
         PlayerManager.Instance.player.LoadDivineIntervention(this);
+        PlayerManager.Instance.player.LoadIntels(this);
     }
     //public void LoadInvasion(Save save) {
     //    if (invadingRegionID != -1) {

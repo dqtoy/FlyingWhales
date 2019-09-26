@@ -35,6 +35,7 @@ public class SaveManager : MonoBehaviour {
         save.SaveSpecialObjects(TokenManager.Instance.specialObjects);
         save.SaveAreaMaps(InteriorMapManager.Instance.areaMaps);
         save.SaveCurrentDate();
+        save.SaveNotifications();
 
         SaveGame.Save<Save>(Utilities.gameSavePath + saveFileName, save);
     }

@@ -1257,7 +1257,7 @@ public class UIManager : MonoBehaviour {
     public ScrollRect playerNotifScrollRect;
     public Image[] playerNotifTransparentImages;
     public int maxPlayerNotif;
-    private List<PlayerNotificationItem> activeNotifications = new List<PlayerNotificationItem>(); //notifications that are currently being shown.
+    public List<PlayerNotificationItem> activeNotifications = new List<PlayerNotificationItem>(); //notifications that are currently being shown.
     private void ShowPlayerNotification(Intel intel) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         IntelNotificationItem newItem = newIntelGO.GetComponent<IntelNotificationItem>();
@@ -1271,6 +1271,14 @@ public class UIManager : MonoBehaviour {
         newItem.Initialize(log, true, OnNotificationDestroyed);
         newIntelGO.transform.localScale = Vector3.one;
         PlaceNewNotification(newItem);        
+    }
+    public void ShowPlayerNotification(Log log, int tick) {
+        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
+        PlayerNotificationItem newItem = newIntelGO.GetComponent<PlayerNotificationItem>();
+        newItem.Initialize(log, true, OnNotificationDestroyed);
+        newItem.SetTickShown(tick);
+        newIntelGO.transform.localScale = Vector3.one;
+        PlaceNewNotification(newItem);
     }
     private void PlaceNewNotification(PlayerNotificationItem newNotif) {
         //check if the log used is from a GoapAction

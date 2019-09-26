@@ -535,6 +535,11 @@ public class Player : ILeader {
             Messenger.Broadcast(Signals.PLAYER_REMOVED_INTEL, intel);
         }
     }
+    public void LoadIntels(SaveDataPlayer data) {
+        for (int i = 0; i < data.allIntel.Count; i++) {
+            AddIntel(data.allIntel[i].Load());
+        }
+    }
     /// <summary>
     /// Listener for when a character has finished doing an action.
     /// </summary>
@@ -630,6 +635,20 @@ public class Player : ILeader {
         string hoverText = string.Empty;
         if (CanShareIntel(InteriorMapManager.Instance.currentlyHoveredPOI, ref hoverText)) {
             Character targetCharacter = InteriorMapManager.Instance.currentlyHoveredPOI as Character;
+            if(currentActiveIntel is EventIntel) {
+                if((currentActiveIntel as EventIntel).action == null) {
+                    //If intel has no action, do not execute intel, just remove it instead
+                    PlayerManager.Instance.player.RemoveIntel(currentActiveIntel);
+                    return;
+                }
+            }
+            if (currentActiveIntel is PlanIntel) {
+                if ((currentActiveIntel as PlanIntel).plan == null) {
+                    //If intel has no plan, do not execute intel, just remove it instead
+                    PlayerManager.Instance.player.RemoveIntel(currentActiveIntel);
+                    return;
+                }
+            }
             UIManager.Instance.OpenShareIntelMenu(targetCharacter, currentMinionLeader.character, currentActiveIntel);
         }
     }

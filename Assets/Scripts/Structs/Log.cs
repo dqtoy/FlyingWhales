@@ -5,7 +5,6 @@ using System.Linq;
 
 //Log and Memory are the same now so assume that this class will have data that the Memory uses
 public class Log {
-
     public int id;
 
 	public MONTH month;
@@ -21,7 +20,7 @@ public class Log {
 
 	public List<LogFiller> fillers;
 
-    private bool lockFillers;
+    //private bool lockFillers;
 
     public string logCallStack;
 
@@ -50,7 +49,7 @@ public class Log {
         this.key = key;
         this._goapAction = goapAction;
         this.fillers = new List<LogFiller>();
-        this.lockFillers = false;
+        //this.lockFillers = false;
         logText = string.Empty;
         //logCallStack = StackTraceUtility.ExtractStackTrace();
     }
@@ -64,15 +63,39 @@ public class Log {
         this.message = message;
         this._goapAction = goapAction;
         this.fillers = new List<LogFiller>();
-        this.lockFillers = false;
+        //this.lockFillers = false;
         logText = string.Empty;
         //logCallStack = StackTraceUtility.ExtractStackTrace();
     }
 
-    internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier, bool replaceExisting = true){
-        if (lockFillers) {
-            return;
+    public Log(SaveDataLog data) {
+        id = Utilities.SetID(this, data.id);
+        month = data.month;
+        day = data.day;
+        year = data.year;
+        tick = data.tick;
+
+        category = data.category;
+        file = data.file;
+        key = data.key;
+
+        message = data.message;
+        logText = data.logText;
+
+        fillers = new List<LogFiller>();
+        for (int i = 0; i < data.fillers.Count; i++) {
+            LogFiller filler = data.fillers[i].Load();
+            fillers.Add(filler);
         }
+
+        //No goap action when loaded because we cannot save goap action
+        _goapAction = null;
+}
+
+    internal void AddToFillers(object obj, string value, LOG_IDENTIFIER identifier, bool replaceExisting = true){
+        //if (lockFillers) {
+        //    return;
+        //}
         if (replaceExisting && HasFillerForIdentifier(identifier)) {
             fillers.Remove(GetFillerForIdentifier(identifier));
         }
@@ -88,9 +111,9 @@ public class Log {
         }
     }
     public void SetFillers(List<LogFiller> fillers) {
-        if (lockFillers) {
-            return;
-        }
+        //if (lockFillers) {
+        //    return;
+        //}
         this.fillers = fillers;
     }
     public void AddLogToInvolvedObjects() {
@@ -172,9 +195,9 @@ public class Log {
     }
 
     #region Utilities
-    public void SetFillerLockedState(bool state) {
-        lockFillers = state;
-    }
+    //public void SetFillerLockedState(bool state) {
+    //    lockFillers = state;
+    //}
     public string GetLogDebugInfo() {
         //if (fromInteraction.intel != null) {
         //    return fromInteraction.intel.GetDebugInfo();
@@ -191,4 +214,49 @@ public class Log {
         this.logText = text;
     }
     #endregion
+}
+
+[System.Serializable]
+public class SaveDataLog {
+    public int id;
+
+    public MONTH month;
+    public int day;
+    public int year;
+    public int tick;
+
+    public string category;
+    public string file;
+    public string key;
+
+    public string message;
+    public string logText;
+
+    public List<SaveDataLogFiller> fillers;
+
+    public void Save(Log log) {
+        id = log.id;
+        month = log.month;
+        day = log.day;
+        year = log.year;
+        tick = log.tick;
+
+        category = log.category;
+        file = log.file;
+        key = log.key;
+
+        message = log.message;
+        logText = log.logText;
+
+        fillers = new List<SaveDataLogFiller>();
+        for (int i = 0; i < log.fillers.Count; i++) {
+            SaveDataLogFiller filler = new SaveDataLogFiller();
+            filler.Save(log.fillers[i]);
+            fillers.Add(filler);
+        }
+    }
+
+    public Log Load() {
+        return new Log(this);
+    }
 }

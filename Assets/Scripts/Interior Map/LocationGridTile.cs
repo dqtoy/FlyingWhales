@@ -900,7 +900,9 @@ public class SaveDataLocationGridTile {
         }
 
         tile.SetGroundType(groundType);
-        tile.SetFurnitureSpot(furnitureSpot);
+        if (hasFurnitureSpot) {
+            tile.SetFurnitureSpot(furnitureSpot);
+        }
         loadedGridTile = tile;
 
         //load tile assets

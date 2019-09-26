@@ -97,6 +97,9 @@ public class SaveDataCharacterStateJob : SaveDataJobQueueItem {
     public CHARACTER_STATE targetState;
     public int targetAreaID;
 
+    //Only save assigned character in state job because 
+    public int assignedCharacterID;
+
     public override void Save(JobQueueItem job) {
         base.Save(job);
         CharacterStateJob stateJob = job as CharacterStateJob;
@@ -106,9 +109,18 @@ public class SaveDataCharacterStateJob : SaveDataJobQueueItem {
         } else {
             targetAreaID = -1;
         }
+        if(stateJob.assignedCharacter != null) {
+            assignedCharacterID = stateJob.assignedCharacter.id;
+        } else {
+            assignedCharacterID = -1;
+        }
     }
 
     //public override JobQueueItem Load() {
-    //    return base.Load();
+    //    CharacterStateJob stateJob = base.Load() as CharacterStateJob;
+
+    //    return stateJob;
     //}
+
+
 }

@@ -565,8 +565,16 @@ public class Region {
     #region Characters
     public void LoadCharacterHere(Character character) {
         charactersAtLocation.Add(character);
-        character.SetLandmarkLocation(this.mainLandmark);
-        Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+        if (area == null) {
+            character.SetLandmarkLocation(this.mainLandmark);
+            //JobBasedEventGeneration(character);
+            Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
+        } else {
+            //character.ownParty.SetSpecificLocation(area);
+            Messenger.Broadcast(Signals.CHARACTER_ENTERED_AREA, area, character);
+        }
+        //character.SetLandmarkLocation(this.mainLandmark);
+        //Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
     }
     public void AddCharacterToLocation(Character character) {
         if (!charactersAtLocation.Contains(character)) {

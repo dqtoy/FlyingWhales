@@ -122,6 +122,12 @@ public class SerialKiller : Trait {
                 CheckTargetVictimIfStillAvailable();
                 if (targetVictim != null) {
                     character.CancelAllJobsAndPlans();
+                    if (character.stateComponent.currentState != null) {
+                        character.stateComponent.currentState.OnExitThisState();
+                        if (character.stateComponent.currentState != null) {
+                            character.stateComponent.currentState.OnExitThisState();
+                        }
+                    }
                     FollowTargetVictim();
                     SetHasStartedFollowing(true);
                 }
@@ -152,6 +158,12 @@ public class SerialKiller : Trait {
         }
         if (targetVictim != null) {
             character.CancelAllJobsAndPlans();
+            if(character.stateComponent.currentState != null) {
+                character.stateComponent.currentState.OnExitThisState();
+                if (character.stateComponent.currentState != null) {
+                    character.stateComponent.currentState.OnExitThisState();
+                }
+            }
             FollowTargetVictim();
             SetHasStartedFollowing(true);
         }

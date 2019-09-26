@@ -143,9 +143,6 @@ public class MapGenerator : MonoBehaviour {
         //CharacterManager.Instance.GenerateRelationships();
         StoryEventsManager.Instance.Initialize();
 
-
-        data.LoadPlayer();
-
         yield return null;
         //LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);
         data.LoadAreaMaps();
@@ -155,14 +152,23 @@ public class MapGenerator : MonoBehaviour {
         data.LoadAreaMapsTileTraits();
         data.LoadTileObjectTraits();
         data.LoadCharacterHomeStructures();
-        data.LoadAllJobs();
         data.LoadCharacterInitialPlacements();
+        data.LoadAllJobs();
         data.LoadTileObjectsDataAfterLoadingAreaMap();
 
         //Note: Loading area items is after loading the inner map because LocationStructure and LocationGridTile is required
         data.LoadPlayerAreaItems();
         data.LoadNonPlayerAreaItems();
         yield return null;
+        data.LoadCharacterHistories();
+
+        data.LoadCurrentDate();
+        data.LoadWorldEventsAndWorldObject();
+        data.LoadCharacterCurrentStates();
+        data.LoadFactionsActiveQuests();
+
+        data.LoadPlayer();
+        data.LoadNotifications();
 
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
@@ -171,14 +177,17 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
-        data.LoadCurrentDate();
-        data.LoadWorldEventsAndWorldObject();
-        data.LoadCharacterCurrentStates();
-        data.LoadFactionsActiveQuests();
+
         GameManager.Instance.StartProgression();
         UIManager.Instance.SetTimeControlsState(false);
         UIManager.Instance.SetSpeedTogglesState(true);
         Messenger.Broadcast(Signals.UPDATE_UI);
+
+        yield return null;
+        UIManager.Instance.Unpause();
+        yield return null;
+        UIManager.Instance.Pause();
+
         //data.LoadInvasion();
         //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
 

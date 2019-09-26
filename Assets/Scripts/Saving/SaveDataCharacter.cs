@@ -117,6 +117,8 @@ public class SaveDataCharacter {
     public int sleepScheduleJobID;
     public bool hasCancelledSleepSchedule;
 
+    public List<SaveDataLog> history;
+
     public void Save(Character character) {
         id = character.id;
         name = character.name;
@@ -287,6 +289,13 @@ public class SaveDataCharacter {
         currentSleepTicks = character.currentSleepTicks;
         sleepScheduleJobID = character.sleepScheduleJobID;
         hasCancelledSleepSchedule = character.hasCancelledSleepSchedule;
+
+        history = new List<SaveDataLog>();
+        for (int i = 0; i < character.history.Count; i++) {
+            SaveDataLog data = new SaveDataLog();
+            data.Save(character.history[i]);
+            history.Add(data);
+        }
     }
 
     public void Load() {
@@ -378,6 +387,26 @@ public class SaveDataCharacter {
         for (int i = 0; i < jobs.Count; i++) {
             JobQueueItem job = jobs[i].Load();
             character.jobQueue.AddJobInQueue(job, false);
+
+            //if(jobs[i] is SaveDataCharacterStateJob) {
+            //    SaveDataCharacterStateJob dataStateJob = jobs[i] as SaveDataCharacterStateJob;
+            //    CharacterStateJob stateJob = job as CharacterStateJob;
+            //    if (dataStateJob.assignedCharacterID != -1) {
+            //        Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
+            //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
+            //        if (newState != null) {
+            //            stateJob.SetAssignedState(newState);
+            //        } else {
+            //            throw new System.Exception(assignedCharacter.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
+            //        }
+            //    }
+            //}
+        }
+    }
+
+    public void LoadCharacterHistory(Character character) {
+        for (int i = 0; i < history.Count; i++) {
+            character.AddHistory(history[i].Load());
         }
     }
 }

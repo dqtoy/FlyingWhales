@@ -1045,7 +1045,7 @@ public struct GoapEffect {
 }
 
 [System.Serializable]
-public struct SaveDataGoapEffect {
+public class SaveDataGoapEffect {
     public GOAP_EFFECT_CONDITION conditionType;
 
     public string conditionKey;
