@@ -8,8 +8,8 @@ public class DouseFireState : CharacterState {
     //private List<IPointOfInterest> objsOnFire;
     //public object sourceOfBurning { get; private set; } //only put out fires from this source.
     private IPointOfInterest currentTarget;
-    private object currentTargetSource;
-    private Dictionary<object, List<IPointOfInterest>> fires;
+    private BurningSource currentTargetSource;
+    private Dictionary<BurningSource, List<IPointOfInterest>> fires;
 
     private bool isFetchingWater;
 
@@ -19,7 +19,7 @@ public class DouseFireState : CharacterState {
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 0;
         actionIconString = GoapActionStateDB.Drink_Icon;
-        fires = new Dictionary<object, List<IPointOfInterest>>();
+        fires = new Dictionary<BurningSource, List<IPointOfInterest>>();
     }
 
     #region Overrides
@@ -48,7 +48,7 @@ public class DouseFireState : CharacterState {
         Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
         Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
     }
-    private void DetermineAction() {
+    public void DetermineAction() {
         if (StillHasFire()) {
             if (HasWater()) {
                 //douse nearest fire
@@ -96,7 +96,7 @@ public class DouseFireState : CharacterState {
     #endregion
 
     #region Utilities
-    private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
+    public void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
         if (trait is Burning) {
             Burning burning = trait as Burning;
             if (fires.ContainsKey(burning.sourceOfBurning) && !fires[burning.sourceOfBurning].Contains(burning.owner)) {

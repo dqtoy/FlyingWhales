@@ -257,6 +257,17 @@ public class Save {
             characterSaves[i].LoadCharacterHistory(CharacterManager.Instance.allCharacters[i]);
         }
     }
+    public void LoadCharactersDousingFire() {
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area currArea = LandmarkManager.Instance.allAreas[i];
+            if (currArea.areaMap != null) {
+                for (int j = 0; j < currArea.areaMap.activeBurningSources.Count; j++) {
+                    BurningSource currBurningSource = currArea.areaMap.activeBurningSources[j];
+                    currBurningSource.ActivateCharactersDousingFire();
+                }
+            }
+        }
+    }
 
     public void SavePlayer(Player player) {
         playerSave = new SaveDataPlayer();

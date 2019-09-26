@@ -28,10 +28,10 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] private bool allowZoom = true;
 
     [Header("Dragging")]
-    private float dragThreshold = 0.25f;
+    private float dragThreshold = 0.35f;
     private float currDragTime;
     private Vector3 dragOrigin;
-    private bool isDragging = false;
+    public bool isDragging = false;
 
     [Header("Edging")]
     [SerializeField] private float edgingSpeed = 30f;
@@ -58,7 +58,7 @@ public class CameraMove : MonoBehaviour {
     private void Awake(){
 		Instance = this;
 	}
-    private void LateUpdate() {
+    private void Update() {
         if (!cameraControlEnabled) {
             return;
         }
@@ -242,6 +242,12 @@ public class CameraMove : MonoBehaviour {
             }
             return;
         }
+
+        if (isDragging && Input.GetMouseButtonUp(0)) {
+            ResetDragValues();
+            return;
+        }
+
         if (!isDragging) {
             if (Input.GetMouseButtonDown(0)) {
                 if (UIManager.Instance.IsMouseOnUI()) {
@@ -260,16 +266,14 @@ public class CameraMove : MonoBehaviour {
                     if (originMousePos !=  Input.mousePosition) { //check if the mouse has moved position from the origin, only then will it be considered dragging
                         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Clicked);
                         isDragging = true;
+                        target = null;
                     }
                 }
             }
             
         }
 
-        if (isDragging && !Input.GetMouseButton(0)) {
-            ResetDragValues();
-        }
-
+       
         if (isDragging) {
             //Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
             //Vector3 move = new Vector3(pos.x * dragSpeed, pos.y * dragSpeed, 0f);

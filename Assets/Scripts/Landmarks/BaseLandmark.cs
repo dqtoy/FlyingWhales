@@ -1,4 +1,4 @@
-﻿#define TESTING_VALUES
+﻿//#define TESTING_VALUES
 
 /*
  This is the base class for all landmarks.
@@ -50,7 +50,7 @@ public class BaseLandmark {
 #if TESTING_VALUES
         invasionTicks = 12;
 #else
-        invasionTicks = GameManager.ticksPerDay;
+        invasionTicks = GameManager.Instance.GetTicksBasedOnHour(4);
 #endif
 
     }

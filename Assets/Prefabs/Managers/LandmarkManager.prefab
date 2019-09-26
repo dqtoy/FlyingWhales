@@ -286,7 +286,7 @@ MonoBehaviour:
   - landmarkTypeString: The Spire
     landmarkType: 48
     minimumTileCount: 1
-    buildDuration: 288
+    buildDuration: 48
     description: Each minion has access to three different Spells. The Ruinarch may
       use the Spire to extract a Spell from a minion. There is a small risk that the
       minion may perish from the process.
@@ -308,7 +308,7 @@ MonoBehaviour:
   - landmarkTypeString: The Crypt
     landmarkType: 49
     minimumTileCount: 1
-    buildDuration: 288
+    buildDuration: 48
     description: Each Crypt expands the player's Artifact slots by 1.
     connectedTileDirection: 6
     uniqueTags: 
@@ -328,7 +328,7 @@ MonoBehaviour:
   - landmarkTypeString: The Kennel
     landmarkType: 50
     minimumTileCount: 1
-    buildDuration: 288
+    buildDuration: 48
     description: Each Kennel expands the player's Summon slots by 1.
     connectedTileDirection: 6
     uniqueTags: 
@@ -348,7 +348,7 @@ MonoBehaviour:
   - landmarkTypeString: The Anvil
     landmarkType: 51
     minimumTileCount: 1
-    buildDuration: 288
+    buildDuration: 48
     description: The Ruinarch may assign a minion to research upgrades on the Anvil.
     connectedTileDirection: 6
     uniqueTags: 
@@ -368,7 +368,7 @@ MonoBehaviour:
   - landmarkTypeString: The Fingers
     landmarkType: 52
     minimumTileCount: 1
-    buildDuration: 288
+    buildDuration: 48
     description: The Ruinarch may assign a minion The Fingers to spawn Chaos Events.
     connectedTileDirection: 6
     uniqueTags: 
@@ -388,7 +388,7 @@ MonoBehaviour:
   - landmarkTypeString: The Eye
     landmarkType: 53
     minimumTileCount: 1
-    buildDuration: 288
+    buildDuration: 48
     description: Defenders may occasionally start their own Heroic Missions. The Ruinarch
       may assign a minion to the Eye to scout and interfere on active Heroic Missions.
     connectedTileDirection: 6
@@ -409,7 +409,7 @@ MonoBehaviour:
   - landmarkTypeString: The Profane
     landmarkType: 54
     minimumTileCount: 1
-    buildDuration: 288
+    buildDuration: 48
     description: The Ruinarch may assign a minion to delay Heroic Quests on the Profane.
     connectedTileDirection: 6
     uniqueTags: 
@@ -449,7 +449,7 @@ MonoBehaviour:
   - landmarkTypeString: The Needles
     landmarkType: 55
     minimumTileCount: 1
-    buildDuration: 288
+    buildDuration: 48
     description: The Ruinarch may sacrifice a minion to The Needles to gain resources.
     connectedTileDirection: 6
     uniqueTags: 
@@ -469,7 +469,7 @@ MonoBehaviour:
   - landmarkTypeString: The Pit
     landmarkType: 56
     minimumTileCount: 1
-    buildDuration: 288
+    buildDuration: 48
     description: The Pit provides a slow but steady supply of resources.
     connectedTileDirection: 6
     uniqueTags: 

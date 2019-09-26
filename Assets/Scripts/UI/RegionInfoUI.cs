@@ -31,6 +31,7 @@ public class RegionInfoUI : UIMenu {
 
     [Header("Invasion")]
     [SerializeField] private GameObject invConfrimationGO;
+    [SerializeField] private TextMeshProUGUI invConfrimationTitleLbl;
     [SerializeField] private TextMeshProUGUI invDescriptionLbl;
     [SerializeField] private MinionPicker invMinionPicker;
     [SerializeField] private Button confirmInvasionBtn;
@@ -159,6 +160,7 @@ public class RegionInfoUI : UIMenu {
     private Minion chosenMinionToInvade;
     private void ShowInvasionConfirmation() {
         invConfrimationGO.SetActive(true);
+        invConfrimationTitleLbl.text = "Invasion (" + ((int)activeRegion.mainLandmark.invasionTicks / (int)GameManager.ticksPerHour).ToString() + " hours)";
         invDescriptionLbl.text = "Choose a minion that will invade " + activeRegion.name + ". NOTE: That minion will be unavailable while the invasion is ongoing.";
         invMinionPicker.ShowMinionPicker(PlayerManager.Instance.player.minions, CanMinionInvade, ChooseMinionForInvasion);
         chosenMinionToInvade = null;

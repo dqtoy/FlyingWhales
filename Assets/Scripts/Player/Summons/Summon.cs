@@ -106,6 +106,14 @@ public class Summon : Character, IWorldObject {
                 _role.OnDeath(this);
             }
 
+            if (homeArea != null) {
+                Area home = homeArea;
+                Dwelling homeStructure = this.homeStructure;
+                homeArea.RemoveResident(this);
+                SetHome(home); //keep this data with character to prevent errors
+                SetHomeStructure(homeStructure); //keep this data with character to prevent errors
+            }
+
             RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
 
             for (int i = 0; i < normalTraits.Count; i++) {

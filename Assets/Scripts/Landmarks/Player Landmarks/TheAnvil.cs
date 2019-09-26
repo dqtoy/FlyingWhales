@@ -44,17 +44,13 @@ public class TheAnvil : BaseLandmark {
         } else if (upgradeIdentifier == All_Summon) {
             for (int i = 0; i < PlayerManager.Instance.player.summonSlots.Count; i++) {
                 SummonSlot slot = PlayerManager.Instance.player.summonSlots[i];
-                if (slot.summon != null) {
-                    slot.LevelUp();
-                }
+                slot.LevelUp();
             }
             UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All Summon Slots upgraded!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
         } else if (upgradeIdentifier == All_Artifact) {
             for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Count; i++) {
                 ArtifactSlot slot = PlayerManager.Instance.player.artifactSlots[i];
-                if (slot.artifact != null) {
-                    slot.LevelUp();
-                }
+                slot.LevelUp();
             }
             UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All Artifact Slots upgraded!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
         }
@@ -72,11 +68,11 @@ public class TheAnvil : BaseLandmark {
     #region Static
     public static int GetUpgradeDuration(string upgrade) {
         if (upgrade == All_Intervention) {
-            return GameManager.ticksPerHour;
+            return GameManager.Instance.GetTicksBasedOnHour(8);
         } else if (upgrade == All_Summon) {
-            return GameManager.ticksPerHour;
+            return GameManager.Instance.GetTicksBasedOnHour(8);
         } else if (upgrade == All_Artifact) {
-            return GameManager.ticksPerHour;
+            return GameManager.Instance.GetTicksBasedOnHour(8);
         }
         return 0;
     }

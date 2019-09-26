@@ -26,7 +26,7 @@ public class AreaMapCameraMove : MonoBehaviour {
     [SerializeField] private bool allowZoom = true;
 
     [Header("Dragging")]
-    private float dragThreshold = 0.15f;
+    private float dragThreshold = 0.35f;
     private float currDragTime;
     private Vector3 dragOrigin;
     private bool isDragging = false;
@@ -63,7 +63,7 @@ public class AreaMapCameraMove : MonoBehaviour {
     private void Awake(){
 		Instance = this;
 	}
-    private void LateUpdate() {
+    private void Update() {
         if (!cameraControlEnabled) {
             return;
         }

@@ -91,7 +91,6 @@ public class MapGenerator : MonoBehaviour {
         AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
         GameManager.Instance.StartProgression();
-        UIManager.Instance.SetTimeControlsState(false);
 
         PlayerUI.Instance.ShowStartingMinionPicker();
     }
@@ -179,7 +178,6 @@ public class MapGenerator : MonoBehaviour {
         yield return new WaitForSeconds(1f);
 
         GameManager.Instance.StartProgression();
-        UIManager.Instance.SetTimeControlsState(false);
         UIManager.Instance.SetSpeedTogglesState(true);
         Messenger.Broadcast(Signals.UPDATE_UI);
 

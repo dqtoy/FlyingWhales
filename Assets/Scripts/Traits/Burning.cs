@@ -48,7 +48,11 @@ public class Burning : Trait {
                 burningEffect = GameManager.Instance.CreateBurningEffectAt(character);
                 character.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
             }
-        } 
+        }
+
+        if (sourceOfBurning != null && !sourceOfBurning.objectsOnFire.Contains(owner)) {
+            SetSourceOfBurning(sourceOfBurning, owner);
+        }
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         base.OnAddTrait(addedTo);
     }
@@ -143,10 +147,13 @@ public class Burning : Trait {
         return true;
     }
     public override string GetTestingData() {
-        return sourceOfBurning.ToString() + " - " + sourceOfBurning.dousers.Count.ToString();
+        return sourceOfBurning.ToString();
     }
     #endregion
 
+    public void LoadSourceOfBurning(BurningSource source) {
+        sourceOfBurning = source;
+    }
     public void SetSourceOfBurning(BurningSource source, ITraitable obj) {
         sourceOfBurning = source;
         IPointOfInterest poiOnFire;
@@ -180,7 +187,6 @@ public class Burning : Trait {
             return character.GetNormalTrait("Burning") == null;
         }
     }
-
     private void PerTick() {
         //Burning characters reduce their current hp by 2% of maxhp every tick. 
         //They also have a 6% chance to remove Burning effect but will not gain a Burnt trait afterwards. 
@@ -225,24 +231,19 @@ public class Burning : Trait {
     
 }
 
+public class SaveDataBurning : SaveDataTrait {
+    public int burningSourceID;
 
-//public interface IBurningSource {
-//    List<Character> dousers { get; }
-//    List<IPointOfInterest> objectsOnFire { get; }
-//    DelegateTypes.OnAllBurningExtinguished onAllBurningExtinguished { get; }
-//    DelegateTypes.OnBurningObjectAdded onBurningObjectAdded { get; }
-//    DelegateTypes.OnBurningObjectRemoved onBurningObjectRemoved { get; }
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Burning derivedTrait = trait as Burning;
+        burningSourceID = derivedTrait.sourceOfBurning.id;
+    }
 
-//    void AddCharactersDousingFire(Character character);
-//    void RemoveCharactersDousingFire(Character character);
-//    Character GetNearestDouserFrom(Character otherCharacter);
-
-//    void AddObjectOnFire(IPointOfInterest poi);
-//    void RemoveObjectOnFire(IPointOfInterest poi);
-//    void AddOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action);
-//    void RemoveOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action);
-//    void AddOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action);
-//    void RemoveOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action);
-//    void AddOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action);
-//    void RemoveOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action);
-//}
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        Burning derivedTrait = trait as Burning;
+        derivedTrait.LoadSourceOfBurning(LandmarkManager.Instance.GetBurningSourceByID(burningSourceID));
+        return trait;
+    }
+}
