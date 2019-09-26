@@ -331,9 +331,9 @@ public class Region {
     private void FinishBuildingStructure() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickBuilding);
         //mainLandmark.ChangeLandmarkType(demonicBuildingData.landmarkType);
-        int previousID = mainLandmark.id;
+        //int previousID = mainLandmark.id;
         BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(coreTile, demonicBuildingData.landmarkType);
-        newLandmark.OverrideID(previousID);
+        //newLandmark.OverrideID(previousID);
 
         UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Finished building " + Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString()) + " at " + this.name, () => UIManager.Instance.ShowHextileInfo(coreTile));
         demonicBuildingData = new DemonicLandmarkBuildingData();

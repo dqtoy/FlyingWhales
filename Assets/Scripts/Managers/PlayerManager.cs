@@ -120,9 +120,9 @@ public class PlayerManager : MonoBehaviour {
         chosenRegion.SetWorldObject(null);
         //Pre-build a Spire in the second initial empty corrupted region and ensure that it does not have a Hallowed Ground trait.
         chosenRegion.coreTile.RemoveTileTag(TILE_TAG.HALLOWED_GROUNDS);
-        int previousID = chosenRegion.mainLandmark.id;
+        //int previousID = chosenRegion.mainLandmark.id;
         BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenRegion.coreTile, LANDMARK_TYPE.THE_SPIRE);
-        newLandmark.OverrideID(previousID);
+        //newLandmark.OverrideID(previousID);
 
     }
     public void InitializePlayer(SaveDataPlayer data) {
