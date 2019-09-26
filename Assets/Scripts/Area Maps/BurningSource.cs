@@ -27,7 +27,7 @@ public class BurningSource {
         objectsOnFire = new List<IPointOfInterest>();
         this.location = location;
         location.areaMap.AddActiveBurningSource(this);
-        LoadCharactersDousingFire(source); //This will just add the characters dousing the fires to the list.
+        //LoadCharactersDousingFire(source); //This will just add the characters dousing the fires to the list.
     }
 
     private void LoadCharactersDousingFire(SaveDataBurningSource source) {
@@ -44,20 +44,23 @@ public class BurningSource {
     public void ActivateCharactersDousingFire() {
         for (int i = 0; i < dousers.Count; i++) {
             Character currDouser = dousers[i];
-            if (!currDouser.jobQueue.HasJob(JOB_TYPE.REMOVE_FIRE)) {
+            CharacterStateJob existingJob = currDouser.jobQueue.GetJob(JOB_TYPE.REMOVE_FIRE) as CharacterStateJob;
+            if (existingJob == null) {
                 CharacterStateJob job = new CharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE, currDouser.specificLocation);
-                job.AddOnUnassignAction(this.RemoveCharactersDousingFire); //This is the action responsible for reducing the number of characters dousing the fire when a character decides to quit the job.
-                currDouser.CancelAllPlans(); //cancel all other plans except douse fire.
+                existingJob = job;
                 currDouser.jobQueue.AddJobInQueue(job);
+            }
+            existingJob.AddOnUnassignAction(this.RemoveCharactersDousingFire); //This is the action responsible for reducing the number of characters dousing the fire when a character decides to quit the job.
+            currDouser.CancelAllPlans(); //cancel all other plans except douse fire.
+            currDouser.jobQueue.ProcessFirstJobInQueue(currDouser);
 
-                if (currDouser.stateComponent.currentState is DouseFireState) {
-                    DouseFireState state = currDouser.stateComponent.currentState as DouseFireState;
-                    for (int j = 0; j < objectsOnFire.Count; j++) {
-                        IPointOfInterest poi = objectsOnFire[j];
-                        state.OnTraitableGainedTrait(poi, poi.GetNormalTrait("Burning"));
-                    }
-                    state.DetermineAction();
+            if (currDouser.stateComponent.currentState is DouseFireState) {
+                DouseFireState state = currDouser.stateComponent.currentState as DouseFireState;
+                for (int j = 0; j < objectsOnFire.Count; j++) {
+                    IPointOfInterest poi = objectsOnFire[j];
+                    state.OnTraitableGainedTrait(poi, poi.GetNormalTrait("Burning"));
                 }
+                state.DetermineAction();
             }
         }
     }

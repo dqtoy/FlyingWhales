@@ -153,6 +153,8 @@ public class MapGenerator : MonoBehaviour {
         data.LoadTileObjectTraits();
         data.LoadCharacterHomeStructures();
         data.LoadCharacterInitialPlacements();
+        data.LoadPlayer();
+
         data.LoadAllJobs();
         data.LoadTileObjectsDataAfterLoadingAreaMap();
 
@@ -167,7 +169,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadCharacterCurrentStates();
         data.LoadFactionsActiveQuests();
 
-        data.LoadPlayer();
+        
         data.LoadNotifications();
 
         loadingWatch.Stop();

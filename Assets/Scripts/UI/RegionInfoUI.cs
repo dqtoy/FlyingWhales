@@ -15,8 +15,9 @@ public class RegionInfoUI : UIMenu {
     [SerializeField] private TextMeshProUGUI descriptionLbl;
     [SerializeField] private TextMeshProUGUI worldObjLbl;
     [SerializeField] private ToggleGroup tabsToggleGroup;
-    [SerializeField] private Toggle demonicTabToggle;
+    [SerializeField] private Toggle overviewTabToggle;
     [SerializeField] private Toggle eventsTabToggle;
+    [SerializeField] private GameObject overviewGO;
 
     [Header("Characters")]
     [SerializeField] private ScrollRect charactersScrollView;
@@ -76,7 +77,7 @@ public class RegionInfoUI : UIMenu {
         UpdateCharacters();
         UpdateInvadeBtnState();
         UpdateEventInfo();
-        UpdateDemonicLandmarkToggleState();
+        //UpdateDemonicLandmarkToggleState();
         ShowAppropriateContentOnOpen();
         eventsListGO.SetActive(false);
         activeRegion.CenterCameraOnRegion();
@@ -274,30 +275,30 @@ public class RegionInfoUI : UIMenu {
 
     #region Demonic Landmarks
     private void ShowAppropriateContentOnSignal(Region region) {
-        if (region == activeRegion && demonicTabToggle.isOn) {
-            UpdateDemonicLandmarkToggleState();
-            OnDemonicToggleStateChanged(demonicTabToggle.isOn);
+        if (region == activeRegion && overviewTabToggle.isOn) {
+            //UpdateDemonicLandmarkToggleState();
+            OnDemonicToggleStateChanged(overviewTabToggle.isOn);
         }
     }
     private void ShowAppropriateContentOnOpen() {
-        if (demonicTabToggle.isOn) {
-            UpdateDemonicLandmarkToggleState();
-            OnDemonicToggleStateChanged(demonicTabToggle.isOn);
+        if (overviewTabToggle.isOn) {
+            //UpdateDemonicLandmarkToggleState();
+            OnDemonicToggleStateChanged(overviewTabToggle.isOn);
         }
     }
     private void UpdateDemonicLandmarkToggleState() {
         //only activate demonic tab if the main landmark of this region is a player landmark and is not the kennel or crypt (Since both of those do not have their own special UI)
-        demonicTabToggle.gameObject.SetActive((activeRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark() && 
-            activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_CRYPT && activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_KENNEL) || activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE);
+        //overviewTabToggle.gameObject.SetActive((activeRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark() && 
+        //    activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_CRYPT && activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_KENNEL) || activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE);
 
-        if (demonicTabToggle.gameObject.activeSelf) {
-            demonicTabToggle.group = tabsToggleGroup;
+        if (overviewTabToggle.gameObject.activeSelf) {
+            overviewTabToggle.group = tabsToggleGroup;
         } else {
-            if (demonicTabToggle.isOn) {
-                demonicTabToggle.isOn = false;
+            if (overviewTabToggle.isOn) {
+                overviewTabToggle.isOn = false;
                 eventsTabToggle.isOn = true;
             }
-            demonicTabToggle.group = null;
+            overviewTabToggle.group = null;
         }
     }
     private void UpdateAppropriateContentPerUpdateUI() {
@@ -314,6 +315,7 @@ public class RegionInfoUI : UIMenu {
         }
     }
     public void OnDemonicToggleStateChanged(bool isOn) {
+        overviewGO.SetActive(isOn);
         if (isOn) {
             HidePlayerBuildLandmarkUI();
             HidePlayerResearchUI();
