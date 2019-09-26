@@ -108,7 +108,8 @@ public class RegionInfoUI : UIMenu {
     #region Main
     private void UpdateRegionInfo() {
         descriptionLbl.text = activeRegion.description;
-        worldObjLbl.text = "<b>World Object: </b>" + (activeRegion.worldObj?.worldObjectName ?? "None");
+        string wo = "\n\n<b>World Object: </b>" + (activeRegion.worldObj?.worldObjectName ?? "None");
+        descriptionLbl.text += wo;
     }
     #endregion
 
