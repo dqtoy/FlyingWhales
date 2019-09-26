@@ -62,7 +62,7 @@ public class BaseLandmark {
         SetName(RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType));
         ConstructTags(landmarkData);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
-        //nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
+        nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
     }
     public BaseLandmark(HexTile location, LandmarkSaveData data) : this() {
         _id = Utilities.SetID(this, data.landmarkID);
@@ -73,7 +73,7 @@ public class BaseLandmark {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
-        //nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
+        nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
     }
     public BaseLandmark(HexTile location, SaveDataLandmark data) : this() {
         _id = Utilities.SetID(this, data.id);
@@ -89,7 +89,7 @@ public class BaseLandmark {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
-        //nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
+        nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
     }
 
     public void SetName(string name) {
@@ -128,6 +128,7 @@ public class BaseLandmark {
             HexTile tile = _location;
             UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()) + " was destroyed!", () => UIManager.Instance.ShowHextileInfo(tile));
         }
+        ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
         _location = null;
     }
     public virtual void OnFinishedBuilding() { }

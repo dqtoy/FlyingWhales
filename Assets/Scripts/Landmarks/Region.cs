@@ -554,9 +554,13 @@ public class Region {
     //}
     private void JobBasedEventGeneration(Character character) {
         if (activeEvent == null) {
-            WORLD_EVENT_EFFECT[] effects = character.currentJob.jobType.GetAllowedEventEffects();
-            if (effects != null) {
-                SpawnEventThatCanProvideEffectFor(effects, character);
+            if (character.stateComponent.currentState is MoveOutState) {
+                WORLD_EVENT_EFFECT[] effects = character.stateComponent.currentState.job.jobType.GetAllowedEventEffects();
+                if (effects != null) {
+                    SpawnEventThatCanProvideEffectFor(effects, character);
+                }
+            } else {
+                throw new System.Exception(GameManager.Instance.TodayLogString() + character.name + " has arrived at " + this.name + " but is not in Move Out State!");
             }
         }
     }
