@@ -3348,6 +3348,11 @@ public class Character : ILeader, IPointOfInterest {
         //    }
         //}
         ///Moved all needed checking <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)"/>
+        ///
+        if (action.goapType == INTERACTION_TYPE.WATCH) {
+            //Cannot witness/watch a watch action
+            return;
+        }
         ThisCharacterWitnessedEvent(action);
         //ThisCharacterWatchEvent(null, action, state);
     }
@@ -3522,6 +3527,9 @@ public class Character : ILeader, IPointOfInterest {
         //}
     }
     public void ThisCharacterWitnessedEvent(GoapAction witnessedEvent) {
+        if (isDead || GetNormalTrait("Unconscious", "Resting") != null) {
+            return;
+        }
         if (witnessedEvent.currentState == null) {
             throw new System.Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.goapName + " by " + witnessedEvent.actor.name + " but it does not have a current state!");
         }
@@ -8052,9 +8060,9 @@ public class Character : ILeader, IPointOfInterest {
         _hasAlreadyAskedForPlan = state;
     }
     public void PrintLogIfActive(string log) {
-        if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
+        //if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
             Debug.Log(log);
-        }
+        //}
     }
     public void AddTargettedByAction(GoapAction action) {
         if (this != action.actor) { // && !isDead

@@ -1066,14 +1066,18 @@ public class CharacterMarker : PooledObject {
 
                 //Witness all actions
                 log += "\n - Witnessing collected actions:";
-                if(actionsToWitness.Count > 0) {
-                    for (int i = 0; i < actionsToWitness.Count; i++) {
-                        GoapAction action = actionsToWitness[i];
-                        log += "\n   - Witnessed: " + action.goapName + " of " + action.actor.name + " with target " + action.poiTarget.name;
-                        character.ThisCharacterWitnessedEvent(action);
-                    }
+                if (character.isDead || character.GetNormalTrait("Unconscious", "Resting") != null) {
+                    log += "\n   - Character is either dead, unconscious or resting, cannot witness";
                 } else {
-                    log += "\n   - No collected actions";
+                    if (actionsToWitness.Count > 0) {
+                        for (int i = 0; i < actionsToWitness.Count; i++) {
+                            GoapAction action = actionsToWitness[i];
+                            log += "\n   - Witnessed: " + action.goapName + " of " + action.actor.name + " with target " + action.poiTarget.name;
+                            character.ThisCharacterWitnessedEvent(action);
+                        }
+                    } else {
+                        log += "\n   - No collected actions";
+                    }
                 }
 
             } else {
