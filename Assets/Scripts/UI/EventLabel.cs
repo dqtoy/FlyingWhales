@@ -123,7 +123,7 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                     UIManager.Instance.ShowHextileInfo(region.mainLandmark.tileLocation);
                 }
             }
-            //ResetHighlightValues();
+            ResetHighlightValues();
         }
     }
     public void OnPointerEnter(PointerEventData eventData) {

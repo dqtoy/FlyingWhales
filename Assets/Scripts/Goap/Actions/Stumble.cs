@@ -8,6 +8,7 @@ public class Stumble : GoapAction {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         isNotificationAnIntel = false;
+        animationName = "Sleep Ground";
     }
 
     #region Overrides
