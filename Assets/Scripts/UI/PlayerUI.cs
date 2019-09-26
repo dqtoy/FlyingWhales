@@ -879,9 +879,17 @@ public class PlayerUI : MonoBehaviour {
         tempCurrentMinionLeaderPicker = leaderPicker;
     }
     private void RandomizeStartingAbilities() {
-        INTERVENTION_ABILITY[] abilities = PlayerManager.Instance.allInterventionAbilities;
+        List<INTERVENTION_ABILITY> abilitiesPool = PlayerManager.Instance.allInterventionAbilities.ToList();
+        List<INTERVENTION_ABILITY> chosenAbilities = new List<INTERVENTION_ABILITY>();
+
+        while (chosenAbilities.Count != startingAbilityIcons.Length) {
+            INTERVENTION_ABILITY randomAbility = abilitiesPool[UnityEngine.Random.Range(0, abilitiesPool.Count)];
+            chosenAbilities.Add(randomAbility);
+            abilitiesPool.Remove(randomAbility);
+        }
+
         for (int i = 0; i < startingAbilityIcons.Length; i++) {
-            INTERVENTION_ABILITY randomAbility = abilities[UnityEngine.Random.Range(0, abilities.Length)];
+            INTERVENTION_ABILITY randomAbility = chosenAbilities[i];
             string abilityName = Utilities.NormalizeStringUpperCaseFirstLetters(randomAbility.ToString());
             startingAbilityIcons[i].sprite = PlayerManager.Instance.GetJobActionSprite(abilityName);
             startingAbilityLbls[i].text = abilityName;

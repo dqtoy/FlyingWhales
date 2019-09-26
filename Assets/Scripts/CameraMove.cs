@@ -28,9 +28,9 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] private bool allowZoom = true;
 
     [Header("Dragging")]
-    private float dragThreshold = 0.35f;
-    private float currDragTime;
-    private Vector3 dragOrigin;
+    [SerializeField] private float dragThreshold = 0.35f;
+    [SerializeField] private float currDragTime;
+    [SerializeField] private Vector3 dragOrigin;
     public bool isDragging = false;
 
     [Header("Edging")]
@@ -243,7 +243,7 @@ public class CameraMove : MonoBehaviour {
             return;
         }
 
-        if (isDragging && Input.GetMouseButtonUp(0)) {
+        if (Input.GetMouseButtonUp(0)) {
             ResetDragValues();
             return;
         }
