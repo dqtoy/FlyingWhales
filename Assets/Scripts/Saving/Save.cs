@@ -68,7 +68,8 @@ public class Save {
             newSaveData = new SaveDataLandmark();
         }
         newSaveData.Save(landmark);
-        SortAddSaveDataLandmark(newSaveData);
+        //SortAddSaveDataLandmark(newSaveData);
+        landmarkSaves.Add(newSaveData);
     }
     public void SaveLandmarks(List<HexTile> tiles) {
         landmarkSaves = new List<SaveDataLandmark>();
@@ -77,7 +78,8 @@ public class Save {
             if(currTile.landmarkOnTile != null) {
                 SaveDataLandmark newSaveData = new SaveDataLandmark();
                 newSaveData.Save(currTile.landmarkOnTile);
-                SortAddSaveDataLandmark(newSaveData);
+                //SortAddSaveDataLandmark(newSaveData);
+                landmarkSaves.Add(newSaveData);
             }
         }
     }
@@ -95,6 +97,14 @@ public class Save {
             landmarkSaves.Add(newSaveData);
         }
     }
+    private SaveDataLandmark GetLandmarkSaveByID(int id) {
+        for (int i = 0; i < landmarkSaves.Count; i++) {
+            if(landmarkSaves[i].id == id) {
+                return landmarkSaves[i];
+            }
+        }
+        return null;
+    }
     public void LoadLandmarks() {
         for (int i = 0; i < hextileSaves.Count; i++) {
             SaveDataHextile saveDataHextile = hextileSaves[i];
@@ -103,10 +113,11 @@ public class Save {
                 //We get the index for the appropriate landmark of hextile through (landmarkID - 1) because the list of landmarksaves is properly ordered
                 //Example, the save data in index 0 of the list has an id of 1 since all ids in game start at 1, that is why to get the index of the landmark of the tile, we get the true landmark id and subtract it by 1
                 //This is done so that we will not loop every time we want to get the save data of a landmark and check all the ids if it will match
-                landmarkSaves[saveDataHextile.landmarkID - 1].Load(currTile);
+                GetLandmarkSaveByID(saveDataHextile.landmarkID).Load(currTile);
             }
         }
     }
+
     public void LoadWorldEventsAndWorldObject() {
         for (int i = 0; i < regionSaves.Count; i++) {
             SaveDataRegion data = regionSaves[i];

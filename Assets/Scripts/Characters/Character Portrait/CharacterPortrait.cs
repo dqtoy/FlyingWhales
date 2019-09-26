@@ -195,7 +195,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     }
     public void ShowCharacterMenu() {
         if (_character != null) {
-            UIManager.Instance.ShowCharacterInfo(_character);
+            //UIManager.Instance.ShowCharacterInfo(_character);
+            _character.CenterOnCharacter();
         }
     }
     #endregion

@@ -86,22 +86,22 @@ public class AccidentProne : Trait {
             owner.ownParty.RemoveAllOtherCharacters();
         }
         if (owner.currentAction != null) {
-            //When stumble is done, current action's job must not be removed, this means that it will also bypass the cancelJobOnFail checker
-            JobQueueItem currentJob = null;
-            bool isCancelJobOnFail = false;
-            if (owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null) {
-                currentJob = owner.currentAction.parentPlan.job;
-            }
-            if (currentJob != null) {
-                //Temporarily store cancelJobOnFail, then set the original data to false in order for the job not to be removed in queue
-                isCancelJobOnFail = currentJob.cancelJobOnFail;
-                currentJob.SetCancelOnFail(false);
-            }
+            ////When stumble is done, current action's job must not be removed, this means that it will also bypass the cancelJobOnFail checker
+            //JobQueueItem currentJob = null;
+            //bool isCancelJobOnFail = false;
+            //if (owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null) {
+            //    currentJob = owner.currentAction.parentPlan.job;
+            //}
+            //if (currentJob != null) {
+            //    //Temporarily store cancelJobOnFail, then set the original data to false in order for the job not to be removed in queue
+            //    isCancelJobOnFail = currentJob.cancelJobOnFail;
+            //    currentJob.SetCancelOnFail(false);
+            //}
             owner.StopCurrentAction(false);
-            if (currentJob != null) {
-                //After processing StopCurrentAction, bring back the temporarily stored cancelJobOnFail data
-                currentJob.SetCancelOnFail(isCancelJobOnFail);
-            }
+            //if (currentJob != null) {
+            //    //After processing StopCurrentAction, bring back the temporarily stored cancelJobOnFail data
+            //    currentJob.SetCancelOnFail(isCancelJobOnFail);
+            //}
         }
         if (owner.stateComponent.currentState != null) {
             storedState = owner.stateComponent.currentState;
