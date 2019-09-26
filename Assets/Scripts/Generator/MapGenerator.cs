@@ -90,8 +90,8 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
+        UIManager.Instance.SetSpeedTogglesState(false);
         GameManager.Instance.StartProgression();
-        UIManager.Instance.SetTimeControlsState(false);
 
         PlayerUI.Instance.ShowStartingMinionPicker();
     }
@@ -175,9 +175,12 @@ public class MapGenerator : MonoBehaviour {
         data.LoadWorldEventsAndWorldObject();
         data.LoadCharacterCurrentStates();
         data.LoadFactionsActiveQuests();
-        GameManager.Instance.StartProgression();
-        UIManager.Instance.SetTimeControlsState(false);
+
+        //special case for burning, while character states are not yet saved.
+        //data.LoadCharactersDousingFire();
+
         UIManager.Instance.SetSpeedTogglesState(true);
+        GameManager.Instance.StartProgression();
         Messenger.Broadcast(Signals.UPDATE_UI);
         //data.LoadInvasion();
         //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);

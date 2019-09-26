@@ -327,7 +327,7 @@ public class PlayerUI : MonoBehaviour {
         if (!stillHasResidents) {
             //player has won
             UIManager.Instance.Pause();
-            UIManager.Instance.SetTimeControlsState(false);
+            UIManager.Instance.SetSpeedTogglesState(false);
             Messenger.Broadcast(Signals.HIDE_MENUS);
             SuccessfulAreaCorruption();
         }
@@ -845,7 +845,7 @@ public class PlayerUI : MonoBehaviour {
             PlayerManager.Instance.player.GainNewInterventionAbility(startingAbilities[i]);
         }
         startingAbilities = null;
-        UIManager.Instance.SetTimeControlsState(true);
+        UIManager.Instance.SetSpeedTogglesState(true);
         PlayerManager.Instance.player.StartDivineIntervention();
         //PlayerManager.Instance.player.StartResearchNewInterventionAbility();
     }

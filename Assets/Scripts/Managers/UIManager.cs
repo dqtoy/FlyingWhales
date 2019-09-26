@@ -166,13 +166,6 @@ public class UIManager : MonoBehaviour {
     public void ExitGame() {
         Application.Quit();
     }
-
-    public void SetTimeControlsState(bool state) {
-        pauseBtn.interactable = state;
-        x1Btn.interactable = state;
-        x2Btn.interactable = state;
-        x4Btn.interactable = state;
-    }
     internal void InitializeUI() {
         allMenus = this.transform.GetComponentsInChildren<UIMenu>(true);
         for (int i = 0; i < allMenus.Length; i++) {

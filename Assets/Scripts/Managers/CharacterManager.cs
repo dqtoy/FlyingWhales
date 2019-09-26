@@ -1445,7 +1445,8 @@ public class CharacterManager : MonoBehaviour {
             target = action.poiTarget;
         }
         List<Character> allInVisionCharacters = action.actor.marker.inVisionCharacters;
-        if(target is Character) {
+        allInVisionCharacters.Add(action.actor);
+        if (target is Character) {
             Character targetCharacter = target as Character;
             if (!targetCharacter.isDead) {
                 //TODO: FOR PERFORMANCE TESTING!
@@ -1462,6 +1463,8 @@ public class CharacterManager : MonoBehaviour {
                 if (inVisionChar.GetNormalTrait("Unconscious", "Resting") != null) {
                     return;
                 }
+                inVisionChar.OnActionStateSet(action, state);
+            } else if (inVisionChar is Summon) {
                 inVisionChar.OnActionStateSet(action, state);
             }
         }

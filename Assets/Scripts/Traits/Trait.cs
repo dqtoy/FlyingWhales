@@ -119,11 +119,11 @@ public class Trait {
     public int GetTriggerFlawManaCost(Character character) {
         //Triggering while in a bad mood costs more Mana (100) than triggering while in a dark mood (50). Great and good mood costs 200 mana.
         if (character.currentMoodType == CHARACTER_MOOD.BAD) {
-            return 100;
+            return 25;
         } else if (character.currentMoodType == CHARACTER_MOOD.DARK) {
-            return 50;
+            return 10;
         } else {
-            return 200; //great or good
+            return 50; //great or good
         }
     }
     public string GetTriggerFlawEffectDescription(Character character) {

@@ -875,6 +875,7 @@ public class Player : ILeader {
         for (int i = 0; i < summonSlots.Count; i++) {
             if (summonSlots[i].summon == null) {
                 summonSlots[i].SetSummon(newSummon);
+                playerArea.AddResident(newSummon, ignoreCapacity:true);
                 Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
                 if (showNewSummonUI) {
                     PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
@@ -1705,11 +1706,11 @@ public class Player : ILeader {
     public int GetManaCostForInterventionAbility(INTERVENTION_ABILITY ability) {
         int tier = PlayerManager.Instance.GetInterventionAbilityTier(ability);
         if (tier == 1) {
-            return 200;
-        } else if (tier == 2) {
             return 150;
-        } else {
+        } else if (tier == 2) {
             return 100;
+        } else {
+            return 50;
         }
     }
     public bool CanAffordInterventionAbility(INTERVENTION_ABILITY ability) {

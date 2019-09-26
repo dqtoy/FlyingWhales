@@ -11,7 +11,7 @@ public class LandmarkManager : MonoBehaviour {
     public static LandmarkManager Instance = null;
     public static readonly int Max_Connections = 3;
     public const int DELAY_DIVINE_INTERVENTION_DURATION = 144;
-    public const int SUMMON_MINION_DURATION = 576;
+    public const int SUMMON_MINION_DURATION = 96;
 
     public int initialLandmarkCount;
 
@@ -872,14 +872,13 @@ public class LandmarkManager : MonoBehaviour {
         GameObject areaMapGO = GameObject.Instantiate(innerStructurePrefab, areaMapsParent);
         AreaInnerTileMap areaMap = areaMapGO.GetComponent<AreaInnerTileMap>();
         areaMap.ClearAllTilemaps();
-        InteriorMapManager.Instance.CleanupForTownGeneration();
-
+        //InteriorMapManager.Instance.CleanupForTownGeneration();
         data.Load(areaMap);
+        //areaMap.GenerateDetails();
 
         //Load other data
         Area area = areaMap.area;
-        area.SetAreaMap(areaMap);
-        //areaMap.GenerateDetails();
+        //area.SetAreaMap(areaMap);
 
         areaMap.OnMapGenerationFinished();
         area.OnMapGenerationFinished();
@@ -895,7 +894,7 @@ public class LandmarkManager : MonoBehaviour {
         TownMapSettings generatedSettings = areaMap.GenerateInnerStructures(out log);
         //Debug.Log(log);
         areaMap.DrawMap(generatedSettings);
-        area.SetAreaMap(areaMap);
+        //area.SetAreaMap(areaMap);
         areaMap.GenerateDetails();
         area.PlaceTileObjects();
         //thread.areaMap.RotateTiles();
@@ -985,6 +984,23 @@ public class LandmarkManager : MonoBehaviour {
     }
     public void SetEnemyPlayerArea(Area area) {
         enemyOfPlayerArea = area;
+    }
+    #endregion
+
+    #region Burning Source
+    public BurningSource GetBurningSourceByID(int id) {
+        for (int i = 0; i < allAreas.Count; i++) {
+            Area currArea = allAreas[i];
+            if (currArea.areaMap != null) {
+                for (int j = 0; j < currArea.areaMap.activeBurningSources.Count; j++) {
+                    BurningSource source = currArea.areaMap.activeBurningSources[j];
+                    if (source.id == id) {
+                        return source;
+                    }
+                }
+            }
+        }
+        return null;
     }
     #endregion
 

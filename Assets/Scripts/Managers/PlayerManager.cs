@@ -88,7 +88,7 @@ public class PlayerManager : MonoBehaviour {
         LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, portal.tileLocation.region);
         player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
         GameManager.Instance.StartProgression();
-        UIManager.Instance.SetTimeControlsState(true);
+        UIManager.Instance.SetSpeedTogglesState(true);
         PlayerUI.Instance.UpdateUI();
         //PlayerUI.Instance.InitializeThreatMeter();
     }

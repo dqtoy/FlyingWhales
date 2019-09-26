@@ -122,8 +122,10 @@ public class AreaInnerTileMap : MonoBehaviour {
     public Tilemap eastEdgeTilemap;
     [SerializeField] private SeamlessEdgeAssetsDictionary edgeAssets; //0-north, 1-south, 2-west, 3-east
 
-    public Character hoveredCharacter { get; private set; }
+    //burning
+    public List<BurningSource> activeBurningSources { get; private set; }
 
+    public Character hoveredCharacter { get; private set; }
     public Area area { get; private set; }
     public LocationGridTile[,] map { get; private set; }
     public List<LocationGridTile> allTiles { get; private set; }
@@ -141,6 +143,8 @@ public class AreaInnerTileMap : MonoBehaviour {
     #region Map Generation
     public void Initialize(Area area) {
         this.area = area;
+        area.SetAreaMap(this);
+        activeBurningSources = new List<BurningSource>();
     }
     public void DrawMap(TownMapSettings generatedSettings) {
         generatedTownMapSettings = generatedSettings;
@@ -167,6 +171,8 @@ public class AreaInnerTileMap : MonoBehaviour {
     public void LoadMap(SaveDataAreaInnerTileMap data) {
         outsideTiles = new List<LocationGridTile>();
         insideTiles = new List<LocationGridTile>();
+
+        LoadBurningSources(data.burningSources);
 
         LoadGrid(data);
         SplitMap(false);
@@ -1949,6 +1955,22 @@ public class AreaInnerTileMap : MonoBehaviour {
     }
     #endregion
 
+    #region Burning Source
+    public void AddActiveBurningSource(BurningSource bs) {
+        if (!activeBurningSources.Contains(bs)) {
+            activeBurningSources.Add(bs);
+        }
+    }
+    public void RemoveActiveBurningSources(BurningSource bs) {
+        activeBurningSources.Remove(bs);
+    }
+    public void LoadBurningSources(List<SaveDataBurningSource> sources) {
+        for (int i = 0; i < sources.Count; i++) {
+            SaveDataBurningSource data = sources[i];
+            BurningSource bs = new BurningSource(area, data);
+        }
+    }
+    #endregion
 }
 
 [System.Serializable]
@@ -1995,6 +2017,7 @@ public class SaveDataAreaInnerTileMap {
     public SaveDataLocationGridTile[][] map;
     public string usedTownCenterTemplateName;
     public TownMapSettings generatedTownMapSettings;
+    public List<SaveDataBurningSource> burningSources;
 
     public void Save(AreaInnerTileMap innerMap) {
         width = innerMap.width;
@@ -2002,6 +2025,14 @@ public class SaveDataAreaInnerTileMap {
         areaID = innerMap.area.id;
         usedTownCenterTemplateName = innerMap.usedTownCenterTemplateName;
         generatedTownMapSettings = innerMap.generatedTownMapSettings;
+
+        burningSources = new List<SaveDataBurningSource>();
+        for (int i = 0; i < innerMap.activeBurningSources.Count; i++) {
+            BurningSource bs = innerMap.activeBurningSources[i];
+            SaveDataBurningSource source = new SaveDataBurningSource();
+            source.Save(bs);
+            burningSources.Add(source);
+        }
 
         map = new SaveDataLocationGridTile[width][];
         for (int x = 0; x < innerMap.map.GetLength(0); x++) {
@@ -2013,7 +2044,6 @@ public class SaveDataAreaInnerTileMap {
             }
         }
     }
-
     public void Load(AreaInnerTileMap innerMap) {
         innerMap.width = width;
         innerMap.height = height;

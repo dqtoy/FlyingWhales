@@ -24,7 +24,7 @@ public class Explosion : PlayerJobAction {
             flammables.AddRange(tile.GetAllTraitablesOnTileWithTrait("Flammable"));
         }
         flammables = flammables.Where(x => x.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
-        BurningSource bs = new BurningSource();
+        BurningSource bs = new BurningSource(targetTile.parentAreaMap.area);
         for (int i = 0; i < flammables.Count; i++) {
             ITraitable flammable = flammables[i];
             GameManager.Instance.CreateExplodeEffectAt(flammable.gridTileLocation);
@@ -42,8 +42,8 @@ public class Explosion : PlayerJobAction {
             }
             if (Random.Range(0, 100) < 25) {
                 Burning burning = new Burning();
-                flammable.AddTrait(burning);
                 burning.SetSourceOfBurning(bs, flammable);
+                flammable.AddTrait(burning);
             }
         }
     }
