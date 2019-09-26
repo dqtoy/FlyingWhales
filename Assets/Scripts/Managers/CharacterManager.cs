@@ -83,7 +83,7 @@ public class CharacterManager : MonoBehaviour {
         //ConstructRoleInteractions();
         //ConstructPortraitDictionaries();
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
-        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        //Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
     #region Characters
@@ -1445,7 +1445,7 @@ public class CharacterManager : MonoBehaviour {
             target = action.poiTarget;
         }
         List<Character> allInVisionCharacters = action.actor.marker.inVisionCharacters;
-        allInVisionCharacters.Add(action.actor);
+        //allInVisionCharacters.Add(action.actor);
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (!targetCharacter.isDead) {
@@ -1453,16 +1453,16 @@ public class CharacterManager : MonoBehaviour {
                 allInVisionCharacters = action.actor.marker.inVisionCharacters.Union(targetCharacter.marker.inVisionCharacters).ToList();
             }
         }
+        //if(allInVisionCharacters.Count <= 0) {
+        //    allInVisionCharacters.AddRange(action.actor.marker.inVisionCharacters);
+        //    allInVisionCharacters.Add(action.actor);
+        //}
+        if(action.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER) {
+            Debug.LogError("Check this!");
+        }
         for (int i = 0; i < allInVisionCharacters.Count; i++) {
             Character inVisionChar = allInVisionCharacters[i];
             if (target != inVisionChar && action.actor != inVisionChar) {
-                if (action.goapType == INTERACTION_TYPE.WATCH) {
-                    //Cannot witness/watch a watch action
-                    return;
-                }
-                if (inVisionChar.GetNormalTrait("Unconscious", "Resting") != null) {
-                    return;
-                }
                 inVisionChar.OnActionStateSet(action, state);
             } else if (inVisionChar is Summon) {
                 inVisionChar.OnActionStateSet(action, state);
