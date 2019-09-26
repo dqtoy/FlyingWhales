@@ -767,7 +767,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #if WORLD_CREATION_TOOL
         Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
 #else
-        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
+        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || CameraMove.Instance.isDragging) {
             return;
         }
         //StartCorruptionAnimation();

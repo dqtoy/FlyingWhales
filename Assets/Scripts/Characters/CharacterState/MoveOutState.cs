@@ -36,8 +36,16 @@ public class MoveOutState : CharacterState {
         base.ResumeState();
         stateComponent.character.AdjustDoNotDisturb(1);
     }
-    protected override void DoMovementBehavior() {
-        base.DoMovementBehavior();
+    //protected override void DoMovementBehavior() {
+    //    base.DoMovementBehavior();
+    //    if (stateComponent.character.specificLocation == stateComponent.character.homeArea) {
+    //        //if the character is still at his/her home area, go to the nearest edge tile
+    //        LocationGridTile nearestEdgeTile = stateComponent.character.GetNearestUnoccupiedEdgeTileFromThis();
+    //        stateComponent.character.marker.GoTo(nearestEdgeTile, OnArriveAtNearestEdgeTile);
+    //    }
+    //}
+    protected override void OnJobSet() {
+        base.OnJobSet();
         if (stateComponent.character.specificLocation == stateComponent.character.homeArea) {
             //if the character is still at his/her home area, go to the nearest edge tile
             LocationGridTile nearestEdgeTile = stateComponent.character.GetNearestUnoccupiedEdgeTileFromThis();

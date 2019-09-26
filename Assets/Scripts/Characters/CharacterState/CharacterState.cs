@@ -218,7 +218,14 @@ public class CharacterState {
     }
     public void SetJob(CharacterStateJob job) {
         this.job = job;
+        if (job != null) {
+            OnJobSet();
+        }
     }
+    /// <summary>
+    /// What should happen once the job of this state is set to anything other than null?
+    /// </summary>
+    protected virtual void OnJobSet() { }
     protected virtual void CreateThoughtBubbleLog() {
         if(LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "thought_bubble")) {
             thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "thought_bubble");
