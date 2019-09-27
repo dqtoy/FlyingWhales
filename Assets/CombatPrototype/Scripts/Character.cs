@@ -8674,6 +8674,9 @@ public class Character : ILeader, IPointOfInterest {
             }
             AdjustIsWaitingForInteraction(-1);
 
+            if(alterEgoName == "Lycanthrope") {
+                hasForcedTiredness = true;
+            }
             SetHasCancelledSleepSchedule(false);
             ResetSleepTicks();
             ResetFullnessMeter();

@@ -69,6 +69,9 @@ public class GetFood : GoapAction {
         if(foodPile.foodInPile < takenFood) {
             takenFood = foodPile.foodInPile;
         }
+        if(takenFood < 0) {
+            Debug.Log("Hey!");
+        }
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.AddLogFiller(null, takenFood.ToString(), LOG_IDENTIFIER.STRING_1);
     }
