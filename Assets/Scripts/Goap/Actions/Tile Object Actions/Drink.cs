@@ -8,7 +8,7 @@ public class Drink : GoapAction {
 
     public Drink(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //shouldIntelNotificationOnlyIfActorIsActive = true;
-        if (actor.GetNormalTrait("Alcoholic") != null) {
+        if (actor.GetNormalTrait("Drunkard") != null) {
             validTimeOfDays = new TIME_IN_WORDS[] {
                 TIME_IN_WORDS.MORNING,
                 TIME_IN_WORDS.LUNCH_TIME,
@@ -51,7 +51,7 @@ public class Drink : GoapAction {
     }
     protected override int GetCost() {
         //**Cost**: 15 - 26 (If Actor is alcoholic 5 - 19)
-        if (actor.GetNormalTrait("Alcoholic") != null) {
+        if (actor.GetNormalTrait("Drunkard") != null) {
             return Utilities.rng.Next(5, 20);
         }
         return Utilities.rng.Next(15, 27);
@@ -127,7 +127,7 @@ public class Drink : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        return poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.GetNormalTrait("Agoraphobia") == null;
+        return poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.GetNormalTrait("Agoraphobic") == null;
     }
     #endregion
 }
@@ -142,6 +142,6 @@ public class DrinkData : GoapActionData {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        return poiTarget.gridTileLocation != null &&  poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && actor.GetNormalTrait("Agoraphobia") == null;
+        return poiTarget.gridTileLocation != null &&  poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && actor.GetNormalTrait("Agoraphobic") == null;
     }
 }

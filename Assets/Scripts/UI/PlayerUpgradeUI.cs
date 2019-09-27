@@ -116,7 +116,7 @@ public class PlayerUpgradeUI : MonoBehaviour {
     #region Upgrade
     public void OnClickSelectAbility() {
         List<string> choices = new List<string>() {
-           TheAnvil.All_Intervention,
+           TheAnvil.All_Spell,
            TheAnvil.All_Summon,
            TheAnvil.All_Artifact,
            TheAnvil.Increased_Mana_Capacity,
@@ -130,7 +130,7 @@ public class PlayerUpgradeUI : MonoBehaviour {
     }
     private bool CanChooseUpgrade(string upgrade) {
         //check if any of the categories are already at max level.
-        if (upgrade == TheAnvil.All_Intervention) {
+        if (upgrade == TheAnvil.All_Spell) {
             return !PlayerManager.Instance.player.AreAllInterventionSlotsMaxLevel();
         } else if (upgrade == TheAnvil.All_Summon) {
             if (PlayerManager.Instance.player.summonSlots.Count == 0) {

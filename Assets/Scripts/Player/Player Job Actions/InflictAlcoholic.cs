@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InflictAlcoholic : PlayerJobAction {
+public class Alcoholic : PlayerJobAction {
 
-    public InflictAlcoholic() : base(INTERVENTION_ABILITY.INFLICT_ALCOHOLIC) {
+    public Alcoholic() : base(INTERVENTION_ABILITY.ALCOHOLIC) {
         tier = 3;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
@@ -25,10 +25,10 @@ public class InflictAlcoholic : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
-                    currTarget.AddTrait("Alcoholic");
+                    currTarget.AddTrait("Drunkard");
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    log.AddToFillers(null, "Alcoholic", LOG_IDENTIFIER.STRING_1);
+                    log.AddToFillers(null, "Drunkard", LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
                     PlayerManager.Instance.player.ShowNotification(log);
                 }
@@ -57,7 +57,7 @@ public class InflictAlcoholic : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Alcoholic") != null) {
+        if (targetCharacter.GetNormalTrait("Drunkard") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);
@@ -66,7 +66,7 @@ public class InflictAlcoholic : PlayerJobAction {
         if (targetPOI.isDead) {
             return false;
         }
-        if (!(targetPOI is Character) || targetPOI.GetNormalTrait("Alcoholic") != null) {
+        if (!(targetPOI is Character) || targetPOI.GetNormalTrait("Drunkard") != null) {
             return false;
         }
         return base.CanPerformActionTowards(targetPOI);
@@ -87,8 +87,8 @@ public class InflictAlcoholic : PlayerJobAction {
     #endregion
 }
 
-public class InflictAlcoholicData : PlayerJobActionData {
-    public override string name { get { return "Inflict Alcoholic"; } }
+public class AlcoholicData : PlayerJobActionData {
+    public override string name { get { return "Alcoholic"; } }
     public override string description { get { return "Makes a character often want to drink."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
 }

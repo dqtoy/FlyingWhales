@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Alcoholic : Trait {
+public class Drunkard : Trait {
 
-    public Alcoholic() {
-        name = "Alcoholic";
-        description = "Alcoholics enjoy drinking.";
+    public Drunkard() {
+        name = "Drunkard";
+        description = "Drunkards enjoy drinking.";
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEGATIVE;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

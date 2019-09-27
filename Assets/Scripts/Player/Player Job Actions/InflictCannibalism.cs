@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InflictCannibalism : PlayerJobAction {
+public class Cannibalism : PlayerJobAction {
 
-    public InflictCannibalism() : base(INTERVENTION_ABILITY.INFLICT_CANNIBALISM) {
+    public Cannibalism() : base(INTERVENTION_ABILITY.CANNIBALISM) {
         tier = 2;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT};
@@ -104,8 +104,8 @@ public class InflictCannibalism : PlayerJobAction {
     }
 }
 
-public class InflictCannibalismData : PlayerJobActionData {
-    public override string name { get { return "Inflict Cannibalism"; } }
+public class CannibalismData : PlayerJobActionData {
+    public override string name { get { return "Cannibalism"; } }
     public override string description { get { return "Makes a character eat other characters with the same race for sustenance."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
 }

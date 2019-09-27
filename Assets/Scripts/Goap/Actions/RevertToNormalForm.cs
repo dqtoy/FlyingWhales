@@ -41,7 +41,7 @@ public class RevertToNormalForm : GoapAction {
         currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     public void AfterTransformSuccess() {
-        Lycanthropy lycanthropy = actor.GetNormalTrait("Lycanthropy") as Lycanthropy;
+        Lycanthrope lycanthropy = actor.GetNormalTrait("Lycanthrope") as Lycanthrope;
         lycanthropy.RevertToNormal();
         SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
     }

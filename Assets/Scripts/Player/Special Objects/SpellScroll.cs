@@ -13,7 +13,7 @@ public class SpellScroll : SpecialObject {
         INTERVENTION_ABILITY[] spells = PlayerManager.Instance.allInterventionAbilities;
         INTERVENTION_ABILITY chosenSpell = spells[Random.Range(0, spells.Length)];
         
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Intervention Ability: " + Utilities.NormalizeStringUpperCaseFirstLetters(chosenSpell.ToString()), () => PlayerManager.Instance.player.GainNewInterventionAbility(chosenSpell, true));
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Spell: " + Utilities.NormalizeStringUpperCaseFirstLetters(chosenSpell.ToString()), () => PlayerManager.Instance.player.GainNewInterventionAbility(chosenSpell, true));
     }
     #endregion
 }

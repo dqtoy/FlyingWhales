@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Agoraphobia : Trait {
+public class Agoraphobic : Trait {
 
-    public Agoraphobia() {
-        name = "Agoraphobia";
+    public Agoraphobic() {
+        name = "Agoraphobic";
         description = "Agoraphobics avoid crowds.";
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEUTRAL;
@@ -33,7 +33,7 @@ public class Agoraphobia : Trait {
         if(addedTo is Character) {
             Character character = addedTo as Character;
             if(character.marker.inVisionCharacters.Count >= 3) {
-                ApplyAgoraphobiaEffect(character, true);
+                ApplyAgoraphobicEffect(character, true);
             }
         }
     }
@@ -46,13 +46,13 @@ public class Agoraphobia : Trait {
             }
             if(character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
                 if (character.marker.inVisionCharacters.Count >= 3) {
-                    ApplyAgoraphobiaEffect(character, true);
+                    ApplyAgoraphobicEffect(character, true);
                 }
             } else if (character.stateComponent.currentState != null && character.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
                 CombatState combatState = character.stateComponent.currentState as CombatState;
                 if (combatState.isAttacking) {
                     if (character.marker.inVisionCharacters.Count >= 3) {
-                        ApplyAgoraphobiaEffect(character, false);
+                        ApplyAgoraphobicEffect(character, false);
                         Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, character);
                     }
                 }
@@ -78,7 +78,7 @@ public class Agoraphobia : Trait {
     }
     #endregion
 
-    private void ApplyAgoraphobiaEffect(Character character, bool processCombat) {
+    private void ApplyAgoraphobicEffect(Character character, bool processCombat) {
         character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat);
         character.AdjustHappiness(-50);
         character.AdjustTiredness(-150);

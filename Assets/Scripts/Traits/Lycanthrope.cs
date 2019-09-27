@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Lycanthropy : Trait {
+public class Lycanthrope : Trait {
 
     private Character _character;
 
     public override bool isPersistent { get { return true; } }
 
     private int _level;
-    public Lycanthropy() {
-        name = "Lycanthropy";
+    public Lycanthrope() {
+        name = "Lycanthrope";
         description = "Lycanthropes transform into wolves when they sleep.";
         thoughtText = "[Character] can transform into a wolf.";
         type = TRAIT_TYPE.FLAW;
@@ -123,7 +123,7 @@ public class Lycanthropy : Trait {
 
         ////Copy traits and then remove them
         //data.SetTraits(_character);
-        //_character.RemoveAllNonRelationshipTraits("Lycanthropy");
+        //_character.RemoveAllNonRelationshipTraits("Lycanthrope");
 
         ////Change faction and race
         //_character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
@@ -217,7 +217,7 @@ public class Lycanthropy : Trait {
     }
 }
 
-public class LycanthropyData {
+public class LycanthropeData {
     public int fullness { get; private set; }
     public int tiredness { get; private set; }
     public int happiness { get; private set; }
@@ -251,7 +251,7 @@ public class LycanthropyData {
     //public void SetTraits(Character character) {
     //    this.traits = new List<Trait>();
     //    for (int i = 0; i < character.allTraits.Count; i++) {
-    //        if(character.allTraits[i].name != "Lycanthropy" && !(character.allTraits[i] is RelationshipTrait)) {
+    //        if(character.allTraits[i].name != "Lycanthrope" && !(character.allTraits[i] is RelationshipTrait)) {
     //            this.traits.Add(character.allTraits[i]);
     //        }
     //    }

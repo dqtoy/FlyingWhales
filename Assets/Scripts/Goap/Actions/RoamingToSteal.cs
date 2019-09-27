@@ -9,6 +9,7 @@ public class RoamingToSteal : GoapAction {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         isNotificationAnIntel = false;
+        isRoamingAction = true;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,

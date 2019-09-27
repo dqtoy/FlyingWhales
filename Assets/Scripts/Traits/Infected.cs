@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Zombie_Virus : Trait {
+public class Infected : Trait {
     private Character owner;
     public override bool isPersistent { get { return true; } }
-    public Zombie_Virus() {
-        name = "Zombie Virus";
+    public Infected() {
+        name = "Infected";
         description = "This character is infected with a Zombie Virus.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;

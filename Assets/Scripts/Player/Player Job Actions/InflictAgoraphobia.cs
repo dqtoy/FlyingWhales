@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InflictAgoraphobia : PlayerJobAction {
+public class Agoraphobia : PlayerJobAction {
 
-    public InflictAgoraphobia() : base(INTERVENTION_ABILITY.INFLICT_AGORAPHOBIA) {
+    public Agoraphobia() : base(INTERVENTION_ABILITY.AGORAPHOBIA) {
         tier = 3;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
@@ -26,7 +26,7 @@ public class InflictAgoraphobia : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
-                    Trait newTrait = new Agoraphobia();
+                    Trait newTrait = new Agoraphobic();
                     newTrait.SetLevel(level);
                     currTarget.AddTrait(newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
@@ -56,7 +56,7 @@ public class InflictAgoraphobia : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Agoraphobia") != null) {
+        if (targetCharacter.GetNormalTrait("Agoraphobic") != null) {
             return false;
         }
         //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -87,7 +87,7 @@ public class InflictAgoraphobia : PlayerJobAction {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Agoraphobia") != null) {
+        if (targetCharacter.GetNormalTrait("Agoraphobic") != null) {
             return false;
         }
         //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -97,8 +97,8 @@ public class InflictAgoraphobia : PlayerJobAction {
     }
 }
 
-public class InflictAgoraphobiaData : PlayerJobActionData {
-    public override string name { get { return "Inflict Agoraphobia"; } }
+public class AgoraphobiaData : PlayerJobActionData {
+    public override string name { get { return "Agoraphobia"; } }
     public override string description { get { return "Makes a character fear crowds."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
 }

@@ -81,6 +81,7 @@ public class GoapAction {
     public int referenceCount { get; protected set; }
     public bool willAvoidCharactersWhileMoving { get; protected set; }
     public bool isStealth { get; protected set; }
+    public bool isRoamingAction { get; protected set; } //Is this action a roaming action like Hunting To Drink Blood or Roaming To Steal
     public object[] otherData { get; protected set; }
 
     protected virtual bool isTargetMissing {
@@ -101,9 +102,6 @@ public class GoapAction {
             }
         }
     }
-
-    //Stealth
-    protected int _numOfTries;
 
     protected bool _stayInArea; //if the character should stay at his/her current area to do this action
 
@@ -129,7 +127,6 @@ public class GoapAction {
         actualEffects = new List<GoapEffect>();
         committedCrime = CRIME.NONE;
         animationName = string.Empty;
-        _numOfTries = 0;
         resumeTargetCharacterState = true;
         isNotificationAnIntel = true;
         canBeAddedToMemory = true;

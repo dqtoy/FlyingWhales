@@ -87,7 +87,7 @@ public class LevelUpUI : MonoBehaviour {
             if (identifierToLevelUp.ToLower() == "combat ability") {
                 titleText.text = "Gain a level for a Combat Ability!";
             } else if (identifierToLevelUp.ToLower() == "intervention ability") {
-                titleText.text = "Gain a level for an Intervention Ability!";
+                titleText.text = "Gain a level for a Spell!";
             } else if (identifierToLevelUp.ToLower() == "summon_slot") {
                 titleText.text = "Unlock or Level Up a Summon Slot!";
             } else if (identifierToLevelUp.ToLower() == "artifact_slot") {

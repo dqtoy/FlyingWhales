@@ -51,8 +51,8 @@ public class NewAbilityUI : MonoBehaviour {
         minionGO.SetActive(false);
         obtainText.gameObject.SetActive(false);
         if (obj is PlayerJobAction) {
-            titleText.text = "New Intervention Ability";
-            obtainText.text = "You obtained a new Intervention Ability!";
+            titleText.text = "New Spell";
+            obtainText.text = "You obtained a new Spell!";
             PlayerJobAction action = obj as PlayerJobAction;
             abilityIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
             string text = action.name;

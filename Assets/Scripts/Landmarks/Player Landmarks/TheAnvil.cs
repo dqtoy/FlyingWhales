@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TheAnvil : BaseLandmark {
-
-    public static readonly string All_Intervention = "Improved Spells";
+    public static readonly string All_Spell = "Improved Spells";
     public static readonly string All_Summon = "Improved Summons";
     public static readonly string All_Artifact = "Improved Artifacts";
     //unimplemented
@@ -42,24 +41,24 @@ public class TheAnvil : BaseLandmark {
         TimerHubUI.Instance.AddItem("Research " + upgradeIdentifier, upgradeDuration, () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
     }
     private void UpgradeDone() {
-        if (upgradeIdentifier == All_Intervention) {
+        if (upgradeIdentifier == All_Spell) {
             for (int i = 0; i < PlayerManager.Instance.player.interventionAbilitySlots.Length; i++) {
                 PlayerJobActionSlot slot = PlayerManager.Instance.player.interventionAbilitySlots[i];
                 slot.LevelUp();
             }
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All Intervention Abilities upgraded!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Spell Level increased!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
         } else if (upgradeIdentifier == All_Summon) {
             for (int i = 0; i < PlayerManager.Instance.player.summonSlots.Count; i++) {
                 SummonSlot slot = PlayerManager.Instance.player.summonSlots[i];
                 slot.LevelUp();
             }
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All Summon Slots upgraded!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Summon Level increased!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
         } else if (upgradeIdentifier == All_Artifact) {
             for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Count; i++) {
                 ArtifactSlot slot = PlayerManager.Instance.player.artifactSlots[i];
                 slot.LevelUp();
             }
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All Artifact Slots upgraded!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Artifact Level increased!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
         }
         upgradeIdentifier = string.Empty;
         tileLocation.region.assignedMinion.SetAssignedRegion(null);
@@ -74,7 +73,7 @@ public class TheAnvil : BaseLandmark {
 
     #region Static
     public static int GetUpgradeDuration(string upgrade) {
-        if (upgrade == All_Intervention) {
+        if (upgrade == All_Spell) {
             return GameManager.Instance.GetTicksBasedOnHour(8);
         } else if (upgrade == All_Summon) {
             return GameManager.Instance.GetTicksBasedOnHour(8);
@@ -84,8 +83,8 @@ public class TheAnvil : BaseLandmark {
         return GameManager.Instance.GetTicksBasedOnHour(8);
     }
     public static string GetUpgradeDescription(string upgrade) {
-        if (upgrade == All_Intervention) {
-            return "Upgrade all your intervention abilities by 1 level.";
+        if (upgrade == All_Spell) {
+            return "Upgrade all your spells by 1 level.";
         } else if (upgrade == All_Summon) {
             return "Upgrade all your summon slots by 1 level.";
         } else if (upgrade == All_Artifact) {
