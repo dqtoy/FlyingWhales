@@ -1397,9 +1397,10 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private Button closeBtn;
     [SerializeField] private TextMeshProUGUI yesBtnLbl;
     [SerializeField] private TextMeshProUGUI noBtnLbl;
+    [SerializeField] private UIHoverHandler yesBtnUnInteractableHoverHandler;
     public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null,
         bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool noBtnInteractable = true, bool pauseAndResume = false, 
-        bool yesBtnActive = true, bool noBtnActive = true) {
+        bool yesBtnActive = true, bool noBtnActive = true, System.Action yesBtnInactiveHoverAction = null, System.Action yesBtnInactiveHoverExitAction = null) {
         if (pauseAndResume) {
             SetSpeedTogglesState(false);
             Pause();
@@ -1440,6 +1441,14 @@ public class UIManager : MonoBehaviour {
         if (onClickNoAction != null) {
             noBtn.onClick.AddListener(onClickNoAction.Invoke);
             closeBtn.onClick.AddListener(onClickNoAction.Invoke);
+        }
+
+        yesBtnUnInteractableHoverHandler.gameObject.SetActive(!yesBtn.interactable);
+        if (yesBtnInactiveHoverAction != null) {
+            yesBtnUnInteractableHoverHandler.SetOnHoverAction(yesBtnInactiveHoverAction.Invoke);
+        }
+        if (yesBtnInactiveHoverExitAction != null) {
+            yesBtnUnInteractableHoverHandler.SetOnHoverOutAction(yesBtnInactiveHoverExitAction.Invoke);
         }
 
         yesNoGO.SetActive(true);
