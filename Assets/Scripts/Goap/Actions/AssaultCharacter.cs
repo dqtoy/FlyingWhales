@@ -48,12 +48,15 @@ public class AssaultCharacter : GoapAction {
                         Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did was unable to add target as hostile when reacting to " + poiTarget.name + " in assault action!");
                         SetState("Target Missing");
                     }
-                } else {
+                } else if (actor.stateComponent.currentState is CombatState){
                     characterState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
                     CombatState combatState = characterState as CombatState;
                     combatState.SetActionThatTriggeredThisState(this);
                     combatState.SetOnEndStateAction(OnFinishCombatState);
                     SetState("In Progress");
+                } else {
+                    Debug.LogWarning(actor.name + " is not in combat state, but it has " + targetCharacter.name + "in it's hostile range");
+                    SetState("Assault Failed");
                 }
                 //if (characterState is CombatState) {
                 //    CombatState realCombatState = characterState as CombatState;
