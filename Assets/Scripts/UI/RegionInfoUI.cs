@@ -29,6 +29,9 @@ public class RegionInfoUI : UIMenu {
     [SerializeField] private GameObject eventListItemPrefab;
     [SerializeField] private TextMeshProUGUI eventDesctiptionLbl;
     [SerializeField] private Button spawnEventBtn;
+    [SerializeField] private GameObject worldEventNameplatePrefab;
+    [SerializeField] private ScrollRect worldEventsScrollView;
+
 
     [Header("Invasion")]
     [SerializeField] private GameObject invConfrimationGO;
@@ -53,14 +56,16 @@ public class RegionInfoUI : UIMenu {
     [SerializeField] private TheEyeUI theEyeUI;
 
     public Region activeRegion { get; private set; }
+    protected List<WorldEventNameplate> activeWorldEventNameplates = new List<WorldEventNameplate>();
 
     internal override void Initialize() {
         base.Initialize();
         Messenger.AddListener<Character, Region>(Signals.CHARACTER_ENTERED_REGION, OnCharacterEnteredRegion);
         Messenger.AddListener<Character, Region>(Signals.CHARACTER_EXITED_REGION, OnCharacterExitedRegion);
         Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
-        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FINISHED_NORMAL, OnWorldEventFinishedNormally);
-        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FAILED, OnWorldEventFailed);
+        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_DESPAWNED, OnWorldEventDespawned);
+        //Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FINISHED_NORMAL, OnWorldEventFinishedNormally);
+        //Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FAILED, OnWorldEventFailed);
         Messenger.AddListener<Region>(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, ShowAppropriateContentOnSignal);
         theEyeUI.Initialize();
     }
@@ -221,29 +226,57 @@ public class RegionInfoUI : UIMenu {
 
     #region Events
     private void UpdateEventInfo() {
-        if (activeRegion.activeEvent != null) {
-            eventDesctiptionLbl.text = activeRegion.activeEvent.name + "\n" + activeRegion.activeEvent.description;
-        } else {
-            eventDesctiptionLbl.text = "No active event.";
+        if(worldEventsScrollView.content.childCount > 0) {
+            Utilities.DestroyChildren(worldEventsScrollView.content);
         }
+        if (activeRegion.activeEvent != null) {
+            GenerateWorldEventNameplate(activeRegion.activeEvent);
+        }
+        //if (activeRegion.activeEvent != null) {
+        //    eventDesctiptionLbl.text = activeRegion.activeEvent.name + "\n" + activeRegion.activeEvent.description;
+        //} 
+        //else {
+        //    eventDesctiptionLbl.text = "No active event.";
+        //}
         //UpdateSpawnEventButton();
-        UpdateInterveneButton();
+        //UpdateInterveneButton();
     }
     private void OnWorldEventSpawned(Region region, WorldEvent we) {
         if (isShowing && activeRegion == region) {
-            UpdateEventInfo();
+            GenerateWorldEventNameplate(we);
         }
     }
-    private void OnWorldEventFinishedNormally(Region region, WorldEvent we) {
+    private void OnWorldEventDespawned(Region region, WorldEvent we) {
         if (isShowing && activeRegion == region) {
-            UpdateEventInfo();
+            RemoveWorldEventNameplate(we);
         }
     }
-    private void OnWorldEventFailed(Region region, WorldEvent we) {
-        if (isShowing && activeRegion == region) {
-            UpdateEventInfo();
+    private void GenerateWorldEventNameplate(WorldEvent worldEvent) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(worldEventNameplatePrefab.name, Vector3.zero, Quaternion.identity, worldEventsScrollView.content);
+        WorldEventNameplate item = go.GetComponent<WorldEventNameplate>();
+        item.Initialize(worldEvent);
+        activeWorldEventNameplates.Add(item);
+    }
+    private void RemoveWorldEventNameplate(WorldEvent worldEvent) {
+        for (int i = 0; i < activeWorldEventNameplates.Count; i++) {
+            if(activeWorldEventNameplates[i].worldEvent == worldEvent) {
+                WorldEventNameplate worldEventNameplate = activeWorldEventNameplates[i];
+                activeWorldEventNameplates.RemoveAt(i);
+                ObjectPoolManager.Instance.DestroyObject(worldEventNameplate.gameObject);
+                break;
+            }
         }
     }
+    //private void OnWorldEventFinishedNormally(Region region, WorldEvent we) {
+    //    if (isShowing && activeRegion == region) {
+    //        UpdateEventInfo();
+    //    }
+    //}
+    //private void OnWorldEventFailed(Region region, WorldEvent we) {
+    //    if (isShowing && activeRegion == region) {
+    //        UpdateEventInfo();
+    //    }
+    //}
     public void OnClickSpawnEvent() {
         if (eventsListGO.activeInHierarchy) {
             eventsListGO.SetActive(false);

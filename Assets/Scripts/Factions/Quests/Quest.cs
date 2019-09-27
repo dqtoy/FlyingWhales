@@ -15,6 +15,7 @@ public class Quest {
         this.region = region;
         name = "Quest";
         jobQueue = new JobQueue(null);
+        jobQueue.SetQuest(this);
     }
     public Quest(SaveDataQuest data) {
         name = data.name;
@@ -22,6 +23,7 @@ public class Quest {
         region = GridMap.Instance.GetRegionByID(data.regionID);
         factionOwner = FactionManager.Instance.GetFactionBasedOnID(data.factionOwnerID);
         jobQueue = new JobQueue(null);
+        jobQueue.SetQuest(this);
     }
 
     #region Virtuals
@@ -31,6 +33,12 @@ public class Quest {
     }
     public virtual void FinishQuest() {
         isActivated = false;
+    }
+    public virtual void OnAddJob(JobQueueItem job) {
+        Messenger.Broadcast(Signals.ADD_QUEST_JOB, this, job);
+    }
+    public virtual void OnRemoveJob(JobQueueItem job) {
+        Messenger.Broadcast(Signals.REMOVE_QUEST_JOB, this, job);
     }
     #endregion
 }

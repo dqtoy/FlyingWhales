@@ -190,6 +190,8 @@ public static class Signals {
     public static string CHARACTER_SNATCHED = "OnCharacterSnatched"; //Parameters (Character snatchedCharacter)
     public static string CHARACTER_RELEASED = "OnCharacterReleased"; //Parameters (Character releasedCharacter)
     public static string QUEST_TURNED_IN = "OnQuestTurnedIn"; //Parameter (Quest turnedInQuest)
+    public static string ADD_QUEST_JOB = "OnAddQuestJob"; //Parameter (Quest quest, JobQueueItem job)
+    public static string REMOVE_QUEST_JOB = "OnRemoveQuestJob"; //Parameter (Quest quest, JobQueueItem job)
     #endregion
 
     #region Party

@@ -172,6 +172,7 @@ public class UIManager : MonoBehaviour {
             allMenus[i].Initialize();
             //allMenus[i].ApplyUnifiedSettings(settings);
         }
+        questInfoUI.Initialize();
         //Image[] images = this.gameObject.GetComponentsInChildren<Image>();
         //for (int i = 0; i < images.Length; i++) {
         //    images[i].alphaHitTestMinimumThreshold = 1f;

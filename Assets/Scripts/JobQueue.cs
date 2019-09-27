@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class JobQueue {
     public Character character { get; private set; } //If there is character it means that this job queue is a personal job queue
-	public List<JobQueueItem> jobsInQueue { get; private set; }
+    public Quest quest { get; private set; } //If there is a quest it means that this is a quest job
+
+    public List<JobQueueItem> jobsInQueue { get; private set; }
 
     public bool isAreaOrQuestJobQueue {
         get { return character == null; }
@@ -12,6 +14,11 @@ public class JobQueue {
     public JobQueue(Character character) {
         this.character = character;
         jobsInQueue = new List<JobQueueItem>();
+    }
+
+    //NOTE: IMPROVE THIS! PROBABLY PUT THIS IN CONSTRUCTOR JUST LIKE WITH THE CHARACTER
+    public void SetQuest(Quest quest) {
+        this.quest = quest;
     }
 
     public void AddJobInQueue(JobQueueItem job, bool processLogicForPersonalJob = true) {
@@ -28,6 +35,9 @@ public class JobQueue {
             jobsInQueue.Add(job);
         }
         job.OnAddJobToQueue();
+        if(quest != null) {
+            quest.OnAddJob(job);
+        }
 
         if(!isAreaOrQuestJobQueue) {
             //bool hasProcessed = false;
@@ -85,6 +95,9 @@ public class JobQueue {
             //removeLog += "\nAssigned Plan: " + (planJob.assignedPlan != null);
             //}
             Debug.Log(GameManager.Instance.TodayLogString() + removeLog);
+            if (quest != null) {
+                quest.OnRemoveJob(job);
+            }
             return job.OnRemoveJobFromQueue();
         }
         return false;
