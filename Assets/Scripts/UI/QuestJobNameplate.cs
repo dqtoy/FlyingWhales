@@ -15,6 +15,8 @@ public class QuestJobNameplate : PooledObject {
     public Button mainBtn;
     public GameObject coverGO;
 
+    public System.Action onClickAction { get; private set; }
+
     public void Initialize(Quest quest, JobQueueItem job) {
         this.job = job;
         this.quest = quest;
@@ -26,6 +28,9 @@ public class QuestJobNameplate : PooledObject {
         jobNameLbl.text = job.name;
         //TODO: eventIconImg
     }
+    public void SetClickAction(System.Action onClickAction) {
+        this.onClickAction = onClickAction;
+    }
 
     #region Object Pool
     public override void Reset() {
@@ -36,6 +41,11 @@ public class QuestJobNameplate : PooledObject {
     #endregion
 
     #region Mouse Actions
+    public void OnClickThis() {
+        if (onClickAction != null) {
+            onClickAction();
+        }
+    }
     public void OnHover() {
         string hoverText = string.Empty;
         if (job != null) {

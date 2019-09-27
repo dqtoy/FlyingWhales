@@ -259,8 +259,8 @@ public class RegionInfoUI : UIMenu {
     }
     private void RemoveWorldEventNameplate(WorldEvent worldEvent) {
         for (int i = 0; i < activeWorldEventNameplates.Count; i++) {
-            if(activeWorldEventNameplates[i].worldEvent == worldEvent) {
-                WorldEventNameplate worldEventNameplate = activeWorldEventNameplates[i];
+            WorldEventNameplate worldEventNameplate = activeWorldEventNameplates[i];
+            if (worldEventNameplate.worldEvent == worldEvent) {
                 activeWorldEventNameplates.RemoveAt(i);
                 ObjectPoolManager.Instance.DestroyObject(worldEventNameplate.gameObject);
                 break;

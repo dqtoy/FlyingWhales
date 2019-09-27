@@ -97,8 +97,8 @@ public class QuestInfoUI : MonoBehaviour {
     }
     private void RemoveQuestJobNameplate(JobQueueItem job) {
         for (int i = 0; i < activeQuestJobNameplates.Count; i++) {
-            if (activeQuestJobNameplates[i].job == job) {
-                QuestJobNameplate nameplate = activeQuestJobNameplates[i];
+            QuestJobNameplate nameplate = activeQuestJobNameplates[i];
+            if (nameplate.job == job) {
                 activeQuestJobNameplates.RemoveAt(i);
                 ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
                 break;
@@ -106,7 +106,6 @@ public class QuestInfoUI : MonoBehaviour {
         }
         UpdateJobText();
     }
-
     #region Listeners
     private void OnAddQuestJob(Quest quest, JobQueueItem job) {
         if(gameObject.activeSelf && this.quest == quest) {
