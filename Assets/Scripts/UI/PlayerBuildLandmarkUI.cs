@@ -87,7 +87,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         UIManager.Instance.ShowClickableObjectPicker(characters, SetChosenMinion, null, CanChooseMinion, title);
     }
     private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.CONSTRUCT);
+        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER);
     }
     private void SetChosenMinion(Character character) {
         chosenMinion = character.minion;

@@ -96,7 +96,7 @@ public class PlayerUpgradeUI : MonoBehaviour {
         UIManager.Instance.ShowClickableObjectPicker(characters, SetChosenMinion, null, CanChooseMinion, title);
     }
     private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.UPGRADE);
+        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.RESEARCHER);
     }
     private void SetChosenMinion(Character character) {
         chosenMinion = character.minion;

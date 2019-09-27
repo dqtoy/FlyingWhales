@@ -1340,7 +1340,7 @@ public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVE
 public enum SERIAL_VICTIM_TYPE { GENDER, ROLE, TRAIT, STATUS }
 public enum SPECIAL_OBJECT_TYPE { DEMON_STONE, SPELL_SCROLL, SKILL_SCROLL }
 public enum WORLD_EVENT { NONE, HARVEST, SLAY_MINION, MINE_SUPPLY, STUDY, PRAY_AT_TEMPLE, DESTROY_DEMONIC_LANDMARK, HOLY_INCANTATION }
-public enum DEADLY_SIN_ACTION { RESEARCH_SPELL, SPAWN_EVENT, CONSTRUCT, INTERFERE, INVADE, FIGHT, UPGRADE, }
+public enum DEADLY_SIN_ACTION { SPELL_SOURCE, INSTIGATOR, BUILDER, SABOTEUR, INVADER, FIGHTER, RESEARCHER, }
 public enum WORLD_EVENT_EFFECT { GET_FOOD, GET_SUPPLY, GAIN_POSITIVE_TRAIT, REMOVE_NEGATIVE_TRAIT, EXPLORE, COMBAT, DESTROY_LANDMARK, DIVINE_INTERVENTION_SPEED_UP }
 public enum WORLD_OBJECT_TYPE { NONE, ARTIFACT, SUMMON, SPECIAL_OBJECT, }
 
@@ -1736,6 +1736,49 @@ public static class Extensions {
             default:
                 return false;
         }
+    }
+    #endregion
+
+    #region Deadly Sins
+    public static string Description(this DEADLY_SIN_ACTION sin) {
+        switch (sin) {
+            case DEADLY_SIN_ACTION.SPELL_SOURCE:
+                return "Knows three Spells that can be extracted by the Ruinarch";
+            case DEADLY_SIN_ACTION.INSTIGATOR:
+                return "Can be assigned to spawn Chaos Events in The Fingers";
+            case DEADLY_SIN_ACTION.BUILDER:
+                return "Can construct demonic structures";
+            case DEADLY_SIN_ACTION.SABOTEUR:
+                return "Can interfere in Events spawned by non-combatant characters";
+            case DEADLY_SIN_ACTION.INVADER:
+                return "Can invade adjacent regions";
+            case DEADLY_SIN_ACTION.FIGHTER:
+                return "Can interfere in Events spawned by combat-ready characters";
+            case DEADLY_SIN_ACTION.RESEARCHER:
+                return "Can be assigned to research upgrades in The Anvil";
+            default:
+                return string.Empty;
+        }
+    }
+    #endregion
+
+    #region Combat Abilities
+    public static string Description(this COMBAT_ABILITY ability) {
+        switch (ability) {
+            case COMBAT_ABILITY.SINGLE_HEAL:
+                return "Heals a friendly unit by a percentage of its max HP.";
+            case COMBAT_ABILITY.FLAMESTRIKE:
+                return "Deal AOE damage in the surrounding area.";
+            case COMBAT_ABILITY.FEAR_SPELL:
+                return "Makes a character fear any other character.";
+            case COMBAT_ABILITY.SACRIFICE:
+                return "Sacrifice a friendly unit to deal AOE damage in the surrounding area.";
+            case COMBAT_ABILITY.TAUNT:
+                return "Taunts enemies into attacking this character.";
+            default:
+                return string.Empty;
+        }
+
     }
     #endregion
 }

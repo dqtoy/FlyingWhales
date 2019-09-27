@@ -6,7 +6,6 @@ public class FearSpellAbility : CombatAbility {
 
     private int _fearDurationInMinutes;
     public FearSpellAbility() : base(COMBAT_ABILITY.FEAR_SPELL) {
-        description = "Makes a character fear any other character.";
         abilityTags.Add(ABILITY_TAG.MAGIC);
         abilityTags.Add(ABILITY_TAG.DEBUFF);
         cooldown = 10;
