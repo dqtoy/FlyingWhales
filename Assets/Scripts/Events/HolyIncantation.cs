@@ -6,6 +6,7 @@ public class HolyIncantation : WorldEvent {
 
     public HolyIncantation() : base(WORLD_EVENT.HOLY_INCANTATION) {
         eventEffects = new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.DIVINE_INTERVENTION_SPEED_UP };
+        description = "This mission performs a holy incantation that will significantly speed up the Divine Intervention.";
     }
 
     #region Overrides

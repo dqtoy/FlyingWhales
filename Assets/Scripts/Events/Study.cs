@@ -6,6 +6,7 @@ public class Study : WorldEvent {
 
     public Study() : base(WORLD_EVENT.STUDY) {
         eventEffects = new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GAIN_POSITIVE_TRAIT, WORLD_EVENT_EFFECT.EXPLORE };
+        description = "This mission will grant the character a Buff.";
     }
 
     #region Overrides

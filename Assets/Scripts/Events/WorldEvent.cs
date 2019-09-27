@@ -12,7 +12,7 @@ public class WorldEvent  {
     public int duration { get; protected set; }
     public WORLD_EVENT eventType { get; protected set; }
     public string name { get; private set; }
-    public string description { get; private set; }
+    public string description { get; protected set; }
     public bool isUnique { get; protected set; } //should this event only spawn once?
     public WORLD_EVENT_EFFECT[] eventEffects { get; protected set; }
     private bool hasSuccessfullyExecutedOnce;

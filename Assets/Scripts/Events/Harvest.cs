@@ -6,6 +6,7 @@ public class Harvest : WorldEvent {
 
     public Harvest() : base(WORLD_EVENT.HARVEST) {
         eventEffects = new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GET_FOOD };
+        description = "This mission will provide more food for the settlement.";
     }
 
     #region Overrides
