@@ -87,7 +87,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         UIManager.Instance.ShowClickableObjectPicker(characters, SetChosenMinion, null, CanChooseMinion, title);
     }
     private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.CONSTRUCT);
+        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER);
     }
     private void SetChosenMinion(Character character) {
         chosenMinion = character.minion;
@@ -113,6 +113,9 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         UIManager.Instance.ShowClickableObjectPicker(landmarkNames, SetChosenLandmark, null, CanChooseLandmark, title, OnHoverLandmarkChoice, OnHoverExitLandmarkChoice, "landmark");
     }
     private bool CanChooseLandmark(string landmarkName) {
+        if (landmarkName == "The Pit" || landmarkName == "The Profane" || landmarkName == "The Fingers" || landmarkName == "The Needles") {
+            return false;
+        }
         return true;
     }
     private void OnHoverLandmarkChoice(string landmarkName) {

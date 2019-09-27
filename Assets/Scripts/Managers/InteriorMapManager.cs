@@ -72,8 +72,14 @@ public class InteriorMapManager : MonoBehaviour {
 
 
     private Dictionary<int, float> lightSettings = new Dictionary<int, float>() { //this specifies what light intensity is to be used while inside the specific range in ticks
+#if UNITY_EDITOR
         { 228, 1f },
         { 61, 1.8f }
+#else
+        { 228, 0.3f },
+        { 61, 0.8f }
+#endif
+
     };
 
     #region Monobehaviours

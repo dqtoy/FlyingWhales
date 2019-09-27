@@ -723,7 +723,7 @@ public class UIManager : MonoBehaviour {
     }
     public LandmarkNameplate CreateLandmarkNameplate(BaseLandmark landmark) {
         GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("LandmarkNameplate", worldUIParent);
-        //nameplateGO.transform.localScale = new Vector3(0.02f, 0.02f, 1f);
+        nameplateGO.transform.localScale = Vector3.one;
         LandmarkNameplate nameplate = nameplateGO.GetComponent<LandmarkNameplate>();
         nameplate.SetLandmark(landmark);
         return nameplate;

@@ -38,7 +38,7 @@ public class TheAnvil : BaseLandmark {
         dueDate = GameManager.Instance.Today().AddTicks(upgradeDuration);
         int tickDiff = Utilities.GetTicksInBetweenDates(upgradeStartDate, dueDate);
         SchedulingManager.Instance.AddEntry(dueDate, UpgradeDone, this);
-        TimerHubUI.Instance.AddItem("Upgrade " + upgradeIdentifier, upgradeDuration, () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
+        TimerHubUI.Instance.AddItem("Research " + upgradeIdentifier, upgradeDuration, () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
     }
     private void UpgradeDone() {
         if (upgradeIdentifier == All_Spell) {

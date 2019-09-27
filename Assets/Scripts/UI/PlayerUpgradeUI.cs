@@ -96,7 +96,7 @@ public class PlayerUpgradeUI : MonoBehaviour {
         UIManager.Instance.ShowClickableObjectPicker(characters, SetChosenMinion, null, CanChooseMinion, title);
     }
     private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.UPGRADE);
+        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.RESEARCHER);
     }
     private void SetChosenMinion(Character character) {
         chosenMinion = character.minion;
@@ -126,7 +126,7 @@ public class PlayerUpgradeUI : MonoBehaviour {
            TheAnvil.Reduce_Spire_Cooldown,
            TheAnvil.Reduce_Eye_Cooldown,
         };
-        UIManager.Instance.ShowClickableObjectPicker(choices, SetChosenUpgrade, null, CanChooseUpgrade, "Select upgrade", OnHoverAbilityChoice, OnHoverExitAbilityChoice, "intervention ability");
+        UIManager.Instance.ShowClickableObjectPicker(choices, SetChosenUpgrade, null, CanChooseUpgrade, "Select research", OnHoverAbilityChoice, OnHoverExitAbilityChoice, "intervention ability");
     }
     private bool CanChooseUpgrade(string upgrade) {
         //check if any of the categories are already at max level.

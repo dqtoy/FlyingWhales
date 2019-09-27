@@ -19,7 +19,7 @@ public class DeadlySin {
 
 public class Envy : DeadlySin {
     public Envy() : base() {
-        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.RESEARCH_SPELL, DEADLY_SIN_ACTION.SPAWN_EVENT, DEADLY_SIN_ACTION.CONSTRUCT };
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.SPELL_SOURCE, DEADLY_SIN_ACTION.INSTIGATOR, DEADLY_SIN_ACTION.BUILDER };
     }
     #region Overrides
     //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
@@ -35,7 +35,7 @@ public class Envy : DeadlySin {
 
 public class Greed : DeadlySin {
     public Greed() : base() {
-        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.INTERFERE, DEADLY_SIN_ACTION.INVADE, DEADLY_SIN_ACTION.FIGHT };
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.SABOTEUR, DEADLY_SIN_ACTION.INVADER, DEADLY_SIN_ACTION.FIGHTER };
     }
     //#region Overrides
     //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
@@ -48,7 +48,7 @@ public class Greed : DeadlySin {
 
 public class Pride : DeadlySin {
     public Pride() : base() {
-        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.SPAWN_EVENT, DEADLY_SIN_ACTION.UPGRADE, DEADLY_SIN_ACTION.FIGHT };
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.INSTIGATOR, DEADLY_SIN_ACTION.RESEARCHER, DEADLY_SIN_ACTION.FIGHTER };
     }
     //#region Overrides
     //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
@@ -61,7 +61,7 @@ public class Pride : DeadlySin {
 
 public class Lust : DeadlySin {
     public Lust() : base() {
-        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.RESEARCH_SPELL, DEADLY_SIN_ACTION.INTERFERE, DEADLY_SIN_ACTION.UPGRADE };
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.SPELL_SOURCE, DEADLY_SIN_ACTION.SABOTEUR, DEADLY_SIN_ACTION.RESEARCHER };
     }
     #region Overrides
     //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
@@ -77,7 +77,7 @@ public class Lust : DeadlySin {
 
 public class Gluttony : DeadlySin {
     public Gluttony() : base() {
-        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.INVADE, DEADLY_SIN_ACTION.INTERFERE, DEADLY_SIN_ACTION.CONSTRUCT };
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.INVADER, DEADLY_SIN_ACTION.SABOTEUR, DEADLY_SIN_ACTION.BUILDER };
     }
     //#region Overrides
     //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
@@ -90,7 +90,7 @@ public class Gluttony : DeadlySin {
 
 public class Wrath : DeadlySin {
     public Wrath() : base() {
-        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.RESEARCH_SPELL, DEADLY_SIN_ACTION.INVADE, DEADLY_SIN_ACTION.FIGHT };
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.SPELL_SOURCE, DEADLY_SIN_ACTION.INVADER, DEADLY_SIN_ACTION.FIGHTER };
     }
     #region Overrides
     //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {
@@ -106,7 +106,7 @@ public class Wrath : DeadlySin {
 
 public class Sloth : DeadlySin {
     public Sloth() : base() {
-        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.RESEARCH_SPELL, DEADLY_SIN_ACTION.UPGRADE, DEADLY_SIN_ACTION.CONSTRUCT };
+        assignments = new DEADLY_SIN_ACTION[] { DEADLY_SIN_ACTION.SPELL_SOURCE, DEADLY_SIN_ACTION.RESEARCHER, DEADLY_SIN_ACTION.BUILDER };
     }
     #region Overrides
     //public override bool CanDoDeadlySinAction(DEADLY_SIN_ACTION sinAction) {

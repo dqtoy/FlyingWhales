@@ -113,8 +113,38 @@ public class RegionInfoUI : UIMenu {
     #region Main
     private void UpdateRegionInfo() {
         descriptionLbl.text = activeRegion.description;
-        string wo = "\n\n<b>World Object: </b>" + (activeRegion.worldObj?.worldObjectName ?? "None");
-        descriptionLbl.text += wo;
+        descriptionLbl.text += "\n\n<b>Features: </b>";
+
+        List<string> allFeatures = new List<string>();
+        if (activeRegion.coreTile.HasTileTag(TILE_TAG.HALLOWED_GROUNDS)) {
+            allFeatures.Add("Hallowed Grounds");
+        }
+        if (activeRegion.worldObj != null) {
+            if (activeRegion.worldObj is Summon) {
+                allFeatures.Add("Monsters");
+            } else if (activeRegion.worldObj is Artifact) {
+                allFeatures.Add("Treasures");
+            } else if (activeRegion.worldObj is SpellScroll) {
+                allFeatures.Add("Spells");
+            } else if (activeRegion.worldObj is SkillScroll) {
+                allFeatures.Add("Knowledge");
+            }
+        }
+        if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.BARRACKS || activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.MAGE_TOWER) {
+            allFeatures.Add("Experience");
+        }
+
+        if (allFeatures.Count == 0) {
+            descriptionLbl.text += "None";
+        } else {
+            for (int i = 0; i < allFeatures.Count; i++) {
+                if (i != 0) {
+                    descriptionLbl.text += ", ";
+                }
+                descriptionLbl.text += allFeatures[i];
+            }
+        }
+        
     }
     #endregion
 
@@ -174,7 +204,7 @@ public class RegionInfoUI : UIMenu {
         UpdateStartInvasionBtn();
     }
     private bool CanMinionInvade(Minion minion) {
-        return !minion.isAssigned && minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADE);
+        return !minion.isAssigned && minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADER);
     }
     private void UpdateStartInvasionBtn() {
         confirmInvasionBtn.interactable = chosenMinionToInvade != null;

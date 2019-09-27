@@ -878,9 +878,10 @@ public class PlayerUI : MonoBehaviour {
         leaderPicker.imgHighlight.gameObject.SetActive(true);
         tempCurrentMinionLeaderPicker = leaderPicker;
     }
+    private List<INTERVENTION_ABILITY> chosenAbilities;
     private void RandomizeStartingAbilities() {
         List<INTERVENTION_ABILITY> abilitiesPool = PlayerManager.Instance.allInterventionAbilities.ToList();
-        List<INTERVENTION_ABILITY> chosenAbilities = new List<INTERVENTION_ABILITY>();
+        chosenAbilities = new List<INTERVENTION_ABILITY>();
 
         while (chosenAbilities.Count != startingAbilityIcons.Length) {
             INTERVENTION_ABILITY randomAbility = abilitiesPool[UnityEngine.Random.Range(0, abilitiesPool.Count)];
@@ -896,6 +897,10 @@ public class PlayerUI : MonoBehaviour {
             startingAbilities[i] = randomAbility;
         }
     }
+    public void OnHoverStartingSpell(int index) {
+        INTERVENTION_ABILITY spell = chosenAbilities[index];
+        UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allInterventionAbilitiesData[spell].description, Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
+    }
     public void RerollAbilities() {
         RandomizeStartingAbilities();
     }
@@ -909,7 +914,7 @@ public class PlayerUI : MonoBehaviour {
 
         List<string> filteredDeadlySinClasses = new List<string>();
         foreach (KeyValuePair<string, DeadlySin> kvp in CharacterManager.Instance.deadlySins) {
-            if (kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.CONSTRUCT) || kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADE)) {
+            if (kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER) || kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADER)) {
                 filteredDeadlySinClasses.Add(kvp.Key);
             }
         }
@@ -919,14 +924,14 @@ public class PlayerUI : MonoBehaviour {
         filteredDeadlySinClasses.RemoveAt(class1Index);
 
         string minionClassName2 = string.Empty;
-        if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADE)
-            && CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.CONSTRUCT)) {
+        if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADER)
+            && CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
             minionClassName2 = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
         } else {
-            if(CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADE)) {
-                filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.CONSTRUCT)).ToList();
-            }else if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.CONSTRUCT)) {
-                filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.INVADE)).ToList();
+            if(CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADER)) {
+                filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.BUILDER)).ToList();
+            }else if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
+                filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.INVADER)).ToList();
             }
             minionClassName2 = filteredDeadlySinClasses[UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count)];
         }
