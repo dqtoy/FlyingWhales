@@ -1457,9 +1457,9 @@ public class CharacterManager : MonoBehaviour {
         //    allInVisionCharacters.AddRange(action.actor.marker.inVisionCharacters);
         //    allInVisionCharacters.Add(action.actor);
         //}
-        if(action.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER) {
-            Debug.LogError("Check this!");
-        }
+        //if(action.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER) {
+        //    Debug.LogError("Check this!");
+        //}
         for (int i = 0; i < allInVisionCharacters.Count; i++) {
             Character inVisionChar = allInVisionCharacters[i];
             if (target != inVisionChar && action.actor != inVisionChar) {

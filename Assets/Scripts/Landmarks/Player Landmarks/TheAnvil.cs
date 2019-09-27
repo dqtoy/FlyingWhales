@@ -52,13 +52,13 @@ public class TheAnvil : BaseLandmark {
                 SummonSlot slot = PlayerManager.Instance.player.summonSlots[i];
                 slot.LevelUp();
             }
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All Summon Slots upgraded!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Summon Level increased!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
         } else if (upgradeIdentifier == All_Artifact) {
             for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Count; i++) {
                 ArtifactSlot slot = PlayerManager.Instance.player.artifactSlots[i];
                 slot.LevelUp();
             }
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All Artifact Slots upgraded!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Artifact Level increased!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
         }
         upgradeIdentifier = string.Empty;
         tileLocation.region.assignedMinion.SetAssignedRegion(null);
