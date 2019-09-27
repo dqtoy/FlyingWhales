@@ -940,6 +940,10 @@ public class Character : ILeader, IPointOfInterest {
             ClearAllAwareness();
             //Area gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
             MigrateHomeStructureTo(null);
+            SetTirednessForcedTick(0);
+            SetFullnessForcedTick(0);
+            SetHasCancelledSleepSchedule(false);
+            ResetSleepTicks();
             //MigrateHomeTo(null);
             //AddInitialAwareness(gloomhollow);
             Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
