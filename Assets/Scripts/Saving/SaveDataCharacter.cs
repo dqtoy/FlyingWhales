@@ -393,6 +393,7 @@ public class SaveDataCharacter {
                 CharacterStateJob stateJob = job as CharacterStateJob;
                 if (dataStateJob.assignedCharacterID != -1) {
                     Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
+                    stateJob.SetAssignedCharacter(assignedCharacter);
                     CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
                     if (newState != null) {
                         stateJob.SetAssignedState(newState);
