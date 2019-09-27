@@ -126,7 +126,7 @@ public class PlayerUpgradeUI : MonoBehaviour {
            TheAnvil.Reduce_Spire_Cooldown,
            TheAnvil.Reduce_Eye_Cooldown,
         };
-        UIManager.Instance.ShowClickableObjectPicker(choices, SetChosenUpgrade, null, CanChooseUpgrade, "Select upgrade", OnHoverAbilityChoice, OnHoverExitAbilityChoice, "intervention ability");
+        UIManager.Instance.ShowClickableObjectPicker(choices, SetChosenUpgrade, null, CanChooseUpgrade, "Select research", OnHoverAbilityChoice, OnHoverExitAbilityChoice, "intervention ability");
     }
     private bool CanChooseUpgrade(string upgrade) {
         //check if any of the categories are already at max level.

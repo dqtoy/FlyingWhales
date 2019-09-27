@@ -13,6 +13,14 @@ public class CharacterInfoUI : UIMenu {
     public bool isWaitingForJoinBattleTarget;
 
     [Space(10)]
+    [SerializeField] GameObject normalCharacterGO;
+    [SerializeField] GameObject minionCharacterGO;
+
+    [Space(10)]
+    [Header("Minion")]
+    [SerializeField] MinionCard minionCard;
+
+    [Space(10)]
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
@@ -146,6 +154,14 @@ public class CharacterInfoUI : UIMenu {
         if (UIManager.Instance.IsObjectPickerOpen()) {
             UIManager.Instance.HideObjectPicker();
         }
+
+        if (_activeCharacter.minion != null) {
+            minionCharacterGO.SetActive(true);
+            normalCharacterGO.SetActive(false);
+        } else {
+            minionCharacterGO.SetActive(false);
+            normalCharacterGO.SetActive(true);
+        }
         UpdateCharacterInfo();
         UpdateTraits();
         UpdateInventoryInfo();
@@ -185,10 +201,15 @@ public class CharacterInfoUI : UIMenu {
         if (_activeCharacter == null) {
             return;
         }
-        UpdatePortrait();
-        UpdateBasicInfo();
-        UpdateStatInfo();
-        UpdateLocationInfo();
+        if (_activeCharacter.minion != null) {
+            minionCard.SetMinion(_activeCharacter.minion);
+        } else {
+            UpdatePortrait();
+            UpdateBasicInfo();
+            UpdateStatInfo();
+            UpdateLocationInfo();
+        }
+        
         //UpdateAllHistoryInfo();
         //UpdateMemories();
     }
@@ -204,6 +225,9 @@ public class CharacterInfoUI : UIMenu {
     }
 
     public void UpdateThoughtBubble() {
+        if (_activeCharacter.minion != null) {
+            return;
+        }
         if (_activeCharacter.isDead) {
             plansLbl.text = _activeCharacter.name + " has died.";
             return;
@@ -332,6 +356,9 @@ public class CharacterInfoUI : UIMenu {
         UpdateThoughtBubble();
     }
     private void UpdateTraits() {
+        if (_activeCharacter.minion != null) {
+            return;
+        }
         //Utilities.DestroyChildren(statusTraitsScrollView.content);
         //Utilities.DestroyChildren(normalTraitsScrollView.content);
         //Utilities.DestroyChildren(relationshipTraitsScrollView.content);
@@ -493,6 +520,9 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     private void UpdateInventoryInfo() {
+        if (_activeCharacter.minion != null) {
+            return;
+        }
         for (int i = 0; i < inventoryItemContainers.Length; i++) {
             ItemContainer currContainer = inventoryItemContainers[i];
             SpecialToken currInventoryItem = _activeCharacter.items.ElementAtOrDefault(i);
@@ -503,11 +533,14 @@ public class CharacterInfoUI : UIMenu {
 
     #region History
     private void UpdateHistory(object obj) {
-        if (obj is Character && _activeCharacter != null && (obj as Character).id == _activeCharacter.id) {
+        if (obj is Character && _activeCharacter != null && (obj as Character).id == _activeCharacter.id && _activeCharacter.minion == null) {
             UpdateAllHistoryInfo();
         }
     }
     private void UpdateAllHistoryInfo() {
+        if (_activeCharacter.minion != null) {
+            return;
+        }
         //List<Log> characterHistory = new List<Log>(_activeCharacter.history.OrderByDescending(x => x.date.year).ThenByDescending(x => x.date.month).ThenByDescending(x => x.date.day).ThenByDescending(x => x.date.tick));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
