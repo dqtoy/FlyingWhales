@@ -34,7 +34,10 @@ public class CharacterTrait : Trait {
                     if (!targetTable.HasJobTargettingThis(JOB_TYPE.OBTAIN_FOOD)) {
                         int neededFood = 60 - targetTable.food;
                         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_FOOD, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = 0, targetPOI = targetPOI }
-                        , new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.GET_FOOD, new object[] { neededFood } }, });
+                        , new Dictionary<INTERACTION_TYPE, object[]>() {
+                            { INTERACTION_TYPE.DROP_FOOD, new object[] { neededFood } },
+                            { INTERACTION_TYPE.GET_FOOD, new object[] { neededFood } },
+                        });
                         job.AllowDeadTargets();
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;

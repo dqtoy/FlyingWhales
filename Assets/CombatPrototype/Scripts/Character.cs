@@ -3881,7 +3881,11 @@ public class Character : ILeader, IPointOfInterest {
                         this.AddTrait(injured, characterThatAttacked, gainedFromDoing: state.actionThatTriggeredThisState);
                         break;
                     case "Death":
-                        this.Death("attacked", deathFromAction: state.actionThatTriggeredThisState, responsibleCharacter: characterThatAttacked);
+                        string deathReason = "attacked";
+                        if (!characterThatAttacked.marker.IsLethalCombatForTarget(this)) {
+                            deathReason = "accidental_attacked";
+                        }
+                        this.Death(deathReason, deathFromAction: state.actionThatTriggeredThisState, responsibleCharacter: characterThatAttacked);
                         break;
                 }
             } else {
