@@ -699,11 +699,11 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void LoadInitialCharacterPlacement(LocationGridTile tile) {
         ConstructInitialGoapAdvertisementActions();
-#if !WORLD_CREATION_TOOL
-        GameDate gameDate = GameManager.Instance.Today();
-        gameDate.AddTicks(1);
-        SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions(), this);
-#endif
+//#if !WORLD_CREATION_TOOL
+//        GameDate gameDate = GameManager.Instance.Today();
+//        gameDate.AddTicks(1);
+//        SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions(), this);
+//#endif
         marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
         AddInitialAwareness();
         SubscribeToSignals();

@@ -119,8 +119,13 @@ public class PlayerUpgradeUI : MonoBehaviour {
            TheAnvil.All_Spell,
            TheAnvil.All_Summon,
            TheAnvil.All_Artifact,
+           TheAnvil.Increased_Mana_Capacity,
+           TheAnvil.Increased_Mana_Regen,
+           TheAnvil.Faster_Portal_Invocation,
+           TheAnvil.Faster_Invasion,
+           TheAnvil.Reduce_Spire_Cooldown,
+           TheAnvil.Reduce_Eye_Cooldown,
         };
-       
         UIManager.Instance.ShowClickableObjectPicker(choices, SetChosenUpgrade, null, CanChooseUpgrade, "Select upgrade", OnHoverAbilityChoice, OnHoverExitAbilityChoice, "intervention ability");
     }
     private bool CanChooseUpgrade(string upgrade) {
@@ -128,12 +133,18 @@ public class PlayerUpgradeUI : MonoBehaviour {
         if (upgrade == TheAnvil.All_Spell) {
             return !PlayerManager.Instance.player.AreAllInterventionSlotsMaxLevel();
         } else if (upgrade == TheAnvil.All_Summon) {
+            if (PlayerManager.Instance.player.summonSlots.Count == 0) {
+                return true;
+            }
             return !PlayerManager.Instance.player.AreAllSummonSlotsMaxLevel();
         } else if (upgrade == TheAnvil.All_Artifact) {
+            if (PlayerManager.Instance.player.artifactSlots.Count == 0) {
+                return true;
+            }
             return !PlayerManager.Instance.player.AreAllArtifactSlotsMaxLevel();
         }
-        return true;
-    }
+        return false;
+    } 
     private void OnHoverAbilityChoice(string abilityName) {
         string info = TheAnvil.GetUpgradeDescription(abilityName);
         info += "\nUpgrade Duration: " + GameManager.Instance.GetCeilingHoursBasedOnTicks(TheAnvil.GetUpgradeDuration(abilityName)) + " hours";

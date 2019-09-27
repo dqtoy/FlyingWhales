@@ -181,9 +181,9 @@ public class MoveOutState : CharacterState {
         Debug.Log(summary);
     }
 
-    public override string ToString() {
-        return "Move Out State by " + stateComponent.character.name;
-    }
+    //public override string ToString() {
+    //    return "Move Out State by " + stateComponent.character.name;
+    //}
 
     private List<Region> GetValidRegionsToDoJob(Character character) {
         if (job == null) {

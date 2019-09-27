@@ -152,6 +152,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadAreaMapsTileTraits();
         data.LoadTileObjectTraits();
         data.LoadCharacterHomeStructures();
+        data.LoadCurrentDate(); //Moved this because some jobs use current date
         data.LoadCharacterInitialPlacements();
         data.LoadPlayer();
 
@@ -164,7 +165,6 @@ public class MapGenerator : MonoBehaviour {
         yield return null;
         data.LoadCharacterHistories();
 
-        data.LoadCurrentDate();
         data.LoadWorldEventsAndWorldObject();
         data.LoadCharacterCurrentStates();
         data.LoadFactionsActiveQuests();

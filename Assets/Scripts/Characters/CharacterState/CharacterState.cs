@@ -220,6 +220,8 @@ public class CharacterState {
         this.job = job;
         if (job != null) {
             OnJobSet();
+        } else {
+            Debug.Log(GameManager.Instance.TodayLogString() + this.ToString() + " Set job to null!");
         }
     }
     /// <summary>
@@ -293,6 +295,9 @@ public class CharacterState {
     /// <param name="state">If the state should be unending or not.</param>
     public void SetIsUnending(bool state) {
         isUnending = state;
+    }
+    public override string ToString() {
+        return stateName + " by " + stateComponent.character.name + " with job : " + (job?.name ?? "None");
     }
     #endregion
 }

@@ -20,7 +20,7 @@ public class TimerHubUI : MonoBehaviour {
     public void Initialize() {
         timerHubItems = new List<TimerHubItem>();
 
-        Messenger.AddListener(Signals.TICK_STARTED, PerTick);
+        Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         //Messenger.AddListener<string, int, System.Action>(Signals.SHOW_TIMER_HUB_ITEM, AddItem);
     }
 
