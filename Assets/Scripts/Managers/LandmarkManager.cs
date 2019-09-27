@@ -606,26 +606,34 @@ public class LandmarkManager : MonoBehaviour {
             switch (landmark.specificLandmarkType) {
                 case LANDMARK_TYPE.MONSTER_LAIR:
                     worldObjWeights.AddElement("summon", 100);
-                    break;
-                case LANDMARK_TYPE.CAVE:
-                    worldObjWeights.AddElement("summon", 25);
-                    worldObjWeights.AddElement("artifact", 25);
-                    worldObjWeights.AddElement("SpellScroll", 20);
-                    worldObjWeights.AddElement("SkillScroll", 15);
-                    //worldObjWeights.AddElement("DemonStone", 15);
+                    worldObjWeights.AddElement("SpellScroll", 25);
+                    worldObjWeights.AddElement("SkillScroll", 25);
                     break;
                 case LANDMARK_TYPE.BARRACKS:
+                    worldObjWeights.AddElement("SpellScroll", 25);
+                    worldObjWeights.AddElement("SkillScroll", 45);
+                    worldObjWeights.AddElement("nothing", 25);
+                    break;
                 case LANDMARK_TYPE.MAGE_TOWER:
-                    worldObjWeights.AddElement("SkillScroll", 35);
-                    worldObjWeights.AddElement("nothing", 65);
+                    worldObjWeights.AddElement("SpellScroll", 45);
+                    worldObjWeights.AddElement("SkillScroll", 25);
+                    worldObjWeights.AddElement("nothing", 25);
                     break;
                 case LANDMARK_TYPE.TEMPLE:
-                    worldObjWeights.AddElement("SpellScroll", 35);
-                    worldObjWeights.AddElement("nothing", 65);
+                    worldObjWeights.AddElement("SpellScroll", 25);
+                    worldObjWeights.AddElement("artifact", 35);
+                    worldObjWeights.AddElement("nothing", 25);
                     break;
-                    //default:
-                    //    worldObjWeights.AddElement("SpellScroll", 100);
-                    //    break;
+                case LANDMARK_TYPE.MINES:
+                    worldObjWeights.AddElement("summon", 25);
+                    worldObjWeights.AddElement("artifact", 25);
+                    worldObjWeights.AddElement("nothing", 50);
+                    break;
+                case LANDMARK_TYPE.FARM:
+                    worldObjWeights.AddElement("SkillScroll", 25);
+                    worldObjWeights.AddElement("summon", 25);
+                    worldObjWeights.AddElement("nothing", 50);
+                    break;
             }
             if (worldObjWeights.GetTotalOfWeights() > 0) {
                 IWorldObject worldObj = null;
