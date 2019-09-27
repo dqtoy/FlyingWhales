@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InflictParalysis : PlayerJobAction {
-    public InflictParalysis() : base(INTERVENTION_ABILITY.INFLICT_PARALYSIS) {
+public class Paralysis : PlayerJobAction {
+    public Paralysis() : base(INTERVENTION_ABILITY.PARALYSIS) {
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
@@ -96,8 +96,8 @@ public class InflictParalysis : PlayerJobAction {
     }
 }
 
-public class InflictParalysisData : PlayerJobActionData {
-    public override string name { get { return "Inflict Paralysis"; } }
+public class ParalysisData : PlayerJobActionData {
+    public override string name { get { return "Paralysis"; } }
     public override string description { get { return "Makes a character unable to move permanently."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
 }

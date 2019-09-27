@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TheAnvil : BaseLandmark {
 
-    public static readonly string All_Intervention = "All Intervention Abilities";
+    public static readonly string All_Spell = "All Spells";
     public static readonly string All_Summon = "All Summons";
     public static readonly string All_Artifact = "All Artifacts";
 
@@ -35,12 +35,12 @@ public class TheAnvil : BaseLandmark {
         TimerHubUI.Instance.AddItem("Upgrade " + upgradeIdentifier, upgradeDuration, () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
     }
     private void UpgradeDone() {
-        if (upgradeIdentifier == All_Intervention) {
+        if (upgradeIdentifier == All_Spell) {
             for (int i = 0; i < PlayerManager.Instance.player.interventionAbilitySlots.Length; i++) {
                 PlayerJobActionSlot slot = PlayerManager.Instance.player.interventionAbilitySlots[i];
                 slot.LevelUp();
             }
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All Intervention Abilities upgraded!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All Spells upgraded!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
         } else if (upgradeIdentifier == All_Summon) {
             for (int i = 0; i < PlayerManager.Instance.player.summonSlots.Count; i++) {
                 SummonSlot slot = PlayerManager.Instance.player.summonSlots[i];
@@ -67,7 +67,7 @@ public class TheAnvil : BaseLandmark {
 
     #region Static
     public static int GetUpgradeDuration(string upgrade) {
-        if (upgrade == All_Intervention) {
+        if (upgrade == All_Spell) {
             return GameManager.Instance.GetTicksBasedOnHour(8);
         } else if (upgrade == All_Summon) {
             return GameManager.Instance.GetTicksBasedOnHour(8);
@@ -77,8 +77,8 @@ public class TheAnvil : BaseLandmark {
         return 0;
     }
     public static string GetUpgradeDescription(string upgrade) {
-        if (upgrade == All_Intervention) {
-            return "Upgrade all your intervention abilities by 1 level.";
+        if (upgrade == All_Spell) {
+            return "Upgrade all your spells by 1 level.";
         } else if (upgrade == All_Summon) {
             return "Upgrade all your summon slots by 1 level.";
         } else if (upgrade == All_Artifact) {

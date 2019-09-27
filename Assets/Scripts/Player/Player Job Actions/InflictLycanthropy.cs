@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InflictLycanthropy : PlayerJobAction {
+public class Lycanthropy : PlayerJobAction {
 
     private int _level;
 
-    public InflictLycanthropy() : base(INTERVENTION_ABILITY.INFLICT_LYCANTHROPY) {
+    public Lycanthropy() : base(INTERVENTION_ABILITY.LYCANTHROPY) {
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
@@ -28,7 +28,7 @@ public class InflictLycanthropy : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
-                    Trait newTrait = new Lycanthropy();
+                    Trait newTrait = new Lycanthrope();
                     newTrait.SetLevel(level);
                     currTarget.AddTrait(newTrait);
                     //AlterEgoData alterEgoData = currTarget.GetAlterEgoData("Lycanthrope");
@@ -64,7 +64,7 @@ public class InflictLycanthropy : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Lycanthropy") != null) {
+        if (targetCharacter.GetNormalTrait("Lycanthrope") != null) {
             return false;
         }
         //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -108,7 +108,7 @@ public class InflictLycanthropy : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Lycanthropy") != null) {
+        if (targetCharacter.GetNormalTrait("Lycanthrope") != null) {
             return false;
         }
         //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -118,8 +118,8 @@ public class InflictLycanthropy : PlayerJobAction {
     }
 }
 
-public class InflictLycanthropyData : PlayerJobActionData {
-    public override string name { get { return "Inflict Lycanthropy"; } }
+public class LycanthropyData : PlayerJobActionData {
+    public override string name { get { return "Lycanthropy"; } }
     public override string description { get { return "Makes a character transform into a wild wolf whenever he/she sleeps."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
 }

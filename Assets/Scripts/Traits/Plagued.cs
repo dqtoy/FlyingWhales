@@ -75,7 +75,17 @@ public class Plagued : Trait {
             //do puke action
             if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.PUKE) {
                 stoppedAction = owner.currentAction;
+                //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
+                JobQueueItem currentJob = null;
+                JobQueue currentJobQueue = null;
+                if (owner.currentAction.isRoamingAction && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null) {
+                    currentJob = owner.currentAction.parentPlan.job;
+                    currentJobQueue = currentJob.jobQueueParent;
+                }
                 owner.StopCurrentAction(false);
+                if (currentJob != null) {
+                    currentJobQueue.AddJobInQueue(currentJob, false);
+                }
                 owner.marker.StopMovement();
 
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);

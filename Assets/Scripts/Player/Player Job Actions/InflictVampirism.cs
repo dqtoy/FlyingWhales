@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InflictVampirism : PlayerJobAction {
+public class Vampirism : PlayerJobAction {
 
-    public InflictVampirism() : base(INTERVENTION_ABILITY.INFLICT_VAMPIRISM) {
+    public Vampirism() : base(INTERVENTION_ABILITY.VAMPIRISM) {
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
@@ -104,8 +104,8 @@ public class InflictVampirism : PlayerJobAction {
     }
 }
 
-public class InflictVampirismData : PlayerJobActionData {
-    public override string name { get { return "Inflict Vampirism"; } }
+public class VampirismData : PlayerJobActionData {
+    public override string name { get { return "Vampirism"; } }
     public override string description { get { return "Makes a character have uncontrollable urge to drink blood for sustenance."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
 }

@@ -4362,7 +4362,7 @@ public class Character : ILeader, IPointOfInterest {
     public void CreateInitialTraitsByClass() {
         if (role.roleType != CHARACTER_ROLE.MINION) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
             string[] traitPool = new string[] { "Vigilant", "Doctor", "Diplomatic",
-            "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
+            "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
             "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
             "Narcoleptic", "Hothead",
             };
@@ -7578,6 +7578,7 @@ public class Character : ILeader, IPointOfInterest {
                     if(plan.currentNode.action.poiTarget != this && plan.currentNode.action.isStealth) {
                         //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
                         if (marker.inVisionPOIs.Contains(plan.currentNode.action.poiTarget) && !marker.CanDoStealthActionToTarget(plan.currentNode.action.poiTarget)) {
+                            log += "\n - Action is stealth and character cannot do stealth action right now...";
                             continue;
                         }
                     }

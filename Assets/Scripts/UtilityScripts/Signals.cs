@@ -388,7 +388,7 @@ public static class Signals {
         { HOUR_STARTED, new SignalMethod[] {
             new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(Area) },
             new SignalMethod() { methodName = "DecreaseNeeds", objectType = typeof(Character) },
-            new SignalMethod() { methodName = "PerHour", objectType = typeof(Zombie_Virus) },
+            new SignalMethod() { methodName = "PerHour", objectType = typeof(Infected) },
         }},
         { TICK_STARTED, new SignalMethod[] {
             new SignalMethod() { methodName = "CheckSupply", objectType = typeof(SupplyPile) },

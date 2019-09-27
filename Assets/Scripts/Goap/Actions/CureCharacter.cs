@@ -20,7 +20,7 @@ public class CureCharacter : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = actor }, HasItemInInventory);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = poiTarget });
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Zombie Virus", targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Infected", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Plagued", targetPOI = poiTarget });
 
     }
@@ -51,7 +51,7 @@ public class CureCharacter : GoapAction {
         SetCannotCancelAction(true);
         RemoveTraitFrom(poiTarget, "Sick", actor);
         RemoveTraitFrom(poiTarget, "Plagued", actor);
-        RemoveTraitFrom(poiTarget, "Zombie Virus", actor);
+        RemoveTraitFrom(poiTarget, "Infected", actor);
         //**After Effect 2**: Remove Healing Potion from Actor's Inventory
         actor.ConsumeToken(actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
         //**After Effect 3**: Allow movement of Target

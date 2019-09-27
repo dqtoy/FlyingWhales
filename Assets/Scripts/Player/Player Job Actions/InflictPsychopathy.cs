@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InflictPsychopathy : PlayerJobAction {
+public class Psychopathy : PlayerJobAction {
 
-    public InflictPsychopathy() : base(INTERVENTION_ABILITY.INFLICT_PSYCHOPATHY) {
+    public Psychopathy() : base(INTERVENTION_ABILITY.PSYCHOPATHY) {
         tier = 1;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER };
@@ -57,8 +57,8 @@ public class InflictPsychopathy : PlayerJobAction {
     }
 }
 
-public class InflictPsychopathyData : PlayerJobActionData {
-    public override string name { get { return "Inflict Psychopathy"; } }
+public class PsychopathyData : PlayerJobActionData {
+    public override string name { get { return "Psychopathy"; } }
     public override string description { get { return "Turns a character into a serial killer."; } }
     public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
 }

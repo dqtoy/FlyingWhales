@@ -45,12 +45,12 @@ public class PlayerManager : MonoBehaviour {
     }
     public void Initialize() {
         //allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.IGNITE };
-        allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.ZAP, INTERVENTION_ABILITY.RAISE_DEAD, INTERVENTION_ABILITY.INFLICT_CANNIBALISM
-            , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY, INTERVENTION_ABILITY.INFLICT_LYCANTHROPY, INTERVENTION_ABILITY.INFLICT_VAMPIRISM, INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA
-            , INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE, INTERVENTION_ABILITY.EXPLOSION
-            , INTERVENTION_ABILITY.IGNITE, INTERVENTION_ABILITY.LURE, INTERVENTION_ABILITY.CURSED_OBJECT, INTERVENTION_ABILITY.SPOIL, INTERVENTION_ABILITY.INFLICT_ALCOHOLIC
-            , INTERVENTION_ABILITY.LULLABY, INTERVENTION_ABILITY.INFLICT_AGORAPHOBIA, INTERVENTION_ABILITY.INFLICT_PARALYSIS, INTERVENTION_ABILITY.RELEASE, INTERVENTION_ABILITY.INFLICT_ZOMBIE_VIRUS
-            , INTERVENTION_ABILITY.PESTILENCE, INTERVENTION_ABILITY.INFLICT_PSYCHOPATHY }; //INTERVENTION_ABILITY.JOLT, 
+        allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.ZAP, INTERVENTION_ABILITY.RAISE_DEAD, INTERVENTION_ABILITY.CANNIBALISM
+            , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY, INTERVENTION_ABILITY.LYCANTHROPY, INTERVENTION_ABILITY.VAMPIRISM, INTERVENTION_ABILITY.KLEPTOMANIA
+            , INTERVENTION_ABILITY.UNFAITHFULNESS, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE, INTERVENTION_ABILITY.EXPLOSION
+            , INTERVENTION_ABILITY.IGNITE, INTERVENTION_ABILITY.LURE, INTERVENTION_ABILITY.CURSED_OBJECT, INTERVENTION_ABILITY.SPOIL, INTERVENTION_ABILITY.ALCOHOLIC
+            , INTERVENTION_ABILITY.LULLABY, INTERVENTION_ABILITY.AGORAPHOBIA, INTERVENTION_ABILITY.PARALYSIS, INTERVENTION_ABILITY.RELEASE, INTERVENTION_ABILITY.ZOMBIE_VIRUS
+            , INTERVENTION_ABILITY.PESTILENCE, INTERVENTION_ABILITY.PSYCHOPATHY }; //INTERVENTION_ABILITY.JOLT, 
         //allInterventionAbilities = (INTERVENTION_ABILITY[]) System.Enum.GetValues(typeof(INTERVENTION_ABILITY));
         allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
 
@@ -194,14 +194,14 @@ public class PlayerManager : MonoBehaviour {
                 return new Disable();
             case INTERVENTION_ABILITY.ENRAGE:
                 return new Enrage();
-            case INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA:
-                return new InflictKleptomania();
-            case INTERVENTION_ABILITY.INFLICT_LYCANTHROPY:
-                return new InflictLycanthropy();
-            case INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS:
-                return new InflictUnfaithfulness();
-            case INTERVENTION_ABILITY.INFLICT_VAMPIRISM:
-                return new InflictVampirism();
+            case INTERVENTION_ABILITY.KLEPTOMANIA:
+                return new Kleptomania();
+            case INTERVENTION_ABILITY.LYCANTHROPY:
+                return new Lycanthropy();
+            case INTERVENTION_ABILITY.UNFAITHFULNESS:
+                return new Unfaithfulness();
+            case INTERVENTION_ABILITY.VAMPIRISM:
+                return new Vampirism();
             case INTERVENTION_ABILITY.JOLT:
                 return new Jolt();
             case INTERVENTION_ABILITY.PROVOKE:
@@ -216,8 +216,8 @@ public class PlayerManager : MonoBehaviour {
                 return new Spook();
             case INTERVENTION_ABILITY.ZAP:
                 return new Zap();
-            case INTERVENTION_ABILITY.INFLICT_CANNIBALISM:
-                return new InflictCannibalism();
+            case INTERVENTION_ABILITY.CANNIBALISM:
+                return new Cannibalism();
             case INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY:
                 return new CloakOfInvisibility();
             case INTERVENTION_ABILITY.LURE:
@@ -230,22 +230,22 @@ public class PlayerManager : MonoBehaviour {
                 return new CursedObject();
             case INTERVENTION_ABILITY.SPOIL:
                 return new Spoil();
-            case INTERVENTION_ABILITY.INFLICT_ALCOHOLIC:
-                return new InflictAlcoholic();
+            case INTERVENTION_ABILITY.ALCOHOLIC:
+                return new Alcoholic();
             case INTERVENTION_ABILITY.LULLABY:
                 return new Lullaby();
             case INTERVENTION_ABILITY.PESTILENCE:
                 return new Pestilence();
-            case INTERVENTION_ABILITY.INFLICT_AGORAPHOBIA:
-                return new InflictAgoraphobia();
-            case INTERVENTION_ABILITY.INFLICT_PARALYSIS:
-                return new InflictParalysis();
+            case INTERVENTION_ABILITY.AGORAPHOBIA:
+                return new Agoraphobia();
+            case INTERVENTION_ABILITY.PARALYSIS:
+                return new Paralysis();
             case INTERVENTION_ABILITY.RELEASE:
                 return new Release();
-            case INTERVENTION_ABILITY.INFLICT_ZOMBIE_VIRUS:
-                return new InflictZombieVirus();
-            case INTERVENTION_ABILITY.INFLICT_PSYCHOPATHY:
-                return new InflictPsychopathy();
+            case INTERVENTION_ABILITY.ZOMBIE_VIRUS:
+                return new ZombieVirus();
+            case INTERVENTION_ABILITY.PSYCHOPATHY:
+                return new Psychopathy();
         }
         return null;
     }

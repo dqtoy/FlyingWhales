@@ -1131,9 +1131,9 @@ public class ConsoleMenu : UIMenu {
         INTERVENTION_ABILITY type;
         if (Enum.TryParse(typeParameterString, out type)) {
             PlayerManager.Instance.player.GainNewInterventionAbility(type, true);
-            AddSuccessMessage("Gained new Intervention Ability: " + type);
+            AddSuccessMessage("Gained new Spell: " + type);
         } else {
-            AddErrorMessage("There is no intervention ability of type " + typeParameterString);
+            AddErrorMessage("There is no spell of type " + typeParameterString);
         }
 
     }

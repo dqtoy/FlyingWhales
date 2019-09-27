@@ -8,7 +8,7 @@ public class Resting : Trait {
     }
 
     private Character _character;
-    public Lycanthropy lycanthropyTrait { get; private set; }
+    public Lycanthrope lycanthropyTrait { get; private set; }
 
     public bool hasTransformed { get; private set; }
     public Resting() {
@@ -29,7 +29,7 @@ public class Resting : Trait {
     public override void OnAddTrait(ITraitable sourceCharacter) {
         if (sourceCharacter is Character) {
             _character = sourceCharacter as Character;
-            lycanthropyTrait = _character.GetNormalTrait("Lycanthropy") as Lycanthropy;
+            lycanthropyTrait = _character.GetNormalTrait("Lycanthrope") as Lycanthrope;
             //if(lycanthropyTrait != null) {
             //    Messenger.AddListener(Signals.HOUR_STARTED, CheckForLycanthropy);
             //}
