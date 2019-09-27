@@ -159,11 +159,6 @@ public class PlayerUI : MonoBehaviour {
             UpdateStartInvasionButton();
         }
         UpdateMana();
-        //redMagicText.text = "" + PlayerManager.Instance.player.redMagic;
-        //greenMagicText.text = "" + PlayerManager.Instance.player.greenMagic;
-        //suppliesText.text = PlayerManager.Instance.player.currencies[CURRENCY.SUPPLY].ToString();
-        //impsText.text = "Imps: " + PlayerManager.Instance.player.currencies[CURRENCY.IMP].ToString() + "/" + PlayerManager.Instance.player.maxImps.ToString();
-        //threatFiller.fillAmount = (float) PlayerManager.Instance.player.threatLevel / 100f;
     }
 
     public void Initialize() {

@@ -41,7 +41,6 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
         isHovering = true;
     }
-
     public virtual void OnPointerExit(PointerEventData eventData) {
         if (!ignoreInteractable && selectable != null) {
             if (!selectable.IsInteractable()) {
@@ -52,6 +51,16 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (onHoverExitAction != null) {
             onHoverExitAction.Invoke();
         }
+    }
+
+
+    public void SetOnHoverAction(UnityAction e) {
+        onHoverOverAction.RemoveAllListeners();
+        onHoverOverAction.AddListener(e);
+    }
+    public void SetOnHoverOutAction(UnityAction e) {
+        onHoverExitAction.RemoveAllListeners();
+        onHoverExitAction.AddListener(e);
     }
 
     void Update() {

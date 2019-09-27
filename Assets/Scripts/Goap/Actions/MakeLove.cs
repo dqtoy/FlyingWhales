@@ -57,8 +57,8 @@ public class MakeLove : GoapAction {
         base.OnResultReturnedToActor();
         if (endedAtState.name == "Make Love Success") {
             if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
-                AddTraitTo(actor, "Cheery", targetCharacter);
-                AddTraitTo(targetCharacter, "Cheery", actor);
+                AddTraitTo(actor, "Satisfied", targetCharacter);
+                AddTraitTo(targetCharacter, "Satisfied", actor);
             } else if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
                 AddTraitTo(actor, "Ashamed", targetCharacter);
                 AddTraitTo(targetCharacter, "Ashamed", actor);

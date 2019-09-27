@@ -449,7 +449,7 @@ public class CharacterInfoUI : UIMenu {
             string text = (string) obj;
             int index = int.Parse(text);
             Trait trait = activeCharacter.normalTraits[index];
-            UIManager.Instance.ShowSmallInfo(trait.description, trait.name);
+            UIManager.Instance.ShowSmallInfo(trait.description);
         }
 
     }
@@ -484,7 +484,9 @@ public class CharacterInfoUI : UIMenu {
                     yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
                     pauseAndResume: true,
                     noBtnActive: false,
-                    yesBtnActive: trait.canBeTriggered
+                    yesBtnActive: trait.canBeTriggered,
+                    yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
+                    yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
                 );
                 normalTraitsEventLbl.ResetHighlightValues();
             }
@@ -497,6 +499,14 @@ public class CharacterInfoUI : UIMenu {
     private IEnumerator HoverOutTraitAfterClick() {
         yield return new WaitForEndOfFrame();
         OnHoverOutTrait();
+    }
+    private void ShowCannotTriggerFlawReason(Trait trait) {
+        string reason = "You cannot trigger " + activeCharacter.name + "'s flaw because: ";
+        List<string> reasons = trait.GetCannotTriggerFlawReasons(activeCharacter);
+        for (int i = 0; i < reasons.Count; i++) {
+            reason += "\n\t- " + reasons[i];
+        }
+        UIManager.Instance.ShowSmallInfo(reason);
     }
     private void OnClickTriggerFlaw(Trait trait) {
         trait.TriggerFlaw(activeCharacter);

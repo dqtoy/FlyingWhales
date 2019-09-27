@@ -5,7 +5,7 @@ using UnityEngine;
 public class Angry : Trait {
     public Angry() {
         name = "Angry";
-        description = "This character is angry";
+        description = "This character will often argue with others and may destroy objects.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

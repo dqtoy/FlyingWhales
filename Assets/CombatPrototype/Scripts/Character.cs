@@ -4868,7 +4868,7 @@ public class Character : ILeader, IPointOfInterest {
             AdjustMoodValue(-25, trait, trait.gainedFromDoing);
         } else if (trait.name == "Sick") {
             AdjustMoodValue(-15, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Cheery") {
+        } else if (trait.name == "Satisfied") {
             AdjustMoodValue(15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Annoyed") {
             AdjustMoodValue(-15, trait, trait.gainedFromDoing);
@@ -4977,7 +4977,7 @@ public class Character : ILeader, IPointOfInterest {
             AdjustMoodValue(25, trait, trait.gainedFromDoing);
         } else if (trait.name == "Sick") {
             AdjustMoodValue(15, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Cheery") {
+        } else if (trait.name == "Satisfied") {
             AdjustMoodValue(-15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Annoyed") {
             AdjustMoodValue(15, trait, trait.gainedFromDoing);
@@ -8588,7 +8588,7 @@ public class Character : ILeader, IPointOfInterest {
                             joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                             joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
                             joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                            PlayerManager.Instance.player.ShowNotification(joinLog);
+                            PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                         }
                         //marker.ProcessCombatBehavior();
                         return; //do not do watch.

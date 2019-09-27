@@ -104,14 +104,29 @@ public class Trait {
     /// <returns>true or false</returns>
     public virtual bool CanFlawBeTriggered(Character character) {
         //return true;
-        int manaCost = GetTriggerFlawManaCost(character); ;
+        int manaCost = GetTriggerFlawManaCost(character);
        
         return PlayerManager.Instance.player.mana >= manaCost 
             && character.GetTraitOf(TRAIT_TYPE.DISABLER) == null //disabled characters cannot be triggered
+            && character.GetNormalTrait("Blessed") == null
             && !character.currentParty.icon.isTravellingOutside; //characters travelling outside cannot be triggered
     }
     public virtual string GetRequirementDescription(Character character) {
         return "Mana cost of triggering this flaw's negative effect depends on the character's mood. The darker the mood, the cheaper the cost.";
+    }
+    public virtual List<string> GetCannotTriggerFlawReasons(Character character) {
+        List<string> reasons = new List<string>();
+        if (PlayerManager.Instance.player.mana < GetTriggerFlawManaCost(character)) {
+            reasons.Add("You do not have enough mana.");
+        }
+        if (character.GetNormalTrait("Blessed") != null) {
+            reasons.Add("Blessed characters cannot be targeted by Trigger Flaw.");
+        }
+        if (character.GetTraitOf(TRAIT_TYPE.DISABLER) != null) {
+            reasons.Add("Inactive characters cannot be targeted by Trigger Flaw.");
+        }
+        return reasons;
+
     }
     #endregion
 

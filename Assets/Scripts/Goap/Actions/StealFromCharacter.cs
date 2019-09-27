@@ -229,7 +229,7 @@ public class StealFromCharacter : GoapAction {
                         }
                     } else {
                         reactions.Add(string.Format("Hahaha! It's what {0} deserves.", Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-                        AddTraitTo(recipient, "Cheery");
+                        AddTraitTo(recipient, "Satisfied");
                     }
                 }
                 //- Recipient Has No Relationship with Target

@@ -6,7 +6,7 @@ public class Wet : Trait {
 
     public Wet() {
         name = "Wet";
-        description = "This is wet.";
+        description = "This character is soaking wet.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEUTRAL;
         associatedInteraction = INTERACTION_TYPE.NONE;

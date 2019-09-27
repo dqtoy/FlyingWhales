@@ -17,7 +17,7 @@ public class Injured : Trait {
 
     public Injured() {
         name = "Injured";
-        description = "Temporary small reduction to overall combat prowess.";
+        description = "This character is badly hurt.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

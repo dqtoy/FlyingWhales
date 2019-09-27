@@ -159,7 +159,7 @@ public class BuryCharacter : GoapAction {
                 }
                 //- Negative Relationship with Target
                 else if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                    recipient.AddTrait("Cheery");
+                    recipient.AddTrait("Satisfied");
                     if (UnityEngine.Random.Range(0, 2) == 0) {
                         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.SPIT, targetCharacter.grave);
                         job.SetCancelOnFail(true);

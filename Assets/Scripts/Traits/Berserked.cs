@@ -10,7 +10,7 @@ public class Berserked : Trait {
 
     public Berserked() {
         name = "Berserked";
-        description = "This character is berserked.";
+        description = "This character will attack anyone at random and may destroy objects.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

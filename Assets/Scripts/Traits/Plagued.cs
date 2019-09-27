@@ -14,7 +14,7 @@ public class Plagued : Trait {
 
     public Plagued() {
         name = "Plagued";
-        description = "This character is Plagued.";
+        description = "This character has a terrible disease.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = GameManager.ticksPerDay * 3;

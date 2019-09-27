@@ -6,7 +6,7 @@ public class Drunk : Trait {
 
     public Drunk() {
         name = "Drunk";
-        description = "This character is drunk.";
+        description = "This character is intoxicated and may lash out at nearby characters.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
