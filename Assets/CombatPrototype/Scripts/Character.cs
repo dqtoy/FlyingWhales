@@ -545,6 +545,7 @@ public class Character : ILeader, IPointOfInterest {
         _normalTraits = new List<Trait>();
         alterEgos = new Dictionary<string, AlterEgoData>();
         items = new List<SpecialToken>();
+        SetIsDead(data.isDead);
     }
     public Character() {
         SetIsDead(false);

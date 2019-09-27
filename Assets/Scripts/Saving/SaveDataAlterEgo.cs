@@ -25,7 +25,11 @@ public class SaveDataAlterEgo {
 
     public void Save(AlterEgoData alterEgo) {
         name = alterEgo.name;
-        factionID = alterEgo.faction.id;
+        if (alterEgo.faction != null) {
+            factionID = alterEgo.faction.id;
+        } else {
+            factionID = -1;
+        }
         race = alterEgo.race;
         roleType = alterEgo.role.roleType;
         characterClassName = alterEgo.characterClass.className;
@@ -60,7 +64,9 @@ public class SaveDataAlterEgo {
 
     public void Load(Character character) {
         AlterEgoData alterEgoData = character.CreateNewAlterEgo(name);
-        alterEgoData.SetFaction(FactionManager.Instance.GetFactionBasedOnID(factionID));
+        if(factionID != -1) {
+            alterEgoData.SetFaction(FactionManager.Instance.GetFactionBasedOnID(factionID));
+        }
         alterEgoData.SetRace(race);
         alterEgoData.SetRole(CharacterManager.Instance.GetRoleByRoleType(roleType));
         alterEgoData.SetCharacterClass(CharacterManager.Instance.CreateNewCharacterClass(characterClassName));

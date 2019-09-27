@@ -129,6 +129,7 @@ public class SaveDataCharacter {
         //doNotGetTired = character.doNotGetTired;
         if (character.faction != null) {
             factionID = character.faction.id;
+            isFactionLeader = character.faction.leader == character;
         } else {
             factionID = -1;
         }
@@ -221,7 +222,6 @@ public class SaveDataCharacter {
             Summon summon = character as Summon;
             summonType = summon.summonType;
         }
-        isFactionLeader = character.faction.leader == character;
 
         currentAlterEgoName = character.currentAlterEgoName;
         alterEgos = new List<SaveDataAlterEgo>();
@@ -358,6 +358,10 @@ public class SaveDataCharacter {
             for (int i = 0; i < avoidInRangeIDs.Count; i++) {
                 Character target = CharacterManager.Instance.GetCharacterByID(avoidInRangeIDs[i]);
                 character.marker.AddAvoidInRange(target);
+            }
+
+            if (character.isDead) {
+                character.marker.OnDeath(gridTile);
             }
         }
     }
