@@ -6,6 +6,7 @@ public class ThePortal : BaseLandmark {
     public int currentMinionToSummonIndex { get; private set; }
     public int currentSummonTick { get; private set; }
     public int currentSummonDuration { get; private set; }
+    public string minionSummonClassName { get; private set; }
 
     public ThePortal(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         currentMinionToSummonIndex = -1;
@@ -17,14 +18,14 @@ public class ThePortal : BaseLandmark {
 
     public void LoadSummonMinion(SaveDataThePortal data) {
         if (data.currentMinionToSummonIndex != -1) {
-            StartSummon(data.currentMinionToSummonIndex, data.currentSummonTick, data.currentSummonDuration);
+            StartSummon(data.currentMinionToSummonIndex, data.currentSummonTick, data.currentSummonDuration, data.currentSummonClassName);
         } else {
             currentMinionToSummonIndex = data.currentMinionToSummonIndex;
             currentSummonTick = data.currentSummonTick;
             currentSummonDuration = data.currentSummonDuration;
         }
     }
-    public void StartSummon(int minionToSummonIndex, int currentSummonTick, int summonDuration = 0) {
+    public void StartSummon(int minionToSummonIndex, int currentSummonTick, int summonDuration = 0, string summonClassName = "") {
         currentMinionToSummonIndex = minionToSummonIndex;
         this.currentSummonTick = currentSummonTick;
         if(summonDuration != 0) {
@@ -36,7 +37,12 @@ public class ThePortal : BaseLandmark {
                 currentSummonDuration -= speedUpDuration;
             }
         }
-        TimerHubUI.Instance.AddItem("Summmoning " + PlayerManager.Instance.player.minionsToSummon[currentMinionToSummonIndex].className + " Minion", currentSummonDuration - currentSummonTick, null);
+        if (string.IsNullOrEmpty(summonClassName)) {
+            minionSummonClassName = PlayerManager.Instance.player.minionsToSummon[currentMinionToSummonIndex].className;
+        } else {
+            minionSummonClassName = summonClassName;
+        }
+        TimerHubUI.Instance.AddItem("Summmoning " + minionSummonClassName + " Minion", currentSummonDuration - currentSummonTick, null);
         Messenger.AddListener(Signals.TICK_STARTED, PerTickSummon);
     }
     private void PerTickSummon() {
@@ -73,6 +79,7 @@ public class SaveDataThePortal : SaveDataLandmark {
     public int currentMinionToSummonIndex;
     public int currentSummonTick;
     public int currentSummonDuration;
+    public string currentSummonClassName;
 
     public override void Save(BaseLandmark landmark) {
         base.Save(landmark);
@@ -80,6 +87,7 @@ public class SaveDataThePortal : SaveDataLandmark {
         currentMinionToSummonIndex = portal.currentMinionToSummonIndex;
         currentSummonTick = portal.currentSummonTick;
         currentSummonDuration = portal.currentSummonDuration;
+        currentSummonClassName = portal.minionSummonClassName;
     }
     public override void LoadSpecificLandmarkData(BaseLandmark landmark) {
         base.LoadSpecificLandmarkData(landmark);

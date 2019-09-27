@@ -98,6 +98,7 @@ public class Player : ILeader {
         maxSummonSlots = data.maxSummonSlots;
         maxArtifactSlots = data.maxArtifactSlots;
         mana = data.mana;
+        minionsToSummon = data.minionsToSummon;
         //isNotFirstResearch = data.isNotFirstResearch;
         //threat = data.threat;
         //ConstructAllInterventionAbilitySlots();

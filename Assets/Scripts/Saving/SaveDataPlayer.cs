@@ -15,6 +15,8 @@ public class SaveDataPlayer {
     public List<SaveDataArtifactSlot> artifactSlots;
     public List<SaveDataInterventionAbility> interventionAbilitySlots;
     public List<SaveDataIntel> allIntel;
+    public UnsummonedMinionData[] minionsToSummon;
+
 
     public int currentMinionLeaderID;
 
@@ -37,6 +39,7 @@ public class SaveDataPlayer {
         maxSummonSlots = player.maxSummonSlots;
         maxArtifactSlots = player.maxArtifactSlots;
         currentDivineInterventionTick = player.currentDivineInterventionTick;
+        minionsToSummon = player.minionsToSummon;
         //isNotFirstResearch = player.isNotFirstResearch;
 
         minions = new List<SaveDataMinion>();

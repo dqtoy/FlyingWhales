@@ -1229,14 +1229,14 @@ public class UIManager : MonoBehaviour {
     private void OnOpenShareIntelMenu() {
         returnToWorldBtn.interactable = false;
         SetCoverState(true);
-        playerNotificationParent.SetSiblingIndex(1);
+        //playerNotificationParent.SetSiblingIndex(1);
     }
     private void OnCloseShareIntelMenu() {
         returnToWorldBtn.interactable = true;
         SetCoverState(false);
         //Unpause();
         //SetSpeedTogglesState(true);
-        playerNotificationParent.SetAsLastSibling();
+        //playerNotificationParent.SetAsLastSibling();
     }
     #endregion
 

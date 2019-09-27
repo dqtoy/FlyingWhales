@@ -16,7 +16,7 @@ public class SerialKiller : Trait {
         name = "Serial Killer";
         description = "Serial killers have a specific subset of target victims that they may kidnap and then kill.";
         thoughtText = "[Character] is a serial killer.";
-        type = TRAIT_TYPE.SPECIAL;
+        type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         associatedInteraction = INTERACTION_TYPE.NONE;
