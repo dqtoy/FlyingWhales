@@ -1061,19 +1061,19 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnRemoveSummon(Summon summon) {
         UpdateSummonsInteraction();
-        if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
-            SetCurrentlySelectedSummonSlot(null);
-        } else if (currentlySelectedSummonSlot.summon == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
-            CycleSummons(1);
-        }
+        //if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
+            SetCurrentlySelectedSummonSlot(currentlySelectedSummonSlot);
+        //} else if (currentlySelectedSummonSlot.summon == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+        //    CycleSummons(1);
+        //}
     }
     private void OnSummonUsed(Summon summon) {
         UpdateSummonsInteraction();
-        if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
-            SetCurrentlySelectedSummonSlot(null);
-        } else if (currentlySelectedSummonSlot.summon == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
-            CycleSummons(1);
-        }
+        //if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
+        SetCurrentlySelectedSummonSlot(currentlySelectedSummonSlot);
+        //} else if (currentlySelectedSummonSlot.summon == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+        //    CycleSummons(1);
+        //}
     }
     public void SetCurrentlySelectedSummonSlot(SummonSlot summonSlot) {
         currentlySelectedSummonSlot = summonSlot;
@@ -1253,19 +1253,19 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnRemoveArtifact(Artifact artifact) {
         UpdateArtifactsInteraction();
-        if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more artifacts left
-            SetCurrentlySelectedArtifactSlot(null);
-        } else if (currentlySelectedArtifactSlot.artifact == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
-            CycleArtifacts(1);
-        }
+        //if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more artifacts left
+        SetCurrentlySelectedArtifactSlot(currentlySelectedArtifactSlot);
+        //} else if (currentlySelectedArtifactSlot.artifact == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+        //    CycleArtifacts(1);
+        //}
     }
     private void OnUsedArtifact(Artifact artifact) {
         UpdateArtifactsInteraction();
-        if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more artifacts left
-            SetCurrentlySelectedArtifactSlot(null);
-        } else if (currentlySelectedArtifactSlot.artifact == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
-            CycleArtifacts(1);
-        }
+        //if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more artifacts left
+            SetCurrentlySelectedArtifactSlot(currentlySelectedArtifactSlot);
+        //} else if (currentlySelectedArtifactSlot.artifact == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+        //    CycleArtifacts(1);
+        //}
         //else if (artifact == currentlySelectedArtifactSlot
         //    && PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(artifact.type) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
         //    CycleArtifacts(1);
