@@ -261,15 +261,14 @@ public class Region {
         }
     }
     private void PerInvasionTick() {
-        if (demonicInvasionData.currentDuration >= mainLandmark.invasionTicks) {
+        DemonicLandmarkInvasionData tempData = demonicInvasionData;
+        tempData.currentDuration++;
+        demonicInvasionData = tempData;
+        if (demonicInvasionData.currentDuration > mainLandmark.invasionTicks) {
             //invaded.
             Invade();
             UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You have successfully invaded " + this.name, () => UIManager.Instance.ShowHextileInfo(coreTile));
             Messenger.RemoveListener(Signals.TICK_STARTED, PerInvasionTick);
-        } else {
-            DemonicLandmarkInvasionData tempData = demonicInvasionData;
-            tempData.currentDuration++;
-            demonicInvasionData = tempData;
         }
     }
     private void Invade() {
@@ -320,12 +319,11 @@ public class Region {
         }
     }
     private void PerTickBuilding() {
+        DemonicLandmarkBuildingData tempData = demonicBuildingData;
+        tempData.currentDuration++;
+        demonicBuildingData = tempData;
         if (demonicBuildingData.currentDuration >= demonicBuildingData.buildDuration) {
             FinishBuildingStructure();
-        } else {
-            DemonicLandmarkBuildingData tempData = demonicBuildingData;
-            tempData.currentDuration++;
-            demonicBuildingData = tempData;
         }
     }
     private void FinishBuildingStructure() {

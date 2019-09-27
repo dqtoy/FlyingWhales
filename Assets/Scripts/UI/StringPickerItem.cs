@@ -53,6 +53,9 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
                 iconImg.gameObject.SetActive(true);
             }
             iconImg.SetNativeSize();
+            if (iconImg.sprite == null) {
+                iconImg.gameObject.SetActive(false);
+            }
         }
     }
 

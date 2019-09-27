@@ -288,7 +288,6 @@ public class GameManager : MonoBehaviour {
      * */
     public void TickEnded(){
         Messenger.Broadcast(Signals.TICK_ENDED);
-        Messenger.Broadcast(Signals.UPDATE_UI);
 
         this.tick += 1;
         if (this.tick > ticksPerDay) {
@@ -296,15 +295,13 @@ public class GameManager : MonoBehaviour {
             this.tick = 1;
             DayStarted(false);
         }
+        Messenger.Broadcast(Signals.UPDATE_UI);
     }
     public void SetTick(int amount) {
         this.tick = amount;
         Messenger.Broadcast(Signals.UPDATE_UI);
     }
     public void DayStarted(bool broadcastUI = true) {
-        if (broadcastUI) {
-            Messenger.Broadcast(Signals.UPDATE_UI);
-        }
         days += 1;
         this.continuousDays += 1;
         Messenger.Broadcast(Signals.DAY_STARTED);
@@ -316,6 +313,9 @@ public class GameManager : MonoBehaviour {
                 this.year += 1;
             }
             Messenger.Broadcast(Signals.MONTH_START);
+        }
+        if (broadcastUI) {
+            Messenger.Broadcast(Signals.UPDATE_UI);
         }
     }
     public static string ConvertTickToTime(int tick) {
@@ -432,7 +432,7 @@ public class GameManager : MonoBehaviour {
         return Mathf.CeilToInt(ticks / (float) ticksPerHour);
     }
     public int GetCeilingDaysBasedOnTicks(int ticks) {
-        return Mathf.CeilToInt(ticks / (float) ticksPerDay);
+        return Mathf.CeilToInt((float)ticks / (float) ticksPerDay);
     }
     //public void SetTicksToAddPerTick(int amount) {
     //    ticksToAddPerTick = amount;
