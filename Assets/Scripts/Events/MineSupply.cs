@@ -6,6 +6,7 @@ public class MineSupply : WorldEvent {
 
     public MineSupply() : base(WORLD_EVENT.MINE_SUPPLY) {
         eventEffects = new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GET_SUPPLY };
+        description = "This mission will increase the settlement's Supply.";
     }
 
     #region Overrides

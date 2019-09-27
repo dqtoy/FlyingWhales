@@ -6,6 +6,7 @@ public class PrayAtTemple : WorldEvent {
 
     public PrayAtTemple() : base(WORLD_EVENT.PRAY_AT_TEMPLE) {
         eventEffects = new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.REMOVE_NEGATIVE_TRAIT };
+        description = "This mission will cleanse the character of one of his Flaws.";
     }
 
     #region Overrides

@@ -3641,7 +3641,7 @@ public class Character : ILeader, IPointOfInterest {
                                             joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
                                             joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
                                             joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                            PlayerManager.Instance.player.ShowNotification(joinLog);
+                                            PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                         }
                                         //marker.ProcessCombatBehavior();
                                     }
@@ -3662,7 +3662,7 @@ public class Character : ILeader, IPointOfInterest {
                                             joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
                                             joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
                                             joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                            PlayerManager.Instance.player.ShowNotification(joinLog);
+                                            PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                         }
                                         //marker.ProcessCombatBehavior();
                                     }
@@ -3684,7 +3684,7 @@ public class Character : ILeader, IPointOfInterest {
                                     joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                     joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
                                     joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                    PlayerManager.Instance.player.ShowNotification(joinLog);
+                                    PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                 }
                                 //marker.ProcessCombatBehavior();
                             }
