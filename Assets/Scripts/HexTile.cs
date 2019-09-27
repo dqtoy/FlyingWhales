@@ -425,7 +425,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             }
         }
 
-        if (UnityEngine.Random.Range(0, 100) < 20) {
+        if (UnityEngine.Random.Range(0, 100) < 15) {
             AddTileTag(TILE_TAG.HALLOWED_GROUNDS);
         }
     }
