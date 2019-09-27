@@ -44,7 +44,13 @@ public class GoapPlan {
         hasShownNotification = false;
         //ConstructAllNodes();
     }
-    public void SetNextNode() {
+    public void SetNextNode(GoapAction action) {
+        for (int i = 0; i < allNodes.Count; i++) {
+            if(allNodes[i].action == action) {
+                currentNode = allNodes[i];
+                break;
+            }
+        }
         previousNode = currentNode;
         currentNode = currentNode.parent;
     }

@@ -773,11 +773,10 @@ public class SaveDataTileObject {
         if (previousTileAreaID != -1 && previousTileID.z != -1) {
             Area area = LandmarkManager.Instance.GetAreaByID(previousTileAreaID);
             LocationGridTile tile = area.areaMap.map[(int)previousTileID.x, (int)previousTileID.y];
-            loadedTileObject.SetGridTileLocation(tile);
-        }
-
-        if (!hasCurrentTile) {
-            loadedTileObject.SetGridTileLocation(null);
+            tile.structure.AddPOI(loadedTileObject, tile);
+            if (!hasCurrentTile) {
+                tile.structure.RemovePOI(loadedTileObject);
+            }
         }
     }
 

@@ -8,10 +8,10 @@ public class SaveDataCharacter {
     public int id;
     public string name;
     public string characterColorCode;
-    public int doNotDisturb;
-    public int doNotGetHungry;
-    public int doNotGetTired;
-    public int doNotGetLonely;
+    //public int doNotDisturb;
+    //public int doNotGetHungry;
+    //public int doNotGetTired;
+    //public int doNotGetLonely;
     public int factionID;
     public int homeID;
     public int homeStructureID;
@@ -123,10 +123,10 @@ public class SaveDataCharacter {
         id = character.id;
         name = character.name;
         characterColorCode = character.characterColorCode;
-        doNotDisturb = character.doNotDisturb;
-        doNotGetHungry = character.doNotGetHungry;
-        doNotGetLonely = character.doNotGetLonely;
-        doNotGetTired = character.doNotGetTired;
+        //doNotDisturb = character.doNotDisturb;
+        //doNotGetHungry = character.doNotGetHungry;
+        //doNotGetLonely = character.doNotGetLonely;
+        //doNotGetTired = character.doNotGetTired;
         if (character.faction != null) {
             factionID = character.faction.id;
         } else {

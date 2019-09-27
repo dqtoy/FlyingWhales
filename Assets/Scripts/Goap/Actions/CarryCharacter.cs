@@ -56,9 +56,9 @@ public class CarryCharacter : GoapAction {
     //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     //}
     public void AfterCarrySuccess() {
-        if (parentPlan != null && parentPlan.job != null) {
-            parentPlan.job.SetCannotOverrideJob(true);//Carry should not be overrideable if the character is actually already carrying another character.
-        }
+        //if (parentPlan != null && parentPlan.job != null) {
+        //    parentPlan.job.SetCannotOverrideJob(true);//Carry should not be overrideable if the character is actually already carrying another character.
+        //}
         Character target = poiTarget as Character;
         actor.ownParty.AddCharacter(target);
     }

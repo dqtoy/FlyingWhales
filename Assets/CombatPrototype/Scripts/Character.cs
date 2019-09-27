@@ -596,10 +596,10 @@ public class Character : ILeader, IPointOfInterest {
     //But since the Glutton trait will process the add trait function, fullnessDecreaseRate will add by 50% again
     //So for example if the saved value is 150, then the loaded value will be 300 (150+150)
     public void LoadAllStatsOfCharacter(SaveDataCharacter data) {
-        _doNotDisturb = data.doNotDisturb;
-        _doNotGetHungry = data.doNotGetHungry;
-        _doNotGetLonely = data.doNotGetLonely;
-        _doNotGetTired = data.doNotGetTired;
+        //_doNotDisturb = data.doNotDisturb;
+        //_doNotGetHungry = data.doNotGetHungry;
+        //_doNotGetLonely = data.doNotGetLonely;
+        //_doNotGetTired = data.doNotGetTired;
 
         _maxHP = data.maxHP;
         _currentHP = data.currentHP;
@@ -7776,7 +7776,7 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
         log += "\nPlan is setting next action to be done...";
-        plan.SetNextNode();
+        plan.SetNextNode(action);
         if (plan.currentNode == null) {
             log += "\nThis action is the end of plan.";
             if (plan.job != null && plan.job.jobQueueParent != null) {

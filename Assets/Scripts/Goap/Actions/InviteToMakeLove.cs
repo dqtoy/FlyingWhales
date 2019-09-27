@@ -146,9 +146,9 @@ public class InviteToMakeLove : GoapAction {
         if (validBeds.Count == 0) {
             //No More valid beds, what to do?
         } else {
-            if (parentPlan != null && parentPlan.job != null) {
-                parentPlan.job.SetCannotOverrideJob(true); //Carry should not be overrideable if the character is actually already carrying another character.
-            }
+            //if (parentPlan != null && parentPlan.job != null) {
+            //    parentPlan.job.SetCannotOverrideJob(true); //Carry should not be overrideable if the character is actually already carrying another character.
+            //}
             IPointOfInterest chosenBed = validBeds[Random.Range(0, validBeds.Count)];
             MakeLove makeLove = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.MAKE_LOVE, actor, chosenBed, false) as MakeLove;
             makeLove.SetTargetCharacter(target);
