@@ -46,7 +46,7 @@ public class TheAnvil : BaseLandmark {
                 PlayerJobActionSlot slot = PlayerManager.Instance.player.interventionAbilitySlots[i];
                 slot.LevelUp();
             }
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All Spells upgraded!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Spell Level increased!", () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
         } else if (upgradeIdentifier == All_Summon) {
             for (int i = 0; i < PlayerManager.Instance.player.summonSlots.Count; i++) {
                 SummonSlot slot = PlayerManager.Instance.player.summonSlots[i];
