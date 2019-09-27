@@ -4,9 +4,16 @@ using UnityEngine;
 
 public class TheAnvil : BaseLandmark {
 
-    public static readonly string All_Intervention = "All Intervention Abilities";
-    public static readonly string All_Summon = "All Summons";
-    public static readonly string All_Artifact = "All Artifacts";
+    public static readonly string All_Intervention = "Improved Spells";
+    public static readonly string All_Summon = "Improved Summons";
+    public static readonly string All_Artifact = "Improved Artifacts";
+    //unimplemented
+    public static readonly string Increased_Mana_Capacity = "Increased Mana Capacity";
+    public static readonly string Increased_Mana_Regen = "Increased Mana Regen";
+    public static readonly string Faster_Portal_Invocation = "Faster Portal Invocation";
+    public static readonly string Faster_Invasion = "Faster Invasion";
+    public static readonly string Reduce_Spire_Cooldown = "Reduce Spire Cooldown";
+    public static readonly string Reduce_Eye_Cooldown = "Reduce Eye Cooldown";
 
     public string upgradeIdentifier { get; private set; }
     public int currentUpgradeTick {
@@ -74,7 +81,7 @@ public class TheAnvil : BaseLandmark {
         } else if (upgrade == All_Artifact) {
             return GameManager.Instance.GetTicksBasedOnHour(8);
         }
-        return 0;
+        return GameManager.Instance.GetTicksBasedOnHour(8);
     }
     public static string GetUpgradeDescription(string upgrade) {
         if (upgrade == All_Intervention) {
@@ -84,7 +91,7 @@ public class TheAnvil : BaseLandmark {
         } else if (upgrade == All_Artifact) {
             return "Upgrade all your artifact slots by 1 level.";
         }
-        return string.Empty;
+        return upgrade;
     }
     #endregion
 }
