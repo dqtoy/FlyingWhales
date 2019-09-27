@@ -185,7 +185,7 @@ public class InteriorMapManager : MonoBehaviour {
         //GameManager.Instance.SetTicksToAddPerTick(GameManager.ticksPerHour); //When area map is shown, ticks will progress by 1 hour
         PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
         Messenger.Broadcast(Signals.AREA_MAP_CLOSED, closedArea);
-        GameManager.Instance.SetPausedState(true);
+        //GameManager.Instance.SetPausedState(true);
         //GameManager.Instance.DayStarted(false);
         //GameManager.Instance.SetTick(96);
         return closedArea;

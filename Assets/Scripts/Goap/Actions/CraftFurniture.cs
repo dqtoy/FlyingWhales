@@ -97,7 +97,9 @@ public class CraftFurniture : GoapAction {
     }
     private void AfterCraftSuccess() {
         actor.AdjustSupply(-TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost);
-        targetSpot.structure.AddTileObject(furnitureToCreate, targetSpot, false);
+        if (targetSpot.objHere == null) {
+            targetSpot.structure.AddTileObject(furnitureToCreate, targetSpot, false);
+        }
     }
     #endregion
 

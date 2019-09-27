@@ -449,7 +449,7 @@ public class CharacterInfoUI : UIMenu {
             string text = (string) obj;
             int index = int.Parse(text);
             Trait trait = activeCharacter.normalTraits[index];
-            UIManager.Instance.ShowSmallInfo(trait.description, trait.name);
+            UIManager.Instance.ShowSmallInfo(trait.description);
         }
 
     }
