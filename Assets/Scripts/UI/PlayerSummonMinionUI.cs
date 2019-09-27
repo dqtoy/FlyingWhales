@@ -125,6 +125,7 @@ public class PlayerSummonMinionUI : MonoBehaviour {
     #region Minion To Summon
     public void OnClickSelectMinionToSummon() {
         ShowMinionsToSummon();
+        UIManager.Instance.HideObjectPicker();
     }
     private void ShowMinionsToSummon() {
         for (int i = 0; i < PlayerManager.Instance.player.minionsToSummon.Length; i++) {
