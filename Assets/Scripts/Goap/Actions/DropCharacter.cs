@@ -137,7 +137,7 @@ public class DropCharacter : GoapAction {
                 else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     if (recipient.faction.id != actor.faction.id) {
                         reactions.Add("This news is music to my ears!");
-                        AddTraitTo(recipient, "Cheery");
+                        AddTraitTo(recipient, "Satisfied");
                     } else {
                         reactions.Add(string.Format("I am pissed that {0} had been brought back.", targetCharacter.name));
                         AddTraitTo(recipient, "Annoyed");

@@ -339,7 +339,7 @@ public class AssaultCharacter : GoapAction {
                     RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         reactions.Add(string.Format("{0} deserves to be beaten.", targetCharacter.name));
-                        AddTraitTo(recipient, "Cheery");
+                        AddTraitTo(recipient, "Satisfied");
                         //if (status == SHARE_INTEL_STATUS.WITNESSED) {
                         //    if (recipient.marker.inVisionPOIs.Contains(targetCharacter)) {
                         //        recipient.marker.AddHostileInRange(targetCharacter, checkHostility: false);
@@ -354,7 +354,7 @@ public class AssaultCharacter : GoapAction {
                         //}
                     } else {
                         reactions.Add(string.Format("{0} deserves to be beaten.", targetCharacter.name));
-                        AddTraitTo(recipient, "Cheery");
+                        AddTraitTo(recipient, "Satisfied");
                     }
                 }
                 //- Recipient Has No Relationship with Target
@@ -434,7 +434,7 @@ public class AssaultCharacter : GoapAction {
                     RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         reactions.Add(string.Format("Suits {0} right.", Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
-                        AddTraitTo(recipient, "Cheery");
+                        AddTraitTo(recipient, "Satisfied");
                         //if (status == SHARE_INTEL_STATUS.WITNESSED) {
                         //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
                         //        recipient.marker.AddAvoidInRange(actor);
@@ -466,7 +466,7 @@ public class AssaultCharacter : GoapAction {
                             //    }
                             //}
                         }
-                        AddTraitTo(recipient, "Cheery");
+                        AddTraitTo(recipient, "Satisfied");
                     }
                 }
                 //- Recipient Has No Relationship with Target

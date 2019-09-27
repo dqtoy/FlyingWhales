@@ -114,13 +114,13 @@ public class Feed : GoapAction {
                 else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     //if (targetCharacter.isAtHomeArea) {
                     //    reactions.Add(string.Format("I hope {0} rots in there!", targetCharacter.name));
-                    //    AddTraitTo(recipient, "Cheery");
+                    //    AddTraitTo(recipient, "Satisfied");
                     //} else {
                     //    reactions.Add(string.Format("I hope {0} rots in there!", targetCharacter.name));
-                    //    AddTraitTo(recipient, "Cheery");
+                    //    AddTraitTo(recipient, "Satisfied");
                     //}
                     reactions.Add(string.Format("I hope {0} rots in there!", targetCharacter.name));
-                    AddTraitTo(recipient, "Cheery");
+                    AddTraitTo(recipient, "Satisfied");
                 }
                 //- Recipient Has No Relationship with Target
                 else {

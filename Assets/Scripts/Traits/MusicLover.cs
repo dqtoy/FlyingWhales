@@ -51,7 +51,7 @@ public class MusicLover : Trait {
     #endregion
 
     private void OnHearGuitarPlaying(Character guitarPlayer) {
-        owner.AddTrait("Cheery");
+        owner.AddTrait("Satisfied");
         owner.AdjustTiredness(20);
         owner.AdjustHappiness(40);
         //Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became happier.");

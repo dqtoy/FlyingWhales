@@ -251,7 +251,7 @@ public class EatAtTable : GoapAction {
             else if (poisonedTrait.IsResponsibleForTrait(recipient)) {
                 if(recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     reactions.Add("Yes I did that and it worked! Muahahaha!");
-                    AddTraitTo(recipient, "Cheery");
+                    AddTraitTo(recipient, "Satisfied");
                 } else {
                     reactions.Add(string.Format("{0} wasn't my target when I poisoned the food.", actor.name));
                 }
@@ -271,7 +271,7 @@ public class EatAtTable : GoapAction {
             } 
             else if (recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
                 reactions.Add(string.Format("{0} deserves that.", actor.name));
-                AddTraitTo(recipient, "Cheery");
+                AddTraitTo(recipient, "Satisfied");
             }
             else {
                 reactions.Add("This is not relevant to me.");

@@ -6,7 +6,7 @@ public class Dead : Trait {
     public List<Character> charactersThatSawThisDead { get; private set; }
     public Dead() {
         name = "Dead";
-        description = "This character is dead.";
+        description = "This character's life has been extinguished.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEUTRAL;
         associatedInteraction = INTERACTION_TYPE.NONE;

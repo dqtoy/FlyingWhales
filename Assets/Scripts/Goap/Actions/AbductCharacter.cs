@@ -118,7 +118,7 @@ public class AbductCharacter : GoapAction {
                 //- Recipient Has Negative Relationship with Target
                 else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     reactions.Add(string.Format("{0} deserves what {1} got.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-                    AddTraitTo(recipient, "Cheery");
+                    AddTraitTo(recipient, "Satisfied");
                 }
                 //- Recipient Has No Relationship with Target
                 else {

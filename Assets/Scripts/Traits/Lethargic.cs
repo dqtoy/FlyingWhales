@@ -5,7 +5,7 @@ using UnityEngine;
 public class Lethargic : Trait {
     public Lethargic() {
         name = "Lethargic";
-        description = "This character lost a lot of blood.";
+        description = "This character is feeling sluggish and apathetic.";
         thoughtText = "[Character] lost a lot of blood.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;

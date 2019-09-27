@@ -13,7 +13,7 @@ public class Burning : Trait {
 
     public Burning() {
         name = "Burning";
-        description = "This is burning.";
+        description = "This character is on fire!";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;

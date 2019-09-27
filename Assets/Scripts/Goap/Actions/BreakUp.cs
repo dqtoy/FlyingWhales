@@ -110,22 +110,22 @@ public class BreakUp : GoapAction {
                 }
                 //- Recipient is Lover or Paramour of Actor
                 else if (isRecipientLoverOrParamourOfActor) {
-                    recipient.AddTrait("Cheery");
+                    recipient.AddTrait("Satisfied");
                     reactions.Add(string.Format("This is great news! My relationship with {0} will be better now.", actor.name));
                 }
                 //- Recipient is Lover or Paramour of Target
                 else if (isRecipientLoverOrParamourOfActor) {
-                    recipient.AddTrait("Cheery");
+                    recipient.AddTrait("Satisfied");
                     reactions.Add(string.Format("This is great news! My relationship with {0} will be better now.", targetCharacter.name));
                 }
                 //- Is in Love with Actor
                 else if (isRecipientInLoveWithActor) {
-                    recipient.AddTrait("Cheery");
+                    recipient.AddTrait("Satisfied");
                     reactions.Add(string.Format("This means I have a chance with {0} now.", actor.name));
                 }
                 //- Is in Love with Target
                 else if (isRecipientInLoveWithTarget) {
-                    recipient.AddTrait("Cheery");
+                    recipient.AddTrait("Satisfied");
                     reactions.Add(string.Format("This means I have a chance with {0} now.", targetCharacter.name));
                 }
                 //- Other Positive Relationship with Actor

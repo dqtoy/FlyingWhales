@@ -8,7 +8,7 @@ public class Cursed : Trait {
 
     public Cursed() {
         name = "Cursed";
-        description = "This character has been afflicted with a debilitating curse.";
+        description = "This character has been afflicted by a magical curse.";
         type = TRAIT_TYPE.ENCHANTMENT;
         effect = TRAIT_EFFECT.NEGATIVE;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

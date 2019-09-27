@@ -10,7 +10,7 @@ public class Sick : Trait {
     }
     public Sick() {
         name = "Sick";
-        description = "This character is sick.";
+        description = "This character has caught a mild illness.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;

@@ -7,7 +7,7 @@ public class Infected : Trait {
     public override bool isPersistent { get { return true; } }
     public Infected() {
         name = "Infected";
-        description = "This character is infected with a Zombie Virus.";
+        description = "This character has the zombie virus.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = 0;

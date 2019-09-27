@@ -7,7 +7,7 @@ public class Spooked : Trait {
 
     public Spooked() {
         name = "Spooked";
-        description = "This character fears anything.";
+        description = "This character is too scared and may refuse to sleep.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEUTRAL;
         associatedInteraction = INTERACTION_TYPE.NONE;
