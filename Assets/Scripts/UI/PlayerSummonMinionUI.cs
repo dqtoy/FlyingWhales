@@ -68,6 +68,8 @@ public class PlayerSummonMinionUI : MonoBehaviour {
         UpdateSummonButton();
         UpdateSelectMinionToAssignBtn();
         UpdateSelectMinionToSummonBtn();
+        HideMinionsToSummon();
+        UIManager.Instance.HideObjectPicker();
     }
     private void UpdateSummonButton() {
         summonProgress.gameObject.SetActive(false);
