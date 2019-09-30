@@ -573,9 +573,7 @@ public class GoapAction {
             //    targetCharacter.AdjustIsWaitingForInteraction(-1);
             //}
             OnStopActionWhileTravelling();
-            if (!actor.DropPlan(parentPlan)) {
-                //actor.PlanGoapActions();
-            }
+            actor.DropPlan(parentPlan, forceProcessPlanJob: true);
         }
         //Remove job in queue if job is personal job and removeJobInQueue value is true
         if (removeJobInQueue && job != null && !job.jobQueueParent.isAreaOrQuestJobQueue) {
