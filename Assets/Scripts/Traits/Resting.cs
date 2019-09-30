@@ -54,7 +54,7 @@ public class Resting : Trait {
         int chance = UnityEngine.Random.Range(0, 100);
         if(_character.race == RACE.WOLF) {
             //Turn back to normal form
-            if (forceTransform || chance < 40) {
+            if (forceTransform || chance < 1) {
                 lycanthropyTrait.PlanRevertToNormal();
                 _character.currentAction.currentState.EndPerTickEffect();
                 hasTransformed = true;

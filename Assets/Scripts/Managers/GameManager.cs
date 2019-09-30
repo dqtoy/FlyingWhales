@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour {
                 UIManager.Instance.ToggleConsole();
             }
         } else if (Input.GetKeyDown(KeyCode.Space) && !UIManager.Instance.IsMouseOnInput()) {
-            if (UIManager.Instance.pauseBtn.IsInteractable()) {
+            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.pauseBtn.IsInteractable()) {
                 if (isPaused) {
                     UIManager.Instance.Unpause();
                 } else {
@@ -94,15 +94,15 @@ public class GameManager : MonoBehaviour {
                 }
             }
         } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            if (UIManager.Instance.x1Btn.IsInteractable()) {
+            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x1Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed1X();
             }
         } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
-            if (UIManager.Instance.x2Btn.IsInteractable()) {
+            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x2Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed2X();
             }
         } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
-            if (UIManager.Instance.x4Btn.IsInteractable()) {
+            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x4Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed4X();
             }
         } else if (Input.GetKeyDown(KeyCode.Escape)) {

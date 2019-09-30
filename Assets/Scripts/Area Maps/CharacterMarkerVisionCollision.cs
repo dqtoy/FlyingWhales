@@ -186,7 +186,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             }
         }
         parentMarker.AddPOIAsInVisionRange(poi);
-        if(targetCharacter != null) {
+        if(targetCharacter != null && parentMarker.character.GetNormalTrait("Resting", "Unconscious") == null) {
             parentMarker.AddHostileInRange(targetCharacter);
         }
         //if (GameManager.Instance.gameHasStarted) {

@@ -15,7 +15,7 @@ public class Table : TileObject {
     public Table(LocationStructure location) {
         SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_AT_TABLE, INTERACTION_TYPE.DRINK, INTERACTION_TYPE.TABLE_REMOVE_POISON, INTERACTION_TYPE.TABLE_POISON, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
-        SetFood(UnityEngine.Random.Range(20, 81));
+        SetFood(0); //UnityEngine.Random.Range(20, 81)
         Initialize(TILE_OBJECT_TYPE.TABLE);
         //int slots = 4;
         //if (usedAsset.name.Contains("2")) {

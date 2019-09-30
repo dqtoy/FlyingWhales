@@ -84,7 +84,7 @@ public class JobQueue {
     public bool RemoveJobInQueue(JobQueueItem job) {
         if (jobsInQueue.Remove(job)) {
             string ownerName = "area";
-            if (character != null) {
+            if (!isAreaOrQuestJobQueue) {
                 ownerName = character.name;
             }
             string removeLog = job.name + " has been removed from " + ownerName + " job queue.";
@@ -434,12 +434,25 @@ public class JobQueue {
             }
         }
     }
+
+    //Returnsc true or false if job was really removed in queue
     public bool CancelJob(JobQueueItem job, string cause = "", bool shouldDoAfterEffect = true) {
-        if (RemoveJobInQueue(job)) {
+        //When cancelling a job, we must check if it's personal or not because if it is a faction/settlement job it cannot be removed from queue
+        //The only way for a faction/settlement job to be removed is if it is forced or it is actually finished
+        //We don't remove them, but they will be considered as removed so that other processes will be triggered
+        bool hasBeenRemovedInJobQueue = false;
+        bool process = false;
+        if (job.jobQueueParent.isAreaOrQuestJobQueue) {
+            process = true;
+        } else {
+            hasBeenRemovedInJobQueue = RemoveJobInQueue(job);
+            process = hasBeenRemovedInJobQueue;
+        }
+        if (process) {
             if(job is GoapPlanJob && cause != "") {
                 GoapPlanJob planJob = job as GoapPlanJob;
                 Character actor = null;
-                if(this.character != null) {
+                if(!isAreaOrQuestJobQueue) {
                     actor = this.character;
                 } else if(job.assignedCharacter != null) {
                     actor = job.assignedCharacter;
@@ -449,9 +462,8 @@ public class JobQueue {
                 }
             }
             job.UnassignJob(shouldDoAfterEffect);
-            return true;
         }
-        return false;
+        return hasBeenRemovedInJobQueue;
     }
     /// <summary>
     /// Unassign all jobs that a certain character has taken.

@@ -1026,7 +1026,7 @@ public class CharacterMarker : PooledObject {
     private void ProcessAllUnprocessedVisionPOIs() {
         if(unprocessedVisionPOIs.Count > 0 && (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
             string log = GameManager.Instance.TodayLogString() + character.name + " tick ended! Processing all unprocessed in visions...";
-            if (!character.isDead) {
+            if (!character.isDead && character.GetNormalTrait("Unconscious", "Resting", "Zapped") == null) {
                 List<GoapAction> actionsToWitness = new List<GoapAction>();
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
@@ -1066,22 +1066,17 @@ public class CharacterMarker : PooledObject {
 
                 //Witness all actions
                 log += "\n - Witnessing collected actions:";
-                if (character.isDead || character.GetNormalTrait("Unconscious", "Resting") != null) {
-                    log += "\n   - Character is either dead, unconscious or resting, cannot witness";
-                } else {
-                    if (actionsToWitness.Count > 0) {
-                        for (int i = 0; i < actionsToWitness.Count; i++) {
-                            GoapAction action = actionsToWitness[i];
-                            log += "\n   - Witnessed: " + action.goapName + " of " + action.actor.name + " with target " + action.poiTarget.name;
-                            character.ThisCharacterWitnessedEvent(action);
-                        }
-                    } else {
-                        log += "\n   - No collected actions";
+                if (actionsToWitness.Count > 0) {
+                    for (int i = 0; i < actionsToWitness.Count; i++) {
+                        GoapAction action = actionsToWitness[i];
+                        log += "\n   - Witnessed: " + action.goapName + " of " + action.actor.name + " with target " + action.poiTarget.name;
+                        character.ThisCharacterWitnessedEvent(action);
                     }
+                } else {
+                    log += "\n   - No collected actions";
                 }
-
             } else {
-                log += "\n - Character is dead, not processing...";
+                log += "\n - Character is either dead, unconscious, resting, or zapped, not processing...";
             }
             unprocessedVisionPOIs.Clear();
             character.PrintLogIfActive(log);
@@ -1099,7 +1094,7 @@ public class CharacterMarker : PooledObject {
     public bool AddHostileInRange(Character character, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true) {
         if (!hostilesInRange.Contains(character)) {
             if (this.character.GetNormalTrait("Zapped") == null && !this.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !character.isDead && !this.character.isFollowingPlayerInstruction &&
-                (!checkHostility || this.character.IsHostileWith(character))) {
+                (!checkHostility || this.character.IsHostileWith(character))) { //"Resting"
                 if (!WillCharacterTransferEngageToFleeList(isLethal)) {
                     hostilesInRange.Add(character);
                     lethalCharacters.Add(character, isLethal);
@@ -1251,7 +1246,7 @@ public class CharacterMarker : PooledObject {
         return false;
     }
     private bool AddAvoidInRange(Character poi, bool processCombatBehavior = true) {
-        if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && character.GetNormalTrait("Berserked") == null) {
+        if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && character.GetNormalTrait("Berserked") == null) { //, "Resting"
             if (!avoidInRange.Contains(poi)) {
                 avoidInRange.Add(poi);
                 //NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);

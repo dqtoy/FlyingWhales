@@ -54,6 +54,7 @@ public class GoapAction {
     public GoapActionState endedAtState { get; private set; } //the state this action ended at
     public GoapPlan parentPlan { get; private set; }
     public bool isStopped { get; private set; }
+    public bool isStoppedAsCurrentAction { get; private set; }
     public bool isPerformingActualAction { get; protected set; }
     public bool isDone { get; private set; }
     public ACTION_LOCATION_TYPE actionLocationType { get; protected set; } //This is set in every action's constructor
@@ -117,7 +118,7 @@ public class GoapAction {
         this.goapName = Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
         this.poiTarget = poiTarget;
         this.actor = actor;
-        isStopped = false;
+        SetIsStopped(false);
         isPerformingActualAction = false;
         isDone = false;
         SetShowIntelNotification(true);
@@ -576,7 +577,8 @@ public class GoapAction {
                 //actor.PlanGoapActions();
             }
         }
-        if (removeJobInQueue && job != null && job.jobQueueParent.character != null) {
+        //Remove job in queue if job is personal job and removeJobInQueue value is true
+        if (removeJobInQueue && job != null && !job.jobQueueParent.isAreaOrQuestJobQueue) {
             job.jobQueueParent.RemoveJobInQueue(job);
         }
         if (UIManager.Instance.characterInfoUI.isShowing) {
@@ -587,6 +589,9 @@ public class GoapAction {
     }
     public void SetIsStopped(bool state) {
         isStopped = state;
+    }
+    public void SetIsStoppedAsCurrentAction(bool state) {
+        isStoppedAsCurrentAction = state;
     }
     public int GetDistanceCost() {
         if (actor.specificLocation == null) {
