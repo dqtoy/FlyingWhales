@@ -5,7 +5,6 @@ using UnityEngine;
 public class TheSpire : BaseLandmark {
     public int currentCooldownTick { get; private set; }
     public int cooldownDuration { get; private set; }
-
     public bool isInCooldown {
         get { return currentCooldownTick < cooldownDuration; }
     }

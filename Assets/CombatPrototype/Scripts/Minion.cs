@@ -146,7 +146,7 @@ public class Minion {
 
             character.RemoveAllNonPersistentTraits();
 
-            character.marker.OnDeath(deathTile);
+            character.marker?.OnDeath(deathTile);
             character.SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);

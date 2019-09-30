@@ -376,6 +376,8 @@ public class RegionInfoUI : UIMenu {
             UpdatePlayerUpgradeUI();
         } else if (playerSummonMinionUI.gameObject.activeSelf) {
             UpdatePlayerSummonMinionUI();
+        } else if (needlesUI.gameObject.activeSelf) {
+            UpdateTheNeedlesUI();
         }
     }
     public void OnDemonicToggleStateChanged(bool isOn) {
@@ -387,6 +389,7 @@ public class RegionInfoUI : UIMenu {
             HidePlayerUpgradeUI();
             HidePlayerSummonMinionUI();
             HideTheEyeUI();
+            HideTheNeedlesUI();
             //activate the neeeded UI for the tab
             if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
                 ShowPlayerBuildLandmarkUI();
@@ -400,6 +403,8 @@ public class RegionInfoUI : UIMenu {
                 ShowPlayerSummonMinionUI();
             } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_EYE) {
                 ShowTheEyeUI();
+            } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_NEEDLES) {
+                ShowTheNeedlesUI();
             }
         } else {
             //deactivate the UI for the tab
@@ -409,6 +414,7 @@ public class RegionInfoUI : UIMenu {
             HidePlayerUpgradeUI();
             HidePlayerSummonMinionUI();
             HideTheEyeUI();
+            HideTheNeedlesUI();
         }
     }
 
@@ -485,6 +491,19 @@ public class RegionInfoUI : UIMenu {
     }
     private void HideTheEyeUI() {
         theEyeUI.HideTheEyeUI();
+    }
+    #endregion
+
+    #region The Needles
+    [SerializeField] private TheNeedlesUI needlesUI;
+    private void ShowTheNeedlesUI() {
+        needlesUI.ShowTheNeedlesUI(activeRegion.mainLandmark as TheNeedles);
+    }
+    private void HideTheNeedlesUI() {
+        needlesUI.HideTheNeedlesUI();
+    }
+    private void UpdateTheNeedlesUI() {
+        needlesUI.UpdateUI();
     }
     #endregion
 }

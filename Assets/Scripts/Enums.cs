@@ -1683,6 +1683,7 @@ public static class Extensions {
             case LANDMARK_TYPE.THE_FINGERS:
             case LANDMARK_TYPE.THE_EYE:
             case LANDMARK_TYPE.THE_PROFANE:
+            case LANDMARK_TYPE.THE_NEEDLES:
                 return true;
             default:
                 return false;

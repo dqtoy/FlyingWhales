@@ -34,6 +34,7 @@ public class CameraMove : MonoBehaviour {
     public bool isDragging = false;
 
     [Header("Edging")]
+    [SerializeField] private int edgeBoundary = 30;
     [SerializeField] private float edgingSpeed = 30f;
     private bool allowEdgePanning = false;
 
@@ -295,20 +296,20 @@ public class CameraMove : MonoBehaviour {
         }
         bool isEdging = false;
         Vector3 newPos = transform.position;
-        if (Input.mousePosition.x > Screen.width) {
+        if (Input.mousePosition.x > Screen.width - edgeBoundary) {
             newPos.x += edgingSpeed * Time.deltaTime;
             isEdging = true;
         }
-        if (Input.mousePosition.x < 0 ) {
+        if (Input.mousePosition.x < 0 + edgeBoundary) {
             newPos.x -= edgingSpeed * Time.deltaTime;
             isEdging = true;
         }
 
-        if (Input.mousePosition.y > Screen.height) {
+        if (Input.mousePosition.y > Screen.height - edgeBoundary) {
             newPos.y += edgingSpeed * Time.deltaTime;
             isEdging = true;
         }
-        if (Input.mousePosition.y < 0) {
+        if (Input.mousePosition.y < 0 + edgeBoundary) {
             newPos.y -= edgingSpeed * Time.deltaTime;
             isEdging = true;
         }

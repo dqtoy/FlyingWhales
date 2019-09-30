@@ -290,8 +290,10 @@ public class Region {
         Minion previouslyAssignedMinion = assignedMinion;
         assignedMinion = minion;
         if (assignedMinion != null) {
+            AddCharacterToLocation(assignedMinion.character);
             mainLandmark.OnMinionAssigned(assignedMinion); //a new minion was assigned 
         } else if (previouslyAssignedMinion != null) {
+            RemoveCharacterFromLocation(previouslyAssignedMinion.character);
             mainLandmark.OnMinionUnassigned(previouslyAssignedMinion); //a minion was unassigned
         }
     }
@@ -526,9 +528,10 @@ public class Region {
             activeEvent.ExecuteAfterInvasionEffect(this);
             DespawnEvent();
         }
+        List<Character> nonMinionChaarcters = charactersAtLocation.Where(x => x.minion == null).ToList();
         //kill all remaining characters
-        while (charactersAtLocation.Count > 0) {
-            Character character = charactersAtLocation[0];
+        for (int i = 0; i < nonMinionChaarcters.Count; i++) {
+            Character character = nonMinionChaarcters[i];
             character.Death("Invasion");
         }
     }
@@ -551,7 +554,8 @@ public class Region {
     //    }
     //}
     private void JobBasedEventGeneration(Character character) {
-        if (activeEvent == null) {
+        //only trigger event generation if there is no active event and the character that arrived is not a minion
+        if (activeEvent == null && character.minion == null) {
             if (character.stateComponent.currentState is MoveOutState) {
                 WORLD_EVENT_EFFECT[] effects = character.stateComponent.currentState.job.jobType.GetAllowedEventEffects();
                 if (effects != null) {
