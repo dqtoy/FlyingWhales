@@ -19,6 +19,13 @@ public class TheNeedles : BaseLandmark {
         cooldownDuration = GameManager.Instance.GetTicksBasedOnHour(4);
     }
 
+    public void LoadSavedData(SaveDataTheNeedles data) {
+        if (data.currentCooldownTick < cooldownDuration) {
+            StartCooldown();
+        }
+        currentCooldownTick = data.currentCooldownTick;
+    }
+
     public void Activate() {
         Minion minion = tileLocation.region.assignedMinion;
         int gainedMana = GetManaValue(minion);
@@ -48,5 +55,20 @@ public class TheNeedles : BaseLandmark {
 
     public int GetManaValue(Minion minion) {
        return minion.character.level * 100;
+    }
+}
+
+public class SaveDataTheNeedles : SaveDataLandmark {
+    public int currentCooldownTick;
+
+    public override void Save(BaseLandmark landmark) {
+        base.Save(landmark);
+        TheNeedles needles = landmark as TheNeedles;
+        currentCooldownTick = needles.currentCooldownTick;
+    }
+    public override void LoadSpecificLandmarkData(BaseLandmark landmark) {
+        base.LoadSpecificLandmarkData(landmark);
+        TheNeedles needles = landmark as TheNeedles;
+        needles.LoadSavedData(this);
     }
 }
