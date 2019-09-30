@@ -10,7 +10,7 @@ public class FoodPile : TileObject {
         SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_FOOD, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(TILE_OBJECT_TYPE.FOOD_PILE);
-        SetFoodInPile(0); //2000
+        SetFoodInPile(2000); //
         RemoveTrait("Flammable");
     }
     public FoodPile(SaveDataTileObject data) {
