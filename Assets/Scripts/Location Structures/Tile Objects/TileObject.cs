@@ -24,7 +24,6 @@ public class TileObject : IPointOfInterest {
     public List<JobQueueItem> allJobsTargettingThis { get; protected set; }
     public List<GoapAction> targettedByAction { get; protected set; }
     public List<Character> owners { get; private set; }
-
     public virtual Character[] users {
         get {
             if (slots == null) {
@@ -33,6 +32,9 @@ public class TileObject : IPointOfInterest {
             return slots.Where(x => x != null && x.user != null).Select(x => x.user).ToArray();
         }
     }//array of characters, currently using the tile object
+
+    ///this is null by default. This is responsible for updating the pathfinding graph when a tileobject that should be unapassable is placed <see cref="LocationGridTileGUS.Initialize(Vector3[])"/>, this should also destroyed when the object is removed. <see cref="LocationGridTileGUS.Destroy"/>
+    public LocationGridTileGUS graphUpdateScene { get; protected set; } 
 
     //tile slots
     public TileObjectSlotItem[] slots { get; protected set; } //for users
@@ -659,6 +661,20 @@ public class TileObject : IPointOfInterest {
             log = null;
         }
         
+    }
+    #endregion
+
+    #region Graph Updates
+    protected void CreateNewGUS(Vector2 offset, Vector2 size) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("LocationGridTileGUS", Vector3.zero, Quaternion.identity, gridTileLocation.parentAreaMap.graphUpdateScenesParent);
+        LocationGridTileGUS gus = go.GetComponent<LocationGridTileGUS>();
+        gus.Initialize(offset, size, this);
+        this.graphUpdateScene = gus;
+    }
+    protected void DestroyExistingGUS() {
+        if (this.graphUpdateScene != null) {
+            this.graphUpdateScene.Destroy();
+        }
     }
     #endregion
 }
