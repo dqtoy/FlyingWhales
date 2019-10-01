@@ -30,7 +30,6 @@ public interface IPointOfInterest : ITraitable{
     LocationGridTile GetNearestUnoccupiedTileFromThis();
     List<GoapAction> AdvertiseActionsToActor(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData);
 
-
     //#region Traits
     //bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);
     //bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);
