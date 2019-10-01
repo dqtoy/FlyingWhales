@@ -9,7 +9,7 @@ Material:
   m_Name: Decal 1
   m_Shader: {fileID: 4800000, guid: d8f400148b999fe41bd30759b3a9126b, type: 3}
   m_ShaderKeywords: BlendAlpha Clip_OFF FrameBlend_OFF SoftParticles_OFF USE_ALPHA_POW
-    USE_CUTOUT USE_CUTOUT_TEX USE_NOISE_DISTORTION VertLight_OFF _BLENDMODE_BLEND
+    USE_CUTOUT USE_CUTOUT_TEX USE_NOISE_DISTORTION USE_QUAD_DECAL VertLight_OFF _BLENDMODE_BLEND
   m_LightmapFlags: 5
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -114,7 +114,7 @@ Material:
     - _UseFrameBlending: 0
     - _UseNoiseDistortion: 1
     - _UseWorldSpaceUV: 0
-    - _ZTest1: 5
+    - _ZTest1: 4
     - _ZWrite: 1
     m_Colors:
     - _BorderColor: {r: 0.4470588, g: 0.51720095, b: 1.9, a: 1}
