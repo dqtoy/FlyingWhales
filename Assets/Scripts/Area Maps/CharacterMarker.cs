@@ -54,6 +54,7 @@ public class CharacterMarker : PooledObject {
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
+    public List<GoapAction> actionsToWitness { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
     public Dictionary<Character, bool> lethalCharacters { get; private set; }
     public bool willProcessCombat { get; private set; }
     public Action arrivalAction {
@@ -109,6 +110,7 @@ public class CharacterMarker : PooledObject {
         terrifyingObjects = new List<IPointOfInterest>();
         avoidInRange = new List<IPointOfInterest>();
         lethalCharacters = new Dictionary<Character, bool>();
+        actionsToWitness = new List<GoapAction>();
         attackSpeedMeter = 0f;
         OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
         //flee
@@ -1027,7 +1029,6 @@ public class CharacterMarker : PooledObject {
         if(unprocessedVisionPOIs.Count > 0 && (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
             string log = GameManager.Instance.TodayLogString() + character.name + " tick ended! Processing all unprocessed in visions...";
             if (!character.isDead && character.GetNormalTrait("Unconscious", "Resting", "Zapped") == null) {
-                List<GoapAction> actionsToWitness = new List<GoapAction>();
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     log += "\n - Reacting to " + poi.name;
@@ -1075,6 +1076,7 @@ public class CharacterMarker : PooledObject {
                 } else {
                     log += "\n   - No collected actions";
                 }
+                actionsToWitness.Clear();
             } else {
                 log += "\n - Character is either dead, unconscious, resting, or zapped, not processing...";
             }
