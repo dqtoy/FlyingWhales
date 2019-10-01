@@ -121,6 +121,17 @@ public class CharacterTrait : Trait {
                     }
                 }
             }
+            if(targetPOI is Character) {
+                Character character = targetPOI as Character;
+                if(!character.isDead && character.IsInOwnParty() && character.currentParty.characters.Count > 1) { //This means that this character is carrrying another character
+                    Character carriedCharacter = character.currentParty.characters[1];
+                    if(!carriedCharacter.isDead && carriedCharacter.GetNormalTrait("Unconscious", "Restrained") != null) {
+                        if(!character.HasRelationshipOfTypeWith(carriedCharacter, false, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER)) {
+                            //Current problem: Adding a trait here will be a big problem since it might cause nesting of CreateJobsOnEnterVisionWith, since this part of code loops through all the code
+                        }
+                    }
+                }
+            }
         }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
     }
