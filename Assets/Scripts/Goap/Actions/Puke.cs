@@ -59,15 +59,16 @@ public class Puke : GoapAction {
             //- If character has Doctor trait
             if (recipient.GetNormalTrait("Doctor") != null) {
                 //- attempt to Cure the Actor
-                if (!actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, "Plagued") && !actor.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Plagued", targetPOI = actor };
+                Trait trait = actor.GetNormalTrait("Plagued", "Infected", "Sick");
+                if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = actor };
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
                         new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
-                    if (CanCharacterTakeRemoveIllnessesJob(recipient, actor, null)) {
+                    if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(recipient, actor, job)) {
                         //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
                         recipient.jobQueue.AddJobInQueue(job);
                     } else {
-                        job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveIllnessesJob);
+                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
                         recipient.specificLocation.jobQueue.AddJobInQueue(job);
                     }
                 }
@@ -166,15 +167,15 @@ public class Puke : GoapAction {
         pausedState.ResumeState();
     }
 
-    private bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
-            if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
-            }
-            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.GetNormalTrait("Doctor") != null;
-        }
-        return false;
-    }
+    //private bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
+    //    if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
+    //        if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
+    //            return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
+    //        }
+    //        return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.GetNormalTrait("Doctor") != null;
+    //    }
+    //    return false;
+    //}
 }
 
 public class PukeData : GoapActionData {

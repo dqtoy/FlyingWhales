@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Sick : Trait {
-    private Character _sourceCharacter;
+    private Character owner;
+    private float pukeChance;
+    private CharacterState pausedState;
     //private GoapPlanJob _removeTraitJob;
     public override bool isRemovedOnSwitchAlterEgo {
         get { return true; }
@@ -26,57 +28,142 @@ public class Sick : Trait {
     public override void OnAddTrait(ITraitable sourceCharacter) {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
-            _sourceCharacter = sourceCharacter as Character;
-            _sourceCharacter.AdjustSpeedModifier(-0.10f);
+            owner = sourceCharacter as Character;
+            owner.AdjustSpeedModifier(-0.10f);
             //_sourceCharacter.CreateRemoveTraitJob(name);
-            _sourceCharacter.AddTraitNeededToBeRemoved(this);
+            owner.AddTraitNeededToBeRemoved(this);
             if (gainedFromDoing == null) {
-                _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+                owner.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
             } else {
                 if (gainedFromDoing.goapType == INTERACTION_TYPE.EAT_AT_TABLE) {
                     Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
-                    addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    gainedFromDoing.states["Eat Poisoned"].AddArrangedLog("sick", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
+                    gainedFromDoing.states["Eat Poisoned"].AddArrangedLog("sick", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, owner, true));
                 } else {
-                    _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+                    owner.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
                 }
             }
         }
     }
     public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-        _sourceCharacter.AdjustSpeedModifier(0.10f);
+        owner.AdjustSpeedModifier(0.10f);
         //if (_removeTraitJob != null) {
         //    _removeTraitJob.jobQueueParent.CancelJob(_removeTraitJob);
         //}
-        _sourceCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
-        _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
-        _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
+        owner.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
+        owner.RemoveTraitNeededToBeRemoved(this);
+        owner.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         base.OnRemoveTrait(sourceCharacter, removedBy);
         //Messenger.Broadcast(Signals.OLD_NEWS_TRIGGER, sourceCharacter, gainedFromDoing);
     }
-    public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-        if (traitOwner is Character) {
-            Character targetCharacter = traitOwner as Character;
-            if (!targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
-                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
-                job.SetCanBeDoneInLocation(true);
-                if (InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, job)) {
-                    //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    return true;
-                } else {
-                    if (!IsResponsibleForTrait(characterThatWillDoJob)) {
-                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob);
-                        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
-                    }
-                    return false;
-                }
-            }
+    //public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+    //    if (traitOwner is Character) {
+    //        Character targetCharacter = traitOwner as Character;
+    //        if (!targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+    //            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
+    //            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
+    //                new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
+    //            job.SetCanBeDoneInLocation(true);
+    //            if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, targetCharacter, job)) {
+    //                //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+    //                characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+    //                return true;
+    //            } else {
+    //                if (!IsResponsibleForTrait(characterThatWillDoJob)) {
+    //                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
+    //                    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+    //                }
+    //                return false;
+    //            }
+    //        }
+    //    }
+    //    return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+    //}
+    protected override void OnChangeLevel() {
+        if (level == 1) {
+            pukeChance = 5f;
+        } else if (level == 2) {
+            pukeChance = 7f;
+        } else {
+            pukeChance = 9f;
         }
-        return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+    }
+    public override bool PerTickOwnerMovement() {
+        //string summary = owner.name + " is rolling for plagued chances....";
+        float pukeRoll = Random.Range(0f, 100f);
+        //summary += "\nPuke roll is: " + pukeRoll.ToString();
+        //summary += "\nSeptic Shock roll is: " + septicRoll.ToString();
+        bool hasCreatedJob = false;
+        if (pukeRoll < pukeChance) {
+            //summary += "\nPuke chance met. Doing puke action.";
+            //do puke action
+            if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.PUKE) {
+                //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
+                JobQueueItem currentJob = null;
+                JobQueue currentJobQueue = null;
+                if (owner.currentAction.isRoamingAction && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null) {
+                    currentJob = owner.currentAction.parentPlan.job;
+                    currentJobQueue = currentJob.jobQueueParent;
+                }
+                owner.StopCurrentAction(false);
+                if (currentJob != null) {
+                    currentJobQueue.AddJobInQueue(currentJob, false);
+                }
+                owner.marker.StopMovement();
+
+                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
+
+                GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+                GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
+                job.SetAssignedPlan(goapPlan);
+                goapPlan.ConstructAllNodes();
+
+                goapAction.CreateStates();
+                owner.SetCurrentAction(goapAction);
+                //owner.currentAction.SetEndAction(ResumeLastAction);
+                owner.currentAction.DoAction();
+                hasCreatedJob = true;
+            } else if (owner.stateComponent.currentState != null) {
+                pausedState = owner.stateComponent.currentState;
+                owner.stateComponent.currentState.PauseState();
+                owner.marker.StopMovement();
+                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
+
+                GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+                GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
+                job.SetAssignedPlan(goapPlan);
+                goapPlan.ConstructAllNodes();
+
+                goapAction.CreateStates();
+                owner.SetCurrentAction(goapAction);
+                owner.currentAction.SetEndAction(ResumePausedState);
+                owner.currentAction.DoAction();
+                hasCreatedJob = true;
+            } else {
+                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
+
+                GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+                GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
+                job.SetAssignedPlan(goapPlan);
+                goapPlan.ConstructAllNodes();
+
+                goapAction.CreateStates();
+                owner.SetCurrentAction(goapAction);
+                owner.currentAction.DoAction();
+                hasCreatedJob = true;
+            }
+            //Debug.Log(summary);
+        }
+        return hasCreatedJob;
     }
     #endregion
+
+    private void ResumePausedState(string result, GoapAction action) {
+        owner.GoapActionResult(result, action);
+        pausedState.ResumeState();
+    }
 }
