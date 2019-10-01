@@ -84,6 +84,18 @@ public class Table : TileObject {
     public override bool CanBeReplaced() {
         return true;
     }
+    protected override void OnPlaceObjectAtTile(LocationGridTile tile) {
+        base.OnPlaceObjectAtTile(tile);
+        if (tile.parentAreaMap.objectsTilemap.GetTile(tile.localPlace).name.Contains("Bartop")) {
+            CreateNewGUS(new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
+        } else {
+            CreateNewGUS(Vector2.zero, new Vector2(0.5f, 0.5f));
+        }
+    }
+    protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
+        base.OnRemoveTileObject(removedBy, removedFrom);
+        DestroyExistingGUS();
+    }
     #endregion
 
     #region Users
@@ -273,59 +285,6 @@ public class Table : TileObject {
         }
     }
     #endregion
-
-    //private void UpdateUsedTableAsset() {
-    //    if (gridTileLocation == null) {
-    //        return;
-    //    }
-    //    int userCount = GetActiveUserCount();
-    //    if (userCount == 1) {
-    //        if (usedAsset.name.Contains("0")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table01);
-    //        } else if (usedAsset.name.Contains("1")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table11);
-    //        } else if (usedAsset.name.Contains("2")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table21);
-    //        } else if (usedAsset.name.Contains("Left")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bartopLeft1);
-    //        } else if (usedAsset.name.Contains("Right")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bartopRight1);
-    //        }
-    //    } else if (userCount == 2) {
-    //        if (usedAsset.name.Contains("0")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table02);
-    //        } else if (usedAsset.name.Contains("1")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table12);
-    //        } else if (usedAsset.name.Contains("2")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table22);
-    //        }
-    //    } else if (userCount == 3) {
-    //        if (usedAsset.name.Contains("0")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table03);
-    //        } else if (usedAsset.name.Contains("1")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table13);
-    //        }
-    //    } else if (userCount == 4) {
-    //        if (usedAsset.name.Contains("0")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table04);
-    //        } else if (usedAsset.name.Contains("1")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table14);
-    //        }
-    //    } else {
-    //        if (usedAsset.name.Contains("0")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table00);
-    //        } else if (usedAsset.name.Contains("1")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table10);
-    //        } else if (usedAsset.name.Contains("2")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.table20);
-    //        } else if (usedAsset.name.Contains("Left")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bartopLeft0);
-    //        } else if (usedAsset.name.Contains("Right")) {
-    //            gridTileLocation.parentAreaMap.UpdateTileObjectVisual(this, gridTileLocation.parentAreaMap.bartopRight0);
-    //        }
-    //    }
-    //    //the asset will revert to no one using once the table is set to active again
-    //}
 }
 
 public class SaveDataTable : SaveDataTileObject {

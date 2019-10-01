@@ -103,6 +103,7 @@ public class AreaInnerTileMap : MonoBehaviour {
     [Header("Other")]
     public Vector4 cameraBounds;
     public GameObject centerGOPrefab;
+    public Transform graphUpdateScenesParent;
 
     [Header("For Testing")]
     [SerializeField] private LineRenderer pathLineRenderer;

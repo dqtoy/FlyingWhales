@@ -300,6 +300,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 03ddf53b6351efe4ca05ed2590881383, type: 3}
   - {fileID: 21300000, guid: da282d4b3382ab94abbd6ab4c9d1defb, type: 3}
   - {fileID: 21300000, guid: 1d4c825b7e27475458e36989cf618aef, type: 3}
+  - {fileID: 21300000, guid: 33cf6e5bea4751c4ca860912d52e1ee2, type: 3}
   - {fileID: 21300000, guid: 807c776b946f27248a5ed8719ddf076e, type: 3}
   - {fileID: 21300000, guid: 636c786b50377ae45bca7927bc3e2494, type: 3}
   - {fileID: 21300000, guid: cc9ae86baac8bb44ba345fcee6a60bf4, type: 3}
@@ -666,6 +667,7 @@ SpriteAtlas:
   - shore01111111-00
   - caveWallA-1110-02 - Copy
   - bartop_right_empty
+  - Tornado
   - road02
   - road03
   - shore11010001-00
