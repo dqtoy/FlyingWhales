@@ -79,7 +79,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
-    public List<TILE_TAG> tileTags { get; private set; }
 
     private List<HexTile> _tilesConnectedInGoingToMarker = new List<HexTile>();
     private List<HexTile> _tilesConnectedInComingFromMarker = new List<HexTile>();
@@ -94,7 +93,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public int id { get { return data.id; } }
     public int xCoordinate { get { return data.xCoordinate; } }
     public int yCoordinate { get { return data.yCoordinate; } }
-    public int corruptDuration { get { return GetCorruptDuration(); } }
     public string tileName { get { return data.tileName; } }
     public string thisName { get { return data.tileName; } }
     public float elevationNoise { get { return data.elevationNoise; } }
@@ -135,7 +133,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //StartCorruptionAnimation();
         //Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, AreaMapOpened);
         //Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, AreaMapClosed);
-        tileTags = new List<TILE_TAG>();
     }
 
     #region Elevation Functions
@@ -151,8 +148,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Landmarks
-    public void SetLandmarkOnTile(BaseLandmark landmarkOnTile) {
+    public void SetLandmarkOnTile(BaseLandmark landmarkOnTile, bool addFeatures = true) {
         this.landmarkOnTile = landmarkOnTile;
+        if (addFeatures) {
+            landmarkOnTile?.AddFeaturesToRegion();
+        }
     }
     public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
@@ -185,7 +185,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public BaseLandmark CreateLandmarkOfType(LandmarkSaveData saveData) {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
         //SetLandmarkOnTile(new BaseLandmark(this, saveData));
-        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData));
+        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData), false);
         if (landmarkData.minimumTileCount > 1) {
             if (neighbourDirections.ContainsKey(landmarkData.connectedTileDirection) && neighbourDirections[landmarkData.connectedTileDirection] != null) {
                 HexTile tileToConnect = neighbourDirections[landmarkData.connectedTileDirection];
@@ -207,7 +207,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public BaseLandmark CreateLandmarkOfType(SaveDataLandmark saveData) {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
         //SetLandmarkOnTile(new BaseLandmark(this, saveData));
-        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData));
+        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData), false);
         //if (landmarkData.minimumTileCount > 1) {
         //    if (neighbourDirections.ContainsKey(landmarkData.connectedTileDirection) && neighbourDirections[landmarkData.connectedTileDirection] != null) {
         //        HexTile tileToConnect = neighbourDirections[landmarkData.connectedTileDirection];
@@ -385,58 +385,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool IsAtEdgeOfMap() {
         return AllNeighbours.Count < 6; //if this tile has less than 6 neighbours, it is at the edge of the map
-    }
-    public void GenerateInitialTileTags() {
-        //Elevation
-        if(landmarkOnTile == null || landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE) {
-            if (elevationType == ELEVATION.MOUNTAIN) {
-                tileTags.Add(TILE_TAG.MOUNTAIN);
-            } else if (elevationType == ELEVATION.PLAIN) {
-                tileTags.Add(TILE_TAG.FLATLAND);
-            } else if (elevationType == ELEVATION.TREES) {
-                tileTags.Add(TILE_TAG.FOREST);
-            }
-        }
-
-        //Biome
-        if (biomeType == BIOMES.DESERT) {
-            tileTags.Add(TILE_TAG.DESERT);
-        } else if (biomeType == BIOMES.FOREST) {
-            if (elevationType == ELEVATION.TREES) {
-                tileTags.Add(TILE_TAG.JUNGLE); //Myk, tama ba to? Hahaha, di ko sure to lol. RE: Kapag ata may trees din yung forest na biome, saka siya nagiging jungle? ahahaha
-            }
-        } else if (biomeType == BIOMES.GRASSLAND) {
-            tileTags.Add(TILE_TAG.GRASSLAND);
-        } else if (biomeType == BIOMES.SNOW) {
-            tileTags.Add(TILE_TAG.SNOW);
-        } else if (biomeType == BIOMES.TUNDRA) {
-            tileTags.Add(TILE_TAG.TUNDRA);
-        }
-
-        //Landmark Tags
-        if (landmarkOnTile != null) {
-            switch (landmarkOnTile.specificLandmarkType) {
-                case LANDMARK_TYPE.CAVE:
-                    tileTags.Add(TILE_TAG.CAVE);
-                    break;
-                default:
-                    tileTags.Add(TILE_TAG.DUNGEON); //Ginawa ko na dungeon type na lang muna lahat ng landmarks na di caves.
-                    break;
-            }
-        }
-
-        if (UnityEngine.Random.Range(0, 100) < 15) {
-            AddTileTag(TILE_TAG.HALLOWED_GROUNDS);
-        }
-    }
-    public void AddTileTag(TILE_TAG tag) {
-        tileTags.Add(tag);
-    }
-    public void RemoveTileTag(TILE_TAG tag) {
-        tileTags.Remove(tag);
-    }
-    public bool HasTileTag(TILE_TAG tag) {
-        return tileTags.Contains(tag);
     }
     public bool HasNeighbourFromOtherRegion() {
         for (int i = 0; i < AllNeighbours.Count; i++) {
@@ -928,17 +876,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public void ShowTileInfo() {
         string summary = "Landmark: " + landmarkOnTile?.specificLandmarkType.ToString();
         summary += "\nRegion: " + region.id + " (Tiles: " + region.tiles.Count.ToString() + ")";
-        summary += "\nWorld Object: " + region.worldObj?.ToString();
         summary += "\nConnections: " + region.connections.Count.ToString();
         for (int i = 0; i < region.connections.Count; i++) {
             Region connection = region.connections[i];
             summary += "\n\t- " + connection.mainLandmark.specificLandmarkType.ToString() + " " + connection.coreTile.locationName;
         }
         summary += "\nArea: " + areaOfTile?.name;
-        summary += "\nTags: ";
-        for (int i = 0; i < region.coreTile.tileTags.Count; i++) {
-            summary += "|" + region.coreTile.tileTags[i].ToString() + "|";
-        }
         //summary += "\nNeighbours: " + AllNeighbours.Count.ToString();
         //for (int i = 0; i < AllNeighbours.Count; i++) {
         //    HexTile currNeighbour = AllNeighbours[i];
@@ -1002,39 +945,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         for (int i = 0; i < particleEffects.Length; i++) {
             particleEffects[i].gameObject.SetActive(false);
         }
-    }
-    private int GetCorruptDuration() {
-        //return 3;
-        int duration = 0;
-        for (int i = 0; i < tileTags.Count; i++) {
-            duration += GetTileTagCorruptDuration(tileTags[i]);
-        }
-        return duration;
-    }
-    private int GetTileTagCorruptDuration(TILE_TAG tileTag) {
-        switch (tileTag) {
-            case TILE_TAG.CAVE:
-                return 7;
-            case TILE_TAG.DESERT:
-                return 3;
-            case TILE_TAG.DUNGEON:
-                return 8;
-            case TILE_TAG.FLATLAND:
-                return 3;
-            case TILE_TAG.FOREST:
-                return 5;
-            case TILE_TAG.GRASSLAND:
-                return 4;
-            case TILE_TAG.JUNGLE:
-                return 5;
-            case TILE_TAG.MOUNTAIN:
-                return 6;
-            case TILE_TAG.SNOW:
-                return 5;
-            case TILE_TAG.TUNDRA:
-                return 4;
-        }
-        return 0;
     }
     public bool CanBeCorrupted() {
         return true;
@@ -1300,23 +1210,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #region Region
     public void SetRegion(Region region) {
         this.region = region;
-    }
-    #endregion
-
-    #region Utilities
-    /// <summary>
-    /// Can demonic landmarks be built on this tile.
-    /// </summary>
-    /// <param name="reasons">A list of reasons why this tile cannot be built on.</param>
-    /// <returns>True or false</returns>
-    public bool CanBuildDemonicLandmarksOnTile(out List<string> reasons) {
-        reasons = new List<string>();
-        bool canBeBuiltOn = true;
-        if (tileTags.Contains(TILE_TAG.HALLOWED_GROUNDS)) {
-            canBeBuiltOn = false;
-            reasons.Add("This location is Hallowed Ground, Demonic Structures cannot be built on it until it is defiled.");
-        }
-        return canBeBuiltOn;
     }
     #endregion
 }

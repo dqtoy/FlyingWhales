@@ -400,9 +400,6 @@ public class Area {
     //    }
     //}
     public bool CanInvadeSettlement() {
-        if (coreTile.tileTags.Contains(TILE_TAG.PROTECTIVE_BARRIER)) { //NOTE: For now only put this specific case, but might convert this to int value instead. Will see what other elements will prevent a settlement from being invaded and change accordingly.
-            return false;
-        }
         return coreTile.region.HasCorruptedConnection() && PlayerManager.Instance.player.minions.Where(x => x.assignedRegion == null).ToList().Count > 0 && PlayerManager.Instance.player.currentAreaBeingInvaded == null;
     }
     #endregion

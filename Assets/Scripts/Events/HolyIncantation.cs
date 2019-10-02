@@ -20,7 +20,7 @@ public class HolyIncantation : WorldEvent {
         base.ExecuteAfterEffect(region, spawner);
     }
     public override bool CanSpawnEventAt(Region region, Character spawner) {
-        return region.coreTile.tileTags.Contains(TILE_TAG.HALLOWED_GROUNDS);
+        return region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature);
     }
     #endregion
 

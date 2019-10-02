@@ -21,7 +21,6 @@ public class Region {
     public Color regionColor { get; private set; }
     public List<Region> connections { get; private set; }
     public Minion assignedMinion { get; private set; }
-    public IWorldObject worldObj { get; private set; }
     public Faction owner { get; private set; }
     public Faction previousOwner { get; private set; }
     public List<Faction> factionsHere { get; private set; }
@@ -35,7 +34,6 @@ public class Region {
     //Invasion
     public DemonicLandmarkInvasionData demonicInvasionData { get; private set; }
 
-
     //World Events
     public WorldEvent activeEvent { get; private set; }
     public Character eventSpawnedBy { get; private set; }
@@ -44,6 +42,9 @@ public class Region {
 
     //Characters
     public List<Character> charactersAtLocation { get; private set; }
+
+    //Features
+    public List<RegionFeature> features { get; private set; }
 
     private List<System.Action> otherAfterInvasionActions; //list of other things to do when this landmark is invaded.
     private string activeEventAfterEffectScheduleID;
@@ -59,6 +60,7 @@ public class Region {
         charactersAtLocation = new List<Character>();
         otherAfterInvasionActions = new List<System.Action>();
         factionsHere = new List<Faction>();
+        features = new List<RegionFeature>();
     }
     public Region(HexTile coreTile) : this() {
         id = Utilities.SetID(this);
@@ -116,7 +118,7 @@ public class Region {
     #region Utilities
     private string GetDescription() {
         if (coreTile.isCorrupted) {
-            if (coreTile.tileTags.Contains(TILE_TAG.HALLOWED_GROUNDS)) {
+            if (HasFeature(RegionFeatureDB.Hallowed_Ground_Feature)) {
                 return "This region has a Hallowed Ground. You cannot build a demonic landmark here until you have defiled it.";
             } else if (mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
                 return "This region is empty. You may assign a minion to build a demonic landmark here.";
@@ -373,44 +375,11 @@ public class Region {
     }
     #endregion
 
-    #region World Objects
-    public void SetWorldObject(IWorldObject obj) {
-        worldObj = obj;
-    }
-    private void ObtainWorldObject() {
-        worldObj?.Obtain();
-        SetWorldObject(null);
-    }
-    #endregion
-
     #region Corruption/Invasion
     public void InvadeActions() {
-        if (mainLandmark != null) {
-            switch (mainLandmark.specificLandmarkType) {
-                case LANDMARK_TYPE.NONE:
-                case LANDMARK_TYPE.CAVE:
-                case LANDMARK_TYPE.MONSTER_LAIR:
-                case LANDMARK_TYPE.TEMPLE:
-                case LANDMARK_TYPE.BANDIT_CAMP:
-                    //No base effect upon invading
-                    break;
-                case LANDMARK_TYPE.BARRACKS:
-                case LANDMARK_TYPE.MAGE_TOWER:
-                    PlayerManager.Instance.player.LevelUpAllMinions();
-                    UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "All your minions have levelled up!", () => PlayerUI.Instance.ShowGeneralConfirmation("Congratulations!", "All your minions gained 1 level."));
-                    break;
-                    //case LANDMARK_TYPE.FARM:
-                    //    PlayerManager.Instance.player.UnlockASummonSlotOrUpgradeExisting();
-                    //    break;
-                    //case LANDMARK_TYPE.MINES:
-                    //case LANDMARK_TYPE.FACTORY: //This is FACTORY
-                    //case LANDMARK_TYPE.WORKSHOP:
-                    //    PlayerManager.Instance.player.UnlockAnArtifactSlotOrUpgradeExisting();
-                    //    break;
-            }
-            mainLandmark.ChangeLandmarkType(LANDMARK_TYPE.NONE);
-        }
-        ObtainWorldObject();
+        mainLandmark?.ChangeLandmarkType(LANDMARK_TYPE.NONE);
+        ActivateRegionFeatures();
+        //ObtainWorldObject();
         ExecuteEventAfterInvasion();
         ExecuteOtherAfterInvasionActions();
     }
@@ -447,7 +416,7 @@ public class Region {
         activeEvent.Spawn(this, spawner, eventData, out activeEventAfterEffectScheduleID);
         Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, we);
     }
-    public void LoadEventAndWorldObject(SaveDataRegion data) {
+    public void LoadEvent(SaveDataRegion data) {
         if (data.activeEvent != WORLD_EVENT.NONE) {
             activeEvent = StoryEventsManager.Instance.GetWorldEvent(data.activeEvent);
             Character spawner = CharacterManager.Instance.GetCharacterByID(data.eventSpawnedByCharacterID);
@@ -455,9 +424,6 @@ public class Region {
             eventData = data.eventData.Load();
             activeEvent.Load(this, spawner, eventData, out activeEventAfterEffectScheduleID);
             Messenger.Broadcast(Signals.WORLD_EVENT_SPAWNED, this, activeEvent);
-        }
-        if (data.hasWorldObject) {
-            SetWorldObject(data.worldObj.Load());
         }
     }
     public void SetCharacterEventSpawner(Character character) {
@@ -739,5 +705,58 @@ public class Region {
     //        Biomes.Instance.UpdateTileVisuals(tile);
     //    }
     //}
+    #endregion
+
+    #region Features
+    public void LoadFeatures(SaveDataRegion data) {
+        for (int i = 0; i < data.features.Count; i++) {
+            AddFeature(data.features[i]);
+        }
+    }
+    public void AddFeature(RegionFeature feature) {
+        if (!features.Contains(feature)) {
+            features.Add(feature);
+        }
+    }
+    public void AddFeature(string featureName) {
+        AddFeature(LandmarkManager.Instance.CreateRegionFeature(featureName));
+    }
+    public bool RemoveFeature(RegionFeature feature) {
+        return features.Remove(feature);
+    }
+    public bool RemoveFeature(string featureName) {
+        RegionFeature feature = GetFeature(featureName);
+        if (feature != null) {
+            return RemoveFeature(feature);
+        }
+        return false;
+    }
+    public void RemoveAllFeatures() {
+        features.Clear(); //only cleared for now because at the time of writing, features do not do anything when they are removed.
+    }
+    public RegionFeature GetFeature(string featureName) {
+        for (int i = 0; i < features.Count; i++) {
+            RegionFeature f = features[i];
+            if (f.GetType().ToString() == featureName || f.name == featureName) {
+                return f;
+            }
+        }
+        return null;
+    }
+    public bool HasFeature(string featureName) {
+        return GetFeature(featureName) != null;
+    }
+    private void ActivateRegionFeatures() {
+        List<RegionFeature> regionFeatures = new List<RegionFeature>(features);
+        for (int i = 0; i < regionFeatures.Count; i++) {
+            RegionFeature f = regionFeatures[i];
+            if (f.type == REGION_FEATURE_TYPE.ACTIVE) {
+                f.Activate();
+                if (f.isRemovedOnActivation) {
+                    RemoveFeature(f);
+                }
+            }
+        }
+    }
     #endregion
 }

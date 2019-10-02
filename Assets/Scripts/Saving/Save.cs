@@ -121,7 +121,7 @@ public class Save {
     public void LoadWorldEventsAndWorldObject() {
         for (int i = 0; i < regionSaves.Count; i++) {
             SaveDataRegion data = regionSaves[i];
-            data.LoadActiveEventAndWorldObject(GridMap.Instance.hexTiles[data.coreTileID].region);
+            data.LoadActiveEvent(GridMap.Instance.hexTiles[data.coreTileID].region);
         }
     }
 
