@@ -43,6 +43,9 @@ public class TransformFood : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
+        if(poiTarget is Character) {
+            AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget }, IsTargetDead);
+        }
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = 0, targetPOI = actor });
     }
     public override void PerformActualAction() {
@@ -88,6 +91,12 @@ public class TransformFood : GoapAction {
             return true;
         }
         return false;
+    }
+    #endregion
+
+    #region Preconditions
+    private bool IsTargetDead() {
+        return (poiTarget as Character).isDead;
     }
     #endregion
 
@@ -231,14 +240,14 @@ public class TransformFoodData : GoapActionData {
         if (poiTarget.gridTileLocation == null) {
             return false;
         }
-        Character deadCharacter = null;
+        Character targetCharacter = null;
         if (poiTarget is Character) {
-            deadCharacter = poiTarget as Character;
+            targetCharacter = poiTarget as Character;
         } else if (poiTarget is Tombstone) {
-            deadCharacter = (poiTarget as Tombstone).character;
+            targetCharacter = (poiTarget as Tombstone).character;
         }
-        if (deadCharacter != null) {
-            if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+        if (targetCharacter != null) {
+            if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
                 //return true;
                 if (actor.GetNormalTrait("Cannibal") != null) {
                     return true;

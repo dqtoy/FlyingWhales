@@ -3773,30 +3773,30 @@ public class Character : ILeader, IPointOfInterest {
             PrintLogIfActive(summary);
             return;
         }
-        //if (stateComponent.currentState != null) {
-        //    summary += "\nEnding current state " + stateComponent.currentState.stateName + " before watching...";
-        //    stateComponent.currentState.OnExitThisState();
-        //    //This call is doubled so that it will also exit the previous major state if there's any
-        //    if (stateComponent.currentState != null) {
-        //        stateComponent.currentState.OnExitThisState();
-        //    }
-        //} else if (stateComponent.stateToDo != null) {
-        //    summary += "\nEnding state to do " + stateComponent.stateToDo.stateName + " before watching...";
-        //    stateComponent.SetStateToDo(null);
-        //} else {
-        //    if (currentParty.icon.isTravelling) {
-        //        summary += "\nStopping movement before watching...";
-        //        if (currentParty.icon.travelLine == null) {
-        //            marker.StopMovement();
-        //        } else {
-        //            currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
-        //        }
-        //    }
-        //    summary += "\nEnding current action (if there's any) before watching...";
-        //    AdjustIsWaitingForInteraction(1);
-        //    StopCurrentAction(false);
-        //    AdjustIsWaitingForInteraction(-1);
-        //}
+        if (stateComponent.currentState != null) {
+            summary += "\nEnding current state " + stateComponent.currentState.stateName + " before watching...";
+            stateComponent.currentState.OnExitThisState();
+            //This call is doubled so that it will also exit the previous major state if there's any
+            if (stateComponent.currentState != null) {
+                stateComponent.currentState.OnExitThisState();
+            }
+        } else if (stateComponent.stateToDo != null) {
+            summary += "\nEnding state to do " + stateComponent.stateToDo.stateName + " before watching...";
+            stateComponent.SetStateToDo(null);
+        } else {
+            if (currentParty.icon.isTravelling) {
+                summary += "\nStopping movement before watching...";
+                if (currentParty.icon.travelLine == null) {
+                    marker.StopMovement();
+                } else {
+                    currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
+                }
+            }
+            summary += "\nEnding current action (if there's any) before watching...";
+            AdjustIsWaitingForInteraction(1);
+            StopCurrentAction(false);
+            AdjustIsWaitingForInteraction(-1);
+        }
         summary += "\nWatch event created.";
         PrintLogIfActive(summary);
         Watch watchAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.WATCH, this, targetCharacter) as Watch;
@@ -3810,12 +3810,13 @@ public class Character : ILeader, IPointOfInterest {
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.WATCH, INTERACTION_TYPE.WATCH, this);
         goapPlan.ConstructAllNodes();
         goapPlan.SetDoNotRecalculate(true);
+        job.SetAssignedPlan(goapPlan);
         job.SetCancelOnFail(true);
         job.SetCancelJobOnDropPlan(true);
 
         jobQueue.AddJobInQueue(job, false);
-        jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, this);
-        //AddPlan(goapPlan, true);
+        //jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, this);
+        AddPlan(goapPlan, true);
     }
     #endregion
 
@@ -5360,9 +5361,10 @@ public class Character : ILeader, IPointOfInterest {
                 GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
                 if (GetNormalTrait("Vampiric") != null) {
                     job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                } else if (GetNormalTrait("Cannibal") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
                 }
+                //else if (GetNormalTrait("Cannibal") != null) {
+                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                //}
                 job.SetCancelOnFail(true);
                 jobQueue.AddJobInQueue(job, processOverrideLogic);
                 return true;
@@ -5375,9 +5377,10 @@ public class Character : ILeader, IPointOfInterest {
                     GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
                     if (GetNormalTrait("Vampiric") != null) {
                         job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                    } else if (GetNormalTrait("Cannibal") != null) {
-                        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                    }
+                    } 
+                    //else if (GetNormalTrait("Cannibal") != null) {
+                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                    //}
                     job.SetCancelOnFail(true);
                     jobQueue.AddJobInQueue(job, processOverrideLogic);
                     return true;
@@ -5497,9 +5500,10 @@ public class Character : ILeader, IPointOfInterest {
                 GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
                 if (GetNormalTrait("Vampiric") != null) {
                     job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                } else if (GetNormalTrait("Cannibal") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                }
+                } 
+                //else if (GetNormalTrait("Cannibal") != null) {
+                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                //}
                 job.SetCancelOnFail(true);
                 bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
                     || stateComponent.currentState != null || stateComponent.stateToDo != null;
@@ -5521,9 +5525,10 @@ public class Character : ILeader, IPointOfInterest {
         GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
         if (GetNormalTrait("Vampiric") != null) {
             job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-        } else if (GetNormalTrait("Cannibal") != null) {
-            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-        }
+        } 
+        //else if (GetNormalTrait("Cannibal") != null) {
+        //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+        //}
         jobQueue.AddJobInQueue(job);
     }
     private void PlanForcedTirednessRecovery() {
@@ -7229,11 +7234,14 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.PRIORITIZED_CRY);
         poiGoapActions.Add(INTERACTION_TYPE.CRY);
         poiGoapActions.Add(INTERACTION_TYPE.HAVE_AFFAIR);
+        poiGoapActions.Add(INTERACTION_TYPE.SLAY_CHARACTER);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
             poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
             poiGoapActions.Add(INTERACTION_TYPE.EAT_CHARACTER);
+            poiGoapActions.Add(INTERACTION_TYPE.KNOCKOUT_CHARACTER);
+            poiGoapActions.Add(INTERACTION_TYPE.TRANSFORM_FOOD);
         }
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {

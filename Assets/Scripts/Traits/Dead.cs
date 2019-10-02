@@ -12,7 +12,7 @@ public class Dead : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         //effects = new List<TraitEffect>();
-        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_FOOD };
+        //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_FOOD };
         charactersThatSawThisDead = new List<Character>();
     }
 
