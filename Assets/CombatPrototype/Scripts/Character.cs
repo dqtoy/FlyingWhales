@@ -4176,7 +4176,14 @@ public class Character : ILeader, IPointOfInterest {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
-        marker.UpdateHP();
+        if (marker.hpBarGO.activeSelf) {
+            marker.UpdateHP();
+        } else {
+            if (amount < 0 && _currentHP > 0) {
+                //only show hp bar if hp was reduced and hp is greater than 0
+                marker.QuickShowHPBar();
+            }
+        }
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
         if (IsHealthCriticallyLow()) {
             Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);

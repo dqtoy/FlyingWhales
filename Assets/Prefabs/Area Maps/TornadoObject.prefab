@@ -58,10 +58,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4767504038401076}
   - component: {fileID: 212303688385155980}
-  - component: {fileID: 61953371097449142}
   - component: {fileID: 114322723697606096}
   - component: {fileID: 50213978046532624}
-  m_Layer: 14
+  - component: {fileID: 58645192881817854}
+  m_Layer: 15
   m_Name: TornadoObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,8 +129,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!61 &61953371097449142
-BoxCollider2D:
+--- !u!58 &58645192881817854
+CircleCollider2D:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -138,22 +138,12 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1.28, y: 1.28}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Radius: 0.5
 --- !u!114 &114231252610835808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -183,6 +173,8 @@ MonoBehaviour:
   - {fileID: 198164080446869112}
   - {fileID: 198983414748264842}
   rigidBody: {fileID: 50213978046532624}
+  targetTileName: 
+  baseSpeed: 1
 --- !u!114 &114613813232875902
 MonoBehaviour:
   m_ObjectHideFlags: 1

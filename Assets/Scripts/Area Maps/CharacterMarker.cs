@@ -974,6 +974,14 @@ public class CharacterMarker : PooledObject {
     public void SetMarkerColor(Color color) {
         mainImg.color = color;
     }
+    public void QuickShowHPBar() {
+        StartCoroutine(QuickShowHPBarCoroutine());
+    }
+    private IEnumerator QuickShowHPBarCoroutine() {
+        ShowHPBar();
+        yield return new WaitForSeconds(1f);
+        HideHPBar();
+    }
     #endregion
 
     #region Vision Collision

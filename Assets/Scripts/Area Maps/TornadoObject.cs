@@ -7,24 +7,54 @@ public class TornadoObject : MonoBehaviour {
 
     [SerializeField] private ParticleSystem[] particles;
     [SerializeField] private Rigidbody2D rigidBody;
+    [SerializeField] private string targetTileName;
+
+
+    [Header("Movement")]
+    // Movement speed in units per second.
+    [SerializeField] private float baseSpeed = 1.0F;
+    // Time when the movement started.
+    private float startTime;
+    // Total distance between the markers.
+    private float journeyLength;
+    private Vector3 startPosition;
+
+    private List<IPointOfInterest> poisInTornado;
+    private float speed;
 
     #region getters/setters
     public LocationGridTile gridTileLocation {
         get { return GetLocationGridTileByXY(Mathf.FloorToInt(this.transform.localPosition.x), Mathf.FloorToInt(this.transform.localPosition.y)); }
     }
+    public LocationGridTile destinationTile {
+        get { return _destinationTile; }
+        set {
+            _destinationTile = value;
+            if (_destinationTile != null) {
+                targetTileName = _destinationTile.name;
+            } else {
+                targetTileName = string.Empty;
+            }
+        }
+    }
     #endregion
 
     private Area areaLocation;
-    private LocationGridTile destinationTile;
+    private LocationGridTile _destinationTile;
 
-    public void Initialize(LocationGridTile location, float size) {
+    public void Initialize(LocationGridTile location, float size, int durationInTicks) {
         this.transform.localPosition = location.centeredLocalLocation;
+        poisInTornado = new List<IPointOfInterest>();
         areaLocation = location.parentAreaMap.area;
         float scale = size / 10f;
         for (int i = 0; i < particles.Length; i++) {
             particles[i].transform.localScale = new Vector3(scale, scale, scale);
         }
         GoToRandomTileInRadius();
+        SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(durationInTicks), Expire, this);
+        Messenger.AddListener(Signals.TICK_ENDED, PerTick);
+        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
     }
 
     private void GoToRandomTileInRadius() {
@@ -32,7 +62,6 @@ public class TornadoObject : MonoBehaviour {
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
         GoTo(chosen);
     }
-
     public LocationGridTile GetLocationGridTileByXY(int x, int y, bool throwOnException = true) {
         try {
             if (throwOnException) {
@@ -53,24 +82,114 @@ public class TornadoObject : MonoBehaviour {
     #region Pathfinding
     public void GoTo(LocationGridTile destinationTile) {
         this.destinationTile = destinationTile;
+        UpdateSpeed();
+        RecalculatePathingValues();
+    }
+    private void RecalculatePathingValues() {
+        // Keep a note of the time the movement started.
+        startTime = Time.time;
+        startPosition = this.transform.position;
+
+        // Calculate the journey length.
+        journeyLength = Vector3.Distance(this.transform.position, destinationTile.centeredWorldLocation);
+    }
+    private void UpdateSpeed() {
+        speed = baseSpeed;
+        if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
+            speed *= 1.5f;
+        } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
+            speed *= 2f;
+        }
+    }
+    private void OnProgressionSpeedChanged(PROGRESSION_SPEED prog) {
+        UpdateSpeed();
+        RecalculatePathingValues();
+    }
+    private void OnGamePaused(bool paused) {
+        UpdateSpeed();
+        RecalculatePathingValues();
     }
     #endregion
 
-    private void FixedUpdate() {
+    private void Expire() {
+        destinationTile = null;
+        areaLocation = null;
+        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+        Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
+        Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
+        Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
+    }
+
+    #region Monobehaviours
+    private void Update() {
         if (destinationTile == null) {
             return;
         }
         if (GameManager.Instance.isPaused) {
+            RecalculatePathingValues();
             return;
         }
-        if (Mathf.Approximately(this.transform.position.x, destinationTile.centeredWorldLocation.x) && Mathf.Approximately(this.transform.position.y, destinationTile.centeredWorldLocation.y)) {
+        // Distance moved equals elapsed time times speed..
+        float distCovered = (Time.time - startTime) * speed;
+
+        // Fraction of journey completed equals current distance divided by total distance.
+        float fractionOfJourney = distCovered / journeyLength;
+
+        // Set our position as a fraction of the distance between the markers.
+        transform.position = Vector3.Lerp(startPosition, destinationTile.centeredWorldLocation, fractionOfJourney);
+        if (Mathf.Approximately(transform.position.x, destinationTile.centeredWorldLocation.x) && Mathf.Approximately(transform.position.y, destinationTile.centeredWorldLocation.y)) {
             destinationTile = null;
             GoToRandomTileInRadius();
-            return;
         }
-        Vector2 direction = (Vector2)destinationTile.centeredWorldLocation - rigidBody.position;
-        direction.Normalize();
-        rigidBody.velocity = transform.up * 1f;
+    }
+    #endregion
+
+    #region Triggers
+    public void OnTriggerEnter2D(Collider2D collision) {
+        POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
+        if (collidedWith != null) {
+            Debug.Log("Tornado collision enter with " + collidedWith.name);
+            AddPOI(collidedWith.poi);
+        }
+        
+    }
+    public void OnTriggerExit2D(Collider2D collision) {
+        POICollisionTrigger collidedWith = collision.gameObject.GetComponent<POICollisionTrigger>();
+        if (collidedWith != null) {
+            Debug.Log("Tornado collision exit with " + collidedWith.name);
+            RemovePOI(collidedWith.poi);
+        }
+    }
+    #endregion
+
+    #region POI's
+    private void AddPOI(IPointOfInterest poi) {
+        if (!poisInTornado.Contains(poi)) {
+            poisInTornado.Add(poi);
+            OnAddPOIActions(poi);
+        }
+    }
+    private void RemovePOI(IPointOfInterest poi) {
+        if (poisInTornado.Remove(poi)) {
+            
+        }
+    }
+    private void OnAddPOIActions(IPointOfInterest poi) {
+        if (poi is Character) {
+            Character character = poi as Character;
+            character.AdjustHP(-100, true, this);
+        }
+    }
+    #endregion
+
+    private void PerTick() {
+        for (int i = 0; i < poisInTornado.Count; i++) {
+            IPointOfInterest poi = poisInTornado[i];
+            if (poi is Character) {
+                Character character = poi as Character;
+                character.AdjustHP(-100, true, this);
+            }
+        }
     }
 
 }
