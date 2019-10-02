@@ -33,9 +33,9 @@ public class TransformFood : GoapAction {
         } else if (poiTarget is Tombstone) {
             deadCharacter = (poiTarget as Tombstone).character;
         }
-        if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
-            SetIsStealth(true);
-        }
+        //if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+        //    SetIsStealth(true);
+        //}
     }
 
     #region Overrides
@@ -81,7 +81,7 @@ public class TransformFood : GoapAction {
             return false;
         }
         if (deadCharacter != null) {
-            if (isStealth) {
+            if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
                 //return true;
                 if (actor.GetNormalTrait("Cannibal") != null) {
                     return true;
@@ -109,7 +109,7 @@ public class TransformFood : GoapAction {
         } else if (deadCharacter.race == RACE.ELVES) {
             transformedFood = 120;
         }
-        if (isStealth) {
+        if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
             SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
             currentState.SetIntelReaction(CannibalTransformSuccessIntelReaction);
         } else {

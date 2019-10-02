@@ -1052,8 +1052,8 @@ public class Character : ILeader, IPointOfInterest {
 
             SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
-            dead.SetCharacterResponsibleForTrait(responsibleCharacter);
-            AddTrait(dead, gainedFromDoing: deathFromAction);
+            //dead.SetCharacterResponsibleForTrait(responsibleCharacter);
+            AddTrait(dead, responsibleCharacter, gainedFromDoing: deathFromAction);
 
             CancelAllJobsAndPlans();
 
@@ -3853,8 +3853,8 @@ public class Character : ILeader, IPointOfInterest {
             attackSummary += "\n" + this.name + "'s hp has reached 0.";
             WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
 
-            int deathWeight = 70;
-            int unconsciousWeight = 30;
+            int deathWeight = 70; //70
+            int unconsciousWeight = 30; //30
             if (!characterThatAttacked.marker.IsLethalCombatForTarget(this)) {
                 deathWeight = 5;
                 unconsciousWeight = 95;
