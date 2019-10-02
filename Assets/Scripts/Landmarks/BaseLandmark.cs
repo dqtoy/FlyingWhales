@@ -172,5 +172,66 @@ public class BaseLandmark {
         //BaseLandmarkData baseLandmarkData = LandmarkManager.Instance.GetBaseLandmarkData(landmarkData.baseLandmarkType);
         //_landmarkTags.AddRange(baseLandmarkData.baseLandmarkTags);
     }
-    #endregion       
+    #endregion
+
+    #region Region Features
+    /// <summary>
+    /// Add features to the region that this landmark is in.
+    /// </summary>
+    public void AddFeaturesToRegion() {
+        //random features
+        WeightedDictionary<string> randomFeatureWeights = new WeightedDictionary<string>();
+        switch (specificLandmarkType) {
+            case LANDMARK_TYPE.MONSTER_LAIR:
+                randomFeatureWeights.AddElement(RegionFeatureDB.Monster_Feature, 100);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 25);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 25);
+                break;
+            case LANDMARK_TYPE.BARRACKS:
+                randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 25);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 45);
+                randomFeatureWeights.AddElement("Nothing", 25);
+                break;
+            case LANDMARK_TYPE.MAGE_TOWER:
+                randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 45);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 25);
+                randomFeatureWeights.AddElement("Nothing", 25);
+                break;
+            case LANDMARK_TYPE.TEMPLE:
+                randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 25);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Treasure_Feature, 35);
+                randomFeatureWeights.AddElement("Nothing", 25);
+                break;
+            case LANDMARK_TYPE.MINES:
+                randomFeatureWeights.AddElement(RegionFeatureDB.Monster_Feature, 25);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Treasure_Feature, 25);
+                randomFeatureWeights.AddElement("Nothing", 50);
+                break;
+            case LANDMARK_TYPE.FARM:
+                randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 25);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Monster_Feature, 25);
+                randomFeatureWeights.AddElement("Nothing", 50);
+                break;
+        }
+        if (randomFeatureWeights.GetTotalOfWeights() > 0) {
+            string randomFeature = randomFeatureWeights.PickRandomElementGivenWeights();
+            if (randomFeature != "Nothing") {
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(randomFeature));
+            }
+        }
+
+        //hallowed ground
+        if (Random.Range(0, 100) < 20) {
+            tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Hallowed_Ground_Feature));
+        }
+
+        //Constant features
+        switch (specificLandmarkType) {
+            case LANDMARK_TYPE.BARRACKS:
+            case LANDMARK_TYPE.MAGE_TOWER:
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Experience_Feature));
+                break;
+        }
+    }
+    #endregion
 }

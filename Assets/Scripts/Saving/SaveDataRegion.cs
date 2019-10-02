@@ -15,8 +15,6 @@ public class SaveDataRegion {
     public List<int> factionsHereIDs;
 
     public List<int> charactersAtLocationIDs;
-    public SaveDataWorldObject worldObj;
-    public bool hasWorldObject;
     public WORLD_EVENT activeEvent;
     public int eventSpawnedByCharacterID;
     public bool hasEventIconGO;
@@ -25,6 +23,8 @@ public class SaveDataRegion {
     //public int invadingMinionID;
     public DemonicLandmarkBuildingData demonicBuildingData;
     public DemonicLandmarkInvasionData demonicInvasionData;
+
+    public List<string> features;
 
 
     //public Minion assignedMinion - NOTE: Minion assigned for the region is already saved and loaded in SaveDataMinion. It is not saved and loaded here because there will be redundancy
@@ -79,22 +79,9 @@ public class SaveDataRegion {
         }
         hasEventIconGO = region.eventIconGO != null;
 
-        if (region.worldObj != null) {
-            hasWorldObject = true;
-
-            worldObj = new SaveDataWorldObject();
-            worldObj.Save(region.worldObj);
-            //if (region.worldObj is Artifact) {
-            //    worldObj = new SaveDataArtifact();
-            //} else if (region.worldObj is Summon) {
-            //    worldObj = new SaveDataSummon();
-            //} else {
-            //    var typeName = "SaveData" + region.worldObj.GetType().ToString();
-            //    worldObj = System.Activator.CreateInstance(System.Type.GetType(typeName)) as SaveDataWorldObject;
-            //}
-            //worldObj.Save(region.worldObj);
-        } else {
-            hasWorldObject = false;
+        features = new List<string>();
+        for (int i = 0; i < region.features.Count; i++) {
+            features.Add(region.features[i].GetType().ToString());
         }
 
         //if (region.assignedMinion != null) {
@@ -124,6 +111,8 @@ public class SaveDataRegion {
 
         region.LoadBuildingStructure(this);
         region.LoadInvasion(this);
+        region.LoadFeatures(this);
+
     }
     public void LoadRegionConnections(Region region) {
         for (int i = 0; i < connectionsTileIDs.Count; i++) {
@@ -138,8 +127,8 @@ public class SaveDataRegion {
             region.LoadCharacterHere(CharacterManager.Instance.GetCharacterByID(charactersAtLocationIDs[i]));
         }
     }
-    public void LoadActiveEventAndWorldObject(Region region) {
-        region.LoadEventAndWorldObject(this);
+    public void LoadActiveEvent(Region region) {
+        region.LoadEvent(this);
     }
     //public Minion LoadInvadingMinion() {
     //    if(invadingMinionID != -1) {

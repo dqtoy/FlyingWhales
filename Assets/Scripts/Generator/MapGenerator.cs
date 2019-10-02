@@ -56,9 +56,8 @@ public class MapGenerator : MonoBehaviour {
 
         FactionManager.Instance.CreateNeutralFaction();
         //LandmarkManager.Instance.SetCascadingLevelsForAllCharacters(portal.tileLocation);
-        LandmarkManager.Instance.GenerateWorldObjects();
+        //LandmarkManager.Instance.GenerateRegionFeatures();
         LandmarkManager.Instance.LoadAdditionalAreaData();
-        GridMap.Instance.GenerateInitialTileTags();
         yield return null;
 
 
@@ -130,8 +129,6 @@ public class MapGenerator : MonoBehaviour {
         data.LoadRegionConnections();
         data.LoadRegionCharacters();
         data.LoadRegionAdditionalData();
-        yield return null;
-        GridMap.Instance.GenerateInitialTileTags();
         yield return null;
 
         CameraMove.Instance.CalculateCameraBounds();

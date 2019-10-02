@@ -598,61 +598,6 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
     }
-    public void GenerateWorldObjects() {
-        List<BaseLandmark> allLandmarks = GetAllLandmarks();
-        for (int i = 0; i < allLandmarks.Count; i++) {
-            BaseLandmark landmark = allLandmarks[i];
-            WeightedDictionary<string> worldObjWeights = new WeightedDictionary<string>();
-            switch (landmark.specificLandmarkType) {
-                case LANDMARK_TYPE.MONSTER_LAIR:
-                    worldObjWeights.AddElement("summon", 100);
-                    worldObjWeights.AddElement("SpellScroll", 25);
-                    worldObjWeights.AddElement("SkillScroll", 25);
-                    break;
-                case LANDMARK_TYPE.BARRACKS:
-                    worldObjWeights.AddElement("SpellScroll", 25);
-                    worldObjWeights.AddElement("SkillScroll", 45);
-                    worldObjWeights.AddElement("nothing", 25);
-                    break;
-                case LANDMARK_TYPE.MAGE_TOWER:
-                    worldObjWeights.AddElement("SpellScroll", 45);
-                    worldObjWeights.AddElement("SkillScroll", 25);
-                    worldObjWeights.AddElement("nothing", 25);
-                    break;
-                case LANDMARK_TYPE.TEMPLE:
-                    worldObjWeights.AddElement("SpellScroll", 25);
-                    worldObjWeights.AddElement("artifact", 35);
-                    worldObjWeights.AddElement("nothing", 25);
-                    break;
-                case LANDMARK_TYPE.MINES:
-                    worldObjWeights.AddElement("summon", 25);
-                    worldObjWeights.AddElement("artifact", 25);
-                    worldObjWeights.AddElement("nothing", 50);
-                    break;
-                case LANDMARK_TYPE.FARM:
-                    worldObjWeights.AddElement("SkillScroll", 25);
-                    worldObjWeights.AddElement("summon", 25);
-                    worldObjWeights.AddElement("nothing", 50);
-                    break;
-            }
-            if (worldObjWeights.GetTotalOfWeights() > 0) {
-                IWorldObject worldObj = null;
-                string worldObjStr = worldObjWeights.PickRandomElementGivenWeights();
-                if (worldObjStr == "summon") {
-                    SUMMON_TYPE[] summonTypes = Utilities.GetEnumValues<SUMMON_TYPE>().Where(x => !x.CanBeSummoned()).ToArray();
-                    worldObj = CharacterManager.Instance.CreateNewSummon(summonTypes[Random.Range(0, summonTypes.Length)]);
-                } else if (worldObjStr == "artifact") {
-                    ARTIFACT_TYPE[] artifactTypes = Utilities.GetEnumValues<ARTIFACT_TYPE>().Where(x => !x.CanBeSummoned()).ToArray();
-                    worldObj = PlayerManager.Instance.CreateNewArtifact(artifactTypes[Random.Range(0, artifactTypes.Length)]);
-                } else if (worldObjStr == "SpellScroll" || worldObjStr == "SkillScroll" || worldObjStr == "DemonStone") {
-                    worldObj = PlayerManager.Instance.CreateNewSpecialObject(worldObjStr);
-                }
-                if (worldObj != null) {
-                    landmark.tileLocation.region.SetWorldObject(worldObj);
-                }
-            }
-        }
-    }
     #endregion
 
     #region Utilities
@@ -1034,6 +979,23 @@ public class LandmarkManager : MonoBehaviour {
             location.AddStructure(createdStructure);
         }
         return createdStructure;
+    }
+    #endregion
+
+    #region Regions
+    //public void GenerateRegionFeatures() {
+    //    for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+    //        Region region = GridMap.Instance.allRegions[i];
+    //        region.mainLandmark.AddFeaturesToRegion();
+    //    }
+    //}
+    public RegionFeature CreateRegionFeature(string featureName) {
+        try {
+            return System.Activator.CreateInstance(System.Type.GetType(featureName)) as RegionFeature;
+        } catch {
+            throw new System.Exception("Cannot create region feature with name " + featureName);
+        }
+        
     }
     #endregion
 }

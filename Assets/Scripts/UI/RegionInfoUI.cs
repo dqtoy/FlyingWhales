@@ -115,50 +115,22 @@ public class RegionInfoUI : UIMenu {
         descriptionLbl.text = activeRegion.description;
         descriptionLbl.text += "\n\n<b>Features: </b>";
 
-        List<string> allFeatures = new List<string>();
-        if (activeRegion.coreTile.HasTileTag(TILE_TAG.HALLOWED_GROUNDS)) {
-            allFeatures.Add("<link=\"hallowedground\">Hallowed Grounds</link>");
-        }
-        if (activeRegion.worldObj != null) {
-            if (activeRegion.worldObj is Summon) {
-                allFeatures.Add("<link=\"monsters\">Monsters</link>");
-            } else if (activeRegion.worldObj is Artifact) {
-                allFeatures.Add("<link=\"treasures\">Treasures</link>");
-            } else if (activeRegion.worldObj is SkillScroll || activeRegion.worldObj is SpellScroll) {
-                allFeatures.Add("<link=\"knowledge\">Knowledge</link>");
-            }
-        }
-        if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.BARRACKS || activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.MAGE_TOWER) {
-            allFeatures.Add("<link=\"experience\">Experience</link>");
-        }
-
-        if (allFeatures.Count == 0) {
+        if (activeRegion.features.Count == 0) {
             descriptionLbl.text += "None";
         } else {
-            for (int i = 0; i < allFeatures.Count; i++) {
+            for (int i = 0; i < activeRegion.features.Count; i++) {
+                RegionFeature feature = activeRegion.features[i];
                 if (i != 0) {
                     descriptionLbl.text += ", ";
                 }
-                descriptionLbl.text += allFeatures[i];
+                descriptionLbl.text += "<link=\"" + i + "\">" + feature.name + "</link>";
             }
         }
     }
     public void OnHoverFeature(object obj) {
         if (obj is string) {
-            string feature = (string)obj;
-            string tooltip = string.Empty;
-            if (feature == "hallowedground") {
-                tooltip = "This place has a divine protection. Demonic structures cannot be erected here until the Hallowed Ground has been defiled.";
-            } else if (feature == "monsters") {
-                tooltip = "This region is home to a monster. You may able to turn it into a Summon after invading this region.";
-            } else if (feature == "treasures") {
-                tooltip = "There are rumored treasures hidden in this region. You may be able to find an Artifact here after invading this region.";
-            } else if (feature == "knowledge") {
-                tooltip = "This place contains some secret knowledge. You may obtain a new Spell or your Minion may learn a new Skill after invading this region.";
-            } else if (feature == "experience") {
-                tooltip = "Invading this region is going to be tough. The process will improve your Minions, increasing all their Levels by 1.";
-            }
-            UIManager.Instance.ShowSmallInfo(tooltip);
+            int index = System.Int32.Parse((string)obj);
+            UIManager.Instance.ShowSmallInfo(activeRegion.features[index].description);
         }
     }
     public void OnHoverExitFeature() {

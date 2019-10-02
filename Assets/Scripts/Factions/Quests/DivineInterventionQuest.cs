@@ -139,7 +139,7 @@ public class DivineInterventionQuest : Quest {
     private bool AreThereHallowedGrounds() {
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
-            if (currRegion.coreTile.tileTags.Contains(TILE_TAG.HALLOWED_GROUNDS)) {
+            if (currRegion.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature)) {
                 return true;
             }
         }

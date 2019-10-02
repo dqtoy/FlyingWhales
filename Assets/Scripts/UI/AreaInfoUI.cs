@@ -483,14 +483,6 @@ public class AreaInfoUI : UIMenu {
         } else {
             summary += "\nNone";
         }
-        summary += "\nTags: ";
-        if (activeTile.tileTags.Count > 0) {
-            for (int i = 0; i < activeTile.tileTags.Count; i++) {
-                summary += "|" + activeTile.tileTags[i].ToString() + "|";
-            }
-        } else {
-            summary += "None";
-        }
         summary += "\nActive Quest: ";
         if(activeTile.region.owner != null && activeTile.region.owner.activeQuest != null) {
             summary += activeTile.region.owner.activeQuest.name;

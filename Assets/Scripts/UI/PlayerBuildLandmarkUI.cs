@@ -62,7 +62,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
     private void UpdateBuildButton() {
         buildProgress.gameObject.SetActive(false);
         buildBtn.interactable = chosenMinion != null && chosenLandmark != LANDMARK_TYPE.NONE 
-            && currentTile.region.demonicBuildingData.landmarkType == LANDMARK_TYPE.NONE && !currentTile.HasTileTag(TILE_TAG.HALLOWED_GROUNDS);
+            && currentTile.region.demonicBuildingData.landmarkType == LANDMARK_TYPE.NONE && !currentTile.region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature);
         if (!buildBtn.interactable) {
             if(currentTile.region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
                 buildProgress.gameObject.SetActive(true);
@@ -99,7 +99,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         UIManager.Instance.HideObjectPicker();
     }
     private void UpdateSelectMinionBtn() {
-        selectMinionBtn.interactable = currentTile.region.demonicBuildingData.landmarkType == LANDMARK_TYPE.NONE && !currentTile.HasTileTag(TILE_TAG.HALLOWED_GROUNDS);
+        selectMinionBtn.interactable = currentTile.region.demonicBuildingData.landmarkType == LANDMARK_TYPE.NONE && !currentTile.region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature);
     }
     #endregion
 
@@ -141,7 +141,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         UIManager.Instance.HideObjectPicker();
     }
     private void UpdateSelectLandmarkBtn() {
-        selectLandmarkBtn.interactable = currentTile.region.demonicBuildingData.landmarkType == LANDMARK_TYPE.NONE && !currentTile.HasTileTag(TILE_TAG.HALLOWED_GROUNDS);
+        selectLandmarkBtn.interactable = currentTile.region.demonicBuildingData.landmarkType == LANDMARK_TYPE.NONE && !currentTile.region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature);
     }
     #endregion
 }

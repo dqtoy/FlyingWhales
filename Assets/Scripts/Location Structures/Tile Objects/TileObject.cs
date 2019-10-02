@@ -223,7 +223,6 @@ public class TileObject : IPointOfInterest {
         return false;
     }
     protected virtual void OnTileObjectGainedTrait(Trait trait) { }
-
     public virtual void SetStructureLocation(LocationStructure structure) {
         structureLocation = structure;
     }
