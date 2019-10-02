@@ -117,21 +117,19 @@ public class RegionInfoUI : UIMenu {
 
         List<string> allFeatures = new List<string>();
         if (activeRegion.coreTile.HasTileTag(TILE_TAG.HALLOWED_GROUNDS)) {
-            allFeatures.Add("Hallowed Grounds");
+            allFeatures.Add("<link=\"hallowedground\">Hallowed Grounds</link>");
         }
         if (activeRegion.worldObj != null) {
             if (activeRegion.worldObj is Summon) {
-                allFeatures.Add("Monsters");
+                allFeatures.Add("<link=\"monsters\">Monsters</link>");
             } else if (activeRegion.worldObj is Artifact) {
-                allFeatures.Add("Treasures");
-            } else if (activeRegion.worldObj is SpellScroll) {
-                allFeatures.Add("Spells");
-            } else if (activeRegion.worldObj is SkillScroll) {
-                allFeatures.Add("Knowledge");
+                allFeatures.Add("<link=\"treasures\">Treasures</link>");
+            } else if (activeRegion.worldObj is SkillScroll || activeRegion.worldObj is SpellScroll) {
+                allFeatures.Add("<link=\"knowledge\">Knowledge</link>");
             }
         }
         if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.BARRACKS || activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.MAGE_TOWER) {
-            allFeatures.Add("Experience");
+            allFeatures.Add("<link=\"experience\">Experience</link>");
         }
 
         if (allFeatures.Count == 0) {
@@ -144,7 +142,27 @@ public class RegionInfoUI : UIMenu {
                 descriptionLbl.text += allFeatures[i];
             }
         }
-        
+    }
+    public void OnHoverFeature(object obj) {
+        if (obj is string) {
+            string feature = (string)obj;
+            string tooltip = string.Empty;
+            if (feature == "hallowedground") {
+                tooltip = "This place has a divine protection. Demonic structures cannot be erected here until the Hallowed Ground has been defiled.";
+            } else if (feature == "monsters") {
+                tooltip = "This region is home to a monster. You may able to turn it into a Summon after invading this region.";
+            } else if (feature == "treasures") {
+                tooltip = "There are rumored treasures hidden in this region. You may be able to find an Artifact here after invading this region.";
+            } else if (feature == "knowledge") {
+                tooltip = "This place contains some secret knowledge. You may obtain a new Spell or your Minion may learn a new Skill after invading this region.";
+            } else if (feature == "experience") {
+                tooltip = "Invading this region is going to be tough. The process will improve your Minions, increasing all their Levels by 1.";
+            }
+            UIManager.Instance.ShowSmallInfo(tooltip);
+        }
+    }
+    public void OnHoverExitFeature() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 

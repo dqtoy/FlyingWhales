@@ -61,8 +61,10 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 string linkText = linkInfo.GetLinkID();
                 int idToUse;
                 if (!int.TryParse(linkText, out idToUse)) {
-                    string id = linkText.Substring(0, linkText.IndexOf('_'));
-                    idToUse = int.Parse(id);
+                    if (linkText.Contains("_") && linkText.Length > 1) {
+                        string id = linkText.Substring(0, linkText.IndexOf('_'));
+                        idToUse = int.Parse(id);
+                    }
                 }
                 if (linkText.Contains("_faction")) {
                     Faction faction = FactionManager.Instance.GetFactionBasedOnID(idToUse);
@@ -170,8 +172,10 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
             if (log == null) {
                 int idToUse;
                 if (!int.TryParse(linkText, out idToUse)) {
-                    string id = linkText.Substring(0, linkText.IndexOf('_'));
-                    idToUse = int.Parse(id);
+                    if (linkText.Contains("_") && linkText.Length > 1) {
+                        string id = linkText.Substring(0, linkText.IndexOf('_'));
+                        idToUse = int.Parse(id);
+                    }
                 }
                 if (objectDictionary.ContainsKey(linkText)) {
                     obj = objectDictionary[linkText];
