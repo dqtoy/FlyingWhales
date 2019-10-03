@@ -212,8 +212,11 @@ public class Infected : Trait {
     private void OnCharacterHit(Character hitCharacter, Character hitBy) {
         if (hitBy == owner) {
             //a character was hit by the owner of this trait, check if the character that was hit becomes infected.
+            string summary = hitCharacter.name + " was hit by " + hitBy.name + ". Rolling for infect...";
             int roll = Random.Range(0, 100);
+            summary += "\nRoll is " + roll.ToString();
             if (roll < 20) { //15
+                summary += "\nChance met, " + hitCharacter.name + " will turn into a zombie.";
                 if (hitCharacter.AddTrait("Zombie_Virus", characterResponsible: hitBy)) {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_zombie");
                     log.AddToFillers(hitCharacter, hitCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -221,8 +224,11 @@ public class Infected : Trait {
                     log.AddLogToInvolvedObjects();
                     PlayerManager.Instance.player.ShowNotification(log);
                     //Debug.Log(GameManager.Instance.TodayLogString() + Utilities.LogReplacer(log));
+                } else {
+                    summary += "\n" + hitCharacter.name + " is already a zombie!";
                 }
             }
+            Debug.Log(GameManager.Instance.TodayLogString() + summary);
         }
     }
 }
