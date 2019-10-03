@@ -305,7 +305,9 @@ public class InteractionManager : MonoBehaviour {
         return character.role.roleType != CHARACTER_ROLE.LEADER && GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick) == time; //Only non-leaders can take move out job, and it must also be in the morning time.
     }
     public bool CanDoCraftFurnitureJob(Character character, JobQueueItem item) {
-        return character.furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(character);
+        object[] otherData = (item as GoapPlanJob).otherData[INTERACTION_TYPE.CRAFT_FURNITURE];
+        FURNITURE_TYPE furnitureToCreate = (FURNITURE_TYPE) otherData[1];
+        return furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(character);
     }
     public bool CanDoDestroyProfaneJob(Character character, JobQueueItem item) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER;
@@ -408,6 +410,11 @@ public class InteractionManager : MonoBehaviour {
     public bool CanCharacterTakeRepairJob(Character character, JobQueueItem job) {
         return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER;
     }
+    public bool CanCharacterTakeReplaceTileObjectJob(Character character, JobQueueItem job) {
+        object[] otherData = (job as GoapPlanJob).otherData[INTERACTION_TYPE.REPLACE_TILE_OBJECT];
+        TileObject removedObj = otherData[0] as TileObject;
+        return removedObj.tileObjectType.CanBeCraftedBy(character);
+    }
     public bool CanCharacterTakeParalyzedFeedJob(Character sourceCharacter, Character character, JobQueueItem job) {
         return sourceCharacter != character && sourceCharacter.faction == character.faction && sourceCharacter.GetRelationshipEffectWith(character) != RELATIONSHIP_EFFECT.NEGATIVE;
     }
@@ -423,6 +430,9 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanCharacterTakeDropJob(Character sourceCharacter, Character character, JobQueueItem job) {
         return sourceCharacter != character && sourceCharacter.faction == character.faction && character.GetRelationshipEffectWith(sourceCharacter) != RELATIONSHIP_EFFECT.NEGATIVE;
+    }
+    public bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter, JobQueueItem job) {
+        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
     public void OnTakeBrewPotion(Character character, JobQueueItem job) {
         GoapPlanJob j = job as GoapPlanJob;

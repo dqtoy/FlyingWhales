@@ -1221,7 +1221,7 @@ public class Area {
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPLACE_TILE_OBJECT, INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
         });
-        job.SetCanTakeThisJobChecker((character, item) => removedObj.tileObjectType.CanBeCraftedBy(character));
+        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeReplaceTileObjectJob);
         job.SetCancelOnFail(false);
         job.SetCancelJobOnDropPlan(false);
         jobQueue.AddJobInQueue(job);

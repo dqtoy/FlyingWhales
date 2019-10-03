@@ -165,8 +165,6 @@ public class Character : ILeader, IPointOfInterest {
     public List<string> locationHistory { get; private set; }
     public List<string> actionHistory { get; private set; }
 
-    public FURNITURE_TYPE furnitureToCreate { get; private set; }
-
     #region getters / setters
     public string firstName {
         get { return _firstName; }
@@ -1064,8 +1062,8 @@ public class Character : ILeader, IPointOfInterest {
 
             SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
-            dead.SetCharacterResponsibleForTrait(responsibleCharacter);
-            AddTrait(dead, gainedFromDoing: deathFromAction);
+            //dead.SetCharacterResponsibleForTrait(responsibleCharacter);
+            AddTrait(dead, responsibleCharacter, gainedFromDoing: deathFromAction);
 
             CancelAllJobsAndPlans();
 
@@ -1827,7 +1825,7 @@ public class Character : ILeader, IPointOfInterest {
         if (isAtHomeArea && isPartOfHomeFaction && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {//&& !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
             for (int i = 0; i < amount; i++) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = targetCharacter });
-                job.SetCanTakeThisJobChecker(CanCharacterTakeKnockoutJob);
+                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeKnockoutJob);
                 homeArea.jobQueue.AddJobInQueue(job);
             }
             //return job;
@@ -1839,9 +1837,6 @@ public class Character : ILeader, IPointOfInterest {
         jobQueue.AddJobInQueue(job);
         PrintLogIfActive(GameManager.Instance.TodayLogString() + "Added a KNOCKOUT Job to " + this.name + " with target " + targetCharacter.name);
         return true;
-    }
-    private bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter, JobQueueItem job) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
     /// <summary>
     /// Make this character create an apprehend job at his home location targetting a specific character.
@@ -1856,7 +1851,7 @@ public class Character : ILeader, IPointOfInterest {
             job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
             //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
             //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
-            job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
             //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
             homeArea.jobQueue.AddJobInQueue(job);
             if(assignSelfToJob) {
@@ -1874,9 +1869,6 @@ public class Character : ILeader, IPointOfInterest {
         //Debug.Log(this.name + " created job to obtain item " + item.ToString());
         //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, this.name + " created job to obtain item " + item.ToString(), 5, null);
         return job;
-    }
-    private bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
     }
     public GoapPlanJob CreateAttemptToStopCurrentActionAndJob(Character targetCharacter, GoapPlanJob jobToStop) {
         if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.ATTEMPT_TO_STOP_JOB)) {
@@ -1900,7 +1892,7 @@ public class Character : ILeader, IPointOfInterest {
                     if (mostNeededFacility != FACILITY_TYPE.NONE) {
                         List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
                         LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
-                        furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
+                        FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
 
                         object[] otherData = new object[] { chosenTile, furnitureToCreate };
 
@@ -2325,7 +2317,7 @@ public class Character : ILeader, IPointOfInterest {
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPLACE_TILE_OBJECT, INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
         });
-        job.SetCanTakeThisJobChecker((character, item) => removedObj.tileObjectType.CanBeCraftedBy(character));
+        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeReplaceTileObjectJob);
         job.SetCancelOnFail(false);
         job.SetCancelJobOnDropPlan(false);
         jobQueue.AddJobInQueue(job);
@@ -3796,30 +3788,30 @@ public class Character : ILeader, IPointOfInterest {
             PrintLogIfActive(summary);
             return;
         }
-        //if (stateComponent.currentState != null) {
-        //    summary += "\nEnding current state " + stateComponent.currentState.stateName + " before watching...";
-        //    stateComponent.currentState.OnExitThisState();
-        //    //This call is doubled so that it will also exit the previous major state if there's any
-        //    if (stateComponent.currentState != null) {
-        //        stateComponent.currentState.OnExitThisState();
-        //    }
-        //} else if (stateComponent.stateToDo != null) {
-        //    summary += "\nEnding state to do " + stateComponent.stateToDo.stateName + " before watching...";
-        //    stateComponent.SetStateToDo(null);
-        //} else {
-        //    if (currentParty.icon.isTravelling) {
-        //        summary += "\nStopping movement before watching...";
-        //        if (currentParty.icon.travelLine == null) {
-        //            marker.StopMovement();
-        //        } else {
-        //            currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
-        //        }
-        //    }
-        //    summary += "\nEnding current action (if there's any) before watching...";
-        //    AdjustIsWaitingForInteraction(1);
-        //    StopCurrentAction(false);
-        //    AdjustIsWaitingForInteraction(-1);
-        //}
+        if (stateComponent.currentState != null) {
+            summary += "\nEnding current state " + stateComponent.currentState.stateName + " before watching...";
+            stateComponent.currentState.OnExitThisState();
+            //This call is doubled so that it will also exit the previous major state if there's any
+            if (stateComponent.currentState != null) {
+                stateComponent.currentState.OnExitThisState();
+            }
+        } else if (stateComponent.stateToDo != null) {
+            summary += "\nEnding state to do " + stateComponent.stateToDo.stateName + " before watching...";
+            stateComponent.SetStateToDo(null);
+        } else {
+            if (currentParty.icon.isTravelling) {
+                summary += "\nStopping movement before watching...";
+                if (currentParty.icon.travelLine == null) {
+                    marker.StopMovement();
+                } else {
+                    currentParty.icon.SetOnArriveAction(() => OnArriveAtAreaStopMovement());
+                }
+            }
+            summary += "\nEnding current action (if there's any) before watching...";
+            AdjustIsWaitingForInteraction(1);
+            StopCurrentAction(false);
+            AdjustIsWaitingForInteraction(-1);
+        }
         summary += "\nWatch event created.";
         PrintLogIfActive(summary);
         Watch watchAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.WATCH, this, targetCharacter) as Watch;
@@ -3833,12 +3825,13 @@ public class Character : ILeader, IPointOfInterest {
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.WATCH, INTERACTION_TYPE.WATCH, this);
         goapPlan.ConstructAllNodes();
         goapPlan.SetDoNotRecalculate(true);
+        job.SetAssignedPlan(goapPlan);
         job.SetCancelOnFail(true);
         job.SetCancelJobOnDropPlan(true);
 
         jobQueue.AddJobInQueue(job, false);
-        jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, this);
-        //AddPlan(goapPlan, true);
+        //jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, this);
+        AddPlan(goapPlan, true);
     }
     #endregion
 
@@ -3875,8 +3868,8 @@ public class Character : ILeader, IPointOfInterest {
             attackSummary += "\n" + this.name + "'s hp has reached 0.";
             WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
 
-            int deathWeight = 70;
-            int unconsciousWeight = 30;
+            int deathWeight = 70; //70
+            int unconsciousWeight = 30; //30
             if (!characterThatAttacked.marker.IsLethalCombatForTarget(this)) {
                 deathWeight = 5;
                 unconsciousWeight = 95;
@@ -5383,9 +5376,10 @@ public class Character : ILeader, IPointOfInterest {
                 GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
                 if (GetNormalTrait("Vampiric") != null) {
                     job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                } else if (GetNormalTrait("Cannibal") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
                 }
+                //else if (GetNormalTrait("Cannibal") != null) {
+                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                //}
                 job.SetCancelOnFail(true);
                 jobQueue.AddJobInQueue(job, processOverrideLogic);
                 return true;
@@ -5393,16 +5387,19 @@ public class Character : ILeader, IPointOfInterest {
         }
         else if (isHungry) {
             if(UnityEngine.Random.Range(0,2) == 0 && GetNormalTrait("Glutton") != null) {
-                JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                if (GetNormalTrait("Vampiric") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                } else if (GetNormalTrait("Cannibal") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY)) {
+                    JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    if (GetNormalTrait("Vampiric") != null) {
+                        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                    } 
+                    //else if (GetNormalTrait("Cannibal") != null) {
+                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                    //}
+                    job.SetCancelOnFail(true);
+                    jobQueue.AddJobInQueue(job, processOverrideLogic);
+                    return true;
                 }
-                job.SetCancelOnFail(true);
-                jobQueue.AddJobInQueue(job, processOverrideLogic);
-                return true;
             }
         }
         return false;
@@ -5518,9 +5515,10 @@ public class Character : ILeader, IPointOfInterest {
                 GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
                 if (GetNormalTrait("Vampiric") != null) {
                     job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                } else if (GetNormalTrait("Cannibal") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                }
+                } 
+                //else if (GetNormalTrait("Cannibal") != null) {
+                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                //}
                 job.SetCancelOnFail(true);
                 bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
                     || stateComponent.currentState != null || stateComponent.stateToDo != null;
@@ -5542,9 +5540,10 @@ public class Character : ILeader, IPointOfInterest {
         GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
         if (GetNormalTrait("Vampiric") != null) {
             job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-        } else if (GetNormalTrait("Cannibal") != null) {
-            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-        }
+        } 
+        //else if (GetNormalTrait("Cannibal") != null) {
+        //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+        //}
         jobQueue.AddJobInQueue(job);
     }
     private void PlanForcedTirednessRecovery() {
@@ -7011,9 +7010,7 @@ public class Character : ILeader, IPointOfInterest {
                     IPointOfInterest tree = treeObjects[i];
                     AddAwareness(tree);
                 }
-
             }
-
         }
     }
     public void AddInitialAwareness(Area area) {
@@ -7252,11 +7249,14 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.PRIORITIZED_CRY);
         poiGoapActions.Add(INTERACTION_TYPE.CRY);
         poiGoapActions.Add(INTERACTION_TYPE.HAVE_AFFAIR);
+        poiGoapActions.Add(INTERACTION_TYPE.SLAY_CHARACTER);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
             poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
             poiGoapActions.Add(INTERACTION_TYPE.EAT_CHARACTER);
+            poiGoapActions.Add(INTERACTION_TYPE.KNOCKOUT_CHARACTER);
+            poiGoapActions.Add(INTERACTION_TYPE.TRANSFORM_FOOD);
         }
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {
@@ -8412,6 +8412,7 @@ public class Character : ILeader, IPointOfInterest {
                     //only add apprehend job if the criminal is part of this characters faction
                     criminal.owner.AddCriminalTrait(committedCrime, crimeAction);
                     CreateApprehendJobFor(criminal.owner);
+                    crimeAction.OnReportCrime();
                     //job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
@@ -8434,6 +8435,7 @@ public class Character : ILeader, IPointOfInterest {
                     if (job != null) {
                         homeArea.jobQueue.ForceAssignCharacterToJob(job, this);
                     }
+                    crimeAction.OnReportCrime();
                 }
                 break;
             default:

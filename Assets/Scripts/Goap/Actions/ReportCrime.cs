@@ -90,6 +90,7 @@ public class ReportCrime : GoapAction {
             target.CreateInformedEventLog(crimeAction, true);
         }
         bool hasRelationshipDegraded = false;
+        crimeAction.OnReportCrime();
         target.ReactToCrime(crime, crimeAction, criminal, ref hasRelationshipDegraded, null, crimeAction);
     }
     public void PreReportCrimeFail() {

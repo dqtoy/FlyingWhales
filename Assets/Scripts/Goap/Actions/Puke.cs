@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class Puke : GoapAction {
 
+    public bool isPuking { get; private set; }
+    public Character recipient { get; private set; } //These are the characters who witnessed the puke action, but will not process it immediately because they need to wait until the puke action is finished
     public Puke(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PUKE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.No_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
+        recipient = null;
     }
 
     #region Overrides
@@ -28,13 +31,33 @@ public class Puke : GoapAction {
 
     #region State Effects
     private void PrePukeSuccess() {
+        isPuking = true;
         actor.SetPOIState(POI_STATE.INACTIVE);
         currentState.SetIntelReaction(SuccessReactions);
     }
     private void AfterPukeSuccess() {
         actor.SetPOIState(POI_STATE.ACTIVE);
+        if (recipient != null) {
+            CreateRemoveTraitJob(recipient);
+        }
+        isPuking = false;
     }
     #endregion
+
+    private void CreateRemoveTraitJob(Character characterThatWillDoJob) {
+        Trait trait = actor.GetNormalTrait("Plagued", "Infected", "Sick");
+        if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = actor };
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
+                new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
+            if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, actor, job)) {
+                characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+            } else {
+                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
+                characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+            }
+        }
+    }
 
     #region Intel Reactions
     private List<string> SuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
@@ -56,33 +79,41 @@ public class Puke : GoapAction {
                     return reactions; //do not do anything else
                 }
             }
-            //- If character has Doctor trait
-            if (recipient.GetNormalTrait("Doctor") != null) {
-                //- attempt to Cure the Actor
+            if (!isPuking) {
                 Trait trait = actor.GetNormalTrait("Plagued", "Infected", "Sick");
                 if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
                     GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = actor };
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
                         new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
                     if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(recipient, actor, job)) {
-                        //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                        if (status == SHARE_INTEL_STATUS.INFORMED) {
+                            //- if informed: "I'm a doctor. I should help [Actor Name]."
+                            reactions.Add(string.Format("I'm a doctor. I should help {0}.", recipient.name));
+                        }
                         recipient.jobQueue.AddJobInQueue(job);
                     } else {
+                        if (status == SHARE_INTEL_STATUS.INFORMED) {
+                            reactions.Add(string.Format("I hope {0} gets well soon.", Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                        }
                         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
                         recipient.specificLocation.jobQueue.AddJobInQueue(job);
                     }
                 }
-                if (status == SHARE_INTEL_STATUS.INFORMED) {
-                    //- if informed: "I'm a doctor. I should help [Actor Name]."
-                    reactions.Add(string.Format("I'm a doctor. I should help {0}.", recipient.name));
+            } else {
+                //If currently puking, wait until puking is done, then process remove trait job on AfterPukeSuccess
+                //This is done because character is inactive while puking, it will only result in "unable to do action" if we create a job while puking, so we need to wait until it is finished
+                if (this.recipient == null) {
+                    this.recipient = recipient;
                 }
-            }
-            //- If character does not have Doctor trait
-            else {
-                //- if informed: "I hope [he/she] gets well soon."
                 if (status == SHARE_INTEL_STATUS.INFORMED) {
-                    reactions.Add(string.Format("I hope {0} gets well soon.", Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                    if(recipient.GetNormalTrait("Doctor") != null) {
+                        //- if informed: "I'm a doctor. I should help [Actor Name]."
+                        reactions.Add(string.Format("I'm a doctor. I should help {0}.", recipient.name));
+                    } else {
+                        reactions.Add(string.Format("I hope {0} gets well soon.", Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                    }
                 }
+                
             }
         }
         //- Negative Relationship with Actor
