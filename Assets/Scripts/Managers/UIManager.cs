@@ -247,6 +247,7 @@ public class UIManager : MonoBehaviour {
         if (PlayerUI.Instance.isShowingMinionList) {
             PlayerUI.Instance.HideMinionList();
         }
+        ClearUIMenuHistory();
     }
     public void AddToUIMenuHistory(object data) {
         if(_uiMenuHistory.Count > 0 && _uiMenuHistory[_uiMenuHistory.Count - 1] == data) {

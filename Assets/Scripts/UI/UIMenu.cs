@@ -74,6 +74,8 @@ public class UIMenu : MonoBehaviour {
                 UIManager.Instance.ShowTileObjectInfo(data as TileObject);
             } else if (data is Region) {
                 UIManager.Instance.ShowHextileInfo((data as Region).mainLandmark.tileLocation);
+            } else if (data is HexTile) {
+                UIManager.Instance.ShowHextileInfo(data as HexTile);
             }
         }
     }

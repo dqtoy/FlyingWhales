@@ -46,6 +46,7 @@ public class Minion {
         character.SetMinion(this);
         character.ownParty.icon.SetVisualState(true);
         _assignedDeadlySinName = character.characterClass.className;
+        spellExtractionCount = data.spellExtractionCount;
     }
     //public void SetEnabledState(bool state) {
     //    if (character.IsInOwnParty()) {
