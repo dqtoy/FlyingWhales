@@ -980,7 +980,9 @@ public class CharacterMarker : PooledObject {
     private IEnumerator QuickShowHPBarCoroutine() {
         ShowHPBar();
         yield return new WaitForSeconds(1f);
-        HideHPBar();
+        if (!(character.stateComponent.currentState is CombatState)) {
+            HideHPBar();
+        }
     }
     #endregion
 

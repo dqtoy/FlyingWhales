@@ -210,4 +210,13 @@ public class Plagued : Trait {
             return 100;
         }
     }
+    public int GetCarryInfectChance() {
+        if (level == 1) {
+            return 50;
+        } else if (level == 2) {
+            return 75;
+        } else {
+            return 100;
+        }
+    }
 }
