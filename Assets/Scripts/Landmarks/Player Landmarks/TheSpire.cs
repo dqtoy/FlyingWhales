@@ -59,6 +59,7 @@ public class TheSpire : BaseLandmark {
         //first extraction: 0% chance to die
         //second extraction: 10 % chance to die
         //third and future extractions: depends on the Spell's tier level. Tier 1: 35%, Tier 2: 25%, Tier 3: 15%
+        string summary = minion.character.name + " will roll for death after extraction. Extraction count is: " + minion.spellExtractionCount.ToString();
         int deathChance = 0;
         if (minion.spellExtractionCount == 2) {
             deathChance = 10;
@@ -72,10 +73,14 @@ public class TheSpire : BaseLandmark {
                 deathChance = 15;
             }
         }
-
-        if (Random.Range(0, 100) < deathChance) {
+        int roll = Random.Range(0, 100);
+        summary += "\nDeath Chance is: " + deathChance.ToString();
+        summary += "\nRoll is: " + roll.ToString();
+        if (roll < deathChance) {
+            summary += minion.character.name + " died.";
             minion.Death("SpellExtraction");
         }
+        Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
 }
 
