@@ -29,7 +29,13 @@ public class Angry : Trait {
                 if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.DESTROY, tileObject)) {
                     GoapPlanJob destroyJob = new GoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.TILE_OBJECT_DESTROY, tileObject);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(destroyJob);
+                    return true;
                 }
+            }
+        } else if (targetPOI is Character) {
+            Character targetCharacter = targetPOI as Character;
+            if (UnityEngine.Random.Range(0, 2) == 0 && characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, isLethal: false);
             }
         }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);

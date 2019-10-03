@@ -18,30 +18,41 @@ public class Hothead : Trait {
     }
 
     #region Overrides
-    public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-        if (targetPOI is Character) {
-            Character targetCharacter = targetPOI as Character;
-            if (!targetCharacter.isDead) {
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 2 && characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    characterThatWillDoJob.PrintLogIfActive(GameManager.Instance.TodayLogString() + characterThatWillDoJob.name
-                        + " Hothead Assault Chance: 2, Roll: " + chance);
-                    if (characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, false, false)) {
-                        if (!characterThatWillDoJob.marker.avoidInRange.Contains(targetCharacter)) {
-                            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "hothead_assault");
-                            log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                            //log.AddLogToInvolvedObjects();
-                            characterThatWillDoJob.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-                        }
-                        //characterThatWillDoJob.marker.ProcessCombatBehavior();
-                    }
-                    return true;
+    public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
+        base.OnSeePOI(targetPOI, character);
+        if(targetPOI is Character) {
+            if(UnityEngine.Random.Range(0, 100) < 20) {
+                Character targetCharacter = targetPOI as Character;
+                if (character.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+                    character.AddTrait("Angry");
                 }
             }
         }
-        return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
     }
+    //public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
+    //    if (targetPOI is Character) {
+    //        Character targetCharacter = targetPOI as Character;
+    //        if (!targetCharacter.isDead) {
+    //            int chance = UnityEngine.Random.Range(0, 100);
+    //            if (chance < 2 && characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+    //                characterThatWillDoJob.PrintLogIfActive(GameManager.Instance.TodayLogString() + characterThatWillDoJob.name
+    //                    + " Hothead Assault Chance: 2, Roll: " + chance);
+    //                if (characterThatWillDoJob.marker.AddHostileInRange(targetCharacter, false, false, false)) {
+    //                    if (!characterThatWillDoJob.marker.avoidInRange.Contains(targetCharacter)) {
+    //                        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "hothead_assault");
+    //                        log.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+    //                        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //                        //log.AddLogToInvolvedObjects();
+    //                        characterThatWillDoJob.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+    //                    }
+    //                    //characterThatWillDoJob.marker.ProcessCombatBehavior();
+    //                }
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //    return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
+    //}
     public override void TriggerFlaw(Character character) {
         base.TriggerFlaw(character);
         character.AddTrait("Angry");
