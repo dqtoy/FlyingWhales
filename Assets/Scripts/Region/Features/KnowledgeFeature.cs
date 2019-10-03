@@ -12,8 +12,8 @@ public class KnowledgeFeature : RegionFeature {
     }
 
     #region Overrides
-    public override void Activate() {
-        base.Activate();
+    public override void Activate(Region region) {
+        base.Activate(region);
         COMBAT_ABILITY[] skills = Utilities.GetEnumValues<COMBAT_ABILITY>();
         CombatAbility newAbility = PlayerManager.Instance.CreateNewCombatAbility(skills[Random.Range(1, skills.Length)]);
         UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Combat Ability: " + newAbility.name, () => PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(newAbility));

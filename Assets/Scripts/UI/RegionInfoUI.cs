@@ -368,6 +368,8 @@ public class RegionInfoUI : UIMenu {
             UpdatePlayerSummonMinionUI();
         } else if (needlesUI.gameObject.activeSelf) {
             UpdateTheNeedlesUI();
+        } else if (theEyeUI.gameObject.activeSelf) {
+            UpdateTheEyeUI();
         }
     }
     public void OnDemonicToggleStateChanged(bool isOn) {
@@ -481,6 +483,9 @@ public class RegionInfoUI : UIMenu {
     }
     private void HideTheEyeUI() {
         theEyeUI.HideTheEyeUI();
+    }
+    private void UpdateTheEyeUI() {
+        theEyeUI.UpdateTheEyeUI();
     }
     #endregion
 

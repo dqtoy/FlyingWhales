@@ -950,9 +950,9 @@ public class Character : ILeader, IPointOfInterest {
             Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
         }
     }
-    public virtual void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null) {
+    public virtual void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if(minion != null) {
-            minion.Death(cause, deathFromAction, responsibleCharacter);
+            minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             return;
         }
         if (!_isDead) {
@@ -992,14 +992,24 @@ public class Character : ILeader, IPointOfInterest {
             if(jobQueue.jobsInQueue.Count > 0) {
                 jobQueue.CancelAllJobs();
             }
-            if (ownParty.specificLocation != null && isHoldingItem) {
-                DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
+            if (currentLandmark == null) {
+                if (ownParty.specificLocation != null && isHoldingItem) {
+                    DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
+                }
+            } else {
+                List<SpecialToken> all = new List<SpecialToken>(items);
+                for (int i = 0; i < all.Count; i++) {
+                    RemoveToken(all[i]);
+                }
             }
+            
 
             //clear traits that need to be removed
             traitsNeededToBeRemoved.Clear();
 
+            bool wasOutsideSettlement = false;
             if (currentLandmark != null) {
+                wasOutsideSettlement = true;
                 currentLandmark.tileLocation.region.RemoveCharacterFromLocation(this);
             }
 
@@ -1050,7 +1060,7 @@ public class Character : ILeader, IPointOfInterest {
 
             SetHP(0);
 
-            marker.OnDeath(deathTile);
+            marker.OnDeath(deathTile, wasOutsideSettlement);
 
             SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
@@ -1066,6 +1076,11 @@ public class Character : ILeader, IPointOfInterest {
                 deathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                }
+                if (deathLogFillers != null) {
+                    for (int i = 0; i < deathLogFillers.Length; i++) {
+                        deathLog.AddToFillers(deathLogFillers[i]);
+                    }
                 }
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
                 AddHistory(deathLog);

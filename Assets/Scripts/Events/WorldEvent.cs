@@ -60,7 +60,21 @@ public class WorldEvent  {
     public void TryExecuteAfterEffect(Region region, Character spawner) {
         if (region.eventData.interferingCharacter != null) {
             //there is an interfering character.
-            ExecuteFailEffect(region, spawner);
+            if (TryInterfere(spawner, region.eventData.interferingCharacter)) {
+                //interfering character succeeded
+                spawner.Death("Interfere_Attacked", responsibleCharacter: region.eventData.interferingCharacter, deathLogFillers: new LogFiller[] {
+                    new LogFiller(null, this.name, LOG_IDENTIFIER.STRING_1),
+                    new LogFiller(region, region.name, LOG_IDENTIFIER.LANDMARK_1),
+                });
+                ExecuteFailEffect(region, spawner);
+            } else {
+                //interfering character failed
+                region.eventData.interferingCharacter.Death("Interfere_Attacking", responsibleCharacter: spawner, deathLogFillers: new LogFiller[] {
+                    new LogFiller(null, this.name, LOG_IDENTIFIER.STRING_1),
+                    new LogFiller(region, region.name, LOG_IDENTIFIER.LANDMARK_1),
+                });
+                ExecuteAfterEffect(region, spawner);
+            }
         } else {
             //there are no interfering characters.
             ExecuteAfterEffect(region, spawner);
@@ -125,6 +139,43 @@ public class WorldEvent  {
     }
     #endregion
 
+    #region Interference
+    /// <summary>
+    /// Execute interfere chances.
+    /// </summary>
+    /// <param name="eventSpawner">The character that spawned this event.</param>
+    /// <param name="interferer">The character interfering with this event.</param>
+    /// <returns>Whether the interference was successful or not.</returns>
+    private bool TryInterfere(Character eventSpawner, Character interferer) {
+        //If Minion Level is lower than character's level: 20% chance to fail and die per level lower
+        //If Minion Level is equal to character's level: 5% chance to fail and die
+        //If Minion Level is higher than character's level: 0% chance to fail and die
+        string summary = interferer.name + " will try to interfere with " + this.name + " event spawned by " + eventSpawner.name;
+        int deathChance = 0;
+        if (interferer.level < eventSpawner.level) {
+            int difference = eventSpawner.level - interferer.level;
+            deathChance = 20 * difference;
+        } else if (interferer.level == eventSpawner.level) {
+            deathChance = 5;
+        } else {
+            deathChance = 0;
+        }
+        int roll = Random.Range(0, 100);
+        summary += "\nDeath chance is: " + deathChance.ToString() + ". Roll is: " + roll.ToString();
+        if (roll < deathChance) {
+            //interferer died
+            summary += "\n" + interferer.name + " failed";
+            Debug.Log(summary);
+            return false;
+        } else {
+            //interferer succeeded
+            summary += "\n" + interferer.name + " succeeded";
+            Debug.Log(summary);
+            return true;
+
+        }
+    }
+    #endregion
 }
 
 //This is base class where data for each individual landmark is stored.

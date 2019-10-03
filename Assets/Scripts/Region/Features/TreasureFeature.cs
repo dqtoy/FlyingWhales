@@ -13,8 +13,8 @@ public class TreasureFeature : RegionFeature {
     }
 
     #region Override
-    public override void Activate() {
-        base.Activate();
+    public override void Activate(Region region) {
+        base.Activate(region);
         ARTIFACT_TYPE[] artifactTypes = Utilities.GetEnumValues<ARTIFACT_TYPE>().Where(x => !x.CanBeSummoned()).ToArray();
         Artifact artifact = PlayerManager.Instance.CreateNewArtifact(artifactTypes[Random.Range(0, artifactTypes.Length)]);
         UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new artifact: " + artifact.name + "!", () => PlayerManager.Instance.player.GainArtifact(artifact, true));

@@ -13,8 +13,8 @@ public class MonsterFeature : RegionFeature {
     }
 
     #region Override
-    public override void Activate() {
-        base.Activate();
+    public override void Activate(Region region) {
+        base.Activate(region);
         //Give a random summon
         SUMMON_TYPE[] summonTypes = Utilities.GetEnumValues<SUMMON_TYPE>().Where(x => !x.CanBeSummoned()).ToArray();
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonTypes[Random.Range(0, summonTypes.Length)]);
