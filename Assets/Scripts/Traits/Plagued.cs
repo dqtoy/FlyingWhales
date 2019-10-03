@@ -97,9 +97,8 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
                 //owner.currentAction.SetEndAction(ResumeLastAction);
-                owner.currentAction.DoAction();
+                goapAction.DoAction();
                 hasCreatedJob = true;
             } else if (owner.stateComponent.currentState != null) {
                 pausedState = owner.stateComponent.currentState;
@@ -114,11 +113,10 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
-                owner.currentAction.SetEndAction(ResumePausedState);
-                owner.currentAction.DoAction();
+                goapAction.SetEndAction(ResumePausedState);
+                goapAction.DoAction();
                 hasCreatedJob = true;
-            } else {
+            } else if (owner.stateComponent.currentState == null && owner.currentAction == null) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
 
                 GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
@@ -128,8 +126,7 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
-                owner.currentAction.DoAction();
+                goapAction.DoAction();
                 hasCreatedJob = true;
             }
             //Debug.Log(summary);
@@ -148,8 +145,7 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
-                owner.currentAction.DoAction();
+                goapAction.DoAction();
                 hasCreatedJob = true;
             } else if (owner.stateComponent.currentState != null) {
                 owner.stateComponent.currentState.OnExitThisState();
@@ -163,10 +159,9 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
-                owner.currentAction.DoAction();
+                goapAction.DoAction();
                 hasCreatedJob = true;
-            } else {
+            } else if (owner.stateComponent.currentState == null && owner.currentAction == null) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
 
                 GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
@@ -176,7 +171,6 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
                 owner.currentAction.DoAction();
                 hasCreatedJob = true;
             }
