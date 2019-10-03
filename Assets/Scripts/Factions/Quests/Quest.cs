@@ -84,20 +84,20 @@ public class SaveDataQuest {
         for (int i = 0; i < jobs.Count; i++) {
             JobQueueItem job = jobs[i].Load();
             quest.jobQueue.AddJobInQueue(job, false);
-            if (jobs[i] is SaveDataCharacterStateJob) {
-                SaveDataCharacterStateJob dataStateJob = jobs[i] as SaveDataCharacterStateJob;
-                CharacterStateJob stateJob = job as CharacterStateJob;
-                if (dataStateJob.assignedCharacterID != -1) {
-                    Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
-                    stateJob.SetAssignedCharacter(assignedCharacter);
-                    CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
-                    if (newState != null) {
-                        stateJob.SetAssignedState(newState);
-                    } else {
-                        throw new System.Exception(assignedCharacter.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
-                    }
-                }
-            }
+            //if (jobs[i] is SaveDataCharacterStateJob) {
+            //    SaveDataCharacterStateJob dataStateJob = jobs[i] as SaveDataCharacterStateJob;
+            //    CharacterStateJob stateJob = job as CharacterStateJob;
+            //    if (dataStateJob.assignedCharacterID != -1) {
+            //        Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
+            //        stateJob.SetAssignedCharacter(assignedCharacter);
+            //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
+            //        if (newState != null) {
+            //            stateJob.SetAssignedState(newState);
+            //        } else {
+            //            throw new System.Exception(assignedCharacter.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
+            //        }
+            //    }
+            //}
         }
         return quest;
     }

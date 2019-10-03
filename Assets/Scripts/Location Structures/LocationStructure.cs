@@ -33,9 +33,6 @@ public class LocationStructure {
     public List<LocationGridTile> unoccupiedTiles {
         get { return tiles.Where(x => !x.isOccupied).ToList(); }
     }
-    public POINT_OF_INTEREST_TYPE poiType {
-        get { return POINT_OF_INTEREST_TYPE.STRUCTURE; }
-    }
     #endregion
 
     public LocationStructure(STRUCTURE_TYPE structureType, Area location, bool isInside) {

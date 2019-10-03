@@ -99,6 +99,7 @@ public class SaveDataCharacterStateJob : SaveDataJobQueueItem {
 
     //Only save assigned character in state job because 
     public int assignedCharacterID;
+    public SaveDataCharacterState connectedState; //This should only have value if the character's current state is connected to this job
 
     public override void Save(JobQueueItem job) {
         base.Save(job);
@@ -111,16 +112,33 @@ public class SaveDataCharacterStateJob : SaveDataJobQueueItem {
         }
         if(stateJob.assignedCharacter != null) {
             assignedCharacterID = stateJob.assignedCharacter.id;
+            if (stateJob.assignedCharacter.stateComponent.currentState.job == stateJob) {
+                connectedState = SaveUtilities.CreateCharacterStateSaveDataInstance(stateJob.assignedCharacter.stateComponent.currentState);
+                connectedState.Save(stateJob.assignedCharacter.stateComponent.currentState);
+            }
         } else {
             assignedCharacterID = -1;
         }
     }
 
-    //public override JobQueueItem Load() {
-    //    CharacterStateJob stateJob = base.Load() as CharacterStateJob;
+    public override JobQueueItem Load() {
+        CharacterStateJob stateJob = base.Load() as CharacterStateJob;
+        if (this.assignedCharacterID != -1) {
+            Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(this.assignedCharacterID);
+            stateJob.SetAssignedCharacter(assignedCharacter);
+            //Load Character State if there is any.
+            if (this.connectedState != null) {
+                CharacterState newState = assignedCharacter.stateComponent.LoadState(connectedState);
+                if (newState != null) {
+                    stateJob.SetAssignedState(newState);
+                } else {
+                    throw new System.Exception(assignedCharacter.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
+                }
+            }
+        }
 
-    //    return stateJob;
-    //}
+        return stateJob;
+    }
 
 
 }

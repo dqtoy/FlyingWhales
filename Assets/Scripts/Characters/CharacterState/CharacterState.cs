@@ -33,6 +33,18 @@ public class CharacterState {
     }
 
     #region Virtuals
+    public virtual void Load(SaveDataCharacterState saveData) {
+        this.SetCurrentDuration(saveData.currentDuration);
+        this.SetIsUnending(saveData.isUnending);
+        if (saveData.targetCharacterID != -1) {
+            Character targetCharacter = CharacterManager.Instance.GetCharacterByID(saveData.targetCharacterID);
+            this.SetTargetCharacter(targetCharacter);
+        }
+        if (saveData.targetAreaID != -1) {
+            Area targetArea = LandmarkManager.Instance.GetAreaByID(saveData.targetAreaID);
+            this.SetTargetArea(targetArea);
+        }
+    }
     //Starts a state and its movement behavior, can be overridden
     protected virtual void StartState() {
         hasStarted = true;
@@ -76,7 +88,6 @@ public class CharacterState {
         }
         Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.character, this);
     }
-    
     //This is called per TICK_ENDED if the state has a duration, can be overriden
     protected virtual void PerTickInState() {
         if (!isPaused && !isUnending && !isDone) {
@@ -94,10 +105,8 @@ public class CharacterState {
     }
     //Character will do the movement behavior of this state, can be overriden
     protected virtual void DoMovementBehavior() {}
-
     //What happens when you see another point of interest (character, tile objects, etc)
     public virtual bool OnEnterVisionWith(IPointOfInterest targetPOI) { return false; }
-
     //What happens if there are already point of interest in your vision upon entering the state
     public virtual bool ProcessInVisionPOIsOnStartState() {
         if(stateComponent.character.marker.inVisionPOIs.Count > 0) {
@@ -105,22 +114,49 @@ public class CharacterState {
         }
         return false;
     }
-
     //This is called for exiting current state, I made it a virtual because some states still requires something before exiting current state
     public virtual void OnExitThisState() {
         stateComponent.ExitCurrentState(this);
     }
-
     //Typically used if there are other data that is needed to be set for this state when it starts
     //Currently used only in combat state so we can set the character's behavior if attacking or not when it enters the state
     public virtual void SetOtherDataOnStartState(object otherData) { }
-
     //This is called on ExitCurrentState function in CharacterStateComponent after all exit processing is finished
     public virtual void AfterExitingState() {
         stateComponent.character.marker.UpdateActionIcon();
     }
     public virtual bool CanResumeState() {
         return true;
+    }
+    /// <summary>
+    /// Pauses this state, used in switching states if this is a major state
+    /// </summary>
+    public virtual void PauseState() {
+        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Pausing " + stateName + " for " + stateComponent.character.name);
+        isPaused = true;
+        StopStatePerTick();
+    }
+    /// <summary>
+    /// Resumes the state and its movement behavior
+    /// </summary>
+    public virtual void ResumeState() {
+        if (isDone) {
+            return; //if the state has already been exited. Do not resume.
+        }
+        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Resuming " + stateName + " for " + stateComponent.character.name);
+        isPaused = false;
+        StartStatePerTick();
+        DoMovementBehavior();
+    }
+    protected virtual void OnJobSet() { }
+    protected virtual void CreateThoughtBubbleLog() {
+        if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "thought_bubble")) {
+            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "thought_bubble");
+            thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            if (targetCharacter != null) {
+                thoughtBubbleLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+            }
+        }
     }
     #endregion
 
@@ -189,7 +225,6 @@ public class CharacterState {
         //    StartState();
         //}
     }
-
     //private void GoToLocation(Area targetArea) {
     //    CreateTravellingThoughtBubbleLog(targetArea);
     //    Debug.Log(GameManager.Instance.TodayLogString() + "Travelling to " + targetArea.name + " before entering " + stateName + " for " + stateComponent.character.name);
@@ -199,22 +234,6 @@ public class CharacterState {
     public void ExitState() {
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Exiting " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name ?? "No One");
         EndState();
-    }
-    //Pauses this state, used in switching states if this is a major state
-    public virtual void PauseState() {
-        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Pausing " + stateName + " for " + stateComponent.character.name);
-        isPaused = true;
-        StopStatePerTick();
-    }
-    //Resumes the state and its movement behavior
-    public virtual void ResumeState() {
-        if (isDone) {
-            return; //if the state has already been exited. Do not resume.
-        }
-        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Resuming " + stateName + " for " + stateComponent.character.name);
-        isPaused = false;
-        StartStatePerTick();
-        DoMovementBehavior();
     }
     public void SetJob(CharacterStateJob job) {
         this.job = job;
@@ -227,16 +246,6 @@ public class CharacterState {
     /// <summary>
     /// What should happen once the job of this state is set to anything other than null?
     /// </summary>
-    protected virtual void OnJobSet() { }
-    protected virtual void CreateThoughtBubbleLog() {
-        if(LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "thought_bubble")) {
-            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "thought_bubble");
-            thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            if (targetCharacter != null) {
-                thoughtBubbleLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
-            }
-        }
-    }
     private void CreateStartStateLog() {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "start")) {
             Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "start");

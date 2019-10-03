@@ -1211,10 +1211,8 @@ public enum RELATIONSHIP_TRAIT {
 
 public enum POINT_OF_INTEREST_TYPE {
     ITEM,
-    LANDMARK,
     CHARACTER,
     TILE_OBJECT,
-    STRUCTURE,
 }
 public enum TILE_OBJECT_TYPE {
     SUPPLY_PILE,
@@ -1500,6 +1498,19 @@ public static class Extensions {
             case CHARACTER_STATE.BERSERKED:
             case CHARACTER_STATE.COMBAT:
             case CHARACTER_STATE.HUNT:
+                return true;
+            default:
+                return false;
+        }
+    }
+    /// <summary>
+    /// This is used to determine what class should be created when saving a CharacterState. <see cref="SaveUtilities.CreateCharacterStateSaveDataInstance(CharacterState)"/>
+    /// </summary>
+    /// <param name="type">The type of state</param>
+    /// <returns>If the state type has a unique save data class or not.</returns>
+    public static bool HasUniqueSaveData(this CHARACTER_STATE type) {
+        switch (type) {
+            case CHARACTER_STATE.DOUSE_FIRE:
                 return true;
             default:
                 return false;
