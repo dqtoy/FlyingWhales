@@ -61,7 +61,8 @@ public class Character : ILeader, IPointOfInterest {
     public int speedPercentMod { get; protected set; }
     public int maxHPPercentMod { get; protected set; }
 
-    public Area homeArea { get; protected set; }
+    public Region homeRegion { get; protected set; }
+    public Area homeArea { get { return homeRegion.area; } }
     public Dwelling homeStructure { get; protected set; }
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
@@ -212,11 +213,11 @@ public class Character : ILeader, IPointOfInterest {
     public bool isHoldingItem {
         get { return items.Count > 0; }
     }
-    public bool isAtHomeArea {
-        get { return currentRegion == null && specificLocation.id == homeArea.id && !currentParty.icon.isTravellingOutside; }
+    public bool isAtHomeRegion {
+        get { return currentRegion == null && specificLocation.region.id == homeRegion.id && !currentParty.icon.isTravellingOutside; }
     }
     public bool isPartOfHomeFaction { //is this character part of the faction that owns his home area
-        get { return homeArea != null && faction != null && homeArea.region.IsFactionHere(faction); }
+        get { return homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); }
     }
     public bool isChatting {
         get { return _isChatting; }
@@ -1028,13 +1029,21 @@ public class Character : ILeader, IPointOfInterest {
             if (_role != null) {
                 _role.OnDeath(this);
             }
-            if (homeArea != null) {
-                Area home = homeArea;
+
+            if (homeRegion != null) {
+                Region home = homeRegion;
                 Dwelling homeStructure = this.homeStructure;
-                homeArea.RemoveResident(this);
+                homeRegion.RemoveResident(this);
                 SetHome(home); //keep this data with character to prevent errors
                 SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
+            //if (homeArea != null) {
+            //    Area home = homeArea;
+            //    Dwelling homeStructure = this.homeStructure;
+            //    homeArea.RemoveResident(this);
+            //    SetHome(home); //keep this data with character to prevent errors
+            //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
+            //}
 
             //List<Character> characterRels = new List<Character>(this.relationships.Keys.ToList());
             //for (int i = 0; i < characterRels.Count; i++) {
@@ -1554,6 +1563,17 @@ public class Character : ILeader, IPointOfInterest {
         }
         return null;
     }
+    public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            if (allJobsTargettingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+                if (job.jobType == jobType) {
+                    return job;
+                }
+            }
+        }
+        return null;
+    }
     public List<GoapPlanJob> GetJobsTargettingThisCharacter(JOB_TYPE jobType, object conditionKey) {
         List<GoapPlanJob> jobs = new List<GoapPlanJob>();
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
@@ -1822,7 +1842,7 @@ public class Character : ILeader, IPointOfInterest {
         return false;
     }
     public void CreateLocationKnockoutJobs(Character targetCharacter, int amount) {
-        if (isAtHomeArea && isPartOfHomeFaction && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {//&& !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
+        if (homeArea != null && isAtHomeRegion && isPartOfHomeFaction && !targetCharacter.isDead && !targetCharacter.isAtHomeRegion && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {//&& !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
             for (int i = 0; i < amount; i++) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = targetCharacter });
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeKnockoutJob);
@@ -1845,7 +1865,7 @@ public class Character : ILeader, IPointOfInterest {
     /// <returns>The created job.</returns>
     public GoapPlanJob CreateApprehendJobFor(Character targetCharacter, bool assignSelfToJob = false) {
         //if (homeArea.id == specificLocation.id) {
-        if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND) && targetCharacter.GetNormalTrait("Restrained") == null && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        if (homeArea != null && specificLocation == homeArea && !targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND) && targetCharacter.GetNormalTrait("Restrained") == null && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             //GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = targetCharacter };
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
             job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
@@ -1914,40 +1934,6 @@ public class Character : ILeader, IPointOfInterest {
                 }
             }
         }
-
-        //Claim Item Job
-        //if (faction.id != FactionManager.Instance.neutralFaction.id && !jobQueue.HasJob("Claim Item")) {
-        //    int numOfItemsOwned = GetNumOfItemsOwned();
-        //    if (numOfItemsOwned < 3) {
-        //        int chance = UnityEngine.Random.Range(0, 100);
-        //        int value = 10 - (numOfItemsOwned * 3);
-        //        if (chance < value) {
-        //            List<SpecialToken> tokens = new List<SpecialToken>();
-        //            for (int i = 0; i < specificLocation.possibleSpecialTokenSpawns.Count; i++) {
-        //                SpecialToken currToken = specificLocation.possibleSpecialTokenSpawns[i];
-        //                if (currToken.characterOwner == null) {
-        //                    if (currToken.factionOwner != null && faction.id != currToken.factionOwner.id) {
-        //                        continue;
-        //                    }
-        //                    if (currToken.gridTileLocation != null && currToken.gridTileLocation.structure != null
-        //                        && currToken.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WAREHOUSE && GetToken(currToken) == null && !currToken.HasJobTargettingThis("Claim Item")
-        //                        && GetAwareness(currToken) != null) {
-        //                        tokens.Add(currToken);
-        //                    }
-        //                }
-        //            }
-        //            if (tokens.Count > 0) {
-        //                SpecialToken chosenToken = tokens[UnityEngine.Random.Range(0, tokens.Count)];
-        //                GoapPlanJob job = new GoapPlanJob("Claim Item", INTERACTION_TYPE.PICK_ITEM, chosenToken);
-        //                job.SetCancelOnFail(true);
-        //                //GameManager.Instance.SetPausedState(true);
-        //                Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added a Claim Item Job to " + this.name + " with target " + chosenToken.name + " in " + chosenToken.gridTileLocation.ToString());
-        //                jobQueue.AddJobInQueue(job);
-        //                hasCreatedJob = true;
-        //            }
-        //        }
-        //    }
-        //}
 
         //Obtain Item job
         //if the character is part of a Faction and he doesnt have an Obtain Item Job in his personal job queue, 
@@ -2675,7 +2661,7 @@ public class Character : ILeader, IPointOfInterest {
                     InteriorMapManager.Instance.HideAreaMap();
                 }
                 //CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
-                CameraMove.Instance.CenterCameraOn(homeArea.coreTile.gameObject);
+                CameraMove.Instance.CenterCameraOn(homeRegion.coreTile.gameObject);
             }else if (currentParty.icon.isTravelling) {
                 if (marker.gameObject.activeInHierarchy) {
                     bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
@@ -2722,32 +2708,32 @@ public class Character : ILeader, IPointOfInterest {
         _doNotGetTired += amount;
         _doNotGetTired = Math.Max(_doNotGetTired, 0);
     }
-    public void ReturnToOriginalHomeAndFaction(Area ogHome, Faction ogFaction) {
+    public void ReturnToOriginalHomeAndFaction(Region ogHome, Faction ogFaction) {
         //first, check if the character's original faction is still alive
         if (!ogFaction.isDestroyed) { //if it is, 
             this.ChangeFactionTo(ogFaction);  //transfer the character to his original faction
             if (ogFaction.id == FactionManager.Instance.neutralFaction.id) { //if the character's original faction is the neutral faction
-                if (ogHome.owner == null && !ogHome.IsResidentsFull()) { //check if his original home is still unowned
+                if (ogHome.owner == null && (ogHome.area == null || (ogHome.area != null && !ogHome.area.IsResidentsFull()))) { //check if his original home is still unowned
                     //if it is and it has not reached it's resident capacity, return him to his original home
                     MigrateHomeTo(ogHome);
                 } else { //if it does not meet those requirements
                     //check if the neutral faction still has any available areas that have not reached capacity yet
-                    List<Area> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedRegions.Where(x => x.area != null && !x.area.IsResidentsFull()).Select(x => x.area).ToList();
+                    List<Region> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedRegions.Where(x => x.area == null || (x.area != null && !x.area.IsResidentsFull())).ToList();
                     if (validNeutralAreas.Count > 0) {
                         //if it does, pick randomly from those
-                        Area chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
+                        Region chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
                         MigrateHomeTo(chosenArea);
                     }
                     //if not, keep the characters current home
                 }
             } else { //if it is not, check if his original home is still owned by that faction and it has not yet reached it's resident capacity
-                if (ogHome.region.IsFactionHere(ogFaction) && !ogHome.IsResidentsFull()) {
+                if (ogHome.IsFactionHere(ogFaction) && (ogHome.area == null || (ogHome.area != null && !ogHome.area.IsResidentsFull()))) {
                     //if it meets those requirements, return the character's home to that location
                     MigrateHomeTo(ogHome);
                 } else { //if not, get another area owned by his faction that has not yet reached capacity
-                    List<Area> validAreas = ogFaction.ownedRegions.Where(x => x.area != null && !x.area.IsResidentsFull()).Select(x => x.area).ToList();
+                    List<Region> validAreas = ogFaction.ownedRegions.Where(x => x.area == null || (x.area != null && !x.area.IsResidentsFull())).ToList();
                     if (validAreas.Count > 0) {
-                        Area chosenArea = validAreas[UnityEngine.Random.Range(0, validAreas.Count)];
+                        Region chosenArea = validAreas[UnityEngine.Random.Range(0, validAreas.Count)];
                         MigrateHomeTo(chosenArea);
                     }
                     //if there are still no areas that can be his home, keep his current one.
@@ -2756,10 +2742,10 @@ public class Character : ILeader, IPointOfInterest {
         } else { //if not
             //transfer the character to the neutral faction instead
             this.ChangeFactionTo(FactionManager.Instance.neutralFaction);
-            List<Area> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedRegions.Where(x => x.area != null && !x.area.IsResidentsFull()).Select(x => x.area).ToList();
+            List<Region> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedRegions.Where(x => x.area == null || (x.area != null && !x.area.IsResidentsFull())).ToList();
             if (validNeutralAreas.Count > 0) {  //then check if the neutral faction has any owned areas that have not yet reached area capacity
                 //if it does, pick from any of those, then set it as the characters new home
-                Area chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
+                Region chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
                 MigrateHomeTo(chosenArea);
             }
             //if it does not, keep the characters current home
@@ -2822,9 +2808,12 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     public bool CanCharacterReact() {
-        if(this is Summon || minion != null) {
+        if (this is Summon || minion != null) {
             //Cannot react if summon or minion
             return false;
+        }
+        if (!isAtHomeRegion && homeRegion.area == null) {
+            return false; //Must not react because he will only have one thing to do and that is to return home
         }
         if (stateComponent.currentState != null && !stateComponent.currentState.isDone) {
             if (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
@@ -3143,7 +3132,7 @@ public class Character : ILeader, IPointOfInterest {
 #if !WORLD_CREATION_TOOL
          //check if they share the same home, then migrate them accordingly
         if (newRel.relType == RELATIONSHIP_TRAIT.LOVER
-            && this.homeArea.id == targetCharacter.homeArea.id
+            && this.homeArea != null && targetCharacter.homeArea != null && this.homeArea.id == targetCharacter.homeArea.id
             && this.homeStructure != targetCharacter.homeStructure) {
             //Lover conquers all, even if one character is factionless they will be together, meaning the factionless character will still have home structure
             homeArea.AssignCharacterToDwellingInArea(this, targetCharacter.homeStructure);
@@ -3368,6 +3357,10 @@ public class Character : ILeader, IPointOfInterest {
         //Instead of witnessing the action immediately, it needs to be pooled to avoid duplicates, so add the supposed to be witnessed action to the list and let ProcessAllUnprocessedVisionPOIs in CharacterMarker do its thing
         if(marker != null && !marker.actionsToWitness.Contains(action)) {
             marker.actionsToWitness.Add(action);
+            if(action.actor != this) {
+                //This is done so that the character will react again
+                marker.unprocessedVisionPOIs.Add(action.actor);
+            }
         }
 
         //ThisCharacterWitnessedEvent(action);
@@ -3846,7 +3839,7 @@ public class Character : ILeader, IPointOfInterest {
         }
 
         //If someone is attacked, relationship should deteriorate
-        //TODO: SAVE THIS!
+        //TODO: SAVE THE allCharactersThatDegradeRel list so when loaded they will not be able to degrade rel again
         Character responsibleCharacter = null;
         if (state != null) {
             if(state.currentClosestHostile == this) {
@@ -4321,9 +4314,9 @@ public class Character : ILeader, IPointOfInterest {
     /// Set this character's home area data.(Does nothing else)
     /// </summary>
     /// <param name="newHome">The character's new home</param>
-    public void SetHome(Area newHome) {
-        Area previousHome = homeArea;
-        homeArea = newHome;
+    public void SetHome(Region newHome) {
+        Region previousHome = homeRegion;
+        homeRegion = newHome;
 
         //If a character sets his home, add his faction to the factions in the region
         //Subsequently, if character loses his home, remove his faction from the region only if there are no co faction resident in the region anymore
@@ -4332,19 +4325,19 @@ public class Character : ILeader, IPointOfInterest {
                 //If character loses home and he has previous home, remove him faction
                 if(previousHome != null) {
                     bool removeFaction = true;
-                    for (int i = 0; i < previousHome.areaResidents.Count; i++) {
-                        Character resident = previousHome.areaResidents[i];
+                    for (int i = 0; i < previousHome.residents.Count; i++) {
+                        Character resident = previousHome.residents[i];
                         if(resident != this && resident.faction == faction) {
                             removeFaction = false;
                             break;
                         }
                     }
                     if (removeFaction) {
-                        previousHome.region.RemoveFactionHere(faction);
+                        previousHome.RemoveFactionHere(faction);
                     }
                 }
             } else {
-                newHome.region.AddFactionHere(faction);
+                newHome.AddFactionHere(faction);
             }
         }
     }
@@ -4361,15 +4354,15 @@ public class Character : ILeader, IPointOfInterest {
         }
         return false;
     }
-    public bool MigrateHomeTo(Area newHomeArea, Dwelling homeStructure = null, bool broadcast = true) {
-        Area previousHome = null;
-        if (homeArea != null) {
-            previousHome = homeArea;
-            homeArea.RemoveResident(this);
+    public bool MigrateHomeTo(Region newHomeRegion, Dwelling homeStructure = null, bool broadcast = true) {
+        Region previousHome = null;
+        if (homeRegion != null) {
+            previousHome = homeRegion;
+            homeRegion.RemoveResident(this);
         }
-        if(newHomeArea.AddResident(this, homeStructure)) {
+        if(newHomeRegion.AddResident(this, homeStructure)) {
             if (broadcast) {
-                Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeArea);
+                Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeRegion);
             }
             return true;
         }
@@ -5216,7 +5209,7 @@ public class Character : ILeader, IPointOfInterest {
         if (!IsInOwnParty()) {
             _currentParty.RemoveCharacter(this);
         }
-        MigrateHomeTo(PlayerManager.Instance.player.playerArea);
+        MigrateHomeTo(PlayerManager.Instance.player.playerArea.region);
 
         specificLocation.RemoveCharacterFromLocation(this.currentParty);
         currentRegion?.RemoveCharacterFromLocation(this);
@@ -5256,6 +5249,9 @@ public class Character : ILeader, IPointOfInterest {
     protected virtual void PerTickGoapPlanGeneration() {
         if(isDead || minion != null) {
             return;
+        }
+        if(homeRegion.area == null) {
+            return; //If there is no area, it means that there is no inner map, so character must not do goap actions, jobs, and plans
         }
         //Out of combat hp recovery
         if(stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
@@ -5586,7 +5582,7 @@ public class Character : ILeader, IPointOfInterest {
     private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
-                if (isAtHomeArea && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
+                if (isAtHomeRegion && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
                     if(GetNormalTrait("Lazy") != null) {
                         if(UnityEngine.Random.Range(0, 100) < 35) {
                             if (!ForcePlanHappinessRecoveryActions()) {
@@ -5624,7 +5620,7 @@ public class Character : ILeader, IPointOfInterest {
     private bool PlanJobQueueFirst() {
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null && !isStarving && !isExhausted && !isForlorn) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
-                if (isAtHomeArea && isPartOfHomeFaction) {
+                if (isAtHomeRegion && isPartOfHomeFaction) {
                     if (GetNormalTrait("Lazy") != null) {
                         if (UnityEngine.Random.Range(0, 100) < 35) {
                             if (!ForcePlanHappinessRecoveryActions()) {
@@ -5675,7 +5671,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         return true;
     }
-    public bool PlanIdleReturnHome() {
+    public bool PlanIdleReturnHome(bool forceDoAction = false) {
         //if (GetTrait("Berserker") != null) {
         //    //Return home becomes stroll if the character has berserker trait
         //    PlanIdleStroll(currentStructure);
@@ -5687,6 +5683,9 @@ public class Character : ILeader, IPointOfInterest {
         goapPlan.ConstructAllNodes();
         //AddPlan(goapPlan, true);
         AddPlan(goapPlan);
+        if (forceDoAction) {
+            PerformGoapPlans();
+        }
         //PlanGoapActions(goapAction);
         //}
         return true;
@@ -5921,7 +5920,7 @@ public class Character : ILeader, IPointOfInterest {
         } else {
             //Unaligned NPC Idle
             log += "\n-" + name + " has no faction";
-            if (!isAtHomeArea) {
+            if (!isAtHomeRegion) {
                 log += "\n-" + name + " is in another area";
                 log += "\n-100% chance to return home";
                 PlanIdleReturnHome();
@@ -6300,8 +6299,8 @@ public class Character : ILeader, IPointOfInterest {
                 if (location.AddSpecialTokenToLocation(token, structure, gridTile)) {
                     //When items are dropped into the warehouse, make all residents aware of it.
                     if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-                        for (int i = 0; i < structure.location.areaResidents.Count; i++) {
-                            Character resident = structure.location.areaResidents[i];
+                        for (int i = 0; i < structure.location.region.residents.Count; i++) {
+                            Character resident = structure.location.region.residents[i];
                             resident.AddAwareness(token);
                         }
                     }
@@ -6498,6 +6497,9 @@ public class Character : ILeader, IPointOfInterest {
     protected void DecreaseNeeds() {
         if (!HasNeeds()) {
             return;
+        }
+        if (homeRegion.area == null) {
+            return; //Characters living on a region without a settlement must not decrease needs
         }
         if (_doNotGetHungry <= 0) {
             AdjustFullness(-(CharacterManager.FULLNESS_DECREASE_RATE + fullnessDecreaseRate));
@@ -7978,7 +7980,7 @@ public class Character : ILeader, IPointOfInterest {
         if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.CHARACTER)) {
             List<IPointOfInterest> characterAwarenesses = awareness[POINT_OF_INTEREST_TYPE.CHARACTER];
             Character randomTarget = characterAwarenesses[UnityEngine.Random.Range(0, characterAwarenesses.Count)] as Character;
-            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = randomTarget };
+            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeRegion, targetPOI = randomTarget };
             StartGOAP(goapEffect, randomTarget, GOAP_CATEGORY.REACTION);
         }
     }
@@ -8508,7 +8510,8 @@ public class Character : ILeader, IPointOfInterest {
             //tantrumLog += "\nRolled: " + chance.ToString();
 
             if (chance < 10) {
-                CancelAllJobsAndPlans();
+                //Note: Do not cancel jobs and plans anymore, let the job priority decide if the character will do tantrum already
+                //CancelAllJobsAndPlans();
                 //Create Tantrum action
                 GoapPlanJob tantrum = new GoapPlanJob(JOB_TYPE.TANTRUM, INTERACTION_TYPE.TANTRUM, this, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.TANTRUM, new object[] { tantrumReason } }
@@ -8604,7 +8607,7 @@ public class Character : ILeader, IPointOfInterest {
                 SetHappinessLowerBound(HAPPINESS_THRESHOLD_2);
             }
         } else {
-            if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null && isAtHomeArea && !ownParty.icon.isTravellingOutside) {
+            if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null && isAtHomeRegion && !ownParty.icon.isTravellingOutside) {
                 //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
                 CombatState combatState = state as CombatState;
                 float distance = Vector2.Distance(this.marker.transform.position, characterThatStartedState.marker.transform.position);
@@ -8615,7 +8618,7 @@ public class Character : ILeader, IPointOfInterest {
                     targetCharacter = characterThatStartedState.marker.GetNearestValidAvoid();
                 }
                 //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
-                if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeArea && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
+                if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeRegion && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
                     && this.IsHostileOutsider(targetCharacter) && (this.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
                     && distance <= Combat_Signalled_Distance) {
                     if (marker.AddHostileInRange(targetCharacter, processCombatBehavior: false)) {

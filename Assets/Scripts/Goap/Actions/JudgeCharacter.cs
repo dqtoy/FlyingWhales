@@ -78,9 +78,13 @@ public class JudgeCharacter : GoapAction {
         //**Effect 2**: Target becomes unaligned and will have his Home Location set to a random different location
         Character target = poiTarget as Character;
         target.ChangeFactionTo(FactionManager.Instance.neutralFaction);
-        List<Area> choices = new List<Area>(LandmarkManager.Instance.allNonPlayerAreas.Where(x => x.owner == null)); //limited choices to only use un owned areas
-        choices.Remove(target.homeArea);
-        Area newHome = choices[Random.Range(0, choices.Count)];
+        //List<Area> choices = new List<Area>(LandmarkManager.Instance.allNonPlayerAreas.Where(x => x.owner == null)); //limited choices to only use un owned areas
+        List<Region> choices = GridMap.Instance.allRegions.Where(x => !x.coreTile.isCorrupted).ToList();
+        if (choices == null || choices.Count <= 0) {
+            choices = GridMap.Instance.allRegions.Where(x => x != PlayerManager.Instance.player.playerArea.region).ToList();
+        }
+        choices.Remove(target.homeRegion);
+        Region newHome = choices[Random.Range(0, choices.Count)];
         target.MigrateHomeTo(newHome);
 
         //**Effect 3**: Target is not hostile with characters from the Actor's faction until Target leaves the location. Target is forced to create a Return Home plan

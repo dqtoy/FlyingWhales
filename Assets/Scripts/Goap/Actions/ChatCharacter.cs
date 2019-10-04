@@ -281,6 +281,15 @@ public class ChatCharacter : GoapAction {
     private void PreArgument() {
         currentState.SetIntelReaction(ArgumentIntelReaction);
     }
+    private void AfterArgument() {
+        Character targetCharacter = poiTarget as Character;
+        if (actor.GetNormalTrait("Hothead") != null) {
+            actor.AddTrait("Angry");
+        }
+        if (targetCharacter.GetNormalTrait("Hothead") != null) {
+            targetCharacter.AddTrait("Angry");
+        }
+    }
     private void PreFlirt() {
         currentState.SetIntelReaction(FlirtIntelReaction);
         Character targetCharacter = poiTarget as Character;

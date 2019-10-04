@@ -171,9 +171,11 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.MISC:
                 priority = 5;
                 break;
+            case JOB_TYPE.TANTRUM:
+                priority = 6;
+                break;
             case JOB_TYPE.DEATH:
             case JOB_TYPE.BERSERK:
-            case JOB_TYPE.TANTRUM:
             case JOB_TYPE.STEAL:
             case JOB_TYPE.RESOLVE_CONFLICT:
             case JOB_TYPE.DESTROY:
@@ -345,14 +347,14 @@ public class InteractionManager : MonoBehaviour {
         return SPECIAL_TOKEN.HEALING_POTION.CanBeCraftedBy(character);
     }
     public bool CanTakeBuryJob(Character character, JobQueueItem job) {
-        if (!character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.isAtHomeArea && character.isPartOfHomeFaction
+        if (!character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.isAtHomeRegion && character.isPartOfHomeFaction
                 && character.role.roleType != CHARACTER_ROLE.BEAST) {
             return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
         }
         return false;
     }
     public bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
+        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
             if(job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
                 if (targetCharacter.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
@@ -367,7 +369,7 @@ public class InteractionManager : MonoBehaviour {
         return false;
     }
     public bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
+        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
             if (job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
                 try {
@@ -386,7 +388,7 @@ public class InteractionManager : MonoBehaviour {
         return false;
     }
     public bool CanCharacterTakeRemoveSpecialIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
+        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
             if (job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
                 try {
@@ -406,13 +408,13 @@ public class InteractionManager : MonoBehaviour {
         return false;
     }
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character.isAtHomeArea && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        if (character.isAtHomeRegion && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.GetNormalTrait("Coward") == null) {
             return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
         }
         return false;
     }
     public bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter, JobQueueItem job) {
-        return targetCharacter.faction != character.faction && character.isAtHomeArea && character.isPartOfHomeFaction
+        return targetCharacter.faction != character.faction && character.isAtHomeRegion && character.isPartOfHomeFaction
             && (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER)
             && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL);
     }
@@ -428,7 +430,7 @@ public class InteractionManager : MonoBehaviour {
         return sourceCharacter != character && sourceCharacter.faction == character.faction && sourceCharacter.GetRelationshipEffectWith(character) != RELATIONSHIP_EFFECT.NEGATIVE;
     }
     public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character, JobQueueItem job) {
-        if (sourceCharacter.specificLocation.IsResident(character)) {
+        if (sourceCharacter.specificLocation.region.IsResident(character)) {
             if (character.faction.id != FactionManager.Instance.neutralFaction.id) {
                 return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
             } else {

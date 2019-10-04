@@ -1086,10 +1086,10 @@ public class CharacterMarker : PooledObject {
                 } else {
                     log += "\n   - No collected actions";
                 }
-                actionsToWitness.Clear();
             } else {
                 log += "\n - Character is either dead, unconscious, resting, or zapped, not processing...";
             }
+            actionsToWitness.Clear();
             unprocessedVisionPOIs.Clear();
             character.PrintLogIfActive(log);
         }

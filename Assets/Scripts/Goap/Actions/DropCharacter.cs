@@ -22,7 +22,7 @@ public class DropCharacter : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = actor, targetPOI = poiTarget }, IsInActorParty);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeRegion, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
@@ -85,7 +85,7 @@ public class DropCharacter : GoapAction {
         }
         actor.currentParty.RemoveCharacter(target, dropLocation: dropLocation);
         //target.MoveToAnotherStructure(_workAreaStructure);
-        AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
+        AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeRegion, targetPOI = poiTarget });
 
         if(parentPlan != null && parentPlan.job != null && parentPlan.job.jobType == JOB_TYPE.SAVE_CHARACTER) {
             RemoveTraitFrom(target, "Restrained");

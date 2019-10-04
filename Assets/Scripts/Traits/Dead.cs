@@ -26,18 +26,37 @@ public class Dead : Trait {
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (traitOwner is Character) {
             Character targetCharacter = traitOwner as Character;
-            if (responsibleCharacter != characterThatWillDoJob && targetCharacter.race != RACE.SKELETON && !(targetCharacter is Summon) && !targetCharacter.HasJobTargettingThis(JOB_TYPE.BURY)) {
-                GoapPlanJob buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
-                buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
-                buryJob.AllowDeadTargets();
-                buryJob.SetCanBeDoneInLocation(true);
-                if (InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, buryJob)) {
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(buryJob, false);
-                    return true;
+            if (responsibleCharacter != characterThatWillDoJob && targetCharacter.race != RACE.SKELETON && !(targetCharacter is Summon)) {
+                GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.BURY);
+                if (currentJob == null) {
+                    GoapPlanJob buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
+                    buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
+                    buryJob.AllowDeadTargets();
+                    buryJob.SetCanBeDoneInLocation(true);
+                    if (InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, buryJob)) {
+                        characterThatWillDoJob.jobQueue.AddJobInQueue(buryJob);
+                        return true;
+                    } else {
+                        buryJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanTakeBuryJob);
+                        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(buryJob);
+                        return false;
+                    }
                 } else {
-                    buryJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanTakeBuryJob);
-                    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(buryJob, false);
-                    return false;
+                    if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, currentJob)) {
+                        bool canBeTransfered = false;
+                        if(currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null 
+                            && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
+                            canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
+                        } else {
+                            canBeTransfered = true;
+                        }
+                        if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
+                            currentJob.jobQueueParent.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
+                            characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
+                            characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
+                        }
+                        return true;
+                    }
                 }
             }
         }

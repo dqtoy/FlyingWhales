@@ -73,7 +73,7 @@ public class CharacterTrait : Trait {
                 if (token.characterOwner == null) {
                     //Patrollers should not pick up items from their warehouse
                     if (token.structureLocation != null && token.structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE
-                        && token.specificLocation == characterThatWillDoJob.homeArea) {
+                        && token.specificLocation.region == characterThatWillDoJob.homeRegion) {
                         return false;
                     }
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_ITEM_GOAP)) {

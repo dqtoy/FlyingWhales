@@ -234,13 +234,13 @@ public class Player : ILeader {
         return minion;
     }
     public Minion CreateNewMinion(RACE race) {
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, race, GENDER.MALE, playerFaction, playerArea, null), false);
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, race, GENDER.MALE, playerFaction, playerArea.region, null), false);
         //minion.character.CreateMarker();
         InitializeMinion(minion);
         return minion;
     }
     public Minion CreateNewMinion(string className, RACE race, bool initialize = true) {
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea), false);
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea.region), false);
         if (initialize) {
             InitializeMinion(minion);
         }
@@ -248,13 +248,13 @@ public class Player : ILeader {
     }
     public Minion CreateNewMinionRandomClass(RACE race) {
         string className = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea), false);
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerArea.region), false);
         InitializeMinion(minion);
         return minion;
     }
     public Minion CreateNewMinionRandomClass() {
         string className = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, RACE.DEMON, GENDER.MALE, playerFaction, playerArea), false);
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, RACE.DEMON, GENDER.MALE, playerFaction, playerArea.region), false);
         InitializeMinion(minion);
         return minion;
     }
@@ -853,7 +853,7 @@ public class Player : ILeader {
         UIManager.Instance.HideObjectPicker();
     }
     public void GainSummon(SUMMON_TYPE type, int level = 1, bool showNewSummonUI = false) {
-        Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, playerFaction, playerArea);
+        Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, playerFaction, playerArea.region);
         newSummon.SetLevel(level);
         GainSummon(newSummon, showNewSummonUI);
     }
@@ -895,7 +895,7 @@ public class Player : ILeader {
         for (int i = 0; i < summonSlots.Count; i++) {
             if (summonSlots[i].summon == null) {
                 summonSlots[i].SetSummon(newSummon);
-                playerArea.AddResident(newSummon, ignoreCapacity:true);
+                playerArea.region.AddResident(newSummon, ignoreCapacity:true);
                 Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
                 if (showNewSummonUI) {
                     PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
@@ -945,7 +945,7 @@ public class Player : ILeader {
     private void ClearSummonData(Summon summon) {
         PlayerManager.Instance.player.playerFaction.LeaveFaction(summon);
         PlayerManager.Instance.player.playerArea.RemoveCharacterFromLocation(summon);
-        PlayerManager.Instance.player.playerArea.RemoveResident(summon);
+        PlayerManager.Instance.player.playerArea.region.RemoveResident(summon);
         CharacterManager.Instance.RemoveCharacter(summon);
     }
     public Summon GetAvailableSummonOfType(SUMMON_TYPE type) {

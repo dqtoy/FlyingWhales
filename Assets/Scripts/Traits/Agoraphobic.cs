@@ -12,22 +12,22 @@ public class Agoraphobic : Trait {
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
-        daysDuration = 50;
+        daysDuration = 0;
         canBeTriggered = true;
         //effects = new List<TraitEffect>();
     }
 
     #region Overrides
-    protected override void OnChangeLevel() {
-        base.OnChangeLevel();
-        if(level == 1) {
-            daysDuration = 50;
-        } else if (level == 2) {
-            daysDuration = 70;
-        } else if (level == 3) {
-            daysDuration = 90;
-        }
-    }
+    //protected override void OnChangeLevel() {
+    //    base.OnChangeLevel();
+        //if(level == 1) {
+        //    daysDuration = 50;
+        //} else if (level == 2) {
+        //    daysDuration = 70;
+        //} else if (level == 3) {
+        //    daysDuration = 90;
+        //}
+    //}
     public override void OnAddTrait(ITraitable addedTo) {
         base.OnAddTrait(addedTo);
         if(addedTo is Character) {

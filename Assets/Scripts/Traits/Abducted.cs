@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Abducted : Trait {
-    public Area originalHome { get; private set; }
+    public Region originalHome { get; private set; }
 
-    public Abducted(Area originalHome) {
+    public Abducted(Region originalHome) {
         name = "Abducted";
         SetOriginalHome(originalHome);
         //name = "Charmed from " + originalFaction.name;
@@ -19,7 +19,7 @@ public class Abducted : Trait {
         //effects = new List<TraitEffect>();
     }
 
-    public void SetOriginalHome(Area origHome) {
+    public void SetOriginalHome(Region origHome) {
         originalHome = origHome;
     }
 
@@ -45,7 +45,7 @@ public class SaveDataAbducted : SaveDataTrait {
     public override Trait Load(ref Character responsibleCharacter) {
         Trait trait = base.Load(ref responsibleCharacter);
         Abducted derivedTrait = trait as Abducted;
-        Area origHome = LandmarkManager.Instance.GetAreaByID(originalHomeID);
+        Region origHome = GridMap.Instance.GetRegionByID(originalHomeID);
         derivedTrait.SetOriginalHome(origHome);
         return trait;
     }

@@ -54,7 +54,7 @@ public class AreaNameplate : MonoBehaviour {
             residentsGO.SetActive(true);
             visitorsGO.SetActive(true);
         }
-        residentsLbl.text = area.areaResidents.Count.ToString();
+        residentsLbl.text = area.region.residents.Count.ToString();
         visitorsLbl.text = area.visitors.Count.ToString();
     }
 

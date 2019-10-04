@@ -562,16 +562,16 @@ public class UIManager : MonoBehaviour {
         smallInfoBGParentLG.childAlignment = position.anchor;
         rt.pivot = position.pivot;
     }
-    public void ShowSmallLocationInfo(Area area, RectTransform initialParent, Vector2 adjustment, string subText = "") {
-        locationSmallInfo.ShowAreaInfo(area, subText);
+    public void ShowSmallLocationInfo(Region region, RectTransform initialParent, Vector2 adjustment, string subText = "") {
+        locationSmallInfo.ShowRegionInfo(region, subText);
         locationSmallInfoRT.SetParent(initialParent);
         locationSmallInfoRT.anchoredPosition = Vector3.zero;
         locationSmallInfoRT.anchoredPosition += adjustment;
         locationSmallInfoRT.SetParent(this.transform);
         //(locationSmallInfo.transform as RectTransform).anchoredPosition = pos;
     }
-    public void ShowSmallLocationInfo(Area area, Vector3 pos, string subText = "") {
-        locationSmallInfo.ShowAreaInfo(area, subText);
+    public void ShowSmallLocationInfo(Region region, Vector3 pos, string subText = "") {
+        locationSmallInfo.ShowRegionInfo(region, subText);
         locationSmallInfoRT.position = pos;
     }
     public void HideSmallLocationInfo() {
@@ -580,9 +580,9 @@ public class UIManager : MonoBehaviour {
     public bool IsSmallLocationInfoShowing() {
         return locationSmallInfoRT.gameObject.activeSelf;
     }
-    public Area GetCurrentlyShowingSmallInfoLocation() {
+    public Region GetCurrentlyShowingSmallInfoLocation() {
         if (IsSmallLocationInfoShowing()) {
-            return locationSmallInfo.area;
+            return locationSmallInfo.region;
         }
         return null;
     }

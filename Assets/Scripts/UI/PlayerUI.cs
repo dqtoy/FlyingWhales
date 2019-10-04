@@ -1474,8 +1474,8 @@ public class PlayerUI : MonoBehaviour {
         for (int i = 0; i < items.Length; i++) {
             ObjectPoolManager.Instance.DestroyObject(items[i].gameObject);
         }
-        for (int i = 0; i < area.areaResidents.Count; i++) {
-            Character character = area.areaResidents[i];
+        for (int i = 0; i < area.region.residents.Count; i++) {
+            Character character = area.region.residents[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killCountScrollView.content);
             CharacterItem item = go.GetComponent<CharacterItem>();
             item.SetCharacter(character);
@@ -1484,7 +1484,7 @@ public class PlayerUI : MonoBehaviour {
         UpdateKillCount();
     }
     private void UpdateKillCount() {
-        killCountLbl.text = LandmarkManager.Instance.enemyOfPlayerArea.areaResidents.Where(x => x.IsAble()).Count().ToString() + "/" + LandmarkManager.Instance.enemyOfPlayerArea.citizenCount.ToString();
+        killCountLbl.text = LandmarkManager.Instance.enemyOfPlayerArea.region.residents.Where(x => x.IsAble()).Count().ToString() + "/" + LandmarkManager.Instance.enemyOfPlayerArea.citizenCount.ToString();
     }
     private void OrderKillSummaryItems() {
         CharacterItem[] items = Utilities.GetComponentsInDirectChildren<CharacterItem>(killCountScrollView.content.gameObject);

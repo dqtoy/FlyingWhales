@@ -151,7 +151,7 @@ public class Infected : Trait {
 
     private void PerHour() {
         int roll = Random.Range(0, 100);
-        if (roll < 2 && owner.isAtHomeArea) { //2
+        if (roll < 2 && owner.isAtHomeRegion) { //2
             owner.marker.StopMovement();
             if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.ZOMBIE_DEATH) {
                 owner.StopCurrentAction(false);

@@ -47,7 +47,6 @@ public class ReturnHome : GoapAction {
         } else {
             _targetStructure = actor.homeArea.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         }
-        
         base.SetTargetStructure();
     }
     #endregion

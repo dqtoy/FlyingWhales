@@ -281,6 +281,17 @@ public class TileObject : IPointOfInterest {
         }
         return false;
     }
+    public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            if (allJobsTargettingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+                if (job.jobType == jobType) {
+                    return job;
+                }
+            }
+        }
+        return null;
+    }
     public void AddTargettedByAction(GoapAction action) {
         targettedByAction.Add(action);
     }

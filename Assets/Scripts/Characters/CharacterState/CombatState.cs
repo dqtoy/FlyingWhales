@@ -14,6 +14,11 @@ public class CombatState : CharacterState {
     public Character forcedTarget { get; private set; }
     public List<Character> allCharactersThatDegradedRel { get; private set; }
 
+    //Is this character fighting another character or has a character in hostile range list who is trying to apprehend him/her because he/she is a criminal?
+    //See: https://trello.com/c/uCZfbCSa/2819-criminals-should-eventually-flee-settlement-and-leave-faction
+    public bool isBeingApprehended { get; private set; }
+
+
     public CombatState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Combat State";
         characterState = CHARACTER_STATE.COMBAT;
@@ -108,7 +113,28 @@ public class CombatState : CharacterState {
     }
     public override void AfterExitingState() {
         base.AfterExitingState();
-        if (!stateComponent.character.isDead) { //Made it so that dead characters no longer check invision characters after exiting a state.
+        if (!stateComponent.character.isDead) {
+            if(isBeingApprehended && stateComponent.character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !stateComponent.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+                //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
+                if (stateComponent.character.faction != FactionManager.Instance.neutralFaction) {
+                    //Leave current faction
+                    stateComponent.character.ChangeFactionTo(FactionManager.Instance.neutralFaction);
+                }
+
+                Region newHomeRegion = GetCriminalNewHomeLocation();
+                stateComponent.character.MigrateHomeTo(newHomeRegion);
+
+                string log = GameManager.Instance.TodayLogString() + stateComponent.character.name + " is a criminal and survived being apprehended." +
+                    " Changed faction to: " + stateComponent.character.faction.name + " and home to: " + stateComponent.character.homeRegion.name;
+                stateComponent.character.PrintLogIfActive(log);
+
+                //stateComponent.character.CancelAllJobsAndPlans();
+                //stateComponent.character.PlanIdleReturnHome(true);
+
+                return;
+            }
+
+            //Made it so that dead characters no longer check invision characters after exiting a state.
             for (int i = 0; i < stateComponent.character.marker.inVisionCharacters.Count; i++) {
                 Character currCharacter = stateComponent.character.marker.inVisionCharacters[i];
                 stateComponent.character.CreateJobsOnEnterVisionWith(currCharacter);
@@ -117,12 +143,34 @@ public class CombatState : CharacterState {
     }
     #endregion
 
+    private Region GetCriminalNewHomeLocation() {
+        List<Region> potentialRegions = new List<Region>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            Region region = GridMap.Instance.allRegions[i];
+            if(stateComponent.character.homeRegion != region && !region.coreTile.isCorrupted) {
+                potentialRegions.Add(region);
+            }
+        }
+
+        if(potentialRegions.Count > 0) {
+            return potentialRegions[UnityEngine.Random.Range(0, potentialRegions.Count)];
+        } else {
+            for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+                Region region = GridMap.Instance.allRegions[i];
+                if (stateComponent.character.homeRegion != region && region != PlayerManager.Instance.player.playerArea.region) {
+                    potentialRegions.Add(region);
+                }
+            }
+            return potentialRegions[UnityEngine.Random.Range(0, potentialRegions.Count)];
+        }
+    }
     /// <summary>
     /// Function that determines what a character should do in a certain point in time.
     /// Can be triggered by broadcasting signal <see cref="Signals.DETERMINE_COMBAT_REACTION"/>
     /// </summary>
     /// <param name="character">The character that should determine a reaction.</param>
     private void DetermineReaction(Character character) {
+        DetermineIsBeingApprehended();
         if (stateComponent.character == character) {
             string summary = character.name + " will determine a combat reaction";
             if (stateComponent.character.marker.hostilesInRange.Count > 0) {
@@ -167,6 +215,38 @@ public class CombatState : CharacterState {
         }
         stateComponent.character.marker.UpdateActionIcon();
         DoCombatBehavior();
+    }
+    //Determine if this character is being apprehended by one of his hostile/avoid in range
+    private void DetermineIsBeingApprehended() {
+        if (isBeingApprehended) {
+            return;
+        }
+        for (int i = 0; i < stateComponent.character.marker.hostilesInRange.Count; i++) {
+            Character hostile = stateComponent.character.marker.hostilesInRange[i];
+            if(hostile.stateComponent.currentState != null && hostile.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                CombatState combatState = hostile.stateComponent.currentState as CombatState;
+                if(combatState.actionThatTriggeredThisState != null && combatState.actionThatTriggeredThisState.parentPlan != null
+                    && combatState.actionThatTriggeredThisState.parentPlan.job != null && combatState.actionThatTriggeredThisState.parentPlan.job.jobType == JOB_TYPE.APPREHEND
+                    && combatState.actionThatTriggeredThisState.parentPlan.job.targetPOI == stateComponent.character) {
+                    isBeingApprehended = true;
+                    return;
+                }
+            }
+        }
+        for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
+            if(stateComponent.character.marker.avoidInRange[i].poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                Character hostile = stateComponent.character.marker.avoidInRange[i] as Character;
+                if (hostile.stateComponent.currentState != null && hostile.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                    CombatState combatState = hostile.stateComponent.currentState as CombatState;
+                    if (combatState.actionThatTriggeredThisState != null && combatState.actionThatTriggeredThisState.parentPlan != null
+                        && combatState.actionThatTriggeredThisState.parentPlan.job != null && combatState.actionThatTriggeredThisState.parentPlan.job.jobType == JOB_TYPE.APPREHEND
+                        && combatState.actionThatTriggeredThisState.parentPlan.job.targetPOI == stateComponent.character) {
+                        isBeingApprehended = true;
+                        return;
+                    }
+                }
+            }
+        }
     }
     private void StartCombatMovement() {
         string log = GameManager.Instance.TodayLogString() + "Starting combat movement for " + stateComponent.character.name;
@@ -422,8 +502,8 @@ public class CombatState : CharacterState {
                         stateComponent.character.CreateLocationKnockoutJobs(character, numOfJobs);
                     }
                 } else {
-                    if (!(character.isDead || (character.isAtHomeArea && character.isPartOfHomeFaction))) { //|| targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
-                        if (stateComponent.character.isAtHomeArea && stateComponent.character.isPartOfHomeFaction) {
+                    if (!(character.isDead || (character.isAtHomeRegion && character.isPartOfHomeFaction))) { //|| targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
+                        if (stateComponent.character.isAtHomeRegion && stateComponent.character.isPartOfHomeFaction) {
                             if (!stateComponent.character.jobQueue.HasJobWithOtherData(JOB_TYPE.REPORT_HOSTILE, fledFrom)) {
                                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_HOSTILE, INTERACTION_TYPE.REPORT_HOSTILE, new Dictionary<INTERACTION_TYPE, object[]>() {
                                 { INTERACTION_TYPE.REPORT_HOSTILE, new object[] { fledFrom }}

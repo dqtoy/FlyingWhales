@@ -74,17 +74,36 @@ public class Burnt : Trait {
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (traitOwner is TileObject) {
             TileObject targetPOI = traitOwner as TileObject;
-            if (!targetPOI.HasJobTargettingThis(JOB_TYPE.REPAIR) && targetPOI.poiGoapActions.Contains(INTERACTION_TYPE.REPAIR_TILE_OBJECT)) {
-                GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", targetPOI);
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPAIR, effect);
-                job.SetCanBeDoneInLocation(true);
-                if (InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob, job)) {
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    return true;
+            if (targetPOI.poiGoapActions.Contains(INTERACTION_TYPE.REPAIR_TILE_OBJECT)) {
+                GoapPlanJob currentJob = targetPOI.GetJobTargettingThisCharacter(JOB_TYPE.REPAIR);
+                if(currentJob == null) {
+                    GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", targetPOI);
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPAIR, effect);
+                    job.SetCanBeDoneInLocation(true);
+                    if (InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob, job)) {
+                        characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                        return true;
+                    } else {
+                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairJob);
+                        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                        return false;
+                    }
                 } else {
-                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairJob);
-                    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
-                    return false;
+                    if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob, currentJob)) {
+                        bool canBeTransfered = false;
+                        if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null
+                            && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
+                            canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
+                        } else {
+                            canBeTransfered = true;
+                        }
+                        if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
+                            currentJob.jobQueueParent.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
+                            characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
+                            characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
+                            return true;
+                        }
+                    }
                 }
             }
         }
