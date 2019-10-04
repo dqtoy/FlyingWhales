@@ -9,59 +9,39 @@ public class AbductCharacter : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
     protected override void ConstructPreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget }, HasNonPositiveDisablerTrait);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
-        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget }, HasRestrainedTrait);
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY_WITHOUT_CONSENT, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
-            SetState("Abduct Success");
-            //if (!HasOtherCharacterInRadius()) {
-            //    SetState("Abduct Success");
-            //} else {
-            //    parentPlan.SetDoNotRecalculate(true);
-            //    SetState("Abduct Fail");
-            //}
+        if (!isTargetMissing) {
+            if ((poiTarget as Character).IsInOwnParty()) {
+                SetState("In Progress");
+            } else {
+                SetState("Abduct Success");
+            }
         } else {
             SetState("Target Missing");
         }
     }
     protected override int GetCost() {
-        return 3;
-    }
-    //public override void FailAction() {
-    //    base.FailAction();
-    //    SetState("Target Missing");
-    //}
-    public override void DoAction() {
-        SetTargetStructure();
-        base.DoAction();
+        return 1;
     }
     #endregion
 
-    #region Requirements
-    protected bool Requirement() {
-        if(actor != poiTarget) {
-            Character target = poiTarget as Character;
-            return target.GetNormalTrait("Restrained") == null;
-        }
-        return false;
+
+    #region Preconditions
+    private bool HasRestrainedTrait() {
+        Character target = poiTarget as Character;
+        return target.GetNormalTrait("Restrained") != null;
     }
     #endregion
-
-    //#region Preconditions
-    //private bool HasNonPositiveDisablerTrait() {
-    //    Character target = poiTarget as Character;
-    //    return target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER);
-    //}
-    //#endregion
 
     #region State Effects
+    public void PreInProgress() {
+        SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
+    }
     public void PreAbductSuccess() {
         //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         currentState.SetIntelReaction(AbductSuccessIntelReaction);
@@ -144,8 +124,9 @@ public class AbductCharacterData: GoapActionData {
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (actor != poiTarget) {
-            Character target = poiTarget as Character;
-            return target.GetNormalTrait("Restrained") == null;
+            //Character target = poiTarget as Character;
+            //return target.GetNormalTrait("Restrained") == null;
+            return true;
         }
         return false;
     }

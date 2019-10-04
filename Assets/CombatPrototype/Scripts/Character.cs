@@ -2077,7 +2077,7 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.SAVE_CHARACTER)) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SAVE_CHARACTER, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
-                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY_WITH_CONSENT, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
                 //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = targetCharacter.homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
                 jobQueue.AddJobInQueue(job, processLogicForPersonalJob);
                 log += "\n" + name + " created save character job.";

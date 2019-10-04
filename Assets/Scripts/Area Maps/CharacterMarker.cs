@@ -1217,11 +1217,7 @@ public class CharacterMarker : PooledObject {
             if (character.GetNormalTrait("Berserked") == null) {
                 if (!avoidInRange.Contains(poi)) {
                     avoidInRange.Add(poi);
-                    //NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
-                    //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
-                    //if (processCombatBehavior) {
-                    //    ProcessCombatBehavior();
-                    //}
+                    willProcessCombat = true;
                     return true;
                 }
             }
@@ -1248,11 +1244,7 @@ public class CharacterMarker : PooledObject {
 
         }
         if (otherPOI != null) {
-            //NormalReactToHostileCharacter(otherPOI, CHARACTER_STATE.FLEE);
-            //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
-            //if (processCombatBehavior) {
-            //    ProcessCombatBehavior();
-            //}
+            willProcessCombat = true;
             return true;
         }
         return false;
@@ -1288,11 +1280,7 @@ public class CharacterMarker : PooledObject {
             }
         }
         if (otherPOI != null) {
-            //NormalReactToHostileCharacter(otherPOI, CHARACTER_STATE.FLEE);
-            //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
-            //if (processCombatBehavior) {
-            //    ProcessCombatBehavior();
-            //}
+            willProcessCombat = true;
             return true;
         }
         return false;
