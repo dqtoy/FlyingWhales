@@ -605,10 +605,10 @@ public class CharacterManager : MonoBehaviour {
     public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
 
-        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null)) {
+        if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter) && !(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null)) {
             currCharacter.AddRelationship(targetCharacter, CreateRelationshipTrait(rel, targetCharacter));
         }
-        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && targetCharacter.GetNormalTrait("Diplomatic") != null)) {
+        if (targetCharacter.CanHaveRelationshipWith(rel, currCharacter) && !(rel == RELATIONSHIP_TRAIT.ENEMY && targetCharacter.GetNormalTrait("Diplomatic") != null)) {
             targetCharacter.AddRelationship(currCharacter, CreateRelationshipTrait(pair, currCharacter));
         }
 
