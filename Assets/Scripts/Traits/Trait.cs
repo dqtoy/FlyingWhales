@@ -93,8 +93,11 @@ public class Trait {
     public virtual bool OnStartPerformGoapAction(GoapAction action, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
     public virtual void TriggerFlaw(Character character) {
         int manaCost = GetTriggerFlawManaCost(character); ;
-
         PlayerManager.Instance.player.AdjustMana(-manaCost);
+        if (character.trapStructure.structure != null) {
+            //clear all trap structures when triggering flaw
+            character.trapStructure.SetStructureAndDuration(null, 0);
+        }
     }
     /// <summary>
     /// This checks if this flaw can be triggered. This checks both the requirements of the individual traits,
