@@ -169,6 +169,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.HAVE_AFFAIR:
             case JOB_TYPE.TRIGGER_FLAW:
             case JOB_TYPE.MISC:
+            case JOB_TYPE.RETURN_HOME:
                 priority = 5;
                 break;
             case JOB_TYPE.TANTRUM:

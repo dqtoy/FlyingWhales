@@ -5,7 +5,11 @@ using UnityEngine;
 //This trait is present in all characters
 //A dummy trait in order for some jobs to be created
 public class CharacterTrait : Trait {
+    //IMPORTANT NOTE: When the owner of this trait changed its alter ego, this trait will not be present in the alter ego anymore
+    //Meaning that he/she cannot do the things specified in here anymore unless he/she switch to the ego which this trait is present
     public List<TileObject> alreadyInspectedTileObjects { get; private set; }
+    public bool hasSurvivedApprehension { get; private set; } //If a criminal character (is in original alter ego), and survived being apprehended, this must be turned on
+    public Character owner { get; private set; }
 
     public CharacterTrait() {
         name = "Character Trait";
@@ -22,6 +26,10 @@ public class CharacterTrait : Trait {
         if (!alreadyInspectedTileObjects.Contains(to)) {
             alreadyInspectedTileObjects.Add(to);
         }
+    }
+    public override void OnAddTrait(ITraitable addedTo) {
+        base.OnAddTrait(addedTo);
+        owner = addedTo as Character;
     }
 
     #region Overrides
@@ -139,6 +147,30 @@ public class CharacterTrait : Trait {
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
     }
     #endregion
+    private void CheckAsCriminal() {
+        if(owner.stateComponent.currentState == null && !owner.isAtHomeRegion && !owner.jobQueue.HasJob(JOB_TYPE.RETURN_HOME)) {
+            if(owner.allGoapPlans.Count > 0 || owner.jobQueue.jobsInQueue.Count > 0) {
+                owner.CancelAllJobsAndPlans();
+            }
+            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT);
+            owner.jobQueue.AddJobInQueue(job);
+        }else if (owner.isAtHomeRegion) {
+            SetHasSurvivedApprehension(false);
+        }
+    }
+
+    public void SetHasSurvivedApprehension(bool state) {
+        if(hasSurvivedApprehension != state) {
+            hasSurvivedApprehension = state;
+            if (hasSurvivedApprehension) {
+                Messenger.AddListener(Signals.TICK_STARTED, CheckAsCriminal);
+            } else {
+                if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
+                    Messenger.RemoveListener(Signals.TICK_STARTED, CheckAsCriminal);
+                }
+            }
+        }
+    }
 
     private bool RandomizeBetweenShockAndCryJob(Character characterThatWillDoJob) {
         if(UnityEngine.Random.Range(0, 2) == 0) {
@@ -167,6 +199,7 @@ public class CharacterTrait : Trait {
 
 public class SaveDataCharacterTrait : SaveDataTrait {
     public List<TileObjectSerializableData> alreadyInspectedTileObjects;
+    public bool hasSurvivedApprehension;
 
     public override void Save(Trait trait) {
         base.Save(trait);
@@ -180,6 +213,7 @@ public class SaveDataCharacterTrait : SaveDataTrait {
             };
             alreadyInspectedTileObjects.Add(toData);
         }
+        hasSurvivedApprehension = derivedTrait.hasSurvivedApprehension;
     }
 
     public override Trait Load(ref Character responsibleCharacter) {
@@ -189,6 +223,7 @@ public class SaveDataCharacterTrait : SaveDataTrait {
             TileObjectSerializableData toData = alreadyInspectedTileObjects[i];
             derivedTrait.AddAlreadyInspectedObject(InteriorMapManager.Instance.GetTileObject(toData.type, toData.id));
         }
+        derivedTrait.SetHasSurvivedApprehension(hasSurvivedApprehension);
         return trait;
     }
 }

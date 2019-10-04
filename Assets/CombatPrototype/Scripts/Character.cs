@@ -214,7 +214,9 @@ public class Character : ILeader, IPointOfInterest {
         get { return items.Count > 0; }
     }
     public bool isAtHomeRegion {
-        get { return currentRegion == null && specificLocation.region.id == homeRegion.id && !currentParty.icon.isTravellingOutside; }
+        //TODO: REDO THIS! REMOVE CURRENT REGION
+        get { return (currentRegion != null && currentRegion == homeRegion) 
+                || (currentRegion == null && specificLocation.region.id == homeRegion.id && !currentParty.icon.isTravellingOutside); }
     }
     public bool isPartOfHomeFaction { //is this character part of the faction that owns his home area
         get { return homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); }
@@ -1424,11 +1426,11 @@ public class Character : ILeader, IPointOfInterest {
     public bool RemoveJobTargettingThis(JobQueueItem job) {
         return allJobsTargettingThis.Remove(job);
     }
-    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType) {
+    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType) {
-                if (job.jobQueueParent.CancelJob(job)) {
+                if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
                     i--;
                 }
             }
@@ -1439,54 +1441,54 @@ public class Character : ILeader, IPointOfInterest {
     /// </summary>
     /// <param name="jobType">The type of job to cancel.</param>
     /// <param name="otherCharacter">The character exception.</param>
-    public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, Character otherCharacter) {
+    public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, Character otherCharacter, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType && job.assignedCharacter != otherCharacter) {
-                if (job.jobQueueParent.CancelJob(job)) {
+                if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
                     i--;
                 }
             }
         }
     }
-    public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, object conditionKey, Character otherCharacter) {
+    public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, object conditionKey, Character otherCharacter, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
                 if (job.jobType == jobType && job.targetEffect.conditionKey == conditionKey && job.assignedCharacter != otherCharacter) {
-                    if (job.jobQueueParent.CancelJob(job)) {
+                    if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
                         i--;
                     }
                 }
             }
         }
     }
-    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, JobQueueItem except) {
+    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, JobQueueItem except, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType && job != except) {
-                if (job.jobQueueParent.CancelJob(job)) {
+                if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
                     i--;
                 }
             }
         }
     }
-    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, object conditionKey) {
+    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, object conditionKey, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
                 if (job.jobType == jobType && job.targetEffect.conditionKey == conditionKey) {
-                    if (job.jobQueueParent.CancelJob(job)) {
+                    if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
                         i--;
                     }
                 }
             }
         }
     }
-    public void CancelAllJobsTargettingThisCharacter(string cause = "", bool shouldDoAfterEffect = true) {
+    public void CancelAllJobsTargettingThisCharacter(string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
-            if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect)) {
+            if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect, forceRemove)) {
                 i--;
             }
         }
@@ -1497,13 +1499,13 @@ public class Character : ILeader, IPointOfInterest {
     /// <param name="except">The exception.</param>
     /// <param name="cause">The cause for cancelling</param>
     /// <param name="shouldDoAfterEffect">Should the effect of the cancelled action be executed.</param>
-    public void CancelAllJobsTargettingThisCharacterExcept(GoapAction except, string cause = "", bool shouldDoAfterEffect = true) {
+    public void CancelAllJobsTargettingThisCharacterExcept(GoapAction except, string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (except.parentPlan != null && except.parentPlan.job == job) {
                 continue; //skip
             }
-            if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect)) {
+            if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect, forceRemove)) {
                 i--;
             }
         }
@@ -2812,7 +2814,7 @@ public class Character : ILeader, IPointOfInterest {
             //Cannot react if summon or minion
             return false;
         }
-        if (!isAtHomeRegion && homeRegion.area == null) {
+        if (defaultCharacterTrait.hasSurvivedApprehension && !isAtHomeRegion) {
             return false; //Must not react because he will only have one thing to do and that is to return home
         }
         if (stateComponent.currentState != null && !stateComponent.currentState.isDone) {
@@ -3547,11 +3549,11 @@ public class Character : ILeader, IPointOfInterest {
         witnessLog.AddToFillers(witnessedEvent.currentState.descriptionLog.fillers);
         AddHistory(witnessLog);
 
-        if(faction == PlayerManager.Instance.player.playerFaction) {
+        if (faction == PlayerManager.Instance.player.playerFaction) {
             //Player characters cannot react to witnessed events
             return;
         }
-        if (witnessedEvent.currentState.shareIntelReaction != null && !isFactionless) {
+        if (witnessedEvent.currentState.shareIntelReaction != null && !isFactionless) { //Characters with no faction cannot witness react
             List<string> reactions = witnessedEvent.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.WITNESSED);
             if(reactions != null) {
                 string reactionLog = name + " witnessed event: " + witnessedEvent.goapName;
@@ -3562,7 +3564,6 @@ public class Character : ILeader, IPointOfInterest {
                 PrintLogIfActive(reactionLog);
             }
         }
-
         witnessedEvent.AddAwareCharacter(this);
 
         //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
@@ -8430,10 +8431,10 @@ public class Character : ILeader, IPointOfInterest {
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //homeArea.jobQueue.AddJobInQueue(job);
-                    job = CreateApprehendJobFor(criminal.owner);
-                    if (job != null) {
-                        homeArea.jobQueue.ForceAssignCharacterToJob(job, this);
-                    }
+                    job = CreateApprehendJobFor(criminal.owner, true);
+                    //if (job != null) {
+                    //    homeArea.jobQueue.ForceAssignCharacterToJob(job, this);
+                    //}
                     crimeAction.OnReportCrime();
                 }
                 break;

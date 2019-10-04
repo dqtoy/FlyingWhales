@@ -12,6 +12,7 @@ public class TablePoison : GoapAction {
         this.goapName = "Poison Table";
         actionIconString = GoapActionStateDB.Hostile_Icon;
         //_isStealthAction = true;
+        SetIsStealth(true);
     }
 
     #region Overrides

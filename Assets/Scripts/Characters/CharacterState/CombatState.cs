@@ -130,7 +130,7 @@ public class CombatState : CharacterState {
 
                 //stateComponent.character.CancelAllJobsAndPlans();
                 //stateComponent.character.PlanIdleReturnHome(true);
-
+                stateComponent.character.defaultCharacterTrait.SetHasSurvivedApprehension(true);
                 return;
             }
 

@@ -51,7 +51,9 @@ public class Thief : Trait {
                         bool canBeTransfered = false;
                         if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null
                             && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
-                            canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
+                            if (currentJob.assignedCharacter != characterThatWillDoJob) {
+                                canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
+                            }
                         } else {
                             canBeTransfered = true;
                         }

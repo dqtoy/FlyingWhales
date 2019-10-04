@@ -343,7 +343,7 @@ public class CharacterInfoUI : UIMenu {
         } else {
             visitorLocationPortrait.SetLocation(_activeCharacter.specificLocation.region);
         }
-        residentLocationPortrait.SetLocation(_activeCharacter.homeArea.region);
+        residentLocationPortrait.SetLocation(_activeCharacter.homeRegion);
     }
     #endregion
 

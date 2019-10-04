@@ -520,7 +520,7 @@ public class Region {
     //        SpawnBasicEvent(characterThatArrived);
     //    }
     //}
-    private void JobBasedEventGeneration(Character character) {
+    public void JobBasedEventGeneration(Character character) {
         //only trigger event generation if there is no active event and the character that arrived is not a minion
         if (activeEvent == null && character.minion == null) {
             if (character.stateComponent.currentState is MoveOutState) {
@@ -528,9 +528,10 @@ public class Region {
                 if (effects != null) {
                     SpawnEventThatCanProvideEffectFor(effects, character);
                 }
-            } else {
-                throw new System.Exception(GameManager.Instance.TodayLogString() + character.name + " has arrived at " + this.name + " but is not in Move Out State!");
             }
+            //else {
+            //    throw new System.Exception(GameManager.Instance.TodayLogString() + character.name + " has arrived at " + this.name + " but is not in Move Out State!");
+            //}
         }
     }
     #endregion
@@ -554,7 +555,6 @@ public class Region {
             charactersAtLocation.Add(character);
             if(area == null) {
                 character.SetRegionLocation(this);
-                JobBasedEventGeneration(character);
                 Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
             } else {
                 character.ownParty.SetSpecificLocation(area);
@@ -573,6 +573,7 @@ public class Region {
                 }
                 if (character.currentStructure != null) {
                     character.currentStructure.RemoveCharacterAtLocation(character);
+
                 }
                 Messenger.Broadcast(Signals.CHARACTER_EXITED_AREA, area, character);
             }

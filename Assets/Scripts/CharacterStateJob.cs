@@ -15,6 +15,10 @@ public class CharacterStateJob : JobQueueItem {
         this.targetArea = targetArea;
         onUnassignActions = new List<System.Action<Character>>();
     }
+    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state) : base(jobType) {
+        this.targetState = state;
+        onUnassignActions = new List<System.Action<Character>>();
+    }
     public CharacterStateJob(SaveDataCharacterStateJob data) : base(data) {
         targetState = data.targetState;
         if(data.targetAreaID != -1) {
