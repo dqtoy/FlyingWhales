@@ -13,7 +13,7 @@ public class RegionFeature  {
     /// <summary>
     /// If this feature is an Active type, This executes any effects it may have.
     /// </summary>
-    public virtual void Activate() { }
+    public virtual void Activate(Region region) { }
     #endregion
 
 }

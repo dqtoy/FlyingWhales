@@ -228,8 +228,17 @@ public class BaseLandmark {
         //Constant features
         switch (specificLandmarkType) {
             case LANDMARK_TYPE.BARRACKS:
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Experience_Feature));
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Fortified_Feature));
+                break;
             case LANDMARK_TYPE.MAGE_TOWER:
                 tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Experience_Feature));
+                break;
+            case LANDMARK_TYPE.TEMPLE:
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Warded_Feature));
+                break;
+            case LANDMARK_TYPE.MONSTER_LAIR:
+                tileLocation.region.AddFeature(LandmarkManager.Instance.CreateRegionFeature(RegionFeatureDB.Dangerous_Feature));
                 break;
         }
     }

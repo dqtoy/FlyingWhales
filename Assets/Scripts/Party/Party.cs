@@ -164,6 +164,27 @@ public class Party {
                 character.marker.visualsParent.eulerAngles = Vector3.zero;
                 character.marker.transform.eulerAngles = Vector3.zero;
                 character.marker.nameLbl.gameObject.SetActive(false);
+
+                Plagued targetPlagued = character.GetNormalTrait("Plagued") as Plagued;
+                if (targetPlagued != null) {
+                    string plaguedSummary = owner.name + " carried a plagued character. Rolling for infection.";
+                    int roll = UnityEngine.Random.Range(0, 100);
+                    plaguedSummary += "\nRoll is: " + roll.ToString() + ", Chance is: " + targetPlagued.GetCarryInfectChance().ToString();
+                    if (roll < targetPlagued.GetCarryInfectChance()) {
+                        //carrier will be infected with plague
+                        plaguedSummary += "\nWill infect " + owner.name + " with plague!";
+                        if (owner.AddTrait("Plagued", character)) {
+                            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
+                            log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                            log.AddLogToInvolvedObjects();
+                        }
+                    }
+                    Debug.Log(GameManager.Instance.TodayLogString() + plaguedSummary);
+                }
+
+                
+
                 //character.marker.PlayIdle();
             }
             Messenger.Broadcast(Signals.CHARACTER_JOINED_PARTY, character, this);

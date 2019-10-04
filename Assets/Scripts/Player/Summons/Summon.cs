@@ -64,7 +64,7 @@ public class Summon : Character, IWorldObject {
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
         ResetToFullHP();
     }
-    public override void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null) {
+    public override void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if (!_isDead) {
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
@@ -137,9 +137,24 @@ public class Summon : Character, IWorldObject {
             CancelAllJobsAndPlans();
 
             //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
-            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
-            log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            AddHistory(log);
+            Log deathLog;
+            if (_deathLog == null) {
+                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+                deathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                if (responsibleCharacter != null) {
+                    deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                }
+                if (deathLogFillers != null) {
+                    for (int i = 0; i < deathLogFillers.Length; i++) {
+                        deathLog.AddToFillers(deathLogFillers[i]);
+                    }
+                }
+                //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
+                AddHistory(deathLog);
+                PlayerManager.Instance.player.ShowNotification(deathLog);
+            } else {
+                deathLog = _deathLog;
+            }
         }
     }
     protected override void PerTickGoapPlanGeneration() {

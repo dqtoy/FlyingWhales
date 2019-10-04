@@ -109,9 +109,25 @@ public class CharacterStateComponent {
         newState.EnterState();
         return newState;
     }
+    /// <summary>
+    /// Load a Character State given save data. 
+    /// NOTE: This will also make the character enter the loaded state.
+    /// </summary>
+    /// <param name="saveData">Save data to load.</param>
+    /// <returns>The state that was loaded.</returns>
+    public CharacterState LoadState(SaveDataCharacterState saveData) {
+        CharacterState loadedState = CreateNewState(saveData.characterState);
+        loadedState.Load(saveData);
+        loadedState.EnterState();
+        return loadedState;
+    }
 
-    //This ends the current state
-    //This is triggered when the timer is out, or the character simply wants to end its state and go back to normal state
+    /// <summary>
+    /// This ends the current state.
+    /// This is triggered when the timer is out, or the character simply wants to end its state and go back to normal state.
+    /// </summary>
+    /// <param name="state">The state to be exited.</param>
+    /// <param name="stopMovement">Should this character stop his/her current movement when exiting his/her current state?/param>
     public void ExitCurrentState(CharacterState state, bool stopMovement = true) {
         if (currentState == null) {
             throw new System.Exception(character.name + " is trying to exit his/her current state but it is null, Passed state is " + state?.stateName);

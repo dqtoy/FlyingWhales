@@ -905,8 +905,8 @@ public class CharacterMarker : PooledObject {
         transform.localPosition = localPos;
         Rotate(lookAt, true);
     }
-    public void OnDeath(LocationGridTile deathTileLocation) {
-        if (character.race == RACE.SKELETON || character is Summon || character.minion != null) {
+    public void OnDeath(LocationGridTile deathTileLocation, bool isOutsideSettlement = false) {
+        if (character.race == RACE.SKELETON || character is Summon || character.minion != null || isOutsideSettlement) {
             character.DestroyMarker();
         } else {
             for (int i = 0; i < colliders.Length; i++) {
@@ -980,7 +980,9 @@ public class CharacterMarker : PooledObject {
     private IEnumerator QuickShowHPBarCoroutine() {
         ShowHPBar();
         yield return new WaitForSeconds(1f);
-        HideHPBar();
+        if (!(character.stateComponent.currentState is CombatState)) {
+            HideHPBar();
+        }
     }
     #endregion
 

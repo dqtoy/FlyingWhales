@@ -39,6 +39,9 @@ public class TheEyeUI : MonoBehaviour {
     public void HideTheEyeUI() {
         gameObject.SetActive(false);
     }
+    public void UpdateTheEyeUI() {
+        UpdateWorldEventButtonStates();
+    }
     private void UpdateWorldEventButtonStates() {
         if (!this.gameObject.activeSelf) {
             return;

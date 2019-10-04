@@ -12,8 +12,8 @@ public class MentorFeature : RegionFeature {
     }
 
     #region Overrides
-    public override void Activate() {
-        base.Activate();
+    public override void Activate(Region region) {
+        base.Activate(region);
         
     }
     #endregion

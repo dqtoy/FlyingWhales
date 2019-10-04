@@ -151,9 +151,8 @@ public class Puke : GoapAction {
             goapPlan.ConstructAllNodes();
 
             goapAction.CreateStates();
-            character.SetCurrentAction(goapAction);
-            character.currentAction.SetEndAction(ResumeLastAction);
-            character.currentAction.DoAction();
+            goapAction.SetEndAction(ResumeLastAction);
+            goapAction.DoAction();
         } else if (character.stateComponent.currentState != null) {
             pausedState = character.stateComponent.currentState;
             character.stateComponent.currentState.PauseState();
@@ -167,10 +166,9 @@ public class Puke : GoapAction {
             goapPlan.ConstructAllNodes();
 
             goapAction.CreateStates();
-            character.SetCurrentAction(goapAction);
-            character.currentAction.SetEndAction(ResumePausedState);
-            character.currentAction.DoAction();
-        } else {
+            goapAction.SetEndAction(ResumePausedState);
+            goapAction.DoAction();
+        } else if (character.stateComponent.currentState == null && character.currentAction == null) {
             GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, character, character);
 
             GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
@@ -180,8 +178,7 @@ public class Puke : GoapAction {
             goapPlan.ConstructAllNodes();
 
             goapAction.CreateStates();
-            character.SetCurrentAction(goapAction);
-            character.currentAction.DoAction();
+            goapAction.DoAction();
         }
     }
 

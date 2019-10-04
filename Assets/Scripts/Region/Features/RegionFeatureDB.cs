@@ -12,4 +12,7 @@ public static class RegionFeatureDB {
     public static string Experience_Feature = "ExperienceFeature";
     public static string Hallowed_Ground_Feature = "HallowedGroundFeature";
     public static string Mentor_Feature = "MentorFeature";
+    public static string Warded_Feature = "WardedFeature";
+    public static string Fortified_Feature = "FortifiedFeature";
+    public static string Dangerous_Feature = "DangerousFeature";
 }

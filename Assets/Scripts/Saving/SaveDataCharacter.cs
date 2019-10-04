@@ -265,7 +265,7 @@ public class SaveDataCharacter {
 
         hasCurrentState = character.stateComponent.currentState != null && character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT && character.stateComponent.currentState.job == null;
         if (hasCurrentState) {
-            currentState = new SaveDataCharacterState();
+            currentState = SaveUtilities.CreateCharacterStateSaveDataInstance(character.stateComponent.currentState);
             currentState.Save(character.stateComponent.currentState);
         }
 
@@ -366,6 +366,10 @@ public class SaveDataCharacter {
         }
     }
 
+    /// <summary>
+    /// Load the characters current state. NOTE: This should only load states that are not combat and are not part of jobs.
+    /// </summary>
+    /// <param name="character"></param>
     public void LoadCharacterCurrentState(Character character) {
         if (hasCurrentState) {
             Character targetCharacter = null;
@@ -376,7 +380,6 @@ public class SaveDataCharacter {
             if (currentState.targetAreaID != -1) {
                 targetArea = LandmarkManager.Instance.GetAreaByID(currentState.targetAreaID);
             }
-
             CharacterState loadedState = character.stateComponent.SwitchToState(currentState.characterState, targetCharacter, targetArea, currentState.duration, currentState.level);
             loadedState.SetCurrentDuration(currentState.currentDuration);
             loadedState.SetIsUnending(currentState.isUnending);
@@ -392,20 +395,20 @@ public class SaveDataCharacter {
             JobQueueItem job = jobs[i].Load();
             character.jobQueue.AddJobInQueue(job, false);
 
-            if (jobs[i] is SaveDataCharacterStateJob) {
-                SaveDataCharacterStateJob dataStateJob = jobs[i] as SaveDataCharacterStateJob;
-                CharacterStateJob stateJob = job as CharacterStateJob;
-                if (dataStateJob.assignedCharacterID != -1) {
-                    Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
-                    stateJob.SetAssignedCharacter(assignedCharacter);
-                    CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
-                    if (newState != null) {
-                        stateJob.SetAssignedState(newState);
-                    } else {
-                        throw new System.Exception(assignedCharacter.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
-                    }
-                }
-            }
+            //if (jobs[i] is SaveDataCharacterStateJob) {
+            //    SaveDataCharacterStateJob dataStateJob = jobs[i] as SaveDataCharacterStateJob;
+            //    CharacterStateJob stateJob = job as CharacterStateJob;
+            //    if (dataStateJob.assignedCharacterID != -1) {
+            //        Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(dataStateJob.assignedCharacterID);
+            //        stateJob.SetAssignedCharacter(assignedCharacter);
+            //        CharacterState newState = assignedCharacter.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
+            //        if (newState != null) {
+            //            stateJob.SetAssignedState(newState);
+            //        } else {
+            //            throw new System.Exception(assignedCharacter.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
+            //        }
+            //    }
+            //}
         }
     }
 

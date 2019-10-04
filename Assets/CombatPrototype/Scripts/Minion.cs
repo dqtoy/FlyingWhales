@@ -15,6 +15,7 @@ public class Minion {
     public DeadlySin deadlySin { get { return CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName); } }
     public bool isAssigned { get { return assignedRegion != null; } } //true if minion is already assigned somewhere else, maybe in construction or research spells
     public List<INTERVENTION_ABILITY> interventionAbilitiesToResearch { get; private set; } //This is a list not array because the abilities here are consumable
+    public int spellExtractionCount { get; private set; } //the number of times a spell was extracted from this minion.
 
     private string _assignedDeadlySinName;
 
@@ -45,6 +46,7 @@ public class Minion {
         character.SetMinion(this);
         character.ownParty.icon.SetVisualState(true);
         _assignedDeadlySinName = character.characterClass.className;
+        spellExtractionCount = data.spellExtractionCount;
     }
     //public void SetEnabledState(bool state) {
     //    if (character.IsInOwnParty()) {
@@ -99,7 +101,7 @@ public class Minion {
     public void SetIndexDefaultSort(int index) {
         indexDefaultSort = index;
     }
-    public void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null) {
+    public void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if (!character.isDead) {
             Area deathLocation = character.ownParty.specificLocation;
             LocationStructure deathStructure = character.currentStructure;
@@ -129,6 +131,12 @@ public class Minion {
             //clear traits that need to be removed
             character.traitsNeededToBeRemoved.Clear();
 
+            bool wasOutsideSettlement = false;
+            if (character.currentLandmark != null) {
+                wasOutsideSettlement = true;
+                character.currentLandmark.tileLocation.region.RemoveCharacterFromLocation(this.character);
+            }
+
             if (!character.IsInOwnParty()) {
                 character.currentParty.RemoveCharacter(character);
             }
@@ -146,7 +154,7 @@ public class Minion {
 
             character.RemoveAllNonPersistentTraits();
 
-            character.marker?.OnDeath(deathTile);
+            character.marker?.OnDeath(deathTile, wasOutsideSettlement);
             character.SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);
@@ -158,10 +166,25 @@ public class Minion {
             StopInvasionProtocol();
 
             //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " died of " + cause);
-            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
-            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            character.AddHistory(log);
-            //character.specificLocation.AddHistory(log);
+            Log deathLog;
+            if (_deathLog == null) {
+                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+                deathLog.AddToFillers(this, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                if (responsibleCharacter != null) {
+                    deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                }
+                if (deathLogFillers != null) {
+                    for (int i = 0; i < deathLogFillers.Length; i++) {
+                        deathLog.AddToFillers(deathLogFillers[i]);
+                    }
+                }
+                //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
+                character.AddHistory(deathLog);
+                PlayerManager.Instance.player.ShowNotification(deathLog);
+            } else {
+                deathLog = _deathLog;
+            }
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Minion Died: " +  Utilities.LogReplacer(deathLog), null);
         }
     }
 
@@ -395,6 +418,9 @@ public class Minion {
     }
     private void SetBusyReason(Log log) {
         busyReasonLog = log;
+    }
+    public void AdjustSpellExtractionCount(int amount) {
+        spellExtractionCount += amount;
     }
     #endregion
 }

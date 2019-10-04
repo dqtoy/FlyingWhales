@@ -28,12 +28,16 @@ public class TheSpire : BaseLandmark {
         //UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Intervention Ability: " + Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString()), () => PlayerManager.Instance.player.GainNewInterventionAbility(ability, true));
         PlayerManager.Instance.player.GainNewInterventionAbility(ability, true);
         PlayerManager.Instance.player.AdjustMana(-PlayerManager.Instance.player.GetManaCostForInterventionAbility(ability));
-        tileLocation.region.assignedMinion.SetAssignedRegion(null);
+        Minion assignedMinion = tileLocation.region.assignedMinion;
+        assignedMinion.AdjustSpellExtractionCount(1);
+        assignedMinion.SetAssignedRegion(null);
         tileLocation.region.SetAssignedMinion(null);
         Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
 
         //Start Cooldown
         StartCooldown();
+
+        CheckForMinionDeath(assignedMinion, ability);
     }
     private void StartCooldown() {
         currentCooldownTick = 0;
@@ -49,41 +53,34 @@ public class TheSpire : BaseLandmark {
     private void StopCooldown() {
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickCooldown);
         Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
-    }
+    }  
 
-   
-    //public void StartResearchNewInterventionAbility(INTERVENTION_ABILITY interventionAbility, int currentResearchTick) {
-    //    interventionAbilityToResearch = interventionAbility;
-    //    if (interventionAbilityToResearch != INTERVENTION_ABILITY.NONE) {
-    //        researchDuration = PlayerManager.Instance.allInterventionAbilitiesData[interventionAbilityToResearch].durationInTicks;
-    //    } else {
-    //        researchDuration = 0;
-    //    }
-    //    this.currentResearchTick = currentResearchTick;
-    //    TimerHubUI.Instance.AddItem("Research for " + Utilities.NormalizeStringUpperCaseFirstLetters(interventionAbilityToResearch.ToString()), researchDuration - currentResearchTick, null);
-    //    Messenger.AddListener(Signals.TICK_STARTED, PerTickInterventionAbility);
-    //}
-    //private void PerTickInterventionAbility() {
-    //    currentResearchTick++;
-    //    if (currentResearchTick >= researchDuration) {
-    //        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInterventionAbility);
-    //        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Intervention Ability: " + Utilities.NormalizeStringUpperCaseFirstLetters(interventionAbilityToResearch.ToString()), () => PlayerManager.Instance.player.GainNewInterventionAbility(interventionAbilityToResearch, true));
-    //        tileLocation.region.assignedMinion.RemoveInterventionAbilityToResearch(interventionAbilityToResearch);
-    //        StopResearch();
-    //    }
-    //}
-    //private void StopResearch() {
-    //    interventionAbilityToResearch = INTERVENTION_ABILITY.NONE;
-    //    currentResearchTick = 0;
-    //    researchDuration = 0;
-    //    tileLocation.region.assignedMinion.SetAssignedRegion(null);
-    //    tileLocation.region.SetAssignedMinion(null);
-    //    Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
-    //}
-
-    public override void DestroyLandmark() {
-        base.DestroyLandmark();
-        //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInterventionAbility);
+    private void CheckForMinionDeath(Minion minion, INTERVENTION_ABILITY ability) {
+        //first extraction: 0% chance to die
+        //second extraction: 10 % chance to die
+        //third and future extractions: depends on the Spell's tier level. Tier 1: 35%, Tier 2: 25%, Tier 3: 15%
+        string summary = minion.character.name + " will roll for death after extraction. Extraction count is: " + minion.spellExtractionCount.ToString();
+        int deathChance = 0;
+        if (minion.spellExtractionCount == 2) {
+            deathChance = 10;
+        } else if (minion.spellExtractionCount >= 3) {
+            int tier = PlayerManager.Instance.GetInterventionAbilityTier(ability);
+            if (tier == 1) {
+                deathChance = 35;
+            } else if (tier == 2) {
+                deathChance = 25;
+            } else {
+                deathChance = 15;
+            }
+        }
+        int roll = Random.Range(0, 100);
+        summary += "\nDeath Chance is: " + deathChance.ToString();
+        summary += "\nRoll is: " + roll.ToString();
+        if (roll < deathChance) {
+            summary += minion.character.name + " died.";
+            minion.Death("SpellExtraction");
+        }
+        Debug.Log(GameManager.Instance.TodayLogString() + summary);
     }
 }
 

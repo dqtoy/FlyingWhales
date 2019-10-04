@@ -381,7 +381,6 @@ public class Region {
     public void InvadeActions() {
         mainLandmark?.ChangeLandmarkType(LANDMARK_TYPE.NONE);
         ActivateRegionFeatures();
-        //ObtainWorldObject();
         ExecuteEventAfterInvasion();
         ExecuteOtherAfterInvasionActions();
     }
@@ -475,7 +474,7 @@ public class Region {
         for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
             Character currCharacter = eventData.involvedCharacters[i];
             //make characters involved in the event, go home
-            if (currCharacter.minion == null) {
+            if (currCharacter.minion == null && !currCharacter.isDead && currCharacter.stateComponent.currentState is MoveOutState) {
                 (currCharacter.stateComponent.currentState as MoveOutState).GoHome();
             }
         }
@@ -802,7 +801,7 @@ public class Region {
         for (int i = 0; i < regionFeatures.Count; i++) {
             RegionFeature f = regionFeatures[i];
             if (f.type == REGION_FEATURE_TYPE.ACTIVE) {
-                f.Activate();
+                f.Activate(this);
                 if (f.isRemovedOnActivation) {
                     RemoveFeature(f);
                 }
