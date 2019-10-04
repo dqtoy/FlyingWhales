@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PatrolState : CharacterState {
+    private int _planDuration;
 
     public PatrolState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Patrol State";
@@ -51,15 +52,15 @@ public class PatrolState : CharacterState {
                 OnExitThisState();
                 return;
             }
-            if (currentDuration >= 4) {
-                currentDuration = 0;
+            if (_planDuration >= 4) {
+                _planDuration = 0;
                 if (!stateComponent.character.PlanFullnessRecoveryActions(true)) {
                     if (!stateComponent.character.PlanTirednessRecoveryActions(true)) {
                         stateComponent.character.PlanHappinessRecoveryActions(true);
                     }
                 }
             } else {
-                currentDuration++;
+                _planDuration++;
             }
         }
     }
