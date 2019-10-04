@@ -24,6 +24,7 @@ public class Region {
     public Faction owner { get; private set; }
     public Faction previousOwner { get; private set; }
     public List<Faction> factionsHere { get; private set; }
+    public List<Character> residents { get; private set; }
 
     private List<HexTile> outerTiles;
     private List<SpriteRenderer> borderSprites;
@@ -61,6 +62,7 @@ public class Region {
         otherAfterInvasionActions = new List<System.Action>();
         factionsHere = new List<Faction>();
         features = new List<RegionFeature>();
+        residents = new List<Character>();
     }
     public Region(HexTile coreTile) : this() {
         id = Utilities.SetID(this);
@@ -576,6 +578,55 @@ public class Region {
                 Messenger.Broadcast(Signals.CHARACTER_EXITED_AREA, area, character);
             }
         }
+    }
+    public void RemoveCharacterFromLocation(Party party) {
+        RemoveCharacterFromLocation(party.owner);
+    }
+    public bool IsResident(Character character) {
+        return residents.Contains(character);
+    }
+    public bool AddResident(Character character, Dwelling chosenHome = null, bool ignoreCapacity = true) {
+        if (!residents.Contains(character)) {
+            if (!ignoreCapacity) {
+                if (area != null && area.IsResidentsFull()) {
+                    Debug.LogWarning(GameManager.Instance.TodayLogString() + "Cannot add " + character.name + " as resident of " + this.name + " because residency is already full!");
+                    return false; //area is at capacity
+                }
+            }
+            if (!CanCharacterBeAddedAsResidentBasedOnFaction(character)) {
+                character.PrintLogIfActive(GameManager.Instance.TodayLogString() + character.name + " tried to become a resident of " + name + " but their factions conflicted");
+                return false;
+            }
+            character.SetHome(this);
+            residents.Add(character);
+#if !WORLD_CREATION_TOOL
+            if(area != null) {
+               area.AssignCharacterToDwellingInArea(character, chosenHome);
+            }
+#endif
+            return true;
+        }
+        return false;
+    }
+    public void RemoveResident(Character character) {
+        if (residents.Remove(character)) {
+            character.SetHome(null);
+            if (area != null && character.homeStructure != null && character.homeStructure.location == area) {
+                character.homeStructure.RemoveResident(character);
+            }
+            //CheckForUnoccupancy();
+            //Messenger.Broadcast(Signals.AREA_RESIDENT_REMOVED, this, character);
+        }
+    }
+    private bool CanCharacterBeAddedAsResidentBasedOnFaction(Character character) {
+        if (owner != null && character.faction != null) {
+            //If character's faction is hostile with region's ruling faction, character cannot be a resident
+            return !owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, character.faction);
+        } else if (owner != null && character.faction == null) {
+            //If character has no faction and region has faction, character cannot be a resident
+            return false;
+        }
+        return true;
     }
     public bool HasAnyCharacterOfType(params CHARACTER_ROLE[] roleTypes) {
         for (int i = 0; i < charactersAtLocation.Count; i++) {

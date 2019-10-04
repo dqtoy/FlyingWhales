@@ -121,7 +121,7 @@ public class Paralyzed : Trait {
         return false;
     }
     private bool CreateFeedJob() {
-        if (!character.HasJobTargettingThis(JOB_TYPE.FEED) && !character.HasJobTargettingThis(JOB_TYPE.DROP) && character.specificLocation.IsResident(character)) {
+        if (!character.HasJobTargettingThis(JOB_TYPE.FEED) && !character.HasJobTargettingThis(JOB_TYPE.DROP) && character.specificLocation.region.IsResident(character)) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = character };
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);
@@ -168,7 +168,7 @@ public class Paralyzed : Trait {
         return false;
     }
     private bool CreateDaydreamOrPrayJob() {
-        if (character.specificLocation.IsResident(character)) {
+        if (character.specificLocation.region.IsResident(character)) {
             int chance = UnityEngine.Random.Range(0, 2);
             if (chance == 0) {
                 return CreatePrayJob();

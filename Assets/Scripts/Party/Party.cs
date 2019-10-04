@@ -221,12 +221,12 @@ public class Party {
     public void SetPartyName(string name) {
         _partyName = name;
     }
-    public void GoToLocation(Area targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
+    public void GoToLocation(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
         Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
         if (_icon.isTravelling && _icon.travelLine != null) {
             return;
         }
-        if (specificLocation == targetLocation) {
+        if (specificLocation.region == targetLocation) {
             //action doer is already at the target location
             if (doneAction != null) {
                 doneAction();
@@ -237,7 +237,7 @@ public class Party {
             owner.marker.GoTo(exitTile, () => MoveToAnotherArea(targetLocation, pathfindingMode, targetStructure, doneAction, actionOnStartOfMovement, targetPOI, targetTile));
         }
     }
-    private void MoveToAnotherArea(Area targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
+    private void MoveToAnotherArea(Region targetLocation, PATHFINDING_MODE pathfindingMode, LocationStructure targetStructure = null,
         Action doneAction = null, Action actionOnStartOfMovement = null, IPointOfInterest targetPOI = null, LocationGridTile targetTile = null) {
         _icon.SetTarget(targetLocation, targetStructure, targetPOI, targetTile);
         _icon.StartPath(PATHFINDING_MODE.PASSABLE, doneAction, actionOnStartOfMovement);

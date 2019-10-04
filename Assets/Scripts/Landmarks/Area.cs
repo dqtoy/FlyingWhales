@@ -9,7 +9,6 @@ public class Area {
     public int id { get; private set; }
     //public bool isDead { get; private set; }
     public AREA_TYPE areaType { get; private set; }
-    public List<Character> areaResidents { get; private set; }
     public Region region { get; private set; }
     public JobQueue jobQueue { get; private set; }
     public LocationStructure prison { get; private set; }
@@ -42,7 +41,7 @@ public class Area {
 
     #region getters
     public List<Character> visitors {
-        get { return charactersAtLocation.Where(x => !areaResidents.Contains(x)).ToList(); }
+        get { return charactersAtLocation.Where(x => !region.residents.Contains(x)).ToList(); }
     }
     public int suppliesInBank {
         get {
@@ -98,7 +97,6 @@ public class Area {
         this.region = region;
         id = Utilities.SetID(this);
         this.citizenCount = citizenCount;
-        areaResidents = new List<Character>();
         //charactersAtLocation = new List<Character>();
         //defaultRace = new Race(RACE.HUMANS, RACE_SUB_TYPE.NORMAL);
         itemsInArea = new List<SpecialToken>();
@@ -110,7 +108,6 @@ public class Area {
     }
     public Area(AreaSaveData data) {
         id = Utilities.SetID(this, data.areaID);
-        areaResidents = new List<Character>();
         //charactersAtLocation = new List<Character>();
         SetAreaType(data.areaType);
         itemsInArea = new List<SpecialToken>();
@@ -134,8 +131,6 @@ public class Area {
         region = GridMap.Instance.GetRegionByID(saveDataArea.regionID);
         id = Utilities.SetID(this, saveDataArea.id);
         citizenCount = saveDataArea.citizenCount;
-
-        areaResidents = new List<Character>();
         //charactersAtLocation = new List<Character>();
         itemsInArea = new List<SpecialToken>();
         structures = new Dictionary<STRUCTURE_TYPE, List<LocationStructure>>();
@@ -443,40 +438,6 @@ public class Area {
     #endregion
 
     #region Characters
-    public bool IsResident(Character character) {
-        return areaResidents.Contains(character);
-    }
-    public bool AddResident(Character character, Dwelling chosenHome = null, bool ignoreCapacity = true) {
-        if (!areaResidents.Contains(character)) {
-            if (!ignoreCapacity) {
-                if (IsResidentsFull()) {
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + "Cannot add " + character.name + " as resident of " + this.name + " because residency is already full!");
-                    return false; //area is at capacity
-                }
-            }
-            if (!CanCharacterBeAddedAsResidentBasedOnFaction(character)) {
-                character.PrintLogIfActive(GameManager.Instance.TodayLogString() + character.name + " tried to become a resident of " + name + " but their factions conflicted");
-                return false;
-            }
-            character.SetHome(this);
-            areaResidents.Add(character);
-#if !WORLD_CREATION_TOOL
-            AssignCharacterToDwellingInArea(character, chosenHome);
-#endif
-            return true;
-        }
-        return false;
-    }
-    private bool CanCharacterBeAddedAsResidentBasedOnFaction(Character character) {
-        if (region.owner != null && character.faction != null) {
-            //If character's faction is hostile with region's ruling faction, character cannot be a resident
-            return !region.owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, character.faction);
-        }else if (region.owner != null && character.faction == null) {
-            //If character has no faction and region has faction, character cannot be a resident
-            return false;
-        }
-        return true;
-    }
     public void AssignCharacterToDwellingInArea(Character character, Dwelling dwellingOverride = null) {
         if (character.faction != FactionManager.Instance.neutralFaction && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name);
@@ -492,7 +453,7 @@ public class Area {
                 chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player area will all share the same dwelling
             } else {
                 Character lover = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.LOVER);
-                if (lover != null && lover.faction.id == character.faction.id && areaResidents.Contains(lover)) { //check if the character has a lover that lives in the area
+                if (lover != null && lover.faction.id == character.faction.id && region.residents.Contains(lover)) { //check if the character has a lover that lives in the area
                     chosenDwelling = lover.homeStructure;
                 }
             }
@@ -512,16 +473,6 @@ public class Area {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find a dwelling for " + character.name + " at " + this.name);
         }
         character.MigrateHomeStructureTo(chosenDwelling);
-    }
-    public void RemoveResident(Character character) {
-        if (areaResidents.Remove(character)) {
-            character.SetHome(null);
-            if (character.homeArea != null) {
-                character.homeStructure.RemoveResident(character);
-            }
-            //CheckForUnoccupancy();
-            //Messenger.Broadcast(Signals.AREA_RESIDENT_REMOVED, this, character);
-        }
     }
     //private void CheckForUnoccupancy() {
     //    //whenever an owned area loses a resident, check if the area still has any residents that are part of the owner faction
@@ -577,9 +528,6 @@ public class Area {
     }
     public void RemoveCharacterFromLocation(Party party) {
         RemoveCharacterFromLocation(party.owner);
-        //for (int i = 0; i < party.characters.Count; i++) {
-        //    RemoveCharacterFromLocation(party.characters[i]);
-        //}
     }
     public bool IsResidentsFull() {
         if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerArea.id == this.id) {
@@ -626,63 +574,63 @@ public class Area {
     }
     #endregion
 
-    #region Attack
-    public List<Character> FormCombatCharacters() {
-        List<Character> residentsAtArea = new List<Character>();
-        CombatGrid combatGrid = new CombatGrid();
-        combatGrid.Initialize();
-        for (int i = 0; i < areaResidents.Count; i++) {
-            Character resident = areaResidents[i];
-            if (resident.isIdle && !resident.isLeader
-                && !resident.characterClass.isNonCombatant
-                && !resident.isDefender && resident.specificLocation.id == id && resident.currentStructure.isInside) {
-                if ((owner != null && resident.faction == owner) || (owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
-                    residentsAtArea.Add(resident);
-                }
-            }
-        }
-        List<int> frontlineIndexes = new List<int>();
-        List<int> backlineIndexes = new List<int>();
-        for (int i = 0; i < residentsAtArea.Count; i++) {
-            if (residentsAtArea[i].characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
-                frontlineIndexes.Add(i);
-            } else {
-                backlineIndexes.Add(i);
-            }
-        }
-        if (frontlineIndexes.Count > 0) {
-            for (int i = 0; i < frontlineIndexes.Count; i++) {
-                if (combatGrid.IsPositionFull(COMBAT_POSITION.FRONTLINE)) {
-                    break;
-                } else {
-                    combatGrid.AssignCharacterToGrid(residentsAtArea[frontlineIndexes[i]]);
-                    frontlineIndexes.RemoveAt(i);
-                    i--;
-                }
-            }
-        }
-        if (backlineIndexes.Count > 0) {
-            for (int i = 0; i < backlineIndexes.Count; i++) {
-                if (combatGrid.IsPositionFull(COMBAT_POSITION.BACKLINE)) {
-                    break;
-                } else {
-                    combatGrid.AssignCharacterToGrid(residentsAtArea[backlineIndexes[i]]);
-                    backlineIndexes.RemoveAt(i);
-                    i--;
-                }
-            }
-        }
-        List<Character> attackCharacters = new List<Character>();
-        for (int i = 0; i < combatGrid.slots.Length; i++) {
-            if (combatGrid.slots[i].isOccupied) {
-                if (!attackCharacters.Contains(combatGrid.slots[i].character)) {
-                    attackCharacters.Add(combatGrid.slots[i].character);
-                }
-            }
-        }
-        return attackCharacters;
-    }
-    #endregion
+    //#region Attack
+    //public List<Character> FormCombatCharacters() {
+    //    List<Character> residentsAtArea = new List<Character>();
+    //    CombatGrid combatGrid = new CombatGrid();
+    //    combatGrid.Initialize();
+    //    for (int i = 0; i < residents.Count; i++) {
+    //        Character resident = residents[i];
+    //        if (resident.isIdle && !resident.isLeader
+    //            && !resident.characterClass.isNonCombatant
+    //            && !resident.isDefender && resident.specificLocation.id == id && resident.currentStructure.isInside) {
+    //            if ((owner != null && resident.faction == owner) || (owner == null && resident.faction == FactionManager.Instance.neutralFaction)) {
+    //                residentsAtArea.Add(resident);
+    //            }
+    //        }
+    //    }
+    //    List<int> frontlineIndexes = new List<int>();
+    //    List<int> backlineIndexes = new List<int>();
+    //    for (int i = 0; i < residentsAtArea.Count; i++) {
+    //        if (residentsAtArea[i].characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
+    //            frontlineIndexes.Add(i);
+    //        } else {
+    //            backlineIndexes.Add(i);
+    //        }
+    //    }
+    //    if (frontlineIndexes.Count > 0) {
+    //        for (int i = 0; i < frontlineIndexes.Count; i++) {
+    //            if (combatGrid.IsPositionFull(COMBAT_POSITION.FRONTLINE)) {
+    //                break;
+    //            } else {
+    //                combatGrid.AssignCharacterToGrid(residentsAtArea[frontlineIndexes[i]]);
+    //                frontlineIndexes.RemoveAt(i);
+    //                i--;
+    //            }
+    //        }
+    //    }
+    //    if (backlineIndexes.Count > 0) {
+    //        for (int i = 0; i < backlineIndexes.Count; i++) {
+    //            if (combatGrid.IsPositionFull(COMBAT_POSITION.BACKLINE)) {
+    //                break;
+    //            } else {
+    //                combatGrid.AssignCharacterToGrid(residentsAtArea[backlineIndexes[i]]);
+    //                backlineIndexes.RemoveAt(i);
+    //                i--;
+    //            }
+    //        }
+    //    }
+    //    List<Character> attackCharacters = new List<Character>();
+    //    for (int i = 0; i < combatGrid.slots.Length; i++) {
+    //        if (combatGrid.slots[i].isOccupied) {
+    //            if (!attackCharacters.Contains(combatGrid.slots[i].character)) {
+    //                attackCharacters.Add(combatGrid.slots[i].character);
+    //            }
+    //        }
+    //    }
+    //    return attackCharacters;
+    //}
+    //#endregion
 
     #region Special Tokens
     public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
@@ -1230,7 +1178,7 @@ public class Area {
 
     #region Hero Event Jobs
     private int maxHeroEventJobs {
-        get { return areaResidents.Count / 5; } //There should be at most 1 Move Out Job per 5 residents
+        get { return region.residents.Count / 5; } //There should be at most 1 Move Out Job per 5 residents
     }
     private int currentHeroEventJobs {
         get { return jobQueue.GetNumberOfJobsWith(IsJobTypeAHeroEventJob); }

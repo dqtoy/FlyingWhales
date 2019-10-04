@@ -70,7 +70,7 @@ public class POITestingUI : MonoBehaviour {
         if (poi is Character) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN, INTERACTION_TYPE.STEAL_FROM_CHARACTER, poi);
             job.SetCannotOverrideJob(true);
-            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a character!");
         }
@@ -79,7 +79,7 @@ public class POITestingUI : MonoBehaviour {
     public void DrinkBlood() {
         if (poi is Character) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HUNGER_RECOVERY_STARVING, INTERACTION_TYPE.DRINK_BLOOD, poi);
-            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a character!");
         }
@@ -88,7 +88,7 @@ public class POITestingUI : MonoBehaviour {
     public void Feed() {
         if (poi is Character) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HUNGER_RECOVERY_STARVING, INTERACTION_TYPE.FEED, poi);
-            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a character!");
         }
@@ -100,7 +100,7 @@ public class POITestingUI : MonoBehaviour {
     public void PoisonTable() {
         if (poi is Table) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, INTERACTION_TYPE.TABLE_POISON, poi);
-            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a table!");
         }
@@ -110,7 +110,7 @@ public class POITestingUI : MonoBehaviour {
         if (poi is Table) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HUNGER_RECOVERY_STARVING, INTERACTION_TYPE.EAT_AT_TABLE, poi);
             job.SetCannotOverrideJob(true);
-            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a table!");
         }
@@ -119,7 +119,7 @@ public class POITestingUI : MonoBehaviour {
     public void Sleep() {
         if (poi is Bed) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TIREDNESS_RECOVERY, INTERACTION_TYPE.SLEEP, poi);
-            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job, false);
+            UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
             Debug.LogError(poi.name + " is not a bed!");
         }

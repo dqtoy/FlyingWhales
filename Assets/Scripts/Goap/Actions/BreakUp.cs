@@ -42,7 +42,9 @@ public class BreakUp : GoapAction {
             //if the relationship that was removed is lover, change home to a random unoccupied dwelling,
             //otherwise, no home. Reference: https://trello.com/c/JUSt9bEa/1938-broken-up-characters-should-live-in-separate-house
             actor.MigrateHomeStructureTo(null);
-            actor.homeArea.AssignCharacterToDwellingInArea(actor);
+            if(actor.homeArea != null) {
+                actor.homeArea.AssignCharacterToDwellingInArea(actor);
+            }
         } else {
             //**Effect 2**: Actor - Remove Paramour relationship with Character 2
             CharacterManager.Instance.RemoveRelationshipBetween(actor, target, RELATIONSHIP_TRAIT.PARAMOUR);

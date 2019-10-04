@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Charmed : Trait {
     public Faction originalFaction { get; private set; }
-    public Area originalHome { get; private set; }
+    public Region originalHome { get; private set; }
 
-    public Charmed(Faction originalFaction, Area originalHome) {
+    public Charmed(Faction originalFaction, Region originalHome) {
         name = "Charmed";
         this.originalFaction = originalFaction;
         this.originalHome = originalHome;

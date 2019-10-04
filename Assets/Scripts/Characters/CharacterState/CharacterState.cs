@@ -171,7 +171,7 @@ public class CharacterState {
             //SchedulingManager.Instance.AddEntry(dueDate, () => GoToLocation(targetArea));
             CreateTravellingThoughtBubbleLog(targetArea);
             stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Travelling to " + targetArea.name + " before entering " + stateName + " for " + stateComponent.character.name);
-            stateComponent.character.currentParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => StartState());
+            stateComponent.character.currentParty.GoToLocation(targetArea.region, PATHFINDING_MODE.NORMAL, null, () => StartState());
         }
         //if(characterState == CHARACTER_STATE.EXPLORE) {
         //    //There is a special case for explore state, character must travel to a dungeon-type area first

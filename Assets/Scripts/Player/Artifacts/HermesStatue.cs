@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class HermesStatue : Artifact {
 
-    private Area chosenArea;
+    private Region chosenRegion;
     private int uses;
     public int currentUses { get; private set; }
 
@@ -29,12 +29,12 @@ public class HermesStatue : Artifact {
     #region Overrides
     public override void OnInspect(Character inspectedBy, out Log result) {
         base.OnInspect(inspectedBy, out result);
-        List<Area> choices = new List<Area>(LandmarkManager.Instance.allNonPlayerAreas.Where(x => !x.coreTile.isCorrupted));
-        choices.Remove(inspectedBy.specificLocation);
+        List<Region> choices = GridMap.Instance.allRegions.Where(x => !x.coreTile.isCorrupted).ToList();
+        choices.Remove(inspectedBy.specificLocation.region);
         if (choices.Count > 0 && currentUses < uses) {
-            chosenArea = choices[Random.Range(0, choices.Count)];
+            chosenRegion = choices[Random.Range(0, choices.Count)];
             inspectedBy.currentAction.SetEndAction(OnInspectActionDone);
-            result.AddToFillers(chosenArea, chosenArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            result.AddToFillers(chosenRegion, chosenRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         } else {
             Debug.LogWarning(inspectedBy.name + " inspected an hermes statue, but there were no more settlements to teleport to. Statue is useless.");
         }
@@ -52,11 +52,11 @@ public class HermesStatue : Artifact {
     private void OnInspectActionDone(string result, GoapAction action) {
         action.actor.GoapActionResult(result, action);
         //Characters that inspect this will be teleported to a different settlement. If no other settlement exists, this will be useless.
-        action.actor.ChangeFactionTo(chosenArea.owner);
-        action.actor.MigrateHomeTo(chosenArea);
+        action.actor.ChangeFactionTo(chosenRegion.owner);
+        action.actor.MigrateHomeTo(chosenRegion);
         action.actor.specificLocation.RemoveCharacterFromLocation(action.actor);
         action.actor.DestroyMarker();
-        chosenArea.AddCharacterToLocation(action.actor);
+        chosenRegion.AddCharacterToLocation(action.actor);
         action.actor.UnsubscribeSignals();
         action.actor.ClearAllAwareness(); //so teleported character won't revisit old area.
         //remove character from other character's awareness

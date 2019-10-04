@@ -61,7 +61,7 @@ namespace worldcreator {
             HexTile chosenTile = choices[Random.Range(0, choices.Count)];
             //_character.SetHome(chosenTile.areaOfTile);
             if (chosenTile.areaOfTile != null) {
-                _character.MigrateHomeTo(chosenTile.areaOfTile);
+                _character.MigrateHomeTo(chosenTile.region);
                 //chosenTile.areaOfTile.AddResident(_character, true);
             }
             //BaseLandmark chosenLandmark = choices[Random.Range(0, choices.Count)];

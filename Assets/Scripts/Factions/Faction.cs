@@ -445,7 +445,7 @@ public class Faction {
     }
     public void GenerateStartingCitizens(int leaderLevel, int citizensLevel) {
         Character leader = CharacterManager.Instance.CreateNewCharacter(CharacterRole.LEADER, initialLeaderClass, initialLeaderRace, initialLeaderGender,
-                    this, mainRegion.area);
+                    this, mainRegion);
         leader.LevelUp(leaderLevel - 1);
         SetLeader(leader);
         //Debug.Log(GameManager.Instance.TodayLogString() + "LEADER Generated Lvl. " + leader.level.ToString() +
@@ -463,27 +463,27 @@ public class Faction {
             //**4 Human Soldiers**
             for (int i = 0; i < soldierCount; i++) {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
-                    this, mainRegion.area);
+                    this, mainRegion);
                 createdCharacter.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
             }
             //**3 Human Adventurers**
             for (int i = 0; i < adventurerCount; i++) {
                 Character adventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.HUMANS, Utilities.GetRandomGender(),
-                    this, mainRegion.area);
+                    this, mainRegion);
                 adventurer.LevelUp(citizensLevel - 1);
             }
             //**3 Human Civilians**
             for (int i = 0; i < civilianCount; i++) {
                 Character civilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.HUMANS, Utilities.GetRandomGender(),
-                    this, mainRegion.area);
+                    this, mainRegion);
                 civilian.LevelUp(citizensLevel - 1);
             }
         } else if (name == "Orelia") {
             //Female Elf Queen  with **3 Elven Soldiers** each as her servants
             for (int i = 0; i < 3; i++) {
                 Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
-                    this, mainRegion.area);
+                    this, mainRegion);
                 createdCharacter.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
             }
@@ -491,21 +491,21 @@ public class Faction {
             //**2 Elven Nobles**
             for (int i = 0; i < 2; i++) {
                 Character noble = CharacterManager.Instance.CreateNewCharacter(CharacterRole.NOBLE, RACE.ELVES, Utilities.GetRandomGender(),
-                    this, mainRegion.area);
+                    this, mainRegion);
                 noble.LevelUp(citizensLevel - 1);
             }
 
             //**2 Elven Adventurer**
             for (int i = 0; i < 2; i++) {
                 Character elvenAdventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.ELVES, Utilities.GetRandomGender(),
-                   this, mainRegion.area);
+                   this, mainRegion);
                 elvenAdventurer.LevelUp(citizensLevel - 1);
             }
 
             //**1 Elven Civilian**
             for (int i = 0; i < 1; i++) {
                 Character elvenCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.ELVES, Utilities.GetRandomGender(),
-                   this, mainRegion.area);
+                   this, mainRegion);
                 elvenCivilian.LevelUp(citizensLevel - 1);
             }
 
@@ -513,13 +513,13 @@ public class Faction {
             //Male Human Necromancer with **2 Skeleton Soldiers** and **1 Goblin Soldier** as his Servants
             for (int i = 0; i < 2; i++) {
                 Character skeletonSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SKELETON, Utilities.GetRandomGender(),
-                    this, mainRegion.area);
+                    this, mainRegion);
                 skeletonSoldier.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, skeletonSoldier, RELATIONSHIP_TRAIT.SERVANT);
 
                 if (i == 0) {
                     Character goblinSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
-                   this, mainRegion.area);
+                   this, mainRegion);
                     goblinSoldier.LevelUp(citizensLevel - 1);
                     //CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
                 }
@@ -528,7 +528,7 @@ public class Faction {
             //Male Goblin Bandit Boss with **4 Goblin Soldiers** as Servants
             for (int i = 0; i < 4; i++) {
                 Character goblinSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
-                    this, mainRegion.area);
+                    this, mainRegion);
                 goblinSoldier.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, goblinSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
@@ -536,12 +536,12 @@ public class Faction {
             //**1 Goblin Noble** with **3 Goblin Soldiers** as servants
             for (int i = 0; i < 1; i++) {
                 Character noble = CharacterManager.Instance.CreateNewCharacter(CharacterRole.NOBLE, RACE.GOBLIN, Utilities.GetRandomGender(),
-                    this, mainRegion.area);
+                    this, mainRegion);
                 noble.LevelUp(citizensLevel - 1);
 
                 for (int j = 0; j < 3; j++) {
                     Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.GOBLIN, Utilities.GetRandomGender(),
-                   this, mainRegion.area);
+                   this, mainRegion);
                     createdCharacter.LevelUp(citizensLevel - 1);
                     //CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
                 }
@@ -550,14 +550,14 @@ public class Faction {
             //**3 Goblin Civilians**
             for (int i = 0; i < 3; i++) {
                 Character goblinCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.GOBLIN, Utilities.GetRandomGender(),
-                           this, mainRegion.area);
+                           this, mainRegion);
                 goblinCivilian.LevelUp(citizensLevel - 1);
             }
         } else if (name == "Caeven") {
             //Male Faery Tempest with **3 Faery Soldiers** as servants
             for (int i = 0; i < 3; i++) {
                 Character faerySoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.FAERY, Utilities.GetRandomGender(),
-                    this, mainRegion.area);
+                    this, mainRegion);
                 faerySoldier.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, faerySoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
@@ -567,19 +567,19 @@ public class Faction {
             for (int i = 0; i < 2; i++) {
                 if (i < 1) {
                     Character faeryAdventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.FAERY, Utilities.GetRandomGender(),
-                           this, mainRegion.area);
+                           this, mainRegion);
                     faeryAdventurer.LevelUp(citizensLevel - 1);
                 }
 
                 Character faeryCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.FAERY, Utilities.GetRandomGender(),
-                           this, mainRegion.area);
+                           this, mainRegion);
                 faeryCivilian.LevelUp(citizensLevel - 1);
             }
         } else if (name == "Lucareth") {
             //Female Faery Witch with **3 Spider Soldiers**
             for (int i = 0; i < 3; i++) {
                 Character spiderSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SPIDER, Utilities.GetRandomGender(),
-                    this, mainRegion.area);
+                    this, mainRegion);
                 spiderSoldier.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, spiderSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
@@ -587,12 +587,12 @@ public class Faction {
             //**3 Faery Nobles** with **3 Spider Soldiers** each as their servants
             for (int i = 0; i < 3; i++) {
                 Character noble = CharacterManager.Instance.CreateNewCharacter(CharacterRole.NOBLE, RACE.FAERY, Utilities.GetRandomGender(),
-                    this, mainRegion.area);
+                    this, mainRegion);
                 noble.LevelUp(citizensLevel - 1);
 
                 for (int j = 0; j < 3; j++) {
                     Character createdCharacter = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.SPIDER, Utilities.GetRandomGender(),
-                   this, mainRegion.area);
+                   this, mainRegion);
                     createdCharacter.LevelUp(citizensLevel - 1);
                     //CharacterManager.Instance.CreateNewRelationshipBetween(noble, createdCharacter, RELATIONSHIP_TRAIT.SERVANT);
                 }
@@ -602,23 +602,23 @@ public class Faction {
             //**4 Faery Civilians**
             for (int i = 0; i < 4; i++) {
                 Character faeryAdventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.FAERY, Utilities.GetRandomGender(),
-                           this, mainRegion.area);
+                           this, mainRegion);
                 faeryAdventurer.LevelUp(citizensLevel - 1);
 
                 Character faeryCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.FAERY, Utilities.GetRandomGender(),
-                           this, mainRegion.area);
+                           this, mainRegion);
                 faeryCivilian.LevelUp(citizensLevel - 1);
             }
         } else if (name == "Magus") {
             //Male Elf Archmage with **1 Elf Soldier** and **1 Human Soldier** as Servants
             for (int i = 0; i < 1; i++) {
                 Character elfSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.ELVES, Utilities.GetRandomGender(),
-                    this, mainRegion.area);
+                    this, mainRegion);
                 elfSoldier.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, elfSoldier, RELATIONSHIP_TRAIT.SERVANT);
 
                 Character humanSoldier = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, RACE.HUMANS, Utilities.GetRandomGender(),
-                   this, mainRegion.area);
+                   this, mainRegion);
                 humanSoldier.LevelUp(citizensLevel - 1);
                 //CharacterManager.Instance.CreateNewRelationshipBetween(leader, humanSoldier, RELATIONSHIP_TRAIT.SERVANT);
             }
@@ -627,19 +627,19 @@ public class Faction {
             //**2 Human Civilians** and **2 Elven Civilians**
             for (int i = 0; i < 2; i++) {
                 Character humanAdventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.HUMANS, Utilities.GetRandomGender(),
-                           this, mainRegion.area);
+                           this, mainRegion);
                 humanAdventurer.LevelUp(citizensLevel - 1);
 
                 Character elfAdventurer = CharacterManager.Instance.CreateNewCharacter(CharacterRole.ADVENTURER, RACE.ELVES, Utilities.GetRandomGender(),
-                           this, mainRegion.area);
+                           this, mainRegion);
                 elfAdventurer.LevelUp(citizensLevel - 1);
 
                 Character humanCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.HUMANS, Utilities.GetRandomGender(),
-                           this, mainRegion.area);
+                           this, mainRegion);
                 humanCivilian.LevelUp(citizensLevel - 1);
 
                 Character elfCivilian = CharacterManager.Instance.CreateNewCharacter(CharacterRole.CIVILIAN, RACE.ELVES, Utilities.GetRandomGender(),
-                           this, mainRegion.area);
+                           this, mainRegion);
                 elfCivilian.LevelUp(citizensLevel - 1);
             }
         }
@@ -648,7 +648,7 @@ public class Faction {
         for (int i = 0; i < citizenCount; i++) {
             if (i == 0) {
                 //leader
-                Character leader = CharacterManager.Instance.CreateNewCharacter(CharacterRole.LEADER, initialLeaderClass, race, initialLeaderGender, this, mainRegion.area);
+                Character leader = CharacterManager.Instance.CreateNewCharacter(CharacterRole.LEADER, initialLeaderClass, race, initialLeaderGender, this, mainRegion);
                 leader.LevelUp(leaderLevel - 1);
                 SetLeader(leader);
             } else {
@@ -658,7 +658,7 @@ public class Faction {
                 roleChoices.AddElement(CharacterRole.SOLDIER, 35);
 
                 //citizens
-                Character citizen = CharacterManager.Instance.CreateNewCharacter(roleChoices.PickRandomElementGivenWeights(), race, Utilities.GetRandomGender(), this, mainRegion.area);
+                Character citizen = CharacterManager.Instance.CreateNewCharacter(roleChoices.PickRandomElementGivenWeights(), race, Utilities.GetRandomGender(), this, mainRegion);
                 citizen.LevelUp(citizensLevel - 1);
             }
         }

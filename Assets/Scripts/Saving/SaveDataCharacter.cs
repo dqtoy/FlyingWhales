@@ -133,8 +133,8 @@ public class SaveDataCharacter {
         } else {
             factionID = -1;
         }
-        if (character.homeArea != null) {
-            homeID = character.homeArea.id;
+        if (character.homeRegion != null) {
+            homeID = character.homeRegion.id;
         } else {
             homeID = -1;
         }

@@ -442,7 +442,7 @@ public class FactionManager : MonoBehaviour {
         }
         return null;
     }
-    public void TransferCharacter(Character character, Faction faction, Area newHome) {
+    public void TransferCharacter(Character character, Faction faction, Region newHome) {
         if (character.faction != null) {
             character.faction.LeaveFaction(character);
         }

@@ -183,8 +183,8 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
         for (int i = 0; i < arrangedAreas.Count; i++) {
-            for (int j = 0; j < arrangedAreas[i].areaResidents.Count; j++) {
-                Character character = arrangedAreas[i].areaResidents[j];
+            for (int j = 0; j < arrangedAreas[i].region.residents.Count; j++) {
+                Character character = arrangedAreas[i].region.residents[j];
                 int leaderLevel = initialLeaderLevel * (i + 1);
                 if (character.role.roleType == CHARACTER_ROLE.LEADER) {
                     character.SetLevel(leaderLevel);

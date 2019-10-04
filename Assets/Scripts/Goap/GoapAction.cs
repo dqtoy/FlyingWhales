@@ -374,7 +374,7 @@ public class GoapAction {
             if (_stayInArea) {
                 actor.PerformGoapAction();
             } else {
-                actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, OnArriveAtTargetLocation, null, poiTarget, targetTile);
+                actor.currentParty.GoToLocation(targetStructure.location.region, PATHFINDING_MODE.NORMAL, targetStructure, OnArriveAtTargetLocation, null, poiTarget, targetTile);
             }
         } else {
             //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
@@ -906,7 +906,7 @@ public class GoapAction {
             return false;
         }
         if (parentPlan != null && parentPlan.job != null
-                && reacting.homeArea.jobQueue.jobsInQueue.Contains(parentPlan.job)) {
+                && reacting.homeArea != null && reacting.homeArea.jobQueue.jobsInQueue.Contains(parentPlan.job)) {
             return false;
         }
         return reacting.faction == actor.faction && committedCrime != CRIME.NONE;
@@ -962,8 +962,6 @@ public class GoapAction {
         return false;
     }
     #endregion
-
-
 }
 
 public struct GoapEffect {
@@ -986,6 +984,8 @@ public struct GoapEffect {
             return (conditionKey as Character).name;
         } else if (conditionKey is Area) {
             return (conditionKey as Area).name;
+        } else if (conditionKey is Region) {
+            return (conditionKey as Region).name;
         } else if (conditionKey is SpecialToken) {
             return (conditionKey as SpecialToken).name;
         } else if (conditionKey is IPointOfInterest) {
@@ -1002,6 +1002,8 @@ public struct GoapEffect {
             return (conditionKey as Character).id.ToString();
         } else if (conditionKey is Area) {
             return (conditionKey as Area).id.ToString();
+        } else if (conditionKey is Region) {
+            return (conditionKey as Region).id.ToString();
         } else if (conditionKey is SpecialToken) {
             return (conditionKey as SpecialToken).id.ToString();
         } else if (conditionKey is IPointOfInterest) {
@@ -1018,6 +1020,8 @@ public struct GoapEffect {
             return "character";
         } else if (conditionKey is Area) {
             return "area";
+        } else if (conditionKey is Region) {
+            return "region";
         } else if (conditionKey is SpecialToken) {
             return "item";
         } else if (conditionKey is IPointOfInterest) {
@@ -1110,6 +1114,8 @@ public class SaveDataGoapEffect {
                 tempEffect.conditionKey = CharacterManager.Instance.GetCharacterByID(int.Parse(conditionKey));
             } else if (conditionKey == "area") {
                 tempEffect.conditionKey = LandmarkManager.Instance.GetAreaByID(int.Parse(conditionKey));
+            } else if (conditionKey == "region") {
+                tempEffect.conditionKey = GridMap.Instance.GetRegionByID(int.Parse(conditionKey));
             } else if (conditionKey == "item") {
                 tempEffect.conditionKey = TokenManager.Instance.GetSpecialTokenByID(int.Parse(conditionKey));
             } else if (conditionKey == "poi") {

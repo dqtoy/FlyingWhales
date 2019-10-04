@@ -203,7 +203,7 @@ public class ConsoleMenu : UIMenu {
         string text = area.name + "'s info:";
         text += "\n<b>Owner:</b> " + area.owner?.name ?? "None";
         //text += "\n<b>Race:</b> " + area.raceType.ToString();
-        text += "\n<b>Residents:</b> " + area.areaResidents.Count + "/" + area.residentCapacity;
+        text += "\n<b>Residents:</b> " + area.region.residents.Count + "/" + area.residentCapacity;
         if (area.structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
             for (int i = 0; i < area.structures[STRUCTURE_TYPE.DWELLING].Count; i++) {
                 Dwelling dwelling = area.structures[STRUCTURE_TYPE.DWELLING][i] as Dwelling;
@@ -525,7 +525,7 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        List<Character> characters = new List<Character>(area.areaResidents);
+        List<Character> characters = new List<Character>(area.region.residents);
         for (int i = 0; i < characters.Count; i++) {
             characters[i].Death();
         }

@@ -95,7 +95,7 @@ public class AreaInfoUI : UIMenu {
         //Messenger.AddListener<Area, Character>(Signals.AREA_RESIDENT_ADDED, OnAreaResidentAdded);
         //Messenger.AddListener<Area, Character>(Signals.AREA_RESIDENT_REMOVED, OnAreaResidentRemoved);
         Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
-        Messenger.AddListener<Character, Area, Area>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
+        Messenger.AddListener<Character, Region, Region>(Signals.CHARACTER_MIGRATED_HOME, OnCharacterMigratedHome);
         Messenger.AddListener<Area, SpecialToken>(Signals.ITEM_ADDED_TO_AREA, OnItemAddedToArea);
         Messenger.AddListener<Area, SpecialToken>(Signals.ITEM_REMOVED_FROM_AREA, OnItemRemovedFromArea);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
@@ -275,8 +275,8 @@ public class AreaInfoUI : UIMenu {
             }
         }
 
-        for (int i = 0; i < activeArea.areaResidents.Count; i++) {
-            Character resident = activeArea.areaResidents[i];
+        for (int i = 0; i < activeArea.region.residents.Count; i++) {
+            Character resident = activeArea.region.residents[i];
             if (!charactersToShow.Contains(resident)) {
                 charactersToShow.Add(resident);
             }
@@ -333,7 +333,7 @@ public class AreaInfoUI : UIMenu {
         if (isShowing && activeTile != null && activeArea == area) {
             //for (int i = 0; i < character.characters.Count; i++) {
             //    Character currCharacter = character.characters[i];
-                if (!activeArea.areaResidents.Contains(character)) {
+                if (!activeArea.region.residents.Contains(character)) {
                     DestroyItemOfCharacter(character);
                 }
             //}
@@ -405,9 +405,9 @@ public class AreaInfoUI : UIMenu {
             DestroyItemOfCharacter(character);
         }
     }
-    private void OnCharacterMigratedHome(Character character, Area previousHome, Area newHome) {
+    private void OnCharacterMigratedHome(Character character, Region previousHome, Region newHome) {
         if (this.isShowing) {
-            if ((previousHome != null && previousHome.id == activeTile.id) || newHome.id == activeTile.id) {
+            if ((previousHome != null && previousHome.coreTile.id == activeTile.id) || newHome.coreTile.id == activeTile.id) {
                 UpdateCharacters();
             }
         }
