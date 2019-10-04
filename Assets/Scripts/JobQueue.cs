@@ -126,6 +126,11 @@ public class JobQueue {
             for (int i = 0; i < jobsInQueue.Count; i++) {
                 JobQueueItem job = jobsInQueue[i];
                 if(!AssignCharacterToJob(job, characterToDoJob)) {
+                    if(!isAreaOrQuestJobQueue && !job.CanCharacterTakeThisJob(characterToDoJob)) {
+                        //If it is a personal job, and it cannot be done by this character, remove it from queue
+                        RemoveJobInQueue(job);
+                        i--;
+                    }
                     continue;
                 } else {
                     return true;
