@@ -19,7 +19,7 @@ public class StrollState : CharacterState {
     }
     protected override void PerTickInState() {
         base.PerTickInState();
-        if (!isDone && !isPaused && !isUnending) {
+        if (!isDone && !isPaused) {
             if (_planDuration >= 4) {
                 _planDuration = 0;
                 if (!stateComponent.character.PlanFullnessRecoveryActions(true)) {

@@ -177,6 +177,27 @@ public class ChatCharacter : GoapAction {
             chatResult = "Argument"; //For Trailer Only
         }
 #endif
+
+        //Log chatLog = new Log(GameManager.Instance.Today(), "GoapAction", "ChatCharacter", chatResult.ToLower(), this);
+        //chatLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //chatLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        ////chatLog.AddLogToInvolvedObjects();
+        //currentState.OverrideDescriptionLog(chatLog);
+
+        //if (!PlayerManager.Instance.player.ShowNotificationFrom(actor, chatLog)) {
+        //    PlayerManager.Instance.player.ShowNotificationFrom(targetCharacter, chatLog);
+        //}
+
+        weights.LogDictionaryValues("Chat Weights of " + actor.name + " and " + targetCharacter.name);
+        //Debug.Log(actor.name + " and " + targetCharacter.name + "'s chat result is " + chatResult);
+
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddTicks(2);
+        SchedulingManager.Instance.AddEntry(dueDate, () => actor.EndChatCharacter(), actor);
+        SchedulingManager.Instance.AddEntry(dueDate, () => targetCharacter.EndChatCharacter(), targetCharacter);
+
+        SetState(chatResult);
+
         if (chatResult == "Become Friends") {
             //may become friends
             CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.FRIEND);
@@ -201,26 +222,6 @@ public class ChatCharacter : GoapAction {
             //Log: "[Character Name 1] and [Character Name 2] have developed an affair!"
             CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR);
         }
-
-        //Log chatLog = new Log(GameManager.Instance.Today(), "GoapAction", "ChatCharacter", chatResult.ToLower(), this);
-        //chatLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //chatLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        ////chatLog.AddLogToInvolvedObjects();
-        //currentState.OverrideDescriptionLog(chatLog);
-
-        //if (!PlayerManager.Instance.player.ShowNotificationFrom(actor, chatLog)) {
-        //    PlayerManager.Instance.player.ShowNotificationFrom(targetCharacter, chatLog);
-        //}
-
-        weights.LogDictionaryValues("Chat Weights of " + actor.name + " and " + targetCharacter.name);
-        //Debug.Log(actor.name + " and " + targetCharacter.name + "'s chat result is " + chatResult);
-
-        GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddTicks(2);
-        SchedulingManager.Instance.AddEntry(dueDate, () => actor.EndChatCharacter(), actor);
-        SchedulingManager.Instance.AddEntry(dueDate, () => targetCharacter.EndChatCharacter(), targetCharacter);
-
-        SetState(chatResult);
 
         Plagued actorPlagued = actor.GetNormalTrait("Plagued") as Plagued;
         Plagued targetPlagued = poiTarget.GetNormalTrait("Plagued") as Plagued;

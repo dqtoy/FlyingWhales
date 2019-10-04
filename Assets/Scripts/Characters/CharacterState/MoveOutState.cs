@@ -46,10 +46,16 @@ public class MoveOutState : CharacterState {
     //}
     protected override void OnJobSet() {
         base.OnJobSet();
-        if (stateComponent.character.specificLocation == stateComponent.character.homeArea) {
+        Region currRegion = stateComponent.character.currentRegion;
+        if(currRegion == null) {
+            currRegion = stateComponent.character.specificLocation.region;
+        }
+        if (currRegion.area != null) {
             //if the character is still at his/her home area, go to the nearest edge tile
             LocationGridTile nearestEdgeTile = stateComponent.character.GetNearestUnoccupiedEdgeTileFromThis();
             stateComponent.character.marker.GoTo(nearestEdgeTile, OnArriveAtNearestEdgeTile);
+        } else {
+            OnArriveAtNearestEdgeTile();
         }
     }
     public override void OnExitThisState() {
@@ -59,8 +65,15 @@ public class MoveOutState : CharacterState {
         }
         stateComponent.character.SetPOIState(POI_STATE.ACTIVE);
         stateComponent.character.ownParty.icon.SetIsTravellingOutside(false);
-        if (!stateComponent.character.marker.gameObject.activeSelf) {
-            stateComponent.character.marker.PlaceMarkerAt(stateComponent.character.homeArea.GetRandomUnoccupiedEdgeTile());
+
+        Region currRegion = stateComponent.character.currentRegion;
+        if (currRegion == null) {
+            currRegion = stateComponent.character.specificLocation.region;
+        }
+        if (currRegion.area != null) {
+            if (!stateComponent.character.marker.gameObject.activeSelf) {
+                stateComponent.character.marker.PlaceMarkerAt(currRegion.area.GetRandomUnoccupiedEdgeTile());
+            }
         }
         stateComponent.character.AdjustDoNotDisturb(-1);
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
@@ -80,7 +93,7 @@ public class MoveOutState : CharacterState {
         if (hasSceduledArriveAtRandomRegion) {
             return;
         }
-        if (GetValidRegionsToDoJob(stateComponent.character).Count == 0) {
+        if (GetRegionToDoJob(stateComponent.character) == null) {
             job.jobQueueParent.CancelJob(job, "no valid regions", false);
             return;
         }
@@ -106,13 +119,13 @@ public class MoveOutState : CharacterState {
 
     private Region chosenRegion;
     private void ArriveAtRegion() {
-        List<Region> choices = GetValidRegionsToDoJob(stateComponent.character);
-        if (choices.Count > 0) {
+        chosenRegion = GetRegionToDoJob(stateComponent.character);
+        if (chosenRegion != null) {
             stateComponent.character.ownParty.icon.SetIsTravellingOutside(false);
-            chosenRegion = choices[Random.Range(0, choices.Count)];
+            //chosenRegion = choices[Random.Range(0, choices.Count)];
             stateComponent.character.specificLocation.RemoveCharacterFromLocation(stateComponent.character);
-            OnArriveAtRegion();
             chosenRegion.AddCharacterToLocation(stateComponent.character);
+            OnArriveAtRegion();
         } else {
             job.jobQueueParent.CancelJob(job, "no valid regions", false);
         }
@@ -120,16 +133,30 @@ public class MoveOutState : CharacterState {
 
     public string goHomeSchedID { get; private set; }
     private void OnArriveAtRegion() {
-        //schedule go home
-        GameDate dueDate = GameManager.Instance.Today();
-        dueDate = dueDate.AddTicks(3 * GameManager.ticksPerHour);
-        goHomeSchedID = SchedulingManager.Instance.AddEntry(dueDate, GoHome, this);
-        Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "arrived_region");
-        log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(chosenRegion, chosenRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-        log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
-        thoughtBubbleLog = log;
+        if(job.jobType == JOB_TYPE.RETURN_HOME) {
+            //Show log
+            Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "arrive_home");
+            log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(stateComponent.character.homeRegion, stateComponent.character.homeRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddLogToInvolvedObjects();
+            PlayerManager.Instance.player.ShowNotification(log);
+            thoughtBubbleLog = log;
+
+            OnExitThisState();
+        } else {
+            //schedule go home
+            GameDate dueDate = GameManager.Instance.Today();
+            dueDate = dueDate.AddTicks(3 * GameManager.ticksPerHour);
+            goHomeSchedID = SchedulingManager.Instance.AddEntry(dueDate, GoHome, this);
+            Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "arrived_region");
+            log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(chosenRegion, chosenRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+            log.AddLogToInvolvedObjects();
+            PlayerManager.Instance.player.ShowNotification(log);
+            thoughtBubbleLog = log;
+
+            chosenRegion.JobBasedEventGeneration(stateComponent.character);
+        }
     }
 
     public void GoHome() {
@@ -143,7 +170,7 @@ public class MoveOutState : CharacterState {
         //Show log
         Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "going_home");
         log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(stateComponent.character.homeArea, stateComponent.character.homeArea.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddToFillers(stateComponent.character.homeRegion, stateComponent.character.homeRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
         thoughtBubbleLog = log;
@@ -157,7 +184,7 @@ public class MoveOutState : CharacterState {
         //Show log
         Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "arrive_home");
         log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(stateComponent.character.homeArea, stateComponent.character.homeArea.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddToFillers(stateComponent.character.homeRegion, stateComponent.character.homeRegion.name, LOG_IDENTIFIER.LANDMARK_1);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
         thoughtBubbleLog = log;
@@ -184,7 +211,17 @@ public class MoveOutState : CharacterState {
     //public override string ToString() {
     //    return "Move Out State by " + stateComponent.character.name;
     //}
-
+    private Region GetRegionToDoJob(Character character) {
+        if(job.jobType == JOB_TYPE.RETURN_HOME) {
+            return character.homeRegion;
+        } else {
+            List<Region> regionPool = GetValidRegionsToDoJob(character);
+            if(regionPool.Count > 0) {
+                return regionPool[Random.Range(0, regionPool.Count)];
+            }
+        }
+        return null;
+    }
     private List<Region> GetValidRegionsToDoJob(Character character) {
         if (job == null) {
             throw new System.Exception(GameManager.Instance.TodayLogString() + character.name + " is checking for valid regions to do job but his/her job is null.");
@@ -202,28 +239,34 @@ public class MoveOutState : CharacterState {
         if (job.jobType.ProducesWorldEvent()) {
             choices = GridMap.Instance.allRegions.Where(x =>
                 x.activeEvent == null &&
-                x.coreTile.areaOfTile != stateComponent.character.homeArea &&
+                x != stateComponent.character.homeRegion &&
                 validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType) &&
                 StoryEventsManager.Instance.GetEventsThatCanProvideEffects(x, character, job.jobType.GetAllowedEventEffects()).Count > 0
             ).ToList();
         } else {
-            if (job.jobType == JOB_TYPE.RETURN_HOME) { //TODO: Find a way to make getting valid regions per job type prettier.
-                if (!LandmarkManager.Instance.TryGetUncorruptedRegionsExcept(out choices)) {
-                    //there are no uncorrupted regions
-                    choices = GridMap.Instance.allRegions.Where(x =>
-                       x.coreTile.areaOfTile != stateComponent.character.homeArea &&
-                       validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType)
-                    ).ToList();
-                }
-                
-            } else {
-                choices = GridMap.Instance.allRegions.Where(x =>
-                   x.coreTile.areaOfTile != stateComponent.character.homeArea &&
-                   validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType) 
-                ).ToList();
-            }
-            
+            choices = GridMap.Instance.allRegions.Where(x =>
+               x != stateComponent.character.homeRegion &&
+               validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType)
+            ).ToList();
         }
+        //else {
+        //    if (job.jobType == JOB_TYPE.RETURN_HOME) { //TODO: Find a way to make getting valid regions per job type prettier.
+        //        if (!LandmarkManager.Instance.TryGetUncorruptedRegionsExcept(out choices)) {
+        //            //there are no uncorrupted regions
+        //            choices = GridMap.Instance.allRegions.Where(x =>
+        //               x.coreTile.areaOfTile != stateComponent.character.homeArea &&
+        //               validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType)
+        //            ).ToList();
+        //        }
+
+        //    } else {
+        //        choices = GridMap.Instance.allRegions.Where(x =>
+        //           x.coreTile.areaOfTile != stateComponent.character.homeArea &&
+        //           validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType) 
+        //        ).ToList();
+        //    }
+
+        //}
         return choices;
     }
 }
