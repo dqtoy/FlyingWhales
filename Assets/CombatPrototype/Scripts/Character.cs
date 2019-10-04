@@ -3071,9 +3071,9 @@ public class Character : ILeader, IPointOfInterest {
         //if(relationshipsWithTarget == null) { return true; }
         switch (type) {
             case RELATIONSHIP_TRAIT.ENEMY:
-                return relationshipsWithTarget == null || (relationshipsWithTarget != null && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)); //check that the target character is not already this characters enemy and that this character is also not his friend or his lover
+                return relationshipsWithTarget == null || (!relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)); //check that the target character is not already this characters enemy and that this character is also not his friend or his lover
             case RELATIONSHIP_TRAIT.FRIEND:
-                return relationshipsWithTarget == null || (relationshipsWithTarget != null && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY)); //check that the target character is not already this characters friend and that this character is also not his enemy
+                return relationshipsWithTarget == null || (!relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY)); //check that the target character is not already this characters friend and that this character is also not his enemy
             case RELATIONSHIP_TRAIT.LOVER:
                 //- **Lover:** Positive, Permanent (Can only have 1)
                 //check if this character already has a lover and that the target character is not his/her paramour
