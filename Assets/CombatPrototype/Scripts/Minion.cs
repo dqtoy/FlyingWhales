@@ -132,9 +132,9 @@ public class Minion {
             character.traitsNeededToBeRemoved.Clear();
 
             bool wasOutsideSettlement = false;
-            if (character.currentLandmark != null) {
+            if (character.currentRegion != null) {
                 wasOutsideSettlement = true;
-                character.currentLandmark.tileLocation.region.RemoveCharacterFromLocation(this.character);
+                character.currentRegion.RemoveCharacterFromLocation(this.character);
             }
 
             if (!character.IsInOwnParty()) {

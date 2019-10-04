@@ -338,8 +338,8 @@ public class CharacterInfoUI : UIMenu {
 
     #region Location
     private void UpdateLocationInfo() {
-        if (_activeCharacter.currentLandmark != null) {
-            visitorLocationPortrait.SetLocation(_activeCharacter.currentLandmark.tileLocation.region);
+        if (_activeCharacter.currentRegion != null) {
+            visitorLocationPortrait.SetLocation(_activeCharacter.currentRegion);
         } else {
             visitorLocationPortrait.SetLocation(_activeCharacter.specificLocation.region);
         }

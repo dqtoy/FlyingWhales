@@ -199,7 +199,7 @@ public class InviteToMakeLove : GoapAction {
         if (target.returnedToLife) { //do not woo characters that have been raised from the dead
             return false;
         }
-        if (target.currentParty.icon.isTravellingOutside || target.currentLandmark != null) {
+        if (target.currentParty.icon.isTravellingOutside || target.currentRegion != null) {
             return false; //target is outside the map
         }
         if (!(actor is SeducerSummon)) { //ignore relationships if succubus

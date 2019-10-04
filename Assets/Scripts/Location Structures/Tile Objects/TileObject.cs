@@ -40,7 +40,6 @@ public class TileObject : IPointOfInterest {
     public TileObjectSlotItem[] slots { get; protected set; } //for users
     private GameObject slotsParent;
     protected bool hasCreatedSlots;
-    private UnityEngine.Tilemaps.TileBase usedAsset;
 
     protected LocationGridTile tile;
     private POI_STATE _state;

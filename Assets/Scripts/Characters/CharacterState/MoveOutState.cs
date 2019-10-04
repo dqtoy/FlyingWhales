@@ -196,13 +196,34 @@ public class MoveOutState : CharacterState {
         } else {
             validLandmarkTypes.AddRange(Utilities.GetEnumValues<LANDMARK_TYPE>());
         }
-        List<Region> choices = GridMap.Instance.allRegions.Where(x => 
-            x.activeEvent == null && 
-            x.coreTile.areaOfTile != stateComponent.character.homeArea && 
-            validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType) &&
-            StoryEventsManager.Instance.GetEventsThatCanProvideEffects(x, character, job.jobType.GetAllowedEventEffects()).Count > 0
-        ).ToList();
+        validLandmarkTypes.Remove(LANDMARK_TYPE.THE_PORTAL); //Always removing the portal for now, to prevent characters going there.
 
+        List<Region> choices = null;
+        if (job.jobType.ProducesWorldEvent()) {
+            choices = GridMap.Instance.allRegions.Where(x =>
+                x.activeEvent == null &&
+                x.coreTile.areaOfTile != stateComponent.character.homeArea &&
+                validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType) &&
+                StoryEventsManager.Instance.GetEventsThatCanProvideEffects(x, character, job.jobType.GetAllowedEventEffects()).Count > 0
+            ).ToList();
+        } else {
+            if (job.jobType == JOB_TYPE.RETURN_HOME) { //TODO: Find a way to make getting valid regions per job type prettier.
+                if (!LandmarkManager.Instance.TryGetUncorruptedRegionsExcept(out choices)) {
+                    //there are no uncorrupted regions
+                    choices = GridMap.Instance.allRegions.Where(x =>
+                       x.coreTile.areaOfTile != stateComponent.character.homeArea &&
+                       validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType)
+                    ).ToList();
+                }
+                
+            } else {
+                choices = GridMap.Instance.allRegions.Where(x =>
+                   x.coreTile.areaOfTile != stateComponent.character.homeArea &&
+                   validLandmarkTypes.Contains(x.mainLandmark.specificLandmarkType) 
+                ).ToList();
+            }
+            
+        }
         return choices;
     }
 }

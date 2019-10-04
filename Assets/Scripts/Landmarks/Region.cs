@@ -537,7 +537,7 @@ public class Region {
     public void LoadCharacterHere(Character character) {
         charactersAtLocation.Add(character);
         if (area == null) {
-            character.SetLandmarkLocation(this.mainLandmark);
+            character.SetRegionLocation(this);
             //JobBasedEventGeneration(character);
             Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
         } else {
@@ -551,7 +551,7 @@ public class Region {
         if (!charactersAtLocation.Contains(character)) {
             charactersAtLocation.Add(character);
             if(area == null) {
-                character.SetLandmarkLocation(this.mainLandmark);
+                character.SetRegionLocation(this);
                 JobBasedEventGeneration(character);
                 Messenger.Broadcast(Signals.CHARACTER_ENTERED_REGION, character, this);
             } else {
@@ -563,7 +563,7 @@ public class Region {
     public void RemoveCharacterFromLocation(Character character) {
         if (charactersAtLocation.Remove(character)) {
             if (area == null) {
-                character.SetLandmarkLocation(null);
+                character.SetRegionLocation(null);
                 Messenger.Broadcast(Signals.CHARACTER_EXITED_REGION, character, this);
             } else {
                 if (character.currentStructure == null && owner != PlayerManager.Instance.player.playerFaction) {

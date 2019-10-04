@@ -997,6 +997,22 @@ public class LandmarkManager : MonoBehaviour {
         }
         
     }
+    /// <summary>
+    /// Get non corrupted regions if any. 
+    /// Produces a list of uncorrupted regions, if there are none this returns as false
+    /// </summary>
+    /// <param name="regions">List of regions to output</param>
+    /// <returns>If there are any uncorrupted regions.</returns>
+    public bool TryGetUncorruptedRegionsExcept(out List<Region> regions, params Region[] exceptions) {
+        regions = new List<Region>();
+        for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
+            Region region = GridMap.Instance.allRegions[i];
+            if (!region.coreTile.isCorrupted && !exceptions.Contains(region)) {
+                regions.Add(region);
+            }
+        }
+        return regions.Count > 0;
+    }
     #endregion
 }
 

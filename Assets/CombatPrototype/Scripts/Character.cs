@@ -96,7 +96,7 @@ public class Character : ILeader, IPointOfInterest {
     public float speedModifier { get; private set; }
     public string deathStr { get; private set; }
     public TileObject tileObjectLocation { get; private set; }
-    public BaseLandmark currentLandmark { get; private set; } //current Landmark Location. NOTE: Only has value if character is NOT at an area
+    public Region currentRegion { get; private set; } //current Region Location
     public CharacterTrait defaultCharacterTrait { get; private set; }
     public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
 
@@ -213,7 +213,7 @@ public class Character : ILeader, IPointOfInterest {
         get { return items.Count > 0; }
     }
     public bool isAtHomeArea {
-        get { return currentLandmark == null && specificLocation.id == homeArea.id && !currentParty.icon.isTravellingOutside; }
+        get { return currentRegion == null && specificLocation.id == homeArea.id && !currentParty.icon.isTravellingOutside; }
     }
     public bool isPartOfHomeFaction { //is this character part of the faction that owns his home area
         get { return homeArea != null && faction != null && homeArea.region.IsFactionHere(faction); }
@@ -990,7 +990,7 @@ public class Character : ILeader, IPointOfInterest {
             if(jobQueue.jobsInQueue.Count > 0) {
                 jobQueue.CancelAllJobs();
             }
-            if (currentLandmark == null) {
+            if (currentRegion == null) {
                 if (ownParty.specificLocation != null && isHoldingItem) {
                     DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
                 }
@@ -1006,9 +1006,9 @@ public class Character : ILeader, IPointOfInterest {
             traitsNeededToBeRemoved.Clear();
 
             bool wasOutsideSettlement = false;
-            if (currentLandmark != null) {
+            if (currentRegion != null) {
                 wasOutsideSettlement = true;
-                currentLandmark.tileLocation.region.RemoveCharacterFromLocation(this);
+                currentRegion.RemoveCharacterFromLocation(this);
             }
 
             if (!IsInOwnParty()) {
@@ -2589,8 +2589,8 @@ public class Character : ILeader, IPointOfInterest {
         }
         onLeaveAreaActions.Clear();
     }
-    public void SetLandmarkLocation(BaseLandmark landmark) {
-        currentLandmark = landmark;
+    public void SetRegionLocation(Region region) {
+        currentRegion = region;
     }
     #endregion
 
@@ -2684,8 +2684,8 @@ public class Character : ILeader, IPointOfInterest {
                     }
                     AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 }
-            } else if (currentLandmark != null) {
-                CameraMove.Instance.CenterCameraOn(currentLandmark.tileLocation.gameObject);
+            } else if (currentRegion != null) {
+                CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
             } else {
                 bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
                 if (!specificLocation.areaMap.isShowing) {
@@ -5219,9 +5219,8 @@ public class Character : ILeader, IPointOfInterest {
         MigrateHomeTo(PlayerManager.Instance.player.playerArea);
 
         specificLocation.RemoveCharacterFromLocation(this.currentParty);
-        if (currentLandmark != null) {
-            currentLandmark.tileLocation.region.RemoveCharacterFromLocation(this);
-        }
+        currentRegion?.RemoveCharacterFromLocation(this);
+        
         ResetFullnessMeter();
         ResetHappinessMeter();
         ResetTirednessMeter();

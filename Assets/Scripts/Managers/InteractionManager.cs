@@ -370,8 +370,12 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
             if (job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (targetCharacter.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
-                    return false;
+                try {
+                    if (targetCharacter.GetNormalTrait((string)goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
+                        return false;
+                    }
+                } catch {
+                    throw new Exception("Problem with CanCharacterTakeRemoveIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
                 }
             }
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
@@ -385,9 +389,14 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
             if (job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                if (targetCharacter.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
-                    return false;
+                try {
+                    if (targetCharacter.GetNormalTrait((string)goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
+                        return false;
+                    }
+                } catch {
+                    throw new Exception("Problem with CanCharacterTakeRemoveSpecialIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
                 }
+                
             }
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
                 return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
