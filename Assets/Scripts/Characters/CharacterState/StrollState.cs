@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class StrollState : CharacterState {
+    private int _planDuration;
 
     public StrollState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Stroll State";
@@ -19,15 +20,15 @@ public class StrollState : CharacterState {
     protected override void PerTickInState() {
         base.PerTickInState();
         if (!isDone && !isPaused && !isUnending) {
-            if (currentDuration >= 4) {
-                currentDuration = 0;
+            if (_planDuration >= 4) {
+                _planDuration = 0;
                 if (!stateComponent.character.PlanFullnessRecoveryActions(true)) {
                     if (!stateComponent.character.PlanTirednessRecoveryActions(true)) {
                         stateComponent.character.PlanHappinessRecoveryActions(true);
                     }
                 }
             } else {
-                currentDuration++;
+                _planDuration++;
             }
         }
     }

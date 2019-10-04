@@ -3357,10 +3357,8 @@ public class Character : ILeader, IPointOfInterest {
         //Instead of witnessing the action immediately, it needs to be pooled to avoid duplicates, so add the supposed to be witnessed action to the list and let ProcessAllUnprocessedVisionPOIs in CharacterMarker do its thing
         if(marker != null && !marker.actionsToWitness.Contains(action)) {
             marker.actionsToWitness.Add(action);
-            if(action.actor != this) {
-                //This is done so that the character will react again
-                marker.unprocessedVisionPOIs.Add(action.actor);
-            }
+            //This is done so that the character will react again
+            marker.unprocessedVisionPOIs.Add(action.actor);
         }
 
         //ThisCharacterWitnessedEvent(action);
