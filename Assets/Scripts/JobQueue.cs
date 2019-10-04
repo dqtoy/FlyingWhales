@@ -436,14 +436,16 @@ public class JobQueue {
     }
 
     //Returnsc true or false if job was really removed in queue
-    public bool CancelJob(JobQueueItem job, string cause = "", bool shouldDoAfterEffect = true) {
+    public bool CancelJob(JobQueueItem job, string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = false) {
         //When cancelling a job, we must check if it's personal or not because if it is a faction/settlement job it cannot be removed from queue
         //The only way for a faction/settlement job to be removed is if it is forced or it is actually finished
-        //We don't remove them, but they will be considered as removed so that other processes will be triggered
         bool hasBeenRemovedInJobQueue = false;
         bool process = false;
         if (job.jobQueueParent.isAreaOrQuestJobQueue) {
             process = true;
+            if (forceRemove) {
+                hasBeenRemovedInJobQueue = RemoveJobInQueue(job);
+            }
         } else {
             hasBeenRemovedInJobQueue = RemoveJobInQueue(job);
             process = hasBeenRemovedInJobQueue;

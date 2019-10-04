@@ -1554,6 +1554,17 @@ public class Character : ILeader, IPointOfInterest {
         }
         return null;
     }
+    public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            if (allJobsTargettingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+                if (job.jobType == jobType) {
+                    return job;
+                }
+            }
+        }
+        return null;
+    }
     public List<GoapPlanJob> GetJobsTargettingThisCharacter(JOB_TYPE jobType, object conditionKey) {
         List<GoapPlanJob> jobs = new List<GoapPlanJob>();
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
