@@ -179,6 +179,9 @@ public class BaseLandmark {
     /// Add features to the region that this landmark is in.
     /// </summary>
     public void AddFeaturesToRegion() {
+        if (specificLandmarkType == LANDMARK_TYPE.NONE) {
+            return; //do not
+        }
         //random features
         WeightedDictionary<string> randomFeatureWeights = new WeightedDictionary<string>();
         switch (specificLandmarkType) {

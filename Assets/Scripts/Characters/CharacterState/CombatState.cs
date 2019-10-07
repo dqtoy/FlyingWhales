@@ -8,8 +8,7 @@ public class CombatState : CharacterState {
     private bool _hasTimerStarted;
 
     public bool isAttacking { get; private set; } //if not attacking, it is assumed that the character is fleeing
-    public Character currentClosestHostile { get; private set; }
-    private System.Action onEndStateAction; // What should happen when this state ends?
+    public IPointOfInterest currentClosestHostile { get; private set; }
     public GoapAction actionThatTriggeredThisState { get; private set; }
     public Character forcedTarget { get; private set; }
     public List<Character> allCharactersThatDegradedRel { get; private set; }
@@ -68,7 +67,7 @@ public class CombatState : CharacterState {
         } else {
             //If character is pursuing the current closest hostile, check if that hostile is in range, if it is, start pursue timer
             if (isAttacking && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
-                if (stateComponent.character.marker.inVisionCharacters.Contains(currentClosestHostile)) {
+                if (stateComponent.character.marker.inVisionPOIs.Contains(currentClosestHostile)) {
                     StartPursueTimer();
                 }
             }
@@ -82,9 +81,9 @@ public class CombatState : CharacterState {
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
 
         base.StartState();
-        if (stateComponent.character.currentAction is AssaultCharacter && !stateComponent.character.currentAction.isPerformingActualAction) {
-            stateComponent.character.currentAction.PerformActualAction(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
-        }
+        //if (stateComponent.character.currentAction is AssaultCharacter && !stateComponent.character.currentAction.isPerformingActualAction) {
+        //    stateComponent.character.currentAction.PerformActualAction(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
+        //}
         stateComponent.character.StopCurrentAction(false);
         stateComponent.character.currentParty.RemoveAllOtherCharacters(); //Drop characters when entering combat
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Starting combat state for " + stateComponent.character.name);
@@ -96,7 +95,6 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.HideHPBar();
         stateComponent.character.marker.SetAnimationBool("InCombat", false);
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Ending combat state for " + stateComponent.character.name);
-        onEndStateAction?.Invoke();
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
     }
@@ -222,16 +220,20 @@ public class CombatState : CharacterState {
             return;
         }
         for (int i = 0; i < stateComponent.character.marker.hostilesInRange.Count; i++) {
-            Character hostile = stateComponent.character.marker.hostilesInRange[i];
-            if(hostile.stateComponent.currentState != null && hostile.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-                CombatState combatState = hostile.stateComponent.currentState as CombatState;
-                if(combatState.actionThatTriggeredThisState != null && combatState.actionThatTriggeredThisState.parentPlan != null
-                    && combatState.actionThatTriggeredThisState.parentPlan.job != null && combatState.actionThatTriggeredThisState.parentPlan.job.jobType == JOB_TYPE.APPREHEND
-                    && combatState.actionThatTriggeredThisState.parentPlan.job.targetPOI == stateComponent.character) {
-                    isBeingApprehended = true;
-                    return;
+            IPointOfInterest poi = stateComponent.character.marker.hostilesInRange[i];
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                Character hostile = poi as Character;
+                if (hostile.stateComponent.currentState != null && hostile.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                    CombatState combatState = hostile.stateComponent.currentState as CombatState;
+                    if (combatState.actionThatTriggeredThisState != null && combatState.actionThatTriggeredThisState.parentPlan != null
+                        && combatState.actionThatTriggeredThisState.parentPlan.job != null && combatState.actionThatTriggeredThisState.parentPlan.job.jobType == JOB_TYPE.APPREHEND
+                        && combatState.actionThatTriggeredThisState.parentPlan.job.targetPOI == stateComponent.character) {
+                        isBeingApprehended = true;
+                        return;
+                    }
                 }
             }
+            
         }
         for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
             if(stateComponent.character.marker.avoidInRange[i].poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -281,7 +283,7 @@ public class CombatState : CharacterState {
                 SetClosestHostile();
             } else {
                 log += "\nChecking if the current closest hostile is still the closest hostile, if not, set new closest hostile...";
-                Character newClosestHostile =  stateComponent.character.marker.GetNearestValidHostile();
+                IPointOfInterest newClosestHostile =  stateComponent.character.marker.GetNearestValidHostile();
                 if(newClosestHostile != null && currentClosestHostile != newClosestHostile) {
                     SetClosestHostile(newClosestHostile);
                 } else if (currentClosestHostile != null && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
@@ -294,7 +296,7 @@ public class CombatState : CharacterState {
                 log += "\nNo more hostile characters, exiting combat state...";
                 OnExitThisState();
             } else {
-                float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position);
+                float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
                 if (distance > stateComponent.character.characterClass.attackRange || !stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) {
                     log += "\nPursuing closest hostile target: " + currentClosestHostile.name;
                     PursueClosestHostile();
@@ -338,7 +340,7 @@ public class CombatState : CharacterState {
         }
     }
     private void SetClosestHostile() {
-        Character previousClosestHostile = currentClosestHostile;
+        IPointOfInterest previousClosestHostile = currentClosestHostile;
         currentClosestHostile = stateComponent.character.marker.GetNearestValidHostile();
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
@@ -347,9 +349,9 @@ public class CombatState : CharacterState {
             stateComponent.character.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
         }
     }
-    private void SetClosestHostile(Character character) {
-        Character previousClosestHostile = currentClosestHostile;
-        currentClosestHostile = character;
+    private void SetClosestHostile(IPointOfInterest poi) {
+        IPointOfInterest previousClosestHostile = currentClosestHostile;
+        currentClosestHostile = poi;
         if (currentClosestHostile != null && previousClosestHostile != currentClosestHostile) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -377,7 +379,7 @@ public class CombatState : CharacterState {
         //If character is attacking and distance is within the attack range of this character, attack
         //else, pursue again
         else if (isAttacking) {
-            float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.marker.transform.position);
+            float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
             if (distance <= stateComponent.character.characterClass.attackRange && stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) { //&& currentClosestHostile.currentStructure == stateComponent.character.currentStructure
                 //log += "\n" + stateComponent.character.name + " is within range of " + currentClosestHostile.name + ". Attacking...";
                 //stateComponent.character.PrintLogIfActive(log);
@@ -422,30 +424,34 @@ public class CombatState : CharacterState {
         //Debug.Log(summary);
     }
     public bool isExecutingAttack;
-    public void OnAttackHit(Character characterHit) {
-        if (characterHit == null) {
+    public void OnAttackHit(IPointOfInterest poi) {
+        if (poi == null) {
             return; //NOTE: Sometimes this happens even though the passed value is this character's currentClosestHostile.
         }
-        string attackSummary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " hit " + characterHit.name;
-        if (characterHit != currentClosestHostile) {
-            attackSummary = stateComponent.character.name + " hit " + characterHit.name + " instead of " + currentClosestHostile.name + "!";
+        string attackSummary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " hit " + poi.name;
+        if (poi != currentClosestHostile) {
+            attackSummary = stateComponent.character.name + " hit " + poi.name + " instead of " + currentClosestHostile.name + "!";
         }
 
         //Reset Attack Speed
         stateComponent.character.marker.ResetAttackSpeed();
-        characterHit.OnHitByAttackFrom(stateComponent.character, this, ref attackSummary);
+        poi.OnHitByAttackFrom(stateComponent.character, this, ref attackSummary);
 
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
-        if (characterHit.currentHP > 0) {
-            attackSummary += "\n" + characterHit.name + " still has remaining hp " + characterHit.currentHP.ToString() + "/" + characterHit.maxHP.ToString();
-            //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
-            if (characterHit == currentClosestHostile) {
-                //If character that attacked is not invisible or invisible but can be seen by character hit, character hit should react
-                Invisible invisible = stateComponent.character.GetNormalTrait("Invisible") as Invisible;
-                if (invisible == null || invisible.charactersThatCanSee.Contains(characterHit)) {
-                    currentClosestHostile.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(currentClosestHostile)); //When the target is hit and it is still alive, add hostile
+        if (poi.currentHP > 0) {
+            attackSummary += "\n" + poi.name + " still has remaining hp " + poi.currentHP.ToString() + "/" + poi.maxHP.ToString();
+            if (poi is Character) {
+                Character hitCharacter = poi as Character;
+                //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
+                if (poi == currentClosestHostile) {
+                    //If character that attacked is not invisible or invisible but can be seen by character hit, character hit should react
+                    Invisible invisible = stateComponent.character.GetNormalTrait("Invisible") as Invisible;
+                    if (invisible == null || invisible.charactersThatCanSee.Contains(hitCharacter)) {
+                        hitCharacter.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(hitCharacter)); //When the target is hit and it is still alive, add hostile
+                    }
                 }
             }
+            
         }
         if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
             attackSummary += "\n" + stateComponent.character.name + "'s state is still this, running check coroutine.";
@@ -524,9 +530,6 @@ public class CombatState : CharacterState {
     #region Utilities
     public void SetActionThatTriggeredThisState(GoapAction action) {
         actionThatTriggeredThisState = action;
-    }
-    public void SetOnEndStateAction(System.Action action) {
-        onEndStateAction = action;
     }
     public void ResetClosestHostile() {
         currentClosestHostile = null;

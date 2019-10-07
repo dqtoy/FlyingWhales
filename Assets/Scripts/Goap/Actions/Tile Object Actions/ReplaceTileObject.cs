@@ -81,6 +81,7 @@ public class ReplaceTileObject : GoapAction {
         SetCannotCancelAction(true);
         //place the tile object at the specified location.
         targetStructure.AddPOI(tileObjectToReplace, whereToPlace);
+        tileObjectToReplace.AdjustHP(tileObjectToReplace.maxHP);
         actor.AdjustSupply(-TileObjectDB.GetTileObjectData(tileObjectToReplace.tileObjectType).constructionCost);
         //make all residents aware of supply pile, just in case it was ever removed because of ghost collision
         for (int i = 0; i < whereToPlace.parentAreaMap.area.region.residents.Count; i++) {

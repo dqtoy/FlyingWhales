@@ -778,11 +778,11 @@ public class CharacterInfoUI : UIMenu {
             Debug.LogError("No eligible characters to assault!");
         }
     }
-    public void LogWorldDistanceToCurrentHostile() {
-        Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.position, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.position));
-    }
-    public void LogLocalDistanceToCurrentHostile() {
-        Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.localPosition, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.localPosition));
-    }
+    //public void LogWorldDistanceToCurrentHostile() {
+    //    Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.position, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.position));
+    //}
+    //public void LogLocalDistanceToCurrentHostile() {
+    //    Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.localPosition, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.localPosition));
+    //}
     #endregion
 }

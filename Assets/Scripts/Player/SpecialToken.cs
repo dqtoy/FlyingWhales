@@ -23,6 +23,10 @@ public class SpecialToken : IPointOfInterest {
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
     public List<GoapAction> targettedByAction { get; protected set; }
 
+    //hp
+    public int maxHP { get; protected set; }
+    public int currentHP { get; protected set; }
+
     protected List<Trait> _traits;
     private LocationGridTile tile;
 
@@ -56,6 +60,15 @@ public class SpecialToken : IPointOfInterest {
     }
     public Faction factionOwner {
         get { return owner; }
+    }
+    public Vector3 worldPosition {
+        get { return gridTileLocation.centeredWorldLocation; }
+    }
+    public bool isDead {
+        get { return gridTileLocation == null; } //Consider the object as dead if it no longer has a tile location (has been removed)
+    }
+    public ProjectileReceiver projectileReciever {
+        get { return collisionTrigger.projectileReciever; }
     }
     #endregion
 
@@ -189,6 +202,36 @@ public class SpecialToken : IPointOfInterest {
     }
     public void RemoveAdvertisedAction(INTERACTION_TYPE type) {
         poiGoapActions.Add(type);
+    }
+    public void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
+        if (currentHP == 0 && amount < 0) {
+            return; //hp is already at minimum, do not allow any more negative adjustments
+        }
+        this.currentHP += amount;
+        this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);
+        if (currentHP == 0) {
+            //object has been destroyed
+            Character removedBy = null;
+            if (source is Character) {
+                removedBy = source as Character;
+            }
+            gridTileLocation.structure.RemovePOI(this, removedBy);
+        }
+    }
+    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
+        GameManager.Instance.CreateHitEffectAt(this);
+        if (this.currentHP <= 0) {
+            return; //if hp is already 0, do not deal damage
+        }
+        this.AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
+        attackSummary += "\nDealt damage " + characterThatAttacked.attackPower.ToString();
+        if (this.currentHP <= 0) {
+            attackSummary += "\n" + this.name + "'s hp has reached 0.";
+        }
+        //Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
+    }
+    public bool IsValidCombatTarget() {
+        return gridTileLocation != null;
     }
     #endregion
 

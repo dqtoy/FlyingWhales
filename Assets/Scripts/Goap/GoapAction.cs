@@ -289,7 +289,7 @@ public class GoapAction {
         //CreateStates(); //Not sure if this is the best place for this.
         //SetTargetStructure(); //Update target tile and structure so that the character will not go to the target tile that is calculated during the initialization of this action, so the character will move precisely to the intended target
         actor.SetCurrentAction(this);
-        parentPlan.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
+        parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
         actor.marker.OnThisCharacterDoingAction(this);
 
@@ -418,14 +418,12 @@ public class GoapAction {
     public virtual bool IsTarget(IPointOfInterest poi) {
         return poiTarget == poi;
     }
-
     /// <summary>
     /// This might change the value of isOldNews to true if the conditions are met
     /// </summary>
     /// <param name="poi">The POI that is the basis for the old news. Usually, it must match with the action's poiTarget.</param>
     /// <param name="action">Can be null. If this is not null, then the listener action must match with this.</param>
     protected virtual void OldNewsTrigger(IPointOfInterest poi, GoapAction action) { }
-
     /// <summary>
     /// What happens when the parent plan of this action has a job
     /// </summary>
@@ -438,8 +436,10 @@ public class GoapAction {
     /// What should happen when an action is stopped while the actor is still travelling towards it's target?
     /// </summary>
     public virtual void OnStopActionWhileTravelling() { }
-
     public virtual int GetArrangedLogPriorityIndex(string priorityID) { return -1; }
+    public virtual bool ShouldBeStoppedWhenSwitchingStates() {
+        return true; //by default, when a character is switching states and has a current action, that action will be stopped.
+    }
     #endregion
 
     #region Utilities

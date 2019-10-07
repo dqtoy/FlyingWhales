@@ -78,12 +78,12 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
     }
-    public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType) {
+    public BaseLandmark CreateNewLandmarkOnTile(HexTile location, LANDMARK_TYPE landmarkType, bool addFeatures) {
         if (location.landmarkOnTile != null) {
             //Destroy landmark on tile
             DestroyLandmarkOnTile(location);
         }
-        BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType);
+        BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType, addFeatures);
 #if !WORLD_CREATION_TOOL
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
 #endif
@@ -259,7 +259,7 @@ public class LandmarkManager : MonoBehaviour {
         int portalCorner = Random.Range(0, 4);
         Region portalRegion = corners[portalCorner];
         Area portalArea = CreateNewArea(portalRegion, AREA_TYPE.DEMONIC_INTRUSION, 0);
-        BaseLandmark portalLandmark = CreateNewLandmarkOnTile(portalRegion.coreTile, LANDMARK_TYPE.THE_PORTAL);
+        BaseLandmark portalLandmark = CreateNewLandmarkOnTile(portalRegion.coreTile, LANDMARK_TYPE.THE_PORTAL, false);
         portalArea.region.SetName("Portal"); //need this so that when player is initialized. This area will be assigned to the player.
         portal = portalLandmark;
 
@@ -270,7 +270,7 @@ public class LandmarkManager : MonoBehaviour {
         int citizenCount = Random.Range(WorldConfigManager.Instance.minCitizenCount, WorldConfigManager.Instance.maxCitizenCount + 1);
         Area settlementArea = CreateNewArea(settlementRegion, settlementType, citizenCount);
         SetEnemyPlayerArea(settlementArea);
-        BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE);
+        BaseLandmark settlementLandmark = CreateNewLandmarkOnTile(settlementRegion.coreTile, LANDMARK_TYPE.PALACE, true);
         settlement = settlementLandmark;
         Faction faction = FactionManager.Instance.CreateNewFaction();
         if (settlementType == AREA_TYPE.ELVEN_SETTLEMENT) {
@@ -297,7 +297,7 @@ public class LandmarkManager : MonoBehaviour {
             //otherLandmarkSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
             for (int i = 0; i < kvp.Value; i++) {
                 Region chosenRegion = availableRegions[Random.Range(0, availableRegions.Count)];
-                BaseLandmark landmark = CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key);
+                BaseLandmark landmark = CreateNewLandmarkOnTile(chosenRegion.coreTile, kvp.Key, true);
                 availableRegions.Remove(chosenRegion);
             }
         }

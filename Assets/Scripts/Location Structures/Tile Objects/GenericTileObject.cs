@@ -68,6 +68,9 @@ public class GenericTileObject : TileObject {
         }
         SetPOIState(POI_STATE.INACTIVE);
     }
+    public override bool IsValidCombatTarget() {
+        return false;
+    }
     public override string ToString() {
         return "Generic Obj at tile " + gridTileLocation?.ToString();
     }

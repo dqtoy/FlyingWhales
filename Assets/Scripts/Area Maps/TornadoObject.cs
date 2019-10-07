@@ -185,10 +185,7 @@ public class TornadoObject : MonoBehaviour {
     private void PerTick() {
         for (int i = 0; i < poisInTornado.Count; i++) {
             IPointOfInterest poi = poisInTornado[i];
-            if (poi is Character) {
-                Character character = poi as Character;
-                character.AdjustHP(-100, true, this);
-            }
+            poi.AdjustHP(-100, true, this);
         }
     }
 

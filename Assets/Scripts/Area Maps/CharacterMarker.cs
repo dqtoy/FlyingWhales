@@ -52,7 +52,7 @@ public class CharacterMarker : PooledObject {
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> unprocessedVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
-    public List<Character> hostilesInRange { get; private set; } //POI's in this characters hostility collider
+    public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
     public List<GoapAction> actionsToWitness { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
     public Dictionary<Character, bool> lethalCharacters { get; private set; }
@@ -106,7 +106,7 @@ public class CharacterMarker : PooledObject {
         unprocessedVisionPOIs = new List<IPointOfInterest>();
         inVisionPOIs = new List<IPointOfInterest>();
         inVisionCharacters = new List<Character>();
-        hostilesInRange = new List<Character>();
+        hostilesInRange = new List<IPointOfInterest>();
         terrifyingObjects = new List<IPointOfInterest>();
         avoidInRange = new List<IPointOfInterest>();
         lethalCharacters = new Dictionary<Character, bool>();
@@ -127,6 +127,9 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
+
+        Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
 
         PathfindingManager.Instance.AddAgent(pathfindingAI);
         //visionCollision.Initialize();
@@ -328,6 +331,16 @@ public class CharacterMarker : PooledObject {
             }
         }
     }
+    private void OnItemRemovedFromTile(SpecialToken token, LocationGridTile removedFrom) {
+        if (hostilesInRange.Contains(token)) {
+            RemoveHostileInRange(token);
+        }
+    }
+    private void OnTileObjectRemovedFromTile(TileObject obj, Character removedBy, LocationGridTile removedFrom) {
+        if (hostilesInRange.Contains(obj)) {
+            RemoveHostileInRange(obj);
+        }
+    }
     #endregion
 
     #region UI
@@ -459,6 +472,8 @@ public class CharacterMarker : PooledObject {
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.RemoveListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
+        Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
 
         visionCollision.Reset();
         GameObject.Destroy(collisionTrigger.gameObject);
@@ -645,14 +660,29 @@ public class CharacterMarker : PooledObject {
     public void UnhighlightMarker() {
         colorHighlight.gameObject.SetActive(false);
     }
-    public void HighlightHostilesInRange() {
-        for (int i = 0; i < hostilesInRange.Count; i++) {
-            hostilesInRange.ElementAt(i).marker.HighlightMarker(Color.red);
-        }
-    }
     [ContextMenu("Visuals Forward")]
     public void PrintForwardPosition() {
         Debug.Log(visualsParent.up);
+    }
+    [Header("For Testing")]
+    [SerializeField] private string targetCharacterName;
+    [ContextMenu("Check If Path Possible")]
+    private void CheckIfPathIsPossible() {
+        Character targetCharacter = CharacterManager.Instance.GetCharacterByName(targetCharacterName);
+        NNConstraint nodeConstraint = new NNConstraint();
+        nodeConstraint.constrainDistance = false;
+        GraphNode node1 = this.character.gridTileLocation.parentAreaMap.pathfindingGraph.GetNearest(this.transform.position, nodeConstraint).node;
+        GraphNode node2 = targetCharacter.gridTileLocation.parentAreaMap.pathfindingGraph.GetNearest(targetCharacter.marker.transform.position, nodeConstraint).node;
+        if (node1 == null) {
+            Debug.LogWarning("Node1 is null!");
+        }
+        if (node2 == null) {
+            Debug.LogWarning("Node2 is null!");
+        }
+        if (node1 != null && node2 != null) {
+            bool hasPath = PathUtilities.IsPathPossible(node1, node2);
+            Debug.Log(this.character.name + " has path to " + targetCharacter.name + "? " + hasPath.ToString());
+        }
     }
     #endregion
 
@@ -1103,14 +1133,16 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Hosility Collision
-    public bool AddHostileInRange(Character character, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true) {
-        if (!hostilesInRange.Contains(character)) {
-            if (this.character.GetNormalTrait("Zapped") == null && !this.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && !character.isDead && !this.character.isFollowingPlayerInstruction &&
-                (!checkHostility || this.character.IsHostileWith(character))) { //"Resting"
+    public bool AddHostileInRange(IPointOfInterest poi, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true) {
+        if (!hostilesInRange.Contains(poi)) {
+            if (this.character.GetNormalTrait("Zapped") == null && !this.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) 
+                && !this.character.isFollowingPlayerInstruction && CanAddPOIAsHostile(poi, checkHostility)) {
                 if (!WillCharacterTransferEngageToFleeList(isLethal)) {
-                    hostilesInRange.Add(character);
-                    lethalCharacters.Add(character, isLethal);
-                    this.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + character.name + " was added to " + this.character.name + "'s hostile range!");
+                    hostilesInRange.Add(poi);
+                    if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                        lethalCharacters.Add(poi as Character, isLethal);
+                    }
+                    this.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + poi.name + " was added to " + this.character.name + "'s hostile range!");
                     //When adding hostile in range, check if character is already in combat state, if it is, only reevaluate combat behavior, if not, enter combat state
                     //if (processCombatBehavior) {
                     //    ProcessCombatBehavior();
@@ -1118,14 +1150,23 @@ public class CharacterMarker : PooledObject {
                     willProcessCombat = true;
                 } else {
                     //Transfer to flee list
-                    return AddAvoidInRange(character, processCombatBehavior);
+                    return AddAvoidInRange(poi, processCombatBehavior);
                 }
                 return true;
             }
         }
         return false;
     }
-    public bool AddHostileInRange(Character poi, out CharacterState reaction, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true) {
+    private bool CanAddPOIAsHostile(IPointOfInterest poi, bool checkHostility) {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            Character character = poi as Character;
+            return !character.isDead && !this.character.isFollowingPlayerInstruction &&
+                (!checkHostility || this.character.IsHostileWith(character));
+        } else {
+            return true; //allow any other object types
+        }
+    }
+    public bool AddHostileInRange(IPointOfInterest poi, out CharacterState reaction, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true) {
         if (AddHostileInRange(poi, checkHostility, processCombatBehavior, isLethal)) {
             reaction = character.stateComponent.currentState;
             return true;
@@ -1133,9 +1174,11 @@ public class CharacterMarker : PooledObject {
         reaction = null;
         return false;
     }
-    public void RemoveHostileInRange(Character poi, bool processCombatBehavior = true) {
+    public void RemoveHostileInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
         if (hostilesInRange.Remove(poi)) {
-            lethalCharacters.Remove(poi);
+            if (poi is Character) {
+                lethalCharacters.Remove(poi as Character);
+            }
             string removeHostileSummary = GameManager.Instance.TodayLogString() + poi.name + " was removed from " + character.name + "'s hostile range.";
             character.PrintLogIfActive(removeHostileSummary);
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
@@ -1200,10 +1243,14 @@ public class CharacterMarker : PooledObject {
     }
     public bool HasLethalCombatTarget() {
         for (int i = 0; i < hostilesInRange.Count; i++) {
-            Character hostile = hostilesInRange[i];
-            if (IsLethalCombatForTarget(hostile)) {
-                return true;
+            IPointOfInterest poi = hostilesInRange[i];
+            if (poi is Character) {
+                Character hostile = poi as Character;
+                if (IsLethalCombatForTarget(hostile)) {
+                    return true;
+                }
             }
+            
         }
         return false;
     }
@@ -1422,8 +1469,8 @@ public class CharacterMarker : PooledObject {
                 //When transferring to flee list, if the character is not in vision just remove him/her in hostiles range
                 if (HasLethalCombatTarget()) {
                     for (int i = 0; i < hostilesInRange.Count; i++) {
-                        Character hostile = hostilesInRange[i];
-                        if (inVisionCharacters.Contains(hostile)) {
+                        IPointOfInterest hostile = hostilesInRange[i];
+                        if (inVisionPOIs.Contains(hostile)) {
                             AddAvoidInRange(hostile, false);
                         } else {
                             RemoveHostileInRange(hostile, false);
@@ -1508,57 +1555,35 @@ public class CharacterMarker : PooledObject {
     public bool CanAttackByAttackSpeed() {
         return attackSpeedMeter >= character.attackSpeed;
     }
-    public Character GetNearestValidHostile() {
-        Character nearest = null;
+    public IPointOfInterest GetNearestValidHostile() {
+        IPointOfInterest nearest = null;
         float nearestDist = 9999f;
         //first check only the hostiles that are in the same area as this character
         for (int i = 0; i < hostilesInRange.Count; i++) {
-            Character currHostile = hostilesInRange.ElementAt(i);
-            if (IsValidCombatTarget(currHostile)) {
-
-                float dist = Vector2.Distance(this.transform.position, currHostile.marker.transform.position);
+            IPointOfInterest poi = hostilesInRange[i];
+            if (poi.IsValidCombatTarget()) {
+                float dist = Vector2.Distance(this.transform.position, poi.worldPosition);
                 if (nearest == null || dist < nearestDist) {
-                    nearest = currHostile;
+                    nearest = poi;
                     nearestDist = dist;
                 }
             }
+            
         }
         //if no character was returned, choose at random from the list, since we are sure that all characters in the list are not in the same area as this character
-        if (nearest == null && hostilesInRange.Count > 0) {
-            nearest = hostilesInRange[UnityEngine.Random.Range(0, hostilesInRange.Count)];
-        }
-        return nearest;
-    }
-    public Character GetNearestValidAvoid() {
-        Character nearest = null;
-        float nearestDist = 9999f;
-        //first check only the hostiles that are in the same area as this character
-        List<Character> charactersToAvoid = avoidInRange.Where(x => x is Character).Select(x => x as Character).ToList();
-        for (int i = 0; i < charactersToAvoid.Count; i++) {
-            Character currHostile = charactersToAvoid[i];
-            if (IsValidCombatTarget(currHostile)) {
-                float dist = Vector2.Distance(this.transform.position, currHostile.marker.transform.position);
-                if (nearest == null || dist < nearestDist) {
-                    nearest = currHostile;
-                    nearestDist = dist;
-                }
+        if (nearest == null) {
+            List<Character> hostileCharacters = hostilesInRange.Where(x => x.poiType == POINT_OF_INTEREST_TYPE.CHARACTER).Select(x => x as Character).ToList();
+            if (hostileCharacters.Count > 0) {
+                nearest = hostileCharacters[UnityEngine.Random.Range(0, hostileCharacters.Count)];
             }
         }
-        //if no character was returned, choose at random from the list, since we are sure that all characters in the list are not in the same area as this character
-        if (nearest == null && charactersToAvoid.Count > 0) {
-            nearest = charactersToAvoid[UnityEngine.Random.Range(0, charactersToAvoid.Count)];
-        }
         return nearest;
     }
-    private bool IsValidCombatTarget(Character otherCharacter) {
-        //- If the other character has a Negative Disabler trait, this character will not trigger combat
-        return !otherCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
-    }
-    public bool IsCharacterInLineOfSightWith(Character targetCharacter) {
+    public bool IsCharacterInLineOfSightWith(IPointOfInterest target) {
         //return targetCharacter.currentStructure == character.currentStructure;
         //precompute our ray settings
         Vector3 start = transform.position;
-        Vector3 direction = targetCharacter.marker.transform.position - transform.position;
+        Vector3 direction = target.worldPosition - transform.position;
 
         //draw the ray in the editor
         //Debug.DrawRay(start, direction * 10f, Color.red, 1000f);
@@ -1571,9 +1596,14 @@ public class CharacterMarker : PooledObject {
                 if(hit.collider.gameObject.name == "Structure_Tilemap" || hit.collider.gameObject.name == "Walls_Tilemap") {
                     return false;
                 } else {
-                    CharacterCollisionTrigger collisionTrigger = hit.collider.gameObject.GetComponent<CharacterCollisionTrigger>();
-                    if (collisionTrigger != null && collisionTrigger.poi == targetCharacter) {
-                        return true;
+                    POICollisionTrigger collisionTrigger = hit.collider.gameObject.GetComponent<POICollisionTrigger>();
+                    if (collisionTrigger != null) {
+                        if (collisionTrigger.poi == target) {
+                            return true;
+                        } else if (!(collisionTrigger.poi is Character)) {
+                            return false; //if the poi collision is not from a character, consider the target as obstructed
+                        }
+                        
                     }
                 }
                 //Debug.LogWarning(character.name + " collided with: " + hit.collider.gameObject.name);

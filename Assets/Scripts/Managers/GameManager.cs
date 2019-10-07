@@ -448,6 +448,19 @@ public class GameManager : MonoBehaviour {
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
     }
+    public void CreateHitEffectAt(IPointOfInterest poi) {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            CreateHitEffectAt(poi as Character);
+        } else {
+            if (poi.gridTileLocation == null) {
+                return;
+            }
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentAreaMap.objectsParent);
+            go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+            go.SetActive(true);
+        }
+       
+    }
     public void CreateHitEffectAt(Character character) {
         if (character.marker == null) {
             return;
@@ -455,6 +468,18 @@ public class GameManager : MonoBehaviour {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
+    }
+    public void CreateFireEffectAt(IPointOfInterest poi) {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            CreateFireEffectAt(poi as Character);
+        } else {
+            if (poi.gridTileLocation == null) {
+                return;
+            }
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentAreaMap.objectsParent);
+            go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+            go.SetActive(true);
+        }
     }
     public void CreateFireEffectAt(Character character) {
         if (character.marker == null) {

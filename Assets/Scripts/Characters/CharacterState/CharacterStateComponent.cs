@@ -56,8 +56,7 @@ public class CharacterStateComponent {
 
         //Before switching character must end current action first because once a character is in a state in cannot make plans
         character.AdjustIsWaitingForInteraction(1);
-        if (character.currentAction != null && character.currentAction.goapType != INTERACTION_TYPE.ASSAULT_CHARACTER) {
-            //TODO: Unify this! Maybe pass the action that made this character switch states, and if the character's current action is that, do not end it?
+        if (character.currentAction != null && character.currentAction.ShouldBeStoppedWhenSwitchingStates()) {
             character.StopCurrentAction();
         }
         character.AdjustIsWaitingForInteraction(-1);

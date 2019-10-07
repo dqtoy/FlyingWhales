@@ -68,6 +68,7 @@ public class ConsoleMenu : UIMenu {
             {"/set_happiness", SetHappiness },
             {"/gain_i_ability", GainInterventionAbility },
             {"/destroy_tile_obj", DestroyTileObj },
+            {"/add_hostile", AddHostile },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -306,55 +307,55 @@ public class ConsoleMenu : UIMenu {
             UIManager.Instance.Pause();
         }
     }
-    private void CheckForWrongCharacterData() {
-        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
-            Area currArea = LandmarkManager.Instance.allAreas[i];
-            if (currArea == PlayerManager.Instance.player.playerArea) {
-                continue;
-            }
-            for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
-                Character character = currArea.charactersAtLocation[j];
-                if (character.isDead) {
-                    Debug.LogWarning("There is still a dead character at " + currArea.name + " : " + character.name);
-                    //UIManager.Instance.Pause();
-                }
-            }
-            //for (int j = 0; j < currArea.possibleSpecialTokenSpawns.Count; j++) {
-            //    SpecialToken token = currArea.possibleSpecialTokenSpawns[j];
-            //    if (token.structureLocation == null) {
-            //        Debug.LogWarning("There is token at " + currArea.name + " that doesn't have a structure location : " + token.name);
-            //        //UIManager.Instance.Pause();
-            //    }
-            //}
-        }
-        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-            Character currCharacter = CharacterManager.Instance.allCharacters[i];
-            if (!currCharacter.isDead) {
-                if (currCharacter.faction == null) {
-                    Debug.LogWarning("There is an alive character with a null faction! " + currCharacter.name);
-                    UIManager.Instance.Pause();
-                }
-                //if (currCharacter.homeStructure == null) {
-                //    Debug.LogWarning("There is an alive character with a null home structure! " + currCharacter.name);
-                //    UIManager.Instance.Pause();
-                //}
-                //if (currCharacter.currentStructure == null && currCharacter.minion == null) {
-                //    Debug.LogWarning("There is an alive character with a null current structure! " + currCharacter.name);
-                //    //UIManager.Instance.Pause();
-                //}
-                if (currCharacter.marker != null) {
-                    for (int j = 0; j < currCharacter.marker.hostilesInRange.Count; j++) {
-                        Character hostileInRange = currCharacter.marker.hostilesInRange[j];
-                        if (hostileInRange.isDead) {
-                            Debug.LogWarning("There is a dead character (" + hostileInRange.name + ") in " + currCharacter.name + "'s hostile range!");
-                            UIManager.Instance.Pause();
-                        }
-                    }
-                }
+    //private void CheckForWrongCharacterData() {
+    //    for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+    //        Area currArea = LandmarkManager.Instance.allAreas[i];
+    //        if (currArea == PlayerManager.Instance.player.playerArea) {
+    //            continue;
+    //        }
+    //        for (int j = 0; j < currArea.charactersAtLocation.Count; j++) {
+    //            Character character = currArea.charactersAtLocation[j];
+    //            if (character.isDead) {
+    //                Debug.LogWarning("There is still a dead character at " + currArea.name + " : " + character.name);
+    //                //UIManager.Instance.Pause();
+    //            }
+    //        }
+    //        //for (int j = 0; j < currArea.possibleSpecialTokenSpawns.Count; j++) {
+    //        //    SpecialToken token = currArea.possibleSpecialTokenSpawns[j];
+    //        //    if (token.structureLocation == null) {
+    //        //        Debug.LogWarning("There is token at " + currArea.name + " that doesn't have a structure location : " + token.name);
+    //        //        //UIManager.Instance.Pause();
+    //        //    }
+    //        //}
+    //    }
+    //    for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+    //        Character currCharacter = CharacterManager.Instance.allCharacters[i];
+    //        if (!currCharacter.isDead) {
+    //            if (currCharacter.faction == null) {
+    //                Debug.LogWarning("There is an alive character with a null faction! " + currCharacter.name);
+    //                UIManager.Instance.Pause();
+    //            }
+    //            //if (currCharacter.homeStructure == null) {
+    //            //    Debug.LogWarning("There is an alive character with a null home structure! " + currCharacter.name);
+    //            //    UIManager.Instance.Pause();
+    //            //}
+    //            //if (currCharacter.currentStructure == null && currCharacter.minion == null) {
+    //            //    Debug.LogWarning("There is an alive character with a null current structure! " + currCharacter.name);
+    //            //    //UIManager.Instance.Pause();
+    //            //}
+    //            if (currCharacter.marker != null) {
+    //                for (int j = 0; j < currCharacter.marker.hostilesInRange.Count; j++) {
+    //                    Character hostileInRange = currCharacter.marker.hostilesInRange[j];
+    //                    if (hostileInRange.isDead) {
+    //                        Debug.LogWarning("There is a dead character (" + hostileInRange.name + ") in " + currCharacter.name + "'s hostile range!");
+    //                        UIManager.Instance.Pause();
+    //                    }
+    //                }
+    //            }
 
-            }
-        }
-    }
+    //        }
+    //    }
+    //}
     #endregion
 
     #region Misc
@@ -937,6 +938,46 @@ public class ConsoleMenu : UIMenu {
         character.SetHP(amount);
         AddSuccessMessage("Set HP of " + character.name + " to " + amount);
 
+    }
+    private void AddHostile(string[] parameters) {
+        if (parameters.Length != 4) { //character that will attack, POI type to attack, Tile object type, id of poi to attack
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of Attack");
+            return;
+        }
+        string characterParameterString = parameters[0];
+        string poiTypeString = parameters[1];
+        string tileObjectTypeString = parameters[2];
+        string targetIDString = parameters[3];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+        if (character == null) {
+            AddErrorMessage("There is no character with name " + characterParameterString);
+            return;
+        }
+        POINT_OF_INTEREST_TYPE targetType;
+        if (!System.Enum.TryParse(poiTypeString, out targetType)) {
+            AddErrorMessage("There is no poi type of " + poiTypeString);
+            return;
+        }
+        TILE_OBJECT_TYPE targetTileObjectType;
+        if (!System.Enum.TryParse(tileObjectTypeString, out targetTileObjectType)) {
+            AddErrorMessage("There is no tile object type of " + tileObjectTypeString);
+            return;
+        }
+        int targetID;
+        if (!int.TryParse(targetIDString, out targetID)) {
+            AddErrorMessage("ID parameter is not an integer: " + targetIDString);
+            return;
+        }
+
+        IPointOfInterest targetPOI = SaveUtilities.GetPOIFromData(new POIData{ poiType = targetType, poiID = targetID, tileObjectType = targetTileObjectType });
+        if (targetPOI == null) {
+            AddErrorMessage("Could not find POI of type " + targetType.ToString() + " with id " + targetID.ToString());
+            return;
+        }
+
+        character.marker.AddHostileInRange(targetPOI);
     }
     #endregion
 

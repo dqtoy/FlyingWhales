@@ -202,7 +202,10 @@ public class Burning : Trait {
         } else {
             //Every tick, a Burning tile or object also has a 3% chance to remove Burning effect. 
             //Afterwards, it will have a Burnt trait, which disables its Flammable trait (meaning it can no longer gain a Burning status).
-            if (Random.Range(0, 100) < 3) {
+            if (!(owner is GenericTileObject)) {
+                owner.AdjustHP(-(int)(owner.maxHP * 0.02f), true, this);
+            }
+            if (owner.gridTileLocation != null && Random.Range(0, 100) < 3) {
                 owner.RemoveTrait(this);
                 owner.AddTrait("Burnt");
                 return; //do not execute other effecs.
