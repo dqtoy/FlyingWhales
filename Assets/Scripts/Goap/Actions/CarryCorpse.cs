@@ -32,19 +32,20 @@ public class CarryCorpse : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         //AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, conditionKey = poiTarget, targetPOI = poiTarget }, IsTargetDead);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY_WITH_CONSENT, targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
         //rather than checking location check if the character is not in anyone elses party and is still active
-        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
+        Character target = poiTarget as Character;
+        if (!isTargetMissing && target.IsInOwnParty()) {
             SetState("Carry Success");
         } else {
             SetState("Target Missing");
         }
     }
     protected override int GetCost() {
-        return 1;
+        return 100;
     }
     public override void DoAction() {
         SetTargetStructure();

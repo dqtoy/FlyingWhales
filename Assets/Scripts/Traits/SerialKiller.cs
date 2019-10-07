@@ -226,28 +226,28 @@ public class SerialKiller : Trait {
             return;
         }
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim);
-        GoapAction goapAction7 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.BURY_CHARACTER, character, targetVictim);
-        GoapAction goapAction6 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY_CORPSE, character, targetVictim);
-        GoapAction goapAction5 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RITUAL_KILLING, character, targetVictim);
-        GoapAction goapAction4 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DROP, character, targetVictim);
-        GoapAction goapAction3 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY, character, targetVictim);
-        GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RESTRAIN_CHARACTER, character, targetVictim);
+        GoapAction goapAction6 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.BURY_CHARACTER, character, targetVictim);
+        GoapAction goapAction5 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY, character, targetVictim);
+        GoapAction goapAction4 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RITUAL_KILLING, character, targetVictim);
+        GoapAction goapAction3 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ABDUCT_CHARACTER, character, targetVictim);
+        GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER, character, targetVictim);
+        //GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RESTRAIN_CHARACTER, character, targetVictim);
         GoapAction goapAction1 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.KNOCKOUT_CHARACTER, character, targetVictim);
 
-        goapAction4.SetWillAvoidCharactersWhileMoving(true);
-        goapAction7.SetWillAvoidCharactersWhileMoving(true);
+        goapAction3.SetWillAvoidCharactersWhileMoving(true);
+        goapAction6.SetWillAvoidCharactersWhileMoving(true);
 
         LocationStructure wilderness = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         if (character.homeStructure.residents.Count > 1) {
-            goapAction4.InitializeOtherData(new object[] { wilderness });
+            goapAction3.InitializeOtherData(new object[] { wilderness });
         } else {
-            goapAction4.InitializeOtherData(new object[] { character.homeStructure });
+            goapAction3.InitializeOtherData(new object[] { character.homeStructure });
         }
-        goapAction7.InitializeOtherData(new object[] { wilderness });
+        goapAction6.InitializeOtherData(new object[] { wilderness });
 
-        GoapNode goalNode = new GoapNode(null, goapAction7.cost, goapAction7);
-        GoapNode sixthNode = new GoapNode(goalNode, goapAction6.cost, goapAction6);
-        GoapNode fifthNode = new GoapNode(sixthNode, goapAction5.cost, goapAction5);
+        GoapNode goalNode = new GoapNode(null, goapAction6.cost, goapAction6);
+        //GoapNode sixthNode = new GoapNode(goalNode, goapAction5.cost, goapAction5);
+        GoapNode fifthNode = new GoapNode(goalNode, goapAction5.cost, goapAction5);
         GoapNode fourthNode = new GoapNode(fifthNode, goapAction4.cost, goapAction4);
         GoapNode thirdNode = new GoapNode(fourthNode, goapAction3.cost, goapAction3);
         GoapNode secondNode = new GoapNode(thirdNode, goapAction2.cost, goapAction2);
@@ -256,6 +256,7 @@ public class SerialKiller : Trait {
         GoapPlan plan = new GoapPlan(startingNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY }, GOAP_CATEGORY.WORK);
         plan.ConstructAllNodes();
         plan.SetDoNotRecalculate(true);
+        job.AllowDeadTargets();
         job.SetIsStealth(true);
         job.SetAssignedPlan(plan);
         job.SetAssignedCharacter(character);

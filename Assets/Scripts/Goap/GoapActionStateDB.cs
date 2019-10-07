@@ -79,14 +79,15 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.ABDUCT_CHARACTER, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Abduct Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "In Progress", status = InteractionManager.Goap_State_Success, duration = -1 },
-            new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
+            //new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.CARRY_CHARACTER, new StateNameAndDuration[]{
+        {INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Carry Success", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
-        {INTERACTION_TYPE.DROP_CHARACTER, new StateNameAndDuration[]{
-            new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        {INTERACTION_TYPE.IMPRISON_CHARACTER, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "In Progress", status = InteractionManager.Goap_State_Success, duration = -1 },
+            new StateNameAndDuration(){ name = "Imprison Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         {INTERACTION_TYPE.MINE_GOAP, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Mine Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },

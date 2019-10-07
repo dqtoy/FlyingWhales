@@ -1089,10 +1089,10 @@ public class CharacterMarker : PooledObject {
             } else {
                 log += "\n - Character is either dead, unconscious, resting, or zapped, not processing...";
             }
-            actionsToWitness.Clear();
             unprocessedVisionPOIs.Clear();
             character.PrintLogIfActive(log);
         }
+        actionsToWitness.Clear();
         if (willProcessCombat && (hostilesInRange.Count > 0 || avoidInRange.Count > 0)) {
             string log = GameManager.Instance.TodayLogString() + character.name + " process combat switch is turned on and there are hostiles or avoid in list, processing combat...";
             ProcessCombatBehavior();

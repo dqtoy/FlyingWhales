@@ -1869,8 +1869,8 @@ public class Character : ILeader, IPointOfInterest {
         //if (homeArea.id == specificLocation.id) {
         if (homeArea != null && specificLocation == homeArea && !targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND) && targetCharacter.GetNormalTrait("Restrained") == null && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             //GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = targetCharacter };
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
-            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.IMPRISON_CHARACTER, targetCharacter);
+            //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
             //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
             //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
@@ -2076,8 +2076,8 @@ public class Character : ILeader, IPointOfInterest {
                 return;
             }
             if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.SAVE_CHARACTER)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SAVE_CHARACTER, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
-                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY_WITH_CONSENT, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SAVE_CHARACTER, INTERACTION_TYPE.IMPRISON_CHARACTER, targetCharacter);
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER);
                 //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = targetCharacter.homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
                 jobQueue.AddJobInQueue(job, processLogicForPersonalJob);
                 log += "\n" + name + " created save character job.";
@@ -7205,9 +7205,9 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void ConstructInitialGoapAdvertisementActions() {
         //poiGoapActions = new List<INTERACTION_TYPE>();
-        poiGoapActions.Add(INTERACTION_TYPE.CARRY_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ASSAULT_CHARACTER);
-        poiGoapActions.Add(INTERACTION_TYPE.DROP_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.IMPRISON_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ABDUCT_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.RESTRAIN_CHARACTER);
         //poiGoapActions.Add(INTERACTION_TYPE.STROLL);
@@ -7228,7 +7228,7 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
         poiGoapActions.Add(INTERACTION_TYPE.BURY_CHARACTER);
-        poiGoapActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
+        //poiGoapActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
         poiGoapActions.Add(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
         poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
         poiGoapActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
@@ -7714,6 +7714,14 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentAction.goapType, currentAction.actor, currentAction.poiTarget, currentAction.otherData) 
                 && currentAction.CanSatisfyAllPreconditions()) {
+                //if (currentAction.poiTarget != this && currentAction.isStealth) {
+                //    //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
+                //    if (marker.inVisionPOIs.Contains(currentAction.poiTarget) && !marker.CanDoStealthActionToTarget(currentAction.poiTarget)) {
+                //        log += "\n - Action is stealth and character cannot do stealth action right now...";
+                //        PrintLogIfActive(log);
+                //        return;
+                //    }
+                //}
                 log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentAction.goapName + " to " + currentAction.poiTarget.name + " at " + currentAction.poiTarget.gridTileLocation?.ToString() ?? "No Tile Location";
                 PrintLogIfActive(log);
                 currentAction.PerformActualAction();

@@ -23,6 +23,13 @@ public class Dead : Trait {
     #endregion
 
     #region Overrides
+    public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+        base.OnRemoveTrait(removedFrom, removedBy);
+        if(removedFrom is ITraitable) {
+            Character owner = removedFrom as Character;
+            owner.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
+        }
+    }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (traitOwner is Character) {
             Character targetCharacter = traitOwner as Character;
@@ -30,7 +37,7 @@ public class Dead : Trait {
                 GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.BURY);
                 if (currentJob == null) {
                     GoapPlanJob buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
-                    buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY_WITH_CONSENT, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
+                    //buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
                     buryJob.AllowDeadTargets();
                     buryJob.SetCanBeDoneInLocation(true);
                     if (InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, buryJob)) {

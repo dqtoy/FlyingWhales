@@ -3,30 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class DropCharacter : GoapAction {
+public class ImprisonCharacter : GoapAction {
     private LocationStructure _prison;
 
     public override LocationStructure targetStructure {
         get { return _prison; }
     }
 
-    public DropCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public ImprisonCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.IMPRISON_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         _prison = actor.homeArea.prison;
         actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Hostile_Icon;
+        whileMovingState = "In Progress";
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
+    //protected override void ConstructRequirement() {
+    //    _requirementAction = Requirement;
+    //}
     protected override void ConstructPreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY_WITH_CONSENT, conditionKey = actor, targetPOI = poiTarget }, IsInActorParty);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.RESTRAIN_CARRY, conditionKey = actor, targetPOI = poiTarget }, IsInActorPartyAndRestrained);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeRegion, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        SetState("Drop Success");
+        SetState("Imprison Success");
     }
     protected override int GetCost() {
         return 1;
@@ -42,9 +43,6 @@ public class DropCharacter : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void SetTargetStructure() {
-        base.SetTargetStructure();
-    }
     public override void OnStopActionWhileTravelling() {
         base.OnStopActionWhileTravelling();
         Character targetCharacter = poiTarget as Character;
@@ -57,26 +55,20 @@ public class DropCharacter : GoapAction {
     }
     #endregion
 
-    #region Requirements
-    protected bool Requirement() {
-        return actor != poiTarget;
-    }
-    #endregion
-
     #region Preconditions
-    private bool IsInActorParty() {
+    private bool IsInActorPartyAndRestrained() {
         Character target = poiTarget as Character;
-        return target.currentParty == actor.currentParty;
+        return target.currentParty == actor.currentParty && target.GetNormalTrait("Restrained") != null;
     }
     #endregion
 
     #region State Effects
-    public void PreDropSuccess() {
+    public void PreImprisonSuccess() {
         //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         currentState.AddLogFiller(_prison.location, _prison.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.SetIntelReaction(DropSuccessIntelReaction);
     }
-    public void AfterDropSuccess() {
+    public void AfterImprisonSuccess() {
         Character target = poiTarget as Character;
         LocationGridTile dropLocation = null;
         List<LocationGridTile> choices = actor.gridTileLocation.UnoccupiedNeighbours.Where(x => x.structure == targetStructure).ToList();
@@ -159,8 +151,8 @@ public class DropCharacter : GoapAction {
     #endregion
 }
 
-public class DropCharacterData : GoapActionData {
-    public DropCharacterData() : base(INTERACTION_TYPE.DROP_CHARACTER) {
+public class ImprisonCharacterData : GoapActionData {
+    public ImprisonCharacterData() : base(INTERACTION_TYPE.IMPRISON_CHARACTER) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }

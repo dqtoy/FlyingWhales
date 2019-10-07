@@ -129,20 +129,20 @@ public class CharacterTrait : Trait {
                     }
                 }
             }
-            if(targetPOI is Character) {
-                //When someone sees another character carrying a character that is unconscious or restrained, and that character is not a branded criminal, and not the carrier's lover or relative, the carrier will be branded as Assaulter and Crime Handling will take place.
-                Character character = targetPOI as Character;
-                if(!character.isDead && character.IsInOwnParty() && character.currentParty.characters.Count > 1 && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL)) { //This means that this character is carrrying another character
-                    Character carriedCharacter = character.currentParty.characters[1];
-                    if(characterThatWillDoJob != carriedCharacter && !carriedCharacter.isDead && carriedCharacter.GetNormalTrait("Unconscious", "Restrained") != null) {
-                        if(!character.HasRelationshipOfTypeWith(carriedCharacter, false, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER)) {
-                            if(character.currentAction != null && !character.currentAction.hasCrimeBeenReported) {
-                                characterThatWillDoJob.ReactToCrime(CRIME.ASSAULT, character.currentAction, character.currentAlterEgo, SHARE_INTEL_STATUS.WITNESSED);
-                            }
-                        }
-                    }
-                }
-            }
+            //if(targetPOI is Character) {
+            //    //When someone sees another character carrying a character that is unconscious or restrained, and that character is not a branded criminal, and not the carrier's lover or relative, the carrier will be branded as Assaulter and Crime Handling will take place.
+            //    Character character = targetPOI as Character;
+            //    if(!character.isDead && character.IsInOwnParty() && character.currentParty.characters.Count > 1 && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL)) { //This means that this character is carrrying another character
+            //        Character carriedCharacter = character.currentParty.characters[1];
+            //        if(characterThatWillDoJob != carriedCharacter && !carriedCharacter.isDead && carriedCharacter.GetNormalTrait("Unconscious", "Restrained") != null) {
+            //            if(!character.HasRelationshipOfTypeWith(carriedCharacter, false, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER)) {
+            //                if(character.currentAction != null && !character.currentAction.hasCrimeBeenReported) {
+            //                    characterThatWillDoJob.ReactToCrime(CRIME.ASSAULT, character.currentAction, character.currentAlterEgo, SHARE_INTEL_STATUS.WITNESSED);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
         }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
     }

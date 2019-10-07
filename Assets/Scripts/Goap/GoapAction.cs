@@ -84,11 +84,18 @@ public class GoapAction {
     public bool isStealth { get; protected set; }
     public bool isRoamingAction { get; protected set; } //Is this action a roaming action like Hunting To Drink Blood or Roaming To Steal
     public object[] otherData { get; protected set; }
+    public string whileMovingState { get; protected set; } //The state name of this action while actor is still moving towards the target location/character, this can be empty, in fact the default value is empty, this is only needed when we want an action to have a current state even though he/she is still moving to the target, this does not mean that the actor is performing actual action
 
     protected virtual bool isTargetMissing {
         get {
-            bool targetMissing = !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
-                || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
+            bool targetMissing = false;
+            if (parentPlan != null && parentPlan.job != null && parentPlan.job.allowDeadTargets) {
+                targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !(poiTarget as Character).isDead;
+            } else {
+                targetMissing = !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
+            }
 
             if (targetMissing) {
                 return targetMissing;
@@ -133,6 +140,7 @@ public class GoapAction {
         canBeAddedToMemory = true;
         _stayInArea = false;
         awareCharactersOfThisAction = new List<Character>();
+        whileMovingState = string.Empty;
         //for testing
         //CRIME[] choices = Utilities.GetEnumValues<CRIME>();
         //committedCrime = choices[Utilities.rng.Next(1, choices.Length)];
@@ -300,6 +308,9 @@ public class GoapAction {
             }
         }
         poiTarget.AddTargettedByAction(this);
+        if (whileMovingState != string.Empty) {
+            SetState(whileMovingState);
+        }
         MoveToDoAction(targetCharacter);
     }
     public virtual LocationGridTile GetTargetLocationTile() {
@@ -674,6 +685,12 @@ public class GoapAction {
             return this.currentState.descriptionLog;
         }
         if (actor.currentParty.icon.isTravelling) {
+            if(currentState != null) {
+                //character is travelling but there is already a current state
+                //Note: this will only happen is action has whileMovingState
+                //Examples are: Imprison Character and Abduct Character actions
+                return currentState.descriptionLog;
+            }
             //character is travelling
             return thoughtBubbleMovingLog;
         } else {
