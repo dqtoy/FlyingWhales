@@ -75,8 +75,9 @@ public class Puke : GoapAction {
             if (status == SHARE_INTEL_STATUS.WITNESSED) {
                 //- If witnessed: 35% chance to also Puke if also on the move
                 if (Random.Range(0, 100) < 35 && recipient.marker.isMoving) {
-                    AlsoPuke(recipient);
-                    return reactions; //do not do anything else
+                    if (AlsoPuke(recipient)) {
+                        return reactions; //do not do anything else
+                    }
                 }
             }
             if (!isPuking) {
@@ -113,7 +114,15 @@ public class Puke : GoapAction {
                         reactions.Add(string.Format("I hope {0} gets well soon.", Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
                     }
                 }
-                
+
+                //#region Check Up
+                //else if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                //    if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE && !recipient.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, actor)) {
+                //        CreateFeelingConcernedJob(recipient, actor);
+                //    }
+                //}
+                //#endregion
+
             }
         }
         //- Negative Relationship with Actor
@@ -121,9 +130,15 @@ public class Puke : GoapAction {
             if (status == SHARE_INTEL_STATUS.WITNESSED) {
                 //- If witnessed: 35% chance to also Puke if also on the move
                 if (Random.Range(0, 100) < 35 && recipient.marker.isMoving) {
-                    AlsoPuke(recipient);
-                    return reactions; //do not do anything else
+                    if (AlsoPuke(recipient)) {
+                        return reactions; //do not do anything else
+                    }                    
                 }
+                //#region Check Up
+                //if (recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+                //    CreateLaughAtJob(recipient, actor);
+                //}
+                //#endregion
             } else if (status == SHARE_INTEL_STATUS.INFORMED) {
                 //- If Informed: "Stop sharing gross things about that vile person."
                 reactions.Add("Stop sharing gross things about that vile person.");
@@ -136,7 +151,7 @@ public class Puke : GoapAction {
 
     private GoapAction stoppedAction;
     private CharacterState pausedState;
-    private void AlsoPuke(Character character) {
+    private bool AlsoPuke(Character character) {
         if (character.currentAction != null && character.currentAction.goapType != INTERACTION_TYPE.PUKE) {
             stoppedAction = character.currentAction;
             character.StopCurrentAction(false);
@@ -153,6 +168,7 @@ public class Puke : GoapAction {
             goapAction.CreateStates();
             goapAction.SetEndAction(ResumeLastAction);
             goapAction.DoAction();
+            return true;
         } else if (character.stateComponent.currentState != null) {
             pausedState = character.stateComponent.currentState;
             character.stateComponent.currentState.PauseState();
@@ -168,6 +184,7 @@ public class Puke : GoapAction {
             goapAction.CreateStates();
             goapAction.SetEndAction(ResumePausedState);
             goapAction.DoAction();
+            return true;
         } else if (character.stateComponent.currentState == null && character.currentAction == null) {
             GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, character, character);
 
@@ -179,7 +196,9 @@ public class Puke : GoapAction {
 
             goapAction.CreateStates();
             goapAction.DoAction();
+            return true;
         }
+        return false;
     }
 
     private void ResumeLastAction(string result, GoapAction action) {
@@ -194,6 +213,25 @@ public class Puke : GoapAction {
         action.actor.GoapActionResult(result, action);
         pausedState.ResumeState();
     }
+
+    #region Check Up
+    private bool CreateLaughAtJob(Character characterThatWillDoJob, Character target) {
+        if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT)) {
+            GoapPlanJob laughJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target);
+            characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
+            return true;
+        }
+        return false;
+    }
+    private bool CreateFeelingConcernedJob(Character characterThatWillDoJob, Character target) {
+        if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED)) {
+            GoapPlanJob laughJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target);
+            characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
+            return true;
+        }
+        return false;
+    }
+    #endregion
 
     //private bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
     //    if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {

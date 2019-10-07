@@ -6,11 +6,17 @@ public static class TileObjectDB {
 
     //tile objects
     public static Dictionary<TILE_OBJECT_TYPE, TileObjectData> tileObjectData = new Dictionary<TILE_OBJECT_TYPE, TileObjectData>() {
-        { TILE_OBJECT_TYPE.SUPPLY_PILE, new TileObjectData() { constructionCost = 10, constructionTime = 12, neededTraitType = typeof(Craftsman) } },
+        { TILE_OBJECT_TYPE.SUPPLY_PILE, new TileObjectData() {
+            constructionCost = 10,
+            constructionTime = 12,
+            maxHP = 10000,
+            neededTraitType = typeof(Craftsman)
+        } },
 
         { TILE_OBJECT_TYPE.BED, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
+            maxHP = 1000,
             neededTraitType = typeof(Craftsman),
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.TIREDNESS_RECOVERY, value = 20 }
@@ -20,6 +26,7 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.DESK, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
+            maxHP = 1000,
             neededTraitType = typeof(Craftsman),
             providedFacilities = new ProvidedFacility[] {
                  new ProvidedFacility() { type = FACILITY_TYPE.SIT_DOWN_SPOT, value = 10 }
@@ -29,6 +36,7 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.GUITAR, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
+            maxHP = 1000,
             neededTraitType = typeof(Craftsman),
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.HAPPINESS_RECOVERY, value = 10 }
@@ -37,6 +45,7 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.TABLE, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
+            maxHP = 1000,
             neededTraitType = typeof(Craftsman),
             providedFacilities = new ProvidedFacility[] {
                 new ProvidedFacility() { type = FACILITY_TYPE.FULLNESS_RECOVERY, value = 20 },
@@ -46,6 +55,7 @@ public static class TileObjectDB {
         { TILE_OBJECT_TYPE.TREE_OBJECT, new TileObjectData() {
             constructionCost = 10,
             constructionTime = 12,
+            maxHP = 1000,
             neededTraitType = typeof(Craftsman),
         } },
     };
@@ -73,6 +83,7 @@ public static class TileObjectDB {
 public struct TileObjectData {
     public int constructionCost;
     public int constructionTime; //in ticks
+    public int maxHP;
     public System.Type neededTraitType;
     public ProvidedFacility[] providedFacilities;
 
@@ -92,6 +103,7 @@ public struct TileObjectData {
             return new TileObjectData() {
                 constructionCost = 10,
                 constructionTime = 12,
+                maxHP = 1000,
                 neededTraitType = typeof(Craftsman),
                 providedFacilities = null
             };

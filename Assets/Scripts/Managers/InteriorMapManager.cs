@@ -49,7 +49,7 @@ public class InteriorMapManager : MonoBehaviour {
     
     [Header("Pathfinding")]
     [SerializeField] private AstarPath pathfinder;
-    private const float nodeSize = 0.2f;
+    private const float nodeSize = 0.3f;
     public const int Default_Character_Sorting_Order = 82;
 
     [Header("Tile Object")]
@@ -247,7 +247,7 @@ public class InteriorMapManager : MonoBehaviour {
         if (newMap.area.areaType == AREA_TYPE.DUNGEON) {
             gg.collision.diameter = 2f;
         } else {
-            gg.collision.diameter = 1f;
+            gg.collision.diameter = 0.9f;
         }
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         AstarPath.active.Scan(gg);
@@ -427,6 +427,7 @@ public class InteriorMapManager : MonoBehaviour {
         }
         summary += "\nContent: " + poi?.ToString() ?? "None";
         if (poi != null) {
+            summary += "\nHP: " + poi.currentHP.ToString() + "/" + poi.maxHP.ToString();
             summary += "\n\tObject State: " + poi.state.ToString();
             if (poi is TreeObject) {
                 summary += "\n\tYield: " + (poi as TreeObject).yield.ToString();
@@ -549,7 +550,7 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\n\tHostiles in Range: ";
         if (character.marker.hostilesInRange.Count > 0) {
             for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
-                Character poi = character.marker.hostilesInRange[i];
+                IPointOfInterest poi = character.marker.hostilesInRange[i];
                 summary += poi.name + ", ";
             }
         } else {

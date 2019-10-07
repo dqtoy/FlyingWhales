@@ -23,63 +23,85 @@ public class AssaultCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget });
     }
     protected override void MoveToDoAction(Character targetCharacter) {
-        base.MoveToDoAction(targetCharacter);
+        //base.MoveToDoAction(targetCharacter);
         //change end reached distance to the characters attack range. NOTE: Make sure to return the range to default after this action is done.
-        actor.marker.pathfindingAI.SetEndReachedDistance(actor.characterClass.attackRange);
-    }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
-        cannotCancelAction = true;
-        actor.marker.pathfindingAI.ResetEndReachedDistance();
-        
-        Character targetCharacter = poiTarget as Character;
-        if (targetCharacter.specificLocation == actor.specificLocation && !targetCharacter.currentParty.icon.isTravellingOutside) {
-            if (actor.IsCombatReady()) {
-                CharacterState characterState;
-                if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {
-                    bool isLethal = true;
-                    if(parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.UNDERMINE_ENEMY || parentPlan.job.jobType == JOB_TYPE.APPREHEND || parentPlan.job.targetInteractionType == INTERACTION_TYPE.DRINK_BLOOD)) {
-                        //Assaulting characters for imprisonment of criminals and undermining enemies must be non lethal
-                        isLethal = false;
-                    }
-                    if(actor.marker.AddHostileInRange(targetCharacter, out characterState, false, isLethal: isLethal)) {
-                        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState); //set this to signal because adding a character as hostile, is no longer sure to return a new CharacterState
-                        SetState("In Progress");
-                    } else {
-                        Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did was unable to add target as hostile when reacting to " + poiTarget.name + " in assault action!");
-                        SetState("Target Missing");
-                    }
-                } else if (actor.stateComponent.currentState is CombatState){
-                    characterState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
-                    CombatState combatState = characterState as CombatState;
-                    combatState.SetActionThatTriggeredThisState(this);
-                    combatState.SetOnEndStateAction(OnFinishCombatState);
-                    SetState("In Progress");
-                } else {
-                    Debug.LogWarning(actor.name + " is not in combat state, but it has " + targetCharacter.name + "in it's hostile range");
-                    SetState("Assault Failed");
-                }
-                //if (characterState is CombatState) {
-                //    CombatState realCombatState = characterState as CombatState;
-                //    realCombatState.SetActionThatTriggeredThisState(this);
-                //    realCombatState.SetOnEndStateAction(OnFinishCombatState);
-                //    SetState("In Progress");
-                //} else {
-                //    Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
-                //    SetState("Target Missing");
-                //}
-            } else {
-                SetState("Assault Failed");
-            }
+        //actor.marker.pathfindingAI.SetEndReachedDistance(actor.characterClass.attackRange);
+        isPerformingActualAction = true;
+        actorAlterEgo = actor.currentAlterEgo;
+        AddAwareCharacter(actor);
+
+        bool isLethal = true;
+        if (parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.UNDERMINE_ENEMY || parentPlan.job.jobType == JOB_TYPE.APPREHEND || parentPlan.job.targetInteractionType == INTERACTION_TYPE.DRINK_BLOOD)) {
+            //Assaulting characters for imprisonment of criminals and undermining enemies must be non lethal
+            isLethal = false;
+        }
+        if (actor.marker.AddHostileInRange(targetCharacter, false, isLethal: isLethal)) {
+            Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState); //set this to signal because adding a character as hostile, is no longer sure to return a new CharacterState
+            SetState("In Progress");
         } else {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did was unable to add target as hostile when reacting to " + poiTarget.name + " in assault action!");
             SetState("Target Missing");
         }
+
     }
+    public override bool ShouldBeStoppedWhenSwitchingStates() {
+        return false;
+    }
+    //public override void PerformActualAction() {
+    //    base.PerformActualAction();
+    //    cannotCancelAction = true;
+    //    actor.marker.pathfindingAI.ResetEndReachedDistance();
+
+    //    Character targetCharacter = poiTarget as Character;
+    //    if (targetCharacter.specificLocation == actor.specificLocation && !targetCharacter.currentParty.icon.isTravellingOutside) {
+    //        if (actor.IsCombatReady()) {
+    //            CharacterState characterState;
+    //            if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {
+    //                bool isLethal = true;
+    //                if(parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.UNDERMINE_ENEMY || parentPlan.job.jobType == JOB_TYPE.APPREHEND || parentPlan.job.targetInteractionType == INTERACTION_TYPE.DRINK_BLOOD)) {
+    //                    //Assaulting characters for imprisonment of criminals and undermining enemies must be non lethal
+    //                    isLethal = false;
+    //                }
+    //                if(actor.marker.AddHostileInRange(targetCharacter, out characterState, false, isLethal: isLethal)) {
+    //                    Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState); //set this to signal because adding a character as hostile, is no longer sure to return a new CharacterState
+    //                    SetState("In Progress");
+    //                } else {
+    //                    Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did was unable to add target as hostile when reacting to " + poiTarget.name + " in assault action!");
+    //                    SetState("Target Missing");
+    //                }
+    //            } else if (actor.stateComponent.currentState is CombatState){
+    //                characterState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
+    //                CombatState combatState = characterState as CombatState;
+    //                combatState.SetActionThatTriggeredThisState(this);
+    //                combatState.SetEndStateAction(OnFinishCombatState);
+    //                SetState("In Progress");
+    //            } else {
+    //                Debug.LogWarning(actor.name + " is not in combat state, but it has " + targetCharacter.name + "in it's hostile range");
+    //                SetState("Assault Failed");
+    //            }
+    //            //if (characterState is CombatState) {
+    //            //    CombatState realCombatState = characterState as CombatState;
+    //            //    realCombatState.SetActionThatTriggeredThisState(this);
+    //            //    realCombatState.SetOnEndStateAction(OnFinishCombatState);
+    //            //    SetState("In Progress");
+    //            //} else {
+    //            //    Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
+    //            //    SetState("Target Missing");
+    //            //}
+    //        } else {
+    //            SetState("Assault Failed");
+    //        }
+    //    } else {
+    //        SetState("Target Missing");
+    //    }
+    //}
     private void OnCharacterStartedState(Character character, CharacterState state) {
-        CombatState combatState = state as CombatState;
-        combatState.SetActionThatTriggeredThisState(this);
-        combatState.SetOnEndStateAction(OnFinishCombatState);
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        if (character == actor) {
+            CombatState combatState = state as CombatState;
+            combatState.SetActionThatTriggeredThisState(this);
+            combatState.SetEndStateAction(OnFinishCombatState);
+            Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        }
     }
     protected override void OnCancelActionTowardsTarget() {
         actor.marker.pathfindingAI.ResetEndReachedDistance();

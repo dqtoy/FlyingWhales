@@ -33,6 +33,10 @@ public class TileObject : IPointOfInterest {
         }
     }//array of characters, currently using the tile object
 
+    //hp
+    public int maxHP { get; protected set; }
+    public int currentHP { get; protected set; }
+
     ///this is null by default. This is responsible for updating the pathfinding graph when a tileobject that should be unapassable is placed <see cref="LocationGridTileGUS.Initialize(Vector3[])"/>, this should also destroyed when the object is removed. <see cref="LocationGridTileGUS.Destroy"/>
     public LocationGridTileGUS graphUpdateScene { get; protected set; } 
 
@@ -59,6 +63,15 @@ public class TileObject : IPointOfInterest {
     public POICollisionTrigger collisionTrigger {
         get { return _collisionTrigger; }
     }
+    public Vector3 worldPosition {
+        get { return gridTileLocation.centeredWorldLocation; }
+    }
+    public bool isDead {
+        get { return gridTileLocation == null; } //Consider the object as dead if it no longer has a tile location (has been removed)
+    }
+    public ProjectileReceiver projectileReciever {
+        get { return collisionTrigger.projectileReciever; }
+    }
     #endregion
 
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType) {
@@ -71,6 +84,8 @@ public class TileObject : IPointOfInterest {
         targettedByAction = new List<GoapAction>();
         owners = new List<Character>();
         hasCreatedSlots = false;
+        maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
+        currentHP = maxHP;
         AddTrait("Flammable");
         InitializeCollisionTrigger();
         InteriorMapManager.Instance.AddTileObject(this);
@@ -225,6 +240,9 @@ public class TileObject : IPointOfInterest {
     public virtual void SetStructureLocation(LocationStructure structure) {
         structureLocation = structure;
     }
+    public virtual bool IsValidCombatTarget() {
+        return gridTileLocation != null;
+    }
     #endregion
 
     #region IPointOfInterest
@@ -297,6 +315,33 @@ public class TileObject : IPointOfInterest {
     }
     public void RemoveTargettedByAction(GoapAction action) {
         targettedByAction.Remove(action);
+    }
+    public void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
+        if (currentHP == 0 && amount < 0) {
+            return; //hp is already at minimum, do not allow any more negative adjustments
+        }
+        this.currentHP += amount;
+        this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);
+        if (currentHP == 0) {
+            //object has been destroyed
+            Character removedBy = null;
+            if (source is Character) {
+                removedBy = source as Character;
+            }
+            gridTileLocation.structure.RemovePOI(this, removedBy);
+        }
+    }
+    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
+        GameManager.Instance.CreateHitEffectAt(this);
+        if (this.currentHP <= 0) {
+            return; //if hp is already 0, do not deal damage
+        }
+        this.AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
+        attackSummary += "\nDealt damage " + characterThatAttacked.attackPower.ToString();
+        if (this.currentHP <= 0) {
+            attackSummary += "\n" + this.name + "'s hp has reached 0.";
+        }
+        //Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }
     #endregion
 

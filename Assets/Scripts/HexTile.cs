@@ -154,10 +154,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             landmarkOnTile?.AddFeaturesToRegion();
         }
     }
-    public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
+    public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType, bool addFeatures) {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
         //SetLandmarkOnTile(new BaseLandmark(this, landmarkType));
-        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, landmarkType));
+        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, landmarkType), addFeatures);
         if (data.minimumTileCount > 1) {
             if (neighbourDirections.ContainsKey(data.connectedTileDirection) && neighbourDirections[data.connectedTileDirection] != null) {
                 HexTile tileToConnect = neighbourDirections[data.connectedTileDirection];

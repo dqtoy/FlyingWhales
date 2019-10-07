@@ -15,7 +15,11 @@ public interface IPointOfInterest : ITraitable{
     Faction factionOwner { get; }
     POICollisionTrigger collisionTrigger { get; } //Each poi must only hav 1 at a time.
     bool isDisabledByPlayer { get; }
-
+    int maxHP { get; }
+    int currentHP { get; }
+    Vector3 worldPosition { get; }
+    bool isDead { get; }
+    ProjectileReceiver projectileReciever { get; }
     void SetGridTileLocation(LocationGridTile tile);
     void AddAdvertisedAction(INTERACTION_TYPE actionType);
     void RemoveAdvertisedAction(INTERACTION_TYPE actionType);
@@ -29,6 +33,9 @@ public interface IPointOfInterest : ITraitable{
     bool RemoveJobTargettingThis(JobQueueItem job);
     LocationGridTile GetNearestUnoccupiedTileFromThis();
     List<GoapAction> AdvertiseActionsToActor(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData);
+    void AdjustHP(int amount, bool triggerDeath = false, object source = null);
+    void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary);
+    bool IsValidCombatTarget();
 
     //#region Traits
     //bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true);
@@ -63,6 +70,8 @@ public class POIData {
     public SPECIAL_TOKEN specialTokenType; //The type of item that this is, should only be used if poi type is ITEM
 
     public Vector3 genericTileObjectPlace; //used for generic tile objects, use this instead of id. NOTE: Generic Tile objects must ALWAYS have an areaID
+
+    public POIData() { }
 
     public POIData(IPointOfInterest poi) {
         poiID = poi.id;

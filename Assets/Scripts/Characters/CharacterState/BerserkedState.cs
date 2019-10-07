@@ -62,10 +62,12 @@ public class BerserkedState : CharacterState {
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.TILE_OBJECT_DESTROY, stateComponent.character, targetPOI);
                     if (goapAction.targetTile != null) {
                         SetCurrentlyDoingAction(goapAction);
-                        goapAction.CreateStates();
-                        stateComponent.character.SetCurrentAction(goapAction);
-                        stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
                         PauseState();
+                        goapAction.CreateStates();
+                        goapAction.SetEndAction(BerserkAgain);
+                        goapAction.DoAction();
+                        //stateComponent.character.SetCurrentAction(goapAction);
+                        //stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
                     } else {
                         Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't destroy tile object " + targetPOI.name + " because there is no tile to go to!");
                     }
@@ -78,9 +80,13 @@ public class BerserkedState : CharacterState {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ITEM_DESTROY, stateComponent.character, targetPOI);
                 if (goapAction.targetTile != null) {
                     goapAction.CreateStates();
-                    stateComponent.character.SetCurrentAction(goapAction);
-                    stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
                     PauseState();
+                    goapAction.SetEndAction(BerserkAgain);
+                    goapAction.DoAction();
+                    
+                    //stateComponent.character.SetCurrentAction(goapAction);
+                    //stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
+                    
                 } else {
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't destroy item " + targetPOI.name + " because there is no tile to go to!");
                 }

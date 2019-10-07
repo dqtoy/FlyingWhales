@@ -414,11 +414,12 @@ namespace worldcreator {
             return landmarks;
         }
         public BaseLandmark SpawnLandmark(HexTile tile, LANDMARK_TYPE landmarkType) {
-            if (outerGridList.Contains(tile)) {
-                return null;
-            }
-            LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-            return LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, landmarkType);
+            //if (outerGridList.Contains(tile)) {
+            //    return null;
+            //}
+            //LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
+            //return LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, landmarkType);
+            return null;
         }
         public void DestroyLandmarks(List<HexTile> tiles) {
             for (int i = 0; i < tiles.Count; i++) {

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TileObjectDestroy : GoapAction {
+
+    private LocationStructure structure;
+
     public TileObjectDestroy(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Hostile_Icon;
     }
@@ -11,17 +14,50 @@ public class TileObjectDestroy : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    //protected override void ConstructPreconditionsAndEffects() {
-    //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
-    //}
-    public override void PerformActualAction() {
-        base.PerformActualAction();
-        if (!isTargetMissing) {
-            SetState("Destroy Success");
+    protected override void MoveToDoAction(Character targetCharacter) {
+        //base.MoveToDoAction(targetCharacter);
+        //change end reached distance to the characters attack range. NOTE: Make sure to return the range to default after this action is done.
+        //actor.marker.pathfindingAI.SetEndReachedDistance(actor.characterClass.attackRange);
+        isPerformingActualAction = true;
+        actorAlterEgo = actor.currentAlterEgo;
+        AddAwareCharacter(actor);
+        if (actor.marker.AddHostileInRange(poiTarget, false)) {
+            structure = poiTarget.gridTileLocation.structure;
+            Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState); //set this to signal because adding a character as hostile, is no longer sure to return a new CharacterState
+            SetState("In Progress");
         } else {
+            Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " was unable to add target as hostile when reacting to " + poiTarget.name + " in tile object destroy action!");
             SetState("Target Missing");
         }
     }
+    public override bool ShouldBeStoppedWhenSwitchingStates() {
+        return false;
+    }
+    protected override void OnCancelActionTowardsTarget() {
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        base.OnCancelActionTowardsTarget();
+    }
+    public override void OnStopActionWhileTravelling() {
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        base.OnStopActionWhileTravelling();
+    }
+    public override void OnStopActionDuringCurrentState() {
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+    }
+    public override void OnResultReturnedToActor() {
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+    }
+    //protected override void ConstructPreconditionsAndEffects() {
+    //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
+    //}
+    //public override void PerformActualAction() {
+    //    base.PerformActualAction();
+    //    if (!isTargetMissing) {
+    //        SetState("Destroy Success");
+    //    } else {
+    //        SetState("Target Missing");
+    //    }
+    //}
     protected override int GetCost() {
         return 10;
     }
@@ -31,16 +67,31 @@ public class TileObjectDestroy : GoapAction {
     //}
     #endregion
 
+    #region Listeners
+    private void OnCharacterStartedState(Character character, CharacterState state) {
+        if (character == actor) {
+            CombatState combatState = state as CombatState;
+            combatState.SetActionThatTriggeredThisState(this);
+            combatState.SetEndStateAction(OnFinishCombatState);
+            Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        }
+    }
+    private void OnFinishCombatState() {
+        //TODO: Add Checking if the actor of this action was the one that removed the tile object
+        SetState("Destroy Success");
+    }
+    #endregion
+
     #region State Effects
     private void PreDestroySuccess() {
         currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        currentState.AddLogFiller(poiTarget.gridTileLocation.structure.location, poiTarget.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.AddLogFiller(structure.location, structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.SetIntelReaction(SuccessReactions);
     }
-    private void AfterDestroySuccess() {
-        //**After Effect 1**: Destroy target tile object
-        poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
-    }
+    //private void AfterDestroySuccess() {
+    //    //**After Effect 1**: Destroy target tile object
+    //    poiTarget.gridTileLocation?.structure.RemovePOI(poiTarget, actor);
+    //}
     private void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }

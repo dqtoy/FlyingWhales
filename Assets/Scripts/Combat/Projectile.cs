@@ -9,37 +9,41 @@ public class Projectile : MonoBehaviour {
     public float rotateSpeed = 200f;
     public float speed = 5f;
 
-    public System.Action<Character, CombatState> onHitAction;
+    public IPointOfInterest targetPOI { get; private set; }
+
+    public System.Action<IPointOfInterest, CombatState> onHitAction;
 
     private Vector3 _pausedVelocity;
     private float _pausedAngularVelocity;
-    private Character targetCharacter;
     private CombatState createdBy;
 
     #region Monobehaviours
-    //private void OnDisable() {
-    //    Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
-    //    if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
-    //        Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-    //    }
-    //}
     private void OnDestroy() {
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
-        if (Messenger.eventTable.ContainsKey(Signals.PARTY_STARTED_TRAVELLING)) {
-            Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-        }
+        Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
     }
     #endregion
 
-    public void SetTarget(Transform target, Character targetCharacter, CombatState createdBy) {
+    public void SetTarget(Transform target, IPointOfInterest targetPOI, CombatState createdBy) {
         Vector3 diff = target.position - transform.position;
         diff.Normalize();
         float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 90);
         this.target = target;
-        this.targetCharacter = targetCharacter;
+        this.targetPOI = targetPOI;
         this.createdBy = createdBy;
-        Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+        if (targetPOI is Character) {
+            Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
+            Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        } else if (targetPOI is TileObject) {
+            Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        } else if (targetPOI is SpecialToken) {
+            Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        }
+
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
     }
 
@@ -57,9 +61,9 @@ public class Projectile : MonoBehaviour {
         rigidBody.velocity = transform.up * speed;
     }
 
-    public void ProjectileHit(Character character) {
+    public void OnProjectileHit(IPointOfInterest poi) {
         //Debug.Log("Hit character " + character?.name);
-        onHitAction?.Invoke(character, createdBy);
+        onHitAction?.Invoke(poi, createdBy);
         DestroyProjectile();
     }
 
@@ -67,7 +71,7 @@ public class Projectile : MonoBehaviour {
         GameObject.Destroy(this.gameObject);
     }
 
-
+    #region Listeners
     private void OnGamePaused(bool isPaused) {
         if (isPaused) {
             _pausedVelocity = rigidBody.velocity;
@@ -82,9 +86,28 @@ public class Projectile : MonoBehaviour {
         }
     }
     private void OnCharacterAreaTravelling(Party party) {
-        if (party.characters.Contains(targetCharacter)) {
+        if (targetPOI is Character) {
+            if (party.characters.Contains(targetPOI as Character)) {
+                DestroyProjectile();
+            }
+        }
+    }
+    private void OnCharacterDied(Character character) {
+        if (character == targetPOI) {
             DestroyProjectile();
         }
     }
+    private void OnTileObjectRemoved(TileObject obj, Character removedBy, LocationGridTile removedFrom) {
+        if (obj == targetPOI) {
+            DestroyProjectile();
+        }
+    }
+    private void OnItemRemovedFromTile(SpecialToken item, LocationGridTile removedFrom) {
+        if (item == targetPOI) {
+            DestroyProjectile();
+        }
+    }
+    #endregion
+
 
 }

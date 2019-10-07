@@ -1155,14 +1155,14 @@ public class Area {
         //warehouse has 2 or more healing potions
         if (jobQueue.HasJob(JOB_TYPE.BREW_POTION)) {
             JobQueueItem brewJob = jobQueue.GetJob(JOB_TYPE.BREW_POTION);
-            jobQueue.CancelJob(brewJob);
+            jobQueue.CancelJob(brewJob, forceRemove: true);
         }
     }
     private void CancelCraftTool() {
         //warehouse has 2 or more healing potions
         if (jobQueue.HasJob(JOB_TYPE.CRAFT_TOOL)) {
             JobQueueItem craftTool = jobQueue.GetJob(JOB_TYPE.CRAFT_TOOL);
-            jobQueue.CancelJob(craftTool);
+            jobQueue.CancelJob(craftTool, forceRemove: true);
         }
     }
     private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {

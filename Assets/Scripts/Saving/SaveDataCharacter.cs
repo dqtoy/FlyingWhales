@@ -251,11 +251,14 @@ public class SaveDataCharacter {
             avoidInRangeIDs = new List<int>();
 
             for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
-                Character hostile = character.marker.hostilesInRange[i];
-                if (character.marker.IsLethalCombatForTarget(hostile)) {
-                    lethalHostilesInRangeIDs.Add(hostile.id);
-                } else {
-                    nonLethalHostilesInRangeIDs.Add(hostile.id);
+                IPointOfInterest poi = character.marker.hostilesInRange[i];
+                if (poi is Character) {
+                    Character hostile = poi as Character;
+                    if (character.marker.IsLethalCombatForTarget(hostile)) {
+                        lethalHostilesInRangeIDs.Add(hostile.id);
+                    } else {
+                        nonLethalHostilesInRangeIDs.Add(hostile.id);
+                    }
                 }
             }
             for (int i = 0; i < character.marker.avoidInRange.Count; i++) {

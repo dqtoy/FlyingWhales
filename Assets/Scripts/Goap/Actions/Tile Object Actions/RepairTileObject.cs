@@ -35,6 +35,13 @@ public class RepairTileObject : GoapAction {
     #region State Effects
     private void PreRepairSuccess() {
         currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        int gainedHPPerTick = 20;
+        int missingHP = poiTarget.maxHP - poiTarget.currentHP;
+        int ticksToRecpverMissingHP = missingHP / gainedHPPerTick;
+        currentState.OverrideDuration(ticksToRecpverMissingHP);
+    }
+    private void PerTickRepairSuccess() {
+        poiTarget.AdjustHP(20);
     }
     private void AfterRepairSuccess() {
         poiTarget.RemoveTrait("Burnt");

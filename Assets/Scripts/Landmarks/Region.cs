@@ -336,7 +336,7 @@ public class Region {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickBuilding);
         //mainLandmark.ChangeLandmarkType(demonicBuildingData.landmarkType);
         //int previousID = mainLandmark.id;
-        BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(coreTile, demonicBuildingData.landmarkType);
+        BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(coreTile, demonicBuildingData.landmarkType, false);
         //newLandmark.OverrideID(previousID);
 
         UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Finished building " + Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString()) + " at " + this.name, () => UIManager.Instance.ShowHextileInfo(coreTile));
@@ -767,6 +767,7 @@ public class Region {
     public void AddFeature(RegionFeature feature) {
         if (!features.Contains(feature)) {
             features.Add(feature);
+            Debug.Log(GameManager.Instance.TodayLogString() + " added new region feature " + feature.name + " to " + this.name);
         }
     }
     public void AddFeature(string featureName) {
@@ -783,7 +784,11 @@ public class Region {
         return false;
     }
     public void RemoveAllFeatures() {
-        features.Clear(); //only cleared for now because at the time of writing, features do not do anything when they are removed.
+        List<RegionFeature> allFeatures = new List<RegionFeature>(features);
+        for (int i = 0; i < allFeatures.Count; i++) {
+            RemoveFeature(allFeatures[i]);
+        }
+        //features.Clear(); //only cleared for now because at the time of writing, features do not do anything when they are removed.
     }
     public RegionFeature GetFeature(string featureName) {
         for (int i = 0; i < features.Count; i++) {

@@ -16,7 +16,7 @@ public class DestroyDemonicLandmark : WorldEvent {
         log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(region.mainLandmark.specificLandmarkType.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, LANDMARK_TYPE.NONE);
+        LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, LANDMARK_TYPE.NONE, false);
         base.ExecuteAfterEffect(region, spawner);
     }
     public override bool CanSpawnEventAt(Region region, Character spawner) {
