@@ -4523,7 +4523,7 @@ public class Character : ILeader, IPointOfInterest {
         }
 
         //AddTrait("Narcoleptic");
-        AddTrait("Herbalist");
+        //AddTrait("Herbalist");
         AddTrait("Character Trait");
     }
     public void CreateInitialTraitsByRace() {
@@ -7267,6 +7267,9 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.CRY);
         poiGoapActions.Add(INTERACTION_TYPE.HAVE_AFFAIR);
         poiGoapActions.Add(INTERACTION_TYPE.SLAY_CHARACTER);
+        //poiGoapActions.Add(INTERACTION_TYPE.FEELING_CONCERNED);
+        //poiGoapActions.Add(INTERACTION_TYPE.LAUGH_AT);
+        //poiGoapActions.Add(INTERACTION_TYPE.TEASE);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
