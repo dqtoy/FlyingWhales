@@ -105,6 +105,10 @@ public class DropItemWarehouse : GoapAction {
 
     #region Preconditions
     private bool HasItemTypeInInventory() {
+        if (parentPlan != null && parentPlan.job != null && parentPlan.job.jobQueueParent.isAreaOrQuestJobQueue) {
+            //if this action is part of an area job, only check the actors actual inventory instead of taking into account his/her role required items.
+            return actor.HasTokenInInventory(itemTypeToDeposit);
+        }
         return actor.HasExtraTokenInInventory(itemTypeToDeposit);
         //return true;
     }

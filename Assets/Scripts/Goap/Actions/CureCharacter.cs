@@ -45,10 +45,10 @@ public class CureCharacter : GoapAction {
     }
     public void AfterCureSuccess() {
         //**After Effect 1**: Reduce target's Sick trait
-        if(parentPlan.job != null) {
-            parentPlan.job.SetCannotCancelJob(true);
-        }
-        SetCannotCancelAction(true);
+        //if(parentPlan.job != null) {
+        //    parentPlan.job.SetCannotCancelJob(true);
+        //}
+        //SetCannotCancelAction(true);
         RemoveTraitFrom(poiTarget, "Sick", actor);
         RemoveTraitFrom(poiTarget, "Plagued", actor);
         RemoveTraitFrom(poiTarget, "Infected", actor);

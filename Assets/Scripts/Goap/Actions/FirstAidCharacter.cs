@@ -43,10 +43,10 @@ public class FirstAidCharacter : GoapAction {
     }
     public void AfterFirstAidSuccess() {
         //**After Effect 1**: Remove target's Injured and Unconscious trait
-        if (parentPlan.job != null) {
-            parentPlan.job.SetCannotCancelJob(true);
-        }
-        SetCannotCancelAction(true);
+        //if (parentPlan.job != null) {
+        //    parentPlan.job.SetCannotCancelJob(true);
+        //}
+        //SetCannotCancelAction(true);
         RemoveTraitFrom(poiTarget, "Injured", actor);
         RemoveTraitFrom(poiTarget, "Unconscious", actor);
         //**After Effect 2**: Reduce character's Supply by 10
