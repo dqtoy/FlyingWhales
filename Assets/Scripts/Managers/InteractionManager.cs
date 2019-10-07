@@ -160,6 +160,22 @@ public class InteractionManager : MonoBehaviour {
         //}
         return chosenTile;
     }
+    /// <summary>
+    /// Utility function to determine if the action type can be advertised, 
+    /// even if the advertising actor is inactive.
+    /// </summary>
+    /// <param name="type">The action type</param>
+    /// <returns>true or false</returns>
+    public bool CanBeAdvertisedWhileCharacterIsUnavailable(INTERACTION_TYPE type) {
+        switch (type) {
+            case INTERACTION_TYPE.LAUGH_AT:
+            case INTERACTION_TYPE.TEASE:
+            case INTERACTION_TYPE.FEELING_CONCERNED:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     public int GetInitialPriority(JOB_TYPE jobType) {

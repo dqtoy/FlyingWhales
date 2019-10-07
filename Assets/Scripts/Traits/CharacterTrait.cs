@@ -93,55 +93,73 @@ public class CharacterTrait : Trait {
             }
         }
         if (targetPOI is Character || targetPOI is Tombstone) {
-            Character deadTarget = null;
+            Character targetCharacter = null;
             if(targetPOI is Character) {
-                deadTarget = targetPOI as Character;
+                targetCharacter = targetPOI as Character;
             }else if(targetPOI is Tombstone) {
-                deadTarget = (targetPOI as Tombstone).character;
+                targetCharacter = (targetPOI as Tombstone).character;
             }
-            if (deadTarget.isDead) {
-                Dead deadTrait = deadTarget.GetNormalTrait("Dead") as Dead;
+            if (targetCharacter.isDead) {
+                Dead deadTrait = targetCharacter.GetNormalTrait("Dead") as Dead;
                 if (deadTrait.responsibleCharacter != characterThatWillDoJob && !deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
                     deadTrait.AddCharacterThatSawThisDead(characterThatWillDoJob);
 
                     Log sawDeadLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "saw_dead");
                     sawDeadLog.AddToFillers(characterThatWillDoJob, characterThatWillDoJob.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    sawDeadLog.AddToFillers(deadTarget, deadTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    sawDeadLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                     characterThatWillDoJob.AddHistory(sawDeadLog);
                     PlayerManager.Instance.player.ShowNotificationFrom(sawDeadLog, characterThatWillDoJob, false);
 
 
-                    if (characterThatWillDoJob.HasRelationshipOfTypeWith(deadTarget, RELATIONSHIP_TRAIT.LOVER)) {
+                    if (characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
                         characterThatWillDoJob.AddTrait("Heartbroken");
                         bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
                         characterThatWillDoJob.AdjustHappiness(-6000);
                         return hasCreatedJob;
-                    } else if (characterThatWillDoJob.HasRelationshipOfTypeWith(deadTarget, RELATIONSHIP_TRAIT.RELATIVE)) {
+                    } else if (characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.RELATIVE)) {
                         characterThatWillDoJob.AddTrait("Griefstricken");
                         bool hasCreatedJob = RandomizeBetweenShockAndCryJob(characterThatWillDoJob);
                         characterThatWillDoJob.AdjustHappiness(-4000);
                         return hasCreatedJob;
-                    } else if (characterThatWillDoJob.HasRelationshipOfTypeWith(deadTarget, RELATIONSHIP_TRAIT.FRIEND)) {
+                    } else if (characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.FRIEND)) {
                         characterThatWillDoJob.AddTrait("Griefstricken");
                         bool hasCreatedJob = CreatePrioritizedShockJob(characterThatWillDoJob);
                         characterThatWillDoJob.AdjustHappiness(-2000);
                         return hasCreatedJob;
                     }
                 }
-            }
-            if(targetPOI is Character) {
+            } else { //character is not dead
                 //When someone sees another character carrying a character that is unconscious or restrained, and that character is not a branded criminal, and not the carrier's lover or relative, the carrier will be branded as Assaulter and Crime Handling will take place.
-                Character character = targetPOI as Character;
-                if(!character.isDead && character.IsInOwnParty() && character.currentParty.characters.Count > 1 && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL)) { //This means that this character is carrrying another character
-                    Character carriedCharacter = character.currentParty.characters[1];
-                    if(characterThatWillDoJob != carriedCharacter && !carriedCharacter.isDead && carriedCharacter.GetNormalTrait("Unconscious", "Restrained") != null) {
-                        if(!character.HasRelationshipOfTypeWith(carriedCharacter, false, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER)) {
-                            if(character.currentAction != null && !character.currentAction.hasCrimeBeenReported) {
-                                characterThatWillDoJob.ReactToCrime(CRIME.ASSAULT, character.currentAction, character.currentAlterEgo, SHARE_INTEL_STATUS.WITNESSED);
+                if (targetCharacter.IsInOwnParty() && targetCharacter.currentParty.characters.Count > 1 && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) { //This means that this character is carrrying another character
+                    Character carriedCharacter = targetCharacter.currentParty.characters[1];
+                    if (characterThatWillDoJob != carriedCharacter && !carriedCharacter.isDead && carriedCharacter.GetNormalTrait("Unconscious", "Restrained") != null) {
+                        if (!targetCharacter.HasRelationshipOfTypeWith(carriedCharacter, false, RELATIONSHIP_TRAIT.RELATIVE, RELATIONSHIP_TRAIT.LOVER)) {
+                            if (targetCharacter.currentAction != null && !targetCharacter.currentAction.hasCrimeBeenReported) {
+                                characterThatWillDoJob.ReactToCrime(CRIME.ASSAULT, targetCharacter.currentAction, targetCharacter.currentAlterEgo, SHARE_INTEL_STATUS.WITNESSED);
                             }
                         }
                     }
                 }
+
+                //#region Check Up
+                ////If a character cannot assist a character in vision, they may stay with it and check up on it for a bit. Reference: https://trello.com/c/hW7y6d5W/2841-if-a-character-cannot-assist-a-character-in-vision-they-may-stay-with-it-and-check-up-on-it-for-a-bit
+
+                ////If they are enemies and the character in vision has any of the following:
+                ////- unconscious, catatonic, restrained, puked, stumbled
+                /////NOTE: Puke and Stumble Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> and <see cref="Stumble.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> respectively
+                ////They will trigger a personal https://trello.com/c/uCbLBXsF/2846-character-laugh-at job
+                //if (characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && targetCharacter.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null) {
+                //    return CreateLaughAtJob(characterThatWillDoJob, targetCharacter);
+                //}
+                ////If they have a positive relationship but the character cannot perform the necessary job to remove the following traits:
+                ////catatonic, unconscious, restrained, puked
+                /////NOTE: Puke Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/>
+                ////They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
+                //else if (characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null 
+                //    && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, targetCharacter)) {
+                //    return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);
+                //}
+                //#endregion
             }
         }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
@@ -191,6 +209,22 @@ public class CharacterTrait : Trait {
         if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PRIORITIZED_CRY)) {
             GoapPlanJob cryJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PRIORITIZED_CRY, characterThatWillDoJob);
             characterThatWillDoJob.jobQueue.AddJobInQueue(cryJob);
+            return true;
+        }
+        return false;
+    }
+    private bool CreateLaughAtJob(Character characterThatWillDoJob, Character target) {
+        if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT)) {
+            GoapPlanJob laughJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.LAUGH_AT, target);
+            characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
+            return true;
+        }
+        return false;
+    }
+    private bool CreateFeelingConcernedJob(Character characterThatWillDoJob, Character target) {
+        if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED)) {
+            GoapPlanJob laughJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.FEELING_CONCERNED, target);
+            characterThatWillDoJob.jobQueue.AddJobInQueue(laughJob);
             return true;
         }
         return false;

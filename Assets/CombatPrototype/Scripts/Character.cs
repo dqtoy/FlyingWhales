@@ -7101,10 +7101,15 @@ public class Character : ILeader, IPointOfInterest {
 
     #region Point Of Interest
     public List<GoapAction> AdvertiseActionsToActor(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0 && IsAvailable() && !isDead) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0 && !isDead) {//&& IsAvailable()
+            bool isCharacterAvailable = IsAvailable();
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 INTERACTION_TYPE currType = poiGoapActions[i];
+                if (!isCharacterAvailable && !InteractionManager.Instance.CanBeAdvertisedWhileCharacterIsUnavailable(currType)) {
+                    //if this character is not available, check if the current action type can be advertised even when the character is inactive.
+                    continue; //skip
+                }
                 if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if(otherData != null) {
@@ -7267,9 +7272,9 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.CRY);
         poiGoapActions.Add(INTERACTION_TYPE.HAVE_AFFAIR);
         poiGoapActions.Add(INTERACTION_TYPE.SLAY_CHARACTER);
-        //poiGoapActions.Add(INTERACTION_TYPE.FEELING_CONCERNED);
-        //poiGoapActions.Add(INTERACTION_TYPE.LAUGH_AT);
-        //poiGoapActions.Add(INTERACTION_TYPE.TEASE);
+        poiGoapActions.Add(INTERACTION_TYPE.FEELING_CONCERNED);
+        poiGoapActions.Add(INTERACTION_TYPE.LAUGH_AT);
+        poiGoapActions.Add(INTERACTION_TYPE.TEASE);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
@@ -7841,7 +7846,7 @@ public class Character : ILeader, IPointOfInterest {
             PrintLogIfActive(log);
             bool forceRemoveJobInQueue = true;
             //If an action is stopped as current action (meaning it was cancelled) and it is a settlement/faction job, do not remove it from the queue
-            if (action.isStoppedAsCurrentAction && plan.job != null && plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
+            if (action.isStoppedAsCurrentAction && plan != null && plan.job != null && plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
                 forceRemoveJobInQueue = false;
             }
             //this means that this is the end goal so end this plan now
