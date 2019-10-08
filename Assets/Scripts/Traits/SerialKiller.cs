@@ -339,6 +339,14 @@ public class SerialKiller : Trait {
     private bool DoesCharacterFitAnyVictimRequirements(Character target) {
         return victim1Requirement.DoesCharacterFitVictimRequirements(target); //|| victim2Requirement.DoesCharacterFitVictimRequirements(target)
     }
+
+    public void SerialKillerSawButWillNotAssist(Character targetCharacter, Trait negativeTrait) {
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_saw_no_assist");
+        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddToFillers(null, negativeTrait.name, LOG_IDENTIFIER.STRING_1);
+        character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+    }
 }
 
 [System.Serializable]
