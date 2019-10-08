@@ -18,4 +18,25 @@ public class Berserked : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
     }
+
+    #region Overrides
+    public override void OnAddTrait(ITraitable addedTo) {
+        base.OnAddTrait(addedTo);
+        if(addedTo is Character) {
+            Character character = addedTo as Character;
+            if (character.marker != null) {
+                character.marker.BerserkedMarker();
+            }
+        }
+    }
+    public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+        base.OnRemoveTrait(removedFrom, removedBy);
+        if (removedFrom is Character) {
+            Character character = removedFrom as Character;
+            if (character.marker != null) {
+                character.marker.UnberserkedMarker();
+            }
+        }
+    }
+    #endregion
 }

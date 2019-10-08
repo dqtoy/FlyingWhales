@@ -23,6 +23,7 @@ public class CharacterMarker : PooledObject {
     [SerializeField] private SpriteRenderer hoveredImg;
     [SerializeField] private SpriteRenderer clickedImg;
     [SerializeField] private SpriteRenderer actionIcon;
+    [SerializeField] private SpriteRenderer berserkedOutline;
 
     [Header("Actions")]
     [SerializeField] private StringSpriteDictionary actionIconDictionary;
@@ -96,6 +97,7 @@ public class CharacterMarker : PooledObject {
         hoveredImg.sortingOrder = mainImg.sortingOrder - 1;
         clickedImg.sortingOrder = mainImg.sortingOrder - 1;
         colorHighlight.sortingOrder = mainImg.sortingOrder - 1;
+        berserkedOutline.sortingOrder = mainImg.sortingOrder + 1;
         hpBarGO.GetComponent<Canvas>().sortingOrder = mainImg.sortingOrder;
         if (UIManager.Instance.characterInfoUI.isShowing) {
             clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
@@ -653,6 +655,12 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region For Testing
+    public void BerserkedMarker() {
+        berserkedOutline.gameObject.SetActive(true);
+    }
+    public void UnberserkedMarker() {
+        berserkedOutline.gameObject.SetActive(false);
+    }
     public void HighlightMarker(Color color) {
         colorHighlight.gameObject.SetActive(true);
         colorHighlight.color = color;
