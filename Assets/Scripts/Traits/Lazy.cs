@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Lazy : Trait {
+    public Character owner { get; private set; }
 
     public Lazy() {
         name = "Lazy";
@@ -18,6 +19,12 @@ public class Lazy : Trait {
     }
 
     #region Overrides
+    public override void OnAddTrait(ITraitable addedTo) {
+        base.OnAddTrait(addedTo);
+        if(addedTo is Character) {
+            owner = addedTo as Character;
+        }
+    }
     public override void TriggerFlaw(Character character) {
         base.TriggerFlaw(character);
         //Will drop current action and will perform Happiness Recovery.
@@ -31,13 +38,48 @@ public class Lazy : Trait {
                 character.stateComponent.SetStateToDo(null, false, false);
             }
 
-            if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+            bool triggerBrokenhearted = false;
+            Heartbroken heartbroken = character.GetNormalTrait("Heartbroken") as Heartbroken;
+            if (heartbroken != null) {
+                triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
             }
-
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = character });
-            character.jobQueue.AddJobInQueue(job);
+            if (!triggerBrokenhearted) {
+                if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+                    character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+                }
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = character });
+                character.jobQueue.AddJobInQueue(job);
+            } else {
+                heartbroken.TriggerBrokenhearted();
+            }
         }
     }
     #endregion
+
+    public bool TriggerLazy() {
+        if (!owner.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+            JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
+            if (owner.isForlorn) {
+                jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
+            }
+            bool triggerBrokenhearted = false;
+            Heartbroken heartbroken = owner.GetNormalTrait("Heartbroken") as Heartbroken;
+            if (heartbroken != null) {
+                triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
+            }
+            if (!triggerBrokenhearted) {
+                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = owner });
+                job.SetCancelOnFail(true);
+                owner.jobQueue.AddJobInQueue(job);
+
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "trigger_lazy");
+                log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                owner.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            } else {
+                heartbroken.TriggerBrokenhearted();
+            }
+            return true;
+        }
+        return false;
+    }
 }

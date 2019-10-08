@@ -97,13 +97,22 @@ public class Kleptomaniac : Trait {
         base.TriggerFlaw(character);
         //The character will begin Hunt for Blood.
         if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
-            if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+            bool triggerBrokenhearted = false;
+            Heartbroken heartbroken = character.GetNormalTrait("Heartbroken") as Heartbroken;
+            if (heartbroken != null) {
+                triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
             }
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = character });
-            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = character }, INTERACTION_TYPE.ROAMING_TO_STEAL);
-            job.SetCancelOnFail(true);
-            character.jobQueue.AddJobInQueue(job);
+            if (!triggerBrokenhearted) {
+                if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+                    character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+                }
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = character });
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = character }, INTERACTION_TYPE.ROAMING_TO_STEAL);
+                job.SetCancelOnFail(true);
+                character.jobQueue.AddJobInQueue(job);
+            } else {
+                heartbroken.TriggerBrokenhearted();
+            }
         }
     }
     #endregion

@@ -36,9 +36,9 @@ public class Skeleton : Summon {
         if (GetNormalTrait("Unconscious", "Resting") != null) {
             return;
         }
-        if (character.role.roleType == CHARACTER_ROLE.CIVILIAN && character.GetNormalTrait("Spooked") == null) {
-            character.AddTrait("Spooked", this);
-        }
+        //if (character.role.roleType == CHARACTER_ROLE.CIVILIAN && character.GetNormalTrait("Spooked") == null) {
+        //    character.AddTrait("Spooked", this);
+        //}
     }
     #endregion
 }

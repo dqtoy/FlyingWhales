@@ -3415,7 +3415,6 @@ public class Character : ILeader, IPointOfInterest {
                 //Collect all actions first to avoid duplicates 
                 actionsToWitness.AddRange(target.targettedByAction);
             }
-            //Must not witness/watch if spooked
             if (targetCharacter.currentAction != null && targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone && targetCharacter.currentAction.goapType != INTERACTION_TYPE.WATCH) {
                 //Cannot witness/watch a watch action
                 IPointOfInterest poiTarget = null;
@@ -3955,9 +3954,9 @@ public class Character : ILeader, IPointOfInterest {
         if (isExhausted) {
             return false;
         }
-        if (GetNormalTrait("Spooked") != null) {
-            return false;
-        }
+        //if (GetNormalTrait("Spooked") != null) {
+        //    return false;
+        //}
         //if (GetNormalTrait("Injured") != null) {
         //    return false;
         //}
@@ -5347,7 +5346,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     private bool OtherPlanCreations() {
         int chance = UnityEngine.Random.Range(0, 100);
-        if (GetNormalTrait("Berserker") != null) {
+        if (GetNormalTrait("Berserked") != null) {
             if (chance < 15) {
                 Character target = specificLocation.GetRandomCharacterAtLocationExcept(this);
                 if (target != null) {
@@ -5384,15 +5383,24 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
                 JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                if (GetNormalTrait("Vampiric") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                bool triggerGrieving = false;
+                Griefstricken griefstricken = GetNormalTrait("Griefstricken") as Griefstricken;
+                if (griefstricken != null) {
+                    triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
                 }
-                //else if (GetNormalTrait("Cannibal") != null) {
-                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                //}
-                job.SetCancelOnFail(true);
-                jobQueue.AddJobInQueue(job, processOverrideLogic);
+                if (!triggerGrieving) {
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    if (GetNormalTrait("Vampiric") != null) {
+                        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                    }
+                    //else if (GetNormalTrait("Cannibal") != null) {
+                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                    //}
+                    job.SetCancelOnFail(true);
+                    jobQueue.AddJobInQueue(job, processOverrideLogic);
+                } else {
+                    griefstricken.TriggerGrieving();
+                }
                 return true;
             }
         }
@@ -5400,15 +5408,24 @@ public class Character : ILeader, IPointOfInterest {
             if(UnityEngine.Random.Range(0,2) == 0 && GetNormalTrait("Glutton") != null) {
                 if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY)) {
                     JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
-                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                    if (GetNormalTrait("Vampiric") != null) {
-                        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                    } 
-                    //else if (GetNormalTrait("Cannibal") != null) {
-                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                    //}
-                    job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job, processOverrideLogic);
+                    bool triggerGrieving = false;
+                    Griefstricken griefstricken = GetNormalTrait("Griefstricken") as Griefstricken;
+                    if (griefstricken != null) {
+                        triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+                    }
+                    if (!triggerGrieving) {
+                        GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                        if (GetNormalTrait("Vampiric") != null) {
+                            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                        }
+                        //else if (GetNormalTrait("Cannibal") != null) {
+                        //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                        //}
+                        job.SetCancelOnFail(true);
+                        jobQueue.AddJobInQueue(job, processOverrideLogic);
+                    } else {
+                        griefstricken.TriggerGrieving();
+                    }
                     return true;
                 }
             }
@@ -5432,24 +5449,20 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                job.SetCancelOnFail(true);
-                jobQueue.AddJobInQueue(job, processOverrideLogic);
+                bool triggerSpooked = false;
+                Spooked spooked = GetNormalTrait("Spooked") as Spooked;
+                if (spooked != null) {
+                    triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
+                }
+                if (!triggerSpooked) {
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    job.SetCancelOnFail(true);
+                    jobQueue.AddJobInQueue(job, processOverrideLogic);
+                } else {
+                    spooked.TriggerFeelingSpooked();
+                }
                 return true;
             } 
-        }
-        return false;
-    }
-    public bool ForcePlanHappinessRecoveryActions() {
-        if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-            JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
-            if (isForlorn) {
-                jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
-            }
-            GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
-            job.SetCancelOnFail(true);
-            jobQueue.AddJobInQueue(job);
-            return true;
         }
         return false;
     }
@@ -5469,29 +5482,31 @@ public class Character : ILeader, IPointOfInterest {
                 }
             }
             if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
-                if (hardworking != null) {
-                    bool isPlanningRecoveryProcessed = false;
-                    if (hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
-                        return isPlanningRecoveryProcessed;
-                    }
+                bool triggerBrokenhearted = false;
+                Heartbroken heartbroken = GetNormalTrait("Heartbroken") as Heartbroken;
+                if (heartbroken != null) {
+                    triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
                 }
-                JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
-                job.SetCancelOnFail(true);
-                jobQueue.AddJobInQueue(job, processOverrideLogic);
+                if (!triggerBrokenhearted) {
+                    Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
+                    if (hardworking != null) {
+                        bool isPlanningRecoveryProcessed = false;
+                        if (hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
+                            return isPlanningRecoveryProcessed;
+                        }
+                    }
+                    JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    job.SetCancelOnFail(true);
+                    jobQueue.AddJobInQueue(job, processOverrideLogic);
+                } else {
+                    heartbroken.TriggerBrokenhearted();
+                }
                 return true;
             }
         } else if (isLonely) {
             if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
                 JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
-                Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
-                if(hardworking != null) {
-                    bool isPlanningRecoveryProcessed = false;
-                    if(hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
-                        return isPlanningRecoveryProcessed;
-                    }
-                }
                 int chance = UnityEngine.Random.Range(0, 100);
                 int value = 0;
                 TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
@@ -5507,9 +5522,25 @@ public class Character : ILeader, IPointOfInterest {
                     value = 30;
                 }
                 if (chance < value) {
-                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
-                    job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job, processOverrideLogic);
+                    bool triggerBrokenhearted = false;
+                    Heartbroken heartbroken = GetNormalTrait("Heartbroken") as Heartbroken;
+                    if (heartbroken != null) {
+                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
+                    }
+                    if (!triggerBrokenhearted) {
+                        Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
+                        if (hardworking != null) {
+                            bool isPlanningRecoveryProcessed = false;
+                            if (hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
+                                return isPlanningRecoveryProcessed;
+                            }
+                        }
+                        GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
+                        job.SetCancelOnFail(true);
+                        jobQueue.AddJobInQueue(job, processOverrideLogic);
+                    } else {
+                        heartbroken.TriggerBrokenhearted();
+                    }
                     return true;
                 }
             }
@@ -5523,17 +5554,26 @@ public class Character : ILeader, IPointOfInterest {
                 if (isStarving) {
                     jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
                 }
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                if (GetNormalTrait("Vampiric") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                } 
-                //else if (GetNormalTrait("Cannibal") != null) {
-                //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                //}
-                job.SetCancelOnFail(true);
-                bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
-                    || stateComponent.currentState != null || stateComponent.stateToDo != null;
-                jobQueue.AddJobInQueue(job, !willNotProcess);
+                bool triggerGrieving = false;
+                Griefstricken griefstricken = GetNormalTrait("Griefstricken") as Griefstricken;
+                if (griefstricken != null) {
+                    triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+                }
+                if (!triggerGrieving) {
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    if (GetNormalTrait("Vampiric") != null) {
+                        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                    }
+                    //else if (GetNormalTrait("Cannibal") != null) {
+                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                    //}
+                    job.SetCancelOnFail(true);
+                    bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
+                        || stateComponent.currentState != null || stateComponent.stateToDo != null;
+                    jobQueue.AddJobInQueue(job, !willNotProcess);
+                } else {
+                    griefstricken.TriggerGrieving();
+                }
             }
             hasForcedFullness = true;
             SetFullnessForcedTick();
@@ -5548,14 +5588,23 @@ public class Character : ILeader, IPointOfInterest {
         if (jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
             jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
         }
-        GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
-        if (GetNormalTrait("Vampiric") != null) {
-            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-        } 
-        //else if (GetNormalTrait("Cannibal") != null) {
-        //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-        //}
-        jobQueue.AddJobInQueue(job);
+        bool triggerGrieving = false;
+        Griefstricken griefstricken = GetNormalTrait("Griefstricken") as Griefstricken;
+        if (griefstricken != null) {
+            triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+        }
+        if (!triggerGrieving) {
+            GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
+            if (GetNormalTrait("Vampiric") != null) {
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+            }
+            //else if (GetNormalTrait("Cannibal") != null) {
+            //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+            //}
+            jobQueue.AddJobInQueue(job);
+        } else {
+            griefstricken.TriggerGrieving();
+        }
     }
     private void PlanForcedTirednessRecovery() {
         if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.tick >= tirednessForcedTick && _doNotDisturb <= 0) {
@@ -5564,12 +5613,22 @@ public class Character : ILeader, IPointOfInterest {
                 if (isExhausted) {
                     jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
                 }
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                job.SetCancelOnFail(true);
-                sleepScheduleJobID = job.id;
-                bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
-                    || stateComponent.currentState != null || stateComponent.stateToDo != null;
-                jobQueue.AddJobInQueue(job, !willNotProcess);
+
+                bool triggerSpooked = false;
+                Spooked spooked = GetNormalTrait("Spooked") as Spooked;
+                if(spooked != null) {
+                    triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
+                }
+                if (!triggerSpooked) {
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    job.SetCancelOnFail(true);
+                    sleepScheduleJobID = job.id;
+                    bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
+                        || stateComponent.currentState != null || stateComponent.stateToDo != null;
+                    jobQueue.AddJobInQueue(job, !willNotProcess);
+                } else {
+                    spooked.TriggerFeelingSpooked();
+                }
             }
             hasForcedTiredness = true;
             SetTirednessForcedTick();
@@ -5582,12 +5641,21 @@ public class Character : ILeader, IPointOfInterest {
                 if (isExhausted) {
                     jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
                 }
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                job.SetCancelOnFail(true);
-                sleepScheduleJobID = job.id;
-                //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
-                //    || stateComponent.currentState != null || stateComponent.stateToDo != null;
-                jobQueue.AddJobInQueue(job); //!willNotProcess
+                bool triggerSpooked = false;
+                Spooked spooked = GetNormalTrait("Spooked") as Spooked;
+                if (spooked != null) {
+                    triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
+                }
+                if (!triggerSpooked) {
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    job.SetCancelOnFail(true);
+                    sleepScheduleJobID = job.id;
+                    //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
+                    //    || stateComponent.currentState != null || stateComponent.stateToDo != null;
+                    jobQueue.AddJobInQueue(job); //!willNotProcess
+                } else {
+                    spooked.TriggerFeelingSpooked();
+                }
             }
             SetHasCancelledSleepSchedule(false);
         }
@@ -5599,20 +5667,14 @@ public class Character : ILeader, IPointOfInterest {
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
                 if (isAtHomeRegion && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
-                    if(GetNormalTrait("Lazy") != null) {
-                        if(UnityEngine.Random.Range(0, 100) < 35) {
-                            if (!ForcePlanHappinessRecoveryActions()) {
-                                PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
-                            }
-                        } else {
-                            if (!homeArea.jobQueue.ProcessFirstJobInQueue(this)) {
-                                if(faction != null && faction.activeQuest != null) {
-                                    return faction.activeQuest.jobQueue.ProcessFirstJobInQueue(this);
-                                }
-                                return false;
-                            } else {
-                                return true;
-                            }
+                    bool triggerLazy = false;
+                    Lazy lazy = GetNormalTrait("Lazy") as Lazy;
+                    if (lazy != null) {
+                        triggerLazy = UnityEngine.Random.Range(0, 100) < 35;
+                    }
+                    if (triggerLazy) {
+                        if (!lazy.TriggerLazy()) {
+                            PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
                         }
                     } else {
                         if (!homeArea.jobQueue.ProcessFirstJobInQueue(this)) {
@@ -5637,20 +5699,14 @@ public class Character : ILeader, IPointOfInterest {
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null && !isStarving && !isExhausted && !isForlorn) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
                 if (isAtHomeRegion && isPartOfHomeFaction) {
-                    if (GetNormalTrait("Lazy") != null) {
-                        if (UnityEngine.Random.Range(0, 100) < 35) {
-                            if (!ForcePlanHappinessRecoveryActions()) {
-                                PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
-                            }
-                        } else {
-                            if (!homeArea.jobQueue.ProcessFirstJobInQueue(this)) {
-                                if (faction != null && faction.activeQuest != null) {
-                                    return faction.activeQuest.jobQueue.ProcessFirstJobInQueue(this);
-                                }
-                                return false;
-                            } else {
-                                return true;
-                            }
+                    bool triggerLazy = false;
+                    Lazy lazy = GetNormalTrait("Lazy") as Lazy;
+                    if(lazy != null) {
+                        triggerLazy = UnityEngine.Random.Range(0, 100) < 35;
+                    }
+                    if (triggerLazy) {
+                        if (!lazy.TriggerLazy()) {
+                            PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
                         }
                     } else {
                         if (!homeArea.jobQueue.ProcessFirstJobInQueue(this)) {
@@ -7275,6 +7331,10 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.FEELING_CONCERNED);
         poiGoapActions.Add(INTERACTION_TYPE.LAUGH_AT);
         poiGoapActions.Add(INTERACTION_TYPE.TEASE);
+        poiGoapActions.Add(INTERACTION_TYPE.FEELING_SPOOKED);
+        poiGoapActions.Add(INTERACTION_TYPE.FEELING_BROKENHEARTED);
+        poiGoapActions.Add(INTERACTION_TYPE.GRIEVING);
+
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

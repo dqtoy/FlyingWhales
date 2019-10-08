@@ -143,10 +143,19 @@ public class Paralyzed : Trait {
     }
     private bool CreateFeedJob() {
         if (!character.HasJobTargettingThis(JOB_TYPE.FEED) && !character.HasJobTargettingThis(JOB_TYPE.DROP) && character.specificLocation.region.IsResident(character)) {
-            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = character };
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect);
-            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);
-            character.specificLocation.jobQueue.AddJobInQueue(job);
+            bool triggerGrieving = false;
+            Griefstricken griefstricken = character.GetNormalTrait("Griefstricken") as Griefstricken;
+            if (griefstricken != null) {
+                triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+            }
+            if (!triggerGrieving) {
+                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = character };
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.FEED, goapEffect);
+                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeParalyzedFeedJob);
+                character.specificLocation.jobQueue.AddJobInQueue(job);
+            } else {
+                character.jobQueue.AssignCharacterToJob(griefstricken.TriggerGrieving(), character);
+            }
             return true;
         }
         return false;
@@ -237,10 +246,19 @@ public class Paralyzed : Trait {
         if (character.isForlorn) {
             jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
         }
-        GoapPlanJob job = new GoapPlanJob(jobType, actionType, character, new Dictionary<INTERACTION_TYPE, object[]>() {
+        bool triggerBrokenhearted = false;
+        Heartbroken heartbroken = character.GetNormalTrait("Heartbroken") as Heartbroken;
+        if (heartbroken != null) {
+            triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
+        }
+        if (!triggerBrokenhearted) {
+            GoapPlanJob job = new GoapPlanJob(jobType, actionType, character, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { actionType, new object[] { ACTION_LOCATION_TYPE.IN_PLACE } } });
-        character.jobQueue.AddJobInQueue(job);
-        character.jobQueue.AssignCharacterToJob(job, character);
+            character.jobQueue.AddJobInQueue(job);
+            character.jobQueue.AssignCharacterToJob(job, character);
+        } else {
+            character.jobQueue.AssignCharacterToJob(heartbroken.TriggerBrokenhearted(), character);
+        }
     }
     #endregion
 
@@ -270,10 +288,19 @@ public class Paralyzed : Trait {
         if (character.isExhausted) {
             jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
         }
-        GoapPlanJob job = new GoapPlanJob(jobType, INTERACTION_TYPE.SLEEP, bed, new Dictionary<INTERACTION_TYPE, object[]>() {
+        bool triggerSpooked = false;
+        Spooked spooked = character.GetNormalTrait("Spooked") as Spooked;
+        if (spooked != null) {
+            triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
+        }
+        if (!triggerSpooked) {
+            GoapPlanJob job = new GoapPlanJob(jobType, INTERACTION_TYPE.SLEEP, bed, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.SLEEP, new object[] { ACTION_LOCATION_TYPE.IN_PLACE } } });
-        character.jobQueue.AddJobInQueue(job);
-        character.jobQueue.AssignCharacterToJob(job, character);
+            character.jobQueue.AddJobInQueue(job);
+            character.jobQueue.AssignCharacterToJob(job, character);
+        } else {
+            character.jobQueue.AssignCharacterToJob(spooked.TriggerFeelingSpooked(), character);
+        }
     }
     #endregion
 }
