@@ -657,8 +657,8 @@ public class Player : ILeader {
         if(poi is Character) {
             Character character = poi as Character;
             hoverText = string.Empty;
-            if(character.GetNormalTrait("Blessed") != null) {
-                hoverText = "Blessed characters cannot be targetted.";
+            if(character.GetNormalTrait("Blessed", "Catatonic") != null) {
+                hoverText = "Blessed/Catatonic characters cannot be targetted.";
                 return false;
             }
             if(character.faction != PlayerManager.Instance.player.playerFaction && character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER) {

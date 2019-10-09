@@ -33,6 +33,20 @@ public class CharacterTrait : Trait {
     }
 
     #region Overrides
+    public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
+        base.OnSeePOI(targetPOI, character);
+        if(targetPOI is Character) {
+            Character targetCharacter = targetPOI as Character;
+            Paralyzed paralyzed = targetCharacter.GetNormalTrait("Paralyzed") as Paralyzed;
+            Catatonic catatonic = targetCharacter.GetNormalTrait("Catatonic") as Catatonic;
+            if (paralyzed != null) {
+                paralyzed.AddCharacterThatKnows(character);
+            }
+            if (catatonic != null) {
+                catatonic.AddCharacterThatKnows(character);
+            }
+        }
+    }
     public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
         if (targetPOI is Table) {
             Table targetTable = targetPOI as Table;

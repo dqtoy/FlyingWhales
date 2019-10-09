@@ -114,11 +114,13 @@ public class SpecialToken : IPointOfInterest {
     public bool RemoveJobTargettingThis(JobQueueItem job) {
         return allJobsTargettingThis.Remove(job);
     }
-    public bool HasJobTargettingThis(JOB_TYPE jobType) {
+    public bool HasJobTargettingThis(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
-            if (job.jobType == jobType) {
-                return true;
+            for (int j = 0; j < jobTypes.Length; j++) {
+                if (job.jobType == jobTypes[j]) {
+                    return true;
+                }
             }
         }
         return false;
