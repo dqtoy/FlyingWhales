@@ -91,10 +91,19 @@ public class Vampiric : Trait {
             if (character.jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
                 character.jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
             }
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = character });
-            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = character }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-            job.SetCancelOnFail(true);
-            character.jobQueue.AddJobInQueue(job);
+            bool triggerGrieving = false;
+            Griefstricken griefstricken = character.GetNormalTrait("Griefstricken") as Griefstricken;
+            if (griefstricken != null) {
+                triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+            }
+            if (!triggerGrieving) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = character });
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = character }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                job.SetCancelOnFail(true);
+                character.jobQueue.AddJobInQueue(job);
+            } else {
+                griefstricken.TriggerGrieving();
+            }
         }
     }
     #endregion

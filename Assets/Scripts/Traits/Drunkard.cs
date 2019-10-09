@@ -21,11 +21,20 @@ public class Drunkard : Trait {
         base.TriggerFlaw(character);
         //Will drink
         if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
-            if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+            bool triggerBrokenhearted = false;
+            Heartbroken heartbroken = character.GetNormalTrait("Heartbroken") as Heartbroken;
+            if (heartbroken != null) {
+                triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
             }
-            GoapPlanJob drinkJob = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK);
-            character.jobQueue.AddJobInQueue(drinkJob);
+            if (!triggerBrokenhearted) {
+                if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+                    character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+                }
+                GoapPlanJob drinkJob = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK);
+                character.jobQueue.AddJobInQueue(drinkJob);
+            } else {
+                heartbroken.TriggerBrokenhearted();
+            }
         }
     }
     #endregion

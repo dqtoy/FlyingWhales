@@ -72,6 +72,11 @@ public class Unconscious : Trait {
         if (traitOwner is Character) {
             Character targetCharacter = traitOwner as Character;
             if (!targetCharacter.isDead && targetCharacter.faction == characterThatWillDoJob.faction && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                SerialKiller serialKiller = characterThatWillDoJob.GetNormalTrait("Serial Killer") as SerialKiller;
+                if (serialKiller != null) {
+                    serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
+                    return false;
+                }
                 GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
                 if (currentJob == null) {
                     GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
@@ -113,13 +118,8 @@ public class Unconscious : Trait {
                 GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
                 if (currentJob == null) {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.IMPRISON_CHARACTER, targetCharacter);
-                    //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = characterThatWillDoJob, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
-                    //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
-                    //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = characterThatWillDoJob.specificLocation, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
                     job.SetCanBeDoneInLocation(true);
                     if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, job)) {
-                        //job.SetCanTakeThisJobChecker(CanCharacterTakeRestrainJob);
-                        //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
                     } else {

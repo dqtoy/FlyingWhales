@@ -65,6 +65,11 @@ public class Injured : Trait {
         if (traitOwner is Character) {
             Character targetCharacter = traitOwner as Character;
             if (!targetCharacter.isDead && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                SerialKiller serialKiller = characterThatWillDoJob.GetNormalTrait("Serial Killer") as SerialKiller;
+                if (serialKiller != null) {
+                    serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
+                    return false;
+                }
                 GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
                 if(currentJob == null) {
                     GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };

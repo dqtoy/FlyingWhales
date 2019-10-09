@@ -140,15 +140,15 @@ public class BerserkedState : CharacterState {
     //        }
     //    }
     //}
-    public override void AfterExitingState() {
-        base.AfterExitingState();
-        Spooked spooked = stateComponent.character.GetNormalTrait("Spooked") as Spooked;
-        if (spooked != null) {
-            //If has spooked, add them in avoid list and transfer all in engage list to flee list
-            stateComponent.character.marker.AddAvoidsInRange(spooked.terrifyingCharacters, false);
-            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, stateComponent.character);
-        }
-    }
+    //public override void AfterExitingState() {
+    //    base.AfterExitingState();
+    //    Spooked spooked = stateComponent.character.GetNormalTrait("Spooked") as Spooked;
+    //    if (spooked != null) {
+    //        //If has spooked, add them in avoid list and transfer all in engage list to flee list
+    //        stateComponent.character.marker.AddAvoidsInRange(spooked.terrifyingCharacters, false);
+    //        Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, stateComponent.character);
+    //    }
+    //}
     #endregion
 
     private void OnArriveAtLocation() {

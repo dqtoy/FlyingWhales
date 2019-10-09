@@ -40,27 +40,29 @@ public class ChatCharacter : GoapAction {
         RELATIONSHIP_EFFECT relationshipEffectWithTarget = actor.GetRelationshipEffectWith(targetCharacter);
         //**if no relationship yet, may become friends**
         if (relData == null) {
-            int weight = 0;
-            if (thisCharacterMood == CHARACTER_MOOD.DARK) {
-                weight += -30;
-            } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
-                weight += -10;
-            } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
-                weight += 10;
-            } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
-                weight += 30;
-            }
-            if (targetCharacterMood == CHARACTER_MOOD.DARK) {
-                weight += -30;
-            } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
-                weight += -10;
-            } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
-                weight += 10;
-            } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
-                weight += 30;
-            }
-            if (weight > 0) {
-                weights.AddElement("Become Friends", weight);
+            if (actor.GetNormalTrait("Serial Killer") == null && targetCharacter.GetNormalTrait("Serial Killer") == null) {
+                int weight = 0;
+                if (thisCharacterMood == CHARACTER_MOOD.DARK) {
+                    weight += -30;
+                } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
+                    weight += -10;
+                } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
+                    weight += 10;
+                } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
+                    weight += 30;
+                }
+                if (targetCharacterMood == CHARACTER_MOOD.DARK) {
+                    weight += -30;
+                } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
+                    weight += -10;
+                } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
+                    weight += 10;
+                } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
+                    weight += 30;
+                }
+                if (weight > 0) {
+                    weights.AddElement("Become Friends", weight);
+                }
             }
         } else {
             //**if no relationship other than relative, may become enemies**

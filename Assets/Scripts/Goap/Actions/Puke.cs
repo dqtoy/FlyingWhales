@@ -47,6 +47,11 @@ public class Puke : GoapAction {
     private void CreateRemoveTraitJob(Character characterThatWillDoJob) {
         Trait trait = actor.GetNormalTrait("Plagued", "Infected", "Sick");
         if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+            SerialKiller serialKiller = characterThatWillDoJob.GetNormalTrait("Serial Killer") as SerialKiller;
+            if (serialKiller != null) {
+                serialKiller.SerialKillerSawButWillNotAssist(actor, trait);
+                return;
+            }
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = actor };
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
                 new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
@@ -83,21 +88,26 @@ public class Puke : GoapAction {
             if (!isPuking) {
                 Trait trait = actor.GetNormalTrait("Plagued", "Infected", "Sick");
                 if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = actor };
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
-                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
-                    if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(recipient, actor, job)) {
-                        if (status == SHARE_INTEL_STATUS.INFORMED) {
-                            //- if informed: "I'm a doctor. I should help [Actor Name]."
-                            reactions.Add(string.Format("I'm a doctor. I should help {0}.", recipient.name));
-                        }
-                        recipient.jobQueue.AddJobInQueue(job);
+                    SerialKiller serialKiller = recipient.GetNormalTrait("Serial Killer") as SerialKiller;
+                    if (serialKiller != null) {
+                        serialKiller.SerialKillerSawButWillNotAssist(actor, trait);
                     } else {
-                        if (status == SHARE_INTEL_STATUS.INFORMED) {
-                            reactions.Add(string.Format("I hope {0} gets well soon.", Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                        GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = trait.name, targetPOI = actor };
+                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
+                            new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
+                        if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(recipient, actor, job)) {
+                            if (status == SHARE_INTEL_STATUS.INFORMED) {
+                                //- if informed: "I'm a doctor. I should help [Actor Name]."
+                                reactions.Add(string.Format("I'm a doctor. I should help {0}.", recipient.name));
+                            }
+                            recipient.jobQueue.AddJobInQueue(job);
+                        } else {
+                            if (status == SHARE_INTEL_STATUS.INFORMED) {
+                                reactions.Add(string.Format("I hope {0} gets well soon.", Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
+                            }
+                            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
+                            recipient.specificLocation.jobQueue.AddJobInQueue(job);
                         }
-                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
-                        recipient.specificLocation.jobQueue.AddJobInQueue(job);
                     }
                 }
             } else {

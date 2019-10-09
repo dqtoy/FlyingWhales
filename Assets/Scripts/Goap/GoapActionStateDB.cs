@@ -496,6 +496,15 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.TEASE, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Tease Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(10) },
         } },
+        {INTERACTION_TYPE.FEELING_SPOOKED, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Spooked Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.FEELING_BROKENHEARTED, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Brokenhearted Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.GRIEVING, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Grieving Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
     };
 }
 

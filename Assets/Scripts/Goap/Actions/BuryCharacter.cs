@@ -151,9 +151,18 @@ public class BuryCharacter : GoapAction {
                 else if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                     recipient.AddTrait("Heartbroken");
                     if (UnityEngine.Random.Range(0, 2) == 0) {
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.REMEMBER_FALLEN, targetCharacter.grave);
-                        job.SetCancelOnFail(true);
-                        recipient.jobQueue.AddJobInQueue(job);
+                        bool triggerBrokenhearted = false;
+                        Heartbroken heartbroken = recipient.GetNormalTrait("Heartbroken") as Heartbroken;
+                        if (heartbroken != null) {
+                            triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
+                        }
+                        if (!triggerBrokenhearted) {
+                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.REMEMBER_FALLEN, targetCharacter.grave);
+                            job.SetCancelOnFail(true);
+                            recipient.jobQueue.AddJobInQueue(job);
+                        } else {
+                            heartbroken.TriggerBrokenhearted();
+                        }
                     }
                     reactions.Add("Another good one bites the dust.");
                 }
@@ -161,9 +170,18 @@ public class BuryCharacter : GoapAction {
                 else if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                     recipient.AddTrait("Satisfied");
                     if (UnityEngine.Random.Range(0, 2) == 0) {
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.SPIT, targetCharacter.grave);
-                        job.SetCancelOnFail(true);
-                        recipient.jobQueue.AddJobInQueue(job);
+                        bool triggerBrokenhearted = false;
+                        Heartbroken heartbroken = recipient.GetNormalTrait("Heartbroken") as Heartbroken;
+                        if (heartbroken != null) {
+                            triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
+                        }
+                        if (!triggerBrokenhearted) {
+                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.SPIT, targetCharacter.grave);
+                            job.SetCancelOnFail(true);
+                            recipient.jobQueue.AddJobInQueue(job);
+                        } else {
+                            heartbroken.TriggerBrokenhearted();
+                        }
                     }
                     reactions.Add(string.Format("Is it terrible to think that {0} deserved that?", targetCharacter.name));
                 }
