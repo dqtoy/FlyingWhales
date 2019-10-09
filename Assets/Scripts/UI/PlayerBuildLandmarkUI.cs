@@ -113,7 +113,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         UIManager.Instance.ShowClickableObjectPicker(landmarkNames, SetChosenLandmark, null, CanChooseLandmark, title, OnHoverLandmarkChoice, OnHoverExitLandmarkChoice, "landmark");
     }
     private bool CanChooseLandmark(string landmarkName) {
-        if (landmarkName == "The Pit" || landmarkName == "The Profane" || landmarkName == "The Fingers") {
+        if (landmarkName == "The Pit" || landmarkName == "The Fingers" || landmarkName == "The Profane") {
             return false;
         }
         return true;

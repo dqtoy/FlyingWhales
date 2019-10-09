@@ -4408,7 +4408,7 @@ public class Character : ILeader, IPointOfInterest {
             string[] traitPool = new string[] { "Vigilant", "Doctor", "Diplomatic",
             "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
             "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-            "Narcoleptic", "Hothead",
+            "Narcoleptic", "Hothead", "Evil", "Treacherous", "Disillusioned"
             };
             //"Kleptomaniac","Curious", 
 
@@ -4932,6 +4932,10 @@ public class Character : ILeader, IPointOfInterest {
             AdjustHappinessDecreaseRate(320); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
         } else if (trait.name == "Fast") {
             AdjustSpeedModifier(0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
+        } else if (trait.name == "Shellshocked") {
+            AdjustMoodValue(-30, trait, trait.gainedFromDoing);
+        } else if (trait.name == "Ashamed") {
+            AdjustMoodValue(-5, trait, trait.gainedFromDoing);
         }
         //else if (trait.name == "Hungry") {
         //    CreateFeedJob();
@@ -5037,6 +5041,10 @@ public class Character : ILeader, IPointOfInterest {
             AdjustHappinessDecreaseRate(-320); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
         } else if (trait.name == "Fast") {
             AdjustSpeedModifier(-0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
+        } else if (trait.name == "Shellshocked") {
+            AdjustMoodValue(30, trait, trait.gainedFromDoing);
+        } else if (trait.name == "Ashamed") {
+            AdjustMoodValue(5, trait, trait.gainedFromDoing);
         }
 
         if (trait.effects != null) {

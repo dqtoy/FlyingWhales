@@ -115,13 +115,13 @@ public class Puke : GoapAction {
                     }
                 }
 
-                //#region Check Up
-                //else if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                //    if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE && !recipient.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, actor)) {
-                //        CreateFeelingConcernedJob(recipient, actor);
-                //    }
-                //}
-                //#endregion
+                #region Check Up
+                else if (status == SHARE_INTEL_STATUS.WITNESSED) {
+                    if (relWithActor == RELATIONSHIP_EFFECT.POSITIVE && !recipient.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, actor)) {
+                        CreateFeelingConcernedJob(recipient, actor);
+                    }
+                }
+                #endregion
 
             }
         }
@@ -134,11 +134,11 @@ public class Puke : GoapAction {
                         return reactions; //do not do anything else
                     }                    
                 }
-                //#region Check Up
-                //if (recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
-                //    CreateLaughAtJob(recipient, actor);
-                //}
-                //#endregion
+                #region Check Up
+                if (recipient.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY)) {
+                    CreateLaughAtJob(recipient, actor);
+                }
+                #endregion
             } else if (status == SHARE_INTEL_STATUS.INFORMED) {
                 //- If Informed: "Stop sharing gross things about that vile person."
                 reactions.Add("Stop sharing gross things about that vile person.");
