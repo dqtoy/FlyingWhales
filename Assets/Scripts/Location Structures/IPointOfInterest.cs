@@ -28,7 +28,7 @@ public interface IPointOfInterest : ITraitable{
     void SetIsDisabledByPlayer(bool state);
     void AddTargettedByAction(GoapAction action);
     void RemoveTargettedByAction(GoapAction action);
-    bool HasJobTargettingThis(JOB_TYPE jobType);
+    bool HasJobTargettingThis(params JOB_TYPE[] jobType);
     bool IsAvailable();
     bool RemoveJobTargettingThis(JobQueueItem job);
     LocationGridTile GetNearestUnoccupiedTileFromThis();

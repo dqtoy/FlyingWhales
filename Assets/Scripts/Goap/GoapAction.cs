@@ -89,13 +89,14 @@ public class GoapAction {
     protected virtual bool isTargetMissing {
         get {
             bool targetMissing = false;
-            if (parentPlan != null && parentPlan.job != null && parentPlan.job.allowDeadTargets) {
-                targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
-                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !(poiTarget as Character).isDead;
-            } else {
-                targetMissing = !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+            targetMissing = !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
                     || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
-            }
+            //if (parentPlan != null && parentPlan.job != null && parentPlan.job.allowDeadTargets) {
+            //    targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+            //        || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !(poiTarget as Character).isDead;
+            //} else {
+                
+            //}
 
             if (targetMissing) {
                 return targetMissing;

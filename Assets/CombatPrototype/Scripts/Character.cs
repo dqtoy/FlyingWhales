@@ -1517,11 +1517,13 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
-    public bool HasJobTargettingThis(JOB_TYPE jobType) {
+    public bool HasJobTargettingThis(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
-            if (job.jobType == jobType) {
-                return true;
+            for (int j = 0; j < jobTypes.Length; j++) {
+                if (job.jobType == jobTypes[j]) {
+                    return true;
+                }
             }
         }
         return false;
@@ -7306,7 +7308,7 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ASK_FOR_HELP_REMOVE_POISON_TABLE);
         poiGoapActions.Add(INTERACTION_TYPE.BURY_CHARACTER);
-        //poiGoapActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
+        poiGoapActions.Add(INTERACTION_TYPE.CARRY_CORPSE);
         poiGoapActions.Add(INTERACTION_TYPE.DROP_ITEM_WAREHOUSE);
         poiGoapActions.Add(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE);
         poiGoapActions.Add(INTERACTION_TYPE.REPLACE_TILE_OBJECT);
