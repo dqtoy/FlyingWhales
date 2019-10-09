@@ -1046,7 +1046,7 @@ public class CharacterMarker : PooledObject {
             //    }
             //}
             character.AddAwareness(poi);
-            //OnAddPOIAsInVisionRange(poi);
+            OnAddPOIAsInVisionRange(poi);
         }
     }
     public void RemovePOIFromInVisionRange(IPointOfInterest poi) {
@@ -1071,7 +1071,10 @@ public class CharacterMarker : PooledObject {
         Debug.Log(summary);
     }
     private void OnAddPOIAsInVisionRange(IPointOfInterest poi) {
-        character.ThisCharacterSaw(poi);
+        if (character.currentAction != null && character.currentAction.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && character.currentAction.poiTarget == poi) {
+            StopMovement();
+            character.PerformGoapAction();
+        }
     }
     private void ProcessAllUnprocessedVisionPOIs() {
         if(unprocessedVisionPOIs.Count > 0 && (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {

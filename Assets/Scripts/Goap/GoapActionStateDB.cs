@@ -505,6 +505,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.GRIEVING, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Grieving Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
+        {INTERACTION_TYPE.CHECK_OUT, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Checkout Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

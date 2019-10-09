@@ -382,18 +382,22 @@ public class GoapAction {
             throw new Exception(actor.name + " target structure of action " + this.goapName + " is null.");
         }
 
-        if (actor.specificLocation != targetStructure.location) {
-            if (_stayInArea) {
-                actor.PerformGoapAction();
-            } else {
-                actor.currentParty.GoToLocation(targetStructure.location.region, PATHFINDING_MODE.NORMAL, targetStructure, OnArriveAtTargetLocation, null, poiTarget, targetTile);
-            }
+        if(actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && actor.marker.inVisionPOIs.Contains(poiTarget)) {
+            actor.PerformGoapAction();
         } else {
-            //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
-            if (targetTile != null) {
-                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+            if (actor.specificLocation != targetStructure.location) {
+                if (_stayInArea) {
+                    actor.PerformGoapAction();
+                } else {
+                    actor.currentParty.GoToLocation(targetStructure.location.region, PATHFINDING_MODE.NORMAL, targetStructure, OnArriveAtTargetLocation, null, poiTarget, targetTile);
+                }
             } else {
-                actor.marker.GoTo(poiTarget, OnArriveAtTargetLocation);
+                //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
+                if (targetTile != null) {
+                    actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+                } else {
+                    actor.marker.GoTo(poiTarget, OnArriveAtTargetLocation);
+                }
             }
         }
     }
@@ -456,7 +460,10 @@ public class GoapAction {
 
     #region Utilities
     private void OnArriveAtTargetLocation() {
-        actor.PerformGoapAction();
+        if(actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
+            //This should not happen if the location type is target in vision because this will be called upon entering vision of target
+            actor.PerformGoapAction();
+        }
     }
     public void Initialize() {
         SetTargetStructure();

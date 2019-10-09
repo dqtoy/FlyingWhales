@@ -3548,7 +3548,7 @@ public class Character : ILeader, IPointOfInterest {
         //}
     }
     public void ThisCharacterWitnessedEvent(GoapAction witnessedEvent) {
-        if (isDead || GetNormalTrait("Unconscious", "Resting") != null) {
+        if (isDead || GetNormalTrait("Unconscious", "Resting", "Catatonic") != null) {
             return;
         }
         if (witnessedEvent.currentState == null) {
@@ -5819,7 +5819,7 @@ public class Character : ILeader, IPointOfInterest {
                 } else {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
-                log += "\n-Otherwise, if it is Afternoon, 25% chance to nap if there is still an unoccupied Bed in the house";
+                log += "\n-Otherwise, if it is Lunch Time or Afternoon, 25% chance to nap if there is still an unoccupied Bed in the house";
                 if (currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
@@ -5841,7 +5841,25 @@ public class Character : ILeader, IPointOfInterest {
                 } else {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
-                log += "\n-Otherwise, if it is Morning or Afternoon or Early Night, 25% chance to enter Stroll Outside Mode for 1 hour";
+                log += "\n-Otherwise, if it is Morning or Afternoon or Early Night, and the character has a positive relationship with someone currently Paralyzed or Catatonic, 30% chance to Check Out one at random";
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
+                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    int chance = UnityEngine.Random.Range(0, 100);
+                    log += "\n  -RNG roll: " + chance;
+                    if (chance < 30) {
+                        Character chosenCharacter = GetParalyzedOrCatatonicCharacterToCheckOut();
+                        if(chosenCharacter != null) {
+                            log += "\n  -Will Check Out character " + chosenCharacter.name;
+                            PlanIdle(INTERACTION_TYPE.CHECK_OUT, chosenCharacter);
+                            return log;
+                        } else {
+                            log += "\n  -No available character to check out ";
+                        }
+                    }
+                } else {
+                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                }
+                log += "\n-Otherwise, if it is Morning or Lunch Time or Afternoon or Early Night, 25% chance to enter Stroll Outside Mode for 1 hour";
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
@@ -5928,19 +5946,24 @@ public class Character : ILeader, IPointOfInterest {
                 } else {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
-                //log += "\n-Otherwise, if it is Early Night, 35% chance to drink at the Inn";
-                //if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
-                //    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
-                //    int chance = UnityEngine.Random.Range(0, 100);
-                //    log += "\n  -RNG roll: " + chance;
-                //    if (chance < 35) {
-                //        log += "\n  -Early Night: " + name + " will do action Drink (multithreaded)";
-                //        StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
-                //        return log;
-                //    }
-                //} else {
-                //    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
-                //}
+                log += "\n-Otherwise, if it is Morning or Afternoon or Early Night, and the character has a positive relationship with someone currently Paralyzed or Catatonic, 30% chance to Check Out one at random";
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
+                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    int chance = UnityEngine.Random.Range(0, 100);
+                    log += "\n  -RNG roll: " + chance;
+                    if (chance < 30) {
+                        Character chosenCharacter = GetParalyzedOrCatatonicCharacterToCheckOut();
+                        if (chosenCharacter != null) {
+                            log += "\n  -Will Check Out character " + chosenCharacter.name;
+                            PlanIdle(INTERACTION_TYPE.CHECK_OUT, chosenCharacter);
+                            return log;
+                        } else {
+                            log += "\n  -No available character to check out ";
+                        }
+                    }
+                } else {
+                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                }
                 log += "\n-Otherwise, return home";
                 log += "\n  -" + name + " will do action Return Home";
                 PlanIdleReturnHome();
@@ -6068,27 +6091,28 @@ public class Character : ILeader, IPointOfInterest {
         AddPlan(goapPlan);
         //PlanGoapActions(goapAction);
     }
-    //public bool AssaultCharacter(Character target) {
-    //    //Debug.Log(this.name + " will assault " + target.name);
-    //    hasAssaultPlan = true;
-    //    lastAssaultedCharacter = target;
-    //    //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
-    //    //if(currentStructure.unoccupiedTiles.Count > 0) {
-    //    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ASSAULT_ACTION_NPC, this, target);
-    //    goapAction.SetEndAction(OnAssaultActionReturn);
-    //    //goapAction.SetTargetStructure(target);
-    //    GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-    //    GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.DEATH }, GOAP_CATEGORY.REACTION);
-    //    goapPlan.ConstructAllNodes();
-    //    goapPlan.SetDoNotRecalculate(true);
-    //    AddPlan(goapPlan, true);
-    //    if (currentAction != null) {
-    //        currentAction.StopAction();
-    //    }
-    //    return true;
-    //    //}
-    //    //return false;
-    //}
+    private Character GetParalyzedOrCatatonicCharacterToCheckOut() {
+        List<Character> charactersWithRel = GetAllCharactersThatHasRelationship();
+        if (charactersWithRel.Count > 0) {
+            List<Character> positiveCharactersWithParalyzedOrCatatonic = new List<Character>();
+            for (int i = 0; i < charactersWithRel.Count; i++) {
+                if (GetRelationshipEffectWith(charactersWithRel[i]) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    Trait trait = charactersWithRel[i].GetNormalTrait("Paralyzed", "Catatonic");
+                    if (trait != null) {
+                        if (trait is Paralyzed && (trait as Paralyzed).charactersThatKnow.Contains(this)) {
+                            positiveCharactersWithParalyzedOrCatatonic.Add(charactersWithRel[i]);
+                        } else if (trait is Catatonic && (trait as Catatonic).charactersThatKnow.Contains(this)) {
+                            positiveCharactersWithParalyzedOrCatatonic.Add(charactersWithRel[i]);
+                        }
+                    }
+                }
+            }
+            if (positiveCharactersWithParalyzedOrCatatonic.Count > 0) {
+                return positiveCharactersWithParalyzedOrCatatonic[UnityEngine.Random.Range(0, positiveCharactersWithParalyzedOrCatatonic.Count)];
+            }
+        }
+        return null;
+    }
     private void SetLastAssaultedCharacter(Character character) {
         lastAssaultedCharacter = character;
         if (character != null) {

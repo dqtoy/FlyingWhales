@@ -14,7 +14,7 @@ public class Paralyzed : Trait {
         type = TRAIT_TYPE.DISABLER;
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
-        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED, };
+        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED, INTERACTION_TYPE.CHECK_OUT };
         daysDuration = 0;
         charactersThatKnow = new List<Character>();
     }
@@ -316,4 +316,27 @@ public class Paralyzed : Trait {
         }
     }
     #endregion
+}
+
+
+public class SaveDataParalyzed : SaveDataTrait {
+    public List<int> charactersThatKnow;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Paralyzed paralyzed = trait as Paralyzed;
+        charactersThatKnow = new List<int>();
+        for (int i = 0; i < paralyzed.charactersThatKnow.Count; i++) {
+            charactersThatKnow.Add(paralyzed.charactersThatKnow[i].id);
+        }
+    }
+
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        Paralyzed paralyzed = trait as Paralyzed;
+        for (int i = 0; i < charactersThatKnow.Count; i++) {
+            paralyzed.AddCharacterThatKnows(CharacterManager.Instance.GetCharacterByID(charactersThatKnow[i]));
+        }
+        return trait;
+    }
 }

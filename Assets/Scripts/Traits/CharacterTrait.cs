@@ -38,13 +38,13 @@ public class CharacterTrait : Trait {
         if(targetPOI is Character) {
             Character targetCharacter = targetPOI as Character;
             Paralyzed paralyzed = targetCharacter.GetNormalTrait("Paralyzed") as Paralyzed;
-            //Catatonic catatonic = targetCharacter.GetNormalTrait("Catatonic") as Catatonic;
+            Catatonic catatonic = targetCharacter.GetNormalTrait("Catatonic") as Catatonic;
             if (paralyzed != null) {
                 paralyzed.AddCharacterThatKnows(character);
             }
-            //if (catatonic != null) {
-            //    catatonic.AddCharacterThatKnows(character);
-            //}
+            if (catatonic != null) {
+                catatonic.AddCharacterThatKnows(character);
+            }
         }
     }
     public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
