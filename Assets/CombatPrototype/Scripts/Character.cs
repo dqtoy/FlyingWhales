@@ -5578,8 +5578,7 @@ public class Character : ILeader, IPointOfInterest {
                     //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
                     //}
                     job.SetCancelOnFail(true);
-                    bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
-                        || stateComponent.currentState != null || stateComponent.stateToDo != null;
+                    bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0 || stateComponent.stateToDo != null;
                     jobQueue.AddJobInQueue(job, !willNotProcess);
                 } else {
                     griefstricken.TriggerGrieving();
@@ -5633,8 +5632,7 @@ public class Character : ILeader, IPointOfInterest {
                     GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
                     job.SetCancelOnFail(true);
                     sleepScheduleJobID = job.id;
-                    bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
-                        || stateComponent.currentState != null || stateComponent.stateToDo != null;
+                    bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0 || stateComponent.stateToDo != null;
                     jobQueue.AddJobInQueue(job, !willNotProcess);
                 } else {
                     spooked.TriggerFeelingSpooked();
