@@ -22,8 +22,8 @@ public class ObjectPicker : MonoBehaviour {
 
     private bool _isGamePausedBeforeOpeningPicker;
 
-    public void ShowClickable<T>(List<T> items, Action<T> onClickItemAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null
-        , string title = "", Action<T> onHoverItemAction = null, Action<T> onHoverExitItemAction = null, string identifier = "", bool showCover = false, int layer = 9, bool closable = true) {
+    public void ShowClickable<T>(List<T> items, Action<T> onClickItemAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, 
+        string title = "", Action<T> onHoverItemAction = null, Action<T> onHoverExitItemAction = null, string identifier = "", bool showCover = false, int layer = 9, bool closable = true) {
         Utilities.DestroyChildren(objectPickerScrollView.content);
         List<T> validItems;
         List<T> invalidItems;

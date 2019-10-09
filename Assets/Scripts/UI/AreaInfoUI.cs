@@ -48,7 +48,7 @@ public class AreaInfoUI : UIMenu {
     public GameObject normalContentGO;
     public PlayerBuildLandmarkUI playerBuildLandmarkUI;
     public PlayerResearchUI playerResearchUI;
-    public PlayerDelayDivineInterventionUI playerDelayDivineInterventionUI;
+    public TheProfaneUI playerDelayDivineInterventionUI;
     public PlayerSummonMinionUI playerSummonMinionUI;
     [SerializeField] private GameObject cryptGO;
     [SerializeField] private GameObject kennelGO;

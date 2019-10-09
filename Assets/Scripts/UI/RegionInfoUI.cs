@@ -50,7 +50,7 @@ public class RegionInfoUI : UIMenu {
     [Header("Demonic Landmark")]
     [SerializeField] private PlayerBuildLandmarkUI playerBuildLandmarkUI;
     [SerializeField] private PlayerResearchUI playerResearchUI;
-    [SerializeField] private PlayerDelayDivineInterventionUI playerDelayDivineInterventionUI;
+    [SerializeField] private TheProfaneUI theProfaneUI;
     [SerializeField] private PlayerSummonMinionUI playerSummonMinionUI;
     [SerializeField] private PlayerUpgradeUI playerUpgradeUI;
     [SerializeField] private TheEyeUI theEyeUI;
@@ -360,7 +360,7 @@ public class RegionInfoUI : UIMenu {
             UpdatePlayerBuildLandmarkUI();
         } else if (playerResearchUI.gameObject.activeSelf) {
             UpdatePlayerResearchUI();
-        } else if (playerDelayDivineInterventionUI.gameObject.activeSelf) {
+        } else if (theProfaneUI.gameObject.activeSelf) {
             UpdatePlayerDelayDivineInterventionUI();
         } else if (playerUpgradeUI.gameObject.activeSelf) {
             UpdatePlayerUpgradeUI();
@@ -438,13 +438,13 @@ public class RegionInfoUI : UIMenu {
 
     #region Player Delay Divine Intervention Content
     private void ShowPlayerDelayDivineInterventionUI() {
-        playerDelayDivineInterventionUI.ShowPlayerDelayDivineInterventionUI(activeRegion.mainLandmark as TheProfane);
+        theProfaneUI.ShowTheProfaneUI(activeRegion.mainLandmark as TheProfane);
     }
     private void HidePlayerDelayDivineInterventionUI() {
-        playerDelayDivineInterventionUI.HidePlayerDelayDivineInterventionUI();
+        theProfaneUI.Hide();
     }
     private void UpdatePlayerDelayDivineInterventionUI() {
-        playerDelayDivineInterventionUI.UpdatePlayerDelayDivineInterventionUI();
+        theProfaneUI.UpdatePlayerDelayDivineInterventionUI();
     }
     #endregion
 

@@ -30,6 +30,9 @@ public class CharacterItem : PooledObject {
             return _toggleClickActions;
         }
     }
+    public bool coverState {
+        get { return coverGO.activeSelf; }
+    }
 
     public virtual void SetCharacter(Character character) {
         this.character = character;
@@ -74,6 +77,9 @@ public class CharacterItem : PooledObject {
         }
         itemBtn.onClick.AddListener(onClick.Invoke);
     }
+    public void ClearClickActions() {
+        itemBtn.onClick.RemoveAllListeners();
+    }
     public void AddOnToggleAction(System.Action onClick, bool clearAllOtherActions = false) {
         if (clearAllOtherActions) {
             toggleClickActions.Clear();
@@ -99,5 +105,8 @@ public class CharacterItem : PooledObject {
     public void SetAsButton() {
         itemBtn.gameObject.SetActive(true);
         toggle.gameObject.SetActive(false);
+    }
+    public void SetToggleState(bool state) {
+        toggle.isOn = state;
     }
 }

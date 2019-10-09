@@ -45,20 +45,28 @@ public class Pyrophobic : Trait {
         }
     }
 
-    public void Flee(BurningSource source, Character character) {
+    public void BeShellshocked(BurningSource source, Character character) {
         string summary = GameManager.Instance.TodayLogString() + character.name + " saw burning source " + source.ToString();
         if (character.marker.AddAvoidsInRange(source.objectsOnFire)) {
             summary += "\nStarted fleeing";
             //owner.marker.AddTerrifyingObject(source.objectsOnFire);
             character.CancelAllPlans();
-            Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), "flee_pyrophobia");
+            Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), "flee");
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToInvolvedObjects();
             PlayerManager.Instance.player.ShowNotificationFrom(character, log);
+            character.AddTrait("Shellshocked");
         } else {
             summary += "\nDid not flee because already fleeing.";
         }
         Debug.Log(summary);
+    }
+    public void BeCatatonic(BurningSource source, Character character) {
+        Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), "catatonic");
+        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotificationFrom(character, log);
+        character.AddTrait("Catatonic");
     }
 
     private void OnObjectStartedBurning(IPointOfInterest poi) {

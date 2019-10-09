@@ -116,6 +116,7 @@ public class AttributeManager : MonoBehaviour {
             new Lazy(),
             new Coward(),
             new Berserked(),
+            new Catatonic(),
             new Griefstricken(),
             new Heartbroken(),
         };

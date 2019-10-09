@@ -83,8 +83,17 @@ public class Burning : Trait {
                     if (pyrophobic.AddKnownBurningSource(sourceOfBurning)) {
                         characterThatWillDoJob.AdjustHappiness(-2000);
                     }
-                    pyrophobic.Flee(sourceOfBurning, characterThatWillDoJob);
-
+                    //It will trigger one of the following:
+                    if (!characterThatWillDoJob.marker.hasFleePath && characterThatWillDoJob.GetNormalTrait("Catatonic") == null) { //if not already fleeing or catatonic
+                        //50% gain Shellshocked and Flee from fire. Log "[Actor Name] saw a fire and fled from it."
+                        if (UnityEngine.Random.Range(0, 100) < 50) {
+                            pyrophobic.BeShellshocked(sourceOfBurning, characterThatWillDoJob);
+                        }
+                        //50% gain Catatonic. Log "[Actor Name] saw a fire and became Catatonic."
+                        else {
+                            pyrophobic.BeCatatonic(sourceOfBurning, characterThatWillDoJob);
+                        }
+                    }
                 } else {
                     summary += "\nDid not create douse fire job because maximum dousers has been reached!";
                     //if the character did not create a douse fire job. Check if he/she will watch instead. (Characters will just watch if their current actions are lower priority than Watch) NOTE: Lower priority value is considered higher priority
