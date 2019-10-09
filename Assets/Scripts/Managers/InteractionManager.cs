@@ -186,6 +186,9 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.TRIGGER_FLAW:
             case JOB_TYPE.MISC:
             case JOB_TYPE.RETURN_HOME:
+            case JOB_TYPE.CORRUPT_CULTIST:
+            case JOB_TYPE.DESTROY_FOOD:
+            case JOB_TYPE.DESTROY_SUPPLY:
                 priority = 5;
                 break;
             case JOB_TYPE.TANTRUM:

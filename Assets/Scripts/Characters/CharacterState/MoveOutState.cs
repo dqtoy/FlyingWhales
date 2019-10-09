@@ -230,6 +230,8 @@ public class MoveOutState : CharacterState {
         List<LANDMARK_TYPE> validLandmarkTypes = new List<LANDMARK_TYPE>();
         if (job.jobType == JOB_TYPE.DESTROY_PROFANE_LANDMARK) {
             validLandmarkTypes.Add(LANDMARK_TYPE.THE_PROFANE);
+        } else if (job.jobType == JOB_TYPE.CORRUPT_CULTIST) {
+            validLandmarkTypes.Add(LANDMARK_TYPE.THE_PROFANE);
         } else {
             validLandmarkTypes.AddRange(Utilities.GetEnumValues<LANDMARK_TYPE>());
         }

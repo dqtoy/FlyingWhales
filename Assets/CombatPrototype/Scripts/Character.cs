@@ -5246,13 +5246,42 @@ public class Character : ILeader, IPointOfInterest {
 
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this);
         UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(newMinion, true));
-        //PlayerManager.Instance.player.AddMinion(newMinion);
+    }
+    public void RecruitAsMinion(UnsummonedMinionData minionData) {
+        if (stateComponent.currentState != null) {
+            stateComponent.currentState.OnExitThisState();
+        } else if (stateComponent.stateToDo != null) {
+            stateComponent.SetStateToDo(null);
+        }
 
+        CancelAllJobsTargettingThisCharacter("target became a minion", false);
+        Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target became a minion");
+        if (currentAction != null && !currentAction.cannotCancelAction) {
+            currentAction.StopAction();
+        }
 
+        if (!IsInOwnParty()) {
+            _currentParty.RemoveCharacter(this);
+        }
+        MigrateHomeTo(PlayerManager.Instance.player.playerArea.region);
 
-        //if (!characterToken.isObtainedByPlayer) {
-        //    PlayerManager.Instance.player.AddToken(characterToken);
-        //}
+        specificLocation.RemoveCharacterFromLocation(this.currentParty);
+        currentRegion?.RemoveCharacterFromLocation(this);
+
+        ResetFullnessMeter();
+        ResetHappinessMeter();
+        ResetTirednessMeter();
+        //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(this.currentParty);
+
+        ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
+
+        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(minionData.className, RACE.DEMON, false);
+        newMinion.character.SetName(minionData.minionName);
+        newMinion.SetCombatAbility(minionData.combatAbility);
+        newMinion.SetRandomResearchInterventionAbilities(minionData.interventionAbilitiesToResearch);
+        SetMinion(newMinion);
+
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(newMinion, true));
     }
     #endregion
 

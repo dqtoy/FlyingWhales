@@ -14,8 +14,8 @@ public class SpellFeature : RegionFeature {
     #region Overrides
     public override void Activate(Region region) {
         base.Activate(region);
-        INTERVENTION_ABILITY[] spells = Utilities.GetEnumValues<INTERVENTION_ABILITY>();
-        PlayerJobAction newAbility = PlayerManager.Instance.CreateNewInterventionAbility(spells[Random.Range(1, spells.Length)]);
+        INTERVENTION_ABILITY[] spells = PlayerManager.Instance.allInterventionAbilities;
+        PlayerJobAction newAbility = PlayerManager.Instance.CreateNewInterventionAbility(spells[Random.Range(0, spells.Length)]);
         UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Spell: " + newAbility.name, () => PlayerManager.Instance.player.GainNewInterventionAbility(newAbility));
     }
     #endregion

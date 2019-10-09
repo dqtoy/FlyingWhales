@@ -361,7 +361,7 @@ public class RegionInfoUI : UIMenu {
         } else if (playerResearchUI.gameObject.activeSelf) {
             UpdatePlayerResearchUI();
         } else if (theProfaneUI.gameObject.activeSelf) {
-            UpdatePlayerDelayDivineInterventionUI();
+            UpdateTheProfaneUI();
         } else if (playerUpgradeUI.gameObject.activeSelf) {
             UpdatePlayerUpgradeUI();
         } else if (playerSummonMinionUI.gameObject.activeSelf) {
@@ -377,7 +377,7 @@ public class RegionInfoUI : UIMenu {
         if (isOn) {
             HidePlayerBuildLandmarkUI();
             HidePlayerResearchUI();
-            HidePlayerDelayDivineInterventionUI();
+            HideTheProfaneUI();
             HidePlayerUpgradeUI();
             HidePlayerSummonMinionUI();
             HideTheEyeUI();
@@ -388,7 +388,7 @@ public class RegionInfoUI : UIMenu {
             } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_SPIRE) {
                 ShowPlayerResearchUI();
             } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE) {
-                ShowPlayerDelayDivineInterventionUI();
+                ShowTheProfaneUI();
             } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_ANVIL) {
                 ShowPlayerUpgradeUI();
             } else if (activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL) {
@@ -402,7 +402,7 @@ public class RegionInfoUI : UIMenu {
             //deactivate the UI for the tab
             HidePlayerBuildLandmarkUI();
             HidePlayerResearchUI();
-            HidePlayerDelayDivineInterventionUI();
+            HideTheProfaneUI();
             HidePlayerUpgradeUI();
             HidePlayerSummonMinionUI();
             HideTheEyeUI();
@@ -437,14 +437,14 @@ public class RegionInfoUI : UIMenu {
     #endregion
 
     #region Player Delay Divine Intervention Content
-    private void ShowPlayerDelayDivineInterventionUI() {
+    private void ShowTheProfaneUI() {
         theProfaneUI.ShowTheProfaneUI(activeRegion.mainLandmark as TheProfane);
     }
-    private void HidePlayerDelayDivineInterventionUI() {
+    private void HideTheProfaneUI() {
         theProfaneUI.Hide();
     }
-    private void UpdatePlayerDelayDivineInterventionUI() {
-        theProfaneUI.UpdatePlayerDelayDivineInterventionUI();
+    private void UpdateTheProfaneUI() {
+        theProfaneUI.UpdateTheProfaneUI();
     }
     #endregion
 
