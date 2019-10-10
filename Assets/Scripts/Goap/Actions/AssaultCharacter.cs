@@ -8,6 +8,7 @@ public class AssaultCharacter : GoapAction {
     private Character loser;
 
     public AssaultCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASSAULT_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         doesNotStopTargetCharacter = true;
     }
@@ -50,7 +51,7 @@ public class AssaultCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        cannotCancelAction = true;
+        SetCannotCancelAction(true);
         //actor.marker.pathfindingAI.ResetEndReachedDistance();
 
         Character targetCharacter = poiTarget as Character;
@@ -143,6 +144,9 @@ public class AssaultCharacter : GoapAction {
     public override void DoAction() {
         SetTargetStructure();
         base.DoAction();
+    }
+    public override LocationGridTile GetTargetLocationTile() {
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
     public override void OnStopActionDuringCurrentState() {
         //actor.marker.pathfindingAI.ResetEndReachedDistance();
