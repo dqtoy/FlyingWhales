@@ -223,6 +223,17 @@ public class ChatCharacter : GoapAction {
         } else if (chatResult == "Become Paramours") {
             //Log: "[Character Name 1] and [Character Name 2] have developed an affair!"
             CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR);
+        } else if (chatResult == "Argument") {
+            if(actor.GetNormalTrait("Angry") != null) {
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
+                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            }
+            if (targetCharacter.GetNormalTrait("Angry") != null) {
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
+                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                targetCharacter.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            }
         }
 
         Plagued actorPlagued = actor.GetNormalTrait("Plagued") as Plagued;

@@ -319,10 +319,10 @@ public class CharacterMarker : PooledObject {
             RemoveHostileInRange(otherCharacter);
             RemoveAvoidInRange(otherCharacter);
             RemovePOIFromInVisionRange(otherCharacter);
-            if (character.currentAction != null && character.currentAction.poiTarget == otherCharacter) {
-                //If current action target is invisible and it is moving towards target stop it
-                character.currentAction.StopAction(true);
-            }
+            //if (character.currentAction != null && character.currentAction.poiTarget == otherCharacter) {
+            //    //If current action target is invisible and it is moving towards target stop it
+            //    character.currentAction.StopAction(true);
+            //}
         } else {
             if (inVisionCharacters.Contains(otherCharacter)) {
                 character.CreateJobsOnEnterVisionWith(otherCharacter);

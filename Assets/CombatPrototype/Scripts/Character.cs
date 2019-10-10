@@ -3835,7 +3835,7 @@ public class Character : ILeader, IPointOfInterest {
             }
             summary += "\nEnding current action (if there's any) before watching...";
             AdjustIsWaitingForInteraction(1);
-            StopCurrentAction(false);
+            StopCurrentAction(false, "Have something important to do");
             AdjustIsWaitingForInteraction(-1);
         }
         summary += "\nWatch event created.";
@@ -5244,7 +5244,7 @@ public class Character : ILeader, IPointOfInterest {
         CancelAllJobsTargettingThisCharacter("target became a minion", false);
         Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target became a minion");
         if (currentAction != null && !currentAction.cannotCancelAction) {
-            currentAction.StopAction();
+            currentAction.StopAction(reason: "Became a minion");
         }
 
         if (!IsInOwnParty()) {
@@ -5275,7 +5275,7 @@ public class Character : ILeader, IPointOfInterest {
         CancelAllJobsTargettingThisCharacter("target became a minion", false);
         Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target became a minion");
         if (currentAction != null && !currentAction.cannotCancelAction) {
-            currentAction.StopAction();
+            currentAction.StopAction(reason: "Became a minion");
         }
 
         if (!IsInOwnParty()) {

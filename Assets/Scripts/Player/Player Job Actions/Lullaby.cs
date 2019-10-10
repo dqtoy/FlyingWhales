@@ -49,7 +49,7 @@ public class Lullaby : PlayerJobAction {
                     }
                     character.AdjustIsWaitingForInteraction(1);
                     if (character.currentAction != null) {
-                        character.currentAction.StopAction(true);
+                        character.currentAction.StopAction(true, "Stopped by the player");
                     }
                     character.AdjustIsWaitingForInteraction(-1);
                 }
