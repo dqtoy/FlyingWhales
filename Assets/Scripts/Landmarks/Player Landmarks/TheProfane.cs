@@ -31,7 +31,7 @@ public class TheProfane : BaseLandmark {
             CharacterStateJob job = new CharacterStateJob(JOB_TYPE.CORRUPT_CULTIST, CHARACTER_STATE.MOVE_OUT);
             targetCharacter.jobQueue.AddJobInQueue(job);
         } else if (action == "Sabotage Faction Quest") {
-
+            (targetCharacter.faction.activeQuest as DivineInterventionQuest).CreateSabotageFactionnJob();
         } else if (action == "Destroy Supply") {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_SUPPLY, INTERACTION_TYPE.DESTROY_SUPPLY);
             job.SetIsStealth(true);

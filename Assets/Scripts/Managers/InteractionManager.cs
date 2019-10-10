@@ -189,6 +189,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.CORRUPT_CULTIST:
             case JOB_TYPE.DESTROY_FOOD:
             case JOB_TYPE.DESTROY_SUPPLY:
+            case JOB_TYPE.SABOTAGE_FACTION:
                 priority = 5;
                 break;
             case JOB_TYPE.TANTRUM:
@@ -351,6 +352,9 @@ public class InteractionManager : MonoBehaviour {
     }
     public bool CanDoJudgementJob(Character character, JobQueueItem job) {
         return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
+    }
+    public bool CanDoSabotageFactionJob(Character character, JobQueueItem item) {
+        return character.GetNormalTrait("Cultist") != null;
     }
     public bool CanCraftTool(Character character, JobQueueItem job) {
         //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.TOOL);
