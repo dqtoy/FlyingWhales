@@ -134,7 +134,7 @@ public class GoapPlanJob : JobQueueItem {
     }
 
     #region Overrides 
-    public override void UnassignJob(bool shouldDoAfterEffect = true) {
+    public override void UnassignJob(bool shouldDoAfterEffect = true, string reason = "") {
         base.UnassignJob(shouldDoAfterEffect);
         if (assignedPlan != null && assignedCharacter != null) {
             Character character = assignedCharacter;
@@ -147,7 +147,7 @@ public class GoapPlanJob : JobQueueItem {
                         character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
                     }
                 }
-                character.StopCurrentAction(shouldDoAfterEffect);
+                character.StopCurrentAction(shouldDoAfterEffect, reason);
                 if (character.currentAction != null) {
                     character.SetCurrentAction(null);
                 }

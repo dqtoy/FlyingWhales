@@ -508,6 +508,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.CHECK_OUT, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Checkout Success", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
+        {INTERACTION_TYPE.SING, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Sing Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
+        {INTERACTION_TYPE.DANCE, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Dance Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        } },
     };
 }
 

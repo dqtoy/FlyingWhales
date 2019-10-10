@@ -162,7 +162,7 @@ public class JobQueue {
                     }
                 }
                 character.AdjustIsWaitingForInteraction(1);
-                character.StopCurrentAction(false);
+                character.StopCurrentAction(false, "Have something important to do");
                 character.AdjustIsWaitingForInteraction(-1);
             }
         }
@@ -441,7 +441,7 @@ public class JobQueue {
     }
 
     //Returnsc true or false if job was really removed in queue
-    public bool CancelJob(JobQueueItem job, string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = false) {
+    public bool CancelJob(JobQueueItem job, string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = false, string reason = "") {
         //When cancelling a job, we must check if it's personal or not because if it is a faction/settlement job it cannot be removed from queue
         //The only way for a faction/settlement job to be removed is if it is forced or it is actually finished
         bool hasBeenRemovedInJobQueue = false;
@@ -468,7 +468,7 @@ public class JobQueue {
                     actor.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, cause);
                 }
             }
-            job.UnassignJob(shouldDoAfterEffect);
+            job.UnassignJob(shouldDoAfterEffect, reason);
         }
         return hasBeenRemovedInJobQueue;
     }

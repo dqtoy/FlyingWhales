@@ -2122,7 +2122,7 @@ public class Character : ILeader, IPointOfInterest {
             jobQueue.AddJobInQueue(job, false);
         }
     }
-    public void CancelAllJobsAndPlansExceptNeedsRecovery() {
+    public void CancelAllJobsAndPlansExceptNeedsRecovery(string reason = "") {
         AdjustIsWaitingForInteraction(1);
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
             if (jobQueue.jobsInQueue[i].jobType.IsNeedsTypeJob()) {
@@ -2136,7 +2136,7 @@ public class Character : ILeader, IPointOfInterest {
             homeArea.jobQueue.UnassignAllJobsTakenBy(this);
         }
 
-        StopCurrentAction(false);
+        StopCurrentAction(false, reason: reason);
         for (int i = 0; i < allGoapPlans.Count; i++) {
             if(allGoapPlans[i].job != null && allGoapPlans[i].job.jobType.IsNeedsTypeJob()) {
                 if (JustDropPlan(allGoapPlans[i])) {
@@ -2150,7 +2150,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         AdjustIsWaitingForInteraction(-1);
     }
-    public void CancelAllJobsAndPlans() {
+    public void CancelAllJobsAndPlans(string reason = "") {
         AdjustIsWaitingForInteraction(1);
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
             if (jobQueue.CancelJob(jobQueue.jobsInQueue[i])) {
@@ -2161,7 +2161,7 @@ public class Character : ILeader, IPointOfInterest {
             homeArea.jobQueue.UnassignAllJobsTakenBy(this);
         }
 
-        StopCurrentAction(false);
+        StopCurrentAction(false, reason: reason);
         for (int i = 0; i < allGoapPlans.Count; i++) {
             if (DropPlan(allGoapPlans[i])) {
                 i--;
@@ -2169,15 +2169,15 @@ public class Character : ILeader, IPointOfInterest {
         }
         AdjustIsWaitingForInteraction(-1);
     }
-    public void CancelAllPlans() {
-        StopCurrentAction(false);
+    public void CancelAllPlans(string reason = "") {
+        StopCurrentAction(false, reason: reason);
         for (int i = 0; i < allGoapPlans.Count; i++) {
             if (DropPlan(allGoapPlans[i])) {
                 i--;
             }
         }
     }
-    public void CancelAllJobsAndPlansExcept(params JOB_TYPE[] job) {
+    public void CancelAllJobsAndPlansExcept(string reason = "", params JOB_TYPE[] job) {
         List<JOB_TYPE> exceptions = job.ToList();
         AdjustIsWaitingForInteraction(1);
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
@@ -2190,7 +2190,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         homeArea.jobQueue.UnassignAllJobsTakenBy(this);
 
-        StopCurrentAction(false);
+        StopCurrentAction(false, reason: reason);
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan currPlan = allGoapPlans[i];
             if (currPlan.job == null || !exceptions.Contains(currPlan.job.jobType)) {
@@ -3388,7 +3388,7 @@ public class Character : ILeader, IPointOfInterest {
         if (currentAction != null && currentAction.poiTarget == target && currentAction.isStealth) {
             //Upon seeing the target while performing a stealth job action, check if it can do the action
             if (!marker.CanDoStealthActionToTarget(target)) {
-                currentAction.parentPlan.job.jobQueueParent.CancelJob(currentAction.parentPlan.job);
+                currentAction.parentPlan.job.jobQueueParent.CancelJob(currentAction.parentPlan.job, reason: "There is a witness around");
             }
         }
         if (target.targettedByAction.Count > 0) {
@@ -3399,7 +3399,7 @@ public class Character : ILeader, IPointOfInterest {
                 if (action.isStealth && action.actor != this) {
                     if (!action.isDone && !action.isPerformingActualAction && action.actor.currentAction == action
                         && action.actor.marker.inVisionPOIs.Contains(target)) {
-                        action.StopAction(true);
+                        action.StopAction(true, "There is a witness around");
                     }
                 }
             }
@@ -7366,6 +7366,8 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.FEELING_SPOOKED);
         poiGoapActions.Add(INTERACTION_TYPE.FEELING_BROKENHEARTED);
         poiGoapActions.Add(INTERACTION_TYPE.GRIEVING);
+        poiGoapActions.Add(INTERACTION_TYPE.DANCE);
+        poiGoapActions.Add(INTERACTION_TYPE.SING);
 
 
         if (race != RACE.SKELETON) {
@@ -7564,7 +7566,7 @@ public class Character : ILeader, IPointOfInterest {
                             }
                         }
                         AdjustIsWaitingForInteraction(1);
-                        StopCurrentAction(false);
+                        StopCurrentAction(false, "Have something important to do");
                         AdjustIsWaitingForInteraction(-1);
                     }
                     //return;
@@ -8215,9 +8217,16 @@ public class Character : ILeader, IPointOfInterest {
     }
     //This will only stop the current action of this character, this is different from StopAction because this will not drop the plan if the actor is not performing it but is on the way
     //This does not stop the movement of this character, call StopMovement separately to stop movement
-    public void StopCurrentAction(bool shouldDoAfterEffect = true) {
+    public void StopCurrentAction(bool shouldDoAfterEffect = true, string reason = "") {
         if(currentAction != null) {
             //Debug.Log("Stopped action of " + name + " which is " + currentAction.goapName);
+            if (reason != "") {
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
+                log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(null, currentAction.goapName, LOG_IDENTIFIER.STRING_1);
+                log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
+                RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            }
             if (currentAction.isPerformingActualAction && !currentAction.isDone) {
                 if (!shouldDoAfterEffect) {
                     currentAction.OnStopActionDuringCurrentState();

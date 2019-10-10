@@ -30,7 +30,7 @@ public class CharacterStateJob : JobQueueItem {
     }
 
     #region Overrides
-    public override void UnassignJob(bool shouldDoAfterEffect = true) {
+    public override void UnassignJob(bool shouldDoAfterEffect = true, string reason = "") {
         base.UnassignJob(shouldDoAfterEffect);
         if(assignedState != null && assignedCharacter != null) {
             if(assignedCharacter.stateComponent.stateToDo == assignedState) {

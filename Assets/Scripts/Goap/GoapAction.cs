@@ -548,11 +548,20 @@ public class GoapAction {
     public void SetEndAction(System.Action<string, GoapAction> endAction) {
         this.endAction = endAction;
     }
-    public void StopAction(bool removeJobInQueue = false) {
+    public void StopAction(bool removeJobInQueue = false, string reason = "") {
         //GoapAction action = actor.currentAction;
         //if(actor.marker.pathfindingThread != null) {
         //    actor.marker.pathfindingThread.SetDoNotMove(true);
         //}
+        if(actor.currentAction != null && actor.currentAction == this) {
+            if (reason != "") {
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
+                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(null, actor.currentAction.goapName, LOG_IDENTIFIER.STRING_1);
+                log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
+                actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            }
+        }
         actor.SetCurrentAction(null);
         if (actor.currentParty.icon.isTravelling) {
             if (actor.currentParty.icon.travelLine == null) {
