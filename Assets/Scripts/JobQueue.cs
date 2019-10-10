@@ -184,7 +184,7 @@ public class JobQueue {
                 }
             } else if (job is CharacterStateJob) {
                 CharacterStateJob stateJob = job as CharacterStateJob;
-                CharacterState newState = characterToDoJob.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
+                CharacterState newState = characterToDoJob.stateComponent.SwitchToState(stateJob.targetState);
                 if (newState != null) {
                     stateJob.SetAssignedState(newState);
                 } else {

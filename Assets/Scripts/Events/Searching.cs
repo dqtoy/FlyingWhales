@@ -7,6 +7,7 @@ public class Searching : WorldEvent {
     public Searching() : base(WORLD_EVENT.SEARCHING) {
         eventEffects = new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.SEARCHING };
         description = "This mission lets the character search in the region.";
+        duration = GameManager.Instance.GetTicksBasedOnHour(3);
     }
 
     #region Overrides

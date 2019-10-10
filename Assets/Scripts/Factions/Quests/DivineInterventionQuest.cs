@@ -163,7 +163,7 @@ public class DivineInterventionQuest : Quest {
 
     #region Destroy Profane
     private void CreateDestroyProfaneJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK, CHARACTER_STATE.MOVE_OUT, null);
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.DESTROY_PROFANE_LANDMARK, CHARACTER_STATE.MOVE_OUT);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoDestroyProfaneJob);
         jobQueue.AddJobInQueue(job);
 
@@ -176,7 +176,7 @@ public class DivineInterventionQuest : Quest {
 
     #region Holy Incantation
     private void CreateHolyIncantationJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.PERFORM_HOLY_INCANTATION, CHARACTER_STATE.MOVE_OUT, null);
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.PERFORM_HOLY_INCANTATION, CHARACTER_STATE.MOVE_OUT);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoHolyIncantationJob);
         jobQueue.AddJobInQueue(job);
 

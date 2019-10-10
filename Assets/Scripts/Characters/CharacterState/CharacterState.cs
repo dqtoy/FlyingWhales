@@ -18,7 +18,7 @@ public class CharacterState {
     public string actionIconString { get; protected set; }
     public GoapAction currentlyDoingAction { get; protected set; }
     public Character targetCharacter { get; protected set; } //Target character of current state
-    public Area targetArea { get; protected set; }
+    //public Area targetArea { get; protected set; }
     public bool isUnending { get; protected set; } //is this state unending?
     //public CharacterState parentMajorState { get; protected set; }
 
@@ -40,10 +40,10 @@ public class CharacterState {
             Character targetCharacter = CharacterManager.Instance.GetCharacterByID(saveData.targetCharacterID);
             this.SetTargetCharacter(targetCharacter);
         }
-        if (saveData.targetAreaID != -1) {
-            Area targetArea = LandmarkManager.Instance.GetAreaByID(saveData.targetAreaID);
-            this.SetTargetArea(targetArea);
-        }
+        //if (saveData.targetAreaID != -1) {
+        //    Area targetArea = LandmarkManager.Instance.GetAreaByID(saveData.targetAreaID);
+        //    this.SetTargetArea(targetArea);
+        //}
     }
     //Starts a state and its movement behavior, can be overridden
     protected virtual void StartState() {
@@ -181,10 +181,10 @@ public class CharacterState {
     public void SetTargetCharacter(Character target) {
         targetCharacter = target;
     }
-    //Sets the target area of this state, if there's any
-    public void SetTargetArea(Area target) {
-        targetArea = target;
-    }
+    ////Sets the target area of this state, if there's any
+    //public void SetTargetArea(Area target) {
+    //    targetArea = target;
+    //}
     //This is the action that is currently being done while in this state, ex. pick up item
     public void SetCurrentlyDoingAction(GoapAction action) {
         currentlyDoingAction = action;
@@ -198,17 +198,19 @@ public class CharacterState {
             return;
         }
         stateComponent.SetStateToDo(this, stopMovement: false);
-        //targetArea = area;
-        if(targetArea == null || targetArea == stateComponent.character.specificLocation) {
-            stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
-            StartState();
-        } else {
-            //GameDate dueDate = GameManager.Instance.Today().AddTicks(30);
-            //SchedulingManager.Instance.AddEntry(dueDate, () => GoToLocation(targetArea));
-            CreateTravellingThoughtBubbleLog(targetArea);
-            stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Travelling to " + targetArea.name + " before entering " + stateName + " for " + stateComponent.character.name);
-            stateComponent.character.currentParty.GoToLocation(targetArea.region, PATHFINDING_MODE.NORMAL, null, () => StartState());
-        }
+        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
+        StartState();
+        ////targetArea = area;
+        //if (targetArea == null || targetArea == stateComponent.character.specificLocation) {
+        //    stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
+        //    StartState();
+        //} else {
+        //    //GameDate dueDate = GameManager.Instance.Today().AddTicks(30);
+        //    //SchedulingManager.Instance.AddEntry(dueDate, () => GoToLocation(targetArea));
+        //    CreateTravellingThoughtBubbleLog(targetArea);
+        //    stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Travelling to " + targetArea.name + " before entering " + stateName + " for " + stateComponent.character.name);
+        //    stateComponent.character.currentParty.GoToLocation(targetArea.region, PATHFINDING_MODE.NORMAL, null, () => StartState());
+        //}
         //if(characterState == CHARACTER_STATE.EXPLORE) {
         //    //There is a special case for explore state, character must travel to a dungeon-type area first
         //    Area dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
@@ -253,9 +255,9 @@ public class CharacterState {
             if (targetCharacter != null) {
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             }
-            if(targetArea != null) {
-                log.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
-            }
+            //if(targetArea != null) {
+            //    log.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            //}
             log.AddLogToInvolvedObjects();
 
             PlayerManager.Instance.player.ShowNotificationFrom(log, stateComponent.character, false);
@@ -321,7 +323,7 @@ public class SaveDataCharacterState {
     public int currentDuration;
     public bool isPaused;
     public int targetCharacterID;
-    public int targetAreaID;
+    //public int targetAreaID;
     public bool isUnending;
     public bool hasStarted;
     public int level;
@@ -340,11 +342,11 @@ public class SaveDataCharacterState {
         } else {
             targetCharacterID = -1;
         }
-        if (state.targetArea != null) {
-            targetAreaID = state.targetArea.id;
-        } else {
-            targetAreaID = -1;
-        }
+        //if (state.targetArea != null) {
+        //    targetAreaID = state.targetArea.id;
+        //} else {
+        //    targetAreaID = -1;
+        //}
     }
 
     //public virtual CharacterState Load(Character character) {

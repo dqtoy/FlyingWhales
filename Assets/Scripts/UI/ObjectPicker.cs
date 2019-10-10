@@ -12,6 +12,7 @@ public class ObjectPicker : MonoBehaviour {
     [SerializeField] private ScrollRect objectPickerScrollView;
     [SerializeField] private GameObject objectPickerCharacterItemPrefab;
     [SerializeField] private GameObject objectPickerAreaItemPrefab;
+    [SerializeField] private GameObject objectPickerRegionItemPrefab;
     [SerializeField] private GameObject objectPickerStringItemPrefab;
     [SerializeField] private GameObject objectPickerAttackItemPrefab;
     [SerializeField] private GameObject objectPickerSummonSlotItemPrefab;
@@ -33,6 +34,8 @@ public class ObjectPicker : MonoBehaviour {
             ShowCharacterItems(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList(), onClickItemAction, onHoverItemAction, onHoverExitItemAction, identifier);
         } else if (type == typeof(Area)) {
             ShowAreaItems(validItems.Cast<Area>().ToList(), invalidItems.Cast<Area>().ToList(), onClickItemAction, onHoverItemAction, onHoverExitItemAction);
+        } else if (type == typeof(Region)) {
+            ShowRegionItems(validItems.Cast<Region>().ToList(), invalidItems.Cast<Region>().ToList(), onClickItemAction, onHoverItemAction, onHoverExitItemAction);
         } else if (type == typeof(string)) {
             ShowStringItems(validItems.Cast<string>().ToList(), invalidItems.Cast<string>().ToList(), onClickItemAction, onHoverItemAction, onHoverExitItemAction, identifier);
         } else if (type == typeof(SummonSlot)) {
@@ -182,6 +185,40 @@ public class ObjectPicker : MonoBehaviour {
             areaItem.SetButtonState(false);
         }
     }
+    private void ShowRegionItems<T>(List<Region> validItems, List<Region> invalidItems, Action<T> onClickItemAction, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction) {
+        Action<Region> convertedAction = null;
+        if (onClickItemAction != null) {
+            convertedAction = ConvertToRegion(onClickItemAction);
+        }
+        Action<Region> convertedHoverAction = null;
+        if (onHoverItemAction != null) {
+            convertedHoverAction = ConvertToRegion(onHoverItemAction);
+        }
+        Action<Region> convertedHoverExitAction = null;
+        if (onHoverExitItemAction != null) {
+            convertedHoverExitAction = ConvertToRegion(onHoverExitItemAction);
+        }
+        for (int i = 0; i < validItems.Count; i++) {
+            Region currRegion = validItems[i];
+            GameObject areaItemGO = UIManager.Instance.InstantiateUIObject(objectPickerRegionItemPrefab.name, objectPickerScrollView.content);
+            RegionPickerItem regionItem = areaItemGO.GetComponent<RegionPickerItem>();
+            regionItem.SetRegion(currRegion);
+            regionItem.onClickAction = convertedAction;
+            regionItem.onHoverEnterAction = convertedHoverAction;
+            regionItem.onHoverExitAction = convertedHoverExitAction;
+            regionItem.SetButtonState(true);
+        }
+        for (int i = 0; i < invalidItems.Count; i++) {
+            Region currRegion = invalidItems[i];
+            GameObject areaItemGO = UIManager.Instance.InstantiateUIObject(objectPickerRegionItemPrefab.name, objectPickerScrollView.content);
+            RegionPickerItem regionItem = areaItemGO.GetComponent<RegionPickerItem>();
+            regionItem.SetRegion(currRegion);
+            regionItem.onClickAction = null;
+            regionItem.onHoverEnterAction = convertedHoverAction;
+            regionItem.onHoverExitAction = convertedHoverExitAction;
+            regionItem.SetButtonState(false);
+        }
+    }
     private void ShowStringItems<T>(List<string> validItems, List<string> invalidItems, Action<T> onClickItemAction, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier) {
         Action<string> convertedAction = null;
         if (onClickItemAction != null) {
@@ -303,6 +340,10 @@ public class ObjectPicker : MonoBehaviour {
     public Action<Area> ConvertToArea<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<Area>(o => myActionT((T) (object) o));
+    }
+    public Action<Region> ConvertToRegion<T>(Action<T> myActionT) {
+        if (myActionT == null) return null;
+        else return new Action<Region>(o => myActionT((T) (object) o));
     }
     public Action<string> ConvertToString<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
