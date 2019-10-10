@@ -62,6 +62,12 @@ public class UIHoverHandler : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         onHoverExitAction.RemoveAllListeners();
         onHoverExitAction.AddListener(e);
     }
+    public void AddOnHoverAction(UnityAction e) {
+        onHoverOverAction.AddListener(e);
+    }
+    public void AddOnHoverOutAction(UnityAction e) {
+        onHoverExitAction.AddListener(e);
+    }
 
     void Update() {
         if (isHovering) {

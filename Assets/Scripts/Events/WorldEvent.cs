@@ -62,10 +62,6 @@ public class WorldEvent  {
             //there is an interfering character.
             if (TryInterfere(spawner, region.eventData.interferingCharacter)) {
                 //interfering character succeeded
-                spawner.Death("Interfere_Attacked", responsibleCharacter: region.eventData.interferingCharacter, deathLogFillers: new LogFiller[] {
-                    new LogFiller(null, this.name, LOG_IDENTIFIER.STRING_1),
-                    new LogFiller(region, region.name, LOG_IDENTIFIER.LANDMARK_1),
-                });
                 ExecuteFailEffect(region, spawner);
             } else {
                 //interfering character failed

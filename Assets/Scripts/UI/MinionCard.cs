@@ -10,15 +10,7 @@ public class MinionCard : MonoBehaviour {
     public Image portraitImg;
     public TextMeshProUGUI txtName;
     public TextMeshProUGUI txtClass;
-    public Image imgAbility1;
-    public Image imgAbility2;
-    public TextMeshProUGUI txtAbility1;
-    public TextMeshProUGUI txtAbility2;
     public TextMeshProUGUI txtCombatAbility;
-    public Image imgTrait1;
-    public Image imgTrait2;
-    public TextMeshProUGUI txtTrait1;
-    public TextMeshProUGUI txtTrait2;
     public TextMeshProUGUI txtActions;
     public TextMeshProUGUI txtResearch;
     public GameObject researchGO;

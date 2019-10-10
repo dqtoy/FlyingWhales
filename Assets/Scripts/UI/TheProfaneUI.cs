@@ -9,35 +9,45 @@ using System.Linq;
 public class TheProfaneUI : MonoBehaviour {
 
     [Header("General")]
-    [SerializeField] private HorizontalScrollSnap scrollSnap;
-    [SerializeField] private Button nextBtn;
-    [SerializeField] private GameObject nextBtnDisabler;
-    [SerializeField] private TextMeshProUGUI nextBtnLbl;
+    [SerializeField] private Toggle minionsToggle;
+    [SerializeField] private Toggle cultistsToggle;
 
-    [Header("Minion")]
+    [Header("Minions Tab")]
+    [SerializeField] private GameObject minionsTabContentGO;
     [SerializeField] private ScrollRect minionsScrollRect;
     [SerializeField] private GameObject minionItemPrefab;
     [SerializeField] private ToggleGroup minionsToggleGroup;
-
-    [Header("Cultist")]
     [SerializeField] private ScrollRect charactersScrollRect;
     [SerializeField] private GameObject characterItemPrefab;
-    [SerializeField] private ToggleGroup cultistsToggleGroup;
+    [SerializeField] private HorizontalScrollSnap minionsTabScrollSnap;
+    [SerializeField] private Button minionsTabNextBtn;
+    [SerializeField] private GameObject minionsTabNextBtnDisabler;
+    [SerializeField] private TextMeshProUGUI minionsTabNextBtnLbl;
 
-    [Header("Actions")]
-    [SerializeField] private ScrollRect actionsScrollRect;
+    [Header("Cultist Tab")]
+    [SerializeField] private GameObject cultistTabContentGO;
+    [SerializeField] private ToggleGroup cultistsToggleGroup;
+    [SerializeField] private ScrollRect cultistsScrollRect;
+    [SerializeField] private ScrollRect cultistActionsScrollRect;
     [SerializeField] private GameObject stringItemPrefab;
+    [SerializeField] private HorizontalScrollSnap cultistTabScrollSnap;
+    [SerializeField] private Button cultistTabNextBtn;
+    [SerializeField] private GameObject cultistTabNextBtnDisabler;
+    [SerializeField] private TextMeshProUGUI cultistTabNextBtnLbl;
 
     [Header("Cooldown")]
     [SerializeField] private GameObject cooldownGO;
     [SerializeField] private TextMeshProUGUI cooldownLbl;
     public TheProfane profane { get; private set; }
     public Minion chosenMinion { get; private set; }
-    public Character chosenCharacter { get; private set; }
+    public Character chosenCultist { get; private set; }
     public string chosenAction { get; private set; }
 
-    private enum Profane_Step { Minion, Character, Action }
-    private Profane_Step currentStep;
+    private enum Minion_Tab_Step { Minion, Convert }
+    private Minion_Tab_Step currentMinionTabStep;
+
+    private enum Cultist_Tab_Step { Cultist, Action }
+    private Cultist_Tab_Step currentCultistTabStep;
 
     #region General
     public void ShowTheProfaneUI(TheProfane profane) {
@@ -47,7 +57,9 @@ public class TheProfaneUI : MonoBehaviour {
         }
         //UpdateMinionList();
         gameObject.SetActive(true);
-        Reset();
+        //Reset();
+        minionsToggle.isOn = true; //switch to minions tab;
+        OnToggleMinionsTab(true);
     }
     public void Hide() {
         gameObject.SetActive(false);
@@ -60,40 +72,53 @@ public class TheProfaneUI : MonoBehaviour {
             cooldownGO.SetActive(false);
         }
     }
-    public void SetCurrentStep(int page) {
-        currentStep = (Profane_Step)page;
-        //update next and previous button;
-        UpdateNextButton(true);
+    #endregion
+
+    #region Tabs
+    public void OnToggleMinionsTab(bool isOn) {
+        minionsTabContentGO.SetActive(isOn);
+        if (minionsTabContentGO.activeSelf) {
+            ResetMinionsTab();
+        }
     }
-    private void UpdateNextButton(bool updateList = false) {
-        if (currentStep == Profane_Step.Minion) {
-            nextBtn.interactable = chosenMinion != null && !profane.isInCooldown;
-            nextBtnDisabler.SetActive(!nextBtn.interactable);
-            nextBtnLbl.text = "Next";
+    public void OnToggleCultistTab(bool isOn) {
+        cultistTabContentGO.SetActive(isOn);
+        if (cultistTabContentGO.activeSelf) {
+            ResetCultistTab();
+        }
+    }
+    #endregion
+
+
+    #region Minions Tab
+    public void SetCurrentMinionTabStep(int page) {
+        currentMinionTabStep = (Minion_Tab_Step)page;
+        //update next and previous button;
+        UpdateMinionTabNextButton(true);
+    }
+    private void ResetMinionsTab() {
+        chosenMinion = null;
+        minionsTabScrollSnap.GoToScreen(0);
+        currentMinionTabStep = Minion_Tab_Step.Minion;
+        UpdateMinionTabNextButton(true);
+    }
+    private void UpdateMinionTabNextButton(bool updateList = false) {
+        if (currentMinionTabStep == Minion_Tab_Step.Minion) {
+            minionsTabNextBtn.interactable = chosenMinion != null && !profane.isInCooldown;
+            minionsTabNextBtnDisabler.SetActive(!minionsTabNextBtn.interactable);
+            minionsTabNextBtnLbl.text = "Next";
             if (updateList) {
                 UpdateMinionList();
             }
-        } else if (currentStep == Profane_Step.Character) {
-            nextBtn.interactable = chosenCharacter != null && !profane.isInCooldown;
-            nextBtnDisabler.SetActive(!nextBtn.interactable);
-            nextBtnLbl.text = "Next";
+        } else if (currentMinionTabStep == Minion_Tab_Step.Convert) {
+            minionsTabNextBtn.interactable = !profane.isInCooldown;
+            minionsTabNextBtnDisabler.SetActive(!minionsTabNextBtn.interactable);
+            minionsTabNextBtnLbl.text = "Next";
             if (updateList) {
-                UpdateCharacterList();
-            }
-        } else if (currentStep == Profane_Step.Action) {
-            if (updateList) {
-                UpdatePossibleActions();
+                UpdateConvertToCultistList();
             }
         }
     }
-    private void Reset() {
-        chosenMinion = null;
-        chosenCharacter = null;
-        scrollSnap.GoToScreen(0);
-        currentStep = Profane_Step.Minion;
-        UpdateNextButton(true);
-    }
-    #endregion
 
     #region Minion
     private void UpdateMinionList() {
@@ -137,88 +162,140 @@ public class TheProfaneUI : MonoBehaviour {
     private void SetSelectedMinion(Minion minion) {
         chosenMinion = minion;
         //update next button
-        UpdateNextButton();
+        UpdateMinionTabNextButton();
     }
     #endregion
 
-    #region Cultist
-    private void UpdateCharacterList() {
+    #region Convert to Cultist
+    /// <summary>
+    /// Load the list of characters that can be turned into cultists.
+    /// </summary>
+    private void UpdateConvertToCultistList() {
         Utilities.DestroyChildren(charactersScrollRect.content);
-        List<Character> allCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.role.roleType != CHARACTER_ROLE.MINION && x.GetNormalTrait("Disillusioned", "Evil", "Treacherous") != null && x.GetNormalTrait("Blessed") == null));
+        List<Character> allCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.GetNormalTrait("Disillusioned", "Evil", "Treacherous") != null && x.GetNormalTrait("Blessed") == null && x.GetNormalTrait("Cultist") == null));
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currCharacter = allCharacters[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(characterItemPrefab.name, Vector3.zero, Quaternion.identity, charactersScrollRect.content);
             CharacterItem item = go.GetComponent<CharacterItem>();
             item.SetCharacter(currCharacter);
             item.ClearClickActions();
-            item.SetCoverState(!CanDoActionsToCharacter(currCharacter));
+            item.SetCoverState(!CanBeConvertedToCultist(currCharacter), true);
+            item.SetAsButton();
+            item.AddOnClickAction(() => OnChooseCharacterToConvert(currCharacter));
+            item.hoverHandler.AddOnHoverAction(() => UIManager.Instance.ShowSmallInfo("Conversion Cost: " + profane.GetConvertToCultistCost(currCharacter).ToString() + " mana"));
+            item.hoverHandler.AddOnHoverOutAction(() => UIManager.Instance.HideSmallInfo());
             if (item.coverState) {
-                //cannot be chosen
-                item.ResetToggle();
-                go.transform.SetAsLastSibling();
-                if (chosenCharacter == currCharacter) {
-                    SetSelectedCharacter(null);
-                    item.SetToggleState(false);
-                }
-            } else {
-                //can be chosen
-                go.transform.SetAsFirstSibling();
-                item.SetAsToggle(minionsToggleGroup);
-                item.AddOnToggleAction(() => OnClickCharacter(currCharacter), true);
-                if (chosenCharacter == currCharacter || chosenCharacter == null) {
-                    SetSelectedCharacter(currCharacter);
-                    item.SetToggleState(true);
-                }
+                item.transform.SetAsLastSibling();
             }
-           
         }
     }
-    private void OnClickCharacter(Character character) {
-        if (chosenCharacter == character) {
-            //SetSelectedCharacter(null);
+    private void OnChooseCharacterToConvert(Character character) {
+        chosenAction = "Convert to cultist";
+        if (profane.isInCooldown) {
+            PlayerUI.Instance.ShowGeneralConfirmation("In Cooldown", "The profane is currently on cooldown. Action will not proceed.");
         } else {
-            SetSelectedCharacter(character);
+            //show confirmation.
+            UIManager.Instance.ShowYesNoConfirmation("Confirm Action", "Are you sure you want to convert " + character.name + " into a cultist? ", onClickYesAction: () => profane.DoAction(character, chosenAction), showCover: true, layer: 25);
         }
     }
-    private void SetSelectedCharacter(Character character) {
-        chosenCharacter = character;
-        Debug.Log("Selected Character is " + (chosenCharacter?.name ?? "Null"));
-        //update next button
-        UpdateNextButton();
-    }
-    private bool CanDoActionsToCharacter(Character character) {
-        if (character.GetNormalTrait("Cultist") == null) {
-            //character is not yet a cultist
-            int manaCost = profane.GetConvertToCultistCost(character);
-            if (PlayerManager.Instance.player.mana < manaCost) {
-                return false;
-            }
-            if (character.GetNormalTrait("Evil") != null) {
-                return true;
-            } else if (character.GetNormalTrait("Disillusioned") != null) {
-                return true;
-            } else if (character.GetNormalTrait("Treacherous") != null) {
-                Character factionLeader = character.faction.leader as Character;
-                return character.HasRelationshipOfTypeWith(factionLeader, RELATIONSHIP_TRAIT.ENEMY);
-            }
-        } else {
-            //character is a cultist
+    private bool CanBeConvertedToCultist(Character character) {
+        int manaCost = profane.GetConvertToCultistCost(character);
+        if (PlayerManager.Instance.player.mana < manaCost) {
+            return false;
+        }
+        if (character.GetNormalTrait("Evil") != null) {
             return true;
+        } else if (character.GetNormalTrait("Disillusioned") != null) {
+            return true;
+        } else if (character.GetNormalTrait("Treacherous") != null) {
+            Character factionLeader = character.faction.leader as Character;
+            return character.HasRelationshipOfTypeWith(factionLeader, RELATIONSHIP_TRAIT.ENEMY);
         }
         return false;
     }
     #endregion
 
+    #endregion
+
+    #region Cultist Tab
+
+    #region Cultists
+    public void SetCurrentCultistTabStep(int page) {
+        currentCultistTabStep = (Cultist_Tab_Step)page;
+        //update next and previous button;
+        UpdateCultistTabNextButton(true);
+    }
+    private void ResetCultistTab() {
+        chosenCultist = null;
+        cultistTabScrollSnap.GoToScreen(0);
+        currentCultistTabStep = Cultist_Tab_Step.Cultist;
+        UpdateCultistTabNextButton(true);
+    }
+    private void UpdateCultistTabNextButton(bool updateList = false) {
+        if (currentCultistTabStep == Cultist_Tab_Step.Cultist) {
+            cultistTabNextBtn.interactable = chosenCultist != null && !profane.isInCooldown;
+            cultistTabNextBtnDisabler.SetActive(!cultistTabNextBtn.interactable);
+            if (updateList) {
+                UpdateCultistList();
+            }
+        } else if (currentCultistTabStep == Cultist_Tab_Step.Action) {
+            cultistTabNextBtn.interactable = !profane.isInCooldown;
+            cultistTabNextBtnDisabler.SetActive(!cultistTabNextBtn.interactable);
+            if (updateList) {
+                UpdatePossibleActions();
+            }
+        }
+    }
+    private void UpdateCultistList() {
+        Utilities.DestroyChildren(cultistsScrollRect.content);
+        List<Character> cultists = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.GetNormalTrait("Cultist") != null ));
+        for (int i = 0; i < cultists.Count; i++) {
+            Character currCultist = cultists[i];
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(characterItemPrefab.name, Vector3.zero, Quaternion.identity, cultistsScrollRect.content);
+            CharacterItem item = go.GetComponent<CharacterItem>();
+            item.SetCharacter(currCultist);
+            item.SetCoverState(!CanDoActionsToCharacter(currCultist), true);
+            if (item.coverState) {
+                //cannot do actions to cultist
+                if (chosenCultist == currCultist) {
+                    SetSelectedCultist(null);
+                }
+            } else {
+                item.SetAsToggle(cultistsToggleGroup);
+                item.AddOnToggleAction(() => OnClickCultist(currCultist), true);
+                if (chosenCultist == currCultist || chosenCultist == null) {
+                    item.SetToggleState(true);
+                    SetSelectedCultist(currCultist);
+                }
+            }
+        }
+    }
+    private bool CanDoActionsToCharacter(Character character) {
+        return !character.currentParty.icon.isTravellingOutside && character.isAtHomeRegion;
+    }
+    private void OnClickCultist(Character cultist) {
+        SetSelectedCultist(cultist);
+    }
+    private void SetSelectedCultist(Character character) {
+        chosenCultist = character;
+        Debug.Log("Selected cultist is " + (chosenCultist?.name ?? "Null"));
+        //update next button
+        UpdateCultistTabNextButton();
+    }
+    #endregion
+
     #region Actions
     private void UpdatePossibleActions() {
-        Utilities.DestroyChildren(actionsScrollRect.content);
+        Utilities.DestroyChildren(cultistActionsScrollRect.content);
         //character is a cultist
-        List<string> actions = GetPossibleActionsForCharacter(chosenCharacter);
+        List<string> actions = GetPossibleActionsForCharacter(chosenCultist);
         for (int i = 0; i < actions.Count; i++) {
-            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(stringItemPrefab.name, Vector3.zero, Quaternion.identity, actionsScrollRect.content);
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(stringItemPrefab.name, Vector3.zero, Quaternion.identity, cultistActionsScrollRect.content);
             StringPickerItem item = go.GetComponent<StringPickerItem>();
             item.SetString(actions[i], string.Empty);
             item.onClickAction = SetChosenAction;
+            item.onHoverEnterAction = ShowActionTooltip;
+            item.onHoverExitAction = HideActionTooltip;
         }
     }
     private void SetChosenAction(string action) {
@@ -227,41 +304,42 @@ public class TheProfaneUI : MonoBehaviour {
             PlayerUI.Instance.ShowGeneralConfirmation("In Cooldown", "The profane is currently on cooldown. Action will not proceed.");
         } else {
             string message = "Are you sure you want to ";
-            if (chosenAction == "Convert to cultist") {
-                message += "convert " + chosenCharacter.name + " into a cultist?";
-            } else if (chosenAction == "Corrupt") {
-                message += chosenAction + " " + chosenCharacter.name + "?";
+            if (chosenAction == "Corrupt") {
+                message += chosenAction + " " + chosenCultist.name + "?";
             } else if (chosenAction == "Sabotage Faction Quest") {
-                message += " instruct " + chosenCharacter.name + " to sabotage " + Utilities.GetPronounString(chosenCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false) + " factions quest?";
+                message += "instruct " + chosenCultist.name + " to sabotage " + Utilities.GetPronounString(chosenCultist.gender, PRONOUN_TYPE.POSSESSIVE, false) + " factions quest?";
             } else if (chosenAction == "Destroy Supply" || chosenAction == "Destroy Food") {
-                message += " instruct " + chosenCharacter.name + " to " + chosenAction + "?";
+                message += "instruct " + chosenCultist.name + " to " + chosenAction + "?";
             }
             //show confirmation.
-            UIManager.Instance.ShowYesNoConfirmation("Confirm Action", message, onClickYesAction: OnConfirmAction, showCover: true, layer: 25);
+            UIManager.Instance.ShowYesNoConfirmation("Confirm Action", message, onClickYesAction: () => profane.DoAction(chosenCultist, chosenAction), showCover: true, layer: 25);
         }
     }
-    private void OnConfirmAction() {
-        profane.DoAction(chosenCharacter, chosenAction);
+    private void ShowActionTooltip(string action) {
+        if (action == "Corrupt") {
+            UIManager.Instance.ShowSmallInfo("Turn this character into a minion. This character will become a demon of " + (chosenCultist.GetNormalTrait("Cultist") as Cultist).minionData.className);
+        }
+    }
+    private void HideActionTooltip(string action) {
+        UIManager.Instance.HideSmallInfo();
     }
     private List<string> GetPossibleActionsForCharacter(Character character) {
         List<string> actions = new List<string>();
-        if (character.GetNormalTrait("Cultist") == null) {
-            actions.Add("Convert to cultist");
-        } else {
-            if (character.role.roleType != CHARACTER_ROLE.MINION) {
-                actions.Add("Corrupt");
-            }
-            if (character.homeRegion.area != null && character.homeRegion.IsFactionHere(character.faction) && character.faction.activeQuest is DivineInterventionQuest &&
-                !(character.faction.activeQuest as DivineInterventionQuest).jobQueue.HasJob(JOB_TYPE.SABOTAGE_FACTION)) {
-                //only allow creation of sabotage faction quest if there is no job of that type yet.
-                actions.Add("Sabotage Faction Quest");
-            }
-            if (character.homeRegion.area != null) {
-                actions.Add("Destroy Supply");
-                actions.Add("Destroy Food");
-            }
+        if (character.role.roleType != CHARACTER_ROLE.MINION) {
+            actions.Add("Corrupt");
+        }
+        if (character.homeRegion.area != null && character.homeRegion.IsFactionHere(character.faction) && character.faction.activeQuest is DivineInterventionQuest &&
+            !(character.faction.activeQuest as DivineInterventionQuest).jobQueue.HasJob(JOB_TYPE.SABOTAGE_FACTION)) {
+            //only allow creation of sabotage faction quest if there is no job of that type yet.
+            actions.Add("Sabotage Faction Quest");
+        }
+        if (character.homeRegion.area != null) {
+            actions.Add("Destroy Supply");
+            actions.Add("Destroy Food");
         }
         return actions;
     }
+    #endregion
+
     #endregion
 }
