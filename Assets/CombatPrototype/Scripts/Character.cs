@@ -3567,6 +3567,9 @@ public class Character : ILeader, IPointOfInterest {
         if (witnessedEvent.currentState == null) {
             throw new System.Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.goapName + " by " + witnessedEvent.actor.name + " but it does not have a current state!");
         }
+        if (witnessedEvent.currentState.descriptionLog == null) {
+            throw new Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.goapName + " by " + witnessedEvent.actor.name + " with state " + witnessedEvent.currentState.name + " but it does not have a description log!");
+        }
         Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);
         witnessLog.AddToFillers(this, name, LOG_IDENTIFIER.OTHER);
         witnessLog.AddToFillers(null, Utilities.LogDontReplace(witnessedEvent.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
