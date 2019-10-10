@@ -22,8 +22,8 @@ public class Enemy : RelationshipTrait {
     public override void OnAddTrait(ITraitable sourcePOI) {
         if (sourcePOI is Character) {
             Character sourceCharacter = sourcePOI as Character;
-            if (!GameManager.Instance.gameHasStarted) {
-                return; //do not log initial relationships
+            if (!GameManager.Instance.gameHasStarted || sourceCharacter.isSwitchingAlterEgo) {
+                return; //do not log initial relationships or when switching alter egos
             }
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "enemy");
             log.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -34,8 +34,8 @@ public class Enemy : RelationshipTrait {
     public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
         if (sourcePOI is Character) {
             Character sourceCharacter = sourcePOI as Character;
-            if (!GameManager.Instance.gameHasStarted) {
-                return; //do not log initial relationships
+            if (!GameManager.Instance.gameHasStarted || sourceCharacter.isSwitchingAlterEgo) {
+                return; //do not log initial relationships or when switching alter egos
             }
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "not_enemy");
             log.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

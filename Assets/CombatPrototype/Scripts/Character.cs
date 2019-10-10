@@ -4409,7 +4409,7 @@ public class Character : ILeader, IPointOfInterest {
             string[] traitPool = new string[] { "Vigilant", "Doctor", "Diplomatic",
             "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
             "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-            "Narcoleptic", "Hothead", "Evil", "Treacherous", "Disillusioned"
+            "Narcoleptic", "Hothead", "Evil", "Treacherous", "Disillusioned", "Ambitious", "Authoritative"
             };
             //"Kleptomaniac","Curious", 
 

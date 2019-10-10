@@ -81,9 +81,9 @@ public class CombatState : CharacterState {
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
 
         base.StartState();
-        //if (stateComponent.character.currentAction is AssaultCharacter && !stateComponent.character.currentAction.isPerformingActualAction) {
-        //    stateComponent.character.currentAction.PerformActualAction(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
-        //}
+        if (stateComponent.character.currentAction is AssaultCharacter && !stateComponent.character.currentAction.isPerformingActualAction) {
+            stateComponent.character.currentAction.PerformActualAction(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
+        }
         stateComponent.character.StopCurrentAction(false);
         stateComponent.character.currentParty.RemoveAllOtherCharacters(); //Drop characters when entering combat
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Starting combat state for " + stateComponent.character.name);
