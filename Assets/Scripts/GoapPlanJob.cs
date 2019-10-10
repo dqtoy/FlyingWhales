@@ -171,7 +171,7 @@ public class GoapPlanJob : JobQueueItem {
         }
     }
     public override bool OnRemoveJobFromQueue() {
-        if (!jobQueueParent.isAreaOrQuestJobQueue && id == jobQueueParent.character.sleepScheduleJobID && (assignedCharacter == null && assignedPlan == null || jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks)) {
+        if (!jobQueueParent.isAreaOrQuestJobQueue && id == jobQueueParent.character.sleepScheduleJobID && (assignedCharacter == null && assignedPlan == null)) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
             //If a character's scheduled sleep job is removed from queue before even doing it, consider it as cancelled 
             jobQueueParent.character.SetHasCancelledSleepSchedule(true);
         }
