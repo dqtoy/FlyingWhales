@@ -11,6 +11,7 @@ public class TheProfaneUI : MonoBehaviour {
     [Header("General")]
     [SerializeField] private HorizontalScrollSnap scrollSnap;
     [SerializeField] private Button nextBtn;
+    [SerializeField] private GameObject nextBtnDisabler;
     [SerializeField] private TextMeshProUGUI nextBtnLbl;
 
     [Header("Minion")]
@@ -27,6 +28,9 @@ public class TheProfaneUI : MonoBehaviour {
     [SerializeField] private ScrollRect actionsScrollRect;
     [SerializeField] private GameObject stringItemPrefab;
 
+    [Header("Cooldown")]
+    [SerializeField] private GameObject cooldownGO;
+    [SerializeField] private TextMeshProUGUI cooldownLbl;
     public TheProfane profane { get; private set; }
     public Minion chosenMinion { get; private set; }
     public Character chosenCharacter { get; private set; }
@@ -38,6 +42,9 @@ public class TheProfaneUI : MonoBehaviour {
     #region General
     public void ShowTheProfaneUI(TheProfane profane) {
         this.profane = profane;
+        if (profane.isInCooldown) {
+            UpdateTheProfaneUI();
+        }
         //UpdateMinionList();
         gameObject.SetActive(true);
         Reset();
@@ -45,7 +52,14 @@ public class TheProfaneUI : MonoBehaviour {
     public void Hide() {
         gameObject.SetActive(false);
     }
-    public void UpdatePlayerDelayDivineInterventionUI() { }
+    public void UpdateTheProfaneUI() {
+        if (profane.isInCooldown) {
+            cooldownGO.SetActive(true);
+            cooldownLbl.text = "In Cooldown:\n" + Mathf.FloorToInt(((float)profane.currentCooldownTick / (float)profane.cooldownDuration) * 100f).ToString() + "%";
+        } else {
+            cooldownGO.SetActive(false);
+        }
+    }
     public void SetCurrentStep(int page) {
         currentStep = (Profane_Step)page;
         //update next and previous button;
@@ -53,13 +67,15 @@ public class TheProfaneUI : MonoBehaviour {
     }
     private void UpdateNextButton(bool updateList = false) {
         if (currentStep == Profane_Step.Minion) {
-            nextBtn.interactable = chosenMinion != null;
+            nextBtn.interactable = chosenMinion != null && !profane.isInCooldown;
+            nextBtnDisabler.SetActive(!nextBtn.interactable);
             nextBtnLbl.text = "Next";
             if (updateList) {
                 UpdateMinionList();
             }
         } else if (currentStep == Profane_Step.Character) {
-            nextBtn.interactable = chosenCharacter != null;
+            nextBtn.interactable = chosenCharacter != null && !profane.isInCooldown;
+            nextBtnDisabler.SetActive(!nextBtn.interactable);
             nextBtnLbl.text = "Next";
             if (updateList) {
                 UpdateCharacterList();
@@ -69,11 +85,11 @@ public class TheProfaneUI : MonoBehaviour {
                 UpdatePossibleActions();
             }
         }
-        Debug.Log("Set next btn interactable to " + nextBtn.interactable.ToString());
     }
     private void Reset() {
         chosenMinion = null;
-        //scrollSnap.GoToScreen(0);
+        chosenCharacter = null;
+        scrollSnap.GoToScreen(0);
         currentStep = Profane_Step.Minion;
         UpdateNextButton(true);
     }
@@ -92,10 +108,7 @@ public class TheProfaneUI : MonoBehaviour {
                 //can be assigned
                 item.SetAsToggle(minionsToggleGroup);
                 item.AddOnToggleAction(() => OnClickMinion(currMinion), true);
-                if (chosenMinion == currMinion) {
-                    item.SetToggleState(true);
-                    SetSelectedMinion(currMinion);
-                } else if (chosenMinion == null) {
+                if (chosenMinion == currMinion || chosenMinion == null) {
                     item.SetToggleState(true);
                     SetSelectedMinion(currMinion);
                 }
@@ -123,7 +136,6 @@ public class TheProfaneUI : MonoBehaviour {
     }
     private void SetSelectedMinion(Minion minion) {
         chosenMinion = minion;
-        Debug.Log("Selected Minion is " + (chosenMinion?.character.name ?? "Null"));
         //update next button
         UpdateNextButton();
     }
@@ -139,8 +151,9 @@ public class TheProfaneUI : MonoBehaviour {
             CharacterItem item = go.GetComponent<CharacterItem>();
             item.SetCharacter(currCharacter);
             item.ClearClickActions();
-            item.SetCoverState(CanConvertCharacterToCultist(currCharacter));
+            item.SetCoverState(!CanDoActionsToCharacter(currCharacter));
             if (item.coverState) {
+                //cannot be chosen
                 item.ResetToggle();
                 go.transform.SetAsLastSibling();
                 if (chosenCharacter == currCharacter) {
@@ -148,9 +161,11 @@ public class TheProfaneUI : MonoBehaviour {
                     item.SetToggleState(false);
                 }
             } else {
+                //can be chosen
+                go.transform.SetAsFirstSibling();
                 item.SetAsToggle(minionsToggleGroup);
                 item.AddOnToggleAction(() => OnClickCharacter(currCharacter), true);
-                if (chosenCharacter == currCharacter) {
+                if (chosenCharacter == currCharacter || chosenCharacter == null) {
                     SetSelectedCharacter(currCharacter);
                     item.SetToggleState(true);
                 }
@@ -160,7 +175,7 @@ public class TheProfaneUI : MonoBehaviour {
     }
     private void OnClickCharacter(Character character) {
         if (chosenCharacter == character) {
-            SetSelectedCharacter(null);
+            //SetSelectedCharacter(null);
         } else {
             SetSelectedCharacter(character);
         }
@@ -171,18 +186,24 @@ public class TheProfaneUI : MonoBehaviour {
         //update next button
         UpdateNextButton();
     }
-    private bool CanConvertCharacterToCultist(Character character) {
-        int manaCost = profane.GetConvertToCultistCost(character);
-        if (PlayerManager.Instance.player.mana < manaCost) {
-            return false;
-        }
-        if (character.GetNormalTrait("Evil") != null) {
+    private bool CanDoActionsToCharacter(Character character) {
+        if (character.GetNormalTrait("Cultist") == null) {
+            //character is not yet a cultist
+            int manaCost = profane.GetConvertToCultistCost(character);
+            if (PlayerManager.Instance.player.mana < manaCost) {
+                return false;
+            }
+            if (character.GetNormalTrait("Evil") != null) {
+                return true;
+            } else if (character.GetNormalTrait("Disillusioned") != null) {
+                return true;
+            } else if (character.GetNormalTrait("Treacherous") != null) {
+                Character factionLeader = character.faction.leader as Character;
+                return character.HasRelationshipOfTypeWith(factionLeader, RELATIONSHIP_TRAIT.ENEMY);
+            }
+        } else {
+            //character is a cultist
             return true;
-        } else if (character.GetNormalTrait("Disillusioned") != null) {
-            return true;
-        } else if (character.GetNormalTrait("Treacherous") != null) {
-            Character factionLeader = character.faction.leader as Character;
-            return character.HasRelationshipOfTypeWith(factionLeader, RELATIONSHIP_TRAIT.ENEMY);
         }
         return false;
     }
@@ -211,9 +232,12 @@ public class TheProfaneUI : MonoBehaviour {
     }
     private void SetChosenAction(string action) {
         chosenAction = action;
-        //show confirmation.
-        UIManager.Instance.ShowYesNoConfirmation("Confirm Action", "Are you sure you want to " + chosenAction + " " + chosenCharacter.name + "?", onClickYesAction: OnConfirmAction, showCover: true, layer: 25);
-
+        if (profane.isInCooldown) {
+            PlayerUI.Instance.ShowGeneralConfirmation("In Cooldown", "The profane is currently on cooldown. Action will not proceed.");
+        } else {
+            //show confirmation.
+            UIManager.Instance.ShowYesNoConfirmation("Confirm Action", "Are you sure you want to " + chosenAction + " " + chosenCharacter.name + "?", onClickYesAction: OnConfirmAction, showCover: true, layer: 25);
+        }
     }
     private void OnConfirmAction() {
         profane.DoAction(chosenCharacter, chosenAction);
@@ -222,9 +246,11 @@ public class TheProfaneUI : MonoBehaviour {
         List<string> actions = new List<string>();
         if (character.role.roleType != CHARACTER_ROLE.MINION) {
             actions.Add("Corrupt");
-        } else if (character.homeRegion.area != null && character.homeRegion.IsFactionHere(character.faction)) {
+        } 
+        if (character.homeRegion.area != null && character.homeRegion.IsFactionHere(character.faction)) {
             actions.Add("Sabotage Faction Quest");
-        } else if (character.homeRegion.area != null) {
+        }
+        if (character.homeRegion.area != null) {
             actions.Add("Destroy Supply");
             actions.Add("Destroy Food");
         }

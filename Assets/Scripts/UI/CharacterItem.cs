@@ -63,6 +63,12 @@ public class CharacterItem : PooledObject {
         UIManager.Instance.HideSmallInfo();
     }
 
+    public override void Reset() {
+        base.Reset();
+        ResetToggle();
+        ClearClickActions();
+    }
+
     public void SetCoverState(bool state, bool blockRaycasts = false) {
         coverGO.SetActive(state);
         if (state) { //only block raycasts if active

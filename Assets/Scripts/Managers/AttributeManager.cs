@@ -119,6 +119,7 @@ public class AttributeManager : MonoBehaviour {
             new Catatonic(),
             new Griefstricken(),
             new Heartbroken(),
+            new Cultist(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
             CategorizeTrait(instancedTraits[i]);
