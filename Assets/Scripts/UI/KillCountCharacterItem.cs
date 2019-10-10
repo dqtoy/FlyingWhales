@@ -30,7 +30,7 @@ public class KillCountCharacterItem : CharacterItem {
     }
     protected override void UpdateInfo() {
         base.UpdateInfo();
-        deathLbl.gameObject.SetActive(!character.IsAble() || character.faction != PlayerManager.Instance.player.currentTargetFaction);
+        deathReasonContainer.gameObject.SetActive(!character.IsAble() || !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(character.faction));
         if (character.isDead) {
             deathLbl.text = "\"" + character.deathStr + "\"";
         } else {
