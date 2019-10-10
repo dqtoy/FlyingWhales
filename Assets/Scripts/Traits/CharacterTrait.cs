@@ -157,7 +157,6 @@ public class CharacterTrait : Trait {
 
                 #region Check Up
                 //If a character cannot assist a character in vision, they may stay with it and check up on it for a bit. Reference: https://trello.com/c/hW7y6d5W/2841-if-a-character-cannot-assist-a-character-in-vision-they-may-stay-with-it-and-check-up-on-it-for-a-bit
-
                 //If they are enemies and the character in vision has any of the following:
                 //- unconscious, catatonic, restrained, puked, stumbled
                 ///NOTE: Puke and Stumble Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> and <see cref="Stumble.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> respectively
@@ -165,6 +164,7 @@ public class CharacterTrait : Trait {
                 if (characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && targetCharacter.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null) {
                     return CreateLaughAtJob(characterThatWillDoJob, targetCharacter);
                 }
+
                 //If they have a positive relationship but the character cannot perform the necessary job to remove the following traits:
                 //catatonic, unconscious, restrained, puked
                 ///NOTE: Puke Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/>

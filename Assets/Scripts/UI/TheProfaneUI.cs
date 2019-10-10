@@ -212,22 +212,13 @@ public class TheProfaneUI : MonoBehaviour {
     #region Actions
     private void UpdatePossibleActions() {
         Utilities.DestroyChildren(actionsScrollRect.content);
-        if (chosenCharacter.GetNormalTrait("Cultist") == null) {
-            //character is not yet a cultist
-            //only action available is convert to cultist
+        //character is a cultist
+        List<string> actions = GetPossibleActionsForCharacter(chosenCharacter);
+        for (int i = 0; i < actions.Count; i++) {
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(stringItemPrefab.name, Vector3.zero, Quaternion.identity, actionsScrollRect.content);
             StringPickerItem item = go.GetComponent<StringPickerItem>();
-            item.SetString("Convert to cultist", string.Empty);
+            item.SetString(actions[i], string.Empty);
             item.onClickAction = SetChosenAction;
-        } else {
-            //character is a cultist
-            List<string> actions = GetPossibleActionsForCharacter(chosenCharacter);
-            for (int i = 0; i < actions.Count; i++) {
-                GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(stringItemPrefab.name, Vector3.zero, Quaternion.identity, actionsScrollRect.content);
-                StringPickerItem item = go.GetComponent<StringPickerItem>();
-                item.SetString(actions[i], string.Empty);
-                item.onClickAction = SetChosenAction;
-            }
         }
     }
     private void SetChosenAction(string action) {
@@ -235,8 +226,18 @@ public class TheProfaneUI : MonoBehaviour {
         if (profane.isInCooldown) {
             PlayerUI.Instance.ShowGeneralConfirmation("In Cooldown", "The profane is currently on cooldown. Action will not proceed.");
         } else {
+            string message = "Are you sure you want to ";
+            if (chosenAction == "Convert to cultist") {
+                message += "convert " + chosenCharacter.name + " into a cultist?";
+            } else if (chosenAction == "Corrupt") {
+                message += chosenAction + " " + chosenCharacter.name + "?";
+            } else if (chosenAction == "Sabotage Faction Quest") {
+                message += " instruct " + chosenCharacter.name + " to sabotage " + Utilities.GetPronounString(chosenCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false) + " factions quest?";
+            } else if (chosenAction == "Destroy Supply" || chosenAction == "Destroy Food") {
+                message += " instruct " + chosenCharacter.name + " to " + chosenAction + "?";
+            }
             //show confirmation.
-            UIManager.Instance.ShowYesNoConfirmation("Confirm Action", "Are you sure you want to " + chosenAction + " " + chosenCharacter.name + "?", onClickYesAction: OnConfirmAction, showCover: true, layer: 25);
+            UIManager.Instance.ShowYesNoConfirmation("Confirm Action", message, onClickYesAction: OnConfirmAction, showCover: true, layer: 25);
         }
     }
     private void OnConfirmAction() {
@@ -244,15 +245,21 @@ public class TheProfaneUI : MonoBehaviour {
     }
     private List<string> GetPossibleActionsForCharacter(Character character) {
         List<string> actions = new List<string>();
-        if (character.role.roleType != CHARACTER_ROLE.MINION) {
-            actions.Add("Corrupt");
-        } 
-        if (character.homeRegion.area != null && character.homeRegion.IsFactionHere(character.faction)) {
-            actions.Add("Sabotage Faction Quest");
-        }
-        if (character.homeRegion.area != null) {
-            actions.Add("Destroy Supply");
-            actions.Add("Destroy Food");
+        if (character.GetNormalTrait("Cultist") == null) {
+            actions.Add("Convert to cultist");
+        } else {
+            if (character.role.roleType != CHARACTER_ROLE.MINION) {
+                actions.Add("Corrupt");
+            }
+            if (character.homeRegion.area != null && character.homeRegion.IsFactionHere(character.faction) && character.faction.activeQuest is DivineInterventionQuest &&
+                !(character.faction.activeQuest as DivineInterventionQuest).jobQueue.HasJob(JOB_TYPE.SABOTAGE_FACTION)) {
+                //only allow creation of sabotage faction quest if there is no job of that type yet.
+                actions.Add("Sabotage Faction Quest");
+            }
+            if (character.homeRegion.area != null) {
+                actions.Add("Destroy Supply");
+                actions.Add("Destroy Food");
+            }
         }
         return actions;
     }
