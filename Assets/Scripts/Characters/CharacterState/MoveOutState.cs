@@ -212,6 +212,10 @@ public class MoveOutState : CharacterState {
     //    return "Move Out State by " + stateComponent.character.name;
     //}
     private Region GetRegionToDoJob(Character character) {
+        if(job.targetRegion != null) {
+            //If job has a designated region to go to, always use it
+            return job.targetRegion;
+        }
         if(job.jobType == JOB_TYPE.RETURN_HOME) {
             return character.homeRegion;
         } else {

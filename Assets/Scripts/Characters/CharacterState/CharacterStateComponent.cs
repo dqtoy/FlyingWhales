@@ -104,7 +104,7 @@ public class CharacterStateComponent {
         //newState.SetEndStateAction(endStateAction);
         //newState.SetOtherDataOnStartState(otherData);
         newState.SetTargetCharacter(targetCharacter);
-        newState.SetTargetArea(targetArea);
+        //newState.SetTargetArea(targetArea);
         newState.EnterState();
         return newState;
     }

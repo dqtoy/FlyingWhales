@@ -6,13 +6,13 @@ public class CharacterStateJob : JobQueueItem {
 
     public CHARACTER_STATE targetState { get; protected set; }
     public CharacterState assignedState { get; protected set; }
-    public Area targetArea { get; protected set; }
+    public Region targetRegion { get; protected set; }
 
     public List<System.Action<Character>> onUnassignActions { get; private set; }
 
-    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, Area targetArea) : base(jobType) {
+    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, Region targetRegion) : base(jobType) {
         this.targetState = state;
-        this.targetArea = targetArea;
+        this.targetRegion = targetRegion;
         onUnassignActions = new List<System.Action<Character>>();
     }
     public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state) : base(jobType) {
@@ -21,10 +21,10 @@ public class CharacterStateJob : JobQueueItem {
     }
     public CharacterStateJob(SaveDataCharacterStateJob data) : base(data) {
         targetState = data.targetState;
-        if(data.targetAreaID != -1) {
-            targetArea = LandmarkManager.Instance.GetAreaByID(data.targetAreaID);
+        if(data.targetRegionID != -1) {
+            targetRegion = GridMap.Instance.GetRegionByID(data.targetRegionID);
         } else {
-            targetArea = null;
+            targetRegion = null;
         }
         onUnassignActions = new List<System.Action<Character>>();
     }
@@ -99,7 +99,7 @@ public class CharacterStateJob : JobQueueItem {
 
 public class SaveDataCharacterStateJob : SaveDataJobQueueItem {
     public CHARACTER_STATE targetState;
-    public int targetAreaID;
+    public int targetRegionID;
 
     //Only save assigned character in state job because 
     public int assignedCharacterID;
@@ -109,10 +109,10 @@ public class SaveDataCharacterStateJob : SaveDataJobQueueItem {
         base.Save(job);
         CharacterStateJob stateJob = job as CharacterStateJob;
         targetState = stateJob.targetState;
-        if(stateJob.targetArea != null) {
-            targetAreaID = stateJob.targetArea.id;
+        if(stateJob.targetRegion != null) {
+            targetRegionID = stateJob.targetRegion.id;
         } else {
-            targetAreaID = -1;
+            targetRegionID = -1;
         }
         if(stateJob.assignedCharacter != null) {
             assignedCharacterID = stateJob.assignedCharacter.id;

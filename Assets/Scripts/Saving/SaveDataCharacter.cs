@@ -380,9 +380,9 @@ public class SaveDataCharacter {
             if (currentState.targetCharacterID != -1) {
                 targetCharacter = CharacterManager.Instance.GetCharacterByID(currentState.targetCharacterID);
             }
-            if (currentState.targetAreaID != -1) {
-                targetArea = LandmarkManager.Instance.GetAreaByID(currentState.targetAreaID);
-            }
+            //if (currentState.targetAreaID != -1) {
+            //    targetArea = LandmarkManager.Instance.GetAreaByID(currentState.targetAreaID);
+            //}
             CharacterState loadedState = character.stateComponent.SwitchToState(currentState.characterState, targetCharacter, targetArea, currentState.duration, currentState.level);
             loadedState.SetCurrentDuration(currentState.currentDuration);
             loadedState.SetIsUnending(currentState.isUnending);

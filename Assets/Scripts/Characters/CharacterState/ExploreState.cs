@@ -37,8 +37,7 @@ public class ExploreState : CharacterState {
         //}
     }
     public override bool CanResumeState() {
-        if (stateComponent.character.specificLocation != targetArea
-            || stateComponent.character.currentParty.icon.isTravelling) {
+        if (stateComponent.character.currentParty.icon.isTravelling) { //stateComponent.character.specificLocation != targetArea ||
             return false;
         }
         return true;
@@ -82,11 +81,11 @@ public class ExploreState : CharacterState {
     protected override void PerTickInState() {
         base.PerTickInState();
         if (!isDone && !isPaused) {
-            if (stateComponent.character.GetNormalTrait("Injured") != null || targetArea != stateComponent.character.specificLocation) {
-                StopStatePerTick();
-                OnExitThisState();
-                return;
-            }
+            //if (stateComponent.character.GetNormalTrait("Injured") != null || targetArea != stateComponent.character.specificLocation) {
+            //    StopStatePerTick();
+            //    OnExitThisState();
+            //    return;
+            //}
             if (_planDuration >= 4) {
                 _planDuration = 0;
                 if (!stateComponent.character.PlanFullnessRecoveryActions(true)) {

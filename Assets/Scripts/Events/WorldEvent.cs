@@ -22,7 +22,7 @@ public class WorldEvent  {
         this.eventType = eventType;
         name = Utilities.NormalizeStringUpperCaseFirstLetters(eventType.ToString());
         description = "This is a test description";
-        duration = 6 * GameManager.ticksPerHour;
+        duration = GameManager.Instance.GetTicksBasedOnHour(6);
     }
 
     #region Virtuals

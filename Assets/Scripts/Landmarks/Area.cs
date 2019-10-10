@@ -1199,7 +1199,7 @@ public class Area {
         return currentHeroEventJobs < maxHeroEventJobs;
     }
     private void CreateMoveOutJobs() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.MOVE_OUT, CHARACTER_STATE.MOVE_OUT, this);
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.MOVE_OUT, CHARACTER_STATE.MOVE_OUT);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanMoveOut);
         jobQueue.AddJobInQueue(job);
     }
@@ -1220,7 +1220,7 @@ public class Area {
         }
     }
     private void CreateObtainFoodOutsideJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_FOOD_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_FOOD_OUTSIDE, CHARACTER_STATE.MOVE_OUT);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainFoodOutsideJob);
         jobQueue.AddJobInQueue(job);
     }
@@ -1241,7 +1241,7 @@ public class Area {
         }
     }
     private void CreateObtainSupplyOutsideJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE, CHARACTER_STATE.MOVE_OUT, this);
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE, CHARACTER_STATE.MOVE_OUT);
         job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyOutsideJob);
         jobQueue.AddJobInQueue(job);
     }
@@ -1271,7 +1271,7 @@ public class Area {
             return; //hero events are maxed.
         }
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
-            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.IMPROVE, CHARACTER_STATE.MOVE_OUT, this);
+            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.IMPROVE, CHARACTER_STATE.MOVE_OUT);
             jobQueue.AddJobInQueue(job);
             //expires at midnight
             GameDate expiry = GameManager.Instance.Today();
@@ -1289,7 +1289,7 @@ public class Area {
             return; //hero events are maxed.
         }
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
-            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.MOVE_OUT, this);
+            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.EXPLORE, CHARACTER_STATE.MOVE_OUT);
             //Used lambda expression instead of new function. Reference: https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/lambda-expressions
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoExploreJob); 
             jobQueue.AddJobInQueue(job);
@@ -1309,7 +1309,7 @@ public class Area {
             return; //hero events are maxed.
         }
         if (UnityEngine.Random.Range(0, 100) < 15) {//15
-            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.MOVE_OUT, this);
+            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.MOVE_OUT);
             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCombatJob);
             jobQueue.AddJobInQueue(job);
             //expires at midnight

@@ -139,7 +139,7 @@ public class Burning : Trait {
             }
 
             if (willCreateDouseFireJob) {
-                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE, characterThatWillDoJob.specificLocation);
+                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE);
                 if (CanTakeRemoveFireJob(characterThatWillDoJob, traitOwner)) {
                     sourceOfBurning.AddCharactersDousingFire(characterThatWillDoJob); //adjust the number of characters dousing the fire source. NOTE: Make sure to reduce that number if a character decides to quit the job for any reason.
                     job.AddOnUnassignAction(sourceOfBurning.RemoveCharactersDousingFire); //This is the action responsible for reducing the number of characters dousing the fire when a character decides to quit the job.

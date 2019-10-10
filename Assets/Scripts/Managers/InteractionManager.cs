@@ -306,6 +306,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.IMPROVE:
             case JOB_TYPE.EXPLORE:
             case JOB_TYPE.COMBAT:
+            case JOB_TYPE.SEARCHING_WORLD_EVENT:
                 priority = 300;
                 break;
         }
