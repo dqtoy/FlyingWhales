@@ -1088,7 +1088,8 @@ public class CharacterMarker : PooledObject {
                     if (actions != null && actions.Count > 0) {
                         for (int j = 0; j < actions.Count; j++) {
                             GoapAction action = actions[j];
-                            if (action.isPerformingActualAction && !action.isDone && action.goapType != INTERACTION_TYPE.WATCH) {
+                            if ((action.isPerformingActualAction && !action.isDone && action.goapType != INTERACTION_TYPE.WATCH) ||
+                                (action.currentState != null && action.currentState.name == action.whileMovingState)) {
                                 //Cannot witness a watch action
                                 IPointOfInterest poiTarget = null;
                                 if (action.goapType == INTERACTION_TYPE.MAKE_LOVE) {

@@ -3407,7 +3407,7 @@ public class Character : ILeader, IPointOfInterest {
         if (target is Character) {
             Character targetCharacter = target as Character;
             targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
-            
+
             for (int i = 0; i < normalTraits.Count; i++) {
                 normalTraits[i].OnSeePOI(target, this);
             }
@@ -3419,6 +3419,19 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (targetCharacter.currentAction != null && targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone && targetCharacter.currentAction.goapType != INTERACTION_TYPE.WATCH) {
                 //Cannot witness/watch a watch action
+                IPointOfInterest poiTarget = null;
+                if (targetCharacter.currentAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                    poiTarget = (targetCharacter.currentAction as MakeLove).targetCharacter;
+                } else {
+                    poiTarget = targetCharacter.currentAction.poiTarget;
+                }
+                if (targetCharacter.currentAction.actor != this && poiTarget != this) {
+                    actionsToWitness.Add(targetCharacter.currentAction);
+                    //ThisCharacterWitnessedEvent(targetCharacter.currentAction);
+                    //ThisCharacterWatchEvent(targetCharacter, targetCharacter.currentAction, targetCharacter.currentAction.currentState);
+                }
+            } else if (targetCharacter.currentAction != null && targetCharacter.currentAction.currentState != null && targetCharacter.currentAction.currentState.name == targetCharacter.currentAction.whileMovingState) {
+                //Must also witness whileMovingState
                 IPointOfInterest poiTarget = null;
                 if (targetCharacter.currentAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
                     poiTarget = (targetCharacter.currentAction as MakeLove).targetCharacter;
