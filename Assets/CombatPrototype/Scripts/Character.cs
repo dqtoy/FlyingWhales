@@ -8623,6 +8623,9 @@ public class Character : ILeader, IPointOfInterest {
             case CRIME.ABERRATION:
                 trait = new Aberration();
                 break;
+            case CRIME.HERETIC:
+                trait = new Heretic();
+                break;
             default:
                 break;
         }
