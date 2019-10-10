@@ -13,10 +13,11 @@ public class AssaultCharacter : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
+    //protected override void ConstructRequirement() {
+    //    _requirementAction = Requirement;
+    //}
     protected override void ConstructPreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_VISION, targetPOI = poiTarget }, IsInVision);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
@@ -163,15 +164,9 @@ public class AssaultCharacter : GoapAction {
     }
     #endregion
 
-    #region Requirements
-    protected bool Requirement() {
-        if(poiTarget is Character && actor != poiTarget) {
-            Character target = poiTarget as Character;
-            if(!target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-                return true;
-            }
-        }
-        return false;
+    #region Preconditions
+    protected bool IsInVision() {
+        return actor.marker.inVisionPOIs.Contains(poiTarget);
     }
     #endregion
 

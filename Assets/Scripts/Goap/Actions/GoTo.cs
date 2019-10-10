@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CheckOut : GoapAction {
+public class GoTo : GoapAction {
 
-    public CheckOut(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CHECK_OUT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public GoTo(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.GO_TO, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.TARGET_IN_VISION;
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
@@ -12,9 +12,12 @@ public class CheckOut : GoapAction {
     }
 
     #region Overrides
+    protected override void ConstructPreconditionsAndEffects() {
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_VISION, targetPOI = poiTarget });
+    }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        SetState("Checkout Success");
+        SetState("Goto Success");
     }
     protected override int GetCost() {
         return 15;
@@ -32,8 +35,8 @@ public class CheckOut : GoapAction {
     //#endregion
 }
 
-public class CheckOutData : GoapActionData {
-    public CheckOutData() : base(INTERACTION_TYPE.CHECK_OUT) {
+public class GoToData : GoapActionData {
+    public GoToData() : base(INTERACTION_TYPE.GO_TO) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }

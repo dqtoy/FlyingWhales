@@ -1123,7 +1123,7 @@ public class Area {
                 if (!jobQueue.HasJob(JOB_TYPE.BREW_POTION)) {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BREW_POTION, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
-                        { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
+                        { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.HEALING_POTION } },
                     });
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
                     job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeBrewPotion);
@@ -1139,7 +1139,7 @@ public class Area {
                 if (!jobQueue.HasJob(JOB_TYPE.CRAFT_TOOL)) {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.CRAFT_TOOL, INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new Dictionary<INTERACTION_TYPE, object[]>() {
                         { INTERACTION_TYPE.DROP_ITEM_WAREHOUSE, new object[]{ SPECIAL_TOKEN.TOOL } },
-                        { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[]{ SPECIAL_TOKEN.TOOL } },
+                        { INTERACTION_TYPE.CRAFT_ITEM, new object[]{ SPECIAL_TOKEN.TOOL } },
                     });
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
                     job.SetOnTakeJobAction(InteractionManager.Instance.OnTakeCraftTool);

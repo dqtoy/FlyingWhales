@@ -5377,12 +5377,12 @@ public class Character : ILeader, IPointOfInterest {
         if (_hasAlreadyAskedForPlan || isDead) {
             return;
         }
+        SetHasAlreadyAskedForPlan(true);
         if (returnedToLife) {
             //characters that have returned to life will just stroll.
             PlanIdleStrollOutside(currentStructure);
             return;
         }
-        SetHasAlreadyAskedForPlan(true);
         if (!PlanJobQueueFirst()) {
             if (!PlanFullnessRecoveryActions(true)) {
                 if (!PlanTirednessRecoveryActions(true)) {
@@ -5890,7 +5890,7 @@ public class Character : ILeader, IPointOfInterest {
                         Character chosenCharacter = GetParalyzedOrCatatonicCharacterToCheckOut();
                         if(chosenCharacter != null) {
                             log += "\n  -Will Check Out character " + chosenCharacter.name;
-                            PlanIdle(INTERACTION_TYPE.CHECK_OUT, chosenCharacter);
+                            PlanIdle(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_VISION, targetPOI = chosenCharacter });
                             return log;
                         } else {
                             log += "\n  -No available character to check out ";
@@ -5995,7 +5995,7 @@ public class Character : ILeader, IPointOfInterest {
                         Character chosenCharacter = GetParalyzedOrCatatonicCharacterToCheckOut();
                         if (chosenCharacter != null) {
                             log += "\n  -Will Check Out character " + chosenCharacter.name;
-                            PlanIdle(INTERACTION_TYPE.CHECK_OUT, chosenCharacter);
+                            PlanIdle(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_VISION, targetPOI = chosenCharacter });
                             return log;
                         } else {
                             log += "\n  -No available character to check out ";
@@ -6129,6 +6129,18 @@ public class Character : ILeader, IPointOfInterest {
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
         goapPlan.ConstructAllNodes();
         AddPlan(goapPlan);
+        //PlanGoapActions(goapAction);
+    }
+    private void PlanIdle(GoapEffect effect) {
+        if (effect.targetPOI != null && effect.targetPOI != this) {
+            AddAwareness(effect.targetPOI);
+        }
+        StartGOAP(effect, effect.targetPOI, GOAP_CATEGORY.IDLE);
+        //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(type, this, target);
+        //GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+        //GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+        //goapPlan.ConstructAllNodes();
+        //AddPlan(goapPlan);
         //PlanGoapActions(goapAction);
     }
     private Character GetParalyzedOrCatatonicCharacterToCheckOut() {
@@ -7031,7 +7043,7 @@ public class Character : ILeader, IPointOfInterest {
                             case INTERACTION_TYPE.PLAY:
                             case INTERACTION_TYPE.SLEEP:
                             case INTERACTION_TYPE.SLEEP_OUTSIDE:
-                            case INTERACTION_TYPE.MINE_GOAP:
+                            case INTERACTION_TYPE.MINE:
                             case INTERACTION_TYPE.CHOP_WOOD:
                                 dialogReactions.Add("What will I do with this random tidbit?");
                                 break;
@@ -7410,7 +7422,7 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.GRIEVING);
         poiGoapActions.Add(INTERACTION_TYPE.DANCE);
         poiGoapActions.Add(INTERACTION_TYPE.SING);
-
+        poiGoapActions.Add(INTERACTION_TYPE.GO_TO);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

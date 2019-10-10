@@ -14,7 +14,7 @@ public class Catatonic : Trait {
         effect = TRAIT_EFFECT.NEGATIVE;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         daysDuration = GameManager.ticksPerDay;
-        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED, INTERACTION_TYPE.CHECK_OUT};
+        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
         charactersThatKnow = new List<Character>();
     }
 
