@@ -5564,7 +5564,7 @@ public class Character : ILeader, IPointOfInterest {
                 JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
                 int chance = UnityEngine.Random.Range(0, 100);
                 int value = 0;
-                TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+                TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick(this);
                 if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
                     value = 30;
                 } else if (currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME) {
@@ -5840,7 +5840,7 @@ public class Character : ILeader, IPointOfInterest {
                 return log;
             } else if (currentStructure == homeStructure) {
                 log += "\n-" + name + " is in home structure and previous action is not returned home";
-                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
+                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(this);
 
                 log += "\n-If it is Early Night, 35% chance to go to the current Inn and then set it as the Base Structure for 2.5 hours";
                 if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
@@ -5976,7 +5976,7 @@ public class Character : ILeader, IPointOfInterest {
                 log += "\n-" + name + " is in the Work Area/Wilderness/Cemetery of home location";
 
                 log += "\n-If it is Morning or Afternoon, 25% chance to enter Stroll Outside Mode";
-                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
+                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(this);
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
@@ -6076,7 +6076,7 @@ public class Character : ILeader, IPointOfInterest {
             } else {
                 log += "\n-" + name + " is in home area";
                 log += "\n-If it is Morning or Afternoon, 25% chance to play";
-                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
+                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(this);
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);

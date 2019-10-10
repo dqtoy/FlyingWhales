@@ -350,21 +350,28 @@ public class GameManager : MonoBehaviour {
         }
         return TIME_IN_WORDS.NONE;
     }
-    public static TIME_IN_WORDS GetCurrentTimeInWordsOfTick() {
+
+    //Note: If there is a character parameter, it means that the current time in words might not be the actual one because we will get the time in words relative to the character
+    //Example: If the character is Nocturnal, MORNING will become LATE_NIGHT
+    public static TIME_IN_WORDS GetCurrentTimeInWordsOfTick(Character relativeTo = null) {
+        TIME_IN_WORDS time = TIME_IN_WORDS.NONE;
         if ((GameManager.Instance.tick >= 265 && GameManager.Instance.tick <= 288) || (GameManager.Instance.tick >= 1 && GameManager.Instance.tick <= 60)) {
-            return TIME_IN_WORDS.AFTER_MIDNIGHT;
+            time = TIME_IN_WORDS.AFTER_MIDNIGHT;
         } else if (GameManager.Instance.tick >= 61 && GameManager.Instance.tick <= 132) {
-            return TIME_IN_WORDS.MORNING;
+            time = TIME_IN_WORDS.MORNING;
         } else if (GameManager.Instance.tick >= 133 && GameManager.Instance.tick <= 156) {
-            return TIME_IN_WORDS.LUNCH_TIME;
+            time = TIME_IN_WORDS.LUNCH_TIME;
         } else if (GameManager.Instance.tick >= 157 && GameManager.Instance.tick <= 204) {
-            return TIME_IN_WORDS.AFTERNOON;
+            time = TIME_IN_WORDS.AFTERNOON;
         } else if (GameManager.Instance.tick >= 205 && GameManager.Instance.tick <= 240) {
-            return TIME_IN_WORDS.EARLY_NIGHT;
+            time = TIME_IN_WORDS.EARLY_NIGHT;
         } else if (GameManager.Instance.tick >= 241 && GameManager.Instance.tick <= 264) {
-            return TIME_IN_WORDS.LATE_NIGHT;
+            time = TIME_IN_WORDS.LATE_NIGHT;
         }
-        return TIME_IN_WORDS.NONE;
+        if(relativeTo != null && relativeTo.GetNormalTrait("Nocturnal") != null) {
+            time = ConvertTimeInWordsWhenNocturnal(time);
+        }
+        return time;
         //float time = GameManager.Instance.tick / (float) ticksPerTimeInWords;
         //int intTime = (int) time;
         //if (time == intTime && intTime > 0) {
@@ -417,6 +424,29 @@ public class GameManager : MonoBehaviour {
             return UnityEngine.Random.Range(minimumThreshold, 265);
         }
         throw new System.Exception(timeInWords.ToString() + " time in words has no tick!");
+    }
+    public static TIME_IN_WORDS[] ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS[] currentTimeInWords) {
+        TIME_IN_WORDS[] convertedTimeInWords = new TIME_IN_WORDS[currentTimeInWords.Length];
+        for (int i = 0; i < currentTimeInWords.Length; i++) {
+            convertedTimeInWords[i] = ConvertTimeInWordsWhenNocturnal(currentTimeInWords[i]);
+        }
+        return convertedTimeInWords;
+    }
+    public static TIME_IN_WORDS ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS currentTimeInWords) {
+        if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+            return TIME_IN_WORDS.LATE_NIGHT;
+        } else if (currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME) {
+            return TIME_IN_WORDS.AFTER_MIDNIGHT;
+        } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+            return TIME_IN_WORDS.AFTER_MIDNIGHT;
+        } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+            return TIME_IN_WORDS.MORNING;
+        } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+            return TIME_IN_WORDS.MORNING;
+        } else if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+            return TIME_IN_WORDS.AFTERNOON;
+        }
+        return TIME_IN_WORDS.NONE;
     }
     public int GetTicksBasedOnHour(int hours) {
         return ticksPerHour * hours;
