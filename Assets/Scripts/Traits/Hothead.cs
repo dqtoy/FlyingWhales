@@ -25,6 +25,10 @@ public class Hothead : Trait {
                 Character targetCharacter = targetPOI as Character;
                 if (character.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     character.AddTrait("Angry");
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_saw");
+                    log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
                 }
             }
         }

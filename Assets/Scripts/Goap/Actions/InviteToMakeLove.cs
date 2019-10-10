@@ -54,7 +54,7 @@ public class InviteToMakeLove : GoapAction {
             return Utilities.rng.Next(40, 67);
         }
         bool isLustful = actor.GetNormalTrait("Lustful") != null;
-        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick(actor);
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             if (poiTarget is Character) {
                 //If unfaithful and target is Paramour (15 - 36)/(8 - 20)/(5-15) per level, affects Early Night and Late Night only).

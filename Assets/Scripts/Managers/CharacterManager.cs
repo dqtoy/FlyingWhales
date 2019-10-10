@@ -83,7 +83,7 @@ public class CharacterManager : MonoBehaviour {
         //ConstructRoleInteractions();
         //ConstructPortraitDictionaries();
         Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
-        //Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
+        Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
     #region Characters
@@ -1485,21 +1485,19 @@ public class CharacterManager : MonoBehaviour {
         actor.marker.UpdateActionIcon();
         actor.marker.UpdateAnimation();
 
-        for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
-            Character otherCharacter = actor.marker.inVisionCharacters[i];
-            //crime system:
-            //if the other character committed a crime,
-            //check if that character is in this characters vision 
-            //and that this character can react to a crime (not in flee or engage mode)
-            if (action.IsConsideredACrimeBy(otherCharacter)
-                && action.CanReactToThisCrime(otherCharacter)
-                && otherCharacter.CanReactToCrime()) {
-                bool hasRelationshipDegraded = false;
-                otherCharacter.ReactToCrime(action, ref hasRelationshipDegraded);
-            }
-        }
-
-            
+        //for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
+        //    Character otherCharacter = actor.marker.inVisionCharacters[i];
+        //    //crime system:
+        //    //if the other character committed a crime,
+        //    //check if that character is in this characters vision 
+        //    //and that this character can react to a crime (not in flee or engage mode)
+        //    if (action.IsConsideredACrimeBy(otherCharacter)
+        //        && action.CanReactToThisCrime(otherCharacter)
+        //        && otherCharacter.CanReactToCrime()) {
+        //        bool hasRelationshipDegraded = false;
+        //        otherCharacter.ReactToCrime(action, ref hasRelationshipDegraded);
+        //    }
+        //}
     }
     #endregion
 

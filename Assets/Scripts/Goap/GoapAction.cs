@@ -731,7 +731,7 @@ public class GoapAction {
         return actor.gridTileLocation == targetTile;
     }
     public int CostMultiplier() {
-        if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())) {
+        if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick(actor))) {
             return 1;
         }
         return 3;

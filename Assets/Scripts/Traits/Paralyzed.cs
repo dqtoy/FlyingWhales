@@ -14,7 +14,7 @@ public class Paralyzed : Trait {
         type = TRAIT_TYPE.DISABLER;
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
-        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED, INTERACTION_TYPE.CHECK_OUT };
+        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.FEED };
         daysDuration = 0;
         charactersThatKnow = new List<Character>();
     }

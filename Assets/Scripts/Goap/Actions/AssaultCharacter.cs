@@ -8,15 +8,17 @@ public class AssaultCharacter : GoapAction {
     private Character loser;
 
     public AssaultCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASSAULT_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         doesNotStopTargetCharacter = true;
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
+    //protected override void ConstructRequirement() {
+    //    _requirementAction = Requirement;
+    //}
     protected override void ConstructPreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_VISION, targetPOI = poiTarget }, IsInVision);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
@@ -49,7 +51,7 @@ public class AssaultCharacter : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        cannotCancelAction = true;
+        SetCannotCancelAction(true);
         //actor.marker.pathfindingAI.ResetEndReachedDistance();
 
         Character targetCharacter = poiTarget as Character;
@@ -143,6 +145,9 @@ public class AssaultCharacter : GoapAction {
         SetTargetStructure();
         base.DoAction();
     }
+    public override LocationGridTile GetTargetLocationTile() {
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
+    }
     public override void OnStopActionDuringCurrentState() {
         //actor.marker.pathfindingAI.ResetEndReachedDistance();
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
@@ -163,15 +168,9 @@ public class AssaultCharacter : GoapAction {
     }
     #endregion
 
-    #region Requirements
-    protected bool Requirement() {
-        if(poiTarget is Character && actor != poiTarget) {
-            Character target = poiTarget as Character;
-            if(!target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-                return true;
-            }
-        }
-        return false;
+    #region Preconditions
+    protected bool IsInVision() {
+        return actor.marker.inVisionPOIs.Contains(poiTarget);
     }
     #endregion
 

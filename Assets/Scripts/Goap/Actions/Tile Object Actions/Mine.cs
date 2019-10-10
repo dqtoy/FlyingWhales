@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MineGoap : GoapAction {
+public class Mine : GoapAction {
     private const int MAX_SUPPLY = 50;
     private const int MIN_SUPPLY = 20;
 
     private int _gainedSupply;
-    public MineGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.MINE_GOAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+    public Mine(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.MINE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
     }
@@ -67,8 +67,8 @@ public class MineGoap : GoapAction {
     #endregion
 }
 
-public class MineGoapData : GoapActionData {
-    public MineGoapData() : base(INTERACTION_TYPE.MINE_GOAP) {
+public class MineData : GoapActionData {
+    public MineData() : base(INTERACTION_TYPE.MINE) {
         //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }

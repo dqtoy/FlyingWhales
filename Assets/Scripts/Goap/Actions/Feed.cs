@@ -126,7 +126,7 @@ public class Feed : GoapAction {
                 else {
                     if(recipient.faction.id == targetCharacter.faction.id) {
                         if (targetCharacter.isAtHomeRegion) {
-                            reactions.Add(string.Format("{0} is a criminal", targetCharacter.name));
+                            reactions.Add(string.Format("{0} is a criminal!", targetCharacter.name));
                         } else {
                             reactions.Add(string.Format("I've got to figure out how to save {0}!", targetCharacter.name));
                             recipient.CreateSaveCharacterJob(targetCharacter);

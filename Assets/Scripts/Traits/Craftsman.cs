@@ -17,7 +17,7 @@ public class Craftsman : Trait {
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         //effects = new List<TraitEffect>();
-        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CRAFT_ITEM_GOAP, INTERACTION_TYPE.CRAFT_FURNITURE };
+        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CRAFT_ITEM, INTERACTION_TYPE.CRAFT_FURNITURE };
     }
 
     #region Overrides

@@ -120,9 +120,9 @@ public class SeducerSummon : Summon {
         if (currentParty.icon.isTravelling) {
             marker.StopMovement();
         }
-        AdjustIsWaitingForInteraction(1);
-        StopCurrentAction(false);
-        AdjustIsWaitingForInteraction(-1);
+        //AdjustIsWaitingForInteraction(1);
+        //StopCurrentAction(false);
+        //AdjustIsWaitingForInteraction(-1);
         specificLocation.RemoveCharacterFromLocation(this);
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
         ownParty.SetSpecificLocation(PlayerManager.Instance.player.playerArea);
