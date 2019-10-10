@@ -53,6 +53,7 @@ public class DestroySupply : GoapAction {
 
     #region State Effects
     private void PreDestroySuccess() {
+        currentState.SetIntelReaction(DestroySuccessReactions);
         SetCommittedCrime(CRIME.HERETIC, new Character[] { actor });
         SupplyPile supplyPile = poiTarget as SupplyPile;
         destroyedSupply = Mathf.FloorToInt((float)supplyPile.suppliesInPile * (UnityEngine.Random.Range(0.25f, 0.5f)));
@@ -61,6 +62,18 @@ public class DestroySupply : GoapAction {
     private void AfterDestroySuccess() {
         SupplyPile supplyPile = poiTarget as SupplyPile;
         supplyPile.AdjustSuppliesInPile(-destroyedSupply);
+    }
+    #endregion
+
+    #region Intel Reactions
+    private List<string> DestroySuccessReactions(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+        if (status == SHARE_INTEL_STATUS.WITNESSED) {
+            if (recipient != actor) {
+                recipient.ReactToCrime(CRIME.HERETIC, this, actorAlterEgo, status);
+            }
+        }
+        return reactions;
     }
     #endregion
 }
