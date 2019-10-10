@@ -150,6 +150,11 @@ public class Bed : TileObject {
                 }
                 //enable the character's marker
                 character.marker.SetVisualState(true);
+                if (character.gridTileLocation != null && character.GetNormalTrait("Paralyzed") != null) {
+                    //When a paralyzed character awakens, place it on a nearby adjacent empty tile in the same Structure
+                    LocationGridTile gridTile = character.gridTileLocation.GetNearestUnoccupiedTileFromThis();
+                    character.marker.PlaceMarkerAt(gridTile);
+                }
                 break;
             }
         }
