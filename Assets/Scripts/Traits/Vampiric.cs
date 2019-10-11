@@ -5,9 +5,9 @@ using UnityEngine;
 public class Vampiric : Trait {
     //private Character _character;
 
-    private int _flatAttackMod;
+    //private int _flatAttackMod;
     private int _flatHPMod;
-    private int _flatSpeedMod;
+    //private int _flatSpeedMod;
 
     public Vampiric() {
         name = "Vampiric";
@@ -20,17 +20,24 @@ public class Vampiric : Trait {
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
         //effects = new List<TraitEffect>();
-        _flatAttackMod = 100;
+        //_flatAttackMod = 100;
         _flatHPMod = 500;
-        _flatSpeedMod = 100;
+        //_flatSpeedMod = 100;
         canBeTriggered = true;
         //advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TRANSFORM_TO_WOLF, INTERACTION_TYPE.REVERT_TO_NORMAL };
     }
 
     public void VamipiricLevel(int level) {
-        _flatAttackMod *= level;
-        _flatHPMod *= level;
-        _flatSpeedMod *= level;
+        //_flatAttackMod *= level;
+        //_flatHPMod *= level;
+        //_flatSpeedMod *= level;
+        if(level == 1) {
+            _flatHPMod *= 1;
+        }else if (level == 2) {
+            _flatHPMod = Mathf.RoundToInt(_flatHPMod * 1.5f);
+        }else if (level == 3) {
+            _flatHPMod *= 2;
+        }
     }
 
     #region Overrides
@@ -44,9 +51,9 @@ public class Vampiric : Trait {
             character.SetFullnessForcedTick();
             character.AdjustDoNotGetTired(1);
             character.ResetTirednessMeter();
-            character.AdjustAttackMod(_flatAttackMod);
+            //character.AdjustAttackMod(_flatAttackMod);
             character.AdjustMaxHPMod(_flatHPMod);
-            character.AdjustSpeedMod(_flatSpeedMod);
+            //character.AdjustSpeedMod(_flatSpeedMod);
         }
     }
     public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
@@ -57,9 +64,9 @@ public class Vampiric : Trait {
             character.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
             character.SetFullnessForcedTick();
             character.AdjustDoNotGetTired(-1);
-            character.AdjustAttackMod(-_flatAttackMod);
+            //character.AdjustAttackMod(-_flatAttackMod);
             character.AdjustMaxHPMod(-_flatHPMod);
-            character.AdjustSpeedMod(-_flatSpeedMod);
+            //character.AdjustSpeedMod(-_flatSpeedMod);
         }
         base.OnRemoveTrait(sourceCharacter, removedBy);
     }

@@ -110,5 +110,9 @@ public class CureCharacter : GoapAction {
 public class CureCharacterData : GoapActionData {
     public CureCharacterData() : base(INTERACTION_TYPE.CURE_CHARACTER) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
+        requirementAction = Requirement;
+    }
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return poiTarget.GetNormalTrait("Sick", "Infected", "Plagued") != null;
     }
 }

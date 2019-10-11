@@ -19,5 +19,6 @@ public class DataConstructor : MonoBehaviour {
         AttributeManager.Instance.Initialize();
         //IntelManager.Instance.Initialize();
         SecretManager.Instance.Initialize();
+        LandmarkManager.Instance.Initialize();
     }
 }

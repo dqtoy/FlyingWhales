@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -115,39 +116,49 @@ public class PlayerUpgradeUI : MonoBehaviour {
 
     #region Upgrade
     public void OnClickSelectAbility() {
-        List<string> choices = new List<string>() {
-           TheAnvil.All_Spell,
-           TheAnvil.All_Summon,
-           TheAnvil.All_Artifact,
-           TheAnvil.Increased_Mana_Capacity,
-           TheAnvil.Increased_Mana_Regen,
-           TheAnvil.Faster_Portal_Invocation,
-           TheAnvil.Faster_Invasion,
-           TheAnvil.Reduce_Spire_Cooldown,
-           TheAnvil.Reduce_Eye_Cooldown,
-        };
+        List<string> choices = LandmarkManager.Instance.anvilResearchData.Keys.ToList();
         UIManager.Instance.ShowClickableObjectPicker(choices, SetChosenUpgrade, null, CanChooseUpgrade, "Select research", OnHoverAbilityChoice, OnHoverExitAbilityChoice, "intervention ability");
     }
     private bool CanChooseUpgrade(string upgrade) {
         //check if any of the categories are already at max level.
-        if (upgrade == TheAnvil.All_Spell) {
-            return !PlayerManager.Instance.player.AreAllInterventionSlotsMaxLevel();
-        } else if (upgrade == TheAnvil.All_Summon) {
-            if (PlayerManager.Instance.player.summonSlots.Count == 0) {
+        //if (upgrade == TheAnvil.Improved_Spells_1) {
+        //    return !PlayerManager.Instance.player.AreAllInterventionSlotsMaxLevel();
+        //} else if (upgrade == TheAnvil.Improved_Summoning_1) {
+        //    if (PlayerManager.Instance.player.summonSlots.Count == 0) {
+        //        return true;
+        //    }
+        //    return !PlayerManager.Instance.player.AreAllSummonSlotsMaxLevel();
+        //} else if (upgrade == TheAnvil.Improved_Artifacts_1) {
+        //    if (PlayerManager.Instance.player.artifactSlots.Count == 0) {
+        //        return true;
+        //    }
+        //    return !PlayerManager.Instance.player.AreAllArtifactSlotsMaxLevel();
+        //}
+        if (!theAnvil.dynamicResearchData[upgrade].isResearched && PlayerManager.Instance.player.mana >= LandmarkManager.Instance.anvilResearchData[upgrade].manaCost) {
+            if(LandmarkManager.Instance.anvilResearchData[upgrade].preRequisiteResearch == string.Empty) {
                 return true;
+            } else {
+                return theAnvil.dynamicResearchData[LandmarkManager.Instance.anvilResearchData[upgrade].preRequisiteResearch].isResearched;
             }
-            return !PlayerManager.Instance.player.AreAllSummonSlotsMaxLevel();
-        } else if (upgrade == TheAnvil.All_Artifact) {
-            if (PlayerManager.Instance.player.artifactSlots.Count == 0) {
-                return true;
-            }
-            return !PlayerManager.Instance.player.AreAllArtifactSlotsMaxLevel();
         }
         return false;
     } 
     private void OnHoverAbilityChoice(string abilityName) {
-        string info = TheAnvil.GetUpgradeDescription(abilityName);
-        info += "\nUpgrade Duration: " + GameManager.Instance.GetCeilingHoursBasedOnTicks(TheAnvil.GetUpgradeDuration(abilityName)) + " hours";
+        string info = string.Empty;
+        if (CanChooseUpgrade(abilityName)) {
+            info = TheAnvil.GetUpgradeDescription(abilityName);
+            info += "\nCost: " + LandmarkManager.Instance.anvilResearchData[abilityName].manaCost + " mana";
+            info += "\nDuration: " + LandmarkManager.Instance.anvilResearchData[abilityName].durationInHours + " hours";
+        } else {
+            info = theAnvil.GetUnavailabilityDescription(abilityName);
+            if(info != string.Empty) {
+                info += "\n";
+            }
+            string costColor = PlayerManager.Instance.player.mana >= LandmarkManager.Instance.anvilResearchData[abilityName].manaCost ? "green" : "red";
+            info += "<color=" + costColor + ">Cost: " + LandmarkManager.Instance.anvilResearchData[abilityName].manaCost + " mana</color>";
+            info += "\nDuration: " + LandmarkManager.Instance.anvilResearchData[abilityName].durationInHours + " hours";
+        }
+
         UIManager.Instance.ShowSmallInfo(info);
     }
     private void OnHoverExitAbilityChoice(string abilityName) {

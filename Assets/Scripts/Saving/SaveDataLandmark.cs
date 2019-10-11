@@ -9,6 +9,7 @@ public class SaveDataLandmark {
     public LANDMARK_TYPE landmarkType;
     public int locationID;
     public int connectedTileID;
+    public int invasionTicks;
     public List<LANDMARK_TAG> landmarkTags;
    
     public virtual void Save(BaseLandmark landmark) {
@@ -22,8 +23,7 @@ public class SaveDataLandmark {
             connectedTileID = -1;
         }
         landmarkTags = landmark.landmarkTags;
-
-        
+        invasionTicks = landmark.invasionTicks;
     }
     public virtual void LoadSpecificLandmarkData(BaseLandmark landmark) { }
 

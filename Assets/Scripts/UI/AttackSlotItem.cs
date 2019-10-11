@@ -8,9 +8,9 @@ public class AttackSlotItem : MonoBehaviour {
     public Button attackBtn;
 
     public void ShowAttackButton() {
-        if (!PlayerManager.Instance.player.attackGrid.IsGridEmpty()) {
-            attackBtn.gameObject.SetActive(true);
-        }
+        //if (!PlayerManager.Instance.player.attackGrid.IsGridEmpty()) {
+        //    attackBtn.gameObject.SetActive(true);
+        //}
     }
     public void HideAttackButton() {
         attackBtn.gameObject.SetActive(false);
@@ -35,6 +35,6 @@ public class AttackSlotItem : MonoBehaviour {
         return false;
     }
     public void UpdateVisuals() {
-        attackImg.gameObject.SetActive(PlayerManager.Instance.player.attackGrid != null && !PlayerManager.Instance.player.attackGrid.IsGridEmpty());
+        //attackImg.gameObject.SetActive(PlayerManager.Instance.player.attackGrid != null && !PlayerManager.Instance.player.attackGrid.IsGridEmpty());
     }
 }

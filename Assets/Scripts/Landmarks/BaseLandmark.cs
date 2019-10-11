@@ -19,8 +19,10 @@ public class BaseLandmark {
     protected LandmarkVisual _landmarkVisual;
     protected LandmarkNameplate nameplate;
     public List<LANDMARK_TAG> landmarkTags { get; private set; }
-    public int invasionTicks { get; private set; } //how many ticks until this landmark is invaded. NOTE: This is in raw ticks so if the landmark should be invaded in 1 hour, this should be set to the number of ticks in an hour.
     public Vector2 nameplatePos { get; private set; }
+    //public int invasionTicks { get { return GetInvasionTicks(); } }
+    public int invasionTicks { get; private set; }
+    //private int _invasionTicks; //how many ticks until this landmark is invaded. NOTE: This is in raw ticks so if the landmark should be invaded in 1 hour, this should be set to the number of ticks in an hour.
 
     #region getters/setters
     public int id {
@@ -47,12 +49,6 @@ public class BaseLandmark {
     #endregion
 
     public BaseLandmark() {
-#if TESTING_VALUES
-        invasionTicks = 12;
-#else
-        invasionTicks = GameManager.Instance.GetTicksBasedOnHour(4);
-#endif
-
     }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
@@ -63,6 +59,11 @@ public class BaseLandmark {
         ConstructTags(landmarkData);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
         nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
+#if TESTING_VALUES
+        SetInvasionTicks(12);
+#else
+        SetInvasionTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+#endif
     }
     public BaseLandmark(HexTile location, LandmarkSaveData data) : this() {
         _id = Utilities.SetID(this, data.landmarkID);
@@ -74,6 +75,11 @@ public class BaseLandmark {
         ConstructTags(landmarkData);
         nameplatePos = LandmarkManager.Instance.GetNameplatePosition(this.tileLocation);
         nameplate = UIManager.Instance.CreateLandmarkNameplate(this);
+#if TESTING_VALUES
+        SetInvasionTicks(12);
+#else
+        SetInvasionTicks(GameManager.Instance.GetTicksBasedOnHour(4));
+#endif
     }
     public BaseLandmark(HexTile location, SaveDataLandmark data) : this() {
         _id = Utilities.SetID(this, data.id);
@@ -84,7 +90,7 @@ public class BaseLandmark {
         _specificLandmarkType = data.landmarkType;
         SetName(data.landmarkName);
         landmarkTags = data.landmarkTags;
-        invasionTicks = GameManager.ticksPerDay;
+        SetInvasionTicks(data.invasionTicks);
 
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
         ConstructTags(landmarkData);
@@ -159,6 +165,12 @@ public class BaseLandmark {
     }
     public void CenterOnLandmark() {
         tileLocation.CenterCameraHere();
+    }
+    //private int GetInvasionTicks() {
+    //    return invasionTicks + Mathf.RoundToInt(invasionTicks * PlayerManager.Instance.player.invasionRatePercentageModifier);
+    //}
+    public void SetInvasionTicks(int amount) {
+        invasionTicks = amount;
     }
     public override string ToString() {
         return this.landmarkName;

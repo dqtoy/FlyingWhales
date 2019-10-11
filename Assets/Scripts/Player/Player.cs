@@ -11,13 +11,16 @@ public class Player : ILeader {
     public const int MAX_THREAT = 100;
     public readonly int MAX_INTERVENTION_ABILITIES = 4;
     public const int MAX_MANA = 500;
+    public const int INITIAL_MANA_REGEN = 20;
 
     public Faction playerFaction { get; private set; }
     public Area playerArea { get; private set; }
     public int threat { get; private set; }
     public int mana { get; private set; }
-    public CombatGrid attackGrid { get; private set; }
-    public CombatGrid defenseGrid { get; private set; }
+    public int maxMana { get; private set; }
+    public int manaRegen { get; private set; }
+    //public CombatGrid attackGrid { get; private set; }
+    //public CombatGrid defenseGrid { get; private set; }
     public List<Intel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
     public List<SummonSlot> summonSlots { get; private set; }
@@ -45,6 +48,8 @@ public class Player : ILeader {
     //public INTERVENTION_ABILITY interventionAbilityToResearch { get; private set; }
     //public bool isNotFirstResearch { get; private set; }
 
+    public float constructionRatePercentageModifier { get; private set; }
+
     #region getters/setters
     public int id {
         get { return -645; }
@@ -71,10 +76,10 @@ public class Player : ILeader {
 
     public Player() {
         //playerArea = null;
-        attackGrid = new CombatGrid();
-        defenseGrid = new CombatGrid();
-        attackGrid.Initialize();
-        defenseGrid.Initialize();
+        //attackGrid = new CombatGrid();
+        //defenseGrid = new CombatGrid();
+        //attackGrid.Initialize();
+        //defenseGrid.Initialize();
         allIntel = new List<Intel>();
         minions = new List<Minion>();
         summonSlots = new List<SummonSlot>();
@@ -83,22 +88,27 @@ public class Player : ILeader {
         minionsToSummon = new UnsummonedMinionData[3];
         maxSummonSlots = 0;
         maxArtifactSlots = 0;
-        mana = MAX_MANA;
+        SetMaxMana(MAX_MANA);
+        mana = maxMana;
+        SetManaRegen(INITIAL_MANA_REGEN);
         ConstructAllInterventionAbilitySlots();
         GenerateMinionsToSummon();
         AddListeners();
     }
     public Player(SaveDataPlayer data) {
-        attackGrid = new CombatGrid();
-        defenseGrid = new CombatGrid();
-        attackGrid.Initialize();
-        defenseGrid.Initialize();
+        //attackGrid = new CombatGrid();
+        //defenseGrid = new CombatGrid();
+        //attackGrid.Initialize();
+        //defenseGrid.Initialize();
         allIntel = new List<Intel>();
         minions = new List<Minion>();
         maxSummonSlots = data.maxSummonSlots;
         maxArtifactSlots = data.maxArtifactSlots;
+        SetMaxMana(data.maxMana);
         mana = data.mana;
+        SetManaRegen(data.manaRegen);
         minionsToSummon = data.minionsToSummon;
+        SetConstructionRatePercentageModifier(data.constructionRatePercentageModifier);
         //isNotFirstResearch = data.isNotFirstResearch;
         //threat = data.threat;
         //ConstructAllInterventionAbilitySlots();
@@ -1409,6 +1419,12 @@ public class Player : ILeader {
     //public void SetInvadingRegion(Region region) {
     //    invadingRegion = region;
     //}
+    public void SetConstructionRatePercentageModifier(float amount) {
+        constructionRatePercentageModifier = amount;
+    }
+    //public void AdjustInvasionRatePercentageModifier(float amount) {
+    //    invasionRatePercentageModifier += amount;
+    //}
     #endregion
 
     #region Combat Ability
@@ -1712,12 +1728,32 @@ public class Player : ILeader {
 
     #region Mana
     private void HourlyManaRegen() {
-        AdjustMana(20);
+        AdjustMana(manaRegen);
+    }
+    public void SetManaRegen(int amount) {
+        manaRegen = amount;
+        manaRegen = Mathf.Max(0, manaRegen);
+    }
+    public void AdjustManaRegen(int amount) {
+        manaRegen += amount;
+        manaRegen = Mathf.Max(0, manaRegen);
+    }
+    public void SetMaxManaRegen(int amount) {
+        manaRegen = amount;
+        manaRegen = Mathf.Max(0, manaRegen);
     }
     public void AdjustMana(int amount) {
         mana += amount;
-        mana = Mathf.Clamp(mana, 0, MAX_MANA);
+        mana = Mathf.Clamp(mana, 0, maxMana);
         Messenger.Broadcast(Signals.PLAYER_ADJUSTED_MANA);
+    }
+    public void AdjustMaxMana(int amount) {
+        maxMana += amount;
+        maxMana = Mathf.Max(0, maxMana);
+    }
+    public void SetMaxMana(int amount) {
+        maxMana = amount;
+        maxMana = Mathf.Max(0, maxMana);
     }
     public int GetManaCostForInterventionAbility(string ability) {
         INTERVENTION_ABILITY converted = (INTERVENTION_ABILITY)System.Enum.Parse(typeof(INTERVENTION_ABILITY), ability);

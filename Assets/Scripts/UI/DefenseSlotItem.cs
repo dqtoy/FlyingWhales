@@ -26,6 +26,6 @@ public class DefenseSlotItem : MonoBehaviour {
         return false;
     }
     public void UpdateVisuals() {
-        defenseImg.gameObject.SetActive(PlayerManager.Instance.player.defenseGrid != null && !PlayerManager.Instance.player.defenseGrid.IsGridEmpty());
+        //defenseImg.gameObject.SetActive(PlayerManager.Instance.player.defenseGrid != null && !PlayerManager.Instance.player.defenseGrid.IsGridEmpty());
     }
 }

@@ -9,6 +9,8 @@ public class SaveDataPlayer {
     public int playerAreaID;
     public int threat;
     public int mana;
+    public int maxMana;
+    public int manaRegen;
 
     public List<SaveDataMinion> minions;
     public List<SaveDataSummonSlot> summonSlots;
@@ -31,6 +33,8 @@ public class SaveDataPlayer {
     //public INTERVENTION_ABILITY interventionAbilityToResearch;
     //public bool isNotFirstResearch;
 
+    public float constructionRatePercentageModifier;
+
     public void Save(Player player) {
         playerFactionID = player.playerFaction.id;
         playerAreaID = player.playerArea.id;
@@ -40,6 +44,9 @@ public class SaveDataPlayer {
         maxArtifactSlots = player.maxArtifactSlots;
         currentDivineInterventionTick = player.currentDivineInterventionTick;
         minionsToSummon = player.minionsToSummon;
+        constructionRatePercentageModifier = player.constructionRatePercentageModifier;
+        maxMana = player.maxMana;
+        manaRegen = player.manaRegen;
         //isNotFirstResearch = player.isNotFirstResearch;
 
         minions = new List<SaveDataMinion>();

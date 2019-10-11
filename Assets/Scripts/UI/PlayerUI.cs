@@ -562,16 +562,16 @@ public class PlayerUI : MonoBehaviour {
         return false;
     }
     private void SetAttackGridCharactersFromPlayer() {
-        for (int i = 0; i < attackGridReference.slots.Length; i++) {
-            attackGridReference.slots[i].OccupySlot(PlayerManager.Instance.player.attackGrid.slots[i].character);
-            attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
-        }
+        //for (int i = 0; i < attackGridReference.slots.Length; i++) {
+        //    attackGridReference.slots[i].OccupySlot(PlayerManager.Instance.player.attackGrid.slots[i].character);
+        //    attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
+        //}
     }
     private void SetDefenseGridCharactersFromPlayer() {
-        for (int i = 0; i < defenseGridReference.slots.Length; i++) {
-            defenseGridReference.slots[i].OccupySlot(PlayerManager.Instance.player.attackGrid.slots[i].character);
-            attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
-        }
+        //for (int i = 0; i < defenseGridReference.slots.Length; i++) {
+        //    defenseGridReference.slots[i].OccupySlot(PlayerManager.Instance.player.attackGrid.slots[i].character);
+        //    attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
+        //}
     }
     private void UpdateAttackGridSlots() {
         for (int i = 0; i < attackGridSlots.Length; i++) {

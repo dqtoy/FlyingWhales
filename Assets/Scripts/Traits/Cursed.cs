@@ -40,7 +40,7 @@ public class Cursed : Trait {
     public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         if(sourcePOI is Character) {
             Character character = sourcePOI as Character;
-            character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
+            //character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
             character.RemoveTraitNeededToBeRemoved(this);
             character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         } else if (sourceCharacter is TileObject) {

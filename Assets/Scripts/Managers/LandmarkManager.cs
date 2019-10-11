@@ -41,18 +41,22 @@ public class LandmarkManager : MonoBehaviour {
 
     public Area enemyOfPlayerArea { get; private set; }
 
-    //The Profane
-
+    //The Anvil
+    public Dictionary<string, AnvilResearchData> anvilResearchData;
 
     //The Portal
 
-    #region Monobehaviours
-    private void Awake() {
-        Instance = this;
+    public void Initialize() {
         corruptedLandmarksCount = 0;
         allAreas = new List<Area>();
         ConstructLandmarkData();
         LoadLandmarkTypeDictionary();
+        ConstructAnvilResearchData();
+    }
+
+    #region Monobehaviours
+    private void Awake() {
+        Instance = this;
     }
     #endregion
 
@@ -1012,6 +1016,113 @@ public class LandmarkManager : MonoBehaviour {
             }
         }
         return regions.Count > 0;
+    }
+    #endregion
+
+    #region The Anvil
+    private void ConstructAnvilResearchData() {
+        anvilResearchData = new Dictionary<string, AnvilResearchData>() {
+            { TheAnvil.Improved_Spells_1,
+                new AnvilResearchData() {
+                    effect = 2,
+                    description = "Increase Spell level to 2.",
+                    manaCost = 150,
+                    durationInHours = 8,
+                    preRequisiteResearch = string.Empty,
+                    researchDoneNotifText = "Spell Level increased!",
+                }
+            },
+            { TheAnvil.Improved_Spells_2,
+                new AnvilResearchData() {
+                    effect = 3,
+                    description = "Increase Spell level to 3.",
+                    manaCost = 300,
+                    durationInHours = 24,
+                    preRequisiteResearch = TheAnvil.Improved_Spells_1,
+                    researchDoneNotifText = "Spell Level increased!",
+                }
+            },
+            { TheAnvil.Improved_Artifacts_1,
+                new AnvilResearchData() {
+                    effect = 2,
+                    description = "Increase Artifact level to 2.",
+                    manaCost = 100,
+                    durationInHours = 4,
+                    preRequisiteResearch = string.Empty,
+                    researchDoneNotifText = "Artifact Level increased!",
+                }
+            },
+            { TheAnvil.Improved_Artifacts_2,
+                new AnvilResearchData() {
+                    effect = 3,
+                    description = "Increase Artifact level to 3.",
+                    manaCost = 200,
+                    durationInHours = 12,
+                    preRequisiteResearch = TheAnvil.Improved_Artifacts_1,
+                    researchDoneNotifText = "Artifact Level increased!",
+                }
+            },
+            { TheAnvil.Improved_Summoning_1,
+                new AnvilResearchData() {
+                    effect = 2,
+                    description = "Increase Summon level to 2.",
+                    manaCost = 100,
+                    durationInHours = 4,
+                    preRequisiteResearch = string.Empty,
+                    researchDoneNotifText = "Summon Level increased!",
+                }
+            },
+            { TheAnvil.Improved_Summoning_2,
+                new AnvilResearchData() {
+                    effect = 3,
+                    description = "Increase Summon level to 3.",
+                    manaCost = 200,
+                    durationInHours = 12,
+                    preRequisiteResearch = TheAnvil.Improved_Summoning_1,
+                    researchDoneNotifText = "Summon Level increased!",
+                }
+            },
+            { TheAnvil.Faster_Invasion,
+                new AnvilResearchData() {
+                    effect = 20,
+                    description = "Invasion is 20% faster.",
+                    manaCost = 200,
+                    durationInHours = 12,
+                    preRequisiteResearch = string.Empty,
+                    researchDoneNotifText = "Invasion rate increased!",
+                }
+            },
+            { TheAnvil.Improved_Construction,
+                new AnvilResearchData() {
+                    effect = 20,
+                    description = "Construction is 20% faster.",
+                    manaCost = 200,
+                    durationInHours = 12,
+                    preRequisiteResearch = string.Empty,
+                    researchDoneNotifText = "Construction rate increased!",
+                }
+            },
+            { TheAnvil.Increased_Mana_Capacity,
+                new AnvilResearchData() {
+                    effect = 600,
+                    description = "Maximum Mana increased to 600.",
+                    manaCost = 200,
+                    durationInHours = 12,
+                    preRequisiteResearch = string.Empty,
+                    researchDoneNotifText = "Maximum mana increased!",
+                }
+            },
+            { TheAnvil.Increased_Mana_Regen,
+                new AnvilResearchData() {
+                    effect = 5,
+                    description = "Mana Regen increased by 5.",
+                    manaCost = 200,
+                    durationInHours = 24,
+                    preRequisiteResearch = string.Empty,
+                    researchDoneNotifText = "Mana regeneration rate increased!",
+                }
+            },
+        };
     }
     #endregion
 }
