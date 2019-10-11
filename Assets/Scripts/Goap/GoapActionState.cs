@@ -99,6 +99,7 @@ public class GoapActionState {
             return;
         }
         isDone = true;
+        parentAction.ReturnToActorTheActionResult(status);
         if (shouldDoAfterEffect) {
             if (afterEffect != null) {
                 afterEffect();
@@ -117,7 +118,6 @@ public class GoapActionState {
         } else {
             parentAction.SetShowIntelNotification(false);
         }
-        parentAction.ReturnToActorTheActionResult(status);
     }
     public void StopPerTickEffect() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);

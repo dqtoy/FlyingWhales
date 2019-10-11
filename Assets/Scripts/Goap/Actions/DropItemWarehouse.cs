@@ -60,9 +60,9 @@ public class DropItemWarehouse : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        if (_targetStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            _targetStructure.location.CheckAreaInventoryJobs(_targetStructure);
-        }
+        //if (_targetStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+        //    _targetStructure.location.CheckAreaInventoryJobs(_targetStructure);
+        //}
     }
     #endregion
 
@@ -83,6 +83,9 @@ public class DropItemWarehouse : GoapAction {
             targetLocation = actor.currentStructure.GetRandomUnoccupiedTile();
         }
         actor.DropToken(tokenToDeposit, actor.specificLocation, actor.currentStructure, targetLocation);
+        if (_targetStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+            _targetStructure.location.CheckAreaInventoryJobs(_targetStructure);
+        }
     }
     #endregion
 

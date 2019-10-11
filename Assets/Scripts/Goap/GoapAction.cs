@@ -51,7 +51,7 @@ public class GoapAction {
     public Log planLog { get; protected set; } //used for notification when a character starts this action. NOTE: Do not show notification if this is null
     public Log targetLog { get; protected set; }
     public GoapActionState currentState { get; private set; }
-    public GoapActionState endedAtState { get; private set; } //the state this action ended at
+    //public GoapActionState endedAtState { get; private set; } //the state this action ended at
     public GoapPlan parentPlan { get; private set; }
     public bool isStopped { get; private set; }
     public bool isStoppedAsCurrentAction { get; private set; }
@@ -508,7 +508,7 @@ public class GoapAction {
 
         isPerformingActualAction = false;
         isDone = true;
-        endedAtState = currentState;
+        //endedAtState = currentState;
         this.actor.PrintLogIfActive(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
 
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -553,7 +553,7 @@ public class GoapAction {
         //if(actor.marker.pathfindingThread != null) {
         //    actor.marker.pathfindingThread.SetDoNotMove(true);
         //}
-        if(actor.currentAction != null && actor.currentAction == this) {
+        if(actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null && actor.currentAction == this) {
             if (reason != "") {
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

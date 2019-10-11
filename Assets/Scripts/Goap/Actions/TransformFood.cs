@@ -65,13 +65,13 @@ public class TransformFood : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        if (currentState.name == "Transform Success") {
-            if (poiTarget is Tombstone) {
-                poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
-            } else if (poiTarget is Character) {
-                (poiTarget as Character).DestroyMarker();
-            }
-        }
+        //if (currentState.name == "Transform Success") {
+        //    if (poiTarget is Tombstone) {
+        //        poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
+        //    } else if (poiTarget is Character) {
+        //        (poiTarget as Character).DestroyMarker();
+        //    }
+        //}
     }
     #endregion
 
@@ -121,6 +121,11 @@ public class TransformFood : GoapAction {
     private void AfterTransformSuccess() {
         deadCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
         actor.AdjustFood(transformedFood);
+        if (poiTarget is Tombstone) {
+            poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
+        } else if (poiTarget is Character) {
+            (poiTarget as Character).DestroyMarker();
+        }
     }
     private void PreTargetMissing() {
         currentState.AddLogFiller(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

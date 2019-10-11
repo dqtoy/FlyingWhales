@@ -1715,6 +1715,32 @@ public class Character : ILeader, IPointOfInterest {
         PrintLogIfActive(log);
         return hasCreatedJob;
     }
+    public bool CreateJobsOnTargetGainTrait(IPointOfInterest targetPOI, Trait traitGained, bool bypassInvisibilityCheck = false) {
+        string log = targetPOI.name + " gained trait " + traitGained.name + ", will try to create jobs based on it...";
+        if (!CanCharacterReact()) {
+            log += "\nCharacter cannot react!";
+            PrintLogIfActive(log);
+            return true;
+        }
+        if (!bypassInvisibilityCheck) {
+            Invisible invisible = targetPOI.GetNormalTrait("Invisible") as Invisible;
+            if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
+                log += "\nCharacter is invisible!";
+                PrintLogIfActive(log);
+                return true;
+            }
+        }
+        bool hasCreatedJob = false;
+        log += "\nChecking trait...";
+        if (traitGained.CreateJobsOnEnterVisionBasedOnTrait(targetPOI, this)) {
+            log += ": created a job!";
+            hasCreatedJob = true;
+        } else {
+            log += ": did not create a job!";
+        }
+        PrintLogIfActive(log);
+        return hasCreatedJob;
+    }
     private bool NormalJobsOnEnterVision(IPointOfInterest targetPOI) {
         bool hasCreatedJob = false;
         
@@ -6980,8 +7006,8 @@ public class Character : ILeader, IPointOfInterest {
             }
         } else if (intel is EventIntel) {
             EventIntel ei = intel as EventIntel;
-            if (ei.action.endedAtState != null && ei.action.endedAtState.shareIntelReaction != null) {
-                dialogReactions.AddRange(ei.action.endedAtState.shareIntelReaction.Invoke(this, ei, SHARE_INTEL_STATUS.INFORMED));
+            if (ei.action.currentState != null && ei.action.currentState.shareIntelReaction != null) {
+                dialogReactions.AddRange(ei.action.currentState.shareIntelReaction.Invoke(this, ei, SHARE_INTEL_STATUS.INFORMED));
             }
             //if the determined reactions list is empty, check the default reactions
             if (dialogReactions.Count == 0) {
@@ -8257,7 +8283,7 @@ public class Character : ILeader, IPointOfInterest {
     public void StopCurrentAction(bool shouldDoAfterEffect = true, string reason = "") {
         if(currentAction != null) {
             //Debug.Log("Stopped action of " + name + " which is " + currentAction.goapName);
-            if (reason != "") {
+            if (currentAction.parentPlan != null && currentAction.parentPlan.job != null && reason != "") {
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
                 log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(null, currentAction.goapName, LOG_IDENTIFIER.STRING_1);

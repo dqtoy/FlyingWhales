@@ -58,15 +58,15 @@ public class StealFromCharacter : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        if (currentState.name == "Steal Vigilant") {
-            if (poiTarget is Character) {
-                Character targetCharacter = poiTarget as Character;
-                if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
-                    CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
-                }
-                targetCharacter.marker.AddHostileInRange(actor, false);
-            }
-        }
+        //if (currentState.name == "Steal Vigilant") {
+        //    if (poiTarget is Character) {
+        //        Character targetCharacter = poiTarget as Character;
+        //        if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
+        //            CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
+        //        }
+        //        targetCharacter.marker.AddHostileInRange(actor, false);
+        //    }
+        //}
     }
     #endregion
 
@@ -104,12 +104,15 @@ public class StealFromCharacter : GoapAction {
     private void PreStealVigilant() {
         SetCommittedCrime(CRIME.THEFT, new Character[] { actor });
     }
-    //private void AfterStealVigilant() {
-    //    if (poiTarget is Character) {
-    //        Character targetCharacter = poiTarget as Character;
-            
-    //    }
-    //}
+    private void AfterStealVigilant() {
+        if (poiTarget is Character) {
+            Character targetCharacter = poiTarget as Character;
+            if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
+                CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
+            }
+            targetCharacter.marker.AddHostileInRange(actor, false);
+        }
+    }
     #endregion
 
     #region Intel Reactions

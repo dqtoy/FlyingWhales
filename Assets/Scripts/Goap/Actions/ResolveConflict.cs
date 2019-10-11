@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ResolveConflict : GoapAction {
 
-    private RelationshipTrait chosenEnemyTrait;
+    //private RelationshipTrait chosenEnemyTrait;
 
     public ResolveConflict(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.RESOLVE_CONFLICT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
@@ -44,10 +44,10 @@ public class ResolveConflict : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        if(currentState.name == "Resolve Success") {
-            Character targetCharacter = poiTarget as Character;
-            CharacterManager.Instance.RemoveOneWayRelationship(targetCharacter, chosenEnemyTrait.targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
-        }
+        //if(currentState.name == "Resolve Success") {
+        //    Character targetCharacter = poiTarget as Character;
+        //    CharacterManager.Instance.RemoveOneWayRelationship(targetCharacter, chosenEnemyTrait.targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
+        //}
     }
     #endregion
 
@@ -63,14 +63,14 @@ public class ResolveConflict : GoapAction {
     #endregion
 
     #region State Effects
-    public void PreResolveSuccess() {
+    public void AfterResolveSuccess() {
         if (poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
             List<RelationshipTrait> allEnemyTraits = targetCharacter.GetAllRelationshipsOfType(null, RELATIONSHIP_TRAIT.ENEMY);
             if (allEnemyTraits.Count > 0) {
-                chosenEnemyTrait = allEnemyTraits[UnityEngine.Random.Range(0, allEnemyTraits.Count)];
+                RelationshipTrait chosenEnemyTrait = allEnemyTraits[UnityEngine.Random.Range(0, allEnemyTraits.Count)];
                 currentState.AddLogFiller(chosenEnemyTrait.targetCharacter, chosenEnemyTrait.targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-
+                CharacterManager.Instance.RemoveOneWayRelationship(targetCharacter, chosenEnemyTrait.targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
                 //NOTE: Moved removal of enemy trait after the action is fully processed for proper arrangement of logs
             } else {
                 throw new System.Exception("Cannot resolve conflict for " + targetCharacter.name + " because he/she does not have enemies!");
