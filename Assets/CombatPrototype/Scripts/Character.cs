@@ -3596,6 +3596,10 @@ public class Character : ILeader, IPointOfInterest {
         if (isDead || GetNormalTrait("Unconscious", "Resting", "Catatonic") != null) {
             return;
         }
+        if(faction.GetRelationshipWith(witnessedEvent.actor.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
+            return;
+        }
         if (witnessedEvent.currentState == null) {
             throw new System.Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.goapName + " by " + witnessedEvent.actor.name + " but it does not have a current state!");
         }
@@ -8593,10 +8597,10 @@ public class Character : ILeader, IPointOfInterest {
                     GoapAction crimeToReport = informedCrime;
                     if (witnessedCrime != null) {
                         crimeToReport = witnessedCrime;
-                        //if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
-                        if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
-                            this.marker.AddHostileInRange(criminal.owner, false);
-                        }
+                        ////if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
+                        //if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
+                        //    this.marker.AddHostileInRange(criminal.owner, false);
+                        //}
                     }
                     job = CreateReportCrimeJob(committedCrime, crimeToReport, criminal);
                 }

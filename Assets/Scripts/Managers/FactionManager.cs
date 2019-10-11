@@ -77,7 +77,7 @@ public class FactionManager : MonoBehaviour {
         newFaction.SetEmblem(GetFactionEmblem(4));
         allFactions.Add(newFaction);
         SetNeutralFaction(newFaction);
-        //CreateRelationshipsForFaction(newFaction);
+        CreateRelationshipsForFaction(newFaction);
         //CreateFavorsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
@@ -260,7 +260,7 @@ public class FactionManager : MonoBehaviour {
     public Faction CreateNewFaction(bool isPlayerFaction = false, string factionName = "") {
         Faction newFaction = new Faction(isPlayerFaction);
         allFactions.Add(newFaction);
-        //CreateRelationshipsForFaction(newFaction);
+        CreateRelationshipsForFaction(newFaction);
         //CreateFavorsForFaction(newFaction);
         if (!string.IsNullOrEmpty(factionName)) {
             newFaction.SetName(factionName);
@@ -518,6 +518,10 @@ public class FactionManager : MonoBehaviour {
         FactionRelationship newRel = new FactionRelationship(faction1, faction2);
         faction1.AddNewRelationship(faction2, newRel);
         faction2.AddNewRelationship(faction1, newRel);
+        if(faction1.isPlayerFaction || faction2.isPlayerFaction) {
+            faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.HOSTILE);
+            faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.HOSTILE);
+        }
         return newRel;
     }
     /*
