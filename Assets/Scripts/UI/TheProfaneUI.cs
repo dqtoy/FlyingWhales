@@ -128,35 +128,34 @@ public class TheProfaneUI : MonoBehaviour {
             Minion currMinion = minions[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(minionItemPrefab.name, Vector3.zero, Quaternion.identity, minionsScrollRect.content);
             MinionCharacterItem item = go.GetComponent<MinionCharacterItem>();
-            item.SetCharacter(currMinion.character);
+            item.SetObject(currMinion.character);
             if (currMinion.assignedRegion == null) {
                 //can be assigned
-                item.SetAsToggle(minionsToggleGroup);
-                item.AddOnToggleAction(() => OnClickMinion(currMinion), true);
+                item.SetAsToggle();
+                item.SetToggleGroup(minionsToggleGroup);
+                item.ClearAllOnToggleActions();
+                item.AddOnToggleAction(OnClickMinion);
                 if (chosenMinion == currMinion || chosenMinion == null) {
                     item.SetToggleState(true);
                     SetSelectedMinion(currMinion);
                 }
-                item.SetCoverState(false);
+                item.SetInteractableState(true);
             } else {
                 //cannot be assigned
-                item.ResetToggle();
-                item.ClearClickActions();
+                item.SetToggleGroup(null);
+                item.ClearAllOnToggleActions();
                 if (chosenMinion == currMinion) {
-                    SetSelectedMinion(null);
                     item.SetToggleState(false);
+                    SetSelectedMinion(null);
                 }
                 go.transform.SetAsLastSibling();
-                //cannot be assigned
-                item.SetCoverState(true);
+                item.SetInteractableState(false);
             }
         }
     }
-    private void OnClickMinion(Minion minion) {
-        if (chosenMinion == minion) {
-            //SetSelectedMinion(null);
-        } else {
-            SetSelectedMinion(minion);
+    private void OnClickMinion(Character character, bool isOn) {
+        if (isOn) {
+            SetSelectedMinion(character.minion);
         }
     }
     private void SetSelectedMinion(Minion minion) {

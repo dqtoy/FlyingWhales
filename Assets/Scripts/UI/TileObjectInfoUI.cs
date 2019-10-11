@@ -13,7 +13,7 @@ public class TileObjectInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Users")]
-    [SerializeField] private GameObject landmarkCharacterPrefab;
+    [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
 
     public TileObject activeTileObject { get; private set; }
@@ -56,9 +56,10 @@ public class TileObjectInfoUI : UIMenu {
             for (int i = 0; i < activeTileObject.users.Length; i++) {
                 Character character = activeTileObject.users[i];
                 if(character != null) {
-                    GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
-                    LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-                    item.SetCharacter(character, this);
+                    GameObject characterGO = UIManager.Instance.InstantiateUIObject(characterItemPrefab.name, charactersScrollView.content);
+                    CharacterNameplateItem item = characterGO.GetComponent<CharacterNameplateItem>();
+                    item.SetObject(character);
+                    item.SetAsDefaultBehaviour();
                 }
             }
         }

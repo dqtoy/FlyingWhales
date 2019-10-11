@@ -22,10 +22,10 @@ public class FactionInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Characters")]
-    [SerializeField] private GameObject landmarkCharacterPrefab;
+    [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
     [SerializeField] private RectTransform leaderEmblem;
-    private List<LandmarkCharacterItem> characterItems;
+    private List<CharacterNameplateItem> characterItems;
 
     [Space(10)]
     [Header("Regions")]
@@ -56,7 +56,7 @@ public class FactionInfoUI : UIMenu {
 
     internal override void Initialize() {
         base.Initialize();
-        characterItems = new List<LandmarkCharacterItem>();
+        characterItems = new List<CharacterNameplateItem>();
         locationItems = new List<LocationPortrait>();
         LoadLogItems();
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
@@ -193,10 +193,10 @@ public class FactionInfoUI : UIMenu {
         }
         return null;
     }
-    private LandmarkCharacterItem GetItem(Character character) {
-        LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
+    private CharacterNameplateItem GetItem(Character character) {
+        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
-            LandmarkCharacterItem item = items[i];
+            CharacterNameplateItem item = items[i];
             if (item.character != null) {
                 if (item.character.id == character.id) {
                     return item;
@@ -205,10 +205,11 @@ public class FactionInfoUI : UIMenu {
         }
         return null;
     }
-    private LandmarkCharacterItem CreateNewCharacterItem(Character character, bool autoSort = true) {
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
-        LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(character, this);
+    private CharacterNameplateItem CreateNewCharacterItem(Character character, bool autoSort = true) {
+        GameObject characterGO = UIManager.Instance.InstantiateUIObject(characterItemPrefab.name, charactersScrollView.content);
+        CharacterNameplateItem item = characterGO.GetComponent<CharacterNameplateItem>();
+        item.SetObject(character);
+        item.SetAsDefaultBehaviour();
         characterItems.Add(item);
         if (autoSort) {
             OrderCharacterItems();
@@ -218,7 +219,7 @@ public class FactionInfoUI : UIMenu {
     private void OrderCharacterItems() {
         if (activeFaction.leader is Character) {
             Character leader = activeFaction.leader as Character;
-            LandmarkCharacterItem leaderItem = GetItem(leader);
+            CharacterNameplateItem leaderItem = GetItem(leader);
             if (leaderItem == null) {
                 throw new System.Exception("Leader item in " + activeFaction.name + "'s UI is null! Leader is " + leader.name);
             }
@@ -237,7 +238,7 @@ public class FactionInfoUI : UIMenu {
     }
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
         if (isShowing && activeFaction != null && activeFaction.id == faction.id) {
-            LandmarkCharacterItem item = GetItem(character);
+            CharacterNameplateItem item = GetItem(character);
             if (item != null) {
                 characterItems.Remove(item);
                 ObjectPoolManager.Instance.DestroyObject(item.gameObject);

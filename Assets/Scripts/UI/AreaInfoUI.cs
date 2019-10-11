@@ -23,13 +23,13 @@ public class AreaInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Characters")]
-    [SerializeField] private GameObject landmarkCharacterPrefab;
+    [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
     [SerializeField] private RectTransform visitorsMain;
     [SerializeField] private RectTransform residentsMain;
     [SerializeField] private RectTransform visitorsEmblem;
     [SerializeField] private RectTransform residentsEmblem;
-    private List<LandmarkCharacterItem> characterItems;
+    private List<CharacterNameplateItem> characterItems;
 
     [Space(10)]
     [Header("Items")]
@@ -80,7 +80,7 @@ public class AreaInfoUI : UIMenu {
 
     internal override void Initialize() {
         base.Initialize();
-        characterItems = new List<LandmarkCharacterItem>();
+        characterItems = new List<CharacterNameplateItem>();
         combatGrid = new CombatGrid();
         combatGrid.Initialize();
         LoadLogItems();
@@ -287,10 +287,10 @@ public class AreaInfoUI : UIMenu {
             CreateNewCharacterItem(currCharacter);
         }
     }
-    private LandmarkCharacterItem GetItem(Character character) {
-        LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
+    private CharacterNameplateItem GetItem(Character character) {
+        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
-            LandmarkCharacterItem item = items[i];
+            CharacterNameplateItem item = items[i];
             if (item.character != null) {
                 if (item.character.id == character.id) {
                     return item;
@@ -299,20 +299,21 @@ public class AreaInfoUI : UIMenu {
         }
         return null;
     }
-    private LandmarkCharacterItem CreateNewCharacterItem(Character character) {
+    private CharacterNameplateItem CreateNewCharacterItem(Character character) {
         if (AlreadyHasItem(character)) {
             return null;
         }
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
-        LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(character, this);
+        GameObject characterGO = UIManager.Instance.InstantiateUIObject(characterItemPrefab.name, charactersScrollView.content);
+        CharacterNameplateItem item = characterGO.GetComponent<CharacterNameplateItem>();
+        item.SetObject(character);
+        item.SetAsDefaultBehaviour();
         characterItems.Add(item);
         OrderCharacterItems();
         return item;
     }
     private bool AlreadyHasItem(Character character) {
         for (int i = 0; i < characterItems.Count; i++) {
-            LandmarkCharacterItem item = characterItems[i];
+            CharacterNameplateItem item = characterItems[i];
             if (item.character.id == character.id) {
                 return true;
             }
@@ -341,7 +342,7 @@ public class AreaInfoUI : UIMenu {
         }
     }
     private void DestroyItemOfCharacter(Character character) {
-        LandmarkCharacterItem item = GetItem(character);
+        CharacterNameplateItem item = GetItem(character);
         if (item != null) {
             characterItems.Remove(item);
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
@@ -351,13 +352,13 @@ public class AreaInfoUI : UIMenu {
     public void OrderCharacterItems() {
         visitorsEmblem.SetParent(this.transform);
         residentsEmblem.SetParent(this.transform);
-        List<LandmarkCharacterItem> visitors = new List<LandmarkCharacterItem>();
+        List<CharacterNameplateItem> visitors = new List<CharacterNameplateItem>();
         //List<LandmarkCharacterItem> travellingVisitors = new List<LandmarkCharacterItem>();
 
-        List<LandmarkCharacterItem> residents = new List<LandmarkCharacterItem>();
+        List<CharacterNameplateItem> residents = new List<CharacterNameplateItem>();
         //List<LandmarkCharacterItem> nonTravellingResidents = new List<LandmarkCharacterItem>();
         for (int i = 0; i < characterItems.Count; i++) {
-            LandmarkCharacterItem currItem = characterItems[i];
+            CharacterNameplateItem currItem = characterItems[i];
             if (currItem.character.homeArea != null && activeTile.id == currItem.character.homeArea.id) {
                 residents.Add(currItem);
             } else {
@@ -365,17 +366,17 @@ public class AreaInfoUI : UIMenu {
             }
         }
 
-        List<LandmarkCharacterItem> orderedVisitors = new List<LandmarkCharacterItem>(visitors.OrderByDescending(x => x.character.level));
+        List<CharacterNameplateItem> orderedVisitors = new List<CharacterNameplateItem>(visitors.OrderByDescending(x => x.character.level));
         //orderedVisitors.AddRange(travellingVisitors.OrderByDescending(x => x.character.level));
-        List<LandmarkCharacterItem> orderedResidents = new List<LandmarkCharacterItem>(residents.OrderByDescending(x => x.character.level));
+        List<CharacterNameplateItem> orderedResidents = new List<CharacterNameplateItem>(residents.OrderByDescending(x => x.character.level));
         //orderedResidents.AddRange(residents.OrderByDescending(x => x.character.level));
 
-        List<LandmarkCharacterItem> orderedItems = new List<LandmarkCharacterItem>();
+        List<CharacterNameplateItem> orderedItems = new List<CharacterNameplateItem>();
         orderedItems.AddRange(orderedVisitors);
         orderedItems.AddRange(orderedResidents);
 
-        LandmarkCharacterItem firstResident = orderedResidents.FirstOrDefault();
-        LandmarkCharacterItem firstVisitor = orderedVisitors.FirstOrDefault();
+        CharacterNameplateItem firstResident = orderedResidents.FirstOrDefault();
+        CharacterNameplateItem firstVisitor = orderedVisitors.FirstOrDefault();
 
         visitorsEmblem.gameObject.SetActive(firstVisitor != null);
         residentsEmblem.gameObject.SetActive(firstResident != null);
@@ -395,7 +396,7 @@ public class AreaInfoUI : UIMenu {
 
 
         for (int i = 0; i < orderedItems.Count; i++) {
-            LandmarkCharacterItem currItem = orderedItems[i];
+            CharacterNameplateItem currItem = orderedItems[i];
             currItem.transform.SetSiblingIndex(i);
         }
     }

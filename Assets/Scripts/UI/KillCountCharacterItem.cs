@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class KillCountCharacterItem : CharacterItem {
+public class KillCountCharacterItem : CharacterNameplateItem {
 
-    [SerializeField] private TextMeshProUGUI deathLbl;
-    [SerializeField] private RectTransform deathLblRT;
-    [SerializeField] private RectTransform deathReasonContainer;
-
-    public override void SetCharacter(Character character) {
-        base.SetCharacter(character);
+    public override void SetObject(Character character) {
+        base.SetObject(character);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
@@ -32,11 +28,10 @@ public class KillCountCharacterItem : CharacterItem {
         Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
         StopScroll();
     }
-    protected override void UpdateInfo() {
-        base.UpdateInfo();
-        deathReasonContainer.gameObject.SetActive(!character.IsAble() || !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(character.faction));
+    private void UpdateInfo() {
+        SetSupportingLabelState(!character.IsAble() || !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(character.faction));
         if (character.isDead) {
-            deathLbl.text = "\"" + character.deathStr + "\"";
+            supportingLbl.text = "\"" + character.deathStr + "\"";
         } else {
             string text = string.Empty;
             Trait negDisTrait = character.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
@@ -61,7 +56,7 @@ public class KillCountCharacterItem : CharacterItem {
                     text = "\"" + character.name + " became a minion.\"";
                 }
             }
-            deathLbl.text = text;
+            supportingLbl.text = text;
         }
     }
 
@@ -104,42 +99,6 @@ public class KillCountCharacterItem : CharacterItem {
     private void OnCharacterSwitchedAlterEgo(Character character) {
         if (character.id == this.character.id) {
             UpdateInfo();
-        }
-    }
-    #endregion
-
-    #region Utilities
-    Coroutine scrollRoutine;
-    public void ScrollText() {
-        if (deathLblRT.sizeDelta.x < deathReasonContainer.sizeDelta.x || scrollRoutine != null) {
-            return;
-        }
-        scrollRoutine = StartCoroutine(Scroll());
-    }
-    public void StopScroll() {
-        if (scrollRoutine != null) {
-            StopCoroutine(scrollRoutine);
-            scrollRoutine = null;
-        }
-        deathLblRT.anchoredPosition = new Vector3(0f, deathLblRT.anchoredPosition.y);
-    }
-    private IEnumerator Scroll() {
-        float width = deathLbl.preferredWidth;
-        Vector3 startPosition = deathLblRT.anchoredPosition;
-
-        float difference = deathReasonContainer.sizeDelta.x - deathLblRT.sizeDelta.x;
-
-        float scrollDirection = -1f;
-
-        while (true) {
-            float newX = deathLblRT.anchoredPosition.x + (0.5f * scrollDirection);
-            deathLblRT.anchoredPosition = new Vector3(newX, startPosition.y, startPosition.z);
-            if (deathLblRT.anchoredPosition.x < difference) {
-                scrollDirection = 1f;
-            } else if (deathLblRT.anchoredPosition.x > 0) {
-                scrollDirection = -1f;
-            }
-            yield return null;
         }
     }
     #endregion

@@ -154,8 +154,9 @@ public class RegionInfoUI : UIMenu {
         for (int i = 0; i < activeRegion.charactersAtLocation.Count; i++) {
             Character character = activeRegion.charactersAtLocation[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(characterItemPrefab.name, Vector3.zero, Quaternion.identity, charactersScrollView.content);
-            LandmarkCharacterItem item = go.GetComponent<LandmarkCharacterItem>();
-            item.SetCharacter(character, this);
+            CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+            item.SetObject(character);
+            item.SetAsDefaultBehaviour();
         }
     }
     #endregion
@@ -199,9 +200,11 @@ public class RegionInfoUI : UIMenu {
     private void UpdateStartInvasionBtn() {
         confirmInvasionBtn.interactable = chosenMinionToInvade != null;
     }
-    private void ChooseMinionForInvasion(Minion minion) {
-        chosenMinionToInvade = minion;
-        UpdateStartInvasionBtn();
+    private void ChooseMinionForInvasion(Character character, bool isOn) {
+        if (isOn) {
+            chosenMinionToInvade = character.minion;
+            UpdateStartInvasionBtn();
+        }
     }
     public void StartInvasion() {
         activeRegion.StartInvasion(chosenMinionToInvade);

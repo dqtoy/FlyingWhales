@@ -1078,19 +1078,19 @@ public class PlayerUI : MonoBehaviour {
             summonSlotFrameGO.SetActive(false);
             cycleSummonLeft.gameObject.SetActive(false);
             cycleSummonRight.gameObject.SetActive(false);
-            currentSummonLvlGO.SetActive(false);
+            //currentSummonLvlGO.SetActive(false);
         } else if (currentlySelectedSummonSlot.summon == null) {
             //summon slot has no summon
             summonSlotFrameGO.SetActive(true);
             currentSummonImg.gameObject.SetActive(false);
-            currentSummonLvlGO.SetActive(true);
+            //currentSummonLvlGO.SetActive(true);
             currentSummonLvlLbl.text = currentlySelectedSummonSlot.level.ToString();
         } else {
             //summon slot has summon
             summonSlotFrameGO.SetActive(true);
             currentSummonImg.gameObject.SetActive(true);
             currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(currentlySelectedSummonSlot.summon.summonType).summonPortrait;
-            currentSummonLvlGO.SetActive(true);
+            //currentSummonLvlGO.SetActive(true);
             currentSummonLvlLbl.text = currentlySelectedSummonSlot.level.ToString();
         }
         if (currentlySelectedSummonSlot != null) {
@@ -1273,20 +1273,20 @@ public class PlayerUI : MonoBehaviour {
             currentArtifactImg.gameObject.SetActive(false);
             cycleArtifactLeft.gameObject.SetActive(false);
             cycleArtifactRight.gameObject.SetActive(false);
-            currentArtifactLvlGO.SetActive(false);
+            //currentArtifactLvlGO.SetActive(false);
             artifactSlotFrameGO.SetActive(false);
         } else if (currentlySelectedArtifactSlot.artifact == null) {
             //artifact slot has no artifact
             artifactSlotFrameGO.SetActive(true);
             currentArtifactImg.gameObject.SetActive(false);
-            currentArtifactLvlGO.SetActive(true);
+            //currentArtifactLvlGO.SetActive(true);
             currentArtifactLvlLbl.text = currentlySelectedArtifactSlot.level.ToString();
         } else {
             //player has at least 1 artifact slot and 1 artifact
             artifactSlotFrameGO.SetActive(true);
             currentArtifactImg.gameObject.SetActive(true);
             currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(currentlySelectedArtifactSlot.artifact.type).artifactPortrait;
-            currentArtifactLvlGO.SetActive(true);
+            //currentArtifactLvlGO.SetActive(true);
             currentArtifactLvlLbl.text = currentlySelectedArtifactSlot.level.ToString();
         }
 
@@ -1470,15 +1470,19 @@ public class PlayerUI : MonoBehaviour {
         killSummaryGO.SetActive(false);
     }
     private void LoadKillCountCharacterItems(Area area) {
-        CharacterItem[] items = Utilities.GetComponentsInDirectChildren<CharacterItem>(killCountScrollView.content.gameObject);
+        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             ObjectPoolManager.Instance.DestroyObject(items[i].gameObject);
         }
         for (int i = 0; i < area.region.residents.Count; i++) {
             Character character = area.region.residents[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killCountScrollView.content);
-            CharacterItem item = go.GetComponent<CharacterItem>();
-            item.SetCharacter(character);
+            CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+            item.SetObject(character);
+            item.SetAsButton();
+            item.ClearAllOnClickActions();
+            item.AddOnClickAction(UIManager.Instance.ShowCharacterInfo);
+
         }
         OrderKillSummaryItems();
         UpdateKillCount();
@@ -1487,11 +1491,11 @@ public class PlayerUI : MonoBehaviour {
         killCountLbl.text = LandmarkManager.Instance.enemyOfPlayerArea.region.residents.Where(x => x.IsAble()).Count().ToString() + "/" + LandmarkManager.Instance.enemyOfPlayerArea.citizenCount.ToString();
     }
     private void OrderKillSummaryItems() {
-        CharacterItem[] items = Utilities.GetComponentsInDirectChildren<CharacterItem>(killCountScrollView.content.gameObject);
-        List<CharacterItem> alive = new List<CharacterItem>();
-        List<CharacterItem> dead = new List<CharacterItem>();
+        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
+        List<CharacterNameplateItem> alive = new List<CharacterNameplateItem>();
+        List<CharacterNameplateItem> dead = new List<CharacterNameplateItem>();
         for (int i = 0; i < items.Length; i++) {
-            CharacterItem currItem = items[i];
+            CharacterNameplateItem currItem = items[i];
             if (!currItem.character.IsAble() || !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(currItem.character.faction)) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
                 dead.Add(currItem);
             } else {
@@ -1500,12 +1504,12 @@ public class PlayerUI : MonoBehaviour {
         }
         aliveHeader.transform.SetAsFirstSibling();
         for (int i = 0; i < alive.Count; i++) {
-            CharacterItem currItem = alive[i];
+            CharacterNameplateItem currItem = alive[i];
             currItem.transform.SetSiblingIndex(i + 1);
         }
         deadHeader.transform.SetSiblingIndex(alive.Count + 1);
         for (int i = 0; i < dead.Count; i++) {
-            CharacterItem currItem = dead[i];
+            CharacterNameplateItem currItem = dead[i];
             currItem.transform.SetSiblingIndex(alive.Count + i + 2);
         }
     }
@@ -1611,19 +1615,20 @@ public class PlayerUI : MonoBehaviour {
     }
     private void CreateNewMinionItem(Minion minion) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(minionItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
-        MinionCharacterItem item = go.GetComponent<MinionCharacterItem>();
-        item.SetCharacter(minion.character);
+        CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+        item.SetObject(minion.character);
+        item.SetAsDefaultBehaviour();
     }
     private void DeleteMinionItem(Minion minion) {
-        MinionCharacterItem item = GetMinionItem(minion);
+        CharacterNameplateItem item = GetMinionItem(minion);
         if (item != null) {
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
         }
     }
-    private MinionCharacterItem GetMinionItem(Minion minion) {
-        MinionCharacterItem[] items = Utilities.GetComponentsInDirectChildren<MinionCharacterItem>(minionListScrollView.content.gameObject);
+    private CharacterNameplateItem GetMinionItem(Minion minion) {
+        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(minionListScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
-            MinionCharacterItem item = items[i];
+            CharacterNameplateItem item = items[i];
             if (item.character == minion.character) {
                 return item;
             }
