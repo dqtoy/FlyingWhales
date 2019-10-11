@@ -732,6 +732,13 @@ public class Faction {
             Debug.LogWarning("There is no key for " + otherFaction.name + " in " + this.name + "'s relationship dictionary");
         }
     }
+    public void SetRelationshipFor(Faction otherFaction, FACTION_RELATIONSHIP_STATUS status) {
+        if (relationships.ContainsKey(otherFaction)) {
+            relationships[otherFaction].SetRelationshipStatus(status);
+        } else {
+            Debug.LogWarning("There is no key for " + otherFaction.name + " in " + this.name + "'s relationship dictionary");
+        }
+    }
     public bool IsAtWar() {
         foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
             if (kvp.Key.isActive && kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {

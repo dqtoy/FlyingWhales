@@ -31,11 +31,11 @@ public class Stumble : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        if (currentState.name == "Stumble Success") {
-            if (actor.currentHP <= 0) {
-                actor.Death(deathFromAction: this);
-            }
-        }
+        //if (currentState.name == "Stumble Success") {
+        //    if (actor.currentHP <= 0) {
+        //        actor.Death(deathFromAction: this);
+        //    }
+        //}
     }
     #endregion
 
@@ -55,6 +55,11 @@ public class Stumble : GoapAction {
         int actualHPToLose = Mathf.CeilToInt(actor.maxHP * percentMaxHPToLose);
 
         actor.AdjustHP(-actualHPToLose);
+    }
+    private void AfterStumbleSuccess() {
+        if (actor.currentHP <= 0) {
+            actor.Death(deathFromAction: this);
+        }
     }
     #endregion
 

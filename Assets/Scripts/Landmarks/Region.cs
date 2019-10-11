@@ -311,7 +311,7 @@ public class Region {
         demonicBuildingData = new DemonicLandmarkBuildingData() {
             landmarkType = landmarkType,
             landmarkName = landmarkData.landmarkTypeString,
-            buildDuration = landmarkData.buildDuration,
+            buildDuration = landmarkData.buildDuration + Mathf.RoundToInt(landmarkData.buildDuration * PlayerManager.Instance.player.constructionRatePercentageModifier),
             currentDuration = 0,
         };
         TimerHubUI.Instance.AddItem("Building " + demonicBuildingData.landmarkName + " at " + name, demonicBuildingData.buildDuration, () => UIManager.Instance.ShowHextileInfo(coreTile));

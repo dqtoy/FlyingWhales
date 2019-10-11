@@ -60,5 +60,9 @@ public class DispelMagic : GoapAction {
 public class DispelMagicData : GoapActionData {
     public DispelMagicData() : base(INTERACTION_TYPE.DISPEL_MAGIC) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
+        requirementAction = Requirement;
+    }
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return poiTarget.GetNormalTrait("Reanimated", "Cursed") != null;
     }
 }

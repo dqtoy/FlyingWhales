@@ -31,11 +31,11 @@ public class Accident : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        if(currentState.name == "Accident Success") {
-            if(actor.currentHP <= 0) {
-                actor.Death(deathFromAction: this);
-            }
-        }
+        //if (currentState.name == "Accident Success") {
+        //    if (actor.currentHP <= 0) {
+        //        actor.Death(deathFromAction: this);
+        //    }
+        //}
     }
     public override bool InitializeOtherData(object[] otherData) {
         this.otherData = otherData;
@@ -65,6 +65,9 @@ public class Accident : GoapAction {
         int actualHPToLose = Mathf.CeilToInt(actor.maxHP * percentMaxHPToLose);
 
         actor.AdjustHP(-actualHPToLose);
+        if (actor.currentHP <= 0) {
+            actor.Death(deathFromAction: this);
+        }
     }
     #endregion
 }

@@ -63,8 +63,8 @@ public class SaveDataTheEye : SaveDataLandmark {
 
     public override void Save(BaseLandmark landmark) {
         base.Save(landmark);
-        TheSpire spire = landmark as TheSpire;
-        currentCooldownTick = spire.currentCooldownTick;
+        TheEye eye = landmark as TheEye;
+        currentCooldownTick = eye.currentCooldownTick;
     }
     public override void LoadSpecificLandmarkData(BaseLandmark landmark) {
         base.LoadSpecificLandmarkData(landmark);

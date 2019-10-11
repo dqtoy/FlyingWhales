@@ -324,9 +324,10 @@ public class CharacterMarker : PooledObject {
             //    character.currentAction.StopAction(true);
             //}
         } else {
-            if (inVisionCharacters.Contains(otherCharacter)) {
-                character.CreateJobsOnEnterVisionWith(otherCharacter);
-            }
+            //if (inVisionCharacters.Contains(otherCharacter)) {
+            //    character.CreateJobsOnEnterVisionWith(otherCharacter);
+            //}
+            character.CreateJobsOnTargetGainTrait(otherCharacter, trait);
             if (trait.type == TRAIT_TYPE.DISABLER && trait.effect == TRAIT_EFFECT.NEGATIVE) {
                 RemoveHostileInRange(otherCharacter); //removed hostile because he/she became unconscious.
                 RemoveAvoidInRange(otherCharacter);

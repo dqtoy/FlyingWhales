@@ -38,9 +38,9 @@ public class SlayCharacter : GoapAction {
     //}
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        if(currentState.name == "Slay Success") {
-            (poiTarget as Character).Death(deathFromAction: this, responsibleCharacter: actor);
-        }
+        //if(currentState.name == "Slay Success") {
+        //    (poiTarget as Character).Death(deathFromAction: this, responsibleCharacter: actor);
+        //}
     }
     #endregion
 
@@ -48,6 +48,9 @@ public class SlayCharacter : GoapAction {
     private void PreSlaySuccess() {
         SetCommittedCrime(CRIME.MURDER, new Character[] { actor });
         //currentState.SetIntelReaction(KnockoutSuccessIntelReaction);
+    }
+    private void AfterSlaySuccess() {
+        (poiTarget as Character).Death(deathFromAction: this, responsibleCharacter: actor);
     }
     #endregion
 
