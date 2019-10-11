@@ -70,6 +70,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         Messenger.AddListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
         Messenger.AddListener<Character>(Signals.FACTION_SET, OnFactionSet);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
+        Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
     }
     //private void OnDisable() {
     //    RemoveListeners();
@@ -85,16 +86,20 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         }
         _portraitSettings = character.portraitSettings;
 
-        Sprite classPortrait = CharacterManager.Instance.GetClassPortraitSprite(character.originalClassName);
-        if (classPortrait != null) { //so that only characters that started out with special classes can use the special portraits
-            SetWholeImageSprite(classPortrait);
+        if (character.role.roleType == CHARACTER_ROLE.MINION) {
+            SetWholeImageSprite(CharacterManager.Instance.GetClassPortraitSprite(character.characterClass.className));
         } else {
-            SetBody(character.portraitSettings.bodyIndex);
-            SetSkin(character.portraitSettings.skinIndex);
-            SetHair(character.portraitSettings.hairIndex);
-            SetUnder(character.portraitSettings.underIndex);
-            SetTop(character.portraitSettings.topIndex);
-            SetWholeImageSprite(null);
+            Sprite originalClassPortrait = CharacterManager.Instance.GetClassPortraitSprite(character.originalClassName);
+            if (originalClassPortrait != null) { //so that only characters that started out with special classes can use the special portraits
+                SetWholeImageSprite(originalClassPortrait);
+            } else {
+                SetBody(character.portraitSettings.bodyIndex);
+                SetSkin(character.portraitSettings.skinIndex);
+                SetHair(character.portraitSettings.hairIndex);
+                SetUnder(character.portraitSettings.underIndex);
+                SetTop(character.portraitSettings.topIndex);
+                SetWholeImageSprite(null);
+            }
         }
         UpdateLvl();
         UpdateFrame();
@@ -243,15 +248,10 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
         }
     }
     private void RemoveListeners() {
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_LEVEL_CHANGED)) {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
-        }
-        if (Messenger.eventTable.ContainsKey(Signals.FACTION_SET)) {
-            Messenger.RemoveListener<Character>(Signals.FACTION_SET, OnFactionSet);
-        }
-        if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_CHANGED_RACE)) {
-            Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
-        }
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_LEVEL_CHANGED, OnCharacterLevelChanged);
+        Messenger.RemoveListener<Character>(Signals.FACTION_SET, OnFactionSet);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
+        Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
     }
     #endregion
 
@@ -360,6 +360,12 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
             GeneratePortrait(character);
         }
     }
+    private void OnCharacterChangedRole(Character character) {
+        if (_character != null && _character.id == character.id) {
+            GeneratePortrait(character);
+        }
+    }
 
-    
+
+
 }

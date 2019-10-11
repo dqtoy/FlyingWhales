@@ -28,18 +28,24 @@ public class TheProfane : BaseLandmark {
             PlayerManager.Instance.player.AdjustMana(-GetConvertToCultistCost(targetCharacter));
             targetCharacter.AddTrait("Cultist");
         } else if (action == "Corrupt") {
-            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.CORRUPT_CULTIST, CHARACTER_STATE.MOVE_OUT);
-            targetCharacter.jobQueue.AddJobInQueue(job);
+            if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.CORRUPT_CULTIST)) {
+                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.CORRUPT_CULTIST, CHARACTER_STATE.MOVE_OUT);
+                targetCharacter.jobQueue.AddJobInQueue(job);
+            }
         } else if (action == "Sabotage Faction Quest") {
             (targetCharacter.faction.activeQuest as DivineInterventionQuest).CreateSabotageFactionnJob();
         } else if (action == "Destroy Supply") {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_SUPPLY, INTERACTION_TYPE.DESTROY_SUPPLY);
-            job.SetIsStealth(true);
-            targetCharacter.jobQueue.AddJobInQueue(job);
+            if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.DESTROY_SUPPLY)) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_SUPPLY, INTERACTION_TYPE.DESTROY_SUPPLY);
+                job.SetIsStealth(true);
+                targetCharacter.jobQueue.AddJobInQueue(job);
+            }
         } else if (action == "Destroy Food") {
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_FOOD, INTERACTION_TYPE.DESTROY_FOOD);
-            job.SetIsStealth(true);
-            targetCharacter.jobQueue.AddJobInQueue(job);
+            if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.DESTROY_FOOD)) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DESTROY_FOOD, INTERACTION_TYPE.DESTROY_FOOD);
+                job.SetIsStealth(true);
+                targetCharacter.jobQueue.AddJobInQueue(job);
+            }
         }
         StartCooldown();
         Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);

@@ -161,7 +161,7 @@ public class CharacterTrait : Trait {
                 //- unconscious, catatonic, restrained, puked, stumbled
                 ///NOTE: Puke and Stumble Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> and <see cref="Stumble.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/> respectively
                 //They will trigger a personal https://trello.com/c/uCbLBXsF/2846-character-laugh-at job
-                if (characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && targetCharacter.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null) {
+                if (characterThatWillDoJob.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && targetCharacter.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null && characterThatWillDoJob.faction ==  targetCharacter.faction) {
                     return CreateLaughAtJob(characterThatWillDoJob, targetCharacter);
                 }
 
@@ -170,7 +170,7 @@ public class CharacterTrait : Trait {
                 ///NOTE: Puke Reactions can be found at <see cref="Puke.SuccessReactions(Character, Intel, SHARE_INTEL_STATUS)"/>
                 //They will trigger a personal https://trello.com/c/iDsfwQ7d/2845-character-feeling-concerned job
                 else if (characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE && targetCharacter.GetNormalTrait("Unconscious", "Catatonic", "Restrained") != null
-                    && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, targetCharacter)) {
+                    && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_TRAIT, targetCharacter) && characterThatWillDoJob.faction == targetCharacter.faction) {
                     return CreateFeelingConcernedJob(characterThatWillDoJob, targetCharacter);
                 }
                 #endregion

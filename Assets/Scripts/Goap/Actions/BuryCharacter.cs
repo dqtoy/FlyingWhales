@@ -84,8 +84,14 @@ public class BuryCharacter : GoapAction {
         //**After Effect 1**: Remove Target from Actor's Party.
         actor.ownParty.RemoveCharacter(targetCharacter, false);
         //**After Effect 2**: Place a Tombstone tile object in adjacent unoccupied tile, link it with Target.
-        List<LocationGridTile> choices = actor.gridTileLocation.UnoccupiedNeighbours.Where(x => x.structure == actor.currentStructure).ToList();
-        LocationGridTile chosenLocation = choices[Random.Range(0, choices.Count)];
+        LocationGridTile chosenLocation = actor.gridTileLocation;
+        if (chosenLocation.isOccupied) {
+            List<LocationGridTile> choices = actor.gridTileLocation.UnoccupiedNeighbours.Where(x => x.structure == actor.currentStructure).ToList();
+            if (choices.Count > 0) {
+                chosenLocation = choices[Random.Range(0, choices.Count)];
+            }
+            
+        }
         Tombstone tombstone = new Tombstone(actor.currentStructure);
         tombstone.SetCharacter(targetCharacter);
         actor.currentStructure.AddPOI(tombstone, chosenLocation);

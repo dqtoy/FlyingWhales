@@ -28,7 +28,9 @@ public class LaughAt : GoapAction {
         actor.AdjustHappiness(500);
     }
     private void AfterLaughSuccess() {
-        poiTarget.AddTrait("Ashamed");
+        if (poiTarget.GetNormalTrait("Unconscious") == null) {
+            poiTarget.AddTrait("Ashamed");
+        }
     }
     #endregion   
 }

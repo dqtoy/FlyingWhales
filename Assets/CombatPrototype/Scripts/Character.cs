@@ -2640,6 +2640,10 @@ public class Character : ILeader, IPointOfInterest {
         //_characterClass = charClass.CreateNewCopy();
         OnCharacterClassChange();
 
+        if (minion != null) {
+            minion.SetAssignedDeadlySinName(className);
+        }
+
 #if !WORLD_CREATION_TOOL
         //_homeLandmark.tileLocation.areaOfTile.excessClasses.Remove(previousClassName);
         //_homeLandmark.tileLocation.areaOfTile.missingClasses.Remove(_characterClass.className);
@@ -2673,7 +2677,7 @@ public class Character : ILeader, IPointOfInterest {
                 }
                 //CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
                 CameraMove.Instance.CenterCameraOn(homeRegion.coreTile.gameObject);
-            }else if (currentParty.icon.isTravelling) {
+            } else if (currentParty.icon.isTravelling) {
                 if (marker.gameObject.activeInHierarchy) {
                     bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
                     if (!specificLocation.areaMap.isShowing) {
@@ -2685,10 +2689,12 @@ public class Character : ILeader, IPointOfInterest {
                 CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
             } else {
                 bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
-                if (!specificLocation.areaMap.isShowing) {
+                if (specificLocation.areaMap != null && !specificLocation.areaMap.isShowing) {
                     InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
+                    AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
+                } else {
+                    CameraMove.Instance.CenterCameraOn(specificLocation.region.coreTile.gameObject);
                 }
-                AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
             }
         }
     }
@@ -4155,8 +4161,8 @@ public class Character : ILeader, IPointOfInterest {
         //RecomputeMaxExperience();
     }
     public void OnCharacterClassChange() {
-        if (_currentHP > maxHPMod) {
-            _currentHP = maxHPMod;
+        if (_currentHP > maxHP) {
+            _currentHP = maxHP;
         }
         if (_sp > _maxSP) {
             _sp = _maxSP;
@@ -5234,37 +5240,6 @@ public class Character : ILeader, IPointOfInterest {
         _minion = minion;
         //UnsubscribeSignals(); //Removed this since character's listeners are not on by default now.
     }
-    public void RecruitAsMinion() {
-        if (stateComponent.currentState != null) {
-            stateComponent.currentState.OnExitThisState();
-        } else if (stateComponent.stateToDo != null) {
-            stateComponent.SetStateToDo(null);
-        }
-
-        CancelAllJobsTargettingThisCharacter("target became a minion", false);
-        Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target became a minion");
-        if (currentAction != null && !currentAction.cannotCancelAction) {
-            currentAction.StopAction(reason: "Became a minion");
-        }
-
-        if (!IsInOwnParty()) {
-            _currentParty.RemoveCharacter(this);
-        }
-        MigrateHomeTo(PlayerManager.Instance.player.playerArea.region);
-
-        specificLocation.RemoveCharacterFromLocation(this.currentParty);
-        currentRegion?.RemoveCharacterFromLocation(this);
-        
-        ResetFullnessMeter();
-        ResetHappinessMeter();
-        ResetTirednessMeter();
-        //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(this.currentParty);
-
-        ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
-
-        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this);
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(newMinion, true));
-    }
     public void RecruitAsMinion(UnsummonedMinionData minionData) {
         if (stateComponent.currentState != null) {
             stateComponent.currentState.OnExitThisState();
@@ -5293,11 +5268,16 @@ public class Character : ILeader, IPointOfInterest {
 
         ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
 
-        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(minionData.className, RACE.DEMON, false);
+        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this, false);
         newMinion.character.SetName(minionData.minionName);
-        newMinion.SetCombatAbility(minionData.combatAbility);
+        ChangeRace(RACE.DEMON);
+        ChangeClass(minionData.className);
+        AssignRole(CharacterRole.MINION);
         newMinion.SetRandomResearchInterventionAbilities(minionData.interventionAbilitiesToResearch);
-        SetMinion(newMinion);
+        newMinion.SetCombatAbility(minionData.combatAbility);
+        
+
+        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
 
         UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(newMinion, true));
     }

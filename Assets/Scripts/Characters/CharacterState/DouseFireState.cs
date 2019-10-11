@@ -95,6 +95,17 @@ public class DouseFireState : CharacterState {
             Burning burning = trait as Burning;
             if (fires.ContainsKey(burning.sourceOfBurning) && !fires[burning.sourceOfBurning].Contains(burning.owner)) {
                 fires[burning.sourceOfBurning].Add(burning.owner);
+
+                if (currentTarget != null) {
+                    //check the distance of the new fire with the current target, if the current target is still nearer, continue dousing that, if not redetermine action
+                    float originalDistance = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, currentTarget.gridTileLocation.localLocation);
+                    float newDistance = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, burning.owner.gridTileLocation.localLocation);
+                    if (newDistance < originalDistance) {
+                        DetermineAction();
+                    }
+                } else {
+                    DetermineAction();
+                }
             }
         }
     }
@@ -103,6 +114,9 @@ public class DouseFireState : CharacterState {
             Burning burning = trait as Burning;
             if (fires.ContainsKey(burning.sourceOfBurning) && fires[burning.sourceOfBurning].Contains(burning.owner)) {
                 fires[burning.sourceOfBurning].Remove(burning.owner);
+                if (currentTarget == burning.owner) {
+                    currentTarget = null;
+                }
                 if (fires[burning.sourceOfBurning].Count == 0) {
                     fires.Remove(burning.sourceOfBurning);
                     if (currentTargetSource == burning.sourceOfBurning) {
@@ -168,9 +182,12 @@ public class DouseFireState : CharacterState {
         stateComponent.character.currentAction.PerformActualAction();
     }
     private void DouseNearestFire() {
-        IPointOfInterest nearestFire = null;
+        IPointOfInterest nearestFire = currentTarget;
         float nearest = 99999f;
-
+        if (nearestFire != null) {
+            nearest = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, currentTarget.gridTileLocation.localLocation);
+        }
+        
         if (currentTargetSource == null) {
             currentTargetSource = fires.Keys.First();
         }

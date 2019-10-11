@@ -189,9 +189,11 @@ public class DivineInterventionQuest : Quest {
 
     #region Sabotage Faction
     public void CreateSabotageFactionnJob() {
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.SABOTAGE_FACTION, CHARACTER_STATE.MOVE_OUT);
-        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoSabotageFactionJob);
-        jobQueue.AddJobInQueue(job);
+        if (!jobQueue.HasJob(JOB_TYPE.SABOTAGE_FACTION)) {
+            CharacterStateJob job = new CharacterStateJob(JOB_TYPE.SABOTAGE_FACTION, CHARACTER_STATE.MOVE_OUT);
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoSabotageFactionJob);
+            jobQueue.AddJobInQueue(job);
+        }
     }
     #endregion
 
