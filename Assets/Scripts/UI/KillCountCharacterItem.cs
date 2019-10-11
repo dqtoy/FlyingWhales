@@ -17,6 +17,8 @@ public class KillCountCharacterItem : CharacterItem {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterRemovedTrait);
         Messenger.AddListener<Character>(Signals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnedToLife);
         Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterSwitchedAlterEgo);
+        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterChangedFaction);
+        Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
     }
     public override void Reset() {
         base.Reset();
@@ -26,6 +28,8 @@ public class KillCountCharacterItem : CharacterItem {
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterRemovedTrait);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnedToLife);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterSwitchedAlterEgo);
+        Messenger.RemoveListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterChangedFaction);
+        Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
         StopScroll();
     }
     protected override void UpdateInfo() {
@@ -63,6 +67,16 @@ public class KillCountCharacterItem : CharacterItem {
 
     #region Listeners
     private void OnCharacterChangedRace(Character character) {
+        if (character.id == this.character.id) {
+            UpdateInfo();
+        }
+    }
+    private void OnCharacterChangedFaction(Character character, Faction faction) {
+        if (character.id == this.character.id) {
+            UpdateInfo();
+        }
+    }
+    private void OnCharacterChangedRole(Character character) {
         if (character.id == this.character.id) {
             UpdateInfo();
         }

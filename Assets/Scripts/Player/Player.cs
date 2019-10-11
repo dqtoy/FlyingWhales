@@ -223,9 +223,11 @@ public class Player : ILeader {
     #endregion
 
     #region Minions
-    public Minion CreateNewMinion(Character character) {
+    public Minion CreateNewMinion(Character character, bool initialize = true) {
         Minion minion = new Minion(character, true);
-        InitializeMinion(minion);
+        if (initialize) {
+            InitializeMinion(minion);
+        }
         return minion;
     }
     public Minion CreateNewMinion(SaveDataMinion data) {

@@ -154,7 +154,7 @@ public class TheProfaneUI : MonoBehaviour {
     }
     private void OnClickMinion(Minion minion) {
         if (chosenMinion == minion) {
-            SetSelectedMinion(null);
+            //SetSelectedMinion(null);
         } else {
             SetSelectedMinion(minion);
         }
@@ -186,6 +186,8 @@ public class TheProfaneUI : MonoBehaviour {
             item.hoverHandler.AddOnHoverOutAction(() => UIManager.Instance.HideSmallInfo());
             if (item.coverState) {
                 item.transform.SetAsLastSibling();
+            } else {
+                item.transform.SetAsFirstSibling();
             }
         }
     }
@@ -248,7 +250,7 @@ public class TheProfaneUI : MonoBehaviour {
     }
     private void UpdateCultistList() {
         Utilities.DestroyChildren(cultistsScrollRect.content);
-        List<Character> cultists = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.GetNormalTrait("Cultist") != null ));
+        List<Character> cultists = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.GetNormalTrait("Cultist") != null && x.role.roleType != CHARACTER_ROLE.MINION));
         for (int i = 0; i < cultists.Count; i++) {
             Character currCultist = cultists[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(characterItemPrefab.name, Vector3.zero, Quaternion.identity, cultistsScrollRect.content);
