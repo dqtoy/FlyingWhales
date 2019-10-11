@@ -154,8 +154,11 @@ public class PlayerUpgradeUI : MonoBehaviour {
             if(info != string.Empty) {
                 info += "\n";
             }
-            string costColor = PlayerManager.Instance.player.mana >= LandmarkManager.Instance.anvilResearchData[abilityName].manaCost ? "green" : "red";
-            info += "<color=" + costColor + ">Cost: " + LandmarkManager.Instance.anvilResearchData[abilityName].manaCost + " mana</color>";
+            if(PlayerManager.Instance.player.mana >= LandmarkManager.Instance.anvilResearchData[abilityName].manaCost) {
+                info += "Cost: " + LandmarkManager.Instance.anvilResearchData[abilityName].manaCost + " mana";
+            } else {
+                info += "<color=red>Cost: " + LandmarkManager.Instance.anvilResearchData[abilityName].manaCost + " mana</color>";
+            }
             info += "\nDuration: " + LandmarkManager.Instance.anvilResearchData[abilityName].durationInHours + " hours";
         }
 
