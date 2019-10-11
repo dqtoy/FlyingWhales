@@ -4161,8 +4161,8 @@ public class Character : ILeader, IPointOfInterest {
         //RecomputeMaxExperience();
     }
     public void OnCharacterClassChange() {
-        if (_currentHP > maxHPMod) {
-            _currentHP = maxHPMod;
+        if (_currentHP > maxHP) {
+            _currentHP = maxHP;
         }
         if (_sp > _maxSP) {
             _sp = _maxSP;
