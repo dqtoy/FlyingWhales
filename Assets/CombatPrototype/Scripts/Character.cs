@@ -3596,10 +3596,13 @@ public class Character : ILeader, IPointOfInterest {
         if (isDead || GetNormalTrait("Unconscious", "Resting", "Catatonic") != null) {
             return;
         }
-        if(faction.GetRelationshipWith(witnessedEvent.actor.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+        if (faction != witnessedEvent.actor.faction && //only check faction relationship if involved characters are of different factions
+            faction.GetRelationshipWith(witnessedEvent.actor.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
             //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
             return;
         }
+      
+        
         if (witnessedEvent.currentState == null) {
             throw new System.Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.goapName + " by " + witnessedEvent.actor.name + " but it does not have a current state!");
         }
