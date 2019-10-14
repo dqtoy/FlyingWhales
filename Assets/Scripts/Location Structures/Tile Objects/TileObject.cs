@@ -32,6 +32,7 @@ public class TileObject : IPointOfInterest {
             return slots.Where(x => x != null && x.user != null).Select(x => x.user).ToArray();
         }
     }//array of characters, currently using the tile object
+    public Character removedBy { get; private set; }
 
     //hp
     public int maxHP { get; protected set; }
@@ -228,6 +229,7 @@ public class TileObject : IPointOfInterest {
     /// </summary>
     protected virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
         Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
+        this.removedBy = removedBy;
         if (hasCreatedSlots) {
             DestroyTileSlots();
         }
@@ -588,6 +590,7 @@ public class TileObject : IPointOfInterest {
 
     #region Tile Object Slots
     protected virtual void OnPlaceObjectAtTile(LocationGridTile tile) {
+        removedBy = null;
         if (hasCreatedSlots) {
             RepositionTileSlots(tile);
         } else {

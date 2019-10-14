@@ -78,7 +78,13 @@ public class TileObjectDestroy : GoapAction {
     }
     private void OnFinishCombatState() {
         //TODO: Add Checking if the actor of this action was the one that removed the tile object
-        SetState("Destroy Success");
+        TileObject target = poiTarget as TileObject;
+        if (target.removedBy == actor) {
+            SetState("Destroy Success");
+        } else {
+            SetState("Target Missing");
+        }
+        
     }
     #endregion
 
@@ -88,10 +94,10 @@ public class TileObjectDestroy : GoapAction {
         currentState.AddLogFiller(structure.location, structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.SetIntelReaction(SuccessReactions);
     }
-    //private void AfterDestroySuccess() {
-    //    //**After Effect 1**: Destroy target tile object
-    //    poiTarget.gridTileLocation?.structure.RemovePOI(poiTarget, actor);
-    //}
+    private void AfterDestroySuccess() {
+        //**After Effect 1**: Destroy target tile object
+        poiTarget.gridTileLocation?.structure.RemovePOI(poiTarget, actor);
+    }
     private void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
