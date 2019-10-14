@@ -7,8 +7,8 @@ public class DefenseSlotItem : MonoBehaviour {
     public Image defenseImg;
 
     public void OnClickAssign() {
-        UIManager.Instance.ShowDraggableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, new CharacterLevelComparer(), CanAssignCharacterToDefend);
-        PlayerUI.Instance.ShowDefenseGrid();
+        //UIManager.Instance.ShowDraggableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, new CharacterLevelComparer(), CanAssignCharacterToDefend);
+        //PlayerUI.Instance.ShowDefenseGrid();
     }
     public void OnClickConfirm() {
         CombatGrid savedCombatGrid = new CombatGrid();

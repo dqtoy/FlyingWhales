@@ -16,8 +16,8 @@ public class AttackSlotItem : MonoBehaviour {
         attackBtn.gameObject.SetActive(false);
     }
     public void OnClickAssign() {
-        UIManager.Instance.ShowDraggableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, new CharacterLevelComparer(), CanAssignCharacterToAttack);
-        PlayerUI.Instance.ShowAttackGrid();
+        //UIManager.Instance.ShowDraggableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, new CharacterLevelComparer(), CanAssignCharacterToAttack);
+        //PlayerUI.Instance.ShowAttackGrid();
     }
     public void OnClickConfirm() {
         CombatGrid savedCombatGrid = new CombatGrid();

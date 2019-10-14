@@ -739,9 +739,9 @@ public class UIManager : MonoBehaviour {
         //Pause();
         //SetSpeedTogglesState(false);
     }
-    public void ShowDraggableObjectPicker<T>(List<T> choices, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
-        objectPicker.ShowDraggable(choices, comparer, validityChecker, title);
-    }
+    //public void ShowDraggableObjectPicker<T>(List<T> choices, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
+    //    objectPicker.ShowDraggable(choices, comparer, validityChecker, title);
+    //}
     public void HideObjectPicker() {
         objectPicker.Hide();
         //Unpause();

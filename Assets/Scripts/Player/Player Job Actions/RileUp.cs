@@ -16,8 +16,8 @@ public class RileUp : PlayerJobAction {
             return;
         }
         _targetCharacter = targetPOI as Character;
-        string titleText = "Select a location and " + _targetCharacter.name + " will run amok there.";
-        UIManager.Instance.ShowClickableObjectPicker(LandmarkManager.Instance.allAreas, OnClickArea, null, CanClickArea, titleText);
+        //string titleText = "Select a location and " + _targetCharacter.name + " will run amok there.";
+        //UIManager.Instance.ShowClickableObjectPicker(LandmarkManager.Instance.allAreas, OnClickArea, null, CanClickArea, titleText);
     }
 
     protected override bool CanPerformActionTowards(Character targetCharacter) {

@@ -24,8 +24,8 @@ public class Abduct : PlayerJobAction {
             return;
         }
         _targetCharacter = targetPOI as Character;
-        string titleText = "Select a location.";
-        UIManager.Instance.ShowClickableObjectPicker(_abductAreas, OnClickArea, null, CanClickArea, titleText);
+        //string titleText = "Select a location.";
+        //UIManager.Instance.ShowClickableObjectPicker(_abductAreas, OnClickArea, null, CanClickArea, titleText);
     }
 
     protected override bool CanPerformActionTowards(Character targetCharacter) {
@@ -57,7 +57,7 @@ public class Abduct : PlayerJobAction {
 
     #region Area Checkers
     private void OnClickArea(Area area) {
-        UIManager.Instance.ShowClickableObjectPicker(area.charactersAtLocation, RileUpCharacter, null, CanRileUpCharacter, "Choose a character to abduct.");
+        //UIManager.Instance.ShowClickableObjectPicker(area.charactersAtLocation, RileUpCharacter, null, CanRileUpCharacter, "Choose a character to abduct.");
     }
     private bool CanClickArea(Area area) {
         if (PlayerManager.Instance.player.playerArea == area) {

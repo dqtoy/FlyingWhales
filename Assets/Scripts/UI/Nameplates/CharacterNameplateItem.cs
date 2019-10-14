@@ -20,6 +20,12 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         portrait.GeneratePortrait(character);
         UpdateStatusIcons();
     }
+
+    public override void Reset() {
+        base.Reset();
+        SetInteractableState(true);
+    }
+
     /// <summary>
     /// Set this nameplate to behave in the default settings (button, onclick shows character UI, etc.)
     /// </summary>

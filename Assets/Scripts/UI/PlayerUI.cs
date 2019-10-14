@@ -1405,9 +1405,9 @@ public class PlayerUI : MonoBehaviour {
         LoadKillSummaryCharacterItems();
     }
     private void LoadKillSummaryCharacterItems() {
-        CharacterItem[] items = Utilities.GetComponentsInDirectChildren<CharacterItem>(killCountScrollView.content.gameObject);
+        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
-            CharacterItem item = items[i];
+            CharacterNameplateItem item = items[i];
             item.transform.SetParent(killSummaryScrollView.content);
         }
     }

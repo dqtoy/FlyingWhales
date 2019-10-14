@@ -45,6 +45,10 @@ public class NameplateItem<T> : PooledObject {
 
     public virtual T obj { get; private set; }
 
+    public bool coverState {
+        get { return coverGO.activeSelf; }
+    }
+
     #region Virtuals
     public virtual void SetObject(T o) {
         obj = o;

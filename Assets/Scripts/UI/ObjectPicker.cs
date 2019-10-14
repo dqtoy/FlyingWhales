@@ -54,23 +54,23 @@ public class ObjectPicker : MonoBehaviour {
         this.gameObject.transform.SetSiblingIndex(layer);
         closeBtn.interactable = closable;
     }
-    public void ShowDraggable<T>(List<T> items, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
-        Utilities.DestroyChildren(objectPickerScrollView.content);
-        List<T> validItems;
-        List<T> invalidItems;
-        OrganizeList(items, out validItems, out invalidItems, comparer, validityChecker);
-        Type type = typeof(T);
-        if (type == typeof(Character)) {
-            ShowDraggableCharacterItems<T>(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList());
-        }
-        titleLbl.text = title;
-        if (!gameObject.activeSelf) {
-            this.gameObject.SetActive(true);
-            _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
-            GameManager.Instance.SetPausedState(true);
-            UIManager.Instance.SetSpeedTogglesState(false);
-        }
-    }
+    //public void ShowDraggable<T>(List<T> items, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
+    //    Utilities.DestroyChildren(objectPickerScrollView.content);
+    //    List<T> validItems;
+    //    List<T> invalidItems;
+    //    OrganizeList(items, out validItems, out invalidItems, comparer, validityChecker);
+    //    Type type = typeof(T);
+    //    if (type == typeof(Character)) {
+    //        ShowDraggableCharacterItems<T>(validItems.Cast<Character>().ToList(), invalidItems.Cast<Character>().ToList());
+    //    }
+    //    titleLbl.text = title;
+    //    if (!gameObject.activeSelf) {
+    //        this.gameObject.SetActive(true);
+    //        _isGamePausedBeforeOpeningPicker = GameManager.Instance.isPaused;
+    //        GameManager.Instance.SetPausedState(true);
+    //        UIManager.Instance.SetSpeedTogglesState(false);
+    //    }
+    //}
     public void Hide() {
         if (gameObject.activeSelf) {
             this.gameObject.SetActive(false);
@@ -117,40 +117,60 @@ public class ObjectPicker : MonoBehaviour {
         for (int i = 0; i < validItems.Count; i++) {
             Character currCharacter = validItems[i];
             GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(objectPickerCharacterItemPrefab.name, objectPickerScrollView.content);
-            CharacterPickerItem characterItem = characterItemGO.GetComponent<CharacterPickerItem>();
-            characterItem.SetCharacter(currCharacter);
-            characterItem.onClickAction = convertedAction;
-            characterItem.onHoverEnterAction = convertedHoverAction;
-            characterItem.onHoverExitAction = convertedHoverExitAction;
-            characterItem.SetButtonState(true);
+            CharacterNameplateItem characterItem = characterItemGO.GetComponent<CharacterNameplateItem>();
+            characterItem.SetObject(currCharacter);
+            characterItem.ClearAllOnClickActions();
+            if (convertedAction != null) {
+                characterItem.AddOnClickAction(convertedAction.Invoke);
+            }
+
+            characterItem.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                characterItem.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+            
+            characterItem.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                characterItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            characterItem.SetAsButton();
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             Character currCharacter = invalidItems[i];
             GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(objectPickerCharacterItemPrefab.name, objectPickerScrollView.content);
-            CharacterPickerItem characterItem = characterItemGO.GetComponent<CharacterPickerItem>();
-            characterItem.SetCharacter(currCharacter);
-            characterItem.onClickAction = null;
-            characterItem.onHoverEnterAction = convertedHoverAction;
-            characterItem.onHoverExitAction = convertedHoverExitAction;
-            characterItem.SetButtonState(false);
+            CharacterNameplateItem characterItem = characterItemGO.GetComponent<CharacterNameplateItem>();
+            characterItem.SetObject(currCharacter);
+            characterItem.ClearAllOnClickActions();
+
+            characterItem.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                characterItem.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            characterItem.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                characterItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            characterItem.SetAsButton();
+            characterItem.SetInteractableState(false);
         }
     }
-    private void ShowDraggableCharacterItems<T>(List<Character> validItems, List<Character> invalidItems) {
-        for (int i = 0; i < validItems.Count; i++) {
-            Character currCharacter = validItems[i];
-            GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(objectPickerAttackItemPrefab.name, objectPickerScrollView.content);
-            AttackPickerItem characterItem = characterItemGO.GetComponent<AttackPickerItem>();
-            characterItem.SetCharacter(currCharacter);
-            characterItem.SetDraggableState(true);
-        }
-        for (int i = 0; i < invalidItems.Count; i++) {
-            Character currCharacter = invalidItems[i];
-            GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(objectPickerAttackItemPrefab.name, objectPickerScrollView.content);
-            AttackPickerItem characterItem = characterItemGO.GetComponent<AttackPickerItem>();
-            characterItem.SetCharacter(currCharacter);
-            characterItem.SetDraggableState(false);
-        }
-    }
+    //private void ShowDraggableCharacterItems<T>(List<Character> validItems, List<Character> invalidItems) {
+    //    for (int i = 0; i < validItems.Count; i++) {
+    //        Character currCharacter = validItems[i];
+    //        GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(objectPickerAttackItemPrefab.name, objectPickerScrollView.content);
+    //        AttackPickerItem characterItem = characterItemGO.GetComponent<AttackPickerItem>();
+    //        characterItem.SetCharacter(currCharacter);
+    //        characterItem.SetDraggableState(true);
+    //    }
+    //    for (int i = 0; i < invalidItems.Count; i++) {
+    //        Character currCharacter = invalidItems[i];
+    //        GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(objectPickerAttackItemPrefab.name, objectPickerScrollView.content);
+    //        AttackPickerItem characterItem = characterItemGO.GetComponent<AttackPickerItem>();
+    //        characterItem.SetCharacter(currCharacter);
+    //        characterItem.SetDraggableState(false);
+    //    }
+    //}
     private void ShowAreaItems<T>(List<Area> validItems, List<Area> invalidItems, Action<T> onClickItemAction, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction) {
         Action<Area> convertedAction = null;
         if (onClickItemAction != null) {
@@ -235,22 +255,44 @@ public class ObjectPicker : MonoBehaviour {
         for (int i = 0; i < validItems.Count; i++) {
             string currString = validItems[i];
             GameObject stringItemGO = UIManager.Instance.InstantiateUIObject(objectPickerStringItemPrefab.name, objectPickerScrollView.content);
-            StringPickerItem stringItem = stringItemGO.GetComponent<StringPickerItem>();
-            stringItem.SetString(currString, identifier);
-            stringItem.onClickAction = convertedAction;
-            stringItem.onHoverEnterAction = convertedHoverAction;
-            stringItem.onHoverExitAction = convertedHoverExitAction;
-            stringItem.SetButtonState(true);
+            StringNameplateItem stringItem = stringItemGO.GetComponent<StringNameplateItem>();
+            stringItem.SetObject(currString);
+            stringItem.SetIdentifier(identifier);
+            stringItem.ClearAllOnClickActions();
+            if (convertedAction != null) {
+                stringItem.AddOnClickAction(convertedAction.Invoke);
+            }
+
+            stringItem.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                stringItem.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            stringItem.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                stringItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            stringItem.SetAsButton();
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             string currString = invalidItems[i];
             GameObject stringItemGO = UIManager.Instance.InstantiateUIObject(objectPickerStringItemPrefab.name, objectPickerScrollView.content);
-            StringPickerItem stringItem = stringItemGO.GetComponent<StringPickerItem>();
-            stringItem.SetString(currString, identifier);
-            stringItem.onClickAction = null;
-            stringItem.onHoverEnterAction = convertedHoverAction;
-            stringItem.onHoverExitAction = convertedHoverExitAction;
-            stringItem.SetButtonState(false);
+            StringNameplateItem stringItem = stringItemGO.GetComponent<StringNameplateItem>();
+            stringItem.SetObject(currString);
+            stringItem.SetIdentifier(identifier);
+            stringItem.ClearAllOnClickActions();
+
+            stringItem.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                stringItem.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            stringItem.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                stringItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            stringItem.SetAsButton();
+            stringItem.SetInteractableState(false);
         }
     }
     private void ShowSummonItems<T>(List<SummonSlot> validItems, List<SummonSlot> invalidItems, Action<T> onClickItemAction, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier) {

@@ -175,14 +175,14 @@ public class TheProfaneUI : MonoBehaviour {
         for (int i = 0; i < allCharacters.Count; i++) {
             Character currCharacter = allCharacters[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(characterItemPrefab.name, Vector3.zero, Quaternion.identity, charactersScrollRect.content);
-            CharacterItem item = go.GetComponent<CharacterItem>();
-            item.SetCharacter(currCharacter);
-            item.ClearClickActions();
-            item.SetCoverState(!CanBeConvertedToCultist(currCharacter), true);
+            CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+            item.SetObject(currCharacter);
+            item.ClearAllOnClickActions();
             item.SetAsButton();
-            item.AddOnClickAction(() => OnChooseCharacterToConvert(currCharacter));
-            item.hoverHandler.AddOnHoverAction(() => UIManager.Instance.ShowSmallInfo("Conversion Cost: " + profane.GetConvertToCultistCost(currCharacter).ToString() + " mana"));
-            item.hoverHandler.AddOnHoverOutAction(() => UIManager.Instance.HideSmallInfo());
+            item.SetInteractableState(CanBeConvertedToCultist(currCharacter));
+            item.AddOnClickAction(OnChooseCharacterToConvert);
+            item.AddHoverEnterAction((character) => UIManager.Instance.ShowSmallInfo("Conversion Cost: " + profane.GetConvertToCultistCost(character).ToString() + " mana"));
+            item.AddHoverExitAction((character) => UIManager.Instance.HideSmallInfo());
             if (item.coverState) {
                 item.transform.SetAsLastSibling();
             } else {
@@ -253,17 +253,18 @@ public class TheProfaneUI : MonoBehaviour {
         for (int i = 0; i < cultists.Count; i++) {
             Character currCultist = cultists[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(characterItemPrefab.name, Vector3.zero, Quaternion.identity, cultistsScrollRect.content);
-            CharacterItem item = go.GetComponent<CharacterItem>();
-            item.SetCharacter(currCultist);
-            item.SetCoverState(!CanDoActionsToCharacter(currCultist), true);
+            CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+            item.SetObject(currCultist);
+            item.SetInteractableState(CanDoActionsToCharacter(currCultist));
             if (item.coverState) {
                 //cannot do actions to cultist
                 if (chosenCultist == currCultist) {
                     SetSelectedCultist(null);
                 }
             } else {
-                item.SetAsToggle(cultistsToggleGroup);
-                item.AddOnToggleAction(() => OnClickCultist(currCultist), true);
+                item.SetAsToggle();
+                item.SetToggleGroup(cultistsToggleGroup);
+                item.AddOnToggleAction(OnToggleCultist);
                 if (chosenCultist == currCultist || chosenCultist == null) {
                     item.SetToggleState(true);
                     SetSelectedCultist(currCultist);
@@ -274,8 +275,10 @@ public class TheProfaneUI : MonoBehaviour {
     private bool CanDoActionsToCharacter(Character character) {
         return !character.currentParty.icon.isTravellingOutside && character.isAtHomeRegion;
     }
-    private void OnClickCultist(Character cultist) {
-        SetSelectedCultist(cultist);
+    private void OnToggleCultist(Character cultist, bool isOn) {
+        if (isOn) {
+            SetSelectedCultist(cultist);
+        }
     }
     private void SetSelectedCultist(Character character) {
         chosenCultist = character;
@@ -292,11 +295,15 @@ public class TheProfaneUI : MonoBehaviour {
         List<string> actions = GetPossibleActionsForCharacter(chosenCultist);
         for (int i = 0; i < actions.Count; i++) {
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(stringItemPrefab.name, Vector3.zero, Quaternion.identity, cultistActionsScrollRect.content);
-            StringPickerItem item = go.GetComponent<StringPickerItem>();
-            item.SetString(actions[i], string.Empty);
-            item.onClickAction = SetChosenAction;
-            item.onHoverEnterAction = ShowActionTooltip;
-            item.onHoverExitAction = HideActionTooltip;
+            StringNameplateItem item = go.GetComponent<StringNameplateItem>();
+            item.SetObject(actions[i]);
+            item.ClearAllOnClickActions();
+            item.AddOnClickAction(SetChosenAction);
+            item.ClearAllHoverEnterActions();
+            item.AddHoverEnterAction(ShowActionTooltip);
+            item.ClearAllHoverExitActions();
+            item.AddHoverExitAction(HideActionTooltip);
+            item.SetAsButton();
         }
     }
     private void SetChosenAction(string action) {
