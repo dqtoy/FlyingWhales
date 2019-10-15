@@ -13,7 +13,7 @@ public class RegionInfoUI : UIMenu {
 
     [Header("Main")]
     [SerializeField] private TextMeshProUGUI descriptionLbl;
-    [SerializeField] private TextMeshProUGUI worldObjLbl;
+    [SerializeField] private TextMeshProUGUI featuresLbl;
     [SerializeField] private ToggleGroup tabsToggleGroup;
     [SerializeField] private Toggle overviewTabToggle;
     [SerializeField] private Toggle eventsTabToggle;
@@ -113,17 +113,17 @@ public class RegionInfoUI : UIMenu {
     #region Main
     private void UpdateRegionInfo() {
         descriptionLbl.text = activeRegion.description;
-        descriptionLbl.text += "\n\n<b>Features: </b>";
+        featuresLbl.text = "\n\n<b>Features: </b>";
 
         if (activeRegion.features.Count == 0) {
-            descriptionLbl.text += "None";
+            featuresLbl.text += "None";
         } else {
             for (int i = 0; i < activeRegion.features.Count; i++) {
                 RegionFeature feature = activeRegion.features[i];
                 if (i != 0) {
-                    descriptionLbl.text += ", ";
+                    featuresLbl.text += ", ";
                 }
-                descriptionLbl.text += "<link=\"" + i + "\">" + feature.name + "</link>";
+                featuresLbl.text += "<link=\"" + i + "\">" + feature.name + "</link>";
             }
         }
     }

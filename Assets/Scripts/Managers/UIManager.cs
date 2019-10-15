@@ -99,6 +99,11 @@ public class UIManager : MonoBehaviour {
     [Header("Combat")]
     public CombatUI combatUI;
 
+    [Space(10)]
+    [Header("Nameplate Prefabs")]
+    public GameObject characterNameplatePrefab;
+    public GameObject stringNameplatePrefab;
+
     public bool isShowingAreaTooltip { get; private set; } //is the tooltip for area double clicks showing?
     private UIMenu lastOpenedMenu = null;
     private List<object> _uiMenuHistory;
