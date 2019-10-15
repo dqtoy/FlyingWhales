@@ -80,7 +80,7 @@ public class NameplateItem<T> : PooledObject {
     /// <summary>
     /// This is called to invoke all hover enter actions.
     /// </summary>
-    public void OnHoverEnter() {
+    public virtual void OnHoverEnter() {
         onHoverEnterNameplate?.Invoke(obj);
     }
     #endregion
@@ -98,7 +98,7 @@ public class NameplateItem<T> : PooledObject {
     /// <summary>
     /// This is called to invoke all hover exit actions.
     /// </summary>
-    public void OnHoverExit() {
+    public virtual void OnHoverExit() {
         onHoverExitNameplate?.Invoke(obj);
     }
     #endregion

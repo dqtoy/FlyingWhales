@@ -12,6 +12,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
 
     public Character character { get; private set; }
 
+    #region Overrides
     public override void SetObject(Character character) {
         base.SetObject(character);
         this.character = character;
@@ -20,11 +21,21 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         portrait.GeneratePortrait(character);
         UpdateStatusIcons();
     }
-
     public override void Reset() {
         base.Reset();
         SetInteractableState(true);
     }
+    public override void OnHoverEnter() {
+        portrait.SetHoverHighlightState(true);
+        base.OnHoverEnter();
+    }
+    public override void OnHoverExit() {
+        portrait.SetHoverHighlightState(false);
+        base.OnHoverExit();
+    }
+    #endregion
+
+
 
     /// <summary>
     /// Set this nameplate to behave in the default settings (button, onclick shows character UI, etc.)
