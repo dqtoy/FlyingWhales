@@ -25,8 +25,7 @@ public class Lazy : Trait {
             owner = addedTo as Character;
         }
     }
-    public override void TriggerFlaw(Character character) {
-        base.TriggerFlaw(character);
+    public override string TriggerFlaw(Character character) {
         //Will drop current action and will perform Happiness Recovery.
         if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
             if (character.currentAction != null) {
@@ -53,6 +52,7 @@ public class Lazy : Trait {
                 heartbroken.TriggerBrokenhearted();
             }
         }
+        return base.TriggerFlaw(character);
     }
     #endregion
 

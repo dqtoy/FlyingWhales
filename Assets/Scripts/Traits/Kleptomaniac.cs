@@ -93,8 +93,7 @@ public class Kleptomaniac : Trait {
         }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
     }
-    public override void TriggerFlaw(Character character) {
-        base.TriggerFlaw(character);
+    public override string TriggerFlaw(Character character) {
         //The character will begin Hunt for Blood.
         if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
             bool triggerBrokenhearted = false;
@@ -114,6 +113,7 @@ public class Kleptomaniac : Trait {
                 heartbroken.TriggerBrokenhearted();
             }
         }
+        return base.TriggerFlaw(character);
     }
     #endregion
 

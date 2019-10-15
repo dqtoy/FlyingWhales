@@ -91,8 +91,7 @@ public class Vampiric : Trait {
         }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
     }
-    public override void TriggerFlaw(Character character) {
-        base.TriggerFlaw(character);
+    public override string TriggerFlaw(Character character) {
         //The character will begin Hunt for Blood.
         if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
             if (character.jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
@@ -112,6 +111,7 @@ public class Vampiric : Trait {
                 griefstricken.TriggerGrieving();
             }
         }
+        return base.TriggerFlaw(character);
     }
     #endregion
 }

@@ -36,12 +36,12 @@ public class Glutton : Trait {
             character.AdjustFullnessDecreaseRate(-additionalFullnessDecreaseRate);
         }
     }
-    public override void TriggerFlaw(Character character) {
-        base.TriggerFlaw(character);
+    public override string TriggerFlaw(Character character) {
         if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
             //Will perform Fullness Recovery.
             character.PlanForcedStarvingFullnessRecovery(JOB_TYPE.TRIGGER_FLAW);
         }
+        return base.TriggerFlaw(character);
     }
     #endregion
 }

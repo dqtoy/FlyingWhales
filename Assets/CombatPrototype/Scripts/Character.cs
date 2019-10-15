@@ -1741,12 +1741,6 @@ public class Character : ILeader, IPointOfInterest {
         PrintLogIfActive(log);
         return hasCreatedJob;
     }
-    private bool NormalJobsOnEnterVision(IPointOfInterest targetPOI) {
-        bool hasCreatedJob = false;
-        
-
-        return hasCreatedJob;
-    }
     /// <summary>
     /// Force this character to create an undermine job towards the target character.
     /// Only cases that this will not happen is:
@@ -7529,20 +7523,20 @@ public class Character : ILeader, IPointOfInterest {
             }
 
             if (processPlanSpecialCases) {
-                //If a character is strolling or idly returning home and a plan is added to this character, end the action/state
-                if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
-                    || stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE
-                    || stateComponent.currentState.characterState == CHARACTER_STATE.PATROL)) {
-                    stateComponent.currentState.OnExitThisState();
-                } else if (stateComponent.stateToDo != null && (stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL
-                     || stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL_OUTSIDE
-                     || stateComponent.stateToDo.characterState == CHARACTER_STATE.PATROL)) {
-                    stateComponent.SetStateToDo(null);
-                } else if (currentAction != null && currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
-                    if (currentAction.parentPlan == null || currentAction.parentPlan.category == GOAP_CATEGORY.IDLE) {
-                        currentAction.StopAction();
-                    }
-                }
+                ////If a character is strolling or idly returning home and a plan is added to this character, end the action/state
+                //if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
+                //    || stateComponent.currentState.characterState == CHARACTER_STATE.STROLL_OUTSIDE
+                //    || stateComponent.currentState.characterState == CHARACTER_STATE.PATROL)) {
+                //    stateComponent.currentState.OnExitThisState();
+                //} else if (stateComponent.stateToDo != null && (stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL
+                //     || stateComponent.stateToDo.characterState == CHARACTER_STATE.STROLL_OUTSIDE
+                //     || stateComponent.stateToDo.characterState == CHARACTER_STATE.PATROL)) {
+                //    stateComponent.SetStateToDo(null);
+                //} else if (currentAction != null && currentAction.goapType == INTERACTION_TYPE.RETURN_HOME) {
+                //    if (currentAction.parentPlan == null || currentAction.parentPlan.category == GOAP_CATEGORY.IDLE) {
+                //        currentAction.StopAction();
+                //    }
+                //}
 
                 if (plan.job != null && (plan.job.jobType.IsNeedsTypeJob() || plan.job.jobType.IsEmergencyTypeJob())) {
                     //Unassign Location Job if character decides to rest, eat or have fun.
@@ -8494,8 +8488,8 @@ public class Character : ILeader, IPointOfInterest {
             PrintLogIfActive(reactSummary);
             return;
         }
-        Log witnessLog = null;
-        Log reportLog = null;
+        //Log witnessLog = null;
+        //Log reportLog = null;
         RELATIONSHIP_EFFECT relationshipEfffectWithCriminal = GetRelationshipEffectWith(criminal);
         CRIME_CATEGORY category = committedCrime.GetCategory();
 
@@ -8505,8 +8499,8 @@ public class Character : ILeader, IPointOfInterest {
             //- Report / Share Intel Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]."
             //- no additional response
             reactSummary += "\nCrime committed is infraction.";
-            witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
-            reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+            //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
+            //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed");
         }
         //If character has a positive relationship (Friend, Lover, Paramour) with the criminal
         else if (relationshipEfffectWithCriminal == RELATIONSHIP_EFFECT.POSITIVE) {
@@ -8516,8 +8510,8 @@ public class Character : ILeader, IPointOfInterest {
                 reactSummary += "\nCrime committed is misdemeanor.";
                 //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder] but did not do anything due to their relationship."
                 //-Report / Share Intel Log: "[Character Name] was informed that [Criminal Name] committed [Theft/Assault/Murder] but did not do anything due to their relationship."
-                witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
-                reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
+                //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
+                //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
             }
             //and crime severity is Serious Crimes or worse:
             else if (category.IsGreaterThanOrEqual(CRIME_CATEGORY.SERIOUS)) {
@@ -8525,8 +8519,8 @@ public class Character : ILeader, IPointOfInterest {
                 //- Relationship Degradation between Character and Criminal
                 hasRelationshipDegraded = CharacterManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
                 if (hasRelationshipDegraded) {
-                    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
-                    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
+                    //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
+                    //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
                     PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
                 } else {
                     if (witnessedCrime != null) {
@@ -8534,8 +8528,8 @@ public class Character : ILeader, IPointOfInterest {
                             marker.AddAvoidInRange(criminal.owner);
                         }
                     }
-                    witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
-                    reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
+                    //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
+                    //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
                 }
 
             }
@@ -8548,8 +8542,8 @@ public class Character : ILeader, IPointOfInterest {
             hasRelationshipDegraded = CharacterManager.Instance.RelationshipDegradation(criminal.owner, this, witnessedCrime);
             //- Witness Log: "[Character Name] saw [Criminal Name] committing [Theft/Assault/Murder]!"
             if (hasRelationshipDegraded) {
-                witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
-                reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
+                //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "witnessed_degraded");
+                //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_witnessed_degraded");
                 PerRoleCrimeReaction(committedCrime, crimeAction, criminal, witnessedCrime, informedCrime);
             } else {
                 if (witnessedCrime != null) {
@@ -8557,8 +8551,8 @@ public class Character : ILeader, IPointOfInterest {
                         marker.AddAvoidInRange(criminal.owner);
                     }
                 }
-                witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
-                reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
+                //witnessLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "do_nothing");
+                //reportLog = new Log(GameManager.Instance.Today(), "Character", "CrimeSystem", "report_do_nothing");
             }
         }
 
@@ -8675,13 +8669,8 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     public bool CanReactToCrime() {
-
-        if (stateComponent.currentState == null) {
-            return GetNormalTrait("Resting", "Unconscious") != null;
-        } else {
-            if (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
-                return false;
-            }
+        if (stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+            return false;
         }
         return GetNormalTrait("Resting", "Unconscious") != null;
     }

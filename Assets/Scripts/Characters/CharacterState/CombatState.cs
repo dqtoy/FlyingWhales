@@ -507,7 +507,7 @@ public class CombatState : CharacterState {
                     if (numOfJobs > 0) {
                         stateComponent.character.CreateLocationKnockoutJobs(character, numOfJobs);
                     }
-                } else {
+                } else {    
                     if (!(character.isDead || (character.isAtHomeRegion && character.isPartOfHomeFaction))) { //|| targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
                         if (stateComponent.character.isAtHomeRegion && stateComponent.character.isPartOfHomeFaction) {
                             if (!stateComponent.character.jobQueue.HasJobWithOtherData(JOB_TYPE.REPORT_HOSTILE, fledFrom)) {

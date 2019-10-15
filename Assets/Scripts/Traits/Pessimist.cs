@@ -18,14 +18,14 @@ public class Pessimist : Trait {
     }
 
     #region Overrides
-    public override void TriggerFlaw(Character character) {
-        base.TriggerFlaw(character);
+    public override string TriggerFlaw(Character character) {
         //Will reduce Happiness Meter to become Forlorn. If already Forlorn, reduce Happiness Meter by a further 1000.
         if (character.isForlorn) {
             character.AdjustHappiness(-1000);
         } else {
             character.SetHappiness(Character.HAPPINESS_THRESHOLD_2);
         }
+        return base.TriggerFlaw(character);
     }
     #endregion
 }

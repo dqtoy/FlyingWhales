@@ -175,8 +175,7 @@ public class Lycanthrope : Trait {
         _character.SwitchAlterEgo(CharacterManager.Original_Alter_Ego);
     }
 
-    public override void TriggerFlaw(Character character) {
-        base.TriggerFlaw(character);
+    public override string TriggerFlaw(Character character) {
         if (IsAlone()) {
             DoTransformWolf();
         } else {
@@ -187,6 +186,7 @@ public class Lycanthrope : Trait {
             LocationGridTile randomWildernessTile = wilderness.tiles[Random.Range(0, wilderness.tiles.Count)];
             character.marker.GoTo(randomWildernessTile, CheckIfAlone);
         }
+        return base.TriggerFlaw(character);
     }
 
     private void CheckIfAlone() {

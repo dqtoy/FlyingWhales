@@ -38,9 +38,9 @@ public class Narcoleptic : Trait {
         }
         return hasCreatedJob;
     }
-    public override void TriggerFlaw(Character character) {
-        base.TriggerFlaw(character);
+    public override string TriggerFlaw(Character character) {
         DoNarcolepticNap();
+        return base.TriggerFlaw(character);
     }
     private void DoNarcolepticNap() {
         GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.NARCOLEPTIC_NAP, owner, owner);

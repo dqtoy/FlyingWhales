@@ -57,9 +57,9 @@ public class Hothead : Trait {
     //    }
     //    return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
     //}
-    public override void TriggerFlaw(Character character) {
-        base.TriggerFlaw(character);
+    public override string TriggerFlaw(Character character) {
         character.AddTrait("Angry");
+        return base.TriggerFlaw(character);
     }
     #endregion
 }

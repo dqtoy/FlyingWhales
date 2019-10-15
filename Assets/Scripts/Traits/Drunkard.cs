@@ -17,8 +17,7 @@ public class Drunkard : Trait {
     }
 
     #region Overrides
-    public override void TriggerFlaw(Character character) {
-        base.TriggerFlaw(character);
+    public override string TriggerFlaw(Character character) {
         //Will drink
         if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
             bool triggerBrokenhearted = false;
@@ -36,6 +35,7 @@ public class Drunkard : Trait {
                 heartbroken.TriggerBrokenhearted();
             }
         }
+        return base.TriggerFlaw(character);
     }
     #endregion
 }

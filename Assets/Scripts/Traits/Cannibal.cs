@@ -41,12 +41,15 @@ public class Cannibal : Trait {
         //    daysDuration = GameManager.Instance.GetTicksBasedOnHour(9);
         //}
     }
-    public override void TriggerFlaw(Character character) {
-        base.TriggerFlaw(character);
+    public override string TriggerFlaw(Character character) {
+        string successLogKey = base.TriggerFlaw(character);
         IPointOfInterest poi = GetPOIToTransformToFood(character);
         if(poi != null) {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.TRANSFORM_FOOD, poi);
             character.jobQueue.AddJobInQueue(job);
+            return successLogKey;
+        } else {
+            return "fail";
         }
     }
     #endregion

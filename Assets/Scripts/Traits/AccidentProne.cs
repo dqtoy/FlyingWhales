@@ -52,8 +52,7 @@ public class AccidentProne : Trait {
         }
         return hasCreatedJob;
     }
-    public override void TriggerFlaw(Character character) {
-        base.TriggerFlaw(character);
+    public override string TriggerFlaw(Character character) {
         if (character.marker.isMoving) {
             //If moving, the character will stumble and get injured.
             DoStumble();
@@ -61,6 +60,7 @@ public class AccidentProne : Trait {
             //If doing something, the character will fail and get injured.
             DoAccident(character.currentAction);
         }
+        return base.TriggerFlaw(character);
     }
     #endregion
 

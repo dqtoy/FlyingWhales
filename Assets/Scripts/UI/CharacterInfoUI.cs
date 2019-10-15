@@ -511,6 +511,17 @@ public class CharacterInfoUI : UIMenu {
     private void OnClickTriggerFlaw(Trait trait) {
         trait.TriggerFlaw(activeCharacter);
         normalTraitsLbl.raycastTarget = true;
+
+//        UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
+//    onClickYesAction: () => OnClickTriggerFlaw(trait),
+//    showCover: true, layer: 25, yesBtnText: "Trigger (" + trait.GetTriggerFlawManaCost(activeCharacter).ToString() + " Mana)",
+//    yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
+//    pauseAndResume: true,
+//    noBtnActive: false,
+//    yesBtnActive: trait.canBeTriggered,
+//    yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
+//    yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
+//);
     }
     #endregion
 

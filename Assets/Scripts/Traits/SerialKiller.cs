@@ -61,9 +61,11 @@ public class SerialKiller : Trait {
             }
         }
     }
-    public override void TriggerFlaw(Character character) {
-        base.TriggerFlaw(character);
-        ForceHuntVictim();
+    public override string TriggerFlaw(Character character) {
+        if (!ForceHuntVictim()) {
+            return "fail";
+        }
+        return base.TriggerFlaw(character);
     }
     #endregion
 
@@ -134,10 +136,10 @@ public class SerialKiller : Trait {
             }
         }
     }
-    private void ForceHuntVictim() {
+    private bool ForceHuntVictim() {
         CheckTargetVictimIfStillAvailable();
         if (hasStartedFollowing && targetVictim != null) {
-            return;
+            return true;
         }
         if (targetVictim == null) {
             for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
@@ -166,7 +168,9 @@ public class SerialKiller : Trait {
             }
             FollowTargetVictim();
             SetHasStartedFollowing(true);
+            return true;
         }
+        return false;
     }
     private void CheckerWhileFollowingTargetVictim() {
         if (isFollowing) {
