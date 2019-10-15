@@ -38,7 +38,7 @@ public class BuryCharacter : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = poiTarget }, IsInActorParty);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeArea, targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeRegion, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
@@ -84,9 +84,16 @@ public class BuryCharacter : GoapAction {
         //**After Effect 1**: Remove Target from Actor's Party.
         actor.ownParty.RemoveCharacter(targetCharacter, false);
         //**After Effect 2**: Place a Tombstone tile object in adjacent unoccupied tile, link it with Target.
-        List<LocationGridTile> choices = actor.gridTileLocation.UnoccupiedNeighbours.Where(x => x.structure == actor.currentStructure).ToList();
-        LocationGridTile chosenLocation = choices[Random.Range(0, choices.Count)];
-        Tombstone tombstone = new Tombstone(targetCharacter, actor.currentStructure);
+        LocationGridTile chosenLocation = actor.gridTileLocation;
+        if (chosenLocation.isOccupied) {
+            List<LocationGridTile> choices = actor.gridTileLocation.UnoccupiedNeighbours.Where(x => x.structure == actor.currentStructure).ToList();
+            if (choices.Count > 0) {
+                chosenLocation = choices[Random.Range(0, choices.Count)];
+            }
+            
+        }
+        Tombstone tombstone = new Tombstone(actor.currentStructure);
+        tombstone.SetCharacter(targetCharacter);
         actor.currentStructure.AddPOI(tombstone, chosenLocation);
         targetCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY, except:parentPlan.job);
         List<Character> characters = targetCharacter.GetAllCharactersThatHasRelationship();
@@ -150,19 +157,37 @@ public class BuryCharacter : GoapAction {
                 else if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                     recipient.AddTrait("Heartbroken");
                     if (UnityEngine.Random.Range(0, 2) == 0) {
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.REMEMBER_FALLEN, targetCharacter.grave);
-                        job.SetCancelOnFail(true);
-                        recipient.jobQueue.AddJobInQueue(job);
+                        bool triggerBrokenhearted = false;
+                        Heartbroken heartbroken = recipient.GetNormalTrait("Heartbroken") as Heartbroken;
+                        if (heartbroken != null) {
+                            triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
+                        }
+                        if (!triggerBrokenhearted) {
+                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.REMEMBER_FALLEN, targetCharacter.grave);
+                            job.SetCancelOnFail(true);
+                            recipient.jobQueue.AddJobInQueue(job);
+                        } else {
+                            heartbroken.TriggerBrokenhearted();
+                        }
                     }
                     reactions.Add("Another good one bites the dust.");
                 }
                 //- Negative Relationship with Target
                 else if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                    recipient.AddTrait("Cheery");
+                    recipient.AddTrait("Satisfied");
                     if (UnityEngine.Random.Range(0, 2) == 0) {
-                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.SPIT, targetCharacter.grave);
-                        job.SetCancelOnFail(true);
-                        recipient.jobQueue.AddJobInQueue(job);
+                        bool triggerBrokenhearted = false;
+                        Heartbroken heartbroken = recipient.GetNormalTrait("Heartbroken") as Heartbroken;
+                        if (heartbroken != null) {
+                            triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
+                        }
+                        if (!triggerBrokenhearted) {
+                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.HAPPINESS_RECOVERY, INTERACTION_TYPE.SPIT, targetCharacter.grave);
+                            job.SetCancelOnFail(true);
+                            recipient.jobQueue.AddJobInQueue(job);
+                        } else {
+                            heartbroken.TriggerBrokenhearted();
+                        }
                     }
                     reactions.Add(string.Format("Is it terrible to think that {0} deserved that?", targetCharacter.name));
                 }

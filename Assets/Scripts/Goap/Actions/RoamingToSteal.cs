@@ -9,6 +9,7 @@ public class RoamingToSteal : GoapAction {
         actionIconString = GoapActionStateDB.Entertain_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         isNotificationAnIntel = false;
+        isRoamingAction = true;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
@@ -30,7 +31,10 @@ public class RoamingToSteal : GoapAction {
         SetState("In Progress");
     }
     protected override int GetCost() {
-        return 1;
+        if (actor.GetNormalTrait("Kleptomaniac") != null) {
+            return Utilities.rng.Next(5, 46);
+        }
+        return Utilities.rng.Next(35, 56);
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null);

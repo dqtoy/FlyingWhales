@@ -39,6 +39,7 @@ public class GoapPlanJob : JobQueueItem {
         allowDeadTargets = false;
         this.otherData = otherData;
         if (otherData != null) {
+            isNotSavable = true;
             allOtherData = new List<object>();
             foreach (object[] data in otherData.Values) {
                 if (data != null) {
@@ -65,6 +66,7 @@ public class GoapPlanJob : JobQueueItem {
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
         if(otherData != null) {
+            isNotSavable = true;
             allOtherData = new List<object>();
             foreach (object[] data in otherData.Values) {
                 if(data != null) {
@@ -91,6 +93,7 @@ public class GoapPlanJob : JobQueueItem {
         forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
         if (otherData != null) {
+            isNotSavable = true;
             allOtherData = new List<object>();
             foreach (object[] data in otherData.Values) {
                 if (data != null) {
@@ -101,15 +104,37 @@ public class GoapPlanJob : JobQueueItem {
             }
         }
     }
-    //public GoapPlanJob(string name, GoapPlan targetPlan) : base(name) {
-    //    //this.targetEffect = targetEffect;
-    //    this.targetPlan = targetPlan;
-    //    this.targetPOI = targetPlan.target;
-    //    forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-    //}
+    public GoapPlanJob(JOB_TYPE jobType, GoapPlan targetPlan, IPointOfInterest targetPOI) : base(jobType) {
+        this.targetPOI = targetPOI;
+        this.targetPlan = targetPlan;
+        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        allowDeadTargets = false;
+        isNotSavable = true;
+    }
+    public GoapPlanJob(SaveDataGoapPlanJob data) : base(data) {
+        targetEffect = data.targetEffect.Load();
+        targetInteractionType = data.targetInteractionType;
+        allowDeadTargets = data.allowDeadTargets;
+        if(data.targetPOIID != -1) {
+            if (data.targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                targetPOI = CharacterManager.Instance.GetCharacterByID(data.targetPOIID);
+            } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.ITEM) {
+                targetPOI = TokenManager.Instance.GetSpecialTokenByID(data.targetPOIID);
+            } else if (data.targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                targetPOI = InteriorMapManager.Instance.GetTileObject(data.targetPOITileObjectType, data.targetPOIID);
+            }
+        } else {
+            targetPOI = null;
+        }
+        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        for (int i = 0; i < data.forcedActionsGoapEffect.Count; i++) {
+            GoapEffect effect = data.forcedActionsGoapEffect[i].Load();
+            forcedActions.Add(effect, data.forcedActionsType[i]);
+        }
+    }
 
     #region Overrides 
-    public override void UnassignJob(bool shouldDoAfterEffect = true) {
+    public override void UnassignJob(bool shouldDoAfterEffect = true, string reason = "") {
         base.UnassignJob(shouldDoAfterEffect);
         if (assignedPlan != null && assignedCharacter != null) {
             Character character = assignedCharacter;
@@ -122,7 +147,7 @@ public class GoapPlanJob : JobQueueItem {
                         character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
                     }
                 }
-                character.StopCurrentAction(shouldDoAfterEffect);
+                character.StopCurrentAction(shouldDoAfterEffect, reason);
                 if (character.currentAction != null) {
                     character.SetCurrentAction(null);
                 }
@@ -146,7 +171,11 @@ public class GoapPlanJob : JobQueueItem {
         }
     }
     public override bool OnRemoveJobFromQueue() {
-        if(targetPOI != null) {
+        if (!jobQueueParent.isAreaOrQuestJobQueue && id == jobQueueParent.character.sleepScheduleJobID && (assignedCharacter == null && assignedPlan == null)) { //|| jobQueueParent.character.currentSleepTicks == CharacterManager.Instance.defaultSleepTicks
+            //If a character's scheduled sleep job is removed from queue before even doing it, consider it as cancelled 
+            jobQueueParent.character.SetHasCancelledSleepSchedule(true);
+        }
+        if (targetPOI != null) {
             return targetPOI.RemoveJobTargettingThis(this);
         }
         return false;
@@ -177,13 +206,13 @@ public class GoapPlanJob : JobQueueItem {
         if(character == jobQueueParent.character) {
             return CanTakeJob(character);
         }
-        if (_canTakeThisJob != null) {
-            if (_canTakeThisJob(character, this)) {
+        if (canTakeThisJob != null) {
+            if (canTakeThisJob(character, this)) {
                 return CanTakeJob(character);
             }
             return false;
-        } else if (_canTakeThisJobWithTarget != null && targetPOI != null && targetPOI is Character) {
-            if (_canTakeThisJobWithTarget(character, targetPOI as Character, this)) {
+        } else if (canTakeThisJobWithTarget != null && targetPOI != null && targetPOI is Character) {
+            if (canTakeThisJobWithTarget(character, targetPOI as Character, this)) {
                 return CanTakeJob(character);
             }
             return false;
@@ -297,4 +326,48 @@ public class ForcedActionsComparer : IEqualityComparer<GoapEffect> {
     public int GetHashCode(GoapEffect obj) {
         return obj.GetHashCode();
     }
+}
+
+public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
+    public SaveDataGoapEffect targetEffect;
+    public int targetPOIID;
+    public POINT_OF_INTEREST_TYPE targetPOIType;
+    public TILE_OBJECT_TYPE targetPOITileObjectType;
+    public INTERACTION_TYPE targetInteractionType;
+    public bool allowDeadTargets;
+
+    public List<SaveDataGoapEffect> forcedActionsGoapEffect;
+    public List<INTERACTION_TYPE> forcedActionsType;
+
+    public override void Save(JobQueueItem job) {
+        base.Save(job);
+        GoapPlanJob goapJob = job as GoapPlanJob;
+        allowDeadTargets = goapJob.allowDeadTargets;
+        targetInteractionType = goapJob.targetInteractionType;
+        if (goapJob.targetPOI != null) {
+            targetPOIID = goapJob.targetPOI.id;
+            targetPOIType = goapJob.targetPOI.poiType;
+            if(goapJob.targetPOI is TileObject) {
+                targetPOITileObjectType = (goapJob.targetPOI as TileObject).tileObjectType;
+            }
+        } else {
+            targetPOIID = -1;
+        }
+        targetEffect = new SaveDataGoapEffect();
+        targetEffect.Save(goapJob.targetEffect);
+
+        forcedActionsGoapEffect = new List<SaveDataGoapEffect>();
+        forcedActionsType = new List<INTERACTION_TYPE>();
+        foreach (KeyValuePair<GoapEffect, INTERACTION_TYPE> kvp in goapJob.forcedActions) {
+            SaveDataGoapEffect goapEffect = new SaveDataGoapEffect();
+            goapEffect.Save(kvp.Key);
+            forcedActionsGoapEffect.Add(goapEffect);
+
+            forcedActionsType.Add(kvp.Value);
+        }
+    }
+
+    //public override JobQueueItem Load() {
+    //    return base.Load();
+    //}
 }

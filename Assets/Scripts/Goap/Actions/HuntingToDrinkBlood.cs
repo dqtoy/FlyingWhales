@@ -9,6 +9,7 @@ public class HuntingToDrinkBlood : GoapAction {
         actionIconString = GoapActionStateDB.Eat_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         isNotificationAnIntel = false;
+        isRoamingAction = true;
     }
 
     #region Overrides

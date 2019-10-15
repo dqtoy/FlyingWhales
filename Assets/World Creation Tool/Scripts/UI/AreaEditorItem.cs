@@ -37,14 +37,14 @@ namespace worldcreator {
             UpdateInfo(area);
         }
         private void UpdateInfo(Area area) {
-            areaColorSwatch.color = area.areaColor;
+            //areaColorSwatch.color = area.areaColor;
             areaNameLbl.text = area.name;
             areaTilesLbl.text = area.tiles.Count.ToString();
             areaTypeDropdown.value = Utilities.GetOptionIndex(areaTypeDropdown, area.areaType.ToString());
         }
         private void UpdateInfo(Area area, HexTile tile) {
             if (_area.id == area.id) {
-                areaColorSwatch.color = area.areaColor;
+                //areaColorSwatch.color = area.areaColor;
                 areaNameLbl.text = area.name;
                 areaTilesLbl.text = area.tiles.Count.ToString();
                 areaTypeDropdown.value = Utilities.GetOptionIndex(areaTypeDropdown, area.areaType.ToString());
@@ -80,23 +80,23 @@ namespace worldcreator {
                 //}
                 validSelectedTiles.Add(currTile);
             }
-            _area.AddTile(validSelectedTiles);
+            //_area.AddTile(validSelectedTiles);
             //UpdateInfo();
             WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
         }
         public void RemoveTilesFromArea() {
             List<HexTile> validSelectedTiles = new List<HexTile>(WorldCreatorManager.Instance.selectionComponent.selection
                 .Where(x => x.areaOfTile != null && x.areaOfTile.id == _area.id));
-            _area.RemoveTile(validSelectedTiles);
+            //_area.RemoveTile(validSelectedTiles);
             //UpdateInfo();
             WorldCreatorManager.Instance.selectionComponent.ClearSelectedTiles();
         }
         public void DeleteArea() {
             LandmarkManager.Instance.RemoveArea(_area);
             _area.UnhighlightArea();
-            while (_area.tiles.Count != 0) {
-                _area.RemoveTile(_area.tiles[0]);
-            }
+            //while (_area.tiles.Count != 0) {
+                //_area.RemoveTile(_area.tiles[0]);
+            //}
             GameObject.Destroy(this.gameObject);
         }
         public void EditArea() {

@@ -9,7 +9,7 @@ public class Kleptomaniac : Trait {
     private int _happinessDecreaseRate;
     public Kleptomaniac() {
         name = "Kleptomaniac";
-        description = "This character has irresistible urge to steal.";
+        description = "Kleptomaniacs enjoy stealing.";
         thoughtText = "[Character] has irresistible urge to steal.";
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEGATIVE;
@@ -19,6 +19,7 @@ public class Kleptomaniac : Trait {
         daysDuration = 0;
         //effects = new List<TraitEffect>();
         noItemCharacters = new List<Character>();
+        canBeTriggered = true;
     }
 
     #region Overrides
@@ -92,6 +93,28 @@ public class Kleptomaniac : Trait {
         }
         return base.CreateJobsOnEnterVisionBasedOnOwnerTrait(targetPOI, characterThatWillDoJob);
     }
+    public override void TriggerFlaw(Character character) {
+        base.TriggerFlaw(character);
+        //The character will begin Hunt for Blood.
+        if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
+            bool triggerBrokenhearted = false;
+            Heartbroken heartbroken = character.GetNormalTrait("Heartbroken") as Heartbroken;
+            if (heartbroken != null) {
+                triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
+            }
+            if (!triggerBrokenhearted) {
+                if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
+                    character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN);
+                }
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = character });
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = character }, INTERACTION_TYPE.ROAMING_TO_STEAL);
+                job.SetCancelOnFail(true);
+                character.jobQueue.AddJobInQueue(job);
+            } else {
+                heartbroken.TriggerBrokenhearted();
+            }
+        }
+    }
     #endregion
 
     public void AddNoItemCharacter(Character character) {
@@ -112,5 +135,26 @@ public class Kleptomaniac : Trait {
         if (Utilities.IsEven(GameManager.days)) {
             ClearNoItemsList();
         }
+    }
+}
+
+public class SaveDataKleptomaniac : SaveDataTrait {
+    public List<int> noItemCharacterIDs;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Kleptomaniac derivedTrait = trait as Kleptomaniac;
+        for (int i = 0; i < derivedTrait.noItemCharacters.Count; i++) {
+            noItemCharacterIDs.Add(derivedTrait.noItemCharacters[i].id);
+        }
+    }
+
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        Kleptomaniac derivedTrait = trait as Kleptomaniac;
+        for (int i = 0; i < noItemCharacterIDs.Count; i++) {
+            derivedTrait.AddNoItemCharacter(CharacterManager.Instance.GetCharacterByID(noItemCharacterIDs[i]));
+        }
+        return trait;
     }
 }

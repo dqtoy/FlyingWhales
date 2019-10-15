@@ -330,6 +330,7 @@ public class GridMap : MonoBehaviour {
             currHex.name = currHex.xCoordinate + "," + currHex.yCoordinate;
 
             outerGridList.Add(currHex);
+            currHex.DisableColliders();
         }
         //Biomes.Instance.UpdateTileVisuals(outerGridList);
         outerGridList.ForEach(o => o.GetComponent<HexTile>().FindNeighboursForBorders());
@@ -350,11 +351,6 @@ public class GridMap : MonoBehaviour {
             }
         }
         return null;
-    }
-    public void GenerateInitialTileTags() {
-        for (int i = 0; i < hexTiles.Count; i++) {
-            hexTiles[i].GenerateInitialTileTags();
-        }
     }
     #endregion
 

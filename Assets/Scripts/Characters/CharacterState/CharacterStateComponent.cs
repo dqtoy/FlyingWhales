@@ -48,8 +48,7 @@ public class CharacterStateComponent {
 
     //This switches from one state to another
     //If the character is not in a state right now, this simply starts a new state instead of switching
-    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Area targetArea = null, int durationOverride = -1, object otherData = null
-        , System.Action startStateAction = null, System.Action endStateAction = null) {
+    public CharacterState SwitchToState(CHARACTER_STATE state, Character targetCharacter = null, Area targetArea = null, int durationOverride = -1, int level = 1) {
         //Cannot switch state is has negative disabler
         if(character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return null;
@@ -57,8 +56,7 @@ public class CharacterStateComponent {
 
         //Before switching character must end current action first because once a character is in a state in cannot make plans
         character.AdjustIsWaitingForInteraction(1);
-        if (character.currentAction != null && character.currentAction.goapType != INTERACTION_TYPE.ASSAULT_CHARACTER) {
-            //TODO: Unify this! Maybe pass the action that made this character switch states, and if the character's current action is that, do not end it?
+        if (character.currentAction != null && character.currentAction.ShouldBeStoppedWhenSwitchingStates()) {
             character.StopCurrentAction();
         }
         character.AdjustIsWaitingForInteraction(-1);
@@ -102,16 +100,33 @@ public class CharacterStateComponent {
         if (durationOverride != -1) {
             newState.ChangeDuration(durationOverride);
         }
-        newState.SetStartStateAction(startStateAction);
-        newState.SetEndStateAction(endStateAction);
-        newState.SetOtherDataOnStartState(otherData);
+        //newState.SetStartStateAction(startStateAction);
+        //newState.SetEndStateAction(endStateAction);
+        //newState.SetOtherDataOnStartState(otherData);
         newState.SetTargetCharacter(targetCharacter);
-        newState.EnterState(targetArea);
+        //newState.SetTargetArea(targetArea);
+        newState.EnterState();
         return newState;
     }
+    /// <summary>
+    /// Load a Character State given save data. 
+    /// NOTE: This will also make the character enter the loaded state.
+    /// </summary>
+    /// <param name="saveData">Save data to load.</param>
+    /// <returns>The state that was loaded.</returns>
+    public CharacterState LoadState(SaveDataCharacterState saveData) {
+        CharacterState loadedState = CreateNewState(saveData.characterState);
+        loadedState.Load(saveData);
+        loadedState.EnterState();
+        return loadedState;
+    }
 
-    //This ends the current state
-    //This is triggered when the timer is out, or the character simply wants to end its state and go back to normal state
+    /// <summary>
+    /// This ends the current state.
+    /// This is triggered when the timer is out, or the character simply wants to end its state and go back to normal state.
+    /// </summary>
+    /// <param name="state">The state to be exited.</param>
+    /// <param name="stopMovement">Should this character stop his/her current movement when exiting his/her current state?/param>
     public void ExitCurrentState(CharacterState state, bool stopMovement = true) {
         if (currentState == null) {
             throw new System.Exception(character.name + " is trying to exit his/her current state but it is null, Passed state is " + state?.stateName);
@@ -174,18 +189,25 @@ public class CharacterStateComponent {
                     //    SetCurrentState(null);
                     //}
                 } else {
-                    if (previousMajorState.hasStarted) {
-                        //Resumes previous major state
-                        if (previousMajorState.CanResumeState()) {
-                            SetCurrentState(previousMajorState);
-                            currentState.ResumeState();
-                        } else {
-                            previousMajorState = null;
-                            SetCurrentState(null);
+                    if(currentState.characterState == CHARACTER_STATE.COMBAT && previousMajorState.characterState == CHARACTER_STATE.BERSERKED) {
+                        if (previousMajorState.hasStarted) {
+                            previousMajorState.ExitState();
                         }
-                    } else {
                         SetCurrentState(null);
-                        previousMajorState.EnterState(previousMajorState.targetArea);
+                    } else {
+                        if (previousMajorState.hasStarted) {
+                            //Resumes previous major state
+                            if (previousMajorState.CanResumeState()) {
+                                SetCurrentState(previousMajorState);
+                                currentState.ResumeState();
+                            } else {
+                                previousMajorState = null;
+                                SetCurrentState(null);
+                            }
+                        } else {
+                            SetCurrentState(null);
+                            previousMajorState.EnterState();
+                        }
                     }
                 }
             }
@@ -198,7 +220,7 @@ public class CharacterStateComponent {
         previousState.AfterExitingState();
     }
 
-    private CharacterState CreateNewState(CHARACTER_STATE state) {
+    public CharacterState CreateNewState(CHARACTER_STATE state) {
         CharacterState newState = null;
         switch (state) {
             case CHARACTER_STATE.EXPLORE:

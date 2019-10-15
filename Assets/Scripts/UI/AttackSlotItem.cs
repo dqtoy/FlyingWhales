@@ -8,16 +8,16 @@ public class AttackSlotItem : MonoBehaviour {
     public Button attackBtn;
 
     public void ShowAttackButton() {
-        if (!PlayerManager.Instance.player.attackGrid.IsGridEmpty()) {
-            attackBtn.gameObject.SetActive(true);
-        }
+        //if (!PlayerManager.Instance.player.attackGrid.IsGridEmpty()) {
+        //    attackBtn.gameObject.SetActive(true);
+        //}
     }
     public void HideAttackButton() {
         attackBtn.gameObject.SetActive(false);
     }
     public void OnClickAssign() {
-        UIManager.Instance.ShowDraggableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, new CharacterLevelComparer(), CanAssignCharacterToAttack);
-        PlayerUI.Instance.ShowAttackGrid();
+        //UIManager.Instance.ShowDraggableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, new CharacterLevelComparer(), CanAssignCharacterToAttack);
+        //PlayerUI.Instance.ShowAttackGrid();
     }
     public void OnClickConfirm() {
         CombatGrid savedCombatGrid = new CombatGrid();
@@ -35,6 +35,6 @@ public class AttackSlotItem : MonoBehaviour {
         return false;
     }
     public void UpdateVisuals() {
-        attackImg.gameObject.SetActive(PlayerManager.Instance.player.attackGrid != null && !PlayerManager.Instance.player.attackGrid.IsGridEmpty());
+        //attackImg.gameObject.SetActive(PlayerManager.Instance.player.attackGrid != null && !PlayerManager.Instance.player.attackGrid.IsGridEmpty());
     }
 }

@@ -121,4 +121,5 @@ public class Zap : PlayerJobAction {
 public class ZapData : PlayerJobActionData {
     public override string name { get { return "Zap"; } }
     public override string description { get { return "Stops a character from his/her action and temporarily paralyzes him/her."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
 }

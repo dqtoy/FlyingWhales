@@ -7,8 +7,8 @@ public class DefenseSlotItem : MonoBehaviour {
     public Image defenseImg;
 
     public void OnClickAssign() {
-        UIManager.Instance.ShowDraggableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, new CharacterLevelComparer(), CanAssignCharacterToDefend);
-        PlayerUI.Instance.ShowDefenseGrid();
+        //UIManager.Instance.ShowDraggableObjectPicker(PlayerManager.Instance.player.allOwnedCharacters, new CharacterLevelComparer(), CanAssignCharacterToDefend);
+        //PlayerUI.Instance.ShowDefenseGrid();
     }
     public void OnClickConfirm() {
         CombatGrid savedCombatGrid = new CombatGrid();
@@ -26,6 +26,6 @@ public class DefenseSlotItem : MonoBehaviour {
         return false;
     }
     public void UpdateVisuals() {
-        defenseImg.gameObject.SetActive(PlayerManager.Instance.player.defenseGrid != null && !PlayerManager.Instance.player.defenseGrid.IsGridEmpty());
+        //defenseImg.gameObject.SetActive(PlayerManager.Instance.player.defenseGrid != null && !PlayerManager.Instance.player.defenseGrid.IsGridEmpty());
     }
 }

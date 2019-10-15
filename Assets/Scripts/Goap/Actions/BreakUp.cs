@@ -42,7 +42,9 @@ public class BreakUp : GoapAction {
             //if the relationship that was removed is lover, change home to a random unoccupied dwelling,
             //otherwise, no home. Reference: https://trello.com/c/JUSt9bEa/1938-broken-up-characters-should-live-in-separate-house
             actor.MigrateHomeStructureTo(null);
-            actor.homeArea.AssignCharacterToDwellingInArea(actor);
+            if(actor.homeArea != null) {
+                actor.homeArea.AssignCharacterToDwellingInArea(actor);
+            }
         } else {
             //**Effect 2**: Actor - Remove Paramour relationship with Character 2
             CharacterManager.Instance.RemoveRelationshipBetween(actor, target, RELATIONSHIP_TRAIT.PARAMOUR);
@@ -110,22 +112,22 @@ public class BreakUp : GoapAction {
                 }
                 //- Recipient is Lover or Paramour of Actor
                 else if (isRecipientLoverOrParamourOfActor) {
-                    recipient.AddTrait("Cheery");
+                    recipient.AddTrait("Satisfied");
                     reactions.Add(string.Format("This is great news! My relationship with {0} will be better now.", actor.name));
                 }
                 //- Recipient is Lover or Paramour of Target
                 else if (isRecipientLoverOrParamourOfActor) {
-                    recipient.AddTrait("Cheery");
+                    recipient.AddTrait("Satisfied");
                     reactions.Add(string.Format("This is great news! My relationship with {0} will be better now.", targetCharacter.name));
                 }
                 //- Is in Love with Actor
                 else if (isRecipientInLoveWithActor) {
-                    recipient.AddTrait("Cheery");
+                    recipient.AddTrait("Satisfied");
                     reactions.Add(string.Format("This means I have a chance with {0} now.", actor.name));
                 }
                 //- Is in Love with Target
                 else if (isRecipientInLoveWithTarget) {
-                    recipient.AddTrait("Cheery");
+                    recipient.AddTrait("Satisfied");
                     reactions.Add(string.Format("This means I have a chance with {0} now.", targetCharacter.name));
                 }
                 //- Other Positive Relationship with Actor

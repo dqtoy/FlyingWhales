@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using BayatGames.SaveGameFree.Types;
 
 public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
 
@@ -73,6 +74,24 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         SetReservedType(TILE_OBJECT_TYPE.NONE);
         defaultTileColor = Color.white;
     }
+    public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, AreaInnerTileMap parentAreaMap) {
+        this.parentAreaMap = parentAreaMap;
+        parentTileMap = tilemap;
+        localPlace = new Vector3Int((int)data.localPlace.x, (int)data.localPlace.y, 0);
+        worldLocation = data.worldLocation;
+        localLocation = data.localLocation;
+        centeredLocalLocation = data.centeredLocalLocation;
+        centeredWorldLocation = data.centeredWorldLocation;
+        tileType = data.tileType;
+        tileState = data.tileState;
+        tileAccess = data.tileAccess;
+        SetLockedState(data.isLocked);
+        SetReservedType(data.reservedObjectType);
+        charactersHere = new List<Character>();
+        _traits = new List<Trait>();
+        defaultTileColor = Color.white;
+    }
+
     private void CreateGenericTileObject() {
         genericTileObject = new GenericTileObject(this.structure);
         genericTileObject.SetGridTileLocation(this);
@@ -590,14 +609,16 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
     }
     public FURNITURE_TYPE GetFurnitureThatCanProvide(FACILITY_TYPE facility) {
         List<FURNITURE_TYPE> choices = new List<FURNITURE_TYPE>();
-        for (int i = 0; i < furnitureSpot.allowedFurnitureTypes.Length; i++) {
-            FURNITURE_TYPE currType = furnitureSpot.allowedFurnitureTypes[i];
-            if (currType.ConvertFurnitureToTileObject().CanProvideFacility(facility)) {
-                choices.Add(currType);
+        if (furnitureSpot.allowedFurnitureTypes != null) {
+            for (int i = 0; i < furnitureSpot.allowedFurnitureTypes.Length; i++) {
+                FURNITURE_TYPE currType = furnitureSpot.allowedFurnitureTypes[i];
+                if (currType.ConvertFurnitureToTileObject().CanProvideFacility(facility)) {
+                    choices.Add(currType);
+                }
             }
-        }
-        if (choices.Count > 0) {
-            return choices[UnityEngine.Random.Range(0, choices.Count)];
+            if (choices.Count > 0) {
+                return choices[UnityEngine.Random.Range(0, choices.Count)];
+            }
         }
         throw new System.Exception("Furniture spot at " + this.ToString() + " cannot provide facility " + facility.ToString() + "! Should not reach this point if that is the case!");
     }
@@ -642,7 +663,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         }
         return true;
     }
-    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
+    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
         if (_traits.Remove(trait)) {
             trait.RemoveExpiryTicket(this);
             if (triggerOnRemove) {
@@ -754,5 +775,185 @@ public struct TwoTileDirections {
     public TwoTileDirections(TileNeighbourDirection from, TileNeighbourDirection to) {
         this.from = from;
         this.to = to;
+    }
+}
+
+
+[System.Serializable]
+public class SaveDataLocationGridTile {
+    public Vector3Save localPlace; //this is the id
+    public Vector3Save worldLocation;
+    public Vector3Save centeredWorldLocation;
+    public Vector3Save localLocation;
+    public Vector3Save centeredLocalLocation;
+    public LocationGridTile.Tile_Type tileType;
+    public LocationGridTile.Tile_State tileState;
+    public LocationGridTile.Tile_Access tileAccess;
+    public LocationGridTile.Ground_Type groundType;
+    //public LocationStructure structure { get; private set; }
+    //public Dictionary<TileNeighbourDirection, LocationGridTile> neighbours { get; private set; }
+    //public List<Vector3Save> neighbours;
+    //public List<TileNeighbourDirection> neighbourDirections;
+    public List<SaveDataTrait> traits;
+    //public List<int> charactersHere;
+    public int objHereID;
+    public POINT_OF_INTEREST_TYPE objHereType;
+    public TILE_OBJECT_TYPE objHereTileObjectType;
+
+
+    public TILE_OBJECT_TYPE reservedObjectType;
+    public FurnitureSpot furnitureSpot;
+    public bool hasFurnitureSpot;
+    public bool hasDetail;
+    public bool isInside;
+    public bool isLocked;
+
+    public int structureID;
+    public STRUCTURE_TYPE structureType;
+
+    private LocationGridTile loadedGridTile;
+
+    //tilemap assets
+    public string groundTileMapAssetName;
+    public string roadTileMapAssetName;
+    public string wallTileMapAssetName;
+    public string detailTileMapAssetName;
+    public string structureTileMapAssetName;
+    public string objectTileMapAssetName;
+
+    public Matrix4x4 groundTileMapMatrix;
+    public Matrix4x4 roadTileMapMatrix;
+    public Matrix4x4 wallTileMapMatrix;
+    public Matrix4x4 detailTileMapMatrix;
+    public Matrix4x4 structureTileMapMatrix;
+    public Matrix4x4 objectTileMapMatrix;
+
+    public void Save(LocationGridTile gridTile) {
+        localPlace = new Vector3Save(gridTile.localPlace);
+        worldLocation = gridTile.worldLocation;
+        centeredWorldLocation = gridTile.centeredWorldLocation;
+        localLocation = gridTile.localLocation;
+        centeredLocalLocation = gridTile.centeredLocalLocation;
+        tileType = gridTile.tileType;
+        tileState = gridTile.tileState;
+        tileAccess = gridTile.tileAccess;
+        groundType = gridTile.groundType;
+        reservedObjectType = gridTile.reservedObjectType;
+        furnitureSpot = gridTile.furnitureSpot;
+        hasFurnitureSpot = gridTile.hasFurnitureSpot;
+        hasDetail = gridTile.hasDetail;
+        isInside = gridTile.isInside;
+        isLocked = gridTile.isLocked;
+
+        if(gridTile.structure != null) {
+            structureID = gridTile.structure.id;
+            structureType = gridTile.structure.structureType;
+        } else {
+            structureID = -1;
+        }
+
+        //neighbourDirections = new List<TileNeighbourDirection>();
+        //neighbours = new List<Vector3Save>();
+        //foreach (KeyValuePair<TileNeighbourDirection, LocationGridTile> kvp in gridTile.neighbours) {
+        //    neighbourDirections.Add(kvp.Key);
+        //    neighbours.Add(new Vector3Save(kvp.Value.localPlace));
+        //}
+
+        traits = new List<SaveDataTrait>();
+        for (int i = 0; i < gridTile.normalTraits.Count; i++) {
+            SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(gridTile.normalTraits[i]);
+            if (saveDataTrait != null) {
+                saveDataTrait.Save(gridTile.normalTraits[i]);
+                traits.Add(saveDataTrait);
+            }
+        }
+
+        if(gridTile.objHere != null) {
+            objHereID = gridTile.objHere.id;
+            objHereType = gridTile.objHere.poiType;
+            if(gridTile.objHere is TileObject) {
+                objHereTileObjectType = (gridTile.objHere as TileObject).tileObjectType;
+            }
+        } else {
+            objHereID = -1;
+        }
+
+        //tilemap assets
+        groundTileMapAssetName = gridTile.parentAreaMap.groundTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
+        roadTileMapAssetName = gridTile.parentAreaMap.roadTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
+        wallTileMapAssetName = gridTile.parentAreaMap.wallTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
+        detailTileMapAssetName = gridTile.parentAreaMap.detailsTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
+        structureTileMapAssetName = gridTile.parentAreaMap.structureTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
+        objectTileMapAssetName = gridTile.parentAreaMap.objectsTilemap.GetTile(gridTile.localPlace)?.name ?? string.Empty;
+
+        groundTileMapMatrix = gridTile.parentAreaMap.groundTilemap.GetTransformMatrix(gridTile.localPlace);
+        roadTileMapMatrix = gridTile.parentAreaMap.roadTilemap.GetTransformMatrix(gridTile.localPlace);
+        wallTileMapMatrix = gridTile.parentAreaMap.wallTilemap.GetTransformMatrix(gridTile.localPlace);
+        detailTileMapMatrix = gridTile.parentAreaMap.detailsTilemap.GetTransformMatrix(gridTile.localPlace);
+        structureTileMapMatrix = gridTile.parentAreaMap.structureTilemap.GetTransformMatrix(gridTile.localPlace);
+        objectTileMapMatrix = gridTile.parentAreaMap.objectsTilemap.GetTransformMatrix(gridTile.localPlace);
+    }
+
+    public LocationGridTile Load(Tilemap tilemap, AreaInnerTileMap parentAreaMap, Dictionary<string, TileBase> tileAssetDB) {
+        LocationGridTile tile = new LocationGridTile(this, tilemap, parentAreaMap);
+
+        if(structureID != -1) {
+            LocationStructure structure = parentAreaMap.area.GetStructureByID(structureType, structureID);
+            tile.SetStructure(structure);
+        }
+
+        tile.SetGroundType(groundType);
+        if (hasFurnitureSpot) {
+            tile.SetFurnitureSpot(furnitureSpot);
+        }
+        loadedGridTile = tile;
+
+        //load tile assets
+        tile.parentAreaMap.groundTilemap.SetTile(tile.localPlace, InteriorMapManager.Instance.TryGetTileAsset(groundTileMapAssetName, tileAssetDB));
+        tile.parentAreaMap.roadTilemap.SetTile(tile.localPlace, InteriorMapManager.Instance.TryGetTileAsset(roadTileMapAssetName, tileAssetDB));
+        tile.parentAreaMap.wallTilemap.SetTile(tile.localPlace, InteriorMapManager.Instance.TryGetTileAsset(wallTileMapAssetName, tileAssetDB));
+        tile.parentAreaMap.detailsTilemap.SetTile(tile.localPlace, InteriorMapManager.Instance.TryGetTileAsset(detailTileMapAssetName, tileAssetDB));
+        tile.parentAreaMap.structureTilemap.SetTile(tile.localPlace, InteriorMapManager.Instance.TryGetTileAsset(structureTileMapAssetName, tileAssetDB));
+        tile.parentAreaMap.objectsTilemap.SetTile(tile.localPlace, InteriorMapManager.Instance.TryGetTileAsset(objectTileMapAssetName, tileAssetDB));
+
+        tile.parentAreaMap.groundTilemap.SetTransformMatrix(tile.localPlace, groundTileMapMatrix);
+        tile.parentAreaMap.roadTilemap.SetTransformMatrix(tile.localPlace, roadTileMapMatrix);
+        tile.parentAreaMap.wallTilemap.SetTransformMatrix(tile.localPlace, wallTileMapMatrix);
+        tile.parentAreaMap.detailsTilemap.SetTransformMatrix(tile.localPlace, detailTileMapMatrix);
+        tile.parentAreaMap.structureTilemap.SetTransformMatrix(tile.localPlace, structureTileMapMatrix);
+        tile.parentAreaMap.objectsTilemap.SetTransformMatrix(tile.localPlace, objectTileMapMatrix);
+
+        //TODO: hasDetail
+        return tile;
+    }
+
+    public void LoadTraits() {
+        for (int i = 0; i < traits.Count; i++) {
+            Character responsibleCharacter = null;
+            Trait trait = traits[i].Load(ref responsibleCharacter);
+            loadedGridTile.AddTrait(trait, responsibleCharacter);
+        }
+    }
+
+    //This is loaded last so release loadedGridTile here
+    public void LoadObjectHere() {
+        if(objHereID != -1) {
+            if(objHereType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                loadedGridTile.structure.AddPOI(CharacterManager.Instance.GetCharacterByID(objHereID), loadedGridTile, false);
+            }
+
+            //NOTE: Do not load item in grid tile because it is already loaded in LoadAreaItems
+            //else if (objHereType == POINT_OF_INTEREST_TYPE.ITEM) {
+            //    loadedGridTile.structure.AddPOI(TokenManager.Instance.GetSpecialTokenByID(objHereID), loadedGridTile);
+            //}
+            else if (objHereType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                TileObject obj = InteriorMapManager.Instance.GetTileObject(objHereTileObjectType, objHereID);
+                if (obj == null) {
+                    throw new System.Exception("Could not find object of type " + objHereTileObjectType.ToString() + " with id " + objHereID.ToString() + " at " + loadedGridTile.structure.ToString());
+                }
+                loadedGridTile.structure.AddPOI(obj, loadedGridTile, false);
+            }
+        }
+        //loadedGridTile = null;
     }
 }

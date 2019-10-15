@@ -20,7 +20,7 @@ public class TimerHubUI : MonoBehaviour {
     public void Initialize() {
         timerHubItems = new List<TimerHubItem>();
 
-        Messenger.AddListener(Signals.TICK_STARTED, PerTick);
+        Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         //Messenger.AddListener<string, int, System.Action>(Signals.SHOW_TIMER_HUB_ITEM, AddItem);
     }
 
@@ -43,6 +43,19 @@ public class TimerHubUI : MonoBehaviour {
             timerHubItems.Add(timerHubItem);
         }
     }
+    public void RemoveItem(string itemText) {
+        for (int i = 0; i < timerHubItems.Count; i++) {
+            TimerHubItem timerHubItem = timerHubItems[i];
+            if (timerHubItem.descriptionText.text == itemText) {
+                RemoveItemAt(i);
+                break;
+            }
+        }
+    }
+    private void RemoveItemAt(int index) {
+        ObjectPoolManager.Instance.DestroyObject(timerHubItems[index].gameObject);
+        timerHubItems.RemoveAt(index);
+    }
 
     private void PerTick() {
         if (!GameManager.Instance.gameHasStarted) {
@@ -51,8 +64,7 @@ public class TimerHubUI : MonoBehaviour {
         for (int i = 0; i < timerHubItems.Count; i++) {
             if (timerHubItems[i].PerTick()) {
                 //If true, it means timer is done
-                ObjectPoolManager.Instance.DestroyObject(timerHubItems[i].gameObject);
-                timerHubItems.RemoveAt(i);
+                RemoveItemAt(i);
                 i--;
             }
         }

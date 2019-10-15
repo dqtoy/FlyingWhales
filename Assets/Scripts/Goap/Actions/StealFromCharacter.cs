@@ -13,7 +13,7 @@ public class StealFromCharacter : GoapAction {
             TIME_IN_WORDS.LATE_NIGHT,
             TIME_IN_WORDS.AFTER_MIDNIGHT,
         };
-        actionIconString = GoapActionStateDB.Hostile_Icon;
+        actionIconString = GoapActionStateDB.Steal_Icon;
         _targetCharacter = poiTarget as Character;
         doesNotStopTargetCharacter = true;
     }
@@ -58,12 +58,15 @@ public class StealFromCharacter : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        if (currentState.name == "Steal Vigilant") {
-            if (poiTarget is Character) {
-                Character targetCharacter = poiTarget as Character;
-                targetCharacter.marker.AddHostileInRange(actor, false);
-            }
-        }
+        //if (currentState.name == "Steal Vigilant") {
+        //    if (poiTarget is Character) {
+        //        Character targetCharacter = poiTarget as Character;
+        //        if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
+        //            CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
+        //        }
+        //        targetCharacter.marker.AddHostileInRange(actor, false);
+        //    }
+        //}
     }
     #endregion
 
@@ -106,9 +109,8 @@ public class StealFromCharacter : GoapAction {
             Character targetCharacter = poiTarget as Character;
             if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
                 CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
-
-                //NOTE: Adding hostile in range is done after the action is done processing fully, See OnResultReturnedToActor
             }
+            targetCharacter.marker.AddHostileInRange(actor, false);
         }
     }
     #endregion
@@ -230,7 +232,7 @@ public class StealFromCharacter : GoapAction {
                         }
                     } else {
                         reactions.Add(string.Format("Hahaha! It's what {0} deserves.", Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-                        AddTraitTo(recipient, "Cheery");
+                        AddTraitTo(recipient, "Satisfied");
                     }
                 }
                 //- Recipient Has No Relationship with Target

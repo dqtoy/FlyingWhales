@@ -54,6 +54,14 @@ public static class Signals {
     public static string ITEM_ADDED_TO_AREA = "OnItemAddedToArea"; //Parameters (Area affectedArea, SpecialToken token)
     public static string AREA_MAP_OPENED = "OnAreaMapOpened"; //parameters (Area area)
     public static string AREA_MAP_CLOSED = "OnAreaMapClosed"; //parameters (Area area)
+    /// <summary>
+    /// Parameters: Food Pile (affected food pile)
+    /// </summary>
+    public static string FOOD_IN_PILE_REDUCED = "OnFoodInPileReduced";
+    /// <summary>
+    /// Parameters: Supply Pile (affected supply pile)
+    /// </summary>
+    public static string SUPPLY_IN_PILE_REDUCED = "OnSupplyInPileReduced";
     #endregion
 
     #region Landmarks
@@ -61,8 +69,8 @@ public static class Signals {
     public static string ITEM_REMOVED_FROM_LANDMARK = "OnItemRemovedFromLandmark"; //Parameters (Item item, BaseLandmark landmark)
     public static string STRUCTURE_STATE_CHANGED = "OnStructureStateChanged"; //Parameters (StructureObj obj, ObjectState newState)
     public static string LANDMARK_ATTACK_TARGET_SELECTED = "OnLandmarkAttackTargetSelected"; //Parameters (BaseLandmark target)
-    public static string CHARACTER_ENTERED_LANDMARK = "OnCharacterEnteredLandmark"; //Parameters (Character, BaseLandmark)
-    public static string CHARACTER_EXITED_LANDMARK = "OnCharacterExitedLandmark"; //Parameters (Characte, BaseLandmark)
+    public static string CHARACTER_ENTERED_REGION = "OnCharacterEnteredRegion"; //Parameters (Character, Region)
+    public static string CHARACTER_EXITED_REGION = "OnCharacterExitedRegion"; //Parameters (Characte, Region)
     public static string DESTROY_LANDMARK = "OnDestroyLandmark"; //Parameteres (BaseLandmark destroyedLandmark)
     public static string LANDMARK_UNDER_ATTACK = "OnLandmarkUnderAttack"; //Parameters (BaseLandmark underAttackedLandmark, GameEvent associatedEvent = null)
     public static string LANDMARK_INSPECTED = "OnLandmarkInspected"; //Parameters (BaseLandmark inspectedLandmark)
@@ -71,17 +79,21 @@ public static class Signals {
     public static string LANDMARK_INVESTIGATION_ACTIVATED = "OnLandmarkInvestigationActivated"; //Parameters (BaseLandmark investigatedLandmark)
     public static string UPDATE_RITUAL_CIRCLE_TRAIT = "OnUpdateRitualCircleTrait";
     /// <summary>
-    /// Parameters: BaseLandmark, WorldEvent
+    /// Parameters: Region, WorldEvent
     /// </summary>
     public static string WORLD_EVENT_SPAWNED = "OnWorldEventSpawnedAtLandmark";
     /// <summary>
-    /// Parameters: BaseLandmark, WorldEvent
+    /// Parameters: Region, WorldEvent
     /// </summary>
     public static string WORLD_EVENT_FINISHED_NORMAL = "OnWorldEventFinishedNormallyAtLandmark";
     /// <summary>
-    /// Parameters: BaseLandmark, WorldEvent
+    /// Parameters: Region, WorldEvent
     /// </summary>
     public static string WORLD_EVENT_DESPAWNED = "OnWorldEventDespawnedAtLandmark";
+    /// <summary>
+    /// Parameters: Region, WorldEvent
+    /// </summary>
+    public static string WORLD_EVENT_FAILED = "OnWorldEventFailed";
     #endregion
 
     #region Character
@@ -171,12 +183,15 @@ public static class Signals {
     public static string ON_OPEN_SHARE_INTEL = "OnOpenShareIntel";
     public static string ON_CLOSE_SHARE_INTEL = "OnCloseShareIntel";
     public static string SHOW_TIMER_HUB_ITEM = "ShowTimerHubItem";
+    public static string AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT = "OnAreaInfoUIUpdateAppropriateContent";
     #endregion
 
     #region Quest Signals
     public static string CHARACTER_SNATCHED = "OnCharacterSnatched"; //Parameters (Character snatchedCharacter)
     public static string CHARACTER_RELEASED = "OnCharacterReleased"; //Parameters (Character releasedCharacter)
     public static string QUEST_TURNED_IN = "OnQuestTurnedIn"; //Parameter (Quest turnedInQuest)
+    public static string ADD_QUEST_JOB = "OnAddQuestJob"; //Parameter (Quest quest, JobQueueItem job)
+    public static string REMOVE_QUEST_JOB = "OnRemoveQuestJob"; //Parameter (Quest quest, JobQueueItem job)
     #endregion
 
     #region Party
@@ -194,8 +209,8 @@ public static class Signals {
     public static string FACTION_SET = "OnFactionSet"; //Parameters (Character characterThatSetFaction)
     public static string FACTION_LEADER_DIED = "OnFactionLeaderDied"; //Parameters (Faction affectedFaction)
     public static string FACTION_DIED = "OnFactionDied"; //Parameters (Faction affectedFaction)
-    public static string FACTION_OWNED_AREA_ADDED = "OnFactionOwnedAreaAdded"; //Parameters (Faction affectedFaction, Area addedArea)
-    public static string FACTION_OWNED_AREA_REMOVED = "OnFactionOwnedAreaRemoved"; //Parameters (Faction affectedFaction, Area removedArea)
+    public static string FACTION_OWNED_REGION_ADDED = "OnFactionOwnedAreaAdded"; //Parameters (Faction affectedFaction, Area addedArea)
+    public static string FACTION_OWNED_REGION_REMOVED = "OnFactionOwnedAreaRemoved"; //Parameters (Faction affectedFaction, Area removedArea)
     public static string FACTION_RELATIONSHIP_CHANGED = "OnFactionRelationshipChanged"; //Parameters (FactionRelationship rel)
     public static string FACTION_ACTIVE_CHANGED = "OnFactionActiveChanged"; //Parameters (Faction affectedFaction)
     #endregion
@@ -247,9 +262,17 @@ public static class Signals {
     public static string PLAYER_GAINED_SUMMON = "OnPlayerGainedSummon";
     public static string PLAYER_GAINED_SUMMON_LEVEL = "OnPlayerGainedSummonLevel";
     /// <summary>
+    /// Parameters (SummonSlot gainedSummonSlot)
+    /// </summary>
+    public static string PLAYER_GAINED_SUMMON_SLOT = "OnPlayerGainedSummonSlot";
+    /// <summary>
     /// Parameters (Summon removedSummon)
     /// </summary>
     public static string PLAYER_REMOVED_SUMMON = "OnPlayerRemovedSummon";
+    /// <summary>
+    /// Parameters (SummonSlot lostSummonSlot)
+    /// </summary>
+    public static string PLAYER_LOST_SUMMON_SLOT = "OnPlayerLostSummonSlot";
     /// <summary>
     /// Parameters (Summon placedSummon)
     /// </summary>
@@ -260,9 +283,17 @@ public static class Signals {
     public static string PLAYER_GAINED_ARTIFACT = "OnPlayerGainedArtifact";
     public static string PLAYER_GAINED_ARTIFACT_LEVEL = "OnPlayerGainedArtifactLevel";
     /// <summary>
+    /// Parameters (ArtifactSlot gainedArtifactSlot)
+    /// </summary>
+    public static string PLAYER_GAINED_ARTIFACT_SLOT = "OnPlayerGainedArtifactSlot";
+    /// <summary>
     /// Parameters (Artifact removedArtifact)
     /// </summary>
     public static string PLAYER_REMOVED_ARTIFACT = "OnPlayerRemovedArtifact";
+    /// <summary>
+    /// Parameters (ArtifactSlot lostArtifactSlot)
+    /// </summary>
+    public static string PLAYER_LOST_ARTIFACT_SLOT = "OnPlayerLostArtifactSlot";
     public static string PLAYER_USED_ARTIFACT = "OnPlayerUsedArtifact";
     /// <summary>
     /// Parameters (Area invadedArea)
@@ -285,7 +316,20 @@ public static class Signals {
     /// <summary>
     /// parameters (Minion, BaseLandmark)
     /// </summary>
-    public static string MINION_CHANGED_INVADING_LANDMARK = "OnMinionChangedInvadingLandmark";
+    public static string MINION_CHANGED_ASSIGNED_REGION = "OnMinionChangedInvadingLandmark";
+    /// <summary>
+    /// parameters (Minion, BaseLandmark)
+    /// </summary>
+    public static string MINION_ASSIGNED_PLAYER_LANDMARK = "OnMinionAssignedToPlayerLandmark";
+    /// <summary>
+    /// parameters (Minion, BaseLandmark)
+    /// </summary>
+    public static string MINION_UNASSIGNED_PLAYER_LANDMARK = "OnMinionUnassignedFromPlayerLandmark";
+    public static string PLAYER_ADJUSTED_MANA = "OnPlayerAdjustedMana";
+    /// <summary>
+    /// parameters (Minion)
+    /// </summary>
+    public static string MINION_CHANGED_COMBAT_ABILITY = "OnMinionChangedCombatAbility";
     #endregion
 
     #region Interaction
@@ -346,7 +390,7 @@ public static class Signals {
         { HOUR_STARTED, new SignalMethod[] {
             new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(Area) },
             new SignalMethod() { methodName = "DecreaseNeeds", objectType = typeof(Character) },
-            new SignalMethod() { methodName = "PerHour", objectType = typeof(Zombie_Virus) },
+            new SignalMethod() { methodName = "PerHour", objectType = typeof(Infected) },
         }},
         { TICK_STARTED, new SignalMethod[] {
             new SignalMethod() { methodName = "CheckSupply", objectType = typeof(SupplyPile) },

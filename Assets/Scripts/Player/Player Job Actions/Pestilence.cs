@@ -107,4 +107,5 @@ public class Pestilence : PlayerJobAction {
 public class PestilenceData : PlayerJobActionData {
     public override string name { get { return "Pestilence"; } }
     public override string description { get { return "Afflict a character with a virulent and deadly disease. Disease is spread through chatting and sexual contact."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.DEVASTATION; } }
 }

@@ -3,36 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AbductCharacter : GoapAction {
-    public AbductCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ABDUCT_CHARACTER, INTERACTION_ALIGNMENT.EVIL, actor, poiTarget) {
+    public override LocationStructure targetStructure { get { return structureToBeDropped; } }
+
+    private LocationStructure structureToBeDropped;
+    private LocationGridTile gridTileToBeDropped;
+
+    public AbductCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ABDUCT_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        actionLocationType = ACTION_LOCATION_TYPE.RANDOM_LOCATION_B;
         actionIconString = GoapActionStateDB.Hostile_Icon;
-        //_isStealthAction = true;
+        //isNotificationAnIntel = false;
+        whileMovingState = "In Progress";
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
+    //protected override void ConstructRequirement() {
+    //    _requirementAction = Requirement;
+    //}
     protected override void ConstructPreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget }, HasNonPositiveDisablerTrait);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
-        //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.RESTRAIN_CARRY, conditionKey = actor, targetPOI = poiTarget }, IsInActorPartyAndRestrained);
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY_NO_CONSENT, conditionKey = actor.homeRegion, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
-            SetState("Abduct Success");
-            //if (!HasOtherCharacterInRadius()) {
-            //    SetState("Abduct Success");
-            //} else {
-            //    parentPlan.SetDoNotRecalculate(true);
-            //    SetState("Abduct Fail");
-            //}
-        } else {
-            SetState("Target Missing");
-        }
+        SetState("Abduct Success");
     }
     protected override int GetCost() {
-        return 3;
+        return 1;
     }
     //public override void FailAction() {
     //    base.FailAction();
@@ -42,51 +38,69 @@ public class AbductCharacter : GoapAction {
         SetTargetStructure();
         base.DoAction();
     }
-    #endregion
-
-    #region Requirements
-    protected bool Requirement() {
-        if(actor != poiTarget) {
-            Character target = poiTarget as Character;
-            return target.GetNormalTrait("Restrained") == null;
+    public override LocationGridTile GetTargetLocationTile() {
+        if (gridTileToBeDropped != null) {
+            return gridTileToBeDropped;
         }
-        return false;
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
+    }
+    public override void OnStopActionWhileTravelling() {
+        base.OnStopActionWhileTravelling();
+        Character targetCharacter = poiTarget as Character;
+        actor.currentParty.RemoveCharacter(targetCharacter);
+    }
+    public override void OnStopActionDuringCurrentState() {
+        base.OnStopActionDuringCurrentState();
+        Character targetCharacter = poiTarget as Character;
+        actor.currentParty.RemoveCharacter(targetCharacter);
+    }
+    public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
+        if (otherData.Length == 1 && otherData[0] is LocationStructure) {
+            structureToBeDropped = otherData[0] as LocationStructure;
+            return true;
+        } else if (otherData.Length == 2 && otherData[0] is LocationStructure && otherData[1] is LocationGridTile) {
+            structureToBeDropped = otherData[0] as LocationStructure;
+            gridTileToBeDropped = otherData[1] as LocationGridTile;
+            return true;
+        }
+        return base.InitializeOtherData(otherData);
     }
     #endregion
 
-    //#region Preconditions
-    //private bool HasNonPositiveDisablerTrait() {
-    //    Character target = poiTarget as Character;
-    //    return target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER);
-    //}
-    //#endregion
+    #region Preconditions
+    private bool IsInActorPartyAndRestrained() {
+        Character target = poiTarget as Character;
+        return target.currentParty == actor.currentParty && target.GetNormalTrait("Restrained") != null;
+    }
+    #endregion
 
     #region State Effects
+    public void PreInProgress() {
+        SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
+        currentState.SetIntelReaction(AbductInProgressIntelReaction);
+    }
     public void PreAbductSuccess() {
-        //currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        currentState.SetIntelReaction(AbductSuccessIntelReaction);
+        //Will not SetCommittedCrime anymore because it is already set in PreInProgress, and since this action is an exception where two states will be called, it will be redundant if we set it again here.
+        //In Progress state will always be called first before Abduct Success state
+        currentState.AddLogFiller(actor.currentStructure, actor.currentStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        currentState.SetIntelReaction(AbductInProgressIntelReaction);
     }
     public void AfterAbductSuccess() {
-        if (parentPlan.job != null) {
-            parentPlan.job.SetCannotCancelJob(true);
-        }
         Character target = poiTarget as Character;
-        Restrained restrainedTrait = new Restrained();
-        target.AddTrait(restrainedTrait, actor);
-
-        AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = poiTarget });
-    }
-    //public void PreTargetMissing() {
-    //    currentState.AddLogFiller(poiTarget as Character, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-    //}
-    public void AfterTargetMissing() {
-        actor.RemoveAwareness(poiTarget);
+        actor.currentParty.RemoveCharacter(target, dropLocation: gridTileToBeDropped);
+        //if (gridTileToBeDropped.objHere != null && gridTileToBeDropped.objHere is TileObject) {
+        //    TileObject to = gridTileToBeDropped.objHere as TileObject;
+        //    to.AddUser(target);
+        //}
+        AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeRegion, targetPOI = poiTarget });
     }
     #endregion
 
     #region Intel Reactions
-    private List<string> AbductSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+    private List<string> AbductInProgressIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
+        //Recipient and Target have at least one non-negative relationship and Actor is not from the same faction:
         Character targetCharacter = poiTarget as Character;
 
         if (isOldNews) {
@@ -98,36 +112,9 @@ public class AbductCharacter : GoapAction {
                 //- If Recipient is Aware
                 reactions.Add("I know that already.");
             } else {
-                //- Recipient is Actor
-                if (recipient == actor) {
-                    reactions.Add("I know what I did.");
-                }
-                //- Recipient is Target
-                else if (recipient == targetCharacter) {
-                    reactions.Add("Please help me!");
-                }
-                //- Recipient Has Positive Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    reactions.Add(string.Format("I want to save {0} from {1} but I need to know where {2} was taken.", targetCharacter.name, actor.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                        if (recipient.marker.inVisionCharacters.Contains(actor)) {
-                            recipient.marker.AddHostileInRange(actor, checkHostility: false);
-                        }
-                    }
-                }
-                //- Recipient Has Negative Relationship with Target
-                else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
-                    reactions.Add(string.Format("{0} deserves what {1} got.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-                    AddTraitTo(recipient, "Cheery");
-                }
-                //- Recipient Has No Relationship with Target
-                else {
-                    reactions.Add(string.Format("Poor {0}. If you find out where {1} took {2}, I may be able to help.", targetCharacter.name, actor.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
-                    if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                        if (recipient.marker.inVisionCharacters.Contains(actor)) {
-                            recipient.marker.AddHostileInRange(actor, checkHostility: false);
-                        }
-                    }
+                if (recipient != actor && recipient != targetCharacter && recipient.GetRelationshipEffectWith(actor) != RELATIONSHIP_EFFECT.POSITIVE) {
+                    reactions.Add(string.Format("I think {0} is going to do something bad to {1}. I must stop this!", actor.name, targetCharacter.name));
+                    recipient.ReactToCrime(committedCrime, this, actor.currentAlterEgo, status);
                 }
             }
         }
@@ -143,10 +130,6 @@ public class AbductCharacterData: GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (actor != poiTarget) {
-            Character target = poiTarget as Character;
-            return target.GetNormalTrait("Restrained") == null;
-        }
-        return false;
+        return actor != poiTarget;
     }
 }

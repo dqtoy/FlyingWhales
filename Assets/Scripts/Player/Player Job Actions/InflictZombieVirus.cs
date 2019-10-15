@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InflictZombieVirus : PlayerJobAction {
+public class ZombieVirus : PlayerJobAction {
 
-    public InflictZombieVirus() : base(INTERVENTION_ABILITY.INFLICT_ZOMBIE_VIRUS) {
+    public ZombieVirus() : base(INTERVENTION_ABILITY.ZOMBIE_VIRUS) {
         tier = 2;
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT};
@@ -27,7 +27,7 @@ public class InflictZombieVirus : PlayerJobAction {
             for (int i = 0; i < targets.Count; i++) {
                 Character currTarget = targets[i];
                 if (CanPerformActionTowards(currTarget)) {
-                    Trait newTrait = new Zombie_Virus();
+                    Trait newTrait = new Infected();
                     currTarget.AddTrait(newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -59,7 +59,7 @@ public class InflictZombieVirus : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Zombie Virus", "Robust") != null) {
+        if (targetCharacter.GetNormalTrait("Infected", "Robust") != null) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -90,14 +90,15 @@ public class InflictZombieVirus : PlayerJobAction {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Zombie Virus", "Robust") != null) {
+        if (targetCharacter.GetNormalTrait("Infected", "Robust") != null) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);
     }
 }
 
-public class InflictZombieVirusData : PlayerJobActionData {
-    public override string name { get { return "Inflict Zombie Virus"; } }
+public class ZombieVirusData : PlayerJobActionData {
+    public override string name { get { return "Zombie Virus"; } }
     public override string description { get { return "Afflict a character with the zombie virus. When this character dies, it will turn into a zombie. Other characters that gets attacked by a zombie may also contract the zombie virus."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.MONSTER; } }
 }

@@ -1,1 +1,1 @@
-{"items":[{"key":"flee_pyrophobia","value":"%00@ ran away from fire because %83b has Pyrophobia."}]}
+{"items":[{"key":"flee","value":"%00@ saw a fire and fled from it."},{"key":"catatonic","value":"%00@ saw a fire and became Catatonic."}]}

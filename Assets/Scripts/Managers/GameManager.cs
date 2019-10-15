@@ -9,12 +9,13 @@ public class GameManager : MonoBehaviour {
 	public static GameManager Instance = null;
 
     public static string[] daysInWords = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-    public static TIME_IN_WORDS[] timeInWords = new TIME_IN_WORDS[] {
-        TIME_IN_WORDS.AFTER_MIDNIGHT
-        , TIME_IN_WORDS.MORNING
-        , TIME_IN_WORDS.AFTERNOON
-        , TIME_IN_WORDS.EARLY_NIGHT
-        , TIME_IN_WORDS.LATE_NIGHT };
+    //public static TIME_IN_WORDS[] timeInWords = new TIME_IN_WORDS[] {
+    //    TIME_IN_WORDS.AFTER_MIDNIGHT
+    //    , TIME_IN_WORDS.MORNING
+    //    , TIME_IN_WORDS.LUNCH_TIME
+    //    , TIME_IN_WORDS.AFTERNOON
+    //    , TIME_IN_WORDS.EARLY_NIGHT
+    //    , TIME_IN_WORDS.LATE_NIGHT };
 
 
     public int month;
@@ -33,7 +34,6 @@ public class GameManager : MonoBehaviour {
 
 	public float progressionSpeed;
 	public bool isPaused = true;
-    //public bool hideLandmarks = true;
     public bool initiallyHideRoads = false;
     public bool allowConsole = true;
     public bool displayFPS = true;
@@ -63,17 +63,9 @@ public class GameManager : MonoBehaviour {
     private float timeElapsed;
     private bool _gameHasStarted;
 
-    //[SerializeField] private Texture2D defaultCursorTexture;
-    //[SerializeField] private Texture2D targetCursorTexture;
-    //[SerializeField] private Texture2D dragWorldCursorTexture;
-    //[SerializeField] private Texture2D dragItemHoverCursorTexture;
-    //[SerializeField] private Texture2D dragItemClickedCursorTexture;
-    //[SerializeField] private CursorMode cursorMode = CursorMode.Auto;
-    //[SerializeField] private Vector2 hotSpot = Vector2.zero;
-
     public bool pauseTickEnded2 = false;
-    //public int ticksToAddPerTick { get; private set; } //how many ticks to add per tick of progression? Set this to another value to advance ticks by more than 1. 
-    //public bool isDraggingItem = false;
+
+    public string lastProgressionBeforePausing; //what was the last progression speed before the player paused the game. NOTE: This includes paused state
 
     #region getters/setters
     public bool gameHasStarted {
@@ -86,11 +78,7 @@ public class GameManager : MonoBehaviour {
         Instance = this;
         this.timeElapsed = 0f;
         _gameHasStarted = false;
-        //SetTicksToAddPerTick(1); //ticksPerHour //so that at start of the game time will advance by one hour per tick.
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
-#if !WORLD_CREATION_TOOL
-        //Application.logMessageReceived += LogCallback;
-#endif
     }
     private void Update() {
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
@@ -98,30 +86,29 @@ public class GameManager : MonoBehaviour {
                 UIManager.Instance.ToggleConsole();
             }
         } else if (Input.GetKeyDown(KeyCode.Space) && !UIManager.Instance.IsMouseOnInput()) {
-            if (UIManager.Instance.pauseBtn.IsInteractable()) {
+            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.pauseBtn.IsInteractable()) {
                 if (isPaused) {
                     UIManager.Instance.Unpause();
                 } else {
                     UIManager.Instance.Pause();
                 }
             }
-        } else if (Input.GetKeyDown(KeyCode.F1)) {
-            if (UIManager.Instance.x1Btn.IsInteractable()) {
+        } else if (Input.GetKeyDown(KeyCode.Alpha1)) {
+            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x1Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed1X();
             }
-        } else if (Input.GetKeyDown(KeyCode.F2)) {
-            if (UIManager.Instance.x2Btn.IsInteractable()) {
+        } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
+            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x2Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed2X();
             }
-        } else if (Input.GetKeyDown(KeyCode.F3)) {
-            if (UIManager.Instance.x4Btn.IsInteractable()) {
+        } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
+            if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.x4Btn.IsInteractable()) {
                 UIManager.Instance.SetProgressionSpeed4X();
             }
         } else if (Input.GetKeyDown(KeyCode.Escape)) {
             Messenger.Broadcast(Signals.KEY_DOWN, KeyCode.Escape);
         }
-    }
-    private void FixedUpdate() {
+
         if (_gameHasStarted && !isPaused) {
             if (this.timeElapsed == 0f) {
                 this.TickStarted();
@@ -133,6 +120,18 @@ public class GameManager : MonoBehaviour {
             }
         }
     }
+    //private void FixedUpdate() {
+    //    if (_gameHasStarted && !isPaused) {
+    //        if (this.timeElapsed == 0f) {
+    //            this.TickStarted();
+    //        }
+    //        this.timeElapsed += Time.deltaTime;
+    //        if (this.timeElapsed >= this.progressionSpeed) {
+    //            this.timeElapsed = 0f;
+    //            TickEnded();
+    //        }
+    //    }
+    //}
     //private void Update() {
     //    //Application.targetFrameRate = 60;
     //    //    if (!UIManager.Instance.IsConsoleShowing() && !UIManager.Instance.IsMouseOnInput() && !PlayerManager.Instance.isChoosingStartingTile) {
@@ -161,36 +160,14 @@ public class GameManager : MonoBehaviour {
 	public void StartProgression(){
         _gameHasStarted = true;
         days = 1;
-        //SetPausedState(false);
-        UIManager.Instance.SetProgressionSpeed1X();
+        //UIManager.Instance.SetProgressionSpeed1X();
         UIManager.Instance.Pause();
-		SchedulingManager.Instance.StartScheduleCalls ();
-        Messenger.Broadcast(Signals.MONTH_START); //for the first day
-        TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
-    }
-
-    [ContextMenu("Create Travel Line")]
-    public void CreateTravelLine() {
-        GameObject go = GameObject.Instantiate(travelLinePrefab);
-        go.transform.position = tile1.transform.position;
-        float angle = Mathf.Atan2(tile2.transform.position.y - tile1.transform.position.y, tile2.transform.position.x - tile1.transform.position.x) * Mathf.Rad2Deg;
-        go.transform.eulerAngles = new Vector3(go.transform.rotation.x, go.transform.rotation.y, angle);
-        float distance = Vector3.Distance(tile1.transform.position, tile2.transform.position);
-        //float scale = (distance * 0.143f) * 6f;
-        go.GetComponent<RectTransform>().sizeDelta = new Vector2(distance, 0.2f);
-        //go.transform.SetParent(tile1.UIParent);
-        //go.transform.localScale = new Vector3(scale, go.transform.localScale.y, go.transform.localScale.z);
-
-        /*To get num of ticks to travel from one tile to another, get distance and divide it by 2.31588, round up the result then multiply by 6, such that,
-         * numOfTicks = (Math.Ceil(distance / 2.315188)) * 6
-         */
-    }
-
-    [ContextMenu("Get Distance")]
-    public void GetDistance() {
-        float distance = Vector3.Distance(tile1.transform.position, tile2.transform.position);
-        int distanceAsTiles = Mathf.CeilToInt(distance / 2.315188f);
-        Debug.LogWarning("Distance: " + distanceAsTiles);
+        lastProgressionBeforePausing = "paused";
+        SchedulingManager.Instance.StartScheduleCalls ();
+        Messenger.Broadcast(Signals.DAY_STARTED); //for the first day
+        Messenger.Broadcast(Signals.MONTH_START); //for the first month
+        InteriorMapManager.Instance.UpdateLightBasedOnTime(Today());
+        //TimerHubUI.Instance.AddItem("Until Divine Intervention", 4320, null);
     }
 
     private float AngleBetweenVector2(Vector2 vec1, Vector2 vec2) {
@@ -246,12 +223,32 @@ public class GameManager : MonoBehaviour {
 		return new GameDate(this.month, 1, this.year, 1);
 	}
     public void SetPausedState(bool isPaused){
-        //Debug.Log("Set paused state to " + isPaused);
-        if(this.isPaused != isPaused) {
+        if (isPaused) {
+            StoreLastProgressionBeforePausing();
+        }
+        if (this.isPaused != isPaused) {
             this.isPaused = isPaused;
             Messenger.Broadcast(Signals.PAUSED, isPaused);
         }
 	}
+    private void StoreLastProgressionBeforePausing() {
+        //the player paused the game
+        if (this.isPaused) {
+            lastProgressionBeforePausing = "paused";
+        } else {
+            switch (currProgressionSpeed) {
+                case PROGRESSION_SPEED.X1:
+                    lastProgressionBeforePausing = "1";
+                    break;
+                case PROGRESSION_SPEED.X2:
+                    lastProgressionBeforePausing = "2";
+                    break;
+                case PROGRESSION_SPEED.X4:
+                    lastProgressionBeforePausing = "4";
+                    break;
+            }
+        }
+    }
     public void SetDelayedPausedState(bool state) {
         StartCoroutine(DelayedPausedState(state));
     }
@@ -263,9 +260,9 @@ public class GameManager : MonoBehaviour {
      * Set day progression speed to 1x, 2x of 4x
      * */
 	public void SetProgressionSpeed(PROGRESSION_SPEED progSpeed){
-        if (!isPaused && currProgressionSpeed == progSpeed) {
-            return; //ignore change
-        }
+        //if (!isPaused && currProgressionSpeed == progSpeed) {
+        //    return; //ignore change
+        //}
         currProgressionSpeed = progSpeed;
         //Debug.Log("Set progression speed to " + progSpeed.ToString());
         float speed = X1_SPEED;
@@ -291,7 +288,6 @@ public class GameManager : MonoBehaviour {
      * */
     public void TickEnded(){
         Messenger.Broadcast(Signals.TICK_ENDED);
-        Messenger.Broadcast(Signals.UPDATE_UI);
 
         this.tick += 1;
         if (this.tick > ticksPerDay) {
@@ -299,15 +295,13 @@ public class GameManager : MonoBehaviour {
             this.tick = 1;
             DayStarted(false);
         }
+        Messenger.Broadcast(Signals.UPDATE_UI);
     }
     public void SetTick(int amount) {
         this.tick = amount;
         Messenger.Broadcast(Signals.UPDATE_UI);
     }
     public void DayStarted(bool broadcastUI = true) {
-        if (broadcastUI) {
-            Messenger.Broadcast(Signals.UPDATE_UI);
-        }
         days += 1;
         this.continuousDays += 1;
         Messenger.Broadcast(Signals.DAY_STARTED);
@@ -319,6 +313,9 @@ public class GameManager : MonoBehaviour {
                 this.year += 1;
             }
             Messenger.Broadcast(Signals.MONTH_START);
+        }
+        if (broadcastUI) {
+            Messenger.Broadcast(Signals.UPDATE_UI);
         }
     }
     public static string ConvertTickToTime(int tick) {
@@ -338,32 +335,43 @@ public class GameManager : MonoBehaviour {
         return hour + ":" + minutes.ToString("D2") + " " + timeOfDay;
     }
     public static TIME_IN_WORDS GetTimeInWordsOfTick(int tick) {
-        if (tick >= 1 && GameManager.Instance.tick <= 72) {
-            return timeInWords[0];
-        } else if (tick >= 73 && GameManager.Instance.tick <= 144) {
-            return timeInWords[1];
-        } else if (tick >= 145 && tick <= 204) {
-            return timeInWords[2];
-        } else if (tick >= 205 && tick <= 264) {
-            return timeInWords[3];
-        } else if (tick >= 265 && tick <= 288) {
-            return timeInWords[4];
+        if ((tick >= 265 && tick <= 288) || (tick >= 1 && tick <= 60)) {
+            return TIME_IN_WORDS.AFTER_MIDNIGHT;
+        } else if (tick >= 61 && tick <= 132) {
+            return TIME_IN_WORDS.MORNING;
+        } else if (tick >= 133 && tick <= 156) {
+            return TIME_IN_WORDS.LUNCH_TIME;
+        } else if (tick >= 157 && tick <= 204) {
+            return TIME_IN_WORDS.AFTERNOON;
+        } else if (tick >= 205 && tick <= 240) {
+            return TIME_IN_WORDS.EARLY_NIGHT;
+        } else if (tick >= 241 && tick <= 264) {
+            return TIME_IN_WORDS.LATE_NIGHT;
         }
         return TIME_IN_WORDS.NONE;
     }
-    public static TIME_IN_WORDS GetCurrentTimeInWordsOfTick() {
-        if(GameManager.Instance.tick >= 1 && GameManager.Instance.tick <= 72) {
-            return timeInWords[0];
-        } else if (GameManager.Instance.tick >= 73 && GameManager.Instance.tick <= 144) {
-            return timeInWords[1];
-        } else if (GameManager.Instance.tick >= 145 && GameManager.Instance.tick <= 204) {
-            return timeInWords[2];
-        } else if (GameManager.Instance.tick >= 205 && GameManager.Instance.tick <= 264) {
-            return timeInWords[3];
-        } else if (GameManager.Instance.tick >= 265 && GameManager.Instance.tick <= 288) {
-            return timeInWords[4];
+
+    //Note: If there is a character parameter, it means that the current time in words might not be the actual one because we will get the time in words relative to the character
+    //Example: If the character is Nocturnal, MORNING will become LATE_NIGHT
+    public static TIME_IN_WORDS GetCurrentTimeInWordsOfTick(Character relativeTo = null) {
+        TIME_IN_WORDS time = TIME_IN_WORDS.NONE;
+        if ((GameManager.Instance.tick >= 265 && GameManager.Instance.tick <= 288) || (GameManager.Instance.tick >= 1 && GameManager.Instance.tick <= 60)) {
+            time = TIME_IN_WORDS.AFTER_MIDNIGHT;
+        } else if (GameManager.Instance.tick >= 61 && GameManager.Instance.tick <= 132) {
+            time = TIME_IN_WORDS.MORNING;
+        } else if (GameManager.Instance.tick >= 133 && GameManager.Instance.tick <= 156) {
+            time = TIME_IN_WORDS.LUNCH_TIME;
+        } else if (GameManager.Instance.tick >= 157 && GameManager.Instance.tick <= 204) {
+            time = TIME_IN_WORDS.AFTERNOON;
+        } else if (GameManager.Instance.tick >= 205 && GameManager.Instance.tick <= 240) {
+            time = TIME_IN_WORDS.EARLY_NIGHT;
+        } else if (GameManager.Instance.tick >= 241 && GameManager.Instance.tick <= 264) {
+            time = TIME_IN_WORDS.LATE_NIGHT;
         }
-        throw new System.Exception(GameManager.Instance.tick + " tick has no time in words!");
+        if(relativeTo != null && relativeTo.GetNormalTrait("Nocturnal") != null) {
+            time = ConvertTimeInWordsWhenNocturnal(time);
+        }
+        return time;
         //float time = GameManager.Instance.tick / (float) ticksPerTimeInWords;
         //int intTime = (int) time;
         //if (time == intTime && intTime > 0) {
@@ -376,31 +384,69 @@ public class GameManager : MonoBehaviour {
     }
     public static int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords) {
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            return UnityEngine.Random.Range(1, 73);
+            //After Midnight has special processing because it goes beyond the max tick, its 10:00PM to 5:00AM 
+            int maxRange = ticksPerDay + 60;
+            int chosenTick = UnityEngine.Random.Range(265, maxRange + 1);
+            if(chosenTick > ticksPerDay) {
+                chosenTick -= ticksPerDay;
+            }
+            return chosenTick;
         } else if (timeInWords == TIME_IN_WORDS.MORNING) {
-            return UnityEngine.Random.Range(73, 145);
+            return UnityEngine.Random.Range(61, 133);
+        } else if (timeInWords == TIME_IN_WORDS.LUNCH_TIME) {
+            return UnityEngine.Random.Range(133, 157);
         } else if (timeInWords == TIME_IN_WORDS.AFTERNOON) {
-            return UnityEngine.Random.Range(145, 205);
+            return UnityEngine.Random.Range(157, 205);
         } else if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-            return UnityEngine.Random.Range(205, 265);
+            return UnityEngine.Random.Range(205, 241);
         } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-            return UnityEngine.Random.Range(265, 289);
+            return UnityEngine.Random.Range(241, 265);
         }
         throw new System.Exception(timeInWords.ToString() + " time in words has no tick!");
     }
     public static int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords, int minimumThreshold) {
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
-            return UnityEngine.Random.Range(minimumThreshold, 73);
+            int maxRange = ticksPerDay + 60;
+            int chosenTick = UnityEngine.Random.Range(minimumThreshold, maxRange + 1);
+            if (chosenTick > ticksPerDay) {
+                chosenTick -= ticksPerDay;
+            }
+            return chosenTick;
         } else if (timeInWords == TIME_IN_WORDS.MORNING) {
-            return UnityEngine.Random.Range(minimumThreshold, 145);
+            return UnityEngine.Random.Range(minimumThreshold, 133);
+        } else if (timeInWords == TIME_IN_WORDS.LUNCH_TIME) {
+            return UnityEngine.Random.Range(minimumThreshold, 157);
         } else if (timeInWords == TIME_IN_WORDS.AFTERNOON) {
             return UnityEngine.Random.Range(minimumThreshold, 205);
         } else if (timeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
-            return UnityEngine.Random.Range(minimumThreshold, 265);
+            return UnityEngine.Random.Range(minimumThreshold, 241);
         } else if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
-            return UnityEngine.Random.Range(minimumThreshold, 289);
+            return UnityEngine.Random.Range(minimumThreshold, 265);
         }
         throw new System.Exception(timeInWords.ToString() + " time in words has no tick!");
+    }
+    public static TIME_IN_WORDS[] ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS[] currentTimeInWords) {
+        TIME_IN_WORDS[] convertedTimeInWords = new TIME_IN_WORDS[currentTimeInWords.Length];
+        for (int i = 0; i < currentTimeInWords.Length; i++) {
+            convertedTimeInWords[i] = ConvertTimeInWordsWhenNocturnal(currentTimeInWords[i]);
+        }
+        return convertedTimeInWords;
+    }
+    public static TIME_IN_WORDS ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS currentTimeInWords) {
+        if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
+            return TIME_IN_WORDS.LATE_NIGHT;
+        } else if (currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME) {
+            return TIME_IN_WORDS.AFTER_MIDNIGHT;
+        } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
+            return TIME_IN_WORDS.AFTER_MIDNIGHT;
+        } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
+            return TIME_IN_WORDS.MORNING;
+        } else if (currentTimeInWords == TIME_IN_WORDS.LATE_NIGHT) {
+            return TIME_IN_WORDS.MORNING;
+        } else if (currentTimeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
+            return TIME_IN_WORDS.AFTERNOON;
+        }
+        return TIME_IN_WORDS.NONE;
     }
     public int GetTicksBasedOnHour(int hours) {
         return ticksPerHour * hours;
@@ -416,7 +462,7 @@ public class GameManager : MonoBehaviour {
         return Mathf.CeilToInt(ticks / (float) ticksPerHour);
     }
     public int GetCeilingDaysBasedOnTicks(int ticks) {
-        return Mathf.CeilToInt(ticks / (float) ticksPerDay);
+        return Mathf.CeilToInt((float)ticks / (float) ticksPerDay);
     }
     //public void SetTicksToAddPerTick(int amount) {
     //    ticksToAddPerTick = amount;
@@ -432,6 +478,19 @@ public class GameManager : MonoBehaviour {
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
     }
+    public void CreateHitEffectAt(IPointOfInterest poi) {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            CreateHitEffectAt(poi as Character);
+        } else {
+            if (poi.gridTileLocation == null) {
+                return;
+            }
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentAreaMap.objectsParent);
+            go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+            go.SetActive(true);
+        }
+       
+    }
     public void CreateHitEffectAt(Character character) {
         if (character.marker == null) {
             return;
@@ -439,6 +498,18 @@ public class GameManager : MonoBehaviour {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
+    }
+    public void CreateFireEffectAt(IPointOfInterest poi) {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            CreateFireEffectAt(poi as Character);
+        } else {
+            if (poi.gridTileLocation == null) {
+                return;
+            }
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentAreaMap.objectsParent);
+            go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+            go.SetActive(true);
+        }
     }
     public void CreateFireEffectAt(Character character) {
         if (character.marker == null) {
@@ -528,14 +599,6 @@ public class GameManager : MonoBehaviour {
     #endregion
 
     #region Utilities
-    private void LogCallback(string condition, string stackTrace, LogType type) {
-        //CharacterManager.Instance.CategorizeLog(condition, stackTrace, type);
-        if (type == LogType.Error || type == LogType.Exception) {
-            string notification = "<color=\"red\">" + TodayLogString() + "Error occurred! Check console for log message</color>";
-            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, notification, 100, null);
-            UIManager.Instance.Pause();
-        }
-    }
     public void ToggleCharactersVisibility(bool state) {
         allCharactersAreVisible = state;
         Messenger.Broadcast(Signals.TOGGLE_CHARACTERS_VISIBILITY);

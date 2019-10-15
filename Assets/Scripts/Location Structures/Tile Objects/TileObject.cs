@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using BayatGames.SaveGameFree.Types;
 
 public class TileObject : IPointOfInterest {
 
@@ -23,7 +24,6 @@ public class TileObject : IPointOfInterest {
     public List<JobQueueItem> allJobsTargettingThis { get; protected set; }
     public List<GoapAction> targettedByAction { get; protected set; }
     public List<Character> owners { get; private set; }
-
     public virtual Character[] users {
         get {
             if (slots == null) {
@@ -32,17 +32,25 @@ public class TileObject : IPointOfInterest {
             return slots.Where(x => x != null && x.user != null).Select(x => x.user).ToArray();
         }
     }//array of characters, currently using the tile object
+    public Character removedBy { get; private set; }
+
+    //hp
+    public int maxHP { get; protected set; }
+    public int currentHP { get; protected set; }
+
+    ///this is null by default. This is responsible for updating the pathfinding graph when a tileobject that should be unapassable is placed <see cref="LocationGridTileGUS.Initialize(Vector3[])"/>, this should also destroyed when the object is removed. <see cref="LocationGridTileGUS.Destroy"/>
+    public LocationGridTileGUS graphUpdateScene { get; protected set; } 
 
     //tile slots
     public TileObjectSlotItem[] slots { get; protected set; } //for users
     private GameObject slotsParent;
     protected bool hasCreatedSlots;
-    private UnityEngine.Tilemaps.TileBase usedAsset;
 
     protected LocationGridTile tile;
     private POI_STATE _state;
     protected POICollisionTrigger _collisionTrigger;
-    protected LocationGridTile previousTile;
+    public LocationGridTile previousTile { get; protected set; }
+
     #region getters/setters
     public POINT_OF_INTEREST_TYPE poiType {
         get { return POINT_OF_INTEREST_TYPE.TILE_OBJECT; }
@@ -56,6 +64,15 @@ public class TileObject : IPointOfInterest {
     public POICollisionTrigger collisionTrigger {
         get { return _collisionTrigger; }
     }
+    public Vector3 worldPosition {
+        get { return gridTileLocation.centeredWorldLocation; }
+    }
+    public bool isDead {
+        get { return gridTileLocation == null; } //Consider the object as dead if it no longer has a tile location (has been removed)
+    }
+    public ProjectileReceiver projectileReciever {
+        get { return collisionTrigger.projectileReciever; }
+    }
     #endregion
 
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType) {
@@ -68,30 +85,36 @@ public class TileObject : IPointOfInterest {
         targettedByAction = new List<GoapAction>();
         owners = new List<Character>();
         hasCreatedSlots = false;
+        maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
+        currentHP = maxHP;
         AddTrait("Flammable");
         InitializeCollisionTrigger();
+        InteriorMapManager.Instance.AddTileObject(this);
     }
-    protected void Initialize(SaveDataArtifactSlot data, TILE_OBJECT_TYPE tileObjectType) {
+    //protected void Initialize(SaveDataArtifactSlot data, TILE_OBJECT_TYPE tileObjectType) {
+    //    id = Utilities.SetID(this, data.id);
+    //    this.tileObjectType = tileObjectType;
+    //    _traits = new List<Trait>();
+    //    actionHistory = new List<string>();
+    //    awareCharacters = new List<Character>();
+    //    allJobsTargettingThis = new List<JobQueueItem>();
+    //    owners = new List<Character>();
+    //    hasCreatedSlots = false;
+    //    InitializeCollisionTrigger();
+    //    InteriorMapManager.Instance.AddTileObject(this);
+    //}
+    protected void Initialize(SaveDataTileObject data) {
         id = Utilities.SetID(this, data.id);
-        this.tileObjectType = tileObjectType;
+        tileObjectType = data.tileObjectType;
         _traits = new List<Trait>();
         actionHistory = new List<string>();
         awareCharacters = new List<Character>();
         allJobsTargettingThis = new List<JobQueueItem>();
         owners = new List<Character>();
+        targettedByAction = new List<GoapAction>();
         hasCreatedSlots = false;
         InitializeCollisionTrigger();
-    }
-    protected void Initialize(SaveDataArtifact data, TILE_OBJECT_TYPE tileObjectType) {
-        id = Utilities.SetID(this, data.id);
-        this.tileObjectType = tileObjectType;
-        _traits = new List<Trait>();
-        actionHistory = new List<string>();
-        awareCharacters = new List<Character>();
-        allJobsTargettingThis = new List<JobQueueItem>();
-        owners = new List<Character>();
-        hasCreatedSlots = false;
-        InitializeCollisionTrigger();
+        InteriorMapManager.Instance.AddTileObject(this);
     }
 
     #region Virtuals
@@ -206,6 +229,7 @@ public class TileObject : IPointOfInterest {
     /// </summary>
     protected virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
         Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
+        this.removedBy = removedBy;
         if (hasCreatedSlots) {
             DestroyTileSlots();
         }
@@ -215,6 +239,12 @@ public class TileObject : IPointOfInterest {
         return false;
     }
     protected virtual void OnTileObjectGainedTrait(Trait trait) { }
+    public virtual void SetStructureLocation(LocationStructure structure) {
+        structureLocation = structure;
+    }
+    public virtual bool IsValidCombatTarget() {
+        return gridTileLocation != null;
+    }
     #endregion
 
     #region IPointOfInterest
@@ -262,20 +292,60 @@ public class TileObject : IPointOfInterest {
     public bool RemoveJobTargettingThis(JobQueueItem job) {
         return allJobsTargettingThis.Remove(job);
     }
-    public bool HasJobTargettingThis(JOB_TYPE jobType) {
+    public bool HasJobTargettingThis(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
-            if (job.jobType == jobType) {
-                return true;
+            for (int j = 0; j < jobTypes.Length; j++) {
+                if (job.jobType == jobTypes[j]) {
+                    return true;
+                }
             }
         }
         return false;
+    }
+    public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            if (allJobsTargettingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+                if (job.jobType == jobType) {
+                    return job;
+                }
+            }
+        }
+        return null;
     }
     public void AddTargettedByAction(GoapAction action) {
         targettedByAction.Add(action);
     }
     public void RemoveTargettedByAction(GoapAction action) {
         targettedByAction.Remove(action);
+    }
+    public void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
+        if (currentHP == 0 && amount < 0) {
+            return; //hp is already at minimum, do not allow any more negative adjustments
+        }
+        this.currentHP += amount;
+        this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);
+        if (currentHP == 0) {
+            //object has been destroyed
+            Character removedBy = null;
+            if (source is Character) {
+                removedBy = source as Character;
+            }
+            gridTileLocation.structure.RemovePOI(this, removedBy);
+        }
+    }
+    public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
+        GameManager.Instance.CreateHitEffectAt(this);
+        if (this.currentHP <= 0) {
+            return; //if hp is already 0, do not deal damage
+        }
+        this.AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
+        attackSummary += "\nDealt damage " + characterThatAttacked.attackPower.ToString();
+        if (this.currentHP <= 0) {
+            attackSummary += "\n" + this.name + "'s hp has reached 0.";
+        }
+        //Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }
     #endregion
 
@@ -316,7 +386,7 @@ public class TileObject : IPointOfInterest {
         OnTileObjectGainedTrait(trait);
         return true;
     }
-    public virtual bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
+    public virtual bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
         if (_traits.Remove(trait)) {
             trait.RemoveExpiryTicket(this);
             if (triggerOnRemove) {
@@ -520,6 +590,7 @@ public class TileObject : IPointOfInterest {
 
     #region Tile Object Slots
     protected virtual void OnPlaceObjectAtTile(LocationGridTile tile) {
+        removedBy = null;
         if (hasCreatedSlots) {
             RepositionTileSlots(tile);
         } else {
@@ -530,7 +601,7 @@ public class TileObject : IPointOfInterest {
     }
     private void CreateTileObjectSlots() {
         UnityEngine.Tilemaps.TileBase usedAsset = tile.parentAreaMap.objectsTilemap.GetTile(tile.localPlace);
-        if (tileObjectType != TILE_OBJECT_TYPE.GENERIC && usedAsset != null && InteriorMapManager.Instance.HasSettingForTileObjectAsset(usedAsset)) {
+        if (tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT && usedAsset != null && InteriorMapManager.Instance.HasSettingForTileObjectAsset(usedAsset)) {
             List<TileObjectSlotSetting> slotSettings = InteriorMapManager.Instance.GetTileObjectSlotSettings(usedAsset);
             slotsParent = GameObject.Instantiate(InteriorMapManager.Instance.tileObjectSlotsParentPrefab, tile.parentAreaMap.objectsTilemap.transform);
             slotsParent.transform.localPosition = tile.centeredLocalLocation;
@@ -607,6 +678,9 @@ public class TileObject : IPointOfInterest {
 
     #region Users
     public virtual void AddUser(Character newUser) {
+        if (users.Contains(newUser)) {
+            return;
+        }
         TileObjectSlotItem availableSlot = GetNearestUnoccupiedSlot(newUser);
         if (availableSlot != null) {
             newUser.SetTileObjectLocation(this);
@@ -648,6 +722,20 @@ public class TileObject : IPointOfInterest {
         
     }
     #endregion
+
+    #region Graph Updates
+    protected void CreateNewGUS(Vector2 offset, Vector2 size) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("LocationGridTileGUS", Vector3.zero, Quaternion.identity, gridTileLocation.parentAreaMap.graphUpdateScenesParent);
+        LocationGridTileGUS gus = go.GetComponent<LocationGridTileGUS>();
+        gus.Initialize(offset, size, this);
+        this.graphUpdateScene = gus;
+    }
+    protected void DestroyExistingGUS() {
+        if (this.graphUpdateScene != null) {
+            this.graphUpdateScene.Destroy();
+        }
+    }
+    #endregion
 }
 
 [System.Serializable]
@@ -658,4 +746,120 @@ public struct TileObjectSlotSetting {
     public Vector3 unusedPosition;
     public Vector3 assetRotation;
     public Sprite slotAsset;
+}
+
+[System.Serializable]
+public struct TileObjectSerializableData {
+    public int id;
+    public TILE_OBJECT_TYPE type;
+}
+
+[System.Serializable]
+public class SaveDataTileObject {
+    public int id;
+    public TILE_OBJECT_TYPE tileObjectType;
+    public List<SaveDataTrait> traits;
+    public List<int> awareCharactersIDs;
+    //public LocationStructure structureLocation { get; protected set; }
+    public bool isDisabledByPlayer;
+    public bool isSummonedByPlayer;
+    //public List<JobQueueItem> allJobsTargettingThis { get; protected set; }
+    //public List<Character> owners;
+
+    //public Vector3Save tileID;
+    public POI_STATE state;
+    public Vector3Save previousTileID;
+    public int previousTileAreaID;
+    public bool hasCurrentTile;
+
+    public int structureLocationAreaID;
+    public int structureLocationID;
+    public STRUCTURE_TYPE structureLocationType;
+
+    protected TileObject loadedTileObject;
+
+    public virtual void Save(TileObject tileObject) {
+        id = tileObject.id;
+        tileObjectType = tileObject.tileObjectType;
+        isDisabledByPlayer = tileObject.isDisabledByPlayer;
+        isSummonedByPlayer = tileObject.isSummonedByPlayer;
+        state = tileObject.state;
+
+        hasCurrentTile = tileObject.gridTileLocation != null;
+
+        if(tileObject.structureLocation != null) {
+            structureLocationID = tileObject.structureLocation.id;
+            structureLocationAreaID = tileObject.structureLocation.location.id;
+            structureLocationType = tileObject.structureLocation.structureType;
+        } else {
+            structureLocationID = -1;
+            structureLocationAreaID = -1;
+        }
+
+        if (tileObject.previousTile != null) {
+            previousTileID = new Vector3Save(tileObject.previousTile.localPlace);
+            previousTileAreaID = tileObject.previousTile.structure.location.id;
+        } else {
+            previousTileID = new Vector3Save(0, 0, -1);
+            previousTileAreaID = -1;
+        }
+
+        traits = new List<SaveDataTrait>();
+        for (int i = 0; i < tileObject.normalTraits.Count; i++) {
+            SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(tileObject.normalTraits[i]);
+            if (saveDataTrait != null) {
+                saveDataTrait.Save(tileObject.normalTraits[i]);
+                traits.Add(saveDataTrait);
+            }
+        }
+
+        awareCharactersIDs = new List<int>();
+        for (int i = 0; i < tileObject.awareCharacters.Count; i++) {
+            awareCharactersIDs.Add(tileObject.awareCharacters[i].id);
+        }
+    }
+
+    public virtual TileObject Load() {
+        string tileObjectName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
+        TileObject tileObject = System.Activator.CreateInstance(System.Type.GetType(tileObjectName), this) as TileObject;
+
+        if(structureLocationID != -1 && structureLocationAreaID != -1) {
+            Area area = LandmarkManager.Instance.GetAreaByID(structureLocationAreaID);
+            tileObject.SetStructureLocation(area.GetStructureByID(structureLocationType, structureLocationID));
+        }
+        for (int i = 0; i < awareCharactersIDs.Count; i++) {
+            tileObject.AddAwareCharacter(CharacterManager.Instance.GetCharacterByID(awareCharactersIDs[i]));
+        }
+
+        tileObject.SetIsDisabledByPlayer(isDisabledByPlayer);
+        tileObject.SetIsSummonedByPlayer(isSummonedByPlayer);
+        tileObject.SetPOIState(state);
+
+        loadedTileObject = tileObject;
+        return loadedTileObject;
+    }
+
+    //This is the last to be loaded in SaveDataTileObject, so release loadedTileObject reference
+    public virtual void LoadAfterLoadingAreaMap() {
+        loadedTileObject = null;
+    }
+
+    public void LoadPreviousTileAndCurrentTile() {
+        if (previousTileAreaID != -1 && previousTileID.z != -1) {
+            Area area = LandmarkManager.Instance.GetAreaByID(previousTileAreaID);
+            LocationGridTile tile = area.areaMap.map[(int)previousTileID.x, (int)previousTileID.y];
+            tile.structure.AddPOI(loadedTileObject, tile);
+            if (!hasCurrentTile) {
+                tile.structure.RemovePOI(loadedTileObject);
+            }
+        }
+    }
+
+    public void LoadTraits() {
+        for (int i = 0; i < traits.Count; i++) {
+            Character responsibleCharacter = null;
+            Trait trait = traits[i].Load(ref responsibleCharacter);
+            loadedTileObject.AddTrait(trait, responsibleCharacter);
+        }
+    }
 }

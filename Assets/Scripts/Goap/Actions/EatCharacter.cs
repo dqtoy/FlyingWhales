@@ -19,9 +19,7 @@ public class EatCharacter : GoapAction {
     }
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget }, HasUnconsciousOrDeadTarget);
-        if (actor.GetNormalTrait("Cannibal") != null) {
-            AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
-        }
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
@@ -45,12 +43,12 @@ public class EatCharacter : GoapAction {
             Character target = poiTarget as Character;
             RELATIONSHIP_EFFECT relEffect = actor.GetRelationshipEffectWith(target);
             if (relEffect == RELATIONSHIP_EFFECT.NEGATIVE) {
-                return 1;
+                return 15;
             }else if (relEffect == RELATIONSHIP_EFFECT.NONE) {
                 return 20;
             }
         }
-        return 1;
+        return 15;
     }
     public override void OnStopActionDuringCurrentState() {
         if (currentState.name == "Eat Success") {
@@ -128,6 +126,12 @@ public class EatCharacterData : GoapActionData {
                 return false;
             }
             if (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
+                return false;
+            }
+            if (!actor.isStarving) {
+                return false;
+            }
+            if (actor.GetNormalTrait("Cannibal") == null) {
                 return false;
             }
             if (poiTarget is Character) {

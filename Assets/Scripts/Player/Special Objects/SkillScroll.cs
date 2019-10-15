@@ -5,19 +5,20 @@ using UnityEngine;
 public class SkillScroll : SpecialObject {
 
     public SkillScroll() : base(SPECIAL_OBJECT_TYPE.SKILL_SCROLL) { }
+    public SkillScroll(SaveDataSpecialObject data) : base(data) { }
 
     #region Overrides
     public override void Obtain() {
         base.Obtain();
         COMBAT_ABILITY[] skills = Utilities.GetEnumValues<COMBAT_ABILITY>();
         CombatAbility newAbility = PlayerManager.Instance.CreateNewCombatAbility(skills[Random.Range(1, skills.Length)]);
-        PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(newAbility);    
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Combat Ability: " + newAbility.name, () => PlayerUI.Instance.newMinionAbilityUI.ShowNewMinionAbilityUI(newAbility));
     }
     #endregion
 }
 
 public class SaveDataSkillScroll : SaveDataSpecialObject {
-    public override IWorldObject Load() {
-        return new SkillScroll();
+    public override SpecialObject Load() {
+        return new SkillScroll(this);
     }
 }

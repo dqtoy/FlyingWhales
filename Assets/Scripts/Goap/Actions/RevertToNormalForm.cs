@@ -41,7 +41,7 @@ public class RevertToNormalForm : GoapAction {
         currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     public void AfterTransformSuccess() {
-        Lycanthropy lycanthropy = actor.GetNormalTrait("Lycanthropy") as Lycanthropy;
+        Lycanthrope lycanthropy = actor.GetNormalTrait("Lycanthrope") as Lycanthrope;
         lycanthropy.RevertToNormal();
         SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
     }
@@ -132,6 +132,6 @@ public class RevertToNormalForm : GoapAction {
 
 public class RevertToNormalFormData : GoapActionData {
     public RevertToNormalFormData() : base(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.WOLF };
     }
 }

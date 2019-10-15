@@ -8,7 +8,7 @@ public class ExploreState : CharacterState {
 
     public bool hasStateStarted { get; private set; }
 
-    private int _currentDuration;
+    private int _planDuration;
 
     public ExploreState(CharacterStateComponent characterComp) : base (characterComp) {
         stateName = "Explore State";
@@ -18,7 +18,7 @@ public class ExploreState : CharacterState {
         hasStateStarted = false;
         itemsCollected = new List<SpecialToken>();
         actionIconString = GoapActionStateDB.Explore_Icon;
-        _currentDuration = 0;
+        _planDuration = 0;
     }
 
     #region Overrides
@@ -37,8 +37,7 @@ public class ExploreState : CharacterState {
         //}
     }
     public override bool CanResumeState() {
-        if (stateComponent.character.specificLocation != targetArea
-            || stateComponent.character.currentParty.icon.isTravelling) {
+        if (stateComponent.character.currentParty.icon.isTravelling) { //stateComponent.character.specificLocation != targetArea ||
             return false;
         }
         return true;
@@ -82,20 +81,20 @@ public class ExploreState : CharacterState {
     protected override void PerTickInState() {
         base.PerTickInState();
         if (!isDone && !isPaused) {
-            if (stateComponent.character.GetNormalTrait("Injured") != null || targetArea != stateComponent.character.specificLocation) {
-                StopStatePerTick();
-                OnExitThisState();
-                return;
-            }
-            if (_currentDuration >= 4) {
-                _currentDuration = 0;
+            //if (stateComponent.character.GetNormalTrait("Injured") != null || targetArea != stateComponent.character.specificLocation) {
+            //    StopStatePerTick();
+            //    OnExitThisState();
+            //    return;
+            //}
+            if (_planDuration >= 4) {
+                _planDuration = 0;
                 if (!stateComponent.character.PlanFullnessRecoveryActions(true)) {
                     if (!stateComponent.character.PlanTirednessRecoveryActions(true)) {
                         stateComponent.character.PlanHappinessRecoveryActions(true);
                     }
                 }
             } else {
-                _currentDuration++;
+                _planDuration++;
             }
         }
     }

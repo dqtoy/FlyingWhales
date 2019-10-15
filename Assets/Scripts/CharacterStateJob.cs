@@ -6,18 +6,31 @@ public class CharacterStateJob : JobQueueItem {
 
     public CHARACTER_STATE targetState { get; protected set; }
     public CharacterState assignedState { get; protected set; }
-    public Area targetArea { get; protected set; }
+    public Region targetRegion { get; protected set; }
 
     public List<System.Action<Character>> onUnassignActions { get; private set; }
 
-    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, Area targetArea) : base(jobType) {
+    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state, Region targetRegion) : base(jobType) {
         this.targetState = state;
-        this.targetArea = targetArea;
+        this.targetRegion = targetRegion;
+        onUnassignActions = new List<System.Action<Character>>();
+    }
+    public CharacterStateJob(JOB_TYPE jobType, CHARACTER_STATE state) : base(jobType) {
+        this.targetState = state;
+        onUnassignActions = new List<System.Action<Character>>();
+    }
+    public CharacterStateJob(SaveDataCharacterStateJob data) : base(data) {
+        targetState = data.targetState;
+        if(data.targetRegionID != -1) {
+            targetRegion = GridMap.Instance.GetRegionByID(data.targetRegionID);
+        } else {
+            targetRegion = null;
+        }
         onUnassignActions = new List<System.Action<Character>>();
     }
 
     #region Overrides
-    public override void UnassignJob(bool shouldDoAfterEffect = true) {
+    public override void UnassignJob(bool shouldDoAfterEffect = true, string reason = "") {
         base.UnassignJob(shouldDoAfterEffect);
         if(assignedState != null && assignedCharacter != null) {
             if(assignedCharacter.stateComponent.stateToDo == assignedState) {
@@ -81,5 +94,55 @@ public class CharacterStateJob : JobQueueItem {
         onUnassignActions.Clear();
     }
     #endregion
+
+}
+
+public class SaveDataCharacterStateJob : SaveDataJobQueueItem {
+    public CHARACTER_STATE targetState;
+    public int targetRegionID;
+
+    //Only save assigned character in state job because 
+    public int assignedCharacterID;
+    public SaveDataCharacterState connectedState; //This should only have value if the character's current state is connected to this job
+
+    public override void Save(JobQueueItem job) {
+        base.Save(job);
+        CharacterStateJob stateJob = job as CharacterStateJob;
+        targetState = stateJob.targetState;
+        if(stateJob.targetRegion != null) {
+            targetRegionID = stateJob.targetRegion.id;
+        } else {
+            targetRegionID = -1;
+        }
+        if(stateJob.assignedCharacter != null) {
+            assignedCharacterID = stateJob.assignedCharacter.id;
+            if (stateJob.assignedCharacter.stateComponent.currentState.job == stateJob) {
+                connectedState = SaveUtilities.CreateCharacterStateSaveDataInstance(stateJob.assignedCharacter.stateComponent.currentState);
+                connectedState.Save(stateJob.assignedCharacter.stateComponent.currentState);
+            }
+        } else {
+            assignedCharacterID = -1;
+        }
+    }
+
+    public override JobQueueItem Load() {
+        CharacterStateJob stateJob = base.Load() as CharacterStateJob;
+        if (this.assignedCharacterID != -1) {
+            Character assignedCharacter = CharacterManager.Instance.GetCharacterByID(this.assignedCharacterID);
+            stateJob.SetAssignedCharacter(assignedCharacter);
+            //Load Character State if there is any.
+            if (this.connectedState != null) {
+                CharacterState newState = assignedCharacter.stateComponent.LoadState(connectedState);
+                if (newState != null) {
+                    stateJob.SetAssignedState(newState);
+                } else {
+                    throw new System.Exception(assignedCharacter.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
+                }
+            }
+        }
+
+        return stateJob;
+    }
+
 
 }

@@ -10,7 +10,7 @@ public class AccidentProne : Trait {
 
     public AccidentProne() {
         name = "Accident Prone";
-        description = "This character is prone to accidents.";
+        description = "Accident Prone characters often gets injured.";
         type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
@@ -18,6 +18,7 @@ public class AccidentProne : Trait {
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.ACCIDENT, INTERACTION_TYPE.STUMBLE };
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
+        canBeTriggered = true;
 
     }
 
@@ -33,43 +34,7 @@ public class AccidentProne : Trait {
         bool hasCreatedJob = false;
         if(stumbleChance < 2) {
             if(owner.currentAction == null || (owner.currentAction.goapType != INTERACTION_TYPE.STUMBLE && owner.currentAction.goapType != INTERACTION_TYPE.ACCIDENT)) {
-                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STUMBLE, owner, owner);
-
-                GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-                GoapPlan plan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.STUMBLE, owner);
-                plan.ConstructAllNodes();
-                plan.SetDoNotRecalculate(true);
-                job.SetAssignedPlan(plan);
-                job.SetAssignedCharacter(owner);
-                job.SetCancelOnFail(true);
-
-                owner.jobQueue.AddJobInQueue(job, false);
-
-                owner.AdjustIsWaitingForInteraction(1);
-                if (owner.currentParty.icon.isTravelling) {
-                    owner.marker.StopMovement();
-                }
-                if (owner.IsInOwnParty()) {
-                    owner.ownParty.RemoveAllOtherCharacters();
-                }
-                if (owner.currentAction != null) {
-                    owner.StopCurrentAction(false);
-                }
-                if (owner.stateComponent.currentState != null) {
-                    storedState = owner.stateComponent.currentState;
-                    owner.stateComponent.currentState.PauseState();
-                    goapAction.SetEndAction(ResumePausedState);
-                } else if (owner.stateComponent.stateToDo != null) {
-                    storedState = owner.stateComponent.stateToDo;
-                    owner.stateComponent.SetStateToDo(null, false, false);
-                    goapAction.SetEndAction(ResumeStateToDoState);
-                }
-                owner.AdjustIsWaitingForInteraction(-1);
-
-                owner.AddPlan(plan, true, false);
-                owner.PerformGoapPlans();
-
+                DoStumble();
                 hasCreatedJob = true;
             }
         }
@@ -80,38 +45,105 @@ public class AccidentProne : Trait {
         bool hasCreatedJob = false;
         if (accidentChance < 10) {
             if (action != null && !AttributeManager.Instance.excludedActionsFromAccidentProneTrait.Contains(action.goapType)) {
-                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ACCIDENT, owner, owner);
-                goapAction.InitializeOtherData(new object[] { action });
-
-                GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-                GoapPlan plan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.ACCIDENT, owner);
-                plan.ConstructAllNodes();
-                plan.SetDoNotRecalculate(true);
-                job.SetAssignedPlan(plan);
-                job.SetAssignedCharacter(owner);
-                job.SetCancelOnFail(true);
-
-                owner.jobQueue.AddJobInQueue(job, false);
-
-                owner.AdjustIsWaitingForInteraction(1);
-                owner.currentParty.RemoveAllOtherCharacters();
-                if (owner.currentParty.icon.isTravelling) {
-                    owner.marker.StopMovement();
-                }
-                action.StopAction(true);
-                owner.AdjustIsWaitingForInteraction(-1);
-
-                owner.AddPlan(plan, true, false);
-                owner.PerformGoapPlans();
-
+                DoAccident(action);
                 hasCreatedJob = true;
                 willStillContinueAction = false;
             }
         }
         return hasCreatedJob;
     }
+    public override void TriggerFlaw(Character character) {
+        base.TriggerFlaw(character);
+        if (character.marker.isMoving) {
+            //If moving, the character will stumble and get injured.
+            DoStumble();
+        } else if (character.currentAction != null && !AttributeManager.Instance.excludedActionsFromAccidentProneTrait.Contains(character.currentAction.goapType)) {
+            //If doing something, the character will fail and get injured.
+            DoAccident(character.currentAction);
+        }
+    }
     #endregion
+
+    private void DoStumble() {
+        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.STUMBLE, owner, owner);
+
+        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+        GoapPlan plan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.STUMBLE, owner);
+        plan.ConstructAllNodes();
+        plan.SetDoNotRecalculate(true);
+        job.SetAssignedPlan(plan);
+        job.SetAssignedCharacter(owner);
+        job.SetCancelOnFail(true);
+
+        owner.jobQueue.AddJobInQueue(job, false);
+
+        owner.AdjustIsWaitingForInteraction(1);
+        if (owner.currentParty.icon.isTravelling) {
+            owner.marker.StopMovement();
+        }
+        if (owner.IsInOwnParty()) {
+            owner.ownParty.RemoveAllOtherCharacters();
+        }
+        if (owner.currentAction != null) {
+            //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
+            JobQueueItem currentJob = null;
+            JobQueue currentJobQueue = null;
+            if (owner.currentAction.isRoamingAction && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null) {
+                currentJob = owner.currentAction.parentPlan.job;
+                currentJobQueue = currentJob.jobQueueParent;
+            }
+            owner.StopCurrentAction(false);
+            if (currentJob != null) {
+                currentJobQueue.AddJobInQueue(currentJob, false);
+            }
+        }
+        if (owner.stateComponent.currentState != null) {
+            storedState = owner.stateComponent.currentState;
+            owner.stateComponent.currentState.PauseState();
+            goapAction.SetEndAction(ResumePausedState);
+        } else if (owner.stateComponent.stateToDo != null) {
+            storedState = owner.stateComponent.stateToDo;
+            owner.stateComponent.SetStateToDo(null, false, false);
+            goapAction.SetEndAction(ResumeStateToDoState);
+        }
+        owner.AdjustIsWaitingForInteraction(-1);
+
+        owner.AddPlan(plan, true, false);
+        owner.PerformGoapPlans();
+    }
+
+    private void DoAccident(GoapAction action) {
+        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ACCIDENT, owner, owner);
+        goapAction.InitializeOtherData(new object[] { action });
+
+        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+        GoapPlan plan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.ACCIDENT, owner);
+        plan.ConstructAllNodes();
+        plan.SetDoNotRecalculate(true);
+        job.SetAssignedPlan(plan);
+        job.SetAssignedCharacter(owner);
+        job.SetCancelOnFail(true);
+
+        owner.jobQueue.AddJobInQueue(job, false);
+
+        if (owner.currentAction != null && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null
+            && owner.currentAction.parentPlan.job.id == owner.sleepScheduleJobID) {
+            owner.SetHasCancelledSleepSchedule(true);
+        }
+
+        owner.AdjustIsWaitingForInteraction(1);
+        owner.currentParty.RemoveAllOtherCharacters();
+        if (owner.currentParty.icon.isTravelling) {
+            owner.marker.StopMovement();
+        }
+        action.StopAction(true);
+        owner.AdjustIsWaitingForInteraction(-1);
+
+        owner.AddPlan(plan, true, false);
+        owner.PerformGoapPlans();
+    }
 
     private void ResumePausedState(string result, GoapAction action) {
         owner.GoapActionResult(result, action);

@@ -56,9 +56,8 @@ public class MapGenerator : MonoBehaviour {
 
         FactionManager.Instance.CreateNeutralFaction();
         //LandmarkManager.Instance.SetCascadingLevelsForAllCharacters(portal.tileLocation);
-        LandmarkManager.Instance.GenerateWorldObjects();
+        //LandmarkManager.Instance.GenerateRegionFeatures();
         LandmarkManager.Instance.LoadAdditionalAreaData();
-        GridMap.Instance.GenerateInitialTileTags();
         yield return null;
 
 
@@ -91,7 +90,7 @@ public class MapGenerator : MonoBehaviour {
         AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
         GameManager.Instance.StartProgression();
-        UIManager.Instance.SetTimeControlsState(false);
+        UIManager.Instance.SetSpeedTogglesState(false);
 
         PlayerUI.Instance.ShowStartingMinionPicker();
     }
@@ -118,17 +117,18 @@ public class MapGenerator : MonoBehaviour {
         data.LoadPlayerArea();
         data.LoadNonPlayerAreas();
         data.LoadFactions();
-        data.LoadPlayerAreaItems();
-        data.LoadNonPlayerAreaItems();
         LandmarkManager.Instance.LoadAdditionalAreaData();
         data.LoadCharacters();
+        data.LoadSpecialObjects();
+        data.LoadTileObjects();
         yield return null;
         data.LoadCharacterRelationships();
+        data.LoadCharacterTraits();
         yield return null;
         data.LoadLandmarks();
-        data.LoadLandmarkConnections();
-        yield return null;
-        GridMap.Instance.GenerateInitialTileTags();
+        data.LoadRegionConnections();
+        data.LoadRegionCharacters();
+        data.LoadRegionAdditionalData();
         yield return null;
 
         CameraMove.Instance.CalculateCameraBounds();
@@ -140,12 +140,34 @@ public class MapGenerator : MonoBehaviour {
         //CharacterManager.Instance.GenerateRelationships();
         StoryEventsManager.Instance.Initialize();
 
-
+        yield return null;
+        //LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyOfPlayerArea, false);
+        data.LoadAreaMaps();
+        data.LoadAreaStructureEntranceTiles();
+        data.LoadTileObjectsPreviousTileAndCurrentTile();
+        data.LoadAreaMapsObjectHereOfTiles();
+        data.LoadAreaMapsTileTraits();
+        data.LoadTileObjectTraits();
+        data.LoadCharacterHomeStructures();
+        data.LoadCurrentDate(); //Moved this because some jobs use current date
+        data.LoadCharacterInitialPlacements();
         data.LoadPlayer();
 
+        data.LoadAllJobs();
+        data.LoadTileObjectsDataAfterLoadingAreaMap();
+
+        //Note: Loading area items is after loading the inner map because LocationStructure and LocationGridTile is required
+        data.LoadPlayerAreaItems();
+        data.LoadNonPlayerAreaItems();
         yield return null;
-        LandmarkManager.Instance.GenerateAreaMap(LandmarkManager.Instance.enemyPlayerArea, false);
-        yield return null;
+        data.LoadCharacterHistories();
+
+        data.LoadWorldEventsAndWorldObject();
+        data.LoadCharacterCurrentStates();
+        data.LoadFactionsActiveQuests();
+
+        
+        data.LoadNotifications();
 
         loadingWatch.Stop();
         Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds));
@@ -154,14 +176,19 @@ public class MapGenerator : MonoBehaviour {
         CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerArea.coreTile.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
         yield return new WaitForSeconds(1f);
-        data.LoadCurrentDate();
+
         GameManager.Instance.StartProgression();
-        UIManager.Instance.SetTimeControlsState(false);
         UIManager.Instance.SetSpeedTogglesState(true);
         Messenger.Broadcast(Signals.UPDATE_UI);
-        data.LoadInvasion();
-        PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
-        data.LoadLandmarkEventsAndWorldObject();
+
+        yield return null;
+        UIManager.Instance.Unpause();
+        yield return null;
+        UIManager.Instance.Pause();
+
+        //data.LoadInvasion();
+        //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
+
     }
     private IEnumerator InitializeWorldCoroutine(WorldSaveData data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();
@@ -211,7 +238,7 @@ public class MapGenerator : MonoBehaviour {
 
         TokenManager.Instance.Initialize();
 
-        FactionManager.Instance.RandomizeStartingFactions(data);
+        //FactionManager.Instance.RandomizeStartingFactions(data);
         CharacterManager.Instance.LoadCharacters(data);
         FactionManager.Instance.GenerateStartingFactionData();
 

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using BayatGames.SaveGameFree.Types;
 
 [System.Serializable]
 public class LocationStructure {
-
     public int id { get; private set; }
     public string name { get; private set; }
     public STRUCTURE_TYPE structureType { get; private set; }
@@ -15,16 +15,13 @@ public class LocationStructure {
     private Area _location;
     private List<SpecialToken> _itemsHere;
     public List<IPointOfInterest> pointsOfInterest { get; private set; }   
-    public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
+    //public List<INTERACTION_TYPE> poiGoapActions { get; private set; }
     public POI_STATE state { get; private set; }
 
     //Inner Map
     public List<LocationGridTile> tiles { get; private set; }
     public LocationGridTile entranceTile { get; private set; }
     public bool isFromTemplate { get; private set; }
-
-    //facilities
-    public Dictionary<FACILITY_TYPE, int> facilities { get; protected set; }
 
     #region getters
     public Area location {
@@ -36,9 +33,6 @@ public class LocationStructure {
     public List<LocationGridTile> unoccupiedTiles {
         get { return tiles.Where(x => !x.isOccupied).ToList(); }
     }
-    public POINT_OF_INTEREST_TYPE poiType {
-        get { return POINT_OF_INTEREST_TYPE.STRUCTURE; }
-    }
     #endregion
 
     public LocationStructure(STRUCTURE_TYPE structureType, Area location, bool isInside) {
@@ -47,6 +41,21 @@ public class LocationStructure {
         this.name = Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         this.isInside = isInside;
         _location = location;
+        charactersHere = new List<Character>();
+        _itemsHere = new List<SpecialToken>();
+        pointsOfInterest = new List<IPointOfInterest>();
+        tiles = new List<LocationGridTile>();
+        AddListeners();
+        //if (structureType == STRUCTURE_TYPE.DUNGEON || structureType == STRUCTURE_TYPE.WAREHOUSE) {
+        //    AddPOI(new SupplyPile(this));
+        //}
+    }
+    public LocationStructure(Area location, SaveDataLocationStructure data) {
+        _location = location;
+        id = Utilities.SetID(this, data.id);
+        this.structureType = data.structureType;
+        this.name = data.name;
+        this.isInside = data.isInside;
         charactersHere = new List<Character>();
         _itemsHere = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
@@ -123,9 +132,6 @@ public class LocationStructure {
             }
 #endif
             pointsOfInterest.Add(poi);
-            if (poi is TileObject) {
-                UpdateFacilityValues();
-            }
             return true;
         }
         return false;
@@ -141,9 +147,6 @@ public class LocationStructure {
                     location.areaMap.RemoveObject(poi.gridTileLocation, removedBy);
                 }
                 //throw new System.Exception("Provided tile of " + poi.ToString() + " is null!");
-            }
-            if (poi is TileObject) {
-                UpdateFacilityValues();
             }
 #endif
             return true;
@@ -225,6 +228,8 @@ public class LocationStructure {
                     return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall)).ToList();
                 } else if (poi is WaterWell) {
                     return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && x.parentAreaMap.GetTilesInRadius(x, 3).Where(y => y.objHere is WaterWell).Count() == 0 && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure, true)).ToList();
+                } else if (poi is GoddessStatue) {
+                    return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && x.parentAreaMap.GetTilesInRadius(x, 3).Where(y => y.objHere is GoddessStatue).Count() == 0 && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Structure, true)).ToList();
                 } else if (poi is Guitar || poi is Bed || poi is Table) {
                     return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
                 } else {
@@ -476,7 +481,7 @@ public class LocationStructure {
             case TILE_OBJECT_TYPE.ORE:
                 AddPOI(new Ore(this), tile, placeAsset);
                 break;
-            case TILE_OBJECT_TYPE.TREE:
+            case TILE_OBJECT_TYPE.TREE_OBJECT:
                 AddPOI(new TreeObject(this), tile, placeAsset);
                 break;
             case TILE_OBJECT_TYPE.DESK:
@@ -545,119 +550,63 @@ public class LocationStructure {
     }
     #endregion
     public override string ToString() {
-        return structureType.ToString() + " " + location.structures[structureType].IndexOf(this).ToString() + " at " + location.name;
+        return structureType.ToString() + " " + id.ToString() + " at " + location.name;
+    }
+}
+
+[System.Serializable]
+public class SaveDataLocationStructure {
+    public int id;
+    public string name;
+    public STRUCTURE_TYPE structureType;
+    public bool isInside;
+    public POI_STATE state;
+
+    public Vector3Save entranceTile;
+    public bool isFromTemplate;
+
+    private LocationStructure loadedStructure;
+    public void Save(LocationStructure structure) {
+        id = structure.id;
+        name = structure.name;
+        structureType = structure.structureType;
+        isInside = structure.isInside;
+        state = structure.state;
+        isFromTemplate = structure.isFromTemplate;
+
+        if(structure.entranceTile != null) {
+            entranceTile = new Vector3Save(structure.entranceTile.localPlace.x, structure.entranceTile.localPlace.y, 0);
+        } else {
+            entranceTile = new Vector3Save(0f,0f,-1f);
+        }
     }
 
-    //#region Point Of Interest
-    //public List<GoapAction> AdvertiseActionsToActor(Character actor, List<INTERACTION_TYPE> actorAllowedInteractions) {
-    //    if (poiGoapActions != null && poiGoapActions.Count > 0) {
-    //        List<GoapAction> usableActions = new List<GoapAction>();
-    //        for (int i = 0; i < poiGoapActions.Count; i++) {
-    //            if (actorAllowedInteractions.Contains(poiGoapActions[i])) {
-    //                GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(poiGoapActions[i], actor, this);
-    //                if (goapAction.CanSatisfyRequirements()) {
-    //                    usableActions.Add(goapAction);
-    //                }
-    //            }
-    //        }
-    //        return usableActions;
-    //    }
-    //    return null;
-    //}
-    //#endregion
+    public LocationStructure Load(Area area) {
+        LocationStructure createdStructure = null;
+        switch (structureType) {
+            case STRUCTURE_TYPE.DWELLING:
+                createdStructure = new Dwelling(area, this);
+                break;
+            default:
+                createdStructure = new LocationStructure(area, this);
+                break;
+        }
+        createdStructure.SetIfFromTemplate(isFromTemplate);
+        loadedStructure = createdStructure;
+        return createdStructure;
+    }
 
-    #region Facilities
-    protected virtual void InitializeFacilities() { }
-    private void UpdateFacilityValues() {
-        if (facilities == null) {
-            return;
-        }
-        FACILITY_TYPE[] facilityTypes = Utilities.GetEnumValues<FACILITY_TYPE>();
-        for (int i = 0; i < facilityTypes.Length; i++) {
-            if (facilityTypes[i] != FACILITY_TYPE.NONE) {
-                facilities[facilityTypes[i]] = 0;
-            }
-        }
-        List<TileObject> objects = GetTileObjects();
-        for (int i = 0; i < objects.Count; i++) {
-            TileObject currObj = objects[i];
-            TileObjectData data;
-            if (TileObjectDB.TryGetTileObjectData(currObj.tileObjectType, out data)) {
-                if (data.providedFacilities != null) {
-                    for (int j = 0; j < data.providedFacilities.Length; j++) {
-                        ProvidedFacility facility = data.providedFacilities[j];
-                        facilities[facility.type] += facility.value;
-                    }
+    //This is loaded last so release loadedStructure
+    public void LoadEntranceTile() {
+        if(entranceTile.z != -1f) {
+            for (int i = 0; i < loadedStructure.tiles.Count; i++) {
+                LocationGridTile tile = loadedStructure.tiles[i];
+                if(tile.localPlace.x == (int)entranceTile.x && tile.localPlace.y == (int) entranceTile.y) {
+                    loadedStructure.SetEntranceTile(tile);
+                    break;
                 }
             }
         }
-
+        loadedStructure = null;
     }
-    public bool HasUnoccupiedFurnitureSpot() {
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            if (currTile.objHere == null && currTile.hasFurnitureSpot) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public FACILITY_TYPE GetMostNeededValidFacility() {
-        //get the facility with the lowest value, that can be provided given the unoccupied furnitureSpots
-        int lowestValue = 99999;
-        FACILITY_TYPE lowestFacility = FACILITY_TYPE.NONE;
-        foreach (KeyValuePair<FACILITY_TYPE, int> keyValuePair in facilities) {
-            if (keyValuePair.Value < lowestValue && HasUnoccupiedFurnitureSpotsThatCanProvide(keyValuePair.Key)) {
-                lowestValue = keyValuePair.Value;
-                lowestFacility = keyValuePair.Key;
-            }
-        }
-        return lowestFacility;
-    }
-    public List<LocationGridTile> GetUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type) {
-        List<LocationGridTile> validTiles = new List<LocationGridTile>();
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            if (currTile.objHere == null && currTile.hasFurnitureSpot) {
-                for (int j = 0; j < currTile.furnitureSpot.allowedFurnitureTypes.Length; j++) {
-                    FURNITURE_TYPE furnitureType = currTile.furnitureSpot.allowedFurnitureTypes[j];
-                    TILE_OBJECT_TYPE tileObject = furnitureType.ConvertFurnitureToTileObject();
-                    if (tileObject.CanProvideFacility(type)) {
-                        validTiles.Add(currTile);
-                        break;
-                    }
-                }
-            }
-        }
-        return validTiles;
-    }
-    private bool HasUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type) {
-        for (int i = 0; i < tiles.Count; i++) {
-            LocationGridTile currTile = tiles[i];
-            if (currTile.objHere == null && currTile.hasFurnitureSpot) {
-                for (int j = 0; j < currTile.furnitureSpot.allowedFurnitureTypes.Length; j++) {
-                    FURNITURE_TYPE furnitureType = currTile.furnitureSpot.allowedFurnitureTypes[j];
-                    TILE_OBJECT_TYPE tileObject = furnitureType.ConvertFurnitureToTileObject();
-                    if (tileObject.CanProvideFacility(type)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    private List<FACILITY_TYPE> GetFacilitiesProvidedBy(TILE_OBJECT_TYPE objType) {
-        List<FACILITY_TYPE> facility = new List<FACILITY_TYPE>();
-        TileObjectData data;
-        if (TileObjectDB.TryGetTileObjectData(objType, out data)) {
-            if (data.providedFacilities != null) {
-                for (int j = 0; j < data.providedFacilities.Length; j++) {
-                    ProvidedFacility provided = data.providedFacilities[j];
-                    facility.Add(provided.type);
-                }
-            }
-        }
-        return facility;
-    }
-    #endregion
 }

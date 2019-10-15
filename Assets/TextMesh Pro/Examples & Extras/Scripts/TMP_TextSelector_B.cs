@@ -260,8 +260,6 @@ namespace TMPro.Examples
                     Vector3 worldPointInRectangle = Vector3.zero;
                     RectTransformUtility.ScreenPointToWorldPointInRectangle(m_TextMeshPro.rectTransform, Input.mousePosition, m_Camera, out worldPointInRectangle);
 
-                    Debug.Log(linkInfo.GetLinkText());
-
                     switch (linkInfo.GetLinkID())
                     {
                         case "id_01": // 100041637: // id_01

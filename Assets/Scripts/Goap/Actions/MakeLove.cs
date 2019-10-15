@@ -7,9 +7,10 @@ public class MakeLove : GoapAction {
     public Character targetCharacter { get; private set; }
 
     public MakeLove(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.MAKE_LOVE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionIconString = GoapActionStateDB.Entertain_Icon;
+        actionIconString = GoapActionStateDB.Flirt_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.AFTERNOON,
+            TIME_IN_WORDS.LUNCH_TIME,
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
         };
@@ -54,22 +55,22 @@ public class MakeLove : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        if (endedAtState.name == "Make Love Success") {
-            if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
-                AddTraitTo(actor, "Cheery", targetCharacter);
-                AddTraitTo(targetCharacter, "Cheery", actor);
-            } else if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                AddTraitTo(actor, "Ashamed", targetCharacter);
-                AddTraitTo(targetCharacter, "Ashamed", actor);
-            }
-        }
-        actor.ownParty.RemoveCharacter(targetCharacter);
-        RemoveTraitFrom(targetCharacter, "Wooed");
+        //if (currentState.name == "Make Love Success") {
+        //    if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
+        //        AddTraitTo(actor, "Satisfied", targetCharacter);
+        //        AddTraitTo(targetCharacter, "Satisfied", actor);
+        //    } else if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        //        AddTraitTo(actor, "Ashamed", targetCharacter);
+        //        AddTraitTo(targetCharacter, "Ashamed", actor);
+        //    }
+        //}
+        //actor.ownParty.RemoveCharacter(targetCharacter);
+        //RemoveTraitFrom(targetCharacter, "Wooed");
 
-        targetCharacter.RemoveTargettedByAction(this);
-        if (targetCharacter.currentAction == this) {
-            targetCharacter.SetCurrentAction(null);
-        }
+        //targetCharacter.RemoveTargettedByAction(this);
+        //if (targetCharacter.currentAction == this) {
+        //    targetCharacter.SetCurrentAction(null);
+        //}
     }
     public override bool CanReactToThisCrime(Character character) {
         //do not allow actor and target character to react
@@ -96,6 +97,9 @@ public class MakeLove : GoapAction {
 
     #region Effects
     private void PreMakeLoveSuccess() {
+        if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            SetCommittedCrime(CRIME.INFIDELITY, new Character[] { actor, targetCharacter });
+        }
         actor.AdjustDoNotGetLonely(1);
         targetCharacter.AdjustDoNotGetLonely(1);
 
@@ -107,15 +111,15 @@ public class MakeLove : GoapAction {
         //**Per Tick Effect 1 * *: Actor's Happiness Meter +500
         int actorHappinessAmount = 500;
         int targetHappinessAmount = 500;
-        if (actor.GetNormalTrait("Horny") != null) {
+        if (actor.GetNormalTrait("Lustful") != null) {
             actorHappinessAmount += 100;
-        } else if (actor.GetNormalTrait("Prude") != null) {
+        } else if (actor.GetNormalTrait("Chaste") != null) {
             actorHappinessAmount -= 100;
         }
 
-        if (targetCharacter.GetNormalTrait("Horny") != null) {
+        if (targetCharacter.GetNormalTrait("Lustful") != null) {
             targetHappinessAmount += 100;
-        } else if (targetCharacter.GetNormalTrait("Prude") != null) {
+        } else if (targetCharacter.GetNormalTrait("Chaste") != null) {
             targetHappinessAmount -= 100;
         }
 
@@ -128,11 +132,6 @@ public class MakeLove : GoapAction {
         targetCharacter.AdjustDoNotGetLonely(-1);
 
         //**After Effect 1**: If Actor and Target are Lovers, they both gain Cheery trait. If Actor and Target are Paramours, they both gain Ashamed trait.
-        if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
-            SetCommittedCrime(CRIME.INFIDELITY, new Character[] { actor, targetCharacter });
-        }
-        actor.ownParty.RemoveCharacter(targetCharacter);
-        RemoveTraitFrom(targetCharacter, "Wooed");
         if (actor is SeducerSummon) {
             //kill the target character
             targetCharacter.Death("seduced", this, actor);
@@ -140,7 +139,7 @@ public class MakeLove : GoapAction {
 
         //Plagued chances
         Plagued actorPlagued = actor.GetNormalTrait("Plagued") as Plagued;
-        Plagued targetPlagued = poiTarget.GetNormalTrait("Plagued") as Plagued;
+        Plagued targetPlagued = targetCharacter.GetNormalTrait("Plagued") as Plagued;
         if ((actorPlagued == null || targetPlagued == null) && (actorPlagued != null || targetPlagued != null)) {
             //if either the actor or the target is not yet plagued and one of them is plagued, check for infection chance
             if (actorPlagued != null) {
@@ -148,10 +147,10 @@ public class MakeLove : GoapAction {
                 int roll = Random.Range(0, 100);
                 if (roll < actorPlagued.GetMakeLoveInfectChance()) {
                     //target will be infected with plague
-                    if (AddTraitTo(poiTarget, "Plagued", actor)) {
+                    if (AddTraitTo(targetCharacter, "Plagued", actor)) {
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
                         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddLogToInvolvedObjects();
                     }
                 }
@@ -160,16 +159,30 @@ public class MakeLove : GoapAction {
                 int roll = Random.Range(0, 100);
                 if (roll < targetPlagued.GetMakeLoveInfectChance()) {
                     //actor will be infected with plague
-                    if (AddTraitTo(actor, "Plagued", poiTarget as Character)) {
+                    if (AddTraitTo(actor, "Plagued", targetCharacter)) {
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
                         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         log.AddLogToInvolvedObjects();
                     }
                 }
             }
         }
 
+        if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
+            AddTraitTo(actor, "Satisfied", targetCharacter);
+            AddTraitTo(targetCharacter, "Satisfied", actor);
+        } else if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+            AddTraitTo(actor, "Ashamed", targetCharacter);
+            AddTraitTo(targetCharacter, "Ashamed", actor);
+        }
+        actor.ownParty.RemoveCharacter(targetCharacter);
+        RemoveTraitFrom(targetCharacter, "Wooed");
+
+        targetCharacter.RemoveTargettedByAction(this);
+        if (targetCharacter.currentAction == this) {
+            targetCharacter.SetCurrentAction(null);
+        }
     }
     private void PreMakeLoveFail() {
         currentState.AddLogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -177,10 +190,27 @@ public class MakeLove : GoapAction {
     private void AfterMakeLoveFail() {
         //**After Effect 1**: Actor gains Annoyed trait.
         AddTraitTo(actor, "Annoyed", actor);
+        //actor.ownParty.RemoveCharacter(targetCharacter);
+
         actor.ownParty.RemoveCharacter(targetCharacter);
+        RemoveTraitFrom(targetCharacter, "Wooed");
+
+        targetCharacter.RemoveTargettedByAction(this);
+        if (targetCharacter.currentAction == this) {
+            targetCharacter.SetCurrentAction(null);
+        }
     }
     private void PreTargetMissing() {
         currentState.AddLogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    }
+    private void AfterTargetMissing() {
+        actor.ownParty.RemoveCharacter(targetCharacter);
+        RemoveTraitFrom(targetCharacter, "Wooed");
+
+        targetCharacter.RemoveTargettedByAction(this);
+        if (targetCharacter.currentAction == this) {
+            targetCharacter.SetCurrentAction(null);
+        }
     }
     #endregion
 

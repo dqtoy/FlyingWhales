@@ -9,12 +9,13 @@ public class DemonStone : SpecialObject {
     public bool hasScheduledInvocation { get; private set; }
 
     public DemonStone() : base (SPECIAL_OBJECT_TYPE.DEMON_STONE){ }
+    public DemonStone(SaveDataSpecialObject data) : base(data) { }
 
     #region Overrides
     public override void Obtain() {
         base.Obtain();
         //show begin summon UI
-        PlayerUI.Instance.ShowGeneralConfirmation("Demon Stone", "You've obtained a Demon Stone, you can expect a new minion after 24 hours", "Begin Invocation", ScheduleInvocation);
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You found a demon stone!", () => PlayerUI.Instance.ShowGeneralConfirmation("Demon Stone", "You've obtained a Demon Stone, you can expect a new minion after 24 hours", "Begin Invocation", ScheduleInvocation));
     }
     #endregion
 
@@ -28,7 +29,8 @@ public class DemonStone : SpecialObject {
 
     private void OnInvocationDone() {
         Minion minion = PlayerManager.Instance.player.CreateNewMinionRandomClass();
-        PlayerManager.Instance.player.AddMinion(minion, true);
+        //PlayerManager.Instance.player.AddMinion(minion, true);
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(minion, true));
     }
 
     public void LoadInvocation(SaveDataDemonStone data) {
@@ -56,10 +58,10 @@ public class SaveDataDemonStone : SaveDataSpecialObject {
     public int startTick;
     public bool hasScheduledInvocation;
 
-    public override void Save(IWorldObject worldObject) {
-        base.Save(worldObject);
-        if (worldObject is DemonStone) {
-            DemonStone demonStone = worldObject as DemonStone;
+    public override void Save(SpecialObject specialObject) {
+        base.Save(specialObject);
+        if (specialObject is DemonStone) {
+            DemonStone demonStone = specialObject as DemonStone;
             dueMonth = demonStone.dueDate.month;
             dueDay = demonStone.dueDate.day;
             dueYear = demonStone.dueDate.year;
@@ -74,8 +76,8 @@ public class SaveDataDemonStone : SaveDataSpecialObject {
         }
     }
 
-    public override IWorldObject Load() {
-        DemonStone demonStone = new DemonStone();
+    public override SpecialObject Load() {
+        DemonStone demonStone = new DemonStone(this);
         demonStone.LoadInvocation(this);
         return demonStone;
     }

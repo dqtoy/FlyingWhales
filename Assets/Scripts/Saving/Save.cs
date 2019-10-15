@@ -14,6 +14,10 @@ public class Save {
     public List<SaveDataArea> nonPlayerAreaSaves;
     public List<SaveDataFaction> factionSaves;
     public List<SaveDataCharacter> characterSaves;
+    public List<SaveDataTileObject> tileObjectSaves;
+    public List<SaveDataSpecialObject> specialObjectSaves;
+    public List<SaveDataAreaInnerTileMap> areaMapSaves;
+    public List<SaveDataNotification> notificationSaves;
 
     public SaveDataArea playerAreaSave;
     public SaveDataPlayer playerSave;
@@ -55,9 +59,17 @@ public class Save {
         if(landmarkSaves == null) {
             landmarkSaves = new List<SaveDataLandmark>();
         }
-        SaveDataLandmark newSaveData = new SaveDataLandmark();
+        var typeName = "SaveData" + landmark.GetType().ToString();
+        System.Type type = System.Type.GetType(typeName);
+        SaveDataLandmark newSaveData = null;
+        if (type != null) {
+            newSaveData = System.Activator.CreateInstance(type) as SaveDataLandmark;
+        } else {
+            newSaveData = new SaveDataLandmark();
+        }
         newSaveData.Save(landmark);
-        SortAddSaveDataLandmark(newSaveData);
+        //SortAddSaveDataLandmark(newSaveData);
+        landmarkSaves.Add(newSaveData);
     }
     public void SaveLandmarks(List<HexTile> tiles) {
         landmarkSaves = new List<SaveDataLandmark>();
@@ -66,7 +78,8 @@ public class Save {
             if(currTile.landmarkOnTile != null) {
                 SaveDataLandmark newSaveData = new SaveDataLandmark();
                 newSaveData.Save(currTile.landmarkOnTile);
-                SortAddSaveDataLandmark(newSaveData);
+                //SortAddSaveDataLandmark(newSaveData);
+                landmarkSaves.Add(newSaveData);
             }
         }
     }
@@ -84,6 +97,14 @@ public class Save {
             landmarkSaves.Add(newSaveData);
         }
     }
+    private SaveDataLandmark GetLandmarkSaveByID(int id) {
+        for (int i = 0; i < landmarkSaves.Count; i++) {
+            if(landmarkSaves[i].id == id) {
+                return landmarkSaves[i];
+            }
+        }
+        return null;
+    }
     public void LoadLandmarks() {
         for (int i = 0; i < hextileSaves.Count; i++) {
             SaveDataHextile saveDataHextile = hextileSaves[i];
@@ -92,20 +113,15 @@ public class Save {
                 //We get the index for the appropriate landmark of hextile through (landmarkID - 1) because the list of landmarksaves is properly ordered
                 //Example, the save data in index 0 of the list has an id of 1 since all ids in game start at 1, that is why to get the index of the landmark of the tile, we get the true landmark id and subtract it by 1
                 //This is done so that we will not loop every time we want to get the save data of a landmark and check all the ids if it will match
-                landmarkSaves[saveDataHextile.landmarkID - 1].Load(currTile);
+                GetLandmarkSaveByID(saveDataHextile.landmarkID).Load(currTile);
             }
         }
     }
-    public void LoadLandmarkConnections() {
-        for (int i = 0; i < landmarkSaves.Count; i++) {
-            SaveDataLandmark data = landmarkSaves[i];
-            data.LoadLandmarkConnections(GridMap.Instance.hexTiles[data.locationID].landmarkOnTile);
-        }
-    }
-    public void LoadLandmarkEventsAndWorldObject() {
-        for (int i = 0; i < landmarkSaves.Count; i++) {
-            SaveDataLandmark data = landmarkSaves[i];
-            data.LoadActiveEventAndWorldObject(GridMap.Instance.hexTiles[data.locationID].landmarkOnTile);
+
+    public void LoadWorldEventsAndWorldObject() {
+        for (int i = 0; i < regionSaves.Count; i++) {
+            SaveDataRegion data = regionSaves[i];
+            data.LoadActiveEvent(GridMap.Instance.hexTiles[data.coreTileID].region);
         }
     }
 
@@ -123,6 +139,24 @@ public class Save {
             regions[i] = regionSaves[i].Load();
         }
         GridMap.Instance.LoadRegions(regions);
+    }
+    public void LoadRegionConnections() {
+        for (int i = 0; i < regionSaves.Count; i++) {
+            SaveDataRegion data = regionSaves[i];
+            data.LoadRegionConnections(GridMap.Instance.hexTiles[data.coreTileID].region);
+        }
+    }
+    public void LoadRegionCharacters() {
+        for (int i = 0; i < regionSaves.Count; i++) {
+            SaveDataRegion data = regionSaves[i];
+            data.LoadRegionCharacters(GridMap.Instance.hexTiles[data.coreTileID].region);
+        }
+    }
+    public void LoadRegionAdditionalData() {
+        for (int i = 0; i < regionSaves.Count; i++) {
+            SaveDataRegion data = regionSaves[i];
+            data.LoadRegionAdditionalData(GridMap.Instance.hexTiles[data.coreTileID].region);
+        }
     }
     public void SavePlayerArea(Area area) {
         playerAreaSave = new SaveDataArea();
@@ -153,6 +187,18 @@ public class Save {
             nonPlayerAreaSaves[i].LoadAreaItems();
         }
     }
+    public void LoadAreaStructureEntranceTiles() {
+        for (int i = 0; i < nonPlayerAreaSaves.Count; i++) {
+            nonPlayerAreaSaves[i].LoadStructureEntranceTiles();
+        }
+        playerAreaSave.LoadStructureEntranceTiles();
+    }
+    private void LoadAreaJobs() {
+        for (int i = 0; i < nonPlayerAreaSaves.Count; i++) {
+            nonPlayerAreaSaves[i].LoadAreaJobs();
+        }
+        playerAreaSave.LoadAreaJobs();
+    }
 
     public void SaveFactions(List<Faction> factions) {
         factionSaves = new List<SaveDataFaction>();
@@ -166,6 +212,11 @@ public class Save {
         List<BaseLandmark> allLandmarks = LandmarkManager.Instance.GetAllLandmarks();
         for (int i = 0; i < factionSaves.Count; i++) {
             factionSaves[i].Load(allLandmarks);
+        }
+    }
+    public void LoadFactionsActiveQuests() {
+        for (int i = 0; i < factionSaves.Count; i++) {
+            factionSaves[i].LoadFactionActiveQuest();
         }
     }
 
@@ -187,6 +238,47 @@ public class Save {
             characterSaves[i].LoadRelationships(CharacterManager.Instance.allCharacters[i]);
         }
     }
+    public void LoadCharacterTraits() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadTraits(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
+    public void LoadCharacterHomeStructures() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadHomeStructure(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
+    public void LoadCharacterInitialPlacements() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadCharacterGridTileLocation(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
+    public void LoadCharacterCurrentStates() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadCharacterCurrentState(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
+    private void LoadCharacterJobs() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadCharacterJobs(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
+    public void LoadCharacterHistories() {
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            characterSaves[i].LoadCharacterHistory(CharacterManager.Instance.allCharacters[i]);
+        }
+    }
+    public void LoadCharactersDousingFire() {
+        for (int i = 0; i < LandmarkManager.Instance.allAreas.Count; i++) {
+            Area currArea = LandmarkManager.Instance.allAreas[i];
+            if (currArea.areaMap != null) {
+                for (int j = 0; j < currArea.areaMap.activeBurningSources.Count; j++) {
+                    BurningSource currBurningSource = currArea.areaMap.activeBurningSources[j];
+                    currBurningSource.ActivateCharactersDousingFire();
+                }
+            }
+        }
+    }
 
     public void SavePlayer(Player player) {
         playerSave = new SaveDataPlayer();
@@ -195,8 +287,101 @@ public class Save {
     public void LoadPlayer() {
         playerSave.Load();
     }
-    public void LoadInvasion() {
-        playerSave.LoadInvasion(this);
+
+    public void SaveTileObjects(Dictionary<TILE_OBJECT_TYPE, List<TileObject>> tileObjects) {
+        tileObjectSaves = new List<SaveDataTileObject>();
+        foreach (KeyValuePair<TILE_OBJECT_TYPE, List<TileObject>> kvp in tileObjects) {
+            if(kvp.Key == TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
+                continue; //Do not save generic tile object because it will be created again upon loading
+            }
+            for (int i = 0; i < kvp.Value.Count; i++) {
+                TileObject currTileObject = kvp.Value[i];
+                SaveDataTileObject data = null;
+                System.Type type = System.Type.GetType("SaveData" + currTileObject.GetType().ToString());
+                if (type != null) {
+                    data = System.Activator.CreateInstance(type) as SaveDataTileObject;
+                } else {
+                    if(currTileObject is Artifact) {
+                        data = new SaveDataArtifact();
+                    } else {
+                        data = new SaveDataTileObject();
+                    }
+                }
+                data.Save(currTileObject);
+                tileObjectSaves.Add(data);
+            }
+        }
+    }
+    public void LoadTileObjects() {
+        for (int i = 0; i < tileObjectSaves.Count; i++) {
+            tileObjectSaves[i].Load();
+        }
+    }
+    public void LoadTileObjectsPreviousTileAndCurrentTile() {
+        for (int i = 0; i < tileObjectSaves.Count; i++) {
+            tileObjectSaves[i].LoadPreviousTileAndCurrentTile();
+        }
+    }
+    public void LoadTileObjectTraits() {
+        for (int i = 0; i < tileObjectSaves.Count; i++) {
+            tileObjectSaves[i].LoadTraits();
+        }
+    }
+    public void LoadTileObjectsDataAfterLoadingAreaMap() {
+        for (int i = 0; i < tileObjectSaves.Count; i++) {
+            tileObjectSaves[i].LoadAfterLoadingAreaMap();
+        }
+    }
+
+    public void SaveSpecialObjects(List<SpecialObject> specialObjects) {
+        specialObjectSaves = new List<SaveDataSpecialObject>();
+        for (int i = 0; i < specialObjects.Count; i++) {
+            SpecialObject currSpecialObject = specialObjects[i];
+            SaveDataSpecialObject data = null;
+            System.Type type = System.Type.GetType("SaveData" + currSpecialObject.GetType().ToString());
+            if (type != null) {
+                data = System.Activator.CreateInstance(type) as SaveDataSpecialObject;
+            } else {
+                data = new SaveDataSpecialObject();
+            }
+            data.Save(currSpecialObject);
+            specialObjectSaves.Add(data);
+        }
+    }
+    public void LoadSpecialObjects() {
+        for (int i = 0; i < specialObjectSaves.Count; i++) {
+            specialObjectSaves[i].Load();
+        }
+    }
+
+    public void SaveAreaMaps(List<AreaInnerTileMap> areaMaps) {
+        areaMapSaves = new List<SaveDataAreaInnerTileMap>();
+        for (int i = 0; i < areaMaps.Count; i++) {
+            SaveDataAreaInnerTileMap data = new SaveDataAreaInnerTileMap();
+            data.Save(areaMaps[i]);
+            areaMapSaves.Add(data);
+        }
+    }
+    public void LoadAreaMaps() {
+        for (int i = 0; i < areaMapSaves.Count; i++) {
+            LandmarkManager.Instance.LoadAreaMap(areaMapSaves[i]);
+        }
+    }
+    public void LoadAreaMapsTileTraits() {
+        for (int i = 0; i < areaMapSaves.Count; i++) {
+            areaMapSaves[i].LoadTileTraits();
+        }
+    }
+    public void LoadAreaMapsObjectHereOfTiles() {
+        for (int i = 0; i < areaMapSaves.Count; i++) {
+            areaMapSaves[i].LoadObjectHereOfTiles();
+        }
+    }
+
+    public void LoadAllJobs() {
+        //Loads all jobs except for quest jobs because it will be loaded when the quest is loaded
+        LoadAreaJobs();
+        LoadCharacterJobs();
     }
 
     public void SaveCurrentDate() {
@@ -212,5 +397,36 @@ public class Save {
         GameManager.Instance.year = year;
         GameManager.Instance.tick = tick;
         GameManager.Instance.continuousDays = continuousDays;
+    }
+
+    public void SaveNotifications() {
+        notificationSaves = new List<SaveDataNotification>();
+        for (int i = 0; i < UIManager.Instance.activeNotifications.Count; i++) {
+            SaveDataNotification data = new SaveDataNotification();
+            data.Save(UIManager.Instance.activeNotifications[i]);
+            notificationSaves.Add(data);
+        }
+    }
+    public void LoadNotifications() {
+        for (int i = 0; i < notificationSaves.Count; i++) {
+            notificationSaves[i].Load();
+        }
+    }
+}
+
+[System.Serializable]
+public class SaveDataNotification {
+    public SaveDataLog log;
+    public int tickShown;
+
+    public void Save(PlayerNotificationItem notif) {
+        log = new SaveDataLog();
+        log.Save(notif.shownLog);
+
+        tickShown = notif.tickShown;
+    }
+
+    public void Load() {
+        UIManager.Instance.ShowPlayerNotification(log.Load(), tickShown);
     }
 }

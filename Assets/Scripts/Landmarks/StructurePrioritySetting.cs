@@ -17,7 +17,7 @@ public class StructurePrioritySetting {
     public StructurePrioritySetting() {
         this.buildResourceCost = new List<Resource>();
         this.repairResourceCost = new List<Resource>();
-        this.landmarkType = LANDMARK_TYPE.DEMONIC_PORTAL;
+        this.landmarkType = LANDMARK_TYPE.THE_PORTAL;
     }
 
     public void AddBuildResourceCost(Resource newCost) {

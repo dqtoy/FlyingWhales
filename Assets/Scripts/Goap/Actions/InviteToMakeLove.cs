@@ -6,7 +6,7 @@ using UnityEngine;
 public class InviteToMakeLove : GoapAction {
 
     public InviteToMakeLove(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.INVITE_TO_MAKE_LOVE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionIconString = GoapActionStateDB.Entertain_Icon;
+        actionIconString = GoapActionStateDB.Flirt_Icon;
     }
 
     #region Overrides
@@ -32,7 +32,7 @@ public class InviteToMakeLove : GoapAction {
                 }
             } else {
                 int acceptChance = 100;
-                if (targetCharacter.GetNormalTrait("Prude") != null) {
+                if (targetCharacter.GetNormalTrait("Chaste") != null) {
                     acceptChance = 25;
                 }
                 if (UnityEngine.Random.Range(0, 100) < acceptChance && !targetCharacter.isStarving && !targetCharacter.isExhausted
@@ -48,13 +48,13 @@ public class InviteToMakeLove : GoapAction {
         }
     }
     protected override int GetCost() {
-        bool isPrude = actor.GetNormalTrait("Prude") != null;
-        if (isPrude) {
-            //Prude 40 - 66 all three time of day and also unfaithful values
+        bool isChaste = actor.GetNormalTrait("Chaste") != null;
+        if (isChaste) {
+            //Chaste 40 - 66 all three time of day and also unfaithful values
             return Utilities.rng.Next(40, 67);
         }
-        bool isHorny = actor.GetNormalTrait("Horny") != null;
-        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick();
+        bool isLustful = actor.GetNormalTrait("Lustful") != null;
+        TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick(actor);
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             if (poiTarget is Character) {
                 //If unfaithful and target is Paramour (15 - 36)/(8 - 20)/(5-15) per level, affects Early Night and Late Night only).
@@ -70,15 +70,15 @@ public class InviteToMakeLove : GoapAction {
                     }
                 }
             }
-            if (isHorny) {
-                //Horny(Early Night or Late Night 5 - 25)
+            if (isLustful) {
+                //Lustful(Early Night or Late Night 5 - 25)
                 return Utilities.rng.Next(5, 26);
             }
             return Utilities.rng.Next(15, 37);
         }
 
-        if (isHorny) {
-            // - Horny 15 - 25
+        if (isLustful) {
+            // - Lustful 15 - 25
             return Utilities.rng.Next(15, 26);
         }
         return Utilities.rng.Next(30, 57);
@@ -146,9 +146,9 @@ public class InviteToMakeLove : GoapAction {
         if (validBeds.Count == 0) {
             //No More valid beds, what to do?
         } else {
-            if (parentPlan != null && parentPlan.job != null) {
-                parentPlan.job.SetCannotOverrideJob(true); //Carry should not be overrideable if the character is actually already carrying another character.
-            }
+            //if (parentPlan != null && parentPlan.job != null) {
+            //    parentPlan.job.SetCannotOverrideJob(true); //Carry should not be overrideable if the character is actually already carrying another character.
+            //}
             IPointOfInterest chosenBed = validBeds[Random.Range(0, validBeds.Count)];
             MakeLove makeLove = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.MAKE_LOVE, actor, chosenBed, false) as MakeLove;
             makeLove.SetTargetCharacter(target);
@@ -199,7 +199,7 @@ public class InviteToMakeLove : GoapAction {
         if (target.returnedToLife) { //do not woo characters that have been raised from the dead
             return false;
         }
-        if (target.currentParty.icon.isTravellingOutside || target.currentLandmark != null) {
+        if (target.currentParty.icon.isTravellingOutside || target.currentRegion != null) {
             return false; //target is outside the map
         }
         if (!(actor is SeducerSummon)) { //ignore relationships if succubus

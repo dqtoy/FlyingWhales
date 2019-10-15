@@ -60,7 +60,13 @@ namespace BayatGames.SaveGameFree.Types
 			this.z = vector.z;
 		}
 
-		public Vector3Save ( Vector2Save vector )
+        public Vector3Save(Vector3Int vector) {
+            this.x = vector.x;
+            this.y = vector.y;
+            this.z = vector.z;
+        }
+
+        public Vector3Save ( Vector2Save vector )
 		{
 			this.x = vector.x;
 			this.y = vector.y;
@@ -81,7 +87,7 @@ namespace BayatGames.SaveGameFree.Types
 			this.z = vector.z;
 		}
 
-		public static implicit operator Vector3Save ( Vector2 vector )
+        public static implicit operator Vector3Save ( Vector2 vector )
 		{
 			return new Vector3Save ( vector );
 		}

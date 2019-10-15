@@ -33,9 +33,9 @@ public class TransformFood : GoapAction {
         } else if (poiTarget is Tombstone) {
             deadCharacter = (poiTarget as Tombstone).character;
         }
-        if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
-            SetIsStealth(true);
-        }
+        //if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+        //    SetIsStealth(true);
+        //}
     }
 
     #region Overrides
@@ -43,6 +43,9 @@ public class TransformFood : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
+        if(poiTarget is Character) {
+            AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget }, IsTargetDead);
+        }
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = 0, targetPOI = actor });
     }
     public override void PerformActualAction() {
@@ -62,13 +65,13 @@ public class TransformFood : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        if (currentState.name == "Transform Success") {
-            if (poiTarget is Tombstone) {
-                poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
-            } else if (poiTarget is Character) {
-                (poiTarget as Character).DestroyMarker();
-            }
-        }
+        //if (currentState.name == "Transform Success") {
+        //    if (poiTarget is Tombstone) {
+        //        poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
+        //    } else if (poiTarget is Character) {
+        //        (poiTarget as Character).DestroyMarker();
+        //    }
+        //}
     }
     #endregion
 
@@ -78,7 +81,7 @@ public class TransformFood : GoapAction {
             return false;
         }
         if (deadCharacter != null) {
-            if (isStealth) {
+            if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
                 //return true;
                 if (actor.GetNormalTrait("Cannibal") != null) {
                     return true;
@@ -91,6 +94,12 @@ public class TransformFood : GoapAction {
     }
     #endregion
 
+    #region Preconditions
+    private bool IsTargetDead() {
+        return (poiTarget as Character).isDead;
+    }
+    #endregion
+
     #region State Effects
     private void PreTransformSuccess() {
         if(deadCharacter.race == RACE.WOLF) {
@@ -100,7 +109,7 @@ public class TransformFood : GoapAction {
         } else if (deadCharacter.race == RACE.ELVES) {
             transformedFood = 120;
         }
-        if (isStealth) {
+        if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
             SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
             currentState.SetIntelReaction(CannibalTransformSuccessIntelReaction);
         } else {
@@ -112,6 +121,11 @@ public class TransformFood : GoapAction {
     private void AfterTransformSuccess() {
         deadCharacter.CancelAllJobsTargettingThisCharacter(JOB_TYPE.BURY);
         actor.AdjustFood(transformedFood);
+        if (poiTarget is Tombstone) {
+            poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
+        } else if (poiTarget is Character) {
+            (poiTarget as Character).DestroyMarker();
+        }
     }
     private void PreTargetMissing() {
         currentState.AddLogFiller(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -231,14 +245,14 @@ public class TransformFoodData : GoapActionData {
         if (poiTarget.gridTileLocation == null) {
             return false;
         }
-        Character deadCharacter = null;
+        Character targetCharacter = null;
         if (poiTarget is Character) {
-            deadCharacter = poiTarget as Character;
+            targetCharacter = poiTarget as Character;
         } else if (poiTarget is Tombstone) {
-            deadCharacter = (poiTarget as Tombstone).character;
+            targetCharacter = (poiTarget as Tombstone).character;
         }
-        if (deadCharacter != null) {
-            if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+        if (targetCharacter != null) {
+            if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
                 //return true;
                 if (actor.GetNormalTrait("Cannibal") != null) {
                     return true;

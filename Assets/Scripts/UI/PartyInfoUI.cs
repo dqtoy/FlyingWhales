@@ -82,7 +82,7 @@ public class PartyInfoUI : UIMenu {
         partyMembersErrorLbl.gameObject.SetActive(false);
         if (currentlyShowingParty is CharacterParty) {
             CharacterParty party = currentlyShowingParty as CharacterParty;
-            if (party.owner.minion != null && !party.isBusy) {
+            if (party.owner.minion != null) {
                 //the owner of the party is a minion, and they are not busy, allow editing
                 partyField.interactable = true;
                 for (int i = 0; i < partySlots.Length; i++) {

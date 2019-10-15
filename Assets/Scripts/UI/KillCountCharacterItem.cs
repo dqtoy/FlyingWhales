@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class KillCountCharacterItem : CharacterItem {
+public class KillCountCharacterItem : CharacterNameplateItem {
 
-    [SerializeField] private TextMeshProUGUI deathLbl;
-    [SerializeField] private RectTransform deathLblRT;
-    [SerializeField] private RectTransform deathReasonContainer;
-
-    public override void SetCharacter(Character character) {
-        base.SetCharacter(character);
+    public override void SetObject(Character character) {
+        base.SetObject(character);
         Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterChangedRace);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterRemovedTrait);
         Messenger.AddListener<Character>(Signals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnedToLife);
         Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterSwitchedAlterEgo);
+        Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterChangedFaction);
+        Messenger.AddListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
     }
     public override void Reset() {
         base.Reset();
@@ -26,13 +24,14 @@ public class KillCountCharacterItem : CharacterItem {
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterRemovedTrait);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_RETURNED_TO_LIFE, OnCharacterReturnedToLife);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterSwitchedAlterEgo);
+        Messenger.RemoveListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterChangedFaction);
+        Messenger.RemoveListener<Character>(Signals.ROLE_CHANGED, OnCharacterChangedRole);
         StopScroll();
     }
-    protected override void UpdateInfo() {
-        base.UpdateInfo();
-        deathLbl.gameObject.SetActive(!character.IsAble() || character.faction != PlayerManager.Instance.player.currentTargetFaction);
+    private void UpdateInfo() {
+        SetSupportingLabelState(!character.IsAble() || !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(character.faction));
         if (character.isDead) {
-            deathLbl.text = "\"" + character.deathStr + "\"";
+            supportingLbl.text = "\"" + character.deathStr + "\"";
         } else {
             string text = string.Empty;
             Trait negDisTrait = character.GetTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
@@ -57,12 +56,22 @@ public class KillCountCharacterItem : CharacterItem {
                     text = "\"" + character.name + " became a minion.\"";
                 }
             }
-            deathLbl.text = text;
+            supportingLbl.text = text;
         }
     }
 
     #region Listeners
     private void OnCharacterChangedRace(Character character) {
+        if (character.id == this.character.id) {
+            UpdateInfo();
+        }
+    }
+    private void OnCharacterChangedFaction(Character character, Faction faction) {
+        if (character.id == this.character.id) {
+            UpdateInfo();
+        }
+    }
+    private void OnCharacterChangedRole(Character character) {
         if (character.id == this.character.id) {
             UpdateInfo();
         }
@@ -90,42 +99,6 @@ public class KillCountCharacterItem : CharacterItem {
     private void OnCharacterSwitchedAlterEgo(Character character) {
         if (character.id == this.character.id) {
             UpdateInfo();
-        }
-    }
-    #endregion
-
-    #region Utilities
-    Coroutine scrollRoutine;
-    public void ScrollText() {
-        if (deathLblRT.sizeDelta.x < deathReasonContainer.sizeDelta.x || scrollRoutine != null) {
-            return;
-        }
-        scrollRoutine = StartCoroutine(Scroll());
-    }
-    public void StopScroll() {
-        if (scrollRoutine != null) {
-            StopCoroutine(scrollRoutine);
-            scrollRoutine = null;
-        }
-        deathLblRT.anchoredPosition = new Vector3(0f, deathLblRT.anchoredPosition.y);
-    }
-    private IEnumerator Scroll() {
-        float width = deathLbl.preferredWidth;
-        Vector3 startPosition = deathLblRT.anchoredPosition;
-
-        float difference = deathReasonContainer.sizeDelta.x - deathLblRT.sizeDelta.x;
-
-        float scrollDirection = -1f;
-
-        while (true) {
-            float newX = deathLblRT.anchoredPosition.x + (0.5f * scrollDirection);
-            deathLblRT.anchoredPosition = new Vector3(newX, startPosition.y, startPosition.z);
-            if (deathLblRT.anchoredPosition.x < difference) {
-                scrollDirection = 1f;
-            } else if (deathLblRT.anchoredPosition.x > 0) {
-                scrollDirection = -1f;
-            }
-            yield return null;
         }
     }
     #endregion

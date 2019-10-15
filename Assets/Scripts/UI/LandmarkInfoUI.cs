@@ -98,13 +98,13 @@ public class LandmarkInfoUI : UIMenu {
         ResetScrollPositions();
         if(previousLandmark != null) {
             if (previousLandmark.tileLocation.areaOfTile != null) {
-                previousLandmark.tileLocation.areaOfTile.SetOutlineState(false);
+                //previousLandmark.tileLocation.areaOfTile.SetOutlineState(false);
             } else {
                 SetLandmarkBorderState(false);
             }
         }
         if(_activeLandmark.tileLocation.areaOfTile != null) {
-            _activeLandmark.tileLocation.areaOfTile.SetOutlineState(true);
+            //_activeLandmark.tileLocation.areaOfTile.SetOutlineState(true);
         } else {
             SetLandmarkBorderState(true);
         }
@@ -113,7 +113,7 @@ public class LandmarkInfoUI : UIMenu {
         base.CloseMenu();
         SetLandmarkBorderState(false);
         if (_activeLandmark.tileLocation.areaOfTile != null) {
-            _activeLandmark.tileLocation.areaOfTile.SetOutlineState(false);
+            //_activeLandmark.tileLocation.areaOfTile.SetOutlineState(false);
         } else {
             SetLandmarkBorderState(false);
         }
@@ -155,11 +155,11 @@ public class LandmarkInfoUI : UIMenu {
         } else {
             landmarkNameLbl.text = _activeLandmark.landmarkName;
         }
-        if (_activeLandmark.owner != null) {
-            landmarkTypeLbl.text = Utilities.GetNormalizedRaceAdjective(_activeLandmark.owner.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(_activeLandmark.specificLandmarkType.ToString());
-        } else {
-            landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(_activeLandmark.specificLandmarkType.ToString());
-        }
+        //if (_activeLandmark.owner != null) {
+        //    landmarkTypeLbl.text = Utilities.GetNormalizedRaceAdjective(_activeLandmark.owner.race) + " " + Utilities.NormalizeStringUpperCaseFirstLetters(_activeLandmark.specificLandmarkType.ToString());
+        //} else {
+        //    landmarkTypeLbl.text = Utilities.NormalizeStringUpperCaseFirstLetters(_activeLandmark.specificLandmarkType.ToString());
+        //}
         
         if(_activeLandmark.tileLocation.areaOfTile != null) {
             suppliesNameLbl.text = _activeLandmark.tileLocation.areaOfTile.suppliesInBank.ToString();
@@ -167,12 +167,12 @@ public class LandmarkInfoUI : UIMenu {
             suppliesNameLbl.text = "0";
         }
 
-        if (_activeLandmark.owner == null) {
-            factionEmblem.gameObject.SetActive(false);
-        } else {
-            factionEmblem.gameObject.SetActive(true);
-            factionEmblem.SetFaction(_activeLandmark.owner);
-        }
+        //if (_activeLandmark.owner == null) {
+        //    factionEmblem.gameObject.SetActive(false);
+        //} else {
+        //    factionEmblem.gameObject.SetActive(true);
+        //    factionEmblem.SetFaction(_activeLandmark.owner);
+        //}
         UpdateHP();
     }
     private void UpdateHP() {

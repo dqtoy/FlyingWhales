@@ -39,4 +39,5 @@ public class Spoil : PlayerJobAction {
 public class SpoilData : PlayerJobActionData {
     public override string name { get { return "Spoil"; } }
     public override string description { get { return "Poison the food at the target table."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
 }

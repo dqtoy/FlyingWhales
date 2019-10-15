@@ -31,6 +31,8 @@ public class Utilities : MonoBehaviour {
     public static int lastStructureID = 0;
     public static int lastRegionID = 0;
     public static int lastJobID = 0;
+    public static int lastBurningSourceID = 0;
+    public static int lastSpecialObjectID = 0;
 
     public static float defenseBuff = 1.20f;
     public static int defaultCityHP = 300;
@@ -68,7 +70,7 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Character) {
             lastCharacterID += 1;
             return lastCharacterID;
-        } else if (obj is Item) {
+        } else if (obj is SpecialToken) {
             lastItemID += 1;
             return lastItemID;
         } else if (obj is Monster) {
@@ -103,42 +105,51 @@ public class Utilities : MonoBehaviour {
         } else if (obj is JobQueueItem) {
             lastJobID += 1;
             return lastJobID;
+        } else if (obj is BurningSource) {
+            lastBurningSourceID += 1;
+            return lastBurningSourceID;
+        } else if (obj is SpecialObject) {
+            lastSpecialObjectID += 1;
+            return lastSpecialObjectID;
         }
         return 0;
     }
+
+    //A checker is added before setting the last id of any object so that we can be sure that the last id value is always the highest number
+    //This is mostly needed when loading data from save file because we don't know the order it will be loaded so we must be sure that last id is the highest number not the id of the last object to load
     public static int SetID<T>(T obj, int idToUse) {
         if (obj is Log) {
-            lastLogID = idToUse;
+            if (lastLogID <= idToUse) { lastLogID = idToUse; }
         } else if (obj is BaseLandmark) {
-            lastLandmarkID = idToUse;
+            if (lastLandmarkID <= idToUse) { lastLandmarkID = idToUse; }
         } else if (obj is Faction) {
-            lastFactionID = idToUse;
+            if (lastFactionID <= idToUse) { lastFactionID = idToUse; }
         } else if (obj is Character) {
-            lastCharacterID = idToUse;
-        } else if (obj is Item) {
-            lastItemID = idToUse;
+            if (lastCharacterID <= idToUse) { lastCharacterID = idToUse; }
+        } else if (obj is SpecialToken) {
+            if (lastItemID <= idToUse) { lastItemID = idToUse; }
         } else if (obj is Monster) {
-            lastMonsterID = idToUse;
+            if (lastMonsterID <= idToUse) { lastMonsterID = idToUse; }
         } else if (obj is Area) {
-            lastAreaID = idToUse;
+            if (lastAreaID <= idToUse) { lastAreaID = idToUse; }
         } else if (obj is Party) {
-            lastPartyID = idToUse;
+            if (lastPartyID <= idToUse) { lastPartyID = idToUse; }
         } else if (obj is Squad) {
-            lastSquadID = idToUse;
+            if (lastSquadID <= idToUse) { lastSquadID = idToUse; }
         } else if (obj is CharacterSim) {
-            lastCharacterSimID = idToUse;
+            if (lastCharacterSimID <= idToUse) { lastCharacterSimID = idToUse; }
         } else if (obj is LocationStructure) {
-            lastStructureID = idToUse;
+            if (lastStructureID <= idToUse) { lastStructureID = idToUse; }
         } else if (obj is TileObject) {
-            if(lastTileObjectID <= idToUse) {
-                lastTileObjectID = idToUse;
-            }
+            if (lastTileObjectID <= idToUse) { lastTileObjectID = idToUse; }
         } else if (obj is Region) {
-            lastRegionID = idToUse;
+            if (lastRegionID <= idToUse) { lastRegionID = idToUse; }
         } else if (obj is JobQueueItem) {
-            if (lastJobID <= idToUse) {
-                lastJobID = idToUse;
-            }
+            if (lastJobID <= idToUse) { lastJobID = idToUse; }
+        } else if (obj is BurningSource) {
+            if (lastBurningSourceID <= idToUse) { lastBurningSourceID = idToUse; }
+        } else if (obj is SpecialObject) {
+            if (lastSpecialObjectID <= idToUse) { lastSpecialObjectID = idToUse; }
         }
         //else if (obj is Interaction) {
         //    lastInteractionID = idToUse;
@@ -408,7 +419,7 @@ public class Utilities : MonoBehaviour {
                         wordToReplace += ", ";
                     }
                     if(objectLog[i].obj != null) {
-                        wordToReplace += "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
+                        wordToReplace += "<b><link=" + '"' + i.ToString() + '"' + ">" + objectLog[i].value + "</link></b>";
                     } else {
                         wordToReplace += "<b>" + objectLog[i].value + "</b>";
                     }
@@ -431,7 +442,7 @@ public class Utilities : MonoBehaviour {
             for (int i = 0; i < objectLog.Count; i++) {
                 if (objectLog[i].identifier == identifier) {
                     if (objectLog[i].obj != null) {
-                        wordToReplace = "<link=" + '"' + i.ToString() + '"' + "><b>" + objectLog[i].value + "</b></link>";
+                        wordToReplace = "<b><link=" + '"' + i.ToString() + '"' + ">" + objectLog[i].value + "</link></b>";
                     } else {
                         wordToReplace = "<b>" + objectLog[i].value + "</b>";
                     }
@@ -1694,6 +1705,19 @@ public class Utilities : MonoBehaviour {
             t = t.parent.transform;
         }
         return null; // Could not find a parent with given tag.
+    }
+    public static int GetTicksInBetweenDates(GameDate date1, GameDate date2) {
+        int yearDiff = Mathf.Abs(date1.year - date2.year);
+        int monthDiff = Mathf.Abs(date1.month - date2.month);
+        int daysDiff = Mathf.Abs(date1.day - date2.day);
+        int ticksDiff = Mathf.Abs(date1.tick - date2.tick);
+
+        int totalTickDiff = yearDiff * ((GameManager.ticksPerDay * GameManager.daysPerMonth) * 12);
+        totalTickDiff += monthDiff * (GameManager.ticksPerDay * GameManager.daysPerMonth);
+        totalTickDiff += daysDiff * GameManager.ticksPerDay;
+        totalTickDiff += ticksDiff;
+
+        return totalTickDiff;
     }
     #endregion
 

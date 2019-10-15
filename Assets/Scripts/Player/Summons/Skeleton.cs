@@ -13,31 +13,32 @@ public class Skeleton : Summon {
     #region Overrides
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
-        CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, tile.parentAreaMap.area);
-        state.SetIsUnending(true);
+        //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.STROLL, null, tile.parentAreaMap.area);
+        //state.SetIsUnending(true);
+        GoToWorkArea();
     }
-    public override void ThisCharacterSaw(IPointOfInterest target) {
+    //protected override void IdlePlans() {
+    //    base.IdlePlans();
+    //    //CharacterState state = stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, specificLocation);
+    //    //state.SetIsUnending(true);
+    //    GoToWorkArea();
+    //}
+    public override List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
         if (GetNormalTrait("Unconscious", "Resting") != null) {
-            return;
+            return null;
         }
-        if (target is Character) {
-            Character targetCharacter = target as Character;
-            //NOTE: removed ability of skeletons to watch/witness an event
-            Spooked spooked = GetNormalTrait("Spooked") as Spooked;
-            if (spooked != null) {
-                if (marker.AddAvoidInRange(targetCharacter)) {
-                    spooked.AddTerrifyingCharacter(targetCharacter);
-                }
-            }
+        for (int i = 0; i < normalTraits.Count; i++) {
+            normalTraits[i].OnSeePOI(target, this);
         }
+        return null;
     }
     protected override void OnSeenBy(Character character) {
         if (GetNormalTrait("Unconscious", "Resting") != null) {
             return;
         }
-        if (character.role.roleType == CHARACTER_ROLE.CIVILIAN && character.GetNormalTrait("Spooked") == null) {
-            character.AddTrait("Spooked", this);
-        }
+        //if (character.role.roleType == CHARACTER_ROLE.CIVILIAN && character.GetNormalTrait("Spooked") == null) {
+        //    character.AddTrait("Spooked", this);
+        //}
     }
     #endregion
 }

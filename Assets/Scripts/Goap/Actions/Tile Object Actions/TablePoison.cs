@@ -12,6 +12,7 @@ public class TablePoison : GoapAction {
         this.goapName = "Poison Table";
         actionIconString = GoapActionStateDB.Hostile_Icon;
         //_isStealthAction = true;
+        SetIsStealth(true);
     }
 
     #region Overrides
@@ -30,7 +31,7 @@ public class TablePoison : GoapAction {
                 AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Sick", targetPOI = dwelling.residents[i] });
                 AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = dwelling.residents[i] });
                 //**Effect 3**: Kill Owner/s
-                AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = dwelling.residents[i] });
+                //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = dwelling.residents[i] });
             }
         }
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
@@ -451,10 +452,10 @@ public class TablePoison : GoapAction {
                             reactions.Add(string.Format("I hope {0} dies from that poison!", targetCharacter.name));
                         } else if (targetIsSick) {
                             reactions.Add(string.Format("{0} deserves worse but that will do.", targetCharacter.name));
-                            AddTraitTo(recipient, "Cheery");
+                            AddTraitTo(recipient, "Satisfied");
                         } else if (targetIsDead) {
                             reactions.Add("Good riddance.");
-                            AddTraitTo(recipient, "Cheery");
+                            AddTraitTo(recipient, "Satisfied");
                         } else {
                             reactions.Add(string.Format("I can't wait for {0} to die from that poison.", targetCharacter.name));
                         }
@@ -463,10 +464,10 @@ public class TablePoison : GoapAction {
                             reactions.Add(string.Format("I hate both of them but I hope {0} dies from that poison!", targetCharacter.name));
                         } else if (targetIsSick) {
                             reactions.Add(string.Format("{0} deserves worse but that will do.", targetCharacter.name));
-                            AddTraitTo(recipient, "Cheery");
+                            AddTraitTo(recipient, "Satisfied");
                         } else if (targetIsDead) {
                             reactions.Add(string.Format("Good riddance. I hope {0} is next.", actor.name));
-                            AddTraitTo(recipient, "Cheery");
+                            AddTraitTo(recipient, "Satisfied");
                         } else {
                             reactions.Add(string.Format("I hate both of them but I can't wait for {0} to die from that poison.", targetCharacter.name));
                         }
@@ -475,10 +476,10 @@ public class TablePoison : GoapAction {
                             reactions.Add(string.Format("I hope {0} dies from that poison!", targetCharacter.name));
                         } else if (targetIsSick) {
                             reactions.Add(string.Format("{0} deserves worse but that will do.", targetCharacter.name));
-                            AddTraitTo(recipient, "Cheery");
+                            AddTraitTo(recipient, "Satisfied");
                         } else if (targetIsDead) {
                             reactions.Add("Good riddance.");
-                            AddTraitTo(recipient, "Cheery");
+                            AddTraitTo(recipient, "Satisfied");
                         } else {
                             reactions.Add(string.Format("I can't wait for {0} to die from that poison.", targetCharacter.name));
                         }

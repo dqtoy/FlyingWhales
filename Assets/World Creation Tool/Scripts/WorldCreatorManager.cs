@@ -384,7 +384,7 @@ namespace worldcreator {
                         WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Elevation error", "Cannot change elevation of " + tile.tileName + " because it is a core tile of an area!");
                         return;
                     }
-                    tile.areaOfTile.RemoveTile(tile);
+                    //tile.areaOfTile.RemoveTile(tile);
                 }
                 if (tile.landmarkOnTile != null) {
                     LandmarkManager.Instance.DestroyLandmarkOnTile(tile);
@@ -414,11 +414,12 @@ namespace worldcreator {
             return landmarks;
         }
         public BaseLandmark SpawnLandmark(HexTile tile, LANDMARK_TYPE landmarkType) {
-            if (outerGridList.Contains(tile)) {
-                return null;
-            }
-            LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-            return LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, landmarkType);
+            //if (outerGridList.Contains(tile)) {
+            //    return null;
+            //}
+            //LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
+            //return LandmarkManager.Instance.CreateNewLandmarkOnTile(tile, landmarkType);
+            return null;
         }
         public void DestroyLandmarks(List<HexTile> tiles) {
             for (int i = 0; i < tiles.Count; i++) {

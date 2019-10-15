@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using BayatGames.SaveGameFree.Types;
 
 [System.Serializable]
 public class SaveDataItem {
+    public int id;
     public string name;
     public SPECIAL_TOKEN specialTokenType;
     public int weight;
@@ -11,7 +13,12 @@ public class SaveDataItem {
     public List<SaveDataTrait> traits;
     public POI_STATE state;
 
+    public int structureID;
+    public STRUCTURE_TYPE structureType;
+    public Vector3Save gridTile;
+
     public void Save(SpecialToken item) {
+        id = item.id;
         name = item.name;
         specialTokenType = item.specialTokenType;
         weight = item.weight;
@@ -20,15 +27,26 @@ public class SaveDataItem {
         if(item.normalTraits != null) {
             traits = new List<SaveDataTrait>();
             for (int i = 0; i < item.normalTraits.Count; i++) {
-                SaveDataTrait saveDataTrait = new SaveDataTrait();
-                saveDataTrait.Save(item.normalTraits[i]);
-                traits.Add(saveDataTrait);
+                Trait trait = item.normalTraits[i];
+                SaveDataTrait saveDataTrait = SaveManager.ConvertTraitToSaveDataTrait(trait);
+                if(saveDataTrait != null) {
+                    saveDataTrait.Save(trait);
+                    traits.Add(saveDataTrait);
+                }
             }
         }
 
+        if(item.gridTileLocation != null) {
+            structureID = item.gridTileLocation.structure.id;
+            structureType = item.gridTileLocation.structure.structureType;
+            gridTile = new Vector3Save(item.gridTileLocation.localPlace.x, item.gridTileLocation.localPlace.y, 0);
+        } else {
+            gridTile = new Vector3Save(0f, 0f, -1f);
+        }
     }
     public void Load(Area areaOwner) {
         SpecialToken item = TokenManager.Instance.CreateSpecialToken(specialTokenType, weight);
+        item.SetID(id);
         item.SetIsDisabledByPlayer(isDisabledByPlayer);
         item.SetPOIState(state);
         for (int i = 0; i < traits.Count; i++) {
@@ -36,10 +54,17 @@ public class SaveDataItem {
             Trait trait = traits[i].Load(ref responsibleCharacter);
             item.AddTrait(trait, responsibleCharacter);
         }
-        areaOwner.AddSpecialTokenToLocation(item);
+        LocationStructure structure = null;
+        LocationGridTile tile = null;
+        if(gridTile.z != -1f) {
+            structure = areaOwner.GetStructureByID(structureType, structureID);
+            tile = areaOwner.areaMap.map[(int) gridTile.x, (int) gridTile.y];
+        }
+        areaOwner.AddSpecialTokenToLocation(item, structure, tile);
     }
     public void Load(Character characterOwner) {
         SpecialToken item = TokenManager.Instance.CreateSpecialToken(specialTokenType, weight);
+        item.SetID(id);
         item.SetIsDisabledByPlayer(isDisabledByPlayer);
         item.SetPOIState(state);
         for (int i = 0; i < traits.Count; i++) {

@@ -13,6 +13,14 @@ public class CharacterInfoUI : UIMenu {
     public bool isWaitingForJoinBattleTarget;
 
     [Space(10)]
+    [SerializeField] GameObject normalCharacterGO;
+    [SerializeField] GameObject minionCharacterGO;
+
+    [Space(10)]
+    [Header("Minion")]
+    [SerializeField] MinionCard minionCard;
+
+    [Space(10)]
     [Header("Basic Info")]
     [SerializeField] private CharacterPortrait characterPortrait;
     [SerializeField] private TextMeshProUGUI nameLbl;
@@ -59,6 +67,8 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private ScrollRect relationshipTraitsScrollView;
     [SerializeField] private ScrollRect itemsScrollView;
     [SerializeField] private GameObject combatAttributePrefab;
+    [SerializeField] private EventLabel statusTraitsEventLbl;
+    [SerializeField] private EventLabel normalTraitsEventLbl;
 
     [Space(10)]
     [Header("Memories")]
@@ -108,6 +118,12 @@ public class CharacterInfoUI : UIMenu {
         relationshipTraitContainers = Utilities.GetComponentsInDirectChildren<TraitItem>(relationshipTraitsScrollView.content.gameObject);
         inventoryItemContainers = Utilities.GetComponentsInDirectChildren<ItemContainer>(itemsScrollView.content.gameObject);
 
+        //statusTraitsEventLbl.SetHighlightChecker(ShouldTraitBeHighlighted);
+
+        //normalTraitsEventLbl.SetHighlightChecker(ShouldTraitBeHighlighted);
+        normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
+        statusTraitsEventLbl.SetOnClickAction(OnClickTrait);
+
         //InitializeMemoryUI();
 
         InitializeLogsMenu();
@@ -129,7 +145,7 @@ public class CharacterInfoUI : UIMenu {
         _activeCharacter = _data as Character;
         SetLogMenuState(false);
         if (_activeCharacter.marker != null) {
-            _activeCharacter.CenterOnCharacter(false);
+            _activeCharacter.CenterOnCharacter();
         }
         base.OpenMenu();
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
@@ -138,9 +154,18 @@ public class CharacterInfoUI : UIMenu {
         if (UIManager.Instance.IsObjectPickerOpen()) {
             UIManager.Instance.HideObjectPicker();
         }
+
+        if (_activeCharacter.minion != null) {
+            minionCharacterGO.SetActive(true);
+            normalCharacterGO.SetActive(false);
+        } else {
+            minionCharacterGO.SetActive(false);
+            normalCharacterGO.SetActive(true);
+        }
         UpdateCharacterInfo();
         UpdateTraits();
         UpdateInventoryInfo();
+        UpdateAllHistoryInfo();
         ResetAllScrollPositions();
     }
     public override void SetData(object data) {
@@ -176,11 +201,16 @@ public class CharacterInfoUI : UIMenu {
         if (_activeCharacter == null) {
             return;
         }
-        UpdatePortrait();
-        UpdateBasicInfo();
-        UpdateStatInfo();
-        UpdateLocationInfo();
-        UpdateAllHistoryInfo();
+        if (_activeCharacter.minion != null) {
+            minionCard.SetMinion(_activeCharacter.minion);
+        } else {
+            UpdatePortrait();
+            UpdateBasicInfo();
+            UpdateStatInfo();
+            UpdateLocationInfo();
+        }
+        
+        //UpdateAllHistoryInfo();
         //UpdateMemories();
     }
     private void UpdatePortrait() {
@@ -195,25 +225,20 @@ public class CharacterInfoUI : UIMenu {
     }
 
     public void UpdateThoughtBubble() {
+        if (_activeCharacter.minion != null) {
+            return;
+        }
         if (_activeCharacter.isDead) {
             plansLbl.text = _activeCharacter.name + " has died.";
             return;
         }
-        if (_activeCharacter.minion != null && _activeCharacter.minion.invadingLandmark != null) {
-            if (_activeCharacter.minion.invadingLandmark != null) {
-                Log log = new Log(GameManager.Instance.Today(), "%00@ is currently invading %04@");
-                log.AddToFillers(_activeCharacter, _activeCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                if (_activeCharacter.minion.invadingLandmark.tileLocation.areaOfTile != null) {
-                    log.AddToFillers(_activeCharacter.minion.invadingLandmark.tileLocation.areaOfTile, _activeCharacter.minion.invadingLandmark.tileLocation.areaOfTile.name, LOG_IDENTIFIER.LANDMARK_1);
-                } else {
-                    log.AddToFillers(_activeCharacter.minion.invadingLandmark.tileLocation.region, _activeCharacter.minion.invadingLandmark.tileLocation.region.name, LOG_IDENTIFIER.LANDMARK_1);
-                }
-                plansLblLogItem.SetLog(log);
-                plansLbl.text = Utilities.LogReplacer(log);
+        if (_activeCharacter.minion != null) {
+            if (_activeCharacter.minion.busyReasonLog != null) {
+                plansLblLogItem.SetLog(_activeCharacter.minion.busyReasonLog);
+                plansLbl.text = Utilities.LogReplacer(_activeCharacter.minion.busyReasonLog);
             } else {
                 plansLbl.text = _activeCharacter.name + " is ready to do your bidding.";
             }
-            
             return;
         }
         if (_activeCharacter.specificLocation.areaMap == null) {
@@ -300,8 +325,6 @@ public class CharacterInfoUI : UIMenu {
     }
     #endregion
 
-    
-
     #region Stats
     private void UpdateStatInfo() {
         hpLbl.text = _activeCharacter.currentHP.ToString();
@@ -315,16 +338,16 @@ public class CharacterInfoUI : UIMenu {
 
     #region Location
     private void UpdateLocationInfo() {
-        if (_activeCharacter.currentLandmark != null) {
-            visitorLocationPortrait.SetLocation(_activeCharacter.currentLandmark);
+        if (_activeCharacter.currentRegion != null) {
+            visitorLocationPortrait.SetLocation(_activeCharacter.currentRegion);
         } else {
-            visitorLocationPortrait.SetLocation(_activeCharacter.specificLocation);
+            visitorLocationPortrait.SetLocation(_activeCharacter.specificLocation.region);
         }
-        residentLocationPortrait.SetLocation(_activeCharacter.homeArea);
+        residentLocationPortrait.SetLocation(_activeCharacter.homeRegion);
     }
     #endregion
 
-    #region Combat Attributes
+    #region Traits
     private void UpdateTraitsFromSignal(Character character, Trait trait) {
         if(_activeCharacter == null || _activeCharacter != character) {
             return;
@@ -333,6 +356,9 @@ public class CharacterInfoUI : UIMenu {
         UpdateThoughtBubble();
     }
     private void UpdateTraits() {
+        if (_activeCharacter.minion != null) {
+            return;
+        }
         //Utilities.DestroyChildren(statusTraitsScrollView.content);
         //Utilities.DestroyChildren(normalTraitsScrollView.content);
         //Utilities.DestroyChildren(relationshipTraitsScrollView.content);
@@ -418,13 +444,73 @@ public class CharacterInfoUI : UIMenu {
     //    CombatAttributeItem combatAttributeItem = go.GetComponent<CombatAttributeItem>();
     //    combatAttributeItem.SetCombatAttribute(combatAttribute);
     //}
-    public void OnHoverTrait(object i) {
-        int index = (int)i;
-        Trait trait = activeCharacter.normalTraits[index];
-        UIManager.Instance.ShowSmallInfo(trait.description, trait.name);
+    public void OnHoverTrait(object obj) {
+        if (obj is string) {
+            string text = (string) obj;
+            int index = int.Parse(text);
+            Trait trait = activeCharacter.normalTraits[index];
+            UIManager.Instance.ShowSmallInfo(trait.description);
+        }
+
     }
+    //private bool ShouldTraitBeHighlighted(object obj) {
+    //    if (obj is string) {
+    //        string text = (string)obj;
+    //        int index = int.Parse(text);
+    //        Trait trait = activeCharacter.normalTraits[index];
+    //        return trait.canBeTriggered;
+    //    }
+    //    return false;
+    //}
     public void OnHoverOutTrait() {
         UIManager.Instance.HideSmallInfo();
+    }
+    private void OnClickTrait(object obj) {
+        if (activeCharacter.CanStillTriggerFlaws()) {
+            if (obj is string) {
+                string text = (string)obj;
+                int index = int.Parse(text);
+                Trait trait = activeCharacter.normalTraits[index];
+                string traitDescription = trait.description;
+                if (trait.canBeTriggered) {
+                    traitDescription += "\n" + trait.GetRequirementDescription(activeCharacter) +
+                    "\n\n<b>Effect</b>: " + trait.GetTriggerFlawEffectDescription(activeCharacter);
+                }
+
+                StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
+                UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
+                    onClickYesAction: () => OnClickTriggerFlaw(trait),
+                    showCover: true, layer: 25, yesBtnText: "Trigger (" + trait.GetTriggerFlawManaCost(activeCharacter).ToString() + " Mana)",
+                    yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
+                    pauseAndResume: true,
+                    noBtnActive: false,
+                    yesBtnActive: trait.canBeTriggered,
+                    yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
+                    yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
+                );
+                normalTraitsEventLbl.ResetHighlightValues();
+            }
+        } else {
+            StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
+            PlayerUI.Instance.ShowGeneralConfirmation("Invalid", "This character's flaws can no longer be triggered.");
+            normalTraitsEventLbl.ResetHighlightValues();
+        }
+    }
+    private IEnumerator HoverOutTraitAfterClick() {
+        yield return new WaitForEndOfFrame();
+        OnHoverOutTrait();
+    }
+    private void ShowCannotTriggerFlawReason(Trait trait) {
+        string reason = "You cannot trigger " + activeCharacter.name + "'s flaw because: ";
+        List<string> reasons = trait.GetCannotTriggerFlawReasons(activeCharacter);
+        for (int i = 0; i < reasons.Count; i++) {
+            reason += "\n\t- " + reasons[i];
+        }
+        UIManager.Instance.ShowSmallInfo(reason);
+    }
+    private void OnClickTriggerFlaw(Trait trait) {
+        trait.TriggerFlaw(activeCharacter);
+        normalTraitsLbl.raycastTarget = true;
     }
     #endregion
 
@@ -444,6 +530,9 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     private void UpdateInventoryInfo() {
+        if (_activeCharacter.minion != null) {
+            return;
+        }
         for (int i = 0; i < inventoryItemContainers.Length; i++) {
             ItemContainer currContainer = inventoryItemContainers[i];
             SpecialToken currInventoryItem = _activeCharacter.items.ElementAtOrDefault(i);
@@ -454,11 +543,14 @@ public class CharacterInfoUI : UIMenu {
 
     #region History
     private void UpdateHistory(object obj) {
-        if (obj is Character && _activeCharacter != null && (obj as Character).id == _activeCharacter.id) {
+        if (obj is Character && _activeCharacter != null && (obj as Character).id == _activeCharacter.id && _activeCharacter.minion == null) {
             UpdateAllHistoryInfo();
         }
     }
     private void UpdateAllHistoryInfo() {
+        if (_activeCharacter.minion != null) {
+            return;
+        }
         //List<Log> characterHistory = new List<Log>(_activeCharacter.history.OrderByDescending(x => x.date.year).ThenByDescending(x => x.date.month).ThenByDescending(x => x.date.day).ThenByDescending(x => x.date.tick));
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
@@ -610,7 +702,6 @@ public class CharacterInfoUI : UIMenu {
             AreaMapCameraMove.Instance.CenterCameraOn(null);
         }
     }
-
     #endregion
 
     #region For Testing
@@ -625,6 +716,7 @@ public class CharacterInfoUI : UIMenu {
         summary += "\nFullness Time: " + (activeCharacter.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.fullnessForcedTick));
         summary += "\nTiredness Time: " + (activeCharacter.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.tirednessForcedTick));
         summary += "\nRemaining Sleep Ticks: " + activeCharacter.currentSleepTicks;
+        summary += "\nFood: " + activeCharacter.food;
         summary += "\nRole: " + activeCharacter.role.roleType.ToString();
         summary += "\nSexuality: " + activeCharacter.sexuality.ToString();
         summary += "\nMood: " + activeCharacter.moodValue.ToString() + "(" + activeCharacter.currentMoodType.ToString() + ")";
@@ -642,6 +734,14 @@ public class CharacterInfoUI : UIMenu {
         } else {
             summary += "None";
         }
+        //summary += "\nActions advertised by this character: ";
+        //if (activeCharacter.poiGoapActions.Count > 0) {
+        //    for (int i = 0; i < activeCharacter.poiGoapActions.Count; i++) {
+        //        summary += "|" + activeCharacter.poiGoapActions[i].ToString() + "|";
+        //    }
+        //} else {
+        //    summary += "None";
+        //}
         summary += "\n" + activeCharacter.GetNeedsSummary();
         summary += "\n\nAlter Egos: ";
         for (int i = 0; i < activeCharacter.alterEgos.Values.Count; i++) {
@@ -653,7 +753,6 @@ public class CharacterInfoUI : UIMenu {
     public void HideCharacterTestingInfo() {
         UIManager.Instance.HideSmallInfo();
     }
-
     public void DropACharacter() {
         _activeCharacter.DropACharacter();
     }
@@ -679,11 +778,11 @@ public class CharacterInfoUI : UIMenu {
             Debug.LogError("No eligible characters to assault!");
         }
     }
-    public void LogWorldDistanceToCurrentHostile() {
-        Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.position, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.position));
-    }
-    public void LogLocalDistanceToCurrentHostile() {
-        Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.localPosition, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.localPosition));
-    }
+    //public void LogWorldDistanceToCurrentHostile() {
+    //    Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.position, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.position));
+    //}
+    //public void LogLocalDistanceToCurrentHostile() {
+    //    Debug.Log(Vector2.Distance(_activeCharacter.marker.transform.localPosition, (_activeCharacter.stateComponent.currentState as CombatState).currentClosestHostile.marker.transform.localPosition));
+    //}
     #endregion
 }

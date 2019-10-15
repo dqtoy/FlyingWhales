@@ -40,8 +40,10 @@ public class ReplaceUI : MonoBehaviour {
             PlayerUI.Instance.AddPendingUI(() => ShowReplaceUI(choices, objectToAdd, onClickReplace, onClickCancel));
             return;
         }
-        UIManager.Instance.Pause();
-        UIManager.Instance.SetSpeedTogglesState(false);
+        if (!GameManager.Instance.isPaused) {
+            UIManager.Instance.Pause();
+            UIManager.Instance.SetSpeedTogglesState(false);
+        }
         Utilities.DestroyChildren(choicesParent);
         if(objectToAdd is Minion) {
             newObjectLbl.text = "New Minion!";
@@ -110,8 +112,7 @@ public class ReplaceUI : MonoBehaviour {
     private void Close() {
         this.gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
-            UIManager.Instance.SetSpeedTogglesState(true);
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
     }
 

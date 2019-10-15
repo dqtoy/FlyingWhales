@@ -72,10 +72,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private SpriteRenderer rightBeach;
     [SerializeField] private SpriteRenderer topRightBeach;
 
-    //[Space(10)]
-    //[Header("UI")]
-    //[SerializeField] private GraphicRaycaster uiRaycaster;
-
     public BaseLandmark landmarkOnTile { get; private set; }
     public Region region { get; private set; }
 
@@ -83,8 +79,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 
     public List<HexTile> AllNeighbours { get; set; }
     public List<HexTile> ValidTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER && o.elevationType != ELEVATION.MOUNTAIN).ToList(); } }
-    public List<HexTile> NoWaterTiles { get { return AllNeighbours.Where(o => o.elevationType != ELEVATION.WATER).ToList(); } }
-    public List<TILE_TAG> tileTags { get; private set; }
 
     private List<HexTile> _tilesConnectedInGoingToMarker = new List<HexTile>();
     private List<HexTile> _tilesConnectedInComingFromMarker = new List<HexTile>();
@@ -99,7 +93,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public int id { get { return data.id; } }
     public int xCoordinate { get { return data.xCoordinate; } }
     public int yCoordinate { get { return data.yCoordinate; } }
-    public int corruptDuration { get { return GetCorruptDuration(); } }
     public string tileName { get { return data.tileName; } }
     public string thisName { get { return data.tileName; } }
     public float elevationNoise { get { return data.elevationNoise; } }
@@ -107,7 +100,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public float temperature { get { return data.temperature; } }
     public BIOMES biomeType { get { return data.biomeType; } }
     public ELEVATION elevationType { get { return data.elevationType; } }
-    public Area areaOfTile { get { return _areaOfTile; } }
+    public Area areaOfTile { get { return region.area; } }
     public string locationName {
         get { return "(" + xCoordinate + ", " + yCoordinate + ")"; }
     }
@@ -129,14 +122,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     public LOCATION_IDENTIFIER locIdentifier {
         get { return LOCATION_IDENTIFIER.HEXTILE; }
     }
-    public bool hasLandmark {
-        get { return landmarkOnTile != null; }
-    }
     public bool isCorrupted {
         get { return _isCorrupted; }
-    }
-    public int uncorruptibleLandmarkNeighbors {
-        get { return _uncorruptibleLandmarkNeighbors; }
     }
     #endregion
 
@@ -146,78 +133,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //StartCorruptionAnimation();
         //Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, AreaMapOpened);
         //Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, AreaMapClosed);
-        tileTags = new List<TILE_TAG>();
-    }
-
-    private void AreaMapOpened(Area area) {
-        //uiRaycaster.enabled = false;
-    }
-    private void AreaMapClosed(Area area) {
-        //uiRaycaster.enabled = true;
     }
 
     #region Elevation Functions
     internal void SetElevation(ELEVATION elevationType) {
         data.elevationType = elevationType;
     }
-    //public void UpdateLedgesAndOutlines() {
-    //    if (neighbourDirections == null) {
-    //        return;
-    //    }
-    //    if (elevationType != ELEVATION.WATER) {
-    //        //re enable all outlines and disable all ledges
-    //        //topLeftLedge.SetActive(false);
-    //        //topRightLedge.SetActive(false);
-    //        //SetOutlinesState(true);
-    //    } else { //tile is water
-    //        //check neighbours
-    //        //if north west tile is not water, activate top left ledge
-    //        //if (neighbourDirections.ContainsKey(HEXTILE_DIRECTION.NORTH_WEST) && neighbourDirections[HEXTILE_DIRECTION.NORTH_WEST].elevationType != ELEVATION.WATER) {
-    //        //    topLeftLedge.SetActive(true);
-    //        //    //topLeftOutline.SetActive(false);
-    //        //} else {
-    //        //    //tile doesn't have a north west neighbour
-    //        //}
-    //        ////if north east tile is not water, activate top right edge
-    //        //if (neighbourDirections.ContainsKey(HEXTILE_DIRECTION.NORTH_EAST) && neighbourDirections[HEXTILE_DIRECTION.NORTH_EAST].elevationType != ELEVATION.WATER) {
-    //        //    topRightLedge.SetActive(true);
-    //        //    //topRightOutline.SetActive(false);
-    //        //} else {
-    //        //    //tile doesn't have a north east neighbour
-    //        //}
-
-    //        ////check outlines
-    //        //foreach (KeyValuePair<HEXTILE_DIRECTION, HexTile> kvp in neighbourDirections) {
-    //        //    HexTile neighbour = kvp.Value;
-    //        //    HEXTILE_DIRECTION direction = kvp.Key;
-    //        //    if (neighbour.elevationType == ELEVATION.WATER) {
-    //        //        //deactivate the outline tile in that direction
-    //        //        switch (direction) {
-    //        //            case HEXTILE_DIRECTION.NORTH_WEST:
-    //        //                topLeftOutline.SetActive(false);
-    //        //                break;
-    //        //            case HEXTILE_DIRECTION.NORTH_EAST:
-    //        //                topRightOutline.SetActive(false);
-    //        //                break;
-    //        //            case HEXTILE_DIRECTION.EAST:
-    //        //                rightOutline.SetActive(false);
-    //        //                break;
-    //        //            case HEXTILE_DIRECTION.SOUTH_EAST:
-    //        //                botRightOutline.SetActive(false);
-    //        //                break;
-    //        //            case HEXTILE_DIRECTION.SOUTH_WEST:
-    //        //                botLeftOutline.SetActive(false);
-    //        //                break;
-    //        //            case HEXTILE_DIRECTION.WEST:
-    //        //                leftOutline.SetActive(false);
-    //        //                break;
-    //        //            default:
-    //        //                break;
-    //        //        }
-    //        //    }
-    //        //}
-    //    }
-    //}
     #endregion
 
     #region Biome Functions
@@ -227,12 +148,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Landmarks
-    public void SetLandmarkOnTile(BaseLandmark landmarkOnTile) {
+    public void SetLandmarkOnTile(BaseLandmark landmarkOnTile, bool addFeatures = true) {
         this.landmarkOnTile = landmarkOnTile;
+        if (addFeatures) {
+            landmarkOnTile?.AddFeaturesToRegion();
+        }
     }
-    public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType) {
+    public BaseLandmark CreateLandmarkOfType(LANDMARK_TYPE landmarkType, bool addFeatures) {
         LandmarkData data = LandmarkManager.Instance.GetLandmarkData(landmarkType);
-        SetLandmarkOnTile(new BaseLandmark(this, landmarkType));
+        //SetLandmarkOnTile(new BaseLandmark(this, landmarkType));
+        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, landmarkType), addFeatures);
         if (data.minimumTileCount > 1) {
             if (neighbourDirections.ContainsKey(data.connectedTileDirection) && neighbourDirections[data.connectedTileDirection] != null) {
                 HexTile tileToConnect = neighbourDirections[data.connectedTileDirection];
@@ -259,7 +184,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public BaseLandmark CreateLandmarkOfType(LandmarkSaveData saveData) {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
-        SetLandmarkOnTile(new BaseLandmark(this, saveData));
+        //SetLandmarkOnTile(new BaseLandmark(this, saveData));
+        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData), false);
         if (landmarkData.minimumTileCount > 1) {
             if (neighbourDirections.ContainsKey(landmarkData.connectedTileDirection) && neighbourDirections[landmarkData.connectedTileDirection] != null) {
                 HexTile tileToConnect = neighbourDirections[landmarkData.connectedTileDirection];
@@ -280,7 +206,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public BaseLandmark CreateLandmarkOfType(SaveDataLandmark saveData) {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(saveData.landmarkType);
-        SetLandmarkOnTile(new BaseLandmark(this, saveData));
+        //SetLandmarkOnTile(new BaseLandmark(this, saveData));
+        SetLandmarkOnTile(LandmarkManager.Instance.CreateNewLandmarkInstance(this, saveData), false);
         //if (landmarkData.minimumTileCount > 1) {
         //    if (neighbourDirections.ContainsKey(landmarkData.connectedTileDirection) && neighbourDirections[landmarkData.connectedTileDirection] != null) {
         //        HexTile tileToConnect = neighbourDirections[landmarkData.connectedTileDirection];
@@ -458,60 +385,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public bool IsAtEdgeOfMap() {
         return AllNeighbours.Count < 6; //if this tile has less than 6 neighbours, it is at the edge of the map
-    }
-    public bool HasNeighbourAtEdgeOfMap() {
-        for (int i = 0; i < AllNeighbours.Count; i++) {
-            HexTile currNeighbour = AllNeighbours[i];
-            if (currNeighbour.IsAtEdgeOfMap()) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public void GenerateInitialTileTags() {
-        //Elevation
-        if(landmarkOnTile == null || landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.CAVE) {
-            if (elevationType == ELEVATION.MOUNTAIN) {
-                tileTags.Add(TILE_TAG.MOUNTAIN);
-            } else if (elevationType == ELEVATION.PLAIN) {
-                tileTags.Add(TILE_TAG.FLATLAND);
-            } else if (elevationType == ELEVATION.TREES) {
-                tileTags.Add(TILE_TAG.FOREST);
-            }
-        }
-
-        //Biome
-        if (biomeType == BIOMES.DESERT) {
-            tileTags.Add(TILE_TAG.DESERT);
-        } else if (biomeType == BIOMES.FOREST) {
-            if (elevationType == ELEVATION.TREES) {
-                tileTags.Add(TILE_TAG.JUNGLE); //Myk, tama ba to? Hahaha, di ko sure to lol. RE: Kapag ata may trees din yung forest na biome, saka siya nagiging jungle? ahahaha
-            }
-        } else if (biomeType == BIOMES.GRASSLAND) {
-            tileTags.Add(TILE_TAG.GRASSLAND);
-        } else if (biomeType == BIOMES.SNOW) {
-            tileTags.Add(TILE_TAG.SNOW);
-        } else if (biomeType == BIOMES.TUNDRA) {
-            tileTags.Add(TILE_TAG.TUNDRA);
-        }
-
-        //Landmark Tags
-        if (landmarkOnTile != null) {
-            switch (landmarkOnTile.specificLandmarkType) {
-                case LANDMARK_TYPE.CAVE:
-                    tileTags.Add(TILE_TAG.CAVE);
-                    break;
-                default:
-                    tileTags.Add(TILE_TAG.DUNGEON); //Ginawa ko na dungeon type na lang muna lahat ng landmarks na di caves.
-                    break;
-            }
-        }
-    }
-    public void AddTileTag(TILE_TAG tag) {
-        tileTags.Add(tag);
-    }
-    public void RemoveTileTag(TILE_TAG tag) {
-        tileTags.Remove(tag);
     }
     public bool HasNeighbourFromOtherRegion() {
         for (int i = 0; i < AllNeighbours.Count; i++) {
@@ -758,6 +631,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         };
         return border;
     }
+    public void SetOutlineState(bool state) {
+        SpriteRenderer[] borders = GetAllBorders();
+        for (int i = 0; i < borders.Length; i++) {
+            SpriteRenderer renderer = borders[i];
+            renderer.gameObject.SetActive(state);
+        }
+    }
     internal void DeactivateCenterPiece() {
         centerPiece.SetActive(false);
     }
@@ -835,7 +715,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #if WORLD_CREATION_TOOL
         Messenger.Broadcast<HexTile>(Signals.TILE_LEFT_CLICKED, this);
 #else
-        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
+        if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing() || CameraMove.Instance.isDragging) {
             return;
         }
         //StartCorruptionAnimation();
@@ -844,15 +724,18 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             return;
         }
 
-        if (this.region != null) {
-            if (this.region.mainLandmark.tileLocation.areaOfTile != null) {
-                UIManager.Instance.ShowAreaInfo(this.region.mainLandmark.tileLocation.areaOfTile);
-            } else {
-                UIManager.Instance.ShowRegionInfo(this.region);
-            }
-        } else {
+        if (!UIManager.Instance.ShowHextileInfo(this)) {
             Messenger.Broadcast(Signals.HIDE_MENUS);
         }
+        //if (this.region != null && this.region.mainLandmark.tileLocation == this) {
+        //    if (this.region.mainLandmark.tileLocation.areaOfTile != null) {
+        //        UIManager.Instance.ShowAreaInfo(this.region.mainLandmark.tileLocation.areaOfTile);
+        //    } else {
+        //        UIManager.Instance.ShowRegionInfo(this.region);
+        //    }
+        //} else {
+        //    Messenger.Broadcast(Signals.HIDE_MENUS);
+        //}
 #endif
     }
     public void RightClick() {
@@ -883,10 +766,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //}
         //ShowHexTileInfo();
 #else
-        //if (this.areaOfTile != null) {
+        if (this.landmarkOnTile != null) {
             _hoverHighlightGO.SetActive(true);
-        //SetBordersState(true);
-        //}
+        }
         Messenger.Broadcast(Signals.TILE_HOVERED_OVER, this);
 #endif
     }
@@ -899,8 +781,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //    SetNeighbourHighlightState(false);
         //}
 #else
-        _hoverHighlightGO.SetActive(false);
-        //SetBordersState(false);
+        if (this.landmarkOnTile != null) {
+            _hoverHighlightGO.SetActive(false);
+        }
         UIManager.Instance.HideSmallInfo();
         //if (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing()) {
         //    return;
@@ -908,7 +791,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         Messenger.Broadcast(Signals.TILE_HOVERED_OUT, this);
 #endif
     }
-    private bool hasPendingJob = false;
     private void DoubleLeftClick() {
         //Debug.Log("double click");
         //PlayerUI.Instance.ShowCorruptTileConfirmation(this);
@@ -937,6 +819,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public void OnPointerExit(BaseEventData bed) {
         MouseExit();
+    }
+    public void CenterCameraHere() {
+        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+            InteriorMapManager.Instance.HideAreaMap();
+            UIManager.Instance.OnCameraOutOfFocus();
+        }
+        CameraMove.Instance.CenterCameraOn(gameObject);
     }
     #endregion
 
@@ -986,15 +875,12 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     }
     public void ShowTileInfo() {
         string summary = "Landmark: " + landmarkOnTile?.specificLandmarkType.ToString();
-        if (landmarkOnTile != null) {
-            summary += "\n\t- World Object: " + landmarkOnTile.worldObj?.ToString();
-            summary += "\n\t- Connections: " + landmarkOnTile.connections.Count.ToString();
-            for (int i = 0; i < landmarkOnTile.connections.Count; i++) {
-                BaseLandmark connection = landmarkOnTile.connections[i];
-                summary += "\n\t\t- " + connection.specificLandmarkType.ToString() + " " + connection.tileLocation.locationName;
-            }
-        }
         summary += "\nRegion: " + region.id + " (Tiles: " + region.tiles.Count.ToString() + ")";
+        summary += "\nConnections: " + region.connections.Count.ToString();
+        for (int i = 0; i < region.connections.Count; i++) {
+            Region connection = region.connections[i];
+            summary += "\n\t- " + connection.mainLandmark.specificLandmarkType.ToString() + " " + connection.coreTile.locationName;
+        }
         summary += "\nArea: " + areaOfTile?.name;
         //summary += "\nNeighbours: " + AllNeighbours.Count.ToString();
         //for (int i = 0; i < AllNeighbours.Count; i++) {
@@ -1006,13 +892,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     #endregion
 
     #region Corruption
-    public void SetCorruption(bool state, BaseLandmark landmark = null) {
+    public void SetCorruption(bool state) {
         if(_isCorrupted != state) {
             _isCorrupted = state;
         }
-    }
-    public void SetUncorruptibleLandmarkNeighbors(int amount) {
-        _uncorruptibleLandmarkNeighbors = amount;
     }
     public void AdjustUncorruptibleLandmarkNeighbors(int amount) {
         _uncorruptibleLandmarkNeighbors += amount;
@@ -1063,39 +946,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             particleEffects[i].gameObject.SetActive(false);
         }
     }
-    private int GetCorruptDuration() {
-        //return 3;
-        int duration = 0;
-        for (int i = 0; i < tileTags.Count; i++) {
-            duration += GetTileTagCorruptDuration(tileTags[i]);
-        }
-        return duration;
-    }
-    private int GetTileTagCorruptDuration(TILE_TAG tileTag) {
-        switch (tileTag) {
-            case TILE_TAG.CAVE:
-                return 7;
-            case TILE_TAG.DESERT:
-                return 3;
-            case TILE_TAG.DUNGEON:
-                return 8;
-            case TILE_TAG.FLATLAND:
-                return 3;
-            case TILE_TAG.FOREST:
-                return 5;
-            case TILE_TAG.GRASSLAND:
-                return 4;
-            case TILE_TAG.JUNGLE:
-                return 5;
-            case TILE_TAG.MOUNTAIN:
-                return 6;
-            case TILE_TAG.SNOW:
-                return 5;
-            case TILE_TAG.TUNDRA:
-                return 4;
-        }
-        return 0;
-    }
     public bool CanBeCorrupted() {
         return true;
 
@@ -1120,15 +970,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
             SetExternalState(false);
             SetInternalState(false);
         }
-    }
-    private bool IsAdjacentToPlayerArea() {
-        for (int i = 0; i < AllNeighbours.Count; i++) {
-            HexTile currNeighbour = AllNeighbours[i];
-            if (currNeighbour.areaOfTile != null && currNeighbour.areaOfTile.id == PlayerManager.Instance.player.playerArea.id) {
-                return true;
-            }
-        }
-        return false;
     }
     public void SetExternalState(bool state) {
         _isExternal = state;
@@ -1261,11 +1102,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
 #else
     public ContextMenuSettings GetContextMenuSettings() {
         ContextMenuSettings settings = new ContextMenuSettings();
-        if ((this.areaOfTile == null || this.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) && this.landmarkOnTile == null && IsAdjacentToPlayerArea()) {
-            ContextMenuItemSettings purchaseTileItem = new ContextMenuItemSettings("Purchase Tile");
-            purchaseTileItem.onClickAction += () => PlayerManager.Instance.PurchaseTile(this);
-            settings.AddMenuItem(purchaseTileItem);
-        }
+        //if ((this.areaOfTile == null || this.areaOfTile.id != PlayerManager.Instance.player.playerArea.id) && this.landmarkOnTile == null && IsAdjacentToPlayerArea()) {
+        //    ContextMenuItemSettings purchaseTileItem = new ContextMenuItemSettings("Purchase Tile");
+        //    purchaseTileItem.onClickAction += () => PlayerManager.Instance.PurchaseTile(this);
+        //    settings.AddMenuItem(purchaseTileItem);
+        //}
 #if UNITY_EDITOR
         //if (UIManager.Instance.characterInfoUI.activeCharacter != null && UIManager.Instance.characterInfoUI.isShowing) {
         //    if (this.landmarkOnTile != null) {
@@ -1363,16 +1204,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
                     break;
             }
         }
-    }
-    #endregion
-
-    #region Story Events
-    public StoryEvent GetRandomStoryEvent() {
-        List<StoryEvent> pool = StoryEventsManager.Instance.GetPossibleEventsForTile(this);
-        if (pool.Count > 0) {
-            return pool[UnityEngine.Random.Range(0, pool.Count)];
-        }
-        return null;
     }
     #endregion
 

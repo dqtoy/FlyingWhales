@@ -1,65 +1,121 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
-public class QuestInfoUI : UIMenu {
+public class QuestInfoUI : MonoBehaviour {
+    [Header("General")]
+    public TextMeshProUGUI titleText;
+    public TextMeshProUGUI descriptionText;
+    public TextMeshProUGUI infoText;
+    public TextMeshProUGUI jobText;
+    public ScrollRect jobScrollRect;
+    public GameObject questJobNameplatePrefab;
 
-    [SerializeField] private UILabel questInfoLbl;
-    [SerializeField] private UIButton showQuestLogsBtn;
+    public Quest quest { get; private set; }
 
-	//public OldQuest.Quest currentlyShowingQuest{
-	//	get { return _data as OldQuest.Quest; }
-	//}
-    public override void OpenMenu() {
-        base.OpenMenu();
-        //UpdateQuestInfo();
+    public List<QuestJobNameplate> activeQuestJobNameplates { get; private set; }
+
+    public void Initialize() {
+        activeQuestJobNameplates = new List<QuestJobNameplate>();
+        Messenger.AddListener<Quest, JobQueueItem>(Signals.ADD_QUEST_JOB, OnAddQuestJob);
+        Messenger.AddListener<Quest, JobQueueItem>(Signals.REMOVE_QUEST_JOB, OnRemoveQuestJob);
+    }
+    public void ShowQuestInfoUI(Quest quest) {
+        this.quest = quest;
+        PopulateQuestInfo();
+        UpdateQuestJobs();
+        gameObject.SetActive(true);
     }
 
-    //public override void SetData(object data) {
-    //    if (currentlyShowingQuest != null) {
-    //        currentlyShowingQuest.onTaskInfoChanged = null;
-    //    }
-    //    base.SetData(data);
-    //    //(data as OldQuest.Quest).onTaskInfoChanged = UpdateQuestInfo;
-    //    if (isShowing) {
-    //        UpdateQuestInfo();
-    //    }
-    //}
-
-  //  public void UpdateQuestInfo() {
-		//if (currentlyShowingQuest == null) {
-  //          return;
-  //      }
-  //      string text = string.Empty;
-		//text += "[b]OldQuest.Quest ID:[/b] " + currentlyShowingQuest.id.ToString();
-		//text += "\n[b]OldQuest.Quest Type:[/b] " + currentlyShowingQuest.questName;
-		//text += "\n[b]Done:[/b] " + currentlyShowingQuest.isDone.ToString();
-		//text += "\n[b]Is Waiting:[/b] " + currentlyShowingQuest.isWaiting.ToString();
-		//text += "\n[b]Is Expired:[/b] " + currentlyShowingQuest.isExpired.ToString();
-		//if (currentlyShowingQuest.assignedParty == null) {
-  //          text += "\n[b]Assigned Party:[/b] NONE";
-  //      } else {
-		//	text += "\n[b]Assigned Party:[/b] " + currentlyShowingQuest.assignedParty.urlName;
-		//	if(currentlyShowingQuest.currentAction == null) {
-  //              text += "\n[b]Current Action:[/b] Forming Party";
-  //          } else {
-		//		text += "\n[b]Current Action:[/b] " + currentlyShowingQuest.currentAction.ToString();
-  //          }
-  //      }
-  //      questInfoLbl.text = text;
-
-		//if(currentlyShowingQuest.taskLogs.Count > 0) {
-  //          //enable button
-  //          showQuestLogsBtn.GetComponent<BoxCollider>().enabled = true;
-  //          showQuestLogsBtn.SetState(UIButtonColor.State.Normal, true);
-  //      } else {
-  //          //disable button
-  //          showQuestLogsBtn.GetComponent<BoxCollider>().enabled = false;
-  //          showQuestLogsBtn.SetState(UIButtonColor.State.Disabled, true);
-
-  //      }
-
-  //  }
-    public void ShowQuestLogs() {
-		//UIManager.Instance.ShowQuestLog(currentlyShowingQuest);
+    public void HideQuestInfoUI() {
+        gameObject.SetActive(false);
     }
+
+    public void UpdateQuestInfo() {
+        //UpdateQuestJobs();
+    }
+
+    private void PopulateQuestInfo() {
+        titleText.text = quest.name;
+        descriptionText.text = quest.description;
+
+        //string factionText = "<link=" + '"' + quest.factionOwner.id.ToString() + "_faction" + '"' + ">Faction Owner: <b>" + quest.factionOwner.name + "</b></link>";
+        //string regionText = "<link=" + '"' + quest.region.coreTile.id.ToString() + "_hextile" + '"' + ">Region: <b>" + (quest.region.area != null ? quest.region.area.name : quest.region.name) + "</b></link>";
+
+        string remainingDaysText = string.Empty;
+        if(quest is DivineInterventionQuest) {
+            if (PlayerManager.Instance.player.currentDivineInterventionTick > GameManager.ticksPerDay) {
+                remainingDaysText = "Remaining Days: <b>" + GameManager.Instance.GetCeilingDaysBasedOnTicks(PlayerManager.Instance.player.currentDivineInterventionTick) + "</b>";
+            } else {
+                remainingDaysText = "Remaining Hours: <b>" + GameManager.Instance.GetCeilingHoursBasedOnTicks(PlayerManager.Instance.player.currentDivineInterventionTick) + "</b>";
+            }
+        }
+        infoText.text = remainingDaysText;
+
+        //UpdateQuestJobs();
+    }
+
+    private void UpdateJobText() {
+        string jobInfo = "Associated Events: ";
+        if (quest.jobQueue.jobsInQueue.Count <= 0) {
+            jobInfo = "Associated Events: None";
+        }
+        //if (quest.jobQueue.jobsInQueue.Count > 0) {
+        //    for (int i = 0; i < quest.jobQueue.jobsInQueue.Count; i++) {
+        //        JobQueueItem job = quest.jobQueue.jobsInQueue[i];
+        //        jobInfo += "\n\t<link=" + '"' + i + "_job" + '"' + ">" + (i + 1) + ". <b>" + job.name + "</b></link>";
+        //        //if (job.assignedCharacter != null) {
+        //        //    jobInfo += "\n\t\t" + "<link=" + '"' + job.assignedCharacter.id.ToString() + "_character" + '"' + ">Assigned Character: <b>" + job.assignedCharacter.name + "</b></link>";
+        //        //} else {
+        //        //    jobInfo += "\n\t\tAssigned Character: <b>None</b>";
+        //        //}
+        //    }
+        //} else {
+        //    jobInfo += "None";
+        //}
+        jobText.text = jobInfo;
+    }
+    private void UpdateQuestJobs() {
+        UpdateJobText();
+        if(jobScrollRect.content.childCount > 0) {
+            Utilities.DestroyChildren(jobScrollRect.content);
+        }
+        for (int i = 0; i < quest.jobQueue.jobsInQueue.Count; i++) {
+            GenerateQuestJobNameplate(quest, quest.jobQueue.jobsInQueue[i], false);
+        }
+    }
+    private void GenerateQuestJobNameplate(Quest quest, JobQueueItem job, bool updateJobText = true) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(questJobNameplatePrefab.name, Vector3.zero, Quaternion.identity, jobScrollRect.content);
+        QuestJobNameplate item = go.GetComponent<QuestJobNameplate>();
+        item.Initialize(quest, job);
+        activeQuestJobNameplates.Add(item);
+        if (updateJobText) {
+            UpdateJobText();
+        }
+    }
+    private void RemoveQuestJobNameplate(JobQueueItem job) {
+        for (int i = 0; i < activeQuestJobNameplates.Count; i++) {
+            QuestJobNameplate nameplate = activeQuestJobNameplates[i];
+            if (nameplate.job == job) {
+                activeQuestJobNameplates.RemoveAt(i);
+                ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
+                break;
+            }
+        }
+        UpdateJobText();
+    }
+    #region Listeners
+    private void OnAddQuestJob(Quest quest, JobQueueItem job) {
+        if(gameObject.activeSelf && this.quest == quest) {
+            GenerateQuestJobNameplate(quest, job);
+        }
+    }
+    private void OnRemoveQuestJob(Quest quest, JobQueueItem job) {
+        if (gameObject.activeSelf && this.quest == quest) {
+            RemoveQuestJobNameplate(job);
+        }
+    }
+    #endregion
 }

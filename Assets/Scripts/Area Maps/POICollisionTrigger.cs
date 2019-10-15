@@ -12,12 +12,21 @@ public class POICollisionTrigger : MonoBehaviour {
     public virtual LocationGridTile gridTileLocation { get { return _gridTileLocation; } }
 
     private LocationGridTile _gridTileLocation;
-
     private BoxCollider2D mainCollider;
+
+    public ProjectileReceiver projectileReciever;
+
     public virtual void Initialize(IPointOfInterest poi) {
         this.poi = poi;
         this.name = poi.name + " collision trigger";
         mainCollider = GetComponent<BoxCollider2D>();
+        if (this is GhostCollisionTrigger || poi is GenericTileObject) {
+            //by default, ghost colliders do not have projectile recievers.
+            projectileReciever?.gameObject.SetActive(false);
+        } else {
+            projectileReciever.gameObject.SetActive(true);
+            projectileReciever.Initialize(poi);
+        }
         //gameObject.layer = LayerMask.GetMask("Area Maps");
     }
 

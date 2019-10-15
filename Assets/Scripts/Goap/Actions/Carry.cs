@@ -4,6 +4,31 @@ using UnityEngine;
 
 public class Carry : GoapAction {
 
+    //protected override bool isTargetMissing {
+    //    get {
+    //        bool targetMissing = false;
+    //        if (parentPlan != null && parentPlan.job != null && parentPlan.job.allowDeadTargets) {
+    //            targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+    //                || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !(poiTarget as Character).isDead;
+    //        } else {
+    //            targetMissing = !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+    //                || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
+    //        }
+
+    //        if (targetMissing) {
+    //            return targetMissing;
+    //        } else {
+    //            if (actor != poiTarget) {
+    //                Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
+    //                if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
+    //                    return true;
+    //                }
+    //            }
+    //            return targetMissing;
+    //        }
+    //    }
+    //}
+
     public Carry(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CARRY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
@@ -14,7 +39,7 @@ public class Carry : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY_2, conditionKey = actor, targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = actor, targetPOI = poiTarget });
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
@@ -41,9 +66,9 @@ public class Carry : GoapAction {
 
     #region State Effects
     public void AfterCarrySuccess() {
-        if (parentPlan != null && parentPlan.job != null) {
-            parentPlan.job.SetCannotOverrideJob(true);//Carry should not be overrideable if the character is actually already carrying another character.
-        }
+        //if (parentPlan != null && parentPlan.job != null) {
+        //    parentPlan.job.SetCannotOverrideJob(true);//Carry should not be overrideable if the character is actually already carrying another character.
+        //}
         Character target = poiTarget as Character;
         actor.ownParty.AddCharacter(target);
     }

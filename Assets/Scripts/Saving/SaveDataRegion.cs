@@ -9,10 +9,26 @@ public class SaveDataRegion {
     public string name;
     public List<int> tileIDs;
     public int coreTileID;
-    public int ticksInInvasion;
     public ColorSave regionColor;
+    public List<int> connectionsTileIDs;
+    public int previousOwnerID;
+    public List<int> factionsHereIDs;
 
-    public int invadingMinionID;
+    public List<int> charactersAtLocationIDs;
+    public WORLD_EVENT activeEvent;
+    public int eventSpawnedByCharacterID;
+    public bool hasEventIconGO;
+    public SaveDataWorldEventData eventData;
+
+    //public int invadingMinionID;
+    public DemonicLandmarkBuildingData demonicBuildingData;
+    public DemonicLandmarkInvasionData demonicInvasionData;
+
+    public List<string> features;
+
+
+    //public Minion assignedMinion - NOTE: Minion assigned for the region is already saved and loaded in SaveDataMinion. It is not saved and loaded here because there will be redundancy
+    //SEE SaveDataMinion
 
     public void Save(Region region) {
         id = region.id;
@@ -24,14 +40,55 @@ public class SaveDataRegion {
         }
 
         coreTileID = region.coreTile.id;
-        ticksInInvasion = region.ticksInInvasion;
+        //ticksInInvasion = region.ticksInInvasion;
         regionColor = region.regionColor;
 
-        if (region.invadingMinion != null) {
-            invadingMinionID = region.invadingMinion.character.id;
-        } else {
-            invadingMinionID = -1;
+        demonicBuildingData = region.demonicBuildingData;
+        demonicInvasionData = region.demonicInvasionData;
+
+        connectionsTileIDs = new List<int>();
+        for (int i = 0; i < region.connections.Count; i++) {
+            connectionsTileIDs.Add(region.connections[i].coreTile.id);
         }
+
+        charactersAtLocationIDs = new List<int>();
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            charactersAtLocationIDs.Add(region.charactersAtLocation[i].id);
+        }
+
+        if(region.previousOwner != null) {
+            previousOwnerID = region.previousOwner.id;
+        } else {
+            previousOwnerID = -1;
+        }
+
+        factionsHereIDs = new List<int>();
+        for (int i = 0; i < region.factionsHere.Count; i++) {
+            factionsHereIDs.Add(region.factionsHere[i].id);
+        }
+
+        if (region.activeEvent != null) {
+            activeEvent = region.activeEvent.eventType;
+            eventSpawnedByCharacterID = region.eventSpawnedBy.id;
+
+            var typeName = "SaveData" + region.eventData.GetType().ToString();
+            eventData = System.Activator.CreateInstance(System.Type.GetType(typeName)) as SaveDataWorldEventData;
+            eventData.Save(region.eventData);
+        } else {
+            activeEvent = WORLD_EVENT.NONE;
+        }
+        hasEventIconGO = region.eventIconGO != null;
+
+        features = new List<string>();
+        for (int i = 0; i < region.features.Count; i++) {
+            features.Add(region.features[i].GetType().ToString());
+        }
+
+        //if (region.assignedMinion != null) {
+        //    invadingMinionID = region.assignedMinion.character.id;
+        //} else {
+        //    invadingMinionID = -1;
+        //}
     }
 
     public Region Load() {
@@ -39,18 +96,45 @@ public class SaveDataRegion {
         for (int i = 0; i < tileIDs.Count; i++) {
             region.AddTile(GridMap.Instance.hexTiles[tileIDs[i]]);
         }
-
-        if(ticksInInvasion > 0) {
-            //TODO: what to do if saved in the middle of invading a tile
-        }
         return region;
     }
 
-    public Minion LoadInvadingMinion() {
-        if(invadingMinionID != -1) {
-            Minion minion = CharacterManager.Instance.GetCharacterByID(invadingMinionID).minion;
-            return minion;
+    public void LoadRegionAdditionalData(Region region) {
+        //Region region = GridMap.Instance.GetRegionByID(id);
+        if(previousOwnerID != -1) {
+            region.SetPreviousOwner(FactionManager.Instance.GetFactionBasedOnID(previousOwnerID));
         }
-        return null;
+
+        for (int i = 0; i < factionsHereIDs.Count; i++) {
+            region.AddFactionHere(FactionManager.Instance.GetFactionBasedOnID(factionsHereIDs[i]));
+        }
+
+        region.LoadBuildingStructure(this);
+        region.LoadInvasion(this);
+        region.LoadFeatures(this);
+
     }
+    public void LoadRegionConnections(Region region) {
+        for (int i = 0; i < connectionsTileIDs.Count; i++) {
+            Region regionToConnect = GridMap.Instance.hexTiles[connectionsTileIDs[i]].region;
+            if (!region.connections.Contains(regionToConnect)) {
+                LandmarkManager.Instance.ConnectRegions(region, regionToConnect);
+            }
+        }
+    }
+    public void LoadRegionCharacters(Region region) {
+        for (int i = 0; i < charactersAtLocationIDs.Count; i++) {
+            region.LoadCharacterHere(CharacterManager.Instance.GetCharacterByID(charactersAtLocationIDs[i]));
+        }
+    }
+    public void LoadActiveEvent(Region region) {
+        region.LoadEvent(this);
+    }
+    //public Minion LoadInvadingMinion() {
+    //    if(invadingMinionID != -1) {
+    //        Minion minion = CharacterManager.Instance.GetCharacterByID(invadingMinionID).minion;
+    //        return minion;
+    //    }
+    //    return null;
+    //}
 }

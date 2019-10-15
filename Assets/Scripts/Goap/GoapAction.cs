@@ -51,9 +51,10 @@ public class GoapAction {
     public Log planLog { get; protected set; } //used for notification when a character starts this action. NOTE: Do not show notification if this is null
     public Log targetLog { get; protected set; }
     public GoapActionState currentState { get; private set; }
-    public GoapActionState endedAtState { get; private set; } //the state this action ended at
+    //public GoapActionState endedAtState { get; private set; } //the state this action ended at
     public GoapPlan parentPlan { get; private set; }
     public bool isStopped { get; private set; }
+    public bool isStoppedAsCurrentAction { get; private set; }
     public bool isPerformingActualAction { get; protected set; }
     public bool isDone { get; private set; }
     public ACTION_LOCATION_TYPE actionLocationType { get; protected set; } //This is set in every action's constructor
@@ -81,12 +82,21 @@ public class GoapAction {
     public int referenceCount { get; protected set; }
     public bool willAvoidCharactersWhileMoving { get; protected set; }
     public bool isStealth { get; protected set; }
+    public bool isRoamingAction { get; protected set; } //Is this action a roaming action like Hunting To Drink Blood or Roaming To Steal
     public object[] otherData { get; protected set; }
+    public string whileMovingState { get; protected set; } //The state name of this action while actor is still moving towards the target location/character, this can be empty, in fact the default value is empty, this is only needed when we want an action to have a current state even though he/she is still moving to the target, this does not mean that the actor is performing actual action
 
     protected virtual bool isTargetMissing {
         get {
-            bool targetMissing = !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
-                || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
+            bool targetMissing = false;
+            targetMissing = !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
+            //if (parentPlan != null && parentPlan.job != null && parentPlan.job.allowDeadTargets) {
+            //    targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+            //        || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !(poiTarget as Character).isDead;
+            //} else {
+                
+            //}
 
             if (targetMissing) {
                 return targetMissing;
@@ -102,9 +112,6 @@ public class GoapAction {
         }
     }
 
-    //Stealth
-    protected int _numOfTries;
-
     protected bool _stayInArea; //if the character should stay at his/her current area to do this action
 
     protected Func<bool> _requirementAction;
@@ -119,7 +126,7 @@ public class GoapAction {
         this.goapName = Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
         this.poiTarget = poiTarget;
         this.actor = actor;
-        isStopped = false;
+        SetIsStopped(false);
         isPerformingActualAction = false;
         isDone = false;
         SetShowIntelNotification(true);
@@ -129,12 +136,12 @@ public class GoapAction {
         actualEffects = new List<GoapEffect>();
         committedCrime = CRIME.NONE;
         animationName = string.Empty;
-        _numOfTries = 0;
         resumeTargetCharacterState = true;
         isNotificationAnIntel = true;
         canBeAddedToMemory = true;
         _stayInArea = false;
         awareCharactersOfThisAction = new List<Character>();
+        whileMovingState = string.Empty;
         //for testing
         //CRIME[] choices = Utilities.GetEnumValues<CRIME>();
         //committedCrime = choices[Utilities.rng.Next(1, choices.Length)];
@@ -154,6 +161,22 @@ public class GoapAction {
         currentState.Execute();
         Messenger.Broadcast(Signals.ACTION_STATE_SET, this, currentState);
     }
+    /// <summary>
+    /// Change the state that this action is in. This is used when the current action already has a state,
+    /// but some change in external conditions needs the action to change effects midway.
+    /// </summary>
+    /// <param name="newState">The state that this action will switch to.</param>
+    public void ChangeState(string newState) {
+        GoapActionState nextState = states[newState];
+        nextState.OverrideDuration(currentState.duration - currentState.currentDuration); //set the duration of the next state to be the remaining duration of the current state.
+        CleanupBeforeChangingStates();
+        currentState.StopPerTickEffect();
+        SetState(newState);
+    }
+    /// <summary>
+    /// Utility function to cleanup any unneeded mechanics before this action changes states.
+    /// </summary>
+    protected virtual void CleanupBeforeChangingStates() { }
     #endregion
 
     #region Virtuals
@@ -227,7 +250,7 @@ public class GoapAction {
                         targetCharacter.stateComponent.SetStateToDo(null, false, false);
                     }
                     targetCharacter.marker.pathfindingAI.AdjustDoNotMove(1);
-                    targetCharacter.marker.AdjustIsStoppedByOtherCharacter(1);
+                    targetCharacter.AdjustIsStoppedByOtherCharacter(1);
                     targetCharacter.FaceTarget(actor);
                 }
             }
@@ -275,7 +298,7 @@ public class GoapAction {
         //CreateStates(); //Not sure if this is the best place for this.
         //SetTargetStructure(); //Update target tile and structure so that the character will not go to the target tile that is calculated during the initialization of this action, so the character will move precisely to the intended target
         actor.SetCurrentAction(this);
-        parentPlan.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
+        parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
         actor.marker.OnThisCharacterDoingAction(this);
 
@@ -286,6 +309,9 @@ public class GoapAction {
             }
         }
         poiTarget.AddTargettedByAction(this);
+        if (whileMovingState != string.Empty) {
+            SetState(whileMovingState);
+        }
         MoveToDoAction(targetCharacter);
     }
     public virtual LocationGridTile GetTargetLocationTile() {
@@ -356,18 +382,22 @@ public class GoapAction {
             throw new Exception(actor.name + " target structure of action " + this.goapName + " is null.");
         }
 
-        if (actor.specificLocation != targetStructure.location) {
-            if (_stayInArea) {
-                actor.PerformGoapAction();
-            } else {
-                actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, OnArriveAtTargetLocation, null, poiTarget, targetTile);
-            }
+        if(actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && actor.marker.inVisionPOIs.Contains(poiTarget)) {
+            actor.PerformGoapAction();
         } else {
-            //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
-            if (targetTile != null) {
-                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+            if (actor.specificLocation != targetStructure.location) {
+                if (_stayInArea) {
+                    actor.PerformGoapAction();
+                } else {
+                    actor.currentParty.GoToLocation(targetStructure.location.region, PATHFINDING_MODE.NORMAL, targetStructure, OnArriveAtTargetLocation, null, poiTarget, targetTile);
+                }
             } else {
-                actor.marker.GoTo(poiTarget, OnArriveAtTargetLocation);
+                //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
+                if (targetTile != null) {
+                    actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+                } else {
+                    actor.marker.GoTo(poiTarget, OnArriveAtTargetLocation);
+                }
             }
         }
     }
@@ -404,14 +434,12 @@ public class GoapAction {
     public virtual bool IsTarget(IPointOfInterest poi) {
         return poiTarget == poi;
     }
-
     /// <summary>
     /// This might change the value of isOldNews to true if the conditions are met
     /// </summary>
     /// <param name="poi">The POI that is the basis for the old news. Usually, it must match with the action's poiTarget.</param>
     /// <param name="action">Can be null. If this is not null, then the listener action must match with this.</param>
     protected virtual void OldNewsTrigger(IPointOfInterest poi, GoapAction action) { }
-
     /// <summary>
     /// What happens when the parent plan of this action has a job
     /// </summary>
@@ -424,13 +452,18 @@ public class GoapAction {
     /// What should happen when an action is stopped while the actor is still travelling towards it's target?
     /// </summary>
     public virtual void OnStopActionWhileTravelling() { }
-
     public virtual int GetArrangedLogPriorityIndex(string priorityID) { return -1; }
+    public virtual bool ShouldBeStoppedWhenSwitchingStates() {
+        return true; //by default, when a character is switching states and has a current action, that action will be stopped.
+    }
     #endregion
 
     #region Utilities
     private void OnArriveAtTargetLocation() {
-        actor.PerformGoapAction();
+        if(actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
+            //This should not happen if the location type is target in vision because this will be called upon entering vision of target
+            actor.PerformGoapAction();
+        }
     }
     public void Initialize() {
         SetTargetStructure();
@@ -475,7 +508,7 @@ public class GoapAction {
 
         isPerformingActualAction = false;
         isDone = true;
-        endedAtState = currentState;
+        //endedAtState = currentState;
         this.actor.PrintLogIfActive(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
 
         if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -489,7 +522,7 @@ public class GoapAction {
                             }
                         }
                         targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
-                        targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
+                        targetCharacter.AdjustIsStoppedByOtherCharacter(-1);
                     }
                 }
             }
@@ -515,11 +548,20 @@ public class GoapAction {
     public void SetEndAction(System.Action<string, GoapAction> endAction) {
         this.endAction = endAction;
     }
-    public void StopAction(bool removeJobInQueue = false) {
+    public void StopAction(bool removeJobInQueue = false, string reason = "") {
         //GoapAction action = actor.currentAction;
         //if(actor.marker.pathfindingThread != null) {
         //    actor.marker.pathfindingThread.SetDoNotMove(true);
         //}
+        if(actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null && actor.currentAction == this) {
+            if (reason != "") {
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
+                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(null, actor.currentAction.goapName, LOG_IDENTIFIER.STRING_1);
+                log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
+                actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            }
+        }
         actor.SetCurrentAction(null);
         if (actor.currentParty.icon.isTravelling) {
             if (actor.currentParty.icon.travelLine == null) {
@@ -559,11 +601,10 @@ public class GoapAction {
             //    targetCharacter.AdjustIsWaitingForInteraction(-1);
             //}
             OnStopActionWhileTravelling();
-            if (!actor.DropPlan(parentPlan)) {
-                //actor.PlanGoapActions();
-            }
+            actor.DropPlan(parentPlan, forceProcessPlanJob: true);
         }
-        if (removeJobInQueue && job != null && job.jobQueueParent.character != null) {
+        //Remove job in queue if job is personal job and removeJobInQueue value is true
+        if (removeJobInQueue && job != null && !job.jobQueueParent.isAreaOrQuestJobQueue) {
             job.jobQueueParent.RemoveJobInQueue(job);
         }
         if (UIManager.Instance.characterInfoUI.isShowing) {
@@ -574,6 +615,9 @@ public class GoapAction {
     }
     public void SetIsStopped(bool state) {
         isStopped = state;
+    }
+    public void SetIsStoppedAsCurrentAction(bool state) {
+        isStoppedAsCurrentAction = state;
     }
     public int GetDistanceCost() {
         if (actor.specificLocation == null) {
@@ -620,10 +664,6 @@ public class GoapAction {
     protected bool HasSupply(int neededSupply) {
         return actor.supply >= neededSupply;
     }
-    /// <summary>
-    /// This is used by the character marker so that when it recalculates a path, his/her current action is updated.
-    /// </summary>
-    /// <param name="targetTile">The new target tile.</param>
     public void SetExecutionDate(GameDate date) {
         executionDate = date;
     }
@@ -662,6 +702,12 @@ public class GoapAction {
             return this.currentState.descriptionLog;
         }
         if (actor.currentParty.icon.isTravelling) {
+            if(currentState != null) {
+                //character is travelling but there is already a current state
+                //Note: this will only happen is action has whileMovingState
+                //Examples are: Imprison Character and Abduct Character actions
+                return currentState.descriptionLog;
+            }
             //character is travelling
             return thoughtBubbleMovingLog;
         } else {
@@ -685,7 +731,7 @@ public class GoapAction {
         return actor.gridTileLocation == targetTile;
     }
     public int CostMultiplier() {
-        if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())) {
+        if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick(actor))) {
             return 1;
         }
         return 3;
@@ -834,15 +880,6 @@ public class GoapAction {
     public void AddActualEffect(GoapEffect effect) {
         actualEffects.Add(effect);
     }
-    public bool HasActualEffect(GOAP_EFFECT_CONDITION conditionType, object conditionKey = null, IPointOfInterest targetPOI = null) {
-        for (int i = 0; i < actualEffects.Count; i++) {
-            GoapEffect effect = actualEffects[i];
-            if (effect.conditionType == conditionType && effect.conditionKey == conditionKey && effect.targetPOI == targetPOI) {
-                return true;
-            }
-        }
-        return false;
-    }
     #endregion
 
     #region Tile Objects
@@ -903,7 +940,7 @@ public class GoapAction {
             return false;
         }
         if (parentPlan != null && parentPlan.job != null
-                && reacting.homeArea.jobQueue.jobsInQueue.Contains(parentPlan.job)) {
+                && reacting.homeArea != null && reacting.homeArea.jobQueue.jobsInQueue.Contains(parentPlan.job)) {
             return false;
         }
         return reacting.faction == actor.faction && committedCrime != CRIME.NONE;
@@ -959,8 +996,6 @@ public class GoapAction {
         return false;
     }
     #endregion
-
-
 }
 
 public struct GoapEffect {
@@ -983,10 +1018,48 @@ public struct GoapEffect {
             return (conditionKey as Character).name;
         } else if (conditionKey is Area) {
             return (conditionKey as Area).name;
+        } else if (conditionKey is Region) {
+            return (conditionKey as Region).name;
         } else if (conditionKey is SpecialToken) {
             return (conditionKey as SpecialToken).name;
         } else if (conditionKey is IPointOfInterest) {
             return (conditionKey as IPointOfInterest).name;
+        }
+        return string.Empty;
+    }
+    public string conditionKeyToString() {
+        if (conditionKey is string) {
+            return (string)conditionKey;
+        } else if (conditionKey is int) {
+            return ((int)conditionKey).ToString();
+        } else if (conditionKey is Character) {
+            return (conditionKey as Character).id.ToString();
+        } else if (conditionKey is Area) {
+            return (conditionKey as Area).id.ToString();
+        } else if (conditionKey is Region) {
+            return (conditionKey as Region).id.ToString();
+        } else if (conditionKey is SpecialToken) {
+            return (conditionKey as SpecialToken).id.ToString();
+        } else if (conditionKey is IPointOfInterest) {
+            return (conditionKey as IPointOfInterest).id.ToString();
+        }
+        return string.Empty;
+    }
+    public string conditionKeyTypeString() {
+        if (conditionKey is string) {
+            return "string";
+        } else if (conditionKey is int) {
+            return "int";
+        } else if (conditionKey is Character) {
+            return "character";
+        } else if (conditionKey is Area) {
+            return "area";
+        } else if (conditionKey is Region) {
+            return "region";
+        } else if (conditionKey is SpecialToken) {
+            return "item";
+        } else if (conditionKey is IPointOfInterest) {
+            return "poi";
         }
         return string.Empty;
     }
@@ -1006,6 +1079,91 @@ public struct GoapEffect {
     }
     public override int GetHashCode() {
         return base.GetHashCode();
+    }
+}
+
+[System.Serializable]
+public class SaveDataGoapEffect {
+    public GOAP_EFFECT_CONDITION conditionType;
+
+    public string conditionKey;
+    public string conditionKeyIdentifier;
+    public POINT_OF_INTEREST_TYPE conditionKeyPOIType;
+    public TILE_OBJECT_TYPE conditionKeyTileObjectType;
+
+
+    public int targetPOIID;
+    public POINT_OF_INTEREST_TYPE targetPOIType;
+    public TILE_OBJECT_TYPE targetPOITileObjectType;
+
+    public void Save(GoapEffect goapEffect) {
+        conditionType = goapEffect.conditionType;
+
+        if(goapEffect.conditionKey != null) {
+            conditionKeyIdentifier = goapEffect.conditionKeyTypeString();
+            conditionKey = goapEffect.conditionKeyToString();
+            if(goapEffect.conditionKey is IPointOfInterest) {
+                conditionKeyPOIType = (goapEffect.conditionKey as IPointOfInterest).poiType;
+            }
+            if (goapEffect.conditionKey is TileObject) {
+                conditionKeyTileObjectType = (goapEffect.conditionKey as TileObject).tileObjectType;
+            }
+        } else {
+            conditionKeyIdentifier = string.Empty;
+        }
+
+        if(goapEffect.targetPOI != null) {
+            targetPOIID = goapEffect.targetPOI.id;
+            targetPOIType = goapEffect.targetPOI.poiType;
+            if(goapEffect.targetPOI is TileObject) {
+                targetPOITileObjectType = (goapEffect.targetPOI as TileObject).tileObjectType;
+            }
+        } else {
+            targetPOIID = -1;
+        }
+    }
+
+    public GoapEffect Load() {
+        GoapEffect effect = new GoapEffect() {
+            conditionType = conditionType,
+        };
+        if(targetPOIID != -1) {
+            GoapEffect tempEffect = effect;
+            if (targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                tempEffect.targetPOI = CharacterManager.Instance.GetCharacterByID(targetPOIID);
+            } else if (targetPOIType == POINT_OF_INTEREST_TYPE.ITEM) {
+                tempEffect.targetPOI = TokenManager.Instance.GetSpecialTokenByID(targetPOIID);
+            } else if (targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                tempEffect.targetPOI = InteriorMapManager.Instance.GetTileObject(targetPOITileObjectType, targetPOIID);
+            }
+            effect = tempEffect;
+        }
+        if(conditionKeyIdentifier != string.Empty) {
+            GoapEffect tempEffect = effect;
+            if (conditionKeyIdentifier == "string") {
+                tempEffect.conditionKey = conditionKey;
+            } else if (conditionKey == "int") {
+                tempEffect.conditionKey = int.Parse(conditionKey);
+            } else if (conditionKey == "character") {
+                tempEffect.conditionKey = CharacterManager.Instance.GetCharacterByID(int.Parse(conditionKey));
+            } else if (conditionKey == "area") {
+                tempEffect.conditionKey = LandmarkManager.Instance.GetAreaByID(int.Parse(conditionKey));
+            } else if (conditionKey == "region") {
+                tempEffect.conditionKey = GridMap.Instance.GetRegionByID(int.Parse(conditionKey));
+            } else if (conditionKey == "item") {
+                tempEffect.conditionKey = TokenManager.Instance.GetSpecialTokenByID(int.Parse(conditionKey));
+            } else if (conditionKey == "poi") {
+                if (conditionKeyPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+                    tempEffect.conditionKey = CharacterManager.Instance.GetCharacterByID(int.Parse(conditionKey));
+                } else if (conditionKeyPOIType == POINT_OF_INTEREST_TYPE.ITEM) {
+                    tempEffect.conditionKey = TokenManager.Instance.GetSpecialTokenByID(int.Parse(conditionKey));
+                } else if (conditionKeyPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                    tempEffect.conditionKey = InteriorMapManager.Instance.GetTileObject(conditionKeyTileObjectType, int.Parse(conditionKey));
+                }
+            }
+            effect = tempEffect;
+        }
+        return effect;
     }
 }
 

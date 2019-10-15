@@ -22,14 +22,14 @@ public class FactionInfoUI : UIMenu {
 
     [Space(10)]
     [Header("Characters")]
-    [SerializeField] private GameObject landmarkCharacterPrefab;
+    [SerializeField] private GameObject characterItemPrefab;
     [SerializeField] private ScrollRect charactersScrollView;
     [SerializeField] private RectTransform leaderEmblem;
-    private List<LandmarkCharacterItem> characterItems;
+    private List<CharacterNameplateItem> characterItems;
 
     [Space(10)]
-    [Header("Areas")]
-    [SerializeField] private ScrollRect areasScrollView;
+    [Header("Regions")]
+    [SerializeField] private ScrollRect regionsScrollView;
     [SerializeField] private GameObject locationPortraitPrefab;
     private List<LocationPortrait> locationItems;
 
@@ -56,15 +56,15 @@ public class FactionInfoUI : UIMenu {
 
     internal override void Initialize() {
         base.Initialize();
-        characterItems = new List<LandmarkCharacterItem>();
+        characterItems = new List<CharacterNameplateItem>();
         locationItems = new List<LocationPortrait>();
         LoadLogItems();
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
         Messenger.AddListener(Signals.INSPECT_ALL, OnInspectAll);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_ADDED_TO_FACTION, OnCharacterAddedToFaction);
         Messenger.AddListener<Character, Faction>(Signals.CHARACTER_REMOVED_FROM_FACTION, OnCharacterRemovedFromFaction);
-        Messenger.AddListener<Faction, Area>(Signals.FACTION_OWNED_AREA_ADDED, OnFactionAreaAdded);
-        Messenger.AddListener<Faction, Area>(Signals.FACTION_OWNED_AREA_REMOVED, OnFactionAreaRemoved);
+        Messenger.AddListener<Faction, Region>(Signals.FACTION_OWNED_REGION_ADDED, OnFactionRegionAdded);
+        Messenger.AddListener<Faction, Region>(Signals.FACTION_OWNED_REGION_REMOVED, OnFactionRegionRemoved);
         Messenger.AddListener<FactionRelationship>(Signals.FACTION_RELATIONSHIP_CHANGED, OnFactionRelationshipChanged);
         Messenger.AddListener<Faction>(Signals.FACTION_ACTIVE_CHANGED, OnFactionActiveChanged);
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
@@ -80,7 +80,7 @@ public class FactionInfoUI : UIMenu {
         }
         UpdateFactionInfo();
         UpdateAllCharacters();
-        UpdateAreas();
+        UpdateRegionss();
         UpdateAllRelationships();
         ResetScrollPositions();
     }
@@ -193,10 +193,10 @@ public class FactionInfoUI : UIMenu {
         }
         return null;
     }
-    private LandmarkCharacterItem GetItem(Character character) {
-        LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
+    private CharacterNameplateItem GetItem(Character character) {
+        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
-            LandmarkCharacterItem item = items[i];
+            CharacterNameplateItem item = items[i];
             if (item.character != null) {
                 if (item.character.id == character.id) {
                     return item;
@@ -205,10 +205,11 @@ public class FactionInfoUI : UIMenu {
         }
         return null;
     }
-    private LandmarkCharacterItem CreateNewCharacterItem(Character character, bool autoSort = true) {
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(landmarkCharacterPrefab.name, charactersScrollView.content);
-        LandmarkCharacterItem item = characterGO.GetComponent<LandmarkCharacterItem>();
-        item.SetCharacter(character, this);
+    private CharacterNameplateItem CreateNewCharacterItem(Character character, bool autoSort = true) {
+        GameObject characterGO = UIManager.Instance.InstantiateUIObject(characterItemPrefab.name, charactersScrollView.content);
+        CharacterNameplateItem item = characterGO.GetComponent<CharacterNameplateItem>();
+        item.SetObject(character);
+        item.SetAsDefaultBehaviour();
         characterItems.Add(item);
         if (autoSort) {
             OrderCharacterItems();
@@ -218,7 +219,7 @@ public class FactionInfoUI : UIMenu {
     private void OrderCharacterItems() {
         if (activeFaction.leader is Character) {
             Character leader = activeFaction.leader as Character;
-            LandmarkCharacterItem leaderItem = GetItem(leader);
+            CharacterNameplateItem leaderItem = GetItem(leader);
             if (leaderItem == null) {
                 throw new System.Exception("Leader item in " + activeFaction.name + "'s UI is null! Leader is " + leader.name);
             }
@@ -237,7 +238,7 @@ public class FactionInfoUI : UIMenu {
     }
     private void OnCharacterRemovedFromFaction(Character character, Faction faction) {
         if (isShowing && activeFaction != null && activeFaction.id == faction.id) {
-            LandmarkCharacterItem item = GetItem(character);
+            CharacterNameplateItem item = GetItem(character);
             if (item != null) {
                 characterItems.Remove(item);
                 ObjectPoolManager.Instance.DestroyObject(item.gameObject);
@@ -247,46 +248,46 @@ public class FactionInfoUI : UIMenu {
     }
     #endregion
 
-    #region Areas
-    private void UpdateAreas() {
-        Utilities.DestroyChildren(areasScrollView.content);
+    #region Regions
+    private void UpdateRegionss() {
+        Utilities.DestroyChildren(regionsScrollView.content);
         locationItems.Clear();
 
-        for (int i = 0; i < activeFaction.ownedAreas.Count; i++) {
-            Area currArea = activeFaction.ownedAreas[i];
-            CreateNewAreaItem(currArea);
+        for (int i = 0; i < activeFaction.ownedRegions.Count; i++) {
+            Region currRegion = activeFaction.ownedRegions[i];
+            CreateNewRegionItem(currRegion);
         }
     }
-    private void CreateNewAreaItem(Area area) {
-        GameObject characterGO = UIManager.Instance.InstantiateUIObject(locationPortraitPrefab.name, areasScrollView.content);
+    private void CreateNewRegionItem(Region region) {
+        GameObject characterGO = UIManager.Instance.InstantiateUIObject(locationPortraitPrefab.name, regionsScrollView.content);
         LocationPortrait item = characterGO.GetComponent<LocationPortrait>();
-        item.SetLocation(area);
+        item.SetLocation(region);
         locationItems.Add(item);
     }
-    private LocationPortrait GetLocationItem(Area area) {
+    private LocationPortrait GetLocationItem(Region region) {
         for (int i = 0; i < locationItems.Count; i++) {
             LocationPortrait locationPortrait = locationItems[i];
-            if (locationPortrait.area.id == area.id) {
+            if (locationPortrait.region.id == region.id) {
                 return locationPortrait;
             }
         }
         return null;
     }
-    private void DestroyLocationItem(Area area) {
-        LocationPortrait item = GetLocationItem(area);
+    private void DestroyLocationItem(Region region) {
+        LocationPortrait item = GetLocationItem(region);
         if (item != null) {
             locationItems.Remove(item);
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
         }
     }
-    private void OnFactionAreaAdded(Faction faction, Area area) {
+    private void OnFactionRegionAdded(Faction faction, Region region) {
         if (isShowing && activeFaction.id == faction.id) {
-            CreateNewAreaItem(area);
+            CreateNewRegionItem(region);
         }
     }
-    private void OnFactionAreaRemoved(Faction faction, Area area) {
+    private void OnFactionRegionRemoved(Faction faction, Region region) {
         if (isShowing && activeFaction.id == faction.id) {
-            DestroyLocationItem(area);
+            DestroyLocationItem(region);
         }
     }
     #endregion
@@ -322,13 +323,26 @@ public class FactionInfoUI : UIMenu {
     private void ResetScrollPositions() {
         charactersScrollView.verticalNormalizedPosition = 1;
         historyScrollView.verticalNormalizedPosition = 1;
-        areasScrollView.verticalNormalizedPosition = 1;
+        regionsScrollView.verticalNormalizedPosition = 1;
     }
     private void OnInspectAll() {
         if (isShowing && activeFaction != null) {
             UpdateAllCharacters();
             //UpdateHiddenUI();
         }
+    }
+    public void ShowFactionTestingInfo() {
+        if (activeFaction.activeQuest != null) {
+            string questSummary = activeFaction.activeQuest.name;
+            for (int i = 0; i < activeFaction.activeQuest.jobQueue.jobsInQueue.Count; i++) {
+                JobQueueItem item = activeFaction.activeQuest.jobQueue.jobsInQueue[i];
+                questSummary += "\n\t- " + item.jobType.ToString() + ": " + item.assignedCharacter?.name;
+            }
+            UIManager.Instance.ShowSmallInfo(questSummary);
+        }
+    }
+    public void HideFactionTestingInfo() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 

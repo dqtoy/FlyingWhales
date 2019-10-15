@@ -11,9 +11,14 @@ public class Bed : TileObject {
     }
 
     public Bed(LocationStructure location) {
-        this.structureLocation = location;
+        SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.NAP, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(TILE_OBJECT_TYPE.BED);
+        bedUsers = new Character[2];
+    }
+    public Bed(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.SLEEP, INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.NAP, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        Initialize(data);
         bedUsers = new Character[2];
     }
 
@@ -105,6 +110,9 @@ public class Bed : TileObject {
             }
         }
     }
+    public override bool CanBeReplaced() {
+        return true;
+    }
     #endregion
 
     #region Users
@@ -142,6 +150,11 @@ public class Bed : TileObject {
                 }
                 //enable the character's marker
                 character.marker.SetVisualState(true);
+                if (character.gridTileLocation != null && character.GetNormalTrait("Paralyzed") != null) {
+                    //When a paralyzed character awakens, place it on a nearby adjacent empty tile in the same Structure
+                    LocationGridTile gridTile = character.gridTileLocation.GetNearestUnoccupiedTileFromThis();
+                    character.marker.PlaceMarkerAt(gridTile);
+                }
                 break;
             }
         }

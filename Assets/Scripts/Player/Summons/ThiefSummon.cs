@@ -25,7 +25,7 @@ public class ThiefSummon : Summon {
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
         AddInitialAwareness(tile.parentAreaMap.area);
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
+        //Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
         ////add all characters that are not part of the player faction to this character's terrifying characters list, so this character can avoid them.
         //for (int i = 0; i < tile.parentAreaMap.area.charactersAtLocation.Count; i++) {
         //    Character currCharacter = tile.parentAreaMap.area.charactersAtLocation[i];
@@ -34,8 +34,8 @@ public class ThiefSummon : Summon {
         //    }
         //}
     }
-    public override void ThisCharacterSaw(IPointOfInterest target) {
-        base.ThisCharacterSaw(target);
+    public override List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
+        List<GoapAction> actions = base.ThisCharacterSaw(target);
         if (target is Character) {
             Character targetCharacter = target as Character;
             //if the target is not from the player faction, add them to the terrifying characters list
@@ -43,6 +43,7 @@ public class ThiefSummon : Summon {
                 marker.AddTerrifyingObject(target);
             }
         }
+        return actions;
     }
     protected override void IdlePlans() {
         if (_hasAlreadyAskedForPlan) {

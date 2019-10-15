@@ -10,9 +10,15 @@ public class TokenManager : MonoBehaviour {
     public List<SpecialTokenSettings> specialTokenSettings;
 
     [SerializeField] private ItemSpriteDictionary itemSpritesDictionary;
+    public List<SpecialObject> specialObjects { get; private set; }
+    public List<SpecialToken> specialTokens { get; private set; }
 
     void Awake() {
         Instance = this;
+
+        //TODO: move this somewhere safer
+        specialObjects = new List<SpecialObject>();
+        specialTokens = new List<SpecialToken>();
     }
 
     public void Initialize() {
@@ -21,12 +27,12 @@ public class TokenManager : MonoBehaviour {
 
     private void LoadSpecialTokens() {
         //Reference: https://trello.com/c/Kuqt3ZSP/2610-put-2-healing-potions-in-the-warehouse-at-start-of-the-game
-        LocationStructure warehouse = LandmarkManager.Instance.mainSettlement.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
+        LocationStructure warehouse = LandmarkManager.Instance.enemyOfPlayerArea.GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
         for (int i = 0; i < 4; i++) {
-            LandmarkManager.Instance.mainSettlement.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION), warehouse);
+            LandmarkManager.Instance.enemyOfPlayerArea.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION), warehouse);
         }
         for (int i = 0; i < 2; i++) {
-            LandmarkManager.Instance.mainSettlement.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.TOOL), warehouse);
+            LandmarkManager.Instance.enemyOfPlayerArea.AddSpecialTokenToLocation(CreateSpecialToken(SPECIAL_TOKEN.TOOL), warehouse);
         }
 
         for (int i = 0; i < specialTokenSettings.Count; i++) {
@@ -119,6 +125,29 @@ public class TokenManager : MonoBehaviour {
     public Sprite GetItemSprite(SPECIAL_TOKEN tokenType) {
         if (itemSpritesDictionary.ContainsKey(tokenType)) {
             return itemSpritesDictionary[tokenType];
+        }
+        return null;
+    }
+    public void AddSpecialObject(SpecialObject obj) {
+        specialObjects.Add(obj);
+    }
+    public SpecialObject GetSpecialObjectByID(int id) {
+        for (int i = 0; i < specialObjects.Count; i++) {
+            if(specialObjects[i].id == id) {
+                return specialObjects[i];
+            }
+        }
+        return null;
+    }
+
+    public void AddSpecialToken(SpecialToken token) {
+        specialTokens.Add(token);
+    }
+    public SpecialToken GetSpecialTokenByID(int id) {
+        for (int i = 0; i < specialTokens.Count; i++) {
+            if (specialTokens[i].id == id) {
+                return specialTokens[i];
+            }
         }
         return null;
     }

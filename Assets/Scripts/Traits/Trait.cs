@@ -8,6 +8,9 @@ public class Trait {
     public virtual string nameInUI {
         get { return name; }
     }
+    public virtual bool isNotSavable {
+        get { return false; }
+    }
     public Character responsibleCharacter { get; protected set; }
     public List<Character> responsibleCharacters { get; protected set; }
     public string name;
@@ -24,14 +27,17 @@ public class Trait {
     public List<TraitEffect> effects;
     public bool isHidden;
     public string[] mutuallyExclusive; //list of traits that this trait cannot be with.
+    public bool canBeTriggered;
 
     public Dictionary<ITraitable, string> expiryTickets { get; private set; } //this is the key for the scheduled removal of this trait for each object
     public GoapAction gainedFromDoing { get; private set; } //what action was this poi involved in that gave it this trait.
     public bool isDisabled { get; private set; }
+    public GameDate dateEstablished { get; protected set; }
+
     public virtual bool broadcastDuplicates { get { return false; } }
     public virtual bool isPersistent { get { return false; } } //should this trait persist through all a character's alter egos
-    public GameDate dateEstablished { get; protected set; }
-    
+    public virtual bool isRemovedOnSwitchAlterEgo { get { return false; } }
+
     //private Character _responsibleCharacter;
 
     private System.Action onRemoveAction;
@@ -85,9 +91,67 @@ public class Trait {
     public virtual bool IsTangible() { return false; } //is this trait tangible? Only used for traits on tiles, so that the tile's tile object will be activated when it has a tangible trait
     public virtual bool PerTickOwnerMovement() { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
     public virtual bool OnStartPerformGoapAction(GoapAction action, ref bool willStillContinueAction) { return false; } //returns true or false if it created a job/action, once a job/action is created must not check others anymore to avoid conflicts
+    public virtual void TriggerFlaw(Character character) {
+        int manaCost = GetTriggerFlawManaCost(character); ;
+        PlayerManager.Instance.player.AdjustMana(-manaCost);
+        if (character.trapStructure.structure != null) {
+            //clear all trap structures when triggering flaw
+            character.trapStructure.SetStructureAndDuration(null, 0);
+        }
+    }
+    /// <summary>
+    /// This checks if this flaw can be triggered. This checks both the requirements of the individual traits,
+    /// and the mana cost. This is responsible for enabling/disabling the trigger flaw buttton.
+    /// </summary>
+    /// <param name="character">The character whose flaw will be triggered</param>
+    /// <returns>true or false</returns>
+    public virtual bool CanFlawBeTriggered(Character character) {
+        //return true;
+        int manaCost = GetTriggerFlawManaCost(character);
+       
+        return PlayerManager.Instance.player.mana >= manaCost 
+            && character.GetTraitOf(TRAIT_TYPE.DISABLER) == null //disabled characters cannot be triggered
+            && character.GetNormalTrait("Blessed") == null
+            && !character.currentParty.icon.isTravellingOutside; //characters travelling outside cannot be triggered
+    }
+    public virtual string GetRequirementDescription(Character character) {
+        return "Mana cost of triggering this flaw's negative effect depends on the character's mood. The darker the mood, the cheaper the cost.";
+    }
+    public virtual List<string> GetCannotTriggerFlawReasons(Character character) {
+        List<string> reasons = new List<string>();
+        if (PlayerManager.Instance.player.mana < GetTriggerFlawManaCost(character)) {
+            reasons.Add("You do not have enough mana.");
+        }
+        if (character.GetNormalTrait("Blessed") != null) {
+            reasons.Add("Blessed characters cannot be targeted by Trigger Flaw.");
+        }
+        if (character.GetTraitOf(TRAIT_TYPE.DISABLER) != null) {
+            reasons.Add("Inactive characters cannot be targeted by Trigger Flaw.");
+        }
+        return reasons;
+
+    }
     #endregion
 
     #region Utilities
+    public int GetTriggerFlawManaCost(Character character) {
+        //Triggering while in a bad mood costs more Mana (100) than triggering while in a dark mood (50). Great and good mood costs 200 mana.
+        if (character.currentMoodType == CHARACTER_MOOD.BAD) {
+            return 25;
+        } else if (character.currentMoodType == CHARACTER_MOOD.DARK) {
+            return 10;
+        } else {
+            return 50; //great or good
+        }
+    }
+    public string GetTriggerFlawEffectDescription(Character character) {
+        if (LocalizationManager.Instance.HasLocalizedValue("Trait", this.GetType().ToString(), "flaw_effect")) {
+            Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), "flaw_effect");
+            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            return Utilities.LogReplacer(log);
+        }
+        return string.Empty;
+    }
     public void SetOnRemoveAction(System.Action onRemoveAction) {
         this.onRemoveAction = onRemoveAction;
     }
@@ -162,66 +226,6 @@ public class Trait {
             }
         }
         return false;
-    }
-    #endregion
-
-    #region Jobs
-    protected bool CanCharacterTakeRemoveTraitJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
-            if (IsResponsibleForTrait(character)) {
-                return false;
-            }
-            if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
-            }
-            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
-        }
-        return false;
-    }
-    protected bool CanCharacterTakeRemoveIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
-            if (IsResponsibleForTrait(character)) {
-                return false;
-            }
-            if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
-            }
-            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY); //&& character.GetNormalTrait("Doctor") != null;
-        }
-        return false;
-    }
-    protected bool CanCharacterTakeRemoveSpecialIllnessesJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeArea) {
-            if (IsResponsibleForTrait(character)) {
-                return false;
-            }
-            if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
-                return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
-            }
-            return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.GetNormalTrait("Doctor") != null;
-        }
-        return false;
-    }
-    protected bool CanTakeBuryJob(Character character, JobQueueItem job) {
-        if(!character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && character.isAtHomeArea && character.isPartOfHomeFaction
-                && character.role.roleType != CHARACTER_ROLE.BEAST) {
-            return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN;
-        }
-        return false;
-    }
-    protected bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
-        if(character.isAtHomeArea && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-            return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
-        }
-        return false;
-    }
-    protected bool CanCharacterTakeRestrainJob(Character character, Character targetCharacter, JobQueueItem job) {
-        return targetCharacter.faction != character.faction && character.isAtHomeArea && character.faction == character.homeArea.owner 
-            && (character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER)
-            && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && !character.HasTraitOf(TRAIT_TYPE.CRIMINAL);
-    }
-    protected bool CanCharacterTakeRepairJob(Character character, JobQueueItem job) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.CIVILIAN || character.role.roleType == CHARACTER_ROLE.ADVENTURER;
     }
     #endregion
 }

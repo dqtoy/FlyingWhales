@@ -5,7 +5,7 @@ using UnityEngine;
 public class CombatAbility {
     public COMBAT_ABILITY type { get; protected set; }
     public string name { get; protected set; }
-    public string description { get; protected set; }
+    public string description { get { return type.Description(); } }
     public int tier { get; protected set; }
     public virtual string dynamicDescription { get { return description; } }
     public int lvl { get; protected set; }

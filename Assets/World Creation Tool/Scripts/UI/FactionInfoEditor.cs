@@ -177,11 +177,11 @@ public class FactionInfoEditor : MonoBehaviour {
 
     #region Areas
     private void UpdateAreas() {
-        areaSummaryLbl.text = string.Empty;
-        for (int i = 0; i < _faction.ownedAreas.Count; i++) {
-            Area currArea = _faction.ownedAreas[i];
-            areaSummaryLbl.text += currArea.name + "\n";
-        }
+        //areaSummaryLbl.text = string.Empty;
+        //for (int i = 0; i < _faction.ownedRegions.Count; i++) {
+        //    Area currArea = _faction.ownedRegions[i];
+        //    areaSummaryLbl.text += currArea.name + "\n";
+        //}
     }
     private void LoadAreaChoices() {
         areasDropdown.ClearOptions();
@@ -195,13 +195,13 @@ public class FactionInfoEditor : MonoBehaviour {
     public void AddArea() {
         string chosenAreaName = areasDropdown.options[areasDropdown.value].text;
         Area chosenArea = LandmarkManager.Instance.GetAreaByName(chosenAreaName);
-        LandmarkManager.Instance.OwnArea(_faction, _faction.race, chosenArea);
+        //LandmarkManager.Instance.OwnRegion(_faction, _faction.race, chosenArea);
         UpdateAreas();
     }
     public void RemoveArea() {
         string chosenAreaName = areasDropdown.options[areasDropdown.value].text;
         Area chosenArea = LandmarkManager.Instance.GetAreaByName(chosenAreaName);
-        LandmarkManager.Instance.UnownArea(chosenArea);
+        //LandmarkManager.Instance.UnownArea(chosenArea);
         UpdateAreas();
     }
     #endregion

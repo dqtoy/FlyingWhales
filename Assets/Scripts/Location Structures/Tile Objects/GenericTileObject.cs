@@ -9,15 +9,19 @@ public class GenericTileObject : TileObject {
     }
 
     public GenericTileObject(LocationStructure location) {
-        structureLocation = location;
+        SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>();
-        Initialize(TILE_OBJECT_TYPE.GENERIC);
+        Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT);
+    }
+    public GenericTileObject(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>();
+        Initialize(data);
     }
 
     public override List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
         return gridTileLocation.RemoveAllTraitsByType(traitType);
     }
-    public override bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
+    public override bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
         return gridTileLocation.RemoveTrait(trait, triggerOnRemove, removedBy);
     }
     public override bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
@@ -63,6 +67,9 @@ public class GenericTileObject : TileObject {
             PlaceGhostCollisionTriggerAt(previousTile);
         }
         SetPOIState(POI_STATE.INACTIVE);
+    }
+    public override bool IsValidCombatTarget() {
+        return false;
     }
     public override string ToString() {
         return "Generic Obj at tile " + gridTileLocation?.ToString();

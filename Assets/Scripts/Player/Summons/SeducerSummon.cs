@@ -40,24 +40,17 @@ public class SeducerSummon : Summon {
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
         hasSucceeded = false;
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
+        //Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
         AdjustIgnoreHostilities(1);
     }
-    public override void ThisCharacterSaw(IPointOfInterest target) {
+    public override List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
         if (GetNormalTrait("Unconscious", "Resting") != null) {
-            return;
+            return null;
         }
-        if(target is Character) {
-            Character targetCharacter = target as Character;
-            //NOTE: removed ability of skeletons to watch/witness an event
-            Spooked spooked = GetNormalTrait("Spooked") as Spooked;
-            if (spooked != null) {
-                if (marker.AddAvoidInRange(targetCharacter)) {
-                    spooked.AddTerrifyingCharacter(targetCharacter);
-                }
-            }
+        for (int i = 0; i < normalTraits.Count; i++) {
+            normalTraits[i].OnSeePOI(target, this);
         }
-        
+        return null;
     }
     protected override void IdlePlans() {
         if (_hasAlreadyAskedForPlan) {
@@ -127,9 +120,9 @@ public class SeducerSummon : Summon {
         if (currentParty.icon.isTravelling) {
             marker.StopMovement();
         }
-        AdjustIsWaitingForInteraction(1);
-        StopCurrentAction(false);
-        AdjustIsWaitingForInteraction(-1);
+        //AdjustIsWaitingForInteraction(1);
+        //StopCurrentAction(false);
+        //AdjustIsWaitingForInteraction(-1);
         specificLocation.RemoveCharacterFromLocation(this);
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
         ownParty.SetSpecificLocation(PlayerManager.Instance.player.playerArea);

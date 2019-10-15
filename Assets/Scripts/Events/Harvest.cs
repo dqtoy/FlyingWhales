@@ -5,26 +5,22 @@ using UnityEngine;
 public class Harvest : WorldEvent {
 
     public Harvest() : base(WORLD_EVENT.HARVEST) {
+        eventEffects = new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GET_FOOD };
+        description = "This mission will provide more food for the settlement.";
     }
 
     #region Overrides
-    public override void ExecuteAfterEffect(BaseLandmark landmark) {
+    protected override void ExecuteAfterEffect(Region region, Character spawner) {
         //- after effect: provides an initial +100 Food to owner settlement after completion
-        LandmarkManager.Instance.mainSettlement.AdjustFoodInBank(100);
+        LandmarkManager.Instance.enemyOfPlayerArea.AdjustFoodInBank(100);
         Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
-        AddDefaultFillersToLog(log, landmark);
+        AddDefaultFillersToLog(log, region);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
-        base.ExecuteAfterEffect(landmark);
+        base.ExecuteAfterEffect(region, spawner);
     }
-    public override bool CanSpawnEventAt(BaseLandmark landmark) {
-        return landmark.HasAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN) && landmark.specificLandmarkType == LANDMARK_TYPE.FARM;
-    }
-    public override Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
-        return landmark.GetAnyCharacterOfType(CHARACTER_ROLE.CIVILIAN);
-    }
-    public override bool IsBasicEvent() {
-        return true;
+    public override bool CanSpawnEventAt(Region region, Character spawner) {
+        return region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.FARM;
     }
     #endregion
 }

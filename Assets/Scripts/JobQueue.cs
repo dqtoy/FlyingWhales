@@ -4,14 +4,21 @@ using UnityEngine;
 
 public class JobQueue {
     public Character character { get; private set; } //If there is character it means that this job queue is a personal job queue
-	public List<JobQueueItem> jobsInQueue { get; private set; }
+    public Quest quest { get; private set; } //If there is a quest it means that this is a quest job
 
-    public bool isAreaJobQueue {
+    public List<JobQueueItem> jobsInQueue { get; private set; }
+
+    public bool isAreaOrQuestJobQueue {
         get { return character == null; }
     }
     public JobQueue(Character character) {
         this.character = character;
         jobsInQueue = new List<JobQueueItem>();
+    }
+
+    //NOTE: IMPROVE THIS! PROBABLY PUT THIS IN CONSTRUCTOR JUST LIKE WITH THE CHARACTER
+    public void SetQuest(Quest quest) {
+        this.quest = quest;
     }
 
     public void AddJobInQueue(JobQueueItem job, bool processLogicForPersonalJob = true) {
@@ -28,8 +35,11 @@ public class JobQueue {
             jobsInQueue.Add(job);
         }
         job.OnAddJobToQueue();
+        if(quest != null) {
+            quest.OnAddJob(job);
+        }
 
-        if(!isAreaJobQueue) {
+        if(!isAreaOrQuestJobQueue) {
             //bool hasProcessed = false;
 
             //If the current action's job of the character is overridable and the added job has higher priority than it,
@@ -50,7 +60,7 @@ public class JobQueue {
                                 if(plan.job == null) {
                                     character.JustDropPlan(plan);
                                 } else {
-                                    if (plan.job.jobQueueParent.isAreaJobQueue) {
+                                    if (plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
                                         plan.job.UnassignJob(false);
                                     } else {
                                         character.JustDropPlan(plan);
@@ -73,14 +83,21 @@ public class JobQueue {
     }
     public bool RemoveJobInQueue(JobQueueItem job) {
         if (jobsInQueue.Remove(job)) {
-            //string removeLog = job.name + " has been removed from its job queue.";
+            string ownerName = "area";
+            if (!isAreaOrQuestJobQueue) {
+                ownerName = character.name;
+            }
+            string removeLog = job.name + " has been removed from " + ownerName + " job queue.";
             //removeLog += "\nIs Personal: " + (character != null ? character.name : "False");
             //removeLog += "\nAssigned Character: " + (job.assignedCharacter != null ? job.assignedCharacter.name : "None");
             //if(job is GoapPlanJob) {
             //    GoapPlanJob planJob = job as GoapPlanJob;
-                //removeLog += "\nAssigned Plan: " + (planJob.assignedPlan != null);
+            //removeLog += "\nAssigned Plan: " + (planJob.assignedPlan != null);
             //}
-            //Debug.Log(GameManager.Instance.TodayLogString() + removeLog);
+            Debug.Log(GameManager.Instance.TodayLogString() + removeLog);
+            if (quest != null) {
+                quest.OnRemoveJob(job);
+            }
             return job.OnRemoveJobFromQueue();
         }
         return false;
@@ -109,6 +126,11 @@ public class JobQueue {
             for (int i = 0; i < jobsInQueue.Count; i++) {
                 JobQueueItem job = jobsInQueue[i];
                 if(!AssignCharacterToJob(job, characterToDoJob)) {
+                    if(!isAreaOrQuestJobQueue && !job.CanCharacterTakeThisJob(characterToDoJob)) {
+                        //If it is a personal job, and it cannot be done by this character, remove it from queue
+                        RemoveJobInQueue(job);
+                        i--;
+                    }
                     continue;
                 } else {
                     return true;
@@ -140,7 +162,7 @@ public class JobQueue {
                     }
                 }
                 character.AdjustIsWaitingForInteraction(1);
-                character.StopCurrentAction(false);
+                character.StopCurrentAction(false, "Have something important to do");
                 character.AdjustIsWaitingForInteraction(-1);
             }
         }
@@ -162,7 +184,7 @@ public class JobQueue {
                 }
             } else if (job is CharacterStateJob) {
                 CharacterStateJob stateJob = job as CharacterStateJob;
-                CharacterState newState = characterToDoJob.stateComponent.SwitchToState(stateJob.targetState, null, stateJob.targetArea);
+                CharacterState newState = characterToDoJob.stateComponent.SwitchToState(stateJob.targetState);
                 if (newState != null) {
                     stateJob.SetAssignedState(newState);
                 } else {
@@ -256,6 +278,17 @@ public class JobQueue {
         }
         return false;
     }
+    public bool HasJob(JOB_TYPE jobType, INTERACTION_TYPE targetGoapActionType) {
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i].jobType == jobType && jobsInQueue[i] is GoapPlanJob) {
+                GoapPlanJob job = jobsInQueue[i] as GoapPlanJob;
+                if (job.targetInteractionType == targetGoapActionType) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public bool HasJobWithOtherData(JOB_TYPE jobType, object otherData) {
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if (jobsInQueue[i].jobType == jobType && jobsInQueue[i] is GoapPlanJob) {
@@ -334,6 +367,15 @@ public class JobQueue {
         }
         return null;
     }
+    public List<JobQueueItem> GetJobs(JOB_TYPE jobType) {
+        List<JobQueueItem> jobs = new List<JobQueueItem>();
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (jobsInQueue[i].jobType == jobType) {
+                jobs.Add(jobsInQueue[i]);
+            }
+        }
+        return jobs;
+    }
     public int GetNumberOfJobsWith(CHARACTER_STATE state) {
         int count = 0;
         for (int i = 0; i < jobsInQueue.Count; i++) {
@@ -350,6 +392,20 @@ public class JobQueue {
         int count = 0;
         for (int i = 0; i < jobsInQueue.Count; i++) {
             if (jobsInQueue[i].jobType == type) {
+                count++;
+            }
+        }
+        return count;
+    }
+    /// <summary>
+    /// Get the number of jobs that return true from the provided checker.
+    /// </summary>
+    /// <param name="checker">The function that checks if the item is valid</param>
+    /// <returns></returns>
+    public int GetNumberOfJobsWith(System.Func<JobQueueItem, bool> checker) {
+        int count = 0;
+        for (int i = 0; i < jobsInQueue.Count; i++) {
+            if (checker.Invoke(jobsInQueue[i])) {
                 count++;
             }
         }
@@ -383,12 +439,27 @@ public class JobQueue {
             }
         }
     }
-    public bool CancelJob(JobQueueItem job, string cause = "", bool shouldDoAfterEffect = true) {
-        if (RemoveJobInQueue(job)) {
+
+    //Returnsc true or false if job was really removed in queue
+    public bool CancelJob(JobQueueItem job, string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = false, string reason = "") {
+        //When cancelling a job, we must check if it's personal or not because if it is a faction/settlement job it cannot be removed from queue
+        //The only way for a faction/settlement job to be removed is if it is forced or it is actually finished
+        bool hasBeenRemovedInJobQueue = false;
+        bool process = false;
+        if (job.jobQueueParent.isAreaOrQuestJobQueue) {
+            process = true;
+            if (forceRemove) {
+                hasBeenRemovedInJobQueue = RemoveJobInQueue(job);
+            }
+        } else {
+            hasBeenRemovedInJobQueue = RemoveJobInQueue(job);
+            process = hasBeenRemovedInJobQueue;
+        }
+        if (process) {
             if(job is GoapPlanJob && cause != "") {
                 GoapPlanJob planJob = job as GoapPlanJob;
                 Character actor = null;
-                if(this.character != null) {
+                if(!isAreaOrQuestJobQueue) {
                     actor = this.character;
                 } else if(job.assignedCharacter != null) {
                     actor = job.assignedCharacter;
@@ -397,10 +468,9 @@ public class JobQueue {
                     actor.RegisterLogAndShowNotifToThisCharacterOnly("Generic", "job_cancelled_cause", null, cause);
                 }
             }
-            job.UnassignJob(shouldDoAfterEffect);
-            return true;
+            job.UnassignJob(shouldDoAfterEffect, reason);
         }
-        return false;
+        return hasBeenRemovedInJobQueue;
     }
     /// <summary>
     /// Unassign all jobs that a certain character has taken.

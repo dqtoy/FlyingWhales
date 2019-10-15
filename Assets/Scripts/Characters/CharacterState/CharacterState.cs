@@ -9,6 +9,7 @@ public class CharacterState {
     public CHARACTER_STATE_CATEGORY stateCategory { get; protected set; }
     public int duration { get; protected set; } // 0 means no duration - end state immediately
     public int currentDuration { get; protected set; }
+    public int level { get; protected set; } //Right now, only used in berserk to know what level BerserkBuff will be
     public bool isDone { get; protected set; }
     public bool hasStarted { get; protected set; }
     public bool isPaused { get; protected set; }
@@ -17,7 +18,7 @@ public class CharacterState {
     public string actionIconString { get; protected set; }
     public GoapAction currentlyDoingAction { get; protected set; }
     public Character targetCharacter { get; protected set; } //Target character of current state
-    public Area targetArea { get; protected set; }
+    //public Area targetArea { get; protected set; }
     public bool isUnending { get; protected set; } //is this state unending?
     //public CharacterState parentMajorState { get; protected set; }
 
@@ -32,6 +33,18 @@ public class CharacterState {
     }
 
     #region Virtuals
+    public virtual void Load(SaveDataCharacterState saveData) {
+        this.SetCurrentDuration(saveData.currentDuration);
+        this.SetIsUnending(saveData.isUnending);
+        if (saveData.targetCharacterID != -1) {
+            Character targetCharacter = CharacterManager.Instance.GetCharacterByID(saveData.targetCharacterID);
+            this.SetTargetCharacter(targetCharacter);
+        }
+        //if (saveData.targetAreaID != -1) {
+        //    Area targetArea = LandmarkManager.Instance.GetAreaByID(saveData.targetAreaID);
+        //    this.SetTargetArea(targetArea);
+        //}
+    }
     //Starts a state and its movement behavior, can be overridden
     protected virtual void StartState() {
         hasStarted = true;
@@ -44,7 +57,7 @@ public class CharacterState {
         CreateThoughtBubbleLog();
         DoMovementBehavior();
         Messenger.Broadcast(Signals.CHARACTER_STARTED_STATE, stateComponent.character, this);
-        InVisionPOIsOnStartState();
+        ProcessInVisionPOIsOnStartState();
         if(startStateAction != null) {
             startStateAction();
         }
@@ -75,7 +88,6 @@ public class CharacterState {
         }
         Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.character, this);
     }
-    
     //This is called per TICK_ENDED if the state has a duration, can be overriden
     protected virtual void PerTickInState() {
         if (!isPaused && !isUnending && !isDone) {
@@ -93,33 +105,58 @@ public class CharacterState {
     }
     //Character will do the movement behavior of this state, can be overriden
     protected virtual void DoMovementBehavior() {}
-
     //What happens when you see another point of interest (character, tile objects, etc)
     public virtual bool OnEnterVisionWith(IPointOfInterest targetPOI) { return false; }
-
     //What happens if there are already point of interest in your vision upon entering the state
-    public virtual bool InVisionPOIsOnStartState() {
+    public virtual bool ProcessInVisionPOIsOnStartState() {
         if(stateComponent.character.marker.inVisionPOIs.Count > 0) {
             return true;
         }
         return false;
     }
-
     //This is called for exiting current state, I made it a virtual because some states still requires something before exiting current state
     public virtual void OnExitThisState() {
         stateComponent.ExitCurrentState(this);
     }
-
     //Typically used if there are other data that is needed to be set for this state when it starts
     //Currently used only in combat state so we can set the character's behavior if attacking or not when it enters the state
     public virtual void SetOtherDataOnStartState(object otherData) { }
-
     //This is called on ExitCurrentState function in CharacterStateComponent after all exit processing is finished
     public virtual void AfterExitingState() {
         stateComponent.character.marker.UpdateActionIcon();
     }
     public virtual bool CanResumeState() {
         return true;
+    }
+    /// <summary>
+    /// Pauses this state, used in switching states if this is a major state
+    /// </summary>
+    public virtual void PauseState() {
+        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Pausing " + stateName + " for " + stateComponent.character.name);
+        isPaused = true;
+        StopStatePerTick();
+    }
+    /// <summary>
+    /// Resumes the state and its movement behavior
+    /// </summary>
+    public virtual void ResumeState() {
+        if (isDone) {
+            return; //if the state has already been exited. Do not resume.
+        }
+        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Resuming " + stateName + " for " + stateComponent.character.name);
+        isPaused = false;
+        StartStatePerTick();
+        DoMovementBehavior();
+    }
+    protected virtual void OnJobSet() { }
+    protected virtual void CreateThoughtBubbleLog() {
+        if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "thought_bubble")) {
+            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "thought_bubble");
+            thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            if (targetCharacter != null) {
+                thoughtBubbleLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
+            }
+        }
     }
     #endregion
 
@@ -144,6 +181,10 @@ public class CharacterState {
     public void SetTargetCharacter(Character target) {
         targetCharacter = target;
     }
+    ////Sets the target area of this state, if there's any
+    //public void SetTargetArea(Area target) {
+    //    targetArea = target;
+    //}
     //This is the action that is currently being done while in this state, ex. pick up item
     public void SetCurrentlyDoingAction(GoapAction action) {
         currentlyDoingAction = action;
@@ -152,22 +193,24 @@ public class CharacterState {
     //    parentMajorState = majorState;
     //}
     //This is the one must be called to enter and start this state, if it is already done, it cannot start again
-    public void EnterState(Area area) {
+    public void EnterState() {
         if (isDone) {
             return;
         }
         stateComponent.SetStateToDo(this, stopMovement: false);
-        targetArea = area;
-        if(targetArea == null || targetArea == stateComponent.character.specificLocation) {
-            stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
-            StartState();
-        } else {
-            //GameDate dueDate = GameManager.Instance.Today().AddTicks(30);
-            //SchedulingManager.Instance.AddEntry(dueDate, () => GoToLocation(targetArea));
-            CreateTravellingThoughtBubbleLog(targetArea);
-            stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Travelling to " + targetArea.name + " before entering " + stateName + " for " + stateComponent.character.name);
-            stateComponent.character.currentParty.GoToLocation(targetArea, PATHFINDING_MODE.NORMAL, null, () => StartState());
-        }
+        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
+        StartState();
+        ////targetArea = area;
+        //if (targetArea == null || targetArea == stateComponent.character.specificLocation) {
+        //    stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
+        //    StartState();
+        //} else {
+        //    //GameDate dueDate = GameManager.Instance.Today().AddTicks(30);
+        //    //SchedulingManager.Instance.AddEntry(dueDate, () => GoToLocation(targetArea));
+        //    CreateTravellingThoughtBubbleLog(targetArea);
+        //    stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Travelling to " + targetArea.name + " before entering " + stateName + " for " + stateComponent.character.name);
+        //    stateComponent.character.currentParty.GoToLocation(targetArea.region, PATHFINDING_MODE.NORMAL, null, () => StartState());
+        //}
         //if(characterState == CHARACTER_STATE.EXPLORE) {
         //    //There is a special case for explore state, character must travel to a dungeon-type area first
         //    Area dungeon = LandmarkManager.Instance.GetRandomAreaOfType(AREA_TYPE.DUNGEON);
@@ -184,7 +227,6 @@ public class CharacterState {
         //    StartState();
         //}
     }
-
     //private void GoToLocation(Area targetArea) {
     //    CreateTravellingThoughtBubbleLog(targetArea);
     //    Debug.Log(GameManager.Instance.TodayLogString() + "Travelling to " + targetArea.name + " before entering " + stateName + " for " + stateComponent.character.name);
@@ -195,34 +237,17 @@ public class CharacterState {
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Exiting " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name ?? "No One");
         EndState();
     }
-    //Pauses this state, used in switching states if this is a major state
-    public virtual void PauseState() {
-        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Pausing " + stateName + " for " + stateComponent.character.name);
-        isPaused = true;
-        StopStatePerTick();
-    }
-    //Resumes the state and its movement behavior
-    public virtual void ResumeState() {
-        if (isDone) {
-            return; //if the state has already been exited. Do not resume.
-        }
-        stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Resuming " + stateName + " for " + stateComponent.character.name);
-        isPaused = false;
-        StartStatePerTick();
-        DoMovementBehavior();
-    }
     public void SetJob(CharacterStateJob job) {
         this.job = job;
-    }
-    private void CreateThoughtBubbleLog() {
-        if(LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "thought_bubble")) {
-            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "thought_bubble");
-            thoughtBubbleLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            if (targetCharacter != null) {
-                thoughtBubbleLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
-            }
+        if (job != null) {
+            OnJobSet();
+        } else {
+            Debug.Log(GameManager.Instance.TodayLogString() + this.ToString() + " Set job to null!");
         }
     }
+    /// <summary>
+    /// What should happen once the job of this state is set to anything other than null?
+    /// </summary>
     private void CreateStartStateLog() {
         if (LocalizationManager.Instance.HasLocalizedValue("CharacterState", this.GetType().ToString(), "start")) {
             Log log = new Log(GameManager.Instance.Today(), "CharacterState", this.GetType().ToString(), "start");
@@ -230,9 +255,9 @@ public class CharacterState {
             if (targetCharacter != null) {
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
             }
-            if(targetArea != null) {
-                log.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
-            }
+            //if(targetArea != null) {
+            //    log.AddToFillers(targetArea, targetArea.name, LOG_IDENTIFIER.LANDMARK_1);
+            //}
             log.AddLogToInvolvedObjects();
 
             PlayerManager.Instance.player.ShowNotificationFrom(log, stateComponent.character, false);
@@ -272,6 +297,9 @@ public class CharacterState {
     internal void ChangeDuration(int newDuration) {
         duration = newDuration;
     }
+    public void SetCurrentDuration(int amount) {
+        currentDuration = amount;
+    }
     /// <summary>
     /// Set if this state only has a specific duration, or will it run indefinitely until stopped.
     /// </summary>
@@ -279,6 +307,59 @@ public class CharacterState {
     public void SetIsUnending(bool state) {
         isUnending = state;
     }
+    public override string ToString() {
+        return stateName + " by " + stateComponent.character.name + " with job : " + (job?.name ?? "None");
+    }
     #endregion
+}
 
+//Combat and Character State with Jobs must not be saved since they have separate process for that
+//Combat is entered when there is hostile or avoid in range
+//Character States with Job are processed in their respective Jobs
+[System.Serializable]
+public class SaveDataCharacterState {
+    public CHARACTER_STATE characterState;
+    public int duration;
+    public int currentDuration;
+    public bool isPaused;
+    public int targetCharacterID;
+    //public int targetAreaID;
+    public bool isUnending;
+    public bool hasStarted;
+    public int level;
+
+    public virtual void Save(CharacterState state) {
+        characterState = state.characterState;
+        duration = state.duration;
+        currentDuration = state.currentDuration;
+        isPaused = state.isPaused;
+        isUnending = state.isUnending;
+        hasStarted = state.hasStarted;
+        level = state.level;
+
+        if(state.targetCharacter != null) {
+            targetCharacterID = state.targetCharacter.id;
+        } else {
+            targetCharacterID = -1;
+        }
+        //if (state.targetArea != null) {
+        //    targetAreaID = state.targetArea.id;
+        //} else {
+        //    targetAreaID = -1;
+        //}
+    }
+
+    //public virtual CharacterState Load(Character character) {
+    //    CharacterState state = character.stateComponent.CreateNewState(characterState);
+    //    if(targetCharacterID != -1) {
+    //        state.SetTargetCharacter(CharacterManager.Instance.GetCharacterByID(targetCharacterID));
+    //    }
+    //    if (targetAreaID != -1) {
+    //        state.SetTargetArea(LandmarkManager.Instance.GetAreaByID(targetAreaID));
+    //    }
+    //    state.ChangeDuration(duration);
+    //    state.SetCurrentDuration(currentDuration);
+    //    state.SetIsUnending(isUnending);
+    //    state.EnterState();
+    //}
 }

@@ -13,6 +13,9 @@ public class Artifact : TileObject, IWorldObject {
     public string worldObjectName {
         get { return name; }
     }
+    public WORLD_OBJECT_TYPE worldObjectType {
+        get { return WORLD_OBJECT_TYPE.ARTIFACT; }
+    }
     #endregion
 
     public Artifact(ARTIFACT_TYPE type) {
@@ -22,19 +25,18 @@ public class Artifact : TileObject, IWorldObject {
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY };
         Initialize(parsed);
     }
-    public Artifact(SaveDataArtifactSlot data) {
-        this.type = data.type;
-        level = 1;
-        TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY };
-        Initialize(data, parsed);
-    }
+    //public Artifact(SaveDataArtifactSlot data) {
+    //    this.type = data.type;
+    //    level = 1;
+    //    TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
+    //    poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY };
+    //    Initialize(data, parsed);
+    //}
     public Artifact(SaveDataArtifact data) {
         this.type = data.artifactType;
         level = 1;
-        TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY };
-        Initialize(data, parsed);
+        Initialize(data);
     }
 
     #region Overrides
@@ -87,7 +89,7 @@ public class Artifact : TileObject, IWorldObject {
     #region World Object
     public void Obtain() {
         //- invading a region with an artifact will obtain that artifact for the player
-        PlayerManager.Instance.player.GainArtifact(this, true);
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new artifact: " + this.name + "!", () => PlayerManager.Instance.player.GainArtifact(this, true));
     }
     #endregion
 

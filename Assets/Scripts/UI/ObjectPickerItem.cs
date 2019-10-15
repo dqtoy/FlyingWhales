@@ -14,6 +14,8 @@ public class ObjectPickerItem<T> : MonoBehaviour {
     public System.Action<T> onHoverEnterAction;
     public System.Action<T> onHoverExitAction;
 
+    public virtual T obj { get; }
+
     public virtual void SetButtonState(bool state) {
         mainBtn.interactable = state;
     }
@@ -21,10 +23,14 @@ public class ObjectPickerItem<T> : MonoBehaviour {
         draggable.SetDraggable(state);
     }
 
-    public virtual void OnHoverEnter() {
-        
+    public void OnHoverEnter() {
+        if (onHoverEnterAction != null) {
+            onHoverEnterAction.Invoke(obj);
+        }
     }
     public virtual void OnHoverExit() {
-
+        if (onHoverExitAction != null) {
+            onHoverExitAction.Invoke(obj);
+        }
     }
 }

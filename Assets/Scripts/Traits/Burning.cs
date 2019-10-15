@@ -9,11 +9,11 @@ public class Burning : Trait {
     public override bool isPersistent { get { return true; } }
     private GameObject burningEffect;
 
-    public IBurningSource sourceOfBurning { get; private set; }
+    public BurningSource sourceOfBurning { get; private set; }
 
     public Burning() {
         name = "Burning";
-        description = "This is burning.";
+        description = "This character is on fire!";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
@@ -48,7 +48,11 @@ public class Burning : Trait {
                 burningEffect = GameManager.Instance.CreateBurningEffectAt(character);
                 character.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
             }
-        } 
+        }
+
+        if (sourceOfBurning != null && !sourceOfBurning.objectsOnFire.Contains(owner)) {
+            SetSourceOfBurning(sourceOfBurning, owner);
+        }
         Messenger.AddListener(Signals.TICK_ENDED, PerTick);
         base.OnAddTrait(addedTo);
     }
@@ -79,8 +83,17 @@ public class Burning : Trait {
                     if (pyrophobic.AddKnownBurningSource(sourceOfBurning)) {
                         characterThatWillDoJob.AdjustHappiness(-2000);
                     }
-                    pyrophobic.Flee(sourceOfBurning, characterThatWillDoJob);
-
+                    //It will trigger one of the following:
+                    if (!characterThatWillDoJob.marker.hasFleePath && characterThatWillDoJob.GetNormalTrait("Catatonic") == null) { //if not already fleeing or catatonic
+                        //50% gain Shellshocked and Flee from fire. Log "[Actor Name] saw a fire and fled from it."
+                        if (UnityEngine.Random.Range(0, 100) < 50) {
+                            pyrophobic.BeShellshocked(sourceOfBurning, characterThatWillDoJob);
+                        }
+                        //50% gain Catatonic. Log "[Actor Name] saw a fire and became Catatonic."
+                        else {
+                            pyrophobic.BeCatatonic(sourceOfBurning, characterThatWillDoJob);
+                        }
+                    }
                 } else {
                     summary += "\nDid not create douse fire job because maximum dousers has been reached!";
                     //if the character did not create a douse fire job. Check if he/she will watch instead. (Characters will just watch if their current actions are lower priority than Watch) NOTE: Lower priority value is considered higher priority
@@ -126,11 +139,12 @@ public class Burning : Trait {
             }
 
             if (willCreateDouseFireJob) {
-                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE, characterThatWillDoJob.specificLocation);
+                CharacterStateJob job = new CharacterStateJob(JOB_TYPE.REMOVE_FIRE, CHARACTER_STATE.DOUSE_FIRE);
                 if (CanTakeRemoveFireJob(characterThatWillDoJob, traitOwner)) {
                     sourceOfBurning.AddCharactersDousingFire(characterThatWillDoJob); //adjust the number of characters dousing the fire source. NOTE: Make sure to reduce that number if a character decides to quit the job for any reason.
                     job.AddOnUnassignAction(sourceOfBurning.RemoveCharactersDousingFire); //This is the action responsible for reducing the number of characters dousing the fire when a character decides to quit the job.
-                    characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE); //cancel all other plans except douse fire.
+                    //characterThatWillDoJob.CancelAllJobsAndPlansExcept(JOB_TYPE.REMOVE_FIRE); //cancel all other plans except douse fire.
+                    characterThatWillDoJob.CancelAllPlans(); //cancel all other plans except douse fire.
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                     return true;
                 }
@@ -142,11 +156,14 @@ public class Burning : Trait {
         return true;
     }
     public override string GetTestingData() {
-        return sourceOfBurning.ToString() + " - " + sourceOfBurning.dousers.Count.ToString();
+        return sourceOfBurning.ToString();
     }
     #endregion
 
-    public void SetSourceOfBurning(IBurningSource source, ITraitable obj) {
+    public void LoadSourceOfBurning(BurningSource source) {
+        sourceOfBurning = source;
+    }
+    public void SetSourceOfBurning(BurningSource source, ITraitable obj) {
         sourceOfBurning = source;
         IPointOfInterest poiOnFire;
         if (obj is LocationGridTile) {
@@ -179,7 +196,6 @@ public class Burning : Trait {
             return character.GetNormalTrait("Burning") == null;
         }
     }
-
     private void PerTick() {
         //Burning characters reduce their current hp by 2% of maxhp every tick. 
         //They also have a 6% chance to remove Burning effect but will not gain a Burnt trait afterwards. 
@@ -195,7 +211,10 @@ public class Burning : Trait {
         } else {
             //Every tick, a Burning tile or object also has a 3% chance to remove Burning effect. 
             //Afterwards, it will have a Burnt trait, which disables its Flammable trait (meaning it can no longer gain a Burning status).
-            if (Random.Range(0, 100) < 3) {
+            if (!(owner is GenericTileObject)) {
+                owner.AdjustHP(-(int)(owner.maxHP * 0.02f), true, this);
+            }
+            if (owner.gridTileLocation != null && Random.Range(0, 100) < 3) {
                 owner.RemoveTrait(this);
                 owner.AddTrait("Burnt");
                 return; //do not execute other effecs.
@@ -224,24 +243,19 @@ public class Burning : Trait {
     
 }
 
+public class SaveDataBurning : SaveDataTrait {
+    public int burningSourceID;
 
-public interface IBurningSource {
-    List<Character> dousers { get; }
-    List<IPointOfInterest> objectsOnFire { get; }
-    DelegateTypes.OnAllBurningExtinguished onAllBurningExtinguished { get; }
-    DelegateTypes.OnBurningObjectAdded onBurningObjectAdded { get; }
-    DelegateTypes.OnBurningObjectRemoved onBurningObjectRemoved { get; }
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Burning derivedTrait = trait as Burning;
+        burningSourceID = derivedTrait.sourceOfBurning.id;
+    }
 
-    void AddCharactersDousingFire(Character character);
-    void RemoveCharactersDousingFire(Character character);
-    Character GetNearestDouserFrom(Character otherCharacter);
-
-    void AddObjectOnFire(IPointOfInterest poi);
-    void RemoveObjectOnFire(IPointOfInterest poi);
-    void AddOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action);
-    void RemoveOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action);
-    void AddOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action);
-    void RemoveOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action);
-    void AddOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action);
-    void RemoveOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action);
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        Burning derivedTrait = trait as Burning;
+        derivedTrait.LoadSourceOfBurning(LandmarkManager.Instance.GetBurningSourceByID(burningSourceID));
+        return trait;
+    }
 }

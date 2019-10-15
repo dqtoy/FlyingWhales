@@ -8,9 +8,14 @@ public class Mushroom : TileObject {
     private const int Replenishment_Countdown = 96;
 
     public Mushroom(LocationStructure location) {
-        this.structureLocation = location;
+        SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_MUSHROOM, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.MUSHROOM);
+    }
+
+    public Mushroom(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_MUSHROOM, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        Initialize(data);
     }
 
     #region Overrides

@@ -5,22 +5,22 @@ using UnityEngine.EventSystems;
 
 public class WorldEventIcon : MonoBehaviour {
 
-    private BaseLandmark landmark;
+    private Region region;
 
-    public void PlaceAt(BaseLandmark landmark) {
-        this.landmark = landmark;
-        this.transform.position = landmark.tileLocation.transform.position;
+    public void PlaceAt(Region region) {
+        this.region = region;
+        this.transform.position = region.coreTile.transform.position;
         this.transform.localScale = Vector3.one;
     }
 
     private void UpdatePosition() {
-        if (landmark == null) {
+        if (region == null) {
             return;
         }
         //Vector2 originalPos = area.coreTile.transform.position;
         //originalPos.y -= 1f;
         //Vector2 ScreenPosition = Camera.main.WorldToScreenPoint(area.nameplatePos);
-        this.transform.position = landmark.tileLocation.transform.position;
+        this.transform.position = region.coreTile.transform.position;
 
         //Vector2 landmarkViewportPos = Camera.main.WorldToViewportPoint(landmark.tileLocation.transform.position);
         ////Vector2 cameraViewportPos = Camera.main.WorldToViewportPoint(this.transform.position);
@@ -62,6 +62,12 @@ public class WorldEventIcon : MonoBehaviour {
     }
 
     public void OnClick(BaseEventData data) {
-        UIManager.Instance.ShowRegionInfo(landmark.tileLocation.region);
+        UIManager.Instance.ShowRegionInfo(region);
+    }
+    public void OnHoverEnter(BaseEventData data) {
+        region.coreTile.OnPointerEnter(data);
+    }
+    public void OnHoverExit(BaseEventData data) {
+        region.coreTile.OnPointerExit(data);
     }
 }

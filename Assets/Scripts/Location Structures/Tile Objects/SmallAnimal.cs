@@ -8,9 +8,13 @@ public class SmallAnimal : TileObject {
     private const int Replenishment_Countdown = 96;
 
     public SmallAnimal(LocationStructure location) {
-        this.structureLocation = location;
+        SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_ANIMAL, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
         Initialize(TILE_OBJECT_TYPE.SMALL_ANIMAL);
+    }
+    public SmallAnimal(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.EAT_ANIMAL, INTERACTION_TYPE.TILE_OBJECT_DESTROY, };
+        Initialize(data);
     }
 
     #region Overrides

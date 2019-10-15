@@ -28,10 +28,15 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] private bool allowZoom = true;
 
     [Header("Dragging")]
-    private float dragThreshold = 0.15f;
-    private float currDragTime;
-    private Vector3 dragOrigin;
-    private bool isDragging = false;
+    [SerializeField] private float dragThreshold = 0.35f;
+    [SerializeField] private float currDragTime;
+    [SerializeField] private Vector3 dragOrigin;
+    public bool isDragging = false;
+
+    [Header("Edging")]
+    [SerializeField] private int edgeBoundary = 30;
+    [SerializeField] private float edgingSpeed = 30f;
+    private bool allowEdgePanning = false;
 
     private float previousCameraFOV;
 
@@ -54,7 +59,7 @@ public class CameraMove : MonoBehaviour {
     private void Awake(){
 		Instance = this;
 	}
-    private void LateUpdate() {
+    private void Update() {
         if (!cameraControlEnabled) {
             return;
         }
@@ -67,6 +72,7 @@ public class CameraMove : MonoBehaviour {
 #else
         ArrowKeysMovement();
         Dragging();
+        Edging();
         Zooming();
         Targetting();
         ConstrainCameraBounds();
@@ -237,6 +243,12 @@ public class CameraMove : MonoBehaviour {
             }
             return;
         }
+
+        if (Input.GetMouseButtonUp(0)) {
+            ResetDragValues();
+            return;
+        }
+
         if (!isDragging) {
             if (Input.GetMouseButtonDown(0)) {
                 if (UIManager.Instance.IsMouseOnUI()) {
@@ -255,16 +267,14 @@ public class CameraMove : MonoBehaviour {
                     if (originMousePos !=  Input.mousePosition) { //check if the mouse has moved position from the origin, only then will it be considered dragging
                         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Clicked);
                         isDragging = true;
+                        target = null;
                     }
                 }
             }
             
         }
 
-        if (!Input.GetMouseButton(0)) {
-            ResetDragValues();
-        }
-
+       
         if (isDragging) {
             //Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
             //Vector3 move = new Vector3(pos.x * dragSpeed, pos.y * dragSpeed, 0f);
@@ -279,6 +289,37 @@ public class CameraMove : MonoBehaviour {
         isDragging = false;
         startedOnUI = false;
         hasReachedThreshold = false;
+    }
+    private void Edging() {
+        if (!allowEdgePanning || isDragging) {
+            return;
+        }
+        bool isEdging = false;
+        Vector3 newPos = transform.position;
+        if (Input.mousePosition.x > Screen.width - edgeBoundary) {
+            newPos.x += edgingSpeed * Time.deltaTime;
+            isEdging = true;
+        }
+        if (Input.mousePosition.x < 0 + edgeBoundary) {
+            newPos.x -= edgingSpeed * Time.deltaTime;
+            isEdging = true;
+        }
+
+        if (Input.mousePosition.y > Screen.height - edgeBoundary) {
+            newPos.y += edgingSpeed * Time.deltaTime;
+            isEdging = true;
+        }
+        if (Input.mousePosition.y < 0 + edgeBoundary) {
+            newPos.y -= edgingSpeed * Time.deltaTime;
+            isEdging = true;
+        }
+        if (isEdging) {
+            target = null; //reset target
+        }
+        transform.position = newPos;
+    }
+    public void AllowEdgePanning(bool state) {
+        allowEdgePanning = state;
     }
     #endregion
 

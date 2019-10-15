@@ -34,6 +34,10 @@ public class ResearchAbilityUI : MonoBehaviour {
             PlayerUI.Instance.AddPendingUI(() => ShowResearchUI());
             return;
         }
+        if (!GameManager.Instance.isPaused) {
+            UIManager.Instance.Pause();
+            UIManager.Instance.SetSpeedTogglesState(false);
+        }
         ability1Toggle.isOn = false;
         ability2Toggle.isOn = false;
         ability3Toggle.isOn = false;
@@ -87,11 +91,10 @@ public class ResearchAbilityUI : MonoBehaviour {
     public void OnClickOk() {
         gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            if (PlayerManager.Instance.player.isNotFirstResearch) {
-                UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
-            }
-            UIManager.Instance.SetSpeedTogglesState(true);
-        }
-        PlayerManager.Instance.player.NewCycleForNewInterventionAbility(chosenAbility);
+            //if (PlayerManager.Instance.player.isNotFirstResearch) {
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
+            //}
+    }
+        //PlayerManager.Instance.player.NewCycleForNewInterventionAbility(chosenAbility);
     }
 }

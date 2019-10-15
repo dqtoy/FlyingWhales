@@ -24,8 +24,8 @@ public class Abduct : PlayerJobAction {
             return;
         }
         _targetCharacter = targetPOI as Character;
-        string titleText = "Select a location.";
-        UIManager.Instance.ShowClickableObjectPicker(_abductAreas, OnClickArea, null, CanClickArea, titleText);
+        //string titleText = "Select a location.";
+        //UIManager.Instance.ShowClickableObjectPicker(_abductAreas, OnClickArea, null, CanClickArea, titleText);
     }
 
     protected override bool CanPerformActionTowards(Character targetCharacter) {
@@ -57,7 +57,7 @@ public class Abduct : PlayerJobAction {
 
     #region Area Checkers
     private void OnClickArea(Area area) {
-        UIManager.Instance.ShowClickableObjectPicker(area.charactersAtLocation, RileUpCharacter, null, CanRileUpCharacter, "Choose a character to abduct.");
+        //UIManager.Instance.ShowClickableObjectPicker(area.charactersAtLocation, RileUpCharacter, null, CanRileUpCharacter, "Choose a character to abduct.");
     }
     private bool CanClickArea(Area area) {
         if (PlayerManager.Instance.player.playerArea == area) {
@@ -72,22 +72,22 @@ public class Abduct : PlayerJobAction {
         base.ActivateAction(_targetCharacter);
         UIManager.Instance.HideObjectPicker();
 
-        //GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character };
-        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.DROP_CHARACTER, character);
-        //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = _targetCharacter, targetPOI = character }, INTERACTION_TYPE.CARRY_CHARACTER);
-        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = character }, INTERACTION_TYPE.ABDUCT_CHARACTER);
-        //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character }, INTERACTION_TYPE.DROP_CHARACTER);
-        job.SetCannotOverrideJob(true);
-        //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-        _targetCharacter.jobQueue.AddJobInQueue(job);
+        ////GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character };
+        //GoapPlanJob job = new GoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.DROP_CHARACTER, character);
+        ////job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = _targetCharacter, targetPOI = character }, INTERACTION_TYPE.CARRY_CHARACTER);
+        //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = character }, INTERACTION_TYPE.ABDUCT_CHARACTER);
+        ////job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = _targetCharacter.homeArea, targetPOI = character }, INTERACTION_TYPE.DROP_CHARACTER);
+        //job.SetCannotOverrideJob(true);
+        ////job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
+        //_targetCharacter.jobQueue.AddJobInQueue(job);
 
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_abduct");
-        log.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
-        //_targetCharacter.jobQueue.ProcessFirstJobInQueue(_targetCharacter);
-        //_targetCharacter.StartGOAP(goapEffect, character, GOAP_CATEGORY.REACTION);
+        //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_abduct");
+        //log.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //log.AddLogToInvolvedObjects();
+        //PlayerManager.Instance.player.ShowNotification(log);
+        ////_targetCharacter.jobQueue.ProcessFirstJobInQueue(_targetCharacter);
+        ////_targetCharacter.StartGOAP(goapEffect, character, GOAP_CATEGORY.REACTION);
     }
     private bool CanRileUpCharacter(Character character) {
         if (_targetCharacter == character) {
@@ -107,4 +107,5 @@ public class Abduct : PlayerJobAction {
 public class AbductData : PlayerJobActionData {
     public override string name { get { return "Abduct"; } }
     public override string description { get { return "Makes a character abduct other characters of different race."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.SABOTAGE; } }
 }

@@ -5,7 +5,8 @@ using UnityEngine;
 public class KnockoutCharacter : GoapAction {
 
     public KnockoutCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.KNOCKOUT_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionIconString = GoapActionStateDB.Hostile_Icon;
+        doesNotStopTargetCharacter = true;
+        actionIconString = GoapActionStateDB.Stealth_Icon;
     }
 
     #region Overrides
@@ -41,12 +42,12 @@ public class KnockoutCharacter : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        if(currentState.name == "Knockout Fail") {
-            if (poiTarget is Character) {
-                Character targetCharacter = poiTarget as Character;
-                targetCharacter.marker.AddHostileInRange(actor, false);
-            }
-        }
+        //if(currentState.name == "Knockout Fail") {
+        //    if (poiTarget is Character) {
+        //        Character targetCharacter = poiTarget as Character;
+        //        targetCharacter.marker.AddHostileInRange(actor, false);
+        //    }
+        //}
     }
     #endregion
 
@@ -73,7 +74,7 @@ public class KnockoutCharacter : GoapAction {
             Character targetCharacter = poiTarget as Character;
             if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
                 CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
-
+                targetCharacter.marker.AddHostileInRange(actor, false);
                 //NOTE: Adding hostile in range is done after the action is done processing fully, See OnResultReturnedToActor
             }
         }

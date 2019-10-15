@@ -28,15 +28,17 @@ public class NewMinionAbilityUI : MonoBehaviour {
             PlayerUI.Instance.AddPendingUI(() => ShowNewMinionAbilityUI(objectToAdd));
             return;
         }
-        UIManager.Instance.Pause();
-        UIManager.Instance.SetSpeedTogglesState(false);
+        if (!GameManager.Instance.isPaused) {
+            UIManager.Instance.Pause();
+            UIManager.Instance.SetSpeedTogglesState(false);
+        }
         Utilities.DestroyChildren(choicesParent);
         string identifier = string.Empty;
         if (objectToAdd is CombatAbility) {
             titleText.text = "New Combat Ability";
             identifier = "combat";
         }else if(objectToAdd is PlayerJobAction) {
-            titleText.text = "New Intervention Ability";
+            titleText.text = "New Spell";
             identifier = "intervention";
         }
         UpdateObjectToAdd(objectToAdd);
@@ -74,8 +76,7 @@ public class NewMinionAbilityUI : MonoBehaviour {
     private void Close() {
         this.gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
-            UIManager.Instance.SetSpeedTogglesState(true);
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
     }
 

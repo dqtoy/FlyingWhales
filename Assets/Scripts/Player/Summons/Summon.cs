@@ -12,6 +12,9 @@ public class Summon : Character, IWorldObject {
     public virtual string worldObjectName {
         get { return name + " (" + Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString()) + ")"; }
     }
+    public WORLD_OBJECT_TYPE worldObjectType {
+        get { return WORLD_OBJECT_TYPE.SUMMON; }
+    }
     #endregion
 
     public Summon(SUMMON_TYPE summonType, CharacterRole role, RACE race, GENDER gender) : base(role, race, gender) {
@@ -61,7 +64,7 @@ public class Summon : Character, IWorldObject {
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
         ResetToFullHP();
     }
-    public override void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null) {
+    public override void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if (!_isDead) {
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
@@ -103,6 +106,21 @@ public class Summon : Character, IWorldObject {
                 _role.OnDeath(this);
             }
 
+            if (homeRegion != null) {
+                Region home = homeRegion;
+                Dwelling homeStructure = this.homeStructure;
+                homeRegion.RemoveResident(this);
+                SetHome(home); //keep this data with character to prevent errors
+                SetHomeStructure(homeStructure); //keep this data with character to prevent errors
+            }
+            //if (homeArea != null) {
+            //    Area home = homeArea;
+            //    Dwelling homeStructure = this.homeStructure;
+            //    homeArea.RemoveResident(this);
+            //    SetHome(home); //keep this data with character to prevent errors
+            //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
+            //}
+
             RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
 
             for (int i = 0; i < normalTraits.Count; i++) {
@@ -119,10 +137,47 @@ public class Summon : Character, IWorldObject {
             CancelAllJobsAndPlans();
 
             //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
-            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
-            log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            AddHistory(log);
+            Log deathLog;
+            if (_deathLog == null) {
+                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+                deathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                if (responsibleCharacter != null) {
+                    deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                }
+                if (deathLogFillers != null) {
+                    for (int i = 0; i < deathLogFillers.Length; i++) {
+                        deathLog.AddToFillers(deathLogFillers[i]);
+                    }
+                }
+                //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
+                AddHistory(deathLog);
+                PlayerManager.Instance.player.ShowNotification(deathLog);
+            } else {
+                deathLog = _deathLog;
+            }
         }
+    }
+    protected override void PerTickGoapPlanGeneration() {
+        if (isDead || minion != null) {
+            return;
+        }
+
+        //Out of combat hp recovery
+        if (!isDead && (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
+            HPRecovery(0.0025f);
+        }
+
+        //This is to ensure that this character will not be idle forever
+        //If at the start of the tick, the character is not currently doing any action, and is not waiting for any new plans, it means that the character will no longer perform any actions
+        //so start doing actions again
+        SetHasAlreadyAskedForPlan(false);
+        if (CanPlanGoap()) {
+            PlanGoapActions();
+        }
+    }
+    protected override void IdlePlans() {
+        //base.IdlePlans();
+        GoToWorkArea();
     }
     #endregion
 
@@ -135,11 +190,12 @@ public class Summon : Character, IWorldObject {
         hasBeenUsed = true;
         SubscribeToSignals();
         Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseNeeds); //do not make summons decrease needs
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration); //do not make summons plan goap actions by default
+        //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration); //do not make summons plan goap actions by default
         if (GameManager.Instance.isPaused) {
             marker.pathfindingAI.AdjustDoNotMove(1);
             marker.PauseAnimation();
         }
+        marker.UpdateSpeed();
     }
     #endregion
 
@@ -159,7 +215,15 @@ public class Summon : Character, IWorldObject {
     #region World Object
     public void Obtain() {
         //invading a region with a summon will recruit that summon for the player
-        PlayerManager.Instance.player.GainSummon(this, true);
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Summon: " + this.summonType.SummonName(), () => PlayerManager.Instance.player.GainSummon(this, true));
+    }
+    #endregion
+
+    #region Utilities
+    protected void GoToWorkArea() {
+        LocationStructure structure = this.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
+        LocationGridTile tile = structure.GetRandomTile();
+        this.marker.GoTo(tile);
     }
     #endregion
 

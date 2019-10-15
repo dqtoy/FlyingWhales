@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Abducted : Trait {
-    public Area originalHome { get; private set; }
+    public Region originalHome { get; private set; }
 
-    public Abducted(Area originalHome) {
+    public Abducted(Region originalHome) {
         name = "Abducted";
-        this.originalHome = originalHome;
+        SetOriginalHome(originalHome);
         //name = "Charmed from " + originalFaction.name;
         description = "This character has been abducted!";
         thoughtText = "[Character] has been abducted.";
@@ -19,6 +19,10 @@ public class Abducted : Trait {
         //effects = new List<TraitEffect>();
     }
 
+    public void SetOriginalHome(Region origHome) {
+        originalHome = origHome;
+    }
+
     #region Overrides
     public override string GetToolTipText() {
         if(responsibleCharacter == null) {
@@ -27,4 +31,22 @@ public class Abducted : Trait {
         return "This character has been abducted by " + responsibleCharacter.name;
     }
     #endregion
+}
+
+public class SaveDataAbducted : SaveDataTrait {
+    public int originalHomeID;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Abducted derivedTrait = trait as Abducted;
+        originalHomeID = derivedTrait.originalHome.id;
+    }
+
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        Abducted derivedTrait = trait as Abducted;
+        Region origHome = GridMap.Instance.GetRegionByID(originalHomeID);
+        derivedTrait.SetOriginalHome(origHome);
+        return trait;
+    }
 }

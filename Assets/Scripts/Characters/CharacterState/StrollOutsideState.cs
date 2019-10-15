@@ -5,14 +5,14 @@ using UnityEngine;
 public class StrollOutsideState : CharacterState {
 
     private STRUCTURE_TYPE[] _notAllowedStructures;
-    private int _currentDuration;
+    private int _planDuration;
 
     public StrollOutsideState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Stroll Outside State";
         characterState = CHARACTER_STATE.STROLL_OUTSIDE;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = GameManager.ticksPerHour;
-        _currentDuration = 0;
+        _planDuration = 0;
         _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
     }
 
@@ -23,16 +23,16 @@ public class StrollOutsideState : CharacterState {
     }
     protected override void PerTickInState() {
         base.PerTickInState();
-        if (!isDone && !isPaused && !isUnending) {
-            if(_currentDuration >= 4) {
-                _currentDuration = 0;
+        if (!isDone && !isPaused) {
+            if(_planDuration >= 4) {
+                _planDuration = 0;
                 if (!stateComponent.character.PlanFullnessRecoveryActions(true)) {
                     if (!stateComponent.character.PlanTirednessRecoveryActions(true)) {
                         stateComponent.character.PlanHappinessRecoveryActions(true);
                     }
                 }
             } else {
-                _currentDuration++;
+                _planDuration++;
             }
         }
     }

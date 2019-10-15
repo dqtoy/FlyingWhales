@@ -11,7 +11,15 @@ public class Minion {
     public int indexDefaultSort { get; private set; }
     public CombatAbility combatAbility { get; private set; }
     public List<string> traitsToAdd { get; private set; }
-    public BaseLandmark invadingLandmark { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both settlement and non settlement landmarks
+    public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both settlement and non settlement landmarks
+    public DeadlySin deadlySin { get { return CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName); } }
+    public bool isAssigned { get { return assignedRegion != null; } } //true if minion is already assigned somewhere else, maybe in construction or research spells
+    public List<INTERVENTION_ABILITY> interventionAbilitiesToResearch { get; private set; } //This is a list not array because the abilities here are consumable
+    public int spellExtractionCount { get; private set; } //the number of times a spell was extracted from this minion.
+
+    private string _assignedDeadlySinName;
+
+    public Log busyReasonLog { get; private set; } //The reason that this minion is busy
 
     public Minion(Character character, bool keepData) {
         this.character = character;
@@ -21,20 +29,27 @@ public class Minion {
         character.SetMinion(this);
         SetLevel(1);
         //character.characterToken.SetObtainedState(true);
+        SetAssignedDeadlySinName(character.characterClass.className);
         character.ownParty.icon.SetVisualState(true);
-
         if (!keepData) {
             character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
         }
+        //SetRandomResearchInterventionAbilities(CharacterManager.Instance.Get3RandomResearchInterventionAbilities(deadlySin));
     }
     public Minion(SaveDataMinion data) {
         this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);
         this.exp = data.exp;
         traitsToAdd = data.traitsToAdd;
+        interventionAbilitiesToResearch = data.interventionAbilitiesToResearch;
         SetIndexDefaultSort(data.indexDefaultSort);
         //SetUnlockedInterventionSlots(data.unlockedInterventionSlots);
         character.SetMinion(this);
         character.ownParty.icon.SetVisualState(true);
+        SetAssignedDeadlySinName(character.characterClass.className);
+        spellExtractionCount = data.spellExtractionCount;
+    }
+    public void SetAssignedDeadlySinName(string name) {
+        _assignedDeadlySinName = name;
     }
     //public void SetEnabledState(bool state) {
     //    if (character.IsInOwnParty()) {
@@ -58,6 +73,12 @@ public class Minion {
     //    _isEnabled = state;
     //    minionItem.SetEnabledState(state);
     //}
+    public void SetRandomResearchInterventionAbilities(List<INTERVENTION_ABILITY> abilities) {
+        interventionAbilitiesToResearch = abilities;
+    }
+    public void RemoveInterventionAbilityToResearch(INTERVENTION_ABILITY abilityType) {
+        interventionAbilitiesToResearch.Remove(abilityType);
+    }
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
         character.SetPlayerCharacterItem(item);
     }
@@ -83,7 +104,7 @@ public class Minion {
     public void SetIndexDefaultSort(int index) {
         indexDefaultSort = index;
     }
-    public void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null) {
+    public void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if (!character.isDead) {
             Area deathLocation = character.ownParty.specificLocation;
             LocationStructure deathStructure = character.currentStructure;
@@ -113,6 +134,12 @@ public class Minion {
             //clear traits that need to be removed
             character.traitsNeededToBeRemoved.Clear();
 
+            bool wasOutsideSettlement = false;
+            if (character.currentRegion != null) {
+                wasOutsideSettlement = true;
+                character.currentRegion.RemoveCharacterFromLocation(this.character);
+            }
+
             if (!character.IsInOwnParty()) {
                 character.currentParty.RemoveCharacter(character);
             }
@@ -130,20 +157,37 @@ public class Minion {
 
             character.RemoveAllNonPersistentTraits();
 
-            character.marker.OnDeath(deathTile);
+            character.marker?.OnDeath(deathTile, wasOutsideSettlement);
             character.SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);
             character.AddTrait(dead, gainedFromDoing: deathFromAction);
+            PlayerManager.Instance.player.RemoveMinion(this);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
 
             character.CancelAllJobsAndPlans();
+            StopInvasionProtocol();
 
             //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " died of " + cause);
-            Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
-            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            character.AddHistory(log);
-            character.specificLocation.AddHistory(log);
+            Log deathLog;
+            if (_deathLog == null) {
+                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+                deathLog.AddToFillers(this, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                if (responsibleCharacter != null) {
+                    deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                }
+                if (deathLogFillers != null) {
+                    for (int i = 0; i < deathLogFillers.Length; i++) {
+                        deathLog.AddToFillers(deathLogFillers[i]);
+                    }
+                }
+                //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
+                character.AddHistory(deathLog);
+                PlayerManager.Instance.player.ShowNotification(deathLog);
+            } else {
+                deathLog = _deathLog;
+            }
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Minion Died: " +  Utilities.LogReplacer(deathLog), null);
         }
     }
 
@@ -226,6 +270,7 @@ public class Minion {
             if (combatAbility != null && showNewAbilityUI) {
                 PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(this, combatAbility);
             }
+            Messenger.Broadcast(Signals.MINION_CHANGED_COMBAT_ABILITY, this);
         } else {
             PlayerUI.Instance.replaceUI.ShowReplaceUI(new List<CombatAbility>() { this.combatAbility }, combatAbility, ReplaceCombatAbility, RejectCombatAbility);
         }
@@ -252,14 +297,14 @@ public class Minion {
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
-        SetInvadingLandmark(area.coreTile.landmarkOnTile);
+        SetAssignedRegion(area.coreTile.region);
     }
     public void StopInvasionProtocol() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
-        SetInvadingLandmark(null);
+        SetAssignedRegion(null);
     }
     private void PerTickInvasion() {
         if (character.isDead) {
@@ -317,9 +362,10 @@ public class Minion {
         character.DestroyMarker();
         SchedulingManager.Instance.ClearAllSchedulesBy(this.character);
     }
-    public void SetInvadingLandmark(BaseLandmark landmark) {
-        invadingLandmark = landmark;
-        Messenger.Broadcast(Signals.MINION_CHANGED_INVADING_LANDMARK, this, invadingLandmark);
+    public void SetAssignedRegion(Region region) {
+        assignedRegion = region;
+        UpdateBusyReason();
+        Messenger.Broadcast(Signals.MINION_CHANGED_ASSIGNED_REGION, this, assignedRegion);
     }
     #endregion
 
@@ -342,4 +388,50 @@ public class Minion {
         traitsToAdd.Clear();
     }
     #endregion
+
+    #region Utilities
+    private void UpdateBusyReason() {
+        if (assignedRegion != null) {
+            if (assignedRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark() || assignedRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
+                //the region that this minion is assigned to is a player landmark
+                Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_" + assignedRegion.mainLandmark.specificLandmarkType.ToString());
+                log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+                SetBusyReason(log);
+            } else {
+                //the region that this minion is assigned to is a normal landmark
+                if (assignedRegion.activeEvent != null && assignedRegion.eventData.interferingCharacter == this.character) {
+                    //this minion is interferring with an event 
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_interfere");
+                    log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(null, assignedRegion.activeEvent.name, LOG_IDENTIFIER.STRING_1);
+                    log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+                    SetBusyReason(log);
+                } else {
+                    //this minion is invading
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_invade");
+                    log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+                    SetBusyReason(log);
+                }
+            }
+        } else {
+            SetBusyReason(null);
+        }
+    }
+    private void SetBusyReason(Log log) {
+        busyReasonLog = log;
+    }
+    public void AdjustSpellExtractionCount(int amount) {
+        spellExtractionCount += amount;
+    }
+    #endregion
+}
+
+[System.Serializable]
+public struct UnsummonedMinionData {
+    public string minionName;
+    public string className;
+    public COMBAT_ABILITY combatAbility;
+    public List<INTERVENTION_ABILITY> interventionAbilitiesToResearch;
 }

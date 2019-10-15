@@ -14,7 +14,7 @@ public class Plagued : Trait {
 
     public Plagued() {
         name = "Plagued";
-        description = "This character is Plagued.";
+        description = "This character has a terrible disease.";
         type = TRAIT_TYPE.STATUS;
         effect = TRAIT_EFFECT.NEGATIVE;
         daysDuration = GameManager.ticksPerDay * 3;
@@ -41,28 +41,28 @@ public class Plagued : Trait {
             septicChance = 1.5f;
         }
     }
-    public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
-        if (traitOwner is Character) {
-            Character targetCharacter = traitOwner as Character;
-            if (!targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
-                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
-                job.SetCanBeDoneInLocation(true);
-                if (CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, targetCharacter, null)) {
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    return true;
-                } else {
-                    if (!IsResponsibleForTrait(characterThatWillDoJob)) {
-                        job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveSpecialIllnessesJob);
-                        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
-                    }
-                    return false;
-                }
-            }
-        }
-        return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
-    }
+    //public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
+    //    if (traitOwner is Character) {
+    //        Character targetCharacter = traitOwner as Character;
+    //        if (!targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+    //            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
+    //            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
+    //                new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
+    //            job.SetCanBeDoneInLocation(true);
+    //            if (InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob(characterThatWillDoJob, targetCharacter, job)) {
+    //                characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+    //                return true;
+    //            } else {
+    //                if (!IsResponsibleForTrait(characterThatWillDoJob)) {
+    //                    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveSpecialIllnessesJob);
+    //                    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+    //                }
+    //                return false;
+    //            }
+    //        }
+    //    }
+    //    return base.CreateJobsOnEnterVisionBasedOnTrait(traitOwner, characterThatWillDoJob);
+    //}
     public override bool PerTickOwnerMovement() {
         //string summary = owner.name + " is rolling for plagued chances....";
         float pukeRoll = Random.Range(0f, 100f);
@@ -75,7 +75,17 @@ public class Plagued : Trait {
             //do puke action
             if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.PUKE) {
                 stoppedAction = owner.currentAction;
+                //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
+                JobQueueItem currentJob = null;
+                JobQueue currentJobQueue = null;
+                if (owner.currentAction.isRoamingAction && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null) {
+                    currentJob = owner.currentAction.parentPlan.job;
+                    currentJobQueue = currentJob.jobQueueParent;
+                }
                 owner.StopCurrentAction(false);
+                if (currentJob != null) {
+                    currentJobQueue.AddJobInQueue(currentJob, false);
+                }
                 owner.marker.StopMovement();
 
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
@@ -87,9 +97,8 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
                 //owner.currentAction.SetEndAction(ResumeLastAction);
-                owner.currentAction.DoAction();
+                goapAction.DoAction();
                 hasCreatedJob = true;
             } else if (owner.stateComponent.currentState != null) {
                 pausedState = owner.stateComponent.currentState;
@@ -104,11 +113,10 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
-                owner.currentAction.SetEndAction(ResumePausedState);
-                owner.currentAction.DoAction();
+                goapAction.SetEndAction(ResumePausedState);
+                goapAction.DoAction();
                 hasCreatedJob = true;
-            } else {
+            } else if (owner.stateComponent.currentState == null && owner.currentAction == null) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
 
                 GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
@@ -118,8 +126,7 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
-                owner.currentAction.DoAction();
+                goapAction.DoAction();
                 hasCreatedJob = true;
             }
             //Debug.Log(summary);
@@ -138,8 +145,7 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
-                owner.currentAction.DoAction();
+                goapAction.DoAction();
                 hasCreatedJob = true;
             } else if (owner.stateComponent.currentState != null) {
                 owner.stateComponent.currentState.OnExitThisState();
@@ -153,10 +159,9 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
-                owner.currentAction.DoAction();
+                goapAction.DoAction();
                 hasCreatedJob = true;
-            } else {
+            } else if (owner.stateComponent.currentState == null && owner.currentAction == null) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
 
                 GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
@@ -166,7 +171,6 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
                 owner.currentAction.DoAction();
                 hasCreatedJob = true;
             }
@@ -198,6 +202,15 @@ public class Plagued : Trait {
         }
     }
     public int GetMakeLoveInfectChance() {
+        if (level == 1) {
+            return 50;
+        } else if (level == 2) {
+            return 75;
+        } else {
+            return 100;
+        }
+    }
+    public int GetCarryInfectChance() {
         if (level == 1) {
             return 50;
         } else if (level == 2) {

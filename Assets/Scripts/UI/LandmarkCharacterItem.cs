@@ -65,8 +65,8 @@ public class LandmarkCharacterItem : PooledObject {
                 travellingIcon.SetActive(true);
                 arrivedIcon.SetActive(false);
                 coverGO.SetActive(true);
-            } else if ((parentMenu as AreaInfoUI).activeArea.areaResidents.Contains(character)) { //only check for arrival icon if the character is a resident of the showing area
-                if (character.isAtHomeArea) {
+            } else if ((parentMenu as AreaInfoUI).activeTile.region.residents.Contains(character)) { //only check for arrival icon if the character is a resident of the showing area
+                if (character.isAtHomeRegion) {
                     arrivedIcon.SetActive(false);
                     travellingIcon.SetActive(false);
                     coverGO.SetActive(false);
@@ -128,8 +128,8 @@ public class LandmarkCharacterItem : PooledObject {
         if (character.currentParty.icon.targetLocation == null) {
             return;
         }
-        Area showingArea = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
-        if (showingArea == null || showingArea.id != character.currentParty.icon.targetLocation.id) {
+        Region showingRegion = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
+        if (showingRegion == null || showingRegion.id != character.currentParty.icon.targetLocation.id) {
             
             float x = UIManager.Instance.locationSmallInfoRT.position.x;
             //float x = thisTrans.position.x + thisTrans.sizeDelta.x + 50f;
@@ -138,8 +138,8 @@ public class LandmarkCharacterItem : PooledObject {
     }
     public void ShowArrivedTooltip() {
         //UIManager.Instance.ShowSmallInfo("Arrived at " + character.currentParty.specificLocation.name);
-        Area showingArea = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
-        if (showingArea == null || showingArea.id != character.currentParty.icon.targetLocation.id) {
+        Region showingRegion = UIManager.Instance.GetCurrentlyShowingSmallInfoLocation();
+        if (showingRegion == null || showingRegion.id != character.currentParty.icon.targetLocation.id) {
             if (character.currentParty.icon.targetLocation == null) {
                 return;
             }

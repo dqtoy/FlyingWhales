@@ -8,32 +8,46 @@ public class SaveDataPlayer {
     public int playerFactionID;
     public int playerAreaID;
     public int threat;
+    public int mana;
+    public int maxMana;
+    public int manaRegen;
 
     public List<SaveDataMinion> minions;
     public List<SaveDataSummonSlot> summonSlots;
     public List<SaveDataArtifactSlot> artifactSlots;
     public List<SaveDataInterventionAbility> interventionAbilitySlots;
+    public List<SaveDataIntel> allIntel;
+    public UnsummonedMinionData[] minionsToSummon;
+
 
     public int currentMinionLeaderID;
 
     public int maxSummonSlots;
     public int maxArtifactSlots;
 
-    public int invadingRegionID;
+    //public int invadingRegionID;
 
-    public int currentInterventionAbilityTimerTick;
-    public int currentNewInterventionAbilityCycleIndex;
-    public INTERVENTION_ABILITY interventionAbilityToResearch;
+    public int currentDivineInterventionTick;
+    //public int currentInterventionAbilityTimerTick;
+    //public int currentNewInterventionAbilityCycleIndex;
+    //public INTERVENTION_ABILITY interventionAbilityToResearch;
+    //public bool isNotFirstResearch;
 
-    public bool isNotFirstResearch;
+    public float constructionRatePercentageModifier;
 
     public void Save(Player player) {
         playerFactionID = player.playerFaction.id;
         playerAreaID = player.playerArea.id;
         threat = player.threat;
+        mana = player.mana;
         maxSummonSlots = player.maxSummonSlots;
         maxArtifactSlots = player.maxArtifactSlots;
-        isNotFirstResearch = player.isNotFirstResearch;
+        currentDivineInterventionTick = player.currentDivineInterventionTick;
+        minionsToSummon = player.minionsToSummon;
+        constructionRatePercentageModifier = player.constructionRatePercentageModifier;
+        maxMana = player.maxMana;
+        manaRegen = player.manaRegen;
+        //isNotFirstResearch = player.isNotFirstResearch;
 
         minions = new List<SaveDataMinion>();
         for (int i = 0; i < player.minions.Count; i++) {
@@ -43,14 +57,14 @@ public class SaveDataPlayer {
         }
 
         summonSlots = new List<SaveDataSummonSlot>();
-        for (int i = 0; i < player.summonSlots.Length; i++) {
+        for (int i = 0; i < player.summonSlots.Count; i++) {
             SaveDataSummonSlot data = new SaveDataSummonSlot();
             data.Save(player.summonSlots[i]);
             summonSlots.Add(data);
         }
 
         artifactSlots = new List<SaveDataArtifactSlot>();
-        for (int i = 0; i < player.artifactSlots.Length; i++) {
+        for (int i = 0; i < player.artifactSlots.Count; i++) {
             SaveDataArtifactSlot saveDataArtifact = new SaveDataArtifactSlot();
             saveDataArtifact.Save(player.artifactSlots[i]);
             artifactSlots.Add(saveDataArtifact);
@@ -65,33 +79,42 @@ public class SaveDataPlayer {
             interventionAbilitySlots.Add(saveDataInterventionAbility);
         }
 
-        if(player.isInvadingRegion) {
-            invadingRegionID = player.invadingRegion.id;
-        } else {
-            invadingRegionID = -1;
+        allIntel = new List<SaveDataIntel>();
+        for (int i = 0; i < player.allIntel.Count; i++) {
+            Intel intel = player.allIntel[i];
+            SaveDataIntel data = System.Activator.CreateInstance(System.Type.GetType("SaveData" + intel.GetType().ToString())) as SaveDataIntel;
+            data.Save(intel);
+            allIntel.Add(data);
         }
+        //if(player.isInvadingRegion) {
+        //    invadingRegionID = player.invadingRegion.id;
+        //} else {
+        //    invadingRegionID = -1;
+        //}
 
-        interventionAbilityToResearch = player.interventionAbilityToResearch;
-        currentInterventionAbilityTimerTick = player.currentInterventionAbilityTimerTick;
-        currentNewInterventionAbilityCycleIndex = player.currentNewInterventionAbilityCycleIndex;
+        //interventionAbilityToResearch = player.interventionAbilityToResearch;
+        //currentInterventionAbilityTimerTick = player.currentInterventionAbilityTimerTick;
+        //currentNewInterventionAbilityCycleIndex = player.currentNewInterventionAbilityCycleIndex;
     }
     public void Load() {
         PlayerManager.Instance.InitializePlayer(this);
+        PlayerManager.Instance.player.LoadDivineIntervention(this);
+        PlayerManager.Instance.player.LoadIntels(this);
     }
-    public void LoadInvasion(Save save) {
-        if (invadingRegionID != -1) {
-            SaveDataRegion invadingRegionSave = null;
-            for (int i = 0; i < save.regionSaves.Count; i++) {
-                if (save.regionSaves[i].id == invadingRegionID) {
-                    invadingRegionSave = save.regionSaves[i];
-                    break;
-                }
-            }
+    //public void LoadInvasion(Save save) {
+    //    if (invadingRegionID != -1) {
+    //        SaveDataRegion invadingRegionSave = null;
+    //        for (int i = 0; i < save.regionSaves.Count; i++) {
+    //            if (save.regionSaves[i].id == invadingRegionID) {
+    //                invadingRegionSave = save.regionSaves[i];
+    //                break;
+    //            }
+    //        }
 
-            Region region = GridMap.Instance.GetRegionByID(invadingRegionSave.id);
-            region.LoadInvasion(invadingRegionSave.LoadInvadingMinion(), invadingRegionSave.ticksInInvasion);
-        }
-    }
+    //        Region region = GridMap.Instance.GetRegionByID(invadingRegionSave.id);
+    //        region.LoadInvasion(invadingRegionSave.ticksInInvasion);
+    //    }
+    //}
     private void SortAddSaveDataArtifact(SaveDataArtifactSlot newSaveData) {
         bool hasBeenInserted = false;
         for (int i = 0; i < artifactSlots.Count; i++) {

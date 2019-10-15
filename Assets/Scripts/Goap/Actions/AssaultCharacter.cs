@@ -8,80 +8,112 @@ public class AssaultCharacter : GoapAction {
     private Character loser;
 
     public AssaultCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ASSAULT_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         doesNotStopTargetCharacter = true;
     }
 
     #region Overrides
-    protected override void ConstructRequirement() {
-        _requirementAction = Requirement;
-    }
+    //protected override void ConstructRequirement() {
+    //    _requirementAction = Requirement;
+    //}
     protected override void ConstructPreconditionsAndEffects() {
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_VISION, targetPOI = poiTarget }, IsInVision);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget });
     }
-    protected override void MoveToDoAction(Character targetCharacter) {
-        base.MoveToDoAction(targetCharacter);
-        //change end reached distance to the characters attack range. NOTE: Make sure to return the range to default after this action is done.
-        actor.marker.pathfindingAI.SetEndReachedDistance(actor.characterClass.attackRange);
+    //protected override void MoveToDoAction(Character targetCharacter) {
+    //    base.MoveToDoAction(targetCharacter);
+    //    //change end reached distance to the characters attack range. NOTE: Make sure to return the range to default after this action is done.
+    //    actor.marker.pathfindingAI.SetEndReachedDistance(actor.characterClass.attackRange);
+    //    //isPerformingActualAction = true;
+    //    //actorAlterEgo = actor.currentAlterEgo;
+    //    //AddAwareCharacter(actor);
+
+    //    //bool isLethal = true;
+    //    //if (parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.UNDERMINE_ENEMY || parentPlan.job.jobType == JOB_TYPE.APPREHEND || parentPlan.job.targetInteractionType == INTERACTION_TYPE.DRINK_BLOOD)) {
+    //    //    //Assaulting characters for imprisonment of criminals and undermining enemies must be non lethal
+    //    //    isLethal = false;
+    //    //}
+    //    //if (actor.marker.AddHostileInRange(targetCharacter, false, isLethal: isLethal)) {
+    //    //    Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState); //set this to signal because adding a character as hostile, is no longer sure to return a new CharacterState
+    //    //    SetState("In Progress");
+    //    //} else {
+    //    //    Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did was unable to add target as hostile when reacting to " + poiTarget.name + " in assault action!");
+    //    //    SetState("Target Missing");
+    //    //}
+
+    //}
+    public override bool ShouldBeStoppedWhenSwitchingStates() {
+        return false;
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        cannotCancelAction = true;
-        actor.marker.pathfindingAI.ResetEndReachedDistance();
-        
+        SetCannotCancelAction(true);
+        //actor.marker.pathfindingAI.ResetEndReachedDistance();
+
         Character targetCharacter = poiTarget as Character;
         if (targetCharacter.specificLocation == actor.specificLocation && !targetCharacter.currentParty.icon.isTravellingOutside) {
             if (actor.IsCombatReady()) {
-                CharacterState combatState;
+                CharacterState characterState;
                 if (!actor.marker.hostilesInRange.Contains(targetCharacter)) {
                     bool isLethal = true;
-                    if(parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.UNDERMINE_ENEMY || parentPlan.job.jobType == JOB_TYPE.APPREHEND)) {
+                    if (parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.UNDERMINE_ENEMY || parentPlan.job.jobType == JOB_TYPE.APPREHEND || parentPlan.job.targetInteractionType == INTERACTION_TYPE.DRINK_BLOOD)) {
                         //Assaulting characters for imprisonment of criminals and undermining enemies must be non lethal
                         isLethal = false;
                     }
-                    actor.marker.AddHostileInRange(targetCharacter, out combatState, false, isLethal: isLethal);
-                } else {
-                    combatState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
-                }
-                if (combatState is CombatState) {
-                    CombatState realCombatState = combatState as CombatState;
-                    realCombatState.SetActionThatTriggeredThisState(this);
-                    realCombatState.SetOnEndStateAction(OnFinishCombatState);
+                    if (actor.marker.AddHostileInRange(targetCharacter, out characterState, false, isLethal: isLethal)) {
+                        Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState); //set this to signal because adding a character as hostile, is no longer sure to return a new CharacterState
+                        SetState("In Progress");
+                    } else {
+                        Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did was unable to add target as hostile when reacting to " + poiTarget.name + " in assault action!");
+                        SetState("Target Missing");
+                    }
+                } else if (actor.stateComponent.currentState is CombatState) {
+                    characterState = actor.stateComponent.currentState as CombatState; //target character is already in the actor's hostile range so I assume that the actor is in combat state
+                    CombatState combatState = characterState as CombatState;
+                    combatState.SetActionThatTriggeredThisState(this);
+                    combatState.SetEndStateAction(OnFinishCombatState);
                     SetState("In Progress");
                 } else {
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
-                    SetState("Target Missing");
+                    Debug.LogWarning(actor.name + " is not in combat state, but it has " + targetCharacter.name + "in it's hostile range");
+                    SetState("Assault Failed");
                 }
+                //if (characterState is CombatState) {
+                //    CombatState realCombatState = characterState as CombatState;
+                //    realCombatState.SetActionThatTriggeredThisState(this);
+                //    realCombatState.SetOnEndStateAction(OnFinishCombatState);
+                //    SetState("In Progress");
+                //} else {
+                //    Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " did not return a combat state when reacting to " + poiTarget.name + " in assault action!");
+                //    SetState("Target Missing");
+                //}
             } else {
                 SetState("Assault Failed");
             }
         } else {
             SetState("Target Missing");
         }
-                
-        //Character targetCharacter = poiTarget as Character;
-        //if (!isTargetMissing && targetCharacter.IsInOwnParty() && !targetCharacter.isDead) {
-
-        //    float attackersChance = 0f;
-        //    float defendersChance = 0f;
-
-        //    CombatManager.Instance.GetCombatChanceOfTwoLists(new List<Character>() { actor }, new List<Character>() { targetCharacter }, out attackersChance, out defendersChance);
-
-        //    string nextState = CombatEncounterEvents(actor, targetCharacter, UnityEngine.Random.Range(0, 100) < attackersChance);
-        //    if (nextState == "Target Killed") {
-        //        parentPlan.SetDoNotRecalculate(true);
-        //    }
-        //    SetState(nextState);
-        //} else {
-        //    SetState("Target Missing");
-        //}
-
+    }
+    private void OnCharacterStartedState(Character character, CharacterState state) {
+        if (character == actor) {
+            CombatState combatState = state as CombatState;
+            combatState.SetActionThatTriggeredThisState(this);
+            combatState.SetEndStateAction(OnFinishCombatState);
+            Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        }
     }
     protected override void OnCancelActionTowardsTarget() {
-        actor.marker.pathfindingAI.ResetEndReachedDistance();
+        //actor.marker.pathfindingAI.ResetEndReachedDistance();
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         base.OnCancelActionTowardsTarget();
+    }
+    public override void OnStopActionWhileTravelling() {
+        //actor.marker.pathfindingAI.ResetEndReachedDistance();
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+        base.OnStopActionWhileTravelling();
     }
     private void OnFinishCombatState() {
         //Debug.Log(actor.name + " finished combat state!");
@@ -113,11 +145,16 @@ public class AssaultCharacter : GoapAction {
         SetTargetStructure();
         base.DoAction();
     }
+    public override LocationGridTile GetTargetLocationTile() {
+        return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
+    }
     public override void OnStopActionDuringCurrentState() {
-        actor.marker.pathfindingAI.ResetEndReachedDistance();
+        //actor.marker.pathfindingAI.ResetEndReachedDistance();
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
     }
     public override void OnResultReturnedToActor() {
-        actor.marker.pathfindingAI.ResetEndReachedDistance();
+        //actor.marker.pathfindingAI.ResetEndReachedDistance();
+        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
     }
     public override int GetArrangedLogPriorityIndex(string priorityID) {
         if(priorityID == "description") {
@@ -131,15 +168,9 @@ public class AssaultCharacter : GoapAction {
     }
     #endregion
 
-    #region Requirements
-    protected bool Requirement() {
-        if(poiTarget is Character && actor != poiTarget) {
-            Character target = poiTarget as Character;
-            if(!target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
-                return true;
-            }
-        }
-        return false;
+    #region Preconditions
+    protected bool IsInVision() {
+        return actor.marker.inVisionPOIs.Contains(poiTarget);
     }
     #endregion
 
@@ -330,7 +361,7 @@ public class AssaultCharacter : GoapAction {
                     RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         reactions.Add(string.Format("{0} deserves to be beaten.", targetCharacter.name));
-                        AddTraitTo(recipient, "Cheery");
+                        AddTraitTo(recipient, "Satisfied");
                         //if (status == SHARE_INTEL_STATUS.WITNESSED) {
                         //    if (recipient.marker.inVisionPOIs.Contains(targetCharacter)) {
                         //        recipient.marker.AddHostileInRange(targetCharacter, checkHostility: false);
@@ -345,7 +376,7 @@ public class AssaultCharacter : GoapAction {
                         //}
                     } else {
                         reactions.Add(string.Format("{0} deserves to be beaten.", targetCharacter.name));
-                        AddTraitTo(recipient, "Cheery");
+                        AddTraitTo(recipient, "Satisfied");
                     }
                 }
                 //- Recipient Has No Relationship with Target
@@ -425,7 +456,7 @@ public class AssaultCharacter : GoapAction {
                     RELATIONSHIP_EFFECT relationshipWithActor = recipient.GetRelationshipEffectWith(actor);
                     if (relationshipWithActor == RELATIONSHIP_EFFECT.POSITIVE) {
                         reactions.Add(string.Format("Suits {0} right.", Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
-                        AddTraitTo(recipient, "Cheery");
+                        AddTraitTo(recipient, "Satisfied");
                         //if (status == SHARE_INTEL_STATUS.WITNESSED) {
                         //    if (recipient.marker.inVisionPOIs.Contains(actor)) {
                         //        recipient.marker.AddAvoidInRange(actor);
@@ -457,7 +488,7 @@ public class AssaultCharacter : GoapAction {
                             //    }
                             //}
                         }
-                        AddTraitTo(recipient, "Cheery");
+                        AddTraitTo(recipient, "Satisfied");
                     }
                 }
                 //- Recipient Has No Relationship with Target
@@ -492,7 +523,7 @@ public class AssaultCharacter : GoapAction {
 
 public class AssaultCharacterData : GoapActionData {
     public AssaultCharacterData() : base(INTERACTION_TYPE.ASSAULT_CHARACTER) {
-        //racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         requirementAction = Requirement;
     }
 

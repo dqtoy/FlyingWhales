@@ -230,7 +230,7 @@ public class GoapThread : Multithread {
         //    log += "\nNO OTHER DATA";
         //}
 
-        log += "\nUSABLE ACTIONS: ";
+        string usableLog = "\nUSABLE ACTIONS: ";
         List<GoapPlan> allPlans = new List<GoapPlan>();
         if (job != null && job.planConstructor != null) {
             GoapPlan plan = job.planConstructor.Invoke();
@@ -243,9 +243,9 @@ public class GoapThread : Multithread {
             if (target == null) {
                 for (int i = 0; i < usableActions.Count; i++) {
                     if (i > 0) {
-                        log += ", ";
+                        usableLog += ", ";
                     }
-                    log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
+                    usableLog += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
                     string planLog = string.Empty;
                     if (usableActions[i].goapType == goalType) {
                         GoapPlan plan = actor.planner.PlanActions(usableActions[i].poiTarget, usableActions[i], usableActions, category, isPersonalPlan, ref planLog, job);
@@ -259,9 +259,9 @@ public class GoapThread : Multithread {
             } else {
                 for (int i = 0; i < usableActions.Count; i++) {
                     if (i > 0) {
-                        log += ", ";
+                        usableLog += ", ";
                     }
-                    log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
+                    usableLog += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
                     if (usableActions[i].goapType == goalType && usableActions[i].poiTarget == target) {
                         string planLog = string.Empty;
                         GoapPlan plan = actor.planner.PlanActions(usableActions[i].poiTarget, usableActions[i], usableActions, category, isPersonalPlan, ref planLog, job);
@@ -277,9 +277,9 @@ public class GoapThread : Multithread {
             //provided goal action
             for (int i = 0; i < usableActions.Count; i++) {
                 if (i > 0) {
-                    log += ", ";
+                    usableLog += ", ";
                 }
-                log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
+                usableLog += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
             }
             string planLog = string.Empty;
             GoapPlan plan = actor.planner.PlanActions(target, goalAction, usableActions, category, isPersonalPlan, ref planLog, job);
@@ -292,11 +292,11 @@ public class GoapThread : Multithread {
             //default
             for (int i = 0; i < usableActions.Count; i++) {
                 if (i > 0) {
-                    log += ", ";
+                    usableLog += ", ";
                 }
-                log += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
+                usableLog += usableActions[i].goapName + " (" + usableActions[i].poiTarget.name + ")";
                 if (usableActions[i].WillEffectsSatisfyPrecondition(goalEffect)) {
-                    log += "(GOAL EFFECT SATISFIED!)";
+                    usableLog += "(GOAL EFFECT SATISFIED!)";
                     if (job != null && job.forcedActions.Count > 0) {
                         bool satisfiedForcedActions = true;
                         ForcedActionsComparer comparer = new ForcedActionsComparer();
@@ -357,6 +357,7 @@ public class GoapThread : Multithread {
         } else {
             log += "\nNO PLAN WAS GENERATED! End goap...";
         }
+        log += usableLog;
     }
     private void RecalculatePlan() {
         if (recalculationPlan.isEnd) {
@@ -368,6 +369,9 @@ public class GoapThread : Multithread {
         log += "\nGOAL ACTION: " + recalculationPlan.endNode.action.goapName + " - " + recalculationPlan.endNode.action.poiTarget.name;
         List<GoapAction> usableActions = new List<GoapAction>();
         //List<INTERACTION_TYPE> actorAllowedActions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
+        if(recalculationPlan.job != null) {
+            otherData = recalculationPlan.job.otherData;
+        }
         foreach (KeyValuePair<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> kvp in actor.awareness) {
             if (kvp.Key == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 for (int i = 0; i < kvp.Value.Count; i++) {

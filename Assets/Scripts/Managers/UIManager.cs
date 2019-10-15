@@ -13,9 +13,6 @@ public class UIManager : MonoBehaviour {
 
     public static UIManager Instance = null;
 
-    public delegate void OnAddNewBattleLog();
-    public OnAddNewBattleLog onAddNewBattleLog;
-
     public RectTransform mainRT;
     [SerializeField] private EventSystem eventSystem;
 
@@ -37,7 +34,6 @@ public class UIManager : MonoBehaviour {
     public RectTransform smallInfoRT;
     public HorizontalLayoutGroup smallInfoBGParentLG;
     public RectTransform smallInfoBGRT;
-
     public TextMeshProUGUI smallInfoLbl;
     public EnvelopContentUnityUI smallInfoEnvelopContent;
     public LocationSmallInfo locationSmallInfo;
@@ -82,26 +78,22 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("World UI")]
     [SerializeField] private RectTransform worldUIParent;
+    [SerializeField] private GraphicRaycaster worldUIRaycaster;
     [SerializeField] private GameObject worldEventIconPrefab;
 
+    [Space(10)]
     [Header("Object Picker")]
     [SerializeField] private ObjectPicker objectPicker;
+
+    [Space(10)]
+    [Header("Options")]
+    [SerializeField] private GameObject optionsGO;
 
     [Space(10)] //FOR TESTING
     [Header("For Testing")]
     public ButtonToggle toggleBordersBtn;
     public ButtonToggle corruptionBtn;
     public POITestingUI poiTestingUI;
-
-    public delegate void OnPauseEventExpiration(bool state);
-    public OnPauseEventExpiration onPauseEventExpiration;
-
-    [Space(10)]
-    [Header("Font Sizes")]
-    [SerializeField] private int HEADER_FONT_SIZE = 25;
-    [SerializeField] private int BODY_FONT_SIZE = 20;
-    [SerializeField] private int TOOLTIP_FONT_SIZE = 18;
-    [SerializeField] private int SMALLEST_FONT_SIZE = 12;
 
     [Space(10)]
     [Header("Combat")]
@@ -151,7 +143,7 @@ public class UIManager : MonoBehaviour {
         //} else if (Input.GetKeyDown(KeyCode.Alpha5)) {
         //    PlayerUI.Instance.ScrollRoleSlotTo(4);
         //}
-        UpdateSpeedToggles(GameManager.Instance.isPaused);
+        //UpdateSpeedToggles(GameManager.Instance.isPaused);
         if (isHoveringTile) {
             if (currentTileHovered.areaOfTile != null && currentTileHovered.areaOfTile.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
                 ShowSmallInfo("Double click to view.", currentTileHovered.areaOfTile.name);
@@ -174,19 +166,13 @@ public class UIManager : MonoBehaviour {
     public void ExitGame() {
         Application.Quit();
     }
-
-    public void SetTimeControlsState(bool state) {
-        pauseBtn.interactable = state;
-        x1Btn.interactable = state;
-        x2Btn.interactable = state;
-        x4Btn.interactable = state;
-    }
     internal void InitializeUI() {
         allMenus = this.transform.GetComponentsInChildren<UIMenu>(true);
         for (int i = 0; i < allMenus.Length; i++) {
             allMenus[i].Initialize();
             //allMenus[i].ApplyUnifiedSettings(settings);
         }
+        questInfoUI.Initialize();
         //Image[] images = this.gameObject.GetComponentsInChildren<Image>();
         //for (int i = 0; i < images.Length; i++) {
         //    images[i].alphaHitTestMinimumThreshold = 1f;
@@ -196,6 +182,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<HexTile>(Signals.TILE_RIGHT_CLICKED, ShowContextMenu);
         Messenger.AddListener(Signals.HIDE_MENUS, HideMenus);
         Messenger.AddListener<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, ShowDeveloperNotification);
+        Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
 
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
@@ -219,8 +206,12 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
 
-        Messenger.AddListener<BaseLandmark, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
-        Messenger.AddListener<BaseLandmark, WorldEvent>(Signals.WORLD_EVENT_DESPAWNED, OnWorldEventDespawned);
+        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_SPAWNED, OnWorldEventSpawned);
+        Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_DESPAWNED, OnWorldEventDespawned);
+
+        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnUIMenuOpened);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnUIMenuClosed);
+
         UpdateUI();
     }
     private void OnGameLoaded() {
@@ -256,6 +247,7 @@ public class UIManager : MonoBehaviour {
         if (PlayerUI.Instance.isShowingMinionList) {
             PlayerUI.Instance.HideMinionList();
         }
+        ClearUIMenuHistory();
     }
     public void AddToUIMenuHistory(object data) {
         if(_uiMenuHistory.Count > 0 && _uiMenuHistory[_uiMenuHistory.Count - 1] == data) {
@@ -282,42 +274,6 @@ public class UIManager : MonoBehaviour {
             }
         }
     }
-
-    #region Font Utilities
-    private void NormalizeFontSizes() {
-        TextMeshProUGUI[] allLabels = this.GetComponentsInChildren<TextMeshProUGUI>(true);
-        //Debug.Log ("ALL LABELS COUNT: " + allLabels.Length.ToString());
-        for (int i = 0; i < allLabels.Length; i++) {
-            NormalizeFontSizeOfLabel(allLabels[i]);
-        }
-    }
-    private void NormalizeFontSizeOfLabel(TextMeshProUGUI lbl) {
-        string lblName = lbl.name;
-        if (lblName.Contains("NOTOUCH")) {
-            return;
-        }
-        TextOverflowModes overflowMethod = TextOverflowModes.Truncate;
-        if (lblName.Contains("HEADER")) {
-            lbl.fontSize = HEADER_FONT_SIZE;
-            overflowMethod = TextOverflowModes.Truncate;
-        } else if (lblName.Contains("BODY")) {
-            lbl.fontSize = BODY_FONT_SIZE;
-            overflowMethod = TextOverflowModes.Truncate;
-        } else if (lblName.Contains("TOOLTIP")) {
-            lbl.fontSize = TOOLTIP_FONT_SIZE;
-            overflowMethod = TextOverflowModes.Overflow;
-        } else if (lblName.Contains("SMALLEST")) {
-            lbl.fontSize = SMALLEST_FONT_SIZE;
-            overflowMethod = TextOverflowModes.Truncate;
-        }
-
-        if (!lblName.Contains("NO")) {
-            lbl.overflowMode = overflowMethod;
-        }
-
-    }
-    #endregion
-
     private void UpdateUI() {
         //dateLbl.SetText(GameManager.Instance.continuousDays + "/" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
         dateLbl.SetText("Day " + GameManager.Instance.continuousDays + "\n" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
@@ -335,6 +291,8 @@ public class UIManager : MonoBehaviour {
         UpdateCharacterInfo();
         UpdateTileObjectInfo();
         UpdateRegionInfo();
+        UpdateAreaInfo();
+        UpdateQuestInfo();
     }
 
     #region World Controls
@@ -349,51 +307,47 @@ public class UIManager : MonoBehaviour {
             if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X1) {
                 x1Btn.isOn = true;
                 speedToggleGroup.NotifyToggleOn(x1Btn);
-                SetProgressionSpeed1X();
+                //SetProgressionSpeed1X();
             } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X2) {
                 x2Btn.isOn = true;
                 speedToggleGroup.NotifyToggleOn(x2Btn);
-                SetProgressionSpeed2X();
+                //SetProgressionSpeed2X();
             } else if (GameManager.Instance.currProgressionSpeed == PROGRESSION_SPEED.X4) {
                 x4Btn.isOn = true;
                 speedToggleGroup.NotifyToggleOn(x4Btn);
-                SetProgressionSpeed4X();
+                //SetProgressionSpeed4X();
             }
         }
+    }
+    private void OnProgressionSpeedChanged(PROGRESSION_SPEED speed) {
+        UpdateSpeedToggles(GameManager.Instance.isPaused);
     }
     public void SetProgressionSpeed1X() {
         if (!x1Btn.IsInteractable()) {
             return;
         }
-        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
         Unpause();
+        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X1);
     }
     public void SetProgressionSpeed2X() {
         if (!x2Btn.IsInteractable()) {
             return;
         }
-        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
         Unpause();
+        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X2);
     }
     public void SetProgressionSpeed4X() {
         if (!x4Btn.IsInteractable()) {
             return;
         }
-        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
         Unpause();
+        GameManager.Instance.SetProgressionSpeed(PROGRESSION_SPEED.X4);
     }
     public void Pause() {
         GameManager.Instance.SetPausedState(true);
-        if (onPauseEventExpiration != null) {
-            onPauseEventExpiration(true);
-        }
     }
     public void Unpause() {
-        //Debug.Log("Unpaused from:\n " + StackTraceUtility.ExtractStackTrace());
         GameManager.Instance.SetPausedState(false);
-        if (onPauseEventExpiration != null) {
-            onPauseEventExpiration(false);
-        }
     }
     public void ShowDateSummary() {
         ShowSmallInfo(GameManager.Instance.Today().ToStringDate());
@@ -403,6 +357,34 @@ public class UIManager : MonoBehaviour {
         x1Btn.interactable = state;
         x2Btn.interactable = state;
         x4Btn.interactable = state;
+    }
+    /// <summary>
+    /// Resume the last speed that the player was in before pausing the game.
+    /// </summary>
+    public void ResumeLastProgressionSpeed() {
+        SetSpeedTogglesState(true);
+        if (GameManager.Instance.lastProgressionBeforePausing == "paused") {
+            //pause the game
+            Pause();
+        } else if (GameManager.Instance.lastProgressionBeforePausing == "1") {
+            SetProgressionSpeed1X();
+        } else if (GameManager.Instance.lastProgressionBeforePausing == "2") {
+            SetProgressionSpeed2X();
+        } else if (GameManager.Instance.lastProgressionBeforePausing == "4") {
+            SetProgressionSpeed4X();
+        }
+    }
+    #endregion
+
+    #region Options
+    public void ToggleOptionsMenu() {
+        optionsGO.SetActive(!optionsGO.activeSelf);
+        if (optionsGO.activeSelf) {
+            Pause();
+            SetSpeedTogglesState(false);
+        } else {
+            ResumeLastProgressionSpeed();
+        }
     }
     #endregion
 
@@ -580,16 +562,16 @@ public class UIManager : MonoBehaviour {
         smallInfoBGParentLG.childAlignment = position.anchor;
         rt.pivot = position.pivot;
     }
-    public void ShowSmallLocationInfo(Area area, RectTransform initialParent, Vector2 adjustment, string subText = "") {
-        locationSmallInfo.ShowAreaInfo(area, subText);
+    public void ShowSmallLocationInfo(Region region, RectTransform initialParent, Vector2 adjustment, string subText = "") {
+        locationSmallInfo.ShowRegionInfo(region, subText);
         locationSmallInfoRT.SetParent(initialParent);
         locationSmallInfoRT.anchoredPosition = Vector3.zero;
         locationSmallInfoRT.anchoredPosition += adjustment;
         locationSmallInfoRT.SetParent(this.transform);
         //(locationSmallInfo.transform as RectTransform).anchoredPosition = pos;
     }
-    public void ShowSmallLocationInfo(Area area, Vector3 pos, string subText = "") {
-        locationSmallInfo.ShowAreaInfo(area, subText);
+    public void ShowSmallLocationInfo(Region region, Vector3 pos, string subText = "") {
+        locationSmallInfo.ShowRegionInfo(region, subText);
         locationSmallInfoRT.position = pos;
     }
     public void HideSmallLocationInfo() {
@@ -598,9 +580,9 @@ public class UIManager : MonoBehaviour {
     public bool IsSmallLocationInfoShowing() {
         return locationSmallInfoRT.gameObject.activeSelf;
     }
-    public Area GetCurrentlyShowingSmallInfoLocation() {
+    public Region GetCurrentlyShowingSmallInfoLocation() {
         if (IsSmallLocationInfoShowing()) {
-            return locationSmallInfo.area;
+            return locationSmallInfo.region;
         }
         return null;
     }
@@ -627,6 +609,16 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region UI Utilities
+    private void OnUIMenuOpened(UIMenu menu) {
+        if (menu is AreaInfoUI || menu is RegionInfoUI) {
+            MoveNotificationMenuToModifiedPos();
+        }
+    }
+    private void OnUIMenuClosed(UIMenu menu) {
+        if (menu is AreaInfoUI || menu is RegionInfoUI) {
+            MoveNotificationMenuToDefaultPos();
+        }
+    }
     public void RepositionGridCallback(UIGrid thisGrid) {
         StartCoroutine(RepositionGrid(thisGrid));
     }
@@ -719,12 +711,7 @@ public class UIManager : MonoBehaviour {
      * font sizes.
      * */
     internal GameObject InstantiateUIObject(string prefabObjName, Transform parent) {
-        //GameObject go = GameObject.Instantiate (prefabObj, parent) as GameObject;
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefabObjName, Vector3.zero, Quaternion.identity, parent);
-        TextMeshProUGUI[] goLbls = go.GetComponentsInChildren<TextMeshProUGUI>(true);
-        for (int i = 0; i < goLbls.Length; i++) {
-            NormalizeFontSizeOfLabel(goLbls[i]);
-        }
         return go;
     }
     #endregion
@@ -737,7 +724,7 @@ public class UIManager : MonoBehaviour {
     }
     public LandmarkNameplate CreateLandmarkNameplate(BaseLandmark landmark) {
         GameObject nameplateGO = UIManager.Instance.InstantiateUIObject("LandmarkNameplate", worldUIParent);
-        //nameplateGO.transform.localScale = new Vector3(0.02f, 0.02f, 1f);
+        nameplateGO.transform.localScale = Vector3.one;
         LandmarkNameplate nameplate = nameplateGO.GetComponent<LandmarkNameplate>();
         nameplate.SetLandmark(landmark);
         return nameplate;
@@ -745,14 +732,16 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Object Picker
-    public void ShowClickableObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "", Action<T> onHoverAction = null) {
-        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction);
+    public void ShowClickableObjectPicker<T>(List<T> choices, Action<T> onClickAction, IComparer<T> comparer = null
+        , Func<T, bool> validityChecker = null, string title = ""
+        , Action<T> onHoverAction = null, Action<T> onHoverExitAction = null, string identifier = "", bool showCover = false, int layer = 9, bool closable = true) {
+        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction, onHoverExitAction, identifier, showCover, layer, closable);
         //Pause();
         //SetSpeedTogglesState(false);
     }
-    public void ShowDraggableObjectPicker<T>(List<T> choices, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
-        objectPicker.ShowDraggable(choices, comparer, validityChecker, title);
-    }
+    //public void ShowDraggableObjectPicker<T>(List<T> choices, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, string title = "") {
+    //    objectPicker.ShowDraggable(choices, comparer, validityChecker, title);
+    //}
     public void HideObjectPicker() {
         objectPicker.Hide();
         //Unpause();
@@ -781,26 +770,34 @@ public class UIManager : MonoBehaviour {
     [Header("Area Info")]
     [SerializeField]
     internal AreaInfoUI areaInfoUI;
-    public void ShowAreaInfo(Area area) {
-        if (PlayerManager.Instance.player.homeArea == area) {
-            UIManager.Instance.portalPopup.SetActive(true);
-        } else {
-            if (factionInfoUI.isShowing) {
-                factionInfoUI.CloseMenu();
-            }
-            if (characterInfoUI.isShowing) {
-                characterInfoUI.CloseMenu();
-            }
-            if (tileObjectInfoUI.isShowing) {
-                tileObjectInfoUI.CloseMenu();
-            }
-            if (regionInfoUI.isShowing) {
-                regionInfoUI.CloseMenu();
-            }
-            areaInfoUI.SetData(area);
-            areaInfoUI.OpenMenu();
-            areaInfoUI.CenterOnCoreLandmark();
+
+    //Why change data parameter from Area to Hextile?
+    //It's because the tile data is needed now since we can construct demonic landmarks, etc
+    //If we only pass the area data, the only tile we can get is the coreTile
+    //We have no way of knowing now how to get the actual tile the player clicked
+    //Thus, the information that will be shown to the player will be wrong
+    //So in order for us to process exactly what the player clicked, the tile must be passed not the area
+    //IMPORTANT NOTE: MAKE SURE THAT THE TILE PASSED HAS AN AREA
+    public void ShowAreaInfo(HexTile tile) { //Area area
+        //if (PlayerManager.Instance.player.homeArea == area) {
+        //    portalPopup.SetActive(true);
+        //} else {
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.CloseMenu();
         }
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.CloseMenu();
+        }
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.CloseMenu();
+        }
+        if (regionInfoUI.isShowing) {
+            regionInfoUI.CloseMenu();
+        }
+        areaInfoUI.SetData(tile);
+        areaInfoUI.OpenMenu();
+        areaInfoUI.CenterOnTile();
+        //}
     }
     public void UpdateAreaInfo() {
         if (areaInfoUI.isShowing) {
@@ -878,20 +875,80 @@ public class UIManager : MonoBehaviour {
             characterInfoUI.UpdateCharacterInfo();
         }
     }
-    private void OnPartyStartedTravelling(Party party) {
-        if(characterInfoUI.isShowing && party.characters.Contains(characterInfoUI.activeCharacter)) {
-            characterInfoUI.activeCharacter.CenterOnCharacter();
-        }
-    }
-    private void OnPartyDoneTravelling(Party party) {
-        if (characterInfoUI.isShowing && party.characters.Contains(characterInfoUI.activeCharacter)) {
-            characterInfoUI.activeCharacter.CenterOnCharacter();
-        }
-    }
+    //private void OnPartyStartedTravelling(Party party) {
+    //    if(characterInfoUI.isShowing && party.characters.Contains(characterInfoUI.activeCharacter)) {
+    //        characterInfoUI.activeCharacter.CenterOnCharacter();
+    //    }
+    //}
+    //private void OnPartyDoneTravelling(Party party) {
+    //    if (characterInfoUI.isShowing && party.characters.Contains(characterInfoUI.activeCharacter)) {
+    //        characterInfoUI.activeCharacter.CenterOnCharacter();
+    //    }
+    //}
     public void OnCameraOutOfFocus() {
         if (characterInfoUI.isShowing) {
             characterInfoUI.OnClickCloseMenu();
         }
+    }
+    #endregion
+
+    #region Region Info
+    [Space(10)]
+    [Header("Region Info")]
+    public RegionInfoUI regionInfoUI;
+    public void ShowRegionInfo(Region region) {
+        //if (PlayerManager.Instance.player.homeArea == region.mainLandmark.tileLocation.areaOfTile) {
+        //    portalPopup.SetActive(true);
+        //} else {
+            if (factionInfoUI.isShowing) {
+                factionInfoUI.CloseMenu();
+            }
+            if (characterInfoUI.isShowing) {
+                characterInfoUI.CloseMenu();
+            }
+            if (tileObjectInfoUI.isShowing) {
+                tileObjectInfoUI.CloseMenu();
+            }
+            if (areaInfoUI.isShowing) {
+                areaInfoUI.CloseMenu();
+            }
+            regionInfoUI.SetData(region);
+            regionInfoUI.OpenMenu();
+        //}
+    }
+    public void UpdateRegionInfo() {
+        if (regionInfoUI.isShowing) {
+            regionInfoUI.UpdateInfo();
+        }
+    }
+    #endregion
+
+    #region Hextile Info
+    public bool ShowHextileInfo(HexTile hexTile) {
+        if (hexTile.region != null && hexTile == hexTile.region.coreTile) {
+            if (hexTile.areaOfTile != null && hexTile.areaOfTile.areaType.IsSettlementType()) {
+                //if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
+                //    portalPopup.SetActive(true);
+                //    return true;
+                //}
+                ShowAreaInfo(hexTile);
+                return true;
+            } else {
+                //This is an exception in showing area info ui
+                //Usually, area info ui must only be shown if the tile's region has an area
+                //But for demonic landmarks, even if the region has no area, area info ui will still be shown
+                //The area that will become active is the playerArea
+                //This is done so that the player can build, research, etc.
+                //if (hexTile.region.owner == PlayerManager.Instance.player.playerFaction) {
+                //    ShowAreaInfo(hexTile);
+                //    return true;
+                //} else {
+                    ShowRegionInfo(hexTile.region);
+                    return true;
+                //}
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -942,6 +999,21 @@ public class UIManager : MonoBehaviour {
     //        combatLogUI.UpdateCombatLogs();
     //    }
     //}
+    #endregion
+
+    #region Quest Info
+    [Space(10)]
+    [Header("Quest UI")]
+    public QuestInfoUI questInfoUI;
+    public void ShowQuestInfo(Quest quest) {
+        questInfoUI.ShowQuestInfoUI(quest);
+    }
+    public void UpdateQuestInfo() {
+        if (questInfoUI.gameObject.activeSelf) {
+            questInfoUI.UpdateQuestInfo();
+        }
+    }
+
     #endregion
 
     #region Console
@@ -1040,7 +1112,7 @@ public class UIManager : MonoBehaviour {
 
     #region Interaction
     public void ShowInteractableInfo(BaseLandmark interactable) {
-        ShowAreaInfo(interactable.tileLocation.areaOfTile);
+        ShowHextileInfo(interactable.tileLocation);
         //if (interactable is BaseLandmark) {
         //    ShowLandmarkInfo(interactable);
         //} else if (interactable is Character) {
@@ -1110,10 +1182,12 @@ public class UIManager : MonoBehaviour {
     private void OnAreaMapOpened(Area area) {
         //returnToWorldBtn.interactable = true;
         //ShowPlayerNotificationArea();
+        worldUIRaycaster.enabled = false;
     }
     private void OnAreaMapClosed(Area area) {
         //returnToWorldBtn.interactable = false;
         //HidePlayerNotificationArea();
+        worldUIRaycaster.enabled = true;
     }
     //public void PointerClickWorldMap(BaseEventData bed) {
     //    //PointerEventData ped = bed as PointerEventData;
@@ -1126,14 +1200,14 @@ public class UIManager : MonoBehaviour {
             InteriorMapManager.Instance.HideAreaMap();
             OnCameraOutOfFocus();
         } else {
-            InteriorMapManager.Instance.TryShowAreaMap(LandmarkManager.Instance.enemyPlayerArea);
+            InteriorMapManager.Instance.TryShowAreaMap(LandmarkManager.Instance.enemyOfPlayerArea);
         }
     }
     public void ToggleMapsHover() {
         if (InteriorMapManager.Instance.currentlyShowingArea != null) {
             ShowSmallInfo("Click to exit " + InteriorMapManager.Instance.currentlyShowingArea.name + ".");
         } else {
-            ShowSmallInfo("Click to enter " + LandmarkManager.Instance.enemyPlayerArea.name + ".");
+            ShowSmallInfo("Click to enter " + LandmarkManager.Instance.enemyOfPlayerArea.name + ".");
         }
     }
     #endregion
@@ -1156,14 +1230,14 @@ public class UIManager : MonoBehaviour {
     private void OnOpenShareIntelMenu() {
         returnToWorldBtn.interactable = false;
         SetCoverState(true);
-        playerNotificationParent.SetSiblingIndex(1);
+        //playerNotificationParent.SetSiblingIndex(1);
     }
     private void OnCloseShareIntelMenu() {
         returnToWorldBtn.interactable = true;
         SetCoverState(false);
         //Unpause();
         //SetSpeedTogglesState(true);
-        playerNotificationParent.SetAsLastSibling();
+        //playerNotificationParent.SetAsLastSibling();
     }
     #endregion
 
@@ -1178,8 +1252,7 @@ public class UIManager : MonoBehaviour {
     public ScrollRect playerNotifScrollRect;
     public Image[] playerNotifTransparentImages;
     public int maxPlayerNotif;
-
-    private List<PlayerNotificationItem> activeNotifications = new List<PlayerNotificationItem>(); //notifications that are currently being shown.
+    public List<PlayerNotificationItem> activeNotifications = new List<PlayerNotificationItem>(); //notifications that are currently being shown.
     private void ShowPlayerNotification(Intel intel) {
         GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(intelPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
         IntelNotificationItem newItem = newIntelGO.GetComponent<IntelNotificationItem>();
@@ -1193,6 +1266,14 @@ public class UIManager : MonoBehaviour {
         newItem.Initialize(log, true, OnNotificationDestroyed);
         newIntelGO.transform.localScale = Vector3.one;
         PlaceNewNotification(newItem);        
+    }
+    public void ShowPlayerNotification(Log log, int tick) {
+        GameObject newIntelGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(defaultNotificationPrefab.name, Vector3.zero, Quaternion.identity, playerNotifScrollRect.content);
+        PlayerNotificationItem newItem = newIntelGO.GetComponent<PlayerNotificationItem>();
+        newItem.Initialize(log, true, OnNotificationDestroyed);
+        newItem.SetTickShown(tick);
+        newIntelGO.transform.localScale = Vector3.one;
+        PlaceNewNotification(newItem);
     }
     private void PlaceNewNotification(PlayerNotificationItem newNotif) {
         //check if the log used is from a GoapAction
@@ -1253,11 +1334,24 @@ public class UIManager : MonoBehaviour {
     public void HidePlayerNotificationArea() {
         playerNotifGO.SetActive(false);
     }
+    private void MoveNotificationMenuToDefaultPos() {
+        playerNotificationParent.anchoredPosition = new Vector2(506f, 14f);
+    }
+    private void MoveNotificationMenuToModifiedPos() {
+        playerNotificationParent.anchoredPosition = new Vector2(930f, 14f);
+    }
     #endregion
 
     #region Audio
     public void ToggleMute(bool state) {
         AudioManager.Instance.SetMute(state);
+    }
+    #endregion
+
+    #region Controls
+    public void ToggleEdgePanning(bool state) {
+        CameraMove.Instance.AllowEdgePanning(state);
+        AreaMapCameraMove.Instance.AllowEdgePanning(state);
     }
     #endregion
 
@@ -1280,47 +1374,101 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Area Info
-    [Space(10)]
-    [Header("Region Info")]
-    public RegionInfoUI regionInfoUI;
-    public void ShowRegionInfo(Region region) {
-        if (PlayerManager.Instance.player.homeArea == region.mainLandmark.tileLocation.areaOfTile) {
-            UIManager.Instance.portalPopup.SetActive(true);
-        } else {
-            if (factionInfoUI.isShowing) {
-                factionInfoUI.CloseMenu();
-            }
-            if (characterInfoUI.isShowing) {
-                characterInfoUI.CloseMenu();
-            }
-            if (tileObjectInfoUI.isShowing) {
-                tileObjectInfoUI.CloseMenu();
-            }
-            if (areaInfoUI.isShowing) {
-                areaInfoUI.CloseMenu();
-            }
-            regionInfoUI.SetData(region);
-            regionInfoUI.OpenMenu();
-        }
-    }
-    public void UpdateRegionInfo() {
-        if (regionInfoUI.isShowing) {
-            regionInfoUI.UpdateInfo();
-        }
-    }
-    #endregion
-
     #region World Events
-    private void OnWorldEventSpawned(BaseLandmark landmark, WorldEvent we) {
+    private void OnWorldEventSpawned(Region region, WorldEvent we) {
         //create world event popup
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(worldEventIconPrefab.name, Vector3.zero, Quaternion.identity, worldUIParent);
         WorldEventIcon icon = go.GetComponent<WorldEventIcon>();
-        icon.PlaceAt(landmark);
-        landmark.SetEventIcon(go);
+        icon.PlaceAt(region);
+        region.SetEventIcon(go);
     }
-    private void OnWorldEventDespawned(BaseLandmark landmark, WorldEvent we) {
-        ObjectPoolManager.Instance.DestroyObject(landmark.eventIconGO);
+    private void OnWorldEventDespawned(Region region, WorldEvent we) {
+        ObjectPoolManager.Instance.DestroyObject(region.eventIconGO);
+    }
+    #endregion
+
+    #region Yes/No
+    [Header("Yes or No Confirmation")]
+    [SerializeField] private GameObject yesNoGO;
+    [SerializeField] private GameObject yesNoCover;
+    [SerializeField] private TextMeshProUGUI yesNoHeaderLbl;
+    [SerializeField] private TextMeshProUGUI yesNoDescriptionLbl;
+    [SerializeField] private Button yesBtn;
+    [SerializeField] private Button noBtn;
+    [SerializeField] private Button closeBtn;
+    [SerializeField] private TextMeshProUGUI yesBtnLbl;
+    [SerializeField] private TextMeshProUGUI noBtnLbl;
+    [SerializeField] private UIHoverHandler yesBtnUnInteractableHoverHandler;
+    public void ShowYesNoConfirmation(string header, string question, System.Action onClickYesAction = null, System.Action onClickNoAction = null,
+        bool showCover = false, int layer = 21, string yesBtnText = "Yes", string noBtnText = "No", bool yesBtnInteractable = true, bool noBtnInteractable = true, bool pauseAndResume = false, 
+        bool yesBtnActive = true, bool noBtnActive = true, System.Action yesBtnInactiveHoverAction = null, System.Action yesBtnInactiveHoverExitAction = null) {
+        if (pauseAndResume) {
+            SetSpeedTogglesState(false);
+            Pause();
+        }
+        yesNoHeaderLbl.text = header;
+        yesNoDescriptionLbl.text = question;
+
+        yesBtnLbl.text = yesBtnText;
+        noBtnLbl.text = noBtnText;
+
+        yesBtn.gameObject.SetActive(yesBtnActive);
+        noBtn.gameObject.SetActive(noBtnActive);
+
+        yesBtn.interactable = yesBtnInteractable;
+        noBtn.interactable = noBtnInteractable;
+
+        //clear all listeners
+        yesBtn.onClick.RemoveAllListeners();
+        noBtn.onClick.RemoveAllListeners();
+        closeBtn.onClick.RemoveAllListeners();
+
+        //hide confirmation menu on click
+        yesBtn.onClick.AddListener(HideYesNoConfirmation);
+        noBtn.onClick.AddListener(HideYesNoConfirmation);
+        closeBtn.onClick.AddListener(HideYesNoConfirmation);
+
+        //resume last prog speed on click any btn
+        if (pauseAndResume) {
+            yesBtn.onClick.AddListener(ResumeLastProgressionSpeed);
+            noBtn.onClick.AddListener(ResumeLastProgressionSpeed);
+            closeBtn.onClick.AddListener(ResumeLastProgressionSpeed);
+        }
+
+        //specific actions
+        if (onClickYesAction != null) {
+            yesBtn.onClick.AddListener(onClickYesAction.Invoke);
+        }
+        if (onClickNoAction != null) {
+            noBtn.onClick.AddListener(onClickNoAction.Invoke);
+            closeBtn.onClick.AddListener(onClickNoAction.Invoke);
+        }
+
+        yesBtnUnInteractableHoverHandler.gameObject.SetActive(!yesBtn.interactable);
+        if (yesBtnInactiveHoverAction != null) {
+            yesBtnUnInteractableHoverHandler.SetOnHoverAction(yesBtnInactiveHoverAction.Invoke);
+        }
+        if (yesBtnInactiveHoverExitAction != null) {
+            yesBtnUnInteractableHoverHandler.SetOnHoverOutAction(yesBtnInactiveHoverExitAction.Invoke);
+        }
+
+        yesNoGO.SetActive(true);
+        yesNoGO.transform.SetSiblingIndex(layer);
+        yesNoCover.SetActive(showCover);
+    }
+    private void HideYesNoConfirmation() {
+        yesNoGO.SetActive(false);
+    }
+    #endregion
+
+    #region Important Notifications
+    [Header("Important Notification")]
+    [SerializeField] private ScrollRect importantNotifScrollView;
+    [SerializeField] private GameObject importantNotifPrefab;
+    public void ShowImportantNotification(GameDate date, string message, System.Action onClickAction) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(importantNotifPrefab.name, Vector3.zero, Quaternion.identity, importantNotifScrollView.content);
+        ImportantNotificationItem item = go.GetComponent<ImportantNotificationItem>();
+        item.Initialize(date, message, onClickAction);
     }
     #endregion
 }

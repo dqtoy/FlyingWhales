@@ -50,7 +50,7 @@ public class CurseCharacter : GoapAction {
     }
     protected override void MoveToDoAction(Character targetCharacter) {
         if (actor.specificLocation != targetStructure.location) {
-            actor.currentParty.GoToLocation(targetStructure.location, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(), null, poiTarget, targetTile);
+            actor.currentParty.GoToLocation(targetStructure.location.region, PATHFINDING_MODE.NORMAL, targetStructure, () => actor.PerformGoapAction(), null, poiTarget, targetTile);
         } else {
             //if the actor is already at the area where the target structure is, immediately do the action, since this action is performed in place
             actor.PerformGoapAction();

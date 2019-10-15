@@ -10,11 +10,21 @@ public class Dwelling : LocationStructure {
         get { return residents.ElementAtOrDefault(0); }
     }
 
+    //facilities
+    public Dictionary<FACILITY_TYPE, int> facilities { get; protected set; }
+
     public Dwelling(Area location, bool isInside) 
         : base(STRUCTURE_TYPE.DWELLING, location, isInside) {
         residents = new List<Character>();
         InitializeFacilities();
     }
+
+    public Dwelling(Area location, SaveDataLocationStructure data)
+    : base(location, data) {
+        residents = new List<Character>();
+        InitializeFacilities();
+    }
+
 
     #region Residents
     public void AddResident(Character character) {
@@ -93,6 +103,24 @@ public class Dwelling : LocationStructure {
         }
         return false;
     }
+    public override bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeAsset = true) {
+        if (base.AddPOI(poi, tileLocation, placeAsset)) {
+            if (poi is TileObject) {
+                UpdateFacilityValues();
+            }
+            return true;
+        }
+        return false;
+    }
+    public override bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
+        if (base.RemovePOI(poi, removedBy)) {
+            if (poi is TileObject) {
+                UpdateFacilityValues();
+            }
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Misc
@@ -123,7 +151,7 @@ public class Dwelling : LocationStructure {
     #endregion
 
     #region Facilities
-    protected override void InitializeFacilities() {
+    private void InitializeFacilities() {
         facilities = new Dictionary<FACILITY_TYPE, int>();
         FACILITY_TYPE[] facilityTypes = Utilities.GetEnumValues<FACILITY_TYPE>();
         for (int i = 0; i < facilityTypes.Length; i++) {
@@ -132,6 +160,95 @@ public class Dwelling : LocationStructure {
             }
         }
     }
-    #endregion
+    private void UpdateFacilityValues() {
+        if (facilities == null) {
+            return;
+        }
+        FACILITY_TYPE[] facilityTypes = Utilities.GetEnumValues<FACILITY_TYPE>();
+        for (int i = 0; i < facilityTypes.Length; i++) {
+            if (facilityTypes[i] != FACILITY_TYPE.NONE) {
+                facilities[facilityTypes[i]] = 0;
+            }
+        }
+        List<TileObject> objects = GetTileObjects();
+        for (int i = 0; i < objects.Count; i++) {
+            TileObject currObj = objects[i];
+            TileObjectData data;
+            if (TileObjectDB.TryGetTileObjectData(currObj.tileObjectType, out data)) {
+                if (data.providedFacilities != null) {
+                    for (int j = 0; j < data.providedFacilities.Length; j++) {
+                        ProvidedFacility facility = data.providedFacilities[j];
+                        facilities[facility.type] += facility.value;
+                    }
+                }
+            }
+        }
 
+    }
+    public bool HasUnoccupiedFurnitureSpot() {
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            if (currTile.objHere == null && currTile.hasFurnitureSpot) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public FACILITY_TYPE GetMostNeededValidFacility() {
+        //get the facility with the lowest value, that can be provided given the unoccupied furnitureSpots
+        int lowestValue = 99999;
+        FACILITY_TYPE lowestFacility = FACILITY_TYPE.NONE;
+        foreach (KeyValuePair<FACILITY_TYPE, int> keyValuePair in facilities) {
+            if (keyValuePair.Value < lowestValue && HasUnoccupiedFurnitureSpotsThatCanProvide(keyValuePair.Key)) {
+                lowestValue = keyValuePair.Value;
+                lowestFacility = keyValuePair.Key;
+            }
+        }
+        return lowestFacility;
+    }
+    public List<LocationGridTile> GetUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type) {
+        List<LocationGridTile> validTiles = new List<LocationGridTile>();
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            if (currTile.objHere == null && currTile.hasFurnitureSpot && currTile.furnitureSpot.allowedFurnitureTypes != null) {
+                for (int j = 0; j < currTile.furnitureSpot.allowedFurnitureTypes.Length; j++) {
+                    FURNITURE_TYPE furnitureType = currTile.furnitureSpot.allowedFurnitureTypes[j];
+                    TILE_OBJECT_TYPE tileObject = furnitureType.ConvertFurnitureToTileObject();
+                    if (tileObject.CanProvideFacility(type)) {
+                        validTiles.Add(currTile);
+                        break;
+                    }
+                }
+            }
+        }
+        return validTiles;
+    }
+    private bool HasUnoccupiedFurnitureSpotsThatCanProvide(FACILITY_TYPE type) {
+        for (int i = 0; i < tiles.Count; i++) {
+            LocationGridTile currTile = tiles[i];
+            if (currTile.objHere == null && currTile.hasFurnitureSpot && currTile.furnitureSpot.allowedFurnitureTypes != null) {
+                for (int j = 0; j < currTile.furnitureSpot.allowedFurnitureTypes.Length; j++) {
+                    FURNITURE_TYPE furnitureType = currTile.furnitureSpot.allowedFurnitureTypes[j];
+                    TILE_OBJECT_TYPE tileObject = furnitureType.ConvertFurnitureToTileObject();
+                    if (tileObject.CanProvideFacility(type)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    /// <summary>
+    /// Does this dwelling have any facilities that are at 0?
+    /// </summary>
+    /// <returns></returns>
+    public bool HasFacilityDeficit() {
+        foreach (KeyValuePair<FACILITY_TYPE, int> kvp in facilities) {
+            if (kvp.Value <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    #endregion
 }

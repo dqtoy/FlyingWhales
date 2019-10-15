@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InflictUnfaithfulness : PlayerJobAction {
+public class Unfaithfulness : PlayerJobAction {
 
-    public InflictUnfaithfulness() : base(INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS) {
+    public Unfaithfulness() : base(INTERVENTION_ABILITY.UNFAITHFULNESS) {
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.CRIME);
@@ -104,7 +104,8 @@ public class InflictUnfaithfulness : PlayerJobAction {
     }
 }
 
-public class InflictUnfaithfulnessData : PlayerJobActionData {
-    public override string name { get { return "Inflict Unfaithfulness"; } }
-    public override string description { get { return "Makes a character mory horny and prone to have affairs."; } }
+public class UnfaithfulnessData : PlayerJobActionData {
+    public override string name { get { return "Unfaithfulness"; } }
+    public override string description { get { return "Makes a character more lustful and prone to have affairs."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
 }

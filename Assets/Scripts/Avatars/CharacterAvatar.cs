@@ -24,7 +24,7 @@ public class CharacterAvatar : MonoBehaviour {
 
     protected Party _party;
 
-    public Area targetLocation { get; protected set; }
+    public Region targetLocation { get; protected set; }
     public LocationStructure targetStructure { get; protected set; }
     public LocationGridTile targetTile { get; protected set; }
     public IPointOfInterest targetPOI { get; protected set; }
@@ -61,8 +61,7 @@ public class CharacterAvatar : MonoBehaviour {
                 return _isVisualShowing;
             } else {
                 //check if this characters current location area is being tracked
-                if (party.specificLocation != null 
-                    && party.specificLocation.isBeingTracked) {
+                if (party.specificLocation != null ) { //&& party.specificLocation.isBeingTracked
                     return true;
                 }
             }
@@ -117,7 +116,7 @@ public class CharacterAvatar : MonoBehaviour {
     #endregion
 
     #region Pathfinding
-    public void SetTarget(Area target, LocationStructure structure, IPointOfInterest poi, LocationGridTile tile) {
+    public void SetTarget(Region target, LocationStructure structure, IPointOfInterest poi, LocationGridTile tile) {
         targetLocation = target;
         targetStructure = structure;
         targetPOI = poi;
@@ -215,12 +214,15 @@ public class CharacterAvatar : MonoBehaviour {
         _party.specificLocation.RemoveCharacterFromLocation(_party);
         targetLocation.AddCharacterToLocation(_party.owner);
 
-        //place marker at edge tile of target location
-        LocationGridTile entrance = targetLocation.GetRandomUnoccupiedEdgeTile();
         _party.owner.marker.ClearHostilesInRange();
         _party.owner.marker.ClearAvoidInRange();
         _party.owner.marker.ClearPOIsInVisionRange();
-        _party.owner.marker.PlaceMarkerAt(entrance);
+
+        //place marker at edge tile of target location
+        if (targetLocation.area != null) {
+            LocationGridTile entrance = targetLocation.area.GetRandomUnoccupiedEdgeTile();
+            _party.owner.marker.PlaceMarkerAt(entrance);
+        }
         //_party.owner.marker.gameObject.SetActive(true);
 
         _party.owner.marker.pathfindingAI.SetIsStopMovement(true);
@@ -315,7 +317,7 @@ public class CharacterAvatar : MonoBehaviour {
         HasArrivedAtTargetLocation();
     }
     public virtual void HasArrivedAtTargetLocation() {
-		if (_party.specificLocation.coreTile.id == targetLocation.id) {
+		if (_party.specificLocation.coreTile.id == targetLocation.coreTile.id) {
             if (!this._hasArrived) {
                 SetIsTravelling(false);
                 //_trackTarget = null;

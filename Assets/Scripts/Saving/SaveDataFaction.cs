@@ -9,6 +9,7 @@ public class SaveDataFaction {
     public string name;
     public string description;
     public string initialLeaderClass;
+    public string requirementForJoining;
     public int level;
     public int inventoryTaskWeight;
     public bool isPlayerFaction;
@@ -19,7 +20,7 @@ public class SaveDataFaction {
     public ColorSave factionColor;
     public List<int> ownedLandmarkIDs;
     //public List<int> characterIDs;
-    public List<int> ownedAreaIDs;
+    public List<int> ownedRegionIDs;
     //public List<RACE> recruitableRaces { get; protected set; }
     //public List<RACE> startingFollowers { get; protected set; }
     //public Dictionary<Faction, FactionRelationship> relationships { get; protected set; }
@@ -30,6 +31,9 @@ public class SaveDataFaction {
     //public WeightedDictionary<AreaCharacterClass> additionalClassWeights { get; private set; }
     public bool isActive;
     //public List<Log> history { get; private set; }
+
+    public SaveDataQuest activeQuest;
+    public bool hasActiveQuest;
 
     public void Save(Faction faction) {
         id = faction.id;
@@ -48,6 +52,7 @@ public class SaveDataFaction {
         size = faction.size;
         factionType = faction.factionType;
         isActive = faction.isActive;
+        requirementForJoining = faction.requirementForJoining;
 
         ownedLandmarkIDs = new List<int>();
         for (int i = 0; i < faction.ownedLandmarks.Count; i++) {
@@ -59,9 +64,15 @@ public class SaveDataFaction {
         //    characterIDs.Add(faction.characters[i].id);
         //}
 
-        ownedAreaIDs = new List<int>();
-        for (int i = 0; i < faction.ownedAreas.Count; i++) {
-            ownedAreaIDs.Add(faction.ownedAreas[i].id);
+        ownedRegionIDs = new List<int>();
+        for (int i = 0; i < faction.ownedRegions.Count; i++) {
+            ownedRegionIDs.Add(faction.ownedRegions[i].id);
+        }
+
+        hasActiveQuest = faction.activeQuest != null;
+        if (hasActiveQuest) {
+            activeQuest = new SaveDataQuest();
+            activeQuest.Save(faction.activeQuest);
         }
     }
 
@@ -78,9 +89,18 @@ public class SaveDataFaction {
             }
         }
 
-        for (int i = 0; i < ownedAreaIDs.Count; i++) {
-            Area area = LandmarkManager.Instance.GetAreaByID(ownedAreaIDs[i]);
-            LandmarkManager.Instance.OwnArea(faction, faction.race, area);
+        for (int i = 0; i < ownedRegionIDs.Count; i++) {
+            Region region = GridMap.Instance.GetRegionByID(ownedRegionIDs[i]);
+            LandmarkManager.Instance.OwnRegion(faction, faction.race, region);
+        }
+    }
+
+    public void LoadFactionActiveQuest() {
+        if (hasActiveQuest) {
+            Quest quest = activeQuest.Load();
+            if (activeQuest.isActivated) {
+                quest.factionOwner.SetActiveQuest(quest);
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -11,8 +12,9 @@ public class WorldEvent  {
     public int duration { get; protected set; }
     public WORLD_EVENT eventType { get; protected set; }
     public string name { get; private set; }
-    public string description { get; private set; }
+    public string description { get; protected set; }
     public bool isUnique { get; protected set; } //should this event only spawn once?
+    public WORLD_EVENT_EFFECT[] eventEffects { get; protected set; }
     private bool hasSuccessfullyExecutedOnce;
     private bool isCurrentlySpawned;
 
@@ -20,16 +22,16 @@ public class WorldEvent  {
         this.eventType = eventType;
         name = Utilities.NormalizeStringUpperCaseFirstLetters(eventType.ToString());
         description = "This is a test description";
-        duration = 6 * GameManager.ticksPerHour;
+        duration = GameManager.Instance.GetTicksBasedOnHour(6);
     }
 
     #region Virtuals
     /// <summary>
     /// Spawn an event at a given landmark. Also execute any effects that the event has upon spawn.
     /// </summary>
-    /// <param name="landmark">The landmark this event is spawned at.</param>
+    /// <param name="region">The region this event is spawned at.</param>
     /// <param name="afterEffectScheduleID">The schedule id that this event has created for its after effect</param>
-    public virtual void Spawn(BaseLandmark landmark, IWorldEventData eventData, out string afterEffectScheduleID) {
+    public virtual void Spawn(Region region, Character spawner, IWorldEventData eventData, out string afterEffectScheduleID) {
         GameDate startDate = GameManager.Instance.Today();
         GameDate endDate = GameManager.Instance.Today().AddTicks(duration);
 
@@ -37,83 +39,157 @@ public class WorldEvent  {
         eventData.SetEndDate(endDate);
 
         //once spawned, schedule the after effect of this event to execute after a set amount of ticks (duration). NOTE: This schedule should be cancelled once the landmark it spawned at 
-        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => ExecuteAfterEffect(landmark), this);
-        TimerHubUI.Instance.AddItem(this.name + " event at " + landmark.tileLocation.region.name, duration, () => UIManager.Instance.ShowRegionInfo(landmark.tileLocation.region));
-        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + landmark.tileLocation.region.name);
+        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => TryExecuteAfterEffect(region, spawner), this);
+        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + region.name);
         //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
         //AddDefaultFillersToLog(log, landmark);
         isCurrentlySpawned = true;
     }
-    public virtual void Load(BaseLandmark landmark, IWorldEventData eventData, out string afterEffectScheduleID) {
+    public virtual void Load(Region region, Character spawner, IWorldEventData eventData, out string afterEffectScheduleID) {
         GameDate startDate = GameManager.Instance.Today();
         GameDate endDate = eventData.endDate;
 
         int ticksDiff = GameManager.Instance.GetTicksDifferenceOfTwoDates(endDate, startDate);
         //once spawned, schedule the after effect of this event to execute after a set amount of ticks (duration). NOTE: This schedule should be cancelled once the landmark it spawned at 
-        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => ExecuteAfterEffect(landmark), this);
-        TimerHubUI.Instance.AddItem(this.name + " event at " + landmark.tileLocation.region.name, ticksDiff, () => UIManager.Instance.ShowRegionInfo(landmark.tileLocation.region));
-        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + landmark.tileLocation.region.name);
+        afterEffectScheduleID = SchedulingManager.Instance.AddEntry(endDate, () => TryExecuteAfterEffect(region, spawner), this);
+        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " spawned at " + region.name);
         //Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "spawn");
         //AddDefaultFillersToLog(log, landmark);
         isCurrentlySpawned = true;
     }
-    public virtual void ExecuteAfterEffect(BaseLandmark landmark) {
-        landmark.WorldEventFinished(this);
-        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " after effect executed at " + landmark.tileLocation.region.name);
+    public void TryExecuteAfterEffect(Region region, Character spawner) {
+        if (region.eventData.interferingCharacter != null) {
+            //there is an interfering character.
+            if (TryInterfere(spawner, region.eventData.interferingCharacter)) {
+                //interfering character succeeded
+                ExecuteFailEffect(region, spawner);
+            } else {
+                //interfering character failed
+                region.eventData.interferingCharacter.Death("Interfere_Attacking", responsibleCharacter: spawner, deathLogFillers: new LogFiller[] {
+                    new LogFiller(null, this.name, LOG_IDENTIFIER.STRING_1),
+                    new LogFiller(region, region.name, LOG_IDENTIFIER.LANDMARK_1),
+                });
+                ExecuteAfterEffect(region, spawner);
+            }
+        } else {
+            //there are no interfering characters.
+            ExecuteAfterEffect(region, spawner);
+        }
+    }
+    protected virtual void ExecuteFailEffect(Region region, Character spawner) {
+        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " fail effect executed at " + region.name);
+        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", "Generic", "failed");
+        log.AddToFillers(null, this.name, LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
+        log.AddToFillers(region.eventData.interferingCharacter, region.eventData.interferingCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotification(log);
+        region.WorldEventFailed(this);
+    }
+    protected virtual void ExecuteAfterEffect(Region region, Character spawner) {
+        region.WorldEventFinished(this);
+        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " after effect executed at " + region.name);
         hasSuccessfullyExecutedOnce = true;
     }
-    public virtual void ExecuteAfterInvasionEffect(BaseLandmark landmark) {
-        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " after invasion effect executed at " + landmark.tileLocation.region.name);
+    public virtual void ExecuteAfterInvasionEffect(Region region) {
+        Debug.Log(GameManager.Instance.TodayLogString() + this.name + " after invasion effect executed at " + region.name);
         if (LocalizationManager.Instance.HasLocalizedValue("WorldEvent", this.GetType().ToString(), "after_invasion_effect")) {
             Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_invasion_effect");
-            AddDefaultFillersToLog(log, landmark);
+            AddDefaultFillersToLog(log, region);
             log.AddLogToInvolvedObjects();
             PlayerManager.Instance.player.ShowNotification(log);
         }
     }
-    public virtual bool CanSpawnEventAt(BaseLandmark landmark) {
+    public virtual bool CanSpawnEventAt(Region region, Character spawner) {
         if (this.isUnique && (this.hasSuccessfullyExecutedOnce || this.isCurrentlySpawned)) {
             return false; //if this event is unique and has been spawned once or is currently spawned, do not allow it to spawn again
         }
         return true;
     }
-    public virtual Character GetCharacterThatCanSpawnEvent(BaseLandmark landmark) {
-        return null;
-    }
-    public virtual void OnDespawn(BaseLandmark landmark) {
+    public virtual void OnDespawn(Region region) {
         isCurrentlySpawned = false;
     }
-    public virtual IWorldEventData ConstructEventDataForLandmark(BaseLandmark landmark) {
+    public virtual IWorldEventData ConstructEventDataForLandmark(Region region) {
         IWorldEventData data = new DefaultWorldEventData() {
-            spawner = landmark.eventSpawnedBy
+            spawner = region.eventSpawnedBy
         };
         return data;
     }
-    public virtual bool IsBasicEvent() {
-        return false;
+    #endregion
+
+    #region Utilities
+    protected void AddDefaultFillersToLog(Log log, Region region) {
+        log.AddToFillers(region.eventSpawnedBy, region.eventSpawnedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(region, region.name, LOG_IDENTIFIER.LANDMARK_1);
+    }
+    public bool CanProvideNeededEffects(WORLD_EVENT_EFFECT[] neededEffects) {
+        if (neededEffects != null && eventEffects != null) {
+            for (int i = 0; i < neededEffects.Length; i++) {
+                if (eventEffects.Contains(neededEffects[i])) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
     }
     #endregion
 
-    protected void AddDefaultFillersToLog(Log log, BaseLandmark landmark) {
-        log.AddToFillers(landmark.eventSpawnedBy, landmark.eventSpawnedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(landmark.tileLocation.region, landmark.tileLocation.region.name, LOG_IDENTIFIER.LANDMARK_1);
+    #region Interference
+    /// <summary>
+    /// Execute interfere chances.
+    /// </summary>
+    /// <param name="eventSpawner">The character that spawned this event.</param>
+    /// <param name="interferer">The character interfering with this event.</param>
+    /// <returns>Whether the interference was successful or not.</returns>
+    private bool TryInterfere(Character eventSpawner, Character interferer) {
+        //If Minion Level is lower than character's level: 20% chance to fail and die per level lower
+        //If Minion Level is equal to character's level: 5% chance to fail and die
+        //If Minion Level is higher than character's level: 0% chance to fail and die
+        string summary = interferer.name + " will try to interfere with " + this.name + " event spawned by " + eventSpawner.name;
+        int deathChance = 0;
+        if (interferer.level < eventSpawner.level) {
+            int difference = eventSpawner.level - interferer.level;
+            deathChance = 20 * difference;
+        } else if (interferer.level == eventSpawner.level) {
+            deathChance = 5;
+        } else {
+            deathChance = 0;
+        }
+        int roll = Random.Range(0, 100);
+        summary += "\nDeath chance is: " + deathChance.ToString() + ". Roll is: " + roll.ToString();
+        if (roll < deathChance) {
+            //interferer died
+            summary += "\n" + interferer.name + " failed";
+            Debug.Log(summary);
+            return false;
+        } else {
+            //interferer succeeded
+            summary += "\n" + interferer.name + " succeeded";
+            Debug.Log(summary);
+            return true;
+
+        }
     }
+    #endregion
 }
 
 //This is base class where data for each individual landmark is stored.
 public interface IWorldEventData {
+    Character interferingCharacter { get; }
     Character[] involvedCharacters { get; }
     GameDate endDate { get; }
     GameDate startDate { get; }
 
     void SetEndDate(GameDate date);
     void SetStartDate(GameDate date);
-
+    void SetInterferingCharacter(Character character);
 }
 
 public class DefaultWorldEventData : IWorldEventData {
     public Character spawner;
-    public Character[] involvedCharacters { get { return new Character[] { spawner }; } }
+    public Character[] involvedCharacters { get { return new Character[] { spawner }; } } //does not include interfering character
+    public Character interferingCharacter { get; set; } //the character interfering with this event. This should be a minion.
 
     public GameDate endDate { get; private set; }
     public GameDate startDate { get; private set; }
@@ -123,6 +199,10 @@ public class DefaultWorldEventData : IWorldEventData {
     }
     public void SetStartDate(GameDate date) {
         startDate = date;
+    }
+
+    public void SetInterferingCharacter(Character character) {
+        interferingCharacter = character;
     }
 }
 
@@ -144,6 +224,9 @@ public class SaveDataDefaultWorldEventData : SaveDataWorldEventData {
         DefaultWorldEventData worldEventData = new DefaultWorldEventData() {
             spawner = CharacterManager.Instance.GetCharacterByID(spawnerID),
         };
+        if (interferingCharacterID != -1) {
+            worldEventData.interferingCharacter = CharacterManager.Instance.GetCharacterByID(interferingCharacterID);
+        }
         worldEventData.SetEndDate(new GameDate(endMonth, endDay, endYear, endTick));
         worldEventData.SetStartDate(new GameDate(currentMonth, currentDay, currentYear, currentTick));
 
@@ -154,6 +237,7 @@ public class SaveDataDefaultWorldEventData : SaveDataWorldEventData {
 [System.Serializable]
 public class SaveDataWorldEventData {
     public int[] involvedCharactersID;
+    public int interferingCharacterID;
 
     public int currentMonth;
     public int currentDay;
@@ -180,6 +264,12 @@ public class SaveDataWorldEventData {
         for (int i = 0; i < eventData.involvedCharacters.Length; i++) {
             involvedCharactersID[i] = eventData.involvedCharacters[i].id;
         }
+        if (eventData.interferingCharacter != null) {
+            interferingCharacterID = eventData.interferingCharacter.id;
+        } else {
+            interferingCharacterID = -1;
+        }
+       
     }
     public virtual IWorldEventData Load() {
         return null;

@@ -133,22 +133,25 @@ public class Biomes : MonoBehaviour {
             sortingOrder = (mapHeight -  yCoordinate) * 10; //10 is the number of sorting order between rows
         }
 
-        if (PlayerManager.Instance.player != null &&  PlayerManager.Instance.player.playerArea != null 
-            && PlayerManager.Instance.player.playerArea.tiles.Contains(currentHexTile)) {
+        if (PlayerManager.Instance.player != null && PlayerManager.Instance.player.playerFaction == currentHexTile.region.owner) {
             return;
         }
 #endif
 
         LoadBeachVisuals(currentHexTile);
-        if (currentHexTile.elevationType == ELEVATION.PLAIN) {
-            LoadPlainTileVisuals(currentHexTile, sortingOrder);
-        } else if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
-            LoadMountainTileVisuals(currentHexTile, sortingOrder);
-        } else if (currentHexTile.elevationType == ELEVATION.TREES) {
-            LoadTreeTileVisuals(currentHexTile, sortingOrder);
+        if (currentHexTile.isCorrupted) {
+            CorruptTileVisuals(currentHexTile);
         } else {
-            //For Water
-            LoadWaterTileVisuals(currentHexTile, sortingOrder);
+            if (currentHexTile.elevationType == ELEVATION.PLAIN) {
+                LoadPlainTileVisuals(currentHexTile, sortingOrder);
+            } else if (currentHexTile.elevationType == ELEVATION.MOUNTAIN) {
+                LoadMountainTileVisuals(currentHexTile, sortingOrder);
+            } else if (currentHexTile.elevationType == ELEVATION.TREES) {
+                LoadTreeTileVisuals(currentHexTile, sortingOrder);
+            } else {
+                //For Water
+                LoadWaterTileVisuals(currentHexTile, sortingOrder);
+            }
         }
     }
     public void CorruptTileVisuals(HexTile tile) {
@@ -159,7 +162,7 @@ public class Biomes : MonoBehaviour {
         }else if (tile.elevationType == ELEVATION.TREES) {
             LoadCorruptedTreeTileVisuals(tile);
         }
-        if (tile.landmarkOnTile != null && tile.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.DEMONIC_PORTAL) {
+        if (tile.landmarkOnTile != null && tile.landmarkOnTile.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL) {
             LoadCorruptedStructureVisuals(tile);
         }
     }

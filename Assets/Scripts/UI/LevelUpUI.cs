@@ -33,8 +33,10 @@ public class LevelUpUI : MonoBehaviour {
             PlayerUI.Instance.AddPendingUI(() => ShowLevelUpUI(minionToLevelUp, identifierToLevelUp));
             return;
         }
-        UIManager.Instance.Pause();
-        UIManager.Instance.SetSpeedTogglesState(false);
+        if (!GameManager.Instance.isPaused) {
+            UIManager.Instance.Pause();
+            UIManager.Instance.SetSpeedTogglesState(false);
+        }
         Utilities.DestroyChildren(choicesParent);
         UpdateMinionToLevelUp(minionToLevelUp, identifierToLevelUp);
 
@@ -50,11 +52,11 @@ public class LevelUpUI : MonoBehaviour {
          //    }
          //} 
          else if (identifierToLevelUp.ToLower() == "summon_slot") {
-            for (int i = 0; i < PlayerManager.Instance.player.summonSlots.Length; i++) {
+            for (int i = 0; i < PlayerManager.Instance.player.summonSlots.Count; i++) {
                 choices.Add(PlayerManager.Instance.player.summonSlots[i]);
             }
         } else if (identifierToLevelUp.ToLower() == "artifact_slot") {
-            for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Length; i++) {
+            for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Count; i++) {
                 choices.Add(PlayerManager.Instance.player.artifactSlots[i]);
             }
         }
@@ -85,7 +87,7 @@ public class LevelUpUI : MonoBehaviour {
             if (identifierToLevelUp.ToLower() == "combat ability") {
                 titleText.text = "Gain a level for a Combat Ability!";
             } else if (identifierToLevelUp.ToLower() == "intervention ability") {
-                titleText.text = "Gain a level for an Intervention Ability!";
+                titleText.text = "Gain a level for a Spell!";
             } else if (identifierToLevelUp.ToLower() == "summon_slot") {
                 titleText.text = "Unlock or Level Up a Summon Slot!";
             } else if (identifierToLevelUp.ToLower() == "artifact_slot") {
@@ -99,8 +101,7 @@ public class LevelUpUI : MonoBehaviour {
     private void Close() {
         this.gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
-            UIManager.Instance.SetSpeedTogglesState(true);
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
         
     }
@@ -118,18 +119,18 @@ public class LevelUpUI : MonoBehaviour {
                 (selectedObj as PlayerJobAction).LevelUp();
             } else if (selectedObj is SummonSlot) {
                 SummonSlot summonSlot = selectedObj as SummonSlot;
-                if (summonSlot.isLocked) {
-                    PlayerManager.Instance.player.AdjustSummonSlot(1);
-                } else {
+                //if (summonSlot.isLocked) {
+                //    PlayerManager.Instance.player.IncreaseSummonSlot();
+                //} else {
                     summonSlot.LevelUp();
-                }
+                //}
             } else if (selectedObj is ArtifactSlot) {
                 ArtifactSlot artifactSlot = selectedObj as ArtifactSlot;
-                if (artifactSlot.isLocked) {
-                    PlayerManager.Instance.player.AdjustArtifactSlot(1);
-                } else {
+                //if (artifactSlot.isLocked) {
+                //    PlayerManager.Instance.player.IncreaseArtifactSlot();
+                //} else {
                     artifactSlot.LevelUp();
-                }
+                //}
             }
         }
         Close();

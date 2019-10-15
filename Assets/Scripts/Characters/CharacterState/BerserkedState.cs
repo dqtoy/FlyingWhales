@@ -12,7 +12,7 @@ public class BerserkedState : CharacterState {
         characterState = CHARACTER_STATE.BERSERKED;
         stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 100;
-        SetAreaCombatsLethal(true);
+        SetAreCombatsLethal(true);
     }
 
     #region Overrides
@@ -21,6 +21,9 @@ public class BerserkedState : CharacterState {
         stateComponent.character.AdjustDoNotGetLonely(1);
         stateComponent.character.AdjustDoNotGetTired(1);
         stateComponent.character.AddTrait("Berserked");
+        BerserkBuff berserkBuff = new BerserkBuff();
+        berserkBuff.SetLevel(level);
+        stateComponent.character.AddTrait(berserkBuff);
         base.StartState();
     }
     protected override void EndState() {
@@ -31,6 +34,7 @@ public class BerserkedState : CharacterState {
         stateComponent.character.AdjustHappiness(50);
         stateComponent.character.AdjustTiredness(50);
         stateComponent.character.RemoveTrait("Berserked");
+        stateComponent.character.RemoveTrait("Berserk Buff");
     }
     protected override void DoMovementBehavior() {
         base.DoMovementBehavior();
@@ -52,16 +56,18 @@ public class BerserkedState : CharacterState {
             //return true;
         }else if (targetPOI is TileObject) {
             TileObject target = targetPOI as TileObject;
-            if(target.tileObjectType != TILE_OBJECT_TYPE.TREE && target.poiGoapActions.Contains(INTERACTION_TYPE.TILE_OBJECT_DESTROY)) {
+            if(target.tileObjectType != TILE_OBJECT_TYPE.TREE_OBJECT && target.poiGoapActions.Contains(INTERACTION_TYPE.TILE_OBJECT_DESTROY)) {
                 int chance = UnityEngine.Random.Range(0, 100);
                 if (chance < 20) {
                     GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.TILE_OBJECT_DESTROY, stateComponent.character, targetPOI);
                     if (goapAction.targetTile != null) {
                         SetCurrentlyDoingAction(goapAction);
-                        goapAction.CreateStates();
-                        stateComponent.character.SetCurrentAction(goapAction);
-                        stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
                         PauseState();
+                        goapAction.CreateStates();
+                        goapAction.SetEndAction(BerserkAgain);
+                        goapAction.DoAction();
+                        //stateComponent.character.SetCurrentAction(goapAction);
+                        //stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
                     } else {
                         Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't destroy tile object " + targetPOI.name + " because there is no tile to go to!");
                     }
@@ -74,9 +80,13 @@ public class BerserkedState : CharacterState {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ITEM_DESTROY, stateComponent.character, targetPOI);
                 if (goapAction.targetTile != null) {
                     goapAction.CreateStates();
-                    stateComponent.character.SetCurrentAction(goapAction);
-                    stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
                     PauseState();
+                    goapAction.SetEndAction(BerserkAgain);
+                    goapAction.DoAction();
+                    
+                    //stateComponent.character.SetCurrentAction(goapAction);
+                    //stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtLocation);
+                    
                 } else {
                     Debug.LogWarning(GameManager.Instance.TodayLogString() + " " + stateComponent.character.name + " can't destroy item " + targetPOI.name + " because there is no tile to go to!");
                 }
@@ -85,20 +95,27 @@ public class BerserkedState : CharacterState {
         }
         return base.OnEnterVisionWith(targetPOI);
     }
-    public override bool InVisionPOIsOnStartState() {
+    public override bool ProcessInVisionPOIsOnStartState() {
         for (int i = 0; i < stateComponent.character.marker.avoidInRange.Count; i++) {
-            Character hostile = stateComponent.character.marker.avoidInRange[i];
-            if (stateComponent.character.marker.inVisionCharacters.Contains(hostile)) {
-                stateComponent.character.marker.AddHostileInRange(hostile, checkHostility: false, processCombatBehavior: false, isLethal: areCombatsLethal);
+            IPointOfInterest hostile = stateComponent.character.marker.avoidInRange[i];
+            if (hostile is Character) {
+                Character hostileChar = hostile as Character;
+                if (stateComponent.character.marker.inVisionCharacters.Contains(hostileChar)) {
+                    stateComponent.character.marker.AddHostileInRange(hostileChar, checkHostility: false, processCombatBehavior: false, isLethal: areCombatsLethal);
+                } else {
+                    stateComponent.character.marker.RemoveAvoidInRange(hostile, false);
+                    i--;
+                }
             } else {
                 stateComponent.character.marker.RemoveAvoidInRange(hostile, false);
                 i--;
             }
+            
         }
         stateComponent.character.marker.ClearAvoidInRange(false);
 
         bool hasProcessedCombatBehavior = false;
-        if (base.InVisionPOIsOnStartState()) {
+        if (base.ProcessInVisionPOIsOnStartState()) {
             for (int i = 0; i < stateComponent.character.marker.inVisionPOIs.Count; i++) {
                 IPointOfInterest poi = stateComponent.character.marker.inVisionPOIs[i];
                 if (OnEnterVisionWith(poi)) {
@@ -123,15 +140,15 @@ public class BerserkedState : CharacterState {
     //        }
     //    }
     //}
-    public override void AfterExitingState() {
-        base.AfterExitingState();
-        Spooked spooked = stateComponent.character.GetNormalTrait("Spooked") as Spooked;
-        if (spooked != null) {
-            //If has spooked, add them in avoid list and transfer all in engage list to flee list
-            stateComponent.character.marker.AddAvoidsInRange(spooked.terrifyingCharacters, false);
-            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, stateComponent.character);
-        }
-    }
+    //public override void AfterExitingState() {
+    //    base.AfterExitingState();
+    //    Spooked spooked = stateComponent.character.GetNormalTrait("Spooked") as Spooked;
+    //    if (spooked != null) {
+    //        //If has spooked, add them in avoid list and transfer all in engage list to flee list
+    //        stateComponent.character.marker.AddAvoidsInRange(spooked.terrifyingCharacters, false);
+    //        Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, stateComponent.character);
+    //    }
+    //}
     #endregion
 
     private void OnArriveAtLocation() {
@@ -166,7 +183,7 @@ public class BerserkedState : CharacterState {
     public void SetHostileChecker(System.Func<Character, bool> hostileChecker) {
         this.hostileChecker = hostileChecker;
     }
-    public void SetAreaCombatsLethal(bool state) {
+    public void SetAreCombatsLethal(bool state) {
         areCombatsLethal = state;
     }
 }

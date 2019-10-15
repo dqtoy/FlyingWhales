@@ -14,7 +14,7 @@ public class CharacterSaveData {
     public LOCATION_IDENTIFIER locationType;
     public int locationID;
     public int homeID;
-    public int homeAreaID;
+    public int homeRegionID;
     public int factionID;
     public PortraitSettings portraitSettings;
     public List<string> equipmentData;
@@ -43,10 +43,10 @@ public class CharacterSaveData {
             locationID = -1;
         }
 
-        if (character.homeArea != null) {
-            homeAreaID = character.homeArea.id;
+        if (character.homeRegion != null) {
+            homeRegionID = character.homeRegion.id;
         } else {
-            homeAreaID = -1;
+            homeRegionID = -1;
         }
 
         if (character.faction != null) {

@@ -37,7 +37,8 @@ public class CarryCorpse : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         //rather than checking location check if the character is not in anyone elses party and is still active
-        if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
+        Character target = poiTarget as Character;
+        if (!isTargetMissing && target.IsInOwnParty()) {
             SetState("Carry Success");
         } else {
             SetState("Target Missing");
@@ -67,9 +68,9 @@ public class CarryCorpse : GoapAction {
 
     #region State Effects
     public void AfterCarrySuccess() {
-        if (parentPlan != null && parentPlan.job != null) {
-            parentPlan.job.SetCannotOverrideJob(true);//Carry should not be overrideable if the character is actually already carrying another character.
-        }
+        //if (parentPlan != null && parentPlan.job != null) {
+        //    parentPlan.job.SetCannotOverrideJob(true);//Carry should not be overrideable if the character is actually already carrying another character.
+        //}
         Character target = poiTarget as Character;
         actor.ownParty.AddCharacter(target);
     }

@@ -26,10 +26,14 @@ public class AreaMapCameraMove : MonoBehaviour {
     [SerializeField] private bool allowZoom = true;
 
     [Header("Dragging")]
-    private float dragThreshold = 0.15f;
+    private float dragThreshold = 0.35f;
     private float currDragTime;
     private Vector3 dragOrigin;
     private bool isDragging = false;
+
+    [Header("Edging")]
+    [SerializeField] private float edgingSpeed = 30f;
+    private bool allowEdgePanning = false;
 
     private float previousCameraFOV;
 
@@ -59,12 +63,13 @@ public class AreaMapCameraMove : MonoBehaviour {
     private void Awake(){
 		Instance = this;
 	}
-    private void LateUpdate() {
+    private void Update() {
         if (!cameraControlEnabled) {
             return;
         }
         ArrowKeysMovement();
         Dragging();
+        Edging();
         //Zooming();
         Targetting();
         ConstrainCameraBounds();
@@ -272,6 +277,37 @@ public class AreaMapCameraMove : MonoBehaviour {
         MAX_X = map.cameraBounds.z;
         MAX_Y = y + map.cameraBounds.w;
 
+    }
+    private void Edging() {
+        if (!allowEdgePanning || isDragging) {
+            return;
+        }
+        bool isEdging = false;
+        Vector3 newPos = transform.position;
+        if (Input.mousePosition.x > Screen.width) {
+            newPos.x += edgingSpeed * Time.deltaTime;
+            isEdging = true;
+        }
+        if (Input.mousePosition.x < 0) {
+            newPos.x -= edgingSpeed * Time.deltaTime;
+            isEdging = true;
+        }
+
+        if (Input.mousePosition.y > Screen.height) {
+            newPos.y += edgingSpeed * Time.deltaTime;
+            isEdging = true;
+        }
+        if (Input.mousePosition.y < 0) {
+            newPos.y -= edgingSpeed * Time.deltaTime;
+            isEdging = true;
+        }
+        if (isEdging) {
+            target = null; //reset target
+        }
+        transform.position = newPos;
+    }
+    public void AllowEdgePanning(bool state) {
+        allowEdgePanning = state;
     }
     #endregion
 

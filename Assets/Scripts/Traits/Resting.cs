@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Resting : Trait {
+    public override bool isNotSavable {
+        get { return true; }
+    }
 
     private Character _character;
-    public Lycanthropy lycanthropyTrait { get; private set; }
+    public Lycanthrope lycanthropyTrait { get; private set; }
 
     public bool hasTransformed { get; private set; }
     public Resting() {
@@ -26,7 +29,7 @@ public class Resting : Trait {
     public override void OnAddTrait(ITraitable sourceCharacter) {
         if (sourceCharacter is Character) {
             _character = sourceCharacter as Character;
-            lycanthropyTrait = _character.GetNormalTrait("Lycanthropy") as Lycanthropy;
+            lycanthropyTrait = _character.GetNormalTrait("Lycanthrope") as Lycanthrope;
             //if(lycanthropyTrait != null) {
             //    Messenger.AddListener(Signals.HOUR_STARTED, CheckForLycanthropy);
             //}
@@ -51,7 +54,7 @@ public class Resting : Trait {
         int chance = UnityEngine.Random.Range(0, 100);
         if(_character.race == RACE.WOLF) {
             //Turn back to normal form
-            if (forceTransform || chance < 40) {
+            if (forceTransform || chance < 1) {
                 lycanthropyTrait.PlanRevertToNormal();
                 _character.currentAction.currentState.EndPerTickEffect();
                 hasTransformed = true;

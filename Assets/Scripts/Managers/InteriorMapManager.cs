@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Experimental.GlobalIllumination;
 using UnityEngine.Tilemaps;
 
 public class InteriorMapManager : MonoBehaviour {
@@ -16,7 +17,7 @@ public class InteriorMapManager : MonoBehaviour {
     public GameObject ghostCollisionTriggerPrefab;
     public GameObject characterCollisionTriggerPrefab;
 
-    private List<AreaInnerTileMap> areaMaps;
+    public List<AreaInnerTileMap> areaMaps { get; private set; }
     private Vector3 nextMapPos = Vector3.zero;
     public bool isAnAreaMapShowing {
         get {
@@ -48,13 +49,17 @@ public class InteriorMapManager : MonoBehaviour {
     
     [Header("Pathfinding")]
     [SerializeField] private AstarPath pathfinder;
-    private const float nodeSize = 0.2f;
+    private const float nodeSize = 0.3f;
     public const int Default_Character_Sorting_Order = 82;
 
-    [Header("Tile Object Slots")]
+    [Header("Tile Object")]
     [SerializeField] private TileObjectSlotDictionary tileObjectSlotSettings;
     public GameObject tileObjectSlotsParentPrefab;
     public GameObject tileObjectSlotPrefab;
+    public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
+
+    [Header("Lighting")]
+    [SerializeField] private Light areaMapLight;
 
     //structure templates
     private string templatePath;
@@ -65,19 +70,22 @@ public class InteriorMapManager : MonoBehaviour {
 
     private Dictionary<STRUCTURE_TYPE, List<StructureSlot>> placedStructures;
 
+
+    private Dictionary<int, float> lightSettings = new Dictionary<int, float>() { //this specifies what light intensity is to be used while inside the specific range in ticks
+#if UNITY_EDITOR
+        { 228, 1f },
+        { 61, 1.8f }
+#else
+        { 228, 0.3f },
+        { 61, 0.8f }
+#endif
+
+    };
+
+    #region Monobehaviours
     private void Awake() {
         Instance = this;
         templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
-    }
-    public LocationGridTile GetTileFromMousePosition() {
-        Vector3 mouseWorldPos = (currentlyShowingMap.worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
-        Vector3 localPos = currentlyShowingMap.grid.WorldToLocal(mouseWorldPos);
-        Vector3Int coordinate = currentlyShowingMap.grid.LocalToCell(localPos);
-        if (coordinate.x >= 0 && coordinate.x < currentlyShowingMap.width
-            && coordinate.y >= 0 && coordinate.y < currentlyShowingMap.height) {
-           return currentlyShowingMap.map[coordinate.x, coordinate.y];
-        }
-        return null;
     }
     public void LateUpdate() {
         if (UIManager.Instance.IsMouseOnUI() || currentlyShowingMap == null) {
@@ -119,7 +127,7 @@ public class InteriorMapManager : MonoBehaviour {
                         hoveredTile.OnClickTileActions(PointerEventData.InputButton.Right);
                     }
                     UIManager.Instance.HideSmallInfo();
-                   
+
                 }
             }
 
@@ -127,11 +135,14 @@ public class InteriorMapManager : MonoBehaviour {
             UIManager.Instance.HideSmallInfo();
         }
     }
+    #endregion
 
+    #region Main
     public void Initialize() {
+        allTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
         areaMaps = new List<AreaInnerTileMap>();
         AreaMapCameraMove.Instance.Initialize();
-        //sim = (FindObjectOfType(typeof(RVOSimulator)) as RVOSimulator).GetSimulator();
+        Messenger.AddListener(Signals.TICK_ENDED, CheckForChangeLight);
     }
     /// <summary>
     /// Try and show the area map of an area. If it does not have one, this will generate one instead.
@@ -147,7 +158,6 @@ public class InteriorMapManager : MonoBehaviour {
             LandmarkManager.Instance.GenerateAreaMap(area);
         }
     }
-
     public void ShowAreaMap(Area area, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
         if (area.areaType == AREA_TYPE.DEMONIC_INTRUSION) {
             UIManager.Instance.portalPopup.SetActive(true);
@@ -175,7 +185,7 @@ public class InteriorMapManager : MonoBehaviour {
         //GameManager.Instance.SetTicksToAddPerTick(GameManager.ticksPerHour); //When area map is shown, ticks will progress by 1 hour
         PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
         Messenger.Broadcast(Signals.AREA_MAP_CLOSED, closedArea);
-        GameManager.Instance.SetPausedState(true);
+        //GameManager.Instance.SetPausedState(true);
         //GameManager.Instance.DayStarted(false);
         //GameManager.Instance.SetTick(96);
         return closedArea;
@@ -200,6 +210,20 @@ public class InteriorMapManager : MonoBehaviour {
         GameObject.Destroy(area.areaMap.gameObject);
         area.SetAreaMap(null);
     }
+    #endregion
+
+    #region Utilities
+    public LocationGridTile GetTileFromMousePosition() {
+        Vector3 mouseWorldPos = (currentlyShowingMap.worldUICanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition));
+        Vector3 localPos = currentlyShowingMap.grid.WorldToLocal(mouseWorldPos);
+        Vector3Int coordinate = currentlyShowingMap.grid.LocalToCell(localPos);
+        if (coordinate.x >= 0 && coordinate.x < currentlyShowingMap.width
+            && coordinate.y >= 0 && coordinate.y < currentlyShowingMap.height) {
+            return currentlyShowingMap.map[coordinate.x, coordinate.y];
+        }
+        return null;
+    }
+    #endregion
 
     #region Pathfinding
     private void CreatePathfindingGraphForArea(AreaInnerTileMap newMap) {
@@ -223,7 +247,7 @@ public class InteriorMapManager : MonoBehaviour {
         if (newMap.area.areaType == AREA_TYPE.DUNGEON) {
             gg.collision.diameter = 2f;
         } else {
-            gg.collision.diameter = 1f;
+            gg.collision.diameter = 0.9f;
         }
         gg.collision.mask = LayerMask.GetMask("Unpassable");
         AstarPath.active.Scan(gg);
@@ -339,12 +363,32 @@ public class InteriorMapManager : MonoBehaviour {
         }
         return null;
     }
+    /// <summary>
+    /// Convert all tile list to a dictionary for easier accessing of data. Meant to be used when a function is expected to 
+    /// heavily use the tile database, to prevent constant looping of tile database list.
+    /// </summary>
+    /// <returns></returns>
+    public Dictionary<string, TileBase> GetTileAssetDatabase() {
+        Dictionary<string, TileBase> tileDB = new Dictionary<string, TileBase>();
+        for (int i = 0; i < allTileAssets.Count; i++) {
+            TileBase currTile = allTileAssets[i];
+            tileDB.Add(currTile.name, currTile);
+        }
+        return tileDB;
+    }
+    public TileBase TryGetTileAsset(string name, Dictionary<string, TileBase> assets) {
+        if (assets.ContainsKey(name)) {
+            return assets[name];
+        }
+        return null;
+    }
     private List<TileBase> LoadAllTilesAssets() {
         return Resources.LoadAll("Tile Map Assets", typeof(TileBase)).Cast<TileBase>().ToList();
     }
     [ContextMenu("Load Assets")]
     public void LoadTileAssets() {
-        allTileAssets = LoadAllTilesAssets();
+        allTileAssets = LoadAllTilesAssets().Distinct().ToList();
+        allTileAssets.Sort((x, y) => string.Compare(x.name, y.name));
     }
     #endregion
 
@@ -359,12 +403,9 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\nWorld Location: " + tile.worldLocation.ToString();
         summary += "\nCentered World Location: " + tile.centeredWorldLocation.ToString();
         summary += "\nGround Type: " + tile.groundType.ToString();
-        summary += "\nIs Locked: " + tile.isLocked.ToString();
         summary += "\nIs Occupied: " + tile.isOccupied.ToString();
-        summary += "\nIs Edge: " + tile.IsAtEdgeOfWalkableMap();
         summary += "\nTile Type: " + tile.tileType.ToString();
         summary += "\nTile State: " + tile.tileState.ToString();
-        summary += "\nTile Access: " + tile.tileAccess.ToString();
         summary += "\nReserved Tile Object Type: " + tile.reservedObjectType.ToString();
         if (tile.hasFurnitureSpot) {
             summary += "\nFurniture Spot: " + tile.furnitureSpot.ToString();
@@ -386,6 +427,7 @@ public class InteriorMapManager : MonoBehaviour {
         }
         summary += "\nContent: " + poi?.ToString() ?? "None";
         if (poi != null) {
+            summary += "\nHP: " + poi.currentHP.ToString() + "/" + poi.maxHP.ToString();
             summary += "\n\tObject State: " + poi.state.ToString();
             if (poi is TreeObject) {
                 summary += "\n\tYield: " + (poi as TreeObject).yield.ToString();
@@ -400,6 +442,14 @@ public class InteriorMapManager : MonoBehaviour {
             } else if (poi is SpecialToken) {
                 summary += "\n\tCharacter Owner: " + (poi as SpecialToken).characterOwner?.name ?? "None";
                 summary += "\n\tFaction Owner: " + (poi as SpecialToken).factionOwner?.name ?? "None";
+            }
+            summary += "\n\tAdvertised Actions: ";
+            if (poi.poiGoapActions.Count > 0) {
+                for (int i = 0; i < poi.poiGoapActions.Count; i++) {
+                    summary += "|" + poi.poiGoapActions[i].ToString() + "|";
+                }
+            } else {
+                summary += "None";
             }
             summary += "\n\tObject Traits: ";
             if (poi.normalTraits.Count > 0) {
@@ -420,6 +470,13 @@ public class InteriorMapManager : MonoBehaviour {
         }
         if (tile.structure != null) {
             summary += "\nStructure: " + tile.structure.ToString();
+            if (tile.structure is Dwelling) {
+                Dwelling d = tile.structure as Dwelling;
+                summary += "\nFacilities: ";
+                foreach (KeyValuePair<FACILITY_TYPE, int> kvp in d.facilities) {
+                    summary += "|" + kvp.Key.ToString() + " - " + kvp.Value + "|";
+                }
+            }
             summary += "\nCharacters at " + tile.structure.ToString() + ": ";
             if (tile.structure.charactersHere.Count > 0) {
                 for (int i = 0; i < tile.structure.charactersHere.Count; i++) {
@@ -493,7 +550,7 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\n\tHostiles in Range: ";
         if (character.marker.hostilesInRange.Count > 0) {
             for (int i = 0; i < character.marker.hostilesInRange.Count; i++) {
-                Character poi = character.marker.hostilesInRange[i];
+                IPointOfInterest poi = character.marker.hostilesInRange[i];
                 summary += poi.name + ", ";
             }
         } else {
@@ -502,7 +559,7 @@ public class InteriorMapManager : MonoBehaviour {
         summary += "\n\tAvoid in Range: ";
         if (character.marker.avoidInRange.Count > 0) {
             for (int i = 0; i < character.marker.avoidInRange.Count; i++) {
-                Character poi = character.marker.avoidInRange[i];
+                IPointOfInterest poi = character.marker.avoidInRange[i];
                 summary += poi.name + ", ";
             }
         } else {
@@ -536,27 +593,6 @@ public class InteriorMapManager : MonoBehaviour {
             summary += "None";
         }
         return summary;
-    }
-
-    private IPointOfInterest heldPOI;
-    public void HoldPOI(IPointOfInterest poi) {
-        heldPOI = poi;
-        if (heldPOI is SpecialToken) {
-            heldPOI.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(heldPOI as SpecialToken);
-        } else if (heldPOI is TileObject) {
-            heldPOI.gridTileLocation.structure.RemovePOI(heldPOI);
-        }
-    }
-    public void PlaceHeldPOI(LocationGridTile tile) {
-        if (heldPOI is SpecialToken) {
-            tile.structure.location.AddSpecialTokenToLocation(heldPOI as SpecialToken, tile.structure, tile);
-        } else if (heldPOI is TileObject) {
-            tile.structure.AddPOI(heldPOI, tile);
-        }
-        heldPOI = null;
-    }
-    public bool IsHoldingPOI() {
-        return heldPOI != null;
     }
     #endregion
 
@@ -941,7 +977,7 @@ public class InteriorMapManager : MonoBehaviour {
     }
     #endregion
 
-    #region Tile Object Settings
+    #region Tile Object
     public bool HasSettingForTileObjectAsset(TileBase asset) {
         return tileObjectSlotSettings.ContainsKey(asset);
     }
@@ -954,10 +990,66 @@ public class InteriorMapManager : MonoBehaviour {
     public List<TileObjectSlotSetting> GetTileObjectSlotSettings(TileBase asset) {
         return tileObjectSlotSettings[asset];
     }
+    public void AddTileObject(TileObject to) {
+        if (!allTileObjects.ContainsKey(to.tileObjectType)) {
+            allTileObjects.Add(to.tileObjectType, new List<TileObject>());
+        }
+        if (!allTileObjects[to.tileObjectType].Contains(to)) {
+            allTileObjects[to.tileObjectType].Add(to);
+        }
+    }
+    public void RemoveTileObject(TileObject to) {
+        if (allTileObjects.ContainsKey(to.tileObjectType)) {
+            allTileObjects[to.tileObjectType].Remove(to);
+        }
+    }
+    public TileObject GetTileObject(TILE_OBJECT_TYPE type, int id) {
+        if (allTileObjects.ContainsKey(type)) {
+            for (int i = 0; i < allTileObjects[type].Count; i++) {
+                TileObject to = allTileObjects[type][i];
+                if(to.id == id) {
+                    return to;
+                }
+            }
+        }
+        return null;
+    }
+    #endregion
+
+    #region Lighting
+    public void UpdateLightBasedOnTime(GameDate date) {
+        foreach (KeyValuePair<int, float> keyValuePair in lightSettings) {
+            if (date.tick > keyValuePair.Key) {
+                areaMapLight.intensity = keyValuePair.Value;
+            }
+        }
+    }
+    private void CheckForChangeLight() {
+        if (lightSettings.ContainsKey(GameManager.Instance.tick)) {
+            StartCoroutine(TransitionLightTo(lightSettings[GameManager.Instance.tick]));
+        }
+    }
+    private IEnumerator TransitionLightTo(float intensity) {
+        while (true) {
+            if (GameManager.Instance.isPaused) {
+                yield return null;
+            }
+            if (intensity > areaMapLight.intensity) {
+                areaMapLight.intensity += 0.05f;
+            } else if (intensity < areaMapLight.intensity) {
+                areaMapLight.intensity -= 0.05f;
+            }
+            if (Mathf.Approximately(areaMapLight.intensity, intensity)) {
+                break;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
     #endregion
 }
 
 #region Templates
+[System.Serializable]
 public struct TownMapSettings {
 
     public Point size;
@@ -966,6 +1058,8 @@ public struct TownMapSettings {
     public TileTemplateData[] structureTiles;
     public TileTemplateData[] objectTiles;
     public TileTemplateData[] detailTiles;
+
+    [System.NonSerialized]
     public Dictionary<STRUCTURE_TYPE, List<StructureSlot>> structureSlots;
 
     public void LogInfo() {

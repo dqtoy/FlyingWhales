@@ -5,13 +5,13 @@ using UnityEngine;
 [System.Serializable]
 public class SaveDataArtifactSlot {
     public int id;
-    public ARTIFACT_TYPE type;
+    public TILE_OBJECT_TYPE type;
     public int level;
     
     public void Save(ArtifactSlot slot) {
         if(slot.artifact != null) {
             id = slot.artifact.id;
-            type = slot.artifact.type;
+            type = slot.artifact.tileObjectType;
         } else {
             id = -1;
         }
@@ -22,7 +22,7 @@ public class SaveDataArtifactSlot {
         ArtifactSlot slot = new ArtifactSlot();
         slot.SetLevel(level);
         if(id != -1) {
-            Artifact artifact = PlayerManager.Instance.CreateNewArtifact(this);
+            Artifact artifact = InteriorMapManager.Instance.GetTileObject(type, id) as Artifact;
             slot.SetArtifact(artifact);
         }
         return slot;

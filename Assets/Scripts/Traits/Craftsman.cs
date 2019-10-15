@@ -11,13 +11,13 @@ public class Craftsman : Trait {
         name = "Craftsman";
         //craftedItemNames = new SPECIAL_TOKEN[] { SPECIAL_TOKEN.TOOL, SPECIAL_TOKEN.HEALING_POTION };
         //craftedFurnitureNames = new FURNITURE_TYPE[] { FURNITURE_TYPE.BED, FURNITURE_TYPE.DESK, FURNITURE_TYPE.GUITAR, FURNITURE_TYPE.TABLE };
-        description = "This character can create items.";
+        description = "Craftsmen can create a variety of objects.";
         type = TRAIT_TYPE.BUFF;
         effect = TRAIT_EFFECT.POSITIVE;
         associatedInteraction = INTERACTION_TYPE.NONE;
         daysDuration = 0;
         //effects = new List<TraitEffect>();
-        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CRAFT_ITEM_GOAP, INTERACTION_TYPE.CRAFT_FURNITURE };
+        advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CRAFT_ITEM, INTERACTION_TYPE.CRAFT_FURNITURE };
     }
 
     #region Overrides

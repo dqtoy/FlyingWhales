@@ -40,8 +40,8 @@ public class Tantrum : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        CharacterState berserkedState = actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
-        (berserkedState as BerserkedState).SetAreaCombatsLethal(false);
+        //CharacterState berserkedState = actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
+        //(berserkedState as BerserkedState).SetAreCombatsLethal(false);
     }
     public override bool InitializeOtherData(object[] otherData) {
         this.otherData = otherData;
@@ -55,6 +55,10 @@ public class Tantrum : GoapAction {
     #region Effects
     private void PreTantrumSuccess() {
         currentState.AddLogFiller(null, reason, LOG_IDENTIFIER.STRING_1);
+    }
+    private void AfterTantrumSuccess() {
+        CharacterState berserkedState = actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
+        (berserkedState as BerserkedState).SetAreCombatsLethal(false);
     }
     #endregion
 

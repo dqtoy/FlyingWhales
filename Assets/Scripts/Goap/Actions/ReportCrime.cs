@@ -8,11 +8,30 @@ public class ReportCrime : GoapAction {
     private AlterEgoData criminal;
     private GoapAction crimeAction;
 
+    protected override bool isTargetMissing {
+        get {
+            bool targetMissing = base.isTargetMissing && !((poiTarget as Character).stateComponent.currentState is CombatState); //added checking if target character is in combat state.
+
+            if (targetMissing) {
+                return targetMissing;
+            } else {
+                if (actor != poiTarget) {
+                    Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
+                    if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
+                        return true;
+                    }
+                }
+                return targetMissing;
+            }
+        }
+    }
+
     public ReportCrime(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REPORT_CRIME, INTERACTION_ALIGNMENT.GOOD, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
+            TIME_IN_WORDS.LUNCH_TIME,
             TIME_IN_WORDS.AFTERNOON,
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
@@ -71,6 +90,7 @@ public class ReportCrime : GoapAction {
             target.CreateInformedEventLog(crimeAction, true);
         }
         bool hasRelationshipDegraded = false;
+        crimeAction.OnReportCrime();
         target.ReactToCrime(crime, crimeAction, criminal, ref hasRelationshipDegraded, null, crimeAction);
     }
     public void PreReportCrimeFail() {
@@ -78,6 +98,8 @@ public class ReportCrime : GoapAction {
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(criminal, criminal.owner.name, LOG_IDENTIFIER.CHARACTER_3);
+        //re-create report crime job.
+        actor.CreateReportCrimeJob(crime, crimeAction, criminal);
     }
     #endregion
 

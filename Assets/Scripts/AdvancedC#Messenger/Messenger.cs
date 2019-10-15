@@ -24,7 +24,7 @@
 //#define LOG_ADD_LISTENER
 //#define LOG_BROADCAST_MESSAGE
 //#define REQUIRE_LISTENER
-#define LOG_BROADCAST_EXECUTION
+//#define LOG_BROADCAST_EXECUTION
 
 using System;
 using System.Collections;
@@ -127,7 +127,7 @@ static internal class Messenger {
             eventTable[eventType] = ordered;
             orderWatch.Stop();
             summary += "\nFinished ordering events. Time elapsed is " + orderWatch.ElapsedMilliseconds.ToString() + "ms";
-            Debug.Log(summary);
+            //Debug.Log(summary);
         }
     }
     //static private void OrderEvents(string eventType, Callback newEvent) {

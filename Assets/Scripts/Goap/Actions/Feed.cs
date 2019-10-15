@@ -10,6 +10,7 @@ public class Feed : GoapAction {
         actionIconString = GoapActionStateDB.FirstAid_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
+            TIME_IN_WORDS.LUNCH_TIME,
             TIME_IN_WORDS.AFTERNOON,
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
@@ -94,7 +95,7 @@ public class Feed : GoapAction {
                 }
                 //- Recipient is Target
                 else if (recipient == targetCharacter) {
-                    if(targetCharacter.isAtHomeArea) {
+                    if(targetCharacter.isAtHomeRegion) {
                         reactions.Add("I am paying for my mistakes.");
                     } else {
                         reactions.Add("Please help me!");
@@ -102,7 +103,7 @@ public class Feed : GoapAction {
                 }
                 //- Recipient Has Positive Relationship with Target
                 else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.POSITIVE) {
-                    if (targetCharacter.isAtHomeArea) {
+                    if (targetCharacter.isAtHomeRegion) {
                         reactions.Add(string.Format("{0} is paying for {1} mistakes.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false)));
                     } else {
                         reactions.Add(string.Format("I've got to figure out how to save {0}!", targetCharacter.name));
@@ -113,19 +114,19 @@ public class Feed : GoapAction {
                 else if (recipient.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
                     //if (targetCharacter.isAtHomeArea) {
                     //    reactions.Add(string.Format("I hope {0} rots in there!", targetCharacter.name));
-                    //    AddTraitTo(recipient, "Cheery");
+                    //    AddTraitTo(recipient, "Satisfied");
                     //} else {
                     //    reactions.Add(string.Format("I hope {0} rots in there!", targetCharacter.name));
-                    //    AddTraitTo(recipient, "Cheery");
+                    //    AddTraitTo(recipient, "Satisfied");
                     //}
                     reactions.Add(string.Format("I hope {0} rots in there!", targetCharacter.name));
-                    AddTraitTo(recipient, "Cheery");
+                    AddTraitTo(recipient, "Satisfied");
                 }
                 //- Recipient Has No Relationship with Target
                 else {
                     if(recipient.faction.id == targetCharacter.faction.id) {
-                        if (targetCharacter.isAtHomeArea) {
-                            reactions.Add(string.Format("{0} is a criminal", targetCharacter.name));
+                        if (targetCharacter.isAtHomeRegion) {
+                            reactions.Add(string.Format("{0} is a criminal!", targetCharacter.name));
                         } else {
                             reactions.Add(string.Format("I've got to figure out how to save {0}!", targetCharacter.name));
                             recipient.CreateSaveCharacterJob(targetCharacter);

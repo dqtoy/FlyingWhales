@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Linq;
 
 public class SleepOutside : GoapAction {
+    private Resting _restingTrait;
+
     public SleepOutside(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLEEP_OUTSIDE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         actionIconString = GoapActionStateDB.Sleep_Icon;
@@ -65,21 +67,62 @@ public class SleepOutside : GoapAction {
     private void PreRestSuccess() {
         //currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         //actor.AdjustDoNotGetTired(1);
-        Resting restingTrait = new Resting();
-        actor.AddTrait(restingTrait);
+        _restingTrait = new Resting();
+        actor.AddTrait(_restingTrait);
         currentState.SetAnimation("Sleep Ground");
+        currentState.OverrideDuration(actor.currentSleepTicks);
     }
     private void PerTickRestSuccess() {
         actor.AdjustTiredness(70);
         actor.AdjustSleepTicks(-1);
+
+        if (_restingTrait.lycanthropyTrait == null) {
+            if (currentState.currentDuration == currentState.duration) {
+                //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
+                bool isTargettedByDrinkBlood = false;
+                for (int i = 0; i < actor.targettedByAction.Count; i++) {
+                    if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
+                        isTargettedByDrinkBlood = true;
+                        break;
+                    }
+                }
+                if (isTargettedByDrinkBlood) {
+                    currentState.OverrideDuration(currentState.duration + 1);
+                }
+            }
+        } else {
+            bool isTargettedByDrinkBlood = false;
+            for (int i = 0; i < actor.targettedByAction.Count; i++) {
+                if (actor.targettedByAction[i].goapType == INTERACTION_TYPE.DRINK_BLOOD && !actor.targettedByAction[i].isDone && actor.targettedByAction[i].isPerformingActualAction) {
+                    isTargettedByDrinkBlood = true;
+                    break;
+                }
+            }
+            if (currentState.currentDuration == currentState.duration) {
+                //If sleep will end, check if the actor is being targetted by Drink Blood action, if it is, do not end sleep
+                if (isTargettedByDrinkBlood) {
+                    currentState.OverrideDuration(currentState.duration + 1);
+                } else {
+                    if (!_restingTrait.hasTransformed) {
+                        _restingTrait.CheckForLycanthropy(true);
+                    }
+                }
+            } else {
+                if (!isTargettedByDrinkBlood) {
+                    _restingTrait.CheckForLycanthropy();
+                }
+            }
+        }
     }
     private void AfterRestSuccess() {
         //actor.AdjustDoNotGetTired(-1);
         RemoveTraitFrom(actor, "Resting");
     }
-    //private void PreRestFail() {
-    //    currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
-    //}
+    private void PreRestFail() {
+        if (parentPlan != null && parentPlan.job != null && parentPlan.job.id == actor.sleepScheduleJobID) {
+            actor.SetHasCancelledSleepSchedule(true);
+        }
+    }
     #endregion
 }
 

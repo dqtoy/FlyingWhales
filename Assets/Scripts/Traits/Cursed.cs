@@ -8,16 +8,20 @@ public class Cursed : Trait {
 
     public Cursed() {
         name = "Cursed";
-        description = "This character has been afflicted with a debilitating curse.";
+        description = "This character has been afflicted by a magical curse.";
         type = TRAIT_TYPE.ENCHANTMENT;
         effect = TRAIT_EFFECT.NEGATIVE;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
-        daysDuration = 0;
+        daysDuration = GameManager.ticksPerDay;
         advertisedInteractions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.DISPEL_MAGIC, };
         cursedInteractions = new List<CursedInteraction>();
         //effects = new List<TraitEffect>();
+    }
+
+    public void SetCursedInteractions(List<CursedInteraction> cursedInteractions) {
+        this.cursedInteractions = cursedInteractions;
     }
 
     #region Overrides
@@ -36,7 +40,7 @@ public class Cursed : Trait {
     public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         if(sourcePOI is Character) {
             Character character = sourcePOI as Character;
-            character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
+            //character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
             character.RemoveTraitNeededToBeRemoved(this);
             character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         } else if (sourceCharacter is TileObject) {
@@ -47,21 +51,42 @@ public class Cursed : Trait {
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (traitOwner is Character) {
             Character targetCharacter = traitOwner as Character;
-            if (!targetCharacter.isDead && !targetCharacter.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name) && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
-                    new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM_GOAP, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
-                job.SetCanBeDoneInLocation(true);
-                if (CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, null)) {
-                    //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-                    characterThatWillDoJob.jobQueue.AddJobInQueue(job);
-                    return true;
-                } else {
-                    if (!IsResponsibleForTrait(characterThatWillDoJob)) {
-                        job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
-                        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+            if (!targetCharacter.isDead && !targetCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
+                if (currentJob == null) {
+                    GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
+                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
+                        new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
+                    job.SetCanBeDoneInLocation(true);
+                    if (InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, job)) {
+                        //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
+                        characterThatWillDoJob.jobQueue.AddJobInQueue(job);
+                        return true;
+                    } else {
+                        if (!IsResponsibleForTrait(characterThatWillDoJob)) {
+                            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveTraitJob);
+                            characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                        }
+                        return false;
                     }
-                    return false;
+                } else {
+                    if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRemoveTraitJob(characterThatWillDoJob, targetCharacter, currentJob)) {
+                        bool canBeTransfered = false;
+                        if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null
+                            && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
+                            if (currentJob.assignedCharacter != characterThatWillDoJob) {
+                                canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
+                            }
+                        } else {
+                            canBeTransfered = true;
+                        }
+                        if (canBeTransfered && characterThatWillDoJob.CanCurrentJobBeOverriddenByJob(currentJob)) {
+                            currentJob.jobQueueParent.CancelJob(currentJob, shouldDoAfterEffect: false, forceRemove: true);
+                            characterThatWillDoJob.jobQueue.AddJobInQueue(currentJob, false);
+                            characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(currentJob, characterThatWillDoJob);
+                            return true;
+                        }
+                    }
                 }
             }
         }
@@ -98,12 +123,12 @@ public class Cursed : Trait {
                 result = "losebuff";
             }
         }
-        cursedInteractions.Add(new CursedInteraction() { characterThatInteracted = characterThatInteracted, actionDone = actionDone, result = result });
+        cursedInteractions.Add(new CursedInteraction() { characterThatInteracted = characterThatInteracted, actionDone = actionDone.goapType, result = result });
     }
     private void OnCharacterFinishedInteraction(Character character, GoapAction action, string result) {
         for (int i = 0; i < cursedInteractions.Count; i++) {
             CursedInteraction interaction = cursedInteractions[i];
-            if(interaction.characterThatInteracted == character && interaction.actionDone == action) {
+            if(interaction.characterThatInteracted == character && interaction.actionDone == action.goapType) {
                 InteractionEffectApplication(character, interaction.result);
                 cursedInteractions.RemoveAt(i);
                 break;
@@ -169,12 +194,29 @@ public class Cursed : Trait {
             //If there is no buff trait to lose, injure character instead
             InjureCharacter(character);
         }
-
     }
 }
 
+public class SaveDataCursed : SaveDataTrait {
+    public List<CursedInteraction> cursedInteractions;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        Cursed derivedTrait = trait as Cursed;
+        cursedInteractions = derivedTrait.cursedInteractions;
+    }
+
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        Cursed derivedTrait = trait as Cursed;
+        derivedTrait.SetCursedInteractions(cursedInteractions);
+        return trait;
+    }
+}
+
+[System.Serializable]
 public struct CursedInteraction {
     public Character characterThatInteracted;
-    public GoapAction actionDone;
+    public INTERACTION_TYPE actionDone;
     public string result;
 }

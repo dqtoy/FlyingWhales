@@ -26,14 +26,14 @@ public class AreaSaveData {
             HexTile currTile = area.tiles[i];
             tileData.Add(currTile.id);
         }
-        areaColor = area.areaColor;
+        //areaColor = area.areaColor;
         if (area.owner == null) {
             ownerID = -1;
         } else {
             ownerID = area.owner.id;
         }
-        possibleOccupants = new List<RACE>(area.possibleOccupants);
-        raceSetup = new List<InitialRaceSetup>(area.initialSpawnSetup);
+        //possibleOccupants = new List<RACE>(area.possibleOccupants);
+        //raceSetup = new List<InitialRaceSetup>(area.initialSpawnSetup);
         structures = area.structures;
     }
 }

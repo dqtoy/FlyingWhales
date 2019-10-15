@@ -17,7 +17,6 @@ public class CharacterManager : MonoBehaviour {
     public Transform characterIconsParent;
 
     public int maxLevel;
-    private Dictionary<ELEMENT, float> _elementsChanceDictionary;
     private List<Character> _allCharacters;
     private List<CharacterAvatar> _allCharacterAvatars;
 
@@ -44,8 +43,6 @@ public class CharacterManager : MonoBehaviour {
     public const string Original_Alter_Ego = "Original";
 
     public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
-    //public Dictionary<INTERACTION_TYPE, int> awayFromHomeInteractionWeights { get; private set; }
-    //public Dictionary<INTERACTION_TYPE, int> atHomeInteractionWeights { get; private set; }
     public Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]> characterRoleInteractions { get; private set; }
     public Dictionary<string, CharacterClass> classesDictionary { get; private set; }
     public Dictionary<string, CharacterClass> uniqueClasses { get; private set; }
@@ -53,6 +50,7 @@ public class CharacterManager : MonoBehaviour {
     public Dictionary<string, CharacterClass> beastClasses { get; private set; }
     public Dictionary<string, CharacterClass> demonClasses { get; private set; }
     public Dictionary<string, Dictionary<string, CharacterClass>> identifierClasses { get; private set; }
+    public Dictionary<string, DeadlySin> deadlySins { get; private set; }
 
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     private List<string> deadlySinsRotation = new List<string>();
@@ -63,9 +61,9 @@ public class CharacterManager : MonoBehaviour {
     public List<Character> allCharacters {
         get { return _allCharacters; }
     }
-    public Dictionary<ELEMENT, float> elementsChanceDictionary {
-        get { return _elementsChanceDictionary; }
-    }
+    //public Dictionary<ELEMENT, float> elementsChanceDictionary {
+    //    get { return _elementsChanceDictionary; }
+    //}
     #endregion
 
     private void Awake() {
@@ -77,7 +75,8 @@ public class CharacterManager : MonoBehaviour {
 
     public void Initialize() {
         ConstructAllClasses();
-        ConstructElementChanceDictionary();
+        //ConstructElementChanceDictionary();
+        CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
         //ConstructAwayFromHomeInteractionWeights();
         //ConstructAtHomeInteractionWeights();
@@ -96,7 +95,7 @@ public class CharacterManager : MonoBehaviour {
                 Faction characterFaction = FactionManager.Instance.GetFactionBasedOnID(currData.factionID);
                 if (characterFaction != null) {
                     //currCharacter.SetFaction(characterFaction);
-                    characterFaction.AddNewCharacter(currCharacter);
+                    characterFaction.JoinFaction(currCharacter);
                     //FactionSaveData factionData = data.GetFactionData(characterFaction.id);
                     //if (factionData.leaderID != -1 && factionData.leaderID == currCharacter.id) {
                     //    characterFaction.SetLeader(currCharacter);
@@ -106,7 +105,7 @@ public class CharacterManager : MonoBehaviour {
                 else {
                     characterFaction = FactionManager.Instance.neutralFaction;
                     //currCharacter.SetFaction(characterFaction);
-                    characterFaction.AddNewCharacter(currCharacter);
+                    characterFaction.JoinFaction(currCharacter);
                 }
 #endif
             }
@@ -160,7 +159,7 @@ public class CharacterManager : MonoBehaviour {
      Create a new character, given a role, class and race.
          */
     public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, 
-        Area homeLocation = null, Dwelling homeStructure = null) {
+        Region homeLocation = null, Dwelling homeStructure = null) {
         Character newCharacter = null;
         if (role == CharacterRole.LEADER) {
             //If the role is leader, it must have a faction, so get the data for the class from the faction
@@ -171,17 +170,17 @@ public class CharacterManager : MonoBehaviour {
         //Party party = newCharacter.CreateOwnParty();
         newCharacter.Initialize();
         if (faction != null) {
-            faction.AddNewCharacter(newCharacter);
+            faction.JoinFaction(newCharacter);
         }
 #if !WORLD_CREATION_TOOL
         else {
-            FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
         newCharacter.ownParty.CreateIcon();
         if(homeLocation != null) {
             newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner, null, true);
+            homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner);
         }
         //newCharacter.AddAwareness(newCharacter);
 #endif
@@ -192,20 +191,20 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, Faction faction = null, 
-        Area homeLocation = null, Dwelling homeStructure = null) {
+        Region homeLocation = null, Dwelling homeStructure = null) {
         Character newCharacter = new Character(role, className, race, gender);
         newCharacter.Initialize();
         if (faction != null) {
-            faction.AddNewCharacter(newCharacter);
+            faction.JoinFaction(newCharacter);
         } else {
-            FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
 #if !WORLD_CREATION_TOOL
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner, null, true);
+            homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner);
         }
         //newCharacter.AddAwareness(newCharacter);
 #endif
@@ -219,14 +218,14 @@ public class CharacterManager : MonoBehaviour {
         Character newCharacter = new Character(data);
         newCharacter.Initialize();
         allCharacterLogs.Add(newCharacter, new List<string>());
-        if (data.homeAreaID != -1) {
-            Area homeArea = LandmarkManager.Instance.GetAreaByID(data.homeAreaID);
-            if (homeArea != null) {
+        if (data.homeRegionID != -1) {
+            Region homeRegion = GridMap.Instance.GetRegionByID(data.homeRegionID);
+            if (homeRegion != null) {
 #if !WORLD_CREATION_TOOL
                 newCharacter.ownParty.CreateIcon();
-                newCharacter.ownParty.icon.SetPosition(homeArea.coreTile.transform.position);
-                newCharacter.MigrateHomeTo(homeArea, null, false);
-                homeArea.AddCharacterToLocation(newCharacter.ownParty.owner, null, true);
+                newCharacter.ownParty.icon.SetPosition(homeRegion.coreTile.transform.position);
+                newCharacter.MigrateHomeTo(homeRegion, null, false);
+                homeRegion.AddCharacterToLocation(newCharacter.ownParty.owner);
 #endif
             }
         }
@@ -249,7 +248,7 @@ public class CharacterManager : MonoBehaviour {
 
         Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
         if(faction != null) {
-            faction.AddNewCharacter(newCharacter);
+            faction.JoinFaction(newCharacter);
             if (data.isFactionLeader) {
                 faction.OnlySetLeader(newCharacter);
             }
@@ -257,9 +256,9 @@ public class CharacterManager : MonoBehaviour {
 #if !WORLD_CREATION_TOOL
         newCharacter.ownParty.CreateIcon();
 
-        Area home = null;
+        Region home = null;
         if (data.homeID != -1) {
-            home = LandmarkManager.Instance.GetAreaByID(data.homeID);
+            home = GridMap.Instance.GetRegionByID(data.homeID);
         }
         Area specificLocation = null;
         if (data.currentLocationID != -1) {
@@ -271,7 +270,7 @@ public class CharacterManager : MonoBehaviour {
         if (data.isDead) {
             if (home != null) {
                 newCharacter.SetHome(home); //keep this data with character to prevent errors
-                home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
+                //home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
             }
             if(specificLocation != null) {
                 newCharacter.ownParty.SetSpecificLocation(specificLocation);
@@ -287,11 +286,6 @@ public class CharacterManager : MonoBehaviour {
 #endif
         for (int i = 0; i < data.items.Count; i++) {
             data.items[i].Load(newCharacter);
-        }
-        for (int i = 0; i < data.normalTraits.Count; i++) {
-            Character responsibleCharacter = null;
-            Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);
-            newCharacter.AddTrait(trait, responsibleCharacter);
         }
 
         _allCharacters.Add(newCharacter);
@@ -432,19 +426,19 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Summons
-    public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, Area homeLocation = null, Dwelling homeStructure = null) {
+    public Summon CreateNewSummon(SUMMON_TYPE summonType, Faction faction = null, Region homeLocation = null, Dwelling homeStructure = null) {
         Summon newCharacter = CreateNewSummonClassFromType(summonType) as Summon;
         newCharacter.Initialize();
         if (faction != null) {
-            faction.AddNewCharacter(newCharacter);
+            faction.JoinFaction(newCharacter);
         } else {
-            FactionManager.Instance.neutralFaction.AddNewCharacter(newCharacter);
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
         }
         newCharacter.ownParty.CreateIcon();
         if (homeLocation != null) {
             newCharacter.ownParty.icon.SetPosition(homeLocation.coreTile.transform.position);
             newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-            homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner, null, true);
+            homeLocation.AddCharacterToLocation(newCharacter.ownParty.owner);
         }
         newCharacter.CreateInitialTraitsByClass();
         _allCharacters.Add(newCharacter);
@@ -462,16 +456,16 @@ public class CharacterManager : MonoBehaviour {
 
         Faction faction = FactionManager.Instance.GetFactionBasedOnID(data.factionID);
         if (faction != null) {
-            faction.AddNewCharacter(newCharacter);
+            faction.JoinFaction(newCharacter);
             if (data.isFactionLeader) {
                 faction.OnlySetLeader(newCharacter);
             }
         }
 
         newCharacter.ownParty.CreateIcon();
-        Area home = null;
+        Region home = null;
         if (data.homeID != -1) {
-            home = LandmarkManager.Instance.GetAreaByID(data.homeID);
+            home = GridMap.Instance.GetRegionByID(data.homeID);
         }
         Area specificLocation = null;
         if (data.currentLocationID != -1) {
@@ -483,7 +477,7 @@ public class CharacterManager : MonoBehaviour {
         if (data.isDead) {
             if(home != null) {
                 newCharacter.SetHome(home); //keep this data with character to prevent errors
-                home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
+                //home.AssignCharacterToDwellingInArea(newCharacter); //We do not save LocationStructure, so this is only done so that the dead character will not have null issues with homeStructure
             }
             if(specificLocation != null) {
                 newCharacter.ownParty.SetSpecificLocation(specificLocation);
@@ -500,11 +494,12 @@ public class CharacterManager : MonoBehaviour {
         for (int i = 0; i < data.items.Count; i++) {
             data.items[i].Load(newCharacter);
         }
-        for (int i = 0; i < data.normalTraits.Count; i++) {
-            Character responsibleCharacter = null;
-            Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);
-            newCharacter.AddTrait(trait, responsibleCharacter);
-        }
+        //for (int i = 0; i < data.normalTraits.Count; i++) {
+        //    Character responsibleCharacter = null;
+        //    Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);
+        //    newCharacter.AddTrait(trait, responsibleCharacter);
+        //}
+        //newCharacter.LoadAllStatsOfCharacter(data);
 
         _allCharacters.Add(newCharacter);
         Messenger.Broadcast(Signals.CHARACTER_CREATED, newCharacter);
@@ -594,6 +589,9 @@ public class CharacterManager : MonoBehaviour {
             if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null) {
                 return currCharacter.GetCharacterRelationshipData(targetCharacter);
             }
+            if (rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.GetNormalTrait("Serial Killer") != null) {
+                return currCharacter.GetCharacterRelationshipData(targetCharacter);
+            }
             currCharacter.AddRelationship(targetCharacter, CreateRelationshipTrait(rel, targetCharacter));
         }
         return currCharacter.GetCharacterRelationshipData(targetCharacter);
@@ -603,6 +601,9 @@ public class CharacterManager : MonoBehaviour {
             if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null) {
                 return currCharacter.GetCharacterRelationshipData(alterEgo.owner);
             }
+            if (rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.GetNormalTrait("Serial Killer") != null) {
+                return currCharacter.GetCharacterRelationshipData(alterEgo.owner);
+            }
             currCharacter.AddRelationship(alterEgo, CreateRelationshipTrait(rel, alterEgo.owner));
         }
         return currCharacter.GetCharacterRelationshipData(alterEgo);
@@ -610,10 +611,12 @@ public class CharacterManager : MonoBehaviour {
     public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
 
-        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null)) {
+        if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter) && !(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null)
+            && !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.GetNormalTrait("Serial Killer") != null)) {
             currCharacter.AddRelationship(targetCharacter, CreateRelationshipTrait(rel, targetCharacter));
         }
-        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && targetCharacter.GetNormalTrait("Diplomatic") != null)) {
+        if (targetCharacter.CanHaveRelationshipWith(rel, currCharacter) && !(rel == RELATIONSHIP_TRAIT.ENEMY && targetCharacter.GetNormalTrait("Diplomatic") != null)
+            && !(rel == RELATIONSHIP_TRAIT.FRIEND && targetCharacter.GetNormalTrait("Serial Killer") != null)) {
             targetCharacter.AddRelationship(currCharacter, CreateRelationshipTrait(pair, currCharacter));
         }
 
@@ -627,11 +630,11 @@ public class CharacterManager : MonoBehaviour {
     public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
 
-        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null)) {
+        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null) && !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.GetNormalTrait("Serial Killer") != null)) {
             currCharacter.AddRelationship(alterEgo, CreateRelationshipTrait(rel, alterEgo.owner));
         }
 
-        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && alterEgo.owner.GetNormalTrait("Diplomatic") != null)) {
+        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && alterEgo.owner.GetNormalTrait("Diplomatic") != null) && !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.GetNormalTrait("Serial Killer") != null)) {
             alterEgo.AddRelationship(currCharacter.currentAlterEgo, CreateRelationshipTrait(pair, currCharacter));
         }
 
@@ -1130,6 +1133,9 @@ public class CharacterManager : MonoBehaviour {
         }
     }
     public bool RelationshipImprovement(Character actor, Character target, GoapAction cause = null) {
+        if (actor.race == RACE.DEMON || target.race == RACE.DEMON || actor is Summon || target is Summon) {
+            return false; //do not let demons and summons have relationships
+        }
         if (actor.returnedToLife || target.returnedToLife) {
             return false; //do not let zombies or skeletons develop other relationships
         }
@@ -1142,11 +1148,13 @@ public class CharacterManager : MonoBehaviour {
             int roll = UnityEngine.Random.Range(0, 100);
             summary += "\nRoll is " + roll.ToString();
             if (roll < 25) {
-                log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "enemy_now_friend");
-                summary += target.name + " now considers " + actor.name + " an enemy.";
-                RemoveOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
-                CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
-                hasImproved = true;
+                if (target.GetNormalTrait("Serial Killer") == null) {
+                    log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "enemy_now_friend");
+                    summary += target.name + " now considers " + actor.name + " an enemy.";
+                    RemoveOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
+                    CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
+                    hasImproved = true;
+                }
             }
         }
         //If character is already a Friend, will not change actual relationship but will consider it improved
@@ -1154,11 +1162,13 @@ public class CharacterManager : MonoBehaviour {
             hasImproved = true;
         } 
         else if (!target.HasRelationshipWith(actor)) {
-            log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
-            summary += "\n" + target.name + " has no relationship with " + actor.name + ". " + target.name + " now considers " + actor.name + " a friend.";
-            //If Target has no relationship with Actor, Target now considers Actor a Friend.
-            CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
-            hasImproved = true;
+            if(target.GetNormalTrait("Serial Killer") == null) {
+                log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
+                summary += "\n" + target.name + " has no relationship with " + actor.name + ". " + target.name + " now considers " + actor.name + " a friend.";
+                //If Target has no relationship with Actor, Target now considers Actor a Friend.
+                CreateNewOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.FRIEND);
+                hasImproved = true;
+            }
         }
         Debug.Log(summary);
         if (log != null) {
@@ -1178,6 +1188,9 @@ public class CharacterManager : MonoBehaviour {
         return RelationshipDegradation(actor.currentAlterEgo, target, cause);
     }
     public bool RelationshipDegradation(AlterEgoData actorAlterEgo, Character target, GoapAction cause = null) {
+        if (actorAlterEgo.owner.race == RACE.DEMON || target.race == RACE.DEMON || actorAlterEgo.owner is Summon || target is Summon) {
+            return false; //do not let demons and summons have relationships
+        }
         if (actorAlterEgo.owner.returnedToLife || target.returnedToLife) {
             return false; //do not let zombies or skeletons develop other relationships
         }
@@ -1404,15 +1417,15 @@ public class CharacterManager : MonoBehaviour {
     }
     #endregion
 
-    #region Elements
-    private void ConstructElementChanceDictionary() {
-        _elementsChanceDictionary = new Dictionary<ELEMENT, float>();
-        ELEMENT[] elements = (ELEMENT[]) System.Enum.GetValues(typeof(ELEMENT));
-        for (int i = 0; i < elements.Length; i++) {
-            _elementsChanceDictionary.Add(elements[i], 0f);
-        }
-    }
-    #endregion
+    //#region Elements
+    //private void ConstructElementChanceDictionary() {
+    //    _elementsChanceDictionary = new Dictionary<ELEMENT, float>();
+    //    ELEMENT[] elements = (ELEMENT[]) System.Enum.GetValues(typeof(ELEMENT));
+    //    for (int i = 0; i < elements.Length; i++) {
+    //        _elementsChanceDictionary.Add(elements[i], 0f);
+    //    }
+    //}
+    //#endregion
 
     #region Marker Assets
     public MarkerAsset GetMarkerAsset(RACE race, GENDER gender) {
@@ -1443,16 +1456,27 @@ public class CharacterManager : MonoBehaviour {
         } else {
             target = action.poiTarget;
         }
-        for (int i = 0; i < action.actor.marker.inVisionCharacters.Count; i++) {
-            Character inVisionChar = action.actor.marker.inVisionCharacters[i];
-            if (target != inVisionChar) {
-                if (action.goapType == INTERACTION_TYPE.WATCH) {
-                    //Cannot witness/watch a watch action
-                    return;
-                }
-                if (inVisionChar.GetNormalTrait("Unconscious", "Resting") != null) {
-                    return;
-                }
+        List<Character> allInVisionCharacters = action.actor.marker.inVisionCharacters;
+        //allInVisionCharacters.Add(action.actor);
+        if (target is Character) {
+            Character targetCharacter = target as Character;
+            if (!targetCharacter.isDead) {
+                //TODO: FOR PERFORMANCE TESTING!
+                allInVisionCharacters = action.actor.marker.inVisionCharacters.Union(targetCharacter.marker.inVisionCharacters).ToList();
+            }
+        }
+        //if(allInVisionCharacters.Count <= 0) {
+        //    allInVisionCharacters.AddRange(action.actor.marker.inVisionCharacters);
+        //    allInVisionCharacters.Add(action.actor);
+        //}
+        //if(action.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER) {
+        //    Debug.LogError("Check this!");
+        //}
+        for (int i = 0; i < allInVisionCharacters.Count; i++) {
+            Character inVisionChar = allInVisionCharacters[i];
+            if (target != inVisionChar && action.actor != inVisionChar) {
+                inVisionChar.OnActionStateSet(action, state);
+            } else if (inVisionChar is Summon) {
                 inVisionChar.OnActionStateSet(action, state);
             }
         }
@@ -1461,21 +1485,65 @@ public class CharacterManager : MonoBehaviour {
         actor.marker.UpdateActionIcon();
         actor.marker.UpdateAnimation();
 
-        for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
-            Character otherCharacter = actor.marker.inVisionCharacters[i];
-            //crime system:
-            //if the other character committed a crime,
-            //check if that character is in this characters vision 
-            //and that this character can react to a crime (not in flee or engage mode)
-            if (action.IsConsideredACrimeBy(otherCharacter)
-                && action.CanReactToThisCrime(otherCharacter)
-                && otherCharacter.CanReactToCrime()) {
-                bool hasRelationshipDegraded = false;
-                otherCharacter.ReactToCrime(action, ref hasRelationshipDegraded);
+        //for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
+        //    Character otherCharacter = actor.marker.inVisionCharacters[i];
+        //    //crime system:
+        //    //if the other character committed a crime,
+        //    //check if that character is in this characters vision 
+        //    //and that this character can react to a crime (not in flee or engage mode)
+        //    if (action.IsConsideredACrimeBy(otherCharacter)
+        //        && action.CanReactToThisCrime(otherCharacter)
+        //        && otherCharacter.CanReactToCrime()) {
+        //        bool hasRelationshipDegraded = false;
+        //        otherCharacter.ReactToCrime(action, ref hasRelationshipDegraded);
+        //    }
+        //}
+    }
+    #endregion
+
+    #region Deadly Sins
+    private void CreateDeadlySinsData() {
+        deadlySins = new Dictionary<string, DeadlySin>();
+        for (int i = 0; i < sevenDeadlySinsClassNames.Length; i++) {
+            deadlySins.Add(sevenDeadlySinsClassNames[i], CreateNewDeadlySin(sevenDeadlySinsClassNames[i]));
+        }
+    }
+    private DeadlySin CreateNewDeadlySin(string deadlySin) {
+        System.Type type = System.Type.GetType(deadlySin);
+        if(type != null) {
+            DeadlySin sin = System.Activator.CreateInstance(type) as DeadlySin;
+            return sin;
+        }
+        return null;
+    }
+    public DeadlySin GetDeadlySin(string sinName) {
+        if (deadlySins.ContainsKey(sinName)) {
+            return deadlySins[sinName];
+        }
+        return null;
+    }
+    public bool CanDoDeadlySinAction(string deadlySinName, DEADLY_SIN_ACTION action) {
+        return deadlySins[deadlySinName].CanDoDeadlySinAction(action);
+    }
+    public List<INTERVENTION_ABILITY> Get3RandomResearchInterventionAbilities(DeadlySin deadlySin) {
+        List<INTERVENTION_ABILITY> interventionAbilitiesToResearch = new List<INTERVENTION_ABILITY>();
+        INTERVENTION_ABILITY_CATEGORY category = deadlySin.GetInterventionAbilityCategory();
+        if (category != INTERVENTION_ABILITY_CATEGORY.NONE) {
+            List<INTERVENTION_ABILITY> possibleAbilities = PlayerManager.Instance.GetAllInterventionAbilityByCategory(category);
+            if (possibleAbilities.Count > 0) {
+
+                int index1 = UnityEngine.Random.Range(0, possibleAbilities.Count);
+                interventionAbilitiesToResearch.Add(possibleAbilities[index1]);
+                possibleAbilities.RemoveAt(index1);
+
+                int index2 = UnityEngine.Random.Range(0, possibleAbilities.Count);
+                interventionAbilitiesToResearch.Add(possibleAbilities[index2]);
+                possibleAbilities.RemoveAt(index2);
+
+                interventionAbilitiesToResearch.Add(possibleAbilities[UnityEngine.Random.Range(0, possibleAbilities.Count)]);
             }
         }
-
-            
+        return interventionAbilitiesToResearch;
     }
     #endregion
 }

@@ -252,45 +252,26 @@ public enum LANDMARK_TAG {
 }
 public enum LANDMARK_TYPE {
     NONE = 0,
-    DEMONIC_PORTAL = 1,
+    THE_PORTAL = 1,
     WORKSHOP = 4,
     MINES = 8,
-    INN = 9,
-    HUNTING_GROUNDS = 11,
-    HOUSES = 12,
-    MONSTER_DEN = 14,
-    SHOP = 16,
     FARM = 17,
-    GOLD_MINE = 18,
-    LUMBERYARD = 19,
     PALACE = 20,
-    CAMP = 21,
-    LAIR = 22,
-    ABANDONED_MINE = 23,
     BANDIT_CAMP = 24,
-    OUTPOST = 25,
-    ANCIENT_RUIN = 26,
-    FACTORY = 27,
-    EXILE_CAMP = 28,
-    GIANT_SKELETON = 29,
+    MAGE_TOWER = 25,
     TEMPLE = 30,
     CAVE = 31,
-    ICE_PIT = 32,
-    MANA_EXTRACTOR = 33,
     BARRACKS = 34,
-    MINIONS_HOLD = 35,
-    DWELLINGS = 36,
-    RAMPART = 37,
-    CORRUPTION_NODE = 38,
-    RITUAL_CIRCLE = 39,
-    DRAGON_CAVE = 40,
-    SKELETON_CEMETERY = 41,
     MONSTER_LAIR = 42,
-    ZOMBIE_PYRAMID = 43,
-    IMP_KENNEL = 44,
-    CEMETERY = 45,
-    TRAINING_ARENA = 46,
-    PENANCE_TEMPLE = 47,
+    THE_SPIRE = 48,
+    THE_CRYPT = 49,
+    THE_KENNEL = 50,
+    THE_ANVIL = 51,
+    THE_FINGERS = 52,
+    THE_EYE = 53,
+    THE_PROFANE = 54,
+    THE_NEEDLES = 55,
+    THE_PIT = 56,
 }
 public enum TECHNOLOGY {
     //Weapon Production
@@ -379,12 +360,9 @@ public enum QUEST_TYPE {
     SURRENDER_ITEMS,
 }
 public enum FACTION_RELATIONSHIP_STATUS {
-    AT_WAR,
-    ENEMY,
-    DISLIKED,
-    NEUTRAL,
-    FRIEND,
-    ALLY,
+    FRIENDLY,
+    HOSTILE,
+    COLD_WAR,
 }
 //---------------------------------------- ENTITY COMPONENT SYSTEM ---------------------------------------//
 //public enum BODY_PART{
@@ -952,16 +930,16 @@ public enum INTERACTION_TYPE {
     HANG_OUT_ACTION,
     ARGUE_ACTION,
     CURSE_ACTION,
-    CRAFT_ITEM_GOAP,
-    MINE_GOAP,
+    CRAFT_ITEM,
+    MINE,
     ASK_FOR_HELP_SAVE_CHARACTER,
     ASSAULT_CHARACTER,
     TRANSFORM_TO_WOLF_FORM,
     REVERT_TO_NORMAL_FORM,
     EAT_PLANT,
     SLEEP,
-    CARRY_CHARACTER,
-    DROP_CHARACTER,
+    RESTRAIN_CARRY_CHARACTER,
+    IMPRISON_CHARACTER,
     EAT_ANIMAL,
     EAT_AT_TABLE,
     DAYDREAM,
@@ -1044,6 +1022,24 @@ public enum INTERACTION_TYPE {
     STRANGLE,
     REPAIR_TILE_OBJECT,
     NARCOLEPTIC_NAP,
+    PRIORITIZED_SHOCK,
+    PRIORITIZED_CRY,
+    CRY,
+    CRAFT_TILE_OBJECT,
+    PRAY_TILE_OBJECT,
+    HAVE_AFFAIR,
+    SLAY_CHARACTER,
+    LAUGH_AT,
+    FEELING_CONCERNED,
+    TEASE,
+    FEELING_SPOOKED,
+    FEELING_BROKENHEARTED,
+    GRIEVING,
+    GO_TO,
+    SING,
+    DANCE,
+    DESTROY_SUPPLY,
+    DESTROY_FOOD,
 }
 public enum INTERACTION_ALIGNMENT {
     EVIL,
@@ -1226,10 +1222,8 @@ public enum RELATIONSHIP_TRAIT {
 
 public enum POINT_OF_INTEREST_TYPE {
     ITEM,
-    LANDMARK,
     CHARACTER,
     TILE_OBJECT,
-    STRUCTURE,
 }
 public enum TILE_OBJECT_TYPE {
     SUPPLY_PILE,
@@ -1241,7 +1235,7 @@ public enum TILE_OBJECT_TYPE {
     TABLE,
     BED,
     ORE,
-    TREE,
+    TREE_OBJECT,
     FOOD,
     DESK,
     TOMBSTONE,
@@ -1253,8 +1247,9 @@ public enum TILE_OBJECT_TYPE {
     ANKH_OF_ANUBIS,
     MIASMA_EMITTER,
     WATER_WELL,
-    GENERIC,
+    GENERIC_TILE_OBJECT,
     FOOD_PILE,
+    GODDESS_STATUE,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1275,11 +1270,11 @@ public enum INTERACTION_CHARACTER_EFFECT {
 }
 public enum TARGET_POI { ACTOR, TARGET, }
 public enum TileNeighbourDirection { North, South, West, East, North_West,  North_East, South_West, South_East }
-public enum TIME_IN_WORDS { AFTER_MIDNIGHT, AFTER_MIDNIGHT_1, AFTER_MIDNIGHT_2, MORNING, MORNING_1, MORNING_2, AFTERNOON, AFTERNOON_1, AFTERNOON_2, EARLY_NIGHT, LATE_NIGHT, NIGHT_1, NIGHT_2, NONE }
+public enum TIME_IN_WORDS { AFTER_MIDNIGHT, AFTER_MIDNIGHT_1, AFTER_MIDNIGHT_2, MORNING, MORNING_1, MORNING_2, AFTERNOON, AFTERNOON_1, AFTERNOON_2, EARLY_NIGHT, LATE_NIGHT, NIGHT_1, NIGHT_2, LUNCH_TIME, NONE }
 //public enum CRIME_SEVERITY { NONE, INFRACTION, MISDEMEANOUR, SERIOUS_CRIME, }
 public enum FOOD { BERRY, MUSHROOM, RABBIT, RAT }
-public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, HAS_SUPPLY, HAS_ITEM, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, HAPPINESS_RECOVERY, HAS_NON_POSITIVE_TRAIT, IN_PARTY, IN_PARTY_2, REMOVE_FROM_PARTY, DESTROY, DEATH, PATROL, EXPLORE, REMOVE_ITEM, HAS_TRAIT_EFFECT, HAS_PLAN, HAS_FOOD
-, TARGET_REMOVE_RELATIONSHIP, TARGET_STOP_ACTION_AND_JOB }
+public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, HAS_SUPPLY, HAS_ITEM, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, HAPPINESS_RECOVERY, HAS_NON_POSITIVE_TRAIT, IN_PARTY, REMOVE_FROM_PARTY, DESTROY, DEATH, PATROL, EXPLORE, REMOVE_ITEM, HAS_TRAIT_EFFECT, HAS_PLAN, HAS_FOOD
+, TARGET_REMOVE_RELATIONSHIP, TARGET_STOP_ACTION_AND_JOB, RESTRAIN_CARRY, REMOVE_FROM_PARTY_NO_CONSENT, IN_VISION }
 public enum GOAP_PLAN_STATE { IN_PROGRESS, SUCCESS, FAILED, CANCELLED, }
 public enum GOAP_CATEGORY { NONE, IDLE, FULLNESS, TIREDNESS, HAPPINESS, WORK, REACTION,}
 public enum JOB_TYPE { NONE, UNDERMINE_ENEMY, TIREDNESS_RECOVERY_EXHAUSTED, HUNGER_RECOVERY_STARVING, HAPPINESS_RECOVERY_FORLORN, TIREDNESS_RECOVERY, HUNGER_RECOVERY, HAPPINESS_RECOVERY, REMOVE_TRAIT, RESTRAIN, OBTAIN_SUPPLY, OBTAIN_FOOD
@@ -1287,7 +1282,8 @@ public enum JOB_TYPE { NONE, UNDERMINE_ENEMY, TIREDNESS_RECOVERY_EXHAUSTED, HUNG
         , DESTROY_LOVE, REPORT_HOSTILE, REPORT_CRIME, BURY, DELIVER_TREASURE, CRAFT_TOOL, REPLACE_TILE_OBJECT, BREW_POTION
         , JUDGEMENT, BREAK_UP, SAVE_CHARACTER, ASK_FOR_HELP_SAVE_CHARACTER, TANTRUM, SHARE_INFORMATION, BUILD_FURNITURE, STEAL
         , BERSERK, PATROL, EXPLORE, OBTAIN_ITEM, WATCH, DROP, DEATH, HUNT_SERIAL_KILLER_VICTIM, INSPECT, RESOLVE_CONFLICT, REMOVE_FIRE, MISC, ATTEMPT_TO_STOP_JOB, MOVE_OUT, SUICIDE, SEDUCE, REPAIR
-        , DESTROY, OBTAIN_FOOD_OUTSIDE, OBTAIN_SUPPLY_OUTSIDE, IMPROVE, COMBAT, BUILD_GODDESS_STATUE, DESTROY_PROFANE_LANDMARK, PERFORM_HOLY_INCANTATION, PRAY_GODDESS_STATUE, BUILD_TILE_OBJECT
+        , DESTROY, OBTAIN_FOOD_OUTSIDE, OBTAIN_SUPPLY_OUTSIDE, IMPROVE, COMBAT, BUILD_GODDESS_STATUE, DESTROY_PROFANE_LANDMARK, PERFORM_HOLY_INCANTATION, PRAY_GODDESS_STATUE, BUILD_TILE_OBJECT, CHEAT, HAVE_AFFAIR, TRIGGER_FLAW, RETURN_HOME
+        , CORRUPT_CULTIST, DESTROY_SUPPLY, DESTROY_FOOD, SABOTAGE_FACTION, SEARCHING_WORLD_EVENT
 }
 public enum Cardinal_Direction { North, South, East, West };
 public enum ACTION_LOCATION_TYPE {
@@ -1297,6 +1293,7 @@ public enum ACTION_LOCATION_TYPE {
     RANDOM_LOCATION_B,
     NEAR_TARGET,
     ON_TARGET,
+    TARGET_IN_VISION,
 }
 public enum CHARACTER_STATE_CATEGORY { MAJOR, MINOR,}
 //public enum MOVEMENT_MODE { NORMAL, FLEE, ENGAGE }
@@ -1322,6 +1319,8 @@ public enum CRIME {
     ABERRATION,
     [SubcategoryOf(CRIME_CATEGORY.INFRACTIONS)]
     INFIDELITY,
+    [SubcategoryOf(CRIME_CATEGORY.SERIOUS)]
+    HERETIC,
 }
 public enum CHARACTER_MOOD {
     DARK, BAD, GOOD, GREAT,
@@ -1337,23 +1336,28 @@ public enum RELATIONSHIP_EFFECT {
     NEGATIVE,
 }
 public enum SHARE_INTEL_STATUS { NONE, WITNESSED, INFORMED,}
-public enum INTERVENTION_ABILITY { NONE, ACCESS_MEMORIES, INFLICT_LYCANTHROPY, INFLICT_KLEPTOMANIA, INFLICT_VAMPIRISM, INFLICT_UNFAITHFULNESS, INFLICT_CANNIBALISM, ZAP, JOLT, SPOOK, ENRAGE, DISABLE
-        , RILE_UP, ABDUCT, PROVOKE, DESTROY, RAISE_DEAD, CLOAK_OF_INVISIBILITY, EXPLOSION, IGNITE, LURE, CURSED_OBJECT, LULLABY, INFLICT_AGORAPHOBIA, SPOIL, INFLICT_ALCOHOLIC, PESTILENCE
-        , INFLICT_PARALYSIS, RELEASE, INFLICT_ZOMBIE_VIRUS, INFLICT_PSYCHOPATHY,
+public enum INTERVENTION_ABILITY { NONE, ACCESS_MEMORIES, LYCANTHROPY, KLEPTOMANIA, VAMPIRISM, UNFAITHFULNESS, CANNIBALISM, ZAP, JOLT, SPOOK, ENRAGE, DISABLE
+        , RILE_UP, ABDUCT, PROVOKE, DESTROY, RAISE_DEAD, CLOAK_OF_INVISIBILITY, EXPLOSION, IGNITE, LURE, CURSED_OBJECT, LULLABY, AGORAPHOBIA, SPOIL, ALCOHOLIC, PESTILENCE
+        , PARALYSIS, RELEASE, ZOMBIE_VIRUS, PSYCHOPATHY, TORNADO
 }
+public enum INTERVENTION_ABILITY_CATEGORY { NONE, SABOTAGE, MONSTER, DEVASTATION, HEX }
 
 public enum COMBAT_ABILITY {
     SINGLE_HEAL, FLAMESTRIKE, FEAR_SPELL, SACRIFICE, TAUNT,
 }
 
-public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUNGLE, TUNDRA, SNOW, DESERT, PROTECTIVE_BARRIER }
+public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUNGLE, TUNDRA, SNOW, DESERT, PROTECTIVE_BARRIER, HALLOWED_GROUNDS, }
 public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, ThiefSummon, }
 public enum ARTIFACT_TYPE { None, Necronomicon, Chaos_Orb, Hermes_Statue, Ankh_Of_Anubis, Miasma_Emitter, }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
 public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
 public enum SERIAL_VICTIM_TYPE { GENDER, ROLE, TRAIT, STATUS }
 public enum SPECIAL_OBJECT_TYPE { DEMON_STONE, SPELL_SCROLL, SKILL_SCROLL }
-public enum WORLD_EVENT { NONE, MILITARY_TRAINING, HARVEST, HOUSING_CONSTRUCTION, ITEM_PRODUCTION, SLAY_MONSTER, DESTROY_ARTIFACT, PROTECTION_RITUAL, MINE_SUPPLY, CULT_FOUNDATION, DESTROY_DEMON_STONE, RAID_MINE, SABOTAGE_FARM, CULTIST_DISCOVERED }
+public enum WORLD_EVENT { NONE, HARVEST, SLAY_MINION, MINE_SUPPLY, STUDY, PRAY_AT_TEMPLE, DESTROY_DEMONIC_LANDMARK, HOLY_INCANTATION, CORRUPT_CULTIST, DEMONIC_INCANTATION, SEARCHING }
+public enum DEADLY_SIN_ACTION { SPELL_SOURCE, INSTIGATOR, BUILDER, SABOTEUR, INVADER, FIGHTER, RESEARCHER, }
+public enum WORLD_EVENT_EFFECT { GET_FOOD, GET_SUPPLY, GAIN_POSITIVE_TRAIT, REMOVE_NEGATIVE_TRAIT, EXPLORE, COMBAT, DESTROY_LANDMARK, DIVINE_INTERVENTION_SPEED_UP, CORRUPT_CHARACTER, DIVINE_INTERVENTION_SLOW_DOWN, SEARCHING }
+public enum WORLD_OBJECT_TYPE { NONE, ARTIFACT, SUMMON, SPECIAL_OBJECT, }
+public enum REGION_FEATURE_TYPE { PASSIVE, ACTIVE }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
@@ -1514,6 +1518,19 @@ public static class Extensions {
                 return false;
         }
     }
+    /// <summary>
+    /// This is used to determine what class should be created when saving a CharacterState. <see cref="SaveUtilities.CreateCharacterStateSaveDataInstance(CharacterState)"/>
+    /// </summary>
+    /// <param name="type">The type of state</param>
+    /// <returns>If the state type has a unique save data class or not.</returns>
+    public static bool HasUniqueSaveData(this CHARACTER_STATE type) {
+        switch (type) {
+            case CHARACTER_STATE.DOUSE_FIRE:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     #region Tokens
@@ -1604,6 +1621,21 @@ public static class Extensions {
                 return false;
         }
     }
+    public static bool ProducesWorldEvent(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.COMBAT:
+            case JOB_TYPE.IMPROVE:
+            case JOB_TYPE.OBTAIN_FOOD_OUTSIDE:
+            case JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE:
+            case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
+            case JOB_TYPE.PERFORM_HOLY_INCANTATION:
+            case JOB_TYPE.CORRUPT_CULTIST:
+            case JOB_TYPE.SABOTAGE_FACTION:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     #region Summons
@@ -1644,19 +1676,19 @@ public static class Extensions {
     public static List<ABILITY_TAG> GetAbilityTags(this INTERVENTION_ABILITY type) {
         List<ABILITY_TAG> tags = new List<ABILITY_TAG>();
         switch (type) {
-            case INTERVENTION_ABILITY.INFLICT_LYCANTHROPY:
+            case INTERVENTION_ABILITY.LYCANTHROPY:
                 tags.Add(ABILITY_TAG.MAGIC);
                 break;
-            case INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA:
+            case INTERVENTION_ABILITY.KLEPTOMANIA:
                 tags.Add(ABILITY_TAG.CRIME);
                 break;
-            case INTERVENTION_ABILITY.INFLICT_VAMPIRISM:
+            case INTERVENTION_ABILITY.VAMPIRISM:
                 tags.Add(ABILITY_TAG.MAGIC);
                 break;
-            case INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS:
+            case INTERVENTION_ABILITY.UNFAITHFULNESS:
                 tags.Add(ABILITY_TAG.CRIME);
                 break;
-            case INTERVENTION_ABILITY.INFLICT_CANNIBALISM:
+            case INTERVENTION_ABILITY.CANNIBALISM:
                 tags.Add(ABILITY_TAG.MAGIC);
                 tags.Add(ABILITY_TAG.CRIME);
                 break;
@@ -1683,4 +1715,120 @@ public static class Extensions {
     }
     #endregion
 
+    #region Landmarks
+    public static bool IsPlayerLandmark(this LANDMARK_TYPE type) {
+        switch (type) {
+            case LANDMARK_TYPE.THE_PORTAL:
+            case LANDMARK_TYPE.THE_SPIRE:
+            case LANDMARK_TYPE.THE_CRYPT:
+            case LANDMARK_TYPE.THE_KENNEL:
+            case LANDMARK_TYPE.THE_ANVIL:
+            case LANDMARK_TYPE.THE_FINGERS:
+            case LANDMARK_TYPE.THE_EYE:
+            case LANDMARK_TYPE.THE_PROFANE:
+            case LANDMARK_TYPE.THE_NEEDLES:
+                return true;
+            default:
+                return false;
+        }
+    }
+    public static string LandmarkToString(this LANDMARK_TYPE type) {
+        switch (type) {
+            case LANDMARK_TYPE.NONE:
+                return "Empty";
+            default:
+                return Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+        }
+    }
+    #endregion
+
+    #region Hero Events
+    /// <summary>
+    /// Get an array of effects that a job type expects. 
+    /// NOTE: For a world event to be valid, it just needs to meet at least 1 of the allowed effects
+    /// </summary>
+    /// <param name="type">The type of job.</param>
+    /// <returns>Array of world effects.</returns>
+    public static WORLD_EVENT_EFFECT[] GetAllowedEventEffects(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.OBTAIN_FOOD_OUTSIDE:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GET_FOOD };
+            case JOB_TYPE.OBTAIN_SUPPLY_OUTSIDE:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GET_SUPPLY };
+            case JOB_TYPE.IMPROVE:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.GAIN_POSITIVE_TRAIT, WORLD_EVENT_EFFECT.REMOVE_NEGATIVE_TRAIT };
+            case JOB_TYPE.EXPLORE:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.EXPLORE };
+            case JOB_TYPE.COMBAT:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.COMBAT };
+            case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.DESTROY_LANDMARK };
+            case JOB_TYPE.PERFORM_HOLY_INCANTATION:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.DIVINE_INTERVENTION_SPEED_UP };
+            case JOB_TYPE.CORRUPT_CULTIST:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.CORRUPT_CHARACTER };
+            case JOB_TYPE.SEARCHING_WORLD_EVENT:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.SEARCHING };
+            case JOB_TYPE.SABOTAGE_FACTION:
+                return new WORLD_EVENT_EFFECT[] { WORLD_EVENT_EFFECT.DIVINE_INTERVENTION_SLOW_DOWN };
+            default:
+                return null;
+        }
+    }
+    #endregion
+
+    #region Areas
+    public static bool IsSettlementType(this AREA_TYPE type) {
+        switch (type) {
+            case AREA_TYPE.ELVEN_SETTLEMENT:
+            case AREA_TYPE.HUMAN_SETTLEMENT:
+                return true;
+            default:
+                return false;
+        }
+    }
+    #endregion
+
+    #region Deadly Sins
+    public static string Description(this DEADLY_SIN_ACTION sin) {
+        switch (sin) {
+            case DEADLY_SIN_ACTION.SPELL_SOURCE:
+                return "Knows three Spells that can be extracted by the Ruinarch";
+            case DEADLY_SIN_ACTION.INSTIGATOR:
+                return "Can be assigned to spawn Chaos Events in The Fingers";
+            case DEADLY_SIN_ACTION.BUILDER:
+                return "Can construct demonic structures";
+            case DEADLY_SIN_ACTION.SABOTEUR:
+                return "Can interfere in Events spawned by non-combatant characters";
+            case DEADLY_SIN_ACTION.INVADER:
+                return "Can invade adjacent regions";
+            case DEADLY_SIN_ACTION.FIGHTER:
+                return "Can interfere in Events spawned by combat-ready characters";
+            case DEADLY_SIN_ACTION.RESEARCHER:
+                return "Can be assigned to research upgrades in The Anvil";
+            default:
+                return string.Empty;
+        }
+    }
+    #endregion
+
+    #region Combat Abilities
+    public static string Description(this COMBAT_ABILITY ability) {
+        switch (ability) {
+            case COMBAT_ABILITY.SINGLE_HEAL:
+                return "Heals a friendly unit by a percentage of its max HP.";
+            case COMBAT_ABILITY.FLAMESTRIKE:
+                return "Deal AOE damage in the surrounding area.";
+            case COMBAT_ABILITY.FEAR_SPELL:
+                return "Makes a character fear any other character.";
+            case COMBAT_ABILITY.SACRIFICE:
+                return "Sacrifice a friendly unit to deal AOE damage in the surrounding area.";
+            case COMBAT_ABILITY.TAUNT:
+                return "Taunts enemies into attacking this character.";
+            default:
+                return string.Empty;
+        }
+
+    }
+    #endregion
 }

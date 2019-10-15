@@ -9,6 +9,7 @@ public class CureCharacter : GoapAction {
         actionIconString = GoapActionStateDB.FirstAid_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
+            TIME_IN_WORDS.LUNCH_TIME,
             TIME_IN_WORDS.AFTERNOON,
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
@@ -19,7 +20,7 @@ public class CureCharacter : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.HEALING_POTION.ToString(), targetPOI = actor }, HasItemInInventory);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Sick", targetPOI = poiTarget });
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Zombie Virus", targetPOI = poiTarget });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Infected", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Plagued", targetPOI = poiTarget });
 
     }
@@ -44,13 +45,13 @@ public class CureCharacter : GoapAction {
     }
     public void AfterCureSuccess() {
         //**After Effect 1**: Reduce target's Sick trait
-        if(parentPlan.job != null) {
-            parentPlan.job.SetCannotCancelJob(true);
-        }
-        SetCannotCancelAction(true);
+        //if(parentPlan.job != null) {
+        //    parentPlan.job.SetCannotCancelJob(true);
+        //}
+        //SetCannotCancelAction(true);
         RemoveTraitFrom(poiTarget, "Sick", actor);
         RemoveTraitFrom(poiTarget, "Plagued", actor);
-        RemoveTraitFrom(poiTarget, "Zombie Virus", actor);
+        RemoveTraitFrom(poiTarget, "Infected", actor);
         //**After Effect 2**: Remove Healing Potion from Actor's Inventory
         actor.ConsumeToken(actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
         //**After Effect 3**: Allow movement of Target
@@ -109,5 +110,9 @@ public class CureCharacter : GoapAction {
 public class CureCharacterData : GoapActionData {
     public CureCharacterData() : base(INTERACTION_TYPE.CURE_CHARACTER) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
+        requirementAction = Requirement;
+    }
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return poiTarget.GetNormalTrait("Sick", "Infected", "Plagued") != null;
     }
 }

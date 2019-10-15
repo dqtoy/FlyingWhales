@@ -27,8 +27,10 @@ public class NewAbilityUI : MonoBehaviour {
             PlayerUI.Instance.AddPendingUI(() => ShowNewAbilityUI(minionToLevelUp, ability));
             return;
         }
-        UIManager.Instance.Pause();
-        UIManager.Instance.SetSpeedTogglesState(false);
+        if (!GameManager.Instance.isPaused) {
+            UIManager.Instance.Pause();
+            UIManager.Instance.SetSpeedTogglesState(false);
+        }
         UpdateMinionToLevelUp(minionToLevelUp);
         UpdateNewAbility(ability);
         this.gameObject.SetActive(true);
@@ -49,8 +51,8 @@ public class NewAbilityUI : MonoBehaviour {
         minionGO.SetActive(false);
         obtainText.gameObject.SetActive(false);
         if (obj is PlayerJobAction) {
-            titleText.text = "New Intervention Ability";
-            obtainText.text = "You obtained a new Intervention Ability!";
+            titleText.text = "New Spell";
+            obtainText.text = "You obtained a new Spell!";
             PlayerJobAction action = obj as PlayerJobAction;
             abilityIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
             string text = action.name;
@@ -93,8 +95,7 @@ public class NewAbilityUI : MonoBehaviour {
     private void Close() {
         this.gameObject.SetActive(false);
         if (!PlayerUI.Instance.TryShowPendingUI()) {
-            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
-            UIManager.Instance.SetSpeedTogglesState(true);
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
     }
 

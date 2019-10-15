@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DropFood : GoapAction {
+    public int neededFood { get; private set; }
     public DropFood(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_FOOD, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionIconString = GoapActionStateDB.Work_Icon;
         isNotificationAnIntel = false;
@@ -28,6 +29,14 @@ public class DropFood : GoapAction {
     protected override int GetCost() {
         return 3;
     }
+    public override bool InitializeOtherData(object[] otherData) {
+        this.otherData = otherData;
+        if (otherData.Length == 1 && otherData[0] is int) {
+            neededFood = (int) otherData[0];
+            return true;
+        }
+        return base.InitializeOtherData(otherData);
+    }
     //public override void FailAction() {
     //    base.FailAction();
     //    SetState("Target Missing");
@@ -38,9 +47,12 @@ public class DropFood : GoapAction {
     private bool IsActorFoodEnough() {
         if(poiTarget is Table) {
             Table table = poiTarget as Table;
-            if((actor.food + table.food) >= 60) {
+            if (actor.food >= neededFood) {
                 return true;
             }
+            //if((actor.food + table.food) >= 60) {
+            //    return true;
+            //}
         } else if (poiTarget is FoodPile) {
             //FoodPile foodPile = poiTarget as FoodPile;
             if (actor.food >= 10) {

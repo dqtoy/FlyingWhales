@@ -10,12 +10,14 @@ public class PlayerManager : MonoBehaviour {
     public const int MAX_LEVEL_ARTIFACT = 3;
     public const int MAX_LEVEL_COMBAT_ABILITY = 3;
     public const int MAX_LEVEL_INTERVENTION_ABILITY = 3;
+    public const int DIVINE_INTERVENTION_DURATION = 4320;
 
     public bool isChoosingStartingTile = false;
     public Player player = null;
     public INTERVENTION_ABILITY[] allInterventionAbilities;
     public Dictionary<INTERVENTION_ABILITY, PlayerJobActionData> allInterventionAbilitiesData;
     public COMBAT_ABILITY[] allCombatAbilities;
+    public LANDMARK_TYPE[] allLandmarksThatCanBeBuilt;
 
     [SerializeField] private Sprite[] _playerAreaFloorSprites;
     [SerializeField] private LandmarkStructureSprite[] _playerAreaDefaultStructureSprites;
@@ -42,14 +44,13 @@ public class PlayerManager : MonoBehaviour {
         Instance = this;
     }
     public void Initialize() {
-        //allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.IGNITE };
-        allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.ZAP, INTERVENTION_ABILITY.RAISE_DEAD, INTERVENTION_ABILITY.INFLICT_CANNIBALISM
-            , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY, INTERVENTION_ABILITY.INFLICT_LYCANTHROPY, INTERVENTION_ABILITY.INFLICT_VAMPIRISM, INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA
-            , INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE, INTERVENTION_ABILITY.EXPLOSION
-            , INTERVENTION_ABILITY.IGNITE, INTERVENTION_ABILITY.LURE, INTERVENTION_ABILITY.CURSED_OBJECT, INTERVENTION_ABILITY.SPOIL, INTERVENTION_ABILITY.INFLICT_ALCOHOLIC
-            , INTERVENTION_ABILITY.LULLABY, INTERVENTION_ABILITY.INFLICT_AGORAPHOBIA, INTERVENTION_ABILITY.INFLICT_PARALYSIS, INTERVENTION_ABILITY.RELEASE, INTERVENTION_ABILITY.INFLICT_ZOMBIE_VIRUS
-            , INTERVENTION_ABILITY.PESTILENCE, INTERVENTION_ABILITY.INFLICT_PSYCHOPATHY }; //INTERVENTION_ABILITY.JOLT, 
-        //allInterventionAbilities = (INTERVENTION_ABILITY[]) System.Enum.GetValues(typeof(INTERVENTION_ABILITY));
+        // , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY
+        allInterventionAbilities = new INTERVENTION_ABILITY[] { INTERVENTION_ABILITY.ZAP, INTERVENTION_ABILITY.RAISE_DEAD, INTERVENTION_ABILITY.CANNIBALISM
+            , INTERVENTION_ABILITY.LYCANTHROPY, INTERVENTION_ABILITY.VAMPIRISM, INTERVENTION_ABILITY.KLEPTOMANIA
+            , INTERVENTION_ABILITY.UNFAITHFULNESS, INTERVENTION_ABILITY.ENRAGE, INTERVENTION_ABILITY.PROVOKE, INTERVENTION_ABILITY.EXPLOSION
+            , INTERVENTION_ABILITY.IGNITE, INTERVENTION_ABILITY.LURE, INTERVENTION_ABILITY.CURSED_OBJECT, INTERVENTION_ABILITY.SPOIL, INTERVENTION_ABILITY.ALCOHOLIC
+            , INTERVENTION_ABILITY.LULLABY, INTERVENTION_ABILITY.AGORAPHOBIA, INTERVENTION_ABILITY.PARALYSIS, INTERVENTION_ABILITY.RELEASE, INTERVENTION_ABILITY.ZOMBIE_VIRUS
+            , INTERVENTION_ABILITY.PESTILENCE, INTERVENTION_ABILITY.PSYCHOPATHY, INTERVENTION_ABILITY.TORNADO }; //INTERVENTION_ABILITY.JOLT, , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY//
         allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
 
         allInterventionAbilitiesData = new Dictionary<INTERVENTION_ABILITY, PlayerJobActionData>();
@@ -57,6 +58,8 @@ public class PlayerManager : MonoBehaviour {
             var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allInterventionAbilities[i].ToString()) + "Data";
             allInterventionAbilitiesData.Add(allInterventionAbilities[i], System.Activator.CreateInstance(System.Type.GetType(typeName)) as PlayerJobActionData);
         }
+
+        allLandmarksThatCanBeBuilt = new LANDMARK_TYPE[] { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE , LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.THE_FINGERS };
         //Unit Selection
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -64,7 +67,7 @@ public class PlayerManager : MonoBehaviour {
     }
 
     public void LoadStartingTile() {
-        BaseLandmark portal = LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.DEMONIC_PORTAL);
+        BaseLandmark portal = LandmarkManager.Instance.GetLandmarkOfType(LANDMARK_TYPE.THE_PORTAL);
         OnLoadStartingTile(portal);
     }
     private void OnLoadStartingTile(BaseLandmark portal) {
@@ -80,10 +83,10 @@ public class PlayerManager : MonoBehaviour {
         //player.SetMaxMinions(9);
         //player.CreateInitialMinions();
         //player.PreAssignJobSlots();
-        LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
-        player.SetPlayerTargetFaction(LandmarkManager.Instance.mainSettlement.owner);
+        LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, portal.tileLocation.region);
+        player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
         GameManager.Instance.StartProgression();
-        UIManager.Instance.SetTimeControlsState(true);
+        UIManager.Instance.SetSpeedTogglesState(true);
         PlayerUI.Instance.UpdateUI();
         //PlayerUI.Instance.InitializeThreatMeter();
     }
@@ -97,15 +100,24 @@ public class PlayerManager : MonoBehaviour {
         } else {
             player.LoadPlayerArea(existingPlayerArea);
         }
-        for (int i = 0; i < portal.tileLocation.region.tiles.Count; i++) {
-            HexTile regionTile = portal.tileLocation.region.tiles[i];
-            player.playerArea.AddTile(regionTile);
-            regionTile.SetCorruption(true);
-        }
-        LandmarkManager.Instance.OwnArea(player.playerFaction, RACE.DEMON, player.playerArea);
-        player.SetPlayerTargetFaction(LandmarkManager.Instance.mainSettlement.owner);
+        //for (int i = 0; i < portal.tileLocation.region.tiles.Count; i++) {
+        //    HexTile regionTile = portal.tileLocation.region.tiles[i];
+        //    //player.playerArea.AddTile(regionTile);
+        //    regionTile.SetCorruption(true);
+        //}
+        LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, portal.tileLocation.region);
+        player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
         PlayerUI.Instance.UpdateUI();
-        //PlayerUI.Instance.InitializeThreatMeter();
+
+        //Add an adjacent region to the player at the start of the game.
+        //Ref: https://trello.com/c/cQKzEx06/2699-one-additional-empty-region-owned-by-the-player-at-the-start-of-game
+        List<Region> choices = portal.tileLocation.region.connections;
+        Region chosenRegion = choices[Random.Range(0, choices.Count)];
+        LandmarkManager.Instance.OwnRegion(player.playerFaction, RACE.DEMON, chosenRegion);
+        //Pre-build a Spire in the second initial empty corrupted region and ensure that it does not have a Hallowed Ground trait.
+        chosenRegion.RemoveAllFeatures();
+        BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(chosenRegion.coreTile, LANDMARK_TYPE.THE_SPIRE, false);
+
     }
     public void InitializePlayer(SaveDataPlayer data) {
         player = new Player(data);
@@ -135,21 +147,18 @@ public class PlayerManager : MonoBehaviour {
                 player.SetMinionLeader(player.minions[i]);
             }
         }
-        player.SetPlayerTargetFaction(LandmarkManager.Instance.mainSettlement.owner);
+        player.SetPlayerTargetFaction(LandmarkManager.Instance.enemyOfPlayerArea.owner);
     }
-    public void PurchaseTile(HexTile tile) {
-        AddTileToPlayerArea(tile);
-    }
-    public void AddTileToPlayerArea(HexTile tile) {
-        player.playerArea.AddTile(tile);
-        tile.SetCorruption(true);
-        for (int i = 0; i < tile.region.tiles.Count; i++) {
-            HexTile regionTile = tile.region.tiles[i];
-            player.playerArea.AddTile(regionTile);
-            regionTile.SetCorruption(true);
-        }
-        //tile.StopCorruptionAnimation();
-    }
+    //public void AddTileToPlayerArea(HexTile tile) {
+    //    player.playerArea.AddTile(tile);
+    //    tile.SetCorruption(true);
+    //    for (int i = 0; i < tile.region.tiles.Count; i++) {
+    //        HexTile regionTile = tile.region.tiles[i];
+    //        player.playerArea.AddTile(regionTile);
+    //        regionTile.SetCorruption(true);
+    //    }
+    //    //tile.StopCorruptionAnimation();
+    //}
 
     #region Utilities
     public Sprite GetJobActionSprite(string actionName) {
@@ -179,14 +188,14 @@ public class PlayerManager : MonoBehaviour {
                 return new Disable();
             case INTERVENTION_ABILITY.ENRAGE:
                 return new Enrage();
-            case INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA:
-                return new InflictKleptomania();
-            case INTERVENTION_ABILITY.INFLICT_LYCANTHROPY:
-                return new InflictLycanthropy();
-            case INTERVENTION_ABILITY.INFLICT_UNFAITHFULNESS:
-                return new InflictUnfaithfulness();
-            case INTERVENTION_ABILITY.INFLICT_VAMPIRISM:
-                return new InflictVampirism();
+            case INTERVENTION_ABILITY.KLEPTOMANIA:
+                return new Kleptomania();
+            case INTERVENTION_ABILITY.LYCANTHROPY:
+                return new Lycanthropy();
+            case INTERVENTION_ABILITY.UNFAITHFULNESS:
+                return new Unfaithfulness();
+            case INTERVENTION_ABILITY.VAMPIRISM:
+                return new Vampirism();
             case INTERVENTION_ABILITY.JOLT:
                 return new Jolt();
             case INTERVENTION_ABILITY.PROVOKE:
@@ -201,8 +210,8 @@ public class PlayerManager : MonoBehaviour {
                 return new Spook();
             case INTERVENTION_ABILITY.ZAP:
                 return new Zap();
-            case INTERVENTION_ABILITY.INFLICT_CANNIBALISM:
-                return new InflictCannibalism();
+            case INTERVENTION_ABILITY.CANNIBALISM:
+                return new Cannibalism();
             case INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY:
                 return new CloakOfInvisibility();
             case INTERVENTION_ABILITY.LURE:
@@ -215,22 +224,24 @@ public class PlayerManager : MonoBehaviour {
                 return new CursedObject();
             case INTERVENTION_ABILITY.SPOIL:
                 return new Spoil();
-            case INTERVENTION_ABILITY.INFLICT_ALCOHOLIC:
-                return new InflictAlcoholic();
+            case INTERVENTION_ABILITY.ALCOHOLIC:
+                return new Alcoholic();
             case INTERVENTION_ABILITY.LULLABY:
                 return new Lullaby();
             case INTERVENTION_ABILITY.PESTILENCE:
                 return new Pestilence();
-            case INTERVENTION_ABILITY.INFLICT_AGORAPHOBIA:
-                return new InflictAgoraphobia();
-            case INTERVENTION_ABILITY.INFLICT_PARALYSIS:
-                return new InflictParalysis();
+            case INTERVENTION_ABILITY.AGORAPHOBIA:
+                return new Agoraphobia();
+            case INTERVENTION_ABILITY.PARALYSIS:
+                return new Paralysis();
             case INTERVENTION_ABILITY.RELEASE:
                 return new Release();
-            case INTERVENTION_ABILITY.INFLICT_ZOMBIE_VIRUS:
-                return new InflictZombieVirus();
-            case INTERVENTION_ABILITY.INFLICT_PSYCHOPATHY:
-                return new InflictPsychopathy();
+            case INTERVENTION_ABILITY.ZOMBIE_VIRUS:
+                return new ZombieVirus();
+            case INTERVENTION_ABILITY.PSYCHOPATHY:
+                return new Psychopathy();
+            case INTERVENTION_ABILITY.TORNADO:
+                return new Tornado();
         }
         return null;
     }
@@ -275,6 +286,16 @@ public class PlayerManager : MonoBehaviour {
         }
         return abilityTiers;
     }
+    public List<INTERVENTION_ABILITY> GetAllInterventionAbilityByCategory(INTERVENTION_ABILITY_CATEGORY category) {
+        List<INTERVENTION_ABILITY> abilities = new List<INTERVENTION_ABILITY>();
+        for (int i = 0; i < allInterventionAbilities.Length; i++) {
+            INTERVENTION_ABILITY ability = allInterventionAbilities[i];
+            if (allInterventionAbilitiesData[ability].category == category) {
+                abilities.Add(ability);
+            }
+        }
+        return abilities;
+    }
     #endregion
 
     #region Combat Ability
@@ -300,49 +321,38 @@ public class PlayerManager : MonoBehaviour {
         Artifact newArtifact = CreateNewArtifactClassFromType(artifactType) as Artifact;
         return newArtifact;
     }
-    public Artifact CreateNewArtifact(SaveDataArtifactSlot data) {
-        Artifact newArtifact = CreateNewArtifactClassFromType(data);
-        newArtifact.SetLevel(data.level);
-        return newArtifact;
-    }
+    //public Artifact CreateNewArtifact(SaveDataArtifactSlot data) {
+    //    Artifact newArtifact = CreateNewArtifactClassFromType(data);
+    //    newArtifact.SetLevel(data.level);
+    //    return newArtifact;
+    //}
     public Artifact CreateNewArtifact(SaveDataArtifact data) {
-        Artifact newArtifact = CreateNewArtifactClassFromType(data);
+        Artifact newArtifact = CreateNewArtifactClassFromType(data) as Artifact;
         return newArtifact;
     }
     private object CreateNewArtifactClassFromType(ARTIFACT_TYPE artifactType) {
-        var typeName = artifactType.ToString();
+        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifactType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName));
     }
-    private Artifact CreateNewArtifactClassFromType(SaveDataArtifactSlot data) {
-        switch (data.type) {
-            case ARTIFACT_TYPE.Ankh_Of_Anubis:
-                return new Ankh_Of_Anubis(data);
-            case ARTIFACT_TYPE.Chaos_Orb:
-                return new Chaos_Orb(data);
-            case ARTIFACT_TYPE.Hermes_Statue:
-                return new Hermes_Statue(data);
-            case ARTIFACT_TYPE.Miasma_Emitter:
-                return new Miasma_Emitter(data);
-            case ARTIFACT_TYPE.Necronomicon:
-                return new Necronomicon(data);
-        }
-        return null;
+    private object CreateNewArtifactClassFromType(SaveDataArtifact data) {
+        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.artifactType.ToString());
+        return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
     }
-    private Artifact CreateNewArtifactClassFromType(SaveDataArtifact data) {
-        switch (data.artifactType) {
-            case ARTIFACT_TYPE.Ankh_Of_Anubis:
-                return new Ankh_Of_Anubis(data);
-            case ARTIFACT_TYPE.Chaos_Orb:
-                return new Chaos_Orb(data);
-            case ARTIFACT_TYPE.Hermes_Statue:
-                return new Hermes_Statue(data);
-            case ARTIFACT_TYPE.Miasma_Emitter:
-                return new Miasma_Emitter(data);
-            case ARTIFACT_TYPE.Necronomicon:
-                return new Necronomicon(data);
-        }
-        return null;
-    }
+    //private Artifact CreateNewArtifactClassFromType(SaveDataArtifactSlot data) {
+    //    switch (data.type) {
+    //        case ARTIFACT_TYPE.Ankh_Of_Anubis:
+    //            return new Ankh_Of_Anubis(data);
+    //        case ARTIFACT_TYPE.Chaos_Orb:
+    //            return new Chaos_Orb(data);
+    //        case ARTIFACT_TYPE.Hermes_Statue:
+    //            return new Hermes_Statue(data);
+    //        case ARTIFACT_TYPE.Miasma_Emitter:
+    //            return new Miasma_Emitter(data);
+    //        case ARTIFACT_TYPE.Necronomicon:
+    //            return new Necronomicon(data);
+    //    }
+    //    return null;
+    //}
     #endregion
 
     #region Unit Selection
@@ -388,7 +398,7 @@ public class PlayerManager : MonoBehaviour {
                         continue;
                     }
                     IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
-                    character.StopCurrentAction(false);
+                    character.StopCurrentAction(false, "Stopped by the player");
                     if (character.stateComponent.currentState != null) {
                         character.stateComponent.currentState.OnExitThisState();
                     }

@@ -10,6 +10,9 @@ using System;
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;
 
+    [Header("Currencies")]
+    [SerializeField] private TextMeshProUGUI manaLbl;
+
     [Header("Role Slots")]
     [SerializeField] private RectTransform roleSlotsParent;
     //[SerializeField] private RoleSlotItem[] roleSlots;
@@ -67,7 +70,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject startingMinionPickerGO;
     [SerializeField] private MinionCard startingMinionCard1;
     [SerializeField] private MinionCard startingMinionCard2;
-    [SerializeField] private MinionCard startingMinionCard3;
+    //[SerializeField] private MinionCard startingMinionCard3;
     [SerializeField] private GameObject minionLeaderPickerParent;
     [SerializeField] private GameObject minionLeaderPickerPrefab;
     [SerializeField] private TextMeshProUGUI selectMinionLeaderText;
@@ -155,12 +158,7 @@ public class PlayerUI : MonoBehaviour {
         if (InteriorMapManager.Instance.isAnAreaMapShowing) {
             UpdateStartInvasionButton();
         }
-        //manaText.text = PlayerManager.Instance.player.currencies[CURRENCY.MANA].ToString();
-        //redMagicText.text = "" + PlayerManager.Instance.player.redMagic;
-        //greenMagicText.text = "" + PlayerManager.Instance.player.greenMagic;
-        //suppliesText.text = PlayerManager.Instance.player.currencies[CURRENCY.SUPPLY].ToString();
-        //impsText.text = "Imps: " + PlayerManager.Instance.player.currencies[CURRENCY.IMP].ToString() + "/" + PlayerManager.Instance.player.maxImps.ToString();
-        //threatFiller.fillAmount = (float) PlayerManager.Instance.player.threatLevel / 100f;
+        UpdateMana();
     }
 
     public void Initialize() {
@@ -180,12 +178,12 @@ public class PlayerUI : MonoBehaviour {
         LoadAttackSlot();
         LoadInterventionAbilitySlots();
         UpdateInterventionAbilitySlots();
-        LoadKillCountCharacterItems(LandmarkManager.Instance.mainSettlement);
+        LoadKillCountCharacterItems(LandmarkManager.Instance.enemyOfPlayerArea);
 
         UpdateIntel();
         InitializeMemoriesMenu();
-        SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots[0]);
-        SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots[0]);
+        SetCurrentlySelectedSummonSlot(null);
+        SetCurrentlySelectedArtifactSlot(null);
         //UpdateArtifactsInteraction();
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
@@ -206,12 +204,16 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Summon>(Signals.PLAYER_REMOVED_SUMMON, OnRemoveSummon);
         Messenger.AddListener<Summon>(Signals.PLAYER_PLACED_SUMMON, OnSummonUsed);
         Messenger.AddListener<SummonSlot>(Signals.PLAYER_GAINED_SUMMON_LEVEL, UpdateCurrentlySelectedSummonSlotLevel);
+        Messenger.AddListener<SummonSlot>(Signals.PLAYER_LOST_SUMMON_SLOT, OnPlayerLostSummonSlot);
+        Messenger.AddListener<SummonSlot>(Signals.PLAYER_GAINED_SUMMON_SLOT, OnPlayerGainedSummonSlot);
 
         //Artifacts
         Messenger.AddListener<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, OnGainNewArtifact);
         Messenger.AddListener<Artifact>(Signals.PLAYER_REMOVED_ARTIFACT, OnRemoveArtifact);
         Messenger.AddListener<Artifact>(Signals.PLAYER_USED_ARTIFACT, OnUsedArtifact);
         Messenger.AddListener<ArtifactSlot>(Signals.PLAYER_GAINED_ARTIFACT_LEVEL, UpdateCurrentlySelectedArtifactSlotLevel);
+        Messenger.AddListener<ArtifactSlot>(Signals.PLAYER_LOST_ARTIFACT_SLOT, OnPlayerLostArtifactSlot);
+        Messenger.AddListener<ArtifactSlot>(Signals.PLAYER_GAINED_ARTIFACT_SLOT, OnPlayerGainedArtifactSlot);
 
         //Kill Count UI
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -228,6 +230,9 @@ public class PlayerUI : MonoBehaviour {
 
         //key presses
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
+
+        //currencies
+        Messenger.AddListener(Signals.PLAYER_ADJUSTED_MANA, UpdateMana);
     }
 
     #region Listeners
@@ -238,6 +243,10 @@ public class PlayerUI : MonoBehaviour {
         startInvasionButton.gameObject.SetActive(true);
         //saveGameButton.gameObject.SetActive(false);
 
+        if (PlayerManager.Instance.player.currentAreaBeingInvaded == area) {
+            ShowCombatAbilityUI();
+        }
+
         //Kill count UI
         //UpdateKillCountActiveState();
         //LoadKillCountCharacterItems(area);
@@ -247,6 +256,7 @@ public class PlayerUI : MonoBehaviour {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         startInvasionButton.gameObject.SetActive(false);
+        HideCombatAbilityUI();
         //saveGameButton.gameObject.SetActive(true);
 
         //UpdateKillCountActiveState();
@@ -256,11 +266,13 @@ public class PlayerUI : MonoBehaviour {
             if (PlayerManager.Instance.player.currentActivePlayerJobAction != null) {
                 PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
                 CursorManager.Instance.ClearLeftClickActions();
-            }
-            if (isSummoning) {
+            }else if (isSummoning) {
                 CancelSummon();
             } else if (isSummoningArtifact) {
                 CancelSummonArtifact();
+            } else {
+                //only toggle options menu if doing nothing else
+                UIManager.Instance.ToggleOptionsMenu();
             }
         } else if (pressedKey == KeyCode.Mouse0) {
             //left click
@@ -310,10 +322,16 @@ public class PlayerUI : MonoBehaviour {
         if (!stillHasResidents) {
             //player has won
             UIManager.Instance.Pause();
-            UIManager.Instance.SetTimeControlsState(false);
+            UIManager.Instance.SetSpeedTogglesState(false);
             Messenger.Broadcast(Signals.HIDE_MENUS);
             SuccessfulAreaCorruption();
         }
+    }
+    #endregion
+
+    #region Currencies
+    private void UpdateMana() {
+        manaLbl.text = PlayerManager.Instance.player.mana.ToString();
     }
     #endregion
 
@@ -483,7 +501,7 @@ public class PlayerUI : MonoBehaviour {
         SetDefenseGridCharactersFromPlayer();
     }
     public void OnClickConfirmCombatGrid() {
-        if(combatGridAssignerIcon.sprite == attackGridIconSprite) {
+        if (combatGridAssignerIcon.sprite == attackGridIconSprite) {
             attackSlot.OnClickConfirm();
         } else {
             defenseSlot.OnClickConfirm();
@@ -493,7 +511,7 @@ public class PlayerUI : MonoBehaviour {
         attackGridGO.SetActive(false);
     }
     private void OnDropOnAttackGrid(object obj, int index) {
-        if(obj is Character) {
+        if (obj is Character) {
             Character character = obj as Character;
             if (attackGridReference.IsCharacterInGrid(character)) {
                 attackGridSlots[index].PlaceObject(attackGridReference.slots[index].character);
@@ -544,16 +562,16 @@ public class PlayerUI : MonoBehaviour {
         return false;
     }
     private void SetAttackGridCharactersFromPlayer() {
-        for (int i = 0; i < attackGridReference.slots.Length; i++) {
-            attackGridReference.slots[i].OccupySlot(PlayerManager.Instance.player.attackGrid.slots[i].character);
-            attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
-        }
+        //for (int i = 0; i < attackGridReference.slots.Length; i++) {
+        //    attackGridReference.slots[i].OccupySlot(PlayerManager.Instance.player.attackGrid.slots[i].character);
+        //    attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
+        //}
     }
     private void SetDefenseGridCharactersFromPlayer() {
-        for (int i = 0; i < defenseGridReference.slots.Length; i++) {
-            defenseGridReference.slots[i].OccupySlot(PlayerManager.Instance.player.attackGrid.slots[i].character);
-            attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
-        }
+        //for (int i = 0; i < defenseGridReference.slots.Length; i++) {
+        //    defenseGridReference.slots[i].OccupySlot(PlayerManager.Instance.player.attackGrid.slots[i].character);
+        //    attackGridSlots[i].PlaceObject(attackGridReference.slots[i].character);
+        //}
     }
     private void UpdateAttackGridSlots() {
         for (int i = 0; i < attackGridSlots.Length; i++) {
@@ -618,7 +636,7 @@ public class PlayerUI : MonoBehaviour {
             } else if (previousMenu.Equals("faction")) {
                 UIManager.Instance.ShowFactionTokenMenu();
             }
-        } 
+        }
         //else if (menu is CharacterInfoUI || menu is TileObjectInfoUI) {
         //    HideActionButtons();
         //}
@@ -708,7 +726,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public IntelItem GetIntelItemWithIntel(Intel intel) {
         for (int i = 0; i < intelItems.Length; i++) {
-            if(intelItems[i].intel != null && intelItems[i].intel == intel) {
+            if (intelItems[i].intel != null && intelItems[i].intel == intel) {
                 return intelItems[i];
             }
         }
@@ -760,9 +778,23 @@ public class PlayerUI : MonoBehaviour {
     #region Start Picker
     private INTERVENTION_ABILITY[] startingAbilities;
     public void ShowStartingMinionPicker() {
-        startingMinionCard1.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-        startingMinionCard2.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-        startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+
+        UnsummonedMinionData minion1Data = new UnsummonedMinionData();
+        UnsummonedMinionData minion2Data = new UnsummonedMinionData();
+
+        //string minionName1 = string.Empty;
+        //string minionClassName1 = string.Empty;
+        //COMBAT_ABILITY minionCombatAbilityType1 = COMBAT_ABILITY.FEAR_SPELL;
+
+        //string minionName2 = string.Empty;
+        //string minionClassName2 = string.Empty;
+        //COMBAT_ABILITY minionCombatAbilityType2 = COMBAT_ABILITY.FEAR_SPELL;
+
+        RandomizeTwoStartingMinions(ref minion1Data, ref minion2Data);
+
+        startingMinionCard1.SetMinion(minion1Data);
+        startingMinionCard2.SetMinion(minion2Data);
+        //startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
         startingAbilities = new INTERVENTION_ABILITY[PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES];
         RandomizeStartingAbilities();
         startingMinionPickerGO.SetActive(true);
@@ -770,27 +802,47 @@ public class PlayerUI : MonoBehaviour {
     public void HideStartingMinionPicker() {
         startingMinionPickerGO.SetActive(false);
     }
-    public void Reroll1() {
-        startingMinionCard1.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+    public void Reroll() {
+        UnsummonedMinionData minion1Data = new UnsummonedMinionData();
+        UnsummonedMinionData minion2Data = new UnsummonedMinionData();
+
+        RandomizeTwoStartingMinions(ref minion1Data, ref minion2Data);
+
+        startingMinionCard1.SetMinion(minion1Data);
+        startingMinionCard2.SetMinion(minion2Data);
     }
-    public void Reroll2() {
-        startingMinionCard2.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-    }
-    public void Reroll3() {
-        startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-    }
+    //public void Reroll2() {
+    //    startingMinionCard2.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+    //}
+    //public void Reroll3() {
+    //    startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+    //}
     public void OnClickStartGame() {
         HideStartingMinionPicker();
-        PlayerManager.Instance.player.AddMinion(startingMinionCard1.minion);
-        PlayerManager.Instance.player.AddMinion(startingMinionCard2.minion);
-        PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
-        PlayerManager.Instance.player.SetMinionLeader(startingMinionCard1.minion);
+
+        Minion minion1 = PlayerManager.Instance.player.CreateNewMinion(startingMinionCard1.minionData.className, RACE.DEMON, false);
+        Minion minion2 = PlayerManager.Instance.player.CreateNewMinion(startingMinionCard2.minionData.className, RACE.DEMON, false);
+
+        minion1.character.SetName(startingMinionCard1.minionData.minionName);
+        minion2.character.SetName(startingMinionCard2.minionData.minionName);
+
+        minion1.SetCombatAbility(startingMinionCard1.minionData.combatAbility);
+        minion2.SetCombatAbility(startingMinionCard2.minionData.combatAbility);
+
+        minion1.SetRandomResearchInterventionAbilities(startingMinionCard1.minionData.interventionAbilitiesToResearch);
+        minion2.SetRandomResearchInterventionAbilities(startingMinionCard2.minionData.interventionAbilitiesToResearch);
+
+        PlayerManager.Instance.player.AddMinion(minion1);
+        PlayerManager.Instance.player.AddMinion(minion2);
+        //PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
+        PlayerManager.Instance.player.SetMinionLeader(minion1);
         for (int i = 0; i < startingAbilities.Length; i++) {
             PlayerManager.Instance.player.GainNewInterventionAbility(startingAbilities[i]);
         }
         startingAbilities = null;
-        UIManager.Instance.SetTimeControlsState(true);
-        PlayerManager.Instance.player.StartResearchNewInterventionAbility();
+        UIManager.Instance.SetSpeedTogglesState(true);
+        PlayerManager.Instance.player.StartDivineIntervention();
+        //PlayerManager.Instance.player.StartResearchNewInterventionAbility();
     }
     private void ShowSelectMinionLeader() {
         Utilities.DestroyChildren(minionLeaderPickerParent.transform);
@@ -799,7 +851,7 @@ public class PlayerUI : MonoBehaviour {
         tempCurrentMinionLeaderPicker = null;
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             Minion minion = PlayerManager.Instance.player.minions[i];
-            if(minion != null) {
+            if (minion != null) {
                 GameObject go = GameObject.Instantiate(minionLeaderPickerPrefab, minionLeaderPickerParent.transform);
                 MinionLeaderPicker minionLeaderPicker = go.GetComponent<MinionLeaderPicker>();
                 minionLeaderPicker.SetMinion(minion);
@@ -809,7 +861,7 @@ public class PlayerUI : MonoBehaviour {
                         minionLeaderPicker.imgHighlight.gameObject.SetActive(true);
                         tempCurrentMinionLeaderPicker = minionLeaderPicker;
                     }
-                } else if(minion == PlayerManager.Instance.player.currentMinionLeader) {
+                } else if (minion == PlayerManager.Instance.player.currentMinionLeader) {
                     minionLeaderPicker.imgHighlight.gameObject.SetActive(true);
                     tempCurrentMinionLeaderPicker = minionLeaderPicker;
                 }
@@ -821,18 +873,77 @@ public class PlayerUI : MonoBehaviour {
         leaderPicker.imgHighlight.gameObject.SetActive(true);
         tempCurrentMinionLeaderPicker = leaderPicker;
     }
+    private List<INTERVENTION_ABILITY> chosenAbilities;
     private void RandomizeStartingAbilities() {
-        INTERVENTION_ABILITY[] abilities = PlayerManager.Instance.allInterventionAbilities;
+        List<INTERVENTION_ABILITY> abilitiesPool = PlayerManager.Instance.allInterventionAbilities.ToList();
+        chosenAbilities = new List<INTERVENTION_ABILITY>();
+
+        while (chosenAbilities.Count != startingAbilityIcons.Length) {
+            INTERVENTION_ABILITY randomAbility = abilitiesPool[UnityEngine.Random.Range(0, abilitiesPool.Count)];
+            chosenAbilities.Add(randomAbility);
+            abilitiesPool.Remove(randomAbility);
+        }
+
         for (int i = 0; i < startingAbilityIcons.Length; i++) {
-            INTERVENTION_ABILITY randomAbility = abilities[UnityEngine.Random.Range(0, abilities.Length)];
+            INTERVENTION_ABILITY randomAbility = chosenAbilities[i];
             string abilityName = Utilities.NormalizeStringUpperCaseFirstLetters(randomAbility.ToString());
             startingAbilityIcons[i].sprite = PlayerManager.Instance.GetJobActionSprite(abilityName);
             startingAbilityLbls[i].text = abilityName;
             startingAbilities[i] = randomAbility;
         }
     }
+    public void OnHoverStartingSpell(int index) {
+        INTERVENTION_ABILITY spell = chosenAbilities[index];
+        UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allInterventionAbilitiesData[spell].description, Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
+    }
     public void RerollAbilities() {
         RandomizeStartingAbilities();
+    }
+    public void RandomizeTwoStartingMinions(ref UnsummonedMinionData minion1Data, ref UnsummonedMinionData minion2Data) {
+
+        string minionName1 = RandomNameGenerator.Instance.GenerateMinionName();
+        string minionName2 = RandomNameGenerator.Instance.GenerateMinionName();
+
+        COMBAT_ABILITY minionCombatAbilityType1 = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)];
+        COMBAT_ABILITY minionCombatAbilityType2 = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)];
+
+        List<string> filteredDeadlySinClasses = new List<string>();
+        foreach (KeyValuePair<string, DeadlySin> kvp in CharacterManager.Instance.deadlySins) {
+            if (kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER) || kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADER)) {
+                filteredDeadlySinClasses.Add(kvp.Key);
+            }
+        }
+
+        int class1Index = UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count);
+        string minionClassName1 = filteredDeadlySinClasses[class1Index];
+        filteredDeadlySinClasses.RemoveAt(class1Index);
+
+        string minionClassName2 = string.Empty;
+        if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADER)
+            && CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
+            minionClassName2 = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
+        } else {
+            if(CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADER)) {
+                filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.BUILDER)).ToList();
+            }else if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
+                filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.INVADER)).ToList();
+            }
+            minionClassName2 = filteredDeadlySinClasses[UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count)];
+        }
+
+        minion1Data = new UnsummonedMinionData() {
+            minionName = minionName1,
+            className = minionClassName1,
+            combatAbility = minionCombatAbilityType1,
+            interventionAbilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(CharacterManager.Instance.GetDeadlySin(minionClassName1)),
+        };
+
+        minion2Data = new UnsummonedMinionData() {
+            minionName = minionName2,
+            className = minionClassName2,
+            combatAbility = minionCombatAbilityType2,
+            interventionAbilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(CharacterManager.Instance.GetDeadlySin(minionClassName2)),
+        };
     }
     #endregion
 
@@ -849,8 +960,8 @@ public class PlayerUI : MonoBehaviour {
             //    skirmishConfirmationGO.SetActive(true);
             //    ShowSelectMinionLeader();
             //} else {
-                tempCurrentMinionLeaderPicker = null;
-                OnClickYesCorruption();
+            tempCurrentMinionLeaderPicker = null;
+            OnClickYesCorruption();
             //}
         }
     }
@@ -859,7 +970,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnClickYesCorruption() {
         HideCorruptTileConfirmation();
-        if(tempCurrentMinionLeaderPicker != null) {
+        if (tempCurrentMinionLeaderPicker != null) {
             PlayerManager.Instance.player.SetMinionLeader(tempCurrentMinionLeaderPicker.minion);
         } else {
             //If story event, randomize minion leader, if not, keep current minion leader
@@ -915,16 +1026,29 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private UIHoverPosition summonTooltipPos;
     [SerializeField] private Button cycleSummonLeft;
     [SerializeField] private Button cycleSummonRight;
+    [SerializeField] private GameObject summonSlotFrameGO;
     private bool isSummoning = false; //if the player has clicked the summon button and is targetting a tile to place the summon on.
     private SummonSlot currentlySelectedSummonSlot; //the summon type that is currently shown in the UI
     private void UpdateSummonsInteraction() {
-        bool state = currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed;
+        bool state = currentlySelectedSummonSlot != null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed;
         //summonCover.SetActive(!state);
         summonBtn.interactable = state && InteriorMapManager.Instance.isAnAreaMapShowing;
     }
+    private void OnPlayerGainedSummonSlot(SummonSlot slot) {
+        UpdateSummonsInteraction();
+        //if (currentlySelectedSummonSlot == null) {
+            SetCurrentlySelectedSummonSlot(slot);
+        //}
+    }
+    private void OnPlayerLostSummonSlot(SummonSlot slot) {
+        UpdateSummonsInteraction();
+        if (currentlySelectedSummonSlot == slot) {
+            SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots.FirstOrDefault());
+        }
+    }
     public void OnGainNewSummon(Summon newSummon) {
         UpdateSummonsInteraction();
-        if (currentlySelectedSummonSlot.summon == null || currentlySelectedSummonSlot.summon == newSummon) {
+        if (currentlySelectedSummonSlot == null || currentlySelectedSummonSlot.summon == null || currentlySelectedSummonSlot.summon == newSummon) {
             SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.GetSummonSlotBySummon(newSummon));
         }
         //ShowNewObjectInfo(newSummon);
@@ -932,85 +1056,89 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnRemoveSummon(Summon summon) {
         UpdateSummonsInteraction();
-        if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
-            SetCurrentlySelectedSummonSlot(null);
-        } else if (currentlySelectedSummonSlot.summon == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
-            CycleSummons(1);
-        }
+        //if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
+            SetCurrentlySelectedSummonSlot(currentlySelectedSummonSlot);
+        //} else if (currentlySelectedSummonSlot.summon == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+        //    CycleSummons(1);
+        //}
     }
     private void OnSummonUsed(Summon summon) {
         UpdateSummonsInteraction();
-        if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
-            SetCurrentlySelectedSummonSlot(null);
-        } else if (currentlySelectedSummonSlot.summon == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
-            CycleSummons(1);
-        }
+        //if (PlayerManager.Instance.player.GetTotalSummonsCount() == 0) { //the player has no more summons left
+        SetCurrentlySelectedSummonSlot(currentlySelectedSummonSlot);
+        //} else if (currentlySelectedSummonSlot.summon == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+        //    CycleSummons(1);
+        //}
     }
     public void SetCurrentlySelectedSummonSlot(SummonSlot summonSlot) {
-        if (summonSlot == null) {
-            //If null, just set the first slot so that currentlySelectedArtifactSlot will not be null
-            summonSlot = PlayerManager.Instance.player.summonSlots[0];
-        }
         currentlySelectedSummonSlot = summonSlot;
-        if (currentlySelectedSummonSlot.summon == null) {
+        if (currentlySelectedSummonSlot == null) {
+            //no summon slot yet
             currentSummonImg.gameObject.SetActive(false);
-            //currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(SUMMON_TYPE.None).summonPortrait;
+            summonSlotFrameGO.SetActive(false);
             cycleSummonLeft.gameObject.SetActive(false);
             cycleSummonRight.gameObject.SetActive(false);
-            currentSummonLvlGO.SetActive(false);
+            //currentSummonLvlGO.SetActive(false);
+        } else if (currentlySelectedSummonSlot.summon == null) {
+            //summon slot has no summon
+            summonSlotFrameGO.SetActive(true);
+            currentSummonImg.gameObject.SetActive(false);
+            //currentSummonLvlGO.SetActive(true);
+            currentSummonLvlLbl.text = currentlySelectedSummonSlot.level.ToString();
         } else {
+            //summon slot has summon
+            summonSlotFrameGO.SetActive(true);
             currentSummonImg.gameObject.SetActive(true);
             currentSummonImg.sprite = CharacterManager.Instance.GetSummonSettings(currentlySelectedSummonSlot.summon.summonType).summonPortrait;
-            int index = Array.IndexOf(PlayerManager.Instance.player.summonSlots, currentlySelectedSummonSlot);
-            currentSummonLvlGO.SetActive(true);
-            if (PlayerManager.Instance.player.GetTotalSummonsCount() == 1) {
-                cycleSummonLeft.gameObject.SetActive(false);
-                cycleSummonRight.gameObject.SetActive(false);
-            } else if (index == PlayerManager.Instance.player.summonSlots.Length - 1) {
-                cycleSummonLeft.gameObject.SetActive(true);
-                cycleSummonRight.gameObject.SetActive(false);
-            } else if (index == 0) {
-                cycleSummonLeft.gameObject.SetActive(false);
-                cycleSummonRight.gameObject.SetActive(true);
-            } else {
-                cycleSummonLeft.gameObject.SetActive(true);
-                cycleSummonRight.gameObject.SetActive(true);
-            }
+            //currentSummonLvlGO.SetActive(true);
+            currentSummonLvlLbl.text = currentlySelectedSummonSlot.level.ToString();
         }
-        currentSummonLvlLbl.text = currentlySelectedSummonSlot.level.ToString();
+        if (currentlySelectedSummonSlot != null) {
+            if (PlayerManager.Instance.player.summonSlots.Count == 1) {
+                cycleSummonLeft.gameObject.SetActive(false);
+                cycleSummonRight.gameObject.SetActive(false);
+            } else {
+                int index = PlayerManager.Instance.player.summonSlots.IndexOf(currentlySelectedSummonSlot);
+                if (index == 0) {
+                    cycleSummonLeft.gameObject.SetActive(false);
+                    cycleSummonRight.gameObject.SetActive(true);
+                } else if (index == PlayerManager.Instance.player.summonSlots.Count - 1) {
+                    cycleSummonLeft.gameObject.SetActive(true);
+                    cycleSummonRight.gameObject.SetActive(false);
+                } else {
+                    cycleSummonLeft.gameObject.SetActive(true);
+                    cycleSummonRight.gameObject.SetActive(true);
+                }
+            }
+            
+        }
+
         UpdateSummonsInteraction();
     }
     public void UpdateCurrentlySelectedSummonSlotLevel(SummonSlot summonSlot) {
-        if(currentlySelectedSummonSlot == summonSlot) {
+        if (currentlySelectedSummonSlot == summonSlot) {
             currentSummonLvlLbl.text = currentlySelectedSummonSlot.level.ToString();
         }
     }
     public void CycleSummons(int cycleDirection) {
         int currentSelectedSummonSlotIndex = PlayerManager.Instance.player.GetIndexForSummonSlot(currentlySelectedSummonSlot);
         int index = currentSelectedSummonSlotIndex;
-        int currentSummonCount = PlayerManager.Instance.player.GetTotalSummonsCount();
-        while (true) {
-            int next = index + cycleDirection;
-            if (next >= currentSummonCount) {
-                next = 0;
-            } else if (next <= 0) {
-                next = currentSummonCount - 1;
-            }
-            if(next < 0) {
-                next = 0;
-            }
-            index = next;
-            if (PlayerManager.Instance.player.summonSlots[index].summon != null) {
-                SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots[index]);
-                break;
-            } else if (index == currentSelectedSummonSlotIndex) {//This means that summon slots was already cycled through all of it and it can't find an summon, end the loop when it happens
-                SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots[currentSelectedSummonSlotIndex]);
-                break;
-            }
-        }
+        //int currentSummonCount = PlayerManager.Instance.player.summonSlots.Count;
+        //while (true) {
+        int next = index + cycleDirection;
+        //if (next >= currentSummonCount) {
+        //    next = 0;
+        //} else if (next <= 0) {
+        //    next = currentSummonCount - 1;
+        //}
+        //if (next < 0) {
+        //    next = 0;
+        //}
+        //index = next;
+        SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots[next]);
     }
     public void ShowSummonTooltip() {
-        if(currentlySelectedSummonSlot.summon != null) {
+        if (currentlySelectedSummonSlot.summon != null) {
             string header = currentlySelectedSummonSlot.summon.summonType.SummonName() + " <i>(Click to summon.)</i>";
             string message;
             switch (currentlySelectedSummonSlot.summon.summonType) {
@@ -1048,7 +1176,7 @@ public class PlayerUI : MonoBehaviour {
         //isSummoning = true;
     }
     public void TryPlaceSummon(Summon summon) {
-        LocationGridTile mainEntrance = LandmarkManager.Instance.enemyPlayerArea.GetRandomUnoccupiedEdgeTile();
+        LocationGridTile mainEntrance = LandmarkManager.Instance.enemyOfPlayerArea.GetRandomUnoccupiedEdgeTile();
         //LocationGridTile tile = InteriorMapManager.Instance.GetTileFromMousePosition();
         Summon summonToPlace = summon;
         summonToPlace.CreateMarker();
@@ -1075,6 +1203,9 @@ public class PlayerUI : MonoBehaviour {
         isSummoning = false;
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
     }
+    public void SetSummonCoverState(bool state) {
+        summonCover.SetActive(state);
+    }
     #endregion
 
     #region Artifacts
@@ -1087,16 +1218,29 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private UIHoverPosition summonArtifactTooltipPos;
     [SerializeField] private Button cycleArtifactLeft;
     [SerializeField] private Button cycleArtifactRight;
+    [SerializeField] private GameObject artifactSlotFrameGO;
     private bool isSummoningArtifact = false; //if the player has clicked the summon artifact button and is targetting a tile to place the summon on.
     private ArtifactSlot currentlySelectedArtifactSlot; //the artifact that is currently shown in the UI
     private void UpdateArtifactsInteraction() {
-        bool state = currentlySelectedArtifactSlot.artifact != null && !currentlySelectedArtifactSlot.artifact.hasBeenUsed;
+        bool state = currentlySelectedArtifactSlot != null && currentlySelectedArtifactSlot.artifact != null && !currentlySelectedArtifactSlot.artifact.hasBeenUsed;
         //summonArtifactCover.SetActive(!state);
         summonArtifactBtn.interactable = state && InteriorMapManager.Instance.isAnAreaMapShowing;
     }
+    private void OnPlayerGainedArtifactSlot(ArtifactSlot slot) {
+        UpdateArtifactsInteraction();
+        //if (currentlySelectedArtifactSlot == null) {
+            SetCurrentlySelectedArtifactSlot(slot);
+        //}
+    }
+    private void OnPlayerLostArtifactSlot(ArtifactSlot slot) {
+        UpdateArtifactsInteraction();
+        if (currentlySelectedArtifactSlot == slot) {
+            SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots.FirstOrDefault());
+        }
+    }
     private void OnGainNewArtifact(Artifact newArtifact) {
         UpdateArtifactsInteraction();
-        if (currentlySelectedArtifactSlot.artifact == null || currentlySelectedArtifactSlot.artifact == newArtifact) {
+        if (currentlySelectedArtifactSlot == null || currentlySelectedArtifactSlot.artifact == null || currentlySelectedArtifactSlot.artifact == newArtifact) {
             SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.GetArtifactSlotByArtifact(newArtifact));
         }
         //ShowNewObjectInfo(newArtifact);
@@ -1104,57 +1248,67 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnRemoveArtifact(Artifact artifact) {
         UpdateArtifactsInteraction();
-        if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more artifacts left
-            SetCurrentlySelectedArtifactSlot(null);
-        } else if (currentlySelectedArtifactSlot.artifact == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
-            CycleArtifacts(1);
-        }
+        //if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more artifacts left
+        SetCurrentlySelectedArtifactSlot(currentlySelectedArtifactSlot);
+        //} else if (currentlySelectedArtifactSlot.artifact == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+        //    CycleArtifacts(1);
+        //}
     }
     private void OnUsedArtifact(Artifact artifact) {
         UpdateArtifactsInteraction();
-        if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more artifacts left
-            SetCurrentlySelectedArtifactSlot(null);
-        } else if (currentlySelectedArtifactSlot.artifact == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
-            CycleArtifacts(1);
-        }
+        //if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) { //the player has no more artifacts left
+            SetCurrentlySelectedArtifactSlot(currentlySelectedArtifactSlot);
+        //} else if (currentlySelectedArtifactSlot.artifact == null) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
+        //    CycleArtifacts(1);
+        //}
         //else if (artifact == currentlySelectedArtifactSlot
         //    && PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(artifact.type) == 0) { //the current still has summons left but not of the type that was removed and that type is the players currently selected type
         //    CycleArtifacts(1);
         //}
     }
     public void SetCurrentlySelectedArtifactSlot(ArtifactSlot artifactSlot) {
-        if (artifactSlot == null) {
-            //If null, just set the first slot so that currentlySelectedArtifactSlot will not be null
-            artifactSlot = PlayerManager.Instance.player.artifactSlots[0];
-        }
         currentlySelectedArtifactSlot = artifactSlot;
-        if (currentlySelectedArtifactSlot.artifact == null) {
+        if (currentlySelectedArtifactSlot == null) {
+            //player has no artifact slots yet
             currentArtifactImg.gameObject.SetActive(false);
-            //currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(ARTIFACT_TYPE.None).artifactPortrait;
             cycleArtifactLeft.gameObject.SetActive(false);
             cycleArtifactRight.gameObject.SetActive(false);
-            currentArtifactLvlGO.SetActive(false);
+            //currentArtifactLvlGO.SetActive(false);
+            artifactSlotFrameGO.SetActive(false);
+        } else if (currentlySelectedArtifactSlot.artifact == null) {
+            //artifact slot has no artifact
+            artifactSlotFrameGO.SetActive(true);
+            currentArtifactImg.gameObject.SetActive(false);
+            //currentArtifactLvlGO.SetActive(true);
+            currentArtifactLvlLbl.text = currentlySelectedArtifactSlot.level.ToString();
         } else {
+            //player has at least 1 artifact slot and 1 artifact
+            artifactSlotFrameGO.SetActive(true);
             currentArtifactImg.gameObject.SetActive(true);
             currentArtifactImg.sprite = CharacterManager.Instance.GetArtifactSettings(currentlySelectedArtifactSlot.artifact.type).artifactPortrait;
-            //currentArtifactCountLbl.text = PlayerManager.Instance.player.GetAvailableArtifactsOfTypeCount(currentlySelectedArtifactSlot.artifact.type).ToString();
-            int index = Array.IndexOf(PlayerManager.Instance.player.artifactSlots, currentlySelectedArtifactSlot);
-            currentArtifactLvlGO.SetActive(true);
-            if (PlayerManager.Instance.player.GetTotalArtifactCount() == 0) {
-                cycleArtifactLeft.gameObject.SetActive(false);
-                cycleArtifactRight.gameObject.SetActive(false);
-            } else if (index == PlayerManager.Instance.player.summonSlots.Length - 1) {
-                cycleArtifactLeft.gameObject.SetActive(true);
-                cycleArtifactRight.gameObject.SetActive(false);
-            } else if (index == 0) {
-                cycleArtifactLeft.gameObject.SetActive(false);
-                cycleArtifactRight.gameObject.SetActive(true);
-            } else {
-                cycleArtifactLeft.gameObject.SetActive(true);
-                cycleArtifactRight.gameObject.SetActive(true);
-            }
+            //currentArtifactLvlGO.SetActive(true);
+            currentArtifactLvlLbl.text = currentlySelectedArtifactSlot.level.ToString();
         }
-        currentArtifactLvlLbl.text = currentlySelectedArtifactSlot.level.ToString();
+
+        if (currentlySelectedArtifactSlot != null) {
+            if (PlayerManager.Instance.player.artifactSlots.Count == 1) {
+                cycleArtifactLeft.gameObject.SetActive(false);
+                cycleArtifactRight.gameObject.SetActive(false);
+            } else {
+                int index = PlayerManager.Instance.player.artifactSlots.IndexOf(currentlySelectedArtifactSlot);
+                if (index == 0) {
+                    cycleArtifactLeft.gameObject.SetActive(false);
+                    cycleArtifactRight.gameObject.SetActive(true);
+                } else if (index == PlayerManager.Instance.player.artifactSlots.Count - 1) {
+                    cycleArtifactLeft.gameObject.SetActive(true);
+                    cycleArtifactRight.gameObject.SetActive(false);
+                } else {
+                    cycleArtifactLeft.gameObject.SetActive(true);
+                    cycleArtifactRight.gameObject.SetActive(true);
+                }
+            }
+
+        }
         UpdateArtifactsInteraction();
     }
     public void UpdateCurrentlySelectedArtifactSlotLevel(ArtifactSlot artifactSlot) {
@@ -1165,26 +1319,28 @@ public class PlayerUI : MonoBehaviour {
     public void CycleArtifacts(int cycleDirection) {
         int currentSelectedArtifactSlotIndex = PlayerManager.Instance.player.GetIndexForArtifactSlot(currentlySelectedArtifactSlot);
         int index = currentSelectedArtifactSlotIndex;
-        int currentArtifactCount = PlayerManager.Instance.player.GetTotalArtifactCount();
-        while (true) {
-            int next = index + cycleDirection;
-            if (next >= currentArtifactCount) {
-                next = 0;
-            } else if (next <= 0) {
-                next = currentArtifactCount - 1;
-            }
-            if (next < 0) {
-                next = 0;
-            }
-            index = next;
-            if (PlayerManager.Instance.player.artifactSlots[index].artifact != null) {
-                SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots[index]);
-                break;
-            } else if (index == currentSelectedArtifactSlotIndex) {//This means that artifact slots was already cycled through all of it and it can't find an artifact, end the loop when it happens
-                SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots[currentSelectedArtifactSlotIndex]);
-                break;
-            }
-        }
+        //int currentArtifactCount = PlayerManager.Instance.player.GetTotalArtifactCount();
+        //while (true) {
+        //    int next = index + cycleDirection;
+        //    if (next >= currentArtifactCount) {
+        //        next = 0;
+        //    } else if (next <= 0) {
+        //        next = currentArtifactCount - 1;
+        //    }
+        //    if (next < 0) {
+        //        next = 0;
+        //    }
+        //    index = next;
+        //    if (PlayerManager.Instance.player.artifactSlots[index].artifact != null) {
+        //        SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots[index]);
+        //        break;
+        //    } else if (index == currentSelectedArtifactSlotIndex) {//This means that artifact slots was already cycled through all of it and it can't find an artifact, end the loop when it happens
+        //        SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots[currentSelectedArtifactSlotIndex]);
+        //        break;
+        //    }
+        //}
+        int next = index + cycleDirection;
+        SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots[next]);
     }
     public void ShowArtifactTooltip() {
         if (currentlySelectedArtifactSlot.artifact != null) {
@@ -1227,6 +1383,9 @@ public class PlayerUI : MonoBehaviour {
         isSummoningArtifact = false;
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
     }
+    public void SetArtifactCoverState(bool state) {
+        summonArtifactCover.SetActive(state);
+    }
     #endregion
 
     #region Lose Condition
@@ -1246,9 +1405,9 @@ public class PlayerUI : MonoBehaviour {
         LoadKillSummaryCharacterItems();
     }
     private void LoadKillSummaryCharacterItems() {
-        CharacterItem[] items = Utilities.GetComponentsInDirectChildren<CharacterItem>(killCountScrollView.content.gameObject);
+        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
-            CharacterItem item = items[i];
+            CharacterNameplateItem item = items[i];
             item.transform.SetParent(killSummaryScrollView.content);
         }
     }
@@ -1279,7 +1438,7 @@ public class PlayerUI : MonoBehaviour {
         Utilities.DestroyChildren(combatAbilityGO.transform);
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             Minion currMinion = PlayerManager.Instance.player.minions[i];
-            if (currMinion.invadingLandmark == null || currMinion.invadingLandmark == LandmarkManager.Instance.mainSettlement.coreTile.landmarkOnTile) {
+            if (currMinion.assignedRegion == null || currMinion.assignedRegion == LandmarkManager.Instance.enemyOfPlayerArea.coreTile.region) {
                 GameObject go = GameObject.Instantiate(combatAbilityButtonPrefab, combatAbilityGO.transform);
                 CombatAbilityButton abilityButton = go.GetComponent<CombatAbilityButton>();
                 abilityButton.SetCombatAbility(currMinion.combatAbility);
@@ -1311,29 +1470,33 @@ public class PlayerUI : MonoBehaviour {
         killSummaryGO.SetActive(false);
     }
     private void LoadKillCountCharacterItems(Area area) {
-        CharacterItem[] items = Utilities.GetComponentsInDirectChildren<CharacterItem>(killCountScrollView.content.gameObject);
+        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             ObjectPoolManager.Instance.DestroyObject(items[i].gameObject);
         }
-        for (int i = 0; i < area.areaResidents.Count; i++) {
-            Character character = area.areaResidents[i];
+        for (int i = 0; i < area.region.residents.Count; i++) {
+            Character character = area.region.residents[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(killCharacterItemPrefab.name, Vector3.zero, Quaternion.identity, killCountScrollView.content);
-            CharacterItem item = go.GetComponent<CharacterItem>();
-            item.SetCharacter(character);
+            CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+            item.SetObject(character);
+            item.SetAsButton();
+            item.ClearAllOnClickActions();
+            item.AddOnClickAction(UIManager.Instance.ShowCharacterInfo);
+
         }
         OrderKillSummaryItems();
         UpdateKillCount();
     }
     private void UpdateKillCount() {
-        killCountLbl.text = LandmarkManager.Instance.mainSettlement.areaResidents.Where(x => x.IsAble()).Count().ToString() + "/" + LandmarkManager.Instance.mainSettlement.citizenCount.ToString();
+        killCountLbl.text = LandmarkManager.Instance.enemyOfPlayerArea.region.residents.Where(x => x.IsAble()).Count().ToString() + "/" + LandmarkManager.Instance.enemyOfPlayerArea.citizenCount.ToString();
     }
     private void OrderKillSummaryItems() {
-        CharacterItem[] items = Utilities.GetComponentsInDirectChildren<CharacterItem>(killCountScrollView.content.gameObject);
-        List<CharacterItem> alive = new List<CharacterItem>();
-        List<CharacterItem> dead = new List<CharacterItem>();
+        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
+        List<CharacterNameplateItem> alive = new List<CharacterNameplateItem>();
+        List<CharacterNameplateItem> dead = new List<CharacterNameplateItem>();
         for (int i = 0; i < items.Length; i++) {
-            CharacterItem currItem = items[i];
-            if (!currItem.character.IsAble() || currItem.character.faction != LandmarkManager.Instance.mainSettlement.owner) { //added checking for faction in cases that the character was raised from dead
+            CharacterNameplateItem currItem = items[i];
+            if (!currItem.character.IsAble() || !LandmarkManager.Instance.enemyOfPlayerArea.region.IsFactionHere(currItem.character.faction)) { //added checking for faction in cases that the character was raised from dead (Myk, if the concern here is only from raise dead, I changed the checker to returnedToLife to avoid conflicts with factions, otherwise you can return it to normal. -Chy)
                 dead.Add(currItem);
             } else {
                 alive.Add(currItem);
@@ -1341,12 +1504,12 @@ public class PlayerUI : MonoBehaviour {
         }
         aliveHeader.transform.SetAsFirstSibling();
         for (int i = 0; i < alive.Count; i++) {
-            CharacterItem currItem = alive[i];
+            CharacterNameplateItem currItem = alive[i];
             currItem.transform.SetSiblingIndex(i + 1);
         }
         deadHeader.transform.SetSiblingIndex(alive.Count + 1);
         for (int i = 0; i < dead.Count; i++) {
-            CharacterItem currItem = dead[i];
+            CharacterNameplateItem currItem = dead[i];
             currItem.transform.SetSiblingIndex(alive.Count + i + 2);
         }
     }
@@ -1391,8 +1554,10 @@ public class PlayerUI : MonoBehaviour {
             AddPendingUI(() => ShowGeneralConfirmation(header, body, buttonText, onClickOK));
             return;
         }
-        UIManager.Instance.Pause();
-        UIManager.Instance.SetSpeedTogglesState(false);
+        if (!GameManager.Instance.isPaused) {
+            UIManager.Instance.Pause();
+            UIManager.Instance.SetSpeedTogglesState(false);
+        }
         generalConfirmationTitleText.text = header.ToUpper();
         generalConfirmationBodyText.text = body;
         generalConfirmationButtonText.text = buttonText;
@@ -1406,8 +1571,7 @@ public class PlayerUI : MonoBehaviour {
     public void OnClickOKGeneralConfirmation() {
         generalConfirmationGO.SetActive(false);
         if (!TryShowPendingUI()) {
-            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
-            UIManager.Instance.SetSpeedTogglesState(true);
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
     }
     #endregion
@@ -1429,8 +1593,7 @@ public class PlayerUI : MonoBehaviour {
     public void HideNewMinionUI() {
         newMinionUIGO.SetActive(false);
         if (!TryShowPendingUI()) {
-            UIManager.Instance.Unpause(); //if no other UI was shown, unpause game
-            UIManager.Instance.SetSpeedTogglesState(true);
+            UIManager.Instance.ResumeLastProgressionSpeed(); //if no other UI was shown, unpause game
         }
     }
     #endregion
@@ -1452,19 +1615,20 @@ public class PlayerUI : MonoBehaviour {
     }
     private void CreateNewMinionItem(Minion minion) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(minionItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
-        MinionCharacterItem item = go.GetComponent<MinionCharacterItem>();
-        item.SetCharacter(minion.character);
+        CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
+        item.SetObject(minion.character);
+        item.SetAsDefaultBehaviour();
     }
     private void DeleteMinionItem(Minion minion) {
-        MinionCharacterItem item = GetMinionItem(minion);
+        CharacterNameplateItem item = GetMinionItem(minion);
         if (item != null) {
             ObjectPoolManager.Instance.DestroyObject(item.gameObject);
         }
     }
-    private MinionCharacterItem GetMinionItem(Minion minion) {
-        MinionCharacterItem[] items = Utilities.GetComponentsInDirectChildren<MinionCharacterItem>(minionListScrollView.content.gameObject);
+    private CharacterNameplateItem GetMinionItem(Minion minion) {
+        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(minionListScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
-            MinionCharacterItem item = items[i];
+            CharacterNameplateItem item = items[i];
             if (item.character == minion.character) {
                 return item;
             }
@@ -1493,4 +1657,3 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
 }
-

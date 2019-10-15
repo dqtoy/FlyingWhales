@@ -6,10 +6,14 @@ using UnityEngine;
 public class Desk : TileObject {
     //private Character[] users;
     public Desk(LocationStructure location) {
-        this.structureLocation = location;
+        SetStructureLocation(location);
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
         Initialize(TILE_OBJECT_TYPE.DESK);
         //users = new Character[1];
+    }
+    public Desk(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TILE_OBJECT_DESTROY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        Initialize(data);
     }
 
     #region Overrides
@@ -48,6 +52,9 @@ public class Desk : TileObject {
                 break;
 
         }
+    }
+    public override bool CanBeReplaced() {
+        return true;
     }
     //private bool IsSlotAvailable() {
     //    for (int i = 0; i < users.Length; i++) {

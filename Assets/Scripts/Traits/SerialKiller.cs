@@ -5,7 +5,7 @@ using UnityEngine;
 public class SerialKiller : Trait {
 
     public SerialVictim victim1Requirement { get; private set; }
-    public SerialVictim victim2Requirement { get; private set; }
+    //public SerialVictim victim2Requirement { get; private set; }
     public Character character { get; private set; }
 
     public Character targetVictim { get; private set; }
@@ -14,14 +14,15 @@ public class SerialKiller : Trait {
 
     public SerialKiller() {
         name = "Serial Killer";
-        description = "This character is a serial killer.";
+        description = "Serial killers have a specific subset of target victims that they may kidnap and then kill.";
         thoughtText = "[Character] is a serial killer.";
-        type = TRAIT_TYPE.SPECIAL;
+        type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEUTRAL;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         associatedInteraction = INTERACTION_TYPE.NONE;
         crimeSeverity = CRIME_CATEGORY.NONE;
         daysDuration = 0;
+        canBeTriggered = true;
     }
 
     #region Overrides
@@ -29,7 +30,9 @@ public class SerialKiller : Trait {
         base.OnAddTrait(sourceCharacter);
         if (sourceCharacter is Character) {
             character = sourceCharacter as Character;
-            GenerateSerialVictims();
+            if(victim1Requirement == null) { // || victim2Requirement == null
+                GenerateSerialVictims();
+            }
             Messenger.AddListener(Signals.TICK_STARTED, CheckSerialKiller);
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         }
@@ -48,7 +51,7 @@ public class SerialKiller : Trait {
             CheckTargetVictimIfStillAvailable();
             if (targetVictim == null) {
                 if (DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
-                    targetVictim = potentialVictim;
+                    SetTargetVictim(potentialVictim);
 
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
                     log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -58,7 +61,34 @@ public class SerialKiller : Trait {
             }
         }
     }
+    public override void TriggerFlaw(Character character) {
+        base.TriggerFlaw(character);
+        ForceHuntVictim();
+    }
     #endregion
+
+    public void SetVictim1Requirement(SerialVictim serialVictim) {
+        victim1Requirement = serialVictim;
+    }
+    //public void SetVictim2Requirement(SerialVictim serialVictim) {
+    //    victim2Requirement = serialVictim;
+    //}
+    public void SetTargetVictim(Character victim) {
+        targetVictim = victim;
+    }
+    public void SetIsFollowing(bool state) {
+        isFollowing = state;
+    }
+    public void SetHasStartedFollowing(bool state) {
+        if (hasStartedFollowing != state) {
+            hasStartedFollowing = state;
+            if (hasStartedFollowing) {
+                character.AdjustIsWaitingForInteraction(1);
+            } else {
+                character.AdjustIsWaitingForInteraction(-1);
+            }
+        }
+    }
 
     private void OnCharacterDied(Character deadCharacter) {
         if(deadCharacter == targetVictim) {
@@ -92,17 +122,59 @@ public class SerialKiller : Trait {
                 CheckTargetVictimIfStillAvailable();
                 if (targetVictim != null) {
                     character.CancelAllJobsAndPlans();
+                    if (character.stateComponent.currentState != null) {
+                        character.stateComponent.currentState.OnExitThisState();
+                        if (character.stateComponent.currentState != null) {
+                            character.stateComponent.currentState.OnExitThisState();
+                        }
+                    }
                     FollowTargetVictim();
                     SetHasStartedFollowing(true);
                 }
             }
         }
     }
+    private void ForceHuntVictim() {
+        CheckTargetVictimIfStillAvailable();
+        if (hasStartedFollowing && targetVictim != null) {
+            return;
+        }
+        if (targetVictim == null) {
+            for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+                Character potentialVictim = CharacterManager.Instance.allCharacters[i];
+                if (potentialVictim.specificLocation != this.character.specificLocation || potentialVictim.isDead || potentialVictim is Summon) {
+                    continue;
+                }
+                if (DoesCharacterFitAnyVictimRequirements(potentialVictim)) {
+                    SetTargetVictim(potentialVictim);
+
+                    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
+                    log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    this.character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                    break;
+                }
+            }
+        }
+        if (targetVictim != null) {
+            character.CancelAllJobsAndPlans();
+            if(character.stateComponent.currentState != null) {
+                character.stateComponent.currentState.OnExitThisState();
+                if (character.stateComponent.currentState != null) {
+                    character.stateComponent.currentState.OnExitThisState();
+                }
+            }
+            FollowTargetVictim();
+            SetHasStartedFollowing(true);
+        }
+    }
     private void CheckerWhileFollowingTargetVictim() {
         if (isFollowing) {
-            if(!character.currentParty.icon.isTravelling || character.marker.targetPOI != targetVictim) {
-                isFollowing = false;
-                SetHasStartedFollowing(false);
+            if (!character.currentParty.icon.isTravelling || character.marker.targetPOI != targetVictim) {
+                SetIsFollowing(false);
+                if (character.marker.targetPOI != targetVictim) {
+                    SetHasStartedFollowing(false);
+                }
                 return;
             }
 
@@ -116,39 +188,32 @@ public class SerialKiller : Trait {
                 }
             }
         } else {
+            CheckTargetVictimIfStillAvailable();
             if (targetVictim != null) {
                 if (!character.marker.inVisionCharacters.Contains(targetVictim)) {
                     FollowTargetVictim();
                 }
+            } else {
+                SetHasStartedFollowing(false);
             }
         }
     }
     private void StopFollowing() {
         if (isFollowing) {
-            isFollowing = false;
+            SetIsFollowing(false);
             character.marker.StopMovement();
         }
     }
     private void FollowTargetVictim() {
         if (!isFollowing) {
-            isFollowing = true;
+            SetIsFollowing(true);
             character.marker.GoTo(targetVictim);
-        }
-    }
-    public void SetHasStartedFollowing(bool state) {
-        if(hasStartedFollowing != state) {
-            hasStartedFollowing = state;
-            if (hasStartedFollowing) {
-                character.AdjustIsWaitingForInteraction(1);
-            } else {
-                character.AdjustIsWaitingForInteraction(-1);
-            }
         }
     }
     private void CheckTargetVictimIfStillAvailable() {
         if (targetVictim != null) {
-            if (targetVictim.specificLocation != this.character.specificLocation || targetVictim.isDead) {
-                targetVictim = null;
+            if (targetVictim.specificLocation != this.character.specificLocation || targetVictim.isDead || targetVictim is Summon) {
+                SetTargetVictim(null);
                 if (hasStartedFollowing) {
                     StopFollowing();
                     SetHasStartedFollowing(false);
@@ -156,7 +221,7 @@ public class SerialKiller : Trait {
             }
         }
     }
-    private void CreateHuntVictimJob() {
+    public void CreateHuntVictimJob() {
         if (character.jobQueue.HasJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM)) {
             return;
         }
@@ -164,8 +229,9 @@ public class SerialKiller : Trait {
         GoapAction goapAction6 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.BURY_CHARACTER, character, targetVictim);
         GoapAction goapAction5 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY_CORPSE, character, targetVictim);
         GoapAction goapAction4 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RITUAL_KILLING, character, targetVictim);
-        GoapAction goapAction3 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.DROP, character, targetVictim);
-        GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CARRY, character, targetVictim);
+        GoapAction goapAction3 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ABDUCT_CHARACTER, character, targetVictim);
+        GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER, character, targetVictim);
+        //GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RESTRAIN_CHARACTER, character, targetVictim);
         GoapAction goapAction1 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.KNOCKOUT_CHARACTER, character, targetVictim);
 
         goapAction3.SetWillAvoidCharactersWhileMoving(true);
@@ -180,6 +246,7 @@ public class SerialKiller : Trait {
         goapAction6.InitializeOtherData(new object[] { wilderness });
 
         GoapNode goalNode = new GoapNode(null, goapAction6.cost, goapAction6);
+        //GoapNode sixthNode = new GoapNode(goalNode, goapAction5.cost, goapAction5);
         GoapNode fifthNode = new GoapNode(goalNode, goapAction5.cost, goapAction5);
         GoapNode fourthNode = new GoapNode(fifthNode, goapAction4.cost, goapAction4);
         GoapNode thirdNode = new GoapNode(fourthNode, goapAction3.cost, goapAction3);
@@ -189,10 +256,11 @@ public class SerialKiller : Trait {
         GoapPlan plan = new GoapPlan(startingNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY }, GOAP_CATEGORY.WORK);
         plan.ConstructAllNodes();
         plan.SetDoNotRecalculate(true);
+        job.AllowDeadTargets();
+        job.SetIsStealth(true);
         job.SetAssignedPlan(plan);
         job.SetAssignedCharacter(character);
         job.SetCancelOnFail(true);
-        job.SetIsStealth(true);
 
         character.jobQueue.AddJobInQueue(job, false);
 
@@ -225,30 +293,30 @@ public class SerialKiller : Trait {
         }
     }
     private void GenerateSerialVictims() {
-        victim1Requirement = new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false));
+        SetVictim1Requirement(new SerialVictim(RandomizeVictimType(true), RandomizeVictimType(false)));
 
-        bool hasCreatedRequirement = false;
-        while (!hasCreatedRequirement) {
-            SERIAL_VICTIM_TYPE victim2FirstType = RandomizeVictimType(true);
-            SERIAL_VICTIM_TYPE victim2SecondType = RandomizeVictimType(false);
+        //bool hasCreatedRequirement = false;
+        //while (!hasCreatedRequirement) {
+        //    SERIAL_VICTIM_TYPE victim2FirstType = RandomizeVictimType(true);
+        //    SERIAL_VICTIM_TYPE victim2SecondType = RandomizeVictimType(false);
 
-            string victim2FirstDesc = victim1Requirement.GenerateVictimDescription(victim2FirstType);
-            string victim2SecondDesc = victim1Requirement.GenerateVictimDescription(victim2SecondType);
+        //    string victim2FirstDesc = victim1Requirement.GenerateVictimDescription(victim2FirstType);
+        //    string victim2SecondDesc = victim1Requirement.GenerateVictimDescription(victim2SecondType);
 
-            if(victim1Requirement.victimFirstType == victim2FirstType && victim1Requirement.victimSecondType == victim2SecondType
-                && victim1Requirement.victimFirstDescription == victim2FirstDesc && victim1Requirement.victimSecondDescription == victim2SecondDesc) {
-                continue;
-            } else {
-                victim2Requirement = new SerialVictim(victim2FirstType, victim2FirstDesc, victim2SecondType, victim2SecondDesc);
-                hasCreatedRequirement = true;
-                break;
-            }
-        }
+        //    if(victim1Requirement.victimFirstType == victim2FirstType && victim1Requirement.victimSecondType == victim2SecondType
+        //        && victim1Requirement.victimFirstDescription == victim2FirstDesc && victim1Requirement.victimSecondDescription == victim2SecondDesc) {
+        //        continue;
+        //    } else {
+        //        SetVictim2Requirement(new SerialVictim(victim2FirstType, victim2FirstDesc, victim2SecondType, victim2SecondDesc));
+        //        hasCreatedRequirement = true;
+        //        break;
+        //    }
+        //}
        
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "became_serial_killer");
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
-        log.AddToFillers(null, victim2Requirement.text, LOG_IDENTIFIER.STRING_2);
+        //log.AddToFillers(null, victim2Requirement.text, LOG_IDENTIFIER.STRING_2);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
     }
@@ -269,16 +337,24 @@ public class SerialKiller : Trait {
     }
 
     private bool DoesCharacterFitAnyVictimRequirements(Character target) {
-        return victim1Requirement.DoesCharacterFitVictimRequirements(target)
-            || victim2Requirement.DoesCharacterFitVictimRequirements(target);
+        return victim1Requirement.DoesCharacterFitVictimRequirements(target); //|| victim2Requirement.DoesCharacterFitVictimRequirements(target)
+    }
+
+    public void SerialKillerSawButWillNotAssist(Character targetCharacter, Trait negativeTrait) {
+        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_saw_no_assist");
+        log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddToFillers(null, negativeTrait.name, LOG_IDENTIFIER.STRING_1);
+        character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
     }
 }
 
+[System.Serializable]
 public class SerialVictim {
-    public SERIAL_VICTIM_TYPE victimFirstType { get; private set; }
-    public SERIAL_VICTIM_TYPE victimSecondType { get; private set; }
-    public string victimFirstDescription { get; private set; }
-    public string victimSecondDescription { get; private set; }
+    public SERIAL_VICTIM_TYPE victimFirstType;
+    public SERIAL_VICTIM_TYPE victimSecondType;
+    public string victimFirstDescription;
+    public string victimSecondDescription;
 
     public string text { get; private set; }
 
@@ -308,7 +384,7 @@ public class SerialVictim {
             CHARACTER_ROLE[] roles = new CHARACTER_ROLE[] { CHARACTER_ROLE.CIVILIAN, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER };
             return roles[UnityEngine.Random.Range(0, roles.Length)].ToString();
         } else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
-            string[] traits = new string[] { "Craftsman", "Criminal", "Drunk", "Sick", "Lazy", "Hardworking", "Curious" };
+            string[] traits = new string[] { "Craftsman", "Criminal", "Drunk", "Sick", "Lazy", "Hardworking" }; //, "Curious"
             return traits[UnityEngine.Random.Range(0, traits.Length)];
         } else if (victimType == SERIAL_VICTIM_TYPE.STATUS) {
             string[] statuses = new string[] { "Hungry", "Tired", "Lonely" };
@@ -352,5 +428,45 @@ public class SerialVictim {
             return character.GetNormalTrait(victimDesc) != null;
         }
         return false;
+    }
+}
+
+public class SaveDataSerialKiller : SaveDataTrait {
+    public SerialVictim victim1Requirement;
+    //public SerialVictim victim2Requirement;
+
+    public int targetVictimID;
+    public bool isFollowing;
+    public bool hasStartedFollowing;
+
+    public override void Save(Trait trait) {
+        base.Save(trait);
+        SerialKiller derivedTrait = trait as SerialKiller;
+        victim1Requirement = derivedTrait.victim1Requirement;
+        //victim2Requirement = derivedTrait.victim2Requirement;
+
+        isFollowing = derivedTrait.isFollowing;
+        hasStartedFollowing = derivedTrait.hasStartedFollowing;
+
+        if (derivedTrait.targetVictim != null) {
+            targetVictimID = derivedTrait.targetVictim.id;
+        } else {
+            targetVictimID = -1;
+        }
+    }
+
+    public override Trait Load(ref Character responsibleCharacter) {
+        Trait trait = base.Load(ref responsibleCharacter);
+        SerialKiller derivedTrait = trait as SerialKiller;
+        derivedTrait.SetVictim1Requirement(victim1Requirement);
+        //derivedTrait.SetVictim2Requirement(victim2Requirement);
+
+        derivedTrait.SetIsFollowing(isFollowing);
+        derivedTrait.SetHasStartedFollowing(hasStartedFollowing);
+
+        if(targetVictimID != -1) {
+            derivedTrait.SetTargetVictim(CharacterManager.Instance.GetCharacterByID(targetVictimID));
+        }
+        return trait;
     }
 }

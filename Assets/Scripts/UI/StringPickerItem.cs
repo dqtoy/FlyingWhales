@@ -15,10 +15,14 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
     public GameObject portraitCover;
     public Image iconImg;
 
-    public bool isTrait;
+    public string identifier;
 
-    public void SetString(string str) {
+    public override string obj { get { return str; } }
+
+    public void SetString(string str, string identifier) {
         this.str = str;
+        this.identifier = identifier;
+        iconImg.gameObject.SetActive(false);
         UpdateVisuals();
     }
 
@@ -29,14 +33,29 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
 
     private void UpdateVisuals() {
         mainLbl.text = str;
-        if (isTrait) {
-            if (AttributeManager.Instance.HasTraitIcon(str)) {
-                iconImg.sprite = AttributeManager.Instance.GetTraitIcon(str);
+        if(identifier != string.Empty) {
+            if (identifier == "trait") {
+                if (AttributeManager.Instance.HasTraitIcon(str)) {
+                    iconImg.sprite = AttributeManager.Instance.GetTraitIcon(str);
+                    iconImg.gameObject.SetActive(true);
+                } else {
+                    iconImg.gameObject.SetActive(false);
+                }
+            } else if(identifier == "landmark") {
+                LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(str);
+                iconImg.sprite = landmarkData.landmarkPortrait;
                 iconImg.gameObject.SetActive(true);
-            } else {
+            } else if (identifier == "intervention ability") {
+                iconImg.sprite = PlayerManager.Instance.GetJobActionSprite(str);
+                iconImg.gameObject.SetActive(true);
+            } else if (identifier == "minion") {
+                iconImg.sprite = CharacterManager.Instance.GetClassPortraitSprite(str);
+                iconImg.gameObject.SetActive(true);
+            }
+            iconImg.SetNativeSize();
+            if (iconImg.sprite == null) {
                 iconImg.gameObject.SetActive(false);
             }
-            
         }
     }
 
@@ -49,13 +68,11 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
     public void OnPointerClick(PointerEventData eventData) {
         OnClick();
     }
-    public override void OnHoverEnter() {
-        if (onHoverEnterAction != null) {
-            onHoverEnterAction.Invoke(str);
-        }
-    }
-    public override void OnHoverExit() {
-        //Only set as hide small info for now, but should use on hover exit action
-        UIManager.Instance.HideSmallInfo();
-    }
+    //public override void OnHoverEnter() {
+
+    //}
+    //public override void OnHoverExit() {
+    //    //Only set as hide small info for now, but should use on hover exit action
+    //    UIManager.Instance.HideSmallInfo();
+    //}
 }

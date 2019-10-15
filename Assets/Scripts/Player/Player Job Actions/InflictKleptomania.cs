@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InflictKleptomania : PlayerJobAction {
+public class Kleptomania : PlayerJobAction {
 
-    public InflictKleptomania() : base(INTERVENTION_ABILITY.INFLICT_KLEPTOMANIA) {
+    public Kleptomania() : base(INTERVENTION_ABILITY.KLEPTOMANIA) {
         SetDefaultCooldownTime(24);
         targetTypes = new JOB_ACTION_TARGET[] { JOB_ACTION_TARGET.CHARACTER, JOB_ACTION_TARGET.TILE_OBJECT };
         //abilityTags.Add(ABILITY_TAG.CRIME);
@@ -102,7 +102,8 @@ public class InflictKleptomania : PlayerJobAction {
     }
 }
 
-public class InflictKleptomaniaData : PlayerJobActionData {
-    public override string name { get { return "Inflict Kleptomania"; } }
+public class KleptomaniaData : PlayerJobActionData {
+    public override string name { get { return "Kleptomania"; } }
     public override string description { get { return "Makes a character enjoy stealing other people's items."; } }
+    public override INTERVENTION_ABILITY_CATEGORY category { get { return INTERVENTION_ABILITY_CATEGORY.HEX; } }
 }

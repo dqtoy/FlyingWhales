@@ -16,8 +16,8 @@ public class RileUp : PlayerJobAction {
             return;
         }
         _targetCharacter = targetPOI as Character;
-        string titleText = "Select a location and " + _targetCharacter.name + " will run amok there.";
-        UIManager.Instance.ShowClickableObjectPicker(LandmarkManager.Instance.allAreas, OnClickArea, null, CanClickArea, titleText);
+        //string titleText = "Select a location and " + _targetCharacter.name + " will run amok there.";
+        //UIManager.Instance.ShowClickableObjectPicker(LandmarkManager.Instance.allAreas, OnClickArea, null, CanClickArea, titleText);
     }
 
     protected override bool CanPerformActionTowards(Character targetCharacter) {
@@ -83,7 +83,7 @@ public class RileUp : PlayerJobAction {
         //    _targetCharacter.stateComponent.currentState.OnExitThisState();
         //}
 
-        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.BERSERK, CHARACTER_STATE.BERSERKED, area);
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.BERSERK, CHARACTER_STATE.BERSERKED, area.region);
         _targetCharacter.jobQueue.AddJobInQueue(job);
         //_targetCharacter.AddTrait("Berserker");
         //_targetCharacter.currentParty.GoToLocation(area, PATHFINDING_MODE.NORMAL);

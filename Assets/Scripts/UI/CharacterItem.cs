@@ -19,6 +19,7 @@ public class CharacterItem : PooledObject {
     [SerializeField] private Button itemBtn;
     [SerializeField] private Toggle toggle;
     [SerializeField] private EventTrigger toggleEventTrigger;
+    public UIHoverHandler hoverHandler;
 
     private List<System.Action> _toggleClickActions;
 
@@ -29,6 +30,9 @@ public class CharacterItem : PooledObject {
             }
             return _toggleClickActions;
         }
+    }
+    public bool coverState {
+        get { return coverGO.activeSelf; }
     }
 
     public virtual void SetCharacter(Character character) {
@@ -60,6 +64,12 @@ public class CharacterItem : PooledObject {
         UIManager.Instance.HideSmallInfo();
     }
 
+    public override void Reset() {
+        base.Reset();
+        ResetToggle();
+        ClearClickActions();
+    }
+
     public void SetCoverState(bool state, bool blockRaycasts = false) {
         coverGO.SetActive(state);
         if (state) { //only block raycasts if active
@@ -73,6 +83,9 @@ public class CharacterItem : PooledObject {
             itemBtn.onClick.RemoveAllListeners();
         }
         itemBtn.onClick.AddListener(onClick.Invoke);
+    }
+    public void ClearClickActions() {
+        itemBtn.onClick.RemoveAllListeners();
     }
     public void AddOnToggleAction(System.Action onClick, bool clearAllOtherActions = false) {
         if (clearAllOtherActions) {
@@ -99,5 +112,8 @@ public class CharacterItem : PooledObject {
     public void SetAsButton() {
         itemBtn.gameObject.SetActive(true);
         toggle.gameObject.SetActive(false);
+    }
+    public void SetToggleState(bool state) {
+        toggle.isOn = state;
     }
 }

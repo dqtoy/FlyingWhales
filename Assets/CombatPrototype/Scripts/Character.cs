@@ -6,9 +6,6 @@ using UnityEngine;
 
 public class Character : ILeader, IPointOfInterest {
 
-    public delegate void DailyAction();
-    public DailyAction onDailyAction;
-
     protected string _name;
     protected string _firstName;
     protected string _characterColorCode;
@@ -22,6 +19,7 @@ public class Character : ILeader, IPointOfInterest {
     protected bool _isDead;
     protected bool _hasAlreadyAskedForPlan;
     protected bool _isChatting;
+    protected bool _isFlirting;
     protected GENDER _gender;
     public SEXUALITY sexuality { get; private set; }
     protected CharacterClass _characterClass;
@@ -41,8 +39,8 @@ public class Character : ILeader, IPointOfInterest {
     protected List<Skill> _skills;
     protected List<Log> _history;
     protected List<Trait> _normalTraits; //List of traits that are just normal Traits (Not including relationships)
-    protected Dictionary<ELEMENT, float> _elementalWeaknesses;
-    protected Dictionary<ELEMENT, float> _elementalResistances;
+    //protected Dictionary<ELEMENT, float> _elementalWeaknesses;
+    //protected Dictionary<ELEMENT, float> _elementalResistances;
     protected PlayerCharacterItem _playerCharacterItem;
     private LocationStructure _currentStructure; //what structure is this character currently in.
 
@@ -63,7 +61,8 @@ public class Character : ILeader, IPointOfInterest {
     public int speedPercentMod { get; protected set; }
     public int maxHPPercentMod { get; protected set; }
 
-    public Area homeArea { get; protected set; }
+    public Region homeRegion { get; protected set; }
+    public Area homeArea { get { return homeRegion.area; } }
     public Dwelling homeStructure { get; protected set; }
     public Area defendingArea { get; private set; }
     public MORALITY morality { get; private set; }
@@ -98,13 +97,13 @@ public class Character : ILeader, IPointOfInterest {
     public float speedModifier { get; private set; }
     public string deathStr { get; private set; }
     public TileObject tileObjectLocation { get; private set; }
-    public BaseLandmark currentLandmark { get; private set; } //current Landmark Location. NOTE: Only has value if character is NOT at an area
+    public Region currentRegion { get; private set; } //current Region Location
     public CharacterTrait defaultCharacterTrait { get; private set; }
+    public int isStoppedByOtherCharacter { get; private set; } //this is increased, when the action of another character stops this characters movement
 
     private List<System.Action> onLeaveAreaActions;
     private POI_STATE _state;
 
-    private Dictionary<STAT, float> _buffs;
     public Dictionary<int, Combat> combatHistory;
 
     //Needs
@@ -113,27 +112,29 @@ public class Character : ILeader, IPointOfInterest {
     public int tirednessDecreaseRate { get; protected set; }
     public int tirednessForcedTick { get; protected set; }
     public int currentSleepTicks { get; protected set; }
+    public int sleepScheduleJobID { get; protected set; }
+    public bool hasCancelledSleepSchedule { get; protected set; }
     private int tirednessLowerBound; //how low can this characters tiredness go
-    protected const int TIREDNESS_DEFAULT = 15000;
-    protected const int TIREDNESS_THRESHOLD_1 = 10000;
-    protected const int TIREDNESS_THRESHOLD_2 = 5000;
+    public const int TIREDNESS_DEFAULT = 15000;
+    public const int TIREDNESS_THRESHOLD_1 = 10000;
+    public const int TIREDNESS_THRESHOLD_2 = 5000;
 
     //Fullness
     public int fullness { get; protected set; }
     public int fullnessDecreaseRate { get; protected set; }
     public int fullnessForcedTick { get; protected set; }
     private int fullnessLowerBound; //how low can this characters fullness go
-    protected const int FULLNESS_DEFAULT = 15000;
-    protected const int FULLNESS_THRESHOLD_1 = 10000;
-    protected const int FULLNESS_THRESHOLD_2 = 5000;
+    public const int FULLNESS_DEFAULT = 15000;
+    public const int FULLNESS_THRESHOLD_1 = 10000;
+    public const int FULLNESS_THRESHOLD_2 = 5000;
 
     //Happiness
     public int happiness { get; protected set; }
     public int happinessDecreaseRate { get; protected set; }
     private int happinessLowerBound; //how low can this characters happiness go
-    protected const int HAPPINESS_DEFAULT = 15000;
-    protected const int HAPPINESS_THRESHOLD_1 = 10000;
-    protected const int HAPPINESS_THRESHOLD_2 = 5000;
+    public const int HAPPINESS_DEFAULT = 15000;
+    public const int HAPPINESS_THRESHOLD_1 = 10000;
+    public const int HAPPINESS_THRESHOLD_2 = 5000;
    
     public bool hasForcedFullness { get; protected set; }
     public bool hasForcedTiredness { get; protected set; }
@@ -177,15 +178,6 @@ public class Character : ILeader, IPointOfInterest {
             return _firstName;
         }
     }
-    public string coloredName {
-        get { return "<color=#" + this._characterColorCode + ">" + name + "</color>"; }
-    }
-    public string urlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + name + "</link>"; }
-    }
-    public string coloredUrlName {
-        get { return "<link=" + '"' + this._id.ToString() + "_character" + '"' + ">" + "<color=#" + this._characterColorCode + ">" + name + "</color></link>"; }
-    }
     public string raceClassName {
         get {
             if (Utilities.IsRaceBeast(race)) {
@@ -221,17 +213,19 @@ public class Character : ILeader, IPointOfInterest {
     public bool isHoldingItem {
         get { return items.Count > 0; }
     }
-    public bool isAtHomeStructure {
-        get { return currentStructure == homeStructure; }
-    }
-    public bool isAtHomeArea {
-        get { return currentLandmark == null && specificLocation.id == homeArea.id && !currentParty.icon.isTravellingOutside; }
+    public bool isAtHomeRegion {
+        //TODO: REDO THIS! REMOVE CURRENT REGION
+        get { return (currentRegion != null && currentRegion == homeRegion) 
+                || (currentRegion == null && specificLocation.region.id == homeRegion.id && !currentParty.icon.isTravellingOutside); }
     }
     public bool isPartOfHomeFaction { //is this character part of the faction that owns his home area
-        get { return homeArea != null && homeArea.owner == faction; }
+        get { return homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); }
     }
     public bool isChatting {
         get { return _isChatting; }
+    }
+    public bool isFlirting {
+        get { return _isFlirting; }
     }
     public GENDER gender {
         get { return _gender; }
@@ -331,12 +325,12 @@ public class Character : ILeader, IPointOfInterest {
     public int attackSpeed {
         get { return _characterClass.baseAttackSpeed; } //in milliseconds, The lower the amount the faster the attack rate
     }
-    public Dictionary<ELEMENT, float> elementalWeaknesses {
-        get { return _elementalWeaknesses; }
-    }
-    public Dictionary<ELEMENT, float> elementalResistances {
-        get { return _elementalResistances; }
-    }
+    //public Dictionary<ELEMENT, float> elementalWeaknesses {
+    //    get { return _elementalWeaknesses; }
+    //}
+    //public Dictionary<ELEMENT, float> elementalResistances {
+    //    get { return _elementalResistances; }
+    //}
     public float actRate {
         get { return _actRate; }
         set { _actRate = value; }
@@ -384,9 +378,6 @@ public class Character : ILeader, IPointOfInterest {
         get {
             return GetAllRelationshipTraits();
         }
-    }
-    public Dictionary<STAT, float> buffs {
-        get { return _buffs; }
     }
     public PlayerCharacterItem playerCharacterItem {
         get { return _playerCharacterItem; }
@@ -467,6 +458,12 @@ public class Character : ILeader, IPointOfInterest {
     public bool isInTileObject {
         get { return tileObjectLocation != null; }
     }
+    public Vector3 worldPosition {
+        get { return marker.transform.position; }
+    }
+    public ProjectileReceiver projectileReciever {
+        get { return marker.collisionTrigger.projectileReciever; }
+    }
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -514,10 +511,6 @@ public class Character : ILeader, IPointOfInterest {
     public Character(SaveDataCharacter data) {
         _id = Utilities.SetID(this, data.id);
         _characterColorCode = data.characterColorCode;
-        _doNotDisturb = data.doNotDisturb;
-        _doNotGetHungry = data.doNotGetHungry;
-        _doNotGetLonely = data.doNotGetLonely;
-        _doNotGetTired = data.doNotGetTired;
         _gender = data.gender;
         SetSexuality(data.sexuality);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
@@ -527,6 +520,94 @@ public class Character : ILeader, IPointOfInterest {
         SetPortraitSettings(data.portraitSettings);
         _characterColor = data.characterColor;
         SetName(data.name);
+
+        hSkinColor = data.hSkinColor;
+        hHairColor = data.hHairColor;
+        demonColor = data.demonColor;
+
+        currentAlterEgoName = data.currentAlterEgoName;
+        originalClassName = data.originalClassName;
+        isStoppedByOtherCharacter = data.isStoppedByOtherCharacter;
+
+        _history = new List<Log>();
+        //_elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+        //_elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+        combatHistory = new Dictionary<int, Combat>();
+        poiGoapActions = new List<INTERACTION_TYPE>();
+        allGoapPlans = new List<GoapPlan>();
+        targettedByAction = new List<GoapAction>();
+        stateComponent = new CharacterStateComponent(this);
+        items = new List<SpecialToken>();
+        jobQueue = new JobQueue(this);
+        allJobsTargettingThis = new List<JobQueueItem>();
+        traitsNeededToBeRemoved = new List<Trait>();
+        onLeaveAreaActions = new List<Action>();
+        pendingActionsAfterMultiThread = new List<Action>();
+        trapStructure = new TrapStructure();
+        //for testing
+        locationHistory = new List<string>();
+        actionHistory = new List<string>();
+        planner = new GoapPlanner(this);
+
+        _normalTraits = new List<Trait>();
+        alterEgos = new Dictionary<string, AlterEgoData>();
+        items = new List<SpecialToken>();
+        SetIsDead(data.isDead);
+    }
+    public Character() {
+        SetIsDead(false);
+        _history = new List<Log>();
+        _normalTraits = new List<Trait>();
+
+        //RPG
+        _level = 1;
+        SetExperience(0);
+        //_elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+        //_elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
+        combatHistory = new Dictionary<int, Combat>();
+        currentInteractionTypes = new List<INTERACTION_TYPE>();
+        poiGoapActions = new List<INTERACTION_TYPE>();
+        allGoapPlans = new List<GoapPlan>();
+        targettedByAction = new List<GoapAction>();
+        stateComponent = new CharacterStateComponent(this);
+        items = new List<SpecialToken>();
+        jobQueue = new JobQueue(this);
+        allJobsTargettingThis = new List<JobQueueItem>();
+        traitsNeededToBeRemoved = new List<Trait>();
+        onLeaveAreaActions = new List<Action>();
+        pendingActionsAfterMultiThread = new List<Action>();
+        trapStructure = new TrapStructure();
+        tirednessLowerBound = 0;
+        fullnessLowerBound = 0;
+        happinessLowerBound = 0;
+        SetPOIState(POI_STATE.ACTIVE);
+        SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
+        SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
+        SetFullnessForcedTick();
+        SetTirednessForcedTick();
+        ResetSleepTicks();
+
+        //for testing
+        locationHistory = new List<string>();
+        actionHistory = new List<string>();
+        planner = new GoapPlanner(this);
+       
+        //hostiltiy
+        ignoreHostility = 0;
+    }
+
+    //This is done separately after all traits have been loaded so that the data will be accurate
+    //It is because all traits are added again, this would mean that OnAddedTrait will also be called
+    //Some values of character are modified by adding traits, so since adding trait will still be processed, it will get modified twice or more
+    //For example, the Glutton trait adds fullnessDecreaseRate by 50%
+    //Now when the fullnessDecreaseRate value is loaded the value of it already includes the Glutton trait modification
+    //But since the Glutton trait will process the add trait function, fullnessDecreaseRate will add by 50% again
+    //So for example if the saved value is 150, then the loaded value will be 300 (150+150)
+    public void LoadAllStatsOfCharacter(SaveDataCharacter data) {
+        //_doNotDisturb = data.doNotDisturb;
+        //_doNotGetHungry = data.doNotGetHungry;
+        //_doNotGetLonely = data.doNotGetLonely;
+        //_doNotGetTired = data.doNotGetTired;
 
         _maxHP = data.maxHP;
         _currentHP = data.currentHP;
@@ -557,37 +638,7 @@ public class Character : ILeader, IPointOfInterest {
         tirednessDecreaseRate = data.tirednessDecreaseRate;
         happinessDecreaseRate = data.happinessDecreaseRate;
 
-        hSkinColor = data.hSkinColor;
-        hHairColor = data.hHairColor;
-        demonColor = data.demonColor;
-
         ignoreHostility = data.ignoreHostility;
-        currentAlterEgoName = data.currentAlterEgoName;
-        originalClassName = data.originalClassName;
-
-        _history = new List<Log>();
-        _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
-        _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
-        combatHistory = new Dictionary<int, Combat>();
-        poiGoapActions = new List<INTERACTION_TYPE>();
-        allGoapPlans = new List<GoapPlan>();
-        targettedByAction = new List<GoapAction>();
-        stateComponent = new CharacterStateComponent(this);
-        items = new List<SpecialToken>();
-        jobQueue = new JobQueue(this);
-        allJobsTargettingThis = new List<JobQueueItem>();
-        traitsNeededToBeRemoved = new List<Trait>();
-        onLeaveAreaActions = new List<Action>();
-        pendingActionsAfterMultiThread = new List<Action>();
-        trapStructure = new TrapStructure();
-        //for testing
-        locationHistory = new List<string>();
-        actionHistory = new List<string>();
-        planner = new GoapPlanner(this);
-
-        _normalTraits = new List<Trait>();
-        alterEgos = new Dictionary<string, AlterEgoData>();
-        items = new List<SpecialToken>();
 
         SetForcedFullnessRecoveryTimeInWords(data.forcedFullnessRecoveryTimeInWords);
         SetForcedTirednessRecoveryTimeInWords(data.forcedTirednessRecoveryTimeInWords);
@@ -595,47 +646,9 @@ public class Character : ILeader, IPointOfInterest {
         SetTirednessForcedTick(data.tirednessForcedTick);
 
         returnedToLife = data.returnedToLife;
-    }
-    public Character() {
-        SetIsDead(false);
-        _history = new List<Log>();
-        _normalTraits = new List<Trait>();
-
-        //RPG
-        _level = 1;
-        SetExperience(0);
-        _elementalWeaknesses = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
-        _elementalResistances = new Dictionary<ELEMENT, float>(CharacterManager.Instance.elementsChanceDictionary);
-        combatHistory = new Dictionary<int, Combat>();
-        currentInteractionTypes = new List<INTERACTION_TYPE>();
-        poiGoapActions = new List<INTERACTION_TYPE>();
-        allGoapPlans = new List<GoapPlan>();
-        targettedByAction = new List<GoapAction>();
-        stateComponent = new CharacterStateComponent(this);
-        items = new List<SpecialToken>();
-        jobQueue = new JobQueue(this);
-        allJobsTargettingThis = new List<JobQueueItem>();
-        traitsNeededToBeRemoved = new List<Trait>();
-        onLeaveAreaActions = new List<Action>();
-        pendingActionsAfterMultiThread = new List<Action>();
-        trapStructure = new TrapStructure();
-        tirednessLowerBound = 0;
-        fullnessLowerBound = 0;
-        happinessLowerBound = 0;
-        SetPOIState(POI_STATE.ACTIVE);
-        SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.AFTERNOON);
-        SetForcedTirednessRecoveryTimeInWords(TIME_IN_WORDS.LATE_NIGHT);
-        SetFullnessForcedTick();
-        SetTirednessForcedTick();
-        ResetSleepTicks();
-
-        //for testing
-        locationHistory = new List<string>();
-        actionHistory = new List<string>();
-        planner = new GoapPlanner(this);
-       
-        //hostiltiy
-        ignoreHostility = 0;
+        currentSleepTicks = data.currentSleepTicks;
+        sleepScheduleJobID = data.sleepScheduleJobID;
+        hasCancelledSleepSchedule = data.hasCancelledSleepSchedule;
     }
     /// <summary>
     /// Initialize data for this character that is not safe to put in the constructor.
@@ -685,6 +698,20 @@ public class Character : ILeader, IPointOfInterest {
         gameDate.AddTicks(1);
         SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions(), this);
 #endif
+        marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
+        AddInitialAwareness();
+        SubscribeToSignals();
+        for (int i = 0; i < normalTraits.Count; i++) {
+            normalTraits[i].OnOwnerInitiallyPlaced(this);
+        }
+    }
+    public void LoadInitialCharacterPlacement(LocationGridTile tile) {
+        ConstructInitialGoapAdvertisementActions();
+//#if !WORLD_CREATION_TOOL
+//        GameDate gameDate = GameManager.Instance.Today();
+//        gameDate.AddTicks(1);
+//        SchedulingManager.Instance.AddEntry(gameDate, () => PlanGoapActions(), this);
+//#endif
         marker.InitialPlaceMarkerAt(tile, false); //since normal characters are already placed in their areas.
         AddInitialAwareness();
         SubscribeToSignals();
@@ -921,17 +948,26 @@ public class Character : ILeader, IPointOfInterest {
             ClearAllAwareness();
             //Area gloomhollow = LandmarkManager.Instance.GetAreaByName("Gloomhollow");
             MigrateHomeStructureTo(null);
+            SetTirednessForcedTick(0);
+            SetFullnessForcedTick(0);
+            SetHasCancelledSleepSchedule(false);
+            ResetSleepTicks();
             //MigrateHomeTo(null);
             //AddInitialAwareness(gloomhollow);
             Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
         }
     }
-    public virtual void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null) {
+    public virtual void Death(string cause = "normal", GoapAction deathFromAction = null, Character responsibleCharacter = null, Log _deathLog = null, LogFiller[] deathLogFillers = null) {
         if(minion != null) {
-            minion.Death(cause, deathFromAction, responsibleCharacter);
+            minion.Death(cause, deathFromAction, responsibleCharacter, _deathLog, deathLogFillers);
             return;
         }
         if (!_isDead) {
+            if (currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
+                SwitchAlterEgo(CharacterManager.Original_Alter_Ego); //revert the character to his/her original alter ego
+            }
+            SetIsChatting(false);
+            SetIsFlirting(false);
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
@@ -963,15 +999,25 @@ public class Character : ILeader, IPointOfInterest {
             if(jobQueue.jobsInQueue.Count > 0) {
                 jobQueue.CancelAllJobs();
             }
-            if (ownParty.specificLocation != null && isHoldingItem) {
-                DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
+            if (currentRegion == null) {
+                if (ownParty.specificLocation != null && isHoldingItem) {
+                    DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
+                }
+            } else {
+                List<SpecialToken> all = new List<SpecialToken>(items);
+                for (int i = 0; i < all.Count; i++) {
+                    RemoveToken(all[i]);
+                }
             }
+            
 
             //clear traits that need to be removed
             traitsNeededToBeRemoved.Clear();
 
-            if (currentLandmark != null) {
-                currentLandmark.RemoveCharacterHere(this);
+            bool wasOutsideSettlement = false;
+            if (currentRegion != null) {
+                wasOutsideSettlement = true;
+                currentRegion.RemoveCharacterFromLocation(this);
             }
 
             if (!IsInOwnParty()) {
@@ -985,19 +1031,27 @@ public class Character : ILeader, IPointOfInterest {
 
 
             if (faction != null) {
-                faction.RemoveCharacter(this); //remove this character from it's factions list of characters
+                faction.LeaveFaction(this); //remove this character from it's factions list of characters
             }
 
             if (_role != null) {
                 _role.OnDeath(this);
             }
-            if (homeArea != null) {
-                Area home = homeArea;
+
+            if (homeRegion != null) {
+                Region home = homeRegion;
                 Dwelling homeStructure = this.homeStructure;
-                homeArea.RemoveResident(this);
+                homeRegion.RemoveResident(this);
                 SetHome(home); //keep this data with character to prevent errors
                 SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             }
+            //if (homeArea != null) {
+            //    Area home = homeArea;
+            //    Dwelling homeStructure = this.homeStructure;
+            //    homeArea.RemoveResident(this);
+            //    SetHome(home); //keep this data with character to prevent errors
+            //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
+            //}
 
             //List<Character> characterRels = new List<Character>(this.relationships.Keys.ToList());
             //for (int i = 0; i < characterRels.Count; i++) {
@@ -1021,12 +1075,12 @@ public class Character : ILeader, IPointOfInterest {
 
             SetHP(0);
 
-            marker.OnDeath(deathTile);
+            marker.OnDeath(deathTile, wasOutsideSettlement);
 
             SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
-            dead.SetCharacterResponsibleForTrait(responsibleCharacter);
-            AddTrait(dead, gainedFromDoing: deathFromAction);
+            //dead.SetCharacterResponsibleForTrait(responsibleCharacter);
+            AddTrait(dead, responsibleCharacter, gainedFromDoing: deathFromAction);
 
             CancelAllJobsAndPlans();
 
@@ -1038,9 +1092,15 @@ public class Character : ILeader, IPointOfInterest {
                 if (responsibleCharacter != null) {
                     deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 }
+                if (deathLogFillers != null) {
+                    for (int i = 0; i < deathLogFillers.Length; i++) {
+                        deathLog.AddToFillers(deathLogFillers[i]);
+                    }
+                }
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
-                AddHistory(deathLog);
-                specificLocation.AddHistory(deathLog);
+                //AddHistory(deathLog);
+                deathLog.AddLogToInvolvedObjects();
+                //specificLocation.AddHistory(deathLog);
                 PlayerManager.Instance.player.ShowNotification(deathLog);
             } else {
                 deathLog = _deathLog;
@@ -1373,11 +1433,11 @@ public class Character : ILeader, IPointOfInterest {
     public bool RemoveJobTargettingThis(JobQueueItem job) {
         return allJobsTargettingThis.Remove(job);
     }
-    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType) {
+    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType) {
-                if (job.jobQueueParent.CancelJob(job)) {
+                if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
                     i--;
                 }
             }
@@ -1388,54 +1448,54 @@ public class Character : ILeader, IPointOfInterest {
     /// </summary>
     /// <param name="jobType">The type of job to cancel.</param>
     /// <param name="otherCharacter">The character exception.</param>
-    public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, Character otherCharacter) {
+    public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, Character otherCharacter, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType && job.assignedCharacter != otherCharacter) {
-                if (job.jobQueueParent.CancelJob(job)) {
+                if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
                     i--;
                 }
             }
         }
     }
-    public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, object conditionKey, Character otherCharacter) {
+    public void CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE jobType, object conditionKey, Character otherCharacter, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
                 if (job.jobType == jobType && job.targetEffect.conditionKey == conditionKey && job.assignedCharacter != otherCharacter) {
-                    if (job.jobQueueParent.CancelJob(job)) {
+                    if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
                         i--;
                     }
                 }
             }
         }
     }
-    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, JobQueueItem except) {
+    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, JobQueueItem except, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (job.jobType == jobType && job != except) {
-                if (job.jobQueueParent.CancelJob(job)) {
+                if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
                     i--;
                 }
             }
         }
     }
-    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, object conditionKey) {
+    public void CancelAllJobsTargettingThisCharacter(JOB_TYPE jobType, object conditionKey, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             if (allJobsTargettingThis[i] is GoapPlanJob) {
                 GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
                 if (job.jobType == jobType && job.targetEffect.conditionKey == conditionKey) {
-                    if (job.jobQueueParent.CancelJob(job)) {
+                    if (job.jobQueueParent.CancelJob(job, forceRemove: forceRemove)) {
                         i--;
                     }
                 }
             }
         }
     }
-    public void CancelAllJobsTargettingThisCharacter(string cause = "", bool shouldDoAfterEffect = true) {
+    public void CancelAllJobsTargettingThisCharacter(string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
-            if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect)) {
+            if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect, forceRemove)) {
                 i--;
             }
         }
@@ -1446,22 +1506,24 @@ public class Character : ILeader, IPointOfInterest {
     /// <param name="except">The exception.</param>
     /// <param name="cause">The cause for cancelling</param>
     /// <param name="shouldDoAfterEffect">Should the effect of the cancelled action be executed.</param>
-    public void CancelAllJobsTargettingThisCharacterExcept(GoapAction except, string cause = "", bool shouldDoAfterEffect = true) {
+    public void CancelAllJobsTargettingThisCharacterExcept(GoapAction except, string cause = "", bool shouldDoAfterEffect = true, bool forceRemove = true) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
             if (except.parentPlan != null && except.parentPlan.job == job) {
                 continue; //skip
             }
-            if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect)) {
+            if (job.jobQueueParent.CancelJob(job, cause, shouldDoAfterEffect, forceRemove)) {
                 i--;
             }
         }
     }
-    public bool HasJobTargettingThis(JOB_TYPE jobType) {
+    public bool HasJobTargettingThis(params JOB_TYPE[] jobTypes) {
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
             JobQueueItem job = allJobsTargettingThis[i];
-            if (job.jobType == jobType) {
-                return true;
+            for (int j = 0; j < jobTypes.Length; j++) {
+                if (job.jobType == jobTypes[j]) {
+                    return true;
+                }
             }
         }
         return false;
@@ -1512,6 +1574,17 @@ public class Character : ILeader, IPointOfInterest {
         }
         return null;
     }
+    public GoapPlanJob GetJobTargettingThisCharacter(JOB_TYPE jobType) {
+        for (int i = 0; i < allJobsTargettingThis.Count; i++) {
+            if (allJobsTargettingThis[i] is GoapPlanJob) {
+                GoapPlanJob job = allJobsTargettingThis[i] as GoapPlanJob;
+                if (job.jobType == jobType) {
+                    return job;
+                }
+            }
+        }
+        return null;
+    }
     public List<GoapPlanJob> GetJobsTargettingThisCharacter(JOB_TYPE jobType, object conditionKey) {
         List<GoapPlanJob> jobs = new List<GoapPlanJob>();
         for (int i = 0; i < allJobsTargettingThis.Count; i++) {
@@ -1548,7 +1621,7 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
-    public bool CreateJobsOnEnterVisionWith(Character targetCharacter, bool bypassInvisibilityCheck = false) {
+    private bool CreateJobsOnEnterVisionWith(Character targetCharacter, bool bypassInvisibilityCheck = false) {
         string log = name + " saw " + targetCharacter.name + ", will try to create jobs on enter vision...";
         if (!CanCharacterReact()) {
             log += "\nCharacter cannot react!";
@@ -1601,6 +1674,9 @@ public class Character : ILeader, IPointOfInterest {
         return hasCreatedJob;
     }
     public bool CreateJobsOnEnterVisionWith(IPointOfInterest targetPOI, bool bypassInvisibilityCheck = false) {
+        if(targetPOI is Character) {
+            return CreateJobsOnEnterVisionWith(targetPOI as Character, bypassInvisibilityCheck);
+        }
         string log = name + " saw " + targetPOI.name + ", will try to create jobs on enter vision...";
         if (!CanCharacterReact()) {
             log += "\nCharacter cannot react!";
@@ -1635,6 +1711,32 @@ public class Character : ILeader, IPointOfInterest {
             } else {
                 log += ": did not create a job!";
             }
+        }
+        PrintLogIfActive(log);
+        return hasCreatedJob;
+    }
+    public bool CreateJobsOnTargetGainTrait(IPointOfInterest targetPOI, Trait traitGained, bool bypassInvisibilityCheck = false) {
+        string log = targetPOI.name + " gained trait " + traitGained.name + ", will try to create jobs based on it...";
+        if (!CanCharacterReact()) {
+            log += "\nCharacter cannot react!";
+            PrintLogIfActive(log);
+            return true;
+        }
+        if (!bypassInvisibilityCheck) {
+            Invisible invisible = targetPOI.GetNormalTrait("Invisible") as Invisible;
+            if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
+                log += "\nCharacter is invisible!";
+                PrintLogIfActive(log);
+                return true;
+            }
+        }
+        bool hasCreatedJob = false;
+        log += "\nChecking trait...";
+        if (traitGained.CreateJobsOnEnterVisionBasedOnTrait(targetPOI, this)) {
+            log += ": created a job!";
+            hasCreatedJob = true;
+        } else {
+            log += ": did not create a job!";
         }
         PrintLogIfActive(log);
         return hasCreatedJob;
@@ -1777,10 +1879,10 @@ public class Character : ILeader, IPointOfInterest {
         return false;
     }
     public void CreateLocationKnockoutJobs(Character targetCharacter, int amount) {
-        if (isAtHomeArea && isPartOfHomeFaction && !targetCharacter.isDead && !targetCharacter.isAtHomeArea && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {//&& !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
+        if (homeArea != null && isAtHomeRegion && isPartOfHomeFaction && !targetCharacter.isDead && !targetCharacter.isAtHomeRegion && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {//&& !targetCharacter.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
             for (int i = 0; i < amount; i++) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = targetCharacter });
-                job.SetCanTakeThisJobChecker(CanCharacterTakeKnockoutJob);
+                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeKnockoutJob);
                 homeArea.jobQueue.AddJobInQueue(job);
             }
             //return job;
@@ -1793,9 +1895,6 @@ public class Character : ILeader, IPointOfInterest {
         PrintLogIfActive(GameManager.Instance.TodayLogString() + "Added a KNOCKOUT Job to " + this.name + " with target " + targetCharacter.name);
         return true;
     }
-    private bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter, JobQueueItem job) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER || character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
-    }
     /// <summary>
     /// Make this character create an apprehend job at his home location targetting a specific character.
     /// </summary>
@@ -1803,13 +1902,13 @@ public class Character : ILeader, IPointOfInterest {
     /// <returns>The created job.</returns>
     public GoapPlanJob CreateApprehendJobFor(Character targetCharacter, bool assignSelfToJob = false) {
         //if (homeArea.id == specificLocation.id) {
-        if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND) && targetCharacter.GetNormalTrait("Restrained") == null && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+        if (homeArea != null && specificLocation == homeArea && !targetCharacter.HasJobTargettingThis(JOB_TYPE.APPREHEND) && targetCharacter.GetNormalTrait("Restrained") == null && !this.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
             //GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = targetCharacter };
-            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
-            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.IMPRISON_CHARACTER, targetCharacter);
+            //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
             //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
             //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
-            job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
+            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeApprehendJob);
             //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
             homeArea.jobQueue.AddJobInQueue(job);
             if(assignSelfToJob) {
@@ -1828,9 +1927,6 @@ public class Character : ILeader, IPointOfInterest {
         //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, this.name + " created job to obtain item " + item.ToString(), 5, null);
         return job;
     }
-    private bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter, JobQueueItem job) {
-        return character.role.roleType == CHARACTER_ROLE.SOLDIER && character.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE;
-    }
     public GoapPlanJob CreateAttemptToStopCurrentActionAndJob(Character targetCharacter, GoapPlanJob jobToStop) {
         if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.ATTEMPT_TO_STOP_JOB)) {
             GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_STOP_ACTION_AND_JOB, targetPOI = targetCharacter };
@@ -1842,40 +1938,39 @@ public class Character : ILeader, IPointOfInterest {
         return null;
     }
     public void CreatePersonalJobs() {
-        //Claim Item Job
         bool hasCreatedJob = false;
-        //if (faction.id != FactionManager.Instance.neutralFaction.id && !jobQueue.HasJob("Claim Item")) {
-        //    int numOfItemsOwned = GetNumOfItemsOwned();
-        //    if (numOfItemsOwned < 3) {
-        //        int chance = UnityEngine.Random.Range(0, 100);
-        //        int value = 10 - (numOfItemsOwned * 3);
-        //        if (chance < value) {
-        //            List<SpecialToken> tokens = new List<SpecialToken>();
-        //            for (int i = 0; i < specificLocation.possibleSpecialTokenSpawns.Count; i++) {
-        //                SpecialToken currToken = specificLocation.possibleSpecialTokenSpawns[i];
-        //                if (currToken.characterOwner == null) {
-        //                    if (currToken.factionOwner != null && faction.id != currToken.factionOwner.id) {
-        //                        continue;
-        //                    }
-        //                    if (currToken.gridTileLocation != null && currToken.gridTileLocation.structure != null
-        //                        && currToken.gridTileLocation.structure.structureType == STRUCTURE_TYPE.WAREHOUSE && GetToken(currToken) == null && !currToken.HasJobTargettingThis("Claim Item")
-        //                        && GetAwareness(currToken) != null) {
-        //                        tokens.Add(currToken);
-        //                    }
-        //                }
-        //            }
-        //            if (tokens.Count > 0) {
-        //                SpecialToken chosenToken = tokens[UnityEngine.Random.Range(0, tokens.Count)];
-        //                GoapPlanJob job = new GoapPlanJob("Claim Item", INTERACTION_TYPE.PICK_ITEM, chosenToken);
-        //                job.SetCancelOnFail(true);
-        //                //GameManager.Instance.SetPausedState(true);
-        //                Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added a Claim Item Job to " + this.name + " with target " + chosenToken.name + " in " + chosenToken.gridTileLocation.ToString());
-        //                jobQueue.AddJobInQueue(job);
-        //                hasCreatedJob = true;
-        //            }
-        //        }
-        //    }
-        //}
+
+        //build furniture job
+        if (!hasCreatedJob && currentStructure is Dwelling) {
+            Dwelling dwelling = currentStructure as Dwelling;
+            if (dwelling.HasUnoccupiedFurnitureSpot() && poiGoapActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
+                if (UnityEngine.Random.Range(0, 100) < 10 || dwelling.HasFacilityDeficit()) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
+                    FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
+                    if (mostNeededFacility != FACILITY_TYPE.NONE) {
+                        List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
+                        LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
+                        FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
+
+                        object[] otherData = new object[] { chosenTile, furnitureToCreate };
+
+                        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE, this, new Dictionary<INTERACTION_TYPE, object[]>() {
+                                { INTERACTION_TYPE.CRAFT_FURNITURE, otherData }
+                        });
+                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
+                        if (furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
+                            if (!jobQueue.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
+                                jobQueue.AddJobInQueue(job);
+                            }
+                        } else {
+                            //furniture cannot be crafted by this character, post a job on the area
+                            if (!homeArea.jobQueue.HasJobWithOtherData(JOB_TYPE.BUILD_FURNITURE, otherData)) {
+                                homeArea.jobQueue.AddJobInQueue(job);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         //Obtain Item job
         //if the character is part of a Faction and he doesnt have an Obtain Item Job in his personal job queue, 
@@ -1939,31 +2034,6 @@ public class Character : ILeader, IPointOfInterest {
                     //jobQueue.AddJobInQueue(job);
                     //hasCreatedJob = true;
                 }
-            }
-        }
-
-        if (!hasCreatedJob) {
-            if (currentStructure.HasUnoccupiedFurnitureSpot() && poiGoapActions.Contains(INTERACTION_TYPE.CRAFT_FURNITURE)) {
-                //- if the character is in a Dwelling structure and he or someone he has a positive relationship with owns it, 
-                //and the Dwelling still has an unoccupied Furniture Spot, 5% chance to add a Build Furniture Job.
-                //if (UnityEngine.Random.Range(0, 100) < 5) {
-                    FACILITY_TYPE mostNeededFacility = currentStructure.GetMostNeededValidFacility();
-                    if (mostNeededFacility != FACILITY_TYPE.NONE) {
-                        List<LocationGridTile> validSpots = currentStructure.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
-                        LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
-                        FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
-                        //check first if the character can build that specific type of furniture
-                        if (furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(this)) {
-                            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.BUILD_FURNITURE, INTERACTION_TYPE.CRAFT_FURNITURE, this, new Dictionary<INTERACTION_TYPE, object[]>() {
-                                { INTERACTION_TYPE.CRAFT_FURNITURE, new object[] { chosenTile, furnitureToCreate } }
-                            });
-                            job.SetCancelOnFail(true);
-                            //job.SetCannotOverrideJob(true);
-                            jobQueue.AddJobInQueue(job);
-                            //Debug.Log(this.name + " created a new build furniture job targetting tile " + chosenTile.ToString() + " with furniture type " + furnitureToCreate.ToString());
-                        }
-                    }
-                //}
             }
         }
     }
@@ -2041,8 +2111,8 @@ public class Character : ILeader, IPointOfInterest {
                 return;
             }
             if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.SAVE_CHARACTER)) {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SAVE_CHARACTER, INTERACTION_TYPE.DROP_CHARACTER, targetCharacter);
-                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CHARACTER);
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SAVE_CHARACTER, INTERACTION_TYPE.IMPRISON_CHARACTER, targetCharacter);
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = this, targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER);
                 //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = targetCharacter.homeArea, targetPOI = targetCharacter }, INTERACTION_TYPE.DROP_CHARACTER);
                 jobQueue.AddJobInQueue(job, processLogicForPersonalJob);
                 log += "\n" + name + " created save character job.";
@@ -2078,7 +2148,7 @@ public class Character : ILeader, IPointOfInterest {
             jobQueue.AddJobInQueue(job, false);
         }
     }
-    public void CancelAllJobsAndPlansExceptNeedsRecovery() {
+    public void CancelAllJobsAndPlansExceptNeedsRecovery(string reason = "") {
         AdjustIsWaitingForInteraction(1);
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
             if (jobQueue.jobsInQueue[i].jobType.IsNeedsTypeJob()) {
@@ -2092,7 +2162,7 @@ public class Character : ILeader, IPointOfInterest {
             homeArea.jobQueue.UnassignAllJobsTakenBy(this);
         }
 
-        StopCurrentAction(false);
+        StopCurrentAction(false, reason: reason);
         for (int i = 0; i < allGoapPlans.Count; i++) {
             if(allGoapPlans[i].job != null && allGoapPlans[i].job.jobType.IsNeedsTypeJob()) {
                 if (JustDropPlan(allGoapPlans[i])) {
@@ -2106,7 +2176,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         AdjustIsWaitingForInteraction(-1);
     }
-    public void CancelAllJobsAndPlans() {
+    public void CancelAllJobsAndPlans(string reason = "") {
         AdjustIsWaitingForInteraction(1);
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
             if (jobQueue.CancelJob(jobQueue.jobsInQueue[i])) {
@@ -2117,7 +2187,7 @@ public class Character : ILeader, IPointOfInterest {
             homeArea.jobQueue.UnassignAllJobsTakenBy(this);
         }
 
-        StopCurrentAction(false);
+        StopCurrentAction(false, reason: reason);
         for (int i = 0; i < allGoapPlans.Count; i++) {
             if (DropPlan(allGoapPlans[i])) {
                 i--;
@@ -2125,15 +2195,15 @@ public class Character : ILeader, IPointOfInterest {
         }
         AdjustIsWaitingForInteraction(-1);
     }
-    public void CancelAllPlans() {
-        StopCurrentAction(false);
+    public void CancelAllPlans(string reason = "") {
+        StopCurrentAction(false, reason: reason);
         for (int i = 0; i < allGoapPlans.Count; i++) {
             if (DropPlan(allGoapPlans[i])) {
                 i--;
             }
         }
     }
-    public void CancelAllJobsAndPlansExcept(params JOB_TYPE[] job) {
+    public void CancelAllJobsAndPlansExcept(string reason = "", params JOB_TYPE[] job) {
         List<JOB_TYPE> exceptions = job.ToList();
         AdjustIsWaitingForInteraction(1);
         for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
@@ -2146,7 +2216,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         homeArea.jobQueue.UnassignAllJobsTakenBy(this);
 
-        StopCurrentAction(false);
+        StopCurrentAction(false, reason: reason);
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan currPlan = allGoapPlans[i];
             if (currPlan.job == null || !exceptions.Contains(currPlan.job.jobType)) {
@@ -2169,7 +2239,7 @@ public class Character : ILeader, IPointOfInterest {
             //Berserked state cannot be overriden
             return false;
         }
-        if (stateComponent.currentState == null && this.marker.hasFleePath) {
+        if (stateComponent.currentState == null && this.marker != null && this.marker.hasFleePath) {
             return false; //if the character is only fleeing, but is not in combat state, do not allow overriding.
         }
         if (stateComponent.currentState != null) {
@@ -2238,12 +2308,9 @@ public class Character : ILeader, IPointOfInterest {
     }
     private GoapPlanJob CreateSuicideJob() {
         GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SUICIDE, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = this });
-        job.SetCanTakeThisJobChecker(IsSuicideJobStillValid);
+        job.SetCanTakeThisJobChecker(InteractionManager.Instance.IsSuicideJobStillValid);
         jobQueue.AddJobInQueue(job);
         return job;
-    }
-    private bool IsSuicideJobStillValid(Character character, JobQueueItem item) {
-        return character.GetNormalTrait("Forlorn") != null;
     }
     /// <summary>
     /// Gets the current priority of the character's current action or state.
@@ -2260,6 +2327,23 @@ public class Character : ILeader, IPointOfInterest {
         } else {
             return 999999;
         }
+    }
+    public GoapPlanJob CreateReportCrimeJob(CRIME committedCrime, GoapAction crimeToReport, AlterEgoData criminal) {
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
+                        { INTERACTION_TYPE.REPORT_CRIME,  new object[] { committedCrime, criminal, crimeToReport }}
+                    });
+        //job.SetCannotOverrideJob(true);
+        jobQueue.AddJobInQueue(job);
+        return job;
+    }
+    public void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPLACE_TILE_OBJECT, INTERACTION_TYPE.REPLACE_TILE_OBJECT, new Dictionary<INTERACTION_TYPE, object[]>() {
+                        { INTERACTION_TYPE.REPLACE_TILE_OBJECT, new object[]{ removedObj, removedFrom } },
+        });
+        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeReplaceTileObjectJob);
+        job.SetCancelOnFail(false);
+        job.SetCancelJobOnDropPlan(false);
+        jobQueue.AddJobInQueue(job);
     }
     #endregion
 
@@ -2284,9 +2368,9 @@ public class Character : ILeader, IPointOfInterest {
             return; //if the new faction is the same, ignore change
         }
         if (faction != null) {
-            faction.RemoveCharacter(this);
+            faction.LeaveFaction(this);
         }
-        newFaction.AddNewCharacter(this);
+        newFaction.JoinFaction(this);
     }
     private void OnChangeFaction() {
         //check if this character has a Criminal Trait, if so, remove it
@@ -2295,15 +2379,15 @@ public class Character : ILeader, IPointOfInterest {
             RemoveTrait(criminal, false);
         }
     }
-    public void FoundFaction(string factionName, Area location) {
-        MigrateHomeTo(location);
-        Faction newFaction = FactionManager.Instance.GetFactionBasedOnName(factionName);
-        newFaction.SetLeader(this);
-        ChangeFactionTo(newFaction);
-        FactionManager.Instance.neutralFaction.RemoveFromOwnedAreas(location);
-        LandmarkManager.Instance.OwnArea(newFaction, race, location);
-        newFaction.SetFactionActiveState(true);
-    }
+    //public void FoundFaction(string factionName, Area location) {
+    //    MigrateHomeTo(location);
+    //    Faction newFaction = FactionManager.Instance.GetFactionBasedOnName(factionName);
+    //    newFaction.SetLeader(this);
+    //    ChangeFactionTo(newFaction);
+    //    FactionManager.Instance.neutralFaction.RemoveFromOwnedRegions(location);
+    //    LandmarkManager.Instance.OwnRegion(newFaction, race, location);
+    //    newFaction.SetFactionActiveState(true);
+    //}
     #endregion
 
     #region Party
@@ -2528,8 +2612,8 @@ public class Character : ILeader, IPointOfInterest {
         }
         onLeaveAreaActions.Clear();
     }
-    public void SetLandmarkLocation(BaseLandmark landmark) {
-        currentLandmark = landmark;
+    public void SetRegionLocation(Region region) {
+        currentRegion = region;
     }
     #endregion
 
@@ -2582,6 +2666,10 @@ public class Character : ILeader, IPointOfInterest {
         //_characterClass = charClass.CreateNewCopy();
         OnCharacterClassChange();
 
+        if (minion != null) {
+            minion.SetAssignedDeadlySinName(className);
+        }
+
 #if !WORLD_CREATION_TOOL
         //_homeLandmark.tileLocation.areaOfTile.excessClasses.Remove(previousClassName);
         //_homeLandmark.tileLocation.areaOfTile.missingClasses.Remove(_characterClass.className);
@@ -2607,34 +2695,32 @@ public class Character : ILeader, IPointOfInterest {
     //public bool HasPathToParty(Party partyToJoin) {
     //    return PathGenerator.Instance.GetPath(currLocation, partyToJoin.currLocation, PATHFINDING_MODE.PASSABLE, _faction) != null;
     //}
-    public void CenterOnCharacter(bool clickTravelLine = true) {
+    public void CenterOnCharacter() {
         if (marker != null) {
-            if (currentParty.icon.isTravelling) {
-                if (currentParty.icon.travelLine != null) {
-                    if (specificLocation.areaMap.isShowing) {
-                        InteriorMapManager.Instance.HideAreaMap();
-                        if (clickTravelLine) {
-                            currentParty.icon.travelLine.OnClickTravelLine();
-                        }
-                    }
-                    CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
-                } else {
-                    if (marker.gameObject.activeInHierarchy) {
-                        bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
-                        if (!specificLocation.areaMap.isShowing) {
-                            InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
-                        }
-                        AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
-                    }
+            if (currentParty.icon.isTravellingOutside) {
+                if (specificLocation.areaMap.isShowing) {
+                    InteriorMapManager.Instance.HideAreaMap();
                 }
-            } else if (currentLandmark != null) {
-                CameraMove.Instance.CenterCameraOn(currentLandmark.tileLocation.gameObject);
+                //CameraMove.Instance.CenterCameraOn(currentParty.icon.travelLine.iconImg.gameObject);
+                CameraMove.Instance.CenterCameraOn(homeRegion.coreTile.gameObject);
+            } else if (currentParty.icon.isTravelling) {
+                if (marker.gameObject.activeInHierarchy) {
+                    bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
+                    if (!specificLocation.areaMap.isShowing) {
+                        InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
+                    }
+                    AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
+                }
+            } else if (currentRegion != null) {
+                CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
             } else {
                 bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
-                if (!specificLocation.areaMap.isShowing) {
+                if (specificLocation.areaMap != null && !specificLocation.areaMap.isShowing) {
                     InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
+                    AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
+                } else {
+                    CameraMove.Instance.CenterCameraOn(specificLocation.region.coreTile.gameObject);
                 }
-                AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
             }
         }
     }
@@ -2651,7 +2737,7 @@ public class Character : ILeader, IPointOfInterest {
     public void AdjustDoNotDisturb(int amount) {
         _doNotDisturb += amount;
         _doNotDisturb = Math.Max(_doNotDisturb, 0);
-        Debug.Log(GameManager.Instance.TodayLogString() + " adjusted do not disturb of " + this.name + " by " + amount + " new value is " + _doNotDisturb.ToString());
+        //Debug.Log(GameManager.Instance.TodayLogString() + " adjusted do not disturb of " + this.name + " by " + amount + " new value is " + _doNotDisturb.ToString());
     }
     public void AdjustDoNotGetHungry(int amount) {
         _doNotGetHungry += amount;
@@ -2665,32 +2751,32 @@ public class Character : ILeader, IPointOfInterest {
         _doNotGetTired += amount;
         _doNotGetTired = Math.Max(_doNotGetTired, 0);
     }
-    public void ReturnToOriginalHomeAndFaction(Area ogHome, Faction ogFaction) {
+    public void ReturnToOriginalHomeAndFaction(Region ogHome, Faction ogFaction) {
         //first, check if the character's original faction is still alive
         if (!ogFaction.isDestroyed) { //if it is, 
             this.ChangeFactionTo(ogFaction);  //transfer the character to his original faction
             if (ogFaction.id == FactionManager.Instance.neutralFaction.id) { //if the character's original faction is the neutral faction
-                if (ogHome.owner == null && !ogHome.IsResidentsFull()) { //check if his original home is still unowned
+                if (ogHome.owner == null && (ogHome.area == null || (ogHome.area != null && !ogHome.area.IsResidentsFull()))) { //check if his original home is still unowned
                     //if it is and it has not reached it's resident capacity, return him to his original home
                     MigrateHomeTo(ogHome);
                 } else { //if it does not meet those requirements
                     //check if the neutral faction still has any available areas that have not reached capacity yet
-                    List<Area> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedAreas.Where(x => !x.IsResidentsFull()).ToList();
+                    List<Region> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedRegions.Where(x => x.area == null || (x.area != null && !x.area.IsResidentsFull())).ToList();
                     if (validNeutralAreas.Count > 0) {
                         //if it does, pick randomly from those
-                        Area chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
+                        Region chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
                         MigrateHomeTo(chosenArea);
                     }
                     //if not, keep the characters current home
                 }
             } else { //if it is not, check if his original home is still owned by that faction and it has not yet reached it's resident capacity
-                if (ogHome.owner == ogFaction && !ogHome.IsResidentsFull()) {
+                if (ogHome.IsFactionHere(ogFaction) && (ogHome.area == null || (ogHome.area != null && !ogHome.area.IsResidentsFull()))) {
                     //if it meets those requirements, return the character's home to that location
                     MigrateHomeTo(ogHome);
                 } else { //if not, get another area owned by his faction that has not yet reached capacity
-                    List<Area> validAreas = ogFaction.ownedAreas.Where(x => !x.IsResidentsFull()).ToList();
+                    List<Region> validAreas = ogFaction.ownedRegions.Where(x => x.area == null || (x.area != null && !x.area.IsResidentsFull())).ToList();
                     if (validAreas.Count > 0) {
-                        Area chosenArea = validAreas[UnityEngine.Random.Range(0, validAreas.Count)];
+                        Region chosenArea = validAreas[UnityEngine.Random.Range(0, validAreas.Count)];
                         MigrateHomeTo(chosenArea);
                     }
                     //if there are still no areas that can be his home, keep his current one.
@@ -2699,10 +2785,10 @@ public class Character : ILeader, IPointOfInterest {
         } else { //if not
             //transfer the character to the neutral faction instead
             this.ChangeFactionTo(FactionManager.Instance.neutralFaction);
-            List<Area> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedAreas.Where(x => !x.IsResidentsFull()).ToList();
+            List<Region> validNeutralAreas = FactionManager.Instance.neutralFaction.ownedRegions.Where(x => x.area == null || (x.area != null && !x.area.IsResidentsFull())).ToList();
             if (validNeutralAreas.Count > 0) {  //then check if the neutral faction has any owned areas that have not yet reached area capacity
                 //if it does, pick from any of those, then set it as the characters new home
-                Area chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
+                Region chosenArea = validNeutralAreas[UnityEngine.Random.Range(0, validNeutralAreas.Count)];
                 MigrateHomeTo(chosenArea);
             }
             //if it does not, keep the characters current home
@@ -2765,9 +2851,12 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     public bool CanCharacterReact() {
-        if(this is Summon || minion != null) {
+        if (this is Summon || minion != null) {
             //Cannot react if summon or minion
             return false;
+        }
+        if (defaultCharacterTrait.hasSurvivedApprehension && !isAtHomeRegion) {
+            return false; //Must not react because he will only have one thing to do and that is to return home
         }
         if (stateComponent.currentState != null && !stateComponent.currentState.isDone) {
             if (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
@@ -2820,6 +2909,16 @@ public class Character : ILeader, IPointOfInterest {
     }
     public bool IsDoingEmergencyAction() {
         return currentAction != null && currentAction.goapType.IsEmergencyAction();
+    }
+    public void AdjustIsStoppedByOtherCharacter(int amount) {
+        isStoppedByOtherCharacter += amount;
+        isStoppedByOtherCharacter = Mathf.Max(0, isStoppedByOtherCharacter);
+        if (marker != null) {
+            marker.UpdateAnimation();
+        }
+    }
+    public virtual bool IsValidCombatTarget() {
+        return !HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
     }
     #endregion
 
@@ -3016,9 +3115,9 @@ public class Character : ILeader, IPointOfInterest {
         //if(relationshipsWithTarget == null) { return true; }
         switch (type) {
             case RELATIONSHIP_TRAIT.ENEMY:
-                return relationshipsWithTarget == null || (relationshipsWithTarget != null && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)); //check that the target character is not already this characters enemy and that this character is also not his friend or his lover
+                return relationshipsWithTarget == null || (!relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.LOVER)); //check that the target character is not already this characters enemy and that this character is also not his friend or his lover
             case RELATIONSHIP_TRAIT.FRIEND:
-                return relationshipsWithTarget == null || (relationshipsWithTarget != null && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY)); //check that the target character is not already this characters friend and that this character is also not his enemy
+                return relationshipsWithTarget == null || (!relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.FRIEND) && !relationshipsWithTarget.Contains(RELATIONSHIP_TRAIT.ENEMY)); //check that the target character is not already this characters friend and that this character is also not his enemy
             case RELATIONSHIP_TRAIT.LOVER:
                 //- **Lover:** Positive, Permanent (Can only have 1)
                 //check if this character already has a lover and that the target character is not his/her paramour
@@ -3079,7 +3178,7 @@ public class Character : ILeader, IPointOfInterest {
 #if !WORLD_CREATION_TOOL
          //check if they share the same home, then migrate them accordingly
         if (newRel.relType == RELATIONSHIP_TRAIT.LOVER
-            && this.homeArea.id == targetCharacter.homeArea.id
+            && this.homeArea != null && targetCharacter.homeArea != null && this.homeArea.id == targetCharacter.homeArea.id
             && this.homeStructure != targetCharacter.homeStructure) {
             //Lover conquers all, even if one character is factionless they will be together, meaning the factionless character will still have home structure
             homeArea.AssignCharacterToDwellingInArea(this, targetCharacter.homeStructure);
@@ -3296,18 +3395,32 @@ public class Character : ILeader, IPointOfInterest {
         //    }
         //}
         ///Moved all needed checking <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)"/>
-        ThisCharacterWitnessedEvent(action);
-        ThisCharacterWatchEvent(null, action, state);
-    }
-    public virtual void ThisCharacterSaw(IPointOfInterest target) {
-        if (GetNormalTrait("Unconscious", "Resting") != null || isDead) {
+        ///
+        if (action.goapType == INTERACTION_TYPE.WATCH) {
+            //Cannot witness/watch a watch action
             return;
+        }
+        //Instead of witnessing the action immediately, it needs to be pooled to avoid duplicates, so add the supposed to be witnessed action to the list and let ProcessAllUnprocessedVisionPOIs in CharacterMarker do its thing
+        if(marker != null && !marker.actionsToWitness.Contains(action)) {
+            marker.actionsToWitness.Add(action);
+            //This is done so that the character will react again
+            marker.unprocessedVisionPOIs.Add(action.actor);
+        }
+
+        //ThisCharacterWitnessedEvent(action);
+        //ThisCharacterWatchEvent(null, action, state);
+    }
+
+    //Returns the list of goap actions to be witnessed by this character
+    public virtual List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
+        if (GetNormalTrait("Unconscious", "Resting") != null || isDead) {
+            return null;
         }
         
         if (currentAction != null && currentAction.poiTarget == target && currentAction.isStealth) {
             //Upon seeing the target while performing a stealth job action, check if it can do the action
             if (!marker.CanDoStealthActionToTarget(target)) {
-                currentAction.parentPlan.job.jobQueueParent.CancelJob(currentAction.parentPlan.job);
+                currentAction.parentPlan.job.jobQueueParent.CancelJob(currentAction.parentPlan.job, reason: "There is a witness around");
             }
         }
         if (target.targettedByAction.Count > 0) {
@@ -3318,7 +3431,7 @@ public class Character : ILeader, IPointOfInterest {
                 if (action.isStealth && action.actor != this) {
                     if (!action.isDone && !action.isPerformingActualAction && action.actor.currentAction == action
                         && action.actor.marker.inVisionPOIs.Contains(target)) {
-                        action.StopAction(true);
+                        action.StopAction(true, "There is a witness around");
                     }
                 }
             }
@@ -3326,19 +3439,16 @@ public class Character : ILeader, IPointOfInterest {
         if (target is Character) {
             Character targetCharacter = target as Character;
             targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
-            
-            Spooked spooked = GetNormalTrait("Spooked") as Spooked;
-            if (spooked != null) {
-                if (marker.AddAvoidInRange(targetCharacter)) {
-                    spooked.AddTerrifyingCharacter(targetCharacter);
-                }
-                return;
-            }
+
             for (int i = 0; i < normalTraits.Count; i++) {
                 normalTraits[i].OnSeePOI(target, this);
             }
 
-            //Must not witness/watch if spooked
+            List<GoapAction> actionsToWitness = new List<GoapAction>();
+            if (target.targettedByAction.Count > 0) {
+                //Collect all actions first to avoid duplicates 
+                actionsToWitness.AddRange(target.targettedByAction);
+            }
             if (targetCharacter.currentAction != null && targetCharacter.currentAction.isPerformingActualAction && !targetCharacter.currentAction.isDone && targetCharacter.currentAction.goapType != INTERACTION_TYPE.WATCH) {
                 //Cannot witness/watch a watch action
                 IPointOfInterest poiTarget = null;
@@ -3348,17 +3458,33 @@ public class Character : ILeader, IPointOfInterest {
                     poiTarget = targetCharacter.currentAction.poiTarget;
                 }
                 if (targetCharacter.currentAction.actor != this && poiTarget != this) {
-                    ThisCharacterWitnessedEvent(targetCharacter.currentAction);
-                    ThisCharacterWatchEvent(targetCharacter, targetCharacter.currentAction, targetCharacter.currentAction.currentState);
+                    actionsToWitness.Add(targetCharacter.currentAction);
+                    //ThisCharacterWitnessedEvent(targetCharacter.currentAction);
+                    //ThisCharacterWatchEvent(targetCharacter, targetCharacter.currentAction, targetCharacter.currentAction.currentState);
+                }
+            } else if (targetCharacter.currentAction != null && targetCharacter.currentAction.currentState != null && targetCharacter.currentAction.currentState.name == targetCharacter.currentAction.whileMovingState) {
+                //Must also witness whileMovingState
+                IPointOfInterest poiTarget = null;
+                if (targetCharacter.currentAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
+                    poiTarget = (targetCharacter.currentAction as MakeLove).targetCharacter;
+                } else {
+                    poiTarget = targetCharacter.currentAction.poiTarget;
+                }
+                if (targetCharacter.currentAction.actor != this && poiTarget != this) {
+                    actionsToWitness.Add(targetCharacter.currentAction);
+                    //ThisCharacterWitnessedEvent(targetCharacter.currentAction);
+                    //ThisCharacterWatchEvent(targetCharacter, targetCharacter.currentAction, targetCharacter.currentAction.currentState);
                 }
             }
             //This will only happen if target is in combat
             ThisCharacterWatchEvent(targetCharacter, null, null);
+            return actionsToWitness;
         } else {
             for (int i = 0; i < normalTraits.Count; i++) {
                 normalTraits[i].OnSeePOI(target, this);
             }
         }
+        return null;
     }
     /// <summary>
     /// What should happen if another character sees this character?
@@ -3467,20 +3593,33 @@ public class Character : ILeader, IPointOfInterest {
         //}
     }
     public void ThisCharacterWitnessedEvent(GoapAction witnessedEvent) {
+        if (isDead || GetNormalTrait("Unconscious", "Resting", "Catatonic") != null) {
+            return;
+        }
+        if (faction != witnessedEvent.actor.faction && //only check faction relationship if involved characters are of different factions
+            faction.GetRelationshipWith(witnessedEvent.actor.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
+            return;
+        }
+      
+        
         if (witnessedEvent.currentState == null) {
             throw new System.Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.goapName + " by " + witnessedEvent.actor.name + " but it does not have a current state!");
         }
+        if (witnessedEvent.currentState.descriptionLog == null) {
+            throw new Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.goapName + " by " + witnessedEvent.actor.name + " with state " + witnessedEvent.currentState.name + " but it does not have a description log!");
+        }
         Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", witnessedEvent);
-        witnessLog.AddToFillers(marker.character, marker.character.name, LOG_IDENTIFIER.OTHER);
+        witnessLog.AddToFillers(this, name, LOG_IDENTIFIER.OTHER);
         witnessLog.AddToFillers(null, Utilities.LogDontReplace(witnessedEvent.currentState.descriptionLog), LOG_IDENTIFIER.APPEND);
         witnessLog.AddToFillers(witnessedEvent.currentState.descriptionLog.fillers);
         AddHistory(witnessLog);
 
-        if(faction == PlayerManager.Instance.player.playerFaction) {
+        if (faction == PlayerManager.Instance.player.playerFaction) {
             //Player characters cannot react to witnessed events
             return;
         }
-        if (witnessedEvent.currentState.shareIntelReaction != null && !isFactionless) {
+        if (witnessedEvent.currentState.shareIntelReaction != null && !isFactionless) { //Characters with no faction cannot witness react
             List<string> reactions = witnessedEvent.currentState.shareIntelReaction.Invoke(this, null, SHARE_INTEL_STATUS.WITNESSED);
             if(reactions != null) {
                 string reactionLog = name + " witnessed event: " + witnessedEvent.goapName;
@@ -3491,7 +3630,6 @@ public class Character : ILeader, IPointOfInterest {
                 PrintLogIfActive(reactionLog);
             }
         }
-
         witnessedEvent.AddAwareCharacter(this);
 
         //If a character sees or informed about a lover performing Making Love or Ask to Make Love, they will feel Betrayed
@@ -3538,97 +3676,140 @@ public class Character : ILeader, IPointOfInterest {
                 && targetCharacter.faction == faction) {
                 CombatState targetCombatState = targetCharacter.stateComponent.currentState as CombatState;
                 if (targetCombatState.currentClosestHostile != null && targetCombatState.currentClosestHostile != this) {
-                    Invisible invisible = targetCombatState.currentClosestHostile.GetNormalTrait("Invisible") as Invisible;
-                    if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
-                        CreateWatchEvent(null, targetCombatState, targetCharacter);
-                    } else {
-                        if (targetCombatState.currentClosestHostile.faction == faction) {
-                            RELATIONSHIP_EFFECT relEffectTowardsTarget = GetRelationshipEffectWith(targetCharacter);
-                            RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = GetRelationshipEffectWith(targetCombatState.currentClosestHostile);
+                    if (targetCombatState.currentClosestHostile is Character) {
+                        Character currentHostileOfTargetCharacter = targetCombatState.currentClosestHostile as Character;
+                        if (currentHostileOfTargetCharacter.stateComponent.currentState != null
+                            && !currentHostileOfTargetCharacter.stateComponent.currentState.isDone
+                            && currentHostileOfTargetCharacter.stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT) {
+                            CombatState combatStateOfCurrentHostileOfTargetCharacter = currentHostileOfTargetCharacter.stateComponent.currentState as CombatState;
+                            if (combatStateOfCurrentHostileOfTargetCharacter.currentClosestHostile != null
+                                && combatStateOfCurrentHostileOfTargetCharacter.currentClosestHostile == this) {
+                                //If character 1 is supposed to watch/join the combat of character 2 against character 3
+                                //but character 3 is already in combat and his current target is already character 1
+                                //then character 1 should not react
+                                return;
+                            }
+                        }
 
-                            if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                                if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                    CreateWatchEvent(null, targetCombatState, targetCharacter);
+
+                        Invisible invisible = targetCombatState.currentClosestHostile.GetNormalTrait("Invisible") as Invisible;
+                        if (invisible != null && !invisible.charactersThatCanSee.Contains(this)) {
+                            CreateWatchEvent(null, targetCombatState, targetCharacter);
+                        } else {
+                            if (currentHostileOfTargetCharacter.faction == faction) {
+                                RELATIONSHIP_EFFECT relEffectTowardsTarget = GetRelationshipEffectWith(targetCharacter);
+                                RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = GetRelationshipEffectWith(currentHostileOfTargetCharacter);
+
+                                if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
+                                    if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
+                                        CreateWatchEvent(null, targetCombatState, targetCharacter);
+                                    } else {
+                                        if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                            if (!marker.avoidInRange.Contains(targetCharacter)) {
+                                                //TODO: Do process combat behavior first for this character, if the current closest hostile
+                                                //of the combat state of this character is also the targetCombatState.currentClosestHostile
+                                                //Then that's only when we apply the join combat log and notif
+                                                //Because if not, it means that this character is already in combat with someone else, and thus
+                                                //should not product join combat log anymore
+                                                List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCharacter).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
+                                                Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
+                                                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                                joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
+                                                joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
+                                                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                                PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
+                                            }
+                                            //marker.ProcessCombatBehavior();
+                                        }
+                                    }
                                 } else {
-                                    if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(targetCombatState.currentClosestHostile))) {
-                                        List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCharacter).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
-                                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
-                                        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                        joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-                                        joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
-                                        joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                        PlayerManager.Instance.player.ShowNotification(joinLog);
-                                        marker.ProcessCombatBehavior();
+                                    if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
+                                        if (marker.AddHostileInRange(targetCharacter, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                            if (!marker.avoidInRange.Contains(targetCharacter)) {
+                                                //TODO: Do process combat behavior first for this character, if the current closest hostile
+                                                //of the combat state of this character is also the targetCombatState.currentClosestHostile
+                                                //Then that's only when we apply the join combat log and notif
+                                                //Because if not, it means that this character is already in combat with someone else, and thus
+                                                //should not product join combat log anymore
+                                                List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(currentHostileOfTargetCharacter).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
+                                                Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
+                                                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                                                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                                joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
+                                                joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
+                                                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                                PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
+                                            }
+                                            //marker.ProcessCombatBehavior();
+                                        }
+                                    } else {
+                                        CreateWatchEvent(null, targetCombatState, targetCharacter);
                                     }
                                 }
                             } else {
-                                if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
-                                    if (marker.AddHostileInRange(targetCharacter, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(targetCombatState.currentClosestHostile))) {
-                                        List<RELATIONSHIP_TRAIT> rels = GetAllRelationshipTraitTypesWith(targetCombatState.currentClosestHostile).OrderByDescending(x => (int)x).ToList(); //so that the first relationship to be returned is the one with higher importance.
-                                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat");
+                                //the target of the combat state is not part of this character's faction
+                                if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(currentHostileOfTargetCharacter))) {
+                                    if (!marker.avoidInRange.Contains(targetCharacter)) {
+                                        //TODO: Do process combat behavior first for this character, if the current closest hostile
+                                        //of the combat state of this character is also the targetCombatState.currentClosestHostile
+                                        //Then that's only when we apply the join combat log and notif
+                                        //Because if not, it means that this character is already in combat with someone else, and thus
+                                        //should not product join combat log anymore
+                                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
                                         joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                        joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.CHARACTER_3);
-                                        joinLog.AddToFillers(null, Utilities.NormalizeString(rels.First().ToString()), LOG_IDENTIFIER.STRING_1);
+                                        joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                                        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
                                         joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                        PlayerManager.Instance.player.ShowNotification(joinLog);
-                                        marker.ProcessCombatBehavior();
+                                        PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                     }
-                                } else {
-                                    CreateWatchEvent(null, targetCombatState, targetCharacter);
+                                    //marker.ProcessCombatBehavior();
                                 }
                             }
-                        } else {
-                            //the target of the combat state is not part of this character's faction
-                            if (marker.AddHostileInRange(targetCombatState.currentClosestHostile, false, false, isLethal: targetCharacter.marker.IsLethalCombatForTarget(targetCombatState.currentClosestHostile))) {
-                                Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_faction");
-                                joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                                joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-                                joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                PlayerManager.Instance.player.ShowNotification(joinLog);
-                                marker.ProcessCombatBehavior();
-                            }
                         }
+
                     }
+                    
+
+                    
                 }
             }
-        } else if (!action.isDone) {
-            if (action.goapType == INTERACTION_TYPE.MAKE_LOVE && state.name == "Make Love Success") {
-                MakeLove makeLove = action as MakeLove;
-                Character target = makeLove.targetCharacter;
-                if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                    CreateWatchEvent(action, null, action.actor);
-                } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
-                    CreateWatchEvent(action, null, target);
-                } else {
-                    marker.AddAvoidInRange(action.actor, false);
-                    marker.AddAvoidInRange(target);
-                }
-            } else if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success" && GetNormalTrait("MusicHater") == null) {
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 25) { //25
-                    if (!HasRelationshipOfTypeWith(action.actor, RELATIONSHIP_TRAIT.ENEMY)) {
-                        CreateWatchEvent(action, null, action.actor);
-                    }
-                }
-            } else if (action.goapType == INTERACTION_TYPE.TABLE_POISON) {
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 35) {
-                    CreateWatchEvent(action, null, action.actor);
-                }
-            } else if (action.goapType == INTERACTION_TYPE.CURSE_CHARACTER && state.name == "Curse Success") {
-                int chance = UnityEngine.Random.Range(0, 100);
-                if (chance < 35) {
-                    CreateWatchEvent(action, null, action.actor);
-                }
-            } else if ((action.goapType == INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM || action.goapType == INTERACTION_TYPE.REVERT_TO_NORMAL_FORM) && state.name == "Transform Success") {
-                if (faction == action.actor.faction) {
-                    CreateWatchEvent(action, null, action.actor);
-                }
-            }
-        }
+        } 
+        //else if (!action.isDone) {
+        //    if (action.goapType == INTERACTION_TYPE.MAKE_LOVE && state.name == "Make Love Success") {
+        //        MakeLove makeLove = action as MakeLove;
+        //        Character target = makeLove.targetCharacter;
+        //        if (HasRelationshipOfTypeWith(action.actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        //            CreateWatchEvent(action, null, action.actor);
+        //        } else if (HasRelationshipOfTypeWith(target, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+        //            CreateWatchEvent(action, null, target);
+        //        } else {
+        //            marker.AddAvoidInRange(action.actor, false);
+        //            marker.AddAvoidInRange(target);
+        //        }
+        //    } else if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && state.name == "Play Success" && GetNormalTrait("MusicHater") == null) {
+        //        int chance = UnityEngine.Random.Range(0, 100);
+        //        if (chance < 25) { //25
+        //            if (!HasRelationshipOfTypeWith(action.actor, RELATIONSHIP_TRAIT.ENEMY)) {
+        //                CreateWatchEvent(action, null, action.actor);
+        //            }
+        //        }
+        //    } else if (action.goapType == INTERACTION_TYPE.TABLE_POISON) {
+        //        int chance = UnityEngine.Random.Range(0, 100);
+        //        if (chance < 35) {
+        //            CreateWatchEvent(action, null, action.actor);
+        //        }
+        //    } else if (action.goapType == INTERACTION_TYPE.CURSE_CHARACTER && state.name == "Curse Success") {
+        //        int chance = UnityEngine.Random.Range(0, 100);
+        //        if (chance < 35) {
+        //            CreateWatchEvent(action, null, action.actor);
+        //        }
+        //    } else if ((action.goapType == INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM || action.goapType == INTERACTION_TYPE.REVERT_TO_NORMAL_FORM) && state.name == "Transform Success") {
+        //        if (faction == action.actor.faction) {
+        //            CreateWatchEvent(action, null, action.actor);
+        //        }
+        //    }
+        //}
     }
     //In watch event, it's either the character watch an action or combat state, it cannot be both. (NOTE: Since 9/2/2019 Enabled watching of other states other than Combat)
     public void CreateWatchEvent(GoapAction actionToWatch, CharacterState stateToWatch, Character targetCharacter) {
@@ -3693,7 +3874,7 @@ public class Character : ILeader, IPointOfInterest {
             }
             summary += "\nEnding current action (if there's any) before watching...";
             AdjustIsWaitingForInteraction(1);
-            StopCurrentAction(false);
+            StopCurrentAction(false, "Have something important to do");
             AdjustIsWaitingForInteraction(-1);
         }
         summary += "\nWatch event created.";
@@ -3701,13 +3882,20 @@ public class Character : ILeader, IPointOfInterest {
         Watch watchAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.WATCH, this, targetCharacter) as Watch;
         if (actionToWatch != null) {
             watchAction.InitializeOtherData(new object[] { actionToWatch });
-        }else if (stateToWatch != null) {
+        } else if (stateToWatch != null) {
             watchAction.InitializeOtherData(new object[] { stateToWatch });
         }
         GoapNode goalNode = new GoapNode(null, watchAction.cost, watchAction);
         GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+        GoapPlanJob job = new GoapPlanJob(JOB_TYPE.WATCH, INTERACTION_TYPE.WATCH, this);
         goapPlan.ConstructAllNodes();
         goapPlan.SetDoNotRecalculate(true);
+        job.SetAssignedPlan(goapPlan);
+        job.SetCancelOnFail(true);
+        job.SetCancelJobOnDropPlan(true);
+
+        jobQueue.AddJobInQueue(job, false);
+        //jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, this);
         AddPlan(goapPlan, true);
     }
     #endregion
@@ -3723,11 +3911,17 @@ public class Character : ILeader, IPointOfInterest {
         }
 
         //If someone is attacked, relationship should deteriorate
-        if (characterThatAttacked.stateComponent.currentState != null && characterThatAttacked.stateComponent.currentState is CombatState) {
-            CombatState combat = characterThatAttacked.stateComponent.currentState as CombatState;
-            if(combat.currentClosestHostile == this && !combat.allCharactersThatDegradedRel.Contains(this)) {
-                CharacterManager.Instance.RelationshipDegradation(characterThatAttacked, this);
-                combat.AddCharacterThatDegradedRel(this);
+        //TODO: SAVE THE allCharactersThatDegradeRel list so when loaded they will not be able to degrade rel again
+        Character responsibleCharacter = null;
+        if (state != null) {
+            if(state.currentClosestHostile == this) {
+                //Do not set as responsible character for unconscious trait if character is hit unintentionally
+                //So, only set responsible character if currentClosestHostile is this character, meaning, this character is really the target
+                responsibleCharacter = characterThatAttacked;
+                if (!state.allCharactersThatDegradedRel.Contains(this)) {
+                    CharacterManager.Instance.RelationshipDegradation(characterThatAttacked, this);
+                    state.AddCharacterThatDegradedRel(this);
+                }
             }
         }
 
@@ -3739,8 +3933,8 @@ public class Character : ILeader, IPointOfInterest {
             attackSummary += "\n" + this.name + "'s hp has reached 0.";
             WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
 
-            int deathWeight = 70;
-            int unconsciousWeight = 30;
+            int deathWeight = 70; //70
+            int unconsciousWeight = 30; //30
             if (!characterThatAttacked.marker.IsLethalCombatForTarget(this)) {
                 deathWeight = 5;
                 unconsciousWeight = 95;
@@ -3769,14 +3963,18 @@ public class Character : ILeader, IPointOfInterest {
                 switch (result) {
                     case "Unconscious":
                         Unconscious unconscious = new Unconscious();
-                        this.AddTrait(unconscious, characterThatAttacked, gainedFromDoing: state.actionThatTriggeredThisState);
+                        this.AddTrait(unconscious, responsibleCharacter, gainedFromDoing: state.actionThatTriggeredThisState);
                         break;
                     case "Injured":
                         Injured injured = new Injured();
-                        this.AddTrait(injured, characterThatAttacked, gainedFromDoing: state.actionThatTriggeredThisState);
+                        this.AddTrait(injured, responsibleCharacter, gainedFromDoing: state.actionThatTriggeredThisState);
                         break;
                     case "Death":
-                        this.Death("attacked", deathFromAction: state.actionThatTriggeredThisState, responsibleCharacter: characterThatAttacked);
+                        string deathReason = "attacked";
+                        if (!characterThatAttacked.marker.IsLethalCombatForTarget(this)) {
+                            deathReason = "accidental_attacked";
+                        }
+                        this.Death(deathReason, deathFromAction: state.actionThatTriggeredThisState, responsibleCharacter: responsibleCharacter);
                         break;
                 }
             } else {
@@ -3813,9 +4011,9 @@ public class Character : ILeader, IPointOfInterest {
         if (isExhausted) {
             return false;
         }
-        if (GetNormalTrait("Spooked") != null) {
-            return false;
-        }
+        //if (GetNormalTrait("Spooked") != null) {
+        //    return false;
+        //}
         //if (GetNormalTrait("Injured") != null) {
         //    return false;
         //}
@@ -3894,27 +4092,31 @@ public class Character : ILeader, IPointOfInterest {
         } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
             int multiplier = (amount < 0 ? -1 : 1);
             int range = amount * multiplier;
-            for (int i = 0; i < range; i++) {
-                if (i % 2 == 0) {
-                    //even
-                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-                } else {
-                    //odd
-                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+            if (range > 0) {
+                for (int i = 0; i < range; i++) {
+                    if (i % 2 == 0) {
+                        //even
+                        AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+                    } else {
+                        //odd
+                        AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+                    }
                 }
             }
             AdjustSpeedMod(_characterClass.speedPerLevel * amount);
         } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
             int multiplier = (amount < 0 ? -1 : 1);
             int range = amount * multiplier;
-            for (int i = _level; i <= _level + range; i++) {
-                if (!hpMagicRangedStatMod) {
-                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
-                } else {
-                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-                }
-                if (i != 1 && (i - 1) % 2 == 0) {
-                    hpMagicRangedStatMod = !hpMagicRangedStatMod;
+            if (range > 0) {
+                for (int i = _level; i <= _level + range; i++) {
+                    if (!hpMagicRangedStatMod) {
+                        AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+                    } else {
+                        AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+                    }
+                    if (i != 1 && (i - 1) % 2 == 0) {
+                        hpMagicRangedStatMod = !hpMagicRangedStatMod;
+                    }
                 }
             }
             AdjustSpeedMod(_characterClass.speedPerLevel * amount);
@@ -3948,27 +4150,31 @@ public class Character : ILeader, IPointOfInterest {
         } else if (_characterClass.attackType == ATTACK_TYPE.PHYSICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
             int multiplier = (difference < 0 ? -1 : 1);
             int range = difference * multiplier;
-            for (int i = 0; i < range; i++) {
-                if (i % 2 == 0) {
-                    //even
-                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-                } else {
-                    //odd
-                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+            if (range > 0) {
+                for (int i = 0; i < range; i++) {
+                    if (i % 2 == 0) {
+                        //even
+                        AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+                    } else {
+                        //odd
+                        AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+                    }
                 }
             }
             AdjustSpeedMod(_characterClass.speedPerLevel * difference);
         } else if (_characterClass.attackType == ATTACK_TYPE.MAGICAL && _characterClass.rangeType == RANGE_TYPE.RANGED) {
             int multiplier = (difference < 0 ? -1 : 1);
             int range = difference * multiplier;
-            for (int i = _level; i <= _level + range; i++) {
-                if (!hpMagicRangedStatMod) {
-                    AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
-                } else {
-                    AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
-                }
-                if (i != 1 && (i - 1) % 2 == 0) {
-                    hpMagicRangedStatMod = !hpMagicRangedStatMod;
+            if(range > 0) {
+                for (int i = _level; i <= _level + range; i++) {
+                    if (!hpMagicRangedStatMod) {
+                        AdjustAttackMod(_characterClass.attackPowerPerLevel * multiplier);
+                    } else {
+                        AdjustMaxHPMod(_characterClass.hpPerLevel * multiplier);
+                    }
+                    if (i != 1 && (i - 1) % 2 == 0) {
+                        hpMagicRangedStatMod = !hpMagicRangedStatMod;
+                    }
                 }
             }
             AdjustSpeedMod(_characterClass.speedPerLevel * difference);
@@ -3988,8 +4194,8 @@ public class Character : ILeader, IPointOfInterest {
         //RecomputeMaxExperience();
     }
     public void OnCharacterClassChange() {
-        if (_currentHP > maxHPMod) {
-            _currentHP = maxHPMod;
+        if (_currentHP > maxHP) {
+            _currentHP = maxHP;
         }
         if (_sp > _maxSP) {
             _sp = _maxSP;
@@ -4011,12 +4217,12 @@ public class Character : ILeader, IPointOfInterest {
     public void SetMaxExperience(int amount) {
         _maxExperience = amount;
     }
-    public void AdjustElementalWeakness(ELEMENT element, float amount) {
-        _elementalWeaknesses[element] += amount;
-    }
-    public void AdjustElementalResistance(ELEMENT element, float amount) {
-        _elementalResistances[element] += amount;
-    }
+    //public void AdjustElementalWeakness(ELEMENT element, float amount) {
+    //    _elementalWeaknesses[element] += amount;
+    //}
+    //public void AdjustElementalResistance(ELEMENT element, float amount) {
+    //    _elementalResistances[element] += amount;
+    //}
     public void AdjustSP(int amount) {
         _sp += amount;
         _sp = Mathf.Clamp(_sp, 0, _maxSP);
@@ -4043,7 +4249,14 @@ public class Character : ILeader, IPointOfInterest {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
-        marker.UpdateHP();
+        if (marker.hpBarGO.activeSelf) {
+            marker.UpdateHP();
+        } else {
+            if (amount < 0 && _currentHP > 0) {
+                //only show hp bar if hp was reduced and hp is greater than 0
+                marker.QuickShowHPBar();
+            }
+        }
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
         if (IsHealthCriticallyLow()) {
             Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);
@@ -4064,24 +4277,30 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
-    public void SetMaxHPMod(int amount) {
-        int previousMaxHP = maxHP;
-        maxHPMod = amount;
-        UpdateMaxHP();
-        int currentMaxHP = maxHP;
-        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
-            _currentHP = currentMaxHP;
-        }
-    }
     public void AdjustAttackMod(int amount) {
         attackPowerMod += amount;
+        currentAlterEgo.SetAttackPowerMod(attackPowerMod);
     }
     public void AdjustAttackPercentMod(int amount) {
         attackPowerPercentMod += amount;
+        currentAlterEgo.SetAttackPowerPercentMod(attackPowerPercentMod);
+    }
+    public void SetAttackMod(int amount) {//, bool includeAlterEgo = true
+        attackPowerMod = amount;
+        //if (includeAlterEgo) {
+            currentAlterEgo.SetAttackPowerMod(attackPowerMod);
+        //}
+    }
+    public void SetAttackPercentMod(int amount) {//, bool includeAlterEgo = true
+        attackPowerPercentMod = amount;
+        //if (includeAlterEgo) {
+            currentAlterEgo.SetAttackPowerPercentMod(attackPowerPercentMod);
+        //}
     }
     public void AdjustMaxHPMod(int amount) {
         int previousMaxHP = maxHP;
         maxHPMod += amount;
+        currentAlterEgo.SetMaxHPMod(maxHPMod);
         UpdateMaxHP();
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
@@ -4091,6 +4310,31 @@ public class Character : ILeader, IPointOfInterest {
     public void AdjustMaxHPPercentMod(int amount) {
         int previousMaxHP = maxHP;
         maxHPPercentMod += amount;
+        currentAlterEgo.SetMaxHPPercentMod(maxHPPercentMod);
+        UpdateMaxHP();
+        int currentMaxHP = maxHP;
+        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+            _currentHP = currentMaxHP;
+        }
+    }
+    public void SetMaxHPMod(int amount) {//, bool includeAlterEgo = true
+        int previousMaxHP = maxHP;
+        maxHPMod = amount;
+        //if (includeAlterEgo) {
+            currentAlterEgo.SetMaxHPMod(maxHPMod);
+        //}
+        UpdateMaxHP();
+        int currentMaxHP = maxHP;
+        if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
+            _currentHP = currentMaxHP;
+        }
+    }
+    public void SetMaxHPPercentMod(int amount) {//, bool includeAlterEgo = true
+        int previousMaxHP = maxHP;
+        maxHPPercentMod = amount;
+        //if (includeAlterEgo) {
+            currentAlterEgo.SetMaxHPPercentMod(maxHPPercentMod);
+        //}
         UpdateMaxHP();
         int currentMaxHP = maxHP;
         if (_currentHP > currentMaxHP || _currentHP == previousMaxHP) {
@@ -4110,9 +4354,23 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void AdjustSpeedMod(int amount) {
         speedMod += amount;
+        currentAlterEgo.SetSpeedMod(speedMod);
     }
     public void AdjustSpeedPercentMod(int amount) {
         speedPercentMod += amount;
+        currentAlterEgo.SetSpeedPercentMod(speedPercentMod);
+    }
+    public void SetSpeedMod(int amount) { //, bool includeAlterEgo = true
+        speedMod = amount;
+        //if (includeAlterEgo) {
+            currentAlterEgo.SetSpeedMod(speedMod);
+        //}
+    }
+    public void SetSpeedPercentMod(int amount) { //, bool includeAlterEgo = true
+        speedPercentMod = amount;
+        //if (includeAlterEgo) {
+            currentAlterEgo.SetSpeedPercentMod(speedPercentMod);
+        //}
     }
     public bool IsHealthFull() {
         return _currentHP >= maxHP;
@@ -4128,8 +4386,32 @@ public class Character : ILeader, IPointOfInterest {
     /// Set this character's home area data.(Does nothing else)
     /// </summary>
     /// <param name="newHome">The character's new home</param>
-    public void SetHome(Area newHome) {
-        this.homeArea = newHome;
+    public void SetHome(Region newHome) {
+        Region previousHome = homeRegion;
+        homeRegion = newHome;
+
+        //If a character sets his home, add his faction to the factions in the region
+        //Subsequently, if character loses his home, remove his faction from the region only if there are no co faction resident in the region anymore
+        if(faction != null) {
+            if(newHome == null) {
+                //If character loses home and he has previous home, remove him faction
+                if(previousHome != null) {
+                    bool removeFaction = true;
+                    for (int i = 0; i < previousHome.residents.Count; i++) {
+                        Character resident = previousHome.residents[i];
+                        if(resident != this && resident.faction == faction) {
+                            removeFaction = false;
+                            break;
+                        }
+                    }
+                    if (removeFaction) {
+                        previousHome.RemoveFactionHere(faction);
+                    }
+                }
+            } else {
+                newHome.AddFactionHere(faction);
+            }
+        }
     }
     public void SetHomeStructure(Dwelling homeStructure) {
         this.homeStructure = homeStructure;
@@ -4144,16 +4426,19 @@ public class Character : ILeader, IPointOfInterest {
         }
         return false;
     }
-    public void MigrateHomeTo(Area newHomeArea, Dwelling homeStructure = null, bool broadcast = true) {
-        Area previousHome = null;
-        if (homeArea != null) {
-            previousHome = homeArea;
-            homeArea.RemoveResident(this);
+    public bool MigrateHomeTo(Region newHomeRegion, Dwelling homeStructure = null, bool broadcast = true) {
+        Region previousHome = null;
+        if (homeRegion != null) {
+            previousHome = homeRegion;
+            homeRegion.RemoveResident(this);
         }
-        newHomeArea.AddResident(this, homeStructure);
-        if (broadcast) {
-            Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeArea);
+        if(newHomeRegion.AddResident(this, homeStructure)) {
+            if (broadcast) {
+                Messenger.Broadcast(Signals.CHARACTER_MIGRATED_HOME, this, previousHome, newHomeRegion);
+            }
+            return true;
         }
+        return false;
     }
     public void MigrateHomeStructureTo(Dwelling dwelling) {
         if (this.homeStructure != null) {
@@ -4171,179 +4456,131 @@ public class Character : ILeader, IPointOfInterest {
         //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " changed home structure to " + dwelling?.ToString() ?? "None");
 #endif
     }
-    //private void OnCharacterMigratedHome(Character character, Area previousHome, Area homeArea) {
-    //    if (character.id != this.id && this.homeArea.id == homeArea.id) {
-    //        if (GetAllRelationshipTraitWith(character) != null) {
-    //            this.homeArea.AssignCharacterToDwellingInArea(this); //redetermine home, in case new character with relationship has moved area to same area as this character
-    //        }
-    //    }
-    //}
     #endregion
 
     #region Traits
     public void CreateInitialTraitsByClass() {
-        ////Attack Type
-        //if (characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
-        //    AddTrait("Physical Attacker");
-        //} else if (characterClass.attackType == ATTACK_TYPE.MAGICAL) {
-        //    AddTrait("Magic User");
-        //}
+        if (role.roleType != CHARACTER_ROLE.MINION && !(this is Summon)) { //only generate buffs and flaws for non minion characters. Reference: https://trello.com/c/pC9hBih0/2781-demonic-minions-should-not-have-pregenerated-buff-and-flaw-traits
+            string[] traitPool = new string[] { "Vigilant", "Doctor", "Diplomatic",
+            "Fireproof", "Accident Prone", "Unfaithful", "Drunkard", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
+            "Herbalist", "Optimist", "Pessimist", "Fast", "Chaste", "Lustful", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
+            "Narcoleptic", "Hothead", "Evil", "Treacherous", "Disillusioned", "Ambitious", "Authoritative"
+            };
+            //"Kleptomaniac","Curious", 
 
-        ////Range Type
-        //if (characterClass.rangeType == RANGE_TYPE.MELEE) {
-        //    AddTrait("Melee Attack");
-        //} else if (characterClass.rangeType == RANGE_TYPE.RANGED) {
-        //    AddTrait("Ranged Attack");
-        //}
+            List<string> buffTraits = new List<string>();
+            List<string> flawTraits = new List<string>();
+            List<string> neutralTraits = new List<string>();
 
-        ////Combat Position
-        //if (characterClass.combatPosition == COMBAT_POSITION.FRONTLINE) {
-        //    AddTrait("Frontline Combatant");
-        //} else if (characterClass.combatPosition == COMBAT_POSITION.BACKLINE) {
-        //    AddTrait("Backline Combatant");
-        //}
-
-        ////Class Name
-        //if (characterClass.className == "Knight" || characterClass.className == "Marauder" || characterClass.className == "Barbarian") {
-        //    AddTrait(AttributeManager.Instance.allTraits["Melee Trait"]);
-        //} else if (characterClass.className == "Stalker" || characterClass.className == "Archer" || characterClass.className == "Hunter") {
-        //    AddTrait(AttributeManager.Instance.allTraits["Ranged Trait"]);
-        //} else if (characterClass.className == "Druid" || characterClass.className == "Mage" || characterClass.className == "Shaman") {
-        //    AddTrait(AttributeManager.Instance.allTraits["Magic Trait"]);
-        //} else if (characterClass.className == "Spinner" || characterClass.className == "Abomination") {
-        //    AddTrait(AttributeManager.Instance.allTraits["Melee Vulnerable"]);
-        //} else if (characterClass.className == "Ravager") {
-        //    AddTrait(AttributeManager.Instance.allTraits["Ranged Vulnerable"]);
-        //} else if (characterClass.className == "Dragon") {
-        //    AddTrait(AttributeManager.Instance.allTraits["Dragon Trait"]);
-        //} else if (characterClass.className == "Greed") {
-        //    AddTrait(AttributeManager.Instance.allTraits["Greed Trait"]);
-        //} else if (characterClass.className == "Lust") {
-        //    AddTrait(AttributeManager.Instance.allTraits["Lust Trait"]);
-        //} else if (characterClass.className == "Envy") {
-        //    AddTrait(AttributeManager.Instance.allTraits["Envy Trait"]);
-        //}
-
-        string[] traitPool = new string[] { "Vigilant", "Doctor", "Diplomatic",
-            "Fireproof", "Accident Prone", "Unfaithful", "Alcoholic", "Craftsman", "Music Lover", "Music Hater", "Ugly", "Blessed", "Nocturnal",
-            "Herbalist", "Optimist", "Pessimist", "Fast", "Prude", "Horny", "Coward", "Lazy", "Hardworking", "Glutton", "Robust", "Suspicious" , "Inspiring", "Pyrophobic",
-            "Narcoleptic", "Hothead",
-        };
-        //"Kleptomaniac","Curious", 
-
-        List<string> buffTraits = new List<string>();
-        List<string> flawTraits = new List<string>();
-        List<string> neutralTraits = new List<string>();
-
-        //Categorize traits from trait pool
-        for (int i = 0; i < traitPool.Length; i++) {
-            string currTraitName = traitPool[i];
-            if (AttributeManager.Instance.allTraits.ContainsKey(currTraitName)) {
-                Trait trait = AttributeManager.Instance.allTraits[currTraitName];
-                if(trait.type == TRAIT_TYPE.BUFF) {
-                    buffTraits.Add(currTraitName);
-                } else if (trait.type == TRAIT_TYPE.FLAW) {
-                    flawTraits.Add(currTraitName);
+            //Categorize traits from trait pool
+            for (int i = 0; i < traitPool.Length; i++) {
+                string currTraitName = traitPool[i];
+                if (AttributeManager.Instance.allTraits.ContainsKey(currTraitName)) {
+                    Trait trait = AttributeManager.Instance.allTraits[currTraitName];
+                    if (trait.type == TRAIT_TYPE.BUFF) {
+                        buffTraits.Add(currTraitName);
+                    } else if (trait.type == TRAIT_TYPE.FLAW) {
+                        flawTraits.Add(currTraitName);
+                    } else {
+                        neutralTraits.Add(currTraitName);
+                    }
                 } else {
-                    neutralTraits.Add(currTraitName);
+                    throw new Exception("There is no trait named: " + currTraitName);
+                }
+            }
+
+            //First trait is random buff trait
+            string chosenBuffTraitName = string.Empty;
+            if (buffTraits.Count > 0) {
+                int index = UnityEngine.Random.Range(0, buffTraits.Count);
+                chosenBuffTraitName = buffTraits[index];
+                buffTraits.RemoveAt(index);
+            } else {
+                throw new Exception("There are no buff traits!");
+            }
+
+            Trait buffTrait;
+            AddTrait(chosenBuffTraitName, out buffTrait);
+            if (buffTrait.mutuallyExclusive != null) {
+                buffTraits = Utilities.RemoveElements(buffTraits, buffTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
+                neutralTraits = Utilities.RemoveElements(neutralTraits, buffTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+                flawTraits = Utilities.RemoveElements(flawTraits, buffTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
+            }
+
+
+            //Second trait is a random buff or neutral trait
+            string chosenBuffOrNeutralTraitName = string.Empty;
+            if (buffTraits.Count > 0 && neutralTraits.Count > 0) {
+                if (UnityEngine.Random.Range(0, 2) == 0) {
+                    //Buff trait
+                    int index = UnityEngine.Random.Range(0, buffTraits.Count);
+                    chosenBuffOrNeutralTraitName = buffTraits[index];
+                    buffTraits.RemoveAt(index);
+                } else {
+                    //Neutral trait
+                    int index = UnityEngine.Random.Range(0, neutralTraits.Count);
+                    chosenBuffOrNeutralTraitName = neutralTraits[index];
+                    neutralTraits.RemoveAt(index);
+                    ///Changed this to use mutual exclusive list per trait <see cref= "Trait.mutuallyExclusive"/>
+                    //if(chosenBuffOrNeutralTraitName == "Music Lover") {
+                    //    flawTraits.Remove("Music Hater");
+                    //}
                 }
             } else {
-                throw new Exception("There is no trait named: " + currTraitName);
+                if (buffTraits.Count > 0) {
+                    int index = UnityEngine.Random.Range(0, buffTraits.Count);
+                    chosenBuffOrNeutralTraitName = buffTraits[index];
+                    buffTraits.RemoveAt(index);
+                } else {
+                    int index = UnityEngine.Random.Range(0, neutralTraits.Count);
+                    chosenBuffOrNeutralTraitName = neutralTraits[index];
+                    neutralTraits.RemoveAt(index);
+                    ///Changed this to use mutual exclusive list per trait <see cref= "Trait.mutuallyExclusive"/>
+                    //if (chosenBuffOrNeutralTraitName == "Music Lover") {
+                    //    flawTraits.Remove("Music Hater");
+                    //}
+                }
             }
-        }
+            Trait buffOrNeutralTrait;
+            AddTrait(chosenBuffOrNeutralTraitName, out buffOrNeutralTrait);
+            if (buffOrNeutralTrait.mutuallyExclusive != null) {
+                buffTraits = Utilities.RemoveElements(buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
+                neutralTraits = Utilities.RemoveElements(neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+                flawTraits = Utilities.RemoveElements(flawTraits, buffOrNeutralTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
+            }
 
-        //First trait is random buff trait
-        string chosenBuffTraitName = string.Empty;
-        if (buffTraits.Count > 0) {
-            int index = UnityEngine.Random.Range(0, buffTraits.Count);
-            chosenBuffTraitName = buffTraits[index];
-            buffTraits.RemoveAt(index);
-        } else {
-            throw new Exception("There are no buff traits!");
-        }
 
-        Trait buffTrait;
-        AddTrait(chosenBuffTraitName, out buffTrait);
-        if (buffTrait.mutuallyExclusive != null) {
-            buffTraits = Utilities.RemoveElements(buffTraits, buffTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
-            neutralTraits = Utilities.RemoveElements(neutralTraits, buffTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
-            flawTraits = Utilities.RemoveElements(flawTraits, buffTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
-        }
-        
-
-        //Second trait is a random buff or neutral trait
-        string chosenBuffOrNeutralTraitName = string.Empty;
-        if (buffTraits.Count > 0 && neutralTraits.Count > 0) {
-            if(UnityEngine.Random.Range(0, 2) == 0) {
-                //Buff trait
-                int index = UnityEngine.Random.Range(0, buffTraits.Count);
-                chosenBuffOrNeutralTraitName = buffTraits[index];
-                buffTraits.RemoveAt(index);
+            //Third trait is a random neutral or flaw traits
+            string chosenFlawOrNeutralTraitName = string.Empty;
+            if (flawTraits.Count > 0 && neutralTraits.Count > 0) {
+                if (UnityEngine.Random.Range(0, 2) == 0) {
+                    //Buff trait
+                    int index = UnityEngine.Random.Range(0, flawTraits.Count);
+                    chosenFlawOrNeutralTraitName = flawTraits[index];
+                    flawTraits.RemoveAt(index);
+                } else {
+                    //Neutral trait
+                    int index = UnityEngine.Random.Range(0, neutralTraits.Count);
+                    chosenFlawOrNeutralTraitName = neutralTraits[index];
+                    neutralTraits.RemoveAt(index);
+                }
             } else {
-                //Neutral trait
-                int index = UnityEngine.Random.Range(0, neutralTraits.Count);
-                chosenBuffOrNeutralTraitName = neutralTraits[index];
-                neutralTraits.RemoveAt(index);
-                ///Changed this to use mutual exclusive list per trait <see cref= "Trait.mutuallyExclusive"/>
-                //if(chosenBuffOrNeutralTraitName == "Music Lover") {
-                //    flawTraits.Remove("Music Hater");
-                //}
+                if (flawTraits.Count > 0) {
+                    int index = UnityEngine.Random.Range(0, flawTraits.Count);
+                    chosenFlawOrNeutralTraitName = flawTraits[index];
+                    flawTraits.RemoveAt(index);
+                } else {
+                    int index = UnityEngine.Random.Range(0, neutralTraits.Count);
+                    chosenFlawOrNeutralTraitName = neutralTraits[index];
+                    neutralTraits.RemoveAt(index);
+                }
             }
-        } else {
-            if(buffTraits.Count > 0) {
-                int index = UnityEngine.Random.Range(0, buffTraits.Count);
-                chosenBuffOrNeutralTraitName = buffTraits[index];
-                buffTraits.RemoveAt(index);
-            } else {
-                int index = UnityEngine.Random.Range(0, neutralTraits.Count);
-                chosenBuffOrNeutralTraitName = neutralTraits[index];
-                neutralTraits.RemoveAt(index);
-                ///Changed this to use mutual exclusive list per trait <see cref= "Trait.mutuallyExclusive"/>
-                //if (chosenBuffOrNeutralTraitName == "Music Lover") {
-                //    flawTraits.Remove("Music Hater");
-                //}
-            }
-        }
-        Trait buffOrNeutralTrait;
-        AddTrait(chosenBuffOrNeutralTraitName, out buffOrNeutralTrait);
-        if (buffOrNeutralTrait.mutuallyExclusive != null) {
-            buffTraits = Utilities.RemoveElements(buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
-            neutralTraits = Utilities.RemoveElements(neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
-            flawTraits = Utilities.RemoveElements(flawTraits, buffOrNeutralTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
+            AddTrait(chosenFlawOrNeutralTraitName);
         }
 
-
-        //Third trait is a random neutral or flaw traits
-        string chosenFlawOrNeutralTraitName = string.Empty;
-        if (flawTraits.Count > 0 && neutralTraits.Count > 0) {
-            if (UnityEngine.Random.Range(0, 2) == 0) {
-                //Buff trait
-                int index = UnityEngine.Random.Range(0, flawTraits.Count);
-                chosenFlawOrNeutralTraitName = flawTraits[index];
-                flawTraits.RemoveAt(index);
-            } else {
-                //Neutral trait
-                int index = UnityEngine.Random.Range(0, neutralTraits.Count);
-                chosenFlawOrNeutralTraitName = neutralTraits[index];
-                neutralTraits.RemoveAt(index);
-            }
-        } else {
-            if (flawTraits.Count > 0) {
-                int index = UnityEngine.Random.Range(0, flawTraits.Count);
-                chosenFlawOrNeutralTraitName = flawTraits[index];
-                flawTraits.RemoveAt(index);
-            } else {
-                int index = UnityEngine.Random.Range(0, neutralTraits.Count);
-                chosenFlawOrNeutralTraitName = neutralTraits[index];
-                neutralTraits.RemoveAt(index);
-            }
-        }
-        AddTrait(chosenFlawOrNeutralTraitName);
         //AddTrait("Narcoleptic");
-        //AddTrait("Glutton");
-
+        //AddTrait("Herbalist");
         AddTrait("Character Trait");
-        AddTrait("Craftsman");
     }
     public void CreateInitialTraitsByRace() {
         if (race == RACE.HUMANS) {
@@ -4426,6 +4663,7 @@ public class Character : ILeader, IPointOfInterest {
         if (triggerOnAdd) {
             trait.OnAddTrait(this);
         }
+        currentAlterEgo.AddTrait(trait);
         Messenger.Broadcast(Signals.TRAIT_ADDED, this, trait);
 
 #if !WORLD_CREATION_TOOL
@@ -4455,7 +4693,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         return RemoveTrait(trait, triggerOnRemove);
     }
-    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null) {
+    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
         bool removed = false;
         if (trait is RelationshipTrait) {
             removed = true;
@@ -4468,6 +4706,9 @@ public class Character : ILeader, IPointOfInterest {
             trait.RemoveExpiryTicket(this);
             if (triggerOnRemove) {
                 trait.OnRemoveTrait(this, removedBy);
+            }
+            if (includeAlterEgo) {
+                currentAlterEgo.traits.Remove(trait);
             }
             Messenger.Broadcast(Signals.TRAIT_REMOVED, this, trait);
             //if (trait is RelationshipTrait) {
@@ -4543,7 +4784,7 @@ public class Character : ILeader, IPointOfInterest {
     /// Remove all traits that are not persistent.
     /// NOTE: This does NOT remove relationships!
     /// </summary>
-    public void RemoveAllNonPersistentTraits() {
+    public void RemoveAllNonPersistentTraits(bool includeAlterEgo = true) {
         List<Trait> allTraits = new List<Trait>(this.normalTraits);
         for (int i = 0; i < allTraits.Count; i++) {
             Trait currTrait = allTraits[i];
@@ -4551,7 +4792,7 @@ public class Character : ILeader, IPointOfInterest {
             //    continue; //skip
             //}
             if (!currTrait.isPersistent) {
-                RemoveTrait(currTrait);
+                RemoveTrait(currTrait, includeAlterEgo: includeAlterEgo);
             }
         }
     }    
@@ -4723,14 +4964,16 @@ public class Character : ILeader, IPointOfInterest {
             AdjustMoodValue(-25, trait, trait.gainedFromDoing);
         } else if (trait.name == "Sick") {
             AdjustMoodValue(-15, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Cheery") {
+        } else if (trait.name == "Satisfied") {
             AdjustMoodValue(15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Annoyed") {
             AdjustMoodValue(-15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Lethargic") {
             AdjustMoodValue(-20, trait, trait.gainedFromDoing);
         } else if (trait.name == "Heartbroken") {
-            AdjustMoodValue(-35, trait, trait.gainedFromDoing);
+            AdjustMoodValue(-25, trait, trait.gainedFromDoing);
+        } else if (trait.name == "Griefstricken") {
+            AdjustMoodValue(-20, trait, trait.gainedFromDoing);
         } else if (trait.name == "Encumbered") {
             AdjustSpeedModifier(-0.5f);
         } else if (trait.name == "Vampiric") {
@@ -4745,6 +4988,10 @@ public class Character : ILeader, IPointOfInterest {
             AdjustHappinessDecreaseRate(320); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
         } else if (trait.name == "Fast") {
             AdjustSpeedModifier(0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
+        } else if (trait.name == "Shellshocked") {
+            AdjustMoodValue(-30, trait, trait.gainedFromDoing);
+        } else if (trait.name == "Ashamed") {
+            AdjustMoodValue(-5, trait, trait.gainedFromDoing);
         }
         //else if (trait.name == "Hungry") {
         //    CreateFeedJob();
@@ -4830,7 +5077,7 @@ public class Character : ILeader, IPointOfInterest {
             AdjustMoodValue(25, trait, trait.gainedFromDoing);
         } else if (trait.name == "Sick") {
             AdjustMoodValue(15, trait, trait.gainedFromDoing);
-        } else if (trait.name == "Cheery") {
+        } else if (trait.name == "Satisfied") {
             AdjustMoodValue(-15, trait, trait.gainedFromDoing);
         } else if (trait.name == "Annoyed") {
             AdjustMoodValue(15, trait, trait.gainedFromDoing);
@@ -4850,6 +5097,10 @@ public class Character : ILeader, IPointOfInterest {
             AdjustHappinessDecreaseRate(-320); //Reference: https://trello.com/c/lcen0P9l/2653-pessimist
         } else if (trait.name == "Fast") {
             AdjustSpeedModifier(-0.25f); //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
+        } else if (trait.name == "Shellshocked") {
+            AdjustMoodValue(30, trait, trait.gainedFromDoing);
+        } else if (trait.name == "Ashamed") {
+            AdjustMoodValue(5, trait, trait.gainedFromDoing);
         }
 
         if (trait.effects != null) {
@@ -4984,6 +5235,31 @@ public class Character : ILeader, IPointOfInterest {
         }
         return allRels;
     }
+    /// <summary>
+    /// Utility function to determine if this character's flaws can still be activated
+    /// </summary>
+    /// <returns></returns>
+    public bool CanStillTriggerFlaws() {
+        if (isDead) {
+            return false;
+        }
+        if (faction == PlayerManager.Instance.player.playerFaction) {
+            return false;
+        }
+        if (role.roleType == CHARACTER_ROLE.BEAST) {
+            return false;
+        }
+        if (this is Summon) {
+            return false;
+        }
+        if (returnedToLife) {
+            return false;
+        }
+        //if(doNotDisturb > 0) {
+        //    return false;
+        //}
+        return true;
+    }
     #endregion
 
     #region Morality
@@ -4997,7 +5273,7 @@ public class Character : ILeader, IPointOfInterest {
         _minion = minion;
         //UnsubscribeSignals(); //Removed this since character's listeners are not on by default now.
     }
-    public void RecruitAsMinion() {
+    public void RecruitAsMinion(UnsummonedMinionData minionData) {
         if (stateComponent.currentState != null) {
             stateComponent.currentState.OnExitThisState();
         } else if (stateComponent.stateToDo != null) {
@@ -5007,18 +5283,17 @@ public class Character : ILeader, IPointOfInterest {
         CancelAllJobsTargettingThisCharacter("target became a minion", false);
         Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target became a minion");
         if (currentAction != null && !currentAction.cannotCancelAction) {
-            currentAction.StopAction();
+            currentAction.StopAction(reason: "Became a minion");
         }
 
         if (!IsInOwnParty()) {
             _currentParty.RemoveCharacter(this);
         }
-        MigrateHomeTo(PlayerManager.Instance.player.playerArea);
+        MigrateHomeTo(PlayerManager.Instance.player.playerArea.region);
 
         specificLocation.RemoveCharacterFromLocation(this.currentParty);
-        if (currentLandmark != null) {
-            currentLandmark.RemoveCharacterHere(this);
-        }
+        currentRegion?.RemoveCharacterFromLocation(this);
+
         ResetFullnessMeter();
         ResetHappinessMeter();
         ResetTirednessMeter();
@@ -5026,34 +5301,18 @@ public class Character : ILeader, IPointOfInterest {
 
         ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
 
-        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this);
-        PlayerManager.Instance.player.AddMinion(newMinion);
+        Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this, false);
+        newMinion.character.SetName(minionData.minionName);
+        ChangeRace(RACE.DEMON);
+        ChangeClass(minionData.className);
+        AssignRole(CharacterRole.MINION);
+        newMinion.SetRandomResearchInterventionAbilities(minionData.interventionAbilitiesToResearch);
+        newMinion.SetCombatAbility(minionData.combatAbility);
+        
 
+        PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
 
-
-        //if (!characterToken.isObtainedByPlayer) {
-        //    PlayerManager.Instance.player.AddToken(characterToken);
-        //}
-    }
-    #endregion
-
-    #region Buffs
-    public void ConstructBuffs() {
-        _buffs = new Dictionary<STAT, float>();
-        STAT[] stats = Utilities.GetEnumValues<STAT>();
-        for (int i = 0; i < stats.Length; i++) {
-            _buffs.Add(stats[i], 0f);
-        }
-    }
-    public void AddBuff(Buff buff) {
-        if (_buffs.ContainsKey(buff.buffedStat)) {
-            _buffs[buff.buffedStat] += buff.percentage;
-        }
-    }
-    public void RemoveBuff(Buff buff) {
-        if (_buffs.ContainsKey(buff.buffedStat)) {
-            _buffs[buff.buffedStat] -= buff.percentage;
-        }
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(newMinion, true));
     }
     #endregion
 
@@ -5070,17 +5329,24 @@ public class Character : ILeader, IPointOfInterest {
     public void RemoveInteractionType(INTERACTION_TYPE type) {
         currentInteractionTypes.Remove(type);
     }
-    protected void PerTickGoapPlanGeneration() {
+    protected virtual void PerTickGoapPlanGeneration() {
         if(isDead || minion != null) {
+            return;
+        }
+        if(homeRegion.area == null) {
+            return; //If there is no area, it means that there is no inner map, so character must not do goap actions, jobs, and plans
+        }
+        //Out of combat hp recovery
+        if(stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT) {
+            HPRecovery(0.0025f);
+        }
+
+        if(isStoppedByOtherCharacter > 0) {
             return;
         }
         //Check Trap Structure
         trapStructure.IncrementCurrentDuration(1);
 
-        //Out of combat hp recovery
-        if(!isDead && (stateComponent.currentState == null || stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
-            HPRecovery(0.0025f);
-        }
         PlanForcedFullnessRecovery();
         PlanForcedTirednessRecovery();
 
@@ -5127,12 +5393,12 @@ public class Character : ILeader, IPointOfInterest {
         if (_hasAlreadyAskedForPlan || isDead) {
             return;
         }
+        SetHasAlreadyAskedForPlan(true);
         if (returnedToLife) {
             //characters that have returned to life will just stroll.
             PlanIdleStrollOutside(currentStructure);
             return;
         }
-        SetHasAlreadyAskedForPlan(true);
         if (!PlanJobQueueFirst()) {
             if (!PlanFullnessRecoveryActions(true)) {
                 if (!PlanTirednessRecoveryActions(true)) {
@@ -5148,7 +5414,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     private bool OtherPlanCreations() {
         int chance = UnityEngine.Random.Range(0, 100);
-        if (GetNormalTrait("Berserker") != null) {
+        if (GetNormalTrait("Berserked") != null) {
             if (chance < 15) {
                 Character target = specificLocation.GetRandomCharacterAtLocationExcept(this);
                 if (target != null) {
@@ -5172,21 +5438,7 @@ public class Character : ILeader, IPointOfInterest {
         if(doNotDisturb > 0 || isWaitingForInteraction > 0) {
             return false;
         }
-        if(isHungry) {
-            if(UnityEngine.Random.Range(0,2) == 0 && GetNormalTrait("Glutton") != null) {
-                JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                if (GetNormalTrait("Vampiric") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                } else if (GetNormalTrait("Cannibal") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
-                }
-                job.SetCancelOnFail(true);
-                jobQueue.AddJobInQueue(job, processOverrideLogic);
-                return true;
-            }
-        }
-        else if (isStarving) {
+        if (isStarving) {
             //If there is already a HUNGER_RECOVERY JOB and the character becomes Starving, replace HUNGER_RECOVERY with HUNGER_RECOVERY_STARVING only if that character is not doing the job already
             JobQueueItem hungerRecoveryJob = jobQueue.GetJob(JOB_TYPE.HUNGER_RECOVERY);
             if (hungerRecoveryJob != null) {
@@ -5199,16 +5451,52 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
                 JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                if (GetNormalTrait("Vampiric") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                } else if (GetNormalTrait("Cannibal") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                bool triggerGrieving = false;
+                Griefstricken griefstricken = GetNormalTrait("Griefstricken") as Griefstricken;
+                if (griefstricken != null) {
+                    triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
                 }
-                job.SetCancelOnFail(true);
-                jobQueue.AddJobInQueue(job, processOverrideLogic);
+                if (!triggerGrieving) {
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    if (GetNormalTrait("Vampiric") != null) {
+                        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                    }
+                    //else if (GetNormalTrait("Cannibal") != null) {
+                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                    //}
+                    job.SetCancelOnFail(true);
+                    jobQueue.AddJobInQueue(job, processOverrideLogic);
+                } else {
+                    griefstricken.TriggerGrieving();
+                }
                 return true;
-            } 
+            }
+        }
+        else if (isHungry) {
+            if(UnityEngine.Random.Range(0,2) == 0 && GetNormalTrait("Glutton") != null) {
+                if (!jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY)) {
+                    JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY;
+                    bool triggerGrieving = false;
+                    Griefstricken griefstricken = GetNormalTrait("Griefstricken") as Griefstricken;
+                    if (griefstricken != null) {
+                        triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+                    }
+                    if (!triggerGrieving) {
+                        GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                        if (GetNormalTrait("Vampiric") != null) {
+                            job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                        }
+                        //else if (GetNormalTrait("Cannibal") != null) {
+                        //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                        //}
+                        job.SetCancelOnFail(true);
+                        jobQueue.AddJobInQueue(job, processOverrideLogic);
+                    } else {
+                        griefstricken.TriggerGrieving();
+                    }
+                    return true;
+                }
+            }
         }
         return false;
     }
@@ -5229,24 +5517,20 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                job.SetCancelOnFail(true);
-                jobQueue.AddJobInQueue(job, processOverrideLogic);
+                bool triggerSpooked = false;
+                Spooked spooked = GetNormalTrait("Spooked") as Spooked;
+                if (spooked != null) {
+                    triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
+                }
+                if (!triggerSpooked) {
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    job.SetCancelOnFail(true);
+                    jobQueue.AddJobInQueue(job, processOverrideLogic);
+                } else {
+                    spooked.TriggerFeelingSpooked();
+                }
                 return true;
             } 
-        }
-        return false;
-    }
-    public bool ForcePlanHappinessRecoveryActions() {
-        if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-            JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
-            if (isForlorn) {
-                jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
-            }
-            GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
-            job.SetCancelOnFail(true);
-            jobQueue.AddJobInQueue(job);
-            return true;
         }
         return false;
     }
@@ -5266,34 +5550,38 @@ public class Character : ILeader, IPointOfInterest {
                 }
             }
             if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
-                Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
-                if (hardworking != null) {
-                    bool isPlanningRecoveryProcessed = false;
-                    if (hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
-                        return isPlanningRecoveryProcessed;
-                    }
+                bool triggerBrokenhearted = false;
+                Heartbroken heartbroken = GetNormalTrait("Heartbroken") as Heartbroken;
+                if (heartbroken != null) {
+                    triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
                 }
-                JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
-                job.SetCancelOnFail(true);
-                jobQueue.AddJobInQueue(job, processOverrideLogic);
+                if (!triggerBrokenhearted) {
+                    Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
+                    if (hardworking != null) {
+                        bool isPlanningRecoveryProcessed = false;
+                        if (hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
+                            return isPlanningRecoveryProcessed;
+                        }
+                    }
+                    JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY_FORLORN;
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    job.SetCancelOnFail(true);
+                    jobQueue.AddJobInQueue(job, processOverrideLogic);
+                } else {
+                    heartbroken.TriggerBrokenhearted();
+                }
                 return true;
             }
         } else if (isLonely) {
             if (!jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY, JOB_TYPE.HAPPINESS_RECOVERY_FORLORN)) {
                 JOB_TYPE jobType = JOB_TYPE.HAPPINESS_RECOVERY;
-                Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
-                if(hardworking != null) {
-                    bool isPlanningRecoveryProcessed = false;
-                    if(hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
-                        return isPlanningRecoveryProcessed;
-                    }
-                }
                 int chance = UnityEngine.Random.Range(0, 100);
                 int value = 0;
-                TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick();
+                TIME_IN_WORDS currentTimeInWords = GameManager.GetCurrentTimeInWordsOfTick(this);
                 if (currentTimeInWords == TIME_IN_WORDS.MORNING) {
                     value = 30;
+                } else if (currentTimeInWords == TIME_IN_WORDS.LUNCH_TIME) {
+                    value = 45;
                 } else if (currentTimeInWords == TIME_IN_WORDS.AFTERNOON) {
                     value = 45;
                 } else if (currentTimeInWords == TIME_IN_WORDS.EARLY_NIGHT) {
@@ -5302,9 +5590,25 @@ public class Character : ILeader, IPointOfInterest {
                     value = 30;
                 }
                 if (chance < value) {
-                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
-                    job.SetCancelOnFail(true);
-                    jobQueue.AddJobInQueue(job, processOverrideLogic);
+                    bool triggerBrokenhearted = false;
+                    Heartbroken heartbroken = GetNormalTrait("Heartbroken") as Heartbroken;
+                    if (heartbroken != null) {
+                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
+                    }
+                    if (!triggerBrokenhearted) {
+                        Hardworking hardworking = GetNormalTrait("Hardworking") as Hardworking;
+                        if (hardworking != null) {
+                            bool isPlanningRecoveryProcessed = false;
+                            if (hardworking.ProcessHardworkingTrait(this, ref isPlanningRecoveryProcessed)) {
+                                return isPlanningRecoveryProcessed;
+                            }
+                        }
+                        GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, conditionKey = null, targetPOI = this });
+                        job.SetCancelOnFail(true);
+                        jobQueue.AddJobInQueue(job, processOverrideLogic);
+                    } else {
+                        heartbroken.TriggerBrokenhearted();
+                    }
                     return true;
                 }
             }
@@ -5318,19 +5622,55 @@ public class Character : ILeader, IPointOfInterest {
                 if (isStarving) {
                     jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING;
                 }
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                if (GetNormalTrait("Vampiric") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
-                } else if (GetNormalTrait("Cannibal") != null) {
-                    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                bool triggerGrieving = false;
+                Griefstricken griefstricken = GetNormalTrait("Griefstricken") as Griefstricken;
+                if (griefstricken != null) {
+                    triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
                 }
-                job.SetCancelOnFail(true);
-                bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
-                    || stateComponent.currentState != null || stateComponent.stateToDo != null;
-                jobQueue.AddJobInQueue(job, !willNotProcess);
+                if (!triggerGrieving) {
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    if (GetNormalTrait("Vampiric") != null) {
+                        job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+                    }
+                    //else if (GetNormalTrait("Cannibal") != null) {
+                    //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+                    //}
+                    job.SetCancelOnFail(true);
+                    bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0 || stateComponent.stateToDo != null;
+                    jobQueue.AddJobInQueue(job, !willNotProcess);
+                } else {
+                    griefstricken.TriggerGrieving();
+                }
             }
             hasForcedFullness = true;
             SetFullnessForcedTick();
+        }
+    }
+    /// <summary>
+    /// Make this character plan a starving fullness recovery job, regardless of actual
+    /// fullness level. NOTE: This will also cancel any existing fullness recovery jobs
+    /// <param name="jobType">The type of job to create. Default is HUNGER_RECOVERY_STARVING but can set other job type to prevent overriding.</param>
+    /// </summary>
+    public void PlanForcedStarvingFullnessRecovery(JOB_TYPE jobType = JOB_TYPE.HUNGER_RECOVERY_STARVING) {
+        if (jobQueue.HasJob(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING)) {
+            jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
+        }
+        bool triggerGrieving = false;
+        Griefstricken griefstricken = GetNormalTrait("Griefstricken") as Griefstricken;
+        if (griefstricken != null) {
+            triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+        }
+        if (!triggerGrieving) {
+            GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this });
+            if (GetNormalTrait("Vampiric") != null) {
+                job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.HUNTING_TO_DRINK_BLOOD);
+            }
+            //else if (GetNormalTrait("Cannibal") != null) {
+            //    job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = this }, INTERACTION_TYPE.EAT_CHARACTER);
+            //}
+            jobQueue.AddJobInQueue(job);
+        } else {
+            griefstricken.TriggerGrieving();
         }
     }
     private void PlanForcedTirednessRecovery() {
@@ -5340,45 +5680,77 @@ public class Character : ILeader, IPointOfInterest {
                 if (isExhausted) {
                     jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
                 }
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                job.SetCancelOnFail(true);
-                bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
-                    || stateComponent.currentState != null || stateComponent.stateToDo != null;
-                jobQueue.AddJobInQueue(job, !willNotProcess);
+
+                bool triggerSpooked = false;
+                Spooked spooked = GetNormalTrait("Spooked") as Spooked;
+                if(spooked != null) {
+                    triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
+                }
+                if (!triggerSpooked) {
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    job.SetCancelOnFail(true);
+                    sleepScheduleJobID = job.id;
+                    bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0 || stateComponent.stateToDo != null;
+                    jobQueue.AddJobInQueue(job, !willNotProcess);
+                } else {
+                    spooked.TriggerFeelingSpooked();
+                }
             }
             hasForcedTiredness = true;
             SetTirednessForcedTick();
         }
         //If a character current sleep ticks is less than the default, this means that the character already started sleeping but was awaken midway that is why he/she did not finish the allotted sleeping time
         //When this happens, make sure to queue tiredness recovery again so he can finish the sleeping time
-        else if(currentSleepTicks < CharacterManager.Instance.defaultSleepTicks && _doNotDisturb <= 0) {
+        else if((hasCancelledSleepSchedule || currentSleepTicks < CharacterManager.Instance.defaultSleepTicks) && _doNotDisturb <= 0) {
             if (!jobQueue.HasJob(JOB_TYPE.TIREDNESS_RECOVERY, JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED)) {
                 JOB_TYPE jobType = JOB_TYPE.TIREDNESS_RECOVERY;
                 if (isExhausted) {
                     jobType = JOB_TYPE.TIREDNESS_RECOVERY_EXHAUSTED;
                 }
-                GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
-                job.SetCancelOnFail(true);
-                //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
-                //    || stateComponent.currentState != null || stateComponent.stateToDo != null;
-                jobQueue.AddJobInQueue(job); //!willNotProcess
+                bool triggerSpooked = false;
+                Spooked spooked = GetNormalTrait("Spooked") as Spooked;
+                if (spooked != null) {
+                    triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
+                }
+                if (!triggerSpooked) {
+                    GoapPlanJob job = new GoapPlanJob(jobType, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = this });
+                    job.SetCancelOnFail(true);
+                    sleepScheduleJobID = job.id;
+                    //bool willNotProcess = _numOfWaitingForGoapThread > 0 || !IsInOwnParty() || isDefender || isWaitingForInteraction > 0
+                    //    || stateComponent.currentState != null || stateComponent.stateToDo != null;
+                    jobQueue.AddJobInQueue(job); //!willNotProcess
+                } else {
+                    spooked.TriggerFeelingSpooked();
+                }
             }
+            SetHasCancelledSleepSchedule(false);
         }
+    }
+    public void SetHasCancelledSleepSchedule(bool state) {
+        hasCancelledSleepSchedule = state;
     }
     private bool PlanWorkActions() { //ref bool hasAddedToGoapPlans
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
-                if (isAtHomeArea && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
-                    if(GetNormalTrait("Lazy") != null) {
-                        if(UnityEngine.Random.Range(0, 100) < 35) {
-                            if (!ForcePlanHappinessRecoveryActions()) {
-                                PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
-                            }
-                        } else {
-                            return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                if (isAtHomeRegion && isPartOfHomeFaction) { //&& this.faction.id != FactionManager.Instance.neutralFaction.id
+                    bool triggerLazy = false;
+                    Lazy lazy = GetNormalTrait("Lazy") as Lazy;
+                    if (lazy != null) {
+                        triggerLazy = UnityEngine.Random.Range(0, 100) < 35;
+                    }
+                    if (triggerLazy) {
+                        if (!lazy.TriggerLazy()) {
+                            PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
                         }
                     } else {
-                        return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                        if (!homeArea.jobQueue.ProcessFirstJobInQueue(this)) {
+                            if (faction != null && faction.activeQuest != null) {
+                                return faction.activeQuest.jobQueue.ProcessFirstJobInQueue(this);
+                            }
+                            return false;
+                        } else {
+                            return true;
+                        }
                     }
                 } else {
                     return false;
@@ -5392,17 +5764,25 @@ public class Character : ILeader, IPointOfInterest {
     private bool PlanJobQueueFirst() {
         if (GetPlanByCategory(GOAP_CATEGORY.WORK) == null && !isStarving && !isExhausted && !isForlorn) {
             if (!jobQueue.ProcessFirstJobInQueue(this)) {
-                if (isAtHomeArea && isPartOfHomeFaction) {
-                    if (GetNormalTrait("Lazy") != null) {
-                        if (UnityEngine.Random.Range(0, 100) < 35) {
-                            if (!ForcePlanHappinessRecoveryActions()) {
-                                PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
-                            }
-                        } else {
-                            return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                if (isAtHomeRegion && isPartOfHomeFaction) {
+                    bool triggerLazy = false;
+                    Lazy lazy = GetNormalTrait("Lazy") as Lazy;
+                    if(lazy != null) {
+                        triggerLazy = UnityEngine.Random.Range(0, 100) < 35;
+                    }
+                    if (triggerLazy) {
+                        if (!lazy.TriggerLazy()) {
+                            PrintLogIfActive(GameManager.Instance.TodayLogString() + "Triggered LAZY happiness recovery but " + name + " already has that job type in queue and will not do it anymore!");
                         }
                     } else {
-                        return homeArea.jobQueue.ProcessFirstJobInQueue(this);
+                        if (!homeArea.jobQueue.ProcessFirstJobInQueue(this)) {
+                            if (faction != null && faction.activeQuest != null) {
+                                return faction.activeQuest.jobQueue.ProcessFirstJobInQueue(this);
+                            }
+                            return false;
+                        } else {
+                            return true;
+                        }
                     }
                 } else {
                     return false;
@@ -5429,7 +5809,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         return true;
     }
-    public bool PlanIdleReturnHome() {
+    public bool PlanIdleReturnHome(bool forceDoAction = false) {
         //if (GetTrait("Berserker") != null) {
         //    //Return home becomes stroll if the character has berserker trait
         //    PlanIdleStroll(currentStructure);
@@ -5441,6 +5821,9 @@ public class Character : ILeader, IPointOfInterest {
         goapPlan.ConstructAllNodes();
         //AddPlan(goapPlan, true);
         AddPlan(goapPlan);
+        if (forceDoAction) {
+            PerformGoapPlans();
+        }
         //PlanGoapActions(goapAction);
         //}
         return true;
@@ -5470,7 +5853,7 @@ public class Character : ILeader, IPointOfInterest {
                 return log;
             } else if (currentStructure == homeStructure) {
                 log += "\n-" + name + " is in home structure and previous action is not returned home";
-                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
+                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(this);
 
                 log += "\n-If it is Early Night, 35% chance to go to the current Inn and then set it as the Base Structure for 2.5 hours";
                 if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
@@ -5492,17 +5875,21 @@ public class Character : ILeader, IPointOfInterest {
                 } else {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
-                log += "\n-Otherwise, if it is Afternoon, 25% chance to nap if there is still an unoccupied Bed in the house";
-                if (currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                log += "\n-Otherwise, if it is Lunch Time or Afternoon, 25% chance to nap if there is still an unoccupied Bed in the house";
+                if (currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
                     if (chance < 25) {
                         TileObject bed = currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                         if (bed != null) {
-                            log += "\n  -Afternoon: " + name + " will do action Nap on " + bed.ToString();
-                            PlanIdle(INTERACTION_TYPE.NAP, bed);
-                            return log;
+                            if(GetNormalTrait("Vampiric") != null) {
+                                log += "\n  -Character is vampiric, cannot do nap action";
+                            } else {
+                                log += "\n  -Afternoon: " + name + " will do action Nap on " + bed.ToString();
+                                PlanIdle(INTERACTION_TYPE.NAP, bed);
+                                return log;
+                            }
                         } else {
                             log += "\n  -No unoccupied bed in the current structure";
                         }
@@ -5510,8 +5897,26 @@ public class Character : ILeader, IPointOfInterest {
                 } else {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
-                log += "\n-Otherwise, if it is Morning or Afternoon or Early Night, 25% chance to enter Stroll Outside Mode for 1 hour";
+                log += "\n-Otherwise, if it is Morning or Afternoon or Early Night, and the character has a positive relationship with someone currently Paralyzed or Catatonic, 30% chance to Check Out one at random";
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
+                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    int chance = UnityEngine.Random.Range(0, 100);
+                    log += "\n  -RNG roll: " + chance;
+                    if (chance < 30) {
+                        Character chosenCharacter = GetParalyzedOrCatatonicCharacterToCheckOut();
+                        if(chosenCharacter != null) {
+                            log += "\n  -Will Check Out character " + chosenCharacter.name;
+                            PlanIdle(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_VISION, targetPOI = chosenCharacter });
+                            return log;
+                        } else {
+                            log += "\n  -No available character to check out ";
+                        }
+                    }
+                } else {
+                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                }
+                log += "\n-Otherwise, if it is Morning or Lunch Time or Afternoon or Early Night, 25% chance to enter Stroll Outside Mode for 1 hour";
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
@@ -5524,7 +5929,7 @@ public class Character : ILeader, IPointOfInterest {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
                 log += "\n-Otherwise, if it is Morning or Afternoon, 25% chance to someone with a positive relationship in current location and then set it as the Base Structure for 2.5 hours";
-                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
@@ -5584,8 +5989,8 @@ public class Character : ILeader, IPointOfInterest {
                 log += "\n-" + name + " is in the Work Area/Wilderness/Cemetery of home location";
 
                 log += "\n-If it is Morning or Afternoon, 25% chance to enter Stroll Outside Mode";
-                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
-                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(this);
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
@@ -5597,19 +6002,24 @@ public class Character : ILeader, IPointOfInterest {
                 } else {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                 }
-                //log += "\n-Otherwise, if it is Early Night, 35% chance to drink at the Inn";
-                //if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
-                //    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
-                //    int chance = UnityEngine.Random.Range(0, 100);
-                //    log += "\n  -RNG roll: " + chance;
-                //    if (chance < 35) {
-                //        log += "\n  -Early Night: " + name + " will do action Drink (multithreaded)";
-                //        StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
-                //        return log;
-                //    }
-                //} else {
-                //    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
-                //}
+                log += "\n-Otherwise, if it is Morning or Afternoon or Early Night, and the character has a positive relationship with someone currently Paralyzed or Catatonic, 30% chance to Check Out one at random";
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
+                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    int chance = UnityEngine.Random.Range(0, 100);
+                    log += "\n  -RNG roll: " + chance;
+                    if (chance < 30) {
+                        Character chosenCharacter = GetParalyzedOrCatatonicCharacterToCheckOut();
+                        if (chosenCharacter != null) {
+                            log += "\n  -Will Check Out character " + chosenCharacter.name;
+                            PlanIdle(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_VISION, targetPOI = chosenCharacter });
+                            return log;
+                        } else {
+                            log += "\n  -No available character to check out ";
+                        }
+                    }
+                } else {
+                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                }
                 log += "\n-Otherwise, return home";
                 log += "\n  -" + name + " will do action Return Home";
                 PlanIdleReturnHome();
@@ -5671,7 +6081,7 @@ public class Character : ILeader, IPointOfInterest {
         } else {
             //Unaligned NPC Idle
             log += "\n-" + name + " has no faction";
-            if (!isAtHomeArea) {
+            if (!isAtHomeRegion) {
                 log += "\n-" + name + " is in another area";
                 log += "\n-100% chance to return home";
                 PlanIdleReturnHome();
@@ -5679,8 +6089,8 @@ public class Character : ILeader, IPointOfInterest {
             } else {
                 log += "\n-" + name + " is in home area";
                 log += "\n-If it is Morning or Afternoon, 25% chance to play";
-                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
-                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
+                TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(this);
+                if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
                     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
@@ -5737,27 +6147,40 @@ public class Character : ILeader, IPointOfInterest {
         AddPlan(goapPlan);
         //PlanGoapActions(goapAction);
     }
-    //public bool AssaultCharacter(Character target) {
-    //    //Debug.Log(this.name + " will assault " + target.name);
-    //    hasAssaultPlan = true;
-    //    lastAssaultedCharacter = target;
-    //    //Debug.Log("---------" + GameManager.Instance.TodayLogString() + "CREATING IDLE STROLL ACTION FOR " + name + "-------------");
-    //    //if(currentStructure.unoccupiedTiles.Count > 0) {
-    //    GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.ASSAULT_ACTION_NPC, this, target);
-    //    goapAction.SetEndAction(OnAssaultActionReturn);
-    //    //goapAction.SetTargetStructure(target);
-    //    GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-    //    GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.DEATH }, GOAP_CATEGORY.REACTION);
-    //    goapPlan.ConstructAllNodes();
-    //    goapPlan.SetDoNotRecalculate(true);
-    //    AddPlan(goapPlan, true);
-    //    if (currentAction != null) {
-    //        currentAction.StopAction();
-    //    }
-    //    return true;
-    //    //}
-    //    //return false;
-    //}
+    private void PlanIdle(GoapEffect effect) {
+        if (effect.targetPOI != null && effect.targetPOI != this) {
+            AddAwareness(effect.targetPOI);
+        }
+        StartGOAP(effect, effect.targetPOI, GOAP_CATEGORY.IDLE);
+        //GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(type, this, target);
+        //GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
+        //GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.IDLE);
+        //goapPlan.ConstructAllNodes();
+        //AddPlan(goapPlan);
+        //PlanGoapActions(goapAction);
+    }
+    private Character GetParalyzedOrCatatonicCharacterToCheckOut() {
+        List<Character> charactersWithRel = GetAllCharactersThatHasRelationship();
+        if (charactersWithRel.Count > 0) {
+            List<Character> positiveCharactersWithParalyzedOrCatatonic = new List<Character>();
+            for (int i = 0; i < charactersWithRel.Count; i++) {
+                if (GetRelationshipEffectWith(charactersWithRel[i]) == RELATIONSHIP_EFFECT.POSITIVE) {
+                    Trait trait = charactersWithRel[i].GetNormalTrait("Paralyzed", "Catatonic");
+                    if (trait != null) {
+                        if (trait is Paralyzed && (trait as Paralyzed).charactersThatKnow.Contains(this)) {
+                            positiveCharactersWithParalyzedOrCatatonic.Add(charactersWithRel[i]);
+                        } else if (trait is Catatonic && (trait as Catatonic).charactersThatKnow.Contains(this)) {
+                            positiveCharactersWithParalyzedOrCatatonic.Add(charactersWithRel[i]);
+                        }
+                    }
+                }
+            }
+            if (positiveCharactersWithParalyzedOrCatatonic.Count > 0) {
+                return positiveCharactersWithParalyzedOrCatatonic[UnityEngine.Random.Range(0, positiveCharactersWithParalyzedOrCatatonic.Count)];
+            }
+        }
+        return null;
+    }
     private void SetLastAssaultedCharacter(Character character) {
         lastAssaultedCharacter = character;
         if (character != null) {
@@ -5831,6 +6254,11 @@ public class Character : ILeader, IPointOfInterest {
         if (!CharacterManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
             positiveFlirtationWeight *= 0.1f;
         }
+        bool thisIsUgly = GetNormalTrait("Ugly") != null;
+        bool otherIsUgly = targetCharacter.GetNormalTrait("Ugly") != null;
+        if (thisIsUgly != otherIsUgly) { //if at least one of the characters are ugly
+            positiveFlirtationWeight *= 0.75f;
+        }
         return positiveFlirtationWeight + negativeFlirtationWeight;
     }
     public float GetBecomeLoversWeightWith(Character targetCharacter, CharacterRelationshipData relData, params CHARACTER_MOOD[] moods) {
@@ -5880,6 +6308,12 @@ public class Character : ILeader, IPointOfInterest {
             }
             //x0 if a character is a beast
             //added to initial checking instead.
+
+            bool thisIsUgly = GetNormalTrait("Ugly") != null;
+            bool otherIsUgly = targetCharacter.GetNormalTrait("Ugly") != null;
+            if (thisIsUgly != otherIsUgly) { //if at least one of the characters are ugly
+                positiveWeight *= 0.75f;
+            }
         }
         return positiveWeight + negativeWeight;
     }
@@ -5928,8 +6362,7 @@ public class Character : ILeader, IPointOfInterest {
                 positiveWeight *= 0.1f;
             }
             // x4 if initiator is Unfaithful and already has a lover
-            else if (unfaithful != null && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER)))
-            {
+            else if (unfaithful != null && (relData == null || !relData.HasRelationshipTrait(RELATIONSHIP_TRAIT.LOVER))) {
                 positiveWeight *= 4f;
                 positiveWeight *= unfaithful.affairChanceMultiplier;
             }
@@ -5945,6 +6378,9 @@ public class Character : ILeader, IPointOfInterest {
             if (HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.RELATIVE)) {
                 positiveWeight *= 0.01f;
             }
+            if (lover != null && lover.GetNormalTrait("Ugly") != null) { //if lover is ugly
+                positiveWeight += positiveWeight * 0.75f;
+            }
             //x0 if a character has a lover and does not have the Unfaithful trait
             if ((HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER, false) && GetNormalTrait("Unfaithful") == null) 
                 || (targetCharacter.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER, false) && targetCharacter.GetNormalTrait("Unfaithful") == null)) {
@@ -5956,14 +6392,19 @@ public class Character : ILeader, IPointOfInterest {
         }
         return positiveWeight + negativeWeight;
     }
-    public void EndChatCharacter(Character targetCharacter) {
+    public void EndChatCharacter() {
         SetIsChatting(false);
-        targetCharacter.SetIsChatting(false);
+        //targetCharacter.SetIsChatting(false);
+        SetIsFlirting(false);
+        //targetCharacter.SetIsFlirting(false);
         marker.UpdateActionIcon();
-        targetCharacter.marker.UpdateActionIcon();
+        //targetCharacter.marker.UpdateActionIcon();
     }
     public void SetIsChatting(bool state) {
         _isChatting = state;
+    }
+    public void SetIsFlirting(bool state) {
+        _isFlirting = state;
     }
     public void AddAdvertisedAction(INTERACTION_TYPE type) {
         poiGoapActions.Add(type);
@@ -6032,8 +6473,8 @@ public class Character : ILeader, IPointOfInterest {
                 if (location.AddSpecialTokenToLocation(token, structure, gridTile)) {
                     //When items are dropped into the warehouse, make all residents aware of it.
                     if (structure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-                        for (int i = 0; i < structure.location.areaResidents.Count; i++) {
-                            Character resident = structure.location.areaResidents[i];
+                        for (int i = 0; i < structure.location.region.residents.Count; i++) {
+                            Character resident = structure.location.region.residents[i];
                             resident.AddAwareness(token);
                         }
                     }
@@ -6230,6 +6671,9 @@ public class Character : ILeader, IPointOfInterest {
     protected void DecreaseNeeds() {
         if (!HasNeeds()) {
             return;
+        }
+        if (homeRegion.area == null) {
+            return; //Characters living on a region without a settlement must not decrease needs
         }
         if (_doNotGetHungry <= 0) {
             AdjustFullness(-(CharacterManager.FULLNESS_DECREASE_RATE + fullnessDecreaseRate));
@@ -6561,7 +7005,7 @@ public class Character : ILeader, IPointOfInterest {
         List<string> dialogReactions = new List<string>();
         if (intel is TileObjectIntel) {
             TileObjectIntel toi = intel as TileObjectIntel;
-            if (HasAwareness(toi.obj) != null) {
+            if (HasAwareness(toi.obj)) {
                 dialogReactions.Add("I already know about that.");
             } else {
                 AddAwareness(toi.obj);
@@ -6569,8 +7013,8 @@ public class Character : ILeader, IPointOfInterest {
             }
         } else if (intel is EventIntel) {
             EventIntel ei = intel as EventIntel;
-            if (ei.action.endedAtState != null && ei.action.endedAtState.shareIntelReaction != null) {
-                dialogReactions.AddRange(ei.action.endedAtState.shareIntelReaction.Invoke(this, ei, SHARE_INTEL_STATUS.INFORMED));
+            if (ei.action.currentState != null && ei.action.currentState.shareIntelReaction != null) {
+                dialogReactions.AddRange(ei.action.currentState.shareIntelReaction.Invoke(this, ei, SHARE_INTEL_STATUS.INFORMED));
             }
             //if the determined reactions list is empty, check the default reactions
             if (dialogReactions.Count == 0) {
@@ -6615,7 +7059,7 @@ public class Character : ILeader, IPointOfInterest {
                             case INTERACTION_TYPE.PLAY:
                             case INTERACTION_TYPE.SLEEP:
                             case INTERACTION_TYPE.SLEEP_OUTSIDE:
-                            case INTERACTION_TYPE.MINE_GOAP:
+                            case INTERACTION_TYPE.MINE:
                             case INTERACTION_TYPE.CHOP_WOOD:
                                 dialogReactions.Add("What will I do with this random tidbit?");
                                 break;
@@ -6741,9 +7185,7 @@ public class Character : ILeader, IPointOfInterest {
                     IPointOfInterest tree = treeObjects[i];
                     AddAwareness(tree);
                 }
-
             }
-
         }
     }
     public void AddInitialAwareness(Area area) {
@@ -6817,10 +7259,15 @@ public class Character : ILeader, IPointOfInterest {
 
     #region Point Of Interest
     public List<GoapAction> AdvertiseActionsToActor(Character actor, Dictionary<INTERACTION_TYPE, object[]> otherData) {
-        if (poiGoapActions != null && poiGoapActions.Count > 0 && IsAvailable() && !isDead) {
+        if (poiGoapActions != null && poiGoapActions.Count > 0 && !isDead) {//&& IsAvailable()
+            bool isCharacterAvailable = IsAvailable();
             List<GoapAction> usableActions = new List<GoapAction>();
             for (int i = 0; i < poiGoapActions.Count; i++) {
                 INTERACTION_TYPE currType = poiGoapActions[i];
+                if (!isCharacterAvailable && !InteractionManager.Instance.CanBeAdvertisedWhileCharacterIsUnavailable(currType)) {
+                    //if this character is not available, check if the current action type can be advertised even when the character is inactive.
+                    continue; //skip
+                }
                 if (RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if(otherData != null) {
@@ -6938,9 +7385,9 @@ public class Character : ILeader, IPointOfInterest {
     }
     public void ConstructInitialGoapAdvertisementActions() {
         //poiGoapActions = new List<INTERACTION_TYPE>();
-        poiGoapActions.Add(INTERACTION_TYPE.CARRY_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.RESTRAIN_CARRY_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ASSAULT_CHARACTER);
-        poiGoapActions.Add(INTERACTION_TYPE.DROP_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.IMPRISON_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.ABDUCT_CHARACTER);
         poiGoapActions.Add(INTERACTION_TYPE.RESTRAIN_CHARACTER);
         //poiGoapActions.Add(INTERACTION_TYPE.STROLL);
@@ -6978,11 +7425,27 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.RESOLVE_CONFLICT);
         poiGoapActions.Add(INTERACTION_TYPE.ASK_TO_STOP_JOB);
         poiGoapActions.Add(INTERACTION_TYPE.STRANGLE);
+        poiGoapActions.Add(INTERACTION_TYPE.PRIORITIZED_SHOCK);
+        poiGoapActions.Add(INTERACTION_TYPE.PRIORITIZED_CRY);
+        poiGoapActions.Add(INTERACTION_TYPE.CRY);
+        poiGoapActions.Add(INTERACTION_TYPE.HAVE_AFFAIR);
+        poiGoapActions.Add(INTERACTION_TYPE.SLAY_CHARACTER);
+        poiGoapActions.Add(INTERACTION_TYPE.FEELING_CONCERNED);
+        poiGoapActions.Add(INTERACTION_TYPE.LAUGH_AT);
+        poiGoapActions.Add(INTERACTION_TYPE.TEASE);
+        poiGoapActions.Add(INTERACTION_TYPE.FEELING_SPOOKED);
+        poiGoapActions.Add(INTERACTION_TYPE.FEELING_BROKENHEARTED);
+        poiGoapActions.Add(INTERACTION_TYPE.GRIEVING);
+        poiGoapActions.Add(INTERACTION_TYPE.DANCE);
+        poiGoapActions.Add(INTERACTION_TYPE.SING);
+        poiGoapActions.Add(INTERACTION_TYPE.GO_TO);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
             poiGoapActions.Add(INTERACTION_TYPE.DRINK_BLOOD);
             poiGoapActions.Add(INTERACTION_TYPE.EAT_CHARACTER);
+            poiGoapActions.Add(INTERACTION_TYPE.KNOCKOUT_CHARACTER);
+            poiGoapActions.Add(INTERACTION_TYPE.TRANSFORM_FOOD);
         }
     }
     public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {
@@ -7084,6 +7547,7 @@ public class Character : ILeader, IPointOfInterest {
                 if (plan.job != null && (plan.job.jobType.IsNeedsTypeJob() || plan.job.jobType.IsEmergencyTypeJob())) {
                     //Unassign Location Job if character decides to rest, eat or have fun.
                     homeArea.jobQueue.UnassignAllJobsTakenBy(this);
+                    faction.activeQuest?.jobQueue.UnassignAllJobsTakenBy(this);
                 }
             }
         }
@@ -7122,7 +7586,10 @@ public class Character : ILeader, IPointOfInterest {
                         if (goapThread.job.assignedCharacter == this) {
                             goapThread.job.SetAssignedCharacter(null);
                             goapThread.job.SetAssignedPlan(null);
-                            goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
+                            //Only remove job in queue if it is a personal job, cause if it is not, it must be returned to the queue
+                            if (!goapThread.job.jobQueueParent.isAreaOrQuestJobQueue) {
+                                goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
+                            }
                         }
                     }
                     return;
@@ -7169,7 +7636,7 @@ public class Character : ILeader, IPointOfInterest {
                             }
                         }
                         AdjustIsWaitingForInteraction(1);
-                        StopCurrentAction(false);
+                        StopCurrentAction(false, "Have something important to do");
                         AdjustIsWaitingForInteraction(-1);
                     }
                     //return;
@@ -7204,7 +7671,7 @@ public class Character : ILeader, IPointOfInterest {
             } else {
                 if (goapThread.job != null) {
                     goapThread.job.SetAssignedCharacter(null);
-                    if (goapThread.job.jobQueueParent.character != null) {
+                    if (!goapThread.job.jobQueueParent.isAreaOrQuestJobQueue) {
                         //If no plan was generated, automatically remove job from queue if it is a personal job
                         goapThread.job.jobQueueParent.RemoveJobInQueue(goapThread.job);
                         if (goapThread.job.jobType == JOB_TYPE.REMOVE_FIRE) {
@@ -7264,6 +7731,9 @@ public class Character : ILeader, IPointOfInterest {
         bool willGoIdleState = true;
         for (int i = 0; i < allGoapPlans.Count; i++) {
             GoapPlan plan = allGoapPlans[i];
+            if (plan.currentNode == null) {
+                throw new Exception(this.name + "'s current node in plan is null! Plan is: " + plan.name + "\nCall stack: " + plan.setPlanStateCallStack + "\n");
+            }
             log += "\n" + plan.currentNode.action.goapName;
             if (plan.isBeingRecalculated) {
                 log += "\n - Plan is currently being recalculated, skipping...";
@@ -7342,6 +7812,7 @@ public class Character : ILeader, IPointOfInterest {
                     if(plan.currentNode.action.poiTarget != this && plan.currentNode.action.isStealth) {
                         //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
                         if (marker.inVisionPOIs.Contains(plan.currentNode.action.poiTarget) && !marker.CanDoStealthActionToTarget(plan.currentNode.action.poiTarget)) {
+                            log += "\n - Action is stealth and character cannot do stealth action right now...";
                             continue;
                         }
                     }
@@ -7432,6 +7903,14 @@ public class Character : ILeader, IPointOfInterest {
             }
             if (InteractionManager.Instance.CanSatisfyGoapActionRequirements(currentAction.goapType, currentAction.actor, currentAction.poiTarget, currentAction.otherData) 
                 && currentAction.CanSatisfyAllPreconditions()) {
+                //if (currentAction.poiTarget != this && currentAction.isStealth) {
+                //    //When performing a stealth job action to a character check if that character is already in vision range, if it is, check if the character doesn't have anyone other than this character in vision, if it is, skip it
+                //    if (marker.inVisionPOIs.Contains(currentAction.poiTarget) && !marker.CanDoStealthActionToTarget(currentAction.poiTarget)) {
+                //        log += "\n - Action is stealth and character cannot do stealth action right now...";
+                //        PrintLogIfActive(log);
+                //        return;
+                //    }
+                //}
                 log += "\nAction satisfies all requirements and preconditions, proceeding to perform actual action: " + currentAction.goapName + " to " + currentAction.poiTarget.name + " at " + currentAction.poiTarget.gridTileLocation?.ToString() ?? "No Tile Location";
                 PrintLogIfActive(log);
                 currentAction.PerformActualAction();
@@ -7468,51 +7947,41 @@ public class Character : ILeader, IPointOfInterest {
         GoapPlan plan = action.parentPlan;
         if (isDead) {
             log += "\n" + name + " is dead!";
+            bool forceRemoveJobInQueue = false;
             if (plan.job != null) {
                 if (result == InteractionManager.Goap_State_Success) {
                     if (plan.currentNode.parent == null && plan.job.jobQueueParent != null) {
                         log += "This plan has a job and the result of action " + action.goapName + " is " + result + " and this is the last action for this plan, removing job in job queue...";
-                        plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+                        forceRemoveJobInQueue = true;
                     }
                 }
-                log += "\nSetting assigned character and plan to null...";
-                plan.job.SetAssignedCharacter(null);
-                plan.job.SetAssignedPlan(null);
             }
+            PrintLogIfActive(log);
+            DropPlan(plan, forceRemoveJobInQueue, true);
+            return;
+        }
+        if (action.isStopped) {
+            log += "\nAction is stopped!";
             PrintLogIfActive(log);
             DropPlan(plan);
             return;
         }
-        //if (plan == null) {
-        //    log += "\nAction " + action.goapName + " no longer has a plan, current plans are: ";
-        //    for (int i = 0; i < allGoapPlans.Count; i++) {
-        //        if(i > 0) {
-        //            log += ", ";
-        //        }
-        //        log += allGoapPlans[i].endNode.action.goapName;
-        //    }
-        //    PrintLogIfActive(log);
-        //    PlanGoapActions();
-        //    return;
-        //}
-        if (action.isStopped) {
-            log += "\nAction is stopped!";
-            PrintLogIfActive(log);
-            if (!DropPlan(plan)) {
-                //PlanGoapActions();
-            }
-            return;
-        }
-        if (plan.state == GOAP_PLAN_STATE.CANCELLED) {
+
+        //Myk, para san to?
+        if (plan.state == GOAP_PLAN_STATE.CANCELLED || plan.currentNode == null) {
             log += "\nPlan was cancelled.";
+            bool forceRemoveJobInQueue = false;
             if (plan.job != null) {
-                log += "\nRemoving job in queue...";
-                plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+                if (!plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
+                    log += "\nRemoving job in queue...";
+                    forceRemoveJobInQueue = true;
+                    //plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+                } else {
+                    log += "\nPlan's job is either an area or faction job, returning it to jobQueue...";
+                }
             }
             PrintLogIfActive(log);
-            if (!DropPlan(plan)) {
-                //PlanGoapActions();
-            }
+            DropPlan(plan, forceRemoveJobInQueue);
             return;
         }
 
@@ -7535,22 +8004,25 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
         log += "\nPlan is setting next action to be done...";
-        plan.SetNextNode();
+        plan.SetNextNode(action);
         if (plan.currentNode == null) {
             log += "\nThis action is the end of plan.";
             if (plan.job != null && plan.job.jobQueueParent != null) {
                 log += "\nRemoving job in queue...";
-                if (plan.job.jobQueueParent.isAreaJobQueue && GetNormalTrait("Hardworking") != null) {
+                if (plan.job.jobQueueParent.isAreaOrQuestJobQueue && GetNormalTrait("Hardworking") != null) {
                     log += "\nFinished a settlement job and character is hardworking, increase happiness by 3000...";
                     AdjustHappiness(3000);
                 }
-                plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+                //plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
             }
             PrintLogIfActive(log);
-            //this means that this is the end goal so end this plan now
-            if (!DropPlan(plan)) {
-                //PlanGoapActions();
+            bool forceRemoveJobInQueue = true;
+            //If an action is stopped as current action (meaning it was cancelled) and it is a settlement/faction job, do not remove it from the queue
+            if (action.isStoppedAsCurrentAction && plan != null && plan.job != null && plan.job.jobQueueParent.isAreaOrQuestJobQueue) {
+                forceRemoveJobInQueue = false;
             }
+            //this means that this is the end goal so end this plan now
+            DropPlan(plan, forceRemoveJobInQueue);
         } else {
             log += "\nNext action for this plan: " + plan.currentNode.action.goapName;
             if (plan.job != null && plan.job.assignedCharacter != this) {
@@ -7604,35 +8076,41 @@ public class Character : ILeader, IPointOfInterest {
         //    }
         //}
     }
-    public bool DropPlan(GoapPlan plan, bool forceCancelJob = false) {
+    public bool DropPlan(GoapPlan plan, bool forceRemoveJob = false, bool forceProcessPlanJob = false) {
+        bool hasBeenRemoved = false;
         if (allGoapPlans.Remove(plan)) {
+            Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
             plan.EndPlan();
+            hasBeenRemoved = true;
+        }
+        if(hasBeenRemoved || forceProcessPlanJob) {
             if (plan.job != null) {
-                if (plan.job.cancelJobOnFail || forceCancelJob) {
+                if (plan.job.cancelJobOnFail || plan.job.cancelJobOnDropPlan || forceRemoveJob) {
                     plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
                 }
                 plan.job.SetAssignedCharacter(null);
                 plan.job.SetAssignedPlan(null);
             }
-            //if (allGoapPlans.Count <= 0) {
-            //    PlanGoapActions();
-            //    return true;
-            //    //StartDailyGoapPlanGeneration();
-            //}
-            return true;
         }
-        return false;
+        return hasBeenRemoved;
     }
-    public bool JustDropPlan(GoapPlan plan) {
+    public bool JustDropPlan(GoapPlan plan, bool forceRemoveJob = false, bool forceProcessPlanJob = false) {
+        bool hasBeenRemoved = false;
         if (allGoapPlans.Remove(plan)) {
+            Debug.Log(GameManager.Instance.TodayLogString() + plan.name + " was removed from " + this.name + "'s plan list");
             plan.EndPlan();
+            hasBeenRemoved = true;
+        }
+        if (hasBeenRemoved || forceProcessPlanJob) {
             if (plan.job != null) {
+                if (plan.job.cancelJobOnDropPlan || forceRemoveJob) {
+                    plan.job.jobQueueParent.RemoveJobInQueue(plan.job);
+                }
                 plan.job.SetAssignedCharacter(null);
                 plan.job.SetAssignedPlan(null);
             }
-            return true;
         }
-        return false;
+        return hasBeenRemoved;
     }
     public void DropAllPlans(GoapPlan planException = null) {
         if (planException == null) {
@@ -7698,7 +8176,7 @@ public class Character : ILeader, IPointOfInterest {
         if (awareness.ContainsKey(POINT_OF_INTEREST_TYPE.CHARACTER)) {
             List<IPointOfInterest> characterAwarenesses = awareness[POINT_OF_INTEREST_TYPE.CHARACTER];
             Character randomTarget = characterAwarenesses[UnityEngine.Random.Range(0, characterAwarenesses.Count)] as Character;
-            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = randomTarget };
+            GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeRegion, targetPOI = randomTarget };
             StartGOAP(goapEffect, randomTarget, GOAP_CATEGORY.REACTION);
         }
     }
@@ -7773,9 +8251,9 @@ public class Character : ILeader, IPointOfInterest {
         _hasAlreadyAskedForPlan = state;
     }
     public void PrintLogIfActive(string log) {
-        if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
-            Debug.Log(log);
-        }
+        //if (InteriorMapManager.Instance.currentlyShowingArea == specificLocation) {//UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == this
+        Debug.Log(log);
+        //}
     }
     public void AddTargettedByAction(GoapAction action) {
         if (this != action.actor) { // && !isDead
@@ -7809,14 +8287,22 @@ public class Character : ILeader, IPointOfInterest {
     }
     //This will only stop the current action of this character, this is different from StopAction because this will not drop the plan if the actor is not performing it but is on the way
     //This does not stop the movement of this character, call StopMovement separately to stop movement
-    public void StopCurrentAction(bool shouldDoAfterEffect = true) {
+    public void StopCurrentAction(bool shouldDoAfterEffect = true, string reason = "") {
         if(currentAction != null) {
             //Debug.Log("Stopped action of " + name + " which is " + currentAction.goapName);
+            if (currentAction.parentPlan != null && currentAction.parentPlan.job != null && reason != "") {
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
+                log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(null, currentAction.goapName, LOG_IDENTIFIER.STRING_1);
+                log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
+                RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            }
             if (currentAction.isPerformingActualAction && !currentAction.isDone) {
                 if (!shouldDoAfterEffect) {
                     currentAction.OnStopActionDuringCurrentState();
                 }
                 if(currentAction.currentState != null) {
+                    currentAction.SetIsStoppedAsCurrentAction(true);
                     currentAction.currentState.EndPerTickEffect(shouldDoAfterEffect);
                 } else {
                     SetCurrentAction(null);
@@ -8114,16 +8600,12 @@ public class Character : ILeader, IPointOfInterest {
                     GoapAction crimeToReport = informedCrime;
                     if (witnessedCrime != null) {
                         crimeToReport = witnessedCrime;
-                        //if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
-                        if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
-                            this.marker.AddHostileInRange(criminal.owner, false);
-                        }
+                        ////if a character has no negative disabler traits. Do not Flee. This is so that the character will not also add a Report hostile job
+                        //if (!this.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) { 
+                        //    this.marker.AddHostileInRange(criminal.owner, false);
+                        //}
                     }
-                    job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
-                        { INTERACTION_TYPE.REPORT_CRIME,  new object[] { committedCrime, criminal, crimeToReport }}
-                    });
-                    //job.SetCannotOverrideJob(true);
-                    jobQueue.AddJobInQueue(job);
+                    job = CreateReportCrimeJob(committedCrime, crimeToReport, criminal);
                 }
                 break;
             case CHARACTER_ROLE.LEADER:
@@ -8134,6 +8616,7 @@ public class Character : ILeader, IPointOfInterest {
                     //only add apprehend job if the criminal is part of this characters faction
                     criminal.owner.AddCriminalTrait(committedCrime, crimeAction);
                     CreateApprehendJobFor(criminal.owner);
+                    crimeAction.OnReportCrime();
                     //job = new GoapPlanJob("Apprehend", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = homeArea, targetPOI = actor });
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
@@ -8152,10 +8635,11 @@ public class Character : ILeader, IPointOfInterest {
                     //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = actor }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
                     //job.SetCanTakeThisJobChecker(CanCharacterTakeApprehendJob);
                     //homeArea.jobQueue.AddJobInQueue(job);
-                    job = CreateApprehendJobFor(criminal.owner);
-                    if (job != null) {
-                        homeArea.jobQueue.ForceAssignCharacterToJob(job, this);
-                    }
+                    job = CreateApprehendJobFor(criminal.owner, true);
+                    //if (job != null) {
+                    //    homeArea.jobQueue.ForceAssignCharacterToJob(job, this);
+                    //}
+                    crimeAction.OnReportCrime();
                 }
                 break;
             default:
@@ -8179,6 +8663,9 @@ public class Character : ILeader, IPointOfInterest {
                 break;
             case CRIME.ABERRATION:
                 trait = new Aberration();
+                break;
+            case CRIME.HERETIC:
+                trait = new Heretic();
                 break;
             default:
                 break;
@@ -8229,7 +8716,8 @@ public class Character : ILeader, IPointOfInterest {
             //tantrumLog += "\nRolled: " + chance.ToString();
 
             if (chance < 10) {
-                CancelAllJobsAndPlans();
+                //Note: Do not cancel jobs and plans anymore, let the job priority decide if the character will do tantrum already
+                //CancelAllJobsAndPlans();
                 //Create Tantrum action
                 GoapPlanJob tantrum = new GoapPlanJob(JOB_TYPE.TANTRUM, INTERACTION_TYPE.TANTRUM, this, new Dictionary<INTERACTION_TYPE, object[]>() {
                     { INTERACTION_TYPE.TANTRUM, new object[] { tantrumReason } }
@@ -8325,28 +8813,28 @@ public class Character : ILeader, IPointOfInterest {
                 SetHappinessLowerBound(HAPPINESS_THRESHOLD_2);
             }
         } else {
-            if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null && isAtHomeArea && !ownParty.icon.isTravellingOutside) {
+            if (state.characterState == CHARACTER_STATE.COMBAT && this.GetNormalTrait("Unconscious", "Resting") == null && isAtHomeRegion && !ownParty.icon.isTravellingOutside) {
                 //Reference: https://trello.com/c/2ZppIBiI/2428-combat-available-npcs-should-be-able-to-be-aware-of-hostiles-quickly
                 CombatState combatState = state as CombatState;
                 float distance = Vector2.Distance(this.marker.transform.position, characterThatStartedState.marker.transform.position);
-                Character targetCharacter;
-                if (combatState.isAttacking) {
-                    targetCharacter = combatState.currentClosestHostile;
-                } else {
-                    targetCharacter = characterThatStartedState.marker.GetNearestValidAvoid();
+                Character targetCharacter = null;
+                if (combatState.isAttacking && combatState.currentClosestHostile is Character) {
+                    targetCharacter = combatState.currentClosestHostile as Character;
                 }
                 //Debug.Log(this.name + " distance with " + characterThatStartedState.name + " is " + distance.ToString());
-                if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeArea && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
+                if (targetCharacter != null && this.isPartOfHomeFaction && characterThatStartedState.isAtHomeRegion && characterThatStartedState.isPartOfHomeFaction && this.IsCombatReady()
                     && this.IsHostileOutsider(targetCharacter) && (this.GetRelationshipEffectWith(characterThatStartedState) == RELATIONSHIP_EFFECT.POSITIVE || characterThatStartedState.role.roleType == CHARACTER_ROLE.SOLDIER)
                     && distance <= Combat_Signalled_Distance) {
                     if (marker.AddHostileInRange(targetCharacter, processCombatBehavior: false)) {
-                        Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
-                        joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
-                        joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        PlayerManager.Instance.player.ShowNotification(joinLog);
-                        marker.ProcessCombatBehavior();
+                        if (!marker.avoidInRange.Contains(targetCharacter)) {
+                            Log joinLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "join_combat_signaled");
+                            joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                            joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                            joinLog.AddToFillers(characterThatStartedState, characterThatStartedState.name, LOG_IDENTIFIER.CHARACTER_3);
+                            joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
+                            PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
+                        }
+                        //marker.ProcessCombatBehavior();
                         return; //do not do watch.
                     }
                 }
@@ -8413,19 +8901,36 @@ public class Character : ILeader, IPointOfInterest {
         }
         if (alterEgos.ContainsKey(alterEgoName)) {
             isSwitchingAlterEgo = true;
+            for (int i = 0; i < normalTraits.Count; i++) {
+                Trait currTrait = normalTraits[i];
+                if (currTrait.isRemovedOnSwitchAlterEgo) {
+                    if (RemoveTrait(currTrait)) {
+                        i--;
+                    }
+                }
+            }
             //apply all alter ego changes here
             AlterEgoData alterEgoData = alterEgos[alterEgoName];
-            currentAlterEgo.CopySpecialTraits();
+            //currentAlterEgo.CopySpecialTraits();
 
             //Drop all plans except for the current action
             AdjustIsWaitingForInteraction(1);
-            DropAllPlans(currentAction.parentPlan);
+            if (currentAction != null && currentAction.parentPlan != null) {
+                DropAllPlans(currentAction.parentPlan);
+            } else {
+                DropAllPlans();
+            }
             AdjustIsWaitingForInteraction(-1);
 
+            if(alterEgoName == "Lycanthrope") {
+                hasForcedTiredness = true;
+            }
+            SetHasCancelledSleepSchedule(false);
+            ResetSleepTicks();
             ResetFullnessMeter();
             ResetHappinessMeter();
             ResetTirednessMeter();
-            RemoveAllNonPersistentTraits();
+            RemoveAllNonPersistentTraits(false);
 
             SetHomeStructure(alterEgoData.homeStructure);
             ChangeFactionTo(alterEgoData.faction);
@@ -8433,6 +8938,12 @@ public class Character : ILeader, IPointOfInterest {
             AssignClass(alterEgoData.characterClass);
             ChangeRace(alterEgoData.race);
             SetLevel(alterEgoData.level);
+            SetMaxHPMod(alterEgoData.maxHPMod);
+            SetMaxHPPercentMod(alterEgoData.maxHPPercentMod);
+            SetAttackMod(alterEgoData.attackPowerMod);
+            SetAttackPercentMod(alterEgoData.attackPowerPercentMod);
+            SetSpeedMod(alterEgoData.speedMod);
+            SetSpeedPercentMod(alterEgoData.speedPercentMod);
 
             CancelAllJobsTargettingThisCharacter("target is not found", false);
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, this, "target is not found");

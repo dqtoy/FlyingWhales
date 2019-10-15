@@ -16,6 +16,7 @@ public class Play : GoapAction {
         actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
+            TIME_IN_WORDS.LUNCH_TIME,
             TIME_IN_WORDS.AFTERNOON,
             //TIME_IN_WORDS.EARLY_NIGHT,
         };

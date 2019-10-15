@@ -73,7 +73,7 @@ public class Stroll : GoapAction {
         if (area.HasStructure(STRUCTURE_TYPE.WORK_AREA)) {
             structureTypes.AddElement(STRUCTURE_TYPE.WORK_AREA, 8);
         }
-        if (target.isAtHomeArea && target.homeStructure != null) {
+        if (target.isAtHomeRegion && target.homeStructure != null) {
             structureTypes.AddElement(STRUCTURE_TYPE.DWELLING, 4);
         }
         if (area.HasStructure(STRUCTURE_TYPE.WILDERNESS)) {

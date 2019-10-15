@@ -134,7 +134,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         }
         if(!parentMarker.character.IsHostileWith(targetCharacter)) {
             int roll = UnityEngine.Random.Range(0, 100);
-            int chance = 12;
+            int chance = 8;
 
             if (roll < chance) {
                 if (!parentMarker.character.isChatting && !targetCharacter.isChatting) {
@@ -186,31 +186,34 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             }
         }
         parentMarker.AddPOIAsInVisionRange(poi);
-        if (GameManager.Instance.gameHasStarted) {
-            if (parentMarker.character.stateComponent.currentState != null) {
-                if (!parentMarker.character.stateComponent.currentState.OnEnterVisionWith(poi)) {
-                    if (targetCharacter != null) {
-                        if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                            if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
-                                ChatHandling(targetCharacter);
-                            }
-                        }
-                    } else {
-                        parentMarker.character.CreateJobsOnEnterVisionWith(poi, true);
-                    }
-                }
-            } else {
-                if (targetCharacter != null) {
-                    if (!parentMarker.AddHostileInRange(targetCharacter)) {
-                        if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
-                            ChatHandling(targetCharacter);
-                        }
-                    }
-                } else {
-                    parentMarker.character.CreateJobsOnEnterVisionWith(poi, true);
-                }
-            }
+        if(targetCharacter != null && parentMarker.character.GetNormalTrait("Resting", "Unconscious") == null) {
+            parentMarker.AddHostileInRange(targetCharacter);
         }
+        //if (GameManager.Instance.gameHasStarted) {
+        //    if (parentMarker.character.stateComponent.currentState != null) {
+        //        if (!parentMarker.character.stateComponent.currentState.OnEnterVisionWith(poi)) {
+        //            if (targetCharacter != null) {
+        //                if (!parentMarker.AddHostileInRange(targetCharacter)) {
+        //                    if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
+        //                        ChatHandling(targetCharacter);
+        //                    }
+        //                }
+        //            } else {
+        //                parentMarker.character.CreateJobsOnEnterVisionWith(poi, true);
+        //            }
+        //        }
+        //    } else {
+        //        if (targetCharacter != null) {
+        //            if (!parentMarker.AddHostileInRange(targetCharacter)) {
+        //                if (!parentMarker.character.CreateJobsOnEnterVisionWith(targetCharacter, true)) {
+        //                    ChatHandling(targetCharacter);
+        //                }
+        //            }
+        //        } else {
+        //            parentMarker.character.CreateJobsOnEnterVisionWith(poi, true);
+        //        }
+        //    }
+        //}
     }
 
     #region Different Structure Handling

@@ -8,6 +8,10 @@ public class BerserkBuff : Trait {
     private int _flatHPMod;
     private int _flatSpeedMod;
 
+    public override bool isNotSavable {
+        get { return true; }
+    }
+
     public BerserkBuff() {
         name = "Berserk Buff";
         description = "Temporary increased in stats.";

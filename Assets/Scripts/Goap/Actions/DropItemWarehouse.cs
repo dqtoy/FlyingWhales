@@ -60,9 +60,9 @@ public class DropItemWarehouse : GoapAction {
     }
     public override void OnResultReturnedToActor() {
         base.OnResultReturnedToActor();
-        if (_targetStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-            _targetStructure.location.CheckAreaInventoryJobs(_targetStructure);
-        }
+        //if (_targetStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+        //    _targetStructure.location.CheckAreaInventoryJobs(_targetStructure);
+        //}
     }
     #endregion
 
@@ -83,6 +83,9 @@ public class DropItemWarehouse : GoapAction {
             targetLocation = actor.currentStructure.GetRandomUnoccupiedTile();
         }
         actor.DropToken(tokenToDeposit, actor.specificLocation, actor.currentStructure, targetLocation);
+        if (_targetStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+            _targetStructure.location.CheckAreaInventoryJobs(_targetStructure);
+        }
     }
     #endregion
 
@@ -105,6 +108,10 @@ public class DropItemWarehouse : GoapAction {
 
     #region Preconditions
     private bool HasItemTypeInInventory() {
+        if (parentPlan != null && parentPlan.job != null && parentPlan.job.jobQueueParent.isAreaOrQuestJobQueue) {
+            //if this action is part of an area job, only check the actors actual inventory instead of taking into account his/her role required items.
+            return actor.HasTokenInInventory(itemTypeToDeposit);
+        }
         return actor.HasExtraTokenInInventory(itemTypeToDeposit);
         //return true;
     }

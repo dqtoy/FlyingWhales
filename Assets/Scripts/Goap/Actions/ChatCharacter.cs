@@ -8,6 +8,7 @@ public class ChatCharacter : GoapAction {
     public ChatCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CHAT_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
+            TIME_IN_WORDS.LUNCH_TIME,
             TIME_IN_WORDS.AFTERNOON,
             TIME_IN_WORDS.EARLY_NIGHT,
         };
@@ -39,27 +40,29 @@ public class ChatCharacter : GoapAction {
         RELATIONSHIP_EFFECT relationshipEffectWithTarget = actor.GetRelationshipEffectWith(targetCharacter);
         //**if no relationship yet, may become friends**
         if (relData == null) {
-            int weight = 0;
-            if (thisCharacterMood == CHARACTER_MOOD.DARK) {
-                weight += -30;
-            } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
-                weight += -10;
-            } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
-                weight += 10;
-            } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
-                weight += 30;
-            }
-            if (targetCharacterMood == CHARACTER_MOOD.DARK) {
-                weight += -30;
-            } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
-                weight += -10;
-            } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
-                weight += 10;
-            } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
-                weight += 30;
-            }
-            if (weight > 0) {
-                weights.AddElement("Become Friends", weight);
+            if (actor.GetNormalTrait("Serial Killer") == null && targetCharacter.GetNormalTrait("Serial Killer") == null) {
+                int weight = 0;
+                if (thisCharacterMood == CHARACTER_MOOD.DARK) {
+                    weight += -30;
+                } else if (thisCharacterMood == CHARACTER_MOOD.BAD) {
+                    weight += -10;
+                } else if (thisCharacterMood == CHARACTER_MOOD.GOOD) {
+                    weight += 10;
+                } else if (thisCharacterMood == CHARACTER_MOOD.GREAT) {
+                    weight += 30;
+                }
+                if (targetCharacterMood == CHARACTER_MOOD.DARK) {
+                    weight += -30;
+                } else if (targetCharacterMood == CHARACTER_MOOD.BAD) {
+                    weight += -10;
+                } else if (targetCharacterMood == CHARACTER_MOOD.GOOD) {
+                    weight += 10;
+                } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
+                    weight += 30;
+                }
+                if (weight > 0) {
+                    weights.AddElement("Become Friends", weight);
+                }
             }
         } else {
             //**if no relationship other than relative, may become enemies**
@@ -137,9 +140,9 @@ public class ChatCharacter : GoapAction {
         }
 
         //Flirtation
-        float FlirtationWeight = actor.GetFlirtationWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
-        if (FlirtationWeight > 0f) {
-            weights.AddElement("Flirt", FlirtationWeight);
+        float flirtationWeight = actor.GetFlirtationWeightWith(targetCharacter, relData, thisCharacterMood, targetCharacterMood);
+        if (flirtationWeight > 0f) {
+            weights.AddElement("Flirt", flirtationWeight);
         }
 
         //Become Lovers weight
@@ -154,6 +157,18 @@ public class ChatCharacter : GoapAction {
             weights.AddElement("Become Paramours", becomeParamoursWeight);
         }
 
+        if(actor.GetNormalTrait("Angry") != null || targetCharacter.GetNormalTrait("Angry") != null) {
+            weights.RemoveElement("Quick Chat");
+            weights.RemoveElement("Become Friends");
+            weights.RemoveElement("Share Information");
+            weights.RemoveElement("Resolve Enmity");
+            weights.RemoveElement("Flirt");
+            weights.RemoveElement("Become Lovers");
+            weights.RemoveElement("Become Paramours");
+            weights.AddWeightToElement("Become Enemies", 100);
+            weights.AddWeightToElement("Argument", 100);
+        }
+
         chatResult = weights.PickRandomElementGivenWeights();
 
 #if TRAILER_BUILD
@@ -164,6 +179,26 @@ public class ChatCharacter : GoapAction {
             chatResult = "Argument"; //For Trailer Only
         }
 #endif
+
+        //Log chatLog = new Log(GameManager.Instance.Today(), "GoapAction", "ChatCharacter", chatResult.ToLower(), this);
+        //chatLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //chatLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        ////chatLog.AddLogToInvolvedObjects();
+        //currentState.OverrideDescriptionLog(chatLog);
+
+        //if (!PlayerManager.Instance.player.ShowNotificationFrom(actor, chatLog)) {
+        //    PlayerManager.Instance.player.ShowNotificationFrom(targetCharacter, chatLog);
+        //}
+
+        weights.LogDictionaryValues("Chat Weights of " + actor.name + " and " + targetCharacter.name);
+        //Debug.Log(actor.name + " and " + targetCharacter.name + "'s chat result is " + chatResult);
+
+        GameDate dueDate = GameManager.Instance.Today();
+        dueDate.AddTicks(2);
+        SchedulingManager.Instance.AddEntry(dueDate, () => actor.EndChatCharacter(), actor);
+        SchedulingManager.Instance.AddEntry(dueDate, () => targetCharacter.EndChatCharacter(), targetCharacter);
+
+        SetState(chatResult);
 
         if (chatResult == "Become Friends") {
             //may become friends
@@ -188,26 +223,18 @@ public class ChatCharacter : GoapAction {
         } else if (chatResult == "Become Paramours") {
             //Log: "[Character Name 1] and [Character Name 2] have developed an affair!"
             CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR);
+        } else if (chatResult == "Argument") {
+            if(actor.GetNormalTrait("Angry") != null) {
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
+                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            }
+            if (targetCharacter.GetNormalTrait("Angry") != null) {
+                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
+                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                targetCharacter.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            }
         }
-
-        //Log chatLog = new Log(GameManager.Instance.Today(), "GoapAction", "ChatCharacter", chatResult.ToLower(), this);
-        //chatLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //chatLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        ////chatLog.AddLogToInvolvedObjects();
-        //currentState.OverrideDescriptionLog(chatLog);
-
-        //if (!PlayerManager.Instance.player.ShowNotificationFrom(actor, chatLog)) {
-        //    PlayerManager.Instance.player.ShowNotificationFrom(targetCharacter, chatLog);
-        //}
-
-        //weights.LogDictionaryValues("Chat Weights of " + actor.name + " and " + targetCharacter.name);
-        //Debug.Log(actor.name + " and " + targetCharacter.name + "'s chat result is " + chatResult);
-
-        GameDate dueDate = GameManager.Instance.Today();
-        dueDate.AddTicks(2);
-        SchedulingManager.Instance.AddEntry(dueDate, () => actor.EndChatCharacter(targetCharacter), actor);
-
-        SetState(chatResult);
 
         Plagued actorPlagued = actor.GetNormalTrait("Plagued") as Plagued;
         Plagued targetPlagued = poiTarget.GetNormalTrait("Plagued") as Plagued;
@@ -268,8 +295,22 @@ public class ChatCharacter : GoapAction {
     private void PreArgument() {
         currentState.SetIntelReaction(ArgumentIntelReaction);
     }
+    private void AfterArgument() {
+        Character targetCharacter = poiTarget as Character;
+        if (actor.GetNormalTrait("Hothead") != null) {
+            actor.AddTrait("Angry");
+        }
+        if (targetCharacter.GetNormalTrait("Hothead") != null) {
+            targetCharacter.AddTrait("Angry");
+        }
+    }
     private void PreFlirt() {
         currentState.SetIntelReaction(FlirtIntelReaction);
+        Character targetCharacter = poiTarget as Character;
+        actor.SetIsFlirting(true);
+        targetCharacter.SetIsFlirting(true);
+        actor.marker.UpdateActionIcon();
+        targetCharacter.marker.UpdateActionIcon();
     }
     private void PreBecomeLovers() {
         currentState.SetIntelReaction(BecomeLoversIntelReaction);

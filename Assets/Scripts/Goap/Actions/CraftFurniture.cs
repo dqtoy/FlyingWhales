@@ -76,6 +76,9 @@ public class CraftFurniture : GoapAction {
         }
         //return true;
         if (hasSetOtherData) {
+            if (targetSpot.objHere != null) {
+                return false; //cannot create furniture here because there is already something occupying it.
+            }
             //if the crafted item enum has been set, check if the actor has the needed trait to craft it
             return furnitureToCreate.CanBeCraftedBy(actor);
         } else {
@@ -94,7 +97,9 @@ public class CraftFurniture : GoapAction {
     }
     private void AfterCraftSuccess() {
         actor.AdjustSupply(-TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost);
-        targetSpot.structure.AddTileObject(furnitureToCreate, targetSpot, false);
+        if (targetSpot.objHere == null) {
+            targetSpot.structure.AddTileObject(furnitureToCreate, targetSpot, false);
+        }
     }
     #endregion
 
@@ -121,11 +126,14 @@ public class CraftFurnitureData : GoapActionData {
         if(otherData == null) {
             return true;
         }
-        if (otherData.Length == 1 && otherData[0] is TILE_OBJECT_TYPE) {
-            TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE) otherData[0];
+        if (otherData.Length == 2 && otherData[1] is FURNITURE_TYPE && otherData[0] is LocationGridTile) {
+            if ((otherData[0] as LocationGridTile).objHere != null) {
+                return false; //cannot create furniture here because there is already something occupying it.
+            }
+            FURNITURE_TYPE furnitureToCreate = (FURNITURE_TYPE) otherData[1];
             //if the creafted enum has NOT been set, always allow, since we know that the character has the ability to craft furniture 
             //because craft furniture action is only added to characters with traits that allow crafting
-            return furnitureToCreate.CanBeCraftedBy(actor);
+            return furnitureToCreate.ConvertFurnitureToTileObject().CanBeCraftedBy(actor);
         }
         return false;
     }

@@ -9,6 +9,7 @@ public class FirstAidCharacter : GoapAction {
         actionIconString = GoapActionStateDB.FirstAid_Icon;
         validTimeOfDays = new TIME_IN_WORDS[] {
             TIME_IN_WORDS.MORNING,
+            TIME_IN_WORDS.LUNCH_TIME,
             TIME_IN_WORDS.AFTERNOON,
             TIME_IN_WORDS.EARLY_NIGHT,
             TIME_IN_WORDS.LATE_NIGHT,
@@ -42,10 +43,10 @@ public class FirstAidCharacter : GoapAction {
     }
     public void AfterFirstAidSuccess() {
         //**After Effect 1**: Remove target's Injured and Unconscious trait
-        if (parentPlan.job != null) {
-            parentPlan.job.SetCannotCancelJob(true);
-        }
-        SetCannotCancelAction(true);
+        //if (parentPlan.job != null) {
+        //    parentPlan.job.SetCannotCancelJob(true);
+        //}
+        //SetCannotCancelAction(true);
         RemoveTraitFrom(poiTarget, "Injured", actor);
         RemoveTraitFrom(poiTarget, "Unconscious", actor);
         //**After Effect 2**: Reduce character's Supply by 10
@@ -105,5 +106,9 @@ public class FirstAidCharacter : GoapAction {
 public class FirstAidCharacterData : GoapActionData {
     public FirstAidCharacterData() : base(INTERACTION_TYPE.FIRST_AID_CHARACTER) {
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, };
+        requirementAction = Requirement;
+    }
+    private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return poiTarget.GetNormalTrait("Injured", "Unconscious") != null;
     }
 }

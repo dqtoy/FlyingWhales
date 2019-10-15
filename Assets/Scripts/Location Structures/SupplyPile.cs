@@ -4,15 +4,19 @@ using System.Linq;
 using UnityEngine;
 
 public class SupplyPile : TileObject {
-    public LocationStructure location { get; private set; }
     public int suppliesInPile { get; private set; }
 
     public SupplyPile(LocationStructure location) {
-        this.location = location;
-        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_SUPPLY, INTERACTION_TYPE.REPAIR_TILE_OBJECT };
+        SetStructureLocation(location);
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_SUPPLY, INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_TYPE.DESTROY_SUPPLY };
         Initialize(TILE_OBJECT_TYPE.SUPPLY_PILE);
-        SetSuppliesInPile(50);
+        SetSuppliesInPile(2000);
         RemoveTrait("Flammable");
+        Messenger.AddListener(Signals.TICK_STARTED, CheckSupply);
+    }
+    public SupplyPile(SaveDataTileObject data) {
+        poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_SUPPLY, INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_TYPE.DESTROY_SUPPLY };
+        Initialize(data);
         Messenger.AddListener(Signals.TICK_STARTED, CheckSupply);
     }
 
@@ -31,13 +35,13 @@ public class SupplyPile : TileObject {
 
     private void CheckSupply() {
         if (suppliesInPile < 100) {
-            if (!location.location.jobQueue.HasJob(JOB_TYPE.OBTAIN_SUPPLY, this)) {
+            if (!structureLocation.location.jobQueue.HasJob(JOB_TYPE.OBTAIN_SUPPLY, this)) {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.OBTAIN_SUPPLY, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = 0, targetPOI = this });
-                job.SetCanTakeThisJobChecker(CanCharacterTakeThisJob);
-                location.location.jobQueue.AddJobInQueue(job);
+                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoObtainSupplyJob);
+                structureLocation.location.jobQueue.AddJobInQueue(job);
             }
         } else {
-            location.location.jobQueue.CancelAllJobsRelatedTo(GOAP_EFFECT_CONDITION.HAS_SUPPLY, this);
+            structureLocation.location.jobQueue.CancelAllJobsRelatedTo(GOAP_EFFECT_CONDITION.HAS_SUPPLY, this);
         }
     }
     public void SetSuppliesInPile(int amount) {
@@ -48,13 +52,12 @@ public class SupplyPile : TileObject {
     public void AdjustSuppliesInPile(int adjustment) {
         suppliesInPile += adjustment;
         suppliesInPile = Mathf.Max(0, suppliesInPile);
-    }
-
-    private bool CanCharacterTakeThisJob(Character character, JobQueueItem job) {
-        return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
+        if (adjustment < 0) {
+            Messenger.Broadcast(Signals.SUPPLY_IN_PILE_REDUCED, this);
+        }
     }
     public bool HasSupply() {
-        if (location.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+        if (structureLocation.structureType == STRUCTURE_TYPE.WAREHOUSE) {
             return suppliesInPile > 0;
         }
         return true;
@@ -65,5 +68,21 @@ public class SupplyPile : TileObject {
     }
     public override bool CanBeReplaced() {
         return true;
+    }
+}
+
+public class SaveDataSupplyPile : SaveDataTileObject {
+    public int suppliesInPile;
+
+    public override void Save(TileObject tileObject) {
+        base.Save(tileObject);
+        SupplyPile obj = tileObject as SupplyPile;
+        suppliesInPile = obj.suppliesInPile;
+    }
+
+    public override TileObject Load() {
+        SupplyPile obj = base.Load() as SupplyPile;
+        obj.SetSuppliesInPile(suppliesInPile);
+        return obj;
     }
 }

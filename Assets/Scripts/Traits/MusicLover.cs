@@ -8,7 +8,7 @@ public class MusicLover : Trait {
 
     public MusicLover() {
         name = "Music Lover";
-        description = "This character loves music.";
+        description = "Music Lovers enjoy playing instruments and listening to music.";
         type = TRAIT_TYPE.SPECIAL;
         effect = TRAIT_EFFECT.POSITIVE;
         daysDuration = 0;
@@ -28,30 +28,30 @@ public class MusicLover : Trait {
     public override void OnAddTrait(ITraitable addedTo) {
         base.OnAddTrait(addedTo);
         owner = addedTo as Character;
-        if (owner.marker != null) {
-            Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
-        }
+        //if (owner.marker != null) {
+        //Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        //}
     }
     public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
         base.OnRemoveTrait(removedFrom, removedBy);
-        Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        //Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
     public override void OnDeath(Character character) {
         base.OnDeath(character);
-        Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        //Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
     public override void OnReturnToLife(Character character) {
         base.OnReturnToLife(character);
-        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        //Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
     public override void OnOwnerInitiallyPlaced(Character owner) {
         base.OnOwnerInitiallyPlaced(owner);
-        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        //Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
     #endregion
 
     private void OnHearGuitarPlaying(Character guitarPlayer) {
-        owner.AddTrait("Cheery");
+        owner.AddTrait("Satisfied");
         owner.AdjustTiredness(20);
         owner.AdjustHappiness(40);
         //Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became happier.");
@@ -59,11 +59,11 @@ public class MusicLover : Trait {
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(guitarPlayer, guitarPlayer.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
+        PlayerManager.Instance.player.ShowNotificationFrom(log, owner, guitarPlayer);
     }
-    private void OnActionStateSet(GoapAction action, GoapActionState state) {
-        if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && owner.marker.inVisionCharacters.Contains(action.actor)) {
-            OnHearGuitarPlaying(action.actor);
-        }        
-    }
+    //private void OnActionStateSet(GoapAction action, GoapActionState state) {
+    //    if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && owner.marker.inVisionCharacters.Contains(action.actor)) {
+    //        OnHearGuitarPlaying(action.actor);
+    //    }        
+    //}
 }
