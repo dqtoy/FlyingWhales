@@ -21,10 +21,6 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         portrait.GeneratePortrait(character);
         UpdateStatusIcons();
     }
-    public override void Reset() {
-        base.Reset();
-        SetInteractableState(true);
-    }
     public override void OnHoverEnter() {
         portrait.SetHoverHighlightState(true);
         base.OnHoverEnter();

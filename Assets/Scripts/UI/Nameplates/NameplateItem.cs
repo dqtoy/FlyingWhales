@@ -64,6 +64,8 @@ public class NameplateItem<T> : PooledObject {
         onToggleNameplate = null;
         toggle.isOn = false;
         obj = default(T);
+        SetToggleGroup(null);
+        SetInteractableState(true);
     }
     #endregion
 
@@ -135,6 +137,7 @@ public class NameplateItem<T> : PooledObject {
     public void SetAsToggle() {
         button.gameObject.SetActive(false);
         toggle.gameObject.SetActive(true);
+        toggle.isOn = false;
     }
     public void AddOnToggleAction(OnToggleNameplate action) {
         onToggleNameplate += action;
@@ -155,8 +158,25 @@ public class NameplateItem<T> : PooledObject {
     public void SetToggleState(bool isOn) {
         toggle.isOn = isOn;
     }
+    /// <summary>
+    /// Set the toggle group of this nameplate.
+    /// NOTE: If you want the action of this toggle to execute when it turns on automatically
+    /// because of setting it's group, make sure to set the action before calling this.
+    /// </summary>
+    /// <param name="group">The group that the toggle is in.</param>
     public void SetToggleGroup(ToggleGroup group) {
+        ToggleGroup previous = toggle.group;
         toggle.group = group;
+        previous?.UnregisterToggle(toggle);
+        if (group != null) {
+            group.RegisterToggle(toggle);
+            if (!group.allowSwitchOff && !group.AnyTogglesOn()) {
+                toggle.isOn = true; //if this toggle is set to a group that does not allow all toggles to be switched off, and currently all toggles in the group are switched off, then turn this toggle on.
+                toggle.onValueChanged.Invoke(toggle.isOn);
+            }
+        }
+        
+        
     }
     #endregion
 

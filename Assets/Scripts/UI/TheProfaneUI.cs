@@ -132,9 +132,9 @@ public class TheProfaneUI : MonoBehaviour {
             if (currMinion.assignedRegion == null) {
                 //can be assigned
                 item.SetAsToggle();
-                item.SetToggleGroup(minionsToggleGroup);
                 item.ClearAllOnToggleActions();
                 item.AddOnToggleAction(OnClickMinion);
+                item.SetToggleGroup(minionsToggleGroup);
                 if (chosenMinion == currMinion || chosenMinion == null) {
                     item.SetToggleState(true);
                     SetSelectedMinion(currMinion);
@@ -263,8 +263,9 @@ public class TheProfaneUI : MonoBehaviour {
                 }
             } else {
                 item.SetAsToggle();
-                item.SetToggleGroup(cultistsToggleGroup);
+                item.ClearAllOnToggleActions();
                 item.AddOnToggleAction(OnToggleCultist);
+                item.SetToggleGroup(cultistsToggleGroup);
                 if (chosenCultist == currCultist || chosenCultist == null) {
                     item.SetToggleState(true);
                     SetSelectedCultist(currCultist);

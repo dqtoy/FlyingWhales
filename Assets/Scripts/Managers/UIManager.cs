@@ -103,6 +103,11 @@ public class UIManager : MonoBehaviour {
     [Header("Nameplate Prefabs")]
     public GameObject characterNameplatePrefab;
     public GameObject stringNameplatePrefab;
+    public GameObject unsummonedMinionNameplatePrefab;
+
+    [Space(10)]
+    [Header("Dual Object Picker")]
+    public DualObjectPicker dualObjectPicker;
 
     public bool isShowingAreaTooltip { get; private set; } //is the tooltip for area double clicks showing?
     private UIMenu lastOpenedMenu = null;

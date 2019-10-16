@@ -29,8 +29,9 @@ public class MinionPicker : MonoBehaviour {
             }
             item.SetInteractableState(shouldItemBeClickable);
             item.SetAsToggle();
-            item.SetToggleGroup(toggleGroup);
+            item.ClearAllOnToggleActions();
             item.AddOnToggleAction(onClickMinionItemAction.Invoke);
+            item.SetToggleGroup(toggleGroup);
         }
 
         for (int i = 0; i < inactiveItems.Count; i++) {
