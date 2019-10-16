@@ -20,5 +20,15 @@ public class UnsummonedMinionNameplateItem : NameplateItem<UnsummonedMinionData>
         Sprite classPortrait = CharacterManager.Instance.GetClassPortraitSprite(minionData.className);
         this.classPortrait.sprite = classPortrait;
     }
+    public override void OnHoverEnter() {
+        hoverPortrait.SetActive(true);
+        UIManager.Instance.ShowMinionCardTooltip(minionData);
+        base.OnHoverEnter();
+    }
+    public override void OnHoverExit() {
+        hoverPortrait.SetActive(false);
+         UIManager.Instance.HideMinionCardTooltip();
+        base.OnHoverExit();
+    }
     #endregion
 }

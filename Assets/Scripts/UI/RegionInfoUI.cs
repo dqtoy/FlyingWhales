@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,8 @@ public class RegionInfoUI : UIMenu {
     [Header("Characters")]
     [SerializeField] private ScrollRect charactersScrollView;
     [SerializeField] private GameObject characterItemPrefab;
+    [SerializeField] private RectTransform visitorsEmblem;
+    [SerializeField] private RectTransform residentsEmblem;
 
     [Header("Events")]
     [SerializeField] private GameObject worldEventNameplatePrefab;
@@ -147,6 +150,56 @@ public class RegionInfoUI : UIMenu {
             CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
             item.SetObject(character);
             item.SetAsDefaultBehaviour();
+        }
+        OrderCharacterItems();
+    }
+    
+    public void OrderCharacterItems() {
+        visitorsEmblem.SetParent(this.transform);
+        residentsEmblem.SetParent(this.transform);
+        List<CharacterNameplateItem> visitors = new List<CharacterNameplateItem>();
+
+        List<CharacterNameplateItem> residents = new List<CharacterNameplateItem>();
+        CharacterNameplateItem[] characterItems = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(charactersScrollView.content.gameObject);
+        for (int i = 0; i < characterItems.Length; i++) {
+            CharacterNameplateItem currItem = characterItems[i];
+            if (currItem.character.homeRegion != null && activeRegion.id == currItem.character.homeRegion.id) {
+                residents.Add(currItem);
+            } else {
+                visitors.Add(currItem);
+            }
+        }
+
+        List<CharacterNameplateItem> orderedVisitors = new List<CharacterNameplateItem>(visitors.OrderByDescending(x => x.character.level));
+        List<CharacterNameplateItem> orderedResidents = new List<CharacterNameplateItem>(residents.OrderByDescending(x => x.character.level));
+
+        List<CharacterNameplateItem> orderedItems = new List<CharacterNameplateItem>();
+        orderedItems.AddRange(orderedVisitors);
+        orderedItems.AddRange(orderedResidents);
+
+        CharacterNameplateItem firstResident = orderedResidents.FirstOrDefault();
+        CharacterNameplateItem firstVisitor = orderedVisitors.FirstOrDefault();
+
+        visitorsEmblem.gameObject.SetActive(firstVisitor != null);
+        residentsEmblem.gameObject.SetActive(firstResident != null);
+        if (firstVisitor != null) {
+            visitorsEmblem.SetParent(firstVisitor.transform);
+            visitorsEmblem.anchoredPosition = new Vector2(-355f, 0f);
+        } else {
+            visitorsEmblem.SetParent(charactersScrollView.transform);
+        }
+
+        if (firstResident != null) {
+            residentsEmblem.SetParent(firstResident.transform);
+            residentsEmblem.anchoredPosition = new Vector2(-355f, -0f);
+        } else {
+            residentsEmblem.SetParent(charactersScrollView.transform);
+        }
+
+
+        for (int i = 0; i < orderedItems.Count; i++) {
+            CharacterNameplateItem currItem = orderedItems[i];
+            currItem.transform.SetSiblingIndex(i);
         }
     }
     #endregion

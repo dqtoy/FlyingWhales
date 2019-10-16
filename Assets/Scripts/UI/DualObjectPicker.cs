@@ -119,7 +119,7 @@ public class DualObjectPicker : MonoBehaviour {
         Action<T> column1ItemHoverExitAction,
         Action<object> onPickFirstObjAction,
         Action<object, object> onClickConfirmAction,
-        string confirmBtnStr) {
+        string confirmBtnStr, bool needs2Objects = true) {
 
         if (!GameManager.Instance.isPaused) {
             UIManager.Instance.Pause();
@@ -132,6 +132,7 @@ public class DualObjectPicker : MonoBehaviour {
 
         //set titles
         column1TitleLbl.text = string.Empty;
+        column2TitleLbl.text = string.Empty;
 
         //reset values
         pickedObj1 = null;
@@ -141,6 +142,16 @@ public class DualObjectPicker : MonoBehaviour {
         confirmBtnLbl.text = confirmBtnStr;
 
         this.onPickFirstObjAction = onPickFirstObjAction;
+
+        this.needs2Objects = needs2Objects;
+
+        if (!needs2Objects) {
+            column1ToggleGroup.allowSwitchOff = false;
+            column2ToggleGroup.allowSwitchOff = true;
+        } else {
+            column1ToggleGroup.allowSwitchOff = false;
+            column2ToggleGroup.allowSwitchOff = false;
+        }
 
         //populate column 1
         PopulateColumn(column1Items, column1ValidityChecker, column1ItemHoverEnterAction, column1ItemHoverExitAction, column1ScrollView, column1ToggleGroup, column1Title);

@@ -23,10 +23,16 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     }
     public override void OnHoverEnter() {
         portrait.SetHoverHighlightState(true);
+        if (character != null && character.minion != null) {
+            UIManager.Instance.ShowMinionCardTooltip(character.minion);
+        }
         base.OnHoverEnter();
     }
     public override void OnHoverExit() {
         portrait.SetHoverHighlightState(false);
+        if (character != null && character.minion != null) {
+            UIManager.Instance.HideMinionCardTooltip();
+        }
         base.OnHoverExit();
     }
     #endregion
