@@ -154,10 +154,9 @@ public class RegionInfoUI : UIMenu {
     #region Invade
     private void UpdateInvadeBtnState() {
         if (activeRegion.coreTile.isCorrupted) {
-            demolishBtn.gameObject.SetActive(false);
+            demolishBtn.interactable = false;
             demolishProgress.gameObject.SetActive(false);
         } else {
-            demolishBtn.gameObject.SetActive(true);
             demolishBtn.interactable = activeRegion.CanBeInvaded();
             if (activeRegion.demonicInvasionData.beingInvaded) {
                 demolishProgress.gameObject.SetActive(true);
@@ -386,9 +385,9 @@ public class RegionInfoUI : UIMenu {
         playerUpgradeUI.UpdatePlayerUpgradeUI();
     }
     public void OnPlayerUpgradeDone() {
-        if (playerUpgradeUI.gameObject.activeSelf) {
-            playerUpgradeUI.OnUpgradeDone();
-        }
+        //if (playerUpgradeUI.gameObject.activeSelf) {
+        //    playerUpgradeUI.OnUpgradeDone();
+        //}
     }
     #endregion
 
