@@ -937,14 +937,14 @@ public class UIManager : MonoBehaviour {
     #region Hextile Info
     public bool ShowHextileInfo(HexTile hexTile) {
         if (hexTile.region != null && hexTile == hexTile.region.coreTile) {
-            if (hexTile.areaOfTile != null && hexTile.areaOfTile.areaType.IsSettlementType()) {
-                //if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
-                //    portalPopup.SetActive(true);
-                //    return true;
-                //}
-                ShowAreaInfo(hexTile);
-                return true;
-            } else {
+            //if (hexTile.areaOfTile != null && hexTile.areaOfTile.areaType.IsSettlementType()) {
+            //    //if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
+            //    //    portalPopup.SetActive(true);
+            //    //    return true;
+            //    //}
+            //    ShowAreaInfo(hexTile);
+            //    return true;
+            //} else {
                 //This is an exception in showing area info ui
                 //Usually, area info ui must only be shown if the tile's region has an area
                 //But for demonic landmarks, even if the region has no area, area info ui will still be shown
@@ -957,7 +957,7 @@ public class UIManager : MonoBehaviour {
                     ShowRegionInfo(hexTile.region);
                     return true;
                 //}
-            }
+            //}
         }
         return false;
     }

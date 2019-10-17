@@ -87,6 +87,8 @@ public class DualObjectPicker : MonoBehaviour {
         onConfirmAction = onClickConfirmAction;
         confirmBtnLbl.text = confirmBtnStr;
 
+        onPickFirstObjAction = null;
+
         this.needs2Objects = needs2Objects;
 
         if (!needs2Objects) {

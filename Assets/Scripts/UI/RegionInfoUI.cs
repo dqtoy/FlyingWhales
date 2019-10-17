@@ -30,16 +30,20 @@ public class RegionInfoUI : UIMenu {
     [SerializeField] private GameObject worldEventNameplatePrefab;
     [SerializeField] private ScrollRect worldEventsScrollView;
 
-    [Header("Demolition")]
-    [SerializeField] private Button demolishBtn;
-    [SerializeField] private Image demolishProgress;
+    [Header("Invasion")]
+    [SerializeField] private Button invadeBtn;
+    [SerializeField] private Image invadeProgress;
 
-    [Header("Demolition Confirmation")]
+    [Header("Invasion Confirmation")]
     [SerializeField] private GameObject invConfrimationGO;
     [SerializeField] private TextMeshProUGUI invConfrimationTitleLbl;
     [SerializeField] private TextMeshProUGUI invDescriptionLbl;
     [SerializeField] private MinionPicker invMinionPicker;
     [SerializeField] private Button confirmInvasionBtn;
+
+    [Header("Demolition")]
+    [SerializeField] private Button demolishBtn;
+    [SerializeField] private Image demolishProgress;
 
     [Header("Demonic Landmark")]
     [SerializeField] private PlayerBuildLandmarkUI playerBuildLandmarkUI;
@@ -73,7 +77,7 @@ public class RegionInfoUI : UIMenu {
         UpdateBasicInfo();
         UpdateRegionInfo();
         UpdateCharacters();
-        UpdateInvadeBtnState();
+        UpdateMainBtnState();
         UpdateEventInfo();
         //UpdateDemonicLandmarkToggleState();
         ShowAppropriateContentOnOpen();
@@ -89,7 +93,7 @@ public class RegionInfoUI : UIMenu {
     public void UpdateInfo() {
         UpdateBasicInfo();
         UpdateRegionInfo();
-        UpdateInvadeBtnState();
+        UpdateMainBtnState();
         UpdateAppropriateContentPerUpdateUI();
         //UpdateSpawnEventButton();
     }
@@ -204,17 +208,25 @@ public class RegionInfoUI : UIMenu {
     #endregion
 
     #region Invade
-    private void UpdateInvadeBtnState() {
+    private void UpdateMainBtnState() {
         if (activeRegion.coreTile.isCorrupted) {
-            demolishBtn.interactable = false;
-            demolishProgress.gameObject.SetActive(false);
-        } else {
-            demolishBtn.interactable = activeRegion.CanBeInvaded();
-            if (activeRegion.demonicInvasionData.beingInvaded) {
-                demolishProgress.gameObject.SetActive(true);
-                demolishProgress.fillAmount = ((float)activeRegion.demonicInvasionData.currentDuration / (float)activeRegion.mainLandmark.invasionTicks);
+            invadeBtn.gameObject.SetActive(false);
+            invadeProgress.gameObject.SetActive(false);
+            if (activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL) {
+                //if the active region is corrupted and is not the demonic portal, show the demolish button
+                demolishBtn.gameObject.SetActive(true);
             } else {
-                demolishProgress.gameObject.SetActive(false);
+                demolishBtn.gameObject.SetActive(false);
+            }
+        } else {
+            demolishBtn.gameObject.SetActive(false);
+            invadeBtn.gameObject.SetActive(true);
+            invadeBtn.interactable = activeRegion.CanBeInvaded();
+            if (activeRegion.demonicInvasionData.beingInvaded) {
+                invadeProgress.gameObject.SetActive(true);
+                invadeProgress.fillAmount = ((float)activeRegion.demonicInvasionData.currentDuration / (float)activeRegion.mainLandmark.invasionTicks);
+            } else {
+                invadeProgress.gameObject.SetActive(false);
             }
         }
     }
@@ -224,10 +236,10 @@ public class RegionInfoUI : UIMenu {
     private Minion chosenMinionToInvade;
     private void ShowInvasionConfirmation() {
         invConfrimationGO.SetActive(true);
+        chosenMinionToInvade = null;
         invConfrimationTitleLbl.text = "Invasion (" + ((int)activeRegion.mainLandmark.invasionTicks / (int)GameManager.ticksPerHour).ToString() + " hours)";
         invDescriptionLbl.text = "Choose a minion that will invade " + activeRegion.name + ". NOTE: That minion will be unavailable while the invasion is ongoing.";
         invMinionPicker.ShowMinionPicker(PlayerManager.Instance.player.minions, CanMinionInvade, ChooseMinionForInvasion);
-        chosenMinionToInvade = null;
         UpdateStartInvasionBtn();
     }
     private bool CanMinionInvade(Minion minion) {
@@ -240,16 +252,29 @@ public class RegionInfoUI : UIMenu {
         if (isOn) {
             chosenMinionToInvade = character.minion;
             UpdateStartInvasionBtn();
+        } else {
+            if (chosenMinionToInvade == character.minion) {
+                chosenMinionToInvade = null;
+                UpdateStartInvasionBtn();
+            }
         }
     }
     public void StartInvasion() {
         activeRegion.StartInvasion(chosenMinionToInvade);
-        UpdateInvadeBtnState();
+        UpdateMainBtnState();
         HideStartInvasionConfirmation();
     }
     public void HideStartInvasionConfirmation() {
         chosenMinionToInvade = null;
         invConfrimationGO.SetActive(false);
+    }
+    #endregion
+
+    #region Demolish
+    public void OnClickDemolish() {
+        LandmarkManager.Instance.CreateNewLandmarkOnTile(activeRegion.coreTile, LANDMARK_TYPE.NONE, false);
+        UpdateInfo();
+        ShowAppropriateContentOnOpen();
     }
     #endregion
 

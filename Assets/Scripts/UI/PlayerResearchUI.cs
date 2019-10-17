@@ -42,20 +42,15 @@ public class PlayerResearchUI : MonoBehaviour {
         spire.tileLocation.region.SetAssignedMinion(minion);
         minion.SetAssignedRegion(spire.tileLocation.region);
         spire.ExtractInterventionAbility(ability);
-        UpdateResearchButton();
+        UpdatePlayerResearchUI();
     }
     public void UpdatePlayerResearchUI() {
-        if (researchProgress.gameObject.activeSelf && spire.isInCooldown) {
-            researchProgress.fillAmount = spire.currentCooldownTick / (float) spire.cooldownDuration;
-        }
-    }
-    private void UpdateResearchButton() {
-        researchProgress.gameObject.SetActive(spire.isInCooldown);
         researchBtn.interactable = !spire.isInCooldown;
-
-        if (!researchBtn.interactable) {
+        if (spire.isInCooldown) {
             researchProgress.gameObject.SetActive(true);
-            researchProgress.fillAmount = 0;
+            researchProgress.fillAmount = spire.currentCooldownTick / (float) spire.cooldownDuration;
+        } else {
+            researchProgress.gameObject.SetActive(false);
         }
     }
     #endregion

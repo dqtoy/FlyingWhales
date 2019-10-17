@@ -53,7 +53,14 @@ public class TheSpire : BaseLandmark {
     private void StopCooldown() {
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickCooldown);
         Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
-    }  
+    }
+
+    #region Override
+    public override void DestroyLandmark() {
+        StopCooldown();
+        base.DestroyLandmark();
+    }
+    #endregion
 
     private void CheckForMinionDeath(Minion minion, INTERVENTION_ABILITY ability) {
         //first extraction: 0% chance to die

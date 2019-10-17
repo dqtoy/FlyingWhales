@@ -11,7 +11,7 @@ SpriteAtlas:
       serializedVersion: 2
       anisoLevel: 1
       compressionQuality: 50
-      maxTextureSize: 8192
+      maxTextureSize: 4096
       textureCompression: 0
       filterMode: 0
       generateMipMaps: 0
@@ -50,6 +50,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 24bf27908ce1ff0488b85956c0c3c7f9, type: 3}
   - {fileID: 21300000, guid: baa28b90c4ef8854c8578a5ad5cf48cf, type: 3}
   - {fileID: 21300000, guid: 1b71e4a07e951b847946063b916275e7, type: 3}
+  - {fileID: 21300000, guid: 8b2541b0e47a0d245b7e65561ba239e2, type: 3}
   - {fileID: 21300000, guid: 9ec882b08ff43914985bfa22b9a521d3, type: 3}
   - {fileID: 21300000, guid: cdbb68b0f212de34da89e07319de96bf, type: 3}
   - {fileID: 21300000, guid: c10d17c0ce04cac41a5743f733413e44, type: 3}
@@ -218,7 +219,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 64bc17278d4066b419c756ddcf6c216d, type: 3}
   - {fileID: 21300000, guid: b931dd379df6ed74e9c970349deb8392, type: 3}
   - {fileID: 21300000, guid: 2fb3e9472179d114f90b5ab9b3246177, type: 3}
-  - {fileID: 21300000, guid: 63ba3357e0b20ce4296091727c852feb, type: 3}
   - {fileID: 21300000, guid: 59eb3357f074984418a3530799e1c4f5, type: 3}
   - {fileID: 21300000, guid: 50b2cb67d1cfb3f488173915ee7185e5, type: 3}
   - {fileID: 21300000, guid: 276870770cad95e4583fd7d81613ee9f, type: 3}
@@ -290,6 +290,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3c18a4f925608f84d880b985cd5da522, type: 3}
   - {fileID: 21300000, guid: c713a6f9cc2658c44a28ecdd2386b24f, type: 3}
   - {fileID: 21300000, guid: c54729f95e0d0e74a8d609b0df98161a, type: 3}
+  - {fileID: 21300000, guid: f8010af9aadf2d549a42206416ba9af9, type: 3}
   - {fileID: 21300000, guid: b80e600ad3f763e4aa790a3a5097d816, type: 3}
   - {fileID: 21300000, guid: c66bf41aede20094d9e61d7f323df027, type: 3}
   - {fileID: 21300000, guid: b02b891a0803fcf409c82c96c217edc3, type: 3}
@@ -371,7 +372,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 153f4dfcc2e11164e9a33cd5a1948247, type: 3}
   - {fileID: 21300000, guid: c1a6e50d0ccdd2043bbe00862f05a7c2, type: 3}
   - {fileID: 21300000, guid: 0641f60d82c09214a839f811d91adc45, type: 3}
-  - {fileID: 21300000, guid: 14bda21dc28ea8c40af432eceaa24678, type: 3}
   - {fileID: 21300000, guid: 9e6ac31dc22c6c74c87fa0351f9a63c3, type: 3}
   - {fileID: 21300000, guid: 62cc391ddf5e0c54b90366603efc2e32, type: 3}
   - {fileID: 21300000, guid: 4e72ca1dca662654c8f2748b29510203, type: 3}
@@ -423,6 +423,7 @@ SpriteAtlas:
   - {fileID: 21300010, guid: bce4764debb97f74394681b55ea60dea, type: 3}
   - {fileID: 21300012, guid: bce4764debb97f74394681b55ea60dea, type: 3}
   - {fileID: 21300014, guid: bce4764debb97f74394681b55ea60dea, type: 3}
+  - {fileID: 21300000, guid: 18c0cd4d4155c0146a09c12bc894defa, type: 3}
   - {fileID: 21300000, guid: b4991e5d6e188ea44ba37285820895a6, type: 3}
   - {fileID: 21300000, guid: e4aab77d4e88aae4fbf8e06047736d98, type: 3}
   - {fileID: 21300000, guid: dbe0987dc8cc34441938f371b77893c1, type: 3}
@@ -433,7 +434,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 55eb64cda3f15264a9b3f9926d62a282, type: 3}
   - {fileID: 21300000, guid: e88e58cdffc9ec245a4a6a807c09d399, type: 3}
   - {fileID: 21300000, guid: 08b2bfcd8eaec3a40ad63c6c2b861d07, type: 3}
-  - {fileID: 21300000, guid: 79b0a2dd578c30c478ccd2d9e448df5f, type: 3}
   - {fileID: 21300000, guid: 7d7350edb1c09ef44bd106a428ec75d7, type: 3}
   - {fileID: 21300000, guid: b6ec0ced18c5c7b42ae22c64aba6a44b, type: 3}
   - {fileID: 21300000, guid: 32a0e1fd144eef044920541fc97c9785, type: 3}
@@ -442,7 +442,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: aa3b632e938f5e046bb0948ebd754783, type: 3}
   - {fileID: 21300000, guid: 08a24b3e63f9bd346840c902a738d56b, type: 3}
   - {fileID: 21300000, guid: 0b0d5c3e24b6ea144b0993ddee8a432a, type: 3}
-  - {fileID: 21300000, guid: 618f764eae8362f48ac1e167dafd2256, type: 3}
   - {fileID: 21300000, guid: 32f5284e780ab35459035b92f39b3f9e, type: 3}
   - {fileID: 21300000, guid: 4cbf394e3257b5245a7d29d972cd7313, type: 3}
   - {fileID: 21300000, guid: 6c12e94effe2ef2459ea2f122f107c62, type: 3}
@@ -493,6 +492,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2764e6af55896cd47b3df12d138bb2cf, type: 3}
   - {fileID: 21300000, guid: dfcdc9affebb42f40b589a0b2040aa2e, type: 3}
   - {fileID: 21300000, guid: 060b44cf8c42d2a42b0d4e51b5b11b2f, type: 3}
+  - {fileID: 21300000, guid: 131ae7cf580ae6241a9fd61f8061e28d, type: 3}
   - {fileID: 21300000, guid: 26ca39cf2c4aefc45882e0028f698aa1, type: 3}
   - {fileID: 21300000, guid: 5cc90bcf42fd4974abaae59743b659cd, type: 3}
   - {fileID: 21300000, guid: a47bd4df720d07043b0db5b9058df34c, type: 3}
@@ -523,6 +523,7 @@ SpriteAtlas:
   - button_speed3_on
   - minion_icon_defender
   - scroll_button_left_off
+  - button_invade_clicked
   - button_arrow2_right_default
   - faction_ui_bottom_cover_container
   - button_speed1_on
@@ -691,7 +692,6 @@ SpriteAtlas:
   - transparent_bg
   - button_speed2_off
   - button1_invalid
-  - structures_ui_reference
   - share_intel
   - button_back_clicked
   - event_active_button_enabled
@@ -763,6 +763,7 @@ SpriteAtlas:
   - assign_button_clicked
   - ge_icon-08
   - button_action_clicked
+  - button_invade_default
   - tab_items_hover
   - minion_tab_items_active
   - magus_s
@@ -844,7 +845,6 @@ SpriteAtlas:
   - tab_traits_default
   - WhiteCircle
   - ge_icon-25
-  - Layout
   - traveller_clicked
   - interaction_tab_unselected
   - location_ui_visitors_icon
@@ -896,6 +896,7 @@ SpriteAtlas:
   - Loading_5
   - Loading_6
   - Loading_7
+  - button_invade_disabled
   - button_arrow2_left_disabled
   - start_game_container
   - share_intel_container
@@ -906,7 +907,6 @@ SpriteAtlas:
   - tab_status_hover
   - button_reroll_clicked
   - scroll_button_left_invalid
-  - structures_ui_reference_characters
   - ge_cont-03B
   - button_action_disabled
   - spell_slot_hover
@@ -915,7 +915,6 @@ SpriteAtlas:
   - pause_button_disabled
   - button_interfere_hover
   - pause_button_default
-  - demonic_structure_ref
   - hourglass
   - nameplate_default
   - location_ui_residents_icon
@@ -966,6 +965,7 @@ SpriteAtlas:
   - scroll_button_right_on
   - ge_icon-19
   - button_extract_default
+  - button_invade_hover
   - 1x_button_disabled
   - widget_day_counter
   - orelia

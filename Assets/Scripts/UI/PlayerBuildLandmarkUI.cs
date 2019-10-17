@@ -15,6 +15,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
     #region General
     public void ShowPlayerBuildLandmarkUI(HexTile tile) {
         currentTile = tile;
+        UpdateBuildButton();
         UpdatePlayerBuildLandmarkUI();
         gameObject.SetActive(true);
     }
@@ -61,8 +62,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
     }
     private void UpdateBuildButton() {
         buildProgress.gameObject.SetActive(false);
-        buildBtn.interactable = currentTile.region.assignedMinion != null && currentTile.region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE 
-            && currentTile.region.demonicBuildingData.landmarkType == LANDMARK_TYPE.NONE && !currentTile.region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature);
+        buildBtn.interactable = currentTile.region.demonicBuildingData.landmarkType == LANDMARK_TYPE.NONE && !currentTile.region.HasFeature(RegionFeatureDB.Hallowed_Ground_Feature);
         if (!buildBtn.interactable) {
             if(currentTile.region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
                 buildProgress.gameObject.SetActive(true);
@@ -71,7 +71,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         }
     }
     public void UpdatePlayerBuildLandmarkUI() {
-        if(currentTile.region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE && buildProgress.gameObject.activeSelf) {
+        if(currentTile.region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
             buildProgress.fillAmount = currentTile.region.demonicBuildingData.currentDuration / (float)currentTile.region.demonicBuildingData.buildDuration;
         }
     }

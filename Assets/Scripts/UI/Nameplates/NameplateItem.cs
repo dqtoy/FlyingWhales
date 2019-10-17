@@ -172,7 +172,7 @@ public class NameplateItem<T> : PooledObject {
             group.RegisterToggle(toggle);
             if (!group.allowSwitchOff && !group.AnyTogglesOn()) {
                 toggle.isOn = true; //if this toggle is set to a group that does not allow all toggles to be switched off, and currently all toggles in the group are switched off, then turn this toggle on.
-                toggle.onValueChanged.Invoke(toggle.isOn);
+                //toggle.onValueChanged.Invoke(toggle.isOn);
             }
         }
         
