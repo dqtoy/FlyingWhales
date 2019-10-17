@@ -8,6 +8,7 @@ public class DangerousFeature : RegionFeature {
         name = "Dangerous";
         description = "This place is rumored to be extremely dangerous. It poses a moderate risk to invading minions.";
         type = REGION_FEATURE_TYPE.ACTIVE;
+        isRemovedOnActivation = true;
     }
 
     #region Override

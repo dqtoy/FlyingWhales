@@ -52,12 +52,41 @@ public class Sing : GoapAction {
         if(actor.GetNormalTrait("Music Lover") != null) {
             happinessValue = 1200;
         }
+        currentState.SetIntelReaction(SingSuccessIntelReaction);
     }
     private void PerTickSingSuccess() {
         actor.AdjustHappiness(happinessValue);
     }
     private void AfterSingSuccess() {
         actor.AdjustDoNotGetLonely(-1);
+    }
+    #endregion
+
+    #region Intel Reactions
+    private List<string> SingSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
+        List<string> reactions = new List<string>();
+
+        if (status == SHARE_INTEL_STATUS.WITNESSED && recipient.GetNormalTrait("Music Hater") != null) {
+            recipient.AddTrait("Annoyed");
+            if (recipient.HasRelationshipOfTypeWith(actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
+                if (recipient.CreateBreakupJob(actor) != null) {
+                    Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "break_up");
+                    log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                    log.AddLogToInvolvedObjects();
+                    PlayerManager.Instance.player.ShowNotificationFrom(recipient, log);
+                }
+            } else if (!recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) {
+                //Otherwise, if the Actor does not yet consider the Target an Enemy, relationship degradation will occur, log:
+                Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "degradation");
+                log.AddToFillers(recipient, recipient.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                log.AddLogToInvolvedObjects();
+                PlayerManager.Instance.player.ShowNotificationFrom(recipient, log);
+                CharacterManager.Instance.RelationshipDegradation(actor, recipient);
+            }
+        }
+        return reactions;
     }
     #endregion
 }

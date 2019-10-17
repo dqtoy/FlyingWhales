@@ -8,6 +8,7 @@ public class FortifiedFeature : RegionFeature {
         name = "Fortified";
         description = "This region is heavily defended. It poses a moderate risk to invading minions.";
         type = REGION_FEATURE_TYPE.ACTIVE;
+        isRemovedOnActivation = true;
     }
 
     #region Override

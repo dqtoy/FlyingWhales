@@ -5306,7 +5306,12 @@ public class Character : ILeader, IPointOfInterest {
 
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(this);
 
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(newMinion, true));
+        if (PlayerManager.Instance.player.minions.Count < Player.MAX_MINIONS) {
+            PlayerManager.Instance.player.AddMinion(newMinion);
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", null);
+        } else {
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", () => PlayerManager.Instance.player.AddMinion(newMinion, true));
+        }
     }
     #endregion
 

@@ -881,6 +881,9 @@ public class Player : ILeader {
             PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), summon, ReplaceSummon, RejectSummon);
         }
     }
+    public bool HasSpaceForNewSummon() {
+        return GetTotalSummonsCount() < maxSummonSlots; //if the total summons count is less than the summon slots
+    }
     private void ReplaceSummon(object summonToReplace, object summonToAdd) {
         Summon replace = summonToReplace as Summon;
         Summon add = summonToAdd as Summon;
@@ -1111,6 +1114,9 @@ public class Player : ILeader {
             Debug.LogWarning("Max artifacts has been reached!");
             PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllArtifacts(), artifact, ReplaceArtifact, RejectArtifact);
         }
+    }
+    public bool HasSpaceForNewArtifact() {
+        return GetTotalArtifactCount() < maxArtifactSlots;
     }
     private void ReplaceArtifact(object objToReplace, object objToAdd) {
         Artifact replace = objToReplace as Artifact;

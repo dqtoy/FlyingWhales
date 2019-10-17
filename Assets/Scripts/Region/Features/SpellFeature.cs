@@ -16,7 +16,13 @@ public class SpellFeature : RegionFeature {
         base.Activate(region);
         INTERVENTION_ABILITY[] spells = PlayerManager.Instance.allInterventionAbilities;
         PlayerJobAction newAbility = PlayerManager.Instance.CreateNewInterventionAbility(spells[Random.Range(0, spells.Length)]);
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Spell: " + newAbility.name, () => PlayerManager.Instance.player.GainNewInterventionAbility(newAbility));
+        if (PlayerManager.Instance.player.HasEmptyInterventionSlot()) {
+            PlayerManager.Instance.player.GainNewInterventionAbility(newAbility);
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Spell: " + newAbility.name, null);
+        } else {
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Spell: " + newAbility.name, () => PlayerManager.Instance.player.GainNewInterventionAbility(newAbility));
+        }
+        
     }
     #endregion
 }
