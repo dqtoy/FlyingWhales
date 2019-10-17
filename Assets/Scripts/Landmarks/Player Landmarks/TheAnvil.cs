@@ -106,6 +106,9 @@ public class TheAnvil : BaseLandmark {
     public override void DestroyLandmark() {
         base.DestroyLandmark();
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
+        if (!string.IsNullOrEmpty(upgradeIdentifier)) {
+            TimerHubUI.Instance.RemoveItem("Research " + upgradeIdentifier);
+        }
     }
 
     #region Static

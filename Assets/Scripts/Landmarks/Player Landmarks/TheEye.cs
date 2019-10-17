@@ -38,6 +38,13 @@ public class TheEye : BaseLandmark {
         StartCooldown();
     }
 
+    #region Override
+    public override void DestroyLandmark() {
+        StopCooldown();
+        base.DestroyLandmark();
+    }
+    #endregion
+
     #region Cooldown
     private void StartCooldown() {
         currentCooldownTick = 0;

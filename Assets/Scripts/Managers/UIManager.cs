@@ -99,6 +99,17 @@ public class UIManager : MonoBehaviour {
     [Header("Combat")]
     public CombatUI combatUI;
 
+    [Space(10)]
+    [Header("Nameplate Prefabs")]
+    public GameObject characterNameplatePrefab;
+    public GameObject stringNameplatePrefab;
+    public GameObject unsummonedMinionNameplatePrefab;
+    public GameObject worldEventNameplatePrefab;
+
+    [Space(10)]
+    [Header("Dual Object Picker")]
+    public DualObjectPicker dualObjectPicker;
+
     public bool isShowingAreaTooltip { get; private set; } //is the tooltip for area double clicks showing?
     private UIMenu lastOpenedMenu = null;
     private List<object> _uiMenuHistory;
@@ -926,14 +937,14 @@ public class UIManager : MonoBehaviour {
     #region Hextile Info
     public bool ShowHextileInfo(HexTile hexTile) {
         if (hexTile.region != null && hexTile == hexTile.region.coreTile) {
-            if (hexTile.areaOfTile != null && hexTile.areaOfTile.areaType.IsSettlementType()) {
-                //if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
-                //    portalPopup.SetActive(true);
-                //    return true;
-                //}
-                ShowAreaInfo(hexTile);
-                return true;
-            } else {
+            //if (hexTile.areaOfTile != null && hexTile.areaOfTile.areaType.IsSettlementType()) {
+            //    //if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
+            //    //    portalPopup.SetActive(true);
+            //    //    return true;
+            //    //}
+            //    ShowAreaInfo(hexTile);
+            //    return true;
+            //} else {
                 //This is an exception in showing area info ui
                 //Usually, area info ui must only be shown if the tile's region has an area
                 //But for demonic landmarks, even if the region has no area, area info ui will still be shown
@@ -946,7 +957,7 @@ public class UIManager : MonoBehaviour {
                     ShowRegionInfo(hexTile.region);
                     return true;
                 //}
-            }
+            //}
         }
         return false;
     }
@@ -1469,6 +1480,81 @@ public class UIManager : MonoBehaviour {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(importantNotifPrefab.name, Vector3.zero, Quaternion.identity, importantNotifScrollView.content);
         ImportantNotificationItem item = go.GetComponent<ImportantNotificationItem>();
         item.Initialize(date, message, onClickAction);
+    }
+    #endregion
+
+    #region Minion Card Info
+    [Space(10)]
+    [Header("Minion Card Info")]
+    [SerializeField] private MinionCard minionCardTooltip;
+    [SerializeField] private RectTransform minionCardRT;
+    public void ShowMinionCardTooltip(Minion minion) {
+        if (minionCardTooltip.minion != minion) {
+            minionCardTooltip.SetMinion(minion);
+        }
+        if (!minionCardTooltip.gameObject.activeSelf) {
+            minionCardTooltip.gameObject.SetActive(true);
+        }
+        PositionMinionCardTooltip(Input.mousePosition);
+    }
+    public void ShowMinionCardTooltip(UnsummonedMinionData minion) {
+        minionCardTooltip.SetMinion(minion);
+        PositionMinionCardTooltip(Input.mousePosition);
+        minionCardTooltip.gameObject.SetActive(true);
+    }
+    public void HideMinionCardTooltip() {
+        minionCardTooltip.gameObject.SetActive(false);
+    }
+    private void PositionMinionCardTooltip(Vector3 screenPos) {
+        var v3 = screenPos;
+
+        minionCardRT.pivot = new Vector2(1f, 1f);
+
+        if (CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Cross || CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Check) {
+            v3.x += 100f;
+            v3.y -= 32f;
+        } else {
+            v3.x += 25f;
+            v3.y -= 25f;
+        }
+
+        minionCardRT.transform.position = v3;
+
+        //Vector3[] corners = new Vector3[4]; //bottom-left, top-left, top-right, bottom-right
+        //List<int> cornersOutside = new List<int>();
+        //boundsRT.GetWorldCorners(corners);
+        //for (int i = 0; i < 4; i++) {
+        //    // Backtransform to parent space
+        //    Vector3 localSpacePoint = mainRT.InverseTransformPoint(corners[i]);
+        //    // If parent (canvas) does not contain checked items any point
+        //    if (!mainRT.rect.Contains(localSpacePoint)) {
+        //        cornersOutside.Add(i);
+        //    }
+        //}
+
+        //if (cornersOutside.Count != 0) {
+        //    string log = "Corners outside are: ";
+        //    for (int i = 0; i < cornersOutside.Count; i++) {
+        //        log += cornersOutside[i].ToString() + ", ";
+        //    }
+        //    //Debug.Log(log);
+        //    if (cornersOutside.Contains(2) && cornersOutside.Contains(3)) {
+        //        if (cornersOutside.Contains(0)) {
+        //            //bottom side and right side are outside, move anchor to bottom right
+        //            rtToReposition.pivot = new Vector2(1f, 0f);
+        //            smallInfoBGParentLG.childAlignment = TextAnchor.LowerRight;
+        //        } else {
+        //            //right side is outside, move anchor to top right side
+        //            rtToReposition.pivot = new Vector2(1f, 1f);
+        //            smallInfoBGParentLG.childAlignment = TextAnchor.UpperRight;
+        //        }
+        //    } else if (cornersOutside.Contains(0) && cornersOutside.Contains(3)) {
+        //        //bottom side is outside, move anchor to bottom left
+        //        rtToReposition.pivot = new Vector2(0f, 0f);
+        //        smallInfoBGParentLG.childAlignment = TextAnchor.LowerLeft;
+        //    }
+        //    rtToReposition.localPosition = Vector3.zero;
+        //}
     }
     #endregion
 }

@@ -18,7 +18,6 @@ public class MinionCard : MonoBehaviour {
     //Minion Data
     public UnsummonedMinionData minionData { get; private set; }
     //public List<INTERVENTION_ABILITY> abilitiesToResearch { get; private set; }
-    //TODO: trait 1 and 2
 
     public void SetMinion(UnsummonedMinionData minionData) {
         this.minionData = minionData;
@@ -105,6 +104,9 @@ public class MinionCard : MonoBehaviour {
             } else {
                 researchGO.SetActive(false);
             }
+
+            //tint
+            portraitImg.material.SetVector("_HSVAAdjust", new Vector4(minion.character.demonColor / 360f, 0f, 0f, 0f));
         }
     }
 
