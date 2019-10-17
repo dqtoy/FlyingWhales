@@ -66,12 +66,11 @@ public class DualObjectPicker : MonoBehaviour {
         Action<T> column1ItemHoverEnterAction, Action<U> column2ItemHoverEnterAction,
         Action<T> column1ItemHoverExitAction, Action<U> column2ItemHoverExitAction,
         Action<object, object> onClickConfirmAction,
-        string confirmBtnStr, bool needs2Objects = true) {
+        string confirmBtnStr, bool needs2Objects = true, 
+        string column1Identifier = "", string column2Identifier = "") {
 
-        if (!GameManager.Instance.isPaused) {
-            UIManager.Instance.Pause();
-            UIManager.Instance.SetSpeedTogglesState(false);
-        }
+        UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
 
         //destroy existing items
         Utilities.DestroyChildren(column1ScrollView.content);
@@ -99,10 +98,10 @@ public class DualObjectPicker : MonoBehaviour {
         }
 
         //populate column 1
-        PopulateColumn(column1Items, column1ValidityChecker, column1ItemHoverEnterAction, column1ItemHoverExitAction, column1ScrollView, column1ToggleGroup, column1Title);
+        PopulateColumn(column1Items, column1ValidityChecker, column1ItemHoverEnterAction, column1ItemHoverExitAction, column1ScrollView, column1ToggleGroup, column1Title, column1Identifier);
 
         //populate column 2
-        PopulateColumn(column2Items, column2ValidityChecker, column2ItemHoverEnterAction, column2ItemHoverExitAction, column2ScrollView, column2ToggleGroup, column2Title);
+        PopulateColumn(column2Items, column2ValidityChecker, column2ItemHoverEnterAction, column2ItemHoverExitAction, column2ScrollView, column2ToggleGroup, column2Title, column2Identifier);
 
         this.gameObject.SetActive(true);
     }
@@ -121,10 +120,8 @@ public class DualObjectPicker : MonoBehaviour {
         Action<object, object> onClickConfirmAction,
         string confirmBtnStr, bool needs2Objects = true) {
 
-        if (!GameManager.Instance.isPaused) {
-            UIManager.Instance.Pause();
-            UIManager.Instance.SetSpeedTogglesState(false);
-        }
+        UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
 
         //destroy existing items
         Utilities.DestroyChildren(column1ScrollView.content);
@@ -168,7 +165,7 @@ public class DualObjectPicker : MonoBehaviour {
         Hide();
     }
 
-    public void PopulateColumn<T>(List<T> items, Func<T, bool> validityChecker, Action<T> hoverEnterAction, Action<T> hoverExitAction, ScrollRect column, ToggleGroup toggleGroup, string columnTitle) {
+    public void PopulateColumn<T>(List<T> items, Func<T, bool> validityChecker, Action<T> hoverEnterAction, Action<T> hoverExitAction, ScrollRect column, ToggleGroup toggleGroup, string columnTitle, string identifier = "") {
         Utilities.DestroyChildren(column.content);
         List<T> validItems;
         List<T> invalidItems;
@@ -186,6 +183,10 @@ public class DualObjectPicker : MonoBehaviour {
             ShowStringItems(validItems.Cast<string>().ToList(), invalidItems.Cast<string>().ToList(), hoverEnterAction, hoverExitAction, column, toggleGroup);
         } else if (typeof(T) == typeof(UnsummonedMinionData)) {
             ShowUnsummonedMinionItems(validItems.Cast<UnsummonedMinionData>().ToList(), invalidItems.Cast<UnsummonedMinionData>().ToList(), hoverEnterAction, hoverExitAction, column, toggleGroup);
+        } else if (typeof(T) == typeof(Region)) {
+            if (identifier == "WorldEvent") {
+                ShowWorldEventItems(validItems.Cast<Region>().ToList(), invalidItems.Cast<Region>().ToList(), hoverEnterAction, hoverExitAction, column, toggleGroup);
+            }
         }
     }
 
@@ -337,6 +338,55 @@ public class DualObjectPicker : MonoBehaviour {
             characterItem.SetInteractableState(false);
         }
     }
+    private void ShowWorldEventItems<T>(List<Region> validItems, List<Region> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, ScrollRect column, ToggleGroup toggleGroup) {
+        Action<Region> convertedHoverAction = null;
+        if (onHoverItemAction != null) {
+            convertedHoverAction = ConvertToRegion(onHoverItemAction);
+        }
+        Action<Region> convertedHoverExitAction = null;
+        if (onHoverExitItemAction != null) {
+            convertedHoverExitAction = ConvertToRegion(onHoverExitItemAction);
+        }
+        for (int i = 0; i < validItems.Count; i++) {
+            Region region = validItems[i];
+            GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.worldEventNameplatePrefab.name, column.content);
+            WorldEventNameplate item = characterItemGO.GetComponent<WorldEventNameplate>();
+            item.SetObject(region);
+            item.ClearAllOnClickActions();
+
+            item.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                item.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            item.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                item.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            item.SetAsToggle();
+            item.AddOnToggleAction((character, isOn) => OnToggleItem(character, isOn, column));
+            item.SetToggleGroup(toggleGroup);
+            item.SetInteractableState(true);
+        }
+        for (int i = 0; i < invalidItems.Count; i++) {
+            Region region = invalidItems[i];
+            GameObject characterItemGO = UIManager.Instance.InstantiateUIObject(UIManager.Instance.worldEventNameplatePrefab.name, column.content);
+            WorldEventNameplate characterItem = characterItemGO.GetComponent<WorldEventNameplate>();
+            characterItem.SetObject(region);
+            characterItem.ClearAllOnClickActions();
+
+            characterItem.ClearAllHoverEnterActions();
+            if (convertedHoverAction != null) {
+                characterItem.AddHoverEnterAction(convertedHoverAction.Invoke);
+            }
+
+            characterItem.ClearAllHoverExitActions();
+            if (convertedHoverExitAction != null) {
+                characterItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            characterItem.SetInteractableState(false);
+        }
+    }
     #endregion
 
     #region Utlities
@@ -396,6 +446,10 @@ public class DualObjectPicker : MonoBehaviour {
     public Action<UnsummonedMinionData> ConvertToUnsummonedMinion<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
         else return new Action<UnsummonedMinionData>(o => myActionT((T)(object)o));
+    }
+    public Action<Region> ConvertToRegion<T>(Action<T> myActionT) {
+        if (myActionT == null) return null;
+        else return new Action<Region>(o => myActionT((T)(object)o));
     }
     #endregion
 }

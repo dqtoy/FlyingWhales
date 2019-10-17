@@ -61,7 +61,6 @@ public class RegionInfoUI : UIMenu {
         //Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FINISHED_NORMAL, OnWorldEventFinishedNormally);
         //Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FAILED, OnWorldEventFailed);
         Messenger.AddListener<Region>(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, ShowAppropriateContentOnSignal);
-        theEyeUI.Initialize();
     }
 
     public override void OpenMenu() {
@@ -260,7 +259,7 @@ public class RegionInfoUI : UIMenu {
             Utilities.DestroyChildren(worldEventsScrollView.content);
         }
         if (activeRegion.activeEvent != null) {
-            GenerateWorldEventNameplate(activeRegion.activeEvent);
+            GenerateWorldEventNameplate(activeRegion);
         }
         //if (activeRegion.activeEvent != null) {
         //    eventDesctiptionLbl.text = activeRegion.activeEvent.name + "\n" + activeRegion.activeEvent.description;
@@ -273,7 +272,7 @@ public class RegionInfoUI : UIMenu {
     }
     private void OnWorldEventSpawned(Region region, WorldEvent we) {
         if (isShowing && activeRegion == region) {
-            GenerateWorldEventNameplate(we);
+            GenerateWorldEventNameplate(region);
         }
     }
     private void OnWorldEventDespawned(Region region, WorldEvent we) {
@@ -281,10 +280,10 @@ public class RegionInfoUI : UIMenu {
             RemoveWorldEventNameplate(we);
         }
     }
-    private void GenerateWorldEventNameplate(WorldEvent worldEvent) {
+    private void GenerateWorldEventNameplate(Region region) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(worldEventNameplatePrefab.name, Vector3.zero, Quaternion.identity, worldEventsScrollView.content);
         WorldEventNameplate item = go.GetComponent<WorldEventNameplate>();
-        item.Initialize(worldEvent);
+        item.SetObject(region);
         activeWorldEventNameplates.Add(item);
     }
     private void RemoveWorldEventNameplate(WorldEvent worldEvent) {

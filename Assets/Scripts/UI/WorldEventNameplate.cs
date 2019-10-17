@@ -5,63 +5,35 @@ using UnityEngine.UI;
 using TMPro;
 using EZObjectPools;
 
-public class WorldEventNameplate : PooledObject {
+public class WorldEventNameplate : NameplateItem<Region> {
 
     public WorldEvent worldEvent { get; private set; }
     public Region region { get; private set; }
 
-    public TextMeshProUGUI eventNameLbl;
-    public Image eventIconImg;
-    public Button mainBtn;
-    public GameObject coverGO;
+    //public TextMeshProUGUI eventNameLbl;
+    //public Image eventIconImg;
+    //public Button mainBtn;
+    //public GameObject coverGO;
 
-    public System.Action<Region, WorldEvent> onClickAction { get; private set; }
+    //public System.Action<Region, WorldEvent> onClickAction { get; private set; }
 
-    public void Initialize(WorldEvent e) {
-        worldEvent = e;
-        UpdateInfo();
+    #region Overrides
+    public override void SetObject(Region r) {
+        base.SetObject(r);
+        region = r;
+        worldEvent = r.activeEvent;
+        mainLbl.text = worldEvent.name;
+        subLbl.text = string.Empty;
     }
-    public void Initialize(Region region, WorldEvent e) {
-        worldEvent = e;
-        this.region = region;
-        UpdateInfo();
-    }
-
-    private void UpdateInfo() {
-        if(worldEvent == null) { return; }
-        eventNameLbl.text = worldEvent.name;
-        //TODO: eventIconImg
-    }
-
-    public void SetClickAction(System.Action<Region, WorldEvent> onClickAction) {
-        this.onClickAction = onClickAction;
-    }
-    public void SetMainButtonState(bool state) {
-        mainBtn.interactable = state;
-        coverGO.SetActive(!state);
-    }
-
-    #region Object Pool
-    public override void Reset() {
-        base.Reset();
-        worldEvent = null;
-        region = null;
-    }
-    #endregion
-
-    #region Mouse Actions
-    public void OnClickThis() {
-        if (onClickAction != null) {
-            onClickAction(region, worldEvent);
-        }
-    }
-    public void OnHover() {
-        if(worldEvent == null) { return; }
+    public override void OnHoverEnter() {
+        if (worldEvent == null) { return; }
         UIManager.Instance.ShowSmallInfo(worldEvent.description);
+        base.OnHoverEnter();
     }
-    public void OnHoverOut() {
+    public override void OnHoverExit() {
         if (worldEvent == null) { return; }
         UIManager.Instance.HideSmallInfo();
+        base.OnHoverExit();
     }
     #endregion
 }
