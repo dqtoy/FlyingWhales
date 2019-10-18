@@ -7,7 +7,7 @@ public class Cannibal : Trait {
     public Cannibal() {
         name = "Cannibal";
         description = "This character eats his own kind.";
-        type = TRAIT_TYPE.SPECIAL;
+        type = TRAIT_TYPE.FLAW;
         effect = TRAIT_EFFECT.NEGATIVE;
         trigger = TRAIT_TRIGGER.OUTSIDE_COMBAT;
         associatedInteraction = INTERACTION_TYPE.NONE;
