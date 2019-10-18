@@ -5,7 +5,7 @@ using UnityEngine;
 public class GoapPlanJob : JobQueueItem {
     public GoapEffect targetEffect { get; protected set; }
     public GoapPlan assignedPlan { get; protected set; }
-    public GoapPlan targetPlan { get; protected set; }
+    //public GoapPlan targetPlan { get; protected set; }
     public IPointOfInterest targetPOI { get; protected set; }
     //public bool willImmediatelyBeDoneAfterReceivingPlan { get; protected set; }
 
@@ -104,13 +104,13 @@ public class GoapPlanJob : JobQueueItem {
             }
         }
     }
-    public GoapPlanJob(JOB_TYPE jobType, GoapPlan targetPlan, IPointOfInterest targetPOI) : base(jobType) {
-        this.targetPOI = targetPOI;
-        this.targetPlan = targetPlan;
-        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-        allowDeadTargets = false;
-        isNotSavable = true;
-    }
+    //public GoapPlanJob(JOB_TYPE jobType, GoapPlan targetPlan, IPointOfInterest targetPOI) : base(jobType) {
+    //    this.targetPOI = targetPOI;
+    //    this.targetPlan = targetPlan;
+    //    forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+    //    allowDeadTargets = false;
+    //    isNotSavable = true;
+    //}
     public GoapPlanJob(SaveDataGoapPlanJob data) : base(data) {
         targetEffect = data.targetEffect.Load();
         targetInteractionType = data.targetInteractionType;
@@ -370,4 +370,18 @@ public class SaveDataGoapPlanJob : SaveDataJobQueueItem {
     //public override JobQueueItem Load() {
     //    return base.Load();
     //}
+}
+
+public interface IGoapJobPremadeNodeCreator {
+    IPointOfInterest targetPOI { get; set; }
+}
+
+public struct ActionJobPremadeNodeCreator : IGoapJobPremadeNodeCreator {
+    public INTERACTION_TYPE actionType;
+    public IPointOfInterest targetPOI { get; set; }
+}
+
+public struct StateJobPremadeNodeCreator : IGoapJobPremadeNodeCreator {
+    public CHARACTER_STATE stateType;
+    public IPointOfInterest targetPOI { get; set; }
 }
