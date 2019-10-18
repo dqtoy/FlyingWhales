@@ -27,7 +27,7 @@ public class UnsummonedMinionNameplateItem : NameplateItem<UnsummonedMinionData>
     }
     public override void OnHoverExit() {
         hoverPortrait.SetActive(false);
-         UIManager.Instance.HideMinionCardTooltip();
+        UIManager.Instance.HideMinionCardTooltip();
         base.OnHoverExit();
     }
     #endregion
