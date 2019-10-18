@@ -10,6 +10,7 @@ public class FactionManager : MonoBehaviour {
 
     public List<Faction> allFactions = new List<Faction>();
     public Faction neutralFaction { get; private set; }
+    public Faction disguisedFaction { get; private set; }
 
     private Faction _zombieFaction;
     
@@ -81,8 +82,22 @@ public class FactionManager : MonoBehaviour {
         //CreateFavorsForFaction(newFaction);
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
+    public void CreateDisguisedFaction() {
+        Faction newFaction = new Faction();
+        newFaction.SetName("Disguised");
+        newFaction.SetFactionActiveState(false);
+        newFaction.SetEmblem(GetFactionEmblem(4));
+        allFactions.Add(newFaction);
+        SetDisguisedFaction(newFaction);
+        CreateRelationshipsForFaction(newFaction);
+        //CreateFavorsForFaction(newFaction);
+        Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
+    }
     public void SetNeutralFaction(Faction faction) {
         neutralFaction = faction;
+    }
+    public void SetDisguisedFaction(Faction faction) {
+        disguisedFaction = faction;
     }
     //public void RandomizeStartingFactions(WorldSaveData data) {
     //    string log = "Starting Factions are: ";
@@ -121,7 +136,7 @@ public class FactionManager : MonoBehaviour {
 
     //    //Debug.Log(log);
 
-       
+
 
     //    ////First random faction
     //    //int index1 = UnityEngine.Random.Range(0, factions.Count);
@@ -519,8 +534,10 @@ public class FactionManager : MonoBehaviour {
         faction1.AddNewRelationship(faction2, newRel);
         faction2.AddNewRelationship(faction1, newRel);
         if(faction1.isPlayerFaction || faction2.isPlayerFaction) {
-            faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.HOSTILE);
-            faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.HOSTILE);
+            if(faction1.name != "Disguised" && faction2.name != "Disguised") {
+                faction1.SetRelationshipFor(faction2, FACTION_RELATIONSHIP_STATUS.HOSTILE);
+                faction2.SetRelationshipFor(faction1, FACTION_RELATIONSHIP_STATUS.HOSTILE);
+            }
         }
         return newRel;
     }

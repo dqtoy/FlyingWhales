@@ -55,6 +55,7 @@ public class MapGenerator : MonoBehaviour {
         LandmarkManager.Instance.GenerateConnections(portal, settlement);
 
         FactionManager.Instance.CreateNeutralFaction();
+        FactionManager.Instance.CreateDisguisedFaction();
         //LandmarkManager.Instance.SetCascadingLevelsForAllCharacters(portal.tileLocation);
         //LandmarkManager.Instance.GenerateRegionFeatures();
         LandmarkManager.Instance.LoadAdditionalAreaData();
