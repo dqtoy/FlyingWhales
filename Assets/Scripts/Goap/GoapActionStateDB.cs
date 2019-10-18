@@ -524,6 +524,12 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Destroy Fail", status = InteractionManager.Goap_State_Fail, duration = 0 },
             new StateNameAndDuration(){ name = "Target Missing", status = InteractionManager.Goap_State_Fail, duration = 0 },
         } },
+        {INTERACTION_TYPE.SCREAM_FOR_HELP, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Scream Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
+        } },
+        {INTERACTION_TYPE.REACT_TO_SCREAM, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "React Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
     };
 }
 

@@ -741,6 +741,7 @@ public class Character : ILeader, IPointOfInterest {
         Messenger.AddListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
     }
     public virtual void UnsubscribeSignals() {
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnOtherCharacterDied);
@@ -759,6 +760,7 @@ public class Character : ILeader, IPointOfInterest {
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
+        Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
     }
     #endregion
 
@@ -1623,7 +1625,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     private bool CreateJobsOnEnterVisionWith(Character targetCharacter, bool bypassInvisibilityCheck = false) {
         string log = name + " saw " + targetCharacter.name + ", will try to create jobs on enter vision...";
-        if (!CanCharacterReact()) {
+        if (!CanCharacterReact(targetCharacter)) {
             log += "\nCharacter cannot react!";
             PrintLogIfActive(log);
             return true;
@@ -1678,7 +1680,7 @@ public class Character : ILeader, IPointOfInterest {
             return CreateJobsOnEnterVisionWith(targetPOI as Character, bypassInvisibilityCheck);
         }
         string log = name + " saw " + targetPOI.name + ", will try to create jobs on enter vision...";
-        if (!CanCharacterReact()) {
+        if (!CanCharacterReact(targetPOI)) {
             log += "\nCharacter cannot react!";
             PrintLogIfActive(log);
             return true;
@@ -1717,7 +1719,7 @@ public class Character : ILeader, IPointOfInterest {
     }
     public bool CreateJobsOnTargetGainTrait(IPointOfInterest targetPOI, Trait traitGained, bool bypassInvisibilityCheck = false) {
         string log = targetPOI.name + " gained trait " + traitGained.name + ", will try to create jobs based on it...";
-        if (!CanCharacterReact()) {
+        if (!CanCharacterReact(targetPOI)) {
             log += "\nCharacter cannot react!";
             PrintLogIfActive(log);
             return true;
@@ -2844,7 +2846,7 @@ public class Character : ILeader, IPointOfInterest {
             }
         }
     }
-    public bool CanCharacterReact() {
+    public bool CanCharacterReact(IPointOfInterest targetPOI = null) {
         if (this is Summon || minion != null) {
             //Cannot react if summon or minion
             return false;
@@ -2870,6 +2872,14 @@ public class Character : ILeader, IPointOfInterest {
         }
         if(HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
             return false;
+        }
+        if (targetPOI != null && targetPOI is Character) {
+            Character target = targetPOI as Character;
+            if (target.faction.IsHostileWith(faction)) {
+                //Cannot react if target charcter is from a hostile faction
+                //Only combat those characters that's why they cannot react to their traits, actions, etc.
+                return false;
+            }
         }
         return true;
     }
@@ -3591,7 +3601,7 @@ public class Character : ILeader, IPointOfInterest {
             return;
         }
         if (faction != witnessedEvent.actor.faction && //only check faction relationship if involved characters are of different factions
-            faction.GetRelationshipWith(witnessedEvent.actor.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+            faction.IsHostileWith(witnessedEvent.actor.faction)) {
             //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
             return;
         }
@@ -7433,6 +7443,7 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.DANCE);
         poiGoapActions.Add(INTERACTION_TYPE.SING);
         poiGoapActions.Add(INTERACTION_TYPE.GO_TO);
+        poiGoapActions.Add(INTERACTION_TYPE.SCREAM_FOR_HELP);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);
@@ -8329,6 +8340,59 @@ public class Character : ILeader, IPointOfInterest {
         if(currentSleepTicks <= 0) {
             ResetSleepTicks();
         }
+    }
+    private void HeardAScream(Character characterThatScreamed) {
+        if(doNotDisturb > 0) {
+            //Do not react to scream if character has disabler trait
+            return;
+        }
+        if(gridTileLocation != null && characterThatScreamed.gridTileLocation != null) {
+            float dist = gridTileLocation.GetDistanceTo(characterThatScreamed.gridTileLocation);
+            PrintLogIfActive(name + " distance to " + characterThatScreamed.name + " is " + dist);
+            if(dist > 5f) {
+                //Do not react to scream if character is too far
+                return;
+            }
+        }
+        if(jobQueue.HasJob(JOB_TYPE.REACT_TO_SCREAM, characterThatScreamed)) {
+            //Do not react if character will already react to a scream;
+            return;
+        }
+        if (!CanCharacterReact(characterThatScreamed)) {
+            return;
+        }
+        ReactToScream(characterThatScreamed);
+    }
+    private void ReactToScream(Character characterThatScreamed) {
+        //If you are wondering why the job is not just simply added to the job queue and let the job queue processing work if the job can override current job, is because
+        //in this situation, we want the job not to be added to the job queue if it cannot override the current job
+        //If we let the AddJobInQueue simply process the job, it will still be added regardless if it cannot override the current job, it means that it will just be pushed back in queue and will be done by the character when the time comes
+        //We don't want that because we want to have a spontaneous reaction from this character, so the only way that the character will react is if he can do it immediately
+
+        string log = GameManager.Instance.TodayLogString() + name + " heard the scream of " + characterThatScreamed.name + ", reacting...";
+
+        bool canReact = true;
+        int reactJobPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.REACT_TO_SCREAM);
+        if (stateComponent.currentState != null && stateComponent.currentState.job != null && stateComponent.currentState.job.priority <= reactJobPriority) {
+            canReact = false;
+        } else if (stateComponent.stateToDo != null && stateComponent.stateToDo.job != null && stateComponent.stateToDo.job.priority <= reactJobPriority) {
+            canReact = false;
+        } else if (currentAction != null && currentAction.parentPlan != null && currentAction.parentPlan.job != null && currentAction.parentPlan.job.priority <= reactJobPriority) {
+            canReact = false;
+        }
+        if (canReact) {
+            GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REACT_TO_SCREAM, INTERACTION_TYPE.GO_TO, characterThatScreamed);
+            if (CanCurrentJobBeOverriddenByJob(job)) {
+                jobQueue.AddJobInQueue(job, false);
+                jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, this);
+                log += "\n" + name + " will go to " + characterThatScreamed.name;
+            } else {
+                log += "\n" + name + " cannot react because there is still something important that he/she will do.";
+            }
+        } else {
+            log += "\n" + name + " cannot react because there is still something important that he/she will do.";
+        }
+        PrintLogIfActive(log);
     }
     #endregion
 

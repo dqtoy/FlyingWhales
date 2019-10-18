@@ -41,6 +41,7 @@ public class Restrained : Trait {
             isCriminal = _sourceCharacter.HasTraitOf(TRAIT_TYPE.CRIMINAL);
             isLeader = _sourceCharacter.role.roleType == CHARACTER_ROLE.LEADER;
             Messenger.AddListener(Signals.TICK_STARTED, CheckRestrainTrait);
+            Messenger.AddListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
             //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_restrained");
             //_sourceCharacter.RemoveTrait("Unconscious", removedBy: responsibleCharacter);
             //_sourceCharacter.CancelAllJobsAndPlans();
@@ -58,6 +59,7 @@ public class Restrained : Trait {
             character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.FEED);
             character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.JUDGEMENT);
             Messenger.RemoveListener(Signals.TICK_STARTED, CheckRestrainTrait);
+            Messenger.RemoveListener(Signals.HOUR_STARTED, CheckRestrainTraitPerHour);
             //_sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
             _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
 
@@ -145,6 +147,16 @@ public class Restrained : Trait {
                 MoveFeedJobToTopPriority();
             } else if (_sourceCharacter.isHungry) {
                 CreateFeedJob();
+            }
+        }
+    }
+    private void CheckRestrainTraitPerHour() {
+        if (!isPrisoner && _sourceCharacter.IsInOwnParty()) { //applies even if character is being Carried: so just remove the _sourceCharacter.IsInOwnParty(), right now it cannot happen while character is being carried
+            if(_sourceCharacter.currentAction == null && _sourceCharacter.stateComponent.currentState == null && _sourceCharacter.stateComponent.stateToDo == null
+                && UnityEngine.Random.Range(0, 100) < 75 && !_sourceCharacter.jobQueue.HasJob(JOB_TYPE.SCREAM)
+                && _sourceCharacter.GetNormalTrait("Unconscious", "Resting") == null) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, _sourceCharacter);
+                _sourceCharacter.jobQueue.AddJobInQueue(job);
             }
         }
     }

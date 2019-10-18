@@ -474,7 +474,7 @@ public class CharacterInfoUI : UIMenu {
                 string traitDescription = trait.description;
                 if (trait.canBeTriggered) {
                     traitDescription += "\n" + trait.GetRequirementDescription(activeCharacter) +
-                    "\n\n<b>Effect</b>: " + trait.GetTriggerFlawEffectDescription(activeCharacter);
+                    "\n\n<b>Effect</b>: " + trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect");
                 }
 
                 StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
@@ -509,19 +509,19 @@ public class CharacterInfoUI : UIMenu {
         UIManager.Instance.ShowSmallInfo(reason);
     }
     private void OnClickTriggerFlaw(Trait trait) {
-        trait.TriggerFlaw(activeCharacter);
-        normalTraitsLbl.raycastTarget = true;
-
-//        UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
-//    onClickYesAction: () => OnClickTriggerFlaw(trait),
-//    showCover: true, layer: 25, yesBtnText: "Trigger (" + trait.GetTriggerFlawManaCost(activeCharacter).ToString() + " Mana)",
-//    yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
-//    pauseAndResume: true,
-//    noBtnActive: false,
-//    yesBtnActive: trait.canBeTriggered,
-//    yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
-//    yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
-//);
+        string logKey = trait.TriggerFlaw(activeCharacter);
+        if (logKey != "flaw_effect") {
+            UIManager.Instance.ShowYesNoConfirmation(
+                trait.name,
+                trait.GetTriggerFlawEffectDescription(activeCharacter, logKey),
+                showCover: true,
+                layer: 25,
+                yesBtnText: "OK",
+                pauseAndResume: true,
+                noBtnActive: false
+            );
+        }
+        //normalTraitsLbl.raycastTarget = true;
     }
     #endregion
 

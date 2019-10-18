@@ -190,6 +190,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.DESTROY_FOOD:
             case JOB_TYPE.DESTROY_SUPPLY:
             case JOB_TYPE.SABOTAGE_FACTION:
+            case JOB_TYPE.SCREAM:
                 priority = 5;
                 break;
             case JOB_TYPE.TANTRUM:
@@ -251,6 +252,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.DESTROY_PROFANE_LANDMARK:
             case JOB_TYPE.PERFORM_HOLY_INCANTATION:
             case JOB_TYPE.PRAY_GODDESS_STATUE:
+            case JOB_TYPE.REACT_TO_SCREAM:
                 priority = 120;
                 break;
             case JOB_TYPE.BREAK_UP:

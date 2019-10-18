@@ -146,9 +146,9 @@ public class Trait {
             return 50; //great or good
         }
     }
-    public string GetTriggerFlawEffectDescription(Character character) {
-        if (LocalizationManager.Instance.HasLocalizedValue("Trait", this.GetType().ToString(), "flaw_effect")) {
-            Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), "flaw_effect");
+    public string GetTriggerFlawEffectDescription(Character character, string key) {
+        if (LocalizationManager.Instance.HasLocalizedValue("Trait", this.GetType().ToString(), key)) {
+            Log log = new Log(GameManager.Instance.Today(), "Trait", this.GetType().ToString(), key);
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             return Utilities.LogReplacer(log);
         }

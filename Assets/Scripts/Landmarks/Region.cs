@@ -621,7 +621,7 @@ public class Region {
     private bool CanCharacterBeAddedAsResidentBasedOnFaction(Character character) {
         if (owner != null && character.faction != null) {
             //If character's faction is hostile with region's ruling faction, character cannot be a resident
-            return !owner.HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS.HOSTILE, character.faction);
+            return !owner.IsHostileWith(character.faction);
         } else if (owner != null && character.faction == null) {
             //If character has no faction and region has faction, character cannot be a resident
             return false;

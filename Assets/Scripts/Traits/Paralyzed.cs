@@ -26,12 +26,14 @@ public class Paralyzed : Trait {
             character = addedTo as Character;
             character.CancelAllJobsAndPlans();
             Messenger.AddListener(Signals.TICK_STARTED, CheckParalyzedTrait);
+            Messenger.AddListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
             Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         }
     }
     public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
         if (character != null) {
             Messenger.RemoveListener(Signals.TICK_STARTED, CheckParalyzedTrait);
+            Messenger.RemoveListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
             Messenger.RemoveListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
         }
         base.OnRemoveTrait(sourceCharacter, removedBy);
@@ -113,6 +115,17 @@ public class Paralyzed : Trait {
         } else {
             if (!PlanTirednessRecovery()) {
                 PlanHappinessRecovery();
+            }
+        }
+    }
+    private void CheckParalyzedTraitPerHour() {
+        if (character.IsInOwnParty()) {
+            if (character.CanPlanGoap() && character.stateComponent.currentState == null && character.stateComponent.stateToDo == null
+                && (character.isStarving || character.isExhausted || character.isForlorn) 
+                && UnityEngine.Random.Range(0, 100) < 75 && !character.jobQueue.HasJob(JOB_TYPE.SCREAM)
+                && character.GetNormalTrait("Unconscious", "Resting") == null && !character.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {
+                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.SCREAM, INTERACTION_TYPE.SCREAM_FOR_HELP, character);
+                character.jobQueue.AddJobInQueue(job);
             }
         }
     }
