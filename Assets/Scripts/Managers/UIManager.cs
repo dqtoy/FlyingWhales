@@ -1258,6 +1258,8 @@ public class UIManager : MonoBehaviour {
     [SerializeField] private RectTransform playerNotificationParent;
     [SerializeField] private GameObject intelPrefab;
     [SerializeField] private GameObject defaultNotificationPrefab;
+    [SerializeField] private Button notifExpandButton;
+
     //public ScrollRect playerNotifScrollView;
     public GameObject playerNotifGO;
     public RectTransform playerNotificationScrollRectTransform;
@@ -1314,18 +1316,24 @@ public class UIManager : MonoBehaviour {
         //    (newNotif.gameObject.transform as RectTransform).SetAsLastSibling();
         //}
         activeNotifications.Add(newNotif);
-        if(activeNotifications.Count > maxPlayerNotif) {
+        if (!notifExpandButton.gameObject.activeSelf) {
+            notifExpandButton.gameObject.SetActive(true);
+        }
+        if (activeNotifications.Count > maxPlayerNotif) {
             activeNotifications[0].DeleteNotification();
         }
     }
     private void OnNotificationDestroyed(PlayerNotificationItem item) {
         activeNotifications.Remove(item);
+        if(activeNotifications.Count <= 0) {
+            notifExpandButton.gameObject.SetActive(false);
+        }
     }
     public void OnClickExpand() {
-        if(playerNotificationScrollRectTransform.sizeDelta.y == 1000f) {
+        if(playerNotificationScrollRectTransform.sizeDelta.y == 950f) {
             playerNotificationScrollRectTransform.sizeDelta = new Vector2(playerNotificationScrollRectTransform.sizeDelta.x, 194f);
         }else if (playerNotificationScrollRectTransform.sizeDelta.y == 194f) {
-            playerNotificationScrollRectTransform.sizeDelta = new Vector2(playerNotificationScrollRectTransform.sizeDelta.x, 1000f);
+            playerNotificationScrollRectTransform.sizeDelta = new Vector2(playerNotificationScrollRectTransform.sizeDelta.x, 950f);
         }
         //Canvas.ForceUpdateCanvases();
     }

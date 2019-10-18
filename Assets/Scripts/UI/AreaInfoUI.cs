@@ -449,7 +449,7 @@ public class AreaInfoUI : UIMenu {
         CloseMenu();
     }
     public void CenterOnCoreTile() {
-        activeTile.region.CenterOnCoreTile();
+        activeTile.region.CenterCameraOnRegion();
     }
     public void CenterOnTile() {
         activeTile.CenterCameraHere();

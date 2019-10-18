@@ -23,7 +23,7 @@ public class TraitItem : MonoBehaviour {
             portrait.GeneratePortrait(relTrait.targetCharacter);
             portrait.gameObject.SetActive(true);
             iconImg.gameObject.SetActive(false);
-            portrait.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
+            //portrait.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
         } else {
             portrait.gameObject.SetActive(false);
             Sprite icon = AttributeManager.Instance.GetTraitIcon(trait.name);

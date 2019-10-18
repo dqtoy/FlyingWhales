@@ -113,9 +113,6 @@ public class Region {
     //        }
     //    }
     //}
-    public void CenterOnCoreTile() {
-        coreTile.CenterCameraHere();
-    }
 
     #region Utilities
     private string GetDescription() {
