@@ -1497,35 +1497,46 @@ public class UIManager : MonoBehaviour {
     [Header("Minion Card Info")]
     [SerializeField] private MinionCard minionCardTooltip;
     [SerializeField] private RectTransform minionCardRT;
-    public void ShowMinionCardTooltip(Minion minion) {
+    public void ShowMinionCardTooltip(Minion minion, UIHoverPosition position = null) {
         if (minionCardTooltip.minion != minion) {
             minionCardTooltip.SetMinion(minion);
         }
         if (!minionCardTooltip.gameObject.activeSelf) {
             minionCardTooltip.gameObject.SetActive(true);
         }
-        PositionMinionCardTooltip(Input.mousePosition);
+        if (position != null) {
+            PositionMinionCardTooltip(position);
+        } else {
+            PositionMinionCardTooltip(Input.mousePosition);
+        }
     }
-    public void ShowMinionCardTooltip(UnsummonedMinionData minion) {
+    public void ShowMinionCardTooltip(UnsummonedMinionData minion, UIHoverPosition position = null) {
         minionCardTooltip.SetMinion(minion);
         PositionMinionCardTooltip(Input.mousePosition);
         minionCardTooltip.gameObject.SetActive(true);
+
+        if (position != null) {
+            PositionMinionCardTooltip(position);
+        } else {
+            PositionMinionCardTooltip(Input.mousePosition);
+        }
     }
     public void HideMinionCardTooltip() {
         minionCardTooltip.gameObject.SetActive(false);
     }
     private void PositionMinionCardTooltip(Vector3 screenPos) {
+        minionCardTooltip.transform.SetParent(this.transform);
         var v3 = screenPos;
 
         minionCardRT.pivot = new Vector2(1f, 1f);
 
-        if (CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Cross || CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Check) {
-            v3.x += 100f;
-            v3.y -= 32f;
-        } else {
-            v3.x += 25f;
-            v3.y -= 25f;
-        }
+        //if (CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Cross || CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Check) {
+        //    v3.x += 100f;
+        //    v3.y -= 32f;
+        //} else {
+        //    v3.x += 25f;
+        //    v3.y -= 25f;
+        //}
 
         minionCardRT.transform.position = v3;
 
@@ -1564,6 +1575,18 @@ public class UIManager : MonoBehaviour {
         //    }
         //    rtToReposition.localPosition = Vector3.zero;
         //}
+    }
+    private void PositionMinionCardTooltip(UIHoverPosition position) {
+        minionCardTooltip.transform.SetParent(position.transform);
+        RectTransform tooltipParentRT = minionCardTooltip.transform as RectTransform;
+        tooltipParentRT.pivot = position.pivot;
+
+        Vector2 anchorMin = Vector2.zero;
+        Vector2 anchorMax = Vector2.zero;
+        Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
+        tooltipParentRT.anchorMin = anchorMin;
+        tooltipParentRT.anchorMax = anchorMax;
+        tooltipParentRT.anchoredPosition = Vector2.zero;
     }
     #endregion
 }

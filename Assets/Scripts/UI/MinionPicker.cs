@@ -33,6 +33,8 @@ public class MinionPicker : MonoBehaviour {
                 item.AddOnToggleAction(onClickMinionItemAction.Invoke);
                 item.SetToggleGroup(toggleGroup);
             }
+            item.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(character.minion));
+            item.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
         }
 
         for (int i = 0; i < inactiveItems.Count; i++) {

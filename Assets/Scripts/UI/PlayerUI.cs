@@ -1652,6 +1652,8 @@ public class PlayerUI : MonoBehaviour {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(minionItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
         item.SetObject(minion.character);
+        item.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(character.minion));
+        item.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
         item.SetAsDefaultBehaviour();
     }
     private void DeleteMinionItem(Minion minion) {

@@ -27,6 +27,9 @@ public class DualObjectPicker : MonoBehaviour {
     [SerializeField] private GameObject tabPrefab;
     [SerializeField] private ToggleGroup tabToggleGroup;
 
+    [Header("Misc")]
+    [SerializeField] private UIHoverPosition minionCardPos;
+
     private object _pickedObj1;
     private object _pickedObj2;
     private System.Action<object, object> onConfirmAction;
@@ -241,6 +244,11 @@ public class DualObjectPicker : MonoBehaviour {
             if (convertedHoverExitAction != null) {
                 characterItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
+            //specific case for minion
+            if (currCharacter.minion != null) {
+                characterItem.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(currCharacter.minion, minionCardPos));
+                characterItem.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
+            }
             characterItem.SetAsToggle();
             characterItem.AddOnToggleAction((character, isOn) => OnToggleItem(character, isOn, column));
             characterItem.SetToggleGroup(toggleGroup);
@@ -261,6 +269,11 @@ public class DualObjectPicker : MonoBehaviour {
             characterItem.ClearAllHoverExitActions();
             if (convertedHoverExitAction != null) {
                 characterItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
+            }
+            //specific case for minion
+            if (currCharacter.minion != null) {
+                characterItem.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(currCharacter.minion, minionCardPos));
+                characterItem.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
             }
             characterItem.SetInteractableState(false);
         }
@@ -343,6 +356,8 @@ public class DualObjectPicker : MonoBehaviour {
             item.AddOnToggleAction((character, isOn) => OnToggleItem(character, isOn, column));
             item.SetToggleGroup(toggleGroup);
             item.SetInteractableState(true);
+            //item.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(minion, minionCardPos));
+            //item.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             UnsummonedMinionData minion = invalidItems[i];
