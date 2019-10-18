@@ -23,7 +23,7 @@ public class CursorManager : MonoBehaviour {
     [SerializeField] private GameObject tileObjectSparkle;
 
     public enum Cursor_Type {
-        None, Default, Target, Drag_Hover, Drag_Clicked, Check, Cross
+        None, Default, Target, Drag_Hover, Drag_Clicked, Check, Cross, Link
     }
     public Cursor_Type currentCursorType;
     public Cursor_Type previousCursorType;

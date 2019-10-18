@@ -2875,7 +2875,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         if (targetPOI != null && targetPOI is Character) {
             Character target = targetPOI as Character;
-            if (target.faction.IsHostileWith(faction)) {
+            if (target.faction != null && target.faction.IsHostileWith(faction)) {
                 //Cannot react if target charcter is from a hostile faction
                 //Only combat those characters that's why they cannot react to their traits, actions, etc.
                 return false;
@@ -3908,6 +3908,12 @@ public class Character : ILeader, IPointOfInterest {
     public void SetCombatCharacter(CombatCharacter combatCharacter) {
         _currentCombatCharacter = combatCharacter;
     }
+    /// <summary>
+    /// This character was hit by an attack.
+    /// </summary>
+    /// <param name="characterThatAttacked">The character that attacked this.</param>
+    /// <param name="state">The combat state that the attacker is in.</param>
+    /// <param name="attackSummary">reference log of what happened.</param>
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
         GameManager.Instance.CreateHitEffectAt(this);
         if (this.currentHP <= 0) {

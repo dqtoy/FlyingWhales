@@ -512,7 +512,7 @@ public class UIManager : MonoBehaviour {
         rtToReposition.pivot = new Vector2(0f, 1f);
         smallInfoBGParentLG.childAlignment = TextAnchor.UpperLeft;
 
-        if (CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Cross || CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Check) {
+        if (CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Cross || CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Check || CursorManager.Instance.currentCursorType == CursorManager.Cursor_Type.Link) {
             v3.x += 100f;
             v3.y -= 32f;
         } else {
@@ -907,25 +907,26 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Region Info")]
     public RegionInfoUI regionInfoUI;
-    public void ShowRegionInfo(Region region) {
-        //if (PlayerManager.Instance.player.homeArea == region.mainLandmark.tileLocation.areaOfTile) {
-        //    portalPopup.SetActive(true);
-        //} else {
-            if (factionInfoUI.isShowing) {
-                factionInfoUI.CloseMenu();
-            }
-            if (characterInfoUI.isShowing) {
-                characterInfoUI.CloseMenu();
-            }
-            if (tileObjectInfoUI.isShowing) {
-                tileObjectInfoUI.CloseMenu();
-            }
-            if (areaInfoUI.isShowing) {
-                areaInfoUI.CloseMenu();
-            }
-            regionInfoUI.SetData(region);
-            regionInfoUI.OpenMenu();
-        //}
+    public void ShowRegionInfo(Region region, bool centerOnRegion = true) {
+        if (factionInfoUI.isShowing) {
+            factionInfoUI.CloseMenu();
+        }
+        if (characterInfoUI.isShowing) {
+            characterInfoUI.CloseMenu();
+        }
+        if (tileObjectInfoUI.isShowing) {
+            tileObjectInfoUI.CloseMenu();
+        }
+        if (areaInfoUI.isShowing) {
+            areaInfoUI.CloseMenu();
+        }
+        regionInfoUI.SetData(region);
+        regionInfoUI.OpenMenu();
+
+        if (centerOnRegion) {
+            region.CenterCameraOnRegion();
+            region.ShowSolidBorder();
+        }
     }
     public void UpdateRegionInfo() {
         if (regionInfoUI.isShowing) {
