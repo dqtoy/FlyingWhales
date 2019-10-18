@@ -24,13 +24,15 @@ public class MinionPicker : MonoBehaviour {
             MinionCharacterItem item = go.GetComponent<MinionCharacterItem>();
             item.SetObject(currMinion.character);
             bool shouldItemBeClickable = shouldItemBeActiveChecker.Invoke(currMinion);
+            item.SetInteractableState(shouldItemBeClickable);
             if (!shouldItemBeClickable) {
                 inactiveItems.Add(item);
+            } else {
+                item.SetAsToggle();
+                item.ClearAllOnToggleActions();
+                item.AddOnToggleAction(onClickMinionItemAction.Invoke);
+                item.SetToggleGroup(toggleGroup);
             }
-            item.SetInteractableState(shouldItemBeClickable);
-            item.SetAsToggle();
-            item.SetToggleGroup(toggleGroup);
-            item.AddOnToggleAction(onClickMinionItemAction.Invoke);
         }
 
         for (int i = 0; i < inactiveItems.Count; i++) {

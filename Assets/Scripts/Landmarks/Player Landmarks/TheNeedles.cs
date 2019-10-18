@@ -37,6 +37,13 @@ public class TheNeedles : BaseLandmark {
         Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     }
 
+    #region Overrides
+    public override void DestroyLandmark() {
+        StopCooldown();
+        base.DestroyLandmark();
+    }
+    #endregion
+
     private void StartCooldown() {
         currentCooldownTick = 0;
         Messenger.AddListener(Signals.TICK_ENDED, PerTickCooldown);

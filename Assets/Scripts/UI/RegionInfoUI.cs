@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,7 +14,7 @@ public class RegionInfoUI : UIMenu {
 
     [Header("Main")]
     [SerializeField] private TextMeshProUGUI descriptionLbl;
-    [SerializeField] private TextMeshProUGUI worldObjLbl;
+    [SerializeField] private TextMeshProUGUI featuresLbl;
     [SerializeField] private ToggleGroup tabsToggleGroup;
     [SerializeField] private Toggle overviewTabToggle;
     [SerializeField] private Toggle eventsTabToggle;
@@ -22,30 +23,27 @@ public class RegionInfoUI : UIMenu {
     [Header("Characters")]
     [SerializeField] private ScrollRect charactersScrollView;
     [SerializeField] private GameObject characterItemPrefab;
+    [SerializeField] private RectTransform visitorsEmblem;
+    [SerializeField] private RectTransform residentsEmblem;
 
     [Header("Events")]
-    [SerializeField] private GameObject eventsListGO;
-    [SerializeField] private ScrollRect eventsListScrollView;
-    [SerializeField] private GameObject eventListItemPrefab;
-    [SerializeField] private TextMeshProUGUI eventDesctiptionLbl;
-    [SerializeField] private Button spawnEventBtn;
     [SerializeField] private GameObject worldEventNameplatePrefab;
     [SerializeField] private ScrollRect worldEventsScrollView;
 
-
     [Header("Invasion")]
+    [SerializeField] private Button invadeBtn;
+    [SerializeField] private Image invadeProgress;
+
+    [Header("Invasion Confirmation")]
     [SerializeField] private GameObject invConfrimationGO;
     [SerializeField] private TextMeshProUGUI invConfrimationTitleLbl;
     [SerializeField] private TextMeshProUGUI invDescriptionLbl;
     [SerializeField] private MinionPicker invMinionPicker;
     [SerializeField] private Button confirmInvasionBtn;
-    [SerializeField] private Button invadeBtn;
-    [SerializeField] private Image invadeProgress;
-    [SerializeField] private CharacterPortrait invader;
 
-    [Header("Intervention")]
-    [SerializeField] private Button interveneBtn;
-    [SerializeField] private CharacterPortrait interferingCharacterPortrait;
+    [Header("Demolition")]
+    [SerializeField] private Button demolishBtn;
+    [SerializeField] private Image demolishProgress;
 
     [Header("Demonic Landmark")]
     [SerializeField] private PlayerBuildLandmarkUI playerBuildLandmarkUI;
@@ -67,7 +65,6 @@ public class RegionInfoUI : UIMenu {
         //Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FINISHED_NORMAL, OnWorldEventFinishedNormally);
         //Messenger.AddListener<Region, WorldEvent>(Signals.WORLD_EVENT_FAILED, OnWorldEventFailed);
         Messenger.AddListener<Region>(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, ShowAppropriateContentOnSignal);
-        theEyeUI.Initialize();
     }
 
     public override void OpenMenu() {
@@ -80,11 +77,10 @@ public class RegionInfoUI : UIMenu {
         UpdateBasicInfo();
         UpdateRegionInfo();
         UpdateCharacters();
-        UpdateInvadeBtnState();
+        UpdateMainBtnState();
         UpdateEventInfo();
         //UpdateDemonicLandmarkToggleState();
         ShowAppropriateContentOnOpen();
-        eventsListGO.SetActive(false);
         activeRegion.CenterCameraOnRegion();
         activeRegion.ShowSolidBorder();
     }
@@ -97,7 +93,7 @@ public class RegionInfoUI : UIMenu {
     public void UpdateInfo() {
         UpdateBasicInfo();
         UpdateRegionInfo();
-        UpdateInvadeBtnState();
+        UpdateMainBtnState();
         UpdateAppropriateContentPerUpdateUI();
         //UpdateSpawnEventButton();
     }
@@ -113,17 +109,17 @@ public class RegionInfoUI : UIMenu {
     #region Main
     private void UpdateRegionInfo() {
         descriptionLbl.text = activeRegion.description;
-        descriptionLbl.text += "\n\n<b>Features: </b>";
+        featuresLbl.text = "<b>Features: </b>";
 
         if (activeRegion.features.Count == 0) {
-            descriptionLbl.text += "None";
+            featuresLbl.text += "None";
         } else {
             for (int i = 0; i < activeRegion.features.Count; i++) {
                 RegionFeature feature = activeRegion.features[i];
                 if (i != 0) {
-                    descriptionLbl.text += ", ";
+                    featuresLbl.text += ", ";
                 }
-                descriptionLbl.text += "<link=\"" + i + "\">" + feature.name + "</link>";
+                featuresLbl.text += "<link=\"" + i + "\">" + feature.name + "</link>";
             }
         }
     }
@@ -158,27 +154,79 @@ public class RegionInfoUI : UIMenu {
             item.SetObject(character);
             item.SetAsDefaultBehaviour();
         }
+        OrderCharacterItems();
+    }
+    
+    public void OrderCharacterItems() {
+        visitorsEmblem.SetParent(this.transform);
+        residentsEmblem.SetParent(this.transform);
+        List<CharacterNameplateItem> visitors = new List<CharacterNameplateItem>();
+
+        List<CharacterNameplateItem> residents = new List<CharacterNameplateItem>();
+        CharacterNameplateItem[] characterItems = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(charactersScrollView.content.gameObject);
+        for (int i = 0; i < characterItems.Length; i++) {
+            CharacterNameplateItem currItem = characterItems[i];
+            if (currItem.character.homeRegion != null && activeRegion.id == currItem.character.homeRegion.id) {
+                residents.Add(currItem);
+            } else {
+                visitors.Add(currItem);
+            }
+        }
+
+        List<CharacterNameplateItem> orderedVisitors = new List<CharacterNameplateItem>(visitors.OrderByDescending(x => x.character.level));
+        List<CharacterNameplateItem> orderedResidents = new List<CharacterNameplateItem>(residents.OrderByDescending(x => x.character.level));
+
+        List<CharacterNameplateItem> orderedItems = new List<CharacterNameplateItem>();
+        orderedItems.AddRange(orderedVisitors);
+        orderedItems.AddRange(orderedResidents);
+
+        CharacterNameplateItem firstResident = orderedResidents.FirstOrDefault();
+        CharacterNameplateItem firstVisitor = orderedVisitors.FirstOrDefault();
+
+        visitorsEmblem.gameObject.SetActive(firstVisitor != null);
+        residentsEmblem.gameObject.SetActive(firstResident != null);
+        if (firstVisitor != null) {
+            visitorsEmblem.SetParent(firstVisitor.transform);
+            visitorsEmblem.anchoredPosition = new Vector2(-355f, 0f);
+        } else {
+            visitorsEmblem.SetParent(charactersScrollView.transform);
+        }
+
+        if (firstResident != null) {
+            residentsEmblem.SetParent(firstResident.transform);
+            residentsEmblem.anchoredPosition = new Vector2(-355f, -0f);
+        } else {
+            residentsEmblem.SetParent(charactersScrollView.transform);
+        }
+
+
+        for (int i = 0; i < orderedItems.Count; i++) {
+            CharacterNameplateItem currItem = orderedItems[i];
+            currItem.transform.SetSiblingIndex(i);
+        }
     }
     #endregion
 
     #region Invade
-    private void UpdateInvadeBtnState() {
+    private void UpdateMainBtnState() {
         if (activeRegion.coreTile.isCorrupted) {
             invadeBtn.gameObject.SetActive(false);
             invadeProgress.gameObject.SetActive(false);
-            invader.gameObject.SetActive(false);
+            if (activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL) {
+                //if the active region is corrupted and is not the demonic portal, show the demolish button
+                demolishBtn.gameObject.SetActive(true);
+            } else {
+                demolishBtn.gameObject.SetActive(false);
+            }
         } else {
+            demolishBtn.gameObject.SetActive(false);
             invadeBtn.gameObject.SetActive(true);
             invadeBtn.interactable = activeRegion.CanBeInvaded();
             if (activeRegion.demonicInvasionData.beingInvaded) {
                 invadeProgress.gameObject.SetActive(true);
                 invadeProgress.fillAmount = ((float)activeRegion.demonicInvasionData.currentDuration / (float)activeRegion.mainLandmark.invasionTicks);
-                invader.GeneratePortrait(activeRegion.assignedMinion.character);
-                invader.gameObject.SetActive(true);
-                invader.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
             } else {
                 invadeProgress.gameObject.SetActive(false);
-                invader.gameObject.SetActive(false);
             }
         }
     }
@@ -188,10 +236,10 @@ public class RegionInfoUI : UIMenu {
     private Minion chosenMinionToInvade;
     private void ShowInvasionConfirmation() {
         invConfrimationGO.SetActive(true);
+        chosenMinionToInvade = null;
         invConfrimationTitleLbl.text = "Invasion (" + ((int)activeRegion.mainLandmark.invasionTicks / (int)GameManager.ticksPerHour).ToString() + " hours)";
         invDescriptionLbl.text = "Choose a minion that will invade " + activeRegion.name + ". NOTE: That minion will be unavailable while the invasion is ongoing.";
         invMinionPicker.ShowMinionPicker(PlayerManager.Instance.player.minions, CanMinionInvade, ChooseMinionForInvasion);
-        chosenMinionToInvade = null;
         UpdateStartInvasionBtn();
     }
     private bool CanMinionInvade(Minion minion) {
@@ -204,16 +252,29 @@ public class RegionInfoUI : UIMenu {
         if (isOn) {
             chosenMinionToInvade = character.minion;
             UpdateStartInvasionBtn();
+        } else {
+            if (chosenMinionToInvade == character.minion) {
+                chosenMinionToInvade = null;
+                UpdateStartInvasionBtn();
+            }
         }
     }
     public void StartInvasion() {
         activeRegion.StartInvasion(chosenMinionToInvade);
-        UpdateInvadeBtnState();
+        UpdateMainBtnState();
         HideStartInvasionConfirmation();
     }
     public void HideStartInvasionConfirmation() {
         chosenMinionToInvade = null;
         invConfrimationGO.SetActive(false);
+    }
+    #endregion
+
+    #region Demolish
+    public void OnClickDemolish() {
+        LandmarkManager.Instance.CreateNewLandmarkOnTile(activeRegion.coreTile, LANDMARK_TYPE.NONE, false);
+        UpdateInfo();
+        ShowAppropriateContentOnOpen();
     }
     #endregion
 
@@ -223,7 +284,7 @@ public class RegionInfoUI : UIMenu {
             Utilities.DestroyChildren(worldEventsScrollView.content);
         }
         if (activeRegion.activeEvent != null) {
-            GenerateWorldEventNameplate(activeRegion.activeEvent);
+            GenerateWorldEventNameplate(activeRegion);
         }
         //if (activeRegion.activeEvent != null) {
         //    eventDesctiptionLbl.text = activeRegion.activeEvent.name + "\n" + activeRegion.activeEvent.description;
@@ -236,7 +297,7 @@ public class RegionInfoUI : UIMenu {
     }
     private void OnWorldEventSpawned(Region region, WorldEvent we) {
         if (isShowing && activeRegion == region) {
-            GenerateWorldEventNameplate(we);
+            GenerateWorldEventNameplate(region);
         }
     }
     private void OnWorldEventDespawned(Region region, WorldEvent we) {
@@ -244,10 +305,10 @@ public class RegionInfoUI : UIMenu {
             RemoveWorldEventNameplate(we);
         }
     }
-    private void GenerateWorldEventNameplate(WorldEvent worldEvent) {
+    private void GenerateWorldEventNameplate(Region region) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(worldEventNameplatePrefab.name, Vector3.zero, Quaternion.identity, worldEventsScrollView.content);
         WorldEventNameplate item = go.GetComponent<WorldEventNameplate>();
-        item.Initialize(worldEvent);
+        item.SetObject(region);
         activeWorldEventNameplates.Add(item);
     }
     private void RemoveWorldEventNameplate(WorldEvent worldEvent) {
@@ -270,64 +331,6 @@ public class RegionInfoUI : UIMenu {
     //        UpdateEventInfo();
     //    }
     //}
-    public void OnClickSpawnEvent() {
-        if (eventsListGO.activeInHierarchy) {
-            eventsListGO.SetActive(false);
-        } else {
-            ShowEventsThatCanBeSpawned();
-        }
-    }
-    private void ShowEventsThatCanBeSpawned() {
-        //Utilities.DestroyChildren(eventsListScrollView.content);
-        //List<WorldEvent> spawnableEvents = StoryEventsManager.Instance.GetEventsThatCanSpawnAt(activeRegion);
-        //for (int i = 0; i < spawnableEvents.Count; i++) {
-        //    WorldEvent currEvent = spawnableEvents[i];
-        //    GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(eventListItemPrefab.name, Vector3.zero, Quaternion.identity, eventsListScrollView.content);
-        //    TextMeshProUGUI text = go.GetComponentInChildren<TextMeshProUGUI>();
-        //    Button button = go.GetComponent<Button>();
-        //    text.text = currEvent.eventType.ToString();
-        //    button.onClick.RemoveAllListeners();
-        //    button.onClick.AddListener(() => SpawnEvent(currEvent));
-        //}
-        //eventsListGO.SetActive(true);
-    }
-    private void SpawnEvent(WorldEvent we) {
-        //activeRegion.SpawnEvent(we);
-        //eventsListGO.SetActive(false);
-    }
-    private void UpdateSpawnEventButton() {
-        spawnEventBtn.interactable = activeRegion.CanSpawnNewEvent();
-        if (!spawnEventBtn.interactable) {
-            eventsListGO.SetActive(false);
-        }
-    }
-    private void UpdateInterveneButton() {
-        interveneBtn.gameObject.SetActive(false);
-        //interveneBtn.gameObject.SetActive(activeRegion.activeEvent != null);
-        //interferingCharacterPortrait.gameObject.SetActive(false);
-        //if (interveneBtn.gameObject.activeSelf) {
-        //    interveneBtn.interactable = activeRegion.eventData.interferingCharacter == null && PlayerManager.Instance.player.HasMinionAssignedTo(LANDMARK_TYPE.THE_EYE);
-        //    if (activeRegion.eventData.interferingCharacter != null) {
-        //        interferingCharacterPortrait.gameObject.SetActive(true);
-        //        interferingCharacterPortrait.GeneratePortrait(activeRegion.eventData.interferingCharacter);
-        //    }
-        //}
-    }
-    public void OnClickInterfere() {
-        List<Character> minions = PlayerManager.Instance.player.GetMinionsAssignedTo(LANDMARK_TYPE.THE_EYE);
-        UIManager.Instance.ShowClickableObjectPicker(minions, OnClickMinion, title: "Choose minion to send out.", showCover: true, layer: 25);
-    }
-    private void OnClickMinion(Character character) {
-        //show confirmation message
-        UIManager.Instance.ShowYesNoConfirmation("Send minion to interfere.", "Are you sure you want to send " + character.name + " to interfere with the event happening at " + activeRegion.name + "?", () => SendOutMinionToInterfere(character), showCover: false, layer: 26);
-    }
-    private void SendOutMinionToInterfere(Character character) {
-        activeRegion.eventData.SetInterferingCharacter(character);
-        character.minion.assignedRegion.SetAssignedMinion(null); //remove minion from assignment at previous region.
-        character.minion.SetAssignedRegion(activeRegion); //only set assigned region to minion.
-        UIManager.Instance.HideObjectPicker();
-        UpdateInterveneButton();
-    }
     #endregion
 
     #region Demonic Landmarks
@@ -341,21 +344,6 @@ public class RegionInfoUI : UIMenu {
         if (overviewTabToggle.isOn) {
             //UpdateDemonicLandmarkToggleState();
             OnDemonicToggleStateChanged(overviewTabToggle.isOn);
-        }
-    }
-    private void UpdateDemonicLandmarkToggleState() {
-        //only activate demonic tab if the main landmark of this region is a player landmark and is not the kennel or crypt (Since both of those do not have their own special UI)
-        //overviewTabToggle.gameObject.SetActive((activeRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark() && 
-        //    activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_CRYPT && activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_KENNEL) || activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE);
-
-        if (overviewTabToggle.gameObject.activeSelf) {
-            overviewTabToggle.group = tabsToggleGroup;
-        } else {
-            if (overviewTabToggle.isOn) {
-                overviewTabToggle.isOn = false;
-                eventsTabToggle.isOn = true;
-            }
-            overviewTabToggle.group = null;
         }
     }
     private void UpdateAppropriateContentPerUpdateUI() {
@@ -474,9 +462,9 @@ public class RegionInfoUI : UIMenu {
         playerUpgradeUI.UpdatePlayerUpgradeUI();
     }
     public void OnPlayerUpgradeDone() {
-        if (playerUpgradeUI.gameObject.activeSelf) {
-            playerUpgradeUI.OnUpgradeDone();
-        }
+        //if (playerUpgradeUI.gameObject.activeSelf) {
+        //    playerUpgradeUI.OnUpgradeDone();
+        //}
     }
     #endregion
 

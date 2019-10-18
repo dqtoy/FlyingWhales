@@ -18,8 +18,12 @@ public class MonsterFeature : RegionFeature {
         //Give a random summon
         SUMMON_TYPE[] summonTypes = Utilities.GetEnumValues<SUMMON_TYPE>().Where(x => !x.CanBeSummoned()).ToArray();
         Summon summon = CharacterManager.Instance.CreateNewSummon(summonTypes[Random.Range(0, summonTypes.Length)]);
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Summon: " + summon.summonType.SummonName(), () => PlayerManager.Instance.player.GainSummon(summon, true));
-
+        if (PlayerManager.Instance.player.HasSpaceForNewSummon()) {
+            PlayerManager.Instance.player.GainSummon(summon);
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Summon: " + summon.summonType.SummonName(), null);
+        } else {
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Summon: " + summon.summonType.SummonName(), () => PlayerManager.Instance.player.GainSummon(summon, true));
+        }
     }
     #endregion
 }

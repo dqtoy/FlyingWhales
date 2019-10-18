@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//TODO: Should be witnessed even while in combat.
+//will be branded criminal if anybody witnesses or after combat
 public class AssaultCharacter : GoapAction {
 
     //private Character winner;

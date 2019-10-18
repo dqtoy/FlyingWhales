@@ -76,7 +76,7 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     //    RemoveListeners();
     //}
 
-    public void GeneratePortrait(Character character, CHARACTER_ROLE role = CHARACTER_ROLE.NONE) {
+    public void GeneratePortrait(Character character) {
         _character = character;
         if(character == null) {
             SetBodyPartsState(false);

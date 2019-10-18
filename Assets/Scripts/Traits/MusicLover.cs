@@ -19,9 +19,12 @@ public class MusicLover : Trait {
     public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
         if (targetPOI is Character) {
             Character seenCharacter = targetPOI as Character;
-            if (seenCharacter.currentAction != null && seenCharacter.currentAction.goapType == INTERACTION_TYPE.PLAY_GUITAR && seenCharacter.currentAction.isPerformingActualAction) {
-                //The character will gain Cheery trait and will recover 20 Tiredness and 40 Happiness whenever it gets within vision of someone playing music. Should only trigger once upon entering vision.
-                OnHearGuitarPlaying(seenCharacter);
+            if (seenCharacter.currentAction != null && seenCharacter.currentAction.isPerformingActualAction) {
+                if (seenCharacter.currentAction.goapType == INTERACTION_TYPE.PLAY_GUITAR) {
+                    OnHearGuitarPlaying(seenCharacter);
+                } else if (seenCharacter.currentAction.goapType == INTERACTION_TYPE.SING) {
+                    OnHearSinging(seenCharacter);
+                }
             }
         }
     }
@@ -61,9 +64,16 @@ public class MusicLover : Trait {
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFrom(log, owner, guitarPlayer);
     }
-    //private void OnActionStateSet(GoapAction action, GoapActionState state) {
-    //    if (action.goapType == INTERACTION_TYPE.PLAY_GUITAR && owner.marker.inVisionCharacters.Contains(action.actor)) {
-    //        OnHearGuitarPlaying(action.actor);
-    //    }        
-    //}
+    private void OnHearSinging(Character singer) {
+        owner.AddTrait("Satisfied");
+        owner.AdjustTiredness(20);
+        owner.AdjustHappiness(40);
+        //Debug.Log(GameManager.Instance.TodayLogString() + owner.name + " heard " + guitarPlayer.name + " playing a guitar, and became happier.");
+        Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicLover", "heard_sing");
+        log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        log.AddToFillers(singer, singer.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        log.AddLogToInvolvedObjects();
+        PlayerManager.Instance.player.ShowNotificationFrom(log, owner, singer);
+    }
+
 }

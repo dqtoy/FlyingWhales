@@ -143,7 +143,7 @@ MonoBehaviour:
     landmarkType: 20
     minimumTileCount: 1
     buildDuration: 0
-    description: 
+    description: A Settlement full of characters.
     connectedTileDirection: 0
     uniqueTags: 
     landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,

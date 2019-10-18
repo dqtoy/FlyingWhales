@@ -70,6 +70,7 @@ public class TheProfane : BaseLandmark {
     #endregion
 
     public override void DestroyLandmark() {
+        StopCooldown();
         base.DestroyLandmark();
     }
     public int GetConvertToCultistCost(Character character) {
