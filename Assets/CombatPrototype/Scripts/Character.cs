@@ -2711,10 +2711,13 @@ public class Character : ILeader, IPointOfInterest {
                 CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
             } else {
                 bool instantCenter = InteriorMapManager.Instance.currentlyShowingArea != specificLocation;
-                if (specificLocation.areaMap != null && !specificLocation.areaMap.isShowing) {
-                    InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
+                if (specificLocation.areaMap != null) {
+                    if (!specificLocation.areaMap.isShowing) {
+                        InteriorMapManager.Instance.ShowAreaMap(specificLocation, false);
+                    }
                     AreaMapCameraMove.Instance.CenterCameraOn(marker.gameObject, instantCenter);
                 } else {
+                    InteriorMapManager.Instance.HideAreaMap();
                     CameraMove.Instance.CenterCameraOn(specificLocation.region.coreTile.gameObject);
                 }
             }

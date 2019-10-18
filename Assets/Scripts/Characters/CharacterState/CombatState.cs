@@ -86,6 +86,11 @@ public class CombatState : CharacterState {
         }
         stateComponent.character.StopCurrentAction(false);
         stateComponent.character.currentParty.RemoveAllOtherCharacters(); //Drop characters when entering combat
+        if(stateComponent.character is SeducerSummon) { //If succubus/incubus enters a combat, automatically change its faction to the player faction if faction is still disguised
+            if(stateComponent.character.faction == FactionManager.Instance.disguisedFaction) {
+                stateComponent.character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
+            }
+        }
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Starting combat state for " + stateComponent.character.name);
         stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }

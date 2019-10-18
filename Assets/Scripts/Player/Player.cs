@@ -865,7 +865,11 @@ public class Player : ILeader {
         UIManager.Instance.HideObjectPicker();
     }
     public void GainSummon(SUMMON_TYPE type, int level = 1, bool showNewSummonUI = false) {
-        Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, playerFaction, playerArea.region);
+        Faction faction = playerFaction;
+        if (type == SUMMON_TYPE.Incubus || type == SUMMON_TYPE.Succubus) {
+            faction = FactionManager.Instance.disguisedFaction;
+        }
+        Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, faction, playerArea.region);
         newSummon.SetLevel(level);
         GainSummon(newSummon, showNewSummonUI);
     }

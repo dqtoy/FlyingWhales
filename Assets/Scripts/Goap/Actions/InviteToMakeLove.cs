@@ -166,6 +166,9 @@ public class InviteToMakeLove : GoapAction {
         
     }
     private void PreInviteFail() {
+        currentState.SetIntelReaction(InviteFailReactions);
+    }
+    private void AfterInviteFail() {
         if (actor is SeducerSummon) {
             //Start Combat between actor and target
             Character target = poiTarget as Character;
@@ -174,7 +177,6 @@ public class InviteToMakeLove : GoapAction {
             //**After Effect 1**: Actor gains Annoyed trait.
             AddTraitTo(actor, "Annoyed", actor);
         }
-        currentState.SetIntelReaction(InviteFailReactions);
     }
     #endregion
 
