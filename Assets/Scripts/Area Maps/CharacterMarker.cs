@@ -49,6 +49,10 @@ public class CharacterMarker : PooledObject {
     [Header("For Testing")]
     [SerializeField] private SpriteRenderer colorHighlight;
 
+    //delegates
+    public delegate void OnProcessCombat(CombatState state);
+    private OnProcessCombat onProcessCombat; //actions to be executed and cleared when a character processes combat.
+
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> unprocessedVisionPOIs { get; private set; } //POI's in this characters vision collider
@@ -459,6 +463,7 @@ public class CharacterMarker : PooledObject {
         hoverEnterAction = null;
         hoverExitAction = null;
         destinationTile = null;
+        onProcessCombat = null;
         fleeSpeedModifier = 0;
         SetMarkerColor(Color.white);
         actionIcon.gameObject.SetActive(false);
@@ -951,6 +956,7 @@ public class CharacterMarker : PooledObject {
             for (int i = 0; i < colliders.Length; i++) {
                 colliders[i].enabled = false;
             }
+            onProcessCombat = null;
             pathfindingAI.ClearAllCurrentPathData();
             UpdateAnimation();
             UpdateActionIcon();
@@ -1660,6 +1666,7 @@ public class CharacterMarker : PooledObject {
         return willTransfer;
     }
     public void OnThisCharacterEndedCombatState() {
+        onProcessCombat = null;
         StopPerTickFlee();
     }
     public void ProcessCombatBehavior() {
@@ -1668,6 +1675,12 @@ public class CharacterMarker : PooledObject {
         } else {
             this.character.stateComponent.SwitchToState(CHARACTER_STATE.COMBAT);
         }
+        //execute any external combat actions. This assumes that this character entered combat state.
+        onProcessCombat?.Invoke(this.character.stateComponent.currentState as CombatState); 
+        onProcessCombat = null;
+    }
+    public void AddOnProcessCombatAction(OnProcessCombat action) {
+        onProcessCombat += action;
     }
     #endregion
 }

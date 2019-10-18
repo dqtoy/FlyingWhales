@@ -447,7 +447,11 @@ public class CombatState : CharacterState {
                     //If character that attacked is not invisible or invisible but can be seen by character hit, character hit should react
                     Invisible invisible = stateComponent.character.GetNormalTrait("Invisible") as Invisible;
                     if (invisible == null || invisible.charactersThatCanSee.Contains(hitCharacter)) {
-                        hitCharacter.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(hitCharacter)); //When the target is hit and it is still alive, add hostile
+                        //When the target is hit and it is still alive, add hostile
+                        hitCharacter.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(hitCharacter));
+                        //also add the hit character as degraded rel, so that when the character that owns this state is hit by the other character because of retaliation, relationship degradation will no longer happen
+                        //Reference: https://trello.com/c/mvLDnyBf/2875-retaliation-should-not-trigger-relationship-degradation
+                        hitCharacter.marker.AddOnProcessCombatAction((combatState) => combatState.AddCharacterThatDegradedRel(stateComponent.character));
                     }
                 }
             }
@@ -548,7 +552,9 @@ public class CombatState : CharacterState {
         }
     }
     public void AddCharacterThatDegradedRel(Character character) {
-        allCharactersThatDegradedRel.Add(character);
+        if (!allCharactersThatDegradedRel.Contains(character)) {
+            allCharactersThatDegradedRel.Add(character);
+        }
     }
     #endregion
 }
