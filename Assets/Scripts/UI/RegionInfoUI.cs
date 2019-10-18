@@ -156,7 +156,6 @@ public class RegionInfoUI : UIMenu {
         }
         OrderCharacterItems();
     }
-    
     public void OrderCharacterItems() {
         visitorsEmblem.SetParent(this.transform);
         residentsEmblem.SetParent(this.transform);

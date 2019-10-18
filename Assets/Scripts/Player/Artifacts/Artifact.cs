@@ -40,14 +40,22 @@ public class Artifact : TileObject, IWorldObject {
     }
 
     #region Overrides
-    public override void SetGridTileLocation(LocationGridTile tile) {
-        base.SetGridTileLocation(tile);
-        if (tile != null) {
-            //Debug.Log("Placed artifact " + type.ToString() + " at " + tile.ToString());
-            OnPlaceArtifactOn(tile);
-        } else {
-            OnRemoveArtifact();
-        }
+    //public override void SetGridTileLocation(LocationGridTile tile) {
+    //    base.SetGridTileLocation(tile);
+    //    if (tile != null) {
+    //        //Debug.Log("Placed artifact " + type.ToString() + " at " + tile.ToString());
+    //        OnPlaceArtifactOn(tile);
+    //    } else {
+    //        OnRemoveArtifact();
+    //    }
+    //}
+    protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
+        base.OnRemoveTileObject(removedBy, removedFrom);
+        OnRemoveArtifact();
+    }
+    protected override void OnPlaceObjectAtTile(LocationGridTile tile) {
+        base.OnPlaceObjectAtTile(tile);
+        OnPlaceArtifactOn(tile);
     }
     public override string ToString() {
         return Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
@@ -61,6 +69,7 @@ public class Artifact : TileObject, IWorldObject {
     }
     protected virtual void OnRemoveArtifact() {
         Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSuccessInvadeArea);
+        Debug.Log(GameManager.Instance.TodayLogString() + "Artifact " + this.GetType().ToString() + " has been removed");
     }
     public override void OnInspect(Character inspectedBy, out Log result) {
         if (LocalizationManager.Instance.HasLocalizedValue("Artifact", this.GetType().ToString(), "on_inspect")) {

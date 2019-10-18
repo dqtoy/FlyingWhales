@@ -174,8 +174,9 @@ public class Puke : GoapAction {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
             job.SetAssignedPlan(goapPlan);
             goapPlan.ConstructAllNodes();
-
             goapAction.CreateStates();
+            character.jobQueue.AddJobInQueue(job, false);
+
             goapAction.SetEndAction(ResumeLastAction);
             goapAction.DoAction();
             return true;
@@ -190,8 +191,9 @@ public class Puke : GoapAction {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
             job.SetAssignedPlan(goapPlan);
             goapPlan.ConstructAllNodes();
-
             goapAction.CreateStates();
+            character.jobQueue.AddJobInQueue(job, false);
+
             goapAction.SetEndAction(ResumePausedState);
             goapAction.DoAction();
             return true;
@@ -203,8 +205,9 @@ public class Puke : GoapAction {
             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
             job.SetAssignedPlan(goapPlan);
             goapPlan.ConstructAllNodes();
-
             goapAction.CreateStates();
+            character.jobQueue.AddJobInQueue(job, false);
+
             goapAction.DoAction();
             return true;
         }

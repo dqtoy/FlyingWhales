@@ -89,6 +89,7 @@ public class LandmarkManager : MonoBehaviour {
         }
         BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType, addFeatures);
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
+        location.UpdateBuildSprites();
         Messenger.Broadcast(Signals.LANDMARK_CREATED, newLandmark);
         return newLandmark;
     }
@@ -101,6 +102,7 @@ public class LandmarkManager : MonoBehaviour {
         BaseLandmark newLandmark = location.CreateLandmarkOfType(saveData);
 
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
+        newLandmark.tileLocation.UpdateBuildSprites();
         Messenger.Broadcast(Signals.LANDMARK_CREATED, newLandmark);
         return newLandmark;
     }
@@ -110,6 +112,7 @@ public class LandmarkManager : MonoBehaviour {
             return;
         }
         landmarkOnTile.DestroyLandmark();
+        tile.UpdateBuildSprites();
         tile.RemoveLandmarkVisuals();
         tile.RemoveLandmarkOnTile();
         Messenger.Broadcast(Signals.LANDMARK_DESTROYED, landmarkOnTile);

@@ -110,6 +110,7 @@ public class BaseLandmark {
     public void ChangeLandmarkType(LANDMARK_TYPE type) {
         _specificLandmarkType = type;
         tileLocation.UpdateLandmarkVisuals();
+        tileLocation.UpdateBuildSprites();
         //if (type == LANDMARK_TYPE.NONE) {
         //    ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
         //}

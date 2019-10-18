@@ -1067,7 +1067,7 @@ public class PlayerUI : MonoBehaviour {
     private void UpdateSummonsInteraction() {
         bool state = currentlySelectedSummonSlot != null && currentlySelectedSummonSlot.summon != null && !currentlySelectedSummonSlot.summon.hasBeenUsed;
         //summonCover.SetActive(!state);
-        summonBtn.interactable = state && InteriorMapManager.Instance.isAnAreaMapShowing;
+        summonBtn.interactable = state;
     }
     private void OnPlayerGainedSummonSlot(SummonSlot slot) {
         UpdateSummonsInteraction();
