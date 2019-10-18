@@ -8,47 +8,13 @@ using System.Linq;
 
 public class TheProfaneUI : MonoBehaviour {
 
-    //[Header("General")]
-    //[SerializeField] private Toggle minionsToggle;
-    //[SerializeField] private Toggle cultistsToggle;
-
-    //[Header("Minions Tab")]
-    //[SerializeField] private GameObject minionsTabContentGO;
-    //[SerializeField] private ScrollRect minionsScrollRect;
-    //[SerializeField] private GameObject minionItemPrefab;
-    //[SerializeField] private ToggleGroup minionsToggleGroup;
-    //[SerializeField] private ScrollRect charactersScrollRect;
-    //[SerializeField] private GameObject characterItemPrefab;
-    //[SerializeField] private HorizontalScrollSnap minionsTabScrollSnap;
-    //[SerializeField] private Button minionsTabNextBtn;
-    //[SerializeField] private GameObject minionsTabNextBtnDisabler;
-    //[SerializeField] private TextMeshProUGUI minionsTabNextBtnLbl;
-
-    //[Header("Cultist Tab")]
-    //[SerializeField] private GameObject cultistTabContentGO;
-    //[SerializeField] private ToggleGroup cultistsToggleGroup;
-    //[SerializeField] private ScrollRect cultistsScrollRect;
-    //[SerializeField] private ScrollRect cultistActionsScrollRect;
-    //[SerializeField] private GameObject stringItemPrefab;
-    //[SerializeField] private HorizontalScrollSnap cultistTabScrollSnap;
-    //[SerializeField] private Button cultistTabNextBtn;
-    //[SerializeField] private GameObject cultistTabNextBtnDisabler;
-    //[SerializeField] private TextMeshProUGUI cultistTabNextBtnLbl;
-
     [Header("Cooldown")]
-    [SerializeField] private GameObject cooldownGO;
-    [SerializeField] private TextMeshProUGUI cooldownLbl;
+    [SerializeField] private Button corruptBtn;
+    [SerializeField] private Image cooldownProgess;
+    
 
     public TheProfane profane { get; private set; }
-    //public Minion chosenMinion { get; private set; }
     private Character chosenCultist;
-    //public string chosenAction { get; private set; }
-
-    //private enum Minion_Tab_Step { Minion, Convert }
-    //private Minion_Tab_Step currentMinionTabStep;
-
-    //private enum Cultist_Tab_Step { Cultist, Action }
-    //private Cultist_Tab_Step currentCultistTabStep;
 
     #region General
     public void ShowTheProfaneUI(TheProfane profane) {
@@ -67,23 +33,44 @@ public class TheProfaneUI : MonoBehaviour {
         gameObject.SetActive(false);
     }
     public void UpdateTheProfaneUI() {
+        corruptBtn.interactable = !profane.isInCooldown;
         if (profane.isInCooldown) {
-            cooldownGO.SetActive(true);
-            cooldownLbl.text = "In Cooldown:\n" + Mathf.FloorToInt(((float)profane.currentCooldownTick / (float)profane.cooldownDuration) * 100f).ToString() + "%";
+            cooldownProgess.gameObject.SetActive(true);
+            cooldownProgess.fillAmount = profane.currentCooldownTick / (float)profane.cooldownDuration;
         } else {
-            cooldownGO.SetActive(false);
+            cooldownProgess.gameObject.SetActive(false);
         }
     }
     #endregion
 
-    public void OnClickConvert() {
-        List<Character> convertibleCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.GetNormalTrait("Disillusioned", "Evil", "Treacherous") != null && x.GetNormalTrait("Blessed") == null && x.GetNormalTrait("Cultist") == null));
-        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character, Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), convertibleCharacters,
-            "Choose a Minion", "Choose a character to turn to Cultist",
-            null, CanBeConvertedToCultist,
-            null, (character) => UIManager.Instance.ShowSmallInfo("Conversion Cost: " + profane.GetConvertToCultistCost(character).ToString() + " mana"),
-            null, (character) => UIManager.Instance.HideSmallInfo(),
-            OnConfirmConvert, "Convert");
+    public void OnClickCorrupt() {
+        DualObjectPickerTabSetting[] tabs = new DualObjectPickerTabSetting[] {
+            //convert
+            new DualObjectPickerTabSetting() {
+                name = "Convert",
+                onToggleTabAction = OnClickConvert
+            },
+            //instruct
+            new DualObjectPickerTabSetting() {
+                name = "Instruct",
+                onToggleTabAction = OnClickInstruct
+            }
+        };
+        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(tabs);
+    }
+
+
+    private void OnClickConvert(bool isOn) {
+        if (isOn) {
+            List<Character> convertibleCharacters = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.GetNormalTrait("Disillusioned", "Evil", "Treacherous") != null && x.GetNormalTrait("Blessed") == null && x.GetNormalTrait("Cultist") == null));
+            UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character, Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), convertibleCharacters,
+                "Choose a Minion", "Choose a character to turn to Cultist",
+                null, CanBeConvertedToCultist,
+                null, (character) => UIManager.Instance.ShowSmallInfo("Conversion Cost: " + profane.GetConvertToCultistCost(character).ToString() + " mana"),
+                null, (character) => UIManager.Instance.HideSmallInfo(),
+                OnConfirmConvert, "Convert");
+        }
+        
     }
     private void OnConfirmConvert(object minionObj, object convertCharacter) {
         Minion minion = (minionObj as Character).minion;
@@ -91,9 +78,11 @@ public class TheProfaneUI : MonoBehaviour {
         OnChooseCharacterToConvert(target);
         UpdateTheProfaneUI();
     }
-    public void OnClickInstruct() {
-        List<Character> cultists = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.GetNormalTrait("Cultist") != null && x.role.roleType != CHARACTER_ROLE.MINION));
-        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character>(cultists, "Choose cultist to instruct", CanDoActionsToCharacter, null, null, OnChooseCultistToInstruct, OnConfirmInstruct, "Instruct");
+    private void OnClickInstruct(bool isOn) {
+        if (isOn) {
+            List<Character> cultists = new List<Character>(CharacterManager.Instance.allCharacters.Where(x => !x.returnedToLife && !x.isDead && x.GetNormalTrait("Cultist") != null && x.role.roleType != CHARACTER_ROLE.MINION));
+            UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character>(cultists, "Choose cultist to instruct", CanDoActionsToCharacter, null, null, OnChooseCultistToInstruct, OnConfirmInstruct, "Instruct");
+        }
     }
     private void OnConfirmInstruct(object cultistObj, object instructObj) {
         Character chosenCultist = cultistObj as Character;
