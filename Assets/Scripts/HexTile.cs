@@ -29,6 +29,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
     [SerializeField] private GameObject _hoverHighlightGO;
     [SerializeField] private GameObject _clickHighlightGO;
     [SerializeField] private Animator baseTileAnimator;
+    [SerializeField] private SpriteRenderer emptyBuildingSpotGO;
+    [SerializeField] private SpriteRenderer currentlyBuildingSpotGO;
 
     [Space(10)]
     [Header("Tile Borders")]
@@ -593,7 +595,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         botLeftBorder.sortingOrder = sortingOrder + 12;
         botRightBorder.sortingOrder = sortingOrder + 12;
         rightBorder.sortingOrder = sortingOrder + 12;
-        
+
+        emptyBuildingSpotGO.sortingOrder = sortingOrder + 1;
+        //currentlyBuildingSpotGO.sortingOrder = sortingOrder + 1;
 
         mainStructure.sortingOrder = sortingOrder + 3;
         structureTint.sortingOrder = sortingOrder + 4;
@@ -682,6 +686,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         //botRightBorderSGE.GlowColor = color;
         //leftBorderSGE.GlowColor = color;
         //rightBorderSGE.GlowColor = color;
+    }
+    public void UpdateBuildSprites() {
+        if (region.demonicBuildingData.landmarkType != LANDMARK_TYPE.NONE) {
+            //currently building at tile.
+            currentlyBuildingSpotGO.gameObject.SetActive(true);
+            emptyBuildingSpotGO.gameObject.SetActive(false);
+        } else {
+            emptyBuildingSpotGO.gameObject.SetActive(true);
+            currentlyBuildingSpotGO.gameObject.SetActive(false);
+        }
     }
     #endregion
 

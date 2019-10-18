@@ -38,6 +38,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 7bcf611035629054786bbbf6b8ae0b71, type: 3}
   - {fileID: 21300000, guid: 37c625102625da941af94acb45b6d406, type: 3}
   - {fileID: 21300000, guid: d90065208313b0046970c977116373dc, type: 3}
+  - {fileID: 21300000, guid: 8437593067bbef34fa2818fdf24267a2, type: 3}
   - {fileID: 21300000, guid: cbe4ea300e0115b46a834cd2b2023cb6, type: 3}
   - {fileID: 21300000, guid: 8b522b40fb021ff489eac0a2fb429d00, type: 3}
   - {fileID: 21300000, guid: 2d9f2c40805e23e408d0e126943600f3, type: 3}
@@ -309,6 +310,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 87ee9e45287a3f04eaea062f53833f5a, type: 3}
   - {fileID: 21300000, guid: e05e2e554b638b14b85ab59342c8e0b0, type: 3}
   - {fileID: 21300000, guid: 155168658d87c854b8e196306ef8190e, type: 3}
+  - {fileID: 21300000, guid: 21410a65ef0392a418f23da6cbf38d33, type: 3}
   - {fileID: 21300000, guid: 9e298f6566037fd4fb2c0c689ab7e0fc, type: 3}
   - {fileID: 21300000, guid: 03b9f985c5fc3c74b8f56977df17c459, type: 3}
   - {fileID: 21300000, guid: e6712495fcf5833479ab8374f8819dc7, type: 3}
@@ -777,6 +779,7 @@ SpriteAtlas:
   - ancient_ruins_flat2
   - ice_pit_00076
   - portal_00112
+  - construction_spot_empty
   - Desert Forest_00014
   - Snow forest_00000
   - ice_pit_00053
@@ -1048,6 +1051,7 @@ SpriteAtlas:
   - portal_00125
   - elven_lumberyard
   - Desert Forest_00013
+  - construction_spot_tools
   - TopRight (2)
   - human_tavern_colour
   - Desert Forest_00005

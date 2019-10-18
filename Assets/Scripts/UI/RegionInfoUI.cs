@@ -156,7 +156,6 @@ public class RegionInfoUI : UIMenu {
         }
         OrderCharacterItems();
     }
-    
     public void OrderCharacterItems() {
         visitorsEmblem.SetParent(this.transform);
         residentsEmblem.SetParent(this.transform);
@@ -233,7 +232,14 @@ public class RegionInfoUI : UIMenu {
         }
     }
     public void OnClickInvade() {
-        ShowInvasionConfirmation();
+        if (activeRegion.area != null) {
+            //simulate as if clicking the invade button while inside the are map
+            InteriorMapManager.Instance.ShowAreaMap(activeRegion.area);
+            PlayerUI.Instance.OnClickStartInvasion();
+        } else {
+            ShowInvasionConfirmation();
+        }
+        
     }
     private Minion chosenMinionToInvade;
     private void ShowInvasionConfirmation() {

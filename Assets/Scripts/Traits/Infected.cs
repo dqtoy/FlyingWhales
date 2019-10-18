@@ -101,8 +101,9 @@ public class Infected : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
-
                 goapAction.CreateStates();
+                owner.jobQueue.AddJobInQueue(job, false);
+
                 owner.SetCurrentAction(goapAction);
                 //owner.currentAction.SetEndAction(ResumeLastAction);
                 owner.currentAction.DoAction();
@@ -118,8 +119,9 @@ public class Infected : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
-
                 goapAction.CreateStates();
+                owner.jobQueue.AddJobInQueue(job, false);
+
                 owner.SetCurrentAction(goapAction);
                 owner.currentAction.SetEndAction(ResumePausedState);
                 owner.currentAction.DoAction();
@@ -132,8 +134,9 @@ public class Infected : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
-
                 goapAction.CreateStates();
+                owner.jobQueue.AddJobInQueue(job, false);
+
                 owner.SetCurrentAction(goapAction);
                 owner.currentAction.DoAction();
                 hasCreatedJob = true;

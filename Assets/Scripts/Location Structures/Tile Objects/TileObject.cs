@@ -228,8 +228,9 @@ public class TileObject : IPointOfInterest {
     /// Triggered when the grid tile location of this object is set to null.
     /// </summary>
     protected virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
-        Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
+        Debug.Log(GameManager.Instance.TodayLogString() + "Tile Object " + this.name + " has been removed");
         this.removedBy = removedBy;
+        Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
         if (hasCreatedSlots) {
             DestroyTileSlots();
         }

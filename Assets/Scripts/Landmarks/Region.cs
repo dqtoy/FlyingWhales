@@ -311,6 +311,7 @@ public class Region {
             buildDuration = landmarkData.buildDuration + Mathf.RoundToInt(landmarkData.buildDuration * PlayerManager.Instance.player.constructionRatePercentageModifier),
             currentDuration = 0,
         };
+        coreTile.UpdateBuildSprites();
         TimerHubUI.Instance.AddItem("Building " + demonicBuildingData.landmarkName + " at " + name, demonicBuildingData.buildDuration, () => UIManager.Instance.ShowHextileInfo(coreTile));
         Messenger.AddListener(Signals.TICK_STARTED, PerTickBuilding);
     }
@@ -342,6 +343,7 @@ public class Region {
         //SetAssignedMinion(null);
 
         newLandmark.OnFinishedBuilding();
+        coreTile.UpdateBuildSprites();
         Messenger.Broadcast(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, this);
     }
     #endregion
