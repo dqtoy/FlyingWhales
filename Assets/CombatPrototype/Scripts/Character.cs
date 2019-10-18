@@ -1032,9 +1032,9 @@ public class Character : ILeader, IPointOfInterest {
             //}
 
 
-            if (faction != null) {
-                faction.LeaveFaction(this); //remove this character from it's factions list of characters
-            }
+            //if (faction != null) {
+            //    faction.LeaveFaction(this); //remove this character from it's factions list of characters
+            //}
 
             if (_role != null) {
                 _role.OnDeath(this);
@@ -3055,7 +3055,7 @@ public class Character : ILeader, IPointOfInterest {
         foreach (KeyValuePair<AlterEgoData, CharacterRelationshipData> kvp in relationships) {
             for (int i = 0; i < type.Length; i++) {
                 if (!kvp.Value.isDisabled && kvp.Value.HasRelationshipTrait(type[i])) {
-                    if (kvp.Key.owner.isDead ||  kvp.Key.owner.gender != gender || kvp.Key.owner.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) || kvp.Key.owner.HasTraitOf(TRAIT_TYPE.CRIMINAL) || characters.Contains(kvp.Key.owner)) {
+                    if (kvp.Key.owner.isDead ||  kvp.Key.owner.gender != gender || kvp.Key.owner.faction.IsHostileWith(faction) || kvp.Key.owner.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) || kvp.Key.owner.HasTraitOf(TRAIT_TYPE.CRIMINAL) || characters.Contains(kvp.Key.owner)) {
                         continue;
                     }
                     characters.Add(kvp.Key.owner);
@@ -8360,7 +8360,11 @@ public class Character : ILeader, IPointOfInterest {
         if(gridTileLocation != null && characterThatScreamed.gridTileLocation != null) {
             float dist = gridTileLocation.GetDistanceTo(characterThatScreamed.gridTileLocation);
             PrintLogIfActive(name + " distance to " + characterThatScreamed.name + " is " + dist);
-            if(dist > 5f) {
+            float distanceChecker = 5f;
+            //if (currentStructure != characterThatScreamed.currentStructure) {
+            //    distanceChecker = 2f;
+            //}
+            if (dist > distanceChecker) {
                 //Do not react to scream if character is too far
                 return;
             }
