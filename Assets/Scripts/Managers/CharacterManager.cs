@@ -1274,7 +1274,7 @@ public class CharacterManager : MonoBehaviour {
         }
         //If Target is only Relative of Actor(no other relationship) or has no relationship with Actor, Target now considers Actor an Enemy.
         else if (!target.HasRelationshipWith(actorAlterEgo) || (target.HasRelationshipOfTypeWith(actorAlterEgo, RELATIONSHIP_TRAIT.RELATIVE) && target.GetCharacterRelationshipData(actorAlterEgo).rels.Count == 1)) {
-            summary += "\n" + target.name + " and " + actorAlterEgo.name + " has no relationship or only has relative relationship. " + target.name + " now considers " + actorAlterEgo.name + " an enemy.";
+            summary += "\n" + target.name + " and " + actorAlterEgo.owner.name + " has no relationship or only has relative relationship. " + target.name + " now considers " + actorAlterEgo.owner.name + " an enemy.";
             CreateNewOneWayRelationship(target, actorAlterEgo, RELATIONSHIP_TRAIT.ENEMY);
 
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_enemy");

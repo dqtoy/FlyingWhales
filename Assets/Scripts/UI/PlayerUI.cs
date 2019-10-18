@@ -128,6 +128,18 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private RectTransform aliveHeader;
     [SerializeField] private RectTransform deadHeader;
 
+    [Header("Top Buttons")]
+    [SerializeField] private Toggle portalToggle;
+    [SerializeField] private Toggle spireToggle;
+    [SerializeField] private Toggle anvilToggle;
+    [SerializeField] private Toggle eyeToggle;
+    [SerializeField] private Toggle needleToggle;
+    [SerializeField] private Toggle fingerToggle;
+    [SerializeField] private Toggle cryptToggle;
+    [SerializeField] private Toggle kennelToggle;
+    [SerializeField] private Toggle profaneToggle;
+    [SerializeField] private ToggleGroup demonicToggleGroup;
+
     public List<System.Action> pendingUIToShow { get; private set; }
 
 
@@ -184,6 +196,7 @@ public class PlayerUI : MonoBehaviour {
         InitializeMemoriesMenu();
         SetCurrentlySelectedSummonSlot(null);
         SetCurrentlySelectedArtifactSlot(null);
+        UpdateDemonicLandmarkToggleInteractables();
         //UpdateArtifactsInteraction();
 
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
@@ -233,6 +246,11 @@ public class PlayerUI : MonoBehaviour {
 
         //currencies
         Messenger.AddListener(Signals.PLAYER_ADJUSTED_MANA, UpdateMana);
+
+        //Landmarks
+        Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_CREATED, OnLandmarkCreated);
+        //Messenger.AddListener<BaseLandmark>(Signals.LANDMARK_DESTROYED, OnLandmarkDestroyed);
+        Messenger.AddListener<Region>(Signals.AREA_INFO_UI_UPDATE_APPROPRIATE_CONTENT, OnUpdateRegionUISignal);
     }
 
     #region Listeners
@@ -326,6 +344,50 @@ public class PlayerUI : MonoBehaviour {
             Messenger.Broadcast(Signals.HIDE_MENUS);
             SuccessfulAreaCorruption();
         }
+    }
+    private void OnLandmarkCreated(BaseLandmark landmark) {
+        UpdateDemonicLandmarkToggleInteractables();
+    }
+    private void OnLandmarkDestroyed(BaseLandmark landmark) {
+        if (landmark.specificLandmarkType.IsPlayerLandmark()) {
+            UpdateDemonicLandmarkToggleInteractables();
+        }
+    }
+    private void OnUpdateRegionUISignal(Region region) {
+        if (UIManager.Instance.regionInfoUI.isShowing) {
+            UpdateClickedDemonicToggle();
+        }
+    }
+    public string previousMenu;
+    private void OnMenuOpened(UIMenu menu) {
+        if (menu is LandmarkInfoUI) {
+            UIManager.Instance.ShowMinionsMenu();
+        } else if (menu is AreaInfoUI || menu is CharacterInfoUI || menu is TileObjectInfoUI || menu is RegionInfoUI) {
+            HideKillSummary();
+            if (menu is RegionInfoUI) {
+                UpdateClickedDemonicToggle();
+            }
+        }
+    }
+    private void OnMenuClosed(UIMenu menu) {
+        if (menu is LandmarkInfoUI) {
+            if (string.IsNullOrEmpty(previousMenu)) {
+                UIManager.Instance.HideRightMenus();
+            } else if (previousMenu.Equals("minion")) {
+                UIManager.Instance.ShowMinionsMenu();
+            } else if (previousMenu.Equals("character")) {
+                UIManager.Instance.ShowCharacterTokenMenu();
+            } else if (previousMenu.Equals("location")) {
+                UIManager.Instance.ShowLocationTokenMenu();
+            } else if (previousMenu.Equals("faction")) {
+                UIManager.Instance.ShowFactionTokenMenu();
+            }
+        } else if (menu is RegionInfoUI) {
+            UpdateClickedDemonicToggle();
+        }
+        //else if (menu is CharacterInfoUI || menu is TileObjectInfoUI) {
+        //    HideActionButtons();
+        //}
     }
     #endregion
 
@@ -614,33 +676,6 @@ public class PlayerUI : MonoBehaviour {
         return levelUpUI.gameObject.activeInHierarchy || newAbilityUI.gameObject.activeInHierarchy || newMinionAbilityUI.gameObject.activeInHierarchy || replaceUI.gameObject.activeInHierarchy || generalConfirmationGO.activeInHierarchy || newMinionUIGO.activeInHierarchy;
     }
     #endregion
-
-    public string previousMenu;
-    private void OnMenuOpened(UIMenu menu) {
-        if (menu is LandmarkInfoUI) {
-            UIManager.Instance.ShowMinionsMenu();
-        } else if (menu is AreaInfoUI || menu is CharacterInfoUI || menu is TileObjectInfoUI) {
-            HideKillSummary();
-        }
-    }
-    private void OnMenuClosed(UIMenu menu) {
-        if (menu is LandmarkInfoUI) {
-            if (string.IsNullOrEmpty(previousMenu)) {
-                UIManager.Instance.HideRightMenus();
-            } else if (previousMenu.Equals("minion")) {
-                UIManager.Instance.ShowMinionsMenu();
-            } else if (previousMenu.Equals("character")) {
-                UIManager.Instance.ShowCharacterTokenMenu();
-            } else if (previousMenu.Equals("location")) {
-                UIManager.Instance.ShowLocationTokenMenu();
-            } else if (previousMenu.Equals("faction")) {
-                UIManager.Instance.ShowFactionTokenMenu();
-            }
-        }
-        //else if (menu is CharacterInfoUI || menu is TileObjectInfoUI) {
-        //    HideActionButtons();
-        //}
-    }
 
     #region Intel
     private void OnIntelObtained(Intel intel) {
@@ -1654,6 +1689,158 @@ public class PlayerUI : MonoBehaviour {
     }
     public void HideMinionList() {
         minionListGO.SetActive(false);
+    }
+    #endregion
+
+    #region Demonic Landmark Toggles
+    public void OnTogglePortal(bool isOn) {
+        if (isOn) {
+            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_PORTAL);
+        } else {
+            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PORTAL && !demonicToggleGroup.AnyTogglesOn()) {
+                UIManager.Instance.regionInfoUI.CloseMenu();
+            }
+        }   
+    }
+    public void OnToggleSpire(bool isOn) {
+        if (isOn) {
+            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_SPIRE);
+        } else {
+            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_SPIRE && !demonicToggleGroup.AnyTogglesOn()) {
+                UIManager.Instance.regionInfoUI.CloseMenu();
+            }
+        }
+    }
+    public void OnToggleAnvil(bool isOn) {
+        if (isOn) {
+            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_ANVIL);
+        } else {
+            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_ANVIL && !demonicToggleGroup.AnyTogglesOn()) {
+                UIManager.Instance.regionInfoUI.CloseMenu();
+            }
+        }
+    }
+    public void OnToggleTheEye(bool isOn) {
+        if (isOn) {
+            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_EYE);
+        } else {
+            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_EYE && !demonicToggleGroup.AnyTogglesOn()) {
+                UIManager.Instance.regionInfoUI.CloseMenu();
+            }
+        }
+    }
+    public void OnToggleTheNeedle(bool isOn) {
+        if (isOn) {
+            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_NEEDLES);
+        } else {
+            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_NEEDLES && !demonicToggleGroup.AnyTogglesOn()) {
+                UIManager.Instance.regionInfoUI.CloseMenu();
+            }
+        }
+    }
+    public void OnToggleGoader(bool isOn) {
+        if (isOn) {
+            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_FINGERS);
+        } else {
+            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_FINGERS && !demonicToggleGroup.AnyTogglesOn()) {
+                UIManager.Instance.regionInfoUI.CloseMenu();
+            }
+        }
+    }
+    public void OnToggleTheCrypt(bool isOn) {
+        if (isOn) {
+            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_CRYPT);
+        } else {
+            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_CRYPT && !demonicToggleGroup.AnyTogglesOn()) {
+                UIManager.Instance.regionInfoUI.CloseMenu();
+            }
+        }
+    }
+    public void OnToggleTheKennel(bool isOn) {
+        if (isOn) {
+            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_KENNEL);
+        } else {
+            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_KENNEL && !demonicToggleGroup.AnyTogglesOn()) {
+                UIManager.Instance.regionInfoUI.CloseMenu();
+            }
+        }
+    }
+    public void OnToggleTheProfane(bool isOn) {
+        if (isOn) {
+            ShowDemonicLandmarkUI(LANDMARK_TYPE.THE_PROFANE);
+        } else {
+            if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE && !demonicToggleGroup.AnyTogglesOn()) {
+                UIManager.Instance.regionInfoUI.CloseMenu();
+            }
+        }
+    }
+    private void ShowDemonicLandmarkUI(LANDMARK_TYPE demonicLandmark) {
+        Region region = LandmarkManager.Instance.GetLandmarkOfType(demonicLandmark).tileLocation.region;
+        UIManager.Instance.ShowRegionInfo(region, false);
+    }
+    private void UpdateDemonicLandmarkToggleInteractables() {
+        List<LANDMARK_TYPE> existingTypes = LandmarkManager.Instance.GetAllLandmarks().Select(x => x.specificLandmarkType).ToList();
+        portalToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_PORTAL);
+        spireToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_SPIRE);
+        anvilToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_ANVIL);
+        eyeToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_EYE);
+        needleToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_NEEDLES);
+        fingerToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_FINGERS);
+        cryptToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_CRYPT);
+        kennelToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_KENNEL);
+        profaneToggle.interactable = existingTypes.Contains(LANDMARK_TYPE.THE_PROFANE);
+
+        Toggle[] demonicToggles = Utilities.GetComponentsInDirectChildren<Toggle>(demonicToggleGroup.gameObject);
+        for (int i = 0; i < demonicToggles.Length; i++) {
+            Toggle t = demonicToggles[i];
+            if (!t.interactable) {
+                t.isOn = false;
+            }
+        }
+    }
+    private void UpdateClickedDemonicToggle() {
+        if (UIManager.Instance.regionInfoUI.isShowing && UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark()) {
+            switch (UIManager.Instance.regionInfoUI.activeRegion.mainLandmark.specificLandmarkType) {
+                case LANDMARK_TYPE.THE_PORTAL:
+                    portalToggle.isOn = true;
+                    break;
+                case LANDMARK_TYPE.THE_SPIRE:
+                    spireToggle.isOn = true;
+                    break;
+                case LANDMARK_TYPE.THE_ANVIL:
+                    anvilToggle.isOn = true;
+                    break;
+                case LANDMARK_TYPE.THE_EYE:
+                    eyeToggle.isOn = true;
+                    break;
+                case LANDMARK_TYPE.THE_NEEDLES:
+                    needleToggle.isOn = true;
+                    break;
+                case LANDMARK_TYPE.THE_FINGERS:
+                    fingerToggle.isOn = true;
+                    break;
+                case LANDMARK_TYPE.THE_CRYPT:
+                    cryptToggle.isOn = true;
+                    break;
+                case LANDMARK_TYPE.THE_KENNEL:
+                    kennelToggle.isOn = true;
+                    break;
+                case LANDMARK_TYPE.THE_PROFANE:
+                    profaneToggle.isOn = true;
+                    break;
+
+            }
+        } else {
+            portalToggle.isOn = false;
+            spireToggle.isOn = false;
+            anvilToggle.isOn = false;
+            eyeToggle.isOn = false;
+            needleToggle.isOn = false;
+            fingerToggle.isOn = false;
+            cryptToggle.isOn = false;
+            kennelToggle.isOn = false;
+            profaneToggle.isOn = false;
+        }
     }
     #endregion
 }

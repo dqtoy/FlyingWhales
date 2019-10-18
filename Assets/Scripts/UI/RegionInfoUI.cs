@@ -68,12 +68,13 @@ public class RegionInfoUI : UIMenu {
     }
 
     public override void OpenMenu() {
-        base.OpenMenu();
         Region previousRegion = activeRegion;
         if (previousRegion != null) {
             previousRegion.ShowTransparentBorder();
         }
         activeRegion = _data as Region;
+        Debug.Log("Set active region to " + activeRegion.name);
+        base.OpenMenu();
         UpdateBasicInfo();
         UpdateRegionInfo();
         UpdateCharacters();
@@ -81,13 +82,12 @@ public class RegionInfoUI : UIMenu {
         UpdateEventInfo();
         //UpdateDemonicLandmarkToggleState();
         ShowAppropriateContentOnOpen();
-        activeRegion.CenterCameraOnRegion();
-        activeRegion.ShowSolidBorder();
     }
     public override void CloseMenu() {
-        base.CloseMenu();
         activeRegion.ShowTransparentBorder();
         activeRegion = null;
+        Debug.Log("Set active region to null");
+        base.CloseMenu();
     }
 
     public void UpdateInfo() {
@@ -215,8 +215,10 @@ public class RegionInfoUI : UIMenu {
             if (activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL) {
                 //if the active region is corrupted and is not the demonic portal, show the demolish button
                 demolishBtn.gameObject.SetActive(true);
+                demolishBtn.interactable = true;
             } else {
-                demolishBtn.gameObject.SetActive(false);
+                demolishBtn.gameObject.SetActive(true);
+                demolishBtn.interactable = false;
             }
         } else {
             demolishBtn.gameObject.SetActive(false);
@@ -272,9 +274,9 @@ public class RegionInfoUI : UIMenu {
 
     #region Demolish
     public void OnClickDemolish() {
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(activeRegion.coreTile, LANDMARK_TYPE.NONE, false);
-        UpdateInfo();
-        ShowAppropriateContentOnOpen();
+        Region region = activeRegion;
+        LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, LANDMARK_TYPE.NONE, false);
+        UIManager.Instance.ShowRegionInfo(region);
     }
     #endregion
 

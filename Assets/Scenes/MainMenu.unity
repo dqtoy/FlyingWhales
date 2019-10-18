@@ -13292,7 +13292,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isDraggingItem: 0
   cursors:
-    m_keys: 01000000020000000300000004000000050000000600000000000000
+    m_keys: 0100000002000000030000000400000005000000060000000000000007000000
     m_values:
     - {fileID: 2800000, guid: e139e92190d431d4a85b50db3bbc175e, type: 3}
     - {fileID: 2800000, guid: 311558d663a1b434da71198ded51ad58, type: 3}
@@ -13301,6 +13301,7 @@ MonoBehaviour:
     - {fileID: 2800000, guid: ab093e2518592de4f9a3c3cecdfb5658, type: 3}
     - {fileID: 2800000, guid: 99e3ce0acc1035a46ab37689cb0032d0, type: 3}
     - {fileID: 0}
+    - {fileID: 2800000, guid: b33ec1abe5ab0074cabacda5d3da1c27, type: 3}
   effectsParent: {fileID: 1794712287}
   effectsCamera: {fileID: 1961614546}
   electricEffect: {fileID: 1382770740}

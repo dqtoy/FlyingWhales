@@ -94,6 +94,14 @@ public static class Signals {
     /// Parameters: Region, WorldEvent
     /// </summary>
     public static string WORLD_EVENT_FAILED = "OnWorldEventFailed";
+    /// <summary>
+    /// Parameters: BaseLandmark
+    /// </summary>
+    public static string LANDMARK_CREATED = "OnLandmarkCreated";
+    /// <summary>
+    /// Parameters: BaseLandmark
+    /// </summary>
+    public static string LANDMARK_DESTROYED = "OnLandmarkDestroyed";
     #endregion
 
     #region Character

@@ -88,29 +88,20 @@ public class LandmarkManager : MonoBehaviour {
             DestroyLandmarkOnTile(location);
         }
         BaseLandmark newLandmark = location.CreateLandmarkOfType(landmarkType, addFeatures);
-#if !WORLD_CREATION_TOOL
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-#endif
+        Messenger.Broadcast(Signals.LANDMARK_CREATED, newLandmark);
         return newLandmark;
     }
     public BaseLandmark CreateNewLandmarkOnTile(LandmarkSaveData saveData) {
-#if !WORLD_CREATION_TOOL
         HexTile location = GridMap.Instance.map[saveData.locationCoordinates.X, saveData.locationCoordinates.Y];
-#else
-        HexTile location = worldcreator.WorldCreatorManager.Instance.map[saveData.locationCoordinates.X, saveData.locationCoordinates.Y];
-#endif
         if (location.landmarkOnTile != null) {
             //Destroy landmark on tile
             DestroyLandmarkOnTile(location);
         }
         BaseLandmark newLandmark = location.CreateLandmarkOfType(saveData);
-#if !WORLD_CREATION_TOOL
-        //if (newLandmark.tileLocation.areaOfTile != null && newLandmark.tileLocation.areaOfTile.owner != null) {
-        //    OccupyLandmark(newLandmark, newLandmark.tileLocation.areaOfTile.owner);
-        //}
 
         newLandmark.tileLocation.AdjustUncorruptibleLandmarkNeighbors(1);
-#endif
+        Messenger.Broadcast(Signals.LANDMARK_CREATED, newLandmark);
         return newLandmark;
     }
     public void DestroyLandmarkOnTile(HexTile tile) {
@@ -121,6 +112,7 @@ public class LandmarkManager : MonoBehaviour {
         landmarkOnTile.DestroyLandmark();
         tile.RemoveLandmarkVisuals();
         tile.RemoveLandmarkOnTile();
+        Messenger.Broadcast(Signals.LANDMARK_DESTROYED, landmarkOnTile);
     }
     public BaseLandmark LoadLandmarkOnTile(HexTile location, BaseLandmark landmark) {
         BaseLandmark newLandmark = location.LoadLandmark(landmark);
