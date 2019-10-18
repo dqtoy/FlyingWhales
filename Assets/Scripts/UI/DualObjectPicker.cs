@@ -16,13 +16,16 @@ public class DualObjectPicker : MonoBehaviour {
     public ScrollRect column1ScrollView;
     public ToggleGroup column1ToggleGroup;
     public TextMeshProUGUI column1TitleLbl;
-    
 
     [Header("Column 2")]
     public ScrollRect column2ScrollView;
     public ToggleGroup column2ToggleGroup;
     public TextMeshProUGUI column2TitleLbl;
-  
+
+    [Header("Tabs")]
+    [SerializeField] private RectTransform tabsParent;
+    [SerializeField] private GameObject tabPrefab;
+    [SerializeField] private ToggleGroup tabToggleGroup;
 
     private object _pickedObj1;
     private object _pickedObj2;
@@ -157,7 +160,27 @@ public class DualObjectPicker : MonoBehaviour {
 
         this.gameObject.SetActive(true);
     }
+    
+    public void ShowDualObjectPicker(DualObjectPickerTabSetting[] tabs) {
+        UIManager.Instance.Pause();
+        UIManager.Instance.SetSpeedTogglesState(false);
+
+        //destroy existing items
+        Utilities.DestroyChildren(column1ScrollView.content);
+        Utilities.DestroyChildren(column2ScrollView.content);
+        Utilities.DestroyChildren(tabsParent);
+
+        for (int i = 0; i < tabs.Length; i++) {
+            DualObjectPickerTabSetting currTab = tabs[i];
+            GameObject tabGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(tabPrefab.name, Vector3.zero, Quaternion.identity, tabsParent);
+            DualObjectPickerTab tab = tabGO.GetComponent<DualObjectPickerTab>();
+            tab.Initialize(currTab, tabToggleGroup);
+        }
+        this.gameObject.SetActive(true);
+    }
+
     public void Hide() {
+        Utilities.DestroyChildren(tabsParent);
         UIManager.Instance.ResumeLastProgressionSpeed();
         this.gameObject.SetActive(false);
     }
@@ -454,4 +477,9 @@ public class DualObjectPicker : MonoBehaviour {
         else return new Action<Region>(o => myActionT((T)(object)o));
     }
     #endregion
+}
+
+public class DualObjectPickerTabSetting {
+    public string name;
+    public System.Action<bool> onToggleTabAction;
 }
