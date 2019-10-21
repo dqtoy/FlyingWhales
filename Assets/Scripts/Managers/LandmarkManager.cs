@@ -438,10 +438,12 @@ public class LandmarkManager : MonoBehaviour {
         //landmark1.AddOutGoingConnection(landmark2);
         region2.AddConnection(region1);
         GameObject lineGO = GameObject.Instantiate(landmarkConnectionPrefab, region1.coreTile.transform);
-        LineRenderer line = lineGO.GetComponent<LineRenderer>();
-        line.positionCount = 2;
-        line.SetPosition(0, region1.coreTile.transform.position);
-        line.SetPosition(1, region2.coreTile.transform.position);
+        //LineRenderer line = lineGO.GetComponent<LineRenderer>();
+        //line.positionCount = 2;
+        //line.SetPosition(0, region1.coreTile.transform.position);
+        //line.SetPosition(1, region2.coreTile.transform.position);
+
+        lineGO.GetComponent<LandmarkConnection>().DrawLandmarkConnection(region1, region2, 0.35f);
     }
     public void ConnectRegions(Region region1, Region region2, ref List<Island> islands) {
         Island landmark1Island = GetIslandOfRegion(region1, islands);

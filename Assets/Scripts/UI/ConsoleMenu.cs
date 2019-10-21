@@ -62,6 +62,7 @@ public class ConsoleMenu : UIMenu {
             {"/set_hp", SetHP },
             {"/kill_res",  KillResidents},
             {"/gain_summon",  GainSummon},
+            {"/gain_summon_slot",  GainSummonSlot},
             {"/gain_artifact",  GainArtifact},
             {"/set_fullness", SetFullness },
             {"/set_tiredness", SetTiredness },
@@ -1132,7 +1133,23 @@ public class ConsoleMenu : UIMenu {
         } else {
             AddErrorMessage("There is no summon of type " + typeParameterString);
         }
-
+    }
+    private void GainSummonSlot (string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of GainSummonSlot");
+            return;
+        }
+        string numParameterString = parameters[0];
+        int num;
+        if (int.TryParse(numParameterString, out num)) {
+            for (int i = 0; i < num; i++) {
+                PlayerManager.Instance.player.IncreaseSummonSlot();
+            }
+            AddSuccessMessage("Gained summon slot/s: " + num);
+        } else {
+            AddErrorMessage("Cannot parse input: " + numParameterString);
+        }
     }
     #endregion
 
