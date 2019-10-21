@@ -88,30 +88,31 @@ public class JudgeCharacter : GoapAction {
             }
 
             List<RELATIONSHIP_TRAIT> rels = actor.GetAllRelationshipTraitTypesWith(targetCharacter);
-            for (int i = 0; i < rels.Count; i++) {
-                switch (rels[i]) {
-                    case RELATIONSHIP_TRAIT.LOVER:
-                        absolve *= 2f;
-                        whip *= 2f;
-                        kill *= 0.2f;
-                        exile *= 0.5f;
-                        break;
-                    case RELATIONSHIP_TRAIT.FRIEND:
-                    case RELATIONSHIP_TRAIT.RELATIVE:
-                        absolve *= 2f;
-                        whip *= 2f;
-                        kill *= 0.5f;
-                        exile *= 0.5f;
-                        break;
-                    case RELATIONSHIP_TRAIT.ENEMY:
-                        absolve *= 0.2f;
-                        whip *= 0.5f;
-                        kill *= 2f;
-                        exile *= 1.5f;
-                        break;
+            if (rels != null) {
+                for (int i = 0; i < rels.Count; i++) {
+                    switch (rels[i]) {
+                        case RELATIONSHIP_TRAIT.LOVER:
+                            absolve *= 2f;
+                            whip *= 2f;
+                            kill *= 0.2f;
+                            exile *= 0.5f;
+                            break;
+                        case RELATIONSHIP_TRAIT.FRIEND:
+                        case RELATIONSHIP_TRAIT.RELATIVE:
+                            absolve *= 2f;
+                            whip *= 2f;
+                            kill *= 0.5f;
+                            exile *= 0.5f;
+                            break;
+                        case RELATIONSHIP_TRAIT.ENEMY:
+                            absolve *= 0.2f;
+                            whip *= 0.5f;
+                            kill *= 2f;
+                            exile *= 1.5f;
+                            break;
+                    }
                 }
             }
-
 
             weights.AddElement("Target Released", absolve);
             weights.AddElement("Target Executed", kill);
