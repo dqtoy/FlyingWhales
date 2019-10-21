@@ -45,7 +45,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     public void SetAsDefaultBehaviour() {
         SetAsButton();
         ClearAllOnClickActions();
-        AddOnClickAction(UIManager.Instance.ShowCharacterInfo);
+        AddOnClickAction((character) => UIManager.Instance.ShowCharacterInfo(character));
         SetSupportingLabelState(false);
     }
 

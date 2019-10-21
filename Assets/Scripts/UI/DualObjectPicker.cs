@@ -35,7 +35,9 @@ public class DualObjectPicker : MonoBehaviour {
     private System.Action<object, object> onConfirmAction;
     private System.Action<object> onPickFirstObjAction;
 
-    private bool needs2Objects; //does the current object picker require 2 objects to be picked? If not only an object in the first column is required to be selected.
+    private bool isColumn1Optional; //if column 1 is optional, then pickedObj1 can be null
+    private bool isColumn2Optional; //if column 2 is optional, then pickedObj2 can be null
+
 
     #region getters/setters
     private object pickedObj1 {
@@ -52,6 +54,7 @@ public class DualObjectPicker : MonoBehaviour {
             UpdateConfirmBtnState();
         }
     }
+    private bool needs2Objects { get { return !isColumn1Optional && !isColumn2Optional; } } //if both columns are not optional then 2 objects are needed
     #endregion
 
     /// <summary>
@@ -72,7 +75,8 @@ public class DualObjectPicker : MonoBehaviour {
         Action<T> column1ItemHoverEnterAction, Action<U> column2ItemHoverEnterAction,
         Action<T> column1ItemHoverExitAction, Action<U> column2ItemHoverExitAction,
         Action<object, object> onClickConfirmAction,
-        string confirmBtnStr, bool needs2Objects = true, 
+        string confirmBtnStr, 
+        bool column1Optional = false, bool column2Optional = false,
         string column1Identifier = "", string column2Identifier = "") {
 
         UIManager.Instance.Pause();
@@ -95,15 +99,12 @@ public class DualObjectPicker : MonoBehaviour {
 
         onPickFirstObjAction = null;
 
-        this.needs2Objects = needs2Objects;
+        isColumn1Optional = column1Optional;
+        isColumn2Optional = column2Optional;
 
-        if (!needs2Objects) {
-            column1ToggleGroup.allowSwitchOff = false;
-            column2ToggleGroup.allowSwitchOff = true;
-        } else {
-            column1ToggleGroup.allowSwitchOff = false;
-            column2ToggleGroup.allowSwitchOff = false;
-        }
+        //always allow switch off
+        column1ToggleGroup.allowSwitchOff = true;
+        column2ToggleGroup.allowSwitchOff = true;
 
         //populate column 1
         PopulateColumn(column1Items, column1ValidityChecker, column1ItemHoverEnterAction, column1ItemHoverExitAction, column1ScrollView, column1ToggleGroup, column1Title, column1Identifier);
@@ -126,7 +127,8 @@ public class DualObjectPicker : MonoBehaviour {
         Action<T> column1ItemHoverExitAction,
         Action<object> onPickFirstObjAction,
         Action<object, object> onClickConfirmAction,
-        string confirmBtnStr, bool needs2Objects = true) {
+        string confirmBtnStr, 
+        bool column1Optional = false, bool column2Optional = false) {
 
         UIManager.Instance.Pause();
         UIManager.Instance.SetSpeedTogglesState(false);
@@ -148,15 +150,12 @@ public class DualObjectPicker : MonoBehaviour {
 
         this.onPickFirstObjAction = onPickFirstObjAction;
 
-        this.needs2Objects = needs2Objects;
+        isColumn1Optional = column1Optional;
+        isColumn2Optional = column2Optional;
 
-        if (!needs2Objects) {
-            column1ToggleGroup.allowSwitchOff = false;
-            column2ToggleGroup.allowSwitchOff = true;
-        } else {
-            column1ToggleGroup.allowSwitchOff = false;
-            column2ToggleGroup.allowSwitchOff = false;
-        }
+        //always allow switch off
+        column1ToggleGroup.allowSwitchOff = true;
+        column2ToggleGroup.allowSwitchOff = true;
 
         //populate column 1
         PopulateColumn(column1Items, column1ValidityChecker, column1ItemHoverEnterAction, column1ItemHoverExitAction, column1ScrollView, column1ToggleGroup, column1Title);
@@ -356,8 +355,8 @@ public class DualObjectPicker : MonoBehaviour {
             item.AddOnToggleAction((character, isOn) => OnToggleItem(character, isOn, column));
             item.SetToggleGroup(toggleGroup);
             item.SetInteractableState(true);
-            //item.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(minion, minionCardPos));
-            //item.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
+            item.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(minion, minionCardPos));
+            item.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             UnsummonedMinionData minion = invalidItems[i];
@@ -468,7 +467,17 @@ public class DualObjectPicker : MonoBehaviour {
         if (needs2Objects) {
             confirmBtn.interactable = pickedObj1 != null && pickedObj2 != null;
         } else {
-            confirmBtn.interactable = pickedObj1 != null;
+            bool satisfiesColumn1 = true;
+            if (!isColumn1Optional) {
+                satisfiesColumn1 = pickedObj1 != null;
+            }
+
+            bool satisfiesColumn2 = true;
+            if (!isColumn2Optional) {
+                satisfiesColumn2 = pickedObj2 != null;
+            }
+
+            confirmBtn.interactable = satisfiesColumn1 && satisfiesColumn2;
         }
         
     }

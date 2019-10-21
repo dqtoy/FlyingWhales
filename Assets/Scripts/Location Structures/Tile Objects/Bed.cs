@@ -32,15 +32,15 @@ public class Bed : TileObject {
         if (UIManager.Instance.characterInfoUI.isShowing) {
             if (IsInThisBed(UIManager.Instance.characterInfoUI.activeCharacter)) {
                 Character nextCharacter = GetNextCharacterInCycle(UIManager.Instance.characterInfoUI.activeCharacter);
-                UIManager.Instance.ShowCharacterInfo(nextCharacter);
+                UIManager.Instance.ShowCharacterInfo(nextCharacter, true);
             } else {
                 if (GetActiveUserCount() > 0) {
-                    UIManager.Instance.ShowCharacterInfo(GetNextCharacterInCycle(null));
+                    UIManager.Instance.ShowCharacterInfo(GetNextCharacterInCycle(null), true);
                 }
             }
         } else {
             if (GetActiveUserCount() > 0) {
-                UIManager.Instance.ShowCharacterInfo(GetNextCharacterInCycle(null));
+                UIManager.Instance.ShowCharacterInfo(GetNextCharacterInCycle(null), true);
             }
         }
 

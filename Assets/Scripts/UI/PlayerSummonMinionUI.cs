@@ -24,15 +24,15 @@ public class PlayerSummonMinionUI : MonoBehaviour {
     public void OnClickSummon() {
         //show dual object picker, and allow only 1 object to be picked
         //column 1 should contain all minions to be summoned and column 2 should contain the players minions
-        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minionsToSummon.ToList(), PlayerManager.Instance.player.minions.Select(x => x.character).ToList(),
-            "Choose Minion to Summon", "Choose Minion to Help (Optional)",
-            null, CanChooseMinion,
-            OnHoverMinionToSummonChoice, null,
-            OnHoverExitMinionToSummonChoice, null,
-            ConfirmSummon, "Summon", false
+        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), PlayerManager.Instance.player.minionsToSummon.ToList(),
+            "Choose Minion to Help (Optional)", "Choose Minion to Summon",
+            CanChooseMinion, null,
+            null, OnHoverMinionToSummonChoice,
+            null, OnHoverExitMinionToSummonChoice,
+            ConfirmSummon, "Summon", column1Optional: true
         );
     }
-    private void ConfirmSummon(object summonObj, object minionObj) {
+    private void ConfirmSummon(object minionObj, object summonObj) {
         UnsummonedMinionData data = (UnsummonedMinionData)summonObj;
         Minion minion = (minionObj as Character)?.minion ?? null;
         Debug.Log("Will summon " + data.className + " helped by " + (minion?.character.name ?? "No one"));

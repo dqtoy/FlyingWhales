@@ -16,6 +16,7 @@ public static class GoapActionStateDB {
     public static string FirstAid_Icon = "First Aid";
     public static string Flee_Icon = "Flee";
     public static string Patrol_Icon = "Patrol";
+    public static string Watch_Icon = "Watch";
 
     public static string Drink_Blood_Icon = "Drink Blood";
     public static string Flirt_Icon = "Flirt";

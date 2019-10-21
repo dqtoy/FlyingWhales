@@ -43,7 +43,7 @@ public class AreaPickerItem : ObjectPickerItem<Area>, IPointerClickHandler {
         if (eventData.button == PointerEventData.InputButton.Right) {
             //Debug.Log("Right clicked character portrait!");
             //portrait.OnClick();
-            UIManager.Instance.ShowHextileInfo(area.coreTile);
+            UIManager.Instance.ShowRegionInfo(area.coreTile.region);
         } else {
             OnClick();
         }

@@ -11,7 +11,7 @@ public class Watch : GoapAction {
     //for testing
     private int ticksInWatch;
     public Watch(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.WATCH, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionIconString = GoapActionStateDB.No_Icon;
+        actionIconString = GoapActionStateDB.Watch_Icon;
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         doesNotStopTargetCharacter = true;
         //cannotCancelAction = true;
@@ -46,7 +46,7 @@ public class Watch : GoapAction {
         if (otherData.Length == 1) {
             if(otherData[0] is GoapAction) {
                 actionBeingWatched = otherData[0] as GoapAction;
-                actionIconString = actionBeingWatched.actionIconString;
+                //actionIconString = actionBeingWatched.actionIconString;
                 if (thoughtBubbleLog != null) {
                     thoughtBubbleLog.AddToFillers(actionBeingWatched, actionBeingWatched.goapName, LOG_IDENTIFIER.STRING_1);
                 }
@@ -55,7 +55,7 @@ public class Watch : GoapAction {
                 }
             } else if (otherData[0] is CombatState) {
                 stateBeingWatched = otherData[0] as CombatState;
-                actionIconString = GoapActionStateDB.Hostile_Icon;
+                //actionIconString = GoapActionStateDB.Hostile_Icon;
                 if (thoughtBubbleLog != null) {
                     thoughtBubbleLog.AddToFillers(stateBeingWatched, "Combat", LOG_IDENTIFIER.STRING_1);
                 }
@@ -64,7 +64,7 @@ public class Watch : GoapAction {
                 }
             } else if (otherData[0] is DouseFireState) {
                 stateBeingWatched = otherData[0] as DouseFireState;
-                actionIconString = GoapActionStateDB.Hostile_Icon;
+                //actionIconString = GoapActionStateDB.Hostile_Icon;
                 if (thoughtBubbleLog != null) {
                     thoughtBubbleLog.AddToFillers(stateBeingWatched, "Douse Fire", LOG_IDENTIFIER.STRING_1);
                 }

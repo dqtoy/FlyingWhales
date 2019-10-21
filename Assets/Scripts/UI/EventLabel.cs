@@ -101,28 +101,28 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                 }
             } else {
                 if (obj is Character) {
-                    UIManager.Instance.ShowCharacterInfo(obj as Character);
+                    UIManager.Instance.ShowCharacterInfo(obj as Character, true);
                 } else if (obj is Area) {
-                    UIManager.Instance.ShowHextileInfo((obj as Area).coreTile);
+                    UIManager.Instance.ShowRegionInfo((obj as Area).coreTile.region);
                 } else if (obj is Faction) {
                     UIManager.Instance.ShowFactionInfo((obj as Faction));
                 } else if (obj is Minion) {
-                    UIManager.Instance.ShowCharacterInfo((obj as Minion).character);
+                    UIManager.Instance.ShowCharacterInfo((obj as Minion).character, true);
                 } else if (obj is Combat) {
                     UIManager.Instance.ShowCombatLog(obj as Combat);
                 } else if (obj is Party) {
                     Party party = obj as Party;
-                    UIManager.Instance.ShowCharacterInfo(party.mainCharacter);
+                    UIManager.Instance.ShowCharacterInfo(party.mainCharacter, true);
                 } else if (obj is IPointOfInterest) {
                     IPointOfInterest poi = obj as IPointOfInterest;
                     if (poi is Character) {
-                        UIManager.Instance.ShowCharacterInfo(poi as Character);
+                        UIManager.Instance.ShowCharacterInfo(poi as Character, true);
                     } else if (poi is TileObject) {
                         UIManager.Instance.ShowTileObjectInfo(poi as TileObject);
                     }
                 } else if (obj is Region) {
                     Region region = obj as Region;
-                    UIManager.Instance.ShowHextileInfo(region.mainLandmark.tileLocation);
+                    UIManager.Instance.ShowRegionInfo(region);
                 }
             }
             ResetHighlightValues();

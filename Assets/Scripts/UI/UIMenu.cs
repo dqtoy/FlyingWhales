@@ -67,15 +67,15 @@ public class UIMenu : MonoBehaviour {
             if(data is Character) {
                 UIManager.Instance.ShowCharacterInfo(data as Character);
             } else if (data is Area) {
-                UIManager.Instance.ShowHextileInfo((data as Area).coreTile);
+                UIManager.Instance.ShowRegionInfo((data as Area).coreTile.region);
             } else if(data is Faction) {
                 UIManager.Instance.ShowFactionInfo(data as Faction);
             } else if (data is TileObject) {
                 UIManager.Instance.ShowTileObjectInfo(data as TileObject);
             } else if (data is Region) {
-                UIManager.Instance.ShowHextileInfo((data as Region).mainLandmark.tileLocation);
+                UIManager.Instance.ShowRegionInfo(data as Region);
             } else if (data is HexTile) {
-                UIManager.Instance.ShowHextileInfo(data as HexTile);
+                UIManager.Instance.ShowRegionInfo((data as HexTile).region);
             }
         }
     }

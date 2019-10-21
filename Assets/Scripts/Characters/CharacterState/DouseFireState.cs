@@ -79,7 +79,7 @@ public class DouseFireState : CharacterState {
         if (isFetchingWater) {
             isFetchingWater = false;
         }
-        currentTarget = null;
+        //currentTarget = null;
     }
     protected override void PerTickInState() {
         if (!StillHasFire() && stateComponent.character.currentAction == null && stateComponent.currentState == this) {
@@ -95,7 +95,6 @@ public class DouseFireState : CharacterState {
             Burning burning = trait as Burning;
             if (fires.ContainsKey(burning.sourceOfBurning) && !fires[burning.sourceOfBurning].Contains(burning.owner)) {
                 fires[burning.sourceOfBurning].Add(burning.owner);
-
                 if (currentTarget != null) {
                     //check the distance of the new fire with the current target, if the current target is still nearer, continue dousing that, if not redetermine action
                     float originalDistance = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, currentTarget.gridTileLocation.localLocation);
@@ -114,14 +113,14 @@ public class DouseFireState : CharacterState {
             Burning burning = trait as Burning;
             if (fires.ContainsKey(burning.sourceOfBurning) && fires[burning.sourceOfBurning].Contains(burning.owner)) {
                 fires[burning.sourceOfBurning].Remove(burning.owner);
-                if (currentTarget == burning.owner) {
-                    currentTarget = null;
-                }
                 if (fires[burning.sourceOfBurning].Count == 0) {
                     fires.Remove(burning.sourceOfBurning);
-                    if (currentTargetSource == burning.sourceOfBurning) {
-                        currentTargetSource = null;
-                    }
+                }
+                if (currentTarget == burning.owner) {
+                    currentTarget = null;
+                    DetermineAction();
+                } else if (currentTargetSource == burning.sourceOfBurning) {
+                    currentTargetSource = null;
                     if (fires.Count == 0) {//no more fires left
                         DetermineAction();
                     }

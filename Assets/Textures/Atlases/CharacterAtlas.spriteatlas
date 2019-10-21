@@ -379,6 +379,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 866806def0999ce4c923482b17401480, type: 3}
   - {fileID: 21300000, guid: c09723eee9c66554a905c399a2c59a1c, type: 3}
   - {fileID: 21300000, guid: d5b64bfe5125e5048b5766433a0fd501, type: 3}
+  - {fileID: 21300000, guid: f521dc0fe05fcd841adca17c3297d6b1, type: 3}
   - {fileID: 21300000, guid: a0bf001f1e836dd4fb26d8cdbda6577a, type: 3}
   - {fileID: 21300000, guid: 06a8222f0dbda494995d8e31bf1e48f3, type: 3}
   - {fileID: 21300000, guid: 69dcd42fd83d041458c5c0ca73274fcf, type: 3}
@@ -745,6 +746,7 @@ SpriteAtlas:
   - Bow and arrow0010
   - Bite0007
   - Arrow0014
+  - action_icon_watch
   - action_icon_sleep
   - Slash0010
   - Magic attack0005

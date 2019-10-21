@@ -737,8 +737,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         if (PlayerManager.Instance.isChoosingStartingTile) {
             return;
         }
-
-        if (!UIManager.Instance.ShowHextileInfo(this)) {
+        if (region.coreTile == this) {
+            UIManager.Instance.ShowRegionInfo(this.region);
+        } else {
             Messenger.Broadcast(Signals.HIDE_MENUS);
         }
         //if (this.region != null && this.region.mainLandmark.tileLocation == this) {

@@ -861,7 +861,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Character Info")]
     [SerializeField] internal CharacterInfoUI characterInfoUI;
-    public void ShowCharacterInfo(Character character) {
+    public void ShowCharacterInfo(Character character, bool centerOnCharacter = false) {
         if (tempDisableShowInfoUI) {
             SetTempDisableShowInfoUI(false);
             return;
@@ -880,6 +880,9 @@ public class UIManager : MonoBehaviour {
         }
         characterInfoUI.SetData(character);
         characterInfoUI.OpenMenu();
+        if (centerOnCharacter) {
+            character.CenterOnCharacter();
+        }
     }
     public void UpdateCharacterInfo() {
         if (characterInfoUI.isShowing) {
@@ -936,32 +939,32 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Hextile Info
-    public bool ShowHextileInfo(HexTile hexTile) {
-        if (hexTile.region != null && hexTile == hexTile.region.coreTile) {
-            //if (hexTile.areaOfTile != null && hexTile.areaOfTile.areaType.IsSettlementType()) {
-            //    //if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
-            //    //    portalPopup.SetActive(true);
-            //    //    return true;
-            //    //}
-            //    ShowAreaInfo(hexTile);
-            //    return true;
-            //} else {
-                //This is an exception in showing area info ui
-                //Usually, area info ui must only be shown if the tile's region has an area
-                //But for demonic landmarks, even if the region has no area, area info ui will still be shown
-                //The area that will become active is the playerArea
-                //This is done so that the player can build, research, etc.
-                //if (hexTile.region.owner == PlayerManager.Instance.player.playerFaction) {
-                //    ShowAreaInfo(hexTile);
-                //    return true;
-                //} else {
-                    ShowRegionInfo(hexTile.region);
-                    return true;
-                //}
-            //}
-        }
-        return false;
-    }
+    //public bool ShowRegionInfo(HexTile hexTile) {
+    //    if (hexTile.region != null && hexTile == hexTile.region.coreTile) {
+    //        //if (hexTile.areaOfTile != null && hexTile.areaOfTile.areaType.IsSettlementType()) {
+    //        //    //if (hexTile.areaOfTile.coreTile == hexTile && hexTile.areaOfTile == PlayerManager.Instance.player.playerArea) {
+    //        //    //    portalPopup.SetActive(true);
+    //        //    //    return true;
+    //        //    //}
+    //        //    ShowAreaInfo(hexTile);
+    //        //    return true;
+    //        //} else {
+    //            //This is an exception in showing area info ui
+    //            //Usually, area info ui must only be shown if the tile's region has an area
+    //            //But for demonic landmarks, even if the region has no area, area info ui will still be shown
+    //            //The area that will become active is the playerArea
+    //            //This is done so that the player can build, research, etc.
+    //            //if (hexTile.region.owner == PlayerManager.Instance.player.playerFaction) {
+    //            //    ShowAreaInfo(hexTile);
+    //            //    return true;
+    //            //} else {
+    //                ShowRegionInfo(hexTile.region);
+    //                return true;
+    //            //}
+    //        //}
+    //    }
+    //    return false;
+    //}
     #endregion
 
     #region Tile Object Info
@@ -1122,17 +1125,6 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Interaction
-    public void ShowInteractableInfo(BaseLandmark interactable) {
-        ShowHextileInfo(interactable.tileLocation);
-        //if (interactable is BaseLandmark) {
-        //    ShowLandmarkInfo(interactable);
-        //} else if (interactable is Character) {
-        //    ShowCharacterInfo(interactable as Character);
-        //}
-    }
-    #endregion
-
     public void ShowMinionsMenu() {
         minionsMenuToggle.isOn = true;
     }
@@ -1191,6 +1183,7 @@ public class UIManager : MonoBehaviour {
 
     #region Area Map
     [SerializeField] private Button returnToWorldBtn;
+    [SerializeField] private UIHoverPosition returnToWorldBtnTooltipPos;
     private void OnAreaMapOpened(Area area) {
         //returnToWorldBtn.interactable = true;
         //ShowPlayerNotificationArea();
@@ -1217,9 +1210,9 @@ public class UIManager : MonoBehaviour {
     }
     public void ToggleMapsHover() {
         if (InteriorMapManager.Instance.currentlyShowingArea != null) {
-            ShowSmallInfo("Click to exit " + InteriorMapManager.Instance.currentlyShowingArea.name + ".");
+            ShowSmallInfo("Click to exit " + InteriorMapManager.Instance.currentlyShowingArea.name + ".", returnToWorldBtnTooltipPos);
         } else {
-            ShowSmallInfo("Click to enter " + LandmarkManager.Instance.enemyOfPlayerArea.name + ".");
+            ShowSmallInfo("Click to enter " + LandmarkManager.Instance.enemyOfPlayerArea.name + ".", returnToWorldBtnTooltipPos);
         }
     }
     #endregion
@@ -1511,10 +1504,12 @@ public class UIManager : MonoBehaviour {
         }
     }
     public void ShowMinionCardTooltip(UnsummonedMinionData minion, UIHoverPosition position = null) {
-        minionCardTooltip.SetMinion(minion);
-        PositionMinionCardTooltip(Input.mousePosition);
-        minionCardTooltip.gameObject.SetActive(true);
-
+        if (!minionCardTooltip.minionData.Equals(minion)) {
+            minionCardTooltip.SetMinion(minion);
+        }
+        if (!minionCardTooltip.gameObject.activeSelf) {
+            minionCardTooltip.gameObject.SetActive(true);
+        }
         if (position != null) {
             PositionMinionCardTooltip(position);
         } else {

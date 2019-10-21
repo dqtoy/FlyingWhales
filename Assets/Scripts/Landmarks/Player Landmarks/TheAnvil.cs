@@ -51,7 +51,7 @@ public class TheAnvil : BaseLandmark {
         dueDate = GameManager.Instance.Today().AddTicks(upgradeDuration);
         int tickDiff = Utilities.GetTicksInBetweenDates(upgradeStartDate, dueDate);
         SchedulingManager.Instance.AddEntry(dueDate, UpgradeDone, this);
-        TimerHubUI.Instance.AddItem("Research " + upgradeIdentifier, upgradeDuration, () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
+        TimerHubUI.Instance.AddItem("Research " + upgradeIdentifier, upgradeDuration, () => UIManager.Instance.ShowRegionInfo(this.tileLocation.region));
     }
     private void UpgradeDone() {
         if (upgradeIdentifier == Improved_Spells_1 || upgradeIdentifier == Improved_Spells_2) {
@@ -84,7 +84,7 @@ public class TheAnvil : BaseLandmark {
         tempData.isResearched = true;
         dynamicResearchData[upgradeIdentifier] = tempData;
 
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), LandmarkManager.Instance.anvilResearchData[upgradeIdentifier].researchDoneNotifText, () => UIManager.Instance.ShowHextileInfo(this.tileLocation));
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), LandmarkManager.Instance.anvilResearchData[upgradeIdentifier].researchDoneNotifText, () => UIManager.Instance.ShowRegionInfo(this.tileLocation.region));
         upgradeIdentifier = string.Empty;
         tileLocation.region.assignedMinion.SetAssignedRegion(null);
         tileLocation.region.SetAssignedMinion(null); //reset assigned minion

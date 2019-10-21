@@ -22,11 +22,11 @@ public class MinionCard : MonoBehaviour {
     public void SetMinion(UnsummonedMinionData minionData) {
         this.minionData = minionData;
         string minionName = this.minionData.minionName;
-        if (minionName == string.Empty) {
-            UnsummonedMinionData temp = this.minionData;
-            temp.minionName = RandomNameGenerator.Instance.GenerateMinionName();
-            this.minionData = temp;
-        }
+        //if (minionName == string.Empty) {
+        //    UnsummonedMinionData temp = this.minionData;
+        //    temp.minionName = RandomNameGenerator.Instance.GenerateMinionName();
+        //    this.minionData = temp;
+        //}
 
         Sprite classPortrait = CharacterManager.Instance.GetClassPortraitSprite(this.minionData.className);
         if(classPortrait != null) {

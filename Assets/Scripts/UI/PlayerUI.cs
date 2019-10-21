@@ -30,8 +30,6 @@ public class PlayerUI : MonoBehaviour {
     public AttackSlotItem attackSlot;
     [SerializeField] private DefenseSlotItem defenseSlot;
     public SlotItem[] attackGridSlots;
-    public Button startInvasionButton;
-    [SerializeField] private UIHoverHandler startInvasionHoverHandler;
 
     [Header("Intel")]
     [SerializeField] private GameObject intelContainer;
@@ -167,9 +165,9 @@ public class PlayerUI : MonoBehaviour {
         if (PlayerManager.Instance.player == null) {
             return;
         }
-        if (InteriorMapManager.Instance.isAnAreaMapShowing) {
-            UpdateStartInvasionButton();
-        }
+        //if (InteriorMapManager.Instance.isAnAreaMapShowing) {
+        //    UpdateStartInvasionButton();
+        //}
         UpdateMana();
     }
 
@@ -257,8 +255,8 @@ public class PlayerUI : MonoBehaviour {
     private void OnAreaMapOpened(Area area) {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
-        UpdateStartInvasionButton();
-        startInvasionButton.gameObject.SetActive(true);
+        //UpdateStartInvasionButton();
+        //startInvasionButton.gameObject.SetActive(true);
         //saveGameButton.gameObject.SetActive(false);
 
         if (PlayerManager.Instance.player.currentAreaBeingInvaded == area) {
@@ -273,7 +271,7 @@ public class PlayerUI : MonoBehaviour {
     private void OnAreaMapClosed(Area area) {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
-        startInvasionButton.gameObject.SetActive(false);
+        //startInvasionButton.gameObject.SetActive(false);
         HideCombatAbilityUI();
         //saveGameButton.gameObject.SetActive(true);
 
@@ -650,13 +648,13 @@ public class PlayerUI : MonoBehaviour {
         ShowCombatAbilityUI();
     }
     public void StopInvasion() {
-        startInvasionButton.interactable = true;
+        //startInvasionButton.interactable = true;
         HideCombatAbilityUI();
     }
-    private void UpdateStartInvasionButton() {
-        startInvasionButton.interactable = InteriorMapManager.Instance.currentlyShowingArea.CanInvadeSettlement();
-        startInvasionHoverHandler.gameObject.SetActive(!startInvasionButton.interactable);
-    }
+    //private void UpdateStartInvasionButton() {
+    //    startInvasionButton.interactable = InteriorMapManager.Instance.currentlyShowingArea.CanInvadeSettlement();
+    //    startInvasionHoverHandler.gameObject.SetActive(!startInvasionButton.interactable);
+    //}
     #endregion
 
     #region Miscellaneous
@@ -1516,7 +1514,7 @@ public class PlayerUI : MonoBehaviour {
             item.SetObject(character);
             item.SetAsButton();
             item.ClearAllOnClickActions();
-            item.AddOnClickAction(UIManager.Instance.ShowCharacterInfo);
+            item.AddOnClickAction((c) => UIManager.Instance.ShowCharacterInfo(c, false));
 
         }
         OrderKillSummaryItems();
@@ -1640,6 +1638,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private GameObject minionItemPrefab;
     [SerializeField] private ScrollRect minionListScrollView;
     [SerializeField] private GameObject minionListGO;
+    [SerializeField] private UIHoverPosition minionListCardTooltipPos;
     private void UpdateMinionList() {
         Utilities.DestroyChildren(minionListScrollView.content);
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
@@ -1652,7 +1651,7 @@ public class PlayerUI : MonoBehaviour {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(minionItemPrefab.name, Vector3.zero, Quaternion.identity, minionListScrollView.content);
         CharacterNameplateItem item = go.GetComponent<CharacterNameplateItem>();
         item.SetObject(minion.character);
-        item.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(character.minion));
+        item.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(character.minion, minionListCardTooltipPos));
         item.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
         item.SetAsDefaultBehaviour();
     }

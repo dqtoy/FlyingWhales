@@ -13,7 +13,7 @@ public class Corpse : TileObject {
 
     public override void OnClickAction() {
         base.OnClickAction();
-        UIManager.Instance.ShowCharacterInfo(character);
+        UIManager.Instance.ShowCharacterInfo(character, true);
     }
 
     public override string ToString() {

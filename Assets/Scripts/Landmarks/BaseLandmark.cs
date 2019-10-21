@@ -133,7 +133,7 @@ public class BaseLandmark {
         }
         if (specificLandmarkType.IsPlayerLandmark()) {
             HexTile tile = _location;
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()) + " was destroyed!", () => UIManager.Instance.ShowHextileInfo(tile));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()) + " was destroyed!", () => UIManager.Instance.ShowRegionInfo(tile.region));
         }
         ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
         _location = null;

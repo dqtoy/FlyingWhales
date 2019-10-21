@@ -304,7 +304,7 @@ public class ConsoleMenu : UIMenu {
     private void OnCharacterDoingAction(Character character, GoapAction action) {
         if (typesSubscribedTo.Contains(action.goapType)) {
             Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, character.name + " is doing " + action.goapType.ToString(),
-                100, () => UIManager.Instance.ShowCharacterInfo(character));
+                100, () => UIManager.Instance.ShowCharacterInfo(character, true));
             UIManager.Instance.Pause();
         }
     }
@@ -553,7 +553,7 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage("There was an error in the command format of Center on Character");
             return;
         }
-        UIManager.Instance.ShowCharacterInfo(character);
+        UIManager.Instance.ShowCharacterInfo(character, true);
         //character.CenterOnCharacter();
     }
     private void ShowLogs(string[] parameters) {

@@ -19,7 +19,7 @@ public class LocationPortrait : PooledObject, IPointerClickHandler {
         if (!disableInteraction && eventData.button == PointerEventData.InputButton.Left) {
             if (region != null) {
                 if (!UIManager.Instance.regionInfoUI.isShowing) {
-                    UIManager.Instance.ShowHextileInfo(region.coreTile);
+                    UIManager.Instance.ShowRegionInfo(region);
                 } else {
                     region.CenterCameraOnRegion();
                 }

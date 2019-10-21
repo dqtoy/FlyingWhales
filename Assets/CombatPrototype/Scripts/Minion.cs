@@ -434,4 +434,17 @@ public struct UnsummonedMinionData {
     public string className;
     public COMBAT_ABILITY combatAbility;
     public List<INTERVENTION_ABILITY> interventionAbilitiesToResearch;
+
+    public override bool Equals(object obj) {
+        if (obj is UnsummonedMinionData) {
+            return Equals((UnsummonedMinionData)obj);
+        }
+        return base.Equals(obj);
+    }
+    public override int GetHashCode() {
+        return base.GetHashCode();
+    }
+    private bool Equals(UnsummonedMinionData data) {
+        return this.minionName == data.minionName && this.className == data.className && this.combatAbility == data.combatAbility && this.interventionAbilitiesToResearch.Equals(data.interventionAbilitiesToResearch);
+    }
 }

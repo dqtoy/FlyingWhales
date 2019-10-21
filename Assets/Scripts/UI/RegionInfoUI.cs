@@ -73,7 +73,6 @@ public class RegionInfoUI : UIMenu {
             previousRegion.ShowTransparentBorder();
         }
         activeRegion = _data as Region;
-        Debug.Log("Set active region to " + activeRegion.name);
         base.OpenMenu();
         UpdateBasicInfo();
         UpdateRegionInfo();
@@ -86,7 +85,6 @@ public class RegionInfoUI : UIMenu {
     public override void CloseMenu() {
         activeRegion.ShowTransparentBorder();
         activeRegion = null;
-        Debug.Log("Set active region to null");
         base.CloseMenu();
     }
 

@@ -18,6 +18,7 @@ public class PlayerJobActionButton : MonoBehaviour {
     [SerializeField] private Image actionIcon;
     [SerializeField] private Image selectedIcon;
     [SerializeField] private GameObject cover;
+    [SerializeField] private UIHoverPosition hoverPos;
     //[SerializeField] private GameObject pointer;
     //private Character character;
     private object target;
@@ -97,11 +98,12 @@ public class PlayerJobActionButton : MonoBehaviour {
         if(actionSlot.ability != null) {
             string header = actionSlot.ability.name;
             string message = actionSlot.ability.description;
-            PlayerUI.Instance.ShowActionBtnTooltip(message, header);
+            UIManager.Instance.ShowSmallInfo(message, hoverPos, header);
+            //PlayerUI.Instance.ShowActionBtnTooltip(message, header);
         }
     }
     public void HideHoverText() {
-        PlayerUI.Instance.HideActionBtnTooltip();
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 

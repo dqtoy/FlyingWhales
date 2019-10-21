@@ -82,7 +82,7 @@ public class ReportCrime : GoapAction {
     public void PreReportCrimeSuccess() {
         //**Effect 1**: The reported criminal will gain the associated Crime trait
         criminal.owner.AddCriminalTrait(crime, crimeAction);
-        currentState.AddLogFiller(criminal, criminal.owner.name, LOG_IDENTIFIER.CHARACTER_3);
+        currentState.AddLogFiller(criminal.owner, criminal.owner.name, LOG_IDENTIFIER.CHARACTER_3);
         Character target = poiTarget as Character;
 
         //**Effect 2**: Share event related to the Crime to the Target's memories

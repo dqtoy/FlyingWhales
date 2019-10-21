@@ -28,7 +28,8 @@ public class Enemy : RelationshipTrait {
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "enemy");
             log.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            sourceCharacter.AddHistory(log);
+            //sourceCharacter.AddHistory(log);
+            log.AddLogToInvolvedObjects();
         }
     }
     public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
@@ -40,7 +41,8 @@ public class Enemy : RelationshipTrait {
             Log log = new Log(GameManager.Instance.Today(), "Character", "Generic", "not_enemy");
             log.AddToFillers(sourceCharacter, sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            sourceCharacter.AddHistory(log);
+            //sourceCharacter.AddHistory(log);
+            log.AddLogToInvolvedObjects();
         }
     }
     public override bool IsUnique() {

@@ -1356,7 +1356,7 @@ public class Player : ILeader {
                 }
                 currMinion.StartInvasionProtocol(area);
             }
-            PlayerUI.Instance.startInvasionButton.interactable = false;
+            //PlayerUI.Instance.startInvasionButton.interactable = false;
             currentAreaBeingInvaded = area;
             currentMinions[0].character.CenterOnCharacter();
             Messenger.AddListener(Signals.TICK_ENDED, PerTickInvasion);
@@ -1420,7 +1420,7 @@ public class Player : ILeader {
             //LevelUpAllMinions();
         } else {
             HexTile tile = currentAreaBeingInvaded.coreTile;
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You failed to invade " + currentAreaBeingInvaded.name + ".", () => UIManager.Instance.ShowHextileInfo(tile));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You failed to invade " + currentAreaBeingInvaded.name + ".", () => UIManager.Instance.ShowRegionInfo(tile.region));
         }
         for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];

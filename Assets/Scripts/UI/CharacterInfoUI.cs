@@ -13,12 +13,17 @@ public class CharacterInfoUI : UIMenu {
     public bool isWaitingForJoinBattleTarget;
 
     [Space(10)]
-    [SerializeField] GameObject normalCharacterGO;
-    [SerializeField] GameObject minionCharacterGO;
-
-    [Space(10)]
     [Header("Minion")]
-    [SerializeField] MinionCard minionCard;
+    [SerializeField] private GameObject defaultTogglesGO;
+    [SerializeField] private GameObject minionTogglesGO;
+    [SerializeField] private Toggle skillToggle;
+    [SerializeField] private Toggle minionTraitsToggle;
+    [SerializeField] private Toggle spellsToggle;
+    [SerializeField] private Toggle minionItemsToggle;
+    [SerializeField] private TextMeshProUGUI minionSkillLbl;
+    [SerializeField] private TextMeshProUGUI minionTraitsLbl;
+    [SerializeField] private TextMeshProUGUI minionSpellsLbl;
+    [SerializeField] private ScrollRect minionItemsScrollView;
 
     [Space(10)]
     [Header("Basic Info")]
@@ -50,7 +55,6 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private Toggle attackBtnToggle;
     [SerializeField] private GameObject joinBattleButtonGO;
     [SerializeField] private Toggle joinBattleBtnToggle;
-    [SerializeField] private GameObject releaseBtnGO;
 
     [Space(10)]
     [Header("Stats")]
@@ -77,8 +81,6 @@ public class CharacterInfoUI : UIMenu {
     [SerializeField] private ScrollRect memoriesScrollView;
     public MemoryItem[] memoryItems { get; private set; }
 
-    //private TraitItem[] statusTraitContainers;
-    //private TraitItem[] normalTraitContainers;
     private TraitItem[] relationshipTraitContainers;
     private ItemContainer[] inventoryItemContainers;
 
@@ -144,9 +146,9 @@ public class CharacterInfoUI : UIMenu {
         _previousCharacter = _activeCharacter;
         _activeCharacter = _data as Character;
         SetLogMenuState(false);
-        if (_activeCharacter.marker != null) {
-            _activeCharacter.CenterOnCharacter();
-        }
+        //if (_activeCharacter.marker != null) {
+        //    _activeCharacter.CenterOnCharacter();
+        //}
         base.OpenMenu();
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             backButton.interactable = false;
@@ -154,14 +156,7 @@ public class CharacterInfoUI : UIMenu {
         if (UIManager.Instance.IsObjectPickerOpen()) {
             UIManager.Instance.HideObjectPicker();
         }
-
-        if (_activeCharacter.minion != null) {
-            minionCharacterGO.SetActive(true);
-            normalCharacterGO.SetActive(false);
-        } else {
-            minionCharacterGO.SetActive(false);
-            normalCharacterGO.SetActive(true);
-        }
+        UpdateTabsToShow();
         UpdateCharacterInfo();
         UpdateTraits();
         UpdateInventoryInfo();
@@ -196,18 +191,19 @@ public class CharacterInfoUI : UIMenu {
         statusTraitsScrollView.verticalNormalizedPosition = 1;
         normalTraitsScrollView.verticalNormalizedPosition = 1;
     }
-
     public void UpdateCharacterInfo() {
         if (_activeCharacter == null) {
             return;
         }
+        UpdatePortrait();
+        UpdateBasicInfo();
+        UpdateStatInfo();
+        UpdateLocationInfo();
+
         if (_activeCharacter.minion != null) {
-            minionCard.SetMinion(_activeCharacter.minion);
-        } else {
-            UpdatePortrait();
-            UpdateBasicInfo();
-            UpdateStatInfo();
-            UpdateLocationInfo();
+            UpdateMinionSkills();
+            UpdateMinionTraits();
+            UpdateMinionSpells();
         }
         
         //UpdateAllHistoryInfo();
@@ -223,7 +219,6 @@ public class CharacterInfoUI : UIMenu {
         supplyLbl.text = _activeCharacter.supply.ToString();
         UpdateThoughtBubble();
     }
-
     public void UpdateThoughtBubble() {
         if (_activeCharacter.minion != null) {
             return;
@@ -319,9 +314,74 @@ public class CharacterInfoUI : UIMenu {
             plansLbl.text = _activeCharacter.name + " is in " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
         }
     }
-
     public bool IsCharacterInfoShowing(Character character) {
         return (isShowing && _activeCharacter == character);
+    }
+    #endregion
+
+    #region Tabs
+    /// <summary>
+    /// Update the tabs to show based on the character that is being shown on the menu
+    /// </summary>
+    private void UpdateTabsToShow() {
+        defaultTogglesGO.SetActive(activeCharacter.minion == null);
+        minionTogglesGO.SetActive(activeCharacter.minion != null);
+    }
+    #endregion
+
+    #region Minion
+    private void UpdateMinionSkills() {
+        minionSkillLbl.text = "<b><link=\"0\">" + activeCharacter.minion.combatAbility.name + "</link></b>";
+    }
+    private void UpdateMinionTraits() {
+        minionTraitsLbl.text = string.Empty;
+        for (int i = 0; i < activeCharacter.minion.deadlySin.assignments.Length; i++) {
+            if (i > 0) {
+                minionTraitsLbl.text += ", ";
+            }
+            minionTraitsLbl.text += "<b><link=\"" + i.ToString() + "\">" + Utilities.NormalizeStringUpperCaseFirstLetters(activeCharacter.minion.deadlySin.assignments[i].ToString()) + "</link></b>";
+        }
+    }
+    private void UpdateMinionSpells() {
+        if (activeCharacter.minion.interventionAbilitiesToResearch.Count > 0) {
+            minionSpellsLbl.text = string.Empty;
+            for (int i = 0; i < activeCharacter.minion.interventionAbilitiesToResearch.Count; i++) {
+                if (i > 0) {
+                    minionSpellsLbl.text += ", ";
+                }
+                minionSpellsLbl.text += "<b><link=\"" + i.ToString() + "\">" + Utilities.NormalizeStringUpperCaseFirstLetters(activeCharacter.minion.interventionAbilitiesToResearch[i].ToString()) + "</link></b>";
+            }
+        } else {
+            minionSpellsLbl.text = "<i>Minions without the spell source trait do not have extractable spells.</i>";
+        }
+    }
+    public void OnHoverActionAbility(object obj) {
+        if (obj is string) {
+            int index = System.Int32.Parse((string)obj);
+            DEADLY_SIN_ACTION action = activeCharacter.minion.deadlySin.assignments[index];
+            
+            UIManager.Instance.ShowSmallInfo(action.Description(), Utilities.NormalizeStringUpperCaseFirstLetters(action.ToString()));
+        }
+    }
+    public void OnHoverExitAbility() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    public void OnHoverResearchSpell(object obj) {
+        if (obj is string) {
+            int index = System.Int32.Parse((string)obj);
+            INTERVENTION_ABILITY spell = activeCharacter.minion.interventionAbilitiesToResearch[index];
+            UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allInterventionAbilitiesData[spell].description, Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
+        }
+    }
+    public void OnHoverExitSpell() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    public void OnHoverCombatAbility(object obj) {
+        COMBAT_ABILITY action = activeCharacter.minion.combatAbility.type;
+        UIManager.Instance.ShowSmallInfo(action.Description(), Utilities.NormalizeStringUpperCaseFirstLetters(action.ToString()));
+    }
+    public void OnHoverExitCombatAbility() {
+        UIManager.Instance.HideSmallInfo();
     }
     #endregion
 
@@ -541,13 +601,18 @@ public class CharacterInfoUI : UIMenu {
         }
     }
     private void UpdateInventoryInfo() {
-        if (_activeCharacter.minion != null) {
-            return;
-        }
+        //if (_activeCharacter.minion != null) {
+        //    return;
+        //}
         for (int i = 0; i < inventoryItemContainers.Length; i++) {
             ItemContainer currContainer = inventoryItemContainers[i];
             SpecialToken currInventoryItem = _activeCharacter.items.ElementAtOrDefault(i);
             currContainer.SetItem(currInventoryItem);
+            if (activeCharacter.minion != null) {
+                currContainer.transform.SetParent(minionItemsScrollView.content);
+            } else {
+                currContainer.transform.SetParent(itemsScrollView.content);
+            }
         }
     }
     #endregion
