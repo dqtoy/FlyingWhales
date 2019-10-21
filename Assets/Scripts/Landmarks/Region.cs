@@ -234,6 +234,9 @@ public class Region {
 
     #region Invasion
     public bool CanBeInvaded() {
+        if (area != null) {
+            return area.CanInvadeSettlement();
+        }
         return HasCorruptedConnection() && !coreTile.isCorrupted && !demonicInvasionData.beingInvaded;
     }
     public void StartInvasion(Minion assignedMinion) {

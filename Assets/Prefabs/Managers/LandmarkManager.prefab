@@ -340,7 +340,7 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+    - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
