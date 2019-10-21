@@ -97,6 +97,7 @@ public class Plagued : Trait {
                 goapPlan.ConstructAllNodes();
 
                 goapAction.CreateStates();
+                owner.jobQueue.AddJobInQueue(job, false);
                 //owner.currentAction.SetEndAction(ResumeLastAction);
                 goapAction.DoAction();
                 hasCreatedJob = true;
@@ -111,8 +112,9 @@ public class Plagued : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
-
                 goapAction.CreateStates();
+                owner.jobQueue.AddJobInQueue(job, false);
+
                 goapAction.SetEndAction(ResumePausedState);
                 goapAction.DoAction();
                 hasCreatedJob = true;
@@ -124,8 +126,9 @@ public class Plagued : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
-
                 goapAction.CreateStates();
+                owner.jobQueue.AddJobInQueue(job, false);
+
                 goapAction.DoAction();
                 hasCreatedJob = true;
             }
@@ -143,8 +146,9 @@ public class Plagued : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK);
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
-
                 goapAction.CreateStates();
+                owner.jobQueue.AddJobInQueue(job, false);
+
                 goapAction.DoAction();
                 hasCreatedJob = true;
             } else if (owner.stateComponent.currentState != null) {
@@ -157,8 +161,9 @@ public class Plagued : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK);
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
-
                 goapAction.CreateStates();
+                owner.jobQueue.AddJobInQueue(job, false);
+
                 goapAction.DoAction();
                 hasCreatedJob = true;
             } else if (owner.stateComponent.currentState == null && owner.currentAction == null) {
@@ -169,8 +174,9 @@ public class Plagued : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.SEPTIC_SHOCK);
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
-
                 goapAction.CreateStates();
+                owner.jobQueue.AddJobInQueue(job, false);
+
                 owner.currentAction.DoAction();
                 hasCreatedJob = true;
             }

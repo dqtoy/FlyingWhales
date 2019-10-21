@@ -1258,8 +1258,8 @@ public class PlayerUI : MonoBehaviour {
     private ArtifactSlot currentlySelectedArtifactSlot; //the artifact that is currently shown in the UI
     private void UpdateArtifactsInteraction() {
         bool state = currentlySelectedArtifactSlot != null && currentlySelectedArtifactSlot.artifact != null && !currentlySelectedArtifactSlot.artifact.hasBeenUsed;
-        //summonArtifactCover.SetActive(!state);
-        summonArtifactBtn.interactable = state && InteriorMapManager.Instance.isAnAreaMapShowing;
+        summonArtifactBtn.interactable = state && !InteriorMapManager.Instance.isAnAreaMapShowing;
+        summonArtifactCover.SetActive(!summonArtifactBtn.interactable);
     }
     private void OnPlayerGainedArtifactSlot(ArtifactSlot slot) {
         UpdateArtifactsInteraction();

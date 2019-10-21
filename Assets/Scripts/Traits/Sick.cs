@@ -119,8 +119,9 @@ public class Sick : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
-
                 goapAction.CreateStates();
+                owner.jobQueue.AddJobInQueue(job, false);
+
                 owner.SetCurrentAction(goapAction);
                 //owner.currentAction.SetEndAction(ResumeLastAction);
                 owner.currentAction.DoAction();
@@ -136,10 +137,11 @@ public class Sick : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
-
                 goapAction.CreateStates();
                 owner.SetCurrentAction(goapAction);
                 owner.currentAction.SetEndAction(ResumePausedState);
+                owner.jobQueue.AddJobInQueue(job, false);
+
                 owner.currentAction.DoAction();
                 hasCreatedJob = true;
             } else {
@@ -150,9 +152,10 @@ public class Sick : Trait {
                 GoapPlanJob job = new GoapPlanJob(JOB_TYPE.DEATH, INTERACTION_TYPE.PUKE);
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
-
                 goapAction.CreateStates();
                 owner.SetCurrentAction(goapAction);
+                owner.jobQueue.AddJobInQueue(job, false);
+
                 owner.currentAction.DoAction();
                 hasCreatedJob = true;
             }

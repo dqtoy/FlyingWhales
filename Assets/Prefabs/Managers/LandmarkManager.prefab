@@ -300,7 +300,7 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 73eecfc9a4b9f1d4395846aa3a37d4bf, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
@@ -320,7 +320,7 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+    - mainSprite: {fileID: 21300000, guid: caaaf5c9190312245a0a80dd4a509cc1, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
@@ -340,7 +340,7 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+    - mainSprite: {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
@@ -360,7 +360,7 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 566392069dbffc6409998f9359704001, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
@@ -380,7 +380,7 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 373c75d3584925743ac4245df8a2bbcb, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
@@ -401,7 +401,7 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 3a6d947b034203946aab2f02724b66c2, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
@@ -421,7 +421,7 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: cfbcd6984598e704e83f02312205b7ab, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 0919fe3d152887f46a5152e78ab4f9dd, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
@@ -461,9 +461,9 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: e25182124429402469751b740445d966, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 234e6925ebef61f49b0f4cd54e1b3959, type: 3}
       tintSprite: {fileID: 0}
-      animation: {fileID: 9100000, guid: 5e52831c99093c9429a7012fe80475b7, type: 2}
+      animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
   - landmarkTypeString: The Pit

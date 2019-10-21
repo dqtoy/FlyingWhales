@@ -5273,6 +5273,20 @@ public class Character : ILeader, IPointOfInterest {
         //}
         return true;
     }
+    public bool TryGetMostSeriousCrime(out CRIME_CATEGORY crime) {
+        List<Trait> crimes = GetTraitsOf(TRAIT_TYPE.CRIMINAL);
+        crime = CRIME_CATEGORY.NONE;
+        for (int i = 0; i < crimes.Count; i++) {
+            Trait trait = crimes[i];
+            if (trait.crimeSeverity > crime) {
+                crime = trait.crimeSeverity;
+            }
+        }
+        if (crime != CRIME_CATEGORY.NONE) {
+            return true;
+        }
+        return false;
+    }
     #endregion
 
     #region Morality
@@ -7458,6 +7472,7 @@ public class Character : ILeader, IPointOfInterest {
         poiGoapActions.Add(INTERACTION_TYPE.SING);
         poiGoapActions.Add(INTERACTION_TYPE.GO_TO);
         poiGoapActions.Add(INTERACTION_TYPE.SCREAM_FOR_HELP);
+        poiGoapActions.Add(INTERACTION_TYPE.WHIP);
 
         if (race != RACE.SKELETON) {
             poiGoapActions.Add(INTERACTION_TYPE.SHARE_INFORMATION);

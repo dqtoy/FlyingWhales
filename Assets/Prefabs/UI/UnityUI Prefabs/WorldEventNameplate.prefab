@@ -220,7 +220,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1982682745619146
 GameObject:
   m_ObjectHideFlags: 0
@@ -626,7 +626,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: Marvin
+  m_text: Destroy Profane Landmark
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 44b0e75cf1a2d2246a2de46e846fa57d, type: 2}
   m_sharedMaterial: {fileID: 21554341954933024, guid: 44b0e75cf1a2d2246a2de46e846fa57d,
@@ -693,15 +693,15 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 23, y: 0, z: 15, w: 0}
+  m_margin: {x: 23, y: 0, z: 5, w: 0}
   m_textInfo:
     textComponent: {fileID: 114633726323184002}
-    characterCount: 6
+    characterCount: 24
     spriteCount: 0
-    spaceCount: 0
-    wordCount: 1
+    spaceCount: 2
+    wordCount: 3
     linkCount: 0
-    lineCount: 1
+    lineCount: 2
     pageCount: 1
     materialCount: 1
   m_havePropertiesChanged: 0
@@ -1347,8 +1347,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 234.22998, y: 9.689941}
-  m_SizeDelta: {x: 241.46, y: 46.7}
+  m_AnchoredPosition: {x: 234.22998, y: 0}
+  m_SizeDelta: {x: 241.46, y: 112}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224761089870618304
 RectTransform:
