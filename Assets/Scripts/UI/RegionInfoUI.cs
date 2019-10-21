@@ -500,4 +500,37 @@ public class RegionInfoUI : UIMenu {
         needlesUI.UpdateUI();
     }
     #endregion
+
+    #region For Testing
+    public void ShowLocationInfo() {
+        if(activeRegion.area != null) {
+            string summary = "Location Job Queue: ";
+            if (activeRegion.area.jobQueue.jobsInQueue.Count > 0) {
+                for (int i = 0; i < activeRegion.area.jobQueue.jobsInQueue.Count; i++) {
+                    JobQueueItem jqi = activeRegion.area.jobQueue.jobsInQueue[i];
+                    if (jqi is GoapPlanJob) {
+                        GoapPlanJob gpj = jqi as GoapPlanJob;
+                        summary += "\n" + gpj.name + " Targetting " + gpj.targetPOI?.name ?? "None";
+                    } else {
+                        summary += "\n" + jqi.name;
+                    }
+                    summary += "\n\tAssigned Character: " + jqi.assignedCharacter?.name ?? "None";
+
+                }
+            } else {
+                summary += "\nNone";
+            }
+            summary += "\nActive Quest: ";
+            if (activeRegion.owner != null && activeRegion.owner.activeQuest != null) {
+                summary += activeRegion.owner.activeQuest.name;
+            } else {
+                summary += "None";
+            }
+            UIManager.Instance.ShowSmallInfo(summary);
+        }
+    }
+    public void HideLocationInfo() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
 }
