@@ -220,7 +220,7 @@ public class Infected : Trait {
             summary += "\nRoll is " + roll.ToString();
             if (roll < 20) { //15
                 summary += "\nChance met, " + hitCharacter.name + " will turn into a zombie.";
-                if (hitCharacter.AddTrait("Zombie_Virus", characterResponsible: hitBy)) {
+                if (hitCharacter.AddTrait("Infected", characterResponsible: hitBy)) {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_zombie");
                     log.AddToFillers(hitCharacter, hitCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(hitBy, hitBy.name, LOG_IDENTIFIER.TARGET_CHARACTER);
