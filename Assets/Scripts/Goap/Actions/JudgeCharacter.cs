@@ -24,16 +24,103 @@ public class JudgeCharacter : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
-            WeightedDictionary<string> weights = new WeightedDictionary<string>();
-            weights.AddElement("Target Executed", 10);
-            if (poiTarget.factionOwner == actor.faction) {
-                //only allow target release if target is from the same faction as the actor's faction
-                weights.AddElement("Target Released", 10);
+            WeightedFloatDictionary<string> weights = new WeightedFloatDictionary<string>();
+
+            Character targetCharacter = poiTarget as Character;
+
+            float absolve = 0f;
+            float whip = 0f;
+            float kill = 0f;
+            float exile = 0f;
+
+            //base weights
+            if (targetCharacter.faction != actor.faction && targetCharacter.faction.GetRelationshipWith(actor.faction).relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                //hostile faction
+                whip = 5f;
+                kill = 100f;
+                exile = 10f;
+            } else {
+                //criminal traits
+                CRIME_CATEGORY crime;
+                if (targetCharacter.TryGetMostSeriousCrime(out crime)) {
+                    switch (crime) {
+                        case CRIME_CATEGORY.MISDEMEANOR:
+                            absolve = 50f;
+                            whip = 100f;
+                            break;
+                        case CRIME_CATEGORY.SERIOUS:
+                            absolve = 5f;
+                            whip = 20f;
+                            kill = 50f;
+                            exile = 50f;
+                            break;
+                        case CRIME_CATEGORY.HEINOUS:
+                            whip = 5f;
+                            kill = 100f;
+                            exile = 50f;
+                            break;
+                    }
+                } else {
+                    throw new System.Exception(actor.name + " is trying to judge " + targetCharacter.name + " but has no crime, and is not part of a hostile faction.");
+                }
             }
-            //if (poiTarget.factionOwner == actor.faction) {
-            //    weights.AddElement("Target Exiled", 10);
-            //}
-            SetState(weights.PickRandomElementGivenWeights());
+
+            //modifiers
+            if (targetCharacter.faction == actor.faction) {
+                absolve *= 1.5f;
+                whip *= 1.5f;
+            } else {
+                FACTION_RELATIONSHIP_STATUS rel = actor.faction.GetRelationshipWith(targetCharacter.faction).relationshipStatus;
+                switch (rel) {
+                    case FACTION_RELATIONSHIP_STATUS.COLD_WAR:
+                        absolve *= 0.5f;
+                        whip *= 0.5f;
+                        kill *= 1.5f;
+                        exile *= 2f;
+                        break;
+                    case FACTION_RELATIONSHIP_STATUS.HOSTILE:
+                        absolve *= 0.2f;
+                        whip *= 0.5f;
+                        kill *= 2f;
+                        exile *= 1.5f;
+                        break;
+                }
+            }
+
+            List<RELATIONSHIP_TRAIT> rels = actor.GetAllRelationshipTraitTypesWith(targetCharacter);
+            for (int i = 0; i < rels.Count; i++) {
+                switch (rels[i]) {
+                    case RELATIONSHIP_TRAIT.LOVER:
+                        absolve *= 2f;
+                        whip *= 2f;
+                        kill *= 0.2f;
+                        exile *= 0.5f;
+                        break;
+                    case RELATIONSHIP_TRAIT.FRIEND:
+                    case RELATIONSHIP_TRAIT.RELATIVE:
+                        absolve *= 2f;
+                        whip *= 2f;
+                        kill *= 0.5f;
+                        exile *= 0.5f;
+                        break;
+                    case RELATIONSHIP_TRAIT.ENEMY:
+                        absolve *= 0.2f;
+                        whip *= 0.5f;
+                        kill *= 2f;
+                        exile *= 1.5f;
+                        break;
+                }
+            }
+
+
+            weights.AddElement("Target Released", absolve);
+            weights.AddElement("Target Executed", kill);
+            weights.AddElement("Target Exiled", exile);
+            weights.AddElement("Target Whip", whip);
+
+            weights.LogDictionaryValues(GameManager.Instance.TodayLogString() + actor.name + " judgement weights towards " + targetCharacter.name);
+            string chosen = weights.PickRandomElementGivenWeights();
+            SetState(chosen);
         }
     }
     protected override int GetCost() {
@@ -96,19 +183,23 @@ public class JudgeCharacter : GoapAction {
         //**Effect 1**: Remove target's Restrained trait
         RemoveTraitFrom(poiTarget, "Restrained");
     }
+    public void PreTargetWhip() {
+
+    }
+    public void AfterTargetWhip() {
+        GoapPlanJob whipJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.WHIP);
+        actor.jobQueue.AddJobInQueue(whipJob);
+    }
     #endregion
 
     private void ForceTargetReturnHome() {
         Character target = poiTarget as Character;
         target.AdjustIgnoreHostilities(1); //target should ignore hostilities or be ignored by other hostiles, until it returns home.
-        GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RETURN_HOME, target, poiTarget);
-        goapAction.SetTargetStructure();
         target.AddOnLeaveAreaAction(() => target.AdjustIgnoreHostilities(-1));
         target.AddOnLeaveAreaAction(() => target.ClearAllAwarenessOfType(POINT_OF_INTEREST_TYPE.ITEM, POINT_OF_INTEREST_TYPE.TILE_OBJECT));
-        GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
-        GoapPlan goapPlan = new GoapPlan(goalNode, new GOAP_EFFECT_CONDITION[] { GOAP_EFFECT_CONDITION.NONE }, GOAP_CATEGORY.REACTION);
-        goapPlan.ConstructAllNodes();
-        target.AddPlan(goapPlan, true);
+
+        CharacterStateJob job = new CharacterStateJob(JOB_TYPE.RETURN_HOME, CHARACTER_STATE.MOVE_OUT);
+        target.jobQueue.AddJobInQueue(job);
     }
 
     #region Intel Reactions

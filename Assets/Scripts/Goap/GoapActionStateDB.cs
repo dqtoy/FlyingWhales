@@ -264,6 +264,7 @@ public static class GoapActionStateDB {
             new StateNameAndDuration(){ name = "Target Executed", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Released", status = InteractionManager.Goap_State_Success, duration = 0 },
             new StateNameAndDuration(){ name = "Target Exiled", status = InteractionManager.Goap_State_Success, duration = 0 },
+            new StateNameAndDuration(){ name = "Target Whip", status = InteractionManager.Goap_State_Success, duration = 0 },
         } },
         {INTERACTION_TYPE.REPORT_CRIME, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "Report Crime Success", status = InteractionManager.Goap_State_Success, duration = 0 },
@@ -529,6 +530,9 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.REACT_TO_SCREAM, new StateNameAndDuration[]{
             new StateNameAndDuration(){ name = "React Success", status = InteractionManager.Goap_State_Success, duration = 0 },
+        } },
+         {INTERACTION_TYPE.WHIP, new StateNameAndDuration[]{
+            new StateNameAndDuration(){ name = "Whip Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
         } },
     };
 }
