@@ -857,7 +857,8 @@ public class Player : ILeader {
             Messenger.Broadcast(Signals.PLAYER_LOST_SUMMON_SLOT, slot);
         }
     }
-    private void ShowDiscardSummonConfirmation(SummonSlot slot) {
+    private void ShowDiscardSummonConfirmation(object s) {
+        SummonSlot slot = s as SummonSlot;
         UIManager.Instance.ShowYesNoConfirmation("Discard summon slot", "Are you sure you want to discard your " + slot.summon.summonType.SummonName() + " summon?", () => OnClickYesDiscardSummon(slot), layer: 26);
     }
     private void OnClickYesDiscardSummon(SummonSlot slot) {
@@ -1097,7 +1098,8 @@ public class Player : ILeader {
             Messenger.Broadcast(Signals.PLAYER_LOST_ARTIFACT_SLOT, slot);
         }
     }
-    private void ShowDiscardArtifactConfirmation(ArtifactSlot slot) {
+    private void ShowDiscardArtifactConfirmation(object s) {
+        ArtifactSlot slot = s as ArtifactSlot;
         UIManager.Instance.ShowYesNoConfirmation("Discard artifact slot", "Are you sure you want to discard your " + slot.artifact.name + "?", () => OnClickYesDiscardArtifact(slot), layer: 26);
     }
     private void OnClickYesDiscardArtifact(ArtifactSlot slot) {

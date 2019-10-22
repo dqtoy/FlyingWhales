@@ -75,7 +75,8 @@ public class PlayerCreateChaoticEventsUI : MonoBehaviour {
     private bool CanChooseMinion(Character character) {
         return !character.minion.isAssigned;
     }
-    private void SetChosenMinion(Character character) {
+    private void SetChosenMinion(object c) {
+        Character character = c as Character;
         chosenMinion = character.minion;
         minionPortrait.GeneratePortrait(chosenMinion.character);
         minionName.text = chosenMinion.character.name;

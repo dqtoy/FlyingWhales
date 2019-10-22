@@ -67,7 +67,8 @@ public class WorldEventItem : PooledObject {
     private bool CanChooseMinion(Character character) {
         return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.SABOTEUR);
     }
-    private void OnClickMinion(Character character) {
+    private void OnClickMinion(object c) {
+        Character character = c as Character;
         UIManager.Instance.ShowYesNoConfirmation("Send minion to interfere.", "Are you sure you want to send " + character.name + " to interfere with the " + e.name + " event happening at " + region.name + "?", () => Interfere(character), showCover: false, layer: 26);
     }
     private void Interfere(Character character) {

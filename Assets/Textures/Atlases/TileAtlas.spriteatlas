@@ -176,6 +176,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 89966dd0fee7fab4abe474ffa1727756, type: 3}
   - {fileID: 21300000, guid: 63d253e0c6b317d4395379a46b5ad2f2, type: 3}
   - {fileID: 21300000, guid: 3a45dae052a768e45b88c6a722e03f8d, type: 3}
+  - {fileID: 21300000, guid: 6bfae3f0610e3224d87626ce9d3f2e79, type: 3}
   - {fileID: 21300000, guid: 88dc6c0198fd5164f8e41dcaacb85421, type: 3}
   - {fileID: 21300000, guid: 6debf8113ebc504409044d47f4163ba5, type: 3}
   - {fileID: 21300000, guid: 9d1349113684fd348ab6dd814eaf5ae4, type: 3}
@@ -361,6 +362,8 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 24721027853fdc643b1b4fe0c8c1d5cd, type: 3}
   - {fileID: 21300000, guid: b74740471e8bdce428e7939bd40f6b7c, type: 3}
   - {fileID: 21300000, guid: bdc13a47304a95c468e45659e8132f48, type: 3}
+  - {fileID: 21300000, guid: 228ea757cdc15b14ab93bba87d0237ac, type: 3}
+  - {fileID: 21300000, guid: 23f3d7870a4751946bf7b45c49fc2000, type: 3}
   - {fileID: 21300000, guid: 36bb9c87d942a0747a60b417b0cd79e2, type: 3}
   - {fileID: 21300000, guid: 0c47a3a7e39c48246b41311abefffc8c, type: 3}
   - {fileID: 21300000, guid: cc3765a76c0ab524c84ada1c11b7ca0e, type: 3}
@@ -377,6 +380,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: ef97774840e24e743bb345feda51a7d0, type: 3}
   - {fileID: 21300000, guid: a24a4c482448a1643894757785ced446, type: 3}
   - {fileID: 21300000, guid: 7a7cb758dcfaf0d49a76433cbf1223f4, type: 3}
+  - {fileID: 21300000, guid: c558b76852c543049afa2a83c8ab9767, type: 3}
   - {fileID: 21300000, guid: bc0fdc68227150c488e1d5988e09871d, type: 3}
   - {fileID: 21300000, guid: b5b83e78c3a48954fa35de29644bea69, type: 3}
   - {fileID: 21300000, guid: 1d396e785152633488dabf689958074b, type: 3}
@@ -405,6 +409,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 7b57e639d8eb404419455b591db58d13, type: 3}
   - {fileID: 21300000, guid: 9217873999dba6b48a82477ab29489a7, type: 3}
   - {fileID: 21300000, guid: 671a2939fda30b34898a8299cebcfcd7, type: 3}
+  - {fileID: 21300000, guid: 31fa4a49ce63af346a03d8c8de46adb2, type: 3}
   - {fileID: 21300000, guid: ef7eab49213b7c84187862ee7fea26af, type: 3}
   - {fileID: 21300000, guid: d5a1f05924329334dadc9809969f8281, type: 3}
   - {fileID: 21300000, guid: f507075921d82e440bf0ea67cd7b95b4, type: 3}
@@ -606,6 +611,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2a1fddfa2a5c0344a85234dfb7baca39, type: 3}
   - {fileID: 21300000, guid: e9cd431bb2d682049b8fad85cd585e21, type: 3}
   - {fileID: 21300000, guid: d3a0251b0ce3555478eea06e89479db6, type: 3}
+  - {fileID: 21300000, guid: b704703b2aba8514e8efc189e2f63fe9, type: 3}
   - {fileID: 21300000, guid: 3c2c143b0f889194a91526a8068444c3, type: 3}
   - {fileID: 21300000, guid: 3261893bdd8e38744b1ee760c90f83c2, type: 3}
   - {fileID: 21300000, guid: 1d60ea4b64685aa48b7887a7574aab4e, type: 3}
@@ -622,6 +628,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: d19cf04c59febc945be3c66db3499993, type: 3}
   - {fileID: 21300000, guid: d7be314c435a53e4996c7ae583f3e955, type: 3}
   - {fileID: 21300000, guid: b22aac6cd8940184c8ce54e978454404, type: 3}
+  - {fileID: 21300000, guid: d816bb7c71d1c0a4085e9818e3726719, type: 3}
   - {fileID: 21300000, guid: c1fd6c8ca4e1be1418a76340e4ce4b67, type: 3}
   - {fileID: 21300000, guid: 25dc9e8c9a5b031458205ae17df79a92, type: 3}
   - {fileID: 21300000, guid: f16e449c34192234bb171cc4f9bc300d, type: 3}
@@ -924,6 +931,7 @@ SpriteAtlas:
   - human_item_shop
   - monster_lair
   - elven_town3
+  - connector2
   - forest_floor2
   - catacombs_forest
   - human_mine_gold_colour
@@ -1109,6 +1117,8 @@ SpriteAtlas:
   - elven_lumberyard_colour
   - Snow forest_00006
   - ice_pit_00067
+  - mage_tower
+  - workshop
   - human_garrison_colour
   - ice_pit_00089
   - Right (2)
@@ -1125,7 +1135,8 @@ SpriteAtlas:
   - Tundra Forest_00005
   - ice_pit_00004
   - beachSW
-  - demon_pens
+  - connector1
+  - the_kennel
   - demonic_mountains1
   - demonic_mountains3
   - demonic_mountains_desert3
@@ -1153,6 +1164,7 @@ SpriteAtlas:
   - Desert Forest_00011
   - ice_pit_00042
   - mountains_desert1_cave
+  - the_pit
   - ice_pit_00068
   - demonic_flat2
   - ice_pit_00047
@@ -1354,6 +1366,7 @@ SpriteAtlas:
   - beachE
   - ancient_ruins_temple
   - ice_pit_00039
+  - connector4
   - Ice Pit
   - tundra1
   - Tundra Forest_00003
@@ -1370,6 +1383,7 @@ SpriteAtlas:
   - Jungle Forest_00014
   - demonic_mountains_cold1
   - ice_pit_00028
+  - connector3
   - mountains_snow2
   - ice_pit_00035
   - human_mine_iron_colour
