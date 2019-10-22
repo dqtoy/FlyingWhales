@@ -23,7 +23,7 @@ public class TheNeedlesUI : MonoBehaviour {
         gameObject.SetActive(false);
     }
     public void OnClickConvert() {
-        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), "Choose Minion to Convert to Mana", CanChooseMinion, OnHoverEnterMinion, OnHoverExitMinion, null, OnConfirmConvert, "Convert", false);
+        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), "Choose Minion to Convert to Mana", CanChooseMinion, OnHoverEnterMinion, OnHoverExitMinion, null, OnConfirmConvert, "Convert", column2Optional: true);
     }
     private void OnHoverEnterMinion(Character character) {
         if (!CanChooseMinion(character)) {

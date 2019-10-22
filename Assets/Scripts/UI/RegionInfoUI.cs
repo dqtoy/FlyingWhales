@@ -210,7 +210,7 @@ public class RegionInfoUI : UIMenu {
         if (activeRegion.coreTile.isCorrupted) {
             invadeBtn.gameObject.SetActive(false);
             invadeProgress.gameObject.SetActive(false);
-            if (activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL) {
+            if (activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.THE_PORTAL && activeRegion.mainLandmark.specificLandmarkType != LANDMARK_TYPE.NONE) {
                 //if the active region is corrupted and is not the demonic portal, show the demolish button
                 demolishBtn.gameObject.SetActive(true);
                 demolishBtn.interactable = true;
