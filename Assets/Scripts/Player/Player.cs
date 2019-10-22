@@ -201,10 +201,10 @@ public class Player : ILeader {
     //    }
     //}
     private void OnAreaMapOpened(Area area) {
-        for (int i = 0; i < minions.Count; i++) {
-            minions[i].ResetCombatAbilityCD();
-        }
-        ResetInterventionAbilitiesCD();
+        //for (int i = 0; i < minions.Count; i++) {
+        //    minions[i].ResetCombatAbilityCD();
+        //}
+        //ResetInterventionAbilitiesCD();
         //currentTargetFaction = area.owner;
     }
     private void OnAreaMapClosed(Area area) {

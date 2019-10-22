@@ -132,7 +132,7 @@ public class KnockoutCharacter : GoapAction {
                     } else if (relationshipWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
                         recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
+                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                         reactions.Add("My enemies fighting each other. What a happy day!");
                     } else {
@@ -157,12 +157,12 @@ public class KnockoutCharacter : GoapAction {
                     } else if (relationshipWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
                         recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
+                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                         reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, targetCharacter.name));
                     } else {
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
+                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                         reactions.Add(string.Format("I am not fond of {0} at all so I don't care what happens to {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     }
@@ -222,7 +222,7 @@ public class KnockoutCharacter : GoapAction {
                     } else if (relationshipWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
                         recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
+                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                         reactions.Add("My enemies fighting each other. What a happy day!");
                     } else {
@@ -247,12 +247,12 @@ public class KnockoutCharacter : GoapAction {
                     } else if (relationshipWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
                         recipient.ReactToCrime(committedCrime, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
+                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                         reactions.Add(string.Format("{0} shouldn't have done that to {1}!", actor.name, targetCharacter.name));
                     } else {
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
+                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                         reactions.Add(string.Format("I am not fond of {0} at all so I don't care what happens to {1}.", targetCharacter.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     }

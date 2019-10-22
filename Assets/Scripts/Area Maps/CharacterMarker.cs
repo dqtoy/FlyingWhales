@@ -61,6 +61,7 @@ public class CharacterMarker : PooledObject {
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
     public List<GoapAction> actionsToWitness { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
     public Dictionary<Character, bool> lethalCharacters { get; private set; }
+    public string avoidReason { get; private set; }
     public bool willProcessCombat { get; private set; }
     public Action arrivalAction {
         get { return _arrivalAction; }
@@ -117,6 +118,7 @@ public class CharacterMarker : PooledObject {
         avoidInRange = new List<IPointOfInterest>();
         lethalCharacters = new Dictionary<Character, bool>();
         actionsToWitness = new List<GoapAction>();
+        avoidReason = string.Empty;
         attackSpeedMeter = 0f;
         OnProgressionSpeedChanged(GameManager.Instance.currProgressionSpeed);
         //flee
@@ -130,7 +132,7 @@ public class CharacterMarker : PooledObject {
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, OnCharacterGainedTrait);
         Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         ///Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet); Moved listener for action state set to CharacterManager for optimization <see cref="CharacterManager.OnActionStateSet(GoapAction, GoapActionState)">
-        Messenger.AddListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
+        Messenger.AddListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
 
@@ -480,7 +482,7 @@ public class CharacterMarker : PooledObject {
         Messenger.RemoveListener<Character, Trait>(Signals.TRAIT_REMOVED, OnCharacterLostTrait);
         //Messenger.RemoveListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
-        Messenger.RemoveListener<Character>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
+        Messenger.RemoveListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
         Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
@@ -1147,6 +1149,7 @@ public class CharacterMarker : PooledObject {
         if (willProcessCombat && (hostilesInRange.Count > 0 || avoidInRange.Count > 0)) {
             string log = GameManager.Instance.TodayLogString() + character.name + " process combat switch is turned on and there are hostiles or avoid in list, processing combat...";
             ProcessCombatBehavior();
+            avoidReason = string.Empty;
             willProcessCombat = false;
             character.PrintLogIfActive(log);
         }
@@ -1158,7 +1161,8 @@ public class CharacterMarker : PooledObject {
         if (!hostilesInRange.Contains(poi)) {
             if (this.character.GetNormalTrait("Zapped") == null && !this.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) 
                 && !this.character.isFollowingPlayerInstruction && CanAddPOIAsHostile(poi, checkHostility)) {
-                if (!WillCharacterTransferEngageToFleeList(isLethal)) {
+                string transferReason = string.Empty;
+                if (!WillCharacterTransferEngageToFleeList(isLethal, ref transferReason)) {
                     hostilesInRange.Add(poi);
                     if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                         lethalCharacters.Add(poi as Character, isLethal);
@@ -1171,7 +1175,7 @@ public class CharacterMarker : PooledObject {
                     willProcessCombat = true;
                 } else {
                     //Transfer to flee list
-                    return AddAvoidInRange(poi, processCombatBehavior);
+                    return AddAvoidInRange(poi, processCombatBehavior, transferReason);
                 }
                 return true;
             }
@@ -1278,21 +1282,22 @@ public class CharacterMarker : PooledObject {
     #endregion
 
     #region Avoid In Range
-    public bool AddAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true) {
+    public bool AddAvoidInRange(IPointOfInterest poi, bool processCombatBehavior = true, string reason = "") {
         if (poi is Character) {
-            return AddAvoidInRange(poi as Character, processCombatBehavior);
+            return AddAvoidInRange(poi as Character, processCombatBehavior, reason);
         } else {
             if (character.GetNormalTrait("Berserked") == null) {
                 if (!avoidInRange.Contains(poi)) {
                     avoidInRange.Add(poi);
                     willProcessCombat = true;
+                    avoidReason = reason;
                     return true;
                 }
             }
         }
         return false;
     }
-    public bool AddAvoidsInRange(List<IPointOfInterest> pois, bool processCombatBehavior = true) {
+    public bool AddAvoidsInRange(List<IPointOfInterest> pois, bool processCombatBehavior = true, string reason = "") {
         //Only react to the first hostile that is added
         IPointOfInterest otherPOI = null;
         for (int i = 0; i < pois.Count; i++) {
@@ -1313,11 +1318,12 @@ public class CharacterMarker : PooledObject {
         }
         if (otherPOI != null) {
             willProcessCombat = true;
+            avoidReason = reason;
             return true;
         }
         return false;
     }
-    private bool AddAvoidInRange(Character poi, bool processCombatBehavior = true) {
+    private bool AddAvoidInRange(Character poi, bool processCombatBehavior = true, string reason = "") {
         if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && character.GetNormalTrait("Berserked") == null) { //, "Resting"
             if (!avoidInRange.Contains(poi)) {
                 avoidInRange.Add(poi);
@@ -1327,12 +1333,13 @@ public class CharacterMarker : PooledObject {
                 //    ProcessCombatBehavior();
                 //}
                 willProcessCombat = true;
+                avoidReason = reason;
                 return true;
             }
         }
         return false;
     }
-    public bool AddAvoidsInRange(List<Character> pois, bool processCombatBehavior = true) {
+    public bool AddAvoidsInRange(List<Character> pois, bool processCombatBehavior = true, string reason = "") {
         //Only react to the first hostile that is added
         Character otherPOI = null;
         for (int i = 0; i < pois.Count; i++) {
@@ -1349,6 +1356,7 @@ public class CharacterMarker : PooledObject {
         }
         if (otherPOI != null) {
             willProcessCombat = true;
+            avoidReason = reason;
             return true;
         }
         return false;
@@ -1465,7 +1473,7 @@ public class CharacterMarker : PooledObject {
     /// Can be triggered by broadcasting signal <see cref="Signals.TRANSFER_ENGAGE_TO_FLEE_LIST"/>
     /// </summary>
     /// <param name="character">The character that should determine the transfer.</param>
-    private void TransferEngageToFleeList(Character character) {
+    private void TransferEngageToFleeList(Character character, string reason) {
         if (this.character == character) {
             string summary = GameManager.Instance.TodayLogString() + character.name + " will determine the transfer from engage list to flee list";
             if(character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
@@ -1492,7 +1500,7 @@ public class CharacterMarker : PooledObject {
                     for (int i = 0; i < hostilesInRange.Count; i++) {
                         IPointOfInterest hostile = hostilesInRange[i];
                         if (inVisionPOIs.Contains(hostile)) {
-                            AddAvoidInRange(hostile, false);
+                            AddAvoidInRange(hostile, false, reason);
                         } else {
                             RemoveHostileInRange(hostile, false);
                             i--;
@@ -1632,10 +1640,11 @@ public class CharacterMarker : PooledObject {
         }
         return false;
     }
-    public bool WillCharacterTransferEngageToFleeList(bool isLethal) {
+    public bool WillCharacterTransferEngageToFleeList(bool isLethal, ref string reason) {
         bool willTransfer = false;
         if(character.GetNormalTrait("Coward") != null && character.GetNormalTrait("Berserked") == null) {
             willTransfer = true;
+            reason = "coward";
         } else if (!isLethal && !HasLethalCombatTarget()) {
             willTransfer = false;
         }
@@ -1653,6 +1662,7 @@ public class CharacterMarker : PooledObject {
             //summary += "\n" + character.name + "'s health is critically low.";
             //-character's hp is critically low (chance based dependent on the character)
             willTransfer = true;
+            reason = "critically low health";
         }
         //else if (character.GetNormalTrait("Spooked") != null) {
         //    //- fear-type status effect
@@ -1661,9 +1671,11 @@ public class CharacterMarker : PooledObject {
         else if (character.isStarving && character.GetNormalTrait("Vampiric") == null) {
             //-character is starving and is not a vampire
             willTransfer = true;
+            reason = "starving";
         } else if (character.isExhausted) {
             //-character is exhausted
             willTransfer = true;
+            reason = "exhausted";
         }
         return willTransfer;
     }

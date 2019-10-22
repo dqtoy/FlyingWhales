@@ -98,8 +98,8 @@ public class CharacterTrait : Trait {
                         && token.specificLocation.region == characterThatWillDoJob.homeRegion) {
                         return false;
                     }
-                    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_ITEM_GOAP)) {
-                        GoapPlanJob pickUpJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_ITEM_GOAP, token);
+                    if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_ITEM)) {
+                        GoapPlanJob pickUpJob = new GoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_ITEM, token);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(pickUpJob);
                     }
                     return true;

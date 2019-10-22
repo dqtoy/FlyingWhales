@@ -228,18 +228,18 @@ public class BuryCharacter : GoapAction {
                     if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                         recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
+                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                         reactions.Add(string.Format("{0} is dear to me but {1} must be punished for killing {2}!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false), targetCharacter.name));
                     } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
+                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                         reactions.Add(string.Format("{0} is a terrible person so I'm sure there was a reason {1} offed {2}.", targetCharacter.name, actor.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     } else {
                         recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
+                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                         reactions.Add(string.Format("{0} is dear to me but {1} must be punished for killing {2}!", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false), targetCharacter.name));
                     }
@@ -257,7 +257,7 @@ public class BuryCharacter : GoapAction {
                     } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
                         recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
+                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                         reactions.Add(string.Format("I may not like {0} but {1} must still be punished for killing {2}!", targetCharacter.name, actor.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     } else {
@@ -283,13 +283,13 @@ public class BuryCharacter : GoapAction {
                     } else if (relWithTarget == RELATIONSHIP_EFFECT.NEGATIVE) {
                         recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
+                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                         reactions.Add(string.Format("I may not like {0} but {1} must still be punished for killing {2}!", targetCharacter.name, actor.name, Utilities.GetPronounString(targetCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)));
                     } else {
                         recipient.ReactToCrime(CRIME.MURDER, this, actorAlterEgo, status);
                         if (status == SHARE_INTEL_STATUS.WITNESSED) {
-                            recipient.marker.AddAvoidInRange(actor);
+                            recipient.marker.AddAvoidInRange(actor, reason: "saw something shameful");
                         }
                         reactions.Add(string.Format("{0} must be punished for killing {1}!", actor.name, targetCharacter.name));
                     }

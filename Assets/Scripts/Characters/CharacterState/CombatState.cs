@@ -332,8 +332,16 @@ public class CombatState : CharacterState {
             stateComponent.character.PrintLogIfActive(log);
             stateComponent.character.marker.OnStartFlee();
 
+
+            IPointOfInterest objToAvoid = stateComponent.character.marker.avoidInRange[stateComponent.character.marker.avoidInRange.Count - 1];
+            string avoidReason = "unknown";
+            if(stateComponent.character.marker.avoidReason != string.Empty) {
+                avoidReason = stateComponent.character.marker.avoidReason;
+            }
             Log fleeLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "start_flee");
             fleeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            fleeLog.AddToFillers(objToAvoid, objToAvoid.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            fleeLog.AddToFillers(null, avoidReason, LOG_IDENTIFIER.STRING_1);
             stateComponent.character.RegisterLogAndShowNotifToThisCharacterOnly(fleeLog, null, false);
         }
     }

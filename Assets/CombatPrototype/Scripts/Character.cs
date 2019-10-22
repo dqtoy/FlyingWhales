@@ -4272,7 +4272,7 @@ public class Character : ILeader, IPointOfInterest {
         }
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
         if (IsHealthCriticallyLow()) {
-            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);
+            Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
         }
         if (triggerDeath && previous != this._currentHP) {
             if (this._currentHP <= 0) {
@@ -6765,7 +6765,7 @@ public class Character : ILeader, IPointOfInterest {
         } else if (isExhausted) {
             RemoveTrait("Tired");
             if (AddTrait("Exhausted")) {
-                Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);
+                Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "exhausted");
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "exhausted");
             }
             //PlanTirednessRecoveryActions();
@@ -6882,7 +6882,7 @@ public class Character : ILeader, IPointOfInterest {
         } else if (isStarving) {
             RemoveTrait("Hungry");
             if (AddTrait("Starving") && GetNormalTrait("Vampiric") == null) { //only characters that are not vampires will flee when they are starving
-                Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this);
+                Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "starving");
                 //RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, "starving");
             }
             //PlanFullnessRecoveryActions();
@@ -7085,7 +7085,7 @@ public class Character : ILeader, IPointOfInterest {
                         //- character slept
                         //- character mined or chopped wood
                         switch (ei.action.goapType) {
-                            case INTERACTION_TYPE.PICK_ITEM_GOAP:
+                            case INTERACTION_TYPE.PICK_ITEM:
                             case INTERACTION_TYPE.PRAY:
                             case INTERACTION_TYPE.DAYDREAM:
                             case INTERACTION_TYPE.PLAY:

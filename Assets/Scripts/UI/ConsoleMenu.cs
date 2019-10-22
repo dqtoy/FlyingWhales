@@ -64,6 +64,7 @@ public class ConsoleMenu : UIMenu {
             {"/gain_summon",  GainSummon},
             {"/gain_summon_slot",  GainSummonSlot},
             {"/gain_artifact",  GainArtifact},
+            {"/gain_artifact_slot",  GainArtifactSlot},
             {"/set_fullness", SetFullness },
             {"/set_tiredness", SetTiredness },
             {"/set_happiness", SetHappiness },
@@ -1175,6 +1176,23 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage("There is no artifact of type " + typeParameterString);
         }
 
+    }
+    private void GainArtifactSlot(string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of GainArtifactSlot");
+            return;
+        }
+        string numParameterString = parameters[0];
+        int num;
+        if (int.TryParse(numParameterString, out num)) {
+            for (int i = 0; i < num; i++) {
+                PlayerManager.Instance.player.IncreaseArtifactSlot();
+            }
+            AddSuccessMessage("Gained artifact slot/s: " + num);
+        } else {
+            AddErrorMessage("Cannot parse input: " + numParameterString);
+        }
     }
     #endregion
 

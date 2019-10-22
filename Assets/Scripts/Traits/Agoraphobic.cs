@@ -53,7 +53,7 @@ public class Agoraphobic : Trait {
                 if (combatState.isAttacking) {
                     if (character.marker.inVisionCharacters.Count >= 3) {
                         ApplyAgoraphobicEffect(character, false);
-                        Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, character);
+                        Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, character, "agoraphobia");
                     }
                 }
             }
@@ -86,7 +86,7 @@ public class Agoraphobic : Trait {
     #endregion
 
     private void ApplyAgoraphobicEffect(Character character, bool processCombat) {
-        character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat);
+        character.marker.AddAvoidsInRange(character.marker.inVisionCharacters, processCombat, "agoraphobia");
         character.AdjustHappiness(-50);
         character.AdjustTiredness(-150);
     }
