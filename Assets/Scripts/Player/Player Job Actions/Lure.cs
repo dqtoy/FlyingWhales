@@ -26,7 +26,7 @@ public class Lure : PlayerJobAction {
         if (targetPOI is Character) {
             isGamePausedOnLure = GameManager.Instance.isPaused;
             targetCharacter = targetPOI as Character;
-            UIManager.Instance.ShowClickableObjectPicker(GridMap.Instance.allRegions.ToList(), GoToRegion, null, CanChooseRegion, "Select Region to Lure" + targetCharacter.name);
+            UIManager.Instance.ShowClickableObjectPicker(GridMap.Instance.allRegions.ToList(), GoToRegion, null, CanChooseRegion, "Select Region to Lure" + targetCharacter.name, showCover: true);
         } 
     }
     protected override bool CanPerformActionTowards(Character targetCharacter) {
@@ -68,7 +68,8 @@ public class Lure : PlayerJobAction {
         }
         return !region.coreTile.isCorrupted && !isCharacterAlreadyInRegion;
     }
-    private void GoToRegion(Region region) {
+    private void GoToRegion(object r) {
+        Region region = r as Region;
         base.ActivateAction(targetCharacter);
         CharacterStateJob job = new CharacterStateJob(JOB_TYPE.SEARCHING_WORLD_EVENT, CHARACTER_STATE.MOVE_OUT, region);
         targetCharacter.jobQueue.AddJobInQueue(job);

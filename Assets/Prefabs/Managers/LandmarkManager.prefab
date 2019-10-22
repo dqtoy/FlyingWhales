@@ -89,8 +89,8 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 99997bff53b6d7042a70307d331e1d3f, type: 3}
-      tintSprite: {fileID: 21300000, guid: 03b9f985c5fc3c74b8f56977df17c459, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 23f3d7870a4751946bf7b45c49fc2000, type: 3}
+      tintSprite: {fileID: 0}
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
@@ -205,7 +205,7 @@ MonoBehaviour:
       m_keys: 
       m_values: []
     neutralTileSprites:
-    - mainSprite: {fileID: 21300000, guid: 568e996242fb9a84b9028d668e263ef3, type: 3}
+    - mainSprite: {fileID: 21300000, guid: 228ea757cdc15b14ab93bba87d0237ac, type: 3}
       tintSprite: {fileID: 0}
       animation: {fileID: 0}
     humansLandmarkTileSprites: []

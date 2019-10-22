@@ -531,7 +531,7 @@ MonoBehaviour:
       animator: {fileID: 22100000, guid: d4eb42681002a7b43b7f8ead79c7ab10, type: 2}
       idle: {fileID: 7400000, guid: 30e8fa21006565549a140d90e5ca39a7, type: 2}
       walk: {fileID: 7400000, guid: 52bc838e6e5210f478df1be37b4fb341, type: 2}
-      sleepGround: {fileID: 0}
+      sleepGround: {fileID: 7400000, guid: e44a6c707e664a746aaf1a93e4f2aaf1, type: 2}
       dead: {fileID: 0}
       raiseDead: {fileID: 0}
       slashClip: {fileID: 0}
@@ -544,13 +544,13 @@ MonoBehaviour:
       biteTiming: 0
     femaleAssets:
       gender: 1
-      defaultSprite: {fileID: 21300000, guid: d5e4a8f65f6f5fc449380120838d3d2d, type: 3}
-      hoverSprite: {fileID: 21300000, guid: d5e4a8f65f6f5fc449380120838d3d2d, type: 3}
-      clickedSprite: {fileID: 21300000, guid: d5e4a8f65f6f5fc449380120838d3d2d, type: 3}
-      animator: {fileID: 22100000, guid: d4eb42681002a7b43b7f8ead79c7ab10, type: 2}
-      idle: {fileID: 7400000, guid: 30e8fa21006565549a140d90e5ca39a7, type: 2}
-      walk: {fileID: 7400000, guid: 52bc838e6e5210f478df1be37b4fb341, type: 2}
-      sleepGround: {fileID: 0}
+      defaultSprite: {fileID: 21300000, guid: af8e6c5dd3dba8f4b8c3e5e1067d8432, type: 3}
+      hoverSprite: {fileID: 21300000, guid: af8e6c5dd3dba8f4b8c3e5e1067d8432, type: 3}
+      clickedSprite: {fileID: 21300000, guid: af8e6c5dd3dba8f4b8c3e5e1067d8432, type: 3}
+      animator: {fileID: 22100000, guid: 5be51b216366e284ab244ec92b429fc9, type: 2}
+      idle: {fileID: 7400000, guid: 4e997934c07a68a43b13726e9228cf87, type: 2}
+      walk: {fileID: 7400000, guid: 4f69342dbbf93c24fbd756ff33e4ca87, type: 2}
+      sleepGround: {fileID: 7400000, guid: 00a3749d4ca7c634185a8a1e4e3c407c, type: 2}
       dead: {fileID: 0}
       raiseDead: {fileID: 0}
       slashClip: {fileID: 0}

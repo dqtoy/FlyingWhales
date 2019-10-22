@@ -4,26 +4,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class SummonSlotPickerItem : ObjectPickerItem<SummonSlot>, IPointerClickHandler {
+public class SummonSlotPickerItem : NameplateItem<SummonSlot> {
 
-    public Action<SummonSlot> onClickAction;
+    [Header("Summon Slot Attributes")]
+    [SerializeField] private CharacterPortrait portrait;
+    //[SerializeField] private GameObject portraitCover;
+
 
     private SummonSlot summonSlot;
-
-    [SerializeField] private CharacterPortrait portrait;
-    public GameObject portraitCover;
-
     public override SummonSlot obj { get { return summonSlot; } }
 
-    public void SetSummonSlot(SummonSlot summon) {
-        this.summonSlot = summon;
+    public override void SetObject(SummonSlot o) {
+        base.SetObject(o);
+        this.summonSlot = o;
         UpdateVisuals();
     }
 
-    public override void SetButtonState(bool state) {
-        base.SetButtonState(state);
-        portraitCover.SetActive(!state);
-    }
+    //public override void SetButtonState(bool state) {
+    //    base.SetButtonState(state);
+    //    portraitCover.SetActive(!state);
+    //}
 
     private void UpdateVisuals() {
         portrait.GeneratePortrait(summonSlot.summon);
@@ -31,18 +31,12 @@ public class SummonSlotPickerItem : ObjectPickerItem<SummonSlot>, IPointerClickH
         subLbl.text = summonSlot.summon.summonType.SummonName();
     }
 
-    private void OnClick() {
-        if (onClickAction != null) {
-            onClickAction.Invoke(summonSlot);
-        }
-    }
-
-    public void OnPointerClick(PointerEventData eventData) {
-        if (eventData.button == PointerEventData.InputButton.Right) {
-            //Debug.Log("Right clicked character portrait!");
-            portrait.OnClick();
-        } else {
-            OnClick();
-        }
-    }
+    //public void OnPointerClick(PointerEventData eventData) {
+    //    if (eventData.button == PointerEventData.InputButton.Right) {
+    //        //Debug.Log("Right clicked character portrait!");
+    //        portrait.OnClick();
+    //    } else {
+    //        OnClick();
+    //    }
+    //}
 }

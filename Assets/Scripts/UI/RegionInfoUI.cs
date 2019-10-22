@@ -235,7 +235,11 @@ public class RegionInfoUI : UIMenu {
             InteriorMapManager.Instance.ShowAreaMap(activeRegion.area);
             PlayerUI.Instance.OnClickStartInvasion();
         } else {
-            ShowInvasionConfirmation();
+            //ShowInvasionConfirmation();
+            chosenMinionToInvade = null;
+            UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), onClickAction: ChooseMinionForInvasion, validityChecker: CanMinionInvade,
+                title: "Invasion (" + ((int)activeRegion.mainLandmark.invasionTicks / (int)GameManager.ticksPerHour).ToString() + " hours)\nChoose a minion that will invade " + activeRegion.name + ". NOTE: That minion will be unavailable while the invasion is ongoing.",
+                showCover: true, layer: 25);
         }
         
     }
@@ -245,25 +249,21 @@ public class RegionInfoUI : UIMenu {
         chosenMinionToInvade = null;
         invConfrimationTitleLbl.text = "Invasion (" + ((int)activeRegion.mainLandmark.invasionTicks / (int)GameManager.ticksPerHour).ToString() + " hours)";
         invDescriptionLbl.text = "Choose a minion that will invade " + activeRegion.name + ". NOTE: That minion will be unavailable while the invasion is ongoing.";
-        invMinionPicker.ShowMinionPicker(PlayerManager.Instance.player.minions, CanMinionInvade, ChooseMinionForInvasion);
+        //invMinionPicker.ShowMinionPicker(PlayerManager.Instance.player.minions, CanMinionInvade, ChooseMinionForInvasion);
         UpdateStartInvasionBtn();
     }
-    private bool CanMinionInvade(Minion minion) {
-        return !minion.isAssigned && minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADER);
+    private bool CanMinionInvade(Character character) {
+        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADER);
     }
     private void UpdateStartInvasionBtn() {
         confirmInvasionBtn.interactable = chosenMinionToInvade != null;
     }
-    private void ChooseMinionForInvasion(Character character, bool isOn) {
-        if (isOn) {
-            chosenMinionToInvade = character.minion;
-            UpdateStartInvasionBtn();
-        } else {
-            if (chosenMinionToInvade == character.minion) {
-                chosenMinionToInvade = null;
-                UpdateStartInvasionBtn();
-            }
-        }
+    private void ChooseMinionForInvasion(object c) {
+        Character character = c as Character;
+        chosenMinionToInvade = character.minion;
+        StartInvasion();
+        UIManager.Instance.HideObjectPicker();
+        
     }
     public void StartInvasion() {
         activeRegion.StartInvasion(chosenMinionToInvade);

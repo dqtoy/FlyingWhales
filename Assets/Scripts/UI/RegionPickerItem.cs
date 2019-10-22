@@ -6,47 +6,30 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class RegionPickerItem : ObjectPickerItem<Region>, IPointerClickHandler {
+public class RegionPickerItem : NameplateItem<Region> {
 
-    public Action<Region> onClickAction;
+    [Header("Region Attributes")]
+    [SerializeField] private LocationPortrait portrait;
+    //public GameObject portraitCover;
 
     private Region region;
-
-    [SerializeField] private LocationPortrait portrait;
-    public GameObject portraitCover;
-
     public override Region obj { get { return region; } }
 
-    public void SetRegion(Region region) {
-        this.region = region;
+    public override void SetObject(Region o) {
+        base.SetObject(o);
+        this.region = o;
         UpdateVisuals();
     }
 
-    public override void SetButtonState(bool state) {
-        base.SetButtonState(state);
-        portraitCover.SetActive(!state);
-    }
+    //public override void SetButtonState(bool state) {
+    //    base.SetButtonState(state);
+    //    portraitCover.SetActive(!state);
+    //}
 
     private void UpdateVisuals() {
         portrait.SetLocation(region);
         mainLbl.text = region.name;
-        //subLbl.text = Utilities.GetNormalizedSingularRace(area.race) + " " + area.characterClass.className;
-    }
-
-    private void OnClick() {
-        if (onClickAction != null) {
-            onClickAction.Invoke(region);
-        }
-    }
-
-    public void OnPointerClick(PointerEventData eventData) {
-        if (eventData.button == PointerEventData.InputButton.Right) {
-            //Debug.Log("Right clicked character portrait!");
-            //portrait.OnClick();
-            UIManager.Instance.ShowRegionInfo(region);
-        } else {
-            OnClick();
-        }
+        subLbl.text = string.Empty;
     }
 }
 
