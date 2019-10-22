@@ -47,7 +47,7 @@ public class TheEyeUI : MonoBehaviour {
             }
         }
         minionToInterfere = (obj as Character).minion;
-        UIManager.Instance.dualObjectPicker.PopulateColumn(activeEventRegions, CanInterfere, null, null, UIManager.Instance.dualObjectPicker.column2ScrollView, UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Ability");
+        UIManager.Instance.dualObjectPicker.PopulateColumn(activeEventRegions, CanInterfere, null, null, UIManager.Instance.dualObjectPicker.column2ScrollView, UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Event", "WorldEvent");
     }
     private bool CanInterfere(Region region) {
         return region.activeEvent.CanBeInterferedBy(minionToInterfere);
