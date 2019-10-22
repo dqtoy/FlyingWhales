@@ -118,6 +118,7 @@ public class GoapActionState {
         } else {
             parentAction.SetShowIntelNotification(false);
         }
+        parentAction.actor.OnCharacterDoAction(parentAction); //Moved this here to fix intel not being shown, because arranged logs are not added until after the ReturnToActorTheActionResult() call.
     }
     public void StopPerTickEffect() {
         Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);

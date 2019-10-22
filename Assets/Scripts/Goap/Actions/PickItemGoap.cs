@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PickItemGoap : GoapAction {
     public PickItemGoap(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PICK_ITEM_GOAP, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
+        goapName = "Pick Item";
         actionIconString = GoapActionStateDB.Explore_Icon;
         //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         isNotificationAnIntel = false;
