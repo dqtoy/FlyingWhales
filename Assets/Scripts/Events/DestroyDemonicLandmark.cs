@@ -11,12 +11,20 @@ public class DestroyDemonicLandmark : WorldEvent {
 
     #region Overrides
     protected override void ExecuteAfterEffect(Region region, Character spawner) {
-        Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
-        AddDefaultFillersToLog(log, region);
-        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(region.mainLandmark.specificLandmarkType.ToString()), LOG_IDENTIFIER.STRING_1);
-        log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
-        LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, LANDMARK_TYPE.NONE, false);
+        if (region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
+            //the landmark was demolished by the player
+            Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect_invalid");
+            AddDefaultFillersToLog(log, region);
+            log.AddLogToInvolvedObjects();
+            PlayerManager.Instance.player.ShowNotification(log);
+        } else {
+            Log log = new Log(GameManager.Instance.Today(), "WorldEvent", this.GetType().ToString(), "after_effect");
+            AddDefaultFillersToLog(log, region);
+            log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(region.mainLandmark.specificLandmarkType.ToString()), LOG_IDENTIFIER.STRING_1);
+            log.AddLogToInvolvedObjects();
+            PlayerManager.Instance.player.ShowNotification(log);
+            LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, LANDMARK_TYPE.NONE, false);
+        }        
         base.ExecuteAfterEffect(region, spawner);
     }
     public override bool CanSpawnEventAt(Region region, Character spawner) {
