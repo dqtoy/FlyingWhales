@@ -30,6 +30,18 @@ public class Inspect : GoapAction {
     protected override int GetCost() {
         return 4;
     }
+    public override void AfterAfterEffect() {
+        base.AfterAfterEffect();
+        if(currentState.name == "Inspect Success") {
+            //Log result;
+            (poiTarget as TileObject).OnInspect(actor); //, out result
+            //if (result != null) {
+            //    currentState.AddLogFiller(null, Utilities.LogReplacer(result), LOG_IDENTIFIER.STRING_1);
+            //} else {
+            //    currentState.AddLogFiller(null, "and nothing happened", LOG_IDENTIFIER.STRING_1);
+            //}
+        }
+    }
     #endregion
 
     #region Requirements
@@ -40,7 +52,7 @@ public class Inspect : GoapAction {
 
     #region State Effects
     public void PreInspectSuccess() {
-        currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
+        //currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
     public void AfterInspectSuccess() {
@@ -48,15 +60,7 @@ public class Inspect : GoapAction {
             TileObject to = poiTarget as TileObject;
             //Curious curios = actor.GetNormalTrait("Curious") as Curious;
             actor.defaultCharacterTrait.AddAlreadyInspectedObject(to);
-            Log result;
-            (poiTarget as TileObject).OnInspect(actor, out result);
-            if (result != null) {
-                currentState.AddLogFiller(null, Utilities.LogReplacer(result), LOG_IDENTIFIER.STRING_1);
-            } else {
-                currentState.AddLogFiller(null, "and nothing happened", LOG_IDENTIFIER.STRING_1);
-            }
-        }
-        
+        } 
     }
     public void PreTargetMissing() {
         currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);

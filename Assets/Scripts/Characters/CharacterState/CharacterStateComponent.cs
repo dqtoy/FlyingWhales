@@ -189,12 +189,17 @@ public class CharacterStateComponent {
                     //    SetCurrentState(null);
                     //}
                 } else {
+                    bool resumeState = true;
                     if(currentState.characterState == CHARACTER_STATE.COMBAT && previousMajorState.characterState == CHARACTER_STATE.BERSERKED) {
-                        if (previousMajorState.hasStarted) {
-                            previousMajorState.ExitState();
+                        if (!previousMajorState.isUnending) {
+                            if (previousMajorState.hasStarted) {
+                                previousMajorState.ExitState();
+                            }
+                            SetCurrentState(null);
+                            resumeState = false;
                         }
-                        SetCurrentState(null);
-                    } else {
+                    }
+                    if (resumeState) {
                         if (previousMajorState.hasStarted) {
                             //Resumes previous major state
                             if (previousMajorState.CanResumeState()) {

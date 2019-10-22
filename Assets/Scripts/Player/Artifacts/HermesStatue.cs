@@ -27,14 +27,19 @@ public class HermesStatue : Artifact {
     }
 
     #region Overrides
-    public override void OnInspect(Character inspectedBy, out Log result) {
-        base.OnInspect(inspectedBy, out result);
+    public override void OnInspect(Character inspectedBy) { //, out Log result
+        base.OnInspect(inspectedBy); //, out result
         List<Region> choices = GridMap.Instance.allRegions.Where(x => !x.coreTile.isCorrupted).ToList();
         choices.Remove(inspectedBy.specificLocation.region);
         if (choices.Count > 0 && currentUses < uses) {
             chosenRegion = choices[Random.Range(0, choices.Count)];
-            inspectedBy.currentAction.SetEndAction(OnInspectActionDone);
-            result.AddToFillers(chosenRegion, chosenRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+            OnInspectActionDone(inspectedBy);
+            if (LocalizationManager.Instance.HasLocalizedValue("Artifact", this.GetType().ToString(), "on_inspect")) {
+                Log result = new Log(GameManager.Instance.Today(), "Artifact", this.GetType().ToString(), "on_inspect");
+                result.AddToFillers(inspectedBy, inspectedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                result.AddToFillers(chosenRegion, chosenRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+                inspectedBy.RegisterLogAndShowNotifToThisCharacterOnly(result, onlyClickedCharacter: false);
+            }
         } else {
             Debug.LogWarning(inspectedBy.name + " inspected an hermes statue, but there were no more settlements to teleport to. Statue is useless.");
         }
@@ -49,21 +54,31 @@ public class HermesStatue : Artifact {
     }
     #endregion
 
-    private void OnInspectActionDone(string result, GoapAction action) {
-        action.actor.GoapActionResult(result, action);
+    private void OnInspectActionDone(Character inspectedBy) { //string result, GoapAction action
+        //action.actor.GoapActionResult(result, action);
         //Characters that inspect this will be teleported to a different settlement. If no other settlement exists, this will be useless.
-        action.actor.ChangeFactionTo(chosenRegion.owner);
-        action.actor.MigrateHomeTo(chosenRegion);
-        action.actor.specificLocation.RemoveCharacterFromLocation(action.actor);
-        action.actor.DestroyMarker();
-        chosenRegion.AddCharacterToLocation(action.actor);
-        action.actor.UnsubscribeSignals();
-        action.actor.ClearAllAwareness(); //so teleported character won't revisit old area.
-        //remove character from other character's awareness
-        for (int i = 0; i < gridTileLocation.parentAreaMap.area.charactersAtLocation.Count; i++) {
-            Character currCharacter = gridTileLocation.parentAreaMap.area.charactersAtLocation[i];
-            currCharacter.RemoveAwareness(action.actor);
+        if (chosenRegion.owner != null) {
+            inspectedBy.ChangeFactionTo(chosenRegion.owner);
+        } else {
+            inspectedBy.ChangeFactionTo(FactionManager.Instance.neutralFaction);
         }
+        inspectedBy.MigrateHomeTo(chosenRegion);
+        inspectedBy.SetPOIState(POI_STATE.INACTIVE);
+        inspectedBy.marker.gameObject.SetActive(false);
+        inspectedBy.marker.StopMovement();
+        Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, inspectedBy.ownParty);
+        inspectedBy.specificLocation.RemoveCharacterFromLocation(inspectedBy);
+        //inspectedBy.DestroyMarker();
+        chosenRegion.AddCharacterToLocation(inspectedBy);
+        inspectedBy.SetPOIState(POI_STATE.ACTIVE);
+
+        inspectedBy.UnsubscribeSignals();
+        inspectedBy.ClearAllAwareness(); //so teleported character won't revisit old area.
+        ////remove character from other character's awareness
+        //for (int i = 0; i < gridTileLocation.parentAreaMap.area.charactersAtLocation.Count; i++) {
+        //    Character currCharacter = gridTileLocation.parentAreaMap.area.charactersAtLocation[i];
+        //    currCharacter.RemoveAwareness(inspectedBy);
+        //}
         currentUses++;
         if (currentUses == uses) {
             gridTileLocation.structure.RemovePOI(this);

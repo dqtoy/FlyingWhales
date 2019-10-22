@@ -43,10 +43,16 @@ public class AnkhOfAnubis : Artifact {
         base.LevelUp();
         duration += 10;
     }
-    public override void OnInspect(Character inspectedBy, out Log result) {
-        base.OnInspect(inspectedBy, out result);
+    public override void OnInspect(Character inspectedBy) { //, out Log result
+        base.OnInspect(inspectedBy); //, out result
         if (!isActivated) {
             Activate();
+            if (LocalizationManager.Instance.HasLocalizedValue("Artifact", this.GetType().ToString(), "on_inspect")) {
+                Log result = new Log(GameManager.Instance.Today(), "Artifact", this.GetType().ToString(), "on_inspect");
+                result.AddToFillers(inspectedBy, inspectedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                result.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                inspectedBy.RegisterLogAndShowNotifToThisCharacterOnly(result, onlyClickedCharacter: false);
+            }
         }
     }
     #endregion

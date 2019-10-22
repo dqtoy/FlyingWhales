@@ -23,10 +23,16 @@ public class Necronomicon : Artifact {
     //    base.OnPlaceArtifactOn(tile);
     //    Activate();
     //}
-    public override void OnInspect(Character inspectedBy, out Log result) {
-        base.OnInspect(inspectedBy, out result);
+    public override void OnInspect(Character inspectedBy) { //, out Log result
+        base.OnInspect(inspectedBy); //, out result
         if (!isActivated) {
             Activate();
+            if (LocalizationManager.Instance.HasLocalizedValue("Artifact", this.GetType().ToString(), "on_inspect")) {
+                Log result = new Log(GameManager.Instance.Today(), "Artifact", this.GetType().ToString(), "on_inspect");
+                result.AddToFillers(inspectedBy, inspectedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                result.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                inspectedBy.RegisterLogAndShowNotifToThisCharacterOnly(result, onlyClickedCharacter: false);
+            }
         }
     }
     public override void LevelUp() {
@@ -41,12 +47,12 @@ public class Necronomicon : Artifact {
 
 
     private void OnCharacterReturnedToLife(Character character) {
-        CharacterState state = character.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, gridTileLocation.parentAreaMap.area);
+        CharacterState state = character.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED);
         state.SetIsUnending(true);
     }
     public void Activate() {
         isActivated = true;
-        List<Character> characters = gridTileLocation.parentAreaMap.area.GetAllDeadCharactersInArea();
+        List<Character> characters = gridTileLocation.structure.location.GetAllDeadCharactersInArea();
         for (int i = 0; i < characters.Count; i++) {
             Character currCharacter = characters[i];
             if (currCharacter is Summon) {

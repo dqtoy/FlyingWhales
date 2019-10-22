@@ -456,6 +456,8 @@ public class GoapAction {
     public virtual bool ShouldBeStoppedWhenSwitchingStates() {
         return true; //by default, when a character is switching states and has a current action, that action will be stopped.
     }
+    //This is called after doing the afterEffect action, and after registering the description log
+    public virtual void AfterAfterEffect() { }
     #endregion
 
     #region Utilities

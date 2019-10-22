@@ -14,14 +14,21 @@ public class ChaosOrb : Artifact {
         //poiGoapActions.Add(INTERACTION_TYPE.INSPECT);
     }
 
-    public override void OnInspect(Character inspectedBy, out Log result) {
-        base.OnInspect(inspectedBy, out result);
-        inspectedBy.currentAction.SetEndAction(OnInspectActionDone);
+    public override void OnInspect(Character inspectedBy) { //, out Log result
+        base.OnInspect(inspectedBy); //, out result
+        //inspectedBy.currentAction.SetEndAction(OnInspectActionDone);
+        OnInspectActionDone(inspectedBy);
+        //if (LocalizationManager.Instance.HasLocalizedValue("Artifact", this.GetType().ToString(), "on_inspect")) {
+        //    Log result = new Log(GameManager.Instance.Today(), "Artifact", this.GetType().ToString(), "on_inspect");
+        //    result.AddToFillers(inspectedBy, inspectedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //    //result.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //    inspectedBy.RegisterLogAndShowNotifToThisCharacterOnly(result, onlyClickedCharacter: false);
+        //}
     }
-    private void OnInspectActionDone(string result, GoapAction action) {
-        action.actor.GoapActionResult(result, action);
+    private void OnInspectActionDone(Character inspectedBy) {
+        //action.actor.GoapActionResult(result, action);
         //Characters that inspect the Chaos Orb may be permanently berserked.
-        CharacterState state = action.actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, action.actor.specificLocation);
+        CharacterState state = inspectedBy.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED);
         state.SetIsUnending(true);
     }
 

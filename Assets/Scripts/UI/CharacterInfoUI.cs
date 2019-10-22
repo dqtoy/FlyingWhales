@@ -313,6 +313,14 @@ public class CharacterInfoUI : UIMenu {
         if (_activeCharacter.currentStructure != null) {
             plansLbl.text = _activeCharacter.name + " is in " + _activeCharacter.currentStructure.GetNameRelativeTo(_activeCharacter);
         }
+
+        if (_activeCharacter.currentRegion != null || _activeCharacter.specificLocation != null) {
+            Region region = _activeCharacter.currentRegion;
+            if(region == null) {
+                region = _activeCharacter.specificLocation.region;
+            }
+            plansLbl.text = _activeCharacter.name + " is in " + region.name;
+        }
     }
     public bool IsCharacterInfoShowing(Character character) {
         return (isShowing && _activeCharacter == character);
