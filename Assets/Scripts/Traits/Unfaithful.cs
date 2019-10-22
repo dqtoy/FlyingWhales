@@ -44,6 +44,7 @@ public class Unfaithful : Trait {
     //    return canBeTriggered;
     //}
     public override string TriggerFlaw(Character character) {
+        string successLogKey = base.TriggerFlaw(character);
         if (character.HasRelationshipTraitOf(RELATIONSHIP_TRAIT.LOVER)) {
             Character paramour = character.GetCharacterWithRelationship(RELATIONSHIP_TRAIT.PARAMOUR);
             if (paramour == null) {
@@ -59,10 +60,10 @@ public class Unfaithful : Trait {
                     character.jobQueue.AddJobInQueue(cheatJob);
                 }
             }
+            return successLogKey;
         } else {
             return "fail";
         }
-        return base.TriggerFlaw(character);
     }
     #endregion
 

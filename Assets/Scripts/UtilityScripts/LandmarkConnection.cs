@@ -18,7 +18,6 @@ public class LandmarkConnection : MonoBehaviour {
 
         int numOfLineVariations = Mathf.CeilToInt(distance / brokenLineGapInterval);
         numOfLineVariations -= 2; //trim 2 line child on end of line
-        //brokenLineGapInterval *= 2; //start the line on third position
         for (int i = 2; i < numOfLineVariations; i++) {
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(childConnectorPrefab.name, Vector3.zero, Quaternion.identity, this.transform);
             SpriteRenderer spriteRenderer = go.GetComponent<SpriteRenderer>();
