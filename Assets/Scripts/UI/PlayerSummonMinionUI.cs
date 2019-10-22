@@ -27,10 +27,22 @@ public class PlayerSummonMinionUI : MonoBehaviour {
         UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), PlayerManager.Instance.player.minionsToSummon.ToList(),
             "Choose Minion to Help (Optional)", "Choose Minion to Summon",
             CanChooseMinion, null,
-            null, OnHoverMinionToSummonChoice,
-            null, OnHoverExitMinionToSummonChoice,
+            OnHoverEnterMinion, OnHoverMinionToSummonChoice,
+            OnHoverExitMinion, OnHoverExitMinionToSummonChoice,
             ConfirmSummon, "Summon", column1Optional: true
         );
+    }
+    private void OnHoverEnterMinion(Character character) {
+        if (!CanChooseMinion(character)) {
+            string message = string.Empty;
+            if (character.minion.isAssigned) {
+                message = character.name + " is already doing something else.";
+            }
+            UIManager.Instance.ShowSmallInfo(message);
+        }
+    }
+    private void OnHoverExitMinion(Character character) {
+        UIManager.Instance.HideSmallInfo();
     }
     private void ConfirmSummon(object minionObj, object summonObj) {
         UnsummonedMinionData data = (UnsummonedMinionData)summonObj;

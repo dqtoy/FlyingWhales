@@ -30,12 +30,26 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), landmarkNames,
             "Choose a minion", "Choose a structure",
             CanChooseMinion, CanChooseLandmark,
-            null, OnHoverLandmarkChoice,
-            null, OnHoverExitLandmarkChoice,
+            OnHoverEnterMinion, OnHoverLandmarkChoice,
+            OnHoverExitMinion, OnHoverExitLandmarkChoice,
             StartBuild, "Build");
     }
     private bool CanChooseMinion(Character character) {
         return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER);
+    }
+    private void OnHoverEnterMinion(Character character) {
+        if (!CanChooseMinion(character)) {
+            string message = string.Empty;
+            if (character.minion.isAssigned) {
+                message = character.name + " is already doing something else.";
+            } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER)) {
+                message = character.name + " does not have the required trait: Builder";
+            }
+            UIManager.Instance.ShowSmallInfo(message);
+        }
+    }
+    private void OnHoverExitMinion(Character character) {
+        UIManager.Instance.HideSmallInfo();
     }
     private bool CanChooseLandmark(string landmarkName) {
         if (landmarkName == "The Pit" || landmarkName == "The Fingers") {
