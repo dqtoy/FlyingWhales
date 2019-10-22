@@ -1710,13 +1710,13 @@ public class Utilities : MonoBehaviour {
         int yearDiff = Mathf.Abs(date1.year - date2.year);
         int monthDiff = Mathf.Abs(date1.month - date2.month);
         int daysDiff = Mathf.Abs(date1.day - date2.day);
-        int ticksDiff = Mathf.Abs(date1.tick - date2.tick);
+        int ticksDiff = date2.tick - date1.tick;
 
         int totalTickDiff = yearDiff * ((GameManager.ticksPerDay * GameManager.daysPerMonth) * 12);
         totalTickDiff += monthDiff * (GameManager.ticksPerDay * GameManager.daysPerMonth);
         totalTickDiff += daysDiff * GameManager.ticksPerDay;
         totalTickDiff += ticksDiff;
-
+        
         return totalTickDiff;
     }
     #endregion

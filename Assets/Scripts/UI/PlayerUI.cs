@@ -1546,10 +1546,12 @@ public class PlayerUI : MonoBehaviour {
             currItem.transform.SetSiblingIndex(alive.Count + i + 2);
         }
     }
-    public void ToggleKillSummary() {
-        killSummaryGO.SetActive(!killSummaryGO.activeSelf);
-        if (minionListGO.activeSelf) {
-            minionListGO.SetActive(false);
+    public void ToggleKillSummary(bool isOn) {
+        killSummaryGO.SetActive(isOn);
+        if (isOn) {
+            if (minionListGO.activeSelf) {
+                minionListGO.SetActive(false);
+            }
         }
     }
     public void HideKillSummary() {
@@ -1682,10 +1684,12 @@ public class PlayerUI : MonoBehaviour {
         DeleteMinionItem(minion);
         UpdateMinionCount();
     }
-    public void ToggleMinionList() {
-        minionListGO.SetActive(!minionListGO.activeSelf);
-        if (killSummaryGO.activeSelf) {
-            killSummaryGO.SetActive(false);
+    public void ToggleMinionList(bool isOn) {
+        minionListGO.SetActive(isOn);
+        if (isOn) {
+            if (killSummaryGO.activeSelf) {
+                killSummaryGO.SetActive(false);
+            }
         }
     }
     public void HideMinionList() {

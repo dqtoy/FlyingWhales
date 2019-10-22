@@ -32,7 +32,13 @@ public class TheEyeUI : MonoBehaviour {
             cooldownProgress.gameObject.SetActive(false);
         }
     }
+    private Minion minionToInterfere; 
     public void OnClickInterfere() {
+        minionToInterfere = null;
+        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), "Choose Minion",
+            CanChooseMinion, OnHoverEnterMinion, OnHoverExitMinion, OnPickFirstObject, ConfirmInterfere, "Interfere");
+    }
+    private void OnPickFirstObject(object obj) {
         List<Region> activeEventRegions = new List<Region>();
         for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
             Region currRegion = GridMap.Instance.allRegions[i];
@@ -40,12 +46,25 @@ public class TheEyeUI : MonoBehaviour {
                 activeEventRegions.Add(currRegion);
             }
         }
-        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker<Character, Region>(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), activeEventRegions,
-            "Choose Minion", "Choose Event to Interfere with",
-            CanChooseMinion, null,
-            null, null,
-            null, null,
-            ConfirmInterfere, "Interfere", column2Identifier: "WorldEvent");
+        minionToInterfere = (obj as Character).minion;
+        UIManager.Instance.dualObjectPicker.PopulateColumn(activeEventRegions, CanInterfere, null, null, UIManager.Instance.dualObjectPicker.column2ScrollView, UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Event", "WorldEvent");
+    }
+    private bool CanInterfere(Region region) {
+        return region.activeEvent.CanBeInterferedBy(minionToInterfere);
+    }
+    private void OnHoverEnterMinion(Character character) {
+        if (!CanChooseMinion(character)) {
+            string message = string.Empty;
+            if (character.minion.isAssigned) {
+                message = character.name + " is already doing something else.";
+            } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.SABOTEUR) && !character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.FIGHTER)) {
+                message = character.name + " does not have the required trait: Saboteur or Fighter";
+            }
+            UIManager.Instance.ShowSmallInfo(message);
+        }
+    }
+    private void OnHoverExitMinion(Character character) {
+        UIManager.Instance.HideSmallInfo();
     }
     private void ConfirmInterfere(object minionObj, object regionObj) {
         Character character = minionObj as Character;
@@ -57,7 +76,7 @@ public class TheEyeUI : MonoBehaviour {
     #endregion
 
     private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.SABOTEUR);
+        return !character.minion.isAssigned && (character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.SABOTEUR) || character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.FIGHTER));
     }
 
 }

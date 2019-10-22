@@ -133,6 +133,9 @@ public class WorldEvent  {
         }
         return true;
     }
+    private bool IsCombatEvent() {
+        return eventEffects.Contains(WORLD_EVENT_EFFECT.COMBAT);
+    }
     #endregion
 
     #region Interference
@@ -169,6 +172,20 @@ public class WorldEvent  {
             Debug.Log(summary);
             return true;
 
+        }
+    }
+    /// <summary>
+    /// This is used to filter which minions can interfere with what events.
+    /// </summary>
+    /// <param name="minion">The minion in question.</param>
+    /// <returns>True or False</returns>
+    public bool CanBeInterferedBy(Minion minion) {
+        if (IsCombatEvent()) {
+            //if the event is a combat type event, then the minion must be a fighter
+            return minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.FIGHTER);
+        } else {
+            //if the event is a non-combat type event, then the minion must be a saboteur
+            return minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.SABOTEUR);
         }
     }
     #endregion

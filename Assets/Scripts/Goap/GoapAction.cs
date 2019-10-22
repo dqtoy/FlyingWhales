@@ -503,7 +503,7 @@ public class GoapAction {
     }
     public void ReturnToActorTheActionResult(string result) {
         this.result = result;
-        actor.OnCharacterDoAction(this);
+        //actor.OnCharacterDoAction(this);
         currentState.StopPerTickEffect();
 
         isPerformingActualAction = false;
