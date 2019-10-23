@@ -128,13 +128,13 @@ public class CharacterStateComponent {
     /// <param name="state">The state to be exited.</param>
     /// <param name="stopMovement">Should this character stop his/her current movement when exiting his/her current state?/param>
     public void ExitCurrentState(CharacterState state, bool stopMovement = true) {
-        if (currentState == null) {
+        if (this.currentState == null) {
             throw new System.Exception(character.name + " is trying to exit his/her current state but it is null, Passed state is " + state?.stateName);
         }
 
         //Stops movement unless told otherwise
         if (stopMovement) {
-            if(!(currentState != null && character.currentAction != null && character.currentAction.parentPlan == null)) {
+            if(!(this.currentState != null && character.currentAction != null && character.currentAction.parentPlan == null)) {
                 if (character.currentParty.icon.isTravelling) {
                     if (character.currentParty.icon.travelLine == null) {
                         character.marker.StopMovement();
@@ -142,35 +142,39 @@ public class CharacterStateComponent {
                 }
             }
         }
-        if (currentState != null) {
+        CharacterState currState = this.currentState; //local variable for currentState
+        if (currState != null) {
             //This ends the current state but I added a checker that the parameter state must be the same as the current state to avoid inconsistencies
-            if(currentState != state) {
-                Debug.LogError("Inconsistency! The current state " + currentState.stateName + " of " + character.name + " does not match the state " + state.stateName);
+            if(currState != state) {
+                Debug.LogError("Inconsistency! The current state " + currState.stateName + " of " + character.name + " does not match the state " + state.stateName);
                 //return;
             }
-            currentState.ExitState();
+            currState.ExitState();
         }
-        CharacterState previousState = currentState;
+        CharacterState previousState = currState;
         if (character.isDead) {
             if(previousMajorState != null) {
                 previousMajorState.ExitState();
             }
             previousMajorState = null;
             SetCurrentState(null);
+            currState.endStateAction?.Invoke();
             previousState.AfterExitingState();
             return;
         }
         //If the current state is a minor state and there is a previous major state, resume that major state
-        if(currentState.stateCategory == CHARACTER_STATE_CATEGORY.MINOR && previousMajorState != null) {
+        if(currState.stateCategory == CHARACTER_STATE_CATEGORY.MINOR && previousMajorState != null) {
             if(previousMajorState.duration > 0 && previousMajorState.currentDuration >= previousMajorState.duration) {
                 //In a rare case that the previous major state has already timed out, end that state and do not resume it
                 //This goes back to normal
                 previousMajorState.ExitState();
                 SetCurrentState(null);
+                currState.endStateAction?.Invoke();
             } else {
                 if(character.doNotDisturb > 0) {
                     previousMajorState.ExitState();
                     SetCurrentState(null);
+                    currState.endStateAction?.Invoke();
                     //if (previousMajorState.characterState == CHARACTER_STATE.BERSERKED && character.doNotDisturb == 1 && character.GetNormalTrait("Combat Recovery") != null) { //Quick fix only for build, MUST REDO
                     //    if (previousMajorState.hasStarted) {
                     //        //Resumes previous major state
@@ -190,12 +194,13 @@ public class CharacterStateComponent {
                     //}
                 } else {
                     bool resumeState = true;
-                    if(currentState.characterState == CHARACTER_STATE.COMBAT && previousMajorState.characterState == CHARACTER_STATE.BERSERKED) {
+                    if(currState.characterState == CHARACTER_STATE.COMBAT && previousMajorState.characterState == CHARACTER_STATE.BERSERKED) {
                         if (!previousMajorState.isUnending) {
                             if (previousMajorState.hasStarted) {
                                 previousMajorState.ExitState();
                             }
                             SetCurrentState(null);
+                            currState.endStateAction?.Invoke();
                             resumeState = false;
                         }
                     }
@@ -204,13 +209,16 @@ public class CharacterStateComponent {
                             //Resumes previous major state
                             if (previousMajorState.CanResumeState()) {
                                 SetCurrentState(previousMajorState);
-                                currentState.ResumeState();
+                                currState.endStateAction?.Invoke();
+                                currState.ResumeState();
                             } else {
                                 previousMajorState = null;
                                 SetCurrentState(null);
+                                currState.endStateAction?.Invoke();
                             }
                         } else {
                             SetCurrentState(null);
+                            currState.endStateAction?.Invoke();
                             previousMajorState.EnterState();
                         }
                     }
@@ -221,6 +229,7 @@ public class CharacterStateComponent {
             //This goes back to normal
             previousMajorState = null;
             SetCurrentState(null);
+            currState.endStateAction?.Invoke();
         }
         previousState.AfterExitingState();
     }

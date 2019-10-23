@@ -160,10 +160,15 @@ public class BerserkedState : CharacterState {
         stateComponent.character.currentAction.PerformActualAction();
     }
     private void BerserkAgain(string result, GoapAction goapAction) {
+        string summary = stateComponent.character.name + " is checking for berserk again";
         SetCurrentlyDoingAction(null);
-        if (stateComponent.currentState != this) {
+        if (stateComponent.currentState != null && stateComponent.currentState != this) {
+            summary += "\nCould not berserk again because current state is " + stateComponent.currentState.ToString();
+            Debug.Log(summary);
             return;
         }
+        summary += "Berserk resuming!";
+        Debug.Log(summary);
         stateComponent.character.SetCurrentAction(null);
         ResumeState();
     }

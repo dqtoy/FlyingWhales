@@ -89,6 +89,9 @@ public class TileObjectDestroy : GoapAction {
     #endregion
 
     #region State Effects
+    private void PreInProgress() {
+        currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    }
     private void PreDestroySuccess() {
         currentState.AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         currentState.AddLogFiller(structure.location, structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);

@@ -83,9 +83,6 @@ public class CharacterState {
             job.SetAssignedCharacter(null);
             job.SetAssignedState(null);
         }
-        if (endStateAction != null) {
-            endStateAction();
-        }
         Messenger.Broadcast(Signals.CHARACTER_ENDED_STATE, stateComponent.character, this);
     }
     //This is called per TICK_ENDED if the state has a duration, can be overriden
@@ -142,6 +139,9 @@ public class CharacterState {
     public virtual void ResumeState() {
         if (isDone) {
             return; //if the state has already been exited. Do not resume.
+        }
+        if (!isPaused) {
+            return; //if this state is not paused then do not resume.
         }
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Resuming " + stateName + " for " + stateComponent.character.name);
         isPaused = false;
