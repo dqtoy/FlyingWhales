@@ -504,6 +504,7 @@ public class RegionInfoUI : UIMenu {
 
     #region For Testing
     public void ShowLocationInfo() {
+#if UNITY_EDITOR
         if(activeRegion.area != null) {
             string summary = "Location Job Queue: ";
             if (activeRegion.area.jobQueue.jobsInQueue.Count > 0) {
@@ -529,9 +530,12 @@ public class RegionInfoUI : UIMenu {
             }
             UIManager.Instance.ShowSmallInfo(summary);
         }
+#endif
     }
     public void HideLocationInfo() {
+#if UNITY_EDITOR
         UIManager.Instance.HideSmallInfo();
+#endif
     }
     #endregion
 }
