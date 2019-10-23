@@ -253,7 +253,7 @@ public class RegionInfoUI : UIMenu {
             if (character.minion.isAssigned) {
                 message = character.name + " is already doing something else.";
             } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADER)) {
-                message = character.name + " does not the required trait: Invader";
+                message = character.name + " does have not the required trait: Invader";
             }
             UIManager.Instance.ShowSmallInfo(message);
         }
@@ -504,7 +504,7 @@ public class RegionInfoUI : UIMenu {
 
     #region For Testing
     public void ShowLocationInfo() {
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
         if(activeRegion.area != null) {
             string summary = "Location Job Queue: ";
             if (activeRegion.area.jobQueue.jobsInQueue.Count > 0) {
@@ -530,12 +530,12 @@ public class RegionInfoUI : UIMenu {
             }
             UIManager.Instance.ShowSmallInfo(summary);
         }
-#endif
+//#endif
     }
     public void HideLocationInfo() {
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
         UIManager.Instance.HideSmallInfo();
-#endif
+//#endif
     }
     #endregion
 }
