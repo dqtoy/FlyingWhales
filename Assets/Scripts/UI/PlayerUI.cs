@@ -298,6 +298,14 @@ public class PlayerUI : MonoBehaviour {
             if (isSummoningArtifact) {
                 TryPlaceArtifact();
             }
+        } else if (pressedKey == KeyCode.Mouse1) {
+            //left click
+            //if (isSummoning) {
+            //    TryPlaceSummon();
+            //} else 
+            if (isSummoningArtifact) {
+                CancelSummonArtifact();
+            }
         }
     }
     private void OnCharacterDied(Character character) {
