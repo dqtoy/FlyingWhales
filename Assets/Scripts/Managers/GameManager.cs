@@ -83,7 +83,9 @@ public class GameManager : MonoBehaviour {
     private void Update() {
         if (Input.GetKeyDown(KeyCode.BackQuote)) {
             if (allowConsole) {
+#if UNITY_EDITOR
                 UIManager.Instance.ToggleConsole();
+#endif
             }
         } else if (Input.GetKeyDown(KeyCode.Space) && !UIManager.Instance.IsMouseOnInput()) {
             if (!UIManager.Instance.IsConsoleShowing() && UIManager.Instance.pauseBtn.IsInteractable()) {

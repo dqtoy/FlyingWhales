@@ -1320,7 +1320,7 @@ public class UIManager : MonoBehaviour {
         //}
         activeNotifications.Add(newNotif);
         if (!notifExpandButton.gameObject.activeSelf) {
-            notifExpandButton.gameObject.SetActive(true);
+            //notifExpandButton.gameObject.SetActive(true);
         }
         if (activeNotifications.Count > maxPlayerNotif) {
             activeNotifications[0].DeleteNotification();
@@ -1329,7 +1329,7 @@ public class UIManager : MonoBehaviour {
     private void OnNotificationDestroyed(PlayerNotificationItem item) {
         activeNotifications.Remove(item);
         if(activeNotifications.Count <= 0) {
-            notifExpandButton.gameObject.SetActive(false);
+            //notifExpandButton.gameObject.SetActive(false);
         }
     }
     public void OnClickExpand() {
