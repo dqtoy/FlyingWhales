@@ -56,9 +56,6 @@ MonoBehaviour:
     type: 2}
   lineParentSpriteRenderer: {fileID: 212169953692826844}
   lineVariations:
-  - {fileID: 21300000, guid: c558b76852c543049afa2a83c8ab9767, type: 3}
-  - {fileID: 21300000, guid: 6bfae3f0610e3224d87626ce9d3f2e79, type: 3}
-  - {fileID: 21300000, guid: d816bb7c71d1c0a4085e9818e3726719, type: 3}
   - {fileID: 21300000, guid: b704703b2aba8514e8efc189e2f63fe9, type: 3}
 --- !u!212 &212169953692826844
 SpriteRenderer:

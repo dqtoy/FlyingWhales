@@ -65,6 +65,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: c7eb2c62bdcc23249b526835af97120b, type: 3}
   - {fileID: 21300000, guid: 500e7b7229d790d478f4f93c0e80faea, type: 3}
   - {fileID: 21300000, guid: 5f63eb7267ac08d44b72c56670bf0281, type: 3}
+  - {fileID: 21300000, guid: e8f301c20bd6d5c4fa537959d247490d, type: 3}
   - {fileID: 21300000, guid: 7c0f6fe2f05f6734295053554b57ead7, type: 3}
   - {fileID: 21300000, guid: c29f53f2f0a826746b83e63495cceef2, type: 3}
   - {fileID: 21300000, guid: 09ae2603ebabe1848afd5f6fe31c6cd9, type: 3}
@@ -241,6 +242,7 @@ SpriteAtlas:
   - Jungle Forest_00012
   - woodland forest_00014
   - Jungle Forest_00002
+  - connector5
   - Snow forest_00007
   - woodland1
   - mote1
