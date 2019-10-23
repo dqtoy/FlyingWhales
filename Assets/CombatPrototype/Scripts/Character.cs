@@ -973,6 +973,10 @@ public class Character : ILeader, IPointOfInterest {
             Area deathLocation = ownParty.specificLocation;
             LocationStructure deathStructure = currentStructure;
             LocationGridTile deathTile = gridTileLocation;
+            for (int i = 0; i < normalTraits.Count; i++) {
+                normalTraits[i].OnDeath(this);
+            }
+            //------------------------ Things that are above this line are called before letting the character die so that if we need things done before actually setting the death of character we can do it here like cleaning up necessary things, etc.
             SetIsDead(true);
             UnsubscribeSignals();
             SetPOIState(POI_STATE.INACTIVE);
@@ -1068,10 +1072,6 @@ public class Character : ILeader, IPointOfInterest {
             //deathTile.RemoveCharacterHere(this);
 
             //RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
-
-            for (int i = 0; i < normalTraits.Count; i++) {
-                normalTraits[i].OnDeath(this);
-            }
 
             //RemoveAllNonPersistentTraits();
 

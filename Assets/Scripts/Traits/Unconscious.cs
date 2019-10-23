@@ -68,6 +68,10 @@ public class Unconscious : Trait {
         _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
         base.OnRemoveTrait(sourceCharacter, removedBy);
     }
+    public override void OnDeath(Character character) {
+        base.OnDeath(character);
+        character.RemoveTrait(this);
+    }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (traitOwner is Character) {
             Character targetCharacter = traitOwner as Character;
