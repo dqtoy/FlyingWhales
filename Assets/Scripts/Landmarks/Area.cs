@@ -395,7 +395,7 @@ public class Area {
     //    }
     //}
     public bool CanInvadeSettlement() {
-        return coreTile.region.HasCorruptedConnection() && PlayerManager.Instance.player.minions.Where(x => x.assignedRegion == null).ToList().Count > 0 && PlayerManager.Instance.player.currentAreaBeingInvaded == null;
+        return coreTile.region.HasCorruptedConnection() && PlayerManager.Instance.player.currentAreaBeingInvaded == null && PlayerManager.Instance.player.minions.Where(x => x.assignedRegion == null).ToList().Count > 0;
     }
     #endregion
 

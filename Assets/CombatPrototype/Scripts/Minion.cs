@@ -166,7 +166,7 @@ public class Minion {
             Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
 
             character.CancelAllJobsAndPlans();
-            StopInvasionProtocol();
+            StopInvasionProtocol(PlayerManager.Instance.player.currentAreaBeingInvaded);
 
             //Debug.Log(GameManager.Instance.TodayLogString() + character.name + " died of " + cause);
             Log deathLog;
@@ -299,12 +299,14 @@ public class Minion {
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
         SetAssignedRegion(area.coreTile.region);
     }
-    public void StopInvasionProtocol() {
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
-        Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
-        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
-        SetAssignedRegion(null);
+    public void StopInvasionProtocol(Area area) {
+        if(area != null && assignedRegion.area == area) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
+            Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
+            Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);
+            Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, character.OnCharacterEndedState);
+            SetAssignedRegion(null);
+        }
     }
     private void PerTickInvasion() {
         if (character.isDead) {

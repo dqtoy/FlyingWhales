@@ -1362,9 +1362,10 @@ public class Player : ILeader {
             currentAreaBeingInvaded = area;
             currentMinions[0].character.CenterOnCharacter();
             Messenger.AddListener(Signals.TICK_ENDED, PerTickInvasion);
-        } else {
-            Debug.LogError("Can't invade! No more minions!");
         }
+        //else {
+        //    Debug.LogError("Can't invade! No more minions!");
+        //}
     }
     private void PerTickInvasion() {
         bool stillHasMinions = false;
@@ -1373,7 +1374,7 @@ public class Player : ILeader {
             if (currMinion.assignedRegion != LandmarkManager.Instance.enemyOfPlayerArea.coreTile.region) {
                 continue; //do not include minions that are not invading the main settlement.
             }
-            if(currMinion.character.currentHP > 0 && !currMinion.character.isDead) {
+            if(currMinion.character.currentHP > 0 && !currMinion.character.isDead && currMinion.character.doNotDisturb <= 0) {
                 stillHasMinions = true;
                 break;
             }
@@ -1386,7 +1387,7 @@ public class Player : ILeader {
         bool stillHasResidents = false;
         for (int i = 0; i < currentTargetFaction.characters.Count; i++) { //Changed checking to faction members, because some characters may still consider the area as their home, but are no longer part of the faction
             Character currCharacter = currentTargetFaction.characters[i];
-            if (currCharacter.IsAble() && currCharacter.specificLocation == currentAreaBeingInvaded) {
+            if (currCharacter.specificLocation == currentAreaBeingInvaded && currCharacter.IsAble()) {
                 stillHasResidents = true;
                 break;
             }
@@ -1405,7 +1406,6 @@ public class Player : ILeader {
     }
     private void StopInvasion(bool playerWon) {
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTickInvasion);
-        PlayerUI.Instance.StopInvasion();
         if (playerWon) {
             PlayerUI.Instance.SuccessfulAreaCorruption();
             Area corruptedArea = AreaIsCorrupted();
@@ -1426,9 +1426,10 @@ public class Player : ILeader {
         }
         for (int i = 0; i < minions.Count; i++) {
             Minion currMinion = minions[i];
-            currMinion.StopInvasionProtocol();
+            currMinion.StopInvasionProtocol(currentAreaBeingInvaded);
         }
         currentAreaBeingInvaded = null;
+        UIManager.Instance.regionInfoUI.StopSettlementInvasion();
     }
     //public void SetInvadingRegion(Region region) {
     //    invadingRegion = region;

@@ -259,9 +259,9 @@ public class PlayerUI : MonoBehaviour {
         //startInvasionButton.gameObject.SetActive(true);
         //saveGameButton.gameObject.SetActive(false);
 
-        if (PlayerManager.Instance.player.currentAreaBeingInvaded == area) {
-            ShowCombatAbilityUI();
-        }
+        //if (PlayerManager.Instance.player.currentAreaBeingInvaded == area) {
+        //    ShowCombatAbilityUI();
+        //}
 
         //Kill count UI
         //UpdateKillCountActiveState();
@@ -272,7 +272,7 @@ public class PlayerUI : MonoBehaviour {
         UpdateSummonsInteraction();
         UpdateArtifactsInteraction();
         //startInvasionButton.gameObject.SetActive(false);
-        HideCombatAbilityUI();
+        //HideCombatAbilityUI();
         //saveGameButton.gameObject.SetActive(true);
 
         //UpdateKillCountActiveState();
@@ -651,14 +651,15 @@ public class PlayerUI : MonoBehaviour {
             attackGridSlots[i].PlaceObject(defenseGridReference.slots[i].character);
         }
     }
-    public void OnClickStartInvasion() {
-        PlayerManager.Instance.player.StartInvasion(InteriorMapManager.Instance.currentlyShowingArea);
-        //ShowCombatAbilityUI();
-    }
-    public void StopInvasion() {
-        //startInvasionButton.interactable = true;
-        HideCombatAbilityUI();
-    }
+    //public void OnClickStartInvasion() {
+    //    //ShowCombatAbilityUI();
+    //    UIManager.Instance.regionInfoUI.UpdateMainBtnState();
+    //}
+    //public void StopInvasion() {
+    //    //startInvasionButton.interactable = true;
+    //    HideCombatAbilityUI();
+    //    UpdateMainBtnState();
+    //}
     //private void UpdateStartInvasionButton() {
     //    startInvasionButton.interactable = InteriorMapManager.Instance.currentlyShowingArea.CanInvadeSettlement();
     //    startInvasionHoverHandler.gameObject.SetActive(!startInvasionButton.interactable);
