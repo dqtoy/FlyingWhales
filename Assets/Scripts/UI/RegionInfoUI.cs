@@ -284,7 +284,9 @@ public class RegionInfoUI : UIMenu {
     }
     public void StopSettlementInvasion() {
         //HideCombatAbilityUI();
-        UpdateMainBtnState();
+        if (isShowing) {
+            UpdateMainBtnState();
+        }
     }
     #endregion
 
