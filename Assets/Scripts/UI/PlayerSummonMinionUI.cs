@@ -47,6 +47,7 @@ public class PlayerSummonMinionUI : MonoBehaviour {
     private void ConfirmSummon(object minionObj, object summonObj) {
         UnsummonedMinionData data = (UnsummonedMinionData)summonObj;
         Minion minion = (minionObj as Character)?.minion ?? null;
+
         Debug.Log("Will summon " + data.className + " helped by " + (minion?.character.name ?? "No one"));
 
         int summonDuration = LandmarkManager.SUMMON_MINION_DURATION;
@@ -55,6 +56,8 @@ public class PlayerSummonMinionUI : MonoBehaviour {
             summonDuration -= speedUpDuration;
         }
 
+        minion.SetAssignedRegion(portal.tileLocation.region);
+        portal.tileLocation.region.SetAssignedMinion(minion);
         portal.StartSummon(System.Array.IndexOf(PlayerManager.Instance.player.minionsToSummon, data), 0, summonDuration);
 
         UpdatePlayerSummonMinionUI();
