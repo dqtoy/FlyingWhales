@@ -555,18 +555,26 @@ public class Area {
     }
     public List<Character> GetAllDeadCharactersInArea() {
         List<Character> characters = new List<Character>();
-        CharacterMarker[] markers = Utilities.GetComponentsInDirectChildren<CharacterMarker>(areaMap.objectsParent.gameObject);
-        for (int i = 0; i < markers.Length; i++) {
-            CharacterMarker currMarker = markers[i];
-            if (currMarker.character != null && currMarker.character.isDead) {
-                characters.Add(currMarker.character);
+        for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
+            Character character = CharacterManager.Instance.allCharacters[i];
+            if(character.isDead && character.specificLocation == this && !(character is Summon)) {
+                if(character.marker != null || character.grave != null) { //Only resurrect characters who are in the tombstone or still has a marker in the area
+                    characters.Add(character);
+                }
             }
         }
+        //CharacterMarker[] markers = Utilities.GetComponentsInDirectChildren<CharacterMarker>(areaMap.objectsParent.gameObject);
+        //for (int i = 0; i < markers.Length; i++) {
+        //    CharacterMarker currMarker = markers[i];
+        //    if (currMarker.character != null && currMarker.character.isDead) {
+        //        characters.Add(currMarker.character);
+        //    }
+        //}
 
-        List<TileObject> tombstones = GetTileObjectsOfType(TILE_OBJECT_TYPE.TOMBSTONE);
-        for (int i = 0; i < tombstones.Count; i++) {
-            characters.Add(tombstones[i].users[0]);
-        }
+        //List<TileObject> tombstones = GetTileObjectsOfType(TILE_OBJECT_TYPE.TOMBSTONE);
+        //for (int i = 0; i < tombstones.Count; i++) {
+        //    characters.Add(tombstones[i].users[0]);
+        //}
         return characters;
     }
     public void SetInitialResidentCount(int count) {

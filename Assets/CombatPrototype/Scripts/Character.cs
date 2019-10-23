@@ -907,7 +907,6 @@ public class Character : ILeader, IPointOfInterest {
         } else {
             GameManager.Instance.StartCoroutine(Raise(this, level, onReturnToLifeAction, faction, race, className));
         }
-        
     }
     private IEnumerator Raise(Character target, int level, System.Action<Character> onReturnToLifeAction, Faction faction, RACE race, string className) {
         target.marker.PlayAnimation("Raise Dead");
@@ -954,6 +953,7 @@ public class Character : ILeader, IPointOfInterest {
             SetFullnessForcedTick(0);
             SetHasCancelledSleepSchedule(false);
             ResetSleepTicks();
+            CancelAllJobsTargettingThisCharacter();
             //MigrateHomeTo(null);
             //AddInitialAwareness(gloomhollow);
             Messenger.Broadcast(Signals.CHARACTER_RETURNED_TO_LIFE, this);
