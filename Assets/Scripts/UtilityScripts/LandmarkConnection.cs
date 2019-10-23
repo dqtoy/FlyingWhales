@@ -17,8 +17,8 @@ public class LandmarkConnection : MonoBehaviour {
         transform.localPosition = Vector3.zero;
 
         int numOfLineVariations = Mathf.CeilToInt(distance / brokenLineGapInterval);
-        numOfLineVariations -= 2; //trim 2 line child on end of line
-        for (int i = 2; i < numOfLineVariations; i++) {
+        numOfLineVariations -= 4; //trim 2 line child on end of line
+        for (int i = 3; i < numOfLineVariations; i++) {
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(childConnectorPrefab.name, Vector3.zero, Quaternion.identity, this.transform);
             SpriteRenderer spriteRenderer = go.GetComponent<SpriteRenderer>();
             spriteRenderer.sprite = lineVariations[UnityEngine.Random.Range(0, lineVariations.Length)];

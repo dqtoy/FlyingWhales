@@ -409,12 +409,13 @@ public class PlayerManager : MonoBehaviour {
                         Character target = hoveredPOI as Character;
                         if (character.IsHostileWith(target) && character.IsCombatReady()) {
                             character.marker.AddHostileInRange(target);
-                            CombatState cs = character.stateComponent.currentState as CombatState;
-                            if (cs != null) {
-                                cs.SetForcedTarget(target);
-                            } else {
-                                throw new System.Exception(character.name + " was instructed to attack " + target.name + " but did not enter combat state!");
-                            }
+                            character.marker.AddOnProcessCombatAction((combatState) => combatState.SetForcedTarget(target));
+                            //CombatState cs = character.stateComponent.currentState as CombatState;
+                            //if (cs != null) {
+                            //    cs.SetForcedTarget(target);
+                            //} else {
+                            //    throw new System.Exception(character.name + " was instructed to attack " + target.name + " but did not enter combat state!");
+                            //}
                         } else {
                             Debug.Log(character.name + " is not combat ready or is not hostile with " + target.name + ". Ignoring command.");
                         }
