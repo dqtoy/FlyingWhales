@@ -777,8 +777,8 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Provoke
-    public void OpenProvoke(Character target) {
-        provokeMenu.Open(target);
+    public void OpenProvoke(Character actor, Character target) {
+        provokeMenu.Open(actor, target);
     }
     #endregion
 

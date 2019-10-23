@@ -16,7 +16,11 @@ public class Provoke : PlayerJobAction {
             return;
         }
         Character targetCharacter = targetPOI as Character;
-        PlayerUI.Instance.OpenProvoke(targetCharacter);
+        Character minionActor = null;
+        if(PlayerManager.Instance.player.minions.Count > 0) {
+            minionActor = PlayerManager.Instance.player.minions[0].character;
+        }
+        PlayerUI.Instance.OpenProvoke(minionActor, targetCharacter);
         base.ActivateAction(targetCharacter);
     }
 

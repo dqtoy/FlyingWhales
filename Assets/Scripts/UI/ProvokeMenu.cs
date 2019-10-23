@@ -14,15 +14,15 @@ public class ProvokeMenu : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI instructionLbl;
 
     private Character targetCharacter;
-    //private Character actor;
+    private Character actor;
 
     private bool wasPausedOnOpen;
 
-    public void Open(Character targetCharacter) {
+    public void Open(Character actor, Character targetCharacter) {
         this.gameObject.SetActive(true);
 
         this.targetCharacter = targetCharacter;
-        //this.actor = actor;
+        this.actor = actor;
         instructionLbl.text = "Provoke " + targetCharacter.name;
 
         Utilities.DestroyChildren(dialogScrollView.content);
@@ -32,9 +32,11 @@ public class ProvokeMenu : MonoBehaviour {
 
         ProvokeAction(ref targetDialogText, ref actorDialogText);
 
-        //GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
-        //DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
-        //actorItem.SetData(actor, actorDialogText, DialogItem.Position.Right);
+        if(this.actor != null) {
+            GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
+            DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
+            actorItem.SetData(this.actor, actorDialogText, DialogItem.Position.Right);
+        }
 
         GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem item = targetDialog.GetComponent<DialogItem>();
