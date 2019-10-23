@@ -221,6 +221,7 @@ public class CharacterInfoUI : UIMenu {
     }
     public void UpdateThoughtBubble() {
         if (_activeCharacter.minion != null) {
+            plansLbl.text = string.Empty;
             return;
         }
         if (_activeCharacter.isDead) {

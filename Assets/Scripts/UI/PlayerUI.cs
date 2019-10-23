@@ -1497,6 +1497,7 @@ public class PlayerUI : MonoBehaviour {
 
     #region Kill Count
     public bool isShowingKillSummary { get { return killCountGO.activeSelf; } }
+    [SerializeField] private Toggle killSummaryToggle;
     private void UpdateKillCountActiveState() {
         bool state = InteriorMapManager.Instance.isAnAreaMapShowing;
         killCountGO.SetActive(state);
@@ -1548,12 +1549,11 @@ public class PlayerUI : MonoBehaviour {
     }
     public void ToggleKillSummary(bool isOn) {
         killSummaryGO.SetActive(isOn);
-        //if (minionListGO.activeSelf) {
-        //    minionListGO.SetActive(false);
-        //}
     }
     public void HideKillSummary() {
-        killSummaryGO.SetActive(false);
+        if (killSummaryToggle.isOn) {
+            killSummaryToggle.isOn = false;
+        }
     }
     #endregion
 
@@ -1639,6 +1639,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private ScrollRect minionListScrollView;
     [SerializeField] private GameObject minionListGO;
     [SerializeField] private UIHoverPosition minionListCardTooltipPos;
+    [SerializeField] private Toggle minionListToggle;
     private void UpdateMinionList() {
         Utilities.DestroyChildren(minionListScrollView.content);
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
@@ -1686,7 +1687,9 @@ public class PlayerUI : MonoBehaviour {
         minionListGO.SetActive(isOn);
     }
     public void HideMinionList() {
-        minionListGO.SetActive(false);
+        if (minionListToggle.isOn) {
+            minionListToggle.isOn = false;
+        }
     }
     #endregion
 

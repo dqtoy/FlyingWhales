@@ -22,12 +22,12 @@ public class UnsummonedMinionNameplateItem : NameplateItem<UnsummonedMinionData>
     }
     public override void OnHoverEnter() {
         hoverPortrait.SetActive(true);
-        UIManager.Instance.ShowMinionCardTooltip(minionData);
+        //UIManager.Instance.ShowMinionCardTooltip(minionData);
         base.OnHoverEnter();
     }
     public override void OnHoverExit() {
         hoverPortrait.SetActive(false);
-        UIManager.Instance.HideMinionCardTooltip();
+        //UIManager.Instance.HideMinionCardTooltip();
         base.OnHoverExit();
     }
     #endregion

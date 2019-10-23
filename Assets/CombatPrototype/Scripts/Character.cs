@@ -5316,6 +5316,7 @@ public class Character : ILeader, IPointOfInterest {
         if (!IsInOwnParty()) {
             _currentParty.RemoveCharacter(this);
         }
+        ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
         MigrateHomeTo(PlayerManager.Instance.player.playerArea.region);
 
         specificLocation.RemoveCharacterFromLocation(this.currentParty);
@@ -5325,9 +5326,7 @@ public class Character : ILeader, IPointOfInterest {
         ResetHappinessMeter();
         ResetTirednessMeter();
         //PlayerManager.Instance.player.demonicPortal.AddCharacterToLocation(this.currentParty);
-
-        ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
-
+        
         Minion newMinion = PlayerManager.Instance.player.CreateNewMinion(this, false);
         newMinion.character.SetName(minionData.minionName);
         ChangeRace(RACE.DEMON);
