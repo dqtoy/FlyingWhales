@@ -156,12 +156,12 @@ public class UIManager : MonoBehaviour {
         //}
         //UpdateSpeedToggles(GameManager.Instance.isPaused);
         if (isHoveringTile) {
-            if (currentTileHovered.areaOfTile != null && currentTileHovered.areaOfTile.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
-                ShowSmallInfo("Double click to view.", currentTileHovered.areaOfTile.name);
-                isShowingAreaTooltip = true;
-            }
+            //if (currentTileHovered.areaOfTile != null && currentTileHovered.areaOfTile.areaType != AREA_TYPE.DEMONIC_INTRUSION) {
+            //    ShowSmallInfo("Double click to view.", currentTileHovered.areaOfTile.name);
+            //    isShowingAreaTooltip = true;
+            //}
 #if UNITY_EDITOR
-            else if (currentTileHovered.landmarkOnTile != null) {
+            if (currentTileHovered.landmarkOnTile != null) {
                 currentTileHovered.ShowTileInfo();
                
             }
@@ -621,12 +621,12 @@ public class UIManager : MonoBehaviour {
 
     #region UI Utilities
     private void OnUIMenuOpened(UIMenu menu) {
-        if (menu is AreaInfoUI || menu is RegionInfoUI) {
+        if (menu is RegionInfoUI) {
             MoveNotificationMenuToModifiedPos();
         }
     }
     private void OnUIMenuClosed(UIMenu menu) {
-        if (menu is AreaInfoUI || menu is RegionInfoUI) {
+        if (menu is RegionInfoUI) {
             MoveNotificationMenuToDefaultPos();
         }
     }
@@ -774,6 +774,15 @@ public class UIManager : MonoBehaviour {
     }
     public void DateHover() {
         ShowSmallInfo("Day: " +  GameManager.Instance.continuousDays.ToString() + " Tick: " + GameManager.Instance.tick.ToString());
+    }
+    [ExecuteInEditMode]
+    [ContextMenu("Set All Scroll Rect Scroll Speed")]
+    public void SetAllScrollSpeed() {
+        ScrollRect[] allScroll = this.gameObject.GetComponentsInChildren<ScrollRect>(true);
+        for (int i = 0; i < allScroll.Length; i++) {
+            ScrollRect rect = allScroll[i];
+            rect.scrollSensitivity = 25f;
+        }
     }
     #endregion
 

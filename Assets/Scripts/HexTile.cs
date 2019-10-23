@@ -301,6 +301,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, ILocation {
         structureTint.sprite = sprites.tintSprite;
         mainStructure.gameObject.SetActive(true);
         structureTint.gameObject.SetActive(true);
+
+        if (structureTint.sprite != null) {
+            SetStructureTint(Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f));
+        } else {
+            structureTint.color = Color.white;
+        }
+
         if (sprites.animation == null) {
             structureAnimation.gameObject.SetActive(false);
         } else {

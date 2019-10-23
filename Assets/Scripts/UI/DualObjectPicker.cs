@@ -355,8 +355,8 @@ public class DualObjectPicker : MonoBehaviour {
             item.AddOnToggleAction((character, isOn) => OnToggleItem(character, isOn, column));
             item.SetToggleGroup(toggleGroup);
             item.SetInteractableState(true);
-            item.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(minion, minionCardPos));
-            item.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
+            item.AddHoverEnterAction(ShowMinionCardTooltip);
+            item.AddHoverExitAction(HideMinionCardTooltip);
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             UnsummonedMinionData minion = invalidItems[i];
@@ -376,6 +376,12 @@ public class DualObjectPicker : MonoBehaviour {
             }
             characterItem.SetInteractableState(false);
         }
+    }
+    private void ShowMinionCardTooltip(UnsummonedMinionData data) {
+        UIManager.Instance.ShowMinionCardTooltip(data, minionCardPos);
+    }
+    private void HideMinionCardTooltip(UnsummonedMinionData data) {
+        UIManager.Instance.HideMinionCardTooltip();
     }
     private void ShowWorldEventItems<T>(List<Region> validItems, List<Region> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, ScrollRect column, ToggleGroup toggleGroup) {
         Action<Region> convertedHoverAction = null;

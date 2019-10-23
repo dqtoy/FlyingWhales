@@ -153,17 +153,19 @@ public class ShareIntelMenu : MonoBehaviour {
             if (i + 1 == reactions.Count) {
                 endOfConversationLbl.transform.SetParent(dialogScrollView.content);
                 endOfConversationLbl.gameObject.SetActive(true);
-                UIManager.Instance.ScrollRectSnapTo(dialogScrollView, endOfConversationLbl.transform as RectTransform);
+                //UIManager.Instance.ScrollRectSnapTo(dialogScrollView, endOfConversationLbl.transform as RectTransform);
             } else {
-                UIManager.Instance.ScrollRectSnapTo(dialogScrollView, item.characterDialogParent);
+                //UIManager.Instance.ScrollRectSnapTo(dialogScrollView, item.characterDialogParent);
             }
             
-            yield return new WaitForSeconds(0.5f);
+            //yield return new WaitForSeconds(0.5f);
             //dialogScrollView.verticalNormalizedPosition = 0f;
 
         }
         closeBtn.interactable = true;
+        dialogScrollView.verticalNormalizedPosition = 0f;
         yield return null;
+        
 
         //ShareIntel share = PlayerManager.Instance.player.shareIntelAbility;
         //share.DeactivateAction();

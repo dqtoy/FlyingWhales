@@ -587,6 +587,7 @@ MonoBehaviour:
     rgba: 4283253829
   m_fontColor: {r: 0.27058825, g: 0.26666668, b: 0.3019608, a: 1}
   m_enableVertexGradient: 0
+  m_colorMode: 3
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
     topRight: {r: 1, g: 1, b: 1, a: 1}
@@ -701,6 +702,7 @@ MonoBehaviour:
     rgba: 4289323512
   m_fontColor: {r: 0.972549, g: 0.88235295, b: 0.6627451, a: 1}
   m_enableVertexGradient: 0
+  m_colorMode: 3
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
     topRight: {r: 1, g: 1, b: 1, a: 1}
@@ -859,6 +861,7 @@ MonoBehaviour:
     rgba: 4289323512
   m_fontColor: {r: 0.972549, g: 0.88235295, b: 0.6627451, a: 1}
   m_enableVertexGradient: 0
+  m_colorMode: 3
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
     topRight: {r: 1, g: 1, b: 1, a: 1}
@@ -1088,6 +1091,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -1289,6 +1293,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -1589,6 +1594,7 @@ MonoBehaviour:
     rgba: 4289323512
   m_fontColor: {r: 0.972549, g: 0.88235295, b: 0.6627451, a: 1}
   m_enableVertexGradient: 0
+  m_colorMode: 3
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
     topRight: {r: 1, g: 1, b: 1, a: 1}
@@ -1730,6 +1736,7 @@ MonoBehaviour:
     rgba: 4289323512
   m_fontColor: {r: 0.972549, g: 0.88235295, b: 0.6627451, a: 1}
   m_enableVertexGradient: 0
+  m_colorMode: 3
   m_fontColorGradient:
     topLeft: {r: 1, g: 1, b: 1, a: 1}
     topRight: {r: 1, g: 1, b: 1, a: 1}
@@ -2013,6 +2020,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tooltipPos: {fileID: 0}
   tooltipHeader: 
+  ignoreInteractable: 0
   onHoverOverAction:
     m_PersistentCalls:
       m_Calls:
@@ -2063,7 +2071,7 @@ MonoBehaviour:
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
-  m_ScrollSensitivity: 15
+  m_ScrollSensitivity: 25
   m_Viewport: {fileID: 224383608308209076}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 114292039744993420}
@@ -2433,7 +2441,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 20, y: 0}
-  m_SizeDelta: {x: 20, y: 9.6951}
+  m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 1, y: 1}
 --- !u!224 &224258838132548524
 RectTransform:
@@ -2588,7 +2596,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.000019080937}
+  m_AnchoredPosition: {x: 0, y: 0.000004179394}
   m_SizeDelta: {x: -611.7, y: 30}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224561954596348584
@@ -2701,7 +2709,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 947.44995, y: -568.1999}
+  m_AnchoredPosition: {x: 947.4492, y: -568.1999}
   m_SizeDelta: {x: 618.6, y: 24.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224951675752450706
