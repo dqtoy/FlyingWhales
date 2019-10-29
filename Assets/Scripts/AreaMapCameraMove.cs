@@ -26,7 +26,7 @@ public class AreaMapCameraMove : MonoBehaviour {
     [SerializeField] private bool allowZoom = true;
 
     [Header("Dragging")]
-    private float dragThreshold = 0.35f;
+    private float dragThreshold = 0.07f;
     private float currDragTime;
     private Vector3 dragOrigin;
     private bool isDragging = false;
@@ -197,7 +197,7 @@ public class AreaMapCameraMove : MonoBehaviour {
     private void Targetting() {
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
             Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D)
-            || (Minimap.Instance != null && Minimap.Instance.isDragging) || isDragging) {
+            || (Minimap.Instance != null && Minimap.Instance.isDragging) || isDragging || Input.GetKeyDown(KeyCode.Mouse0)) {
             //reset target when player pushes a button to pan the camera
             //if(target != null) {
             //    Messenger.Broadcast(Signals.CAMERA_OUT_OF_FOCUS);

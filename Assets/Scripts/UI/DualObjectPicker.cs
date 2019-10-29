@@ -252,6 +252,7 @@ public class DualObjectPicker : MonoBehaviour {
             characterItem.AddOnToggleAction((character, isOn) => OnToggleItem(character, isOn, column));
             characterItem.SetToggleGroup(toggleGroup);
             characterItem.SetInteractableState(true);
+            characterItem.SetPortraitIgnoreInteractions(true);
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             Character currCharacter = invalidItems[i];
@@ -275,6 +276,7 @@ public class DualObjectPicker : MonoBehaviour {
                 characterItem.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
             }
             characterItem.SetInteractableState(false);
+            characterItem.SetPortraitIgnoreInteractions(true);
         }
     }
     private void ShowStringItems<T>(List<string> validItems, List<string> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, ScrollRect column, ToggleGroup toggleGroup) {

@@ -23,21 +23,17 @@ public class CharacterNameplateItem : NameplateItem<Character> {
     }
     public override void OnHoverEnter() {
         portrait.SetHoverHighlightState(true);
-        //if (character != null && character.minion != null) {
-        //    UIManager.Instance.ShowMinionCardTooltip(character.minion);
-        //}
         base.OnHoverEnter();
     }
     public override void OnHoverExit() {
         portrait.SetHoverHighlightState(false);
-        //if (character != null && character.minion != null) {
-        //    UIManager.Instance.HideMinionCardTooltip();
-        //}
         base.OnHoverExit();
     }
+    public override void Reset() {
+        base.Reset();
+        SetPortraitIgnoreInteractions(false);
+    }
     #endregion
-
-
 
     /// <summary>
     /// Set this nameplate to behave in the default settings (button, onclick shows character UI, etc.)
@@ -48,7 +44,6 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         AddOnClickAction((character) => UIManager.Instance.ShowCharacterInfo(character));
         SetSupportingLabelState(false);
     }
-
     private void UpdateStatusIcons() {
         if (character.currentParty.icon.isTravellingOutside) {
             //character is travelling outside
@@ -70,5 +65,8 @@ public class CharacterNameplateItem : NameplateItem<Character> {
             arrivedIcon.SetActive(false);
             restrainedIcon.SetActive(false);
         }
+    }
+    public void SetPortraitIgnoreInteractions(bool state) {
+        portrait.ignoreInteractions = state;
     }
 }

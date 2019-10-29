@@ -450,71 +450,60 @@ public class Player : ILeader {
             }
         } else {
             PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(currentActivePlayerJobAction);
-            //change the cursor
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Cross);
-            CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveAction);
-            CursorManager.Instance.AddLeftClickAction(() => SetCurrentlyActivePlayerJobAction(null));
+            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
             jobActionButton?.SetSelectedIconState(true);
         }
     }
+    private void OnSpellCast(KeyCode key) {
+        if (key == KeyCode.Mouse0) {
+            TryExecuteCurrentActiveAction();
+            SetCurrentlyActivePlayerJobAction(null);
+            Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
+        }
+    }
+
     private void TryExecuteCurrentActiveAction() {
-        //string summary = "Mouse was clicked. Will try to execute " + currentActivePlayerJobAction.name;
+        if (UIManager.Instance.IsMouseOnUI()) {
+            return; //clicked on UI;
+        }
         LocationGridTile hoveredTile;
         for (int i = 0; i < currentActivePlayerJobAction.targetTypes.Length; i++) {
             bool activatedAction = false;
             switch (currentActivePlayerJobAction.targetTypes[i]) {
                 case JOB_ACTION_TARGET.NONE:
-                    //summary += "\nNo Target!";
                     break;
                 case JOB_ACTION_TARGET.CHARACTER:
                     if (InteriorMapManager.Instance.currentlyShowingMap != null && InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter != null) {
-                        //summary += " targetting " + InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter.name;
                         if (currentActivePlayerJobAction.CanPerformActionTowards(InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter)) {
-                            //summary += "\nActivated action!";
                             currentActivePlayerJobAction.ActivateAction(InteriorMapManager.Instance.currentlyShowingMap.hoveredCharacter);
                             activatedAction = true;
                         } else {
-                            //summary += "\nDid not activate action! Did not meet requirements";
                         }
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
-                    } else {
-                        //summary += "\nThere is no hovered character!";
                     }
                     break;
                 case JOB_ACTION_TARGET.TILE_OBJECT:
                     hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null && hoveredTile.objHere != null) {
-                        //summary += " targetting " + hoveredTile.objHere.name;
                         if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile.objHere)) {
-                            //summary += "\nActivated action!";
                             currentActivePlayerJobAction.ActivateAction(hoveredTile.objHere);
                             activatedAction = true;
-                        } else {
-                            //summary += "\nDid not activate action! Did not meet requirements";
                         }
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
-                    } else {
-                        //summary += "\nThere is no hovered tile object!";
                     }
                     break;
                 case JOB_ACTION_TARGET.TILE:
                     hoveredTile = InteriorMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
-                        //summary += " targetting " + hoveredTile.ToString();
                         if (currentActivePlayerJobAction.CanPerformActionTowards(hoveredTile)) {
-                            //summary += "\nActivated action!";
                             currentActivePlayerJobAction.ActivateAction(hoveredTile);
                             activatedAction = true;
-                        } else {
-                            //summary += "\nDid not activate action! Did not meet requirements";
-                        }
+                        } 
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
-                    } else {
-                        //summary += "\nThere is no hovered tile object!";
                     }
                     break;
                 default:
-                    //summary += "\nNo casing for target type: " + currentActivePlayerJobAction.targetTypes.ToString();
                     break;
             }
             if (activatedAction) {

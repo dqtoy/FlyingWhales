@@ -62,6 +62,9 @@ public class HaveAffair : GoapAction {
         if (!poiTarget.IsAvailable()) {
             return false;
         }
+        if (actor == poiTarget) {
+            return false;
+        }
         Character targetCharacter = poiTarget as Character;
         if (CharacterManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && actor.CanHaveRelationshipWith(RELATIONSHIP_TRAIT.PARAMOUR, targetCharacter)) {
             return true;
@@ -319,6 +322,9 @@ public class HaveAffairData : GoapActionData {
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (!poiTarget.IsAvailable()) {
+            return false;
+        }
+        if (actor == poiTarget) {
             return false;
         }
         Character targetCharacter = poiTarget as Character;

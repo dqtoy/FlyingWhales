@@ -3955,8 +3955,8 @@ public class Character : ILeader, IPointOfInterest {
             string rollLog = GameManager.Instance.TodayLogString() + characterThatAttacked.name + " attacked " + name
                 + ", death weight: " + deathWeight + ", unconscious weight: " + unconsciousWeight 
                 + ", isLethal: " + characterThatAttacked.marker.IsLethalCombatForTarget(this);
-
-            if (this.GetNormalTrait("Unconscious") == null) {
+             
+            if (this.minion == null && this.GetNormalTrait("Unconscious") == null) {
                 loserResults.AddElement("Unconscious", unconsciousWeight);
                 rollLog += "\n- Unconscious weight will be added";
             }

@@ -29,7 +29,7 @@ public class ChaosOrb : Artifact {
         //action.actor.GoapActionResult(result, action);
         //Characters that inspect the Chaos Orb may be permanently berserked.
         CharacterState state = inspectedBy.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED);
-        state.SetIsUnending(true);
+        //state.SetIsUnending(true);
     }
 
     public override string ToString() {

@@ -48,7 +48,7 @@ public class Necronomicon : Artifact {
 
     private void OnCharacterReturnedToLife(Character character) {
         CharacterState state = character.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED);
-        state.SetIsUnending(true);
+        //state.SetIsUnending(true);
     }
     public void Activate() {
         isActivated = true;

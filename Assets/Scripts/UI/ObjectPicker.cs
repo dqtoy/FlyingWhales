@@ -23,6 +23,9 @@ public class ObjectPicker : MonoBehaviour {
     [SerializeField] private Button confirmBtn;
     [SerializeField] private ToggleGroup toggleGroup;
 
+    [Header("Misc")]
+    [SerializeField] private UIHoverPosition minionCardPos;
+
     private bool _isGamePausedBeforeOpeningPicker;
 
     private object _pickedObj;
@@ -130,8 +133,14 @@ public class ObjectPicker : MonoBehaviour {
             if (convertedHoverExitAction != null) {
                 characterItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
+            //specific case for minion
+            if (currCharacter.minion != null) {
+                characterItem.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(currCharacter.minion, minionCardPos));
+                characterItem.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
+            }
             characterItem.SetAsToggle();
             characterItem.SetToggleGroup(toggleGroup);
+            characterItem.SetPortraitIgnoreInteractions(true);
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             Character currCharacter = invalidItems[i];
@@ -149,8 +158,14 @@ public class ObjectPicker : MonoBehaviour {
             if (convertedHoverExitAction != null) {
                 characterItem.AddHoverExitAction(convertedHoverExitAction.Invoke);
             }
+            //specific case for minion
+            if (currCharacter.minion != null) {
+                characterItem.AddHoverEnterAction((character) => UIManager.Instance.ShowMinionCardTooltip(currCharacter.minion, minionCardPos));
+                characterItem.AddHoverExitAction((character) => UIManager.Instance.HideMinionCardTooltip());
+            }
             characterItem.SetAsToggle();
             characterItem.SetInteractableState(false);
+            characterItem.SetPortraitIgnoreInteractions(true);
         }
     }
     //private void ShowAreaItems<T>(List<Area> validItems, List<Area> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction) {
