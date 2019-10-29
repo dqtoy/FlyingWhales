@@ -441,6 +441,7 @@ public class Player : ILeader {
         PlayerJobAction previousActiveAction = currentActivePlayerJobAction;
         currentActivePlayerJobAction = action;
         if (currentActivePlayerJobAction == null) {
+            Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
             PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(previousActiveAction);
             jobActionButton?.UpdateInteractableState();
