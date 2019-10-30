@@ -258,6 +258,11 @@ public class AreaMapCameraMove : MonoBehaviour {
                 ResetDragValues();
                 CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
             }
+        } else {
+            if (!Input.GetMouseButton(0)) {
+                currDragTime = 0f;
+                hasReachedThreshold = false;
+            }
         }
     }
     private void ResetDragValues() {

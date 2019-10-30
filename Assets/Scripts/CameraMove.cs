@@ -278,6 +278,7 @@ public class CameraMove : MonoBehaviour {
         } else {
             if (!Input.GetMouseButton(0)) {
                 currDragTime = 0f;
+                hasReachedThreshold = false;
             }
         }
     }

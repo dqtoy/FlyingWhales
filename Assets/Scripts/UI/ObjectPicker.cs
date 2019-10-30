@@ -140,7 +140,7 @@ public class ObjectPicker : MonoBehaviour {
             }
             characterItem.SetAsToggle();
             characterItem.SetToggleGroup(toggleGroup);
-            characterItem.SetPortraitIgnoreInteractions(true);
+            characterItem.SetPortraitInteractableState(false);
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             Character currCharacter = invalidItems[i];
@@ -165,7 +165,7 @@ public class ObjectPicker : MonoBehaviour {
             }
             characterItem.SetAsToggle();
             characterItem.SetInteractableState(false);
-            characterItem.SetPortraitIgnoreInteractions(true);
+            characterItem.SetPortraitInteractableState(true);
         }
     }
     //private void ShowAreaItems<T>(List<Area> validItems, List<Area> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction) {

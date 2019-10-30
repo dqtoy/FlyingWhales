@@ -188,10 +188,6 @@ public class Plagued : Trait {
         }
         return hasCreatedJob;
     }
-    public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-        base.OnRemoveTrait(removedFrom, removedBy);
-        owner.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy);
-    }
     #endregion
 
     //private void ResumeLastAction(string result, GoapAction action) {
