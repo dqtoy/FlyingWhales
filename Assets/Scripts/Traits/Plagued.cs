@@ -29,6 +29,10 @@ public class Plagued : Trait {
             owner = sourceCharacter as Character;
         }
     }
+    public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+        base.OnRemoveTrait(removedFrom, removedBy);
+        owner.CancelAllJobsTargettingThisCharacterExcept(JOB_TYPE.REMOVE_TRAIT, name, removedBy);
+    }
     protected override void OnChangeLevel() {
         if (level == 1) {
             pukeChance = 5f;

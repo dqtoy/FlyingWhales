@@ -206,27 +206,32 @@ public class BaseLandmark {
             case LANDMARK_TYPE.BARRACKS:
                 randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 25);
                 randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 45);
-                randomFeatureWeights.AddElement("Nothing", 25);
+                //randomFeatureWeights.AddElement("Nothing", 25);
                 break;
             case LANDMARK_TYPE.MAGE_TOWER:
                 randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 45);
                 randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 25);
-                randomFeatureWeights.AddElement("Nothing", 25);
+                //randomFeatureWeights.AddElement("Nothing", 25);
                 break;
             case LANDMARK_TYPE.TEMPLE:
                 randomFeatureWeights.AddElement(RegionFeatureDB.Spell_Feature, 25);
                 randomFeatureWeights.AddElement(RegionFeatureDB.Treasure_Feature, 35);
-                randomFeatureWeights.AddElement("Nothing", 25);
+                //randomFeatureWeights.AddElement("Nothing", 25);
                 break;
             case LANDMARK_TYPE.MINES:
                 randomFeatureWeights.AddElement(RegionFeatureDB.Monster_Feature, 25);
                 randomFeatureWeights.AddElement(RegionFeatureDB.Treasure_Feature, 25);
-                randomFeatureWeights.AddElement("Nothing", 50);
+                //randomFeatureWeights.AddElement("Nothing", 50);
                 break;
-            case LANDMARK_TYPE.FARM:
+            case LANDMARK_TYPE.FARM:    
                 randomFeatureWeights.AddElement(RegionFeatureDB.Knowledge_Feature, 25);
                 randomFeatureWeights.AddElement(RegionFeatureDB.Monster_Feature, 25);
-                randomFeatureWeights.AddElement("Nothing", 50);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Treasure_Feature, 25);
+                //randomFeatureWeights.AddElement("Nothing", 50);
+                break;
+            case LANDMARK_TYPE.WORKSHOP:
+                randomFeatureWeights.AddElement(RegionFeatureDB.Monster_Feature, 25);
+                randomFeatureWeights.AddElement(RegionFeatureDB.Treasure_Feature, 25);
                 break;
         }
         if (randomFeatureWeights.GetTotalOfWeights() > 0) {
