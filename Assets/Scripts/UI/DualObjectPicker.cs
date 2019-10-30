@@ -252,6 +252,7 @@ public class DualObjectPicker : MonoBehaviour {
             characterItem.AddOnToggleAction((character, isOn) => OnToggleItem(character, isOn, column));
             characterItem.SetToggleGroup(toggleGroup);
             characterItem.SetInteractableState(true);
+            characterItem.SetPortraitInteractableState(false);
         }
         for (int i = 0; i < invalidItems.Count; i++) {
             Character currCharacter = invalidItems[i];

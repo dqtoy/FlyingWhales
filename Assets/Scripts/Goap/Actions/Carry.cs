@@ -85,6 +85,6 @@ public class CarryData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget;
+        return actor != poiTarget && poiTarget is Character && (poiTarget as Character).HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
     }
 }

@@ -35,9 +35,11 @@ public class CharacterNameplateItem : NameplateItem<Character> {
         //}
         base.OnHoverExit();
     }
+    public override void Reset() {
+        base.Reset();
+        SetPortraitInteractableState(true);
+    }
     #endregion
-
-
 
     /// <summary>
     /// Set this nameplate to behave in the default settings (button, onclick shows character UI, etc.)
@@ -70,5 +72,9 @@ public class CharacterNameplateItem : NameplateItem<Character> {
             arrivedIcon.SetActive(false);
             restrainedIcon.SetActive(false);
         }
+    }
+
+    public void SetPortraitInteractableState(bool state) {
+        portrait.ignoreInteractions = !state;
     }
 }

@@ -94,6 +94,8 @@ public class MapGenerator : MonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(false);
 
         PlayerUI.Instance.ShowStartingMinionPicker();
+        PlayerManager.Instance.player.IncreaseArtifactSlot();
+        PlayerManager.Instance.player.IncreaseSummonSlot();
     }
     private IEnumerator InitializeWorldCoroutine(Save data) {
         System.Diagnostics.Stopwatch loadingWatch = new System.Diagnostics.Stopwatch();

@@ -61,7 +61,8 @@ public class JudgeCharacter : GoapAction {
                             break;
                     }
                 } else {
-                    throw new System.Exception(actor.name + " is trying to judge " + targetCharacter.name + " but has no crime, and is not part of a hostile faction.");
+                    kill = 100f;
+                    Debug.LogWarning(actor.name + " is trying to judge " + targetCharacter.name + " but has no crime, and is not part of a hostile faction.");
                 }
             }
 

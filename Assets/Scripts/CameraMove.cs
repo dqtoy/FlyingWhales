@@ -28,7 +28,7 @@ public class CameraMove : MonoBehaviour {
     [SerializeField] private bool allowZoom = true;
 
     [Header("Dragging")]
-    [SerializeField] private float dragThreshold = 0.35f;
+    private float dragThreshold = 0.13f;
     [SerializeField] private float currDragTime;
     [SerializeField] private Vector3 dragOrigin;
     public bool isDragging = false;
@@ -217,7 +217,7 @@ public class CameraMove : MonoBehaviour {
 #else
         if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.RightArrow) ||
             Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.D)
-            || (Minimap.Instance != null && Minimap.Instance.isDragging) || isDragging) {
+            || (Minimap.Instance != null && Minimap.Instance.isDragging) || isDragging || Input.GetMouseButtonDown(0)) {
 #endif
             //reset target when player pushes a button to pan the camera
             target = null;
@@ -243,15 +243,9 @@ public class CameraMove : MonoBehaviour {
             }
             return;
         }
-
-        if (Input.GetMouseButtonUp(0)) {
-            ResetDragValues();
-            return;
-        }
-
         if (!isDragging) {
             if (Input.GetMouseButtonDown(0)) {
-                if (UIManager.Instance.IsMouseOnUI()) {
+                if (UIManager.Instance.IsMouseOnUI()) { //if the dragging started on UI, a tileobject or a character, do not allow drag
                     startedOnUI = true;
                     return;
                 }
@@ -264,23 +258,27 @@ public class CameraMove : MonoBehaviour {
                         originMousePos = Input.mousePosition;
                         hasReachedThreshold = true;
                     }
-                    if (originMousePos !=  Input.mousePosition) { //check if the mouse has moved position from the origin, only then will it be considered dragging
+                    if (originMousePos != Input.mousePosition) { //check if the mouse has moved position from the origin, only then will it be considered dragging
                         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Drag_Clicked);
                         isDragging = true;
-                        target = null;
                     }
                 }
             }
-            
+
         }
 
-       
+
         if (isDragging) {
-            //Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - dragOrigin);
-            //Vector3 move = new Vector3(pos.x * dragSpeed, pos.y * dragSpeed, 0f);
-            //transform.Translate(move, Space.World);
-            Vector3 difference = (Camera.main.ScreenToWorldPoint(Input.mousePosition))- Camera.main.transform.position;
-            Camera.main.transform.position = dragOrigin-difference;
+            Vector3 difference = (Camera.main.ScreenToWorldPoint(Input.mousePosition)) - Camera.main.transform.position;
+            Camera.main.transform.position = dragOrigin - difference;
+            if (Input.GetMouseButtonUp(0)) {
+                ResetDragValues();
+                CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
+            }
+        } else {
+            if (!Input.GetMouseButton(0)) {
+                currDragTime = 0f;
+            }
         }
     }
     private void ResetDragValues() {

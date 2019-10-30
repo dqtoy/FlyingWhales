@@ -38,9 +38,9 @@ public class BerserkBuff : Trait {
         base.OnRemoveTrait(sourceCharacter, removedBy);
         if (sourceCharacter is Character) {
             Character character = sourceCharacter as Character;
-            character.AdjustAttackMod(_flatAttackMod);
-            character.AdjustMaxHPMod(_flatHPMod);
-            character.AdjustSpeedMod(_flatSpeedMod);
+            character.AdjustAttackMod(-_flatAttackMod);
+            character.AdjustMaxHPMod(-_flatHPMod);
+            character.AdjustSpeedMod(-_flatSpeedMod);
         }
     }
     protected override void OnChangeLevel() {

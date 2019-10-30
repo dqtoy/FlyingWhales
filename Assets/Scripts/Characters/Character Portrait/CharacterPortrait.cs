@@ -45,6 +45,8 @@ public class CharacterPortrait : PooledObject, IPointerClickHandler {
     [SerializeField] private FactionEmblem factionEmblem;
     [SerializeField] private GameObject hoverObj;
 
+    private System.Action onClickAction;
+
     #region getters/setters
     public Character thisCharacter {
         get { return _character; }

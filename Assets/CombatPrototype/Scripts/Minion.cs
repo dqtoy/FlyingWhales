@@ -300,7 +300,7 @@ public class Minion {
         SetAssignedRegion(area.coreTile.region);
     }
     public void StopInvasionProtocol(Area area) {
-        if(area != null && assignedRegion.area == area) {
+        if(area != null && assignedRegion != null && assignedRegion.area == area) {
             Messenger.RemoveListener(Signals.TICK_STARTED, PerTickInvasion);
             Messenger.RemoveListener<Area>(Signals.SUCCESS_INVASION_AREA, OnSucceedInvadeArea);
             Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, character.OnOtherCharacterDied);

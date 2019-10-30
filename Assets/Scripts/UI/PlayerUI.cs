@@ -1084,9 +1084,9 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnPlayerLostSummonSlot(SummonSlot slot) {
         UpdateSummonsInteraction();
-        if (currentlySelectedSummonSlot == slot) {
+        //if (currentlySelectedSummonSlot == slot) {
             SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots.FirstOrDefault());
-        }
+        //}
     }
     public void OnGainNewSummon(Summon newSummon) {
         UpdateSummonsInteraction();
@@ -1276,9 +1276,9 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnPlayerLostArtifactSlot(ArtifactSlot slot) {
         UpdateArtifactsInteraction();
-        if (currentlySelectedArtifactSlot == slot) {
+        //if (currentlySelectedArtifactSlot == slot) {
             SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots.FirstOrDefault());
-        }
+        //}
     }
     private void OnGainNewArtifact(Artifact newArtifact) {
         UpdateArtifactsInteraction();
