@@ -94,7 +94,7 @@ public class DropFood : GoapAction {
 
 public class DropFoodData : GoapActionData {
     public DropFoodData() : base(INTERACTION_TYPE.DROP_FOOD) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

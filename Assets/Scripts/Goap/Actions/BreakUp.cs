@@ -159,7 +159,7 @@ public class BreakUp : GoapAction {
 
 public class BreakUpData : GoapActionData {
     public BreakUpData() : base(INTERACTION_TYPE.BREAK_UP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

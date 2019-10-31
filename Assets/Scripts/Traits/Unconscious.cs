@@ -86,18 +86,19 @@ public class Unconscious : Trait {
                     GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
                         new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
-                    job.SetCanBeDoneInLocation(true);
+                    //job.SetCanBeDoneInLocation(true);
                     if (InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, job)) {
                         //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
-                    } else {
-                        if (!IsResponsibleForTrait(characterThatWillDoJob)) {
-                            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob);
-                            characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
-                        }
-                        return false;
                     }
+                    //else {
+                    //    if (!IsResponsibleForTrait(characterThatWillDoJob)) {
+                    //        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob);
+                    //        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                    //    }
+                    //    return false;
+                    //}
                 } else {
                     if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                         bool canBeTransfered = false;
@@ -122,15 +123,16 @@ public class Unconscious : Trait {
                 GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
                 if (currentJob == null) {
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.IMPRISON_CHARACTER, targetCharacter);
-                    job.SetCanBeDoneInLocation(true);
+                    //job.SetCanBeDoneInLocation(true);
                     if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, job)) {
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
-                    } else {
-                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
-                        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
-                        return false;
                     }
+                    //else {
+                    //    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
+                    //    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                    //    return false;
+                    //}
                 } else {
                     if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                         bool canBeTransfered = false;

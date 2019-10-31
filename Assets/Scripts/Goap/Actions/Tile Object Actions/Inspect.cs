@@ -74,7 +74,7 @@ public class Inspect : GoapAction {
 
 public class InspectData : GoapActionData {
     public InspectData() : base(INTERACTION_TYPE.INSPECT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
         requirementAction = Requirement;
     }
 

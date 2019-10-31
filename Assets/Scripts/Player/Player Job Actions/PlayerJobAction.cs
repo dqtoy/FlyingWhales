@@ -136,6 +136,10 @@ public class PlayerJobAction {
         if (targetCharacter.GetNormalTrait("Blessed") != null) {
             return false;
         }
+        //Quick fix only, remove this later
+        if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
+            return false;
+        }
         return CanPerformAction();
     }
     protected virtual bool CanPerformActionTowards(Area targetCharacter) {
@@ -160,6 +164,13 @@ public class PlayerJobAction {
         if (poi.GetNormalTrait("Blessed") != null) {
             hoverText = "Blessed characters cannot be targetted.";
             return false;
+        }
+        //Quick fix only, remove this later
+        if (poi is Character) {
+            Character targetCharacter = poi as Character;
+            if(targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
+                return false;
+            }
         }
         hoverText = string.Empty;
         return true;

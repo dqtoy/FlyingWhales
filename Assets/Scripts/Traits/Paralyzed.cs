@@ -47,16 +47,16 @@ public class Paralyzed : Trait {
                         GoapPlanJob currentJob = targetCharacter.GetJobTargettingThisCharacter(JOB_TYPE.RESTRAIN);
                         if (currentJob == null) {
                             GoapPlanJob job = new GoapPlanJob(JOB_TYPE.RESTRAIN, INTERACTION_TYPE.IMPRISON_CHARACTER, targetCharacter);
-                            //job.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Restrained", targetPOI = targetCharacter }, INTERACTION_TYPE.RESTRAIN_CHARACTER);
-                            job.SetCanBeDoneInLocation(true);
+                            //job.SetCanBeDoneInLocation(true);
                             if (InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, job)) {
                                 characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                                 return true;
-                            } else {
-                                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
-                                characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
-                                return false;
-                            }
+                            } 
+                            //else {
+                            //    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRestrainJob);
+                            //    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                            //    return false;
+                            //}
                         } else {
                             if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                                 bool canBeTransfered = false;

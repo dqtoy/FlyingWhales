@@ -206,7 +206,7 @@ public class RestrainCharacter : GoapAction {
 
 public class RestrainCharacterData : GoapActionData {
     public RestrainCharacterData() : base(INTERACTION_TYPE.RESTRAIN_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

@@ -63,7 +63,7 @@ public class PrayTileObject : GoapAction {
 
 public class PrayTileObjectData : GoapActionData {
     public PrayTileObjectData() : base(INTERACTION_TYPE.PRAY_TILE_OBJECT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

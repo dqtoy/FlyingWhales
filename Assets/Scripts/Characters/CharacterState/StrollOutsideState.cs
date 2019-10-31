@@ -21,23 +21,23 @@ public class StrollOutsideState : CharacterState {
         base.DoMovementBehavior();
         StartStrollMovement();
     }
-    protected override void PerTickInState() {
-        base.PerTickInState();
-        if (!isDone && !isPaused) {
-            if(_planDuration >= 4) {
-                _planDuration = 0;
-                if (!stateComponent.character.PlanFullnessRecoveryActions(true)) {
-                    if (!stateComponent.character.PlanTirednessRecoveryActions(true)) {
-                        stateComponent.character.PlanHappinessRecoveryActions(true);
-                    }
-                }
-            } else {
-                _planDuration++;
-            }
-        }
-    }
+    //protected override void PerTickInState() {
+    //    base.PerTickInState();
+        //if (!isDone && !isPaused) {
+        //    if(_planDuration >= 4) {
+        //        _planDuration = 0;
+        //        if (!stateComponent.character.PlanFullnessRecoveryActions(true)) {
+        //            if (!stateComponent.character.PlanTirednessRecoveryActions(true)) {
+        //                stateComponent.character.PlanHappinessRecoveryActions(true);
+        //            }
+        //        }
+        //    } else {
+        //        _planDuration++;
+        //    }
+        //}
+    //}
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
-        if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && targetPOI is SpecialToken) {
+        if (stateComponent.character.role.roleType != CHARACTER_ROLE.BEAST && stateComponent.character.race != RACE.SKELETON && targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
             if (token.characterOwner == null) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PICK_ITEM, stateComponent.character, targetPOI);

@@ -47,6 +47,8 @@ public class Burning : Trait {
                 Character character = addedTo as Character;
                 burningEffect = GameManager.Instance.CreateBurningEffectAt(character);
                 character.AddAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
+                character.AdjustDoNotRecoverHP(1);
+                CreateJobsOnEnterVisionBasedOnTrait(character, character);
             }
         }
 
@@ -62,14 +64,19 @@ public class Burning : Trait {
         ObjectPoolManager.Instance.DestroyObject(burningEffect);
         if (removedFrom is IPointOfInterest) {
             if (removedFrom is Character) {
-                (removedFrom as Character).CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_FIRE);
+                Character character = removedFrom as Character;
+                character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_FIRE);
+                character.AdjustDoNotRecoverHP(-1);
             }
             (removedFrom as IPointOfInterest).RemoveAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
         } else if (removedFrom is LocationGridTile) {
             (removedFrom as LocationGridTile).genericTileObject.RemoveAdvertisedAction(INTERACTION_TYPE.DOUSE_FIRE);
         }
         sourceOfBurning.RemoveObjectOnFire(owner);
-
+    }
+    public override void OnDeath(Character character) {
+        base.OnDeath(character);
+        character.RemoveTrait(this);
     }
     public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
         if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.REMOVE_FIRE) && (characterThatWillDoJob.stateComponent.currentState == null || characterThatWillDoJob.stateComponent.currentState.characterState != CHARACTER_STATE.DOUSE_FIRE)) {
@@ -99,7 +106,8 @@ public class Burning : Trait {
                     //if the character did not create a douse fire job. Check if he/she will watch instead. (Characters will just watch if their current actions are lower priority than Watch) NOTE: Lower priority value is considered higher priority
                     //also make sure that character is not already watching.
                     int currentPriorityValue = characterThatWillDoJob.GetCurrentPriorityValue();
-                    if ((characterThatWillDoJob.currentAction == null || characterThatWillDoJob.currentAction.goapType != INTERACTION_TYPE.WATCH)
+                    if (characterThatWillDoJob != traitOwner 
+                        && (characterThatWillDoJob.currentAction == null || characterThatWillDoJob.currentAction.goapType != INTERACTION_TYPE.WATCH)
                         && currentPriorityValue > InteractionManager.Instance.GetInitialPriority(JOB_TYPE.WATCH)) {
                         summary += "\nWill watch because current priority value is  " + currentPriorityValue.ToString();
                         Character nearestDouser = sourceOfBurning.GetNearestDouserFrom(characterThatWillDoJob);
@@ -226,7 +234,7 @@ public class Burning : Trait {
         if (Random.Range(0, 100) < 15) {
             List<ITraitable> choices = new List<ITraitable>();
             LocationGridTile origin = owner.gridTileLocation;
-            choices.AddRange(origin.GetAllTraitablesOnTileWithTrait("Flammable"));
+            choices.AddRange(origin.GetAllTraitablesOnTileWithTrait( "Flammable"));
             List<LocationGridTile> neighbours = origin.FourNeighbours();
             for (int i = 0; i < neighbours.Count; i++) {
                 choices.AddRange(neighbours[i].GetAllTraitablesOnTileWithTrait("Flammable"));

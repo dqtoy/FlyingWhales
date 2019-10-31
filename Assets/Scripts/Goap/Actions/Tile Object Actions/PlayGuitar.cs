@@ -178,7 +178,7 @@ public class PlayGuitar : GoapAction {
 
 public class PlayGuitarData : GoapActionData {
     public PlayGuitarData() : base(INTERACTION_TYPE.PLAY_GUITAR) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

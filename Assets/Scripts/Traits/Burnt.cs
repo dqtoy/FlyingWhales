@@ -79,15 +79,16 @@ public class Burnt : Trait {
                 if(currentJob == null) {
                     GoapEffect effect = new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Burnt", targetPOI);
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPAIR, effect);
-                    job.SetCanBeDoneInLocation(true);
+                    //job.SetCanBeDoneInLocation(true);
                     if (InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob, job)) {
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
-                    } else {
-                        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairJob);
-                        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
-                        return false;
-                    }
+                    } 
+                    //else {
+                    //    job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRepairJob);
+                    //    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                    //    return false;
+                    //}
                 } else {
                     if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRepairJob(characterThatWillDoJob, currentJob)) {
                         bool canBeTransfered = false;

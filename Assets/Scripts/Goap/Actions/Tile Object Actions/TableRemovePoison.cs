@@ -73,7 +73,7 @@ public class TableRemovePoison : GoapAction {
 
 public class TableRemovePoisonData : GoapActionData {
     public TableRemovePoisonData() : base(INTERACTION_TYPE.TABLE_REMOVE_POISON) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

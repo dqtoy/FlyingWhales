@@ -284,7 +284,7 @@ public class EatAtTable : GoapAction {
 
 public class EatAtTableData : GoapActionData {
     public EatAtTableData() : base(INTERACTION_TYPE.EAT_AT_TABLE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

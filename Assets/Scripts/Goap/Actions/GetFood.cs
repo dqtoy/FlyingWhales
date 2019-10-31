@@ -95,7 +95,7 @@ public class GetFood : GoapAction {
 
 public class GetFoodData : GoapActionData {
     public GetFoodData() : base(INTERACTION_TYPE.GET_FOOD) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

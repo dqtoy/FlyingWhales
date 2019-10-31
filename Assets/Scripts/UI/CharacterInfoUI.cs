@@ -798,6 +798,7 @@ public class CharacterInfoUI : UIMenu {
         summary += "\nDo Not Get Hungry: " + activeCharacter.doNotGetHungry.ToString();
         summary += "\nDo Not Get Tired: " + activeCharacter.doNotGetTired.ToString();
         summary += "\nDo Not Get Lonely: " + activeCharacter.doNotGetLonely.ToString();
+        summary += "\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP;
         summary += "\nFullness Time: " + (activeCharacter.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.fullnessForcedTick));
         summary += "\nTiredness Time: " + (activeCharacter.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.tirednessForcedTick));
         summary += "\nRemaining Sleep Ticks: " + activeCharacter.currentSleepTicks;

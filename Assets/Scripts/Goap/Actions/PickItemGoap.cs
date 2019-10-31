@@ -65,7 +65,7 @@ public class PickItem : GoapAction {
 
 public class PickItemData : GoapActionData {
     public PickItemData() : base(INTERACTION_TYPE.PICK_ITEM) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         requirementAction = Requirement;
     }
 

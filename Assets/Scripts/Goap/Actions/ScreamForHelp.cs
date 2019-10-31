@@ -40,7 +40,7 @@ public class ScreamForHelp : GoapAction {
 
 public class ScreamForHelpData : GoapActionData {
     public ScreamForHelpData() : base(INTERACTION_TYPE.SCREAM_FOR_HELP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

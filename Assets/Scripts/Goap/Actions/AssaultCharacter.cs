@@ -525,7 +525,7 @@ public class AssaultCharacter : GoapAction {
 
 public class AssaultCharacterData : GoapActionData {
     public AssaultCharacterData() : base(INTERACTION_TYPE.ASSAULT_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

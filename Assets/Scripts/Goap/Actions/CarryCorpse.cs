@@ -82,7 +82,7 @@ public class CarryCorpse : GoapAction {
 
 public class CarryCorpseData : GoapActionData {
     public CarryCorpseData() : base(INTERACTION_TYPE.CARRY_CORPSE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

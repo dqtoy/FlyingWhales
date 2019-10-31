@@ -10,6 +10,7 @@ public class DouseFireState : CharacterState {
     public Dictionary<BurningSource, List<IPointOfInterest>> fires;
 
     private bool isFetchingWater;
+    private bool isDousingFire;
 
     public DouseFireState(CharacterStateComponent characterComp) : base(characterComp) {
         stateName = "Douse Fire State";
@@ -59,33 +60,41 @@ public class DouseFireState : CharacterState {
                 GetWater();
             }
         } else {
-            //no more fire, exit state
-            OnExitThisState();
+            if (stateComponent.character.currentAction == null && stateComponent.currentState == this) {
+                //no more fire, exit state
+                OnExitThisState();
+            }
         }
     }
     public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
         if (AddFire(targetPOI)) {
-            DetermineAction();
-            return true;
+            //DetermineAction();
+            //return true;
         }
         return base.OnEnterVisionWith(targetPOI);
     }
-    protected override void DoMovementBehavior() {
-        base.DoMovementBehavior();
-        DetermineAction();
-    }
+    //protected override void DoMovementBehavior() {
+    //    base.DoMovementBehavior();
+    //    DetermineAction();
+    //}
     public override void PauseState() {
         base.PauseState();
         if (isFetchingWater) {
             isFetchingWater = false;
         }
+        if (isDousingFire) {
+            isDousingFire = false;
+        }
         //currentTarget = null;
     }
     protected override void PerTickInState() {
-        if (!StillHasFire() && stateComponent.character.currentAction == null && stateComponent.currentState == this) {
-            //if there is no longer any fire, and the character is still trying to douse fire, exit this state
-            OnExitThisState();
-        }
+        DetermineAction();
+        //if (!StillHasFire() && stateComponent.character.currentAction == null && stateComponent.currentState == this) {
+        //    //if there is no longer any fire, and the character is still trying to douse fire, exit this state
+        //    OnExitThisState();
+        //}else if (StillHasFire()) {
+        //    DetermineAction();
+        //}
     }
     #endregion
 
@@ -95,16 +104,16 @@ public class DouseFireState : CharacterState {
             Burning burning = trait as Burning;
             if (fires.ContainsKey(burning.sourceOfBurning) && !fires[burning.sourceOfBurning].Contains(burning.owner)) {
                 fires[burning.sourceOfBurning].Add(burning.owner);
-                if (currentTarget != null) {
-                    //check the distance of the new fire with the current target, if the current target is still nearer, continue dousing that, if not redetermine action
-                    float originalDistance = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, currentTarget.gridTileLocation.localLocation);
-                    float newDistance = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, burning.owner.gridTileLocation.localLocation);
-                    if (newDistance < originalDistance) {
-                        DetermineAction();
-                    }
-                } else {
-                    DetermineAction();
-                }
+                //if (currentTarget != null) {
+                //    //check the distance of the new fire with the current target, if the current target is still nearer, continue dousing that, if not redetermine action
+                //    float originalDistance = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, currentTarget.gridTileLocation.localLocation);
+                //    float newDistance = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, burning.owner.gridTileLocation.localLocation);
+                //    if (newDistance < originalDistance) {
+                //        DetermineAction();
+                //    }
+                //} else {
+                //    DetermineAction();
+                //}
             }
         }
     }
@@ -116,15 +125,15 @@ public class DouseFireState : CharacterState {
                 if (fires[burning.sourceOfBurning].Count == 0) {
                     fires.Remove(burning.sourceOfBurning);
                 }
-                if (currentTarget == burning.owner) {
-                    currentTarget = null;
-                    DetermineAction();
-                } else if (currentTargetSource == burning.sourceOfBurning) {
-                    currentTargetSource = null;
-                    if (fires.Count == 0) {//no more fires left
-                        DetermineAction();
-                    }
-                }
+                //if (currentTarget == burning.owner) {
+                //    currentTarget = null;
+                //    DetermineAction();
+                //} else if (currentTargetSource == burning.sourceOfBurning) {
+                //    currentTargetSource = null;
+                //    if (fires.Count == 0) {//no more fires left
+                //        DetermineAction();
+                //    }
+                //}
             }
         }
     }
@@ -159,11 +168,24 @@ public class DouseFireState : CharacterState {
             job.SetAssignedPlan(plan);
             SetCurrentlyDoingAction(goapAction);
             goapAction.CreateStates();
-            stateComponent.character.marker.GoTo(goapAction.targetTile, () => OnArriveAtWaterLocation(goapAction));
+            Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnAfterActionDone);
+            //stateComponent.character.marker.GoTo(goapAction.targetTile, () => OnArriveAtWaterLocation(goapAction));
             PauseState();
             isFetchingWater = true;
+            goapAction.DoAction();
         } else {
             throw new System.Exception(stateComponent.character.name + " cannot find any sources of water!");
+        }
+    }
+    private void OnAfterActionDone(Character characterThatDidAction, GoapAction actionDone) {
+        if(characterThatDidAction == stateComponent.character) {
+            if(actionDone.goapType == INTERACTION_TYPE.GET_WATER) {
+                Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnAfterActionDone);
+                OnGetWaterFromPond(actionDone.result, actionDone);
+            }else if (actionDone.goapType == INTERACTION_TYPE.DOUSE_FIRE) {
+                Messenger.RemoveListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnAfterActionDone);
+                OnDouseFire(actionDone.result, actionDone);
+            }
         }
     }
     private void OnGetWaterFromPond(string result, GoapAction action) {
@@ -172,8 +194,8 @@ public class DouseFireState : CharacterState {
             return;
         }
         stateComponent.character.SetCurrentAction(null);
-        ResumeState();
         isFetchingWater = false;
+        ResumeState();
     }
     private void OnArriveAtWaterLocation(GoapAction goapAction) {
         stateComponent.character.SetCurrentAction(goapAction);
@@ -181,6 +203,9 @@ public class DouseFireState : CharacterState {
         stateComponent.character.currentAction.PerformActualAction();
     }
     private void DouseNearestFire() {
+        if (isDousingFire) {
+            return;
+        }
         IPointOfInterest nearestFire = currentTarget;
         float nearest = 99999f;
         if (nearestFire != null) {
@@ -208,12 +233,16 @@ public class DouseFireState : CharacterState {
             job.SetAssignedPlan(plan);
             SetCurrentlyDoingAction(goapAction);
             goapAction.CreateStates();
+            Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnAfterActionDone);
             PauseState();
-            currentTarget = nearestFire;
-            stateComponent.character.marker.GoTo(nearestFire, () => OnArriveAtDouseFireLocaton(goapAction));
-        } else if (nearestFire == null) {
-            DetermineAction();
-        }
+            isDousingFire = true;
+            goapAction.DoAction();
+            //currentTarget = nearestFire;
+            //stateComponent.character.marker.GoTo(nearestFire, () => OnArriveAtDouseFireLocaton(goapAction));
+        } 
+        //else if (nearestFire == null) {
+        //    DetermineAction();
+        //}
     }
     private void OnArriveAtDouseFireLocaton(GoapAction goapAction) {
         //if (stateComponent.character.currentAction == null) {
@@ -230,6 +259,15 @@ public class DouseFireState : CharacterState {
             return;
         }
         stateComponent.character.SetCurrentAction(null);
+        //THIS IS QUICK FIX ONLY!
+        if(result == InteractionManager.Goap_State_Fail) {
+            //When douse fire fails, it means that the target is no longer burning or doesn't have grid tile location or actor no longer has water
+            //When this happens, be sure to remove it from the list because it causes an UNENDING LOOP!
+            foreach (List<IPointOfInterest> listOfBurning in fires.Values) {
+                listOfBurning.Remove(action.poiTarget);
+            }
+        }
+        isDousingFire = false;
         //objsOnFire.Remove(action.poiTarget);
         ResumeState();
     }

@@ -14,6 +14,7 @@ public class Character : ILeader, IPointOfInterest {
     protected int _doNotGetHungry;
     protected int _doNotGetTired;
     protected int _doNotGetLonely;
+    public int doNotRecoverHP { get; protected set; }
     protected int _numOfWaitingForGoapThread;
     protected float _actRate;
     protected bool _isDead;
@@ -2750,6 +2751,10 @@ public class Character : ILeader, IPointOfInterest {
         _doNotGetTired += amount;
         _doNotGetTired = Math.Max(_doNotGetTired, 0);
     }
+    public void AdjustDoNotRecoverHP(int amount) {
+        doNotRecoverHP += amount;
+        doNotRecoverHP = Math.Max(doNotRecoverHP, 0);
+    }
     public void ReturnToOriginalHomeAndFaction(Region ogHome, Faction ogFaction) {
         //first, check if the character's original faction is still alive
         if (!ogFaction.isDestroyed) { //if it is, 
@@ -4361,7 +4366,7 @@ public class Character : ILeader, IPointOfInterest {
         }
     }
     public void HPRecovery(float maxHPPercentage) {
-        if(currentHP < maxHP && currentHP > 0) {
+        if(doNotRecoverHP <= 0 && currentHP < maxHP && currentHP > 0) {
             AdjustHP(Mathf.CeilToInt(maxHPPercentage * maxHP));
         }
     }
@@ -4594,6 +4599,7 @@ public class Character : ILeader, IPointOfInterest {
         //AddTrait("Narcoleptic");
         //AddTrait("Herbalist");
         AddTrait("Character Trait");
+        AddTrait("Flammable");
     }
     public void CreateInitialTraitsByRace() {
         if (race == RACE.HUMANS) {

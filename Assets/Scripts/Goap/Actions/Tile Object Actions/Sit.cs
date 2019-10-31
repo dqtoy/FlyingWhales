@@ -57,7 +57,7 @@ public class Sit : GoapAction {
 
 public class SitData : GoapActionData {
     public SitData() : base(INTERACTION_TYPE.SIT) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

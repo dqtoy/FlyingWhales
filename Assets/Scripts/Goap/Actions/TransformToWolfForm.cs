@@ -75,11 +75,7 @@ public class TransformToWolfForm : GoapAction {
                 //    recipient.homeArea.jobQueue.AssignCharacterToJob(job, this);
                 //}
             } else {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo, this }}
-                });
-                //job.SetCannotOverrideJob(true);
-                recipient.jobQueue.AddJobInQueue(job);
+                recipient.CreateReportCrimeJob(committedCrime, this, actorAlterEgo);
             }
         }
         //Recipient and Actor are from the same faction (catches all other situations):
@@ -94,11 +90,7 @@ public class TransformToWolfForm : GoapAction {
                 //    recipient.homeArea.jobQueue.AssignCharacterToJob(job, this);
                 //}
             } else {
-                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REPORT_CRIME, INTERACTION_TYPE.REPORT_CRIME, new Dictionary<INTERACTION_TYPE, object[]>() {
-                    { INTERACTION_TYPE.REPORT_CRIME, new object[] { committedCrime, actorAlterEgo, this }}
-                });
-                //job.SetCannotOverrideJob(true);
-                recipient.jobQueue.AddJobInQueue(job);
+                recipient.CreateReportCrimeJob(committedCrime, this, actorAlterEgo);
             }
         }
         //Recipient and Actor are from a different faction and have a positive relationship:

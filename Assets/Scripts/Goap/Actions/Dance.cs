@@ -57,7 +57,7 @@ public class Dance : GoapAction {
 
 public class DanceData : GoapActionData {
     public DanceData() : base(INTERACTION_TYPE.DANCE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

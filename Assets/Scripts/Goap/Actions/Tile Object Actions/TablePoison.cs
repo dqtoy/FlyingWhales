@@ -582,7 +582,7 @@ public class TablePoison : GoapAction {
 
 public class TablePoisonData : GoapActionData {
     public TablePoisonData() : base(INTERACTION_TYPE.TABLE_POISON) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

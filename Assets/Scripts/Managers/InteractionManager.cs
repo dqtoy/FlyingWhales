@@ -191,6 +191,7 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.DESTROY_SUPPLY:
             case JOB_TYPE.SABOTAGE_FACTION:
             case JOB_TYPE.SCREAM:
+            case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
                 priority = 5;
                 break;
             case JOB_TYPE.TANTRUM:
@@ -293,7 +294,6 @@ public class InteractionManager : MonoBehaviour {
             case JOB_TYPE.OBTAIN_SUPPLY:
             case JOB_TYPE.OBTAIN_FOOD:
             case JOB_TYPE.DROP:
-            case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
             case JOB_TYPE.INSPECT:
                 priority = 240;
                 break;
@@ -399,13 +399,13 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
             if (job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                try {
-                    if (targetCharacter.GetNormalTrait((string)goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
-                        return false;
-                    }
-                } catch {
-                    throw new Exception("Problem with CanCharacterTakeRemoveIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
+                if (targetCharacter.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
+                    return false;
                 }
+                //try {
+                //} catch {
+                //    throw new Exception("Problem with CanCharacterTakeRemoveIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
+                //}
             }
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
                 return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
@@ -418,14 +418,14 @@ public class InteractionManager : MonoBehaviour {
         if (character != targetCharacter && character.faction == targetCharacter.faction && character.isAtHomeRegion) {
             if (job != null) {
                 GoapPlanJob goapJob = job as GoapPlanJob;
-                try {
-                    if (targetCharacter.GetNormalTrait((string)goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
-                        return false;
-                    }
-                } catch {
+                if (targetCharacter.GetNormalTrait((string) goapJob.targetEffect.conditionKey).IsResponsibleForTrait(character)) {
                     return false;
-                    //throw new Exception("Problem with CanCharacterTakeRemoveSpecialIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
                 }
+                //try {
+                //} catch {
+                //    return false;
+                //    //throw new Exception("Problem with CanCharacterTakeRemoveSpecialIllnessesJob of " + character.name + ". Target character is " + (targetCharacter?.name ?? "Null") + ". Job is " + (goapJob?.name ?? "Null"));
+                //}
                 
             }
             if (character.faction.id == FactionManager.Instance.neutralFaction.id) {

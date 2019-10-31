@@ -114,7 +114,7 @@ public class Daydream : GoapAction {
 
 public class DaydreamData : GoapActionData {
     public DaydreamData() : base(INTERACTION_TYPE.DAYDREAM) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

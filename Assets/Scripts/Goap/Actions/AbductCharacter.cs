@@ -125,7 +125,7 @@ public class AbductCharacter : GoapAction {
 
 public class AbductCharacterData: GoapActionData {
     public AbductCharacterData() : base(INTERACTION_TYPE.ABDUCT_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         requirementAction = Requirement;
     }
 

@@ -128,6 +128,7 @@ public class CharacterStateComponent {
     /// <param name="state">The state to be exited.</param>
     /// <param name="stopMovement">Should this character stop his/her current movement when exiting his/her current state?/param>
     public void ExitCurrentState(CharacterState state, bool stopMovement = true) {
+        //CODE IS REALLY CONFUSING! REWORK THIS CHY!
         if (this.currentState == null) {
             throw new System.Exception(character.name + " is trying to exit his/her current state but it is null, Passed state is " + state?.stateName);
         }
@@ -210,7 +211,7 @@ public class CharacterStateComponent {
                             if (previousMajorState.CanResumeState()) {
                                 SetCurrentState(previousMajorState);
                                 currState.endStateAction?.Invoke();
-                                currState.ResumeState();
+                                previousMajorState.ResumeState();
                             } else {
                                 previousMajorState = null;
                                 SetCurrentState(null);

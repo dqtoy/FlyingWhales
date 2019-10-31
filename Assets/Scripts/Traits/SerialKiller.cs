@@ -196,6 +196,8 @@ public class SerialKiller : Trait {
             if (targetVictim != null) {
                 if (!character.marker.inVisionCharacters.Contains(targetVictim)) {
                     FollowTargetVictim();
+                } else if (character.marker.CanDoStealthActionToTarget(targetVictim)) {
+                    CreateHuntVictimJob();
                 }
             } else {
                 SetHasStartedFollowing(false);
@@ -238,8 +240,8 @@ public class SerialKiller : Trait {
         //GoapAction goapAction2 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.RESTRAIN_CHARACTER, character, targetVictim);
         GoapAction goapAction1 = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.KNOCKOUT_CHARACTER, character, targetVictim);
 
-        goapAction3.SetWillAvoidCharactersWhileMoving(true);
-        goapAction6.SetWillAvoidCharactersWhileMoving(true);
+        //goapAction3.SetWillAvoidCharactersWhileMoving(true);
+        //goapAction6.SetWillAvoidCharactersWhileMoving(true);
 
         LocationStructure wilderness = character.specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         if (character.homeStructure.residents.Count > 1) {

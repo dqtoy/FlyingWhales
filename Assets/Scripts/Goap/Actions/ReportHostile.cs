@@ -93,7 +93,7 @@ public class ReportHostile : GoapAction {
 
 public class ReportHostileData : GoapActionData {
     public ReportHostileData() : base(INTERACTION_TYPE.REPORT_HOSTILE) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

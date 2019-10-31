@@ -29,7 +29,7 @@ public class FeelingBrokenhearted : GoapAction {
 
 public class FeelingBrokenheartedData : GoapActionData {
     public FeelingBrokenheartedData() : base(INTERACTION_TYPE.FEELING_BROKENHEARTED) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         requirementAction = Requirement;
     }
 

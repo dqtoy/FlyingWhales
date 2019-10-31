@@ -153,7 +153,7 @@ public class ImprisonCharacter : GoapAction {
 
 public class ImprisonCharacterData : GoapActionData {
     public ImprisonCharacterData() : base(INTERACTION_TYPE.IMPRISON_CHARACTER) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         requirementAction = Requirement;
     }
 

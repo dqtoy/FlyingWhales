@@ -75,18 +75,18 @@ public class Injured : Trait {
                     GoapEffect goapEffect = new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = name, targetPOI = targetCharacter };
                     GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_TRAIT, goapEffect,
                         new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION } }, });
-                    job.SetCanBeDoneInLocation(true);
+                    //job.SetCanBeDoneInLocation(true);
                     if (InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, job)) {
-                        //job.SetCanTakeThisJobChecker(CanCharacterTakeRemoveTraitJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(job);
                         return true;
-                    } else {
-                        if (!IsResponsibleForTrait(characterThatWillDoJob)) {
-                            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob);
-                            characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
-                        }
-                        return false;
-                    }
+                    } 
+                    //else {
+                    //    if (!IsResponsibleForTrait(characterThatWillDoJob)) {
+                    //        job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob);
+                    //        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(job);
+                    //    }
+                    //    return false;
+                    //}
                 } else {
                     if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                         bool canBeTransfered = false;

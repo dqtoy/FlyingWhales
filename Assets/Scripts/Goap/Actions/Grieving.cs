@@ -29,7 +29,7 @@ public class Grieving : GoapAction {
 
 public class GrievingData : GoapActionData {
     public GrievingData() : base(INTERACTION_TYPE.GRIEVING) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 

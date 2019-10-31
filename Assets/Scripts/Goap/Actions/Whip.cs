@@ -48,6 +48,6 @@ public class Whip : GoapAction {
 
 public class WhipData : GoapActionData {
     public WhipData() : base(INTERACTION_TYPE.WHIP) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
 }

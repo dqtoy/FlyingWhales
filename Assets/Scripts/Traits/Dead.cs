@@ -39,15 +39,16 @@ public class Dead : Trait {
                     GoapPlanJob buryJob = new GoapPlanJob(JOB_TYPE.BURY, INTERACTION_TYPE.BURY_CHARACTER, targetCharacter);
                     buryJob.AddForcedInteraction(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = targetCharacter }, INTERACTION_TYPE.CARRY_CORPSE);
                     buryJob.AllowDeadTargets();
-                    buryJob.SetCanBeDoneInLocation(true);
+                    //buryJob.SetCanBeDoneInLocation(true);
                     if (InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, buryJob)) {
                         characterThatWillDoJob.jobQueue.AddJobInQueue(buryJob);
                         return true;
-                    } else {
-                        buryJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanTakeBuryJob);
-                        characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(buryJob);
-                        return false;
                     }
+                    //else {
+                    //    buryJob.SetCanTakeThisJobChecker(InteractionManager.Instance.CanTakeBuryJob);
+                    //    characterThatWillDoJob.specificLocation.jobQueue.AddJobInQueue(buryJob);
+                    //    return false;
+                    //}
                 } else {
                     if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanTakeBuryJob(characterThatWillDoJob, currentJob)) {
                         bool canBeTransfered = false;

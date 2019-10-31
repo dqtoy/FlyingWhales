@@ -122,14 +122,14 @@ public class ReportCrime : GoapAction {
 
 public class ReportCrimeData : GoapActionData {
     public ReportCrimeData() : base(INTERACTION_TYPE.REPORT_CRIME) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
         requirementAction = Requirement;
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         AlterEgoData criminal = null;
-        if(otherData != null && otherData.Length == 1 && otherData[0] is AlterEgoData) {
-            criminal = otherData[0] as AlterEgoData;
+        if(otherData != null && otherData.Length == 3 && otherData[1] is AlterEgoData) {
+            criminal = otherData[1] as AlterEgoData;
         }
         if (poiTarget is Character && poiTarget != actor && (criminal == null || poiTarget != criminal.owner)) {
             Character character = poiTarget as Character;

@@ -43,7 +43,7 @@ public class FeelingSpooked : GoapAction {
 
 public class FeelingSpookedData : GoapActionData {
     public FeelingSpookedData() : base(INTERACTION_TYPE.FEELING_SPOOKED) {
-        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, RACE.WOLF, RACE.SPIDER, RACE.DRAGON };
+        racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY };
         requirementAction = Requirement;
     }
 
