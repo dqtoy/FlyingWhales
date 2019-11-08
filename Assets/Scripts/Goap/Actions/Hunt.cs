@@ -15,8 +15,8 @@ public class Hunt : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, targetPOI = actor });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         Character target = poiTarget as Character;
         if (target.isDead) {
             SetState("Target Missing");
@@ -53,7 +53,7 @@ public class Hunt : GoapAction {
             }
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         Character target = poiTarget as Character;
         int cost = 0;
         if(target.race == RACE.GOBLIN) {

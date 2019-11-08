@@ -21,8 +21,8 @@ public class EatCharacter : GoapAction {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget }, HasUnconsciousOrDeadTarget);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             Character target = poiTarget as Character;
             if (target.GetNormalTrait("Unconscious", "Dead") != null) {
@@ -38,7 +38,7 @@ public class EatCharacter : GoapAction {
             }
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         if (poiTarget is Character) {
             Character target = poiTarget as Character;
             RELATIONSHIP_EFFECT relEffect = actor.GetRelationshipEffectWith(target);

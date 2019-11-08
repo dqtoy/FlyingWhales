@@ -28,12 +28,12 @@ public class Pray : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void PerformActualAction() {
+    public override void Perform() {
         //if (targetTile.occupant != null && targetTile.occupant != actor) {
         //    SetState("Pray Failed");
         //} else {
         //}
-        base.PerformActualAction();
+        base.Perform();
         SetState("Pray Success");
     }
     public override void DoAction() {
@@ -43,7 +43,7 @@ public class Pray : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         //**Cost**: randomize between 15 - 55
         return Utilities.rng.Next(15, 56);
     }

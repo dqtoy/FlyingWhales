@@ -18,8 +18,8 @@ public class RestrainCarryCharacter : GoapAction {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget }, HasNonPositiveDisablerTrait);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.RESTRAIN_CARRY, conditionKey = actor, targetPOI = poiTarget });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         isForCriminal = parentPlan != null && parentPlan.job != null && (parentPlan.job.jobType == JOB_TYPE.APPREHEND || parentPlan.job.jobType == JOB_TYPE.RESTRAIN);
         //rather than checking location check if the character is not in anyone elses party and is still active
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) { 
@@ -28,7 +28,7 @@ public class RestrainCarryCharacter : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 1;
     }
     //public override void FailAction() {

@@ -21,15 +21,15 @@ public class Sing : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         SetState("Sing Success");
     }
     public override void DoAction() {
         SetTargetStructure();
         base.DoAction();
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         //**Cost**: randomize between 20 - 36 (if music lover 10 - 26)
         if(actor.GetNormalTrait("Music Lover") != null) {
             return Utilities.rng.Next(10, 27);

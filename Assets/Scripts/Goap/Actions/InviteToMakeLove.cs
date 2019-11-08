@@ -18,8 +18,8 @@ public class InviteToMakeLove : GoapAction {
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         Character targetCharacter = poiTarget as Character;
         if (!isTargetMissing && targetCharacter.IsInOwnParty()) {
             if (actor is SeducerSummon) {
@@ -47,7 +47,7 @@ public class InviteToMakeLove : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         bool isChaste = actor.GetNormalTrait("Chaste") != null;
         if (isChaste) {
             //Chaste 40 - 66 all three time of day and also unfaithful values

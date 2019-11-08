@@ -92,13 +92,6 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             && collidedWith.poi != parentMarker.character) {
             parentMarker.RemovePOIFromInVisionRange(collidedWith.poi);
             RemovePOIAsInRangeButDifferentStructure(collidedWith.poi);
-            if (collidedWith.poi is Character) {
-                Character targetCharacter = collidedWith.poi as Character;
-                Invisible invisible = targetCharacter.GetNormalTrait("Invisible") as Invisible;
-                if (invisible != null && !invisible.charactersThatCanSee.Contains(parentMarker.character)) {
-                    invisible.RemoveInRangeOfVisionCharacter(parentMarker.character);
-                }
-            }
         }
     }
     #endregion
@@ -182,11 +175,6 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
         Character targetCharacter = null;
         if (poi is Character) {
             targetCharacter = poi as Character;
-            Invisible invisible = targetCharacter.GetNormalTrait("Invisible") as Invisible;
-            if (invisible != null && !invisible.charactersThatCanSee.Contains(parentMarker.character)) {
-                invisible.AddInRangeOfVisionCharacter(parentMarker.character);
-                return;
-            }
         }
         parentMarker.AddPOIAsInVisionRange(poi);
         if(targetCharacter != null && parentMarker.character.GetNormalTrait("Resting", "Unconscious") == null) {

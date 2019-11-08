@@ -20,15 +20,15 @@ public class BreakUp : GoapAction {
         //**Effect 2**: Actor - Remove Paramour relationship with Target
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Paramour", targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             SetState("Break Up Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 1;
     }
     #endregion

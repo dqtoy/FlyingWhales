@@ -29,8 +29,8 @@ public class Watch : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         Character targetCharacter = poiTarget as Character;
         if (targetCharacter.IsInOwnParty()) {
             SetState("Watch Success");
@@ -38,7 +38,7 @@ public class Watch : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 10;
     }
     public override bool InitializeOtherData(object[] otherData) {

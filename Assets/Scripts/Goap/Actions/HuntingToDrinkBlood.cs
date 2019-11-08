@@ -21,11 +21,11 @@ public class HuntingToDrinkBlood : GoapAction {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
         }
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         SetState("In Progress");
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 1;
     }
     public override LocationGridTile GetTargetLocationTile() {

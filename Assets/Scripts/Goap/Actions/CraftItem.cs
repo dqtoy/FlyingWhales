@@ -27,11 +27,11 @@ public class CraftItem : GoapAction {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = craftedItem.ToString(), targetPOI = actor });
         }
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         SetState("Craft Success");
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 10;
     }
     protected override void CreateThoughtBubbleLog() {

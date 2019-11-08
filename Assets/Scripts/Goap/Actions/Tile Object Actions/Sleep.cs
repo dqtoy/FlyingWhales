@@ -19,8 +19,8 @@ public class Sleep : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             if(CanSleepInBed(actor, poiTarget as TileObject)) {
                 SetState("Rest Success");
@@ -36,7 +36,7 @@ public class Sleep : GoapAction {
             }
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         if (targetStructure.structureType == STRUCTURE_TYPE.DWELLING) {
             Dwelling dwelling = targetStructure as Dwelling;
             if (dwelling.IsResident(actor)) {

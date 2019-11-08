@@ -30,8 +30,8 @@ public class Daydream : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         //if (targetTile.occupant != null && targetTile.occupant != actor) {
         //    SetState("Daydream Failed");
         //} else {
@@ -42,7 +42,7 @@ public class Daydream : GoapAction {
         SetTargetStructure();
         base.DoAction();
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         //**Cost**: randomize between 10-30
         return Utilities.rng.Next(10, 31);
     }

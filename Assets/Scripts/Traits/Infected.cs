@@ -172,7 +172,7 @@ public class Infected : Trait {
 
             goapAction.CreateStates();
             owner.SetCurrentAction(goapAction);
-            owner.currentAction.PerformActualAction();
+            owner.currentAction.Perform();
         }
     }
 

@@ -11,15 +11,15 @@ public class ReplaceTileObject : GoapAction {
     public override LocationStructure targetStructure { get { return _targetStructure; } }
 
     public ReplaceTileObject(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.REPLACE_TILE_OBJECT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
+        //actionLocationType = ACTION_LOCATION_TYPE.ON_TARGET;
         actionIconString = GoapActionStateDB.Work_Icon;
         tileObjectToReplace = null;
         isNotificationAnIntel = false;
     }
 
     #region Overrides
-    protected override void AddDefaultObjectsToLog(Log log) {
-        base.AddDefaultObjectsToLog(log);
+    protected override void AddFillersToLog(Log log) {
+        base.AddFillersToLog(log);
         if (tileObjectToReplace != null) {
             log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         }
@@ -38,8 +38,8 @@ public class ReplaceTileObject : GoapAction {
     //    SetTargetStructure();
     //    base.DoAction(plan);
     //}
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             SetState("Replace Success");
         } else {
@@ -49,7 +49,7 @@ public class ReplaceTileObject : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return whereToPlace;
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 1;
     }
     public override bool InitializeOtherData(object[] otherData) {

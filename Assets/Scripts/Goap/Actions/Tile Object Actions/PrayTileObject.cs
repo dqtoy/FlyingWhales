@@ -23,16 +23,16 @@ public class PrayTileObject : GoapAction {
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     //}
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         SetState("Pray Success");
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         //**Cost**: randomize between 15 - 55
         return Utilities.rng.Next(15, 56);
     }
-    protected override void AddDefaultObjectsToLog(Log log) {
-        base.AddDefaultObjectsToLog(log);
+    protected override void AddFillersToLog(Log log) {
+        base.AddFillersToLog(log);
         TileObject obj = poiTarget as TileObject;
         log.AddToFillers(poiTarget, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER);
     }

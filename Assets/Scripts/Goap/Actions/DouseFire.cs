@@ -27,23 +27,23 @@ public class DouseFire : GoapAction {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.WATER_BUCKET.ToString(), targetPOI = actor }, () => actor.HasTokenInInventory(SPECIAL_TOKEN.WATER_BUCKET));
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Burning", targetPOI = poiTarget });
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 10;
     }
     protected override void MoveToDoAction(Character targetCharacter) {
         base.MoveToDoAction(targetCharacter);
         tile = poiTarget.gridTileLocation;
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (poiTarget.gridTileLocation != null && poiTarget.GetNormalTrait("Burning") != null && actor.GetToken(SPECIAL_TOKEN.WATER_BUCKET) != null) {
             SetState("Douse Fire Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override void AddDefaultObjectsToLog(Log log) {
-        base.AddDefaultObjectsToLog(log);
+    protected override void AddFillersToLog(Log log) {
+        base.AddFillersToLog(log);
         if (poiTarget is TileObject) {
             if (poiTarget is GenericTileObject) {
                 LocationGridTile tile = poiTarget.gridTileLocation;

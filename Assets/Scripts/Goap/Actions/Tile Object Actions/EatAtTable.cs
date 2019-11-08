@@ -22,8 +22,8 @@ public class EatAtTable : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
             if (poisonedTrait != null) {
@@ -35,7 +35,7 @@ public class EatAtTable : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         //if the table is poisoned, check if the actor knows about it, if he/she does, increase cost
         Poisoned poisoned = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
         if (poisoned != null) {

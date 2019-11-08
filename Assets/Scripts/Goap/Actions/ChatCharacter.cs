@@ -18,7 +18,7 @@ public class ChatCharacter : GoapAction {
     }
 
     #region Overrides
-    public override void PerformActualAction() {
+    public override void Perform() {
         //base.PerformActualAction();
         isPerformingActualAction = true;
 
@@ -277,7 +277,7 @@ public class ChatCharacter : GoapAction {
             }
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 1;
     }
     #endregion

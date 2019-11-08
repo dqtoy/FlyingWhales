@@ -365,6 +365,7 @@ public static class Signals {
     public static string CHARACTER_FINISHED_ACTION = "OnCharacterFinishedAction"; //Parameters (Character, GoapAction, String result)
     public static string CHARACTER_DOING_ACTION = "OnCharacterDoingAction"; //Parameters (Character, GoapAction)
     public static string ACTION_STATE_SET = "OnActionStateSet"; //Parameters (Character, GoapAction, GoapActionState)
+    public static string AFTER_ACTION_STATE_SET = "OnAfterActionStateSet"; //Parameters (Character, GoapAction, GoapActionState)
     public static string CHARACTER_PERFORMING_ACTION = "OnCharacterPerformingAction"; //Parameters (Character, GoapAction)
     public static string ON_SET_JOB = "OnSetJob"; //Parameters (GoapPlanJob)
     #endregion

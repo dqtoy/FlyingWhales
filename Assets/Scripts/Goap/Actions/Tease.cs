@@ -11,11 +11,11 @@ public class Tease : GoapAction {
     }
 
     #region Overrides
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         SetState("Tease Success");
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         Character targetCharacter = poiTarget as Character;
         List<RELATIONSHIP_TRAIT> rels = actor.GetAllRelationshipTraitTypesWith(targetCharacter);
         if (rels.Contains(RELATIONSHIP_TRAIT.FRIEND)) {

@@ -142,7 +142,7 @@ public class Player : ILeader {
 
         //goap
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
-        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.AddListener<GoapAction, string, Character, IPointOfInterest, object[]>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
@@ -597,7 +597,7 @@ public class Player : ILeader {
     /// </summary>
     /// <param name="action">The action that is being performed.</param>
     /// <param name="state">The state that the action is in.</param>
-    private void OnActionStateSet(GoapAction action, GoapActionState state) {
+    private void OnAfterActionStateSet(GoapAction action, string stateName, Character actor, IPointOfInterest target, object[] otherData) {
         bool showPopup = false;
         Log log = action.GetCurrentLog();
         if (action.showIntelNotification && state.duration > 0 && log != null) { //added checking for duration because this notification should only show for actions that have durations.

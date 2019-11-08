@@ -17,8 +17,8 @@ public class DestroySupply : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             SupplyPile supplyPile = poiTarget as SupplyPile;
             if (supplyPile.suppliesInPile > 0) {
@@ -30,7 +30,7 @@ public class DestroySupply : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 3;
     }
     #endregion

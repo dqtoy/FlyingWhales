@@ -1295,7 +1295,7 @@ public enum ACTION_LOCATION_TYPE {
     RANDOM_LOCATION,
     RANDOM_LOCATION_B,
     NEAR_TARGET,
-    ON_TARGET,
+    //ON_TARGET,
     TARGET_IN_VISION,
 }
 public enum CHARACTER_STATE_CATEGORY { MAJOR, MINOR,}
@@ -1367,6 +1367,14 @@ public enum DEADLY_SIN_ACTION { SPELL_SOURCE, INSTIGATOR, BUILDER, SABOTEUR, INV
 public enum WORLD_EVENT_EFFECT { GET_FOOD, GET_SUPPLY, GAIN_POSITIVE_TRAIT, REMOVE_NEGATIVE_TRAIT, EXPLORE, COMBAT, DESTROY_LANDMARK, DIVINE_INTERVENTION_SPEED_UP, CORRUPT_CHARACTER, DIVINE_INTERVENTION_SLOW_DOWN, SEARCHING }
 public enum WORLD_OBJECT_TYPE { NONE, ARTIFACT, SUMMON, SPECIAL_OBJECT, }
 public enum REGION_FEATURE_TYPE { PASSIVE, ACTIVE }
+
+/// <summary>
+/// STARTED - actor is moving towards the target but is not yet performing action
+/// PERFORMING - actor arrived at the target and is performing action
+/// SUCCESS - only when action is finished; if action is successful
+/// FAIL - only when action is finished; if action failed
+/// </summary>
+public enum ACTION_STATUS { STARTED, PERFORMING, SUCCESS, FAIL }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]

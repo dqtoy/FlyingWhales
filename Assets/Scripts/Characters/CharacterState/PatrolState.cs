@@ -72,7 +72,7 @@ public class PatrolState : CharacterState {
             return;
         }
         stateComponent.character.currentAction.SetEndAction(PatrolAgain);
-        stateComponent.character.currentAction.PerformActualAction();
+        stateComponent.character.currentAction.Perform();
     }
     private void PatrolAgain(string result, GoapAction goapAction) {
         SetCurrentlyDoingAction(null);

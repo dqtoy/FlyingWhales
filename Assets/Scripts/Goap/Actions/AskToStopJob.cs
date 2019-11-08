@@ -18,8 +18,8 @@ public class AskToStopJob : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_STOP_ACTION_AND_JOB, targetPOI = poiTarget });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             if (poiTarget is Character) {
                 Character targetCharacter = poiTarget as Character;
@@ -34,7 +34,7 @@ public class AskToStopJob : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         if (poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
             if(targetCharacter.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {

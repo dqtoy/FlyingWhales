@@ -15,11 +15,11 @@ public class GoTo : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_VISION, targetPOI = poiTarget });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         SetState("Goto Success");
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 15;
     }
     #endregion

@@ -6,18 +6,8 @@ public class CarryCorpse : GoapAction {
 
     protected override bool isTargetMissing {
         get {
-            bool targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+            return poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
               || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !(poiTarget as Character).isDead;
-
-            if (targetMissing) {
-                return targetMissing;
-            } else {
-                Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
-                if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
-                    return true;
-                }
-                return targetMissing;
-            }
         }
     }
 
@@ -34,8 +24,8 @@ public class CarryCorpse : GoapAction {
         //AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, conditionKey = poiTarget, targetPOI = poiTarget }, IsTargetDead);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = poiTarget });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         //rather than checking location check if the character is not in anyone elses party and is still active
         Character target = poiTarget as Character;
         if (!isTargetMissing && target.IsInOwnParty()) {
@@ -44,7 +34,7 @@ public class CarryCorpse : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 1;
     }
     public override void DoAction() {

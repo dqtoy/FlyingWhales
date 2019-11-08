@@ -21,8 +21,8 @@ public class JudgeCharacter : GoapAction {
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = poiTarget });
     //}
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             WeightedFloatDictionary<string> weights = new WeightedFloatDictionary<string>();
 
@@ -125,7 +125,7 @@ public class JudgeCharacter : GoapAction {
             SetState(chosen);
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 1;
     }
     #endregion

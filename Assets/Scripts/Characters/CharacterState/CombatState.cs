@@ -82,7 +82,7 @@ public class CombatState : CharacterState {
 
         base.StartState();
         if (stateComponent.character.currentAction is AssaultCharacter && !stateComponent.character.currentAction.isPerformingActualAction) {
-            stateComponent.character.currentAction.PerformActualAction(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
+            stateComponent.character.currentAction.Perform(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
         }
         stateComponent.character.StopCurrentAction(false);
         stateComponent.character.currentParty.RemoveAllOtherCharacters(); //Drop characters when entering combat
@@ -457,15 +457,11 @@ public class CombatState : CharacterState {
                 Character hitCharacter = poi as Character;
                 //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
                 if (poi == currentClosestHostile) {
-                    //If character that attacked is not invisible or invisible but can be seen by character hit, character hit should react
-                    Invisible invisible = stateComponent.character.GetNormalTrait("Invisible") as Invisible;
-                    if (invisible == null || invisible.charactersThatCanSee.Contains(hitCharacter)) {
-                        //When the target is hit and it is still alive, add hostile
-                        hitCharacter.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(hitCharacter));
-                        //also add the hit character as degraded rel, so that when the character that owns this state is hit by the other character because of retaliation, relationship degradation will no longer happen
-                        //Reference: https://trello.com/c/mvLDnyBf/2875-retaliation-should-not-trigger-relationship-degradation
-                        hitCharacter.marker.AddOnProcessCombatAction((combatState) => combatState.AddCharacterThatDegradedRel(stateComponent.character));
-                    }
+                    //When the target is hit and it is still alive, add hostile
+                    hitCharacter.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(hitCharacter));
+                    //also add the hit character as degraded rel, so that when the character that owns this state is hit by the other character because of retaliation, relationship degradation will no longer happen
+                    //Reference: https://trello.com/c/mvLDnyBf/2875-retaliation-should-not-trigger-relationship-degradation
+                    hitCharacter.marker.AddOnProcessCombatAction((combatState) => combatState.AddCharacterThatDegradedRel(stateComponent.character));
                 }
             }
             

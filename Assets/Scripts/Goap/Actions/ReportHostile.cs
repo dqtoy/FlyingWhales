@@ -27,8 +27,8 @@ public class ReportHostile : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         Character targetCharacter = poiTarget as Character;
         if (!isTargetMissing && targetCharacter.IsInOwnParty()) {
             if(!hostile.HasJobTargettingThis(JOB_TYPE.KNOCKOUT)) { //&& !hostile.HasTraitOf(TRAIT_TYPE.DISABLER, "Combat Recovery")
@@ -40,7 +40,7 @@ public class ReportHostile : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 3;
     }
     public override bool InitializeOtherData(object[] otherData) {

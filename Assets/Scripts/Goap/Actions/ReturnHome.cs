@@ -20,12 +20,12 @@ public class ReturnHome : GoapAction {
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
     //}
-    public override void PerformActualAction() {
+    public override void Perform() {
         //if (targetTile != null) {
         //} else {
         //    SetState("Return Home Failed");
         //}
-        base.PerformActualAction();
+        base.Perform();
         SetState("Return Home Success");
     }
     public override LocationGridTile GetTargetLocationTile() {
@@ -34,7 +34,7 @@ public class ReturnHome : GoapAction {
         }
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 3;
     }
     //public override void FailAction() {

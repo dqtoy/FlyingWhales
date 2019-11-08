@@ -17,8 +17,8 @@ public class GetFood : GoapAction {
         FoodPile foodPile = poiTarget as FoodPile;
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = foodPile.foodInPile, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             FoodPile foodPile = poiTarget as FoodPile;
             if (foodPile.foodInPile > 0) {
@@ -30,7 +30,7 @@ public class GetFood : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return Utilities.rng.Next(10, 21);
     }
     //public override void FailAction() {

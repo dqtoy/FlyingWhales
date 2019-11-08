@@ -8,181 +8,145 @@ using System.Linq;
 public class GoapAction {
 
     public INTERACTION_TYPE goapType { get; private set; }
-    public INTERACTION_ALIGNMENT alignment { get; private set; }
     public string goapName { get; protected set; }
-    public IPointOfInterest poiTarget { get; private set; }
-    public AlterEgoData poiTargetAlterEgo { get; protected set; } //The alter ego the target was using while doing this action. only occupied if target is a character
-    public Character actor { get; private set; }
-    public AlterEgoData actorAlterEgo { get; protected set; } //The alter ego the character was using while doing this action.
-    public int cost { get { return (GetCost() * CostMultiplier()) + GetDistanceCost(); } }
+    //public IPointOfInterest poiTarget { get; private set; }
+    //public AlterEgoData poiTargetAlterEgo { get; protected set; } //The alter ego the target was using while doing this action. only occupied if target is a character
+    //public Character actor { get; private set; }
+    //public AlterEgoData actorAlterEgo { get; protected set; } //The alter ego the character was using while doing this action.
     public List<Precondition> preconditions { get; private set; }
     public List<GoapEffect> expectedEffects { get; private set; }
-    public virtual LocationStructure targetStructure {
-        get {
-            if (poiTarget is Character) {
-                return (poiTarget as Character).currentStructure;
-            }
-            if(poiTarget.gridTileLocation == null) {
-                return null;
-            }
-            return poiTarget.gridTileLocation.structure;
-            //try {
-            //    //if (poiTarget is TileObject || poiTarget is SpecialToken) {
-            //    //    //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
-            //    //    IAwareness awareness = actor.HasAwareness(poiTarget);
-            //    //    if (awareness != null) {
-            //    //        return awareness.knownGridLocation.structure;
-            //    //    }
-            //    //} else 
-            //    if (poiTarget is Character) {
-            //        return (poiTarget as Character).currentStructure;
-            //    }
-            //    return poiTarget.gridTileLocation.structure;
-            //} catch {
-            //    throw new Exception("Error with target structure in " + goapName + " targetting " + poiTarget.ToString() + " by " + actor.name);
-            //}
-        }
-    }
-    public LocationGridTile targetTile { get; protected set; }
+    //public virtual LocationStructure targetStructure {
+    //    get {
+    //        if (poiTarget is Character) {
+    //            return (poiTarget as Character).currentStructure;
+    //        }
+    //        if (poiTarget.gridTileLocation == null) {
+    //            return null;
+    //        }
+    //        return poiTarget.gridTileLocation.structure;
+    //    }
+    //}
+    //public LocationGridTile targetTile { get; protected set; }
     public Dictionary<string, GoapActionState> states { get; protected set; }
-    public List<GoapEffect> actualEffects { get; private set; }
-    public Log thoughtBubbleLog { get; protected set; } //used if the current state of this action has a duration
-    public Log thoughtBubbleMovingLog { get; protected set; } //used when the actor is moving with this as his/her current action
-    public Log planLog { get; protected set; } //used for notification when a character starts this action. NOTE: Do not show notification if this is null
-    public Log targetLog { get; protected set; }
-    public GoapActionState currentState { get; private set; }
+    //public List<GoapEffect> actualEffects { get; private set; }
+    //public Log thoughtBubbleLog { get; protected set; } //used if the current state of this action has a duration
+    //public Log thoughtBubbleMovingLog { get; protected set; } //used when the actor is moving with this as his/her current action
+    //public Log planLog { get; protected set; } //used for notification when a character starts this action. NOTE: Do not show notification if this is null
+    //public Log targetLog { get; protected set; }
+    //public GoapActionState currentState { get; private set; }
     //public GoapActionState endedAtState { get; private set; } //the state this action ended at
-    public GoapPlan parentPlan { get; private set; }
-    public bool isStopped { get; private set; }
-    public bool isStoppedAsCurrentAction { get; private set; }
-    public bool isPerformingActualAction { get; protected set; }
-    public bool isDone { get; private set; }
+    //public GoapPlan parentPlan { get; private set; }
+    //public bool isStopped { get; private set; }
+    //public bool isStoppedAsCurrentAction { get; private set; }
+    //public bool isPerformingActualAction { get; protected set; }
+    //public bool isDone { get; private set; }
     public ACTION_LOCATION_TYPE actionLocationType { get; protected set; } //This is set in every action's constructor
     public bool showIntelNotification { get; protected set; } //should this action show a notification when it is done by its actor or when it recieves a plan with this action as it's end node?
     public bool shouldAddLogs { get; protected set; } //should this action add logs to it's actor?
-    public bool shouldIntelNotificationOnlyIfActorIsActive { get; protected set; } //should this action add logs to it's actor?
+    public bool shouldIntelNotificationOnlyIfActorIsActive { get; protected set; }
+    public bool isNotificationAnIntel { get; protected set; }
     public string actionIconString { get; protected set; }
-    public GameDate executionDate { get; protected set; }
-    protected virtual string failActionState { get { return "Target Missing"; } }
-    private System.Action<string, GoapAction> endAction; //if this is not null, this action will return result here, instead of the default actor.GoapActionResult
-    public CRIME committedCrime { get; private set; }
-    public bool hasCrimeBeenReported { get; private set; }
-    public string result { get; private set; }
+    //public GameDate executionDate { get; protected set; }
+    //protected virtual string failActionState { get { return "Target Missing"; } }
+    //private System.Action<string, GoapAction> endAction; //if this is not null, this action will return result here, instead of the default actor.GoapActionResult
+    //public CRIME committedCrime { get; private set; }
+    //public bool hasCrimeBeenReported { get; private set; }
+    //public string result { get; private set; }
     public string animationName { get; protected set; } //what animation should the character be playing while doing this action
     public bool doesNotStopTargetCharacter { get; protected set; }
-    public bool resumeTargetCharacterState { get; protected set; } //used to determine whether or not the target character's current state should be resumed after this action is performed towards him
-    public bool cannotCancelAction { get; protected set; }
-    public bool isNotificationAnIntel { get; protected set; }
-    public bool canBeAddedToMemory { get; protected set; }
-    public bool onlyShowNotifOfDescriptionLog { get; protected set; }
-    public CharacterState characterState { get; protected set; }
-    public Character[] crimeCommitters { get; protected set; }
-    public List<Character> awareCharactersOfThisAction { get; protected set; } //all characters that witnessed/aware of this action
-    public bool isOldNews { get; protected set; }
-    public int referenceCount { get; protected set; }
-    public bool willAvoidCharactersWhileMoving { get; protected set; }
-    public bool isStealth { get; protected set; }
-    public bool isRoamingAction { get; protected set; } //Is this action a roaming action like Hunting To Drink Blood or Roaming To Steal
-    public object[] otherData { get; protected set; }
-    public string whileMovingState { get; protected set; } //The state name of this action while actor is still moving towards the target location/character, this can be empty, in fact the default value is empty, this is only needed when we want an action to have a current state even though he/she is still moving to the target, this does not mean that the actor is performing actual action
+    //public bool resumeTargetCharacterState { get; protected set; } //used to determine whether or not the target character's current state should be resumed after this action is performed towards him
+    //public bool cannotCancelAction { get; protected set; }
+    //public bool canBeAddedToMemory { get; protected set; }
+    //public bool onlyShowNotifOfDescriptionLog { get; protected set; }
+    //public CharacterState characterState { get; protected set; }
+    //public Character[] crimeCommitters { get; protected set; }
+    //public List<Character> awareCharactersOfThisAction { get; protected set; } //all characters that witnessed/aware of this action
+    //public bool isOldNews { get; protected set; }
+    //public int referenceCount { get; protected set; }
+    //public bool willAvoidCharactersWhileMoving { get; protected set; }
+    //public bool isStealth { get; protected set; }
+    //public bool isRoamingAction { get; protected set; } //Is this action a roaming action like Hunting To Drink Blood or Roaming To Steal
+    //public object[] otherData { get; protected set; }
+    //public string whileMovingState { get; protected set; } //The state name of this action while actor is still moving towards the target location/character, this can be empty, in fact the default value is empty, this is only needed when we want an action to have a current state even though he/she is still moving to the target, this does not mean that the actor is performing actual action
 
-    protected virtual bool isTargetMissing {
-        get {
-            bool targetMissing = false;
-            targetMissing = !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
-                    || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
-            //if (parentPlan != null && parentPlan.job != null && parentPlan.job.allowDeadTargets) {
-            //    targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
-            //        || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !(poiTarget as Character).isDead;
-            //} else {
-                
-            //}
+    //protected virtual bool isTargetMissing {
+    //    get {
+    //        return !poiTarget.IsAvailable() || poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+    //                || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation));
+    //    }
+    //}
 
-            if (targetMissing) {
-                return targetMissing;
-            } else {
-                if (actor != poiTarget) {
-                    Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
-                    if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
-                        return true;
-                    }
-                }
-                return targetMissing;
-            }
-        }
-    }
+    //protected bool _stayInArea; //if the character should stay at his/her current area to do this action
 
-    protected bool _stayInArea; //if the character should stay at his/her current area to do this action
-
-    protected Func<bool> _requirementAction;
-    protected Func<bool> _requirementOnBuildGoapTreeAction; //This particular requirement will only be called when building the goap tree in multithread
-    protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-    protected string actionSummary;
+    //protected Func<bool> _requirementAction;
+    //protected Func<bool> _requirementOnBuildGoapTreeAction; //This particular requirement will only be called when building the goap tree in multithread
+    //protected System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+    //protected string actionSummary;
     protected TIME_IN_WORDS[] validTimeOfDays;
 
-    public GoapAction(INTERACTION_TYPE goapType, INTERACTION_ALIGNMENT alignment, Character actor, IPointOfInterest poiTarget) {
-        this.alignment = alignment;
+    public GoapAction(INTERACTION_TYPE goapType) { //, INTERACTION_ALIGNMENT alignment, Character actor, IPointOfInterest poiTarget
+        //this.alignment = alignment;
         this.goapType = goapType;
         this.goapName = Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
-        this.poiTarget = poiTarget;
-        this.actor = actor;
-        SetIsStopped(false);
-        isPerformingActualAction = false;
-        isDone = false;
+        //this.poiTarget = poiTarget;
+        //this.actor = actor;
+        //SetIsStopped(false);
+        //isPerformingActualAction = false;
+        //isDone = false;
         SetShowIntelNotification(true);
         shouldAddLogs = true;
         preconditions = new List<Precondition>();
         expectedEffects = new List<GoapEffect>();
-        actualEffects = new List<GoapEffect>();
-        committedCrime = CRIME.NONE;
-        animationName = string.Empty;
-        resumeTargetCharacterState = true;
-        isNotificationAnIntel = true;
-        canBeAddedToMemory = true;
-        _stayInArea = false;
-        awareCharactersOfThisAction = new List<Character>();
-        whileMovingState = string.Empty;
-        //for testing
-        //CRIME[] choices = Utilities.GetEnumValues<CRIME>();
-        //committedCrime = choices[Utilities.rng.Next(1, choices.Length)];
+        //actualEffects = new List<GoapEffect>();
+        //committedCrime = CRIME.NONE;
+        //animationName = string.Empty;
+        //resumeTargetCharacterState = true;
+        //isNotificationAnIntel = true;
+        //canBeAddedToMemory = true;
+        //_stayInArea = false;
+        //awareCharactersOfThisAction = new List<Character>();
+        //whileMovingState = string.Empty;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
-        actionIconString = GoapActionStateDB.Entertain_Icon;
-        actionSummary = GameManager.Instance.TodayLogString() + actor.name + " created " + goapType.ToString() + " action, targetting " + poiTarget?.ToString() ?? "Nothing";
+        actionIconString = GoapActionStateDB.No_Icon;
+        ConstructPreconditionsAndEffects();
+
+        //actionSummary = GameManager.Instance.TodayLogString() + actor.name + " created " + goapType.ToString() + " action, targetting " + poiTarget?.ToString() ?? "Nothing";
     }
-    public void SetParentPlan(GoapPlan plan) {
-        parentPlan = plan;
-    }
+    //public void SetParentPlan(GoapPlan plan) {
+    //    parentPlan = plan;
+    //}
 
     #region States
-    public void SetState(string stateName) {
-        currentState = states[stateName];
-        AddActionDebugLog(GameManager.Instance.TodayLogString() + " Set state to " + currentState.name);
-        OnPerformActualActionToTarget();
-        currentState.Execute();
-        Messenger.Broadcast(Signals.ACTION_STATE_SET, this, currentState);
+    public void SetState(string stateName, Character actor, IPointOfInterest target, object[] otherData) {
+        Messenger.Broadcast(Signals.ACTION_STATE_SET, this, stateName, actor, target, otherData);
+        Messenger.Broadcast(Signals.AFTER_ACTION_STATE_SET, this, stateName, actor, target, otherData);
+        //GoapActionState currentState = states[stateName];
+        //AddActionDebugLog(GameManager.Instance.TodayLogString() + " Set state to " + currentState.name);
+        //OnPerformActualActionToTarget();
+        //currentState.Execute(actor, target, otherData);
     }
     /// <summary>
     /// Change the state that this action is in. This is used when the current action already has a state,
     /// but some change in external conditions needs the action to change effects midway.
     /// </summary>
     /// <param name="newState">The state that this action will switch to.</param>
-    public void ChangeState(string newState) {
-        GoapActionState nextState = states[newState];
-        nextState.OverrideDuration(currentState.duration - currentState.currentDuration); //set the duration of the next state to be the remaining duration of the current state.
-        CleanupBeforeChangingStates();
-        currentState.StopPerTickEffect();
-        SetState(newState);
-    }
+    //public void ChangeState(string newState) {
+    //    GoapActionState nextState = states[newState];
+    //    nextState.OverrideDuration(currentState.duration - currentState.currentDuration); //set the duration of the next state to be the remaining duration of the current state.
+    //    CleanupBeforeChangingStates();
+    //    currentState.StopPerTickEffect();
+    //    SetState(newState);
+    //}
     /// <summary>
     /// Utility function to cleanup any unneeded mechanics before this action changes states.
     /// </summary>
-    protected virtual void CleanupBeforeChangingStates() { }
+    //protected virtual void CleanupBeforeChangingStates() { }
     #endregion
 
     #region Virtuals
     public virtual void CreateStates() {
-        string summary = "Creating states for goap action (Dynamic) " + goapType.ToString() + " for actor " + actor.name;
-        sw.Start();
+        //string summary = "Creating states for goap action (Dynamic) " + goapType.ToString() + " for actor " + actor.name;
+        //sw.Start();
         states = new Dictionary<string, GoapActionState>();
         if (GoapActionStateDB.goapActionStates.ContainsKey(this.goapType)) {
             StateNameAndDuration[] statesSetup = GoapActionStateDB.goapActionStates[this.goapType];
@@ -190,98 +154,91 @@ public class GoapAction {
                 StateNameAndDuration state = statesSetup[i];
                 string trimmedState = Utilities.RemoveAllWhiteSpace(state.name);
                 Type thisType = this.GetType();
-                MethodInfo preMethod = thisType.GetMethod("Pre" + trimmedState, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-                MethodInfo perMethod = thisType.GetMethod("PerTick" + trimmedState, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-                MethodInfo afterMethod = thisType.GetMethod("After" + trimmedState, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-                Action preAction = null;
-                Action perAction = null;
-                Action afterAction = null;
+                MethodInfo preMethod = thisType.GetMethod("Pre" + trimmedState, new Type[] { typeof(Character), typeof(IPointOfInterest), typeof(object[]) }); //BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance
+                MethodInfo perMethod = thisType.GetMethod("PerTick" + trimmedState, new Type[] { typeof(Character), typeof(IPointOfInterest), typeof(object[]) });
+                MethodInfo afterMethod = thisType.GetMethod("After" + trimmedState, new Type[] { typeof(Character), typeof(IPointOfInterest), typeof(object[]) });
+                Action<Character, IPointOfInterest, object[]> preAction = null;
+                Action<Character, IPointOfInterest, object[]> perAction = null;
+                Action<Character, IPointOfInterest, object[]> afterAction = null;
                 if (preMethod != null) {
-                    preAction = (Action) Delegate.CreateDelegate(typeof(Action), this, preMethod, false);
+                    preAction = (Action<Character, IPointOfInterest, object[]>) Delegate.CreateDelegate(typeof(Action<Character, IPointOfInterest, object[]>), this, preMethod, false);
                 }
                 if (perMethod != null) {
-                    perAction = (Action) Delegate.CreateDelegate(typeof(Action), this, perMethod, false);
+                    perAction = (Action<Character, IPointOfInterest, object[]>) Delegate.CreateDelegate(typeof(Action<Character, IPointOfInterest, object[]>), this, perMethod, false);
                 }
                 if (afterMethod != null) {
-                    afterAction = (Action) Delegate.CreateDelegate(typeof(Action), this, afterMethod, false);
+                    afterAction = (Action<Character, IPointOfInterest, object[]>) Delegate.CreateDelegate(typeof(Action<Character, IPointOfInterest, object[]>), this, afterMethod, false);
                 }
                 GoapActionState newState = new GoapActionState(state.name, this, preAction, perAction, afterAction, state.duration, state.status);
                 states.Add(state.name, newState);
-                summary += "\n Creating state " + state.name;
+                //summary += "\n Creating state " + state.name;
             }
-
         }
-        sw.Stop();
+        //sw.Stop();
         //Debug.Log(summary + "\n" + string.Format("Total creation time is {0}ms", sw.ElapsedMilliseconds));
-
     }
     protected virtual void ConstructPreconditionsAndEffects() { }
-    protected virtual void ConstructRequirement() { }
-    protected virtual void ConstructRequirementOnBuildGoapTree() { }
-    protected virtual int GetCost() {
-        return 0;
+    //protected virtual void ConstructRequirementOnBuildGoapTree() { }
+
+    public virtual void Perform(Character actor, IPointOfInterest target, object[] otherData) {
+        //isPerformingActualAction = true;
+        //actorAlterEgo = actor.currentAlterEgo;
+        //AddAwareCharacter(actor);
+        //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+        //    Character targetCharacter = poiTarget as Character;
+        //    poiTargetAlterEgo = targetCharacter.currentAlterEgo;
+        //    if (poiTarget != actor && !targetCharacter.isDead) {
+        //        if (!doesNotStopTargetCharacter) {
+        //            if (targetCharacter.currentParty.icon.isTravelling) {
+        //                if (targetCharacter.currentParty.icon.travelLine == null) {
+        //                    //This means that the actor currently travelling to another tile in tilemap
+        //                    targetCharacter.marker.StopMovement();
+        //                } else {
+        //                    //This means that the actor is currently travelling to another area
+        //                    targetCharacter.currentParty.icon.SetOnArriveAction(() => targetCharacter.OnArriveAtAreaStopMovement());
+        //                }
+        //            }
+        //            if (targetCharacter.currentAction != null) {
+        //                targetCharacter.StopCurrentAction(false);
+        //            }
+        //            if (targetCharacter.stateComponent.currentState != null) {
+        //                targetCharacter.stateComponent.currentState.PauseState();
+        //            } else if (targetCharacter.stateComponent.stateToDo != null) {
+        //                targetCharacter.stateComponent.SetStateToDo(null, false, false);
+        //            }
+        //            targetCharacter.marker.pathfindingAI.AdjustDoNotMove(1);
+        //            targetCharacter.AdjustIsStoppedByOtherCharacter(1);
+        //            targetCharacter.FaceTarget(actor);
+        //        }
+        //    }
+        //} else {
+        //    Cursed cursed = poiTarget.GetNormalTrait("Cursed") as Cursed;
+        //    if (cursed != null) {
+        //        cursed.Interact(actor, this);
+        //    }
+        //    Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+        //    Messenger.AddListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
+        //}
     }
-    public virtual void PerformActualAction() {
-        isPerformingActualAction = true;
-        actorAlterEgo = actor.currentAlterEgo;
-        //Messenger.AddListener<IPointOfInterest, GoapAction>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
-        AddAwareCharacter(actor);
-        //poiTarget.AddTargettedByAction(this);
-        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            Character targetCharacter = poiTarget as Character;
-            poiTargetAlterEgo = targetCharacter.currentAlterEgo;
-            if (poiTarget != actor && !targetCharacter.isDead) {
-                if (!doesNotStopTargetCharacter) {
-                    if (targetCharacter.currentParty.icon.isTravelling) {
-                        if (targetCharacter.currentParty.icon.travelLine == null) {
-                            //This means that the actor currently travelling to another tile in tilemap
-                            targetCharacter.marker.StopMovement();
-                        } else {
-                            //This means that the actor is currently travelling to another area
-                            targetCharacter.currentParty.icon.SetOnArriveAction(() => targetCharacter.OnArriveAtAreaStopMovement());
-                        }
-                    }
-                    if (targetCharacter.currentAction != null) {
-                        targetCharacter.StopCurrentAction(false);
-                    }
-                    if (targetCharacter.stateComponent.currentState != null) {
-                        targetCharacter.stateComponent.currentState.PauseState();
-                    } else if (targetCharacter.stateComponent.stateToDo != null) {
-                        targetCharacter.stateComponent.SetStateToDo(null, false, false);
-                    }
-                    targetCharacter.marker.pathfindingAI.AdjustDoNotMove(1);
-                    targetCharacter.AdjustIsStoppedByOtherCharacter(1);
-                    targetCharacter.FaceTarget(actor);
-                }
-            }
-        } else {
-            Cursed cursed = poiTarget.GetNormalTrait("Cursed") as Cursed;
-            if (cursed != null) {
-                cursed.Interact(actor, this);
-            }
-            Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-            Messenger.AddListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
-        }
-    }
-    protected virtual void CreateThoughtBubbleLog() {
-        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "thought_bubble")) {
-            thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble", this);
-            AddDefaultObjectsToLog(thoughtBubbleLog);
-        }
-        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "thought_bubble_m")) {
-            thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble_m", this);
-            AddDefaultObjectsToLog(thoughtBubbleMovingLog);
-        }
-        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "plan_log")) {
-            planLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "plan_log", this);
-            AddDefaultObjectsToLog(planLog);
-        }
-        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "target_log")) {
-            targetLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "target_log", this);
-            AddDefaultObjectsToLog(targetLog);
-        }
-    }
-    protected virtual void AddDefaultObjectsToLog(Log log) {
+    //protected void CreateThoughtBubbleLog() {
+    //    if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "thought_bubble")) {
+    //        thoughtBubbleLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble", this);
+    //        AddDefaultObjectsToLog(thoughtBubbleLog);
+    //    }
+    //    if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "thought_bubble_m")) {
+    //        thoughtBubbleMovingLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "thought_bubble_m", this);
+    //        AddDefaultObjectsToLog(thoughtBubbleMovingLog);
+    //    }
+    //    if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "plan_log")) {
+    //        planLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "plan_log", this);
+    //        AddDefaultObjectsToLog(planLog);
+    //    }
+    //    if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", this.GetType().ToString(), "target_log")) {
+    //        targetLog = new Log(GameManager.Instance.Today(), "GoapAction", this.GetType().ToString(), "target_log", this);
+    //        AddDefaultObjectsToLog(targetLog);
+    //    }
+    //}
+    public virtual void AddFillersToLog(Log log, Character actor, IPointOfInterest poiTarget, object[] otherData, LocationStructure targetStructure) {
         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
         if (targetStructure != null) {
@@ -290,117 +247,117 @@ public class GoapAction {
             log.AddToFillers(actor.specificLocation, actor.specificLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         }
     }
+    protected virtual bool AreRequirementsSatisfied(Character actor, IPointOfInterest target, object[] otherData) { return true; }
+    protected virtual int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
+        return 0;
+    }
+    public virtual GoapActionInvalidity IsInvalid(Character actor, IPointOfInterest target, object[] otherData) {
+        string logKey = "target missing_description"; //TODO: actual log key subject to change
+        bool defaultTargetMissing = IsTargetMissing(actor, target, otherData);
+        return new GoapActionInvalidity(defaultTargetMissing, logKey);
+    }
+    public virtual LocationStructure GetTargetStructure(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        //if (poiTarget is Character) {
+        //    return (poiTarget as Character).currentStructure;
+        //}
+        if (poiTarget.gridTileLocation == null) {
+            return null;
+        }
+        return poiTarget.gridTileLocation.structure;
+    }
     ///<summary>
     ///This is called when the actor decides to do this specific action.
     ///All movement related actions should be done here.
     ///</summary>
-    public virtual void DoAction() {
-        //CreateStates(); //Not sure if this is the best place for this.
-        //SetTargetStructure(); //Update target tile and structure so that the character will not go to the target tile that is calculated during the initialization of this action, so the character will move precisely to the intended target
-        actor.SetCurrentAction(this);
-        parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
-        Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
-        actor.marker.OnThisCharacterDoingAction(this);
+    //public virtual void DoAction() {
+    //    actor.SetCurrentAction(this);
+    //    parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
+    //    Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
+    //    actor.marker.OnThisCharacterDoingAction(this);
 
-        Character targetCharacter = null;
-        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            if ((poiTarget as Character) != actor) {
-                targetCharacter = poiTarget as Character;
-            }
-        }
-        poiTarget.AddTargettedByAction(this);
-        if (whileMovingState != string.Empty) {
-            SetState(whileMovingState);
-        }
-        MoveToDoAction(targetCharacter);
-    }
-    public virtual LocationGridTile GetTargetLocationTile() {
-        //LocationGridTile knownTargetLocation = null;
-        if (poiTarget is TileObject || poiTarget is SpecialToken) {
-            //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
-            //IAwareness awareness = actor.HasAwareness(poiTarget);
-            //if (awareness != null) {
-            //    knownTargetLocation = awareness.knownGridLocation;
-            //} else {
-            //    knownTargetLocation = poiTarget.gridTileLocation;
-            //}
-            return poiTarget.gridTileLocation;
+    //    Character targetCharacter = null;
+    //    if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+    //        if ((poiTarget as Character) != actor) {
+    //            targetCharacter = poiTarget as Character;
+    //        }
+    //    }
+    //    poiTarget.AddTargettedByAction(this);
+    //    if (whileMovingState != string.Empty) {
+    //        SetState(whileMovingState);
+    //    }
+    //    MoveToDoAction(targetCharacter);
+    //}
+    //public virtual LocationGridTile GetTargetLocationTile() {
+    //    //LocationGridTile knownTargetLocation = null;
+    //    if (poiTarget is TileObject || poiTarget is SpecialToken) {
+    //        //if the target is a tile object or a special token, the actor will always go to it's known location instead of actual
+    //        //IAwareness awareness = actor.HasAwareness(poiTarget);
+    //        //if (awareness != null) {
+    //        //    knownTargetLocation = awareness.knownGridLocation;
+    //        //} else {
+    //        //    knownTargetLocation = poiTarget.gridTileLocation;
+    //        //}
+    //        return poiTarget.gridTileLocation;
 
-            //return InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.NEAR_TARGET, actor, knownTargetLocation, targetStructure);
-        }
-        //else {
-        //    knownTargetLocation = poiTarget.gridTileLocation;
-        //}
-        return null;
-    }
-    public virtual void SetTargetStructure() {
-        if (targetStructure != null) {
-            targetTile = GetTargetLocationTile();
-        }
-    }
-    //This is for the waiting time, if this returns true, this action will not be done by the actor momentarily, this will be skipped until this returns false
-    public virtual bool IsHalted() {
-        //Only waiting condition for now is the time of day
-        //The default for the valid time of days is null, if it is null, do not wait meaning return false
-        //if (validTimeOfDays != null && !validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick())) {
-        //    return true;
-        //}
-
-        //if this action is a stealth action, check if there are any characters around, if yes, halt(suspend) this action
-        //if (_isStealthAction) {
-        //    if (_numOfTries < 18 && HasOtherCharacterInRadius()) {
-        //        _numOfTries++;
-        //        return true;
-        //    }
-        //}
-        return false;
-    }
+    //        //return InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.NEAR_TARGET, actor, knownTargetLocation, targetStructure);
+    //    }
+    //    //else {
+    //    //    knownTargetLocation = poiTarget.gridTileLocation;
+    //    //}
+    //    return null;
+    //}
+    //public virtual void SetTargetStructure() {
+    //    if (targetStructure != null) {
+    //        targetTile = GetTargetLocationTile();
+    //    }
+    //}
     /// <summary>
     /// Used for Ghost collision handling, when a character sees a ghost collider of a POI
     /// and that POI is the target of this action, this will execute this actions target missing state.
     /// If none will execute whatever fail state this action has.
     /// NOTE: can override state to execute. <see cref="failActionState"/>
     /// </summary>
-    public virtual void ExecuteTargetMissing() {
-        if (states.ContainsKey("Target Missing")) {
-            SetState("Target Missing");
-        } else {
-            //for cases that the current action has no target missing state
-            FailAction();
-        }
-    }
+    //public virtual void ExecuteTargetMissing() {
+    //    if (states.ContainsKey("Target Missing")) {
+    //        SetState("Target Missing");
+    //    } else {
+    //        //for cases that the current action has no target missing state
+    //        FailAction();
+    //    }
+    //}
     /// <summary>
     /// Setup other data needed for an action, This is called during plan creation.
     /// </summary>
     /// <param name="otherData">Array of data</param>
     /// <returns>If any other data was initialized</returns>
-    public virtual bool InitializeOtherData(object[] otherData) { return false; }
-    protected virtual void MoveToDoAction(Character targetCharacter) {
-        //if the actor is NOT at the area where the target structure is, make him/her go there first.
-        actor.marker.pathfindingAI.ResetEndReachedDistance();
-        if (targetStructure == null) {
-            throw new Exception(actor.name + " target structure of action " + this.goapName + " is null.");
-        }
+    //public virtual bool InitializeOtherData(object[] otherData) { return false; }
 
-        if(actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && actor.marker.inVisionPOIs.Contains(poiTarget)) {
-            actor.PerformGoapAction();
-        } else {
-            if (actor.specificLocation != targetStructure.location) {
-                if (_stayInArea) {
-                    actor.PerformGoapAction();
-                } else {
-                    actor.currentParty.GoToLocation(targetStructure.location.region, PATHFINDING_MODE.NORMAL, targetStructure, OnArriveAtTargetLocation, null, poiTarget, targetTile);
-                }
-            } else {
-                //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
-                if (targetTile != null) {
-                    actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
-                } else {
-                    actor.marker.GoTo(poiTarget, OnArriveAtTargetLocation);
-                }
-            }
-        }
-    }
+    //protected virtual void MoveToDoAction(Character targetCharacter) {
+    //    //if the actor is NOT at the area where the target structure is, make him/her go there first.
+    //    actor.marker.pathfindingAI.ResetEndReachedDistance();
+    //    if (targetStructure == null) {
+    //        throw new Exception(actor.name + " target structure of action " + this.goapName + " is null.");
+    //    }
+
+    //    if(actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION && actor.marker.inVisionPOIs.Contains(poiTarget)) {
+    //        actor.PerformGoapAction();
+    //    } else {
+    //        if (actor.specificLocation != targetStructure.location) {
+    //            if (_stayInArea) {
+    //                actor.PerformGoapAction();
+    //            } else {
+    //                actor.currentParty.GoToLocation(targetStructure.location.region, PATHFINDING_MODE.NORMAL, targetStructure, OnArriveAtTargetLocation, null, poiTarget, targetTile);
+    //            }
+    //        } else {
+    //            //if the actor is already at the area where the target structure is, just make the actor move to the specified target structure (ususally the structure where the poiTarget is at).
+    //            if (targetTile != null) {
+    //                actor.marker.GoTo(targetTile, OnArriveAtTargetLocation);
+    //            } else {
+    //                actor.marker.GoTo(poiTarget, OnArriveAtTargetLocation);
+    //            }
+    //        }
+    //    }
+    //}
     //If this action's current state is being performed and is stopped abruptly, call this
     public virtual void OnStopActionDuringCurrentState() { }
     /// <summary>
@@ -461,6 +418,13 @@ public class GoapAction {
     #endregion
 
     #region Utilities
+    public int GetCost(Character actor, IPointOfInterest target, object[] otherData) {
+        return (GetBaseCost(actor, target, otherData) * CostMultiplier(actor)) + GetDistanceCost();
+    }
+    protected bool IsTargetMissing(Character actor, IPointOfInterest target, object[] otherData) {
+        return !target.IsAvailable() || target.gridTileLocation == null || actor.specificLocation != target.specificLocation
+                    || !(actor.gridTileLocation == target.gridTileLocation || actor.gridTileLocation.IsNeighbour(target.gridTileLocation));
+    }
     private void OnArriveAtTargetLocation() {
         if(actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
             //This should not happen if the location type is target in vision because this will be called upon entering vision of target
@@ -475,15 +439,11 @@ public class GoapAction {
         CreateThoughtBubbleLog();
         CreateStates();
     }
-    public bool IsThisPartOfActorActionPool(Character actor) {
-        List<INTERACTION_TYPE> actorInteractions = RaceManager.Instance.GetNPCInteractionsOfCharacter(actor);
-        return actorInteractions.Contains(goapType);
-    }
-    public bool CanSatisfyRequirements() {
-        bool requirementActionSatisfied = true;
-        if (_requirementAction != null) {
-            requirementActionSatisfied = _requirementAction();
-        }
+    public bool CanSatisfyRequirements(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData);
+        //if (_requirementAction != null) {
+        //    requirementActionSatisfied = _requirementAction();
+        //}
         if (requirementActionSatisfied) {
             if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
                 requirementActionSatisfied = actor.IsCombatReady();
@@ -491,18 +451,18 @@ public class GoapAction {
         }
         return requirementActionSatisfied; //&& (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }
-    public bool CanSatisfyRequirementOnBuildGoapTree() {
-        bool requirementActionSatisfied = true;
-        if (_requirementOnBuildGoapTreeAction != null) {
-            requirementActionSatisfied = _requirementOnBuildGoapTreeAction();
-        }
-        if (requirementActionSatisfied) {
-            if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
-                requirementActionSatisfied = actor.IsCombatReady();
-            }
-        }
-        return requirementActionSatisfied;
-    }
+    //public bool CanSatisfyRequirementOnBuildGoapTree() {
+    //    bool requirementActionSatisfied = true;
+    //    if (_requirementOnBuildGoapTreeAction != null) {
+    //        requirementActionSatisfied = _requirementOnBuildGoapTreeAction();
+    //    }
+    //    if (requirementActionSatisfied) {
+    //        if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
+    //            requirementActionSatisfied = actor.IsCombatReady();
+    //        }
+    //    }
+    //    return requirementActionSatisfied;
+    //}
     public void ReturnToActorTheActionResult(string result) {
         this.result = result;
         //actor.OnCharacterDoAction(this);
@@ -551,10 +511,6 @@ public class GoapAction {
         this.endAction = endAction;
     }
     public void StopAction(bool removeJobInQueue = false, string reason = "") {
-        //GoapAction action = actor.currentAction;
-        //if(actor.marker.pathfindingThread != null) {
-        //    actor.marker.pathfindingThread.SetDoNotMove(true);
-        //}
         if(actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null && actor.currentAction == this) {
             if (reason != "") {
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
@@ -666,9 +622,9 @@ public class GoapAction {
     protected bool HasSupply(int neededSupply) {
         return actor.supply >= neededSupply;
     }
-    public void SetExecutionDate(GameDate date) {
-        executionDate = date;
-    }
+    //public void SetExecutionDate(GameDate date) {
+    //    executionDate = date;
+    //}
     public void FailAction() {
         //if (goapType == INTERACTION_TYPE.SLEEP) {
         //    Debug.LogError(actor.name + " failed " + goapName + " action from recalculate path!");
@@ -732,7 +688,7 @@ public class GoapAction {
     public bool IsActorAtTargetTile() {
         return actor.gridTileLocation == targetTile;
     }
-    public int CostMultiplier() {
+    public int CostMultiplier(Character actor) {
         if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick(actor))) {
             return 1;
         }
@@ -879,9 +835,9 @@ public class GoapAction {
         }
         return false;
     }
-    public void AddActualEffect(GoapEffect effect) {
-        actualEffects.Add(effect);
-    }
+    //public void AddActualEffect(GoapEffect effect) {
+    //    actualEffects.Add(effect);
+    //}
     #endregion
 
     #region Tile Objects
@@ -934,72 +890,17 @@ public class GoapAction {
         }
     }
     #endregion
-
-    #region Crime System
-    public bool IsConsideredACrimeBy(Character reacting) {
-        if (actor.faction == FactionManager.Instance.neutralFaction 
-            || reacting.faction == FactionManager.Instance.neutralFaction) {
-            return false;
-        }
-        if (parentPlan != null && parentPlan.job != null
-                && reacting.homeArea != null && reacting.homeArea.jobQueue.jobsInQueue.Contains(parentPlan.job)) {
-            return false;
-        }
-        return reacting.faction == actor.faction && committedCrime != CRIME.NONE;
-    }
-    protected void SetCommittedCrime(CRIME crime, Character[] crimeCommitters) {
-        committedCrime = crime;
-        this.crimeCommitters = crimeCommitters;
-    }
-    public void OnReportCrime() {
-        hasCrimeBeenReported = true;
-    }
-    #endregion
-
-    #region Special Note: Stealth
-    protected bool HasOtherCharacterInRadius() {
-        if (poiTarget is Character) {
-            List<LocationGridTile> tiles = (poiTarget as Character).currentStructure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3, 0, true);
-            for (int i = 0; i < tiles.Count; i++) {
-                //if (tiles[i].occupant != null && tiles[i].occupant != actor && tiles[i].occupant != poiTarget) {
-                //    return true;
-                //}
-                LocationGridTile currTile = tiles[i];
-                List<Character> characters = new List<Character>(currTile.charactersHere);
-                characters.Remove(actor);
-                characters.Remove(poiTarget as Character);
-                for (int j = 0; j < characters.Count; j++) {
-                    Character currCharacter = characters[j];
-                    //check each character, if a character has a disabler trait, do not consider them as a character that will notice this action
-                    if (!currCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
-                        return true;
-                    }
-                }
-            }
-        } else {
-            List<LocationGridTile> tiles = poiTarget.gridTileLocation.structure.location.areaMap.GetTilesInRadius(poiTarget.gridTileLocation, 3, 0, true);
-            for (int i = 0; i < tiles.Count; i++) {
-                //if (tiles[i].occupant != null && tiles[i].occupant != actor && tiles[i].occupant != poiTarget) {
-                //    return true;
-                //}
-                LocationGridTile currTile = tiles[i];
-                List<Character> characters = new List<Character>(currTile.charactersHere);
-                characters.Remove(actor);
-                for (int j = 0; j < characters.Count; j++) {
-                    Character currCharacter = characters[j];
-                    //check each character, if a character has a disabler trait, do not consider them as a character that will notice this action
-                    if (!currCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        
-        return false;
-    }
-    #endregion
 }
 
+public struct GoapActionInvalidity {
+    public bool isInvalid;
+    public string logKey;
+
+    public GoapActionInvalidity(bool isInvalid, string logKey) {
+        this.isInvalid = isInvalid;
+        this.logKey = logKey;
+    }
+}
 public struct GoapEffect {
     public GOAP_EFFECT_CONDITION conditionType;
     public object conditionKey;

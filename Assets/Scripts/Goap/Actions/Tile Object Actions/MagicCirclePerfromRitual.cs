@@ -24,8 +24,8 @@ public class MagicCirclePerformRitual : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Ritualized", targetPOI = actor });
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             SetState("Perform Ritual Success");
         } else {
@@ -36,7 +36,7 @@ public class MagicCirclePerformRitual : GoapAction {
             }
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 3;
     }
     public override void OnStopActionDuringCurrentState() {

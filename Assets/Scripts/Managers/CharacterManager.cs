@@ -82,7 +82,7 @@ public class CharacterManager : MonoBehaviour {
         //ConstructAtHomeInteractionWeights();
         //ConstructRoleInteractions();
         //ConstructPortraitDictionaries();
-        Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.AddListener<GoapAction, string, Character, IPointOfInterest, object[]>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
@@ -1447,7 +1447,7 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Listeners
-    private void OnActionStateSet(GoapAction action, GoapActionState state) {
+    private void OnAfterActionStateSet(GoapAction action, string stateName, Character actor, IPointOfInterest target, object[] otherData) {
         action.actor.marker.UpdateAnimation();
 
         IPointOfInterest target = null;

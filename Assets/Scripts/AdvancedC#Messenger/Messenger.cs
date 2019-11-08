@@ -233,10 +233,34 @@ static internal class Messenger {
         OnListenerAdding(eventType, handler);
         eventTable[eventType] = (Callback<T, U, V>)eventTable[eventType] + handler;
     }
-	#endregion
- 
-	#region RemoveListener
-	//No parameters
+
+    //Four parameters
+    static public void AddListener<T, U, V, W>(string eventType, Callback<T, U, V, W> handler) {
+        OnListenerAdding(eventType, handler);
+        eventTable[eventType] = (Callback<T, U, V, W>) eventTable[eventType] + handler;
+    }
+
+    //Five parameters
+    static public void AddListener<T, U, V, W, X>(string eventType, Callback<T, U, V, W, X> handler) {
+        OnListenerAdding(eventType, handler);
+        eventTable[eventType] = (Callback<T, U, V, W, X>) eventTable[eventType] + handler;
+    }
+
+    //Six parameters
+    static public void AddListener<T, U, V, W, X, Y>(string eventType, Callback<T, U, V, W, X, Y> handler) {
+        OnListenerAdding(eventType, handler);
+        eventTable[eventType] = (Callback<T, U, V, W, X, Y>) eventTable[eventType] + handler;
+    }
+
+    //Seven parameters
+    static public void AddListener<T, U, V, W, X, Y, Z>(string eventType, Callback<T, U, V, W, X, Y, Z> handler) {
+        OnListenerAdding(eventType, handler);
+        eventTable[eventType] = (Callback<T, U, V, W, X, Y, Z>) eventTable[eventType] + handler;
+    }
+    #endregion
+
+    #region RemoveListener
+    //No parameters
     static public void RemoveListener(string eventType, Callback handler) {
         if (eventTable.ContainsKey(eventType)) {
             OnListenerRemoving(eventType, handler);
@@ -271,10 +295,46 @@ static internal class Messenger {
             OnListenerRemoved(eventType);
         }
     }
-	#endregion
- 
-	#region Broadcast
-	//No parameters
+
+    //Four parameters
+    static public void RemoveListener<T, U, V, W>(string eventType, Callback<T, U, V, W> handler) {
+        if (eventTable.ContainsKey(eventType)) {
+            OnListenerRemoving(eventType, handler);
+            eventTable[eventType] = (Callback<T, U, V, W>) eventTable[eventType] - handler;
+            OnListenerRemoved(eventType);
+        }
+    }
+
+    //Five parameters
+    static public void RemoveListener<T, U, V, W, X>(string eventType, Callback<T, U, V, W, X> handler) {
+        if (eventTable.ContainsKey(eventType)) {
+            OnListenerRemoving(eventType, handler);
+            eventTable[eventType] = (Callback<T, U, V, W, X>) eventTable[eventType] - handler;
+            OnListenerRemoved(eventType);
+        }
+    }
+
+    //Six parameters
+    static public void RemoveListener<T, U, V, W, X, Y>(string eventType, Callback<T, U, V, W, X, Y> handler) {
+        if (eventTable.ContainsKey(eventType)) {
+            OnListenerRemoving(eventType, handler);
+            eventTable[eventType] = (Callback<T, U, V, W, X, Y>) eventTable[eventType] - handler;
+            OnListenerRemoved(eventType);
+        }
+    }
+
+    //Seven parameters
+    static public void RemoveListener<T, U, V, W, X, Y, Z>(string eventType, Callback<T, U, V, W, X, Y, Z> handler) {
+        if (eventTable.ContainsKey(eventType)) {
+            OnListenerRemoving(eventType, handler);
+            eventTable[eventType] = (Callback<T, U, V, W, X, Y, Z>) eventTable[eventType] - handler;
+            OnListenerRemoved(eventType);
+        }
+    }
+    #endregion
+
+    #region Broadcast
+    //No parameters
     static public void Broadcast(string eventType) {
 #if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
 		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
@@ -384,7 +444,119 @@ static internal class Messenger {
             }
         }
     }
-	#endregion
+
+    //Four parameters
+    static public void Broadcast<T, U, V, W>(string eventType, T arg1, U arg2, V arg3, W arg4) {
+#if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
+		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
+#endif
+        OnBroadcasting(eventType);
+
+        Delegate d;
+        if (eventTable.TryGetValue(eventType, out d)) {
+            Callback<T, U, V, W> callback = d as Callback<T, U, V, W>;
+
+            if (callback != null) {
+#if LOG_BROADCAST_EXECUTION
+                string summary = "Executing delegates for signal " + eventType;
+                Delegate[] list = callback.GetInvocationList();
+                for (int i = 0; i < list.Length; i++) {
+                    Delegate currD = list[i];
+                    summary += "\n" + i + " - " + currD.Method.ToString() + ", " + currD.Target.ToString();
+                }
+                Debug.Log(summary);
+#endif
+                callback(arg1, arg2, arg3, arg4);
+            } else {
+                throw CreateBroadcastSignatureException(eventType);
+            }
+        }
+    }
+
+    //Five parameters
+    static public void Broadcast<T, U, V, W, X>(string eventType, T arg1, U arg2, V arg3, W arg4, X arg5) {
+#if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
+		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
+#endif
+        OnBroadcasting(eventType);
+
+        Delegate d;
+        if (eventTable.TryGetValue(eventType, out d)) {
+            Callback<T, U, V, W, X> callback = d as Callback<T, U, V, W, X>;
+
+            if (callback != null) {
+#if LOG_BROADCAST_EXECUTION
+                string summary = "Executing delegates for signal " + eventType;
+                Delegate[] list = callback.GetInvocationList();
+                for (int i = 0; i < list.Length; i++) {
+                    Delegate currD = list[i];
+                    summary += "\n" + i + " - " + currD.Method.ToString() + ", " + currD.Target.ToString();
+                }
+                Debug.Log(summary);
+#endif
+                callback(arg1, arg2, arg3, arg4, arg5);
+            } else {
+                throw CreateBroadcastSignatureException(eventType);
+            }
+        }
+    }
+
+    //Six parameters
+    static public void Broadcast<T, U, V, W, X, Y>(string eventType, T arg1, U arg2, V arg3, W arg4, X arg5, Y arg6) {
+#if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
+		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
+#endif
+        OnBroadcasting(eventType);
+
+        Delegate d;
+        if (eventTable.TryGetValue(eventType, out d)) {
+            Callback<T, U, V, W, X, Y> callback = d as Callback<T, U, V, W, X, Y>;
+
+            if (callback != null) {
+#if LOG_BROADCAST_EXECUTION
+                string summary = "Executing delegates for signal " + eventType;
+                Delegate[] list = callback.GetInvocationList();
+                for (int i = 0; i < list.Length; i++) {
+                    Delegate currD = list[i];
+                    summary += "\n" + i + " - " + currD.Method.ToString() + ", " + currD.Target.ToString();
+                }
+                Debug.Log(summary);
+#endif
+                callback(arg1, arg2, arg3, arg4, arg5, arg6);
+            } else {
+                throw CreateBroadcastSignatureException(eventType);
+            }
+        }
+    }
+
+    //Seven parameters
+    static public void Broadcast<T, U, V, W, X, Y, Z>(string eventType, T arg1, U arg2, V arg3, W arg4, X arg5, Y arg6, Z arg7) {
+#if LOG_ALL_MESSAGES || LOG_BROADCAST_MESSAGE
+		Debug.Log("MESSENGER\t" + System.DateTime.Now.ToString("hh:mm:ss.fff") + "\t\t\tInvoking \t\"" + eventType + "\"");
+#endif
+        OnBroadcasting(eventType);
+
+        Delegate d;
+        if (eventTable.TryGetValue(eventType, out d)) {
+            Callback<T, U, V, W, X, Y, Z> callback = d as Callback<T, U, V, W, X, Y, Z>;
+
+            if (callback != null) {
+#if LOG_BROADCAST_EXECUTION
+                string summary = "Executing delegates for signal " + eventType;
+                Delegate[] list = callback.GetInvocationList();
+                for (int i = 0; i < list.Length; i++) {
+                    Delegate currD = list[i];
+                    summary += "\n" + i + " - " + currD.Method.ToString() + ", " + currD.Target.ToString();
+                }
+                Debug.Log(summary);
+#endif
+                callback(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
+            } else {
+                throw CreateBroadcastSignatureException(eventType);
+            }
+        }
+    }
+    #endregion
 }
  
 //This manager will ensure that the messenger's eventTable will be cleaned up upon loading of a new level.

@@ -20,8 +20,8 @@ public class SpreadRumorRemoveLove : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = rumoredCharacter });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Paramour", targetPOI = rumoredCharacter });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Break Love Success", 10);
@@ -31,7 +31,7 @@ public class SpreadRumorRemoveLove : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 15;
     }
     public override bool InitializeOtherData(object[] otherData) {

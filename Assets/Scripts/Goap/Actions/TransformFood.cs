@@ -9,18 +9,8 @@ public class TransformFood : GoapAction {
 
     protected override bool isTargetMissing {
         get {
-            bool targetMissing = poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
+            return poiTarget.gridTileLocation == null || actor.specificLocation != poiTarget.specificLocation
               || !(actor.gridTileLocation == poiTarget.gridTileLocation || actor.gridTileLocation.IsNeighbour(poiTarget.gridTileLocation)) || !(poiTarget as Character).isDead;
-
-            if (targetMissing) {
-                return targetMissing;
-            } else {
-                Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
-                if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
-                    return true;
-                }
-                return targetMissing;
-            }
         }
     }
 
@@ -48,15 +38,15 @@ public class TransformFood : GoapAction {
         }
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = 0, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             SetState("Transform Success");
         } else {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return Utilities.rng.Next(15, 26);
     }
     protected override void CreateThoughtBubbleLog() {

@@ -27,8 +27,8 @@ public class DrinkBlood : GoapAction {
         //}
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Lethargic", targetPOI = poiTarget });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             Character target = poiTarget as Character;
             //SetState("Drink Success");
@@ -46,7 +46,7 @@ public class DrinkBlood : GoapAction {
             }
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 1;
     }
     public override void OnStopActionDuringCurrentState() {

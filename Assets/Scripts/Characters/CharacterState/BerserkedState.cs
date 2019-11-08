@@ -157,7 +157,7 @@ public class BerserkedState : CharacterState {
             return;
         }
         stateComponent.character.currentAction.SetEndAction(BerserkAgain);
-        stateComponent.character.currentAction.PerformActualAction();
+        stateComponent.character.currentAction.Perform();
     }
     private void BerserkAgain(string result, GoapAction goapAction) {
         string summary = stateComponent.character.name + " is checking for berserk again";

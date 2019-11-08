@@ -37,15 +37,15 @@ public class CurseCharacter : GoapAction {
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = poiTarget });
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, targetPOI = poiTarget });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         //if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
         //} else {
         //    SetState("Target Missing");
         //}
         SetState("Curse Success");
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 3;
     }
     protected override void MoveToDoAction(Character targetCharacter) {

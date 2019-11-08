@@ -12,8 +12,8 @@ public class SlayCharacter : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         //rather than checking location check if the character is not in anyone elses party and is still active
         if (!isTargetMissing) {
             if ((poiTarget as Character).isDead) {
@@ -25,7 +25,7 @@ public class SlayCharacter : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 1;
     }
     //public override int GetArrangedLogPriorityIndex(string priorityID) {

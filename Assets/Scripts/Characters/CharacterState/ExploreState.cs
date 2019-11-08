@@ -106,7 +106,7 @@ public class ExploreState : CharacterState {
             return;
         }
         stateComponent.character.currentAction.SetEndAction(ExploreAgain);
-        stateComponent.character.currentAction.PerformActualAction();
+        stateComponent.character.currentAction.Perform();
     }
     private void ExploreAgain(string result, GoapAction goapAction) {
         SetCurrentlyDoingAction(null);

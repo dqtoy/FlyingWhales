@@ -11,15 +11,15 @@ public class PrioritizedShock : GoapAction {
     }
 
     #region Overrides
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         SetState("Shock Success");
     }
     public override void DoAction() {
         SetTargetStructure();
         base.DoAction();
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return Utilities.rng.Next(25, 51);
     }
     public override LocationGridTile GetTargetLocationTile() {

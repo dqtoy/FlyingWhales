@@ -29,8 +29,8 @@ public class ArgueCharacter : GoapAction {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Annoyed", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             Character target = poiTarget as Character;
             if (IsTargetUnable(target)) {
@@ -42,7 +42,7 @@ public class ArgueCharacter : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         int cost = 5; //Base cost: +5
         Character targetCharacter = poiTarget as Character;
         Charmed charmed = actor.GetNormalTrait("Charmed") as Charmed;

@@ -63,7 +63,7 @@ public class StrollOutsideState : CharacterState {
             return;
         }
         stateComponent.character.currentAction.SetEndAction(StrollAgain);
-        stateComponent.character.currentAction.PerformActualAction();
+        stateComponent.character.currentAction.Perform();
     }
     private void StrollAgain(string result, GoapAction goapAction) {
         SetCurrentlyDoingAction(null);

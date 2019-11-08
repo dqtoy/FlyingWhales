@@ -146,12 +146,12 @@ public class InteractionManager : MonoBehaviour {
                     }
                 }
                 break;
-            case ACTION_LOCATION_TYPE.ON_TARGET:
-                //**On Target**: in the same tile as the target item or tile object
-                //if(knownPOITargetLocation.occupant == null || knownPOITargetLocation.occupant == actor) {
-                chosenTile = knownPOITargetLocation;
-                //}
-                break;
+            //case ACTION_LOCATION_TYPE.ON_TARGET:
+            //    //**On Target**: in the same tile as the target item or tile object
+            //    //if(knownPOITargetLocation.occupant == null || knownPOITargetLocation.occupant == actor) {
+            //    chosenTile = knownPOITargetLocation;
+            //    //}
+            //    break;
             default:
                 break;
         }

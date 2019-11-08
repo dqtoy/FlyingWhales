@@ -196,17 +196,3 @@ public class GoapPlanner {
         return arrangedUsableActions;
     }
 }
-
-public class GoapNode {
-    public GoapNode parent;
-    public int runningCost;
-    public int index;
-    public GoapAction action;
-
-    public GoapNode(GoapNode parent, int runningCost, GoapAction action) {
-        this.parent = parent;
-        this.runningCost = runningCost;
-        this.action = action;
-    }
-}
-

@@ -200,7 +200,7 @@ public class DouseFireState : CharacterState {
     private void OnArriveAtWaterLocation(GoapAction goapAction) {
         stateComponent.character.SetCurrentAction(goapAction);
         stateComponent.character.currentAction.SetEndAction(OnGetWaterFromPond);
-        stateComponent.character.currentAction.PerformActualAction();
+        stateComponent.character.currentAction.Perform();
     }
     private void DouseNearestFire() {
         if (isDousingFire) {
@@ -251,7 +251,7 @@ public class DouseFireState : CharacterState {
         //}
         stateComponent.character.SetCurrentAction(goapAction);
         stateComponent.character.currentAction.SetEndAction(OnDouseFire);
-        stateComponent.character.currentAction.PerformActualAction();
+        stateComponent.character.currentAction.Perform();
     }
     private void OnDouseFire(string result, GoapAction action) {
         SetCurrentlyDoingAction(null);

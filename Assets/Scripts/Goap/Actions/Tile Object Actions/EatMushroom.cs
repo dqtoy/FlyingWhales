@@ -18,8 +18,8 @@ public class EatMushroom : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             SetState("Eat Success");
         } else {
@@ -30,7 +30,7 @@ public class EatMushroom : GoapAction {
             }
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         if (actor.GetNormalTrait("Herbivore") != null) {
             return 25;
         } else {

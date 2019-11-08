@@ -19,8 +19,8 @@ public class SpreadRumorRemoveFriendship : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Friend", targetPOI = rumoredCharacter });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             WeightedDictionary<string> weights = new WeightedDictionary<string>();
             weights.AddElement("Break Friendship Success", 10);
@@ -30,7 +30,7 @@ public class SpreadRumorRemoveFriendship : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 15;
     }
     public override bool InitializeOtherData(object[] otherData) {

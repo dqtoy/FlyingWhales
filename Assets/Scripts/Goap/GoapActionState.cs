@@ -9,13 +9,13 @@ public class GoapActionState {
 	public string name { get; private set; }
     public int duration { get; private set; } //if 0, go instantly to after effect, if -1, endless (can only be ended manually)
     public Log descriptionLog { get; private set; } //Always set/create description logs on Pre effect because description logs are used in Memories and Memories are stored on start of the GoapActionState
-    public Action preEffect { get; private set; }
-    public Action perTickEffect { get; private set; }
-    public Action afterEffect { get; private set; }
+    public Action<Character, IPointOfInterest, object[]> preEffect { get; private set; }
+    public Action<Character, IPointOfInterest, object[]> perTickEffect { get; private set; }
+    public Action<Character, IPointOfInterest, object[]> afterEffect { get; private set; }
     public Func<Character, Intel, SHARE_INTEL_STATUS, List<string>> shareIntelReaction { get; private set; }
     public string status { get; private set; }
     public bool shouldAddLogs { get; private set; }
-    public bool isDone { get; private set; }
+    //public bool isDone { get; private set; }
     public string animationName { get; private set; } //specific animation per action state
 
     public bool hasPerTickEffect { get { return perTickEffect != null; } }
@@ -23,7 +23,7 @@ public class GoapActionState {
 
     public List<ActionLog> arrangedLogs { get; protected set; }
 
-    public GoapActionState(string name, GoapAction parentAction, Action preEffect, Action perTickEffect, Action afterEffect, int duration, string status) {
+    public GoapActionState(string name, GoapAction parentAction, Action<Character, IPointOfInterest, object[]> preEffect, Action<Character, IPointOfInterest, object[]> perTickEffect, Action<Character, IPointOfInterest, object[]> afterEffect, int duration, string status) {
         this.name = name;
         this.preEffect = preEffect;
         this.perTickEffect = perTickEffect;
@@ -32,7 +32,7 @@ public class GoapActionState {
         this.duration = duration;
         this.status = status;
         this.shouldAddLogs = true;
-        this.isDone = false;
+        //this.isDone = false;
         this.arrangedLogs = new List<ActionLog>();
         CreateLog();
     }
@@ -41,11 +41,11 @@ public class GoapActionState {
         shareIntelReaction = intelReaction;
     }
 
-    #region Duration
-    public void OverrideDuration(int newDuration) {
-        this.duration = newDuration;
-    }
-    #endregion
+    //#region Duration
+    //public void OverrideDuration(int newDuration) {
+    //    this.duration = newDuration;
+    //}
+    //#endregion
 
     #region Logs
     private void CreateLog() {
@@ -79,62 +79,59 @@ public class GoapActionState {
     }
     #endregion
 
-    public void Execute() {
-        preEffect?.Invoke();
-        parentAction.SetExecutionDate(GameManager.Instance.Today());
+    //public void Execute(Character actor, Character target, object[] otherData) {
+    //    preEffect?.Invoke(actor, target, otherData);
+    //    //parentAction.SetExecutionDate(GameManager.Instance.Today());
 
-        if(duration > 0) {
-            currentDuration = 0;
-            StartPerTickEffect();
-        } else if (duration != -1){
-            EndPerTickEffect();
-        }
-    }
-    private void StartPerTickEffect() {
-        Messenger.AddListener(Signals.TICK_STARTED, PerTickEffect);
-    }
-    public void EndPerTickEffect(bool shouldDoAfterEffect = true) {
-        //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
-        if (isDone) {
-            return;
-        }
-        isDone = true;
-        parentAction.ReturnToActorTheActionResult(status);
-        if (shouldDoAfterEffect) {
-            if (afterEffect != null) {
-                afterEffect();
-            }
-            if (parentAction.shouldAddLogs && this.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
-                if (descriptionLog != null) {
-                    AddArrangedLog("description", descriptionLog, null);
-                }
-                for (int i = 0; i < arrangedLogs.Count; i++) {
-                    arrangedLogs[i].log.SetDate(GameManager.Instance.Today());
-                    arrangedLogs[i].log.AddLogToInvolvedObjects();
-                }
-                //descriptionLog.SetDate(GameManager.Instance.Today());
-                //descriptionLog.AddLogToInvolvedObjects();
-            }
-        } else {
-            parentAction.SetShowIntelNotification(false);
-        }
-        parentAction.actor.OnCharacterDoAction(parentAction); //Moved this here to fix intel not being shown, because arranged logs are not added until after the ReturnToActorTheActionResult() call.
-        if (shouldDoAfterEffect) {
-            parentAction.AfterAfterEffect();
-        }
-    }
-    public void StopPerTickEffect() {
-        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
-    }
-    private void PerTickEffect() {
-        currentDuration++;
-        if (perTickEffect != null) {
-            perTickEffect();
-        }
-        if(currentDuration >= duration) {
-            EndPerTickEffect();
-        }
-    }
+    //    if(duration > 0) {
+    //        currentDuration = 0;
+    //        StartPerTickEffect();
+    //    } else if (duration != -1){
+    //        EndPerTickEffect();
+    //    }
+    //}
+    //private void StartPerTickEffect() {
+    //    Messenger.AddListener(Signals.TICK_STARTED, PerTickEffect);
+    //}
+    //public void EndPerTickEffect(bool shouldDoAfterEffect = true) {
+    //    //if (isDone) {
+    //    //    return;
+    //    //}
+    //    //isDone = true;
+    //    parentAction.ReturnToActorTheActionResult(status);
+    //    if (shouldDoAfterEffect) {
+    //        if (afterEffect != null) {
+    //            afterEffect();
+    //        }
+    //        if (parentAction.shouldAddLogs && this.shouldAddLogs) { //only add logs if both the parent action and this state should add logs
+    //            if (descriptionLog != null) {
+    //                AddArrangedLog("description", descriptionLog, null);
+    //            }
+    //            for (int i = 0; i < arrangedLogs.Count; i++) {
+    //                arrangedLogs[i].log.SetDate(GameManager.Instance.Today());
+    //                arrangedLogs[i].log.AddLogToInvolvedObjects();
+    //            }
+    //        }
+    //    } else {
+    //        parentAction.SetShowIntelNotification(false);
+    //    }
+    //    parentAction.actor.OnCharacterDoAction(parentAction); //Moved this here to fix intel not being shown, because arranged logs are not added until after the ReturnToActorTheActionResult() call.
+    //    if (shouldDoAfterEffect) {
+    //        parentAction.AfterAfterEffect();
+    //    }
+    //}
+    //public void StopPerTickEffect() {
+    //    Messenger.RemoveListener(Signals.TICK_STARTED, PerTickEffect);
+    //}
+    //private void PerTickEffect() {
+    //    currentDuration++;
+    //    if (perTickEffect != null) {
+    //        perTickEffect();
+    //    }
+    //    if(currentDuration >= duration) {
+    //        EndPerTickEffect();
+    //    }
+    //}
 
     #region Animation
     public void SetAnimation(string animationName) {

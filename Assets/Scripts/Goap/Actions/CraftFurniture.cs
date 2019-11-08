@@ -28,15 +28,15 @@ public class CraftFurniture : GoapAction {
         }
         //AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = craftedItem.ToString(), targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (targetSpot.objHere == null) {
             SetState("Craft Success");
         } else {
             SetState("Craft Fail");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 2;
     }
     public override LocationGridTile GetTargetLocationTile() {

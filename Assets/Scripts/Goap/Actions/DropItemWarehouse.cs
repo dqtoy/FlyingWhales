@@ -17,8 +17,8 @@ public class DropItemWarehouse : GoapAction {
     }
 
     #region Overrides
-    protected override void AddDefaultObjectsToLog(Log log) {
-        base.AddDefaultObjectsToLog(log);
+    protected override void AddFillersToLog(Log log) {
+        base.AddFillersToLog(log);
         log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(itemTypeToDeposit.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
     }
     protected override void ConstructPreconditionsAndEffects() {
@@ -32,14 +32,14 @@ public class DropItemWarehouse : GoapAction {
         SetTargetStructure();
         base.DoAction();
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         SetState("Drop Success");
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(ACTION_LOCATION_TYPE.RANDOM_LOCATION, actor, null, targetStructure);
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 1;
     }
     public override void SetTargetStructure() {

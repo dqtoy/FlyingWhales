@@ -26,11 +26,11 @@ public class RoamingToSteal : GoapAction {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
         }
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         SetState("In Progress");
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         if (actor.GetNormalTrait("Kleptomaniac") != null) {
             return Utilities.rng.Next(5, 46);
         }

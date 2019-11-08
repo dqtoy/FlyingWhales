@@ -24,18 +24,18 @@ public class ReturnHomeLocation : GoapAction {
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     //}
-    public override void PerformActualAction() {
+    public override void Perform() {
         //if (targetTile.occupant != null && targetTile.occupant != actor) {
         //    SetState("Return Home Failed");
         //} else {
         //}
-        base.PerformActualAction();
+        base.Perform();
         SetState("Return Home Success");
     }
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 3;
     }
     //public override void FailAction() {

@@ -58,7 +58,7 @@ public class TileObjectDestroy : GoapAction {
     //        SetState("Target Missing");
     //    }
     //}
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 10;
     }
     //public override void FailAction() {

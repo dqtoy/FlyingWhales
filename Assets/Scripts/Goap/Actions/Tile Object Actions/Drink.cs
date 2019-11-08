@@ -9,14 +9,7 @@ public class Drink : GoapAction {
     public Drink(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //shouldIntelNotificationOnlyIfActorIsActive = true;
         if (actor.GetNormalTrait("Drunkard") != null) {
-            validTimeOfDays = new TIME_IN_WORDS[] {
-                TIME_IN_WORDS.MORNING,
-                TIME_IN_WORDS.LUNCH_TIME,
-                TIME_IN_WORDS.AFTERNOON,
-                TIME_IN_WORDS.AFTER_MIDNIGHT,
-                TIME_IN_WORDS.EARLY_NIGHT,
-                TIME_IN_WORDS.LATE_NIGHT,
-            };
+            validTimeOfDays = null;
         } else {
             validTimeOfDays = new TIME_IN_WORDS[] {
                 TIME_IN_WORDS.EARLY_NIGHT,
@@ -35,8 +28,8 @@ public class Drink : GoapAction {
     protected override void ConstructPreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             //SetState("Drink Success");
             poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
@@ -49,7 +42,7 @@ public class Drink : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         //**Cost**: 15 - 26 (If Actor is alcoholic 5 - 19)
         if (actor.GetNormalTrait("Drunkard") != null) {
             return Utilities.rng.Next(5, 20);

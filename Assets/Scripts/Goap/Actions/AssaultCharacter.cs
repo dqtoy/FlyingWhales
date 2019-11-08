@@ -51,8 +51,8 @@ public class AssaultCharacter : GoapAction {
     public override bool ShouldBeStoppedWhenSwitchingStates() {
         return false;
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         SetCannotCancelAction(true);
         //actor.marker.pathfindingAI.ResetEndReachedDistance();
 
@@ -136,7 +136,7 @@ public class AssaultCharacter : GoapAction {
             SetState("Assault Failed");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 1;
     }
     //public override void FailAction() {

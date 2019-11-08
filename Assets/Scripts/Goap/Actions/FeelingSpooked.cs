@@ -14,11 +14,11 @@ public class FeelingSpooked : GoapAction {
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = actor, targetPOI = poiTarget });
     //}
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         SetState("Spooked Success");
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 10;
     }
     public override void DoAction() {

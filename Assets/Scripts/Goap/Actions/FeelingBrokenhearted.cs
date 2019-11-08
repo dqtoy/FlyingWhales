@@ -10,11 +10,11 @@ public class FeelingBrokenhearted : GoapAction {
     }
 
     #region Overrides
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         SetState("Brokenhearted Success");
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 10;
     }
     public override void DoAction() {

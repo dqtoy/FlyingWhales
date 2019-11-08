@@ -423,9 +423,6 @@ public class CharacterMarker : PooledObject {
             }
         }
     }
-    public void OnThisCharacterDoingAction(GoapAction action) {
-         UpdateActionIcon();
-    }
     public void OnCharacterTargettedByAction(GoapAction action) {
         UpdateActionIcon();
         for (int i = 0; i < action.expectedEffects.Count; i++) {

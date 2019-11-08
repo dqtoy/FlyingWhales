@@ -10,19 +10,7 @@ public class ReportCrime : GoapAction {
 
     protected override bool isTargetMissing {
         get {
-            bool targetMissing = base.isTargetMissing && !((poiTarget as Character).stateComponent.currentState is CombatState); //added checking if target character is in combat state.
-
-            if (targetMissing) {
-                return targetMissing;
-            } else {
-                if (actor != poiTarget) {
-                    Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
-                    if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
-                        return true;
-                    }
-                }
-                return targetMissing;
-            }
+            return base.isTargetMissing && !((poiTarget as Character).stateComponent.currentState is CombatState); //added checking if target character is in combat state.
         }
     }
 
@@ -49,8 +37,8 @@ public class ReportCrime : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             if (crimeAction.hasCrimeBeenReported) {
                 SetState("Report Crime Fail");
@@ -61,7 +49,7 @@ public class ReportCrime : GoapAction {
             SetState("Target Missing");
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 3;
     }
     public override bool InitializeOtherData(object[] otherData) {

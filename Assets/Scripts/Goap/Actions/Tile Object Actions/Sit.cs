@@ -15,8 +15,8 @@ public class Sit : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         if (!isTargetMissing) {
             SetState("Sit Success");
         } else {
@@ -27,7 +27,7 @@ public class Sit : GoapAction {
             }
         }
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 8;
     }
     #endregion

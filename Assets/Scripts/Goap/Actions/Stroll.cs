@@ -19,8 +19,8 @@ public class Stroll : GoapAction {
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.NONE, targetPOI = actor });
     //}
-    public override void PerformActualAction() {
-        base.PerformActualAction();
+    public override void Perform() {
+        base.Perform();
         //if (targetTile != null) {
             SetState("Stroll Success");
         //} else {
@@ -31,7 +31,7 @@ public class Stroll : GoapAction {
         SetTargetStructure();
         base.DoAction();
     }
-    protected override int GetCost() {
+    protected override int GetBaseCost() {
         return 5;
     }
     //public override void FailAction() {
