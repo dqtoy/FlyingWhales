@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Traits;
 
-public class AlterEgoData {
+public class AlterEgoData : IRelatable{
 
     //Basic Data
     public Character owner { get; private set; }
