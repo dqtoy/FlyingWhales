@@ -38,11 +38,11 @@ public class Tantrum : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //CharacterState berserkedState = actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
-        //(berserkedState as BerserkedState).SetAreCombatsLethal(false);
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //CharacterState berserkedState = actor.stateComponent.SwitchToState(CHARACTER_STATE.BERSERKED, null, actor.specificLocation, GameManager.Instance.GetTicksBasedOnHour(2));
+    //    //(berserkedState as BerserkedState).SetAreCombatsLethal(false);
+    //}
     public override bool InitializeOtherData(object[] otherData) {
         this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is string) {

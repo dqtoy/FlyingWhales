@@ -107,7 +107,7 @@ public class Burning : Trait {
                     //also make sure that character is not already watching.
                     int currentPriorityValue = characterThatWillDoJob.GetCurrentPriorityValue();
                     if (characterThatWillDoJob != traitOwner 
-                        && (characterThatWillDoJob.currentAction == null || characterThatWillDoJob.currentAction.goapType != INTERACTION_TYPE.WATCH)
+                        && (characterThatWillDoJob.currentActionNode == null || characterThatWillDoJob.currentActionNode.goapType != INTERACTION_TYPE.WATCH)
                         && currentPriorityValue > InteractionManager.Instance.GetInitialPriority(JOB_TYPE.WATCH)) {
                         summary += "\nWill watch because current priority value is  " + currentPriorityValue.ToString();
                         Character nearestDouser = sourceOfBurning.GetNearestDouserFrom(characterThatWillDoJob);

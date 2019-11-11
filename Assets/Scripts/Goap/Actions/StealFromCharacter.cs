@@ -22,7 +22,7 @@ public class StealFromCharacter : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         //if (actor.GetNormalTrait("Kleptomaniac") != null) {
         //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
         //}
@@ -56,18 +56,18 @@ public class StealFromCharacter : GoapAction {
         }
         return Utilities.rng.Next(35, 56);
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if (currentState.name == "Steal Vigilant") {
-        //    if (poiTarget is Character) {
-        //        Character targetCharacter = poiTarget as Character;
-        //        if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
-        //            CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
-        //        }
-        //        targetCharacter.marker.AddHostileInRange(actor, false);
-        //    }
-        //}
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if (currentState.name == "Steal Vigilant") {
+    //    //    if (poiTarget is Character) {
+    //    //        Character targetCharacter = poiTarget as Character;
+    //    //        if (!targetCharacter.ReactToCrime(committedCrime, this, actorAlterEgo, SHARE_INTEL_STATUS.WITNESSED)) {
+    //    //            CharacterManager.Instance.RelationshipDegradation(actor, targetCharacter, this);
+    //    //        }
+    //    //        targetCharacter.marker.AddHostileInRange(actor, false);
+    //    //    }
+    //    //}
+    //}
     #endregion
 
     #region Requirements

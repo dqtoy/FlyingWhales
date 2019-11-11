@@ -41,51 +41,51 @@ public class MakeLove : GoapAction {
         base.AddFillersToLog(log);
         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         actor.ownParty.RemoveCharacter(targetCharacter);
         if(currentState.name == "Make Love Success") {
             actor.AdjustDoNotGetLonely(-1);
             targetCharacter.AdjustDoNotGetLonely(-1);
         }
         RemoveTraitFrom(targetCharacter, "Wooed");
-        targetCharacter.RemoveTargettedByAction(this);
-        if (targetCharacter.currentAction == this) {
-            targetCharacter.SetCurrentAction(null);
+        //targetCharacter.RemoveTargettedByAction(this);
+        if (targetCharacter.currentActionNode == this) {
+            targetCharacter.SetCurrentActionNode(null);
         }
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if (currentState.name == "Make Love Success") {
-        //    if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
-        //        AddTraitTo(actor, "Satisfied", targetCharacter);
-        //        AddTraitTo(targetCharacter, "Satisfied", actor);
-        //    } else if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
-        //        AddTraitTo(actor, "Ashamed", targetCharacter);
-        //        AddTraitTo(targetCharacter, "Ashamed", actor);
-        //    }
-        //}
-        //actor.ownParty.RemoveCharacter(targetCharacter);
-        //RemoveTraitFrom(targetCharacter, "Wooed");
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if (currentState.name == "Make Love Success") {
+    //    //    if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.LOVER)) {
+    //    //        AddTraitTo(actor, "Satisfied", targetCharacter);
+    //    //        AddTraitTo(targetCharacter, "Satisfied", actor);
+    //    //    } else if (actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
+    //    //        AddTraitTo(actor, "Ashamed", targetCharacter);
+    //    //        AddTraitTo(targetCharacter, "Ashamed", actor);
+    //    //    }
+    //    //}
+    //    //actor.ownParty.RemoveCharacter(targetCharacter);
+    //    //RemoveTraitFrom(targetCharacter, "Wooed");
 
-        //targetCharacter.RemoveTargettedByAction(this);
-        //if (targetCharacter.currentAction == this) {
-        //    targetCharacter.SetCurrentAction(null);
-        //}
-    }
-    public override bool CanReactToThisCrime(Character character) {
-        //do not allow actor and target character to react
-        return character != actor && character != targetCharacter;
-    }
-    public override bool IsTarget(IPointOfInterest poi) {
-        return targetCharacter == poi || poiTarget == poi;
-    }
-    public override void OnStopActionWhileTravelling() {
-        base.OnStopActionWhileTravelling();
+    //    //targetCharacter.RemoveTargettedByAction(this);
+    //    //if (targetCharacter.currentAction == this) {
+    //    //    targetCharacter.SetCurrentAction(null);
+    //    //}
+    //}
+    //public override bool CanReactToThisCrime(Character character) {
+    //    //do not allow actor and target character to react
+    //    return character != actor && character != targetCharacter;
+    //}
+    //public override bool IsTarget(IPointOfInterest poi) {
+    //    return targetCharacter == poi || poiTarget == poi;
+    //}
+    public override void OnStopWhileStarted() {
+        base.OnStopWhileStarted();
         actor.ownParty.RemoveCharacter(targetCharacter);
         RemoveTraitFrom(targetCharacter, "Wooed");
-        targetCharacter.RemoveTargettedByAction(this);
-        if (targetCharacter.currentAction == this) {
-            targetCharacter.SetCurrentAction(null);
+        //targetCharacter.RemoveTargettedByAction(this);
+        if (targetCharacter.currentActionNode == this) {
+            targetCharacter.SetCurrentActionNode(null);
         }
         actor.DropPlan(parentPlan, true);
     }
@@ -103,7 +103,7 @@ public class MakeLove : GoapAction {
         actor.AdjustDoNotGetLonely(1);
         targetCharacter.AdjustDoNotGetLonely(1);
 
-        targetCharacter.SetCurrentAction(this);
+        targetCharacter.SetCurrentActionNode(this);
         currentState.AddLogFiller(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         currentState.SetIntelReaction(MakeLoveSuccessReactions);
     }
@@ -179,9 +179,9 @@ public class MakeLove : GoapAction {
         actor.ownParty.RemoveCharacter(targetCharacter);
         RemoveTraitFrom(targetCharacter, "Wooed");
 
-        targetCharacter.RemoveTargettedByAction(this);
-        if (targetCharacter.currentAction == this) {
-            targetCharacter.SetCurrentAction(null);
+        //targetCharacter.RemoveTargettedByAction(this);
+        if (targetCharacter.currentActionNode == this) {
+            targetCharacter.SetCurrentActionNode(null);
         }
     }
     private void PreMakeLoveFail() {
@@ -195,9 +195,9 @@ public class MakeLove : GoapAction {
         actor.ownParty.RemoveCharacter(targetCharacter);
         RemoveTraitFrom(targetCharacter, "Wooed");
 
-        targetCharacter.RemoveTargettedByAction(this);
-        if (targetCharacter.currentAction == this) {
-            targetCharacter.SetCurrentAction(null);
+        //targetCharacter.RemoveTargettedByAction(this);
+        if (targetCharacter.currentActionNode == this) {
+            targetCharacter.SetCurrentActionNode(null);
         }
     }
     private void PreTargetMissing() {
@@ -207,9 +207,9 @@ public class MakeLove : GoapAction {
         actor.ownParty.RemoveCharacter(targetCharacter);
         RemoveTraitFrom(targetCharacter, "Wooed");
 
-        targetCharacter.RemoveTargettedByAction(this);
-        if (targetCharacter.currentAction == this) {
-            targetCharacter.SetCurrentAction(null);
+        //targetCharacter.RemoveTargettedByAction(this);
+        if (targetCharacter.currentActionNode == this) {
+            targetCharacter.SetCurrentActionNode(null);
         }
     }
     #endregion

@@ -204,14 +204,15 @@ public class Lycanthrope : Trait {
         return _character.marker.inVisionCharacters.Count == 0;
     }
     private void DoTransformWolf() {
-        if (_character.currentAction != null) {
+        if (_character.currentActionNode != null) {
             _character.StopCurrentAction(false);
         }
         if (_character.stateComponent.currentState != null) {
             _character.stateComponent.currentState.OnExitThisState();
-        } else if (_character.stateComponent.stateToDo != null) {
-            _character.stateComponent.SetStateToDo(null, false, false);
         }
+        //else if (_character.stateComponent.stateToDo != null) {
+        //    _character.stateComponent.SetStateToDo(null, false, false);
+        //}
 
         PlanTransformToWolf();
     }

@@ -24,7 +24,7 @@ public class ReplaceTileObject : GoapAction {
             log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
         }
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         if (tileObjectToReplace != null) {
             TileObjectData data = TileObjectDB.GetTileObjectData(tileObjectToReplace.tileObjectType);
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = data.constructionCost, targetPOI = actor }, () => HasSupply(data.constructionCost));
@@ -61,7 +61,7 @@ public class ReplaceTileObject : GoapAction {
             SetTargetStructure();
             preconditions.Clear();
             expectedEffects.Clear();
-            ConstructPreconditionsAndEffects();
+            ConstructBasePreconditionsAndEffects();
             CreateThoughtBubbleLog();
             states["Replace Success"].OverrideDuration(TileObjectDB.GetTileObjectData(tileObjectToReplace.tileObjectType).constructionTime);
             return true;

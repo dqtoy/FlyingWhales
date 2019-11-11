@@ -141,7 +141,7 @@ public class Player : ILeader {
         //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
 
         //goap
-        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
+        //Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
         Messenger.AddListener<GoapAction, string, Character, IPointOfInterest, object[]>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
@@ -548,29 +548,29 @@ public class Player : ILeader {
     /// </summary>
     /// <param name="character">The character that finished the action.</param>
     /// <param name="action">The action that was finished.</param>
-    private void OnCharacterDidAction(Character character, GoapAction action) {
-        for (int i = 0; i < action.currentState.arrangedLogs.Count; i++) {
-            if(action.currentState.arrangedLogs[i].notifAction != null) {
-                action.currentState.arrangedLogs[i].notifAction();
-            } else {
-                bool showPopup = false;
-                if (action.showIntelNotification) {
-                    if (action.shouldIntelNotificationOnlyIfActorIsActive) {
-                        showPopup = ShouldShowNotificationFrom(character, true);
-                    } else {
-                        showPopup = ShouldShowNotificationFrom(character, action.currentState.descriptionLog);
-                    }
-                }
-                if (showPopup) {
-                    if (!action.isNotificationAnIntel) {
-                        Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.currentState.descriptionLog);
-                    } else {
-                        Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
-                    }
-                }
-            }
-        }
-    }
+    //private void OnCharacterDidAction(Character character, GoapAction action) {
+    //    for (int i = 0; i < action.currentState.arrangedLogs.Count; i++) {
+    //        if(action.currentState.arrangedLogs[i].notifAction != null) {
+    //            action.currentState.arrangedLogs[i].notifAction();
+    //        } else {
+    //            bool showPopup = false;
+    //            if (action.showIntelNotification) {
+    //                if (action.shouldIntelNotificationOnlyIfActorIsActive) {
+    //                    showPopup = ShouldShowNotificationFrom(character, true);
+    //                } else {
+    //                    showPopup = ShouldShowNotificationFrom(character, action.currentState.descriptionLog);
+    //                }
+    //            }
+    //            if (showPopup) {
+    //                if (!action.isNotificationAnIntel) {
+    //                    Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.currentState.descriptionLog);
+    //                } else {
+    //                    Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     /// <summary>
     /// Listener for when a character starts an action.
     /// Character will go to target location. <see cref="GoapAction.DoAction"/>
@@ -689,7 +689,7 @@ public class Player : ILeader {
         }
         return false;
     }
-    private bool ShouldShowNotificationFrom(Character character, Log log) {
+    public bool ShouldShowNotificationFrom(Character character, Log log) {
 #if TRAILER_BUILD
         if (character.name == "Fiona" || character.name == "Jamie" || character.name == "Audrey") {
             return true;

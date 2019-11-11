@@ -93,7 +93,8 @@ public class GoapAction {
         //SetIsStopped(false);
         //isPerformingActualAction = false;
         //isDone = false;
-        SetShowIntelNotification(true);
+        //SetShowIntelNotification(true);
+        showIntelNotification = true;
         shouldAddLogs = true;
         preconditions = new List<Precondition>();
         expectedEffects = new List<GoapEffect>();
@@ -108,8 +109,8 @@ public class GoapAction {
         //whileMovingState = string.Empty;
         actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
         actionIconString = GoapActionStateDB.No_Icon;
-        ConstructPreconditionsAndEffects();
-
+        ConstructBasePreconditionsAndEffects();
+        CreateStates();
         //actionSummary = GameManager.Instance.TodayLogString() + actor.name + " created " + goapType.ToString() + " action, targetting " + poiTarget?.ToString() ?? "Nothing";
     }
     //public void SetParentPlan(GoapPlan plan) {
@@ -154,20 +155,20 @@ public class GoapAction {
                 StateNameAndDuration state = statesSetup[i];
                 string trimmedState = Utilities.RemoveAllWhiteSpace(state.name);
                 Type thisType = this.GetType();
-                MethodInfo preMethod = thisType.GetMethod("Pre" + trimmedState, new Type[] { typeof(Character), typeof(IPointOfInterest), typeof(object[]) }); //BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance
-                MethodInfo perMethod = thisType.GetMethod("PerTick" + trimmedState, new Type[] { typeof(Character), typeof(IPointOfInterest), typeof(object[]) });
-                MethodInfo afterMethod = thisType.GetMethod("After" + trimmedState, new Type[] { typeof(Character), typeof(IPointOfInterest), typeof(object[]) });
-                Action<Character, IPointOfInterest, object[]> preAction = null;
-                Action<Character, IPointOfInterest, object[]> perAction = null;
-                Action<Character, IPointOfInterest, object[]> afterAction = null;
+                MethodInfo preMethod = thisType.GetMethod("Pre" + trimmedState, new Type[] { typeof(ActualGoapNode) }); //BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance
+                MethodInfo perMethod = thisType.GetMethod("PerTick" + trimmedState, new Type[] { typeof(ActualGoapNode) });
+                MethodInfo afterMethod = thisType.GetMethod("After" + trimmedState, new Type[] { typeof(ActualGoapNode) });
+                Action<ActualGoapNode> preAction = null;
+                Action<ActualGoapNode> perAction = null;
+                Action<ActualGoapNode> afterAction = null;
                 if (preMethod != null) {
-                    preAction = (Action<Character, IPointOfInterest, object[]>) Delegate.CreateDelegate(typeof(Action<Character, IPointOfInterest, object[]>), this, preMethod, false);
+                    preAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, preMethod, false);
                 }
                 if (perMethod != null) {
-                    perAction = (Action<Character, IPointOfInterest, object[]>) Delegate.CreateDelegate(typeof(Action<Character, IPointOfInterest, object[]>), this, perMethod, false);
+                    perAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, perMethod, false);
                 }
                 if (afterMethod != null) {
-                    afterAction = (Action<Character, IPointOfInterest, object[]>) Delegate.CreateDelegate(typeof(Action<Character, IPointOfInterest, object[]>), this, afterMethod, false);
+                    afterAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, afterMethod, false);
                 }
                 GoapActionState newState = new GoapActionState(state.name, this, preAction, perAction, afterAction, state.duration, state.status);
                 states.Add(state.name, newState);
@@ -177,7 +178,7 @@ public class GoapAction {
         //sw.Stop();
         //Debug.Log(summary + "\n" + string.Format("Total creation time is {0}ms", sw.ElapsedMilliseconds));
     }
-    protected virtual void ConstructPreconditionsAndEffects() { }
+    protected virtual void ConstructBasePreconditionsAndEffects() { }
     //protected virtual void ConstructRequirementOnBuildGoapTree() { }
 
     public virtual void Perform(Character actor, IPointOfInterest target, object[] otherData) {
@@ -358,87 +359,87 @@ public class GoapAction {
     //        }
     //    }
     //}
-    //If this action's current state is being performed and is stopped abruptly, call this
-    public virtual void OnStopActionDuringCurrentState() { }
+    //If this action is being performed and is stopped abruptly, call this
+    public virtual void OnStopWhilePerforming(Character actor, IPointOfInterest target, object[] otherData) { }
+    /// <summary>
+    /// What should happen when an action is stopped while the actor is still travelling towards it's target or when the action has already started?
+    /// </summary>
+    public virtual void OnStopWhileStarted(Character actor, IPointOfInterest target, object[] otherData) { }
     /// <summary>
     /// What should happen when another character witnesses this action.
     /// NOTE: This only happens when the character finishes the action. NOT during.
     /// </summary>
     /// <param name="witness">The character that witnessed this action</param>
-    public virtual void OnWitnessedBy(Character witness) { }
+    //public virtual void OnWitnessedBy(Character witness) { }
     /// <summary>
     /// This is called when this actions result has been FULLY processed by the actor.
     /// This should be the last thing that is called in the action flow.
     /// </summary>
-    public virtual void OnResultReturnedToActor() { }
+    //public virtual void OnResultReturnedToActor() { }
     /// <summary>
     /// If this action is a crime. Should the given character be allowed to react to it?
     /// </summary>
     /// <param name="character">The character in question.</param>
     /// <returns>If the character is allowed to react or not.</returns>
-    public virtual bool CanReactToThisCrime(Character character) {
-        //if the witnessed crime is targetting this character, this character should not react to the crime if the crime's doesNotStopTargetCharacter is true
-        if (poiTarget == character && doesNotStopTargetCharacter) {
-            return false;
-        }
-        return true;
-    }
+    //public virtual bool CanReactToThisCrime(Character character) {
+    //    //if the witnessed crime is targetting this character, this character should not react to the crime if the crime's doesNotStopTargetCharacter is true
+    //    if (poiTarget == character && doesNotStopTargetCharacter) {
+    //        return false;
+    //    }
+    //    return true;
+    //}
     /// <summary>
     /// Does this action target the provided POI?
     /// </summary>
     /// <param name="poi">The POI in question.</param>
     /// <returns>True or false.</returns>
-    public virtual bool IsTarget(IPointOfInterest poi) {
-        return poiTarget == poi;
-    }
+    //public virtual bool IsTarget(IPointOfInterest poi) {
+    //    return poiTarget == poi;
+    //}
     /// <summary>
     /// This might change the value of isOldNews to true if the conditions are met
     /// </summary>
     /// <param name="poi">The POI that is the basis for the old news. Usually, it must match with the action's poiTarget.</param>
     /// <param name="action">Can be null. If this is not null, then the listener action must match with this.</param>
-    protected virtual void OldNewsTrigger(IPointOfInterest poi, GoapAction action) { }
+    //protected virtual void OldNewsTrigger(IPointOfInterest poi, GoapAction action) { }
     /// <summary>
     /// What happens when the parent plan of this action has a job
     /// </summary>
-    public virtual void OnSetJob(GoapPlanJob job) {
-        if (job.isStealth) {
-            SetIsStealth(true);
-        }
-    }
-    /// <summary>
-    /// What should happen when an action is stopped while the actor is still travelling towards it's target?
-    /// </summary>
-    public virtual void OnStopActionWhileTravelling() { }
-    public virtual int GetArrangedLogPriorityIndex(string priorityID) { return -1; }
-    public virtual bool ShouldBeStoppedWhenSwitchingStates() {
-        return true; //by default, when a character is switching states and has a current action, that action will be stopped.
-    }
+    //public virtual void OnSetJob(GoapPlanJob job) {
+    //    if (job.isStealth) {
+    //        SetIsStealth(true);
+    //    }
+    //}
+    //public virtual int GetArrangedLogPriorityIndex(string priorityID) { return -1; }
+    //public virtual bool ShouldBeStoppedWhenSwitchingStates() {
+    //    return true; //by default, when a character is switching states and has a current action, that action will be stopped.
+    //}
     //This is called after doing the afterEffect action, and after registering the description log
-    public virtual void AfterAfterEffect() { }
+    //public virtual void AfterAfterEffect() { }
     #endregion
 
     #region Utilities
     public int GetCost(Character actor, IPointOfInterest target, object[] otherData) {
-        return (GetBaseCost(actor, target, otherData) * CostMultiplier(actor)) + GetDistanceCost();
+        return (GetBaseCost(actor, target, otherData) * CostMultiplier(actor)) + GetDistanceCost(actor, target);
     }
     protected bool IsTargetMissing(Character actor, IPointOfInterest target, object[] otherData) {
         return !target.IsAvailable() || target.gridTileLocation == null || actor.specificLocation != target.specificLocation
                     || !(actor.gridTileLocation == target.gridTileLocation || actor.gridTileLocation.IsNeighbour(target.gridTileLocation));
     }
-    private void OnArriveAtTargetLocation() {
-        if(actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
-            //This should not happen if the location type is target in vision because this will be called upon entering vision of target
-            actor.PerformGoapAction();
-        }
-    }
-    public void Initialize() {
-        SetTargetStructure();
-        //ConstructRequirement();
-        //ConstructRequirementOnBuildGoapTree();
-        ConstructPreconditionsAndEffects();
-        CreateThoughtBubbleLog();
-        CreateStates();
-    }
+    //private void OnArriveAtTargetLocation() {
+    //    if(actionLocationType != ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
+    //        //This should not happen if the location type is target in vision because this will be called upon entering vision of target
+    //        actor.PerformGoapAction();
+    //    }
+    //}
+    //public void Initialize() {
+    //    SetTargetStructure();
+    //    //ConstructRequirement();
+    //    //ConstructRequirementOnBuildGoapTree();
+    //    ConstructPreconditionsAndEffects();
+    //    CreateThoughtBubbleLog();
+    //    CreateStates();
+    //}
     public bool CanSatisfyRequirements(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData);
         //if (_requirementAction != null) {
@@ -463,138 +464,97 @@ public class GoapAction {
     //    }
     //    return requirementActionSatisfied;
     //}
-    public void ReturnToActorTheActionResult(string result) {
-        this.result = result;
-        //actor.OnCharacterDoAction(this);
-        currentState.StopPerTickEffect();
+    //protected void AddActionDebugLog(string log) {
+    //    actionSummary += "\n" + log;
+    //}
+    //public void SetEndAction(System.Action<string, GoapAction> endAction) {
+    //    this.endAction = endAction;
+    //}
+    //public void StopAction(bool removeJobInQueue = false, string reason = "") {
+    //    if(actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null && actor.currentAction == this) {
+    //        if (reason != "") {
+    //            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
+    //            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+    //            log.AddToFillers(null, actor.currentAction.goapName, LOG_IDENTIFIER.STRING_1);
+    //            log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
+    //            actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+    //        }
+    //    }
+    //    actor.SetCurrentAction(null);
+    //    if (actor.currentParty.icon.isTravelling) {
+    //        if (actor.currentParty.icon.travelLine == null) {
+    //            //This means that the actor currently travelling to another tile in tilemap
+    //            actor.marker.StopMovement();
+    //        } else {
+    //            //This means that the actor is currently travelling to another area
+    //            actor.currentParty.icon.SetOnArriveAction(() => actor.OnArriveAtAreaStopMovement());
+    //        }
+    //    }
+    //    //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+    //    //    Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
+    //    //    Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
+    //    //}
 
-        isPerformingActualAction = false;
-        isDone = true;
-        //endedAtState = currentState;
-        this.actor.PrintLogIfActive(this.goapType.ToString() + " action by " + this.actor.name + " Summary: \n" + actionSummary);
+    //    OnCancelActionTowardsTarget();
+    //    SetIsStopped(true);
 
-        if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            if (poiTarget != actor) {
-                Character targetCharacter = poiTarget as Character;
-                if (!targetCharacter.isDead) {
-                    if (!doesNotStopTargetCharacter) {
-                        if (resumeTargetCharacterState) {
-                            if (targetCharacter.stateComponent.currentState != null && targetCharacter.stateComponent.currentState.isPaused) {
-                                targetCharacter.stateComponent.currentState.ResumeState();
-                            }
-                        }
-                        targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
-                        targetCharacter.AdjustIsStoppedByOtherCharacter(-1);
-                    }
-                }
-            }
-        } else {
-            Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-            Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
-        }
-        OnFinishActionTowardsTarget();
-        if (endAction != null) {
-            endAction(result, this);
-        } else {
-            if (parentPlan != null) {
-                //Do not go to result if there is no parent plan, this might mean that the action is just a forced action
-                actor.GoapActionResult(result, this);
-            }
-        }
-        Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this, result);
-        parentPlan?.OnActionInPlanFinished(actor, this, result);
-    }
-    protected void AddActionDebugLog(string log) {
-        actionSummary += "\n" + log;
-    }
-    public void SetEndAction(System.Action<string, GoapAction> endAction) {
-        this.endAction = endAction;
-    }
-    public void StopAction(bool removeJobInQueue = false, string reason = "") {
-        if(actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null && actor.currentAction == this) {
-            if (reason != "") {
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
-                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(null, actor.currentAction.goapName, LOG_IDENTIFIER.STRING_1);
-                log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
-                actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-            }
-        }
-        actor.SetCurrentAction(null);
-        if (actor.currentParty.icon.isTravelling) {
-            if (actor.currentParty.icon.travelLine == null) {
-                //This means that the actor currently travelling to another tile in tilemap
-                actor.marker.StopMovement();
-            } else {
-                //This means that the actor is currently travelling to another area
-                actor.currentParty.icon.SetOnArriveAction(() => actor.OnArriveAtAreaStopMovement());
-            }
-        }
-        //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-        //    Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-        //    Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
-        //}
+    //    JobQueueItem job = parentPlan.job;
 
-        OnCancelActionTowardsTarget();
-        SetIsStopped(true);
+    //    if (isPerformingActualAction && !isDone) {
+    //        //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
+    //        OnStopWhilePerforming();
+    //        currentState.EndPerTickEffect(false);
 
-        JobQueueItem job = parentPlan.job;
-
-        if (isPerformingActualAction && !isDone) {
-            //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
-            OnStopActionDuringCurrentState();
-            currentState.EndPerTickEffect(false);
-
-            ////when the action is ended prematurely, make sure to readjust the target character's do not move values
-            //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            //    if (poiTarget != actor) {
-            //        Character targetCharacter = poiTarget as Character;
-            //        targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
-            //        targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
-            //    }
-            //}
-        } else {
-            //if (action != null && action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            //    Character targetCharacter = action.poiTarget as Character;
-            //    targetCharacter.AdjustIsWaitingForInteraction(-1);
-            //}
-            OnStopActionWhileTravelling();
-            actor.DropPlan(parentPlan, forceProcessPlanJob: true);
-        }
-        //Remove job in queue if job is personal job and removeJobInQueue value is true
-        if (removeJobInQueue && job != null && !job.jobQueueParent.isAreaOrQuestJobQueue) {
-            job.jobQueueParent.RemoveJobInQueue(job);
-        }
-        if (UIManager.Instance.characterInfoUI.isShowing) {
-            UIManager.Instance.characterInfoUI.UpdateBasicInfo();
-        }
-        //Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
-        actor.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Stopped action of " + actor.name + " which is " + this.goapName + " targetting " + poiTarget.name + "!");
-    }
-    public void SetIsStopped(bool state) {
-        isStopped = state;
-    }
-    public void SetIsStoppedAsCurrentAction(bool state) {
-        isStoppedAsCurrentAction = state;
-    }
-    public int GetDistanceCost() {
+    //        ////when the action is ended prematurely, make sure to readjust the target character's do not move values
+    //        //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+    //        //    if (poiTarget != actor) {
+    //        //        Character targetCharacter = poiTarget as Character;
+    //        //        targetCharacter.marker.pathfindingAI.AdjustDoNotMove(-1);
+    //        //        targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
+    //        //    }
+    //        //}
+    //    } else {
+    //        //if (action != null && action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+    //        //    Character targetCharacter = action.poiTarget as Character;
+    //        //    targetCharacter.AdjustIsWaitingForInteraction(-1);
+    //        //}
+    //        OnStopWhileStarted();
+    //        actor.DropPlan(parentPlan, forceProcessPlanJob: true);
+    //    }
+    //    //Remove job in queue if job is personal job and removeJobInQueue value is true
+    //    if (removeJobInQueue && job != null && !job.jobQueueParent.isAreaOrQuestJobQueue) {
+    //        job.jobQueueParent.RemoveJobInQueue(job);
+    //    }
+    //    if (UIManager.Instance.characterInfoUI.isShowing) {
+    //        UIManager.Instance.characterInfoUI.UpdateBasicInfo();
+    //    }
+    //    //Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
+    //    actor.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Stopped action of " + actor.name + " which is " + this.goapName + " targetting " + poiTarget.name + "!");
+    //}
+    //public void SetIsStopped(bool state) {
+    //    isStopped = state;
+    //}
+    //public void SetIsStoppedAsCurrentAction(bool state) {
+    //    isStoppedAsCurrentAction = state;
+    //}
+    public int GetDistanceCost(Character actor, IPointOfInterest poiTarget) {
         if (actor.specificLocation == null) {
             return 1;
             //throw new Exception(actor.name + " specific location is null!");
         }
-        if (targetStructure == null) {
-            return 1;
-            //throw new Exception(actor.name + "'s target structure in " + goapName + " is null! Targetting " + poiTarget.name);
-        }
-        LocationGridTile tile = targetTile;
-        if (tile == null) {
-            tile = poiTarget.gridTileLocation;
-        }
+        //if (targetStructure == null) {
+        //    return 1;
+        //    //throw new Exception(actor.name + "'s target structure in " + goapName + " is null! Targetting " + poiTarget.name);
+        //}
+        //LocationGridTile tile = targetTile;
+        //if (tile == null) {
+        LocationGridTile tile = poiTarget.gridTileLocation;
+        //}
         //try {
         if (actor.gridTileLocation != null && tile != null) {
             int distance = Mathf.RoundToInt(Vector2.Distance(actor.gridTileLocation.centeredWorldLocation, tile.centeredWorldLocation));
             distance = (int) (distance * 0.25f);
-            if (actor.specificLocation != targetStructure.location) {
+            if (actor.specificLocation != tile.structure.location) {
                 return distance + 10;
             }
             return distance;
@@ -619,37 +579,37 @@ public class GoapAction {
         //    return 1;
         //}
     }
-    protected bool HasSupply(int neededSupply) {
-        return actor.supply >= neededSupply;
-    }
+    //protected bool HasSupply(int neededSupply) {
+    //    return actor.supply >= neededSupply;
+    //}
     //public void SetExecutionDate(GameDate date) {
     //    executionDate = date;
     //}
-    public void FailAction() {
-        //if (goapType == INTERACTION_TYPE.SLEEP) {
-        //    Debug.LogError(actor.name + " failed " + goapName + " action from recalculate path!");
-        //}
-        if (actor.currentParty.icon.isTravelling && actor.currentParty.icon.travelLine == null) {
-            //This means that the actor currently travelling to another tile in tilemap
-            actor.marker.StopMovement();
-        } else {
-            SetState(failActionState);
-        }
-        //Set state to failed after this (in overrides)
-    }
-    public void SetCannotCancelAction(bool state) {
-        cannotCancelAction = state;
-    }
-    public void SetShowIntelNotification(bool state) {
-        showIntelNotification = state;
-    }
-    public bool IsFromApprehendJob() {
-        if (parentPlan != null && parentPlan.job != null &&
-            (parentPlan.job.jobType == JOB_TYPE.KNOCKOUT || parentPlan.job.jobType == JOB_TYPE.APPREHEND)) {
-            return true;
-        }
-        return false;
-    }
+    //public void FailAction() {
+    //    //if (goapType == INTERACTION_TYPE.SLEEP) {
+    //    //    Debug.LogError(actor.name + " failed " + goapName + " action from recalculate path!");
+    //    //}
+    //    if (actor.currentParty.icon.isTravelling && actor.currentParty.icon.travelLine == null) {
+    //        //This means that the actor currently travelling to another tile in tilemap
+    //        actor.marker.StopMovement();
+    //    } else {
+    //        SetState(failActionState);
+    //    }
+    //    //Set state to failed after this (in overrides)
+    //}
+    //public void SetCannotCancelAction(bool state) {
+    //    cannotCancelAction = state;
+    //}
+    //public void SetShowIntelNotification(bool state) {
+    //    showIntelNotification = state;
+    //}
+    //public bool IsFromApprehendJob() {
+    //    if (parentPlan != null && parentPlan.job != null &&
+    //        (parentPlan.job.jobType == JOB_TYPE.KNOCKOUT || parentPlan.job.jobType == JOB_TYPE.APPREHEND)) {
+    //        return true;
+    //    }
+    //    return false;
+    //}
     /// <summary>
     /// Return the log that best describes the state of this current action.
     /// e.g. Actor is travelling towards target, Actor is currently doing the action, Actor is done doing action

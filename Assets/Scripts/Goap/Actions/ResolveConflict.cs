@@ -14,7 +14,7 @@ public class ResolveConflict : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Enemy", targetPOI = poiTarget });
     }
     public override void Perform() {
@@ -42,13 +42,13 @@ public class ResolveConflict : GoapAction {
         SetTargetStructure();
         base.DoAction();
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if(currentState.name == "Resolve Success") {
-        //    Character targetCharacter = poiTarget as Character;
-        //    CharacterManager.Instance.RemoveOneWayRelationship(targetCharacter, chosenEnemyTrait.targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
-        //}
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if(currentState.name == "Resolve Success") {
+    //    //    Character targetCharacter = poiTarget as Character;
+    //    //    CharacterManager.Instance.RemoveOneWayRelationship(targetCharacter, chosenEnemyTrait.targetCharacter, RELATIONSHIP_TRAIT.ENEMY);
+    //    //}
+    //}
     #endregion
 
     #region Requirements

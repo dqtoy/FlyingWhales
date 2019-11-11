@@ -27,7 +27,7 @@ public class Daydream : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void Perform() {
@@ -63,7 +63,7 @@ public class Daydream : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Daydream Success") {
             actor.AdjustDoNotGetLonely(-1);
             actor.AdjustDoNotGetTired(-1);

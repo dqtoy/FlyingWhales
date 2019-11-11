@@ -19,10 +19,10 @@ public class MusicLover : Trait {
     public override void OnSeePOI(IPointOfInterest targetPOI, Character character) {
         if (targetPOI is Character) {
             Character seenCharacter = targetPOI as Character;
-            if (seenCharacter.currentAction != null && seenCharacter.currentAction.isPerformingActualAction) {
-                if (seenCharacter.currentAction.goapType == INTERACTION_TYPE.PLAY_GUITAR) {
+            if (seenCharacter.currentActionNode != null && seenCharacter.currentActionNode.isPerformingActualAction) {
+                if (seenCharacter.currentActionNode.goapType == INTERACTION_TYPE.PLAY_GUITAR) {
                     OnHearGuitarPlaying(seenCharacter);
-                } else if (seenCharacter.currentAction.goapType == INTERACTION_TYPE.SING) {
+                } else if (seenCharacter.currentActionNode.goapType == INTERACTION_TYPE.SING) {
                     OnHearSinging(seenCharacter);
                 }
             }

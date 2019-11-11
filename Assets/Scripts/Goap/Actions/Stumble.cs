@@ -29,14 +29,14 @@ public class Stumble : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if (currentState.name == "Stumble Success") {
-        //    if (actor.currentHP <= 0) {
-        //        actor.Death(deathFromAction: this);
-        //    }
-        //}
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if (currentState.name == "Stumble Success") {
+    //    //    if (actor.currentHP <= 0) {
+    //    //        actor.Death(deathFromAction: this);
+    //    //    }
+    //    //}
+    //}
     #endregion
 
     #region Requirements

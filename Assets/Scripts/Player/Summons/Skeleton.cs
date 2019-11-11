@@ -23,7 +23,7 @@ public class Skeleton : Summon {
     //    //state.SetIsUnending(true);
     //    GoToWorkArea();
     //}
-    public override List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
+    public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
         if (GetNormalTrait("Unconscious", "Resting") != null) {
             return null;
         }

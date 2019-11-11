@@ -9,7 +9,7 @@ public class SeducerSummon : Summon {
     private List<Character> doneCharacters; //list of characters that the succubus has invited to make love with, regardless of success
     public override int ignoreHostility {
         get {
-            if (currentAction != null && currentAction.goapType.IsHostileAction()) {
+            if (currentActionNode != null && currentActionNode.goapType.IsHostileAction()) {
                 return 0; //allow hostility checking
             } else if (stateComponent.currentState != null && (stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT || stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)) {
                 return 0; //if in combat or berserked state allow hostility checking
@@ -43,7 +43,7 @@ public class SeducerSummon : Summon {
         //Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
         AdjustIgnoreHostilities(1);
     }
-    public override List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
+    public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
         if (GetNormalTrait("Unconscious", "Resting") != null) {
             return null;
         }
@@ -113,9 +113,10 @@ public class SeducerSummon : Summon {
             if (stateComponent.currentState != null) {
                 stateComponent.currentState.OnExitThisState();
             }
-        } else if (stateComponent.currentState != null) {
-            stateComponent.SetStateToDo(null);
         }
+        //else if (stateComponent.currentState != null) {
+        //    stateComponent.SetStateToDo(null);
+        //}
 
         if (currentParty.icon.isTravelling) {
             marker.StopMovement();

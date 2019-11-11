@@ -40,7 +40,7 @@ public class StrollState : CharacterState {
                 if (goapAction.targetTile != null) {
                     SetCurrentlyDoingAction(goapAction);
                     goapAction.CreateStates();
-                    stateComponent.character.SetCurrentAction(goapAction);
+                    stateComponent.character.SetCurrentActionNode(goapAction);
                     stateComponent.character.marker.GoTo(goapAction.targetTile, OnArriveAtPickUpLocation);
                     PauseState();
                 } else {
@@ -54,19 +54,19 @@ public class StrollState : CharacterState {
     #endregion
 
     private void OnArriveAtPickUpLocation() {
-        if (stateComponent.character.currentAction == null) {
+        if (stateComponent.character.currentActionNode == null) {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at pick up location of item during " + stateName + ", but current action is null");
             return;
         }
-        stateComponent.character.currentAction.SetEndAction(StrollAgain);
-        stateComponent.character.currentAction.Perform();
+        stateComponent.character.currentActionNode.SetEndAction(StrollAgain);
+        stateComponent.character.currentActionNode.Perform();
     }
     private void StrollAgain(string result, GoapAction goapAction) {
         SetCurrentlyDoingAction(null);
         if (stateComponent.currentState != this) {
             return;
         }
-        stateComponent.character.SetCurrentAction(null);
+        stateComponent.character.SetCurrentActionNode(null);
         ResumeState();
     }
 

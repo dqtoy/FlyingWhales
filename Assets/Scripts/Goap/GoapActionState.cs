@@ -9,21 +9,20 @@ public class GoapActionState {
 	public string name { get; private set; }
     public int duration { get; private set; } //if 0, go instantly to after effect, if -1, endless (can only be ended manually)
     public Log descriptionLog { get; private set; } //Always set/create description logs on Pre effect because description logs are used in Memories and Memories are stored on start of the GoapActionState
-    public Action<Character, IPointOfInterest, object[]> preEffect { get; private set; }
-    public Action<Character, IPointOfInterest, object[]> perTickEffect { get; private set; }
-    public Action<Character, IPointOfInterest, object[]> afterEffect { get; private set; }
+    public Action<ActualGoapNode> preEffect { get; private set; }
+    public Action<ActualGoapNode> perTickEffect { get; private set; }
+    public Action<ActualGoapNode> afterEffect { get; private set; }
     public Func<Character, Intel, SHARE_INTEL_STATUS, List<string>> shareIntelReaction { get; private set; }
     public string status { get; private set; }
-    public bool shouldAddLogs { get; private set; }
     //public bool isDone { get; private set; }
     public string animationName { get; private set; } //specific animation per action state
 
     public bool hasPerTickEffect { get { return perTickEffect != null; } }
     public int currentDuration { get; private set; }
 
-    public List<ActionLog> arrangedLogs { get; protected set; }
+    //public List<ActionLog> arrangedLogs { get; protected set; }
 
-    public GoapActionState(string name, GoapAction parentAction, Action<Character, IPointOfInterest, object[]> preEffect, Action<Character, IPointOfInterest, object[]> perTickEffect, Action<Character, IPointOfInterest, object[]> afterEffect, int duration, string status) {
+    public GoapActionState(string name, GoapAction parentAction, Action<ActualGoapNode> preEffect, Action<ActualGoapNode> perTickEffect, Action<ActualGoapNode> afterEffect, int duration, string status) {
         this.name = name;
         this.preEffect = preEffect;
         this.perTickEffect = perTickEffect;
@@ -31,10 +30,10 @@ public class GoapActionState {
         this.parentAction = parentAction;
         this.duration = duration;
         this.status = status;
-        this.shouldAddLogs = true;
+        //this.shouldAddLogs = true;
         //this.isDone = false;
-        this.arrangedLogs = new List<ActionLog>();
-        CreateLog();
+        //this.arrangedLogs = new List<ActionLog>();
+        //CreateLog();
     }
 
     public void SetIntelReaction(Func<Character, Intel, SHARE_INTEL_STATUS, List<string>> intelReaction) {
@@ -48,14 +47,14 @@ public class GoapActionState {
     //#endregion
 
     #region Logs
-    private void CreateLog() {
+    public Log CreateDescriptionLog(Character actor, IPointOfInterest poiTarget) {
         if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description")) {
-            descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description", parentAction);
-            AddLogFiller(parentAction.actor, parentAction.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            if (parentAction.poiTarget is Character) {
-                AddLogFiller(parentAction.poiTarget as Character, parentAction.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            }
+            Log descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", parentAction.GetType().ToString(), name.ToLower() + "_description", parentAction);
+            AddLogFiller(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            AddLogFiller(poiTarget, poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            return descriptionLog;
         }
+        return null;
     }
     public void OverrideDescriptionLog(Log log) {
         descriptionLog = log;
@@ -66,17 +65,14 @@ public class GoapActionState {
     public void AddLogFillers(List<LogFiller> fillers, bool replaceExisting = true) {
         descriptionLog.AddToFillers(fillers, replaceExisting);
     }
-    public void SetShouldAddLogs(bool state) {
-        shouldAddLogs = state;
-    }
-    public void AddArrangedLog(string priorityID, Log log, System.Action notifAction) {
-        int index = parentAction.GetArrangedLogPriorityIndex(priorityID);
-        if(index == -1 || arrangedLogs.Count <= index) {
-            arrangedLogs.Add(new ActionLog() { log = log, notifAction = notifAction });
-        } else {
-            arrangedLogs.Insert(index, new ActionLog() { log = log, notifAction = notifAction });
-        }
-    }
+    //public void AddArrangedLog(string priorityID, Log log, System.Action notifAction) {
+    //    int index = parentAction.GetArrangedLogPriorityIndex(priorityID);
+    //    if(index == -1 || arrangedLogs.Count <= index) {
+    //        arrangedLogs.Add(new ActionLog() { log = log, notifAction = notifAction });
+    //    } else {
+    //        arrangedLogs.Insert(index, new ActionLog() { log = log, notifAction = notifAction });
+    //    }
+    //}
     #endregion
 
     //public void Execute(Character actor, Character target, object[] otherData) {

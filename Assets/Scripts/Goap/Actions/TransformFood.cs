@@ -32,7 +32,7 @@ public class TransformFood : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         if(poiTarget is Character) {
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget }, IsTargetDead);
         }
@@ -53,16 +53,16 @@ public class TransformFood : GoapAction {
         base.CreateThoughtBubbleLog();
         thoughtBubbleMovingLog.AddToFillers(deadCharacter, deadCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if (currentState.name == "Transform Success") {
-        //    if (poiTarget is Tombstone) {
-        //        poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
-        //    } else if (poiTarget is Character) {
-        //        (poiTarget as Character).DestroyMarker();
-        //    }
-        //}
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if (currentState.name == "Transform Success") {
+    //    //    if (poiTarget is Tombstone) {
+    //    //        poiTarget.gridTileLocation.structure.RemovePOI(poiTarget, actor);
+    //    //    } else if (poiTarget is Character) {
+    //    //        (poiTarget as Character).DestroyMarker();
+    //    //    }
+    //    //}
+    //}
     #endregion
 
     #region Requirements

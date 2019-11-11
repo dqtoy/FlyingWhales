@@ -13,7 +13,7 @@ public class GetFood : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         FoodPile foodPile = poiTarget as FoodPile;
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_FOOD, conditionKey = foodPile.foodInPile, targetPOI = actor });
     }

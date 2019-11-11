@@ -24,7 +24,7 @@ public class ArgueCharacter : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Charmed", targetPOI = actor }, ShouldNotBeCharmed);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Annoyed", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
@@ -96,7 +96,7 @@ public class ArgueCharacter : GoapAction {
     //    base.FailAction();
     //    SetState("Target Missing");
     //}
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Argue Success") {
             actor.AdjustDoNotGetLonely(-1);
             AddTraitTo(poiTarget, "Annoyed", actor);
@@ -153,8 +153,8 @@ public class ArgueCharacter : GoapAction {
         return false;
     }
     private bool IsTargetUnable(Character target) {
-        if (target.currentAction != null
-                && (target.currentAction.goapType == INTERACTION_TYPE.SLEEP || target.currentAction.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE)) {
+        if (target.currentActionNode != null
+                && (target.currentActionNode.goapType == INTERACTION_TYPE.SLEEP || target.currentActionNode.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE)) {
             return true;
         }
         if (target.GetNormalTrait("Unconscious") != null) {

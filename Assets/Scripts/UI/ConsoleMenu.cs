@@ -139,9 +139,9 @@ public class ConsoleMenu : UIMenu {
         text += "\n\t<b>Grid Location:</b> " + character.gridTileLocation?.localPlace.ToString() ?? "None";
 
         text += "\n<b>Faction:</b> " + character.faction?.name ?? "None";
-        text += "\n<b>Current Action:</b> " + character.currentAction?.goapName ?? "None";
-        if (character.currentAction != null) {
-            text += "\n<b>Current Plan:</b> " + character.currentAction.parentPlan.GetGoalSummary();
+        text += "\n<b>Current Action:</b> " + character.currentActionNode?.goapName ?? "None";
+        if (character.currentActionNode != null) {
+            text += "\n<b>Current Plan:</b> " + character.currentActionNode.parentPlan.GetGoalSummary();
         }
         if (character.currentParty.icon != null) {
             text += "\n<b>Is Travelling:</b> " + character.currentParty.icon.isTravelling.ToString();

@@ -19,7 +19,7 @@ public class TablePoison : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         //**Effect 1**: Table - Add Trait (Poisoned)
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
         LocationGridTile knownLoc = poiTarget.gridTileLocation;
@@ -59,51 +59,51 @@ public class TablePoison : GoapAction {
     //    base.FailAction();
     //    SetState("Poison Fail");
     //}
-    public override void OnWitnessedBy(Character witness) {
-        base.OnWitnessedBy(witness);
+    //public override void OnWitnessedBy(Character witness) {
+    //    base.OnWitnessedBy(witness);
 
-        //Dwelling dwelling = (poiTarget as Table).structureLocation as Dwelling;
+    //    //Dwelling dwelling = (poiTarget as Table).structureLocation as Dwelling;
 
-        //bool isTableOwner = dwelling.IsResident(witness);
-        //bool hasPositiveRelWithOwner = false;
-        //for (int i = 0; i < dwelling.residents.Count; i++) {
-        //    Character resident = dwelling.residents[i];
-        //    if (witness.HasRelationshipOfEffectWith(resident, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
-        //        hasPositiveRelWithOwner = true;
-        //        break;
-        //    }
-        //}
+    //    //bool isTableOwner = dwelling.IsResident(witness);
+    //    //bool hasPositiveRelWithOwner = false;
+    //    //for (int i = 0; i < dwelling.residents.Count; i++) {
+    //    //    Character resident = dwelling.residents[i];
+    //    //    if (witness.HasRelationshipOfEffectWith(resident, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE)) {
+    //    //        hasPositiveRelWithOwner = true;
+    //    //        break;
+    //    //    }
+    //    //}
 
-        //If someone witnesses this, there may be additional things performed aside from Crime Witness handling.
-        Character tableOwner = ((poiTarget as Table).structureLocation as Dwelling).owner;
-        //If the witness has a positive relationship with the owner of the table, or he is the owner of the table, or they are from the same faction and are not enemies:
-        if (witness == tableOwner 
-            || witness.HasRelationshipOfEffectWith(tableOwner, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) 
-            || (witness.faction == tableOwner.faction && !witness.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY))
-            ) {
-            //-If Civilian, Adventurer or Soldier or Unaligned Non-Beast, create a Remove Poison Job.
-            if (witness.role.roleType == CHARACTER_ROLE.CIVILIAN || witness.role.roleType == CHARACTER_ROLE.ADVENTURER 
-                || witness.role.roleType == CHARACTER_ROLE.SOLDIER || witness.role.roleType == CHARACTER_ROLE.BANDIT 
-                || (witness.role.roleType != CHARACTER_ROLE.BEAST && witness.isFactionless)) {
-                if (!witness.jobQueue.HasJob(JOB_TYPE.REMOVE_POISON, poiTarget)) {
-                    GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_POISON, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
-                    witness.jobQueue.AddJobInQueue(job);
-                }
-            }
-            //- If Noble or Faction Leader, create an Ask for Help Remove Poison Job.
-            else if (witness.role.roleType == CHARACTER_ROLE.NOBLE || witness.role.roleType == CHARACTER_ROLE.LEADER) {
-                witness.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.TABLE_REMOVE_POISON, poiTarget);
-            }
-        }
-        //- The witness should not eat at the table until the Poison has been removed
-        //Add character to poisoned trait of table
-        //and when getting the cost of eating at this table, check if the character knows about the poison, if he/she does, increase cost.
-        Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
-        if (poisonedTrait == null) {
-            throw new System.Exception("Poisoned trait of " + poiTarget.ToString() + " is null! But it was just poisoned by " + actor.name);
-        }
-        poisonedTrait.AddAwareCharacter(witness);
-    }
+    //    //If someone witnesses this, there may be additional things performed aside from Crime Witness handling.
+    //    Character tableOwner = ((poiTarget as Table).structureLocation as Dwelling).owner;
+    //    //If the witness has a positive relationship with the owner of the table, or he is the owner of the table, or they are from the same faction and are not enemies:
+    //    if (witness == tableOwner 
+    //        || witness.HasRelationshipOfEffectWith(tableOwner, TRAIT_EFFECT.POSITIVE, RELATIONSHIP_TRAIT.RELATIVE) 
+    //        || (witness.faction == tableOwner.faction && !witness.HasRelationshipOfTypeWith(tableOwner, RELATIONSHIP_TRAIT.ENEMY))
+    //        ) {
+    //        //-If Civilian, Adventurer or Soldier or Unaligned Non-Beast, create a Remove Poison Job.
+    //        if (witness.role.roleType == CHARACTER_ROLE.CIVILIAN || witness.role.roleType == CHARACTER_ROLE.ADVENTURER 
+    //            || witness.role.roleType == CHARACTER_ROLE.SOLDIER || witness.role.roleType == CHARACTER_ROLE.BANDIT 
+    //            || (witness.role.roleType != CHARACTER_ROLE.BEAST && witness.isFactionless)) {
+    //            if (!witness.jobQueue.HasJob(JOB_TYPE.REMOVE_POISON, poiTarget)) {
+    //                GoapPlanJob job = new GoapPlanJob(JOB_TYPE.REMOVE_POISON, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", targetPOI = poiTarget });
+    //                witness.jobQueue.AddJobInQueue(job);
+    //            }
+    //        }
+    //        //- If Noble or Faction Leader, create an Ask for Help Remove Poison Job.
+    //        else if (witness.role.roleType == CHARACTER_ROLE.NOBLE || witness.role.roleType == CHARACTER_ROLE.LEADER) {
+    //            witness.CreateAskForHelpJob(tableOwner, INTERACTION_TYPE.TABLE_REMOVE_POISON, poiTarget);
+    //        }
+    //    }
+    //    //- The witness should not eat at the table until the Poison has been removed
+    //    //Add character to poisoned trait of table
+    //    //and when getting the cost of eating at this table, check if the character knows about the poison, if he/she does, increase cost.
+    //    Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
+    //    if (poisonedTrait == null) {
+    //        throw new System.Exception("Poisoned trait of " + poiTarget.ToString() + " is null! But it was just poisoned by " + actor.name);
+    //    }
+    //    poisonedTrait.AddAwareCharacter(witness);
+    //}
     protected override void OldNewsTrigger(IPointOfInterest poi, GoapAction action) {
         base.OldNewsTrigger(poi, action);
         if (poi is Table && poi == poiTarget) {
@@ -191,6 +191,13 @@ public class TablePoison : GoapAction {
         //PoisonTableIntel pti = sharedIntel as PoisonTableIntel;
         Poisoned poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
         Dwelling targetDwelling = poiTarget.gridTileLocation.structure as Dwelling;
+        
+        if(poisonedTrait != null) {
+            //- The witness should not eat at the table until the Poison has been removed
+            //Add character to poisoned trait of table
+            //and when getting the cost of eating at this table, check if the character knows about the poison, if he/she does, increase cost.
+            poisonedTrait.AddAwareCharacter(recipient);
+        }
 
         bool tableHasPoison = poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor);
 

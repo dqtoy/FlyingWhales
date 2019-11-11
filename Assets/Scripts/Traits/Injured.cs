@@ -44,7 +44,8 @@ public class Injured : Trait {
                     Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
                     addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    gainedFromDoing.states["Target Injured"].AddArrangedLog("injured", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
+                    _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly(addLog, gainedFromDoing, false);
+                    //gainedFromDoing.states["Target Injured"].AddArrangedLog("injured", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
                 }
             }
             //Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, _sourceCharacter);
@@ -90,10 +91,10 @@ public class Injured : Trait {
                 } else {
                     if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                         bool canBeTransfered = false;
-                        if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null
-                            && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
+                        if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentActionNode != null
+                            && currentJob.assignedCharacter.currentActionNode.parentPlan != null && currentJob.assignedCharacter.currentActionNode.parentPlan.job == currentJob) {
                             if (currentJob.assignedCharacter != characterThatWillDoJob) {
-                                canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
+                                canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentActionNode.poiTarget);
                             }
                         } else {
                             canBeTransfered = true;

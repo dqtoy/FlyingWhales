@@ -122,7 +122,7 @@ public class CharacterAIPath : AILerp {
                 }
             }
         }
-        if (marker.character != null && marker.character.currentAction != null && marker.character.currentAction.willAvoidCharactersWhileMoving) {
+        if (marker.character != null && marker.character.currentActionNode != null && marker.character.currentActionNode.willAvoidCharactersWhileMoving) {
             for (int i = 0; i < marker.character.specificLocation.charactersAtLocation.Count; i++) {
                 Character terrifyingCharacter = marker.character.specificLocation.charactersAtLocation[i];
                 terrifyingCharacter.marker.UpdateCenteredWorldPos();
@@ -164,9 +164,9 @@ public class CharacterAIPath : AILerp {
             //        //if(marker.character.currentAction)
             //    }
             //}
-        } else if (marker.character.currentAction != null && marker.character.currentAction.poiTarget != marker.character) {
-            if (marker.character.currentAction.poiTarget.gridTileLocation != null) {
-                marker.LookAt(marker.character.currentAction.poiTarget.gridTileLocation.centeredWorldLocation); //so that the charcter will always face the target, even if it is moving
+        } else if (marker.character.currentActionNode != null && marker.character.currentActionNode.poiTarget != marker.character) {
+            if (marker.character.currentActionNode.poiTarget.gridTileLocation != null) {
+                marker.LookAt(marker.character.currentActionNode.poiTarget.gridTileLocation.centeredWorldLocation); //so that the charcter will always face the target, even if it is moving
             }
         }
     }
@@ -296,7 +296,7 @@ public class CharacterAIPath : AILerp {
                 }
             }
         }
-        if(marker.character != null && marker.character.currentAction != null && marker.character.currentAction.willAvoidCharactersWhileMoving) {
+        if(marker.character != null && marker.character.currentActionNode != null && marker.character.currentActionNode.willAvoidCharactersWhileMoving) {
             for (int i = 0; i < marker.character.specificLocation.charactersAtLocation.Count; i++) {
                 Character terrifyingCharacter = marker.character.specificLocation.charactersAtLocation[i];
                 if (terrifyingCharacter.marker == null || terrifyingCharacter == marker.character) {

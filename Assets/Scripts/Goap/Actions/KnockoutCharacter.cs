@@ -13,7 +13,7 @@ public class KnockoutCharacter : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget });
     }
     public override void Perform() {
@@ -40,16 +40,16 @@ public class KnockoutCharacter : GoapAction {
         }
         return base.GetArrangedLogPriorityIndex(priorityID);
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if(currentState.name == "Knockout Fail") {
-        //    if (poiTarget is Character) {
-        //        Character targetCharacter = poiTarget as Character;
-        //        targetCharacter.marker.AddHostileInRange(actor, false);
-        //    }
-        //}
-    }
-    #endregion
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if(currentState.name == "Knockout Fail") {
+    //    //    if (poiTarget is Character) {
+    //    //        Character targetCharacter = poiTarget as Character;
+    //    //        targetCharacter.marker.AddHostileInRange(actor, false);
+    //    //    }
+    //    //}
+    //}
+    //#endregion
 
     #region Requirements
     protected bool Requirement() {

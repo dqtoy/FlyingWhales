@@ -14,7 +14,7 @@ public class BreakUp : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         //**Effect 1**: Actor - Remove Lover relationship with Target
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = actor });
         //**Effect 2**: Actor - Remove Paramour relationship with Target

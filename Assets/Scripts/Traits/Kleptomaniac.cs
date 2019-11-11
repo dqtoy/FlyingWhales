@@ -68,11 +68,11 @@ public class Kleptomaniac : Trait {
     public override bool CreateJobsOnEnterVisionBasedOnOwnerTrait(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
         if (targetPOI is SpecialToken) {
             SpecialToken token = targetPOI as SpecialToken;
-            if (characterThatWillDoJob.currentAction != null && characterThatWillDoJob.currentAction.goapType == INTERACTION_TYPE.ROAMING_TO_STEAL && !characterThatWillDoJob.currentAction.isDone) {
+            if (characterThatWillDoJob.currentActionNode != null && characterThatWillDoJob.currentActionNode.goapType == INTERACTION_TYPE.ROAMING_TO_STEAL && !characterThatWillDoJob.currentActionNode.isDone) {
                 if ((token.characterOwner == null || token.characterOwner != characterThatWillDoJob) && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetPOI)) {
-                    GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentAction.parentPlan.job.jobType, INTERACTION_TYPE.STEAL, targetPOI);
+                    GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentActionNode.parentPlan.job.jobType, INTERACTION_TYPE.STEAL, targetPOI);
                     job.SetIsStealth(true);
-                    characterThatWillDoJob.currentAction.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentAction.parentPlan.job);
+                    characterThatWillDoJob.currentActionNode.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentActionNode.parentPlan.job);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);
                     characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, characterThatWillDoJob);
                     return true;
@@ -80,11 +80,11 @@ public class Kleptomaniac : Trait {
             }
         } else if (targetPOI is Character) {
             Character targetCharacter = targetPOI as Character;
-            if (characterThatWillDoJob.currentAction != null && characterThatWillDoJob.currentAction.goapType == INTERACTION_TYPE.ROAMING_TO_STEAL && !characterThatWillDoJob.currentAction.isDone) {
+            if (characterThatWillDoJob.currentActionNode != null && characterThatWillDoJob.currentActionNode.goapType == INTERACTION_TYPE.ROAMING_TO_STEAL && !characterThatWillDoJob.currentActionNode.isDone) {
                 if (characterThatWillDoJob.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE && characterThatWillDoJob.marker.CanDoStealthActionToTarget(targetCharacter)) {
-                    GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentAction.parentPlan.job.jobType, INTERACTION_TYPE.STEAL_FROM_CHARACTER, targetCharacter);
+                    GoapPlanJob job = new GoapPlanJob(characterThatWillDoJob.currentActionNode.parentPlan.job.jobType, INTERACTION_TYPE.STEAL_FROM_CHARACTER, targetCharacter);
                     job.SetIsStealth(true);
-                    characterThatWillDoJob.currentAction.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentAction.parentPlan.job);
+                    characterThatWillDoJob.currentActionNode.parentPlan.job.jobQueueParent.CancelJob(characterThatWillDoJob.currentActionNode.parentPlan.job);
                     characterThatWillDoJob.jobQueue.AddJobInQueue(job, false);
                     characterThatWillDoJob.jobQueue.AssignCharacterToJobAndCancelCurrentAction(job, characterThatWillDoJob);
                     return true;

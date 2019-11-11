@@ -152,12 +152,12 @@ public class BerserkedState : CharacterState {
     #endregion
 
     private void OnArriveAtLocation() {
-        if (stateComponent.character.currentAction == null) {
+        if (stateComponent.character.currentActionNode == null) {
             Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at location of item/tile object to be destroyed during " + stateName + ", but current action is null");
             return;
         }
-        stateComponent.character.currentAction.SetEndAction(BerserkAgain);
-        stateComponent.character.currentAction.Perform();
+        stateComponent.character.currentActionNode.SetEndAction(BerserkAgain);
+        stateComponent.character.currentActionNode.Perform();
     }
     private void BerserkAgain(string result, GoapAction goapAction) {
         string summary = stateComponent.character.name + " is checking for berserk again";
@@ -169,7 +169,7 @@ public class BerserkedState : CharacterState {
         }
         summary += "Berserk resuming!";
         Debug.Log(summary);
-        stateComponent.character.SetCurrentAction(null);
+        stateComponent.character.SetCurrentActionNode(null);
         ResumeState();
     }
     private void StartBerserkedMovement() {

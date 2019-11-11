@@ -21,7 +21,7 @@ public class DropItemWarehouse : GoapAction {
         base.AddFillersToLog(log);
         log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(itemTypeToDeposit.ToString()), LOG_IDENTIFIER.TARGET_CHARACTER); //Target character is only the identifier but it doesn't mean that this is a character, it can be item, etc.
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = itemTypeToDeposit.ToString(), targetPOI = actor }, HasItemTypeInInventory);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_ITEM, conditionKey = poiTarget, targetPOI = actor });
     }
@@ -52,18 +52,18 @@ public class DropItemWarehouse : GoapAction {
             itemTypeToDeposit = (SPECIAL_TOKEN) otherData[0];
             preconditions.Clear();
             expectedEffects.Clear();
-            ConstructPreconditionsAndEffects();
+            ConstructBasePreconditionsAndEffects();
             CreateThoughtBubbleLog();
             return true;
         }
         return base.InitializeOtherData(otherData);
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if (_targetStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
-        //    _targetStructure.location.CheckAreaInventoryJobs(_targetStructure);
-        //}
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if (_targetStructure.structureType == STRUCTURE_TYPE.WAREHOUSE) {
+    //    //    _targetStructure.location.CheckAreaInventoryJobs(_targetStructure);
+    //    //}
+    //}
     #endregion
 
     #region State Effects

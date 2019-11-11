@@ -25,7 +25,7 @@ public class Pray : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void Perform() {
@@ -55,7 +55,7 @@ public class Pray : GoapAction {
         _targetStructure = actor.currentStructure;
         base.SetTargetStructure();
     }
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Pray Success") {
             actor.AdjustDoNotGetLonely(-1);
         }

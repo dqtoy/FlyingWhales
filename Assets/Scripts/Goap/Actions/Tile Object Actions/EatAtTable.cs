@@ -19,7 +19,7 @@ public class EatAtTable : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void Perform() {
@@ -73,7 +73,7 @@ public class EatAtTable : GoapAction {
     //    base.FailAction();
     //    SetState("Target Missing");
     //}
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Eat Success") {
             actor.AdjustDoNotGetHungry(-1);
         }else if(currentState.name == "Eat Poisoned") {
@@ -94,10 +94,10 @@ public class EatAtTable : GoapAction {
         }
         return base.GetArrangedLogPriorityIndex(priorityID);
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
+    //}
     protected override void CleanupBeforeChangingStates() {
         base.CleanupBeforeChangingStates();
         if (currentState.name == "Eat Success") {
@@ -124,6 +124,7 @@ public class EatAtTable : GoapAction {
     }
     private void AfterEatSuccess() {
         actor.AdjustDoNotGetHungry(-1);
+        Messenger.RemoveListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait);
     }
     private void PreEatPoisoned() {
         //currentState.SetShouldAddLogs(false);

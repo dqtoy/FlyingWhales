@@ -15,7 +15,7 @@ public class EatMushroom : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void Perform() {
@@ -41,7 +41,7 @@ public class EatMushroom : GoapAction {
     //    base.FailAction();
     //    SetState("Eat Fail");
     //}
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Eat Success") {
             actor.AdjustDoNotGetHungry(-1);
         }

@@ -139,7 +139,7 @@ public class GoapPlanJob : JobQueueItem {
         if (assignedPlan != null && assignedCharacter != null) {
             Character character = assignedCharacter;
             character.AdjustIsWaitingForInteraction(1);
-            if (character.currentAction != null && character.currentAction.parentPlan == assignedPlan) {
+            if (character.currentActionNode != null && character.currentActionNode.parentPlan == assignedPlan) {
                 if (character.currentParty.icon.isTravelling) {
                     if (character.currentParty.icon.travelLine == null) {
                         character.marker.StopMovement();
@@ -148,8 +148,8 @@ public class GoapPlanJob : JobQueueItem {
                     }
                 }
                 character.StopCurrentAction(shouldDoAfterEffect, reason);
-                if (character.currentAction != null) {
-                    character.SetCurrentAction(null);
+                if (character.currentActionNode != null) {
+                    character.SetCurrentActionNode(null);
                 }
                 character.DropPlan(assignedPlan);
             } else {

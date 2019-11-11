@@ -25,7 +25,7 @@ public class Drink : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void Perform() {
@@ -53,7 +53,7 @@ public class Drink : GoapAction {
     //    base.FailAction();
     //    SetState("Target Missing");
     //}
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Drink Success" || currentState.name == "Drink Poisoned") {
             actor.AdjustDoNotGetLonely(-1);
         }

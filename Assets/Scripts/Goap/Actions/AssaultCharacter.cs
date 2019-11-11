@@ -19,7 +19,7 @@ public class AssaultCharacter : GoapAction {
     //protected override void ConstructRequirement() {
     //    _requirementAction = Requirement;
     //}
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_VISION, targetPOI = poiTarget }, IsInVision);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget });
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_NON_POSITIVE_TRAIT, conditionKey = "Disabler", targetPOI = poiTarget });
@@ -112,10 +112,10 @@ public class AssaultCharacter : GoapAction {
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         base.OnCancelActionTowardsTarget();
     }
-    public override void OnStopActionWhileTravelling() {
+    public override void OnStopWhileStarted() {
         //actor.marker.pathfindingAI.ResetEndReachedDistance();
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        base.OnStopActionWhileTravelling();
+        base.OnStopWhileStarted();
     }
     private void OnFinishCombatState() {
         //Debug.Log(actor.name + " finished combat state!");
@@ -150,14 +150,14 @@ public class AssaultCharacter : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         //actor.marker.pathfindingAI.ResetEndReachedDistance();
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
     }
-    public override void OnResultReturnedToActor() {
-        //actor.marker.pathfindingAI.ResetEndReachedDistance();
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-    }
+    //public override void OnResultReturnedToActor() {
+    //    //actor.marker.pathfindingAI.ResetEndReachedDistance();
+    //    Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+    //}
     public override int GetArrangedLogPriorityIndex(string priorityID) {
         if(priorityID == "description") {
             return 0;

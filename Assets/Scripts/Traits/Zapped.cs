@@ -30,9 +30,10 @@ public class Zapped : Trait {
                 if (character.stateComponent.currentState != null) {
                     character.stateComponent.currentState.OnExitThisState();
                 }
-            }else if (character.stateComponent.stateToDo != null) {
-                character.stateComponent.SetStateToDo(null);
             }
+            //else if (character.stateComponent.stateToDo != null) {
+            //    character.stateComponent.SetStateToDo(null);
+            //}
             character.CancelAllJobsAndPlans("Stopped by the player");
             //else if(character.currentAction != null) {
             //    character.currentAction.StopAction();

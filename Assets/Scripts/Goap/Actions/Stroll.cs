@@ -10,7 +10,7 @@ public class Stroll : GoapAction {
     protected override string failActionState { get { return "Stroll Fail"; } }
 
     public Stroll(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STROLL, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
-        SetShowIntelNotification(false);
+        showIntelNotification = false;
         shouldAddLogs = false;
         actionIconString = GoapActionStateDB.No_Icon;
     }

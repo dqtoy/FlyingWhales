@@ -37,16 +37,16 @@ public class TileObjectDestroy : GoapAction {
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
         base.OnCancelActionTowardsTarget();
     }
-    public override void OnStopActionWhileTravelling() {
+    public override void OnStopWhileStarted() {
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-        base.OnStopActionWhileTravelling();
+        base.OnStopWhileStarted();
     }
-    public override void OnStopActionDuringCurrentState() {
-        Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
-    }
-    public override void OnResultReturnedToActor() {
+    public override void OnStopWhilePerforming() {
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
     }
+    //public override void OnResultReturnedToActor() {
+    //    Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_STARTED_STATE, OnCharacterStartedState);
+    //}
     //protected override void ConstructPreconditionsAndEffects() {
     //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     //}

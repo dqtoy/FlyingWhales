@@ -19,7 +19,7 @@ public class AbductCharacter : GoapAction {
     //protected override void ConstructRequirement() {
     //    _requirementAction = Requirement;
     //}
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.RESTRAIN_CARRY, conditionKey = actor, targetPOI = poiTarget }, IsInActorPartyAndRestrained);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY_NO_CONSENT, conditionKey = actor.homeRegion, targetPOI = poiTarget });
     }
@@ -44,13 +44,13 @@ public class AbductCharacter : GoapAction {
         }
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void OnStopActionWhileTravelling() {
-        base.OnStopActionWhileTravelling();
+    public override void OnStopWhileStarted() {
+        base.OnStopWhileStarted();
         Character targetCharacter = poiTarget as Character;
         actor.currentParty.RemoveCharacter(targetCharacter);
     }
-    public override void OnStopActionDuringCurrentState() {
-        base.OnStopActionDuringCurrentState();
+    public override void OnStopWhilePerforming() {
+        base.OnStopWhilePerforming();
         Character targetCharacter = poiTarget as Character;
         actor.currentParty.RemoveCharacter(targetCharacter);
     }

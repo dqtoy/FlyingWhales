@@ -277,9 +277,11 @@ public class SerialKiller : Trait {
             if (character.stateComponent.currentState != null) {
                 character.stateComponent.currentState.OnExitThisState();
             }
-        } else if (character.stateComponent.stateToDo != null) {
-            character.stateComponent.SetStateToDo(null);
-        } else {
+        } 
+        //else if (character.stateComponent.stateToDo != null) {
+        //    character.stateComponent.SetStateToDo(null);
+        //}
+        else {
             if (character.currentParty.icon.isTravelling) {
                 if (character.currentParty.icon.travelLine == null) {
                     character.marker.StopMovement();

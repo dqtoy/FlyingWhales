@@ -12,7 +12,7 @@ public class GetSupply : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         SupplyPile supplyPile = poiTarget as SupplyPile;
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = supplyPile.suppliesInPile, targetPOI = actor });
     }

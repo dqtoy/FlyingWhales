@@ -162,8 +162,8 @@ public class Puke : GoapAction {
     private GoapAction stoppedAction;
     private CharacterState pausedState;
     private bool AlsoPuke(Character character) {
-        if (character.currentAction != null && character.currentAction.goapType != INTERACTION_TYPE.PUKE) {
-            stoppedAction = character.currentAction;
+        if (character.currentActionNode != null && character.currentActionNode.goapType != INTERACTION_TYPE.PUKE) {
+            stoppedAction = character.currentActionNode;
             character.StopCurrentAction(false);
             character.marker.StopMovement();
 
@@ -197,7 +197,7 @@ public class Puke : GoapAction {
             goapAction.SetEndAction(ResumePausedState);
             goapAction.DoAction();
             return true;
-        } else if (character.stateComponent.currentState == null && character.currentAction == null) {
+        } else if (character.stateComponent.currentState == null && character.currentActionNode == null) {
             GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, character, character);
 
             GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);

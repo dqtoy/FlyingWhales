@@ -1374,7 +1374,7 @@ public enum REGION_FEATURE_TYPE { PASSIVE, ACTIVE }
 /// SUCCESS - only when action is finished; if action is successful
 /// FAIL - only when action is finished; if action failed
 /// </summary>
-public enum ACTION_STATUS { STARTED, PERFORMING, SUCCESS, FAIL }
+public enum ACTION_STATUS { NONE, STARTED, PERFORMING, SUCCESS, FAIL }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]

@@ -39,7 +39,8 @@ public class Sick : Trait {
                     Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
                     addLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                    gainedFromDoing.states["Eat Poisoned"].AddArrangedLog("sick", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, owner, true));
+                    owner.RegisterLogAndShowNotifToThisCharacterOnly(addLog, gainedFromDoing, false);
+                    //gainedFromDoing.states["Eat Poisoned"].AddArrangedLog("sick", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, owner, true));
                 } else {
                     owner.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
                 }
@@ -98,12 +99,12 @@ public class Sick : Trait {
         if (pukeRoll < pukeChance) {
             //summary += "\nPuke chance met. Doing puke action.";
             //do puke action
-            if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.PUKE) {
+            if (owner.currentActionNode != null && owner.currentActionNode.goapType != INTERACTION_TYPE.PUKE) {
                 //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
                 JobQueueItem currentJob = null;
                 JobQueue currentJobQueue = null;
-                if (owner.currentAction.isRoamingAction && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null) {
-                    currentJob = owner.currentAction.parentPlan.job;
+                if (owner.currentActionNode.isRoamingAction && owner.currentActionNode.parentPlan != null && owner.currentActionNode.parentPlan.job != null) {
+                    currentJob = owner.currentActionNode.parentPlan.job;
                     currentJobQueue = currentJob.jobQueueParent;
                 }
                 owner.StopCurrentAction(false);
@@ -122,9 +123,9 @@ public class Sick : Trait {
                 goapAction.CreateStates();
                 owner.jobQueue.AddJobInQueue(job, false);
 
-                owner.SetCurrentAction(goapAction);
+                owner.SetCurrentActionNode(goapAction);
                 //owner.currentAction.SetEndAction(ResumeLastAction);
-                owner.currentAction.DoAction();
+                owner.currentActionNode.DoAction();
                 hasCreatedJob = true;
             } else if (owner.stateComponent.currentState != null) {
                 pausedState = owner.stateComponent.currentState;
@@ -138,11 +139,11 @@ public class Sick : Trait {
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
-                owner.currentAction.SetEndAction(ResumePausedState);
+                owner.SetCurrentActionNode(goapAction);
+                owner.currentActionNode.SetEndAction(ResumePausedState);
                 owner.jobQueue.AddJobInQueue(job, false);
 
-                owner.currentAction.DoAction();
+                owner.currentActionNode.DoAction();
                 hasCreatedJob = true;
             } else {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
@@ -153,10 +154,10 @@ public class Sick : Trait {
                 job.SetAssignedPlan(goapPlan);
                 goapPlan.ConstructAllNodes();
                 goapAction.CreateStates();
-                owner.SetCurrentAction(goapAction);
+                owner.SetCurrentActionNode(goapAction);
                 owner.jobQueue.AddJobInQueue(job, false);
 
-                owner.currentAction.DoAction();
+                owner.currentActionNode.DoAction();
                 hasCreatedJob = true;
             }
             //Debug.Log(summary);

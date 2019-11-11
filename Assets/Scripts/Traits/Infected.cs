@@ -81,12 +81,12 @@ public class Infected : Trait {
         if (pukeRoll < pukeChance) {
             //summary += "\nPuke chance met. Doing puke action.";
             //do puke action
-            if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.PUKE) {
+            if (owner.currentActionNode != null && owner.currentActionNode.goapType != INTERACTION_TYPE.PUKE) {
                 //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
                 JobQueueItem currentJob = null;
                 JobQueue currentJobQueue = null;
-                if (owner.currentAction.isRoamingAction && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null) {
-                    currentJob = owner.currentAction.parentPlan.job;
+                if (owner.currentActionNode.isRoamingAction && owner.currentActionNode.parentPlan != null && owner.currentActionNode.parentPlan.job != null) {
+                    currentJob = owner.currentActionNode.parentPlan.job;
                     currentJobQueue = currentJob.jobQueueParent;
                 }
                 owner.StopCurrentAction(false);
@@ -105,9 +105,9 @@ public class Infected : Trait {
                 goapAction.CreateStates();
                 owner.jobQueue.AddJobInQueue(job, false);
 
-                owner.SetCurrentAction(goapAction);
+                owner.SetCurrentActionNode(goapAction);
                 //owner.currentAction.SetEndAction(ResumeLastAction);
-                owner.currentAction.DoAction();
+                owner.currentActionNode.DoAction();
                 hasCreatedJob = true;
             } else if (owner.stateComponent.currentState != null) {
                 pausedState = owner.stateComponent.currentState;
@@ -123,9 +123,9 @@ public class Infected : Trait {
                 goapAction.CreateStates();
                 owner.jobQueue.AddJobInQueue(job, false);
 
-                owner.SetCurrentAction(goapAction);
-                owner.currentAction.SetEndAction(ResumePausedState);
-                owner.currentAction.DoAction();
+                owner.SetCurrentActionNode(goapAction);
+                owner.currentActionNode.SetEndAction(ResumePausedState);
+                owner.currentActionNode.DoAction();
                 hasCreatedJob = true;
             } else {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
@@ -138,8 +138,8 @@ public class Infected : Trait {
                 goapAction.CreateStates();
                 owner.jobQueue.AddJobInQueue(job, false);
 
-                owner.SetCurrentAction(goapAction);
-                owner.currentAction.DoAction();
+                owner.SetCurrentActionNode(goapAction);
+                owner.currentActionNode.DoAction();
                 hasCreatedJob = true;
             }
             //Debug.Log(summary);
@@ -157,7 +157,7 @@ public class Infected : Trait {
         int roll = Random.Range(0, 100);
         if (roll < 2 && owner.isAtHomeRegion) { //2
             owner.marker.StopMovement();
-            if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.ZOMBIE_DEATH) {
+            if (owner.currentActionNode != null && owner.currentActionNode.goapType != INTERACTION_TYPE.ZOMBIE_DEATH) {
                 owner.StopCurrentAction(false);
             } else if (owner.stateComponent.currentState != null) {
                 owner.stateComponent.currentState.OnExitThisState();
@@ -171,8 +171,8 @@ public class Infected : Trait {
             goapPlan.ConstructAllNodes();
 
             goapAction.CreateStates();
-            owner.SetCurrentAction(goapAction);
-            owner.currentAction.Perform();
+            owner.SetCurrentActionNode(goapAction);
+            owner.currentActionNode.Perform();
         }
     }
 

@@ -10,7 +10,7 @@ public interface IPointOfInterest : ITraitable{
     Area specificLocation { get; }
     List<INTERACTION_TYPE> poiGoapActions { get; }
     List<JobQueueItem> allJobsTargettingThis { get; }
-    List<GoapAction> targettedByAction { get; }
+    //List<GoapAction> targettedByAction { get; }
     //List<Trait> normalTraits { get; }
     Faction factionOwner { get; }
     POICollisionTrigger collisionTrigger { get; } //Each poi must only hav 1 at a time.
@@ -26,8 +26,8 @@ public interface IPointOfInterest : ITraitable{
     void AddJobTargettingThis(JobQueueItem job);
     void SetPOIState(POI_STATE state);
     void SetIsDisabledByPlayer(bool state);
-    void AddTargettedByAction(GoapAction action);
-    void RemoveTargettedByAction(GoapAction action);
+    //void AddTargettedByAction(GoapAction action);
+    //void RemoveTargettedByAction(GoapAction action);
     bool HasJobTargettingThis(params JOB_TYPE[] jobType);
     bool IsAvailable();
     bool RemoveJobTargettingThis(JobQueueItem job);

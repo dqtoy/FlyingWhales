@@ -15,7 +15,7 @@ public class AskToStopJob : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_STOP_ACTION_AND_JOB, targetPOI = poiTarget });
     }
     public override void Perform() {
@@ -23,8 +23,8 @@ public class AskToStopJob : GoapAction {
         if (!isTargetMissing) {
             if (poiTarget is Character) {
                 Character targetCharacter = poiTarget as Character;
-                if (targetCharacter.currentAction != null && targetCharacter.currentAction.parentPlan != null && targetCharacter.currentAction.parentPlan.job != null
-                && targetCharacter.currentAction.parentPlan.job == jobToStop) {
+                if (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.parentPlan != null && targetCharacter.currentActionNode.parentPlan.job != null
+                && targetCharacter.currentActionNode.parentPlan.job == jobToStop) {
                     SetState("Ask Success");
                 } else {
                     SetState("Ask Fail");
@@ -75,7 +75,7 @@ public class AskToStopJob : GoapAction {
     private void PreAskSuccess() {
         if (poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
-            currentState.AddLogFiller(null, targetCharacter.currentAction.goapName, LOG_IDENTIFIER.STRING_1);
+            currentState.AddLogFiller(null, targetCharacter.currentActionNode.goapName, LOG_IDENTIFIER.STRING_1);
         }
     }
     private void PreAskFail() {
@@ -87,8 +87,8 @@ public class AskToStopJob : GoapAction {
     private void AfterAskSuccess() {
         if (poiTarget is Character) {
             Character targetCharacter = poiTarget as Character;
-            if(targetCharacter.currentAction != null) {
-                targetCharacter.currentAction.StopAction(true);
+            if(targetCharacter.currentActionNode != null) {
+                targetCharacter.currentActionNode.StopAction(true);
             }
         }
     }

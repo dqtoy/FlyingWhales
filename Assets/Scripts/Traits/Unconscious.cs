@@ -47,11 +47,12 @@ public class Unconscious : Trait {
                 Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
                 addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                if (gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER) {
-                    gainedFromDoing.states["Target Knocked Out"].AddArrangedLog("unconscious", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
-                }else if (gainedFromDoing.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
-                    gainedFromDoing.states["Knockout Success"].AddArrangedLog("unconscious", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
-                }
+                _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly(addLog, gainedFromDoing, false);
+                //if (gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT_CHARACTER) {
+                //    gainedFromDoing.states["Target Knocked Out"].AddArrangedLog("unconscious", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
+                //}else if (gainedFromDoing.goapType == INTERACTION_TYPE.KNOCKOUT_CHARACTER) {
+                //    gainedFromDoing.states["Knockout Success"].AddArrangedLog("unconscious", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, _sourceCharacter, true));
+                //}
             }
         }
     }
@@ -102,10 +103,10 @@ public class Unconscious : Trait {
                 } else {
                     if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRemoveIllnessesJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                         bool canBeTransfered = false;
-                        if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null
-                            && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
+                        if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentActionNode != null
+                            && currentJob.assignedCharacter.currentActionNode.parentPlan != null && currentJob.assignedCharacter.currentActionNode.parentPlan.job == currentJob) {
                             if (currentJob.assignedCharacter != characterThatWillDoJob) {
-                                canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
+                                canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentActionNode.poiTarget);
                             }
                         } else {
                             canBeTransfered = true;
@@ -136,10 +137,10 @@ public class Unconscious : Trait {
                 } else {
                     if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                         bool canBeTransfered = false;
-                        if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null
-                            && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
+                        if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentActionNode != null
+                            && currentJob.assignedCharacter.currentActionNode.parentPlan != null && currentJob.assignedCharacter.currentActionNode.parentPlan.job == currentJob) {
                             if (currentJob.assignedCharacter != characterThatWillDoJob) {
-                                canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
+                                canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentActionNode.poiTarget);
                             }
                         } else {
                             canBeTransfered = true;

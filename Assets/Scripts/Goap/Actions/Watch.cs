@@ -79,8 +79,8 @@ public class Watch : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void OnStopActionDuringCurrentState() {
-        base.OnStopActionDuringCurrentState();
+    public override void OnStopWhilePerforming() {
+        base.OnStopWhilePerforming();
         //if (Messenger.eventTable.ContainsKey(Signals.TICK_STARTED)) {
         //    Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
         //}

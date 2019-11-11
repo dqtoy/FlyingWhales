@@ -10,6 +10,7 @@ public class GoapPlan {
     public GoapNode endNode { get; private set; }
     public GoapNode currentNode { get; private set; }
     public GoapNode previousNode { get; private set; }
+    public ActualGoapNode currentActualNode { get; private set; }
     public GOAP_EFFECT_CONDITION[] goalEffects { get; private set; }
     public List<IPointOfInterest> goalCharacterTargets { get; private set; } ////Only characters in the same structure and characters in this list are allowed to advertise actions even if they are part of the awareness list of the actor
     public List<GoapNode> allNodes { get; private set; }

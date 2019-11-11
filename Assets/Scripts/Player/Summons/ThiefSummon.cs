@@ -34,8 +34,8 @@ public class ThiefSummon : Summon {
         //    }
         //}
     }
-    public override List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
-        List<GoapAction> actions = base.ThisCharacterSaw(target);
+    public override List<ActualGoapNode> ThisCharacterSaw(IPointOfInterest target) {
+        List<ActualGoapNode> actions = base.ThisCharacterSaw(target);
         if (target is Character) {
             Character targetCharacter = target as Character;
             //if the target is not from the player faction, add them to the terrifying characters list
@@ -77,7 +77,7 @@ public class ThiefSummon : Summon {
     public override bool CanBeInstructedByPlayer() {
         bool canBeInstructed = base.CanBeInstructedByPlayer();
         if (canBeInstructed) {
-            if (currentAction != null && !currentAction.goapType.IsHostileAction()) {
+            if (currentActionNode != null && !currentActionNode.goapType.IsHostileAction()) {
                 canBeInstructed = false;
             } else if (stateComponent.currentState == null || !(stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT || stateComponent.currentState.characterState == CHARACTER_STATE.BERSERKED)) {
                 canBeInstructed = false;

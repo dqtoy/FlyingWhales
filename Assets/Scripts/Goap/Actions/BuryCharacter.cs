@@ -35,7 +35,7 @@ public class BuryCharacter : GoapAction {
         }
         base.SetTargetStructure();
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, targetPOI = poiTarget }, IsInActorParty);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = actor.homeRegion, targetPOI = poiTarget });
     }
@@ -46,8 +46,8 @@ public class BuryCharacter : GoapAction {
     protected override int GetBaseCost() {
         return 1;
     }
-    public override void OnStopActionWhileTravelling() {
-        base.OnStopActionWhileTravelling();
+    public override void OnStopWhileStarted() {
+        base.OnStopWhileStarted();
         Character targetCharacter = poiTarget as Character;
         actor.ownParty.RemoveCharacter(targetCharacter, false);
         targetCharacter.SetCurrentStructureLocation(targetCharacter.gridTileLocation.structure, false);

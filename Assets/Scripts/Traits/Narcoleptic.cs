@@ -30,7 +30,7 @@ public class Narcoleptic : Trait {
         int napChance = UnityEngine.Random.Range(0, 100);
         bool hasCreatedJob = false;
         if (napChance < 1) {
-            if (owner.currentAction == null || (owner.currentAction.goapType != INTERACTION_TYPE.NARCOLEPTIC_NAP)) {
+            if (owner.currentActionNode == null || (owner.currentActionNode.goapType != INTERACTION_TYPE.NARCOLEPTIC_NAP)) {
                 DoNarcolepticNap();
 
                 hasCreatedJob = true;
@@ -63,18 +63,19 @@ public class Narcoleptic : Trait {
         if (owner.IsInOwnParty()) {
             owner.ownParty.RemoveAllOtherCharacters();
         }
-        if (owner.currentAction != null) {
+        if (owner.currentActionNode != null) {
             owner.StopCurrentAction(false);
         }
         if (owner.stateComponent.currentState != null) {
             storedState = owner.stateComponent.currentState;
             owner.stateComponent.currentState.PauseState();
             goapAction.SetEndAction(ResumePausedState);
-        } else if (owner.stateComponent.stateToDo != null) {
-            storedState = owner.stateComponent.stateToDo;
-            owner.stateComponent.SetStateToDo(null, false, false);
-            goapAction.SetEndAction(ResumeStateToDoState);
-        }
+        } 
+        //else if (owner.stateComponent.stateToDo != null) {
+        //    storedState = owner.stateComponent.stateToDo;
+        //    owner.stateComponent.SetStateToDo(null, false, false);
+        //    goapAction.SetEndAction(ResumeStateToDoState);
+        //}
         owner.AdjustIsWaitingForInteraction(-1);
 
         owner.AddPlan(plan, true, false);
@@ -86,8 +87,8 @@ public class Narcoleptic : Trait {
         owner.GoapActionResult(result, action);
         storedState.ResumeState();
     }
-    private void ResumeStateToDoState(string result, GoapAction action) {
-        owner.GoapActionResult(result, action);
-        owner.stateComponent.SetStateToDo(storedState);
-    }
+    //private void ResumeStateToDoState(string result, GoapAction action) {
+    //    owner.GoapActionResult(result, action);
+    //    //owner.stateComponent.SetStateToDo(storedState);
+    //}
 }

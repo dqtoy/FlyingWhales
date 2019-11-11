@@ -21,7 +21,7 @@ public class CraftItem : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         if (hasSetCraftedItem) {
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = ItemManager.Instance.itemData[craftedItem].craftCost, targetPOI = actor }, HasSupply);
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = craftedItem.ToString(), targetPOI = actor });
@@ -52,7 +52,7 @@ public class CraftItem : GoapAction {
             SetCraftedItem((SPECIAL_TOKEN) otherData[0]);
             preconditions.Clear();
             expectedEffects.Clear();
-            ConstructPreconditionsAndEffects();
+            ConstructBasePreconditionsAndEffects();
             CreateThoughtBubbleLog();
             return true;
         }

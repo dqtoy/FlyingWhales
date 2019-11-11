@@ -104,12 +104,12 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             //ghostCollisionSummary += "\n" + parentMarker.character.name + " is aware of " + collidedWith.poi.name;
             parentMarker.character.RemoveAwareness(collidedWith.poi);
             //ghostCollisionSummary += "\n" + parentMarker.character.name + "'s known location of " + collidedWith.poi.name + " is same as this ghost colliders position, removing it from it's awareness...";
-            if (parentMarker.character.currentAction != null && parentMarker.character.currentAction.poiTarget == collidedWith.poi) {
-                if (parentMarker.character.currentAction.poiTarget is TileObject && (parentMarker.character.currentAction.poiTarget as TileObject).removedBy == parentMarker.character) {
+            if (parentMarker.character.currentActionNode != null && parentMarker.character.currentActionNode.poiTarget == collidedWith.poi) {
+                if (parentMarker.character.currentActionNode.poiTarget is TileObject && (parentMarker.character.currentActionNode.poiTarget as TileObject).removedBy == parentMarker.character) {
                     return; //if the ghost collider is from a tile object and this character is the one responsible for removing it, then do not execute target missing
                 }
                 //trigger target missing state
-                parentMarker.character.currentAction.ExecuteTargetMissing();
+                parentMarker.character.currentActionNode.ExecuteTargetMissing();
             }
         }
         //Debug.Log(ghostCollisionSummary);

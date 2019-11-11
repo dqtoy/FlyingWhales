@@ -48,7 +48,7 @@ public class CharacterState {
     //Starts a state and its movement behavior, can be overridden
     protected virtual void StartState() {
         hasStarted = true;
-        stateComponent.SetStateToDo(null, false, false);
+        //stateComponent.SetStateToDo(null, false, false);
         stateComponent.SetCurrentState(this);
         currentDuration = 0;
         StartStatePerTick();
@@ -72,7 +72,7 @@ public class CharacterState {
                 currentlyDoingAction.SetEndAction(FakeEndAction);
                 currentlyDoingAction.currentState.EndPerTickEffect(false);
             }
-            stateComponent.character.SetCurrentAction(null);
+            stateComponent.character.SetCurrentActionNode(null);
             SetCurrentlyDoingAction(null);
         }
         isDone = true;
@@ -197,7 +197,7 @@ public class CharacterState {
         if (isDone) {
             return;
         }
-        stateComponent.SetStateToDo(this, stopMovement: false);
+        //stateComponent.SetStateToDo(this, stopMovement: false);
         stateComponent.character.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Entering " + stateName + " for " + stateComponent.character.name + " targetting " + targetCharacter?.name);
         StartState();
         ////targetArea = area;

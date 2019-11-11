@@ -77,13 +77,13 @@ public class Plagued : Trait {
         if (pukeRoll < pukeChance) {
             //summary += "\nPuke chance met. Doing puke action.";
             //do puke action
-            if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.PUKE) {
-                stoppedAction = owner.currentAction;
+            if (owner.currentActionNode != null && owner.currentActionNode.goapType != INTERACTION_TYPE.PUKE) {
+                stoppedAction = owner.currentActionNode;
                 //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
                 JobQueueItem currentJob = null;
                 JobQueue currentJobQueue = null;
-                if (owner.currentAction.isRoamingAction && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null) {
-                    currentJob = owner.currentAction.parentPlan.job;
+                if (owner.currentActionNode.isRoamingAction && owner.currentActionNode.parentPlan != null && owner.currentActionNode.parentPlan.job != null) {
+                    currentJob = owner.currentActionNode.parentPlan.job;
                     currentJobQueue = currentJob.jobQueueParent;
                 }
                 owner.StopCurrentAction(false);
@@ -122,7 +122,7 @@ public class Plagued : Trait {
                 goapAction.SetEndAction(ResumePausedState);
                 goapAction.DoAction();
                 hasCreatedJob = true;
-            } else if (owner.stateComponent.currentState == null && owner.currentAction == null) {
+            } else if (owner.stateComponent.currentState == null && owner.currentActionNode == null) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.PUKE, owner, owner);
 
                 GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
@@ -139,8 +139,8 @@ public class Plagued : Trait {
             //Debug.Log(summary);
         } else if (septicRoll < septicChance) {
             //summary += "\nSeptic Shock chance met. Doing septic shock action.";
-            if (owner.currentAction != null && owner.currentAction.goapType != INTERACTION_TYPE.SEPTIC_SHOCK) {
-                stoppedAction = owner.currentAction;
+            if (owner.currentActionNode != null && owner.currentActionNode.goapType != INTERACTION_TYPE.SEPTIC_SHOCK) {
+                stoppedAction = owner.currentActionNode;
                 owner.StopCurrentAction(false);
                 owner.marker.StopMovement();
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
@@ -170,7 +170,7 @@ public class Plagued : Trait {
 
                 goapAction.DoAction();
                 hasCreatedJob = true;
-            } else if (owner.stateComponent.currentState == null && owner.currentAction == null) {
+            } else if (owner.stateComponent.currentState == null && owner.currentActionNode == null) {
                 GoapAction goapAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.SEPTIC_SHOCK, owner, owner);
 
                 GoapNode goalNode = new GoapNode(null, goapAction.cost, goapAction);
@@ -181,7 +181,7 @@ public class Plagued : Trait {
                 goapAction.CreateStates();
                 owner.jobQueue.AddJobInQueue(job, false);
 
-                owner.currentAction.DoAction();
+                owner.currentActionNode.DoAction();
                 hasCreatedJob = true;
             }
             //Debug.Log(summary);

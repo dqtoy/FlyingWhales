@@ -30,7 +30,7 @@ public class NarcolepticNap : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Nap Success") {
             RemoveTraitFrom(actor, "Resting");
         }

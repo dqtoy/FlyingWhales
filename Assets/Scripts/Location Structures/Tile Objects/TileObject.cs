@@ -22,7 +22,7 @@ public class TileObject : IPointOfInterest {
     public bool isDisabledByPlayer { get; protected set; }
     public bool isSummonedByPlayer { get; protected set; }
     public List<JobQueueItem> allJobsTargettingThis { get; protected set; }
-    public List<GoapAction> targettedByAction { get; protected set; }
+    //public List<GoapAction> targettedByAction { get; protected set; }
     public List<Character> owners { get; private set; }
     public virtual Character[] users {
         get {
@@ -82,7 +82,7 @@ public class TileObject : IPointOfInterest {
         actionHistory = new List<string>();
         awareCharacters = new List<Character>();
         allJobsTargettingThis = new List<JobQueueItem>();
-        targettedByAction = new List<GoapAction>();
+        //targettedByAction = new List<GoapAction>();
         owners = new List<Character>();
         hasCreatedSlots = false;
         maxHP = TileObjectDB.GetTileObjectData(tileObjectType).maxHP;
@@ -111,7 +111,7 @@ public class TileObject : IPointOfInterest {
         awareCharacters = new List<Character>();
         allJobsTargettingThis = new List<JobQueueItem>();
         owners = new List<Character>();
-        targettedByAction = new List<GoapAction>();
+        //targettedByAction = new List<GoapAction>();
         hasCreatedSlots = false;
         InitializeCollisionTrigger();
         InteriorMapManager.Instance.AddTileObject(this);
@@ -315,12 +315,12 @@ public class TileObject : IPointOfInterest {
         }
         return null;
     }
-    public void AddTargettedByAction(GoapAction action) {
-        targettedByAction.Add(action);
-    }
-    public void RemoveTargettedByAction(GoapAction action) {
-        targettedByAction.Remove(action);
-    }
+    //public void AddTargettedByAction(GoapAction action) {
+    //    targettedByAction.Add(action);
+    //}
+    //public void RemoveTargettedByAction(GoapAction action) {
+    //    targettedByAction.Remove(action);
+    //}
     public void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments

@@ -23,14 +23,15 @@ public class Coward : Trait {
         string successLogKey = base.TriggerFlaw(character);
         if (character.homeStructure != null) {
             if (character.currentStructure != character.homeStructure) {
-                if (character.currentAction != null) {
+                if (character.currentActionNode != null) {
                     character.StopCurrentAction(false);
                 }
                 if (character.stateComponent.currentState != null) {
                     character.stateComponent.currentState.OnExitThisState();
-                } else if (character.stateComponent.stateToDo != null) {
-                    character.stateComponent.SetStateToDo(null, false, false);
-                }
+                } 
+                //else if (character.stateComponent.stateToDo != null) {
+                //    character.stateComponent.SetStateToDo(null, false, false);
+                //}
 
                 LocationGridTile tile = character.homeStructure.tiles[Random.Range(0, character.homeStructure.tiles.Count)];
                 character.marker.GoTo(tile);

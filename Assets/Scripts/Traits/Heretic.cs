@@ -42,10 +42,10 @@ public class Heretic : Trait {
                 } else {
                     if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeApprehendJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                         bool canBeTransfered = false;
-                        if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null
-                            && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
+                        if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentActionNode != null
+                            && currentJob.assignedCharacter.currentActionNode.parentPlan != null && currentJob.assignedCharacter.currentActionNode.parentPlan.job == currentJob) {
                             if (currentJob.assignedCharacter != characterThatWillDoJob) {
-                                canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
+                                canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentActionNode.poiTarget);
                             }
                         } else {
                             canBeTransfered = true;

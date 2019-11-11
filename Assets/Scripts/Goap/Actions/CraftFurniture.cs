@@ -14,7 +14,7 @@ public class CraftFurniture : GoapAction {
     public CraftFurniture(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.CRAFT_FURNITURE, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Work_Icon;
-        SetShowIntelNotification(false);
+        showIntelNotification = false;
         isNotificationAnIntel = false;
     }
 
@@ -22,7 +22,7 @@ public class CraftFurniture : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         if (hasSetOtherData) {
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_SUPPLY, conditionKey = TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost, targetPOI = actor }, () => HasSupply(TileObjectDB.GetTileObjectData(furnitureToCreate).constructionCost));
         }
@@ -60,7 +60,7 @@ public class CraftFurniture : GoapAction {
             hasSetOtherData = true;
             preconditions.Clear();
             expectedEffects.Clear();
-            ConstructPreconditionsAndEffects();
+            ConstructBasePreconditionsAndEffects();
             CreateThoughtBubbleLog();
             SetTargetStructure();
             return true;

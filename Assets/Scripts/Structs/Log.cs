@@ -136,11 +136,11 @@ public class Log {
         }
     }
     public void AddLogToSpecificObjects(params LOG_IDENTIFIER[] identifiers) {
-        List<LOG_IDENTIFIER> identifiersList = identifiers.ToList();
+        //List<LOG_IDENTIFIER> identifiersList = identifiers.ToList();
         for (int i = 0; i < fillers.Count; i++) {
             LogFiller currFiller = fillers[i];
             object obj = currFiller.obj;
-            if (obj != null && identifiersList.Contains(currFiller.identifier)) {
+            if (obj != null && identifiers.Contains(currFiller.identifier)) {
                 if (obj is Character) {
                     (obj as Character).AddHistory(this);
                 } 

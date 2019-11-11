@@ -33,7 +33,7 @@ public class AccidentProne : Trait {
         int stumbleChance = UnityEngine.Random.Range(0, 100);
         bool hasCreatedJob = false;
         if(stumbleChance < 2) {
-            if(owner.currentAction == null || (owner.currentAction.goapType != INTERACTION_TYPE.STUMBLE && owner.currentAction.goapType != INTERACTION_TYPE.ACCIDENT)) {
+            if(owner.currentActionNode == null || (owner.currentActionNode.goapType != INTERACTION_TYPE.STUMBLE && owner.currentActionNode.goapType != INTERACTION_TYPE.ACCIDENT)) {
                 DoStumble();
                 hasCreatedJob = true;
             }
@@ -56,9 +56,9 @@ public class AccidentProne : Trait {
         if (character.marker.isMoving) {
             //If moving, the character will stumble and get injured.
             DoStumble();
-        } else if (character.currentAction != null && !AttributeManager.Instance.excludedActionsFromAccidentProneTrait.Contains(character.currentAction.goapType)) {
+        } else if (character.currentActionNode != null && !AttributeManager.Instance.excludedActionsFromAccidentProneTrait.Contains(character.currentActionNode.goapType)) {
             //If doing something, the character will fail and get injured.
-            DoAccident(character.currentAction);
+            DoAccident(character.currentActionNode);
         }
         return base.TriggerFlaw(character);
     }
@@ -85,12 +85,12 @@ public class AccidentProne : Trait {
         if (owner.IsInOwnParty()) {
             owner.ownParty.RemoveAllOtherCharacters();
         }
-        if (owner.currentAction != null) {
+        if (owner.currentActionNode != null) {
             //If current action is a roaming action like Hunting To Drink Blood, we must requeue the job after it is removed by StopCurrentAction
             JobQueueItem currentJob = null;
             JobQueue currentJobQueue = null;
-            if (owner.currentAction.isRoamingAction && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null) {
-                currentJob = owner.currentAction.parentPlan.job;
+            if (owner.currentActionNode.isRoamingAction && owner.currentActionNode.parentPlan != null && owner.currentActionNode.parentPlan.job != null) {
+                currentJob = owner.currentActionNode.parentPlan.job;
                 currentJobQueue = currentJob.jobQueueParent;
             }
             owner.StopCurrentAction(false);
@@ -102,11 +102,12 @@ public class AccidentProne : Trait {
             storedState = owner.stateComponent.currentState;
             owner.stateComponent.currentState.PauseState();
             goapAction.SetEndAction(ResumePausedState);
-        } else if (owner.stateComponent.stateToDo != null) {
-            storedState = owner.stateComponent.stateToDo;
-            owner.stateComponent.SetStateToDo(null, false, false);
-            goapAction.SetEndAction(ResumeStateToDoState);
-        }
+        } 
+        //else if (owner.stateComponent.stateToDo != null) {
+        //    storedState = owner.stateComponent.stateToDo;
+        //    owner.stateComponent.SetStateToDo(null, false, false);
+        //    goapAction.SetEndAction(ResumeStateToDoState);
+        //}
         owner.AdjustIsWaitingForInteraction(-1);
 
         owner.AddPlan(plan, true, false);
@@ -128,8 +129,8 @@ public class AccidentProne : Trait {
 
         owner.jobQueue.AddJobInQueue(job, false);
 
-        if (owner.currentAction != null && owner.currentAction.parentPlan != null && owner.currentAction.parentPlan.job != null
-            && owner.currentAction.parentPlan.job.id == owner.sleepScheduleJobID) {
+        if (owner.currentActionNode != null && owner.currentActionNode.parentPlan != null && owner.currentActionNode.parentPlan.job != null
+            && owner.currentActionNode.parentPlan.job.id == owner.sleepScheduleJobID) {
             owner.SetHasCancelledSleepSchedule(true);
         }
 
@@ -149,8 +150,8 @@ public class AccidentProne : Trait {
         owner.GoapActionResult(result, action);
         storedState.ResumeState();
     }
-    private void ResumeStateToDoState(string result, GoapAction action) {
-        owner.GoapActionResult(result, action);
-        owner.stateComponent.SetStateToDo(storedState);
-    }
+    //private void ResumeStateToDoState(string result, GoapAction action) {
+    //    owner.GoapActionResult(result, action);
+    //    //owner.stateComponent.SetStateToDo(storedState);
+    //}
 }

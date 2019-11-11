@@ -60,7 +60,7 @@ public class DouseFireState : CharacterState {
                 GetWater();
             }
         } else {
-            if (stateComponent.character.currentAction == null && stateComponent.currentState == this) {
+            if (stateComponent.character.currentActionNode == null && stateComponent.currentState == this) {
                 //no more fire, exit state
                 OnExitThisState();
             }
@@ -193,14 +193,14 @@ public class DouseFireState : CharacterState {
         if (stateComponent.currentState != this) {
             return;
         }
-        stateComponent.character.SetCurrentAction(null);
+        stateComponent.character.SetCurrentActionNode(null);
         isFetchingWater = false;
         ResumeState();
     }
     private void OnArriveAtWaterLocation(GoapAction goapAction) {
-        stateComponent.character.SetCurrentAction(goapAction);
-        stateComponent.character.currentAction.SetEndAction(OnGetWaterFromPond);
-        stateComponent.character.currentAction.Perform();
+        stateComponent.character.SetCurrentActionNode(goapAction);
+        stateComponent.character.currentActionNode.SetEndAction(OnGetWaterFromPond);
+        stateComponent.character.currentActionNode.Perform();
     }
     private void DouseNearestFire() {
         if (isDousingFire) {
@@ -249,16 +249,16 @@ public class DouseFireState : CharacterState {
         //    OnDouseFire(InteractionManager.Goap_State_Fail, null); //ususally happens when character collides with ghost collider of fire and the douse fire action is automatically ended.
         //    return;
         //}
-        stateComponent.character.SetCurrentAction(goapAction);
-        stateComponent.character.currentAction.SetEndAction(OnDouseFire);
-        stateComponent.character.currentAction.Perform();
+        stateComponent.character.SetCurrentActionNode(goapAction);
+        stateComponent.character.currentActionNode.SetEndAction(OnDouseFire);
+        stateComponent.character.currentActionNode.Perform();
     }
     private void OnDouseFire(string result, GoapAction action) {
         SetCurrentlyDoingAction(null);
         if (stateComponent.currentState != this) {
             return;
         }
-        stateComponent.character.SetCurrentAction(null);
+        stateComponent.character.SetCurrentActionNode(null);
         //THIS IS QUICK FIX ONLY!
         if(result == InteractionManager.Goap_State_Fail) {
             //When douse fire fails, it means that the target is no longer burning or doesn't have grid tile location or actor no longer has water

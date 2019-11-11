@@ -119,13 +119,14 @@ public class Minion {
             }
             if (character.stateComponent.currentState != null) {
                 character.stateComponent.currentState.OnExitThisState();
-            } else if (character.stateComponent.stateToDo != null) {
-                character.stateComponent.SetStateToDo(null);
-            }
+            } 
+            //else if (character.stateComponent.stateToDo != null) {
+            //    character.stateComponent.SetStateToDo(null);
+            //}
             character.CancelAllJobsTargettingThisCharacter("target is already dead", false);
             Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, character, "target is already dead");
-            if (character.currentAction != null && !character.currentAction.cannotCancelAction) {
-                character.currentAction.StopAction();
+            if (character.currentActionNode != null && !character.currentActionNode.cannotCancelAction) {
+                character.currentActionNode.StopAction();
             }
             if (character.ownParty.specificLocation != null && character.isHoldingItem) {
                 character.DropAllTokens(character.ownParty.specificLocation, character.currentStructure, deathTile, true);
@@ -315,7 +316,7 @@ public class Minion {
         if (!character.IsInOwnParty() || character.ownParty.icon.isTravelling || character.doNotDisturb > 0 || character.isWaitingForInteraction > 0) {
             return; //if this character is not in own party, is a defender or is travelling or cannot be disturbed, do not generate interaction
         }
-        if (character.stateComponent.currentState != null || character.stateComponent.stateToDo != null || character.marker == null) {
+        if (character.stateComponent.currentState != null /*|| character.stateComponent.stateToDo != null*/ || character.marker == null) {
             return;
         }
         GoToWorkArea();
@@ -332,9 +333,10 @@ public class Minion {
             if (character.stateComponent.currentState != null) {
                 character.stateComponent.currentState.OnExitThisState();
             }
-        } else if (character.stateComponent.currentState != null) {
-            character.stateComponent.SetStateToDo(null);
         }
+        //else if (character.stateComponent.currentState != null) {
+        //    character.stateComponent.SetStateToDo(null);
+        //}
 
         if (character.currentParty.icon.isTravelling) {
             character.marker.StopMovement();

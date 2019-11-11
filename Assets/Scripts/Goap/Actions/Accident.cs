@@ -29,14 +29,14 @@ public class Accident : GoapAction {
     public override LocationGridTile GetTargetLocationTile() {
         return InteractionManager.Instance.GetTargetLocationTile(actionLocationType, actor, null, targetStructure);
     }
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if (currentState.name == "Accident Success") {
-        //    if (actor.currentHP <= 0) {
-        //        actor.Death(deathFromAction: this);
-        //    }
-        //}
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if (currentState.name == "Accident Success") {
+    //    //    if (actor.currentHP <= 0) {
+    //    //        actor.Death(deathFromAction: this);
+    //    //    }
+    //    //}
+    //}
     public override bool InitializeOtherData(object[] otherData) {
         this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is GoapAction) {

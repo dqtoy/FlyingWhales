@@ -18,7 +18,7 @@ public class SleepOutside : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void Perform() {
@@ -47,7 +47,7 @@ public class SleepOutside : GoapAction {
     //    _targetStructure = choices[Utilities.rng.Next(0, choices.Count)];
     //    base.SetTargetStructure();
     //}
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Rest Success") {
             RemoveTraitFrom(actor, "Resting");
         }

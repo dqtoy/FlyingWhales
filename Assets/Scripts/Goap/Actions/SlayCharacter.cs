@@ -9,7 +9,7 @@ public class SlayCharacter : GoapAction {
     }
 
     #region Overrides
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.DEATH, targetPOI = poiTarget });
     }
     public override void Perform() {
@@ -36,12 +36,12 @@ public class SlayCharacter : GoapAction {
     //    }
     //    return base.GetArrangedLogPriorityIndex(priorityID);
     //}
-    public override void OnResultReturnedToActor() {
-        base.OnResultReturnedToActor();
-        //if(currentState.name == "Slay Success") {
-        //    (poiTarget as Character).Death(deathFromAction: this, responsibleCharacter: actor);
-        //}
-    }
+    //public override void OnResultReturnedToActor() {
+    //    base.OnResultReturnedToActor();
+    //    //if(currentState.name == "Slay Success") {
+    //    //    (poiTarget as Character).Death(deathFromAction: this, responsibleCharacter: actor);
+    //    //}
+    //}
     #endregion
 
     #region State Effects

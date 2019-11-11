@@ -16,7 +16,7 @@ public class Nap : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, conditionKey = null, targetPOI = actor });
     }
     public override void Perform() {
@@ -60,7 +60,7 @@ public class Nap : GoapAction {
         }
         return 100;
     }
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if(currentState.name == "Nap Success") {
             RemoveTraitFrom(actor, "Resting");
         }

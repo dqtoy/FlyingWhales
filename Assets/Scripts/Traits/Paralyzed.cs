@@ -60,10 +60,10 @@ public class Paralyzed : Trait {
                         } else {
                             if (currentJob.jobQueueParent.isAreaOrQuestJobQueue && InteractionManager.Instance.CanCharacterTakeRestrainJob(characterThatWillDoJob, targetCharacter, currentJob)) {
                                 bool canBeTransfered = false;
-                                if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentAction != null
-                                    && currentJob.assignedCharacter.currentAction.parentPlan != null && currentJob.assignedCharacter.currentAction.parentPlan.job == currentJob) {
+                                if (currentJob.assignedCharacter != null && currentJob.assignedCharacter.currentActionNode != null
+                                    && currentJob.assignedCharacter.currentActionNode.parentPlan != null && currentJob.assignedCharacter.currentActionNode.parentPlan.job == currentJob) {
                                     if (currentJob.assignedCharacter != characterThatWillDoJob) {
-                                        canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentAction.poiTarget);
+                                        canBeTransfered = !currentJob.assignedCharacter.marker.inVisionPOIs.Contains(currentJob.assignedCharacter.currentActionNode.poiTarget);
                                     }
                                 } else {
                                     canBeTransfered = true;
@@ -120,7 +120,7 @@ public class Paralyzed : Trait {
     }
     private void CheckParalyzedTraitPerHour() {
         if (character.IsInOwnParty()) {
-            if (character.CanPlanGoap() && character.stateComponent.currentState == null && character.stateComponent.stateToDo == null
+            if (character.CanPlanGoap() && character.stateComponent.currentState == null /*&& character.stateComponent.stateToDo == null*/
                 && (character.isStarving || character.isExhausted || character.isForlorn) 
                 && UnityEngine.Random.Range(0, 100) < 75 && !character.jobQueue.HasJob(JOB_TYPE.SCREAM)
                 && character.GetNormalTrait("Unconscious", "Resting") == null && !character.HasJobTargettingThis(JOB_TYPE.DROP, JOB_TYPE.FEED)) {

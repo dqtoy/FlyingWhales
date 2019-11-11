@@ -18,7 +18,7 @@ public class DrinkBlood : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         //if (actor.isStarving) {
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget }, HasUnconsciousOrRestingTarget);
         //}
@@ -49,7 +49,7 @@ public class DrinkBlood : GoapAction {
     protected override int GetBaseCost() {
         return 1;
     }
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Drink Success") {
             actor.AdjustDoNotGetHungry(-1);
         }

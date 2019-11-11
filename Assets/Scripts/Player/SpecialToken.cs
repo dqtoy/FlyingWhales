@@ -21,7 +21,7 @@ public class SpecialToken : IPointOfInterest {
     public POICollisionTrigger collisionTrigger { get; protected set; }
     public int uses { get; protected set; } //how many times can this item be used?
     public List<JobQueueItem> allJobsTargettingThis { get; private set; }
-    public List<GoapAction> targettedByAction { get; protected set; }
+    //public List<GoapAction> targettedByAction { get; protected set; }
 
     //hp
     public int maxHP { get; protected set; }
@@ -80,7 +80,7 @@ public class SpecialToken : IPointOfInterest {
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_ITEM, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_TYPE.DROP_ITEM_HOME};
         _traits = new List<Trait>();
         allJobsTargettingThis = new List<JobQueueItem>();
-        targettedByAction = new List<GoapAction>();
+        //targettedByAction = new List<GoapAction>();
         uses = 1;
         InitializeCollisionTrigger();
     }
@@ -125,12 +125,12 @@ public class SpecialToken : IPointOfInterest {
         }
         return false;
     }
-    public void AddTargettedByAction(GoapAction action) {
-        targettedByAction.Add(action);
-    }
-    public void RemoveTargettedByAction(GoapAction action) {
-        targettedByAction.Remove(action);
-    }
+    //public void AddTargettedByAction(GoapAction action) {
+    //    targettedByAction.Add(action);
+    //}
+    //public void RemoveTargettedByAction(GoapAction action) {
+    //    targettedByAction.Remove(action);
+    //}
 
     #region Area Map
     public void SetGridTileLocation(LocationGridTile tile) {

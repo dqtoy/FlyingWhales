@@ -28,7 +28,7 @@ public class Play : GoapAction {
     protected override void ConstructRequirement() {
         _requirementAction = Requirement;
     }
-    protected override void ConstructPreconditionsAndEffects() {
+    protected override void ConstructBasePreconditionsAndEffects() {
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     }
     public override void Perform() {
@@ -64,7 +64,7 @@ public class Play : GoapAction {
     //    }
     //    base.SetTargetStructure();
     //}
-    public override void OnStopActionDuringCurrentState() {
+    public override void OnStopWhilePerforming() {
         if (currentState.name == "Play Success") {
             actor.AdjustDoNotGetLonely(-1);
             actor.AdjustDoNotGetTired(-1);

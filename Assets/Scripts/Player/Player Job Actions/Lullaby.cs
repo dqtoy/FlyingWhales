@@ -39,17 +39,19 @@ public class Lullaby : PlayerJobAction {
                     if (character.stateComponent.currentState != null) {
                         character.stateComponent.currentState.OnExitThisState();
                     }
-                } else if (character.stateComponent.stateToDo != null) {
-                    character.stateComponent.SetStateToDo(null);
-                } else {
+                } 
+                //else if (character.stateComponent.stateToDo != null) {
+                //    character.stateComponent.SetStateToDo(null);
+                //}
+                else {
                     if (character.currentParty.icon.isTravelling) {
                         if (character.currentParty.icon.travelLine == null) {
                             character.marker.StopMovement();
                         }
                     }
                     character.AdjustIsWaitingForInteraction(1);
-                    if (character.currentAction != null) {
-                        character.currentAction.StopAction(true, "Stopped by the player");
+                    if (character.currentActionNode != null) {
+                        character.currentActionNode.StopAction(true, "Stopped by the player");
                     }
                     character.AdjustIsWaitingForInteraction(-1);
                 }
