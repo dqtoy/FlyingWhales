@@ -142,8 +142,8 @@ public class Player : ILeader {
 
         //goap
         //Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DID_ACTION, OnCharacterDidAction);
-        Messenger.AddListener<GoapAction, string, Character, IPointOfInterest, object[]>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
-        Messenger.AddListener<Character, GoapAction>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
+        Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<Area>(Signals.AREA_MAP_OPENED, OnAreaMapOpened);
         Messenger.AddListener<Area>(Signals.AREA_MAP_CLOSED, OnAreaMapClosed);
 
@@ -547,7 +547,7 @@ public class Player : ILeader {
     /// Listener for when a character has finished doing an action.
     /// </summary>
     /// <param name="character">The character that finished the action.</param>
-    /// <param name="action">The action that was finished.</param>
+    /// <param name="actionNode">The action that was finished.</param>
     //private void OnCharacterDidAction(Character character, GoapAction action) {
     //    for (int i = 0; i < action.currentState.arrangedLogs.Count; i++) {
     //        if(action.currentState.arrangedLogs[i].notifAction != null) {
@@ -577,14 +577,14 @@ public class Player : ILeader {
     /// </summary>
     /// <param name="character">The character that will do the action.</param>
     /// <param name="action">The action that will be performed.</param>
-    private void OnCharacterDoingAction(Character character, GoapAction action) {
+    private void OnCharacterDoingAction(Character character, ActualGoapNode actionNode) {
         bool showPopup = false;
-        Log log = action.GetCurrentLog();
-        if (action.showIntelNotification && !action.IsActorAtTargetTile() && log != null) { //added checking if actor is already at target tile. So that travelling notification won't show if that is the case.
-            if (action.shouldIntelNotificationOnlyIfActorIsActive) {
-                showPopup = ShouldShowNotificationFrom(action.actor, true);
+        Log log = actionNode.GetCurrentLog();
+        if (actionNode.showIntelNotification && !actionNode.IsActorAtTargetTile() && log != null) { //added checking if actor is already at target tile. So that travelling notification won't show if that is the case.
+            if (actionNode.shouldIntelNotificationOnlyIfActorIsActive) {
+                showPopup = ShouldShowNotificationFrom(actionNode.actor, true);
             } else {
-                showPopup = ShouldShowNotificationFrom(action.actor, log);
+                showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
             }
         }
         if (showPopup) {
@@ -597,7 +597,7 @@ public class Player : ILeader {
     /// </summary>
     /// <param name="action">The action that is being performed.</param>
     /// <param name="state">The state that the action is in.</param>
-    private void OnAfterActionStateSet(GoapAction action, string stateName, Character actor, IPointOfInterest target, object[] otherData) {
+    private void OnAfterActionStateSet(string stateName, ActualGoapNode actionNode) {
         bool showPopup = false;
         Log log = action.GetCurrentLog();
         if (action.showIntelNotification && state.duration > 0 && log != null) { //added checking for duration because this notification should only show for actions that have durations.

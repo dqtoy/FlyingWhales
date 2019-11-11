@@ -693,8 +693,9 @@ public class RaceManager : MonoBehaviour {
     }
     public bool CanCharacterDoGoapAction(Character character, INTERACTION_TYPE goapType) {
         bool isTrue = false;
-        if (InteractionManager.Instance.goapActionData.ContainsKey(goapType)) {
-            isTrue = InteractionManager.Instance.goapActionData[goapType].DoesCharacterMatchRace(character);
+        Dictionary<INTERACTION_TYPE, GoapActionData> goapActionData = InteractionManager.Instance.goapActionData;
+        if (goapActionData.ContainsKey(goapType)) {
+            isTrue = goapActionData[goapType].DoesCharacterMatchRace(character);
         }
         if (!isTrue) {
             if (character.role.allowedInteractions != null) {

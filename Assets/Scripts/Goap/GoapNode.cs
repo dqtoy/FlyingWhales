@@ -41,21 +41,13 @@ public class ActualGoapNode {
         this.poiTarget = poiTarget;
         this.otherData = otherData;
         actionStatus = ACTION_STATUS.NONE;
-        Messenger.AddListener<GoapAction, string, Character, IPointOfInterest, object[]>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.AddListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
     }
 
     public void DestroyNode() {
-        Messenger.RemoveListener<GoapAction, string, Character, IPointOfInterest, object[]>(Signals.ACTION_STATE_SET, OnActionStateSet);
+        Messenger.RemoveListener<string, ActualGoapNode>(Signals.ACTION_STATE_SET, OnActionStateSet);
 
     }
-
-    #region General
-    private void CreateDescriptionLog(GoapActionState actionState) {
-        if(descriptionLog == null && action.shouldAddLogs) {
-            descriptionLog = actionState.CreateDescriptionLog(actor, poiTarget);
-        }
-    }
-    #endregion
 
     #region Action
     public virtual void DoAction() {
@@ -157,7 +149,7 @@ public class ActualGoapNode {
                 targetCharacter.AdjustIsStoppedByOtherCharacter(1);
             }
         }
-        action.Perform(actor, poiTarget, otherData);
+        action.Perform(this);
     }
     public void ActionResult(GoapActionState actionState) {
         string result = GoapActionStateDB.GetStateResult(action.goapType, actionState.name);
@@ -199,17 +191,29 @@ public class ActualGoapNode {
         Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, actor, this, result);
         //parentPlan?.OnActionInPlanFinished(actor, this, result);
     }
-    public void StopAction(bool removeJobInQueue = false, string reason = "") {
-        if (actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null && actor.currentAction == this) {
-            if (reason != "") {
-                Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
-                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(null, actor.currentAction.goapName, LOG_IDENTIFIER.STRING_1);
-                log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
-                actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-            }
+
+    //Only stop an action node if it is the current action node
+    public void StopActionNode(string reason = "") {
+        if(actor.currentActionNode != this) {
+            return;
         }
-        actor.SetCurrentAction(null);
+        if(reason != "") {
+            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
+            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            log.AddToFillers(null, action.goapName, LOG_IDENTIFIER.STRING_1);
+            log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
+            actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        }
+        //if (actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null && actor.currentAction == this) {
+        //    if (reason != "") {
+        //        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "current_action_abandoned_reason");
+        //        log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //        log.AddToFillers(null, actor.currentAction.goapName, LOG_IDENTIFIER.STRING_1);
+        //        log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
+        //        actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        //    }
+        //}
+        actor.SetCurrentActionNode(null);
         if (actor.currentParty.icon.isTravelling) {
             if (actor.currentParty.icon.travelLine == null) {
                 //This means that the actor currently travelling to another tile in tilemap
@@ -224,15 +228,15 @@ public class ActualGoapNode {
         //    Messenger.RemoveListener<TileObject, Character>(Signals.TILE_OBJECT_DISABLED, OnTileObjectDisabled);
         //}
 
-        OnCancelActionTowardsTarget();
-        SetIsStopped(true);
+        //SetIsStopped(true);
 
-        JobQueueItem job = parentPlan.job;
+        //JobQueueItem job = parentPlan.job;
 
-        if (isPerformingActualAction && !isDone) {
+        if (actionStatus == ACTION_STATUS.PERFORMING) {
+            OnCancelActionTowardsTarget();
             //ReturnToActorTheActionResult(InteractionManager.Goap_State_Fail);
-            OnStopWhilePerforming();
-            currentState.EndPerTickEffect(false);
+            action.OnStopWhilePerforming(actor, poiTarget, otherData);
+            EndPerTickEffect(false);
 
             ////when the action is ended prematurely, make sure to readjust the target character's do not move values
             //if (poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -242,29 +246,29 @@ public class ActualGoapNode {
             //        targetCharacter.marker.AdjustIsStoppedByOtherCharacter(-1);
             //    }
             //}
-        } else {
+        } else if (actionStatus == ACTION_STATUS.STARTED) {
             //if (action != null && action.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             //    Character targetCharacter = action.poiTarget as Character;
             //    targetCharacter.AdjustIsWaitingForInteraction(-1);
             //}
-            OnStopWhileStarted();
-            actor.DropPlan(parentPlan, forceProcessPlanJob: true);
+            action.OnStopWhileStarted(actor, poiTarget, otherData);
+            actor.DropPlan(parentPlan, forceProcessPlanJob: true); //TODO: Try to push back instead of dropping plan immediately, only drop plan if push back fails (fail: if no other plan replaces this plan)
         }
         //Remove job in queue if job is personal job and removeJobInQueue value is true
-        if (removeJobInQueue && job != null && !job.jobQueueParent.isAreaOrQuestJobQueue) {
-            job.jobQueueParent.RemoveJobInQueue(job);
-        }
+        //if (removeJobInQueue && job != null && !job.jobQueueParent.isAreaOrQuestJobQueue) {
+        //    job.jobQueueParent.RemoveJobInQueue(job);
+        //}
         if (UIManager.Instance.characterInfoUI.isShowing) {
             UIManager.Instance.characterInfoUI.UpdateBasicInfo();
         }
         //Messenger.Broadcast<GoapAction>(Signals.STOP_ACTION, this);
-        actor.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Stopped action of " + actor.name + " which is " + this.goapName + " targetting " + poiTarget.name + "!");
+        actor.PrintLogIfActive(GameManager.Instance.TodayLogString() + "Stopped action of " + actor.name + " which is " + action.goapName + " targetting " + poiTarget.name + "!");
     }
     #endregion
 
     #region Action State
-    private void OnActionStateSet(GoapAction action, string stateName, Character actor, IPointOfInterest target, object[] otherData) {
-        if (this.actor == actor && poiTarget == target && this.action == action) {
+    private void OnActionStateSet(string stateName, ActualGoapNode actionNode) {
+        if (actionNode == this) {
             currentStateName = stateName;
             OnPerformActualActionToTarget();
             ExecuteCurrentActionState();
@@ -378,6 +382,11 @@ public class ActualGoapNode {
     #endregion
 
     #region Log
+    private void CreateDescriptionLog(GoapActionState actionState) {
+        if (descriptionLog == null && action.shouldAddLogs) {
+            descriptionLog = actionState.CreateDescriptionLog(actor, poiTarget);
+        }
+    }
     private void CreateThoughtBubbleLog(LocationStructure targetStructure) {
         if(thoughtBubbleLog == null) {
             if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", action.GetType().ToString(), "thought_bubble")) {
@@ -391,6 +400,42 @@ public class ActualGoapNode {
                 action.AddFillersToLog(thoughtBubbleMovingLog, actor, poiTarget, otherData, targetStructure);
             }
         }
+    }
+    public Log GetCurrentLog() {
+        if(actionStatus == ACTION_STATUS.STARTED) {
+            return thoughtBubbleMovingLog;
+        }else if (actionStatus == ACTION_STATUS.PERFORMING) {
+            return thoughtBubbleLog;
+        }
+        return descriptionLog;
+        //if (onlyShowNotifOfDescriptionLog && currentState != null) {
+        //    return this.currentState.descriptionLog;
+        //}
+        //if (actor.currentParty.icon.isTravelling) {
+        //    if (currentState != null) {
+        //        //character is travelling but there is already a current state
+        //        //Note: this will only happen is action has whileMovingState
+        //        //Examples are: Imprison Character and Abduct Character actions
+        //        return currentState.descriptionLog;
+        //    }
+        //    //character is travelling
+        //    return thoughtBubbleMovingLog;
+        //} else {
+        //    //character is not travelling
+        //    if (this.isDone) {
+        //        //action is already done
+        //        return this.currentState.descriptionLog;
+        //    } else {
+        //        //action is not yet done
+        //        if (currentState == null) {
+        //            //if the actions' current state is null, Use moving log
+        //            return thoughtBubbleMovingLog;
+        //        } else {
+        //            //if the actions current state has a duration
+        //            return thoughtBubbleLog;
+        //        }
+        //    }
+        //}
     }
     #endregion
 }

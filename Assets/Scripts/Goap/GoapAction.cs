@@ -15,6 +15,7 @@ public class GoapAction {
     //public AlterEgoData actorAlterEgo { get; protected set; } //The alter ego the character was using while doing this action.
     public List<Precondition> preconditions { get; private set; }
     public List<GoapEffect> expectedEffects { get; private set; }
+    public RACE[] racesThatCanDoAction { get; protected set; }
     //public virtual LocationStructure targetStructure {
     //    get {
     //        if (poiTarget is Character) {
@@ -118,9 +119,9 @@ public class GoapAction {
     //}
 
     #region States
-    public void SetState(string stateName, Character actor, IPointOfInterest target, object[] otherData) {
-        Messenger.Broadcast(Signals.ACTION_STATE_SET, this, stateName, actor, target, otherData);
-        Messenger.Broadcast(Signals.AFTER_ACTION_STATE_SET, this, stateName, actor, target, otherData);
+    public void SetState(string stateName, ActualGoapNode actionNode) {
+        Messenger.Broadcast(Signals.ACTION_STATE_SET, stateName, actionNode);
+        Messenger.Broadcast(Signals.AFTER_ACTION_STATE_SET, stateName, actionNode);
         //GoapActionState currentState = states[stateName];
         //AddActionDebugLog(GameManager.Instance.TodayLogString() + " Set state to " + currentState.name);
         //OnPerformActualActionToTarget();
@@ -181,7 +182,7 @@ public class GoapAction {
     protected virtual void ConstructBasePreconditionsAndEffects() { }
     //protected virtual void ConstructRequirementOnBuildGoapTree() { }
 
-    public virtual void Perform(Character actor, IPointOfInterest target, object[] otherData) {
+    public virtual void Perform(ActualGoapNode actionNode) {
         //isPerformingActualAction = true;
         //actorAlterEgo = actor.currentAlterEgo;
         //AddAwareCharacter(actor);
@@ -452,6 +453,12 @@ public class GoapAction {
         }
         return requirementActionSatisfied; //&& (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));
     }
+    public bool DoesCharacterMatchRace(Character character) {
+        if (racesThatCanDoAction != null) {
+            return racesThatCanDoAction.Contains(character.race);
+        }
+        return false;
+    }
     //public bool CanSatisfyRequirementOnBuildGoapTree() {
     //    bool requirementActionSatisfied = true;
     //    if (_requirementOnBuildGoapTreeAction != null) {
@@ -615,144 +622,145 @@ public class GoapAction {
     /// e.g. Actor is travelling towards target, Actor is currently doing the action, Actor is done doing action
     /// </summary>
     /// <returns>Chosen log.</returns>
-    public Log GetCurrentLog() {
-        if (onlyShowNotifOfDescriptionLog && currentState != null) {
-            return this.currentState.descriptionLog;
-        }
-        if (actor.currentParty.icon.isTravelling) {
-            if(currentState != null) {
-                //character is travelling but there is already a current state
-                //Note: this will only happen is action has whileMovingState
-                //Examples are: Imprison Character and Abduct Character actions
-                return currentState.descriptionLog;
-            }
-            //character is travelling
-            return thoughtBubbleMovingLog;
-        } else {
-            //character is not travelling
-            if (this.isDone) {
-                //action is already done
-                return this.currentState.descriptionLog;
-            } else {
-                //action is not yet done
-                if (currentState == null) {
-                    //if the actions' current state is null, Use moving log
-                    return thoughtBubbleMovingLog;
-                } else {
-                    //if the actions current state has a duration
-                    return thoughtBubbleLog;
-                }
-            }
-        }
-    }
-    public bool IsActorAtTargetTile() {
-        return actor.gridTileLocation == targetTile;
-    }
+    //public Log GetCurrentLog() {
+    //    if (onlyShowNotifOfDescriptionLog && currentState != null) {
+    //        return this.currentState.descriptionLog;
+    //    }
+    //    if (actor.currentParty.icon.isTravelling) {
+    //        if (currentState != null) {
+    //            //character is travelling but there is already a current state
+    //            //Note: this will only happen is action has whileMovingState
+    //            //Examples are: Imprison Character and Abduct Character actions
+    //            return currentState.descriptionLog;
+    //        }
+    //        //character is travelling
+    //        return thoughtBubbleMovingLog;
+    //    } else {
+    //        //character is not travelling
+    //        if (this.isDone) {
+    //            //action is already done
+    //            return this.currentState.descriptionLog;
+    //        } else {
+    //            //action is not yet done
+    //            if (currentState == null) {
+    //                //if the actions' current state is null, Use moving log
+    //                return thoughtBubbleMovingLog;
+    //            } else {
+    //                //if the actions current state has a duration
+    //                return thoughtBubbleLog;
+    //            }
+    //        }
+    //    }
+    //}
+    //public bool IsActorAtTargetTile() {
+    //    return actor.gridTileLocation == targetTile;
+    //}
     public int CostMultiplier(Character actor) {
         if (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick(actor))) {
             return 1;
         }
         return 3;
     }
-    public void AddAwareCharacter(Character character) {
-        if (!awareCharactersOfThisAction.Contains(character)) {
-            awareCharactersOfThisAction.Add(character);
-        }
-    }
-    public void SetIsOldNews(bool state) {
-        if (isOldNews != state) {
-            isOldNews = state;
-            if (isOldNews) {
-                if (Messenger.eventTable.ContainsKey(Signals.OLD_NEWS_TRIGGER)) {
-                    Messenger.RemoveListener<IPointOfInterest, GoapAction>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
-                }
-            }
-        }
-    }
-    public void AdjustReferenceCount(int amount) {
-        referenceCount += amount;
-        referenceCount = Mathf.Max(0, referenceCount);
-        if (referenceCount == 0) {
-            SetIsOldNews(true);
-        }
-    }
-    public void SetActionLocationType(ACTION_LOCATION_TYPE locType) {
-        actionLocationType = locType;
-        SetTargetStructure();
-    }
-    public void SetWillAvoidCharactersWhileMoving(bool state) {
-        willAvoidCharactersWhileMoving = state;
-    }
-    public void SetIsStealth(bool state) {
-        isStealth = state;
-    }
-    public override string ToString() {
-        return goapName + " by " + actor.name;
-    }
+    //public void AddAwareCharacter(Character character) {
+    //    if (!awareCharactersOfThisAction.Contains(character)) {
+    //        awareCharactersOfThisAction.Add(character);
+    //    }
+    //}
+    //public void SetIsOldNews(bool state) {
+    //    if (isOldNews != state) {
+    //        isOldNews = state;
+    //        if (isOldNews) {
+    //            if (Messenger.eventTable.ContainsKey(Signals.OLD_NEWS_TRIGGER)) {
+    //                Messenger.RemoveListener<IPointOfInterest, GoapAction>(Signals.OLD_NEWS_TRIGGER, OldNewsTrigger);
+    //            }
+    //        }
+    //    }
+    //}
+    //public void AdjustReferenceCount(int amount) {
+    //    referenceCount += amount;
+    //    referenceCount = Mathf.Max(0, referenceCount);
+    //    if (referenceCount == 0) {
+    //        SetIsOldNews(true);
+    //    }
+    //}
+    //public void SetActionLocationType(ACTION_LOCATION_TYPE locType) {
+    //    actionLocationType = locType;
+    //    SetTargetStructure();
+    //}
+    //public void SetWillAvoidCharactersWhileMoving(bool state) {
+    //    willAvoidCharactersWhileMoving = state;
+    //}
+    //public void SetIsStealth(bool state) {
+    //    isStealth = state;
+    //}
+    //public override string ToString() {
+    //    return goapName + " by " + actor.name;
+    //}
     #endregion
 
     #region Trait Utilities
-    protected bool HasTrait(Character character, string traitName) {
-        return character.GetNormalTrait(traitName) != null;
-    }
+    //protected bool HasTrait(Character character, string traitName) {
+    //    return character.GetNormalTrait(traitName) != null;
+    //}
+
     /// <summary>
     /// Helper function to encapsulate adding a trait to a poi and adding actual effect data based on the added trait.
     /// </summary>
     /// <param name="target">POI that gains a trait</param>
     /// <param name="traitName">Trait to be gained</param>
-    protected bool AddTraitTo(IPointOfInterest target, string traitName, Character characterResponsible = null, System.Action onRemoveAction = null) {
-        if (target.AddTrait(traitName, characterResponsible, onRemoveAction, this)) {
-            AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = traitName, targetPOI = target });
-            return true;
-        }
-        return false;
-    }
-    protected bool AddTraitTo(IPointOfInterest target, Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
-        if (target.AddTrait(trait, characterResponsible, onRemoveAction, this)) {
-            AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = trait.name, targetPOI = target });
-            return true;
-        }
-        return false;
-    }
+    //protected bool AddTraitTo(IPointOfInterest target, string traitName, Character characterResponsible = null, System.Action onRemoveAction = null) {
+    //    if (target.AddTrait(traitName, characterResponsible, onRemoveAction, this)) {
+    //        //AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = traitName, targetPOI = target });
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    //protected bool AddTraitTo(IPointOfInterest target, Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
+    //    if (target.AddTrait(trait, characterResponsible, onRemoveAction, this)) {
+    //        //AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = trait.name, targetPOI = target });
+    //        return true;
+    //    }
+    //    return false;
+    //}
     /// <summary>
     /// Helper function to encapsulate removing a trait from a poi and adding actual effect data based on the removed trait.
     /// </summary>
     /// <param name="target">POI that loses a trait</param>
     /// <param name="traitName">Trait to be lost</param>
-    protected void RemoveTraitFrom(IPointOfInterest target, string traitName, Character removedBy = null, bool showNotif = true) {
-        if (target.RemoveTrait(traitName, removedBy: removedBy)) {
-            AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = target });
-        }
-    }
+    //protected void RemoveTraitFrom(IPointOfInterest target, string traitName, Character removedBy = null, bool showNotif = true) {
+    //    if (target.RemoveTrait(traitName, removedBy: removedBy)) {
+    //        //AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = target });
+    //    }
+    //}
     /// <summary>
     /// Helper function to encapsulate removing traits of a type from a poi and adding actual effect data based on the removed traits.
     /// </summary>
     /// <param name="target">POI that loses traits</param>
     /// <param name="type">Type of traits to be lost</param>
-    protected void RemoveTraitsOfType(IPointOfInterest target, TRAIT_TYPE type) {
-        List<Trait> removedTraits = target.RemoveAllTraitsByType(type);
-        for (int i = 0; i < removedTraits.Count; i++) {
-            AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = removedTraits[i].name, targetPOI = target });
-        }
-    }
+    //protected void RemoveTraitsOfType(IPointOfInterest target, TRAIT_TYPE type) {
+    //    List<Trait> removedTraits = target.RemoveAllTraitsByType(type);
+    //    for (int i = 0; i < removedTraits.Count; i++) {
+    //        //AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = removedTraits[i].name, targetPOI = target });
+    //    }
+    //}
     #endregion
 
     #region Preconditions
-    protected void AddPrecondition(GoapEffect effect, Func<bool> condition) {
+    protected void AddPrecondition(GoapEffect effect, Func<Character, IPointOfInterest, bool> condition) {
         preconditions.Add(new Precondition(effect, condition));
     }
-    public bool CanSatisfyAllPreconditions() {
+    public bool CanSatisfyAllPreconditions(Character actor, IPointOfInterest target) {
         for (int i = 0; i < preconditions.Count; i++) {
-            if (!preconditions[i].CanSatisfyCondition()) {
+            if (!preconditions[i].CanSatisfyCondition(actor, target)) {
                 return false;
             }
         }
         return true;
     }
-    protected bool HasNonPositiveDisablerTrait() {
-        Character target = poiTarget as Character;
-        return target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER);
-    }
+    //protected bool HasNonPositiveDisablerTrait() {
+    //    Character target = poiTarget as Character;
+    //    return target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER);
+    //}
     #endregion
 
     #region Effects
@@ -768,27 +776,24 @@ public class GoapAction {
         return false;
     }
     private bool EffectPreconditionMatching(GoapEffect effect, GoapEffect precondition) {
-        if(effect.targetPOI == precondition.targetPOI && effect.conditionType == precondition.conditionType) {
-            if(effect.conditionKey != null && precondition.conditionKey != null) {
-                switch (effect.conditionType) {
-                    case GOAP_EFFECT_CONDITION.HAS_SUPPLY:
-                    case GOAP_EFFECT_CONDITION.HAS_FOOD:
-                        int effectInt = (int) effect.conditionKey;
-                        int preconditionInt = (int) precondition.conditionKey;
-                        return effectInt >= preconditionInt;
-                    default:
-                        return effect.conditionKey == precondition.conditionKey;
-                        //case GOAP_EFFECT_CONDITION.HAS_ITEM:
-                        //    string effectString = effect.conditionKey as string;
-                        //    string preconditionString = precondition.conditionKey as string;
-                        //    return effectString.ToLower() == preconditionString.ToLower();
-
-                        //case GOAP_EFFECT_CONDITION.REMOVE_TRAIT:
-                        //case GOAP_EFFECT_CONDITION.HAS_TRAIT:
-                        //    effectString = effect.conditionKey as string;
-                        //    preconditionString = precondition.conditionKey as string;
-                        //    return effectString.ToLower() == preconditionString.ToLower();
+        if(effect.conditionType == precondition.conditionType && effect.target == precondition.target) { //&& CharacterManager.Instance.POIValueTypeMatching(effect.targetPOI, precondition.targetPOI)
+            if (effect.conditionKey != "" && precondition.conditionKey != "") {
+                if(effect.isKeyANumber && precondition.isKeyANumber) {
+                    int effectInt = int.Parse(effect.conditionKey);
+                    int preconditionInt = int.Parse(precondition.conditionKey);
+                    return effectInt >= preconditionInt;
+                } else {
+                    return effect.conditionKey == precondition.conditionKey;
                 }
+                //switch (effect.conditionType) {
+                //    case GOAP_EFFECT_CONDITION.HAS_SUPPLY:
+                //    case GOAP_EFFECT_CONDITION.HAS_FOOD:
+                //        int effectInt = (int) effect.conditionKey;
+                //        int preconditionInt = (int) precondition.conditionKey;
+                //        return effectInt >= preconditionInt;
+                //    default:
+                //        return effect.conditionKey == precondition.conditionKey;
+                //}
             } else {
                 return true;
             }
@@ -801,54 +806,54 @@ public class GoapAction {
     #endregion
 
     #region Tile Objects
-    protected virtual void OnPerformActualActionToTarget() {
-        if (GoapActionStateDB.GetStateResult(goapType, currentState.name) != InteractionManager.Goap_State_Success) {
-            return;
-        }
-        if (poiTarget is TileObject) {
-            TileObject target = poiTarget as TileObject;
-            target.OnDoActionToObject(this);
-        } else if (poiTarget is Character) {
-            if (currentState.name != "Target Missing" && !doesNotStopTargetCharacter) {
-                AddAwareCharacter(poiTarget as Character);
-            }
-        }
-    }
-    protected virtual void OnFinishActionTowardsTarget() {
-        if (GoapActionStateDB.GetStateResult(goapType, currentState.name) != InteractionManager.Goap_State_Success) {
-            return;
-        }
-        if (poiTarget is TileObject) {
-            TileObject target = poiTarget as TileObject;
-            target.OnDoneActionToObject(this);
-        }
-    }
-    protected virtual void OnCancelActionTowardsTarget() {
-        if (poiTarget is TileObject) {
-            TileObject target = poiTarget as TileObject;
-            target.OnCancelActionTowardsObject(this);
-        }
-    }
-    private void OnTileObjectRemoved(TileObject tileObj, Character removedBy, LocationGridTile removedFrom) {
-        if (poiTarget == tileObj) {
-            if (isPerformingActualAction) {
-                if (removedBy != null && removedBy == actor) {
-                    return; //if the object was removed by the actor, do not stop the action
-                }
-                StopAction(); //when the target object of this action was removed, and the actor is currently performing the action, stop the action
-            }
-        }
-    }
-    private void OnTileObjectDisabled(TileObject tileObj, Character disabledBy) {
-        if (poiTarget == tileObj) {
-            if (isPerformingActualAction) {
-                if (disabledBy != null && disabledBy == actor) {
-                    return; //if the object was disabled by the actor, do not stop the action
-                }
-                StopAction(); //when the target object of this action was disabled, and the actor is currently performing the action, stop the action
-            }
-        }
-    }
+    //protected virtual void OnPerformActualActionToTarget() {
+    //    if (GoapActionStateDB.GetStateResult(goapType, currentState.name) != InteractionManager.Goap_State_Success) {
+    //        return;
+    //    }
+    //    if (poiTarget is TileObject) {
+    //        TileObject target = poiTarget as TileObject;
+    //        target.OnDoActionToObject(this);
+    //    } else if (poiTarget is Character) {
+    //        if (currentState.name != "Target Missing" && !doesNotStopTargetCharacter) {
+    //            AddAwareCharacter(poiTarget as Character);
+    //        }
+    //    }
+    //}
+    //protected virtual void OnFinishActionTowardsTarget() {
+    //    if (GoapActionStateDB.GetStateResult(goapType, currentState.name) != InteractionManager.Goap_State_Success) {
+    //        return;
+    //    }
+    //    if (poiTarget is TileObject) {
+    //        TileObject target = poiTarget as TileObject;
+    //        target.OnDoneActionToObject(this);
+    //    }
+    //}
+    //protected virtual void OnCancelActionTowardsTarget() {
+    //    if (poiTarget is TileObject) {
+    //        TileObject target = poiTarget as TileObject;
+    //        target.OnCancelActionTowardsObject(this);
+    //    }
+    //}
+    //private void OnTileObjectRemoved(TileObject tileObj, Character removedBy, LocationGridTile removedFrom) {
+    //    if (poiTarget == tileObj) {
+    //        if (isPerformingActualAction) {
+    //            if (removedBy != null && removedBy == actor) {
+    //                return; //if the object was removed by the actor, do not stop the action
+    //            }
+    //            StopAction(); //when the target object of this action was removed, and the actor is currently performing the action, stop the action
+    //        }
+    //    }
+    //}
+    //private void OnTileObjectDisabled(TileObject tileObj, Character disabledBy) {
+    //    if (poiTarget == tileObj) {
+    //        if (isPerformingActualAction) {
+    //            if (disabledBy != null && disabledBy == actor) {
+    //                return; //if the object was disabled by the actor, do not stop the action
+    //            }
+    //            StopAction(); //when the target object of this action was disabled, and the actor is currently performing the action, stop the action
+    //        }
+    //    }
+    //}
     #endregion
 }
 
@@ -863,86 +868,87 @@ public struct GoapActionInvalidity {
 }
 public struct GoapEffect {
     public GOAP_EFFECT_CONDITION conditionType;
-    public object conditionKey;
-    public IPointOfInterest targetPOI; //this is the target that will be affected by the condition type and key
+    //public object conditionKey;
+    public string conditionKey;
+    public bool isKeyANumber;
+    //public IPointOfInterest targetPOI; //this is the target that will be affected by the condition type and key
+    public GOAP_EFFECT_TARGET target;
 
-    public GoapEffect(GOAP_EFFECT_CONDITION conditionType, object conditionKey = null, IPointOfInterest targetPOI = null) {
+    public GoapEffect(GOAP_EFFECT_CONDITION conditionType, string conditionKey, bool isKeyANumber, GOAP_EFFECT_TARGET target) {
         this.conditionType = conditionType;
         this.conditionKey = conditionKey;
-        this.targetPOI = targetPOI;
+        this.isKeyANumber = isKeyANumber;
+        this.target = target;
     }
 
-    public string conditionString() {
-        if(conditionKey is string) {
-            return conditionKey.ToString();
-        } else if (conditionKey is int) {
-            return conditionKey.ToString();
-        } else if (conditionKey is Character) {
-            return (conditionKey as Character).name;
-        } else if (conditionKey is Area) {
-            return (conditionKey as Area).name;
-        } else if (conditionKey is Region) {
-            return (conditionKey as Region).name;
-        } else if (conditionKey is SpecialToken) {
-            return (conditionKey as SpecialToken).name;
-        } else if (conditionKey is IPointOfInterest) {
-            return (conditionKey as IPointOfInterest).name;
-        }
-        return string.Empty;
-    }
-    public string conditionKeyToString() {
-        if (conditionKey is string) {
-            return (string)conditionKey;
-        } else if (conditionKey is int) {
-            return ((int)conditionKey).ToString();
-        } else if (conditionKey is Character) {
-            return (conditionKey as Character).id.ToString();
-        } else if (conditionKey is Area) {
-            return (conditionKey as Area).id.ToString();
-        } else if (conditionKey is Region) {
-            return (conditionKey as Region).id.ToString();
-        } else if (conditionKey is SpecialToken) {
-            return (conditionKey as SpecialToken).id.ToString();
-        } else if (conditionKey is IPointOfInterest) {
-            return (conditionKey as IPointOfInterest).id.ToString();
-        }
-        return string.Empty;
-    }
-    public string conditionKeyTypeString() {
-        if (conditionKey is string) {
-            return "string";
-        } else if (conditionKey is int) {
-            return "int";
-        } else if (conditionKey is Character) {
-            return "character";
-        } else if (conditionKey is Area) {
-            return "area";
-        } else if (conditionKey is Region) {
-            return "region";
-        } else if (conditionKey is SpecialToken) {
-            return "item";
-        } else if (conditionKey is IPointOfInterest) {
-            return "poi";
-        }
-        return string.Empty;
-    }
+    //public string conditionString() {
+    //    if(conditionKey is string) {
+    //        return conditionKey.ToString();
+    //    } else if (conditionKey is int) {
+    //        return conditionKey.ToString();
+    //    } else if (conditionKey is Character) {
+    //        return (conditionKey as Character).name;
+    //    } else if (conditionKey is Area) {
+    //        return (conditionKey as Area).name;
+    //    } else if (conditionKey is Region) {
+    //        return (conditionKey as Region).name;
+    //    } else if (conditionKey is SpecialToken) {
+    //        return (conditionKey as SpecialToken).name;
+    //    } else if (conditionKey is IPointOfInterest) {
+    //        return (conditionKey as IPointOfInterest).name;
+    //    }
+    //    return string.Empty;
+    //}
+    //public string conditionKeyToString() {
+    //    if (conditionKey is string) {
+    //        return (string)conditionKey;
+    //    } else if (conditionKey is int) {
+    //        return ((int)conditionKey).ToString();
+    //    } else if (conditionKey is Character) {
+    //        return (conditionKey as Character).id.ToString();
+    //    } else if (conditionKey is Area) {
+    //        return (conditionKey as Area).id.ToString();
+    //    } else if (conditionKey is Region) {
+    //        return (conditionKey as Region).id.ToString();
+    //    } else if (conditionKey is SpecialToken) {
+    //        return (conditionKey as SpecialToken).id.ToString();
+    //    } else if (conditionKey is IPointOfInterest) {
+    //        return (conditionKey as IPointOfInterest).id.ToString();
+    //    }
+    //    return string.Empty;
+    //}
+    //public string conditionKeyTypeString() {
+    //    if (conditionKey is string) {
+    //        return "string";
+    //    } else if (conditionKey is int) {
+    //        return "int";
+    //    } else if (conditionKey is Character) {
+    //        return "character";
+    //    } else if (conditionKey is Area) {
+    //        return "area";
+    //    } else if (conditionKey is Region) {
+    //        return "region";
+    //    } else if (conditionKey is SpecialToken) {
+    //        return "item";
+    //    } else if (conditionKey is IPointOfInterest) {
+    //        return "poi";
+    //    }
+    //    return string.Empty;
+    //}
 
-    public override bool Equals(object obj) {
-        if (obj is GoapEffect) {
-            GoapEffect otherEffect = (GoapEffect)obj;
-            if (otherEffect.conditionType == conditionType) {
-                if (string.IsNullOrEmpty(conditionString())) {
-                    return true;
-                } else {
-                    return otherEffect.conditionString() == conditionString();
-                }
-            }
-        }
-        return base.Equals(obj);
-    }
-    public override int GetHashCode() {
-        return base.GetHashCode();
-    }
+    //public override bool Equals(object obj) {
+    //    if (obj is GoapEffect) {
+    //        GoapEffect otherEffect = (GoapEffect)obj;
+    //        if (otherEffect.conditionType == conditionType) {
+    //            if (string.IsNullOrEmpty(conditionString())) {
+    //                return true;
+    //            } else {
+    //                return otherEffect.conditionString() == conditionString();
+    //            }
+    //        }
+    //    }
+    //    return base.Equals(obj);
+    //}
 }
 
 [System.Serializable]
@@ -962,70 +968,70 @@ public class SaveDataGoapEffect {
     public void Save(GoapEffect goapEffect) {
         conditionType = goapEffect.conditionType;
 
-        if(goapEffect.conditionKey != null) {
-            conditionKeyIdentifier = goapEffect.conditionKeyTypeString();
-            conditionKey = goapEffect.conditionKeyToString();
-            if(goapEffect.conditionKey is IPointOfInterest) {
-                conditionKeyPOIType = (goapEffect.conditionKey as IPointOfInterest).poiType;
-            }
-            if (goapEffect.conditionKey is TileObject) {
-                conditionKeyTileObjectType = (goapEffect.conditionKey as TileObject).tileObjectType;
-            }
-        } else {
-            conditionKeyIdentifier = string.Empty;
-        }
+        //if(goapEffect.conditionKey != null) {
+        //    conditionKeyIdentifier = goapEffect.conditionKeyTypeString();
+        //    conditionKey = goapEffect.conditionKeyToString();
+        //    if(goapEffect.conditionKey is IPointOfInterest) {
+        //        conditionKeyPOIType = (goapEffect.conditionKey as IPointOfInterest).poiType;
+        //    }
+        //    if (goapEffect.conditionKey is TileObject) {
+        //        conditionKeyTileObjectType = (goapEffect.conditionKey as TileObject).tileObjectType;
+        //    }
+        //} else {
+        //    conditionKeyIdentifier = string.Empty;
+        //}
 
-        if(goapEffect.targetPOI != null) {
-            targetPOIID = goapEffect.targetPOI.id;
-            targetPOIType = goapEffect.targetPOI.poiType;
-            if(goapEffect.targetPOI is TileObject) {
-                targetPOITileObjectType = (goapEffect.targetPOI as TileObject).tileObjectType;
-            }
-        } else {
-            targetPOIID = -1;
-        }
+        //if(goapEffect.targetPOI != null) {
+        //    targetPOIID = goapEffect.targetPOI.id;
+        //    targetPOIType = goapEffect.targetPOI.poiType;
+        //    if(goapEffect.targetPOI is TileObject) {
+        //        targetPOITileObjectType = (goapEffect.targetPOI as TileObject).tileObjectType;
+        //    }
+        //} else {
+        //    targetPOIID = -1;
+        //}
     }
 
     public GoapEffect Load() {
         GoapEffect effect = new GoapEffect() {
             conditionType = conditionType,
         };
-        if(targetPOIID != -1) {
-            GoapEffect tempEffect = effect;
-            if (targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                tempEffect.targetPOI = CharacterManager.Instance.GetCharacterByID(targetPOIID);
-            } else if (targetPOIType == POINT_OF_INTEREST_TYPE.ITEM) {
-                tempEffect.targetPOI = TokenManager.Instance.GetSpecialTokenByID(targetPOIID);
-            } else if (targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                tempEffect.targetPOI = InteriorMapManager.Instance.GetTileObject(targetPOITileObjectType, targetPOIID);
-            }
-            effect = tempEffect;
-        }
-        if(conditionKeyIdentifier != string.Empty) {
-            GoapEffect tempEffect = effect;
-            if (conditionKeyIdentifier == "string") {
-                tempEffect.conditionKey = conditionKey;
-            } else if (conditionKey == "int") {
-                tempEffect.conditionKey = int.Parse(conditionKey);
-            } else if (conditionKey == "character") {
-                tempEffect.conditionKey = CharacterManager.Instance.GetCharacterByID(int.Parse(conditionKey));
-            } else if (conditionKey == "area") {
-                tempEffect.conditionKey = LandmarkManager.Instance.GetAreaByID(int.Parse(conditionKey));
-            } else if (conditionKey == "region") {
-                tempEffect.conditionKey = GridMap.Instance.GetRegionByID(int.Parse(conditionKey));
-            } else if (conditionKey == "item") {
-                tempEffect.conditionKey = TokenManager.Instance.GetSpecialTokenByID(int.Parse(conditionKey));
-            } else if (conditionKey == "poi") {
-                if (conditionKeyPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-                    tempEffect.conditionKey = CharacterManager.Instance.GetCharacterByID(int.Parse(conditionKey));
-                } else if (conditionKeyPOIType == POINT_OF_INTEREST_TYPE.ITEM) {
-                    tempEffect.conditionKey = TokenManager.Instance.GetSpecialTokenByID(int.Parse(conditionKey));
-                } else if (conditionKeyPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                    tempEffect.conditionKey = InteriorMapManager.Instance.GetTileObject(conditionKeyTileObjectType, int.Parse(conditionKey));
-                }
-            }
-            effect = tempEffect;
-        }
+        //if(targetPOIID != -1) {
+        //    GoapEffect tempEffect = effect;
+        //    if (targetPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+        //        tempEffect.targetPOI = CharacterManager.Instance.GetCharacterByID(targetPOIID);
+        //    } else if (targetPOIType == POINT_OF_INTEREST_TYPE.ITEM) {
+        //        tempEffect.targetPOI = TokenManager.Instance.GetSpecialTokenByID(targetPOIID);
+        //    } else if (targetPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+        //        tempEffect.targetPOI = InteriorMapManager.Instance.GetTileObject(targetPOITileObjectType, targetPOIID);
+        //    }
+        //    effect = tempEffect;
+        //}
+        //if(conditionKeyIdentifier != string.Empty) {
+        //    GoapEffect tempEffect = effect;
+        //    if (conditionKeyIdentifier == "string") {
+        //        tempEffect.conditionKey = conditionKey;
+        //    } else if (conditionKey == "int") {
+        //        tempEffect.conditionKey = int.Parse(conditionKey);
+        //    } else if (conditionKey == "character") {
+        //        tempEffect.conditionKey = CharacterManager.Instance.GetCharacterByID(int.Parse(conditionKey));
+        //    } else if (conditionKey == "area") {
+        //        tempEffect.conditionKey = LandmarkManager.Instance.GetAreaByID(int.Parse(conditionKey));
+        //    } else if (conditionKey == "region") {
+        //        tempEffect.conditionKey = GridMap.Instance.GetRegionByID(int.Parse(conditionKey));
+        //    } else if (conditionKey == "item") {
+        //        tempEffect.conditionKey = TokenManager.Instance.GetSpecialTokenByID(int.Parse(conditionKey));
+        //    } else if (conditionKey == "poi") {
+        //        if (conditionKeyPOIType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+        //            tempEffect.conditionKey = CharacterManager.Instance.GetCharacterByID(int.Parse(conditionKey));
+        //        } else if (conditionKeyPOIType == POINT_OF_INTEREST_TYPE.ITEM) {
+        //            tempEffect.conditionKey = TokenManager.Instance.GetSpecialTokenByID(int.Parse(conditionKey));
+        //        } else if (conditionKeyPOIType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+        //            tempEffect.conditionKey = InteriorMapManager.Instance.GetTileObject(conditionKeyTileObjectType, int.Parse(conditionKey));
+        //        }
+        //    }
+        //    effect = tempEffect;
+        //}
         return effect;
     }
 }
@@ -1069,12 +1075,5 @@ public class GoapActionData {
             }
         }
         return requirementActionSatisfied;
-    }
-
-    public bool DoesCharacterMatchRace(Character character) {
-        if(racesThatCanDoAction != null) {
-            return racesThatCanDoAction.Contains(character.race);
-        }
-        return false;
     }
 }

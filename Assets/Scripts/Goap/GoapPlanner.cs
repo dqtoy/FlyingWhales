@@ -9,7 +9,57 @@ public class GoapPlanner {
     public GoapPlanner(Character actor) {
         this.actor = actor;
     }
+    public void StartGOAP(GoapEffect goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {
+        List<IPointOfInterest> characterTargetsAwareness = new List<IPointOfInterest>();
+        if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            AddAwareness(target);
+            characterTargetsAwareness.Add(target);
+        }
 
+        if (otherCharactePOIs != null) {
+            for (int i = 0; i < otherCharactePOIs.Count; i++) {
+                AddAwareness(otherCharactePOIs[i]);
+                characterTargetsAwareness.Add(otherCharactePOIs[i]);
+            }
+        }
+        if (job != null) {
+            job.SetAssignedPlan(null);
+        }
+        _numOfWaitingForGoapThread++;
+        //Debug.LogWarning(name + " sent a plan to other thread(" + _numOfWaitingForGoapThread + ")");
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets, otherData));
+    }
+    public void StartGOAP(GoapAction goal, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, bool allowDeadTargets = false) {
+        List<IPointOfInterest> characterTargetsAwareness = new List<IPointOfInterest>();
+        if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            AddAwareness(target);
+            characterTargetsAwareness.Add(target);
+        }
+
+        if (otherCharactePOIs != null) {
+            for (int i = 0; i < otherCharactePOIs.Count; i++) {
+                AddAwareness(otherCharactePOIs[i]);
+                characterTargetsAwareness.Add(otherCharactePOIs[i]);
+            }
+        }
+        if (job != null) {
+            job.SetAssignedPlan(null);
+        }
+        _numOfWaitingForGoapThread++;
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, target, goal, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets));
+    }
+    public void StartGOAP(INTERACTION_TYPE goalType, IPointOfInterest target, GOAP_CATEGORY category, bool isPriority = false, List<Character> otherCharactePOIs = null, bool isPersonalPlan = true, GoapPlanJob job = null, Dictionary<INTERACTION_TYPE, object[]> otherData = null, bool allowDeadTargets = false) {
+        List<IPointOfInterest> characterTargetsAwareness = new List<IPointOfInterest>();
+        if (target != null && target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            AddAwareness(target);
+            characterTargetsAwareness.Add(target);
+        }
+        if (job != null) {
+            job.SetAssignedPlan(null);
+        }
+        _numOfWaitingForGoapThread++;
+        MultiThreadPool.Instance.AddToThreadPool(new GoapThread(this, goalType, target, category, isPriority, characterTargetsAwareness, isPersonalPlan, job, allowDeadTargets, otherData));
+    }
     public GoapPlan PlanActions(IPointOfInterest target, GoapAction goalAction, List<GoapAction> usableActions, GOAP_CATEGORY category, bool isPersonalPlan, ref string log, GoapPlanJob job = null) {
         //List of all starting nodes that can do the goal
         List<GoapNode> startingNodes = new List<GoapNode>();
@@ -103,7 +153,7 @@ public class GoapPlanner {
             List<Precondition> unsatisfiedPreconditions = new List<Precondition>();
             for (int i = 0; i < parent.action.preconditions.Count; i++) {
                 Precondition precondition = parent.action.preconditions[i];
-                if (!precondition.CanSatisfyCondition()) {
+                if (!precondition.CanSatisfyCondition(actor, target)) {
                     //Pool all unsatisfied preconditions
                     unsatisfiedPreconditions.Add(precondition);
                 }

@@ -13,10 +13,10 @@ public class GoapPlanJob : JobQueueItem {
     public INTERACTION_TYPE targetInteractionType { get; protected set; } //Only used if the plan to be created uses interaction type
 
     //if INTERACTION_TYPE is NONE, it means that it is used by all
-    public Dictionary<INTERACTION_TYPE, object[]> otherData { get; protected set; } //Only used if the plan to be created uses interaction type
+    public Dictionary<INTERACTION_TYPE, object[]> otherData { get; protected set; } //TODO: Further optimize this by moving this dictionary to the actor itself
 
     //forced interactions per effect
-    public Dictionary<GoapEffect, INTERACTION_TYPE> forcedActions { get; private set; }
+    //public Dictionary<GoapEffect, INTERACTION_TYPE> forcedActions { get; private set; }
 
     //plan constructor
     public System.Func<GoapPlan> planConstructor { get; private set; } //if this is set, the job will execute this when creating a plan instead of using the normal behaviour
@@ -29,13 +29,13 @@ public class GoapPlanJob : JobQueueItem {
     public GoapPlanJob(JOB_TYPE jobType, GoapEffect targetEffect) : base(jobType) {
         this.targetEffect = targetEffect;
         this.targetPOI = targetEffect.targetPOI;
-        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
     }
     public GoapPlanJob(JOB_TYPE jobType, GoapEffect targetEffect, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(jobType) {
         this.targetEffect = targetEffect;
         this.targetPOI = targetEffect.targetPOI;
-        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
         this.otherData = otherData;
         if (otherData != null) {
@@ -55,7 +55,7 @@ public class GoapPlanJob : JobQueueItem {
         //this.targetPOI = targetEffect.targetPOI;
         this.targetInteractionType = targetInteractionType;
         this.otherData = null;
-        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
     }
     public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(jobType) {
@@ -63,7 +63,7 @@ public class GoapPlanJob : JobQueueItem {
         //this.targetPOI = targetEffect.targetPOI;
         this.targetInteractionType = targetInteractionType;
         this.otherData = otherData;
-        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
         if(otherData != null) {
             isNotSavable = true;
@@ -82,7 +82,7 @@ public class GoapPlanJob : JobQueueItem {
         this.targetPOI = targetPOI;
         this.targetInteractionType = targetInteractionType;
         //this.otherData = otherData;
-        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
     }
     public GoapPlanJob(JOB_TYPE jobType, INTERACTION_TYPE targetInteractionType, IPointOfInterest targetPOI, Dictionary<INTERACTION_TYPE, object[]> otherData) : base(jobType) {
@@ -90,7 +90,7 @@ public class GoapPlanJob : JobQueueItem {
         this.targetPOI = targetPOI;
         this.targetInteractionType = targetInteractionType;
         this.otherData = otherData;
-        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
         allowDeadTargets = false;
         if (otherData != null) {
             isNotSavable = true;
@@ -126,11 +126,11 @@ public class GoapPlanJob : JobQueueItem {
         } else {
             targetPOI = null;
         }
-        forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
-        for (int i = 0; i < data.forcedActionsGoapEffect.Count; i++) {
-            GoapEffect effect = data.forcedActionsGoapEffect[i].Load();
-            forcedActions.Add(effect, data.forcedActionsType[i]);
-        }
+        //forcedActions = new Dictionary<GoapEffect, INTERACTION_TYPE>(new ForcedActionsComparer());
+        //for (int i = 0; i < data.forcedActionsGoapEffect.Count; i++) {
+        //    GoapEffect effect = data.forcedActionsGoapEffect[i].Load();
+        //    forcedActions.Add(effect, data.forcedActionsType[i]);
+        //}
     }
 
     #region Overrides 

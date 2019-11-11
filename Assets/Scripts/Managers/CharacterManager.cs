@@ -82,7 +82,7 @@ public class CharacterManager : MonoBehaviour {
         //ConstructAtHomeInteractionWeights();
         //ConstructRoleInteractions();
         //ConstructPortraitDictionaries();
-        Messenger.AddListener<GoapAction, string, Character, IPointOfInterest, object[]>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
+        Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
         Messenger.AddListener<Character, GoapAction, string>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
@@ -1447,7 +1447,7 @@ public class CharacterManager : MonoBehaviour {
     #endregion
 
     #region Listeners
-    private void OnAfterActionStateSet(GoapAction action, string stateName, Character actor, IPointOfInterest target, object[] otherData) {
+    private void OnAfterActionStateSet(string stateName, ActualGoapNode actionNode) {
         action.actor.marker.UpdateAnimation();
 
         IPointOfInterest target = null;
@@ -1544,6 +1544,12 @@ public class CharacterManager : MonoBehaviour {
             }
         }
         return interventionAbilitiesToResearch;
+    }
+    #endregion
+
+    #region POI
+    public bool POIValueTypeMatching(POIValueType poi1, POIValueType poi2) {
+        return poi1.id == poi2.id && poi1.poiType == poi2.poiType && poi1.tileObjectType == poi2.tileObjectType;
     }
     #endregion
 }
