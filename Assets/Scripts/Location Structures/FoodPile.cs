@@ -11,7 +11,7 @@ public class FoodPile : TileObject {
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_FOOD, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_TYPE.DESTROY_FOOD };
         Initialize(TILE_OBJECT_TYPE.FOOD_PILE);
         SetFoodInPile(2000); //
-        RemoveTrait("Flammable");
+        traitContainer.RemoveTrait(this, "Flammable");
     }
     public FoodPile(SaveDataTileObject data) {
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_FOOD, INTERACTION_TYPE.DROP_FOOD, INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_TYPE.DESTROY_FOOD };

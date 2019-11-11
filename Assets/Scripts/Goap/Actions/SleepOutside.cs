@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 using System.Linq;
+using Traits;
 
 public class SleepOutside : GoapAction {
     private Resting _restingTrait;
@@ -68,7 +70,7 @@ public class SleepOutside : GoapAction {
         //currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         //actor.AdjustDoNotGetTired(1);
         _restingTrait = new Resting();
-        actor.AddTrait(_restingTrait);
+        actor.traitContainer.AddTrait(actor, _restingTrait);
         currentState.SetAnimation("Sleep Ground");
         currentState.OverrideDuration(actor.currentSleepTicks);
     }

@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class HuntingToDrinkBlood : GoapAction {
 
@@ -17,7 +18,7 @@ public class HuntingToDrinkBlood : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        if (actor.GetNormalTrait("Vampiric") != null) {
+        if (actor.traitContainer.GetNormalTrait("Vampiric") != null) {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
         }
     }
@@ -44,7 +45,7 @@ public class HuntingToDrinkBlood : GoapAction {
 
     #region Effects
     private void PreInProgress() {
-        Vampiric vampiric = actor.GetNormalTrait("Vampiric") as Vampiric;
+        Vampiric vampiric = actor.traitContainer.GetNormalTrait("Vampiric") as Vampiric;
         if(actor.marker.inVisionCharacters.Count > 0) {
             for (int i = 0; i < actor.marker.inVisionCharacters.Count; i++) {
                 if(vampiric.CreateJobsOnEnterVisionBasedOnTrait(actor.marker.inVisionCharacters[i], actor)) {

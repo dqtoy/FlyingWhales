@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class LaughAt : GoapAction {
 
@@ -28,8 +29,8 @@ public class LaughAt : GoapAction {
         actor.AdjustHappiness(500);
     }
     private void AfterLaughSuccess() {
-        if (poiTarget.GetNormalTrait("Unconscious") == null) {
-            poiTarget.AddTrait("Ashamed");
+        if (poiTarget.traitContainer.GetNormalTrait("Unconscious") == null) {
+            poiTarget.traitContainer.AddTrait(poiTarget, "Ashamed");
         }
     }
     #endregion   

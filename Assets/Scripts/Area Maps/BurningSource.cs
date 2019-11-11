@@ -58,7 +58,7 @@ public class BurningSource {
                 DouseFireState state = currDouser.stateComponent.currentState as DouseFireState;
                 for (int j = 0; j < objectsOnFire.Count; j++) {
                     IPointOfInterest poi = objectsOnFire[j];
-                    state.OnTraitableGainedTrait(poi, poi.GetNormalTrait("Burning"));
+                    state.OnTraitableGainedTrait(poi, poi.traitContainer.GetNormalTrait("Burning"));
                 }
                 state.DetermineAction();
             }

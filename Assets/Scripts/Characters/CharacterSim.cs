@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using System.IO;
+using Traits;
 
 public class CharacterSim : ICharacterSim {
     [SerializeField] private string _name;
@@ -396,7 +396,7 @@ public class CharacterSim : ICharacterSim {
         if (hasEquipped) {
             if (item.attributeNames != null) {
                 for (int i = 0; i < item.attributeNames.Count; i++) {
-                    Trait newCombatAttribute = AttributeManager.Instance.allTraits[item.attributeNames[i]];
+                    Trait newCombatAttribute = TraitManager.Instance.allTraits[item.attributeNames[i]];
                     AddCombatAttribute(newCombatAttribute);
                 }
             }
@@ -416,7 +416,7 @@ public class CharacterSim : ICharacterSim {
         }
         if (item.attributeNames != null) {
             for (int i = 0; i < item.attributeNames.Count; i++) {
-                Trait newCombatAttribute = AttributeManager.Instance.allTraits[item.attributeNames[i]];
+                Trait newCombatAttribute = TraitManager.Instance.allTraits[item.attributeNames[i]];
                 RemoveCombatAttribute(newCombatAttribute);
             }
         }

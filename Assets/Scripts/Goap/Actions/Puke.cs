@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Puke : GoapAction {
 
@@ -45,9 +46,9 @@ public class Puke : GoapAction {
     #endregion
 
     private void CreateRemoveTraitJob(Character characterThatWillDoJob) {
-        Trait trait = actor.GetNormalTrait("Plagued", "Infected", "Sick");
-        if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-            SerialKiller serialKiller = characterThatWillDoJob.GetNormalTrait("Serial Killer") as SerialKiller;
+        Trait trait = actor.traitContainer.GetNormalTrait("Plagued", "Infected", "Sick");
+        if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+            SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait("Serial Killer") as SerialKiller;
             if (serialKiller != null) {
                 serialKiller.SerialKillerSawButWillNotAssist(actor, trait);
                 return;
@@ -86,9 +87,9 @@ public class Puke : GoapAction {
                 }
             }
             if (!isPuking) {
-                Trait trait = actor.GetNormalTrait("Plagued", "Infected", "Sick");
-                if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-                    SerialKiller serialKiller = recipient.GetNormalTrait("Serial Killer") as SerialKiller;
+                Trait trait = actor.traitContainer.GetNormalTrait("Plagued", "Infected", "Sick");
+                if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
+                    SerialKiller serialKiller = recipient.traitContainer.GetNormalTrait("Serial Killer") as SerialKiller;
                     if (serialKiller != null) {
                         serialKiller.SerialKillerSawButWillNotAssist(actor, trait);
                     } else {
@@ -117,7 +118,7 @@ public class Puke : GoapAction {
                     this.recipient = recipient;
                 }
                 if (status == SHARE_INTEL_STATUS.INFORMED) {
-                    if(recipient.GetNormalTrait("Doctor") != null) {
+                    if(recipient.traitContainer.GetNormalTrait("Doctor") != null) {
                         //- if informed: "I'm a doctor. I should help [Actor Name]."
                         reactions.Add(string.Format("I'm a doctor. I should help {0}.", recipient.name));
                     } else {
@@ -251,7 +252,7 @@ public class Puke : GoapAction {
     //        if (character.faction.id == FactionManager.Instance.neutralFaction.id) {
     //            return character.race == targetCharacter.race && character.homeArea == targetCharacter.homeArea && !targetCharacter.HasRelationshipOfTypeWith(character, RELATIONSHIP_TRAIT.ENEMY);
     //        }
-    //        return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.GetNormalTrait("Doctor") != null;
+    //        return !character.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.ENEMY) && character.traitContainer.GetNormalTrait("Doctor") != null;
     //    }
     //    return false;
     //}

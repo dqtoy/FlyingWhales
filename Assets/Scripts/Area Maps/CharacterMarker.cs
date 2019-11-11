@@ -8,7 +8,7 @@ using System;
 using TMPro;
 using Pathfinding;
 using System.Linq;
-using Pathfinding.RVO;
+using Traits;
 
 public class CharacterMarker : PooledObject {
 
@@ -387,8 +387,8 @@ public class CharacterMarker : PooledObject {
         if (character == null) {
             return;
         }
-        int negativeDisablerCount = character.GetNumberOfTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
-        if ((negativeDisablerCount >= 2 || (negativeDisablerCount == 1 && character.GetNormalTrait("Paralyzed") == null)) || character.isDead) {
+        int negativeDisablerCount = character.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).Count;
+        if ((negativeDisablerCount >= 2 || (negativeDisablerCount == 1 && character.traitContainer.GetNormalTrait("Paralyzed") == null)) || character.isDead) {
             actionIcon.gameObject.SetActive(false);
             return;
         }
@@ -432,7 +432,7 @@ public class CharacterMarker : PooledObject {
             if(action.expectedEffects[i].conditionType == GOAP_EFFECT_CONDITION.REMOVE_TRAIT) {
                 if(action.expectedEffects[i].conditionKey is string) {
                     string key = (string) action.expectedEffects[i].conditionKey;
-                    if(AttributeManager.Instance.allTraits.ContainsKey(key) && AttributeManager.Instance.allTraits[key].effect == TRAIT_EFFECT.NEGATIVE) {
+                    if(TraitManager.Instance.allTraits.ContainsKey(key) && TraitManager.Instance.allTraits[key].effect == TRAIT_EFFECT.NEGATIVE) {
                         AdjustTargettedByRemoveNegativeTraitActions(1);
                     } else if (key == "Negative") {
                         AdjustTargettedByRemoveNegativeTraitActions(1);
@@ -447,7 +447,7 @@ public class CharacterMarker : PooledObject {
             if (action.expectedEffects[i].conditionType == GOAP_EFFECT_CONDITION.REMOVE_TRAIT) {
                 if (action.expectedEffects[i].conditionKey is string) {
                     string key = (string) action.expectedEffects[i].conditionKey;
-                    if (AttributeManager.Instance.allTraits.ContainsKey(key) && AttributeManager.Instance.allTraits[key].effect == TRAIT_EFFECT.NEGATIVE) {
+                    if (TraitManager.Instance.allTraits.ContainsKey(key) && TraitManager.Instance.allTraits[key].effect == TRAIT_EFFECT.NEGATIVE) {
                         AdjustTargettedByRemoveNegativeTraitActions(-1);
                     } else if (key == "Negative") {
                         AdjustTargettedByRemoveNegativeTraitActions(-1);
@@ -611,7 +611,7 @@ public class CharacterMarker : PooledObject {
     /// <param name="force">Should this object be forced to rotate?</param>
     public void LookAt(Vector3 target, bool force = false) {
         if (!force) {
-            if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 return;
             }
         }
@@ -628,7 +628,7 @@ public class CharacterMarker : PooledObject {
     /// <param name="force">Should this object be forced to rotate?</param>
     public void Rotate(Quaternion target, bool force = false) {
         if (!force) {
-            if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 return;
             }
         }
@@ -735,14 +735,14 @@ public class CharacterMarker : PooledObject {
         //    return;
         //}
         if (!character.IsInOwnParty()) {
-            if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 PlaySleepGround();
             }
             return; //if not in own party do not update any other animations
         }
         if (character.isDead) {
             PlayAnimation("Dead");
-        } else if (character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        } else if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             PlaySleepGround();
         } else if (character.isStoppedByOtherCharacter > 0) {
             PlayIdle();
@@ -1092,7 +1092,7 @@ public class CharacterMarker : PooledObject {
     private void ProcessAllUnprocessedVisionPOIs() {
         if(unprocessedVisionPOIs.Count > 0 && (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)) {
             string log = GameManager.Instance.TodayLogString() + character.name + " tick ended! Processing all unprocessed in visions...";
-            if (!character.isDead && character.GetNormalTrait("Unconscious", "Resting", "Zapped") == null) {
+            if (!character.isDead && character.traitContainer.GetNormalTrait("Unconscious", "Resting", "Zapped") == null) {
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     log += "\n - Reacting to " + poi.name;
@@ -1161,7 +1161,7 @@ public class CharacterMarker : PooledObject {
     #region Hosility Collision
     public bool AddHostileInRange(IPointOfInterest poi, bool checkHostility = true, bool processCombatBehavior = true, bool isLethal = true) {
         if (!hostilesInRange.Contains(poi)) {
-            if (this.character.GetNormalTrait("Zapped") == null && !this.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) 
+            if (this.character.traitContainer.GetNormalTrait("Zapped") == null && !this.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) 
                 && !this.character.isFollowingPlayerInstruction && CanAddPOIAsHostile(poi, checkHostility)) {
                 string transferReason = string.Empty;
                 if (!WillCharacterTransferEngageToFleeList(isLethal, ref transferReason)) {
@@ -1288,7 +1288,7 @@ public class CharacterMarker : PooledObject {
         if (poi is Character) {
             return AddAvoidInRange(poi as Character, processCombatBehavior, reason);
         } else {
-            if (character.GetNormalTrait("Berserked") == null) {
+            if (character.traitContainer.GetNormalTrait("Berserked") == null) {
                 if (!avoidInRange.Contains(poi)) {
                     avoidInRange.Add(poi);
                     willProcessCombat = true;
@@ -1306,7 +1306,7 @@ public class CharacterMarker : PooledObject {
             IPointOfInterest poi = pois[i];
             if (poi is Character) {
                 Character characterToAvoid = poi as Character;
-                if (characterToAvoid.isDead || characterToAvoid.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) || characterToAvoid.GetNormalTrait("Berserked") != null) {
+                if (characterToAvoid.isDead || characterToAvoid.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || characterToAvoid.traitContainer.GetNormalTrait("Berserked") != null) {
                     continue; //skip
                 }
             }
@@ -1326,7 +1326,7 @@ public class CharacterMarker : PooledObject {
         return false;
     }
     private bool AddAvoidInRange(Character poi, bool processCombatBehavior = true, string reason = "") {
-        if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && character.GetNormalTrait("Berserked") == null) { //, "Resting"
+        if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && character.traitContainer.GetNormalTrait("Berserked") == null) { //, "Resting"
             if (!avoidInRange.Contains(poi)) {
                 avoidInRange.Add(poi);
                 //NormalReactToHostileCharacter(poi, CHARACTER_STATE.FLEE);
@@ -1346,7 +1346,7 @@ public class CharacterMarker : PooledObject {
         Character otherPOI = null;
         for (int i = 0; i < pois.Count; i++) {
             Character poi = pois[i];
-            if (!poi.isDead && !poi.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER) && poi.GetNormalTrait("Berserked") == null) {
+            if (!poi.isDead && !poi.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && poi.traitContainer.GetNormalTrait("Berserked") == null) {
                 if (!avoidInRange.Contains(poi)) {
                     avoidInRange.Add(poi);
                     if (otherPOI == null) {
@@ -1423,7 +1423,7 @@ public class CharacterMarker : PooledObject {
     }
     public void OnFleePathComputed(Path path) {
         //|| character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT 
-        if (character == null || character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        if (character == null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             return; //this is for cases that the character is no longer in a combat state, but the pathfinding thread returns a flee path
         }
         //Debug.Log(character.name + " computed flee path");
@@ -1478,7 +1478,7 @@ public class CharacterMarker : PooledObject {
     private void TransferEngageToFleeList(Character character, string reason) {
         if (this.character == character) {
             string summary = GameManager.Instance.TodayLogString() + character.name + " will determine the transfer from engage list to flee list";
-            if(character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            if(character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 summary += "\n" + character.name + " has negative disabler trait. Ignoring transfer.";
                 character.PrintLogIfActive(summary);
                 return;
@@ -1490,7 +1490,7 @@ public class CharacterMarker : PooledObject {
             }
             //check flee first, the logic determines that this character will not flee, then attack by default
             bool willTransfer = true;
-            if (character.GetNormalTrait("Berserked") != null) {
+            if (character.traitContainer.GetNormalTrait("Berserked") != null) {
                 willTransfer = false;
             }
             summary += "\nDid " + character.name + " chose to transfer? " + willTransfer.ToString();
@@ -1644,18 +1644,18 @@ public class CharacterMarker : PooledObject {
     }
     public bool WillCharacterTransferEngageToFleeList(bool isLethal, ref string reason) {
         bool willTransfer = false;
-        if(character.GetNormalTrait("Coward") != null && character.GetNormalTrait("Berserked") == null) {
+        if(character.traitContainer.GetNormalTrait("Coward") != null && character.traitContainer.GetNormalTrait("Berserked") == null) {
             willTransfer = true;
             reason = "coward";
         } else if (!isLethal && !HasLethalCombatTarget()) {
             willTransfer = false;
         }
         //- if character is berserked, must not flee
-        else if (character.GetNormalTrait("Berserked") != null) {
+        else if (character.traitContainer.GetNormalTrait("Berserked") != null) {
             willTransfer = false;
         }
         //- at some point, situation may trigger the character to flee, at which point it will attempt to move far away from target
-        //else if (character.GetNormalTrait("Injured") != null) {
+        //else if (character.traitContainer.GetNormalTrait("Injured") != null) {
         //    //summary += "\n" + character.name + " is injured.";
         //    //-character gets injured(chance based dependent on the character)
         //    willTransfer = true;
@@ -1666,11 +1666,11 @@ public class CharacterMarker : PooledObject {
             willTransfer = true;
             reason = "critically low health";
         }
-        //else if (character.GetNormalTrait("Spooked") != null) {
+        //else if (character.traitContainer.GetNormalTrait("Spooked") != null) {
         //    //- fear-type status effect
         //    willTransfer = true;
         //} 
-        else if (character.isStarving && character.GetNormalTrait("Vampiric") == null) {
+        else if (character.isStarving && character.traitContainer.GetNormalTrait("Vampiric") == null) {
             //-character is starving and is not a vampire
             willTransfer = true;
             reason = "starving";

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class PickItem : GoapAction {
     public PickItem(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.PICK_ITEM, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {

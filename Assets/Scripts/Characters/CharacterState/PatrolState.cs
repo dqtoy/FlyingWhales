@@ -47,7 +47,7 @@ public class PatrolState : CharacterState {
     protected override void PerTickInState() {
         base.PerTickInState();
         if (!isDone && !isPaused) {
-            if(stateComponent.character.GetNormalTrait("Injured") != null) {
+            if(stateComponent.character.traitContainer.GetNormalTrait("Injured") != null) {
                 StopStatePerTick();
                 OnExitThisState();
                 return;

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class ItemDestroy : GoapAction {
     public ItemDestroy(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.ITEM_DESTROY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {

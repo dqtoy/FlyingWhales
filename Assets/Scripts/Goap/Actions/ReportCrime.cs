@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class ReportCrime : GoapAction {
 
@@ -16,7 +17,7 @@ public class ReportCrime : GoapAction {
                 return targetMissing;
             } else {
                 if (actor != poiTarget) {
-                    Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
+                    Invisible invisible = poiTarget.traitContainer.GetNormalTrait("Invisible") as Invisible;
                     if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
                         return true;
                     }
@@ -108,7 +109,7 @@ public class ReportCrime : GoapAction {
         //**Advertiser**: All Faction Leaders, Nobles and Soldiers
         if (poiTarget is Character && poiTarget != actor && (criminal == null || poiTarget != criminal.owner)) {
             Character character = poiTarget as Character;
-            if (character.GetNormalTrait("Restrained") != null) {
+            if (character.traitContainer.GetNormalTrait("Restrained") != null) {
                 return false; //do not allow restrained
             }
             if (character.role.roleType == CHARACTER_ROLE.LEADER || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.SOLDIER) {
@@ -133,7 +134,7 @@ public class ReportCrimeData : GoapActionData {
         }
         if (poiTarget is Character && poiTarget != actor && (criminal == null || poiTarget != criminal.owner)) {
             Character character = poiTarget as Character;
-            if (character.GetNormalTrait("Restrained") != null) {
+            if (character.traitContainer.GetNormalTrait("Restrained") != null) {
                 return false; //do not allow restrained
             }
             if (character.role.roleType == CHARACTER_ROLE.LEADER || character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.SOLDIER) {

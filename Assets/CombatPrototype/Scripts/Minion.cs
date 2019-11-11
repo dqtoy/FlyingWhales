@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Traits;
 
 public class Minion {
     public const int MAX_INTERVENTION_ABILITY_SLOT = 5;
@@ -149,19 +150,19 @@ public class Minion {
                 character.role.OnDeath(character);
             }
 
-            character.RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
+            character.traitContainer.RemoveAllTraitsByType(character, TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
 
-            for (int i = 0; i < character.normalTraits.Count; i++) {
-                character.normalTraits[i].OnDeath(character);
+            for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
+                character.traitContainer.allTraits[i].OnDeath(character);
             }
 
-            character.RemoveAllNonPersistentTraits();
+            character.traitContainer.RemoveAllNonPersistentTraits(character);
 
             character.marker?.OnDeath(deathTile, wasOutsideSettlement);
             character.SetNumWaitingForGoapThread(0); //for raise dead
             Dead dead = new Dead();
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);
-            character.AddTrait(dead, gainedFromDoing: deathFromAction);
+            character.traitContainer.AddTrait(character, dead, gainedFromDoing: deathFromAction);
             PlayerManager.Instance.player.RemoveMinion(this);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, character);
 
@@ -350,7 +351,7 @@ public class Minion {
         PlayerManager.Instance.player.playerArea.AddCharacterToLocation(character);
         character.ClearAllAwareness();
         character.CancelAllJobsAndPlans();
-        character.RemoveAllNonPersistentTraits();
+        character.traitContainer.RemoveAllNonPersistentTraits(character);
         character.ResetToFullHP();
         if (character.isDead) {
             character.SetIsDead(false);
@@ -359,7 +360,7 @@ public class Minion {
                 character.CreateOwnParty();
                 character.ownParty.CreateIcon();
             }
-            character.RemoveTrait("Dead");
+            character.traitContainer.RemoveTrait(character, "Dead");
         }
         character.DestroyMarker();
         SchedulingManager.Instance.ClearAllSchedulesBy(this.character);
@@ -375,9 +376,9 @@ public class Minion {
     /// <summary>
     /// Add trait function for minions. Added handling for when a minion gains a trait while outside of an area map. All traits are stored and will be added once the minion is placed at an area map.
     /// </summary>
-    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
+    public bool AddTrait(string traitName, Character characterResponsible = null, GoapAction gainedFromDoing = null) {
         if (InteriorMapManager.Instance.isAnAreaMapShowing) {
-            return character.AddTrait(traitName, characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
+            return character.traitContainer.AddTrait(character, traitName, characterResponsible, gainedFromDoing);
         } else {
             traitsToAdd.Add(traitName);
             return true;
@@ -385,7 +386,7 @@ public class Minion {
     }
     private void AddPendingTraits() {
         for (int i = 0; i < traitsToAdd.Count; i++) {
-            character.AddTrait(traitsToAdd[i]);
+            character.traitContainer.AddTrait(character, traitsToAdd[i]);
         }
         traitsToAdd.Clear();
     }

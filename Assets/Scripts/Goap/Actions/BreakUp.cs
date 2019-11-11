@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class BreakUp : GoapAction {
 
@@ -70,7 +71,7 @@ public class BreakUp : GoapAction {
         if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
             return false;
         }
-        if (target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             return false;
         }
         if (!actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER) && !actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR)) {
@@ -112,22 +113,22 @@ public class BreakUp : GoapAction {
                 }
                 //- Recipient is Lover or Paramour of Actor
                 else if (isRecipientLoverOrParamourOfActor) {
-                    recipient.AddTrait("Satisfied");
+                    recipient.traitContainer.AddTrait(recipient, "Satisfied");
                     reactions.Add(string.Format("This is great news! My relationship with {0} will be better now.", actor.name));
                 }
                 //- Recipient is Lover or Paramour of Target
                 else if (isRecipientLoverOrParamourOfActor) {
-                    recipient.AddTrait("Satisfied");
+                    recipient.traitContainer.AddTrait(recipient, "Satisfied");
                     reactions.Add(string.Format("This is great news! My relationship with {0} will be better now.", targetCharacter.name));
                 }
                 //- Is in Love with Actor
                 else if (isRecipientInLoveWithActor) {
-                    recipient.AddTrait("Satisfied");
+                    recipient.traitContainer.AddTrait(recipient, "Satisfied");
                     reactions.Add(string.Format("This means I have a chance with {0} now.", actor.name));
                 }
                 //- Is in Love with Target
                 else if (isRecipientInLoveWithTarget) {
-                    recipient.AddTrait("Satisfied");
+                    recipient.traitContainer.AddTrait(recipient, "Satisfied");
                     reactions.Add(string.Format("This means I have a chance with {0} now.", targetCharacter.name));
                 }
                 //- Other Positive Relationship with Actor
@@ -174,7 +175,7 @@ public class BreakUpData : GoapActionData {
         if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
             return false;
         }
-        if (target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             return false;
         }
         if (!actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.LOVER) && !actor.HasRelationshipOfTypeWith(target, RELATIONSHIP_TRAIT.PARAMOUR)) {

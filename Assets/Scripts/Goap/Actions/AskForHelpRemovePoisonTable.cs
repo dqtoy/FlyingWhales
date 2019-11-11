@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
+using Traits;
 
 public class AskForHelpRemovePoisonTable : GoapAction {
 
@@ -50,7 +52,7 @@ public class AskForHelpRemovePoisonTable : GoapAction {
         this.otherData = otherData;
         if (otherData.Length == 1 && otherData[0] is IPointOfInterest) {
             targetTable = otherData[0] as IPointOfInterest;
-            poison = targetTable.GetNormalTrait("Poisoned") as Poisoned;
+            poison = targetTable.traitContainer.GetNormalTrait("Poisoned") as Poisoned;
             if (thoughtBubbleMovingLog != null) {
                 thoughtBubbleMovingLog.AddToFillers(targetTable.gridTileLocation.structure, targetTable.gridTileLocation.structure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
             }

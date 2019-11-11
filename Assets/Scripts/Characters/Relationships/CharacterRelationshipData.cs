@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class CharacterRelationshipData {
 
@@ -88,13 +89,13 @@ public class CharacterRelationshipData {
     public void AddRelationship(RelationshipTrait newRel) {
         if (!rels.Contains(newRel)) {
             rels.Add(newRel);
-            owner.AddTrait(newRel);
+            owner.traitContainer.AddTrait(owner, newRel);
         }
     }
     public bool RemoveRelationship(RelationshipTrait newRel) {
         if (rels.Remove(newRel)) {
             //Debug.Log("Removed " + newRel.name + " from " + owner.name + "'s relationship data with " + targetCharacter.name);
-            owner.RemoveTrait(newRel);
+            owner.traitContainer.RemoveTrait(owner, newRel);
             return true;
         }
         return false;

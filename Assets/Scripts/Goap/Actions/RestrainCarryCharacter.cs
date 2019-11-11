@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class RestrainCarryCharacter : GoapAction {
     private bool isForCriminal;
@@ -58,7 +59,7 @@ public class RestrainCarryCharacter : GoapAction {
         Character target = poiTarget as Character;
         actor.ownParty.AddCharacter(target);
 
-        if(target.GetNormalTrait("Restrained") == null) {
+        if(target.traitContainer.GetNormalTrait("Restrained") == null) {
             AddTraitTo(target, new Restrained(), actor);
         }
     }
@@ -219,6 +220,6 @@ public class RestrainCarryCharacterData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && poiTarget is Character && (poiTarget as Character).HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+        return actor != poiTarget && poiTarget is Character && (poiTarget as Character).traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE);
     }
 }

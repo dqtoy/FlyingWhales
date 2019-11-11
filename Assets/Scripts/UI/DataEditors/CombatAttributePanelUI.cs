@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using System.Linq;
 using System.IO;
 using System;
-
+using Traits;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif

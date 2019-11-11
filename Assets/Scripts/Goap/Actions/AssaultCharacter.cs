@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 //TODO: Should be witnessed even while in combat.
 //will be branded criminal if anybody witnesses or after combat
@@ -122,11 +123,11 @@ public class AssaultCharacter : GoapAction {
         Character target = poiTarget as Character;
         loser = target;
         //winner = actor; // TODO: How to determine if actor won?
-        if (target.GetNormalTrait("Dead") != null) {
+        if (target.traitContainer.GetNormalTrait("Dead") != null) {
             SetState("Target Killed");
-        } else if (target.GetNormalTrait("Unconscious") != null) {
+        } else if (target.traitContainer.GetNormalTrait("Unconscious") != null) {
             SetState("Target Knocked Out");
-        } else if (target.GetNormalTrait("Injured") != null) {
+        } else if (target.traitContainer.GetNormalTrait("Injured") != null) {
             SetState("Target Injured");
         } else if (actor.specificLocation != target.specificLocation) {
             SetState("Target Missing");
@@ -271,10 +272,10 @@ public class AssaultCharacter : GoapAction {
         //10 Weight: Gain Injured trait and enter Flee mode (reduce to 0 if already Injured)
         //5 Weight: death
         WeightedDictionary<string> loserResults = new WeightedDictionary<string>();
-        if (loser.GetNormalTrait("Unconscious") == null) {
+        if (loser.traitContainer.GetNormalTrait("Unconscious") == null) {
             loserResults.AddElement("Unconscious", 40);
         }
-        if (loser.GetNormalTrait("Injured") == null) {
+        if (loser.traitContainer.GetNormalTrait("Injured") == null) {
             loserResults.AddElement("Injured", 10);
         }
         loserResults.AddElement("Death", 5);
@@ -532,7 +533,7 @@ public class AssaultCharacterData : GoapActionData {
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (poiTarget is Character && actor != poiTarget) {
             Character target = poiTarget as Character;
-            if (!target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            if (!target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 return true;
             }
         }

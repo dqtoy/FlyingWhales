@@ -133,7 +133,7 @@ public class PlayerJobAction {
         return CanPerformAction();
     }
     protected virtual bool CanPerformActionTowards(Character targetCharacter) {
-        if (targetCharacter.GetNormalTrait("Blessed") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Blessed") != null) {
             return false;
         }
         //Quick fix only, remove this later
@@ -161,7 +161,7 @@ public class PlayerJobAction {
     /// <param name="poi">The target poi</param>
     /// <returns>true or false</returns>
     public virtual bool CanTarget(IPointOfInterest poi, ref string hoverText) {
-        if (poi.GetNormalTrait("Blessed") != null) {
+        if (poi.traitContainer.GetNormalTrait("Blessed") != null) {
             hoverText = "Blessed characters cannot be targetted.";
             return false;
         }

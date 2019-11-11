@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
+using Traits;
 
 public class Drink : GoapAction {
     public Poisoned poisonedTrait { get; private set; }
@@ -8,7 +10,7 @@ public class Drink : GoapAction {
 
     public Drink(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DRINK, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
         //shouldIntelNotificationOnlyIfActorIsActive = true;
-        if (actor.GetNormalTrait("Drunkard") != null) {
+        if (actor.traitContainer.GetNormalTrait("Drunkard") != null) {
             validTimeOfDays = new TIME_IN_WORDS[] {
                 TIME_IN_WORDS.MORNING,
                 TIME_IN_WORDS.LUNCH_TIME,
@@ -39,7 +41,7 @@ public class Drink : GoapAction {
         base.PerformActualAction();
         if (!isTargetMissing) {
             //SetState("Drink Success");
-            poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
+            poisonedTrait = poiTarget.traitContainer.GetNormalTrait("Poisoned") as Poisoned;
             if (poisonedTrait != null) {
                 SetState("Drink Poisoned");
             } else {
@@ -51,7 +53,7 @@ public class Drink : GoapAction {
     }
     protected override int GetCost() {
         //**Cost**: 15 - 26 (If Actor is alcoholic 5 - 19)
-        if (actor.GetNormalTrait("Drunkard") != null) {
+        if (actor.traitContainer.GetNormalTrait("Drunkard") != null) {
             return Utilities.rng.Next(5, 20);
         }
         return Utilities.rng.Next(15, 27);
@@ -87,7 +89,7 @@ public class Drink : GoapAction {
         if (res == "Sick") {
             string logKey = "drink poisoned_sick";
             poisonedResult = "Sick";
-            if (actor.GetNormalTrait("Robust") != null) {
+            if (actor.traitContainer.GetNormalTrait("Robust") != null) {
                 poisonedResult = "Robust";
                 logKey = "drink poisoned_robust";
             }
@@ -127,7 +129,7 @@ public class Drink : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        return poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.GetNormalTrait("Agoraphobic") == null;
+        return poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait("Agoraphobic") == null;
     }
     #endregion
 }
@@ -142,6 +144,6 @@ public class DrinkData : GoapActionData {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        return poiTarget.gridTileLocation != null &&  poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && actor.GetNormalTrait("Agoraphobic") == null;
+        return poiTarget.gridTileLocation != null &&  poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && actor.traitContainer.GetNormalTrait("Agoraphobic") == null;
     }
 }

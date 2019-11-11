@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class StealFromCharacter : GoapAction {
 
@@ -23,7 +24,7 @@ public class StealFromCharacter : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        //if (actor.GetNormalTrait("Kleptomaniac") != null) {
+        //if (actor.traitContainer.GetNormalTrait("Kleptomaniac") != null) {
         //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
         //}
         Character target = poiTarget as Character;
@@ -38,7 +39,7 @@ public class StealFromCharacter : GoapAction {
         base.PerformActualAction();
         if (!isTargetMissing && (poiTarget as Character).IsInOwnParty()) {
             if (_targetCharacter.isHoldingItem) {
-                if (_targetCharacter.GetNormalTrait("Vigilant") != null) {
+                if (_targetCharacter.traitContainer.GetNormalTrait("Vigilant") != null) {
                     SetState("Steal Vigilant");
                 } else {
                     SetState("Steal Success");
@@ -51,7 +52,7 @@ public class StealFromCharacter : GoapAction {
         }
     }
     protected override int GetCost() {
-        if (actor.GetNormalTrait("Kleptomaniac") != null) {
+        if (actor.traitContainer.GetNormalTrait("Kleptomaniac") != null) {
             return Utilities.rng.Next(5, 46);
         }
         return Utilities.rng.Next(35, 56);
@@ -76,7 +77,7 @@ public class StealFromCharacter : GoapAction {
             return false;
         }
         //exclude characters that the actor knows has no items.
-        Kleptomaniac kleptomaniacTrait = actor.GetNormalTrait("Kleptomaniac") as Kleptomaniac;
+        Kleptomaniac kleptomaniacTrait = actor.traitContainer.GetNormalTrait("Kleptomaniac") as Kleptomaniac;
         if (kleptomaniacTrait != null && kleptomaniacTrait.noItemCharacters.Contains(poiTarget as Character)) {
             return false;
         }
@@ -97,7 +98,7 @@ public class StealFromCharacter : GoapAction {
     }
     private void AfterStealSuccess() {
         actor.ObtainTokenFrom(_targetCharacter, _targetItem, false);
-        if (actor.GetNormalTrait("Kleptomaniac") != null) {
+        if (actor.traitContainer.GetNormalTrait("Kleptomaniac") != null) {
             actor.AdjustHappiness(6000);
         }
     }
@@ -378,7 +379,7 @@ public class StealFromCharacterData : GoapActionData {
             return false;
         }
         //exclude characters that the actor knows has no items.
-        Kleptomaniac kleptomaniacTrait = actor.GetNormalTrait("Kleptomaniac") as Kleptomaniac;
+        Kleptomaniac kleptomaniacTrait = actor.traitContainer.GetNormalTrait("Kleptomaniac") as Kleptomaniac;
         if (kleptomaniacTrait != null && kleptomaniacTrait.noItemCharacters.Contains(poiTarget as Character)) {
             return false;
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Inspect : GoapAction {
 
@@ -15,7 +16,7 @@ public class Inspect : GoapAction {
         _requirementAction = Requirement;
     }
     //protected override void ConstructPreconditionsAndEffects() {
-    //    if (actor.GetNormalTrait("Curious") != null) {
+    //    if (actor.traitContainer.GetNormalTrait("Curious") != null) {
     //        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
     //    }
     //}
@@ -58,7 +59,7 @@ public class Inspect : GoapAction {
     public void AfterInspectSuccess() {
         if (poiTarget is TileObject) {
             TileObject to = poiTarget as TileObject;
-            //Curious curios = actor.GetNormalTrait("Curious") as Curious;
+            //Curious curios = actor.traitContainer.GetNormalTrait("Curious") as Curious;
             actor.defaultCharacterTrait.AddAlreadyInspectedObject(to);
         } 
     }

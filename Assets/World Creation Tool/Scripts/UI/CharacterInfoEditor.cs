@@ -1,14 +1,11 @@
 ﻿using BayatGames.SaveGameFree;
-
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.UI.Extensions;
-using UnityEngine.UI.Extensions.ColorPicker;
+using Traits;
 
 namespace worldcreator {
     public class CharacterInfoEditor : MonoBehaviour {
@@ -320,25 +317,10 @@ namespace worldcreator {
 
             equipmentChoicesDropdown.AddOptions(choices);
         }
-        //private void LoadEquipment() {
-        //    Utilities.DestroyChildren(equipmentScrollView.content);
-        //    for (int i = 0; i < _character.equippedItems.Count; i++) {
-        //        Item currItem = _character.equippedItems[i];
-        //        OnItemEquipped(currItem, _character);
-        //    }
-        //}
-        public void AddEquipment() {
-            string chosenItem = equipmentChoicesDropdown.options[equipmentChoicesDropdown.value].text;
-            Item item = ItemManager.Instance.allItems[chosenItem].CreateNewCopy();
-            if (!_character.EquipItem(item)) {
-                WorldCreatorUI.Instance.messageBox.ShowMessageBox(MESSAGE_BOX.OK, "Equipment error", "Cannot equip " + item.itemName);
-            }
-        }
         private void OnItemEquipped(Item item, Character character) {
             GameObject itemGO = GameObject.Instantiate(itemEditorPrefab, equipmentScrollView.content);
             ItemEditorItem itemComp = itemGO.GetComponent<ItemEditorItem>();
             itemComp.SetItem(item, character);
-            itemComp.SetDeleteItemAction(() => character.UnequipItem(item));
         }
         private void OnItemUnequipped(Item item, Character character) {
             GameObject.Destroy(GetEquipmentEditorItem(item).gameObject);

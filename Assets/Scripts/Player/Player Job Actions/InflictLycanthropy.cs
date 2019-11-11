@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class Lycanthropy : PlayerJobAction {
@@ -30,7 +31,7 @@ public class Lycanthropy : PlayerJobAction {
                 if (CanPerformActionTowards(currTarget)) {
                     Trait newTrait = new Lycanthrope();
                     newTrait.SetLevel(level);
-                    currTarget.AddTrait(newTrait);
+                    currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     //AlterEgoData alterEgoData = currTarget.GetAlterEgoData("Lycanthrope");
                     //alterEgoData.SetLevel(_level);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
@@ -64,10 +65,10 @@ public class Lycanthropy : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Lycanthrope") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Lycanthrope") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return base.CanPerformActionTowards(targetCharacter);
@@ -108,10 +109,10 @@ public class Lycanthropy : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Lycanthrope") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Lycanthrope") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return base.CanTarget(targetCharacter, ref hoverText);

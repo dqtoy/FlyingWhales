@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
+using Traits;
 
 public class Sleep : GoapAction {
     protected override string failActionState { get { return "Rest Fail"; } }
@@ -97,7 +99,7 @@ public class Sleep : GoapAction {
         //poiTarget.SetPOIState(POI_STATE.INACTIVE);
         //actor.AdjustDoNotGetTired(1);
         _restingTrait = new Resting();
-        actor.AddTrait(_restingTrait);
+        actor.traitContainer.AddTrait(actor, _restingTrait);
         currentState.OverrideDuration(actor.currentSleepTicks);
     }
     private void PerTickRestSuccess() {

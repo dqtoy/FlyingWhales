@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class CombatState : CharacterState {
 
@@ -43,7 +44,7 @@ public class CombatState : CharacterState {
             return; //to prevent exiting from this function, when this state was already exited by another funtion in the same stack.
         }
         if (stateComponent.character.doNotDisturb > 0) {
-            //if (!(characterState == CHARACTER_STATE.BERSERKED && stateComponent.character.doNotDisturb == 1 && stateComponent.character.GetNormalTrait("Combat Recovery") != null)) {
+            //if (!(characterState == CHARACTER_STATE.BERSERKED && stateComponent.character.doNotDisturb == 1 && stateComponent.character.traitContainer.GetNormalTrait("Combat Recovery") != null)) {
                 StopStatePerTick();
                 OnExitThisState();
                 return;
@@ -117,7 +118,7 @@ public class CombatState : CharacterState {
     public override void AfterExitingState() {
         base.AfterExitingState();
         if (!stateComponent.character.isDead) {
-            if(isBeingApprehended && stateComponent.character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !stateComponent.character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            if(isBeingApprehended && stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
                 if (stateComponent.character.faction != FactionManager.Instance.neutralFaction) {
                     //Leave current faction
@@ -273,7 +274,7 @@ public class CombatState : CharacterState {
         if (isAttacking) {
             stateComponent.character.marker.StopPerTickFlee();
             log += "\n" + stateComponent.character.name + " is attacking!";
-            Trait taunted = stateComponent.character.GetNormalTrait("Taunted");
+            Trait taunted = stateComponent.character.traitContainer.GetNormalTrait("Taunted");
             if (forcedTarget != null) {
                 log += "\n" + stateComponent.character.name + " has a forced target. Setting " + forcedTarget.name + " as target.";
                 SetClosestHostile(forcedTarget);
@@ -458,7 +459,7 @@ public class CombatState : CharacterState {
                 //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
                 if (poi == currentClosestHostile) {
                     //If character that attacked is not invisible or invisible but can be seen by character hit, character hit should react
-                    Invisible invisible = stateComponent.character.GetNormalTrait("Invisible") as Invisible;
+                    Invisible invisible = stateComponent.character.traitContainer.GetNormalTrait("Invisible") as Invisible;
                     if (invisible == null || invisible.charactersThatCanSee.Contains(hitCharacter)) {
                         //When the target is hit and it is still alive, add hostile
                         hitCharacter.marker.AddHostileInRange(stateComponent.character, false, isLethal: stateComponent.character.marker.IsLethalCombatForTarget(hitCharacter));

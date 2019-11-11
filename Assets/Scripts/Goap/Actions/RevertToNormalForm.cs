@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class RevertToNormalForm : GoapAction {
 
@@ -41,7 +42,7 @@ public class RevertToNormalForm : GoapAction {
         currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     public void AfterTransformSuccess() {
-        Lycanthrope lycanthropy = actor.GetNormalTrait("Lycanthrope") as Lycanthrope;
+        Lycanthrope lycanthropy = actor.traitContainer.GetNormalTrait("Lycanthrope") as Lycanthrope;
         lycanthropy.RevertToNormal();
         SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
     }

@@ -14,7 +14,7 @@ public class GoddessStatue : TileObject {
         poiGoapActions = new List<INTERACTION_TYPE>();
 
         Initialize(TILE_OBJECT_TYPE.GODDESS_STATUE);
-        RemoveTrait("Flammable");
+        traitContainer.RemoveTrait(this, "Flammable");
     }
     public GoddessStatue(SaveDataTileObject data) {
         poiGoapActions = new List<INTERACTION_TYPE>();

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Traits;
 
 public class CharacterManager : MonoBehaviour {
 
@@ -586,10 +587,10 @@ public class CharacterManager : MonoBehaviour {
     /// <returns>The created relationship data.</returns>
     public CharacterRelationshipData CreateNewOneWayRelationship(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
         if (!currCharacter.HasRelationshipOfTypeWith(targetCharacter, rel)) {
-            if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null) {
+            if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.traitContainer.GetNormalTrait("Diplomatic") != null) {
                 return currCharacter.GetCharacterRelationshipData(targetCharacter);
             }
-            if (rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.GetNormalTrait("Serial Killer") != null) {
+            if (rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait("Serial Killer") != null) {
                 return currCharacter.GetCharacterRelationshipData(targetCharacter);
             }
             currCharacter.AddRelationship(targetCharacter, CreateRelationshipTrait(rel, targetCharacter));
@@ -598,10 +599,10 @@ public class CharacterManager : MonoBehaviour {
     }
     public CharacterRelationshipData CreateNewOneWayRelationship(Character currCharacter, AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
         if (!currCharacter.HasRelationshipOfTypeWith(alterEgo, rel)) {
-            if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null) {
+            if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.traitContainer.GetNormalTrait("Diplomatic") != null) {
                 return currCharacter.GetCharacterRelationshipData(alterEgo.owner);
             }
-            if (rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.GetNormalTrait("Serial Killer") != null) {
+            if (rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait("Serial Killer") != null) {
                 return currCharacter.GetCharacterRelationshipData(alterEgo.owner);
             }
             currCharacter.AddRelationship(alterEgo, CreateRelationshipTrait(rel, alterEgo.owner));
@@ -611,12 +612,12 @@ public class CharacterManager : MonoBehaviour {
     public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, Character targetCharacter, RELATIONSHIP_TRAIT rel) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
 
-        if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter) && !(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null)
-            && !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.GetNormalTrait("Serial Killer") != null)) {
+        if (currCharacter.CanHaveRelationshipWith(rel, targetCharacter) && !(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.traitContainer.GetNormalTrait("Diplomatic") != null)
+            && !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait("Serial Killer") != null)) {
             currCharacter.AddRelationship(targetCharacter, CreateRelationshipTrait(rel, targetCharacter));
         }
-        if (targetCharacter.CanHaveRelationshipWith(rel, currCharacter) && !(rel == RELATIONSHIP_TRAIT.ENEMY && targetCharacter.GetNormalTrait("Diplomatic") != null)
-            && !(rel == RELATIONSHIP_TRAIT.FRIEND && targetCharacter.GetNormalTrait("Serial Killer") != null)) {
+        if (targetCharacter.CanHaveRelationshipWith(rel, currCharacter) && !(rel == RELATIONSHIP_TRAIT.ENEMY && targetCharacter.traitContainer.GetNormalTrait("Diplomatic") != null)
+            && !(rel == RELATIONSHIP_TRAIT.FRIEND && targetCharacter.traitContainer.GetNormalTrait("Serial Killer") != null)) {
             targetCharacter.AddRelationship(currCharacter, CreateRelationshipTrait(pair, currCharacter));
         }
 
@@ -630,11 +631,11 @@ public class CharacterManager : MonoBehaviour {
     public CharacterRelationshipData CreateNewRelationshipBetween(Character currCharacter, AlterEgoData alterEgo, RELATIONSHIP_TRAIT rel) {
         RELATIONSHIP_TRAIT pair = GetPairedRelationship(rel);
 
-        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.GetNormalTrait("Diplomatic") != null) && !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.GetNormalTrait("Serial Killer") != null)) {
+        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.traitContainer.GetNormalTrait("Diplomatic") != null) && !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait("Serial Killer") != null)) {
             currCharacter.AddRelationship(alterEgo, CreateRelationshipTrait(rel, alterEgo.owner));
         }
 
-        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && alterEgo.owner.GetNormalTrait("Diplomatic") != null) && !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.GetNormalTrait("Serial Killer") != null)) {
+        if (!(rel == RELATIONSHIP_TRAIT.ENEMY && alterEgo.owner.traitContainer.GetNormalTrait("Diplomatic") != null) && !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait("Serial Killer") != null)) {
             alterEgo.AddRelationship(currCharacter.currentAlterEgo, CreateRelationshipTrait(pair, currCharacter));
         }
 
@@ -1148,7 +1149,7 @@ public class CharacterManager : MonoBehaviour {
             int roll = UnityEngine.Random.Range(0, 100);
             summary += "\nRoll is " + roll.ToString();
             if (roll < 25) {
-                if (target.GetNormalTrait("Serial Killer") == null) {
+                if (target.traitContainer.GetNormalTrait("Serial Killer") == null) {
                     log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "enemy_now_friend");
                     summary += target.name + " now considers " + actor.name + " an enemy.";
                     RemoveOneWayRelationship(target, actor, RELATIONSHIP_TRAIT.ENEMY);
@@ -1162,7 +1163,7 @@ public class CharacterManager : MonoBehaviour {
             hasImproved = true;
         } 
         else if (!target.HasRelationshipWith(actor)) {
-            if(target.GetNormalTrait("Serial Killer") == null) {
+            if(target.traitContainer.GetNormalTrait("Serial Killer") == null) {
                 log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
                 summary += "\n" + target.name + " has no relationship with " + actor.name + ". " + target.name + " now considers " + actor.name + " a friend.";
                 //If Target has no relationship with Actor, Target now considers Actor a Friend.
@@ -1204,7 +1205,7 @@ public class CharacterManager : MonoBehaviour {
             Debug.LogWarning("Relationship degredation was called and provided same characters " + target.name);
             return hasDegraded;
         }
-        if (target.GetNormalTrait("Diplomatic") != null) {
+        if (target.traitContainer.GetNormalTrait("Diplomatic") != null) {
             Debug.LogWarning("Relationship degredation was called but " + target.name + " is Diplomatic");
             hasDegraded = true;
             return hasDegraded;

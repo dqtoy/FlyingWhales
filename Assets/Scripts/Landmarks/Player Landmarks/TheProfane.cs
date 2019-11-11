@@ -26,7 +26,7 @@ public class TheProfane : BaseLandmark {
     public void DoAction(Character targetCharacter, string action) {
         if (action == "Convert to cultist") {
             PlayerManager.Instance.player.AdjustMana(-GetConvertToCultistCost(targetCharacter));
-            targetCharacter.AddTrait("Cultist");
+            targetCharacter.traitContainer.AddTrait(targetCharacter,"Cultist");
         } else if (action == "Corrupt") {
             if (!targetCharacter.jobQueue.HasJob(JOB_TYPE.CORRUPT_CULTIST)) {
                 CharacterStateJob job = new CharacterStateJob(JOB_TYPE.CORRUPT_CULTIST, CHARACTER_STATE.MOVE_OUT);
@@ -75,11 +75,11 @@ public class TheProfane : BaseLandmark {
     }
     public int GetConvertToCultistCost(Character character) {
         float manaCost = 0;
-        if (character.GetNormalTrait("Evil") != null) {
+        if (character.traitContainer.GetNormalTrait("Evil") != null) {
             manaCost = 200;
-        } else if (character.GetNormalTrait("Disillusioned") != null) {
+        } else if (character.traitContainer.GetNormalTrait("Disillusioned") != null) {
             manaCost = 300;
-        } else if (character.GetNormalTrait("Treacherous") != null) {
+        } else if (character.traitContainer.GetNormalTrait("Treacherous") != null) {
             manaCost = 300;
         }
 

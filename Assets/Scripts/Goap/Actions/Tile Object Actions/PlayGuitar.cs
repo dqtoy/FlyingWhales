@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class PlayGuitar : GoapAction {
     protected override string failActionState { get { return "Play Fail"; } }
@@ -37,7 +38,7 @@ public class PlayGuitar : GoapAction {
         }
     }
     protected override int GetCost() {
-        Trait musicLover = actor.GetNormalTrait("MusicLover");
+        Trait musicLover = actor.traitContainer.GetNormalTrait("MusicLover");
         if (poiTarget.gridTileLocation != null) {
             LocationGridTile knownLoc = poiTarget.gridTileLocation;
             if (actor.homeStructure == knownLoc.structure) {
@@ -85,7 +86,7 @@ public class PlayGuitar : GoapAction {
     public void PrePlaySuccess() {
         actor.AdjustDoNotGetLonely(1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
-        isMusicLover = actor.GetNormalTrait("Music Lover") != null;
+        isMusicLover = actor.traitContainer.GetNormalTrait("Music Lover") != null;
         currentState.SetIntelReaction(PlaySuccessIntelReaction);
     }
     public void PerTickPlaySuccess() {
@@ -113,7 +114,7 @@ public class PlayGuitar : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        if (actor.GetNormalTrait("MusicHater") != null) {
+        if (actor.traitContainer.GetNormalTrait("MusicHater") != null) {
             return false; //music haters will never play guitar
         }
         if (poiTarget.gridTileLocation == null) {
@@ -151,8 +152,8 @@ public class PlayGuitar : GoapAction {
     private List<string> PlaySuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
 
-        if(status == SHARE_INTEL_STATUS.WITNESSED && recipient.GetNormalTrait("Music Hater") != null) {
-            recipient.AddTrait("Annoyed");
+        if(status == SHARE_INTEL_STATUS.WITNESSED && recipient.traitContainer.GetNormalTrait("Music Hater") != null) {
+            recipient.traitContainer.AddTrait(recipient, "Annoyed");
             if (recipient.HasRelationshipOfTypeWith(actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
                 if (recipient.CreateBreakupJob(actor) != null) {
                     Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "break_up");
@@ -189,7 +190,7 @@ public class PlayGuitarData : GoapActionData {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        if (actor.GetNormalTrait("MusicHater") != null) {
+        if (actor.traitContainer.GetNormalTrait("MusicHater") != null) {
             return false; //music haters will never play guitar
         }
         if (poiTarget.gridTileLocation == null) {

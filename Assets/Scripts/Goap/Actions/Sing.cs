@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Sing : GoapAction {
     private int happinessValue = 1000;
@@ -31,7 +32,7 @@ public class Sing : GoapAction {
     }
     protected override int GetCost() {
         //**Cost**: randomize between 20 - 36 (if music lover 10 - 26)
-        if(actor.GetNormalTrait("Music Lover") != null) {
+        if(actor.traitContainer.GetNormalTrait("Music Lover") != null) {
             return Utilities.rng.Next(10, 27);
         }
         return Utilities.rng.Next(20, 37);
@@ -49,7 +50,7 @@ public class Sing : GoapAction {
     #region Effects
     private void PreSingSuccess() {
         actor.AdjustDoNotGetLonely(1);
-        if(actor.GetNormalTrait("Music Lover") != null) {
+        if(actor.traitContainer.GetNormalTrait("Music Lover") != null) {
             happinessValue = 1200;
         }
         currentState.SetIntelReaction(SingSuccessIntelReaction);
@@ -66,8 +67,8 @@ public class Sing : GoapAction {
     private List<string> SingSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
 
-        if (status == SHARE_INTEL_STATUS.WITNESSED && recipient.GetNormalTrait("Music Hater") != null) {
-            recipient.AddTrait("Annoyed");
+        if (status == SHARE_INTEL_STATUS.WITNESSED && recipient.traitContainer.GetNormalTrait("Music Hater") != null) {
+            recipient.traitContainer.AddTrait(recipient, "Annoyed");
             if (recipient.HasRelationshipOfTypeWith(actor, false, RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.PARAMOUR)) {
                 if (recipient.CreateBreakupJob(actor) != null) {
                     Log log = new Log(GameManager.Instance.Today(), "Trait", "MusicHater", "break_up");
@@ -98,6 +99,6 @@ public class SingData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget && actor.GetNormalTrait("Music Hater") == null && (actor.currentMoodType == CHARACTER_MOOD.GOOD || actor.currentMoodType == CHARACTER_MOOD.GREAT);
+        return actor == poiTarget && actor.traitContainer.GetNormalTrait("Music Hater") == null && (actor.currentMoodType == CHARACTER_MOOD.GOOD || actor.currentMoodType == CHARACTER_MOOD.GREAT);
     }
 }

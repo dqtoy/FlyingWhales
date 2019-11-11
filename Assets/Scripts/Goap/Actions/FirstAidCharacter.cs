@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class FirstAidCharacter : GoapAction {
 
@@ -109,6 +110,6 @@ public class FirstAidCharacterData : GoapActionData {
         requirementAction = Requirement;
     }
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.GetNormalTrait("Injured", "Unconscious") != null;
+        return poiTarget.traitContainer.GetNormalTrait("Injured", "Unconscious") != null;
     }
 }

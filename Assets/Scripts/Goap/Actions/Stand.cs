@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Stand : GoapAction {
     public Stand(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.STAND, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {

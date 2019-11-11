@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Watch : GoapAction {
     public GoapAction actionBeingWatched { get; private set; }
@@ -140,7 +141,7 @@ public class Watch : GoapAction {
 
         if(!actor.currentParty.icon.isTravelling && !actor.marker.inVisionPOIs.Contains(poiTarget)) {
             //Go to target because target is not in vision
-            if(actor.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+            if(actor.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 //Messenger.RemoveListener(Signals.TICK_STARTED, PerTickWatchSuccess);
                 currentState.EndPerTickEffect();
                 return;

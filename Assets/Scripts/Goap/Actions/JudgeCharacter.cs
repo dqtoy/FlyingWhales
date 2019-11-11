@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class JudgeCharacter : GoapAction {
 
@@ -42,28 +43,29 @@ public class JudgeCharacter : GoapAction {
             } else {
                 //criminal traits
                 CRIME_CATEGORY crime;
-                if (targetCharacter.TryGetMostSeriousCrime(out crime)) {
-                    switch (crime) {
-                        case CRIME_CATEGORY.MISDEMEANOR:
-                            absolve = 50f;
-                            whip = 100f;
-                            break;
-                        case CRIME_CATEGORY.SERIOUS:
-                            absolve = 5f;
-                            whip = 20f;
-                            kill = 50f;
-                            exile = 50f;
-                            break;
-                        case CRIME_CATEGORY.HEINOUS:
-                            whip = 5f;
-                            kill = 100f;
-                            exile = 50f;
-                            break;
-                    }
-                } else {
-                    kill = 100f;
-                    Debug.LogWarning(actor.name + " is trying to judge " + targetCharacter.name + " but has no crime, and is not part of a hostile faction.");
-                }
+                //TODO:
+                //if (targetCharacter.TryGetMostSeriousCrime(out crime)) {
+                //    switch (crime) {
+                //        case CRIME_CATEGORY.MISDEMEANOR:
+                //            absolve = 50f;
+                //            whip = 100f;
+                //            break;
+                //        case CRIME_CATEGORY.SERIOUS:
+                //            absolve = 5f;
+                //            whip = 20f;
+                //            kill = 50f;
+                //            exile = 50f;
+                //            break;
+                //        case CRIME_CATEGORY.HEINOUS:
+                //            whip = 5f;
+                //            kill = 100f;
+                //            exile = 50f;
+                //            break;
+                //    }
+                //} else {
+                //    kill = 100f;
+                //    Debug.LogWarning(actor.name + " is trying to judge " + targetCharacter.name + " but has no crime, and is not part of a hostile faction.");
+                //}
             }
 
             //modifiers

@@ -260,18 +260,6 @@ public class FactionManager : MonoBehaviour {
     //newChar.AssignInitialTags();
     //     }
     // }
-    private void EquipFullArmorSet(MATERIAL materialToUse, Character character){
-		if(materialToUse == MATERIAL.NONE){
-			return;
-		}
-		foreach (ARMOR_TYPE armorType in ItemManager.Instance.armorTypeData.Keys) {
-			string armorName = Utilities.NormalizeString(materialToUse.ToString()) + " " + Utilities.NormalizeString(armorType.ToString());
-			Item item = ItemManager.Instance.CreateNewItemInstance(armorName);
-            if(item != null) {
-                character.EquipItem(item);
-            }
-        }
-	}
     public Faction CreateNewFaction(bool isPlayerFaction = false, string factionName = "") {
         Faction newFaction = new Faction(isPlayerFaction);
         allFactions.Add(newFaction);

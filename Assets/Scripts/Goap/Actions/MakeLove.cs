@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class MakeLove : GoapAction {
 
@@ -111,15 +112,15 @@ public class MakeLove : GoapAction {
         //**Per Tick Effect 1 * *: Actor's Happiness Meter +500
         int actorHappinessAmount = 500;
         int targetHappinessAmount = 500;
-        if (actor.GetNormalTrait("Lustful") != null) {
+        if (actor.traitContainer.GetNormalTrait("Lustful") != null) {
             actorHappinessAmount += 100;
-        } else if (actor.GetNormalTrait("Chaste") != null) {
+        } else if (actor.traitContainer.GetNormalTrait("Chaste") != null) {
             actorHappinessAmount -= 100;
         }
 
-        if (targetCharacter.GetNormalTrait("Lustful") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Lustful") != null) {
             targetHappinessAmount += 100;
-        } else if (targetCharacter.GetNormalTrait("Chaste") != null) {
+        } else if (targetCharacter.traitContainer.GetNormalTrait("Chaste") != null) {
             targetHappinessAmount -= 100;
         }
 
@@ -138,8 +139,8 @@ public class MakeLove : GoapAction {
         }
 
         //Plagued chances
-        Plagued actorPlagued = actor.GetNormalTrait("Plagued") as Plagued;
-        Plagued targetPlagued = targetCharacter.GetNormalTrait("Plagued") as Plagued;
+        Plagued actorPlagued = actor.traitContainer.GetNormalTrait("Plagued") as Plagued;
+        Plagued targetPlagued = targetCharacter.traitContainer.GetNormalTrait("Plagued") as Plagued;
         if ((actorPlagued == null || targetPlagued == null) && (actorPlagued != null || targetPlagued != null)) {
             //if either the actor or the target is not yet plagued and one of them is plagued, check for infection chance
             if (actorPlagued != null) {

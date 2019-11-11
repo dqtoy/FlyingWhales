@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 public class FearSpellAbility : CombatAbility {
 
@@ -35,11 +36,11 @@ public class FearSpellAbility : CombatAbility {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         if (targetPOI is Character) {
             Character character = targetPOI as Character;
-            Spooked spooked = character.GetNormalTrait("Spooked") as Spooked;
+            Spooked spooked = character.traitContainer.GetNormalTrait("Spooked") as Spooked;
             if(spooked == null) {
                 Spooked newTrait = new Spooked();
                 newTrait.OverrideDuration(GameManager.Instance.GetTicksBasedOnMinutes(_fearDurationInMinutes));
-                character.AddTrait(newTrait);
+                character.traitContainer.AddTrait(character, newTrait);
             }
         }
         base.ActivateAbility(targetPOI);

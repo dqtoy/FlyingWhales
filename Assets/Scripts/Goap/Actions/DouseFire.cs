@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class DouseFire : GoapAction {
 
@@ -36,7 +37,7 @@ public class DouseFire : GoapAction {
     }
     public override void PerformActualAction() {
         base.PerformActualAction();
-        if (poiTarget.gridTileLocation != null && poiTarget.GetNormalTrait("Burning") != null && actor.GetToken(SPECIAL_TOKEN.WATER_BUCKET) != null) {
+        if (poiTarget.gridTileLocation != null && poiTarget.traitContainer.GetNormalTrait("Burning") != null && actor.GetToken(SPECIAL_TOKEN.WATER_BUCKET) != null) {
             SetState("Douse Fire Success");
         } else {
             SetState("Target Missing");
@@ -77,13 +78,13 @@ public class DouseFire : GoapAction {
         }
     }
     private void AfterDouseFireSuccess() {
-        poiTarget.RemoveTrait("Burning", removedBy: actor);
+        poiTarget.traitContainer.RemoveTrait(poiTarget, "Burning", removedBy: actor);
         SpecialToken water = actor.GetToken(SPECIAL_TOKEN.WATER_BUCKET);
         if (water != null) {
             //Reduce water count by 1.
             actor.ConsumeToken(water);
         }
-        poiTarget.AddTrait("Wet", actor);
+        poiTarget.traitContainer.AddTrait(poiTarget, "Wet", actor);
     }
     //private void PreTargetMissing() {
     //    if (poiTarget is TileObject) {

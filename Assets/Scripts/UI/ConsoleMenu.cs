@@ -657,7 +657,7 @@ public class ConsoleMenu : UIMenu {
         }
 
         //if (AttributeManager.Instance.allTraits.ContainsKey(traitParameterString)) {
-        character.AddTrait(traitParameterString);
+        character.traitContainer.AddTrait(character, traitParameterString);
         //} else {
         //    switch (traitParameterString) {
         //        case "Criminal":
@@ -686,7 +686,7 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        if (character.RemoveTrait(traitParameterString)) {
+        if (character.traitContainer.RemoveTrait(character, traitParameterString)) {
             AddSuccessMessage("Removed " + traitParameterString + " to " + character.name);
         } else {
             AddErrorMessage(character.name + " has no trait named " + traitParameterString);

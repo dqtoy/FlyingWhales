@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class RitualKilling : GoapAction {
 
@@ -40,7 +41,7 @@ public class RitualKilling : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        return actor != poiTarget && actor.GetNormalTrait("Serial Killer") != null;
+        return actor != poiTarget && actor.traitContainer.GetNormalTrait("Serial Killer") != null;
     }
     #endregion
 
@@ -66,7 +67,7 @@ public class RitualKillingData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && actor.GetNormalTrait("Serial Killer") != null;
+        return actor != poiTarget && actor.traitContainer.GetNormalTrait("Serial Killer") != null;
     }
 }
 

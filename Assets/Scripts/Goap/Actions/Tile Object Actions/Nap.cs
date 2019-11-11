@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
+using Traits;
 
 public class Nap : GoapAction {
     protected override string failActionState { get { return "Nap Fail"; } }
@@ -86,7 +88,7 @@ public class Nap : GoapAction {
     private void PreNapSuccess() {
         //currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         _restingTrait = new Resting();
-        actor.AddTrait(_restingTrait);
+        actor.traitContainer.AddTrait(actor, _restingTrait);
     }
     private void PerTickNapSuccess() {
         actor.AdjustTiredness(30);

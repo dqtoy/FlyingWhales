@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
+using Traits;
 
 public class TransformToWolfForm : GoapAction {
 
@@ -31,7 +33,7 @@ public class TransformToWolfForm : GoapAction {
         currentState.SetIntelReaction(TransformSuccessIntelReaction);
     }
     public void AfterTransformSuccess() {
-        Lycanthrope lycanthropy = actor.GetNormalTrait("Lycanthrope") as Lycanthrope;
+        Lycanthrope lycanthropy = actor.traitContainer.GetNormalTrait("Lycanthrope") as Lycanthrope;
         lycanthropy.TurnToWolf();
         SetCommittedCrime(CRIME.ABERRATION, new Character[] { actor });
     }

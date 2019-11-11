@@ -359,11 +359,6 @@ public class Area {
     //        UnsubscribeToSignals();
     //    }
     //}
-    private void ReleaseAllAbductedCharacters() {
-        for (int i = 0; i < charactersAtLocation.Count; i++) {
-            charactersAtLocation[i].ReleaseFromAbduction();
-        }
-    }
     public string GetAreaTypeString() {
         if (areaType == AREA_TYPE.DEMONIC_INTRUSION) {
             return "Demonic Intrusion";

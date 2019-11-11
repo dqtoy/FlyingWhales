@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class Jolt : PlayerJobAction {
@@ -29,7 +30,7 @@ public class Jolt : PlayerJobAction {
                 if (CanPerformActionTowards(currTarget)) {
                     Trait newTrait = new Jolted();
                     newTrait.OverrideDuration(GameManager.Instance.GetTicksBasedOnMinutes(_durationInMinutes));
-                    currTarget.AddTrait(newTrait);
+                    currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     if (UIManager.Instance.characterInfoUI.isShowing) {
                         UIManager.Instance.characterInfoUI.UpdateThoughtBubble();
                     }
@@ -60,10 +61,10 @@ public class Jolt : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Jolted") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Jolted") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return base.CanPerformActionTowards(targetCharacter);
@@ -101,10 +102,10 @@ public class Jolt : PlayerJobAction {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Jolted") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Jolted") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return base.CanTarget(targetCharacter, ref hoverText);

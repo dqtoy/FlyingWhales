@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using System.Reflection;
 using System.Linq;
+using Traits;
 
 public class GoapAction {
 
@@ -102,7 +103,7 @@ public class GoapAction {
                 return targetMissing;
             } else {
                 if (actor != poiTarget) {
-                    Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
+                    Invisible invisible = poiTarget.traitContainer.GetNormalTrait("Invisible") as Invisible;
                     if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
                         return true;
                     }
@@ -255,7 +256,7 @@ public class GoapAction {
                 }
             }
         } else {
-            Cursed cursed = poiTarget.GetNormalTrait("Cursed") as Cursed;
+            Cursed cursed = poiTarget.traitContainer.GetNormalTrait("Cursed") as Cursed;
             if (cursed != null) {
                 cursed.Interact(actor, this);
             }
@@ -777,22 +778,22 @@ public class GoapAction {
 
     #region Trait Utilities
     protected bool HasTrait(Character character, string traitName) {
-        return character.GetNormalTrait(traitName) != null;
+        return character.traitContainer.GetNormalTrait(traitName) != null;
     }
     /// <summary>
     /// Helper function to encapsulate adding a trait to a poi and adding actual effect data based on the added trait.
     /// </summary>
     /// <param name="target">POI that gains a trait</param>
     /// <param name="traitName">Trait to be gained</param>
-    protected bool AddTraitTo(IPointOfInterest target, string traitName, Character characterResponsible = null, System.Action onRemoveAction = null) {
-        if (target.AddTrait(traitName, characterResponsible, onRemoveAction, this)) {
+    protected bool AddTraitTo(IPointOfInterest target, string traitName, Character characterResponsible = null) {
+        if (target.traitContainer.AddTrait(target, traitName, characterResponsible, this)) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = traitName, targetPOI = target });
             return true;
         }
         return false;
     }
-    protected bool AddTraitTo(IPointOfInterest target, Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null) {
-        if (target.AddTrait(trait, characterResponsible, onRemoveAction, this)) {
+    protected bool AddTraitTo(IPointOfInterest target, Trait trait, Character characterResponsible = null) {
+        if (target.traitContainer.AddTrait(target, trait, characterResponsible, this)) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = trait.name, targetPOI = target });
             return true;
         }
@@ -804,7 +805,7 @@ public class GoapAction {
     /// <param name="target">POI that loses a trait</param>
     /// <param name="traitName">Trait to be lost</param>
     protected void RemoveTraitFrom(IPointOfInterest target, string traitName, Character removedBy = null, bool showNotif = true) {
-        if (target.RemoveTrait(traitName, removedBy: removedBy)) {
+        if (target.traitContainer.RemoveTrait(target, traitName, removedBy: removedBy)) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = traitName, targetPOI = target });
         }
     }
@@ -814,7 +815,7 @@ public class GoapAction {
     /// <param name="target">POI that loses traits</param>
     /// <param name="type">Type of traits to be lost</param>
     protected void RemoveTraitsOfType(IPointOfInterest target, TRAIT_TYPE type) {
-        List<Trait> removedTraits = target.RemoveAllTraitsByType(type);
+        List<Trait> removedTraits = target.traitContainer.RemoveAllTraitsByType(target, type);
         for (int i = 0; i < removedTraits.Count; i++) {
             AddActualEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = removedTraits[i].name, targetPOI = target });
         }
@@ -835,7 +836,7 @@ public class GoapAction {
     }
     protected bool HasNonPositiveDisablerTrait() {
         Character target = poiTarget as Character;
-        return target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_EFFECT.NEUTRAL, TRAIT_TYPE.DISABLER);
+        return target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEUTRAL);
     }
     #endregion
 
@@ -971,7 +972,7 @@ public class GoapAction {
                 for (int j = 0; j < characters.Count; j++) {
                     Character currCharacter = characters[j];
                     //check each character, if a character has a disabler trait, do not consider them as a character that will notice this action
-                    if (!currCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
+                    if (!currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER)) {
                         return true;
                     }
                 }
@@ -988,7 +989,7 @@ public class GoapAction {
                 for (int j = 0; j < characters.Count; j++) {
                     Character currCharacter = characters[j];
                     //check each character, if a character has a disabler trait, do not consider them as a character that will notice this action
-                    if (!currCharacter.HasTraitOf(TRAIT_TYPE.DISABLER)) {
+                    if (!currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER)) {
                         return true;
                     }
                 }

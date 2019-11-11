@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class DispelMagic : GoapAction {
 
@@ -63,6 +64,6 @@ public class DispelMagicData : GoapActionData {
         requirementAction = Requirement;
     }
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.GetNormalTrait("Reanimated", "Cursed") != null;
+        return poiTarget.traitContainer.GetNormalTrait("Reanimated", "Cursed") != null;
     }
 }

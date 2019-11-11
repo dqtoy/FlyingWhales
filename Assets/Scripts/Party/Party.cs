@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine;
-
+using Traits;
 
 public class Party {
     protected int _id;
@@ -165,7 +165,7 @@ public class Party {
                 character.marker.transform.eulerAngles = Vector3.zero;
                 character.marker.nameLbl.gameObject.SetActive(false);
 
-                Plagued targetPlagued = character.GetNormalTrait("Plagued") as Plagued;
+                Plagued targetPlagued = character.traitContainer.GetNormalTrait("Plagued") as Plagued;
                 if (targetPlagued != null) {
                     string plaguedSummary = owner.name + " carried a plagued character. Rolling for infection.";
                     int roll = UnityEngine.Random.Range(0, 100);
@@ -173,7 +173,7 @@ public class Party {
                     if (roll < targetPlagued.GetCarryInfectChance()) {
                         //carrier will be infected with plague
                         plaguedSummary += "\nWill infect " + owner.name + " with plague!";
-                        if (owner.AddTrait("Plagued", character)) {
+                        if (owner.traitContainer.AddTrait(owner, "Plagued", character)) {
                             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
                             log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                             log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);

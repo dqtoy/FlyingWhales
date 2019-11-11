@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class CureCharacter : GoapAction {
 
@@ -113,6 +114,6 @@ public class CureCharacterData : GoapActionData {
         requirementAction = Requirement;
     }
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.GetNormalTrait("Sick", "Infected", "Plagued") != null;
+        return poiTarget.traitContainer.GetNormalTrait("Sick", "Infected", "Plagued") != null;
     }
 }

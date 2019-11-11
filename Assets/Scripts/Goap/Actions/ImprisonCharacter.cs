@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class ImprisonCharacter : GoapAction {
     private LocationStructure _prison;
@@ -58,7 +59,7 @@ public class ImprisonCharacter : GoapAction {
     #region Preconditions
     private bool IsInActorPartyAndRestrained() {
         Character target = poiTarget as Character;
-        return target.currentParty == actor.currentParty && target.GetNormalTrait("Restrained") != null;
+        return target.currentParty == actor.currentParty && target.traitContainer.GetNormalTrait("Restrained") != null;
     }
     #endregion
 
@@ -82,7 +83,7 @@ public class ImprisonCharacter : GoapAction {
         if(parentPlan != null && parentPlan.job != null && parentPlan.job.jobType == JOB_TYPE.SAVE_CHARACTER) {
             RemoveTraitFrom(target, "Restrained");
         } else {
-            Restrained restrainedTrait = target.GetNormalTrait("Restrained") as Restrained;
+            Restrained restrainedTrait = target.traitContainer.GetNormalTrait("Restrained") as Restrained;
             restrainedTrait.SetIsPrisoner(true);
         }
     }

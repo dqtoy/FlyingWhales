@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class RepairTileObject : GoapAction {
 
@@ -44,8 +45,8 @@ public class RepairTileObject : GoapAction {
         poiTarget.AdjustHP(20);
     }
     private void AfterRepairSuccess() {
-        poiTarget.RemoveTrait("Burnt");
-        poiTarget.RemoveTrait("Damaged");
+        poiTarget.traitContainer.RemoveTrait(poiTarget, "Burnt");
+        poiTarget.traitContainer.RemoveTrait(poiTarget, "Damaged");
 
         TileObject tileObj = poiTarget as TileObject;
         TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);

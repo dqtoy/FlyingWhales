@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class InviteToMakeLove : GoapAction {
 
@@ -32,11 +33,11 @@ public class InviteToMakeLove : GoapAction {
                 }
             } else {
                 int acceptChance = 100;
-                if (targetCharacter.GetNormalTrait("Chaste") != null) {
+                if (targetCharacter.traitContainer.GetNormalTrait("Chaste") != null) {
                     acceptChance = 25;
                 }
                 if (UnityEngine.Random.Range(0, 100) < acceptChance && !targetCharacter.isStarving && !targetCharacter.isExhausted
-                && targetCharacter.GetNormalTrait("Annoyed") == null && !targetCharacter.HasOtherCharacterInParty()
+                && targetCharacter.traitContainer.GetNormalTrait("Annoyed") == null && !targetCharacter.HasOtherCharacterInParty()
                 && targetCharacter.stateComponent.currentState == null && targetCharacter.IsAvailable() && !targetCharacter.IsDoingEmergencyAction()) {
                     SetState("Invite Success");
                 } else {
@@ -48,18 +49,18 @@ public class InviteToMakeLove : GoapAction {
         }
     }
     protected override int GetCost() {
-        bool isChaste = actor.GetNormalTrait("Chaste") != null;
+        bool isChaste = actor.traitContainer.GetNormalTrait("Chaste") != null;
         if (isChaste) {
             //Chaste 40 - 66 all three time of day and also unfaithful values
             return Utilities.rng.Next(40, 67);
         }
-        bool isLustful = actor.GetNormalTrait("Lustful") != null;
+        bool isLustful = actor.traitContainer.GetNormalTrait("Lustful") != null;
         TIME_IN_WORDS currentTime = GameManager.GetCurrentTimeInWordsOfTick(actor);
         if (currentTime == TIME_IN_WORDS.EARLY_NIGHT || currentTime == TIME_IN_WORDS.LATE_NIGHT) {
             if (poiTarget is Character) {
                 //If unfaithful and target is Paramour (15 - 36)/(8 - 20)/(5-15) per level, affects Early Night and Late Night only).
                 Character targetCharacter = poiTarget as Character;
-                Unfaithful unfaithful = actor.GetNormalTrait("Unfaithful") as Unfaithful;
+                Unfaithful unfaithful = actor.traitContainer.GetNormalTrait("Unfaithful") as Unfaithful;
                 if (unfaithful != null && actor.HasRelationshipOfTypeWith(targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR)) {
                     if (unfaithful.level == 1) {
                         return Utilities.rng.Next(15, 37);
@@ -192,7 +193,7 @@ public class InviteToMakeLove : GoapAction {
         if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) { //do not woo characters that have transformed to other alter egos
             return false;
         }
-        if (target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             return false;
         }
         if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat
@@ -479,7 +480,7 @@ public class InviteToMakeLoveData : GoapActionData {
         if (target.currentAlterEgoName != CharacterManager.Original_Alter_Ego) {
             return false;
         }
-        if (target.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        if (target.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             return false;
         }
         if (target.stateComponent.currentState is CombatState) { //do not invite characters that are currently in combat

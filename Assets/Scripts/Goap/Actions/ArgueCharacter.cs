@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
+using Traits;
 
 public class ArgueCharacter : GoapAction {
 
@@ -45,7 +47,7 @@ public class ArgueCharacter : GoapAction {
     protected override int GetCost() {
         int cost = 5; //Base cost: +5
         Character targetCharacter = poiTarget as Character;
-        Charmed charmed = actor.GetNormalTrait("Charmed") as Charmed;
+        Charmed charmed = actor.traitContainer.GetNormalTrait("Charmed") as Charmed;
         if (charmed != null && charmed.responsibleCharacter != null && charmed.responsibleCharacter.id == targetCharacter.id) {
             //If Actor is charmed and target is the charmer: +10
             cost += 10; 
@@ -106,7 +108,7 @@ public class ArgueCharacter : GoapAction {
 
     #region Preconditions
     private bool ShouldNotBeCharmed() {
-        return actor.GetNormalTrait("Charmed") != null;
+        return actor.traitContainer.GetNormalTrait("Charmed") != null;
     }
     #endregion
 
@@ -157,7 +159,7 @@ public class ArgueCharacter : GoapAction {
                 && (target.currentAction.goapType == INTERACTION_TYPE.SLEEP || target.currentAction.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE)) {
             return true;
         }
-        if (target.GetNormalTrait("Unconscious") != null) {
+        if (target.traitContainer.GetNormalTrait("Unconscious") != null) {
             return true;
         }
         return false;

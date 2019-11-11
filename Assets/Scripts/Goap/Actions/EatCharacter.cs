@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class EatCharacter : GoapAction {
     protected override string failActionState { get { return "Eat Fail"; } }
@@ -25,7 +26,7 @@ public class EatCharacter : GoapAction {
         base.PerformActualAction();
         if (!isTargetMissing) {
             Character target = poiTarget as Character;
-            if (target.GetNormalTrait("Unconscious", "Dead") != null) {
+            if (target.traitContainer.GetNormalTrait("Unconscious", "Dead") != null) {
                 SetState("Eat Success");
             } else {
                 SetState("Eat Fail");
@@ -80,7 +81,7 @@ public class EatCharacter : GoapAction {
     #region Preconditions
     private bool HasUnconsciousOrDeadTarget() {
         Character target = poiTarget as Character;
-        return target.GetNormalTrait("Unconscious", "Dead") != null;
+        return target.traitContainer.GetNormalTrait("Unconscious", "Dead") != null;
     }
     #endregion
 
@@ -96,7 +97,7 @@ public class EatCharacter : GoapAction {
     }
     private void AfterEatSuccess() {
         actor.AdjustDoNotGetHungry(-1);
-        if(poiTarget.GetNormalTrait("Unconscious") != null) {
+        if(poiTarget.traitContainer.GetNormalTrait("Unconscious") != null) {
             SetCannotCancelAction(true);
             Character target = poiTarget as Character;
             target.Death("eaten", deathFromAction: this, responsibleCharacter: actor);
@@ -131,7 +132,7 @@ public class EatCharacterData : GoapActionData {
             if (!actor.isStarving) {
                 return false;
             }
-            if (actor.GetNormalTrait("Cannibal") == null) {
+            if (actor.traitContainer.GetNormalTrait("Cannibal") == null) {
                 return false;
             }
             if (poiTarget is Character) {

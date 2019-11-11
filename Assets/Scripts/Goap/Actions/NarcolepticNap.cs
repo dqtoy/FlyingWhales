@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-
+using UnityEngine;  
+using Traits;
+using Traits;
 public class NarcolepticNap : GoapAction {
 
     public Resting restingTrait { get; private set; }
@@ -47,7 +48,7 @@ public class NarcolepticNap : GoapAction {
     private void PreNapSuccess() {
         currentState.SetAnimation("Sleep Ground");
         restingTrait = new Resting();
-        actor.AddTrait(restingTrait);
+        actor.traitContainer.AddTrait(actor, restingTrait);
     }
     private void PerTickNapSuccess() {
         actor.AdjustTiredness(30);

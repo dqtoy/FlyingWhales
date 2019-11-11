@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Hunt : GoapAction {
     public Hunt(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.HUNT, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
@@ -101,7 +102,7 @@ public class Hunt : GoapAction {
         if (actor != poiTarget) {
             Character target = poiTarget as Character;
             if(actor.specificLocation == target.specificLocation && actor.faction == FactionManager.Instance.neutralFaction && target.race != RACE.SKELETON 
-                && actor.GetNormalTrait("Injured") == null) { //added checking for injured so that characters that are injured won't keep trying to hunt a character, then flee after seeing the target
+                && actor.traitContainer.GetNormalTrait("Injured") == null) { //added checking for injured so that characters that are injured won't keep trying to hunt a character, then flee after seeing the target
                 return true;
             }
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class FeelingBrokenhearted : GoapAction {
     public FeelingBrokenhearted(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.FEELING_BROKENHEARTED, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {

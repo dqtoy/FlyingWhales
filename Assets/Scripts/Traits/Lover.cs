@@ -2,21 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Lover : RelationshipTrait {
+namespace Traits {
+    public class Lover : RelationshipTrait {
 
-    public override string nameInUI {
-        get { return "Lover: " + targetCharacter.name; }
+        public override string nameInUI {
+            get { return "Lover: " + targetCharacter.name; }
+        }
+
+        public Lover(Character target) : base(target) {
+            name = "Lover";
+            description = "This character is a lover of " + targetCharacter.name;
+            type = TRAIT_TYPE.RELATIONSHIP;
+            effect = TRAIT_EFFECT.POSITIVE;
+            relType = RELATIONSHIP_TRAIT.LOVER;
+            associatedInteraction = INTERACTION_TYPE.NONE;
+            daysDuration = 0;
+            //effects = new List<TraitEffect>();
+        }
+
     }
-
-    public Lover(Character target) : base(target){
-        name = "Lover";
-        description = "This character is a lover of " + targetCharacter.name;
-        type = TRAIT_TYPE.RELATIONSHIP;
-        effect = TRAIT_EFFECT.POSITIVE;
-        relType = RELATIONSHIP_TRAIT.LOVER;
-        associatedInteraction = INTERACTION_TYPE.NONE;
-        daysDuration = 0;
-        //effects = new List<TraitEffect>();
-    }
-
 }

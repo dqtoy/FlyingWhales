@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
+using Traits;
 
 public class ChatCharacter : GoapAction {
     public string chatResult { get; private set; }
@@ -40,7 +42,7 @@ public class ChatCharacter : GoapAction {
         RELATIONSHIP_EFFECT relationshipEffectWithTarget = actor.GetRelationshipEffectWith(targetCharacter);
         //**if no relationship yet, may become friends**
         if (relData == null) {
-            if (actor.GetNormalTrait("Serial Killer") == null && targetCharacter.GetNormalTrait("Serial Killer") == null) {
+            if (actor.traitContainer.GetNormalTrait("Serial Killer") == null && targetCharacter.traitContainer.GetNormalTrait("Serial Killer") == null) {
                 int weight = 0;
                 if (thisCharacterMood == CHARACTER_MOOD.DARK) {
                     weight += -30;
@@ -87,10 +89,10 @@ public class ChatCharacter : GoapAction {
                 } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
                     weight += -30;
                 }
-                if(actor.GetNormalTrait("Hothead") != null) {
+                if(actor.traitContainer.GetNormalTrait("Hothead") != null) {
                     weight += 200;
                 }
-                if (targetCharacter.GetNormalTrait("Hothead") != null) {
+                if (targetCharacter.traitContainer.GetNormalTrait("Hothead") != null) {
                     weight += 200;
                 }
                 if (weight > 0) {
@@ -127,10 +129,10 @@ public class ChatCharacter : GoapAction {
                 } else if (targetCharacterMood == CHARACTER_MOOD.GREAT) {
                     weight += 50;
                 }
-                if (actor.GetNormalTrait("Hothead") != null) {
+                if (actor.traitContainer.GetNormalTrait("Hothead") != null) {
                     weight -= 40;
                 }
-                if (targetCharacter.GetNormalTrait("Hothead") != null) {
+                if (targetCharacter.traitContainer.GetNormalTrait("Hothead") != null) {
                     weight -= 40;
                 }
                 if (weight > 0) {
@@ -157,7 +159,7 @@ public class ChatCharacter : GoapAction {
             weights.AddElement("Become Paramours", becomeParamoursWeight);
         }
 
-        if(actor.GetNormalTrait("Angry") != null || targetCharacter.GetNormalTrait("Angry") != null) {
+        if(actor.traitContainer.GetNormalTrait("Angry") != null || targetCharacter.traitContainer.GetNormalTrait("Angry") != null) {
             weights.RemoveElement("Quick Chat");
             weights.RemoveElement("Become Friends");
             weights.RemoveElement("Share Information");
@@ -224,20 +226,20 @@ public class ChatCharacter : GoapAction {
             //Log: "[Character Name 1] and [Character Name 2] have developed an affair!"
             CharacterManager.Instance.CreateNewRelationshipBetween(actor, targetCharacter, RELATIONSHIP_TRAIT.PARAMOUR);
         } else if (chatResult == "Argument") {
-            if(actor.GetNormalTrait("Angry") != null) {
+            if(actor.traitContainer.GetNormalTrait("Angry") != null) {
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 actor.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
             }
-            if (targetCharacter.GetNormalTrait("Angry") != null) {
+            if (targetCharacter.traitContainer.GetNormalTrait("Angry") != null) {
                 Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
                 log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 targetCharacter.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
             }
         }
 
-        Plagued actorPlagued = actor.GetNormalTrait("Plagued") as Plagued;
-        Plagued targetPlagued = poiTarget.GetNormalTrait("Plagued") as Plagued;
+        Plagued actorPlagued = actor.traitContainer.GetNormalTrait("Plagued") as Plagued;
+        Plagued targetPlagued = poiTarget.traitContainer.GetNormalTrait("Plagued") as Plagued;
         //Plagued chances
         if ((actorPlagued == null || targetPlagued == null) && (actorPlagued != null || targetPlagued != null)) {
             string plaguedSummary = "Chat with plagued character.";
@@ -297,11 +299,11 @@ public class ChatCharacter : GoapAction {
     }
     private void AfterArgument() {
         Character targetCharacter = poiTarget as Character;
-        if (actor.GetNormalTrait("Hothead") != null) {
-            actor.AddTrait("Angry");
+        if (actor.traitContainer.GetNormalTrait("Hothead") != null) {
+            actor.traitContainer.AddTrait(actor,"Angry");
         }
-        if (targetCharacter.GetNormalTrait("Hothead") != null) {
-            targetCharacter.AddTrait("Angry");
+        if (targetCharacter.traitContainer.GetNormalTrait("Hothead") != null) {
+            targetCharacter.traitContainer.AddTrait(targetCharacter,"Angry");
         }
     }
     private void PreFlirt() {

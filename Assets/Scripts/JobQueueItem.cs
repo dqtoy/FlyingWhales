@@ -55,7 +55,7 @@ public class JobQueueItem {
     protected virtual bool CanTakeJob(Character character) {
         if (jobQueueParent.isAreaOrQuestJobQueue) {
             //Criminals and Characters with Negative Disabler Traits should no longer create and take Location Jobs
-            return !character.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !character.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER);
+            return !character.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL) && !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE);
         }
         return true;
     }

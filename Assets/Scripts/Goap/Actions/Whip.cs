@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Whip : GoapAction {
 
@@ -33,7 +34,7 @@ public class Whip : GoapAction {
         //**After Effect 2**: Target gains Lethargic status
         AddTraitTo(poiTarget, "Lethargic", actor);
         //**After Effect 3**: Target is released from imprisonment and crime is removed from trait list
-        poiTarget.RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL);
+        poiTarget.traitContainer.RemoveAllTraitsByType(poiTarget, TRAIT_TYPE.CRIMINAL);
         RemoveTraitFrom(poiTarget, "Restrained", actor);
     }
     #endregion
@@ -41,7 +42,7 @@ public class Whip : GoapAction {
 
     #region Preconditions
     private bool MustBeRestrained() {
-        return poiTarget.GetNormalTrait("Restrained") != null;
+        return poiTarget.traitContainer.GetNormalTrait("Restrained") != null;
     }
     #endregion
 }

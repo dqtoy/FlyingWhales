@@ -16,7 +16,7 @@ public class DataConstructor : MonoBehaviour {
         CharacterManager.Instance.Initialize();
         RaceManager.Instance.Initialize();
         MonsterManager.Instance.Initialize();
-        AttributeManager.Instance.Initialize();
+        TraitManager.Instance.Initialize();
         //IntelManager.Instance.Initialize();
         SecretManager.Instance.Initialize();
         LandmarkManager.Instance.Initialize();

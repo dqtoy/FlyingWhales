@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class CraftTileObject : GoapAction {
 
@@ -48,8 +49,8 @@ public class CraftTileObject : GoapAction {
         currentState.AddLogFiller(null, Utilities.NormalizeStringUpperCaseFirstLetters(obj.tileObjectType.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     private void AfterCraftSuccess() {
-        //poiTarget.RemoveTrait("Burnt");
-        //poiTarget.RemoveTrait("Damaged");
+        //poiTarget.traitContainer.RemoveTrait(poiTarget, "Burnt");
+        //poiTarget.traitContainer.RemoveTrait(poiTarget, "Damaged");
 
         //TileObject tileObj = poiTarget as TileObject;
         //TileObjectData data = TileObjectDB.GetTileObjectData(tileObj.tileObjectType);

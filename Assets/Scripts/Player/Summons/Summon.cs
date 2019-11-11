@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class Summon : Character, IWorldObject {
@@ -121,17 +122,17 @@ public class Summon : Character, IWorldObject {
             //    SetHomeStructure(homeStructure); //keep this data with character to prevent errors
             //}
 
-            RemoveAllTraitsByType(TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
+            traitContainer.RemoveAllTraitsByType(this, TRAIT_TYPE.CRIMINAL); //remove all criminal type traits
 
-            for (int i = 0; i < normalTraits.Count; i++) {
-                normalTraits[i].OnDeath(this);
+            for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+                traitContainer.allTraits[i].OnDeath(this);
             }
 
             marker?.OnDeath(deathTile);
             _numOfWaitingForGoapThread = 0; //for raise dead
             Dead dead = new Dead();
             dead.SetCharacterResponsibleForTrait(responsibleCharacter);
-            AddTrait(dead, gainedFromDoing: deathFromAction);
+            traitContainer.AddTrait(this, dead, gainedFromDoing: deathFromAction);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this as Character);
 
             CancelAllJobsAndPlans();
@@ -206,7 +207,7 @@ public class Summon : Character, IWorldObject {
             CreateOwnParty();
             ownParty.CreateIcon();
         }
-        RemoveAllNonPersistentTraits();
+        traitContainer.RemoveAllNonPersistentTraits(this);
         ClearAllAwareness();
         CancelAllJobsAndPlans();
         ResetToFullHP();

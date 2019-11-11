@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Traits;
 
 public class Explosion : PlayerJobAction {
 
@@ -23,29 +24,31 @@ public class Explosion : PlayerJobAction {
             LocationGridTile tile = tiles[i];
             flammables.AddRange(tile.GetAllTraitablesOnTileWithTrait("Flammable"));
         }
-        flammables = flammables.Where(x => x.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
+        flammables = flammables.Where(x => x.traitContainer.GetNormalTrait("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
         BurningSource bs = new BurningSource(targetTile.parentAreaMap.area);
         for (int i = 0; i < flammables.Count; i++) {
             ITraitable flammable = flammables[i];
-            GameManager.Instance.CreateExplodeEffectAt(flammable.gridTileLocation);
             if (flammable is TileObject) {
                 TileObject obj = flammable as TileObject;
                 obj.AdjustHP(-obj.currentHP);
                 //obj.gridTileLocation.structure.RemovePOI(obj);
+                GameManager.Instance.CreateExplodeEffectAt(obj.gridTileLocation);
                 continue; //go to next item
             } else if (flammable is SpecialToken) {
                 SpecialToken token = flammable as SpecialToken;
                 token.AdjustHP(-token.currentHP);
+                GameManager.Instance.CreateExplodeEffectAt(token.gridTileLocation);
                 //token.gridTileLocation.structure.RemovePOI(token);
                 continue; //go to next item
             } else if (flammable is Character) {
                 Character character = flammable as Character;
                 character.AdjustHP(-(int)(character.maxHP * 0.4f), true);
+                GameManager.Instance.CreateExplodeEffectAt(character.gridTileLocation);
             }
             if (Random.Range(0, 100) < 60) {
                 Burning burning = new Burning();
                 burning.SetSourceOfBurning(bs, flammable);
-                flammable.AddTrait(burning);
+                flammable.traitContainer.AddTrait(flammable, burning);
             }
         }
     }

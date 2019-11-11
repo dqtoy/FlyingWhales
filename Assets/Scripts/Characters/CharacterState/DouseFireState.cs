@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Traits;
 
 public class DouseFireState : CharacterState {
 
@@ -272,7 +273,7 @@ public class DouseFireState : CharacterState {
         ResumeState();
     }
     private bool AddFire(IPointOfInterest poi) {
-        Burning burning = poi.GetNormalTrait("Burning") as Burning;
+        Burning burning = poi.traitContainer.GetNormalTrait("Burning") as Burning;
         if (burning != null) {
             if (!fires.ContainsKey(burning.sourceOfBurning)) {
                 fires.Add(burning.sourceOfBurning, new List<IPointOfInterest>());

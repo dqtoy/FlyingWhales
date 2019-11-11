@@ -2,8 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 using System.IO;
+using Traits;
 
 public class Monster : ICharacterSim, IInteractable {
     //Serialized fields
@@ -58,7 +58,6 @@ public class Monster : ICharacterSim, IInteractable {
     protected PlayerCharacterItem _playerCharacterItem;
     protected int _currentInteractionTick;
 
-    public CharacterUIData uiData { get; private set; }
     public WeightedDictionary<INTERACTION_TYPE> interactionWeights { get; private set; }
     public WeightedDictionary<bool> eventTriggerWeights { get; private set; }
     #region getters/setters
@@ -543,7 +542,6 @@ public class Monster : ICharacterSim, IInteractable {
         //ResetToFullSP();
         SetCharacterColor(Color.red);
         SetSleeping(_isSleepingOnSpawn);
-        uiData = new CharacterUIData();
         //ConstructBuffs();
         //ConstructMiscActions();
 

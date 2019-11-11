@@ -6,6 +6,7 @@ using UnityEngine.UI.Extensions;
 using TMPro;
 using System.Linq;
 using System;
+using Traits;
 
 public class PlayerUI : MonoBehaviour {
     public static PlayerUI Instance;

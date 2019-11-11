@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class DropSupply : GoapAction {
     public DropSupply(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.DROP_SUPPLY, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {

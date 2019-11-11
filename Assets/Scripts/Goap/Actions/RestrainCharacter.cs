@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class RestrainCharacter : GoapAction {
 
@@ -39,7 +40,7 @@ public class RestrainCharacter : GoapAction {
     protected bool Requirement() {
         if (actor != poiTarget) {
             Character target = poiTarget as Character;
-            return target.GetNormalTrait("Restrained") == null;
+            return target.traitContainer.GetNormalTrait("Restrained") == null;
         }
         return false;
     }
@@ -213,7 +214,7 @@ public class RestrainCharacterData : GoapActionData {
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (actor != poiTarget) {
             Character target = poiTarget as Character;
-            return target.GetNormalTrait("Restrained") == null;
+            return target.traitContainer.GetNormalTrait("Restrained") == null;
         }
         return false;
     }

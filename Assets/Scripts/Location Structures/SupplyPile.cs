@@ -11,7 +11,7 @@ public class SupplyPile : TileObject {
         poiGoapActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.GET_SUPPLY, INTERACTION_TYPE.DROP_SUPPLY, INTERACTION_TYPE.REPAIR_TILE_OBJECT, INTERACTION_TYPE.DESTROY_SUPPLY };
         Initialize(TILE_OBJECT_TYPE.SUPPLY_PILE);
         SetSuppliesInPile(2000);
-        RemoveTrait("Flammable");
+        traitContainer.RemoveTrait(this, "Flammable");
         Messenger.AddListener(Signals.TICK_STARTED, CheckSupply);
     }
     public SupplyPile(SaveDataTileObject data) {

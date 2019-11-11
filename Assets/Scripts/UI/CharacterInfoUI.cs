@@ -2,10 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
 using TMPro;
 using UnityEngine.UI;
-using System;
+using Traits;
 
 public class CharacterInfoUI : UIMenu {
 
@@ -252,7 +251,7 @@ public class CharacterInfoUI : UIMenu {
 
         //Disabler Thought
         if (_activeCharacter.doNotDisturb > 0) {
-            Trait disablerTrait = _activeCharacter.GetTraitOf(TRAIT_TYPE.DISABLER);
+            Trait disablerTrait = _activeCharacter.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER).FirstOrDefault();
             if (disablerTrait != null) {
                 if (disablerTrait.thoughtText != null && disablerTrait.thoughtText != string.Empty) {
                     plansLbl.text = disablerTrait.thoughtText.Replace("[Character]", _activeCharacter.name);
@@ -439,8 +438,8 @@ public class CharacterInfoUI : UIMenu {
         statusTraitsLbl.text = string.Empty;
         normalTraitsLbl.text = string.Empty;
         
-        for (int i = 0; i < _activeCharacter.normalTraits.Count; i++) {
-            Trait currTrait = _activeCharacter.normalTraits[i];
+        for (int i = 0; i < _activeCharacter.traitContainer.allTraits.Count; i++) {
+            Trait currTrait = _activeCharacter.traitContainer.allTraits[i];
             if (currTrait.isHidden) {
                 continue; //skip
             }
@@ -517,7 +516,7 @@ public class CharacterInfoUI : UIMenu {
         if (obj is string) {
             string text = (string) obj;
             int index = int.Parse(text);
-            Trait trait = activeCharacter.normalTraits[index];
+            Trait trait = activeCharacter.traitContainer.allTraits[index];
             UIManager.Instance.ShowSmallInfo(trait.description);
         }
 
@@ -535,11 +534,11 @@ public class CharacterInfoUI : UIMenu {
         UIManager.Instance.HideSmallInfo();
     }
     private void OnClickTrait(object obj) {
-        if (activeCharacter.CanStillTriggerFlaws()) {
+        if (TraitManager.Instance.CanStillTriggerFlaws(activeCharacter)) {
             if (obj is string) {
                 string text = (string)obj;
                 int index = int.Parse(text);
-                Trait trait = activeCharacter.normalTraits[index];
+                Trait trait = activeCharacter.traitContainer.allTraits[index];
                 string traitDescription = trait.description;
                 if (trait.canBeTriggered) {
                     traitDescription += "\n" + trait.GetRequirementDescription(activeCharacter) +

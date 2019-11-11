@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class DrinkBlood : GoapAction {
     protected override string failActionState { get { return "Drink Fail"; } }
@@ -22,7 +23,7 @@ public class DrinkBlood : GoapAction {
         //if (actor.isStarving) {
             AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Unconscious", targetPOI = poiTarget }, HasUnconsciousOrRestingTarget);
         //}
-        //if (actor.GetNormalTrait("Vampiric") != null) {
+        //if (actor.traitContainer.GetNormalTrait("Vampiric") != null) {
         //    AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = null, targetPOI = actor });
         //}
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Lethargic", targetPOI = poiTarget });
@@ -33,7 +34,7 @@ public class DrinkBlood : GoapAction {
             Character target = poiTarget as Character;
             //SetState("Drink Success");
 
-            if (target.GetNormalTrait("Unconscious", "Resting") != null) {
+            if (target.traitContainer.GetNormalTrait("Unconscious", "Resting") != null) {
                 SetState("Drink Success");
             } else {
                 SetState("Drink Fail");
@@ -69,7 +70,7 @@ public class DrinkBlood : GoapAction {
     protected bool RequirementOnBuildGoapTree() {
         //if (!actor.isStarving) {
         //    Character target = poiTarget as Character;
-        //    return target.GetNormalTrait("Unconscious", "Resting") != null;
+        //    return target.traitContainer.GetNormalTrait("Unconscious", "Resting") != null;
         //}
         return true;
     }
@@ -78,7 +79,7 @@ public class DrinkBlood : GoapAction {
     #region Preconditions
     private bool HasUnconsciousOrRestingTarget() {
         Character target = poiTarget as Character;
-        return target.GetNormalTrait("Unconscious", "Resting") != null;
+        return target.traitContainer.GetNormalTrait("Unconscious", "Resting") != null;
     }
     #endregion
 
@@ -124,7 +125,7 @@ public class DrinkBlood : GoapAction {
     private List<string> DrinkBloodSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
         List<string> reactions = new List<string>();
         Character targetCharacter = poiTarget as Character;
-        bool isRecipientVampire = recipient.GetNormalTrait("Vampiric") != null;
+        bool isRecipientVampire = recipient.traitContainer.GetNormalTrait("Vampiric") != null;
 
         if (isOldNews) {
             //Old News

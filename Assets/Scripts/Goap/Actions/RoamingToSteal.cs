@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class RoamingToSteal : GoapAction {
 
@@ -22,7 +23,7 @@ public class RoamingToSteal : GoapAction {
         _requirementAction = Requirement;
     }
     protected override void ConstructPreconditionsAndEffects() {
-        if (actor.GetNormalTrait("Kleptomaniac") != null) {
+        if (actor.traitContainer.GetNormalTrait("Kleptomaniac") != null) {
             AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAPPINESS_RECOVERY, targetPOI = actor });
         }
     }
@@ -31,7 +32,7 @@ public class RoamingToSteal : GoapAction {
         SetState("In Progress");
     }
     protected override int GetCost() {
-        if (actor.GetNormalTrait("Kleptomaniac") != null) {
+        if (actor.traitContainer.GetNormalTrait("Kleptomaniac") != null) {
             return Utilities.rng.Next(5, 46);
         }
         return Utilities.rng.Next(35, 56);
@@ -52,7 +53,7 @@ public class RoamingToSteal : GoapAction {
 
     #region Effects
     private void PreInProgress() {
-        Kleptomaniac kleptomaniac = actor.GetNormalTrait("Kleptomaniac") as Kleptomaniac;
+        Kleptomaniac kleptomaniac = actor.traitContainer.GetNormalTrait("Kleptomaniac") as Kleptomaniac;
         if (actor.marker.inVisionPOIs.Count > 0) {
             for (int i = 0; i < actor.marker.inVisionPOIs.Count; i++) {
                 if (kleptomaniac.CreateJobsOnEnterVisionBasedOnTrait(actor.marker.inVisionPOIs[i], actor)) {

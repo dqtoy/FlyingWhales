@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class AbductCharacter : GoapAction {
     public override LocationStructure targetStructure { get { return structureToBeDropped; } }
@@ -71,7 +72,7 @@ public class AbductCharacter : GoapAction {
     #region Preconditions
     private bool IsInActorPartyAndRestrained() {
         Character target = poiTarget as Character;
-        return target.currentParty == actor.currentParty && target.GetNormalTrait("Restrained") != null;
+        return target.currentParty == actor.currentParty && target.traitContainer.GetNormalTrait("Restrained") != null;
     }
     #endregion
 

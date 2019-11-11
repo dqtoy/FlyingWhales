@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class KnockoutCharacter : GoapAction {
 
@@ -20,7 +21,7 @@ public class KnockoutCharacter : GoapAction {
         base.PerformActualAction();
         //rather than checking location check if the character is not in anyone elses party and is still active
         if (!isTargetMissing) {
-            if (poiTarget.GetNormalTrait("Vigilant") != null) {
+            if (poiTarget.traitContainer.GetNormalTrait("Vigilant") != null) {
                 SetState("Knockout Fail");
             } else {
                 SetState("Knockout Success");
@@ -53,7 +54,7 @@ public class KnockoutCharacter : GoapAction {
 
     #region Requirements
     protected bool Requirement() {
-        return actor != poiTarget && actor.GetNormalTrait("Serial Killer") != null;
+        return actor != poiTarget && actor.traitContainer.GetNormalTrait("Serial Killer") != null;
     }
     #endregion
 
@@ -63,7 +64,7 @@ public class KnockoutCharacter : GoapAction {
         currentState.SetIntelReaction(KnockoutSuccessIntelReaction);
     }
     private void AfterKnockoutSuccess() {
-        poiTarget.AddTrait("Unconscious", actor, gainedFromDoing: this);
+        poiTarget.traitContainer.AddTrait(poiTarget, "Unconscious", actor, gainedFromDoing: this);
     }
     private void PreKnockoutFail() {
         SetCommittedCrime(CRIME.ASSAULT, new Character[] { actor });
@@ -271,6 +272,6 @@ public class KnockoutCharacterData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && actor.GetNormalTrait("Serial Killer") != null;
+        return actor != poiTarget && actor.traitContainer.GetNormalTrait("Serial Killer") != null;
     }
 }

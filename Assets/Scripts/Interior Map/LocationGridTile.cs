@@ -1,21 +1,18 @@
 ﻿using PathFind;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
-using UnityEngine.UI;
 using BayatGames.SaveGameFree.Types;
+using Traits;
 
-public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
+public class LocationGridTile : IHasNeighbours<LocationGridTile> {
 
     public enum Tile_Type { Empty, Wall, Structure, Gate, Road, Structure_Entrance }
     public enum Tile_State { Empty, Occupied }
     public enum Tile_Access { Passable, Impassable, }
     public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water }
-
-    protected List<Trait> _traits;
     public bool hasDetail { get; set; }
     public string name { get { return localPlace.ToString(); } }
     public AreaInnerTileMap parentAreaMap { get; private set; }
@@ -41,7 +38,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
     public FurnitureSpot furnitureSpot { get; private set; }
     public bool hasFurnitureSpot { get; private set; }
     public List<Trait> normalTraits {
-        get { return _traits; }
+        get { return genericTileObject.traitContainer.allTraits; }
     }
     public LocationGridTile gridTileLocation { get { return this; } }
 
@@ -52,7 +49,7 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
     public List<LocationGridTile> RoadTiles { get { return neighbours.Values.Where(o => o.tileType == Tile_Type.Road).ToList(); } }
     public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == this.structure).ToList(); } }
 
-    public TileObject genericTileObject { get; private set; }
+    public GenericTileObject genericTileObject { get; private set; }
 
     public LocationGridTile(int x, int y, Tilemap tilemap, AreaInnerTileMap parentAreaMap) {
         this.parentAreaMap = parentAreaMap;
@@ -69,10 +66,10 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         tileState = Tile_State.Empty;
         tileAccess = Tile_Access.Passable;
         charactersHere = new List<Character>();
-        _traits = new List<Trait>();
         SetLockedState(false);
         SetReservedType(TILE_OBJECT_TYPE.NONE);
         defaultTileColor = Color.white;
+        CreateGenericTileObject();
     }
     public LocationGridTile(SaveDataLocationGridTile data, Tilemap tilemap, AreaInnerTileMap parentAreaMap) {
         this.parentAreaMap = parentAreaMap;
@@ -88,14 +85,12 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         SetLockedState(data.isLocked);
         SetReservedType(data.reservedObjectType);
         charactersHere = new List<Character>();
-        _traits = new List<Trait>();
         defaultTileColor = Color.white;
+        CreateGenericTileObject();
     }
 
     private void CreateGenericTileObject() {
         genericTileObject = new GenericTileObject(this.structure);
-        genericTileObject.SetGridTileLocation(this);
-        genericTileObject.DisableCollisionTrigger();
     }
     public void UpdateWorldLocation() {
         worldLocation = parentTileMap.CellToWorld(localPlace);
@@ -187,17 +182,17 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
     }
     public void SetGroundType(Ground_Type groundType) {
         this.groundType = groundType;
-        switch (groundType) {
-            case Ground_Type.Grass:
-            case Ground_Type.Wood:
-                if (structure != null) {
-                    AddTrait("Flammable");
-                }
-                break;
-            default:
-                RemoveTrait("Flammable");
-                break;
-        }
+        //switch (groundType) {
+        //    case Ground_Type.Grass:
+        //    case Ground_Type.Wood:
+        //        if (structure != null) {
+        //            genericTileObject.traitContainer.AddTrait(genericTileObject, "Flammable");
+        //        }
+        //        break;
+        //    default:
+        //        genericTileObject.traitContainer.RemoveTrait(genericTileObject, "Flammable");
+        //        break;
+        //}
     }
     public List<TileNeighbourDirection> GetSameStructureNeighbourDirections() {
         List<TileNeighbourDirection> dirs = new List<TileNeighbourDirection>();
@@ -225,7 +220,9 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
         }
         this.structure = structure;
         this.structure.AddTile(this);
-        CreateGenericTileObject();
+        if (!genericTileObject.hasBeenInitialized) { //TODO: Make this better
+            genericTileObject.ManualInitialize(structure, this);
+        }
     }
     public void SetTileState(Tile_State state) {
         this.tileState = state;
@@ -547,6 +544,22 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
     public void SetDefaultTileColor(Color color) {
         defaultTileColor = color;
     }
+    public List<ITraitable> GetAllTraitablesOnTileWithTrait(string requiredTrait) {
+        List<ITraitable> traitables = new List<ITraitable>();
+        if (genericTileObject.traitContainer.GetNormalTrait(requiredTrait) != null) {
+            traitables.Add(genericTileObject);
+        }
+        if (objHere != null && objHere.traitContainer.GetNormalTrait(requiredTrait) != null) {
+            traitables.Add(objHere);
+        }
+        for (int i = 0; i < charactersHere.Count; i++) {
+            Character character = charactersHere[i];
+            if (character.traitContainer.GetNormalTrait(requiredTrait) != null) {
+                traitables.Add(character);
+            }
+        }
+        return traitables;
+    }
     #endregion
 
     #region Mouse Actions
@@ -621,148 +634,6 @@ public class LocationGridTile : IHasNeighbours<LocationGridTile>, ITraitable {
             }
         }
         throw new System.Exception("Furniture spot at " + this.ToString() + " cannot provide facility " + facility.ToString() + "! Should not reach this point if that is the case!");
-    }
-    #endregion
-
-    #region Traits
-    public bool AddTrait(string traitName, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
-        if (AttributeManager.Instance.IsInstancedTrait(traitName)) {
-            return AddTrait(AttributeManager.Instance.CreateNewInstancedTraitClass(traitName), characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
-        } else {
-            return AddTrait(AttributeManager.Instance.allTraits[traitName], characterResponsible, onRemoveAction, gainedFromDoing, triggerOnAdd);
-        }
-    }
-    public bool AddTrait(Trait trait, Character characterResponsible = null, System.Action onRemoveAction = null, GoapAction gainedFromDoing = null, bool triggerOnAdd = true) {
-        if (trait.IsUnique()) {
-            Trait oldTrait = GetNormalTrait(trait.name);
-            if (oldTrait != null) {
-                oldTrait.SetCharacterResponsibleForTrait(characterResponsible);
-                oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
-                return false;
-            }
-            //return false;
-        }
-        _traits.Add(trait);
-        trait.SetGainedFromDoing(gainedFromDoing);
-        trait.SetOnRemoveAction(onRemoveAction);
-        trait.SetCharacterResponsibleForTrait(characterResponsible);
-        trait.AddCharacterResponsibleForTrait(characterResponsible);
-        //ApplyTraitEffects(trait);
-        //ApplyPOITraitInteractions(trait);
-        if (trait.daysDuration > 0) {
-            GameDate removeDate = GameManager.Instance.Today();
-            removeDate.AddTicks(trait.daysDuration);
-            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait), this);
-            trait.SetExpiryTicket(this, ticket);
-        }
-        if (triggerOnAdd) {
-            trait.OnAddTrait(this);
-        }
-        if (trait.IsTangible()) {
-            genericTileObject?.SetGridTileLocation(this);
-        }
-        return true;
-    }
-    public bool RemoveTrait(Trait trait, bool triggerOnRemove = true, Character removedBy = null, bool includeAlterEgo = true) {
-        if (_traits.Remove(trait)) {
-            trait.RemoveExpiryTicket(this);
-            if (triggerOnRemove) {
-                trait.OnRemoveTrait(this, removedBy);
-            }
-            if (!HasTangibleTrait()) {
-                genericTileObject?.RemoveTileObject(removedBy);
-            }
-            return true;
-        }
-        return false;
-    }
-    private bool HasTangibleTrait() {
-        for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].IsTangible()) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public bool RemoveTrait(string traitName, bool triggerOnRemove = true, Character removedBy = null) {
-        Trait trait = GetNormalTrait(traitName);
-        if (trait != null) {
-            return RemoveTrait(trait, triggerOnRemove, removedBy);
-        }
-        return false;
-    }
-    public void RemoveTrait(List<Trait> traits) {
-        for (int i = 0; i < traits.Count; i++) {
-            RemoveTrait(traits[i]);
-        }
-    }
-    public List<Trait> RemoveAllTraitsByType(TRAIT_TYPE traitType) {
-        List<Trait> removedTraits = new List<Trait>();
-        for (int i = 0; i < _traits.Count; i++) {
-            if (_traits[i].type == traitType) {
-                removedTraits.Add(_traits[i]);
-                _traits.RemoveAt(i);
-                i--;
-            }
-        }
-        return removedTraits;
-    }
-    public Trait GetNormalTrait(params string[] traitNames) {
-        for (int i = 0; i < _traits.Count; i++) {
-            Trait trait = _traits[i];
-
-            for (int j = 0; j < traitNames.Length; j++) {
-                if (trait.name == traitNames[j] && !trait.isDisabled) {
-                    return trait;
-                }
-            }
-        }
-        return null;
-    }
-    public void RefreshTraitExpiry(Trait trait) {
-        if (trait.expiryTickets.ContainsKey(this)) {
-            SchedulingManager.Instance.RemoveSpecificEntry(trait.expiryTickets[this]);
-        }
-        if (trait.daysDuration > 0) {
-            GameDate removeDate = GameManager.Instance.Today();
-            removeDate.AddTicks(trait.daysDuration);
-            string ticket = SchedulingManager.Instance.AddEntry(removeDate, () => RemoveTrait(trait), this);
-            trait.SetExpiryTicket(this, ticket);
-        }
-
-    }
-    private void RemoveAllTraits() {
-        List<Trait> allTraits = new List<Trait>(normalTraits);
-        for (int i = 0; i < allTraits.Count; i++) {
-            RemoveTrait(allTraits[i]);
-        }
-    }
-    public List<ITraitable> GetAllTraitablesOnTile() {
-        List<ITraitable> traitables = new List<ITraitable>();
-        traitables.Add(this);
-        if (objHere != null) {
-            traitables.Add(objHere);
-        }
-        for (int i = 0; i < charactersHere.Count; i++) {
-            traitables.Add(charactersHere[i]);
-        }
-        return traitables;
-    }
-    public List<ITraitable> GetAllTraitablesOnTileWithTrait(string requiredTrait) {
-        List<ITraitable> traitables = new List<ITraitable>();
-        if (this.GetNormalTrait(requiredTrait) != null) {
-            traitables.Add(this);
-        }
-        if (objHere != null && objHere.GetNormalTrait(requiredTrait) != null) {
-            traitables.Add(objHere);
-        }
-        for (int i = 0; i < charactersHere.Count; i++) {
-            Character character = charactersHere[i];
-            if (character.GetNormalTrait(requiredTrait) != null) {
-                traitables.Add(character);
-            }
-        }
-        return traitables;
     }
     #endregion
 }
@@ -931,7 +802,7 @@ public class SaveDataLocationGridTile {
         for (int i = 0; i < traits.Count; i++) {
             Character responsibleCharacter = null;
             Trait trait = traits[i].Load(ref responsibleCharacter);
-            loadedGridTile.AddTrait(trait, responsibleCharacter);
+            loadedGridTile.genericTileObject.traitContainer.AddTrait(loadedGridTile.genericTileObject, trait, responsibleCharacter);
         }
     }
 

@@ -1550,7 +1550,7 @@ public static class Extensions {
                 return true;
             }
             for (int i = 0; i < data.canBeCraftedBy.Length; i++) {
-                if (character.HasTraitOf(data.canBeCraftedBy[i])) {
+                if (character.traitContainer.GetNormalTrait(data.canBeCraftedBy[i].ToString()) != null) {
                     return true;
                 }
             }
@@ -1585,7 +1585,7 @@ public static class Extensions {
             if (data.neededTraitType == null) {
                 return true;
             }
-            return character.HasTraitOf(data.neededTraitType);
+            return character.traitContainer.GetNormalTrait(data.neededTraitType.ToString()) != null;
         }
         return true;
     }

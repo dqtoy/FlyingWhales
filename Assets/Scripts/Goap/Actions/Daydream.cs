@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Daydream : GoapAction {
 
@@ -99,7 +100,7 @@ public class Daydream : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        if (actor.GetNormalTrait("Disillusioned") != null) {
+        if (actor.traitContainer.GetNormalTrait("Disillusioned") != null) {
             return false;
         }
         return actor == poiTarget;

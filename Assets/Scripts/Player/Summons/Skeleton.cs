@@ -24,19 +24,19 @@ public class Skeleton : Summon {
     //    GoToWorkArea();
     //}
     public override List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
-        if (GetNormalTrait("Unconscious", "Resting") != null) {
+        if (traitContainer.GetNormalTrait("Unconscious", "Resting") != null) {
             return null;
         }
-        for (int i = 0; i < normalTraits.Count; i++) {
-            normalTraits[i].OnSeePOI(target, this);
+        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+            traitContainer.allTraits[i].OnSeePOI(target, this);
         }
         return null;
     }
     protected override void OnSeenBy(Character character) {
-        if (GetNormalTrait("Unconscious", "Resting") != null) {
+        if (traitContainer.GetNormalTrait("Unconscious", "Resting") != null) {
             return;
         }
-        //if (character.role.roleType == CHARACTER_ROLE.CIVILIAN && character.GetNormalTrait("Spooked") == null) {
+        //if (character.role.roleType == CHARACTER_ROLE.CIVILIAN && character.traitContainer.GetNormalTrait("Spooked") == null) {
         //    character.AddTrait("Spooked", this);
         //}
     }

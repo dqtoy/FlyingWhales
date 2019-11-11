@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class Spoil : PlayerJobAction {
@@ -16,19 +17,19 @@ public class Spoil : PlayerJobAction {
             base.ActivateAction(targetPOI);
             Poisoned poison = new Poisoned();
             poison.SetLevel(level);
-            targetPOI.AddTrait(poison);
+            targetPOI.traitContainer.AddTrait(targetPOI, poison);
             Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", this.GetType().ToString(), "activated");
             PlayerManager.Instance.player.ShowNotification(log);
         }
     }
     public override bool CanTarget(IPointOfInterest poi, ref string hoverText) {
-        if (poi is Table && !(poi.GetNormalTrait("Poisoned", "Robust") != null)) {
+        if (poi is Table && !(poi.traitContainer.GetNormalTrait("Poisoned", "Robust") != null)) {
             return true;
         }
         return false;
     }
     protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
-        if (targetPOI is Table && !(targetPOI.GetNormalTrait("Poisoned", "Robust") != null)) {
+        if (targetPOI is Table && !(targetPOI.traitContainer.GetNormalTrait("Poisoned", "Robust") != null)) {
             return true;
         }
         return false;

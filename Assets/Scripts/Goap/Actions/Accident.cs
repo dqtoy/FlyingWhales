@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Accident : GoapAction {
     public GoapAction actionToDo { get; private set; }
@@ -58,7 +59,7 @@ public class Accident : GoapAction {
         currentState.AddLogFiller(actionToDo, actionToDo.goapName, LOG_IDENTIFIER.STRING_1);
     }
     private void AfterAccidentSuccess() {
-        actor.AddTrait("Injured", gainedFromDoing: this);
+        actor.traitContainer.AddTrait(actor, "Injured", gainedFromDoing: this);
 
         int randomHpToLose = UnityEngine.Random.Range(5, 26);
         float percentMaxHPToLose = randomHpToLose / 100f;

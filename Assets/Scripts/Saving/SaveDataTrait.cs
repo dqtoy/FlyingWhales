@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Traits;
 
 //IMPORTANT NOTE: Class name format for all derived classes of SaveDataTrait must be: "SaveData" + [Trait Name], example: SaveDataKleptomaniac
 [System.Serializable]
@@ -51,10 +52,10 @@ public class SaveDataTrait {
             responsibleCharacter = CharacterManager.Instance.GetCharacterByID(responsibleCharacterID);
         }
         Trait trait = null;
-        if (AttributeManager.Instance.IsInstancedTrait(name)) {
-            trait = AttributeManager.Instance.CreateNewInstancedTraitClass(name);
+        if (TraitManager.Instance.IsInstancedTrait(name)) {
+            trait = TraitManager.Instance.CreateNewInstancedTraitClass(name);
         } else {
-            trait = AttributeManager.Instance.allTraits[name];
+            trait = TraitManager.Instance.allTraits[name];
         }
         trait.SetLevel(level);
         trait.OverrideDuration(daysDuration);
@@ -76,13 +77,13 @@ public class SaveDataTrait {
             responsibleCharacter = CharacterManager.Instance.GetCharacterByID(responsibleCharacterID);
         }
         Trait trait = null;
-        if (AttributeManager.Instance.IsInstancedTrait(name)) {
-            trait = AttributeManager.Instance.CreateNewInstancedTraitClass(name);
+        if (TraitManager.Instance.IsInstancedTrait(name)) {
+            trait = TraitManager.Instance.CreateNewInstancedTraitClass(name);
         } else {
-            if (!AttributeManager.Instance.allTraits.ContainsKey(name)) {
+            if (!TraitManager.Instance.allTraits.ContainsKey(name)) {
                 Debug.Log("noooo!");
             }
-            trait = AttributeManager.Instance.allTraits[name];
+            trait = TraitManager.Instance.allTraits[name];
         }
         trait.SetLevel(level);
         trait.OverrideDuration(daysDuration);

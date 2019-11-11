@@ -4,50 +4,41 @@ using System.IO;
 using System;
 using UnityEngine;
 using System.Linq;
+using Traits;
 
-public class AttributeManager : MonoBehaviour {
-    public static AttributeManager Instance;
+public class TraitManager : MonoBehaviour {
+    public static TraitManager Instance;
 
     private Dictionary<string, Trait> _allTraits;
-    private Dictionary<string, Trait> _allPositiveTraits;
-    private Dictionary<string, Trait> _allIlnesses;
     private Trait[] instancedTraits;
 
     [SerializeField] private StringSpriteDictionary traitIconDictionary;
 
-    public INTERACTION_TYPE[] excludedActionsFromAccidentProneTrait = new INTERACTION_TYPE[] {
-        INTERACTION_TYPE.STUMBLE, INTERACTION_TYPE.PUKE, INTERACTION_TYPE.SEPTIC_SHOCK, INTERACTION_TYPE.ACCIDENT
-    };
+    //Trait Processors
+    public static TraitProcessor characterTraitProcessor;
+    public static TraitProcessor tileObjectTraitProcessor;
+    public static TraitProcessor specialTokenTraitProcessor;
 
     #region getters/setters
     public Dictionary<string, Trait> allTraits {
         get { return _allTraits; }
     }
-    public Dictionary<string, Trait> allPositiveTraits {
-        get { return _allPositiveTraits; }
-    }
-    public Dictionary<string, Trait> allIllnesses {
-        get { return _allIlnesses; }
-    }
     #endregion
 
     void Awake() {
         Instance = this;
+        CreateTraitProcessors();
     }
 
     public void Initialize() {
         _allTraits = new Dictionary<string, Trait>();
-        _allPositiveTraits = new Dictionary<string, Trait>();
-        _allIlnesses = new Dictionary<string, Trait>();
         string path = Utilities.dataPath + "CombatAttributes/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
             Trait attribute = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
-            CategorizeTrait(attribute);
+            _allTraits.Add(attribute.name, attribute);
         }
-#if !WORLD_CREATION_TOOL
         AddInstancedTraits(); //Traits with their own classes
-#endif
     }
 
     #region Utilities
@@ -123,16 +114,8 @@ public class AttributeManager : MonoBehaviour {
             new Disillusioned(),
         };
         for (int i = 0; i < instancedTraits.Length; i++) {
-            CategorizeTrait(instancedTraits[i]);
-        }
-    }
-    private void CategorizeTrait(Trait attribute) {
-        _allTraits.Add(attribute.name, attribute);
-        if (attribute.effect == TRAIT_EFFECT.POSITIVE) {
-            _allPositiveTraits.Add(attribute.name, attribute);
-        }
-        if (attribute.type == TRAIT_TYPE.ILLNESS) {
-            _allIlnesses.Add(attribute.name, attribute);
+            Trait trait = instancedTraits[i];
+            _allTraits.Add(trait.name, trait);
         }
     }
     public Sprite GetTraitIcon(string traitName) {
@@ -155,7 +138,10 @@ public class AttributeManager : MonoBehaviour {
     }
     public Trait CreateNewInstancedTraitClass(string traitName) {
         string noSpacesTraitName = Utilities.RemoveAllWhiteSpace(traitName);
-        return System.Activator.CreateInstance(System.Type.GetType(noSpacesTraitName)) as Trait;
+        string typeName = $"Traits.{ noSpacesTraitName }";
+        Debug.Log("Trait type name is: " + typeName);
+        Type type = System.Type.GetType(typeName);
+        return System.Activator.CreateInstance(type) as Trait;
     }
     public List<Trait> GetAllTraitsOfType(TRAIT_TYPE type) {
         List<Trait> traits = new List<Trait>();
@@ -186,23 +172,46 @@ public class AttributeManager : MonoBehaviour {
     }
     public List<string> GetAllBuffTraitsThatCharacterCanHave(Character character) {
         List<string> allBuffs = GetAllBuffTraits();
-        for (int i = 0; i < character.normalTraits.Count; i++) {
-            Trait trait = character.normalTraits[i];
+        for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
+            Trait trait = character.traitContainer.allTraits[i];
             if (trait.mutuallyExclusive != null) {
                 allBuffs = Utilities.RemoveElements(allBuffs, trait.mutuallyExclusive);
             }
         }
         return allBuffs;
     }
-    public List<string> GetAllFlawTraitsThatCharacterCanHave(Character character) {
-        List<string> allFlaws = GetAllFlawTraits();
-        for (int i = 0; i < character.normalTraits.Count; i++) {
-            Trait trait = character.normalTraits[i];
-            if (trait.mutuallyExclusive != null) {
-                allFlaws = Utilities.RemoveElements(allFlaws, trait.mutuallyExclusive);
-            }
+    /// <summary>
+    /// Utility function to determine if this character's flaws can still be activated
+    /// </summary>
+    /// <returns></returns>
+    public bool CanStillTriggerFlaws(Character character) {
+        if (character.isDead) {
+            return false;
         }
-        return allFlaws;
+        if (character.faction == PlayerManager.Instance.player.playerFaction) {
+            return false;
+        }
+        if (character.role.roleType == CHARACTER_ROLE.BEAST) {
+            return false;
+        }
+        if (character is Summon) {
+            return false;
+        }
+        if (character.returnedToLife) {
+            return false;
+        }
+        //if(doNotDisturb > 0) {
+        //    return false;
+        //}
+        return true;
+    }
+    #endregion
+
+    #region Trait Processors
+    private void CreateTraitProcessors() {
+        characterTraitProcessor = new CharacterTraitProcessor();
+        tileObjectTraitProcessor = new TileObjectTraitProcessor();
+        specialTokenTraitProcessor = new SpecialTokenTraitProcessor();
     }
     #endregion
 }

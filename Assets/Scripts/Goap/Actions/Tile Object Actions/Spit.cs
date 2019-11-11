@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Spit : GoapAction {
     protected override string failActionState { get { return "Target Missing"; } }

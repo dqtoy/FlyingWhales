@@ -85,7 +85,7 @@ public class RemoveFromPartyReaction : ActionEffectReaction {
         //                reaction = string.Format("So {0} really went ahead and abducted someone? That criminal will be brought to justice!", ei.actor.name);
         //            }
         //            //- Add Criminal trait to the Actor.
-        //            ei.actor.AddTrait("Criminal");
+        //            ei.actor.traitContainer.AddTrait(actor,"Criminal");
         //        } else if (character.characterClass.className == "Adventurer" || character.characterClass.className == "Civilian") {
         //            if (justAddedPlan) {
         //                reaction = string.Format("{0} abducted someone? I better report this to the authorities!", ei.actor.name);

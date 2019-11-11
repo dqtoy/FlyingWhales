@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class SlayCharacter : GoapAction {
     public SlayCharacter(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.SLAY_CHARACTER, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {
@@ -244,6 +245,6 @@ public class SlayCharacterData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && (poiTarget as Character).HasTraitOf(TRAIT_TYPE.DISABLER);
+        return actor != poiTarget && (poiTarget as Character).traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER);
     }
 }

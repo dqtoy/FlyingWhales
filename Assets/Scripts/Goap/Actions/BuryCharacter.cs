@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-
+using UnityEngine;  
+using Traits;
+using Traits;
 public class BuryCharacter : GoapAction {
     public override LocationStructure targetStructure { get { return _targetStructure; } }
 
@@ -154,10 +155,10 @@ public class BuryCharacter : GoapAction {
                 }
                 //- Positive Relationship with Target
                 else if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                    recipient.AddTrait("Heartbroken");
+                    recipient.traitContainer.AddTrait(recipient, "Heartbroken");
                     if (UnityEngine.Random.Range(0, 2) == 0) {
                         bool triggerBrokenhearted = false;
-                        Heartbroken heartbroken = recipient.GetNormalTrait("Heartbroken") as Heartbroken;
+                        Heartbroken heartbroken = recipient.traitContainer.GetNormalTrait("Heartbroken") as Heartbroken;
                         if (heartbroken != null) {
                             triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
                         }
@@ -173,10 +174,10 @@ public class BuryCharacter : GoapAction {
                 }
                 //- Negative Relationship with Target
                 else if (relWithTarget == RELATIONSHIP_EFFECT.POSITIVE) {
-                    recipient.AddTrait("Satisfied");
+                    recipient.traitContainer.AddTrait(recipient, "Satisfied");
                     if (UnityEngine.Random.Range(0, 2) == 0) {
                         bool triggerBrokenhearted = false;
-                        Heartbroken heartbroken = recipient.GetNormalTrait("Heartbroken") as Heartbroken;
+                        Heartbroken heartbroken = recipient.traitContainer.GetNormalTrait("Heartbroken") as Heartbroken;
                         if (heartbroken != null) {
                             triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
                         }

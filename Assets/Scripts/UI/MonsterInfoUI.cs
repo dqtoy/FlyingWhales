@@ -251,7 +251,6 @@ public class MonsterInfoUI : UIMenu {
         } else {
             if (_activeMonster.hasBeenInspected) {
                 nameLbl.text += " (Info State: Old)";
-                lvlClassLbl.text = "Lvl." + _activeMonster.uiData.level.ToString();
             } else {
                 lvlClassLbl.text = "???";
             }
@@ -274,24 +273,13 @@ public class MonsterInfoUI : UIMenu {
         //vitalityLbl.text = _activeMonster.vitality.ToString();
         //expDropLbl.text = _activeMonster.experienceDrop.ToString();
     }
-    private void UpdateStatsInfo(CharacterUIData uiData) {
-        healthProgressBar.value = uiData.healthValue;
-        manaProgressBar.value = uiData.manaValue;
-        //strengthLbl.text = uiData.strength.ToString();
-        //agilityLbl.text = uiData.agility.ToString();
-        //intelligenceLbl.text = uiData.intelligence.ToString();
-        //vitalityLbl.text = uiData.vitality.ToString();
-    }
+   
     #endregion
 
     #region Items
     private void UpdateItemsInfo() {
         //UpdateEquipmentInfo(_activeMonster.equippedItems);
         UpdateInventoryInfo(_activeMonster.inventory);
-    }
-    private void UpdateItemsInfo(CharacterUIData uiData) {
-        //UpdateEquipmentInfo(uiData.equippedItems);
-        //UpdateInventoryInfo(uiData.inventory);
     }
     private void UpdateEquipmentInfo(List<Item> equipment) {
         headArmorContainer.SetItem(null);

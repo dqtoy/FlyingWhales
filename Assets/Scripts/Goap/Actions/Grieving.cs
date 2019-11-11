@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Grieving : GoapAction {
     public Grieving(Character actor, IPointOfInterest poiTarget) : base(INTERACTION_TYPE.GRIEVING, INTERACTION_ALIGNMENT.NEUTRAL, actor, poiTarget) {

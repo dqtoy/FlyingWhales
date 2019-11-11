@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Traits;
 using UnityEngine;
 
 public class Vampirism : PlayerJobAction {
@@ -28,7 +29,7 @@ public class Vampirism : PlayerJobAction {
                 if (CanPerformActionTowards(currTarget)) {
                     Trait newTrait = new Vampiric();
                     newTrait.SetLevel(level);
-                    currTarget.AddTrait(newTrait);
+                    currTarget.traitContainer.AddTrait(currTarget, newTrait);
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(newTrait, newTrait.name, LOG_IDENTIFIER.STRING_1);
@@ -59,10 +60,10 @@ public class Vampirism : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Vampiric", "Cannibal") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Vampiric", "Cannibal") != null) {
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return base.CanPerformActionTowards(targetCharacter);
@@ -93,11 +94,11 @@ public class Vampirism : PlayerJobAction {
         if (targetCharacter.role.roleType == CHARACTER_ROLE.BEAST || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.GetNormalTrait("Vampiric", "Cannibal") != null) {
+        if (targetCharacter.traitContainer.GetNormalTrait("Vampiric", "Cannibal") != null) {
 
             return false;
         }
-        //if (targetCharacter.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)) {
+        //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
         //    return false;
         //}
         return base.CanTarget(targetCharacter, ref hoverText);

@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
+using Traits;
 
 public class EatAtTable : GoapAction {
 
@@ -25,7 +27,7 @@ public class EatAtTable : GoapAction {
     public override void PerformActualAction() {
         base.PerformActualAction();
         if (!isTargetMissing) {
-            poisonedTrait = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
+            poisonedTrait = poiTarget.traitContainer.GetNormalTrait("Poisoned") as Poisoned;
             if (poisonedTrait != null) {
                 SetState("Eat Poisoned");
             } else {
@@ -37,7 +39,7 @@ public class EatAtTable : GoapAction {
     }
     protected override int GetCost() {
         //if the table is poisoned, check if the actor knows about it, if he/she does, increase cost
-        Poisoned poisoned = poiTarget.GetNormalTrait("Poisoned") as Poisoned;
+        Poisoned poisoned = poiTarget.traitContainer.GetNormalTrait("Poisoned") as Poisoned;
         if (poisoned != null) {
             if (poisoned.awareCharacters.Contains(actor)) {
                 return 50;
@@ -112,7 +114,7 @@ public class EatAtTable : GoapAction {
         actor.AdjustDoNotGetHungry(1);
         currentState.SetIntelReaction(EatSuccessReactions);
         Messenger.AddListener<ITraitable, Trait>(Signals.TRAITABLE_GAINED_TRAIT, OnTraitableGainedTrait); //start listening if the table gains a poisoned trait
-        //actor.AddTrait("Eating");
+        //actor.traitContainer.AddTrait(actor,"Eating");
     }
     private void PerTickEatSuccess() {
         actor.AdjustFullness(585);
@@ -136,7 +138,7 @@ public class EatAtTable : GoapAction {
         if (res == "Sick") {
             string logKey = "eat poisoned_sick";
             poisonedResult = "Sick";
-            if (actor.GetNormalTrait("Robust") != null) {
+            if (actor.traitContainer.GetNormalTrait("Robust") != null) {
                 poisonedResult = "Robust";
                 logKey = "eat poisoned_robust";
             }
@@ -259,10 +261,10 @@ public class EatAtTable : GoapAction {
             else if ((recipient.faction == actor.faction && !recipient.HasRelationshipOfTypeWith(actor, RELATIONSHIP_TRAIT.ENEMY)) 
                 || (recipient.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE)) {
 
-                Trait sickTrait = actor.GetNormalTrait("Sick");
+                Trait sickTrait = actor.traitContainer.GetNormalTrait("Sick");
                 if (actor.isDead) {
                     reactions.Add(string.Format("Poor {0}, may {1} rest in peace.", actor.name, Utilities.GetPronounString(actor.gender, PRONOUN_TYPE.SUBJECTIVE, false)));
-                    Trait deadTrait = actor.GetNormalTrait("Dead");
+                    Trait deadTrait = actor.traitContainer.GetNormalTrait("Dead");
                     deadTrait.CreateJobsOnEnterVisionBasedOnTrait(actor, recipient);
                 }else if (sickTrait != null) {
                     reactions.Add(string.Format("Poor {0}, maybe I can help.", actor.name));

@@ -81,7 +81,7 @@ public class ExploreState : CharacterState {
     protected override void PerTickInState() {
         base.PerTickInState();
         if (!isDone && !isPaused) {
-            //if (stateComponent.character.GetNormalTrait("Injured") != null || targetArea != stateComponent.character.specificLocation) {
+            //if (stateComponent.character.traitContainer.GetNormalTrait("Injured") != null || targetArea != stateComponent.character.specificLocation) {
             //    StopStatePerTick();
             //    OnExitThisState();
             //    return;

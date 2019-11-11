@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class TableRemovePoison : GoapAction {
     protected override string failActionState { get { return "Remove Poison Fail"; } }
@@ -60,7 +61,7 @@ public class TableRemovePoison : GoapAction {
         if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
             return false;
         }
-        return poiTarget.GetNormalTrait("Poisoned") != null;
+        return poiTarget.traitContainer.GetNormalTrait("Poisoned") != null;
     }
     #endregion
 
@@ -81,6 +82,6 @@ public class TableRemovePoisonData : GoapActionData {
         if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
             return false;
         }
-        return poiTarget.GetNormalTrait("Poisoned") != null;
+        return poiTarget.traitContainer.GetNormalTrait("Poisoned") != null;
     }
 }

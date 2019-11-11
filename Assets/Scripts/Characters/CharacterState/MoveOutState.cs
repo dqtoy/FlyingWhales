@@ -8,7 +8,7 @@ public class MoveOutState : CharacterState {
     private int travelTimeInTicks {
         get {
             int travel = 3 * GameManager.ticksPerHour; //3 hours
-            if (stateComponent.character.GetNormalTrait("Fast") != null) { //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
+            if (stateComponent.character.traitContainer.GetNormalTrait("Fast") != null) { //Reference: https://trello.com/c/Gb3kfZEm/2658-fast
                 travel -= (int)(travel * 0.25f); //NOTE: Did not create a new world travel time modifier in character because it seems unneccessary if this is the only thing it is used for. Will put variable if more things need it.
             }
             return travel;

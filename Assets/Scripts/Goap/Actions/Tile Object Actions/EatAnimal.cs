@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class EatAnimal : GoapAction {
     protected override string failActionState { get { return "Eat Fail"; } }
@@ -32,7 +33,7 @@ public class EatAnimal : GoapAction {
         }
     }
     protected override int GetCost() {
-        if (actor.GetNormalTrait("Carnivore") != null) {
+        if (actor.traitContainer.GetNormalTrait("Carnivore") != null) {
             return 25;
         } else {
             return 50;
@@ -54,7 +55,7 @@ public class EatAnimal : GoapAction {
         currentState.AddLogFiller(targetStructure.location, targetStructure.GetNameRelativeTo(actor), LOG_IDENTIFIER.LANDMARK_1);
         poiTarget.SetPOIState(POI_STATE.INACTIVE);
         actor.AdjustDoNotGetHungry(1);
-        //actor.AddTrait("Eating");
+        //actor.traitContainer.AddTrait(actor,"Eating");
     }
     private void PerTickEatSuccess() {
         actor.AdjustFullness(520);

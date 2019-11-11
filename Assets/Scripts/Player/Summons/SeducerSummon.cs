@@ -44,11 +44,11 @@ public class SeducerSummon : Summon {
         AdjustIgnoreHostilities(1);
     }
     public override List<GoapAction> ThisCharacterSaw(IPointOfInterest target) {
-        if (GetNormalTrait("Unconscious", "Resting") != null) {
+        if (traitContainer.GetNormalTrait("Unconscious", "Resting") != null) {
             return null;
         }
-        for (int i = 0; i < normalTraits.Count; i++) {
-            normalTraits[i].OnSeePOI(target, this);
+        for (int i = 0; i < traitContainer.allTraits.Count; i++) {
+            traitContainer.allTraits[i].OnSeePOI(target, this);
         }
         return null;
     }
@@ -65,7 +65,7 @@ public class SeducerSummon : Summon {
             List<Character> choices = specificLocation.charactersAtLocation.Where(x => x.faction != this.faction
             && !doneCharacters.Contains(x)
             && CharacterManager.Instance.IsSexuallyCompatibleOneSided(x, this)
-            && !x.HasTraitOf(TRAIT_EFFECT.NEGATIVE, TRAIT_TYPE.DISABLER)).ToList();
+            && !x.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)).ToList();
             List<TileObject> validBeds = specificLocation.GetRandomStructureOfType(STRUCTURE_TYPE.INN).GetTileObjectsOfType(TILE_OBJECT_TYPE.BED);
             if (choices.Count > 0 && validBeds.Count > 0) {
                 Character chosenCharacter = choices[Random.Range(0, choices.Count)];
@@ -128,7 +128,7 @@ public class SeducerSummon : Summon {
         ownParty.SetSpecificLocation(PlayerManager.Instance.player.playerArea);
         ClearAllAwareness();
         CancelAllJobsAndPlans();
-        RemoveAllNonPersistentTraits();
+        traitContainer.RemoveAllNonPersistentTraits(this);
         ResetToFullHP();
         UnsubscribeSignals();
         DestroyMarker(disappearTile);

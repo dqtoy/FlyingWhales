@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class TransformFood : GoapAction {
 
@@ -15,7 +16,7 @@ public class TransformFood : GoapAction {
             if (targetMissing) {
                 return targetMissing;
             } else {
-                Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
+                Invisible invisible = poiTarget.traitContainer.GetNormalTrait("Invisible") as Invisible;
                 if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
                     return true;
                 }
@@ -83,7 +84,7 @@ public class TransformFood : GoapAction {
         if (deadCharacter != null) {
             if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
                 //return true;
-                if (actor.GetNormalTrait("Cannibal") != null) {
+                if (actor.traitContainer.GetNormalTrait("Cannibal") != null) {
                     return true;
                 }
                 return false;
@@ -254,7 +255,7 @@ public class TransformFoodData : GoapActionData {
         if (targetCharacter != null) {
             if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
                 //return true;
-                if (actor.GetNormalTrait("Cannibal") != null) {
+                if (actor.traitContainer.GetNormalTrait("Cannibal") != null) {
                     return true;
                 }
                 return false;

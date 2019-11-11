@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
+using Traits;
 
 public class CarryCorpse : GoapAction {
 
@@ -12,7 +14,7 @@ public class CarryCorpse : GoapAction {
             if (targetMissing) {
                 return targetMissing;
             } else {
-                Invisible invisible = poiTarget.GetNormalTrait("Invisible") as Invisible;
+                Invisible invisible = poiTarget.traitContainer.GetNormalTrait("Invisible") as Invisible;
                 if (invisible != null && !invisible.charactersThatCanSee.Contains(actor)) {
                     return true;
                 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine;  
+using Traits;
 
 public class Pray : GoapAction {
 
@@ -88,7 +89,7 @@ public class Pray : GoapAction {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        if (actor.GetNormalTrait("Evil") != null) {
+        if (actor.traitContainer.GetNormalTrait("Evil") != null) {
             return false;
         }
         return actor == poiTarget;

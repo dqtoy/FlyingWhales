@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Linq;
+using Traits;
 
 public class TraitItem : MonoBehaviour {
     public TextMeshProUGUI nameText;
@@ -26,7 +27,7 @@ public class TraitItem : MonoBehaviour {
             //portrait.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
         } else {
             portrait.gameObject.SetActive(false);
-            Sprite icon = AttributeManager.Instance.GetTraitIcon(trait.name);
+            Sprite icon = TraitManager.Instance.GetTraitIcon(trait.name);
             if (icon != null) {
                 iconImg.sprite = icon;
                 iconImg.gameObject.SetActive(true);
